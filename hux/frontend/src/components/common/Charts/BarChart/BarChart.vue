@@ -93,6 +93,12 @@ export default {
         })
       })
 
+      let maxEvents = d3Array.max(
+        this.customerEventData,
+        (d) => d.total_event_count
+      )
+      let maxYticks = maxEvents < 5 ? maxEvents : 5
+
       let xScale = d3Scale
         .scaleBand()
         .domain(d3Array.range(this.customerEventData.length))
@@ -109,7 +115,7 @@ export default {
             : d3Array.max(this.customerEventData, (d) => d.total_event_count),
         ])
         .range([h, 0])
-        .nice(5)
+        .nice(maxYticks)
 
       let hideInitialTick =
         this.customerEventData.filter(
@@ -153,7 +159,12 @@ export default {
         .append("g")
         .classed("yAxis-main", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).ticks(5).tickFormat(applyNumericFilter))
+        .call(
+          d3Axis
+            .axisLeft(yScale)
+            .ticks(maxYticks)
+            .tickFormat(applyNumericFilter)
+        )
         .attr("stroke-width", "1")
         .attr("stroke-opacity", "1")
         .style("font-size", "14px")
@@ -162,7 +173,9 @@ export default {
         .append("g")
         .classed("yAxis-alternate", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(5).tickFormat(""))
+        .call(
+          d3Axis.axisLeft(yScale).tickSize(-w).ticks(maxYticks).tickFormat("")
+        )
         .attr("stroke-width", "0.5")
         .attr("stroke-opacity", "1")
         .style("font-size", "12px")

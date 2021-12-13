@@ -4,8 +4,8 @@
     :disabled="isDisabled"
     :outlined="isOutlined"
     :tile="isTile"
-    :color="variant"
     :class="[buttonSize, { 'box-shadow-25': boxShadow }, 'text-button']"
+    :color="variant"
     :width="width"
     :height="height"
     :icon="iconType"
@@ -160,5 +160,9 @@ export default {
 <style lang="scss" scoped>
 ::v-deep.theme--light.v-btn.v-btn--disabled .v-icon {
   color: var(--v-black-lighten3) !important;
+}
+
+.v-application .white {
+  border: solid 1px var(--v-black-lighten1) !important;
 }
 </style>

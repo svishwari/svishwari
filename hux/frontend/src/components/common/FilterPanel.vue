@@ -56,7 +56,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$padding: 30px;
+$padding: 24px;
 $headerHeight: 40px;
 .hux-filter-panel {
   .header {

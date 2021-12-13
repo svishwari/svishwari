@@ -772,6 +772,194 @@ delivery_platforms_constants = [
     },
 ]
 
+# Models List
+models_list = [
+    {
+        db_c.CATEGORY: "Email",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Propensity to Purchase",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to click"
+        " on a link in an email and make a purchase.",
+        db_c.MODEL_ID: "f76a5e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Email",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Propensity to Unsubscribe",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to unsubscribe"
+        " from an email marketing list.",
+        db_c.MODEL_ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Email",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Propensity to Open",
+        db_c.MODEL_DESCRIPTION: " Propensity for a customer to open an email.",
+        db_c.MODEL_ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Email",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Propensity to Click",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to click "
+        "on a link in an email.",
+        db_c.MODEL_ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Email",
+        db_c.TYPE: "Unknown",
+        db_c.NAME: "Email Content Optimization",
+        db_c.MODEL_DESCRIPTION: "Alter email content to optimize "
+        "email campaign performance.",
+        db_c.MODEL_ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Sales forecasting",
+        db_c.TYPE: "Regression",
+        db_c.NAME: "Customer Lifetime Value",
+        db_c.MODEL_DESCRIPTION: "Predicting the lifetime value of a "
+        "customer over a defined time range.",
+        db_c.MODEL_ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Sales forecasting",
+        db_c.TYPE: "Regression",
+        db_c.NAME: "Predicted Sales Per Customer",
+        db_c.MODEL_DESCRIPTION: "Predicting sales for a customer over a "
+        "defined time range.",
+        db_c.MODEL_ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Sales forecasting",
+        db_c.TYPE: "Regression",
+        db_c.NAME: "Predicted Sales Per Store",
+        db_c.MODEL_DESCRIPTION: "Predicting sales for a store over a "
+        "defined time range.",
+        db_c.MODEL_ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Trust",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Capability Propensity",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral capability score.",
+        db_c.MODEL_ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Trust",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Trust Propensity",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral trust score.",
+        db_c.MODEL_ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Trust",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Humanity Propensity",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral humanity score.",
+        db_c.MODEL_ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Trust",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Reliability Propensity",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral reliability score.",
+        db_c.MODEL_ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Trust",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Transparency Propensity",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral transparency score.",
+        db_c.MODEL_ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Retention",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Churn",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to leave a service "
+        "over a defined time range.",
+        db_c.MODEL_ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Web",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Propensity to Purchase Product Category",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web purchase"
+        " in a particular product category.",
+        db_c.MODEL_ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Web",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Propensity to Visit Product Category",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web visit"
+        " in a particular product category.",
+        db_c.MODEL_ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: "Web",
+        db_c.TYPE: "Classification",
+        db_c.NAME: "Propensity to Visit Website",
+        db_c.MODEL_DESCRIPTION: "Propensity for a customer to visit a website.",
+        db_c.MODEL_ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+]
 
 # Configurations List
 configurations_constants = [
@@ -949,6 +1137,8 @@ def drop_collections(database: MongoClient) -> None:
     collections = [
         db_c.CDP_DATA_SOURCES_COLLECTION,
         db_c.DELIVERY_PLATFORM_COLLECTION,
+        db_c.MODELS_COLLECTION,
+        db_c.CONFIGURATIONS_COLLECTION,
     ]
     for collection in collections:
         database[db_c.DATA_MANAGEMENT_DATABASE][collection].drop()
@@ -1033,10 +1223,30 @@ def insert_configurations(database: MongoClient, configurations: list) -> None:
     logging.info("Prepopulated configurations.")
 
 
+def insert_models(database: MongoClient, models: list) -> None:
+    """Insert data into models collection
+
+    Args:
+        database (MongoClient): MongoDB Client.
+        models (List): List of Model Objects.
+    """
+    logging.info("Prepopulate models.")
+
+    for model in models:
+        model_id = create_document(database, db_c.MODELS_COLLECTION, model)[
+            db_c.ID
+        ]
+        logging.info("Added %s, %s.", model[db_c.NAME], model_id)
+
+    logging.info("Prepopulate models complete.")
+
+
 if __name__ == "__main__":
     # Initiate Data Base client
     db_client = get_mongo_client()
+    drop_collections(db_client)
     insert_data_sources(db_client, data_sources_constants)
     insert_delivery_platforms(db_client, delivery_platforms_constants)
     insert_configurations(db_client, configurations_constants)
+    insert_models(db_client, models_list)
     logging.info("Prepopulate complete.")

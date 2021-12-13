@@ -137,32 +137,34 @@ class CustomerStateSchema(Schema):
 class CustomerOverviewSchema(Schema):
     """Customer Profile Overview Schema"""
 
-    total_records = Integer(required=True)
-    match_rate = Float(required=True)
-    total_unique_ids = Integer(required=True)
-    total_unknown_ids = Integer(required=True)
-    total_known_ids = Integer(required=True)
-    total_individual_ids = Integer(required=True)
-    total_household_ids = Integer(required=True)
-    updated = DateTimeWithZ(required=True)
-    total_customers = Integer(required=True)
-    total_countries = Integer(required=True)
-    total_us_states = Integer(required=True)
-    total_cities = Integer(required=True)
-    min_age = Integer(required=True)
-    max_age = Integer(required=True)
-    avg_age = Integer(required=True)
-    gender_women = Float(required=True)
-    gender_men = Float(required=True)
-    gender_other = Float(required=True)
-    gender_men_count = Integer(required=True)
-    gender_women_count = Integer(required=True)
-    gender_other_count = Integer(required=True)
-    min_ltv_predicted = Float(required=True)
-    max_ltv_predicted = Float(required=True)
-    min_ltv_actual = Float(required=True)
-    max_ltv_actual = Float(required=True)
-    geo = List(Nested(CustomerStateSchema))
+    total_records = Integer(required=True, default=0)
+    match_rate = Float(required=True, default=0.0)
+    total_unique_ids = Integer(required=True, default=0)
+    total_unknown_ids = Integer(required=True, default=0)
+    total_anonymous_ids = Integer(required=True, default=0)
+    total_address_ids = Integer(required=True, default=0)
+    total_known_ids = Integer(required=True, default=0)
+    total_individual_ids = Integer(required=True, default=0)
+    total_household_ids = Integer(required=True, default=0)
+    updated = DateTimeWithZ(required=True, default=0)
+    total_customers = Integer(required=True, default=0)
+    total_countries = Integer(required=True, default=0)
+    total_us_states = Integer(required=True, default=0)
+    total_cities = Integer(required=True, default=0)
+    min_age = Integer(required=True, default=0)
+    max_age = Integer(required=True, default=0)
+    avg_age = Integer(required=True, default=0)
+    gender_women = Float(required=True, default=0.0)
+    gender_men = Float(required=True, default=0.0)
+    gender_other = Float(required=True, default=0.0)
+    gender_men_count = Integer(required=True, default=0)
+    gender_women_count = Integer(required=True, default=0)
+    gender_other_count = Integer(required=True, default=0)
+    min_ltv_predicted = Float(required=True, default=0.0)
+    max_ltv_predicted = Float(required=True, default=0.0)
+    min_ltv_actual = Float(required=True, default=0.0)
+    max_ltv_actual = Float(required=True, default=0.0)
+    geo = List(Nested(CustomerStateSchema), default=[])
 
 
 class IDROverviewSchema(Schema):
@@ -176,6 +178,8 @@ class IDROverviewSchema(Schema):
     total_individual_ids = Integer(required=True)
     total_household_ids = Integer(required=True)
     total_customers = Integer(required=True)
+    total_address_ids = Integer(required=True)
+    total_anonymous_ids = Integer(required=True)
 
 
 class CustomersSchema(Schema):
@@ -373,13 +377,21 @@ class CustomerEventCountSchema(Schema):
 
         ordered = True
 
-    abandoned_cart = Integer(required=True, example=1)
-    viewed_cart = Integer(required=True, example=1)
-    customer_login = Integer(required=True, example=1)
     viewed_checkout = Integer(required=True, example=1)
-    viewed_sale_item = Integer(required=True, example=1)
-    item_purchased = Integer(required=True, example=1)
-    trait_computed = Integer(required=True, example=1)
+    abandoned_cart = Integer(
+        required=True, example=1, attribute=api_c.ABANDONED_CARTS
+    )
+    trait = Integer(required=True, example=1, attribute=api_c.TRAITS_ANALYZED)
+    sale = Integer(required=True, example=1, attribute=api_c.SALES_MADE)
+    view_content = Integer(
+        required=True, example=1, attribute=api_c.CONTENT_VIEWED
+    )
+    product_search = Integer(
+        required=True, example=1, attribute=api_c.PRODUCTS_SEARCHED
+    )
+    purchase = Integer(
+        required=True, example=1, attribute=api_c.PURCHASES_MADE
+    )
 
 
 class CustomerEventsSchema(Schema):

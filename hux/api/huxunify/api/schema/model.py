@@ -22,6 +22,7 @@ class ModelSchema(Schema):
     prediction_window = Int()
     fulcrum_date = DateTimeWithZ()
     type = Str()
+    category = Str()
 
 
 class ModelVersionSchema(Schema):
@@ -105,6 +106,7 @@ class ModelRequestPOSTSchema(Schema):
 
     id = Str(required=True)
     name = Str(required=True)
+    type = Str(required=True)
     status = Str(
         validate=lambda x: x.lower() in [api_c.REQUESTED.lower()],
         required=True,

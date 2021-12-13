@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines,unused-argument
 """Paths for Orchestration API"""
 import asyncio
+import re
 from http import HTTPStatus
 from threading import Thread
 from typing import Tuple, Union
@@ -41,6 +42,7 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
+    LookalikeAudiencePutSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -55,7 +57,10 @@ from huxunify.api.data_connectors.cdp import (
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
-    introspect_token,
+)
+from huxunify.api.data_connectors.courier import (
+    get_destination_config,
+    get_audience_destination_pairs,
 )
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -75,6 +80,7 @@ from huxunify.api.route.utils import (
     Validation as validation,
     is_component_favorite,
     get_user_favorites,
+    convert_unique_city_filter,
 )
 
 # setup the orchestration blueprint
@@ -234,7 +240,8 @@ class AudienceView(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    # pylint: disable=no-self-use,too-many-locals
+    # TODO: HUS-1791 - refactor.
+    # pylint: disable=no-self-use,too-many-locals,too-many-statements,too-many-branches
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves all audiences.
 
@@ -419,6 +426,16 @@ class AudienceView(SwaggerView):
                     }
                 )
 
+            if attribute_list:
+                query_filter["$and"] = [
+                    {
+                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                            "$regex": re.compile(rf"^{attribute}$(?i)")
+                        }
+                    }
+                    for attribute in attribute_list
+                ]
+
             lookalikes = cm.get_documents(
                 database,
                 db_c.LOOKALIKE_AUDIENCE_COLLECTION,
@@ -455,6 +472,11 @@ class AudienceView(SwaggerView):
                 lookalike[api_c.FAVORITE] = bool(
                     lookalike[db_c.ID] in favorite_lookalike_audiences
                 )
+                if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
+                    # rename the key
+                    lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
+                        db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                    )
 
             # combine the two lists and serve.
             audiences += lookalikes
@@ -527,7 +549,6 @@ class AudienceGetView(SwaggerView):
         """
 
         token_response = get_token_from_request(request)
-        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         database = get_db_client()
 
@@ -687,7 +708,7 @@ class AudienceGetView(SwaggerView):
         audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         audience[api_c.FAVORITE] = is_component_favorite(
-            user_id, api_c.AUDIENCES, str(audience_id)
+            user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
         )
 
         return (
@@ -772,12 +793,16 @@ class AudienceInsightsGetView(SwaggerView):
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
             )
 
-        audience_insights = asyncio.run(
-            get_audience_insights_async(
-                token_response[0],
-                audience[api_c.AUDIENCE_FILTERS],
+        audience_insights = {}
+
+        # check if the source audience exists.
+        if audience:
+            audience_insights = asyncio.run(
+                get_audience_insights_async(
+                    token_response[0],
+                    audience[api_c.AUDIENCE_FILTERS],
+                )
             )
-        )
 
         return (
             AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
@@ -794,6 +819,14 @@ class AudiencePostView(SwaggerView):
     """Audience Post view class."""
 
     parameters = [
+        {
+            "name": api_c.DELIVER,
+            "description": "Create and Deliver",
+            "in": "query",
+            "type": "boolean",
+            "required": "false",
+            "default": "false",
+        },
         {
             "name": "body",
             "in": "body",
@@ -907,18 +940,20 @@ class AudiencePostView(SwaggerView):
                         f"does not exist."
                     }
                 engagement_ids.append(engagement_id)
-
+        audience_filters = convert_unique_city_filter(
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+        )
         # get live audience size
         customers = get_customers_overview(
             token_response[0],
-            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)},
+            audience_filters,
         )
 
         # create the audience
         audience_doc = orchestration_management.create_audience(
             database=database,
             name=body[api_c.AUDIENCE_NAME],
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
@@ -961,6 +996,28 @@ class AudiencePostView(SwaggerView):
                 api_c.ORCHESTRATION_TAG,
                 user[api_c.USER_NAME],
             )
+
+        # deliver audience
+        if request.args.get(api_c.DELIVER):
+            # TODO: make this OOP between routes.
+
+            # get engagements
+            engagements = engagement_management.get_engagements_by_audience(
+                database, audience_doc[db_c.ID]
+            )
+
+            # submit jobs for the audience/destination pairs
+            for engagement in engagements:
+                for pair in get_audience_destination_pairs(
+                    engagement[api_c.AUDIENCES]
+                ):
+                    if pair[0] != audience_doc[db_c.ID]:
+                        continue
+                    batch_destination = get_destination_config(
+                        database, engagement[db_c.ID], *pair
+                    )
+                    batch_destination.register()
+                    batch_destination.submit()
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 
@@ -1062,7 +1119,7 @@ class AudiencePutView(SwaggerView):
                 )
 
                 if not destination_management.get_delivery_platform(
-                    get_db_client(), destination[db_c.OBJECT_ID]
+                    database, destination[db_c.OBJECT_ID]
                 ):
                     logger.error(
                         "Could not find destination with id %s.",
@@ -1071,12 +1128,14 @@ class AudiencePutView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
-
+        audience_filters = convert_unique_city_filter(
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+        )
         audience_doc = orchestration_management.update_audience(
             database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
         )
@@ -1093,32 +1152,51 @@ class AudiencePutView(SwaggerView):
         if not body.get(api_c.ENGAGEMENT_IDS):
             return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
-        # remove the audience from existing engagements
-        engagement_deliveries = orchestration_management.get_audience_insights(
-            database,
-            audience_doc[db_c.ID],
-        )
+        # audience put engagement ids
+        put_engagement_ids = [
+            ObjectId(x) for x in body.get(api_c.ENGAGEMENT_IDS)
+        ]
 
-        # process each engagement that the audience is attached to.
-        for engagement in engagement_deliveries:
-            # remove the audience
-            engagement_management.remove_audiences_from_engagement(
-                database,
-                engagement[db_c.ID],
-                user[api_c.USER_NAME],
-                [audience_doc[db_c.ID]],
-            )
+        # loop each engagement
+        removed = []
+        for engagement in engagement_management.get_engagements(database):
+            # check if audience is in the engagement doc
+            audience_in_engagement = audience_doc[db_c.ID] in [
+                x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
+            ]
 
-        # now attach each audience to the passed in engagements.
-        for engagement_id in body.get(api_c.ENGAGEMENT_IDS):
-            # the append function expects ID for audience _id.
-            audience_doc[db_c.OBJECT_ID] = audience_doc[db_c.ID]
-            engagement_management.append_audiences_to_engagement(
-                database,
-                ObjectId(engagement_id),
-                user[api_c.USER_NAME],
-                [audience_doc],
-            )
+            # evaluate engagement
+            if (
+                engagement[db_c.ID] in put_engagement_ids
+                and audience_in_engagement
+            ):
+                # audience is in engagement and engagement is in PUT ids.
+                # no update is needed for this scenario.
+                pass
+            elif engagement[db_c.ID] in put_engagement_ids:
+                # engagement is in the PUT ids, but the audience is not.
+                # append audience to the engagement.
+                engagement_management.append_audiences_to_engagement(
+                    database,
+                    engagement.get(db_c.ID),
+                    user[api_c.USER_NAME],
+                    [
+                        {
+                            db_c.OBJECT_ID: audience_doc[db_c.ID],
+                            db_c.DESTINATIONS: audience_doc[db_c.DESTINATIONS],
+                        }
+                    ],
+                )
+            elif audience_in_engagement:
+                # audience is in engagement, but the engagement is not in the PUT ids.
+                # remove the audience from engagement.
+                engagement_management.remove_audiences_from_engagement(
+                    database,
+                    engagement[db_c.ID],
+                    user[api_c.USER_NAME],
+                    [audience_doc[db_c.ID]],
+                )
+                removed.append(engagement[db_c.ID])
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
@@ -1515,6 +1593,100 @@ class SetLookalikeAudience(SwaggerView):
 
 @add_view_to_blueprint(
     orchestration_bp,
+    f"{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}/<audience_id>",
+    "EditLookalikeAudience",
+)
+class PutLookalikeAudience(SwaggerView):
+    """Set Lookalike Audience Class."""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Lookalike Audience Parameters.",
+            "example": {
+                api_c.NAME: "New Lookalike Audience Name",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.ACCEPTED.value: {
+            "schema": LookalikeAudienceGetSchema,
+            "description": "Successfully edited lookalike audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to edit the lookalike audience"
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use, unsubscriptable-object
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
+        """Edits lookalike audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): ID of the audience to be deleted.
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: lookalike audience configuration,
+                HTTP status code.
+
+        Raises:
+            FailedDestinationDependencyError: Destination Dependency
+                error.
+        """
+
+        body = LookalikeAudiencePutSchema().load(
+            request.get_json(), partial=True
+        )
+
+        database = get_db_client()
+
+        update_doc = orchestration_management.update_lookalike_audience(
+            database,
+            ObjectId(audience_id),
+            body[api_c.NAME],
+            user[api_c.USER_NAME],
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Lookalike audience "{update_doc[db_c.NAME]}" '
+                f"edited by {user[api_c.USER_NAME]}."
+            ),
+            api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
+        )
+
+        return (
+            LookalikeAudienceGetSchema().dump(update_doc),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
     f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>",
     "DeleteAudienceView",
 )
@@ -1565,6 +1737,11 @@ class DeleteAudienceView(SwaggerView):
 
         database = get_db_client()
 
+        # get the audience first
+        audience = orchestration_management.get_audience(
+            database, ObjectId(audience_id)
+        )
+
         # attempt to delete the audience from audiences collection first
         deleted_audience = orchestration_management.delete_audience(
             database, ObjectId(audience_id)
@@ -1573,6 +1750,12 @@ class DeleteAudienceView(SwaggerView):
         # attempt to delete the audience from lookalike_audiences collection
         # if audience not found in audiences collection
         if not deleted_audience:
+            audience = cm.get_document(
+                database,
+                db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+                {db_c.ID: ObjectId(audience_id)},
+            )
+
             deleted_audience = delete_lookalike_audience(
                 database, ObjectId(audience_id), soft_delete=False
             )
@@ -1614,7 +1797,7 @@ class DeleteAudienceView(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Audience "{audience_id}" successfully deleted by {user[api_c.USER_NAME]}.',
+            f'Audience "{audience[db_c.NAME]}" successfully deleted by {user[api_c.USER_NAME]}.',
             api_c.ORCHESTRATION_TAG,
             user[api_c.USER_NAME],
         )

@@ -145,34 +145,100 @@ CUSTOMER_INSIGHT_RESPONSE = {
     "message": "ok",
 }
 
-CUSTOMER_EVENT_RESPONSE = {
+CUSTOMER_EVENT_BY_DAY_RESPONSE = {
     "code": 200,
     "body": [
         {
             "total_event_count": 1,
             "event_type_counts": {
-                "abandoned_cart": 0,
-                "customer_login": 0,
-                "item_purchased": 0,
-                "trait_computed": 1,
-                "viewed_cart": 0,
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
                 "viewed_checkout": 0,
-                "viewed_sale_item": 0,
             },
             "date": "2021-01-01T00:00:00.000Z",
         },
         {
             "total_event_count": 1,
             "event_type_counts": {
-                "abandoned_cart": 0,
-                "customer_login": 0,
-                "item_purchased": 0,
-                "trait_computed": 1,
-                "viewed_cart": 0,
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
                 "viewed_checkout": 0,
-                "viewed_sale_item": 0,
             },
             "date": "2021-01-02T00:00:00.000Z",
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMER_EVENT_BY_WEEK_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-12-28T00:00:00.000Z",
+        },
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-01-18T00:00:00.000Z",
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMER_EVENT_BY_MONTH_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-01-01T00:00:00.000Z",
+        },
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-03-01T00:00:00.000Z",
         },
     ],
     "message": "ok",
@@ -295,7 +361,7 @@ MOCKED_MODEL_RESPONSE = [
         api_c.LOOKBACK_WINDOW: 365,
         api_c.PREDICTION_WINDOW: 365,
         api_c.FULCRUM_DATE: parser.isoparse("2021-06-22T11:33:19.658Z"),
-        api_c.TYPE: "test",
+        api_c.TYPE: "other",
     },
 ]
 
@@ -530,13 +596,6 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
     ]
 }
 
-MOCKED_MODEL_LTV_PAYLOAD = {
-    "params": {
-        "feature_service_name": api_c.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE,
-        "join_key_map": {"model_id": "2"},
-    }
-}
-
 MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
     "results": [
         {
@@ -588,13 +647,6 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
             "joinKeys": ["21.7.31"],
         },
     ]
-}
-
-MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
-    "params": {
-        "feature_service_name": api_c.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE,
-        "join_key_map": {"model_id": "1"},
-    }
 }
 
 MOCKED_MODEL_LIFT_CHART = [

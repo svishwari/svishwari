@@ -12,8 +12,8 @@
       <template #footer-right>
         <div v-if="isDataSourcesSelected" class="d-flex align-baseline">
           <huxButton
-            variant="white"
             size="large"
+            variant="white"
             :is-tile="true"
             class="mr-2 btn-border box-shadow-none"
             @click="closeAddDataSource"
@@ -138,21 +138,13 @@ export default {
 
     enabledDataSources() {
       const activeEnabled = this.dataSources
-        .filter((each) => each.is_added && each.status === "Active")
+        .filter((each) => each.is_added)
         .sort(function (a, b) {
           var textA = a.name.toUpperCase()
           var textB = b.name.toUpperCase()
           return textA < textB ? -1 : textA > textB ? 1 : 0
         })
-
-      const notActiveEnabled = this.dataSources
-        .filter((each) => each.is_added && each.status !== "Active")
-        .sort(function (a, b) {
-          var textA = a.name.toUpperCase()
-          var textB = b.name.toUpperCase()
-          return textA < textB ? -1 : textA > textB ? 1 : 0
-        })
-      return [...activeEnabled, ...notActiveEnabled]
+      return activeEnabled
     },
 
     dataSourcesGroupedSorted() {

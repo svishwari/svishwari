@@ -6,8 +6,8 @@
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Here are a list of audiences that you have saved and created from
-          segmenting your customer list in the Segment Playground.
+          Segment your customers into audiences based on your customer data and
+          model scores.
         </div>
       </template>
       <template #right>
@@ -16,287 +16,311 @@
           :size="22"
           class="cursor-pointer"
           color="black-darken4"
-          @click.native="toggleFilterDrawer()"
+          data-e2e="audienceFilterToggle"
+          @click.native="isFilterToggled = !isFilterToggled"
         />
       </template>
     </page-header>
-    <page-header class="top-bar" :header-height="71">
-      <template slot="left">
-        <v-btn disabled icon color="black">
-          <icon type="search" :size="20" color="black" variant="lighten3" />
-        </v-btn>
-      </template>
+    <div
+      class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
+    >
+      <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+        <page-header class="top-bar" :header-height="71">
+          <template slot="left">
+            <v-btn disabled icon color="black">
+              <icon type="search" :size="20" color="black" variant="lighten3" />
+            </v-btn>
+          </template>
 
-      <template slot="right">
-        <router-link
-          :to="{ name: 'AudienceConfiguration' }"
-          class="text-decoration-none"
-          append
-        >
-          <huxButton
-            variant="primary base"
-            icon-color="white"
-            icon-variant="base"
-            icon="plus"
-            size="large"
-            is-custom-icon
-            is-tile
-            class="ma-2 font-weight-regular no-shadow mr-0"
-          >
-            Audience
-          </huxButton>
-        </router-link>
-      </template>
-    </page-header>
-    <audience-filter v-model="isFilterToggled" @onSectionAction="applyFilter" />
-    <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div v-if="!loading" class="white">
-      <hux-data-table
-        v-if="isDataExists"
-        :columns="columnDefs"
-        :data-items="audienceList"
-        view-height="calc(100vh - 210px)"
-        sort-column="update_time"
-        sort-desc="false"
-        data-e2e="audience-table"
-        class="big-table"
-      >
-        <template #row-item="{ item }">
-          <td
-            v-for="header in columnDefs"
-            :key="header.value"
-            :class="{
-              'fixed-column': header.fixed,
-              'v-data-table__divider': header.fixed,
-              'primary--text': header.fixed,
-            }"
-            :style="{ minWidth: header.width, left: 0 }"
-          >
-            <div
-              v-if="header.value == 'name'"
-              class="w-100 d-flex"
-              data-e2e="audiencelist"
+          <template slot="right">
+            <router-link
+              :to="{ name: 'AudienceConfiguration' }"
+              class="text-decoration-none"
+              append
             >
-              <span v-if="item.is_lookalike == true" class="mr-3">
-                <tooltip>
-                  <template #label-content>
-                    <icon type="lookalike" :size="20" class="mr-2" />
-                  </template>
-                  <template #hover-content>Lookalike audience</template>
-                </tooltip>
-              </span>
-              <menu-cell
-                :value="item[header.value]"
-                :menu-options="getActionItems(item)"
-                route-name="AudienceInsight"
-                :route-param="item['id']"
-                data-e2e="audiencename"
-                has-favorite
-                :is-favorite="isUserFavorite(item, 'audiences')"
-                class="text-body-1"
-                @actionFavorite="handleActionFavorite(item, 'audiences')"
-              />
-            </div>
-            <div v-if="header.value == 'status'">
-              <status
-                :status="item[header.value]"
-                :show-label="true"
-                class="d-flex"
-                :icon-size="18"
-              />
-            </div>
-            <div v-if="header.value == 'size'">
-              <size :value="item[header.value]" />
-            </div>
-            <div
-              v-if="header.value == 'filters' && item[header.value]"
-              class="filter_col"
-            >
-              <span
-                v-for="(filter, filterIndex) in filterTags[item.name]"
-                :key="filterIndex"
+              <huxButton
+                variant="primary base"
+                icon-color="white"
+                icon-variant="base"
+                icon="plus"
+                size="large"
+                is-custom-icon
+                is-tile
+                class="ma-2 font-weight-regular no-shadow mr-0"
               >
-                <v-chip
-                  v-if="filterIndex < 4"
-                  small
-                  class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                  text-color="primary"
-                  color="var(--v-primary-lighten3)"
+                Audience
+              </huxButton>
+            </router-link>
+          </template>
+        </page-header>
+        <v-progress-linear :active="loading" :indeterminate="loading" />
+        <div v-if="!loading" class="white">
+          <hux-data-table
+            v-if="isDataExists"
+            :columns="columnDefs"
+            :data-items="audienceList"
+            view-height="calc(100vh - 253px)"
+            sort-column="update_time"
+            sort-desc="false"
+            data-e2e="audience-table"
+            class="big-table"
+          >
+            <template #row-item="{ item }">
+              <td
+                v-for="header in columnDefs"
+                :key="header.value"
+                :class="{
+                  'fixed-column': header.fixed,
+                  'v-data-table__divider': header.fixed,
+                  'primary--text': header.fixed,
+                }"
+                :style="{ minWidth: header.width, left: 0 }"
+              >
+                <div
+                  v-if="header.value == 'name'"
+                  class="w-100 d-flex"
+                  data-e2e="audiencelist"
                 >
-                  {{ formatText(filter) }}
-                </v-chip>
-              </span>
-              <tooltip>
-                <template #label-content>
-                  <span
-                    v-if="filterTags[item.name].size > 4"
-                    class="text-subtitle-2 primary--text"
-                  >
-                    +{{ filterTags[item.name].size - 4 }}
+                  <span v-if="item.is_lookalike == true" class="mr-3">
+                    <tooltip>
+                      <template #label-content>
+                        <icon type="lookalike" :size="20" />
+                      </template>
+                      <template #hover-content>Lookalike audience</template>
+                    </tooltip>
                   </span>
-                </template>
-                <template #hover-content>
-                  <span
-                    v-for="(filter, filterIndex) in filterTags[item.name]"
-                    :key="filterIndex"
-                  >
-                    <v-chip
-                      v-if="filterIndex >= 4"
-                      small
-                      class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                      text-color="primary"
-                      color="var(--v-primary-lighten3)"
-                    >
-                      {{ formatText(filter) }}
-                    </v-chip>
-                    <br v-if="filterIndex >= 4" />
-                  </span>
-                </template>
-              </tooltip>
-            </div>
-            <div v-if="header.value == 'destinations'">
-              <div
-                v-if="item[header.value] && item[header.value].length > 0"
-                class="d-flex align-center"
-              >
-                <div class="d-flex align-center destination-ico">
-                  <tooltip
-                    v-for="destination in getOverallDestinations(
-                      item[header.value]
-                    )"
-                    :key="`${item.id}-${destination.type}`"
-                  >
-                    <template #label-content>
-                      <logo
-                        :key="destination.id"
-                        class="mr-1"
-                        :type="destination.type"
-                        :size="18"
-                      />
-                    </template>
-                    <template #hover-content>
-                      <span>{{ destination.name }}</span>
-                    </template>
-                  </tooltip>
+                  <menu-cell
+                    :value="item[header.value]"
+                    :menu-options="getActionItems(item)"
+                    route-name="AudienceInsight"
+                    :route-param="item['id']"
+                    data-e2e="audiencename"
+                    has-favorite
+                    :is-favorite="isUserFavorite(item, 'audiences')"
+                    class="text-body-1"
+                    :show-star="!item.is_lookalike"
+                    @actionFavorite="handleActionFavorite(item, 'audiences')"
+                  />
                 </div>
-
-                <span
-                  v-if="item[header.value] && item[header.value].length > 2"
-                  class="ml-1 text-body-1 black--text"
-                >
-                  <tooltip>
-                    <template #label-content>
-                      +{{ item[header.value].length - 2 }}
-                    </template>
-                    <template #hover-content>
-                      <div class="d-flex flex-column">
-                        <div
-                          v-for="extraDestination in getExtraDestinations(
-                            item[header.value]
-                          )"
-                          :key="extraDestination.id"
-                          class="d-flex align-center py-2"
+                <div v-if="header.value == 'status'">
+                  <status
+                    :status="item[header.value]"
+                    :show-label="true"
+                    class="d-flex"
+                    :icon-size="18"
+                  />
+                </div>
+                <div v-if="header.value == 'size'">
+                  <size :value="item[header.value]" />
+                </div>
+                <div v-if="header.value == 'filters'" class="filter_col">
+                  <span
+                    v-if="
+                      item[header.value] == 'null' ||
+                      !item[header.value] ||
+                      item[header.value].length == 0
+                    "
+                  >
+                    —
+                  </span>
+                  <span v-else>
+                    <span
+                      v-for="(filter, filterIndex) in filterTags[item.name]"
+                      :key="filterIndex"
+                    >
+                      <v-chip
+                        v-if="filterIndex < 4"
+                        small
+                        class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                        text-color="primary"
+                        color="var(--v-primary-lighten3)"
+                      >
+                        {{ formatText(filter) }}
+                      </v-chip>
+                    </span>
+                    <tooltip>
+                      <template #label-content>
+                        <span
+                          v-if="filterTags[item.name].size > 4"
+                          class="text-subtitle-2 primary--text"
                         >
+                          +{{ filterTags[item.name].size - 4 }}
+                        </span>
+                      </template>
+                      <template #hover-content>
+                        <span
+                          v-for="(filter, filterIndex) in filterTags[item.name]"
+                          :key="filterIndex"
+                        >
+                          <v-chip
+                            v-if="filterIndex >= 4"
+                            small
+                            class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                            text-color="primary"
+                            color="var(--v-primary-lighten3)"
+                          >
+                            {{ formatText(filter) }}
+                          </v-chip>
+                          <br v-if="filterIndex >= 4" />
+                        </span>
+                      </template>
+                    </tooltip>
+                  </span>
+                </div>
+                <div v-if="header.value == 'destinations'">
+                  <div
+                    v-if="item[header.value] && item[header.value].length > 0"
+                    class="d-flex align-center"
+                  >
+                    <div class="d-flex align-center destination-ico">
+                      <tooltip
+                        v-for="destination in getOverallDestinations(
+                          item[header.value]
+                        )"
+                        :key="`${item.id}-${destination.type}`"
+                      >
+                        <template #label-content>
                           <logo
-                            :key="extraDestination.id"
-                            class="mr-4"
-                            :type="extraDestination.type"
+                            :key="destination.id"
+                            class="mr-1"
+                            :type="destination.type"
                             :size="18"
                           />
-                          <span>{{ extraDestination.name }}</span>
+                        </template>
+                        <template #hover-content>
+                          <span>{{ destination.name }}</span>
+                        </template>
+                      </tooltip>
+                    </div>
+
+                    <span
+                      v-if="item[header.value] && item[header.value].length > 3"
+                      class="ml-1 text-body-1 black--text"
+                    >
+                      <tooltip>
+                        <template #label-content>
+                          +{{ item[header.value].length - 3 }}
+                        </template>
+                        <template #hover-content>
+                          <div class="d-flex flex-column">
+                            <div
+                              v-for="extraDestination in getExtraDestinations(
+                                item[header.value]
+                              )"
+                              :key="extraDestination.id"
+                              class="d-flex align-center py-2"
+                            >
+                              <logo
+                                :key="extraDestination.id"
+                                class="mr-4"
+                                :type="extraDestination.type"
+                                :size="18"
+                              />
+                              <span>{{ extraDestination.name }}</span>
+                            </div>
+                          </div>
+                        </template>
+                      </tooltip>
+                    </span>
+                  </div>
+                  <span v-else>—</span>
+                </div>
+                <div v-if="header.value == 'last_delivered'">
+                  <tooltip>
+                    <template #label-content>
+                      {{ item[header.value] | Date("relative") | Empty }}
+                    </template>
+                    <template #hover-content>
+                      <div>
+                        <div class="neroBlack--text text-body-2 mb-2">
+                          Delivered to:
+                        </div>
+                        <div
+                          v-for="deliveries in item['deliveries']"
+                          :key="deliveries.last_delivered"
+                          class="mb-2"
+                        >
+                          <div class="d-flex align-center mb-1">
+                            <logo
+                              :type="deliveries.delivery_platform_type"
+                              :size="18"
+                            />
+                            <span class="ml-1 neroBlack--text text-body-2">
+                              {{ deliveries.delivery_platform_name }}
+                            </span>
+                          </div>
+                          <div class="neroBlack--text text-body-2">
+                            {{ deliveries.last_delivered | Date | Empty }}
+                          </div>
                         </div>
                       </div>
                     </template>
                   </tooltip>
-                </span>
-              </div>
-              <span v-else>—</span>
-            </div>
-            <div v-if="header.value == 'last_delivered'">
-              <tooltip>
-                <template #label-content>
-                  {{ item[header.value] | Date("relative") | Empty }}
-                </template>
-                <template #hover-content>
-                  <div>
-                    <div class="neroBlack--text text-body-2 mb-2">
-                      Delivered to:
-                    </div>
-                    <div
-                      v-for="deliveries in item['deliveries']"
-                      :key="deliveries.last_delivered"
-                      class="mb-2"
-                    >
-                      <div class="d-flex align-center mb-1">
-                        <logo
-                          :type="deliveries.delivery_platform_type"
-                          :size="18"
-                        />
-                        <span class="ml-1 neroBlack--text text-body-2">
-                          {{ deliveries.delivery_platform_name }}
-                        </span>
-                      </div>
-                      <div class="neroBlack--text text-body-2">
-                        {{ deliveries.last_delivered | Date | Empty }}
-                      </div>
-                    </div>
-                  </div>
-                </template>
-              </tooltip>
-            </div>
-            <div
-              v-if="
-                header.value == 'update_time' || header.value == 'create_time'
-              "
-            >
-              <time-stamp :value="item[header.value]" />
-            </div>
-            <div
-              v-if="
-                header.value == 'updated_by' || header.value == 'created_by'
-              "
-            >
-              <avatar :name="item[header.value]" />
-            </div>
-          </td>
-        </template>
-      </hux-data-table>
-      <empty-page v-if="!isDataExists" type="no-audience" size="50">
-        <template #title>Oops! There’s nothing here yet</template>
-        <template #subtitle>
-          You currently have no audiences created! You can create the
-          <br />framework first then complete the details later. <br />Begin by
-          selecting the button below.
-        </template>
-        <template #button>
-          <router-link
-            :to="{ name: 'AudienceConfiguration' }"
-            class="route-link text-decoration-none"
-            append
-          >
-            <huxButton
-              variant="primary base"
-              icon-color="white"
-              icon-variant="base"
-              icon="plus"
-              size="large"
-              is-custom-icon
-              is-tile
-              class="ma-2 font-weight-regular caption"
-            >
-              Audience
-            </huxButton>
-          </router-link>
-        </template>
-      </empty-page>
-    </div>
+                </div>
+                <div
+                  v-if="
+                    header.value == 'update_time' ||
+                    header.value == 'create_time'
+                  "
+                >
+                  <time-stamp :value="item[header.value]" />
+                </div>
+                <div
+                  v-if="
+                    header.value == 'updated_by' || header.value == 'created_by'
+                  "
+                >
+                  <avatar :name="item[header.value]" />
+                </div>
+              </td>
+            </template>
+          </hux-data-table>
+          <empty-page v-if="!isDataExists" type="no-audience" size="50">
+            <template #title>Oops! There’s nothing here yet</template>
+            <template #subtitle>
+              You currently have no audiences created! You can create the
+              <br />framework first then complete the details later. <br />Begin
+              by selecting the button below.
+            </template>
+            <template #button>
+              <router-link
+                :to="{ name: 'AudienceConfiguration' }"
+                class="route-link text-decoration-none"
+                append
+              >
+                <huxButton
+                  variant="primary base"
+                  icon-color="white"
+                  icon-variant="base"
+                  icon="plus"
+                  size="large"
+                  is-custom-icon
+                  is-tile
+                  class="ma-2 font-weight-regular caption"
+                >
+                  Audience
+                </huxButton>
+              </router-link>
+            </template>
+          </empty-page>
+        </div>
 
-    <look-alike-audience
-      ref="lookalikeWorkflow"
-      :toggle="showLookAlikeDrawer"
-      :selected-audience="selectedAudience"
-      @onToggle="(val) => (showLookAlikeDrawer = val)"
-    />
+        <look-alike-audience
+          ref="lookalikeWorkflow"
+          :toggle="showLookAlikeDrawer"
+          :selected-audience="selectedAudience"
+          @onToggle="(val) => (showLookAlikeDrawer = val)"
+        />
+      </div>
+      <div class="ml-auto">
+        <audience-filter
+          v-model="isFilterToggled"
+          view-height="calc(100vh - 180px)"
+          :filter-options="attributeOptions()"
+          @onSectionAction="applyFilter"
+        />
+      </div>
+    </div>
 
     <confirm-modal
       v-model="confirmModal"
@@ -405,7 +429,7 @@ export default {
         {
           text: "Attributes",
           value: "filters",
-          width: "411px",
+          width: "362px",
         },
         {
           text: "Destinations",
@@ -450,9 +474,15 @@ export default {
     ...mapGetters({
       rowData: "audiences/list",
       userFavorites: "users/favorites",
+      ruleAttributes: "audiences/audiencesRules",
     }),
     audienceList() {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
+      audienceValue.forEach((audience) => {
+        if (!("filters" in audience)) {
+          audience["filters"] = "null"
+        }
+      })
       audienceValue.forEach((audience) => {
         audience.destinations.sort((a, b) => a.name.localeCompare(b.name))
       })
@@ -470,7 +500,12 @@ export default {
           filterTagsObj[audience.name] = new Set()
           audience.filters.forEach((item) => {
             item.section_filters.forEach((obj) => {
-              filterTagsObj[audience.name].add(obj.field)
+              let nameObj = this.attributeOptions().find(
+                (item) => item.key == obj.field.toLowerCase()
+              )
+              if (nameObj) {
+                filterTagsObj[audience.name].add(nameObj.name)
+              }
             })
           })
         }
@@ -482,6 +517,7 @@ export default {
     this.loading = true
     try {
       await this.getAllAudiences({})
+      await this.getAudiencesRules()
     } finally {
       this.loading = false
     }
@@ -492,7 +528,38 @@ export default {
       markFavorite: "users/markFavorite",
       clearFavorite: "users/clearFavorite",
       deleteAudience: "audiences/remove",
+      getAudiencesRules: "audiences/fetchConstants",
     }),
+
+    attributeOptions() {
+      const options = []
+      Object.entries(this.ruleAttributes.rule_attributes).forEach((attr) => {
+        Object.keys(attr[1]).forEach((optionKey) => {
+          if (
+            Object.values(attr[1][optionKey])
+              .map((o) => typeof o === "object" && !Array.isArray(o))
+              .includes(Boolean(true))
+          ) {
+            Object.keys(attr[1][optionKey]).forEach((att) => {
+              if (typeof attr[1][optionKey][att] === "object") {
+                options.push({
+                  key: att,
+                  name: attr[1][optionKey][att]["name"],
+                  category: attr[0],
+                })
+              }
+            })
+          } else {
+            options.push({
+              key: optionKey,
+              name: attr[1][optionKey]["name"],
+              category: attr[0],
+            })
+          }
+        })
+      })
+      return options
+    },
 
     isUserFavorite(entity, type) {
       return (
@@ -523,7 +590,7 @@ export default {
       let actionItems = [
         {
           title: isFavorite ? "Unfavorite" : "Favorite",
-          isDisabled: false,
+          isDisabled: audience.is_lookalike,
           onClick: () => {
             this.handleActionFavorite(audience, "audiences")
           },
@@ -562,18 +629,18 @@ export default {
     },
     getOverallDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 2) {
+      if (destinations.length > 3) {
         return destinations
-          .slice(0, 2)
+          .slice(0, 3)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
     getExtraDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 2) {
+      if (destinations.length > 3) {
         return destinations
-          .slice(2)
+          .slice(3)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
@@ -590,9 +657,6 @@ export default {
       this.showLookAlikeDrawer = true
     },
 
-    toggleFilterDrawer() {
-      this.isFilterToggled = !this.isFilterToggled
-    },
     async applyFilter(params) {
       await this.getAllAudiences({
         favorites: params.selectedFavourite,
@@ -649,7 +713,6 @@ export default {
       tr {
         td:nth-child(1) {
           position: sticky;
-          top: 0;
           left: 0;
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }
@@ -690,7 +753,7 @@ export default {
     table {
       tr {
         td {
-          font-size: 14px;
+          font-size: 16px;
         }
       }
       tbody {

@@ -31,7 +31,7 @@ from huxunifylib.database.client import DatabaseClient
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.tecton import check_tecton_connection
+from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.data_connectors.aws import (
     check_aws_ssm,
     check_aws_batch,
@@ -118,7 +118,7 @@ def get_health_check() -> HealthCheck:
 
     # add health checks
     health.add_check(check_mongo_connection)
-    health.add_check(check_tecton_connection)
+    health.add_check(Tecton().check_tecton_connection)
     health.add_check(check_okta_connection)
     health.add_check(check_aws_ssm)
     health.add_check(check_aws_batch)
@@ -618,3 +618,41 @@ def read_stub_city_zip_data(file_path: str) -> list:
         data = list(csv.reader(csv_file))
 
     return data[1:]
+
+
+def convert_unique_city_filter(request_json: dict) -> dict:
+    """To convert request json to have unique city
+
+    Args:
+        request_json (dict): Input audience filter json object
+
+    Returns:
+        dict: Converted audience filter.
+    """
+    try:
+        for filters in request_json[api_c.AUDIENCE_FILTERS]:
+            for item in filters[api_c.AUDIENCE_SECTION_FILTERS]:
+                if (
+                    item[api_c.AUDIENCE_FILTER_FIELD]
+                    == api_c.AUDIENCE_FILTER_CITY
+                ):
+                    city_value, state_value, _ = item.get(
+                        api_c.AUDIENCE_FILTER_VALUE
+                    ).split("|")
+                    item[api_c.AUDIENCE_FILTER_VALUE] = city_value
+
+                    filters[api_c.AUDIENCE_SECTION_FILTERS].append(
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.STATE,
+                            api_c.AUDIENCE_FILTER_TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.AUDIENCE_FILTER_VALUE: state_value,
+                        }
+                    )
+        return request_json
+    except KeyError:
+        logger.info("Incorrect Audience Filter Object")
+        return request_json
+
+    except ValueError:
+        logger.info("Incorrect Audience Filter Object")
+        return request_json

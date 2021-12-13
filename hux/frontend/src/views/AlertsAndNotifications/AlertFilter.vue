@@ -1,28 +1,14 @@
 <template>
-  <drawer
-    v-model="localDrawer"
-    :content-padding="'pa-0'"
-    :content-header-padding="'px-1'"
-    :expanded-width="300"
-    :width="300"
-    header-height="40"
+  <hux-filters-drawer
+    :is-toggled="localDrawer"
+    :count="filterLength"
+    content-height="262px"
+    :disable-clear="filterLength === 1 && selectedTimeType === 'Last week'"
+    @clear="clear"
+    @apply="apply"
+    @close="close"
   >
-    <template #header-left>
-      <span class="text-h2 black--text"> Filter ({{ filterLength }}) </span>
-    </template>
-    <template #header-right>
-      <v-btn
-        plain
-        :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
-        :disabled="filterLength === 1 && selectedTimeType === 'Last week'"
-        class="text-button float-right clear-btn"
-        @click="clearFilter()"
-      >
-        Clear
-      </v-btn>
-    </template>
-
-    <template #default>
+    <div class="filter-body">
       <hux-filter-panels>
         <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
           <v-checkbox
@@ -30,7 +16,7 @@
             :key="data.id"
             v-model="selctedAlertType"
             multiple
-            color="#00a3e0"
+            color="primary lighten-6"
             class="text--base-1"
             :label="data.title"
             :value="data.title"
@@ -42,7 +28,7 @@
             :key="data.id"
             v-model="selctedCategory"
             multiple
-            color="#00a3e0"
+            color="primary lighten-6"
             :label="data.title"
             :value="data.title"
           ></v-checkbox>
@@ -53,7 +39,7 @@
               v-for="data in time"
               :key="data.id"
               :label="data.title"
-              color="#00a3e0"
+              color="primary lighten-6"
               :value="data.title"
             ></v-radio>
           </v-radio-group>
@@ -64,45 +50,24 @@
             :key="data.id"
             v-model="selctedUsers"
             multiple
-            color="#00a3e0"
+            color="primary lighten-6"
             :label="data.display_name"
             :value="data.display_name"
           ></v-checkbox>
         </hux-filter-panel>
       </hux-filter-panels>
-    </template>
-    <template #footer-left>
-      <v-btn
-        tile
-        color="white"
-        class="text-button ml-1 primary-text btn-border box-shadow-none"
-        @click="localDrawer = false"
-      >
-        Cancel
-      </v-btn>
-    </template>
-    <template #footer-right>
-      <v-btn
-        tile
-        color="primary"
-        class="text-button ml-4"
-        width="110"
-        @click="apply()"
-      >
-        Apply filter
-      </v-btn>
-    </template>
-  </drawer>
+    </div>
+  </hux-filters-drawer>
 </template>
 
 <script>
-import Drawer from "@/components/common/Drawer"
+import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
 import HuxFilterPanels from "@/components/common/FilterPanels"
 import HuxFilterPanel from "@/components/common/FilterPanel"
 export default {
   name: "AlertFilterDrawer",
   components: {
-    Drawer,
+    HuxFiltersDrawer,
     HuxFilterPanels,
     HuxFilterPanel,
   },
@@ -131,17 +96,13 @@ export default {
         },
         {
           id: 3,
-          title: "Feedback",
-        },
-        {
-          id: 4,
           title: "Informational",
         },
       ],
       category: [
         {
           id: 1,
-          title: "DataSources",
+          title: "Data Sources",
         },
         {
           id: 2,
@@ -237,6 +198,9 @@ export default {
       this.selectedTimeType = "Last week"
       this.selctedUsers = []
     },
+    clear() {
+      this.clearFilter()
+    },
     apply() {
       let getTime
       switch (this.selectedTimeType) {
@@ -267,10 +231,13 @@ export default {
         selctedUsers: this.selctedUsers,
       })
     },
+    close() {
+      this.localDrawer = false
+    },
   },
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 ::v-deep.v-input--selection-controls {
   margin-top: 0px !important;
   padding-top: 0px !important;
@@ -299,5 +266,10 @@ export default {
 }
 ::v-deep .drawer-header > .v-toolbar__content {
   height: 40px !important;
+}
+.filter-body {
+  ::v-deep .v-expansion-panel-content__wrap {
+    padding: 14px 24px 14px 24px !important;
+  }
 }
 </style>

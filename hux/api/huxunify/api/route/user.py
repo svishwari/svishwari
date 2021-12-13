@@ -133,6 +133,14 @@ class UserProfile(SwaggerView):
                 },
             )
 
+            # merge lookalikes if any to audiences
+            if user[db_c.USER_FAVORITES]:
+                user[db_c.USER_FAVORITES][db_c.AUDIENCES] = user[
+                    db_c.USER_FAVORITES
+                ].get(db_c.AUDIENCES, []) + user[db_c.USER_FAVORITES].get(
+                    db_c.LOOKALIKE, []
+                )
+
             return (
                 UserSchema().dump(user),
                 HTTPStatus.OK,

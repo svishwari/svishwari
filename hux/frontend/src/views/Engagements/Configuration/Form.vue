@@ -270,9 +270,10 @@
 
     <hux-footer>
       <template #left>
-        <v-btn
+        <hux-button
+          size="large"
           tile
-          color="white"
+          variant="white"
           height="40"
           class="btn-border box-shadow-none"
           @click.native="
@@ -281,11 +282,11 @@
           "
         >
           <span class="primary--text">Cancel</span>
-        </v-btn>
+        </hux-button>
       </template>
 
       <template #right>
-        <v-btn
+        <hux-button
           v-if="isEditable"
           tile
           color="primary"
@@ -294,30 +295,30 @@
           @click="restoreEngagement()"
         >
           Update
-        </v-btn>
+        </hux-button>
 
-        <v-btn
+        <hux-button
           v-else-if="hasDestinations && isManualDelivery"
           tile
           color="primary"
           height="44"
-          :disabled="!isValid"
+          :is-disabled="!isValid || !isDateValid"
           data-e2e="create-engagement"
           @click="deliverNewEngagement()"
         >
           Create &amp; deliver
-        </v-btn>
+        </hux-button>
 
-        <v-btn
+        <hux-button
           v-else
           tile
           color="primary"
           height="44"
-          :disabled="!isValid || !isDateValid"
+          :is-disabled="!isValid || !isDateValid"
           @click="addNewEngagement()"
         >
           Create
-        </v-btn>
+        </hux-button>
       </template>
     </hux-footer>
 
@@ -363,6 +364,7 @@ import DataCards from "@/components/common/DataCards.vue"
 import FormStep from "@/components/common/FormStep.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
 import HuxFooter from "@/components/common/HuxFooter.vue"
+import huxButton from "@/components/common/huxButton"
 import Logo from "@/components/common/Logo.vue"
 import TextField from "@/components/common/TextField.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -395,6 +397,7 @@ export default {
     HuxEndDate,
     Icon,
     HuxSchedulePicker,
+    huxButton,
   },
 
   props: {
@@ -439,21 +442,6 @@ export default {
     },
 
     payload() {
-      const recurringConfig = {}
-      recurringConfig["every"] = this.localSchedule.every
-      recurringConfig["periodicity"] = this.localSchedule.periodicity
-      recurringConfig["hour"] = this.localSchedule.hour
-      recurringConfig["minute"] = this.localSchedule.minute
-      recurringConfig["period"] = this.localSchedule.period
-      if (this.localSchedule && this.localSchedule.periodicity == "Weekly") {
-        recurringConfig["day_of_week"] = this.localSchedule.day_of_week
-      } else if (
-        this.localSchedule &&
-        this.localSchedule.periodicity == "Monthly"
-      ) {
-        recurringConfig["day_of_month"] = [this.localSchedule.monthlyDayDate]
-      }
-
       const requestPayload = {
         name: this.value.name,
         description: this.value.description,
@@ -466,12 +454,29 @@ export default {
       }
 
       if (this.value.delivery_schedule == 1) {
+        const recurringConfig = {}
+        recurringConfig["every"] = this.localSchedule.every
+        recurringConfig["periodicity"] = this.localSchedule.periodicity
+        recurringConfig["hour"] = this.localSchedule.hour
+        recurringConfig["minute"] = this.localSchedule.minute
+        recurringConfig["period"] = this.localSchedule.period
+        if (this.localSchedule && this.localSchedule.periodicity == "Weekly") {
+          recurringConfig["day_of_week"] = this.localSchedule.day_of_week
+        } else if (
+          this.localSchedule &&
+          this.localSchedule.periodicity == "Monthly"
+        ) {
+          recurringConfig["day_of_month"] = [this.localSchedule.monthlyDayDate]
+        }
         requestPayload["delivery_schedule"] = {
-          start_date: !this.isManualDelivery
-            ? new Date(this.selectedStartDate).toISOString()
-            : null,
+          start_date:
+            !this.isManualDelivery && this.selectedStartDate !== "Select date"
+              ? new Date(this.selectedStartDate).toISOString()
+              : null,
           end_date:
-            !this.isManualDelivery && this.selectedEndDate
+            !this.isManualDelivery &&
+            this.selectedEndDate !== "Select date" &&
+            this.selectedEndDate !== "No end date"
               ? new Date(this.selectedEndDate).toISOString()
               : null,
           schedule: recurringConfig,

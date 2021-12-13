@@ -5,7 +5,6 @@
 
 import http from "@/api/httpClient"
 import resources from "@/api/resources"
-var qs = require("qs")
 
 const client = {}
 /* #region Generic endpoints */
@@ -265,13 +264,29 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
+client["audiences"].createAndDeliver = (data) => {
+  return http.post("/audiences?deliver=true", data)
+}
+
 client["audiences"].getAudiences = (data) => {
-  return http.get("/audiences", {
-    params: data,
-    paramsSerializer: (params) => {
-      return qs.stringify(params)
-    },
-  })
+  let URLData = []
+  let newURLFormat
+  let URLString
+  for (const property in data) {
+    if (property == "attribute") {
+      for (const attribute in data[property]) {
+        let formURL = property + "=" + data[property][attribute]
+        URLData.push(formURL)
+      }
+    } else {
+      let formURL = property + "=" + data[property]
+      URLData.push(formURL)
+    }
+  }
+  let arrJoin = URLData.join("@")
+  URLString = arrJoin.toString()
+  newURLFormat = URLString.replace(/@/g, "&")
+  return http.get(`/audiences?${newURLFormat}`)
 }
 
 client["audiences"].downloadAudience = (audienceId, fileType) => {
@@ -363,7 +378,7 @@ client["models"].modelFeatures = (id) => {
 }
 
 client["models"].remove = (model) => {
-  return http.delete(`/models/${model.id}`)
+  return http.delete(`/models?model_id=${model.id}`)
 }
 
 //#region Data sources

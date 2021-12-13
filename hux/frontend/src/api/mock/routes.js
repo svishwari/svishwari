@@ -118,7 +118,10 @@ export const defineRoutes = (server) => {
       // update data extension, assign the new `id` to its `data_extension_id`
       let updatedResponse = schema.dataExtensions
         .find(response.attrs.id)
-        .update({ data_extension_id: response.attrs.id })
+        .update({
+          data_extension_id: response.attrs.id,
+          create_time: new Date(),
+        })
       return updatedResponse.attrs
     }
   )
@@ -731,5 +734,10 @@ export const defineRoutes = (server) => {
     delete attrs["engagement_ids"]
 
     return schema.audiences.create(attrs)
+  })
+
+  server.put("/lookalike-audiences/:id", (schema, request) => {
+    let requestData = JSON.parse(request.requestBody)
+    return schema.audiences.find(request.params.id).update(requestData)
   })
 }

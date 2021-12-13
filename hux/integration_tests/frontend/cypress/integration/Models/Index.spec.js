@@ -14,17 +14,19 @@ describe("View models", () => {
     cy.get(selector.models.item).its("length").should("gt", 0)
 
     cy.get(selector.models.item).each(($models) => {
-      cy.wrap($models)
-        .get(selector.models.activeStatus)
-        .children()
-        .eq(0)
-        .should("satisfy", ($el) => {
-          const classList = Array.from($el[0].classList)
-          return (
-            classList.includes("success--text") ||
-            classList.includes("primary--text")
-          ) // passes
-        })
+      if ($models.find(selector.models.activeStatus).length > 0) {
+        cy.wrap($models)
+          .get(selector.models.activeStatus)
+          .children()
+          .eq(0)
+          .should("satisfy", ($el) => {
+            const classList = Array.from($el[0].classList)
+            return (
+              classList.includes("success--text") ||
+              classList.includes("primary--text")
+            ) // passes
+          })
+      }
     })
   })
 })

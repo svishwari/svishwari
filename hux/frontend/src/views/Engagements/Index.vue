@@ -7,7 +7,7 @@
         </div>
         <div class="text-subtitle-1 font-weight-regular">
           Start making meaningful connections with current and future customers
-          by targeting your created (or new) audiences.
+          by targeting intelligent audiences while staying organized.
         </div>
       </template>
       <template #right>
@@ -15,7 +15,8 @@
           type="filter"
           :size="22"
           class="cursor-pointer"
-          color="black-darken4"
+          color="black"
+          variant="lighten3"
         />
       </template>
     </page-header>
@@ -1094,7 +1095,6 @@ export default {
     white-space: nowrap;
   }
   .mdi-chevron-right {
-    margin-top: -4px;
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
     &.normal-icon {
       transform: rotate(90deg);
@@ -1177,7 +1177,6 @@ export default {
         }
         td:nth-child(1) {
           position: sticky;
-          top: 0;
           left: 0;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           background-color: white;

@@ -110,7 +110,6 @@ class TestModelRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(20, len(response.json))
 
     def test_retrieve_version_history_for_model(self):
         """Test get version history for a model from Tecton."""
@@ -149,7 +148,7 @@ class TestModelRoutes(TestCase):
 
         # mock get version history.
         mock.patch(
-            "huxunify.api.route.decisioning.tecton.get_model_version_history",
+            "huxunify.api.route.decisioning.Tecton.get_model_version_history",
             return_value=t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE,
         ).start()
 

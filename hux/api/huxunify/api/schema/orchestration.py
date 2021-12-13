@@ -256,6 +256,12 @@ class LookalikeAudiencePostSchema(Schema):
     engagement_ids = fields.List(fields.String(), required=True)
 
 
+class LookalikeAudiencePutSchema(Schema):
+    """Schema for editing lookalike audience"""
+
+    name = fields.String(required=False)
+
+
 def is_audience_lookalikeable(audience: dict) -> str:
     """Identify if an audience is able to have a lookalike created from it.
     Three possible outcomes

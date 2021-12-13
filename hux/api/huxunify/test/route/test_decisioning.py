@@ -6,10 +6,7 @@ from unittest import TestCase, mock
 import mongomock
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.collection_management import (
-    create_document,
-    get_document,
-)
+from huxunifylib.database.collection_management import create_document
 from hypothesis import given, settings, strategies as st
 
 import requests_mock
@@ -23,6 +20,7 @@ from huxunify.api.schema.model import (
 )
 from huxunify.app import create_app
 from huxunify.test import constants as t_c
+from huxunify.api.data_connectors.tecton import Tecton
 
 
 # Allow 30 secs per hypothesis example (deadline is specified in milliseconds)
@@ -39,6 +37,16 @@ class DecisioningTests(TestCase):
         """Setup tests."""
 
         self.config = get_config(api_c.TEST_MODE)
+        self.tecton = Tecton()
+
+        # define relative paths used for mocking calls.
+        self.models_rel_path = (
+            "huxunify.api.data_connectors.tecton.Tecton.get_models"
+        )
+        self.versions_rel_path = (
+            "huxunify.api.data_connectors."
+            "tecton.Tecton.get_model_version_history"
+        )
 
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
@@ -81,9 +89,7 @@ class DecisioningTests(TestCase):
     def test_success_get_models(self):
         """Test get models from Tecton."""
 
-        get_models_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_models"
-        ).start()
+        get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
         response = self.test_client.get(
@@ -104,9 +110,7 @@ class DecisioningTests(TestCase):
     def test_success_get_models_with_status(self):
         """Test get models from Tecton with status."""
 
-        get_models_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_models"
-        ).start()
+        get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
         response = self.test_client.get(
@@ -127,11 +131,20 @@ class DecisioningTests(TestCase):
     def test_success_request_model(self):
         """Test requesting a model."""
 
-        status_request = {
-            api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
-            api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
-        }
+        status_request = [
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
+            },
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[1][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[1][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[1][api_c.TYPE],
+            },
+        ]
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
@@ -139,29 +152,58 @@ class DecisioningTests(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
-        get_models_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_models"
-        ).start()
+        get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
     def test_success_request_model_duplicate(self):
         """Test requesting a model."""
 
-        status_request = {
-            api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
-            api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
-        }
+        status_request = [
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
+            }
+        ]
 
-        for status_code in [HTTPStatus.CREATED, HTTPStatus.CONFLICT]:
-            response = self.test_client.post(
-                f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-                data=json.dumps(status_request),
-                headers=t_c.STANDARD_HEADERS,
-            )
-            self.assertEqual(status_code, response.status_code)
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            data=json.dumps(status_request),
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_success_request_model_duplicate_name(self):
+        """Test requesting a model."""
+
+        status_request = [
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
+            }
+        ]
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            data=json.dumps(status_request),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        status_request[0][api_c.TYPE] = "other"
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            data=json.dumps(status_request),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_remove_model_success(self):
         """Test removing requested models from Unified DB."""
@@ -193,15 +235,6 @@ class DecisioningTests(TestCase):
         self.assertEqual(
             {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, response.json
         )
-
-        updated_doc = get_document(
-            database=self.database,
-            collection=db_c.CONFIGURATIONS_COLLECTION,
-            document_id=doc[db_c.ID],
-            include_deleted=True,
-        )
-
-        self.assertTrue(updated_doc[db_c.DELETED])
 
     @given(model_id=st.integers())
     def test_remove_model_failure_invalid_model_id(self, model_id: int):
@@ -295,9 +328,7 @@ class DecisioningTests(TestCase):
             model_id (int): Model ID.
         """
 
-        get_model_version_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_model_version_history"
-        ).start()
+        get_model_version_mock = mock.patch(self.versions_rel_path).start()
         get_model_version_mock.return_value = (
             t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
         )
@@ -305,7 +336,7 @@ class DecisioningTests(TestCase):
         # mock the features response
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            self.tecton.service,
             json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES,
         )
         self.request_mocker.start()
@@ -330,9 +361,7 @@ class DecisioningTests(TestCase):
             model_id (int): Model ID.
         """
 
-        get_model_version_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_model_version_history"
-        ).start()
+        get_model_version_mock = mock.patch(self.versions_rel_path).start()
         get_model_version_mock.return_value = (
             t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
         )
@@ -340,7 +369,7 @@ class DecisioningTests(TestCase):
         # mock the features response
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            self.tecton.service,
             json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
         )
         self.request_mocker.start()
@@ -368,9 +397,7 @@ class DecisioningTests(TestCase):
             model_id (str): Model ID.
         """
 
-        get_model_version_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_model_version_history"
-        ).start()
+        get_model_version_mock = mock.patch(self.versions_rel_path).start()
         get_model_version_mock.return_value = (
             t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
         )
@@ -378,7 +405,7 @@ class DecisioningTests(TestCase):
         # mock the features response
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            self.tecton.service,
             json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES,
         )
         self.request_mocker.start()
@@ -405,9 +432,7 @@ class DecisioningTests(TestCase):
             model_id (int): Model ID.
         """
 
-        get_model_version_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_model_version_history"
-        ).start()
+        get_model_version_mock = mock.patch(self.versions_rel_path).start()
         get_model_version_mock.return_value = (
             t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
         )
@@ -415,7 +440,7 @@ class DecisioningTests(TestCase):
         # mock the features response
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            self.tecton.service,
             json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
         )
         self.request_mocker.start()

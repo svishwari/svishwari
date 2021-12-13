@@ -534,6 +534,7 @@ class CDPTest(TestCase):
                 end_date_str=datetime.utcnow()
                 .date()
                 .strftime(api_c.DEFAULT_DATE_FORMAT),
+                interval="day",
             )
 
     def test_get_customer_count_by_state_raise_dependency_error(self) -> None:

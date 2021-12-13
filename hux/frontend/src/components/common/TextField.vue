@@ -1,13 +1,16 @@
 <template>
-  <div class="text-field-hux">
-    <label class="d-flex align-items-center mb-1">
+  <div class="text-field-hux" :class="!required ? 'discription-field' : ''">
+    <label
+      class="d-flex align-items-center"
+      :class="!required ? 'mb-0' : 'mb-1'"
+    >
       <span class="black--text text--darken-4 text-h5">
         {{ labelText }}
         <em v-if="!required" class="text-h6 gray--text"> - optional</em>
       </span>
       <tooltip v-if="helpText" position-top>
         <template #label-content>
-          <v-icon color="primary" size="small" class="ml-2 mb-2">
+          <v-icon color="primary" size="small" class="ml-1 mb-2">
             {{ icon }}
           </v-icon>
         </template>
@@ -161,5 +164,8 @@ export default {
       }
     }
   }
+}
+.discription-field {
+  margin-top: -2px;
 }
 </style>

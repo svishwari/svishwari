@@ -20,7 +20,7 @@
               min-width="50"
               height="24"
               class="primary--text"
-              :disabled="!Boolean(count)"
+              :disabled="!Boolean(count) || disableClear"
               @click="$emit('clear')"
             >
               Clear
@@ -28,23 +28,40 @@
           </slot>
         </div>
 
-        <div class="content">
+        <div class="content" :style="height">
           <slot name="default">
             <!-- `FilterPanels` live here -->
           </slot>
         </div>
 
-        <div class="footer mt-auto">
+        <div class="footer mt-auto white">
           <slot name="footer">
-            <v-btn
-              tile
+            <hux-button
+              size="large"
+              variant="white"
+              is-tile
+              class="
+                text-button
+                ml-auto
+                primary--text
+                mr-3
+                btn-border
+                box-shadow-none
+              "
+              width="91"
+              @click="$emit('close')"
+            >
+              Close
+            </hux-button>
+            <hux-button
+              is-tile
               color="primary"
               class="text-button ml-auto"
-              width="134"
+              width="157"
               @click="$emit('apply')"
             >
               Apply filter
-            </v-btn>
+            </hux-button>
           </slot>
         </div>
       </div>
@@ -54,8 +71,13 @@
 
 <script>
 import { defineComponent } from "@vue/composition-api"
+import huxButton from "@/components/common/huxButton"
 
 export default defineComponent({
+  components: {
+    huxButton,
+  },
+
   props: {
     isToggled: {
       type: Boolean,
@@ -68,6 +90,23 @@ export default defineComponent({
       required: false,
       default: 0,
     },
+
+    disableClear: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    contentHeight: {
+      type: String,
+      required: false,
+      default: "260px",
+    },
+  },
+
+  computed: {
+    height() {
+      return "height: calc(100vh - " + this.contentHeight
+    },
   },
 })
 </script>
@@ -75,21 +114,20 @@ export default defineComponent({
 <style lang="scss" scoped>
 $footerHeight: 80px;
 $headerHeight: 40px;
-$offset: 180px;
 $padding: 20px;
 $width: 300px;
-
+$zIndex: 4;
 .hux-filters-drawer {
   border-left: 1px solid var(--v-black-lighten3) !important;
   width: $width;
   height: 100%;
-
+  z-index: $zIndex;
+  position: absolute;
+  right: 0;
   .wrapper {
     display: flex;
     flex-direction: column;
-    position: fixed;
     width: $width;
-    min-height: calc(100vh - #{$offset});
   }
 
   .header,
@@ -109,11 +147,15 @@ $width: 300px;
   .content {
     flex-direction: column;
     padding: 0;
+    overflow-y: auto;
   }
 
   .footer {
     height: $footerHeight;
-    border-top: 1px solid var(--v-black-lighten3);
+    border-top: 1px solid var(--v-black-lighten3) !important;
+    position: fixed;
+    bottom: 0;
+    z-index: $zIndex;
   }
 }
 </style>
