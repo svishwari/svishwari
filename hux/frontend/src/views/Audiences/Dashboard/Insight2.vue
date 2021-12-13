@@ -71,9 +71,9 @@
                   </span>
                 </template>
                 <template #hover-content>
-                  <span v-if="percentageColumns.includes(item.title)">{{
-                    item.subtitle | Percentage | Empty
-                  }}</span>
+                  <span v-if="percentageColumns.includes(item.title)">
+                    {{ item.subtitle | Percentage | Empty }}
+                  </span>
                   <span v-else>{{ item.subtitle | Numeric | Empty }}</span>
                 </template>
               </tooltip>
@@ -229,7 +229,7 @@
           </v-row>
         </v-tab-item>
         <v-tab-item key="insights" class="insights-tab">
-          Insights UI
+          <insight-tab></insight-tab>
         </v-tab-item>
       </v-tabs-items>
     </div>
@@ -322,6 +322,7 @@ import DashboardHeader from "@/views/Audiences/Dashboard/Header.vue"
 import StandaloneDelivery from "@/views/Audiences/Dashboard/StandaloneDelivery.vue"
 import Matchrate from "@/views/Audiences/Dashboard/Matchrate.vue"
 import Error from "@/components/common/screens/Error"
+import InsightTab from "@/views/Audiences/Dashboard/InsightTab.vue"
 
 export default {
   name: "AudienceInsight",
@@ -342,6 +343,7 @@ export default {
     StandaloneDelivery,
     Matchrate,
     Error,
+    InsightTab,
   },
   data() {
     return {
