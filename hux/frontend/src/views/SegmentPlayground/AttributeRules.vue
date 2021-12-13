@@ -426,7 +426,10 @@ export default {
         ],
       }
       try {
-        let data = await this.getRealtimeSize(filterJSON)
+        let data = await this.getRealtimeSize({
+          filter: filterJSON,
+          overall: false,
+        })
         condition.size = data.total_customers
         condition.awaitingSize = false
       } catch (error) {
@@ -480,7 +483,10 @@ export default {
         filterJSON.filters.push(sectionObject)
       }
       try {
-        let data = await this.getRealtimeSize(filterJSON)
+        let data = await this.getRealtimeSize({
+          filter: filterJSON,
+          overall: true,
+        })
         this.$emit("updateOverview", data)
         this.overAllSize = data.total_customers
         this.$emit("loadingOverAllSize", false)

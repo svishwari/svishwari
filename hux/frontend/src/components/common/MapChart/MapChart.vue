@@ -81,6 +81,11 @@ export default {
       required: false,
       default: false,
     },
+    dimension: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -90,8 +95,8 @@ export default {
         y: 0,
       },
       chartDimensions: {
-        width: 0,
-        height: 0,
+        width: (this.dimension && this.dimension.width) || 0,
+        height: (this.dimension && this.dimension.height) || 0,
       },
       mapChartData: this.mapData,
       currentData: {},
