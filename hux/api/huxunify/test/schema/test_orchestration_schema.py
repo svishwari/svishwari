@@ -11,7 +11,7 @@ from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     EngagementDeliveryHistorySchema,
     AudienceDeliveryHistorySchema,
-    AudienceStandaloneDeliveriesSchema,
+    AudienceDeliverySchema,
 )
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
@@ -331,7 +331,5 @@ class OrchestrationSchemaTest(TestCase):
         }
 
         self.assertFalse(
-            AudienceStandaloneDeliveriesSchema().validate(
-                audience_standalone_delivery_doc
-            )
+            AudienceDeliverySchema().validate(audience_standalone_delivery_doc)
         )

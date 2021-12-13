@@ -194,9 +194,9 @@ def get_audience_standalone_deliveries(audience_id: ObjectId) -> list:
     )
 
     if standalone_delivery_jobs:
-        # TODO: uncomment the below block of code and remove the following
-        # line once destinations nested object in audiences collection
-        # gets populated in the future
+        # TODO: HUS-1864 uncomment the below block of code and remove the
+        # following line once destinations nested object in audiences
+        # collection gets populated in the future
         # extract delivery platform ids from the audience
         # destination_ids = [
         #     x.get(api_c.ID)

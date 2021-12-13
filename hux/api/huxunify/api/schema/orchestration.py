@@ -52,11 +52,6 @@ class AudienceDeliverySchema(Schema):
     delivery_platform_type = fields.String()
     last_delivered = DateTimeWithZ(attribute=db_c.UPDATE_TIME)
     status = fields.String()
-
-
-class AudienceStandaloneDeliveriesSchema(AudienceDeliverySchema):
-    """Schema for audience standalone deliveries"""
-
     size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
 
 
@@ -120,9 +115,7 @@ class AudienceGetSchema(Schema):
 
     destinations = fields.List(fields.Nested(DestinationGetSchema))
     engagements = fields.List(fields.Nested(EngagementDeliverySchema))
-    standalone_deliveries = fields.List(
-        fields.Nested(AudienceStandaloneDeliveriesSchema)
-    )
+    standalone_deliveries = fields.List(fields.Nested(AudienceDeliverySchema))
     audience_insights = fields.Nested(CustomerOverviewSchema)
 
     status = fields.String(
