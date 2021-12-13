@@ -118,6 +118,7 @@
             height="40"
             is-tile
             variant="primary base"
+            data-e2e="action-audience"
             @click="handleAction()"
           >
             {{ buttonText }}
