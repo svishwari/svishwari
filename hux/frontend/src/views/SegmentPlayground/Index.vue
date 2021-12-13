@@ -65,7 +65,7 @@ import HuxFooter from "../../components/common/HuxFooter.vue"
 import Page from "../../components/Page.vue"
 import PageHeader from "../../components/PageHeader.vue"
 import AttributeRules from "./AttributeRules.vue"
-import TipsMenu from "./TipsMenu.vue"
+import TipsMenu from "@/components/common/TipsMenu.vue"
 import Geography from "./Geography.vue"
 import Overview from "./Overview.vue"
 
