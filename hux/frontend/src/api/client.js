@@ -128,7 +128,7 @@ client["engagements"].allFiltered = (data) => {
     let formURL = property + "=" + data[property]
     URLData.push(formURL)
   }
-  let newURLFormat = URLData.join("&").toString()
+  let newURLFormat = URLData.join("@").toString().replace(/@/g, "&")
   return http.get(`/engagements?${newURLFormat}`)
 }
 
