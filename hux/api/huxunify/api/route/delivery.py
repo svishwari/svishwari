@@ -128,7 +128,7 @@ class EngagementDeliverDestinationView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @validate_delivery_params
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def post(
         self,
         engagement_id: ObjectId,
@@ -136,7 +136,7 @@ class EngagementDeliverDestinationView(SwaggerView):
         destination_id: ObjectId,
         user: dict,
     ) -> Tuple[dict, int]:
-        """Delivers one destination for an engagement audience.
+        """Delivers one engagement audience to a destination.
 
         ---
         security:
@@ -267,7 +267,7 @@ class EngagementDeliverAudienceView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def post(
         self, engagement_id: ObjectId, audience_id: ObjectId, user: dict
     ) -> Tuple[dict, int]:
@@ -369,7 +369,7 @@ class EngagementDeliverView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def post(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
 
@@ -459,7 +459,7 @@ class AudienceDeliverView(SwaggerView):
 
     @api_error_handler()
     @validate_delivery_params
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def post(self, audience_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is part of.
 
@@ -915,7 +915,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @validate_delivery_params
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def post(
         self,
         engagement_id: ObjectId,
@@ -1001,7 +1001,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @validate_delivery_params
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def delete(
         self,
         engagement_id: ObjectId,
@@ -1009,7 +1009,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
         destination_id: ObjectId,
         user: dict,
     ) -> Tuple[dict, int]:
-        """Sets the delivery schedule for one destination of an engagement audience.
+        """Deletes the delivery schedule for one destination of an engagement audience.
 
         ---
         security:
