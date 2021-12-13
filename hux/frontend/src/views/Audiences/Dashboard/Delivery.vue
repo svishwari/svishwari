@@ -11,7 +11,7 @@
     />
     <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
       <div
-        v-if="sections.length > 0"
+        v-if="sections.length == 0"
         class="empty-state py-4 black--text text--lighten-4 text-body-1"
       >
         This audience is not part of an engagement. Add it to an engagement

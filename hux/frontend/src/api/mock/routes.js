@@ -669,7 +669,7 @@ export const defineRoutes = (server) => {
   server.get("/audiences/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const audience = schema.audiences.find(id)
-    const destination = schema.destinations.find(7)
+    const destination = schema.destinations.find(id)
     return audience.engagements.map((engagement) => {
       return {
         engagement: {
@@ -677,9 +677,9 @@ export const defineRoutes = (server) => {
           name: engagement.name,
         },
         destination: {
-          id: destination.id,
-          name: destination.name,
-          type: destination.type,
+          id: destination && destination.id,
+          name: destination && destination.name,
+          type: destination && destination.type,
         },
         size: audience.size,
         delivered: dayjs().toJSON(),
