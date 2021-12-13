@@ -94,7 +94,7 @@
             </template>
           </metric-card>
 
-          <metric-card           
+          <metric-card
             class="mr-3"
             title="Attributes"
             :height="80"
@@ -158,7 +158,7 @@
           <v-row class="">
             <v-col :cols="deliveryCols" class="">
               <delivery
-                :sections="audienceData && audienceData.engagements"
+                :sections="relatedEngagements"
                 section-type="engagement"
                 deliveries-key="deliveries"
                 @onOverviewSectionAction="triggerOverviewAction($event)"
@@ -166,6 +166,7 @@
                   triggerOverviewDestinationAction($event)
                 "
                 @onAddDestination="addDestination($event)"
+                @engagementDeliveries="deliverEngagement($event)"
               >
                 <template #title-left>
                   <div class="d-flex align-center">
@@ -524,11 +525,8 @@ export default {
     },
   },
   async mounted() {
-     await this.loadAudienceInsights()
-    this.engagementId = 1
-    await this.loadEngagement(1)
+    await this.loadAudienceInsights()
     this.sizeHandler()
-   
   },
 
   methods: {
@@ -549,11 +547,10 @@ export default {
     }),
 
     async refresh() {
-       await this.loadAudienceInsights()
-      this.engagementId = 1
-      await this.loadEngagement(1)
+      await this.loadAudienceInsights()
+      // this.engagementId = 1
+      // await this.loadEngagement(1)
       this.sizeHandler()
-     
     },
     addDestination(event) {
       this.closeAllDrawers()
@@ -564,6 +561,9 @@ export default {
         ...event.deliveries.map((dest) => ({ id: dest.id }))
       )
       this.showSelectDestinationsDrawer = true
+    },
+    deliverEngagement(event) {
+      console.log("event", event)
     },
     getAgeString(min_age, max_age) {
       if (min_age && max_age && min_age === max_age) {
@@ -619,6 +619,7 @@ export default {
       }
     },
     async triggerOverviewAction(event) {
+      console.log("event", event)
       switch (event.target.title.toLowerCase()) {
         case "remove engagement": {
           this.confirmDialog.actionType = "remove-engagement"
@@ -643,6 +644,7 @@ export default {
       }
     },
     async triggerOverviewDestinationAction(event) {
+      console.log("hiiiiiiiiiiiiiiiii")
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
@@ -802,7 +804,9 @@ export default {
       try {
         this.getAudiencesRules()
         await this.getAudienceById(this.$route.params.id)
+        debugger
         const _getAudience = this.getAudience(this.$route.params.id)
+        // await this.loadEngagement(_getAudience.id)
         if (_getAudience && this.refreshAudience) {
           this.audienceData = JSON.parse(JSON.stringify(_getAudience))
         }

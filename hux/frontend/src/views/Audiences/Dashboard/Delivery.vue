@@ -32,6 +32,7 @@
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
           @onAddDestination="$emit('onAddDestination', $event)"
+          @engagementDeliverySection="$emit('engagementDeliveries', $event)"
         >
           <template #empty-destinations>
             <slot name="empty-deliveries" :sectionId="item.id" />

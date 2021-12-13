@@ -87,7 +87,7 @@
                 </template>
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group v-model="selection" active-class="">
-                    <v-list-item>
+                    <v-list-item  @click="$emit('engagementDeliverySection', item)">
                       <v-list-item-title> Deliver now </v-list-item-title>
                     </v-list-item>
                     <v-list-item>
