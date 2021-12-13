@@ -300,6 +300,7 @@
               <span v-else class="black--text text--lighten-4"> AUC </span>
             </div>
             <div ref="decisioning-drift">
+              <!-- TODO: Refactor the yAxisZeroToOne prop in upcoming changes  -->
               <drift-chart
                 v-if="!loadingDrift && driftChartData.length != 0"
                 v-model="driftChartData"
@@ -307,6 +308,7 @@
                 x-axis-format="%m/%d"
                 :enable-grid="[true, true]"
                 data-e2e="drift-chart"
+                :y-axis-zero-to-one="model.model_type != 'ltv'"
               />
               <v-row
                 v-else-if="!loadingDrift && driftChartData.length == 0"
