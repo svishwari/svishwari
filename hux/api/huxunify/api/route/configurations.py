@@ -2,7 +2,7 @@
 """Paths for Configurations API"""
 from http import HTTPStatus
 from typing import Tuple, List
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, Response
 from flasgger import SwaggerView
 
 from huxunifylib.database import (
@@ -72,7 +72,7 @@ class ConfigurationsSearch(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[List[dict], int]:
+    def get(self) -> Tuple[Response, int]:
         """Retrieves all configurations.
 
         ---
@@ -80,7 +80,7 @@ class ConfigurationsSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[List[dict], int]: list containing dict of configurations,
+            Tuple[Response, int]: Response list containing dict of configurations,
                 HTTP status code.
         """
 

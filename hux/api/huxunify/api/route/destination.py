@@ -616,16 +616,19 @@ class DestinationValidatePostView(SwaggerView):
             db_c.DELIVERY_PLATFORM_SENDGRID,
             db_c.DELIVERY_PLATFORM_TWILIO,
         ]:
-            SendgridConnector(
+            logger.info("---------------------------------------------------------------------------------------------------------------------------------------------------------")
+            sendgrid_connector = SendgridConnector(
                 auth_details={
                     SendgridCredentials.SENDGRID_AUTH_TOKEN.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
                     ).get(api_c.SENDGRID_AUTH_TOKEN),
                 },
             )
-            return {
-                "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
-            }, HTTPStatus.OK
+            if sendgrid_connector.check_connection():
+                logger.info(f"{platform_type.capitalize()} destination validated successfully.")
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+                }, HTTPStatus.OK
         elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             qualtrics_connector = QualtricsConnector(
                 auth_details={
