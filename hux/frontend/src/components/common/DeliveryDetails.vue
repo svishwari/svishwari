@@ -91,7 +91,13 @@
                       v-for="option in destinationMenuOptions"
                       :key="option.id"
                       :disabled="!option.active"
-                      @click="$emit('engagementDeliverySection', { target: option, data: item, parent: section })"
+                      @click="
+                        $emit('engagementDeliverySection', {
+                          target: option,
+                          data: item,
+                          parent: section,
+                        })
+                      "
                     >
                       <v-list-item-title>
                         {{ option.title }}

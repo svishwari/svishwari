@@ -571,10 +571,10 @@ export default {
         case "deliver now":
           console.log("deliver now")
           await this.deliverAudienceDestination({
-              id: event.target.id,
-              audienceId: this.audienceId,
-              destinationId: event.data.delivery_platform_id,
-            })
+            id: event.target.id,
+            audienceId: this.audienceId,
+            destinationId: event.data.delivery_platform_id,
+          })
           this.dataPendingMesssage(event, "destination")
           this.refreshEntity()
           break
@@ -599,7 +599,6 @@ export default {
         default:
           break
       }
-
     },
     getAgeString(min_age, max_age) {
       if (min_age && max_age && min_age === max_age) {
@@ -680,7 +679,6 @@ export default {
       }
     },
     async triggerOverviewDestinationAction(event) {
-
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
