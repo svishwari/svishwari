@@ -135,8 +135,7 @@ class ModelsView(SwaggerView):
 
         database = get_db_client()
         unified_models = collection_management.get_documents(
-            database,
-            db_c.MODELS_COLLECTION
+            database, db_c.MODELS_COLLECTION
         )
         all_models.extend(unified_models)
 
