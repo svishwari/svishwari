@@ -551,8 +551,6 @@ async def deliver_audience_to_destination(
         )
         return
 
-    delivery_job_ids = []
-
     batch_destination = get_destination_config(
         database=database,
         audience_id=audience_id,
@@ -561,11 +559,10 @@ async def deliver_audience_to_destination(
     )
     batch_destination.register()
     batch_destination.submit()
-    delivery_job_ids.append(str(batch_destination.audience_delivery_job_id))
 
     logger.info(
-        "Successfully created delivery jobs %s.",
-        ",".join(delivery_job_ids),
+        "Successfully created delivery job %s.",
+        batch_destination.audience_delivery_job_id,
     )
 
     # create notification
