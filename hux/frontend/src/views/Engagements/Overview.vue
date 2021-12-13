@@ -11,7 +11,12 @@
             {{ data.delivery_schedule | DeliverySchedule }}
           </template>
           <template #hover-content>
+            <span v-if="!data.delivery_schedule">
+              This engagement was delivered manually on
+              {{ lastDelivered | Date("MMM D, YYYY [at] h:mm A") | Empty }}
+            </span>
             <hux-delivery-text
+              v-else
               :schedule="
                 data.delivery_schedule ? data.delivery_schedule.schedule : {}
               "
@@ -198,6 +203,24 @@ export default {
         }
       }
       return "Manual"
+    },
+    lastDelivered() {
+      if (this.data.delivery_schedule !== null) {
+        return ""
+      } else {
+        let audiences = JSON.parse(JSON.stringify(this.data.audiences))
+        let last_delivered = ""
+        audiences.map((audience) => {
+          audience.destinations.map((destination) => {
+            if (destination.latest_delivery?.update_time) {
+              if (destination.latest_delivery.update_time > last_delivered) {
+                last_delivered = destination.latest_delivery.update_time
+              }
+            }
+          })
+        })
+        return last_delivered ? last_delivered : "-"
+      }
     },
   },
   methods: {
