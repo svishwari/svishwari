@@ -61,36 +61,35 @@
       <v-col md="12">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="395">
           <v-row>
+            <v-progress-linear
+              v-if="loadingDemographics"
+              :active="loadingDemographics"
+              :indeterminate="loadingDemographics"
+            />
             <v-col md="7">
-              <v-progress-linear
-                v-if="loadingGeoOverview"
-                :active="loadingGeoOverview"
-                :indeterminate="loadingGeoOverview"
-              />
               <v-card-title class="pb-2 pl-5 pt-2">
                 <div class="mt-2">
                   <span class="black--text text--darken-4 text-h3"> USA </span>
                 </div>
               </v-card-title>
               <map-chart
-                v-if="!loadingGeoOverview"
-                :map-data="customersGeoOverview"
+                v-if="!loadingDemographics"
+                :map-data="mapChartData"
                 :configuration-data="configurationData"
                 data-e2e="map-chart"
               />
 
               <map-slider
-                v-if="!loadingGeoOverview"
-                :map-data="customersGeoOverview"
+                v-if="!loadingDemographics"
+                :map-data="mapChartData"
                 :configuration-data="configurationData"
               />
             </v-col>
-            <v-divider vertical class="combined-list" />
-            <v-col md="5 pt-0 pl-1">
-              <div class="combined-list">
+            <v-col md="5 pt-0 pl-0">
+              <div class="list-tab">
                 <map-state-list
-                  v-if="!loadingGeoOverview"
-                  :map-data="customersGeoOverview"
+                  v-if="!loadingDemographics"
+                  :map-data="mapChartData"
                   :configuration-data="configurationData"
                   :header-config="mapStateHeaderList"
                   :height="395"
@@ -101,77 +100,6 @@
         </v-card>
       </v-col>
     </v-row>
-    <!-- <div>
-    <v-row>
-      <v-col md="6">
-        <v-card class="mt-6 rounded-lg box-shadow-5" height="386">
-          <v-card-title class="pb-2 pl-5">
-            <span class="black--text text--darken-4 text-h3">
-              Audience size
-            </span>
-            <span class="text--lighten-4 text--body-1 ml-2">
-              (last 6 months)
-            </span>
-          </v-card-title>
-        </v-card>
-      </v-col>
-      <v-col md="6">
-        <v-card class="mt-6 rounded-lg box-shadow-5" height="386">
-          <v-card-title class="pb-2 pl-5">
-            <span class="black--text text--darken-4 text-h3">
-              Total audience spend
-              <tooltip>
-                <template #label-content
-                  ><icon
-                    type="info"
-                    :size="8"
-                    color="primary"
-                    variant="base"
-                    class="mb-1"
-                /></template>
-                <template #hover-content> </template></tooltip
-            ></span>
-            <span class="text--lighten-4 text--body-1 ml-2">
-              (last 6 months)</span
-            >
-          </v-card-title>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-card class="mt-6 rounded-lg box-shadow-5" height="386">
-      <v-progress-linear
-        v-if="loadingDemographics"
-        :active="loadingDemographics"
-        :indeterminate="loadingDemographics"
-      />
-      <v-row>
-        <v-col md="7" class="tab-padding">
-          <v-card-title class="pb-2 pl-5">
-            <span class="black--text text--darken-4 text-h3"> USA </span>
-          </v-card-title>
-          <map-chart
-            v-if="!loadingDemographics"
-            :map-data="mapChartData"
-            :configuration-data="configurationData"
-            data-e2e="map-chart"
-          />
-          <map-slider
-            v-if="!loadingDemographics"
-            :map-data="mapChartData"
-            :configuration-data="configurationData"
-          />
-        </v-col>
-        <v-col md="5" class="tab-padding list-tab">
-          <map-state-list
-            v-if="!loadingDemographics"
-            :map-data="mapChartData"
-            :configuration-data="configurationData"
-            :header-config="mapStateHeaderList"
-          />
-        </v-col>
-      </v-row>
-    </v-card>
-      </div> -->
   </div>
 </template>
 <script>
@@ -271,18 +199,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-::v-deep .chart-container {
-  margin-bottom: 16px !important;
-}
-::v-deep .v-data-table {
-  border-radius: 12px !important;
-}
+// ::v-deep .chart-container {
+//   margin-bottom: 16px !important;
+// }
+// ::v-deep .v-data-table {
+//   border-radius: 12px !important;
+// }
 .insight-tab {
-  .tab-padding {
-    padding-top: 0px !important;
-  }
+  //   .tab-padding {
+  //     padding-top: 0px !important;
+  //   }
   .list-tab {
-    padding-left: 0px !important;
     border-left: 1px solid var(--v-black-lighten3) !important;
     height: 386px !important;
   }
