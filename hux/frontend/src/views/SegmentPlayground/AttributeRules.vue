@@ -269,6 +269,7 @@ export default {
         width: 0,
         height: 0,
       },
+      currentData: [],
       selectedValue: null,
       params: {},
     }
@@ -376,11 +377,13 @@ export default {
       } else return []
     },
     listOptions(condition) {
-      return this.selectedValue === "Zip" || this.selectedValue === "City" ? [] : condition.attribute.options
-      
+      return condition.attribute.key === "City" || condition.attribute.key === "Zip"
+        ? this.currentData
+        : condition.attribute.options
     },
     operatorOptions(condition) {
       // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
+      // debugger;
       if (
         condition.attribute.type === "list" ||
         condition.attribute.key === "gender"
@@ -550,16 +553,16 @@ export default {
       this.addNewCondition(newSection.id)
     },
     async autoSearchFunc(value) {
-      if (this.selectedValue === "Zip" || this.selectedValue === "City") {
-        // this.selectedValue = "zip_code"
-        this.params.fieldType = this.selectedValue.toLowerCase()
-        this.params.key = value
-        console.log("valyue", this.params.key)
-
-        if (value.length > 2) {
-          debugger
-          let data = await this.getAudiencesRulesByFields(this.params)
-          console.log("data", data)
+      if (value !== null && value !== "") {
+        if (this.selectedValue === "Zip" || this.selectedValue === "City") {
+          this.params.fieldType = this.selectedValue === "Zip" ? 'zip_code' : this.selectedValue.toLowerCase()
+          this.params.key = value
+          console.log("valyue", this.params.key)
+          if (value.length > 2) {
+            let data = await this.getAudiencesRulesByFields(this.params)
+            // console.log("data", data)
+            this.currentData = [...data]
+          }
         }
       }
     },

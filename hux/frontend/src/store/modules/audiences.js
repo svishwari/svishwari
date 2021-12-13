@@ -328,19 +328,6 @@ const actions = {
           rules.rule_attributes.general.gender.options
       }
       if (
-        response.data.rule_attributes.general.location.zip_code.options
-          .length === 0
-      ) {
-        response.data.rule_attributes.general.location.zip_code.options =
-          rules.rule_attributes.general.location.zip_code.options
-      }
-      if (
-        response.data.rule_attributes.general.location.city.options.length === 0
-      ) {
-        response.data.rule_attributes.general.location.city.options =
-          rules.rule_attributes.general.location.city.options
-      }
-      if (
         response.data.rule_attributes.general.location.country.options
           .length === 0
       ) {
@@ -362,9 +349,9 @@ const actions = {
     }
   },
 
-  async rulesByFields({ commit }, params) {
+  async rulesByFields({ _ }, params) {
     const response = await api.audiences.getrulesByFields(params)
-    commit("SET_CONSTANTS", response.data)
+    // commit("SET_CONSTANTS", response.data)
     return response.data
   },
   async fetchFilterSize({ commit }, filter) {
