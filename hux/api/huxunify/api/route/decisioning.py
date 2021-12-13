@@ -88,7 +88,7 @@ class ModelsView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[List[dict], int]:
         """Retrieves all models.
@@ -136,7 +136,7 @@ class ModelsView(SwaggerView):
         database = get_db_client()
         unified_models = collection_management.get_documents(
             database, db_c.MODELS_COLLECTION
-        )
+        ).get(db_c.DOCUMENTS)
         all_models.extend(unified_models)
 
         config_models = collection_management.get_documents(
