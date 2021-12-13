@@ -94,7 +94,7 @@
             </template>
           </metric-card>
 
-          <metric-card
+          <metric-card           
             class="mr-3"
             title="Attributes"
             :height="80"
@@ -524,10 +524,11 @@ export default {
     },
   },
   async mounted() {
+     await this.loadAudienceInsights()
     this.engagementId = 1
     await this.loadEngagement(1)
     this.sizeHandler()
-    await this.loadAudienceInsights()
+   
   },
 
   methods: {
@@ -548,10 +549,11 @@ export default {
     }),
 
     async refresh() {
+       await this.loadAudienceInsights()
       this.engagementId = 1
       await this.loadEngagement(1)
       this.sizeHandler()
-      await this.loadAudienceInsights()
+     
     },
     addDestination(event) {
       this.closeAllDrawers()
@@ -617,7 +619,6 @@ export default {
       }
     },
     async triggerOverviewAction(event) {
-      debugger
       switch (event.target.title.toLowerCase()) {
         case "remove engagement": {
           this.confirmDialog.actionType = "remove-engagement"
@@ -804,7 +805,6 @@ export default {
         const _getAudience = this.getAudience(this.$route.params.id)
         if (_getAudience && this.refreshAudience) {
           this.audienceData = JSON.parse(JSON.stringify(_getAudience))
-          console.log(this.audienceData)
         }
         if (this.audience && this.audience.is_lookalike) {
           this.audienceHistory = this.audience.audienceHistory.filter(
