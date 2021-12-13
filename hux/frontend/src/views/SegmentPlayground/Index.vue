@@ -51,10 +51,13 @@
       class="white segmentation playground-wrap"
     >
       <v-row class="ma-0 segment-wrap">
-        <v-col class="col-8 pl-0 pr-6 py-6 attributes">
+        <v-col
+          class="col-8 pl-0 pr-6 attributes"
+          :class="isEdit ? 'py-7' : 'py-6'"
+        >
           <div v-if="isEdit" class="edit-wrap">
             <div class="text-body-1">
-              You are currently editing
+              You are currently editing the current audience,
               <span class="text-body-2">{{ audience.originalName }}</span
               >. Please update and/or add any attributes.
             </div>
@@ -62,7 +65,7 @@
               v-model="audience.name"
               placeholder-text="What is the name for this audience ?"
               height="40"
-              label-text="Audience name"
+              label-text="Edit name"
               background-color="white"
               required
               class="
@@ -72,6 +75,8 @@
                 text--darken-4
                 pt-2
                 input-placeholder
+                pt-3
+                h-86
               "
               data-e2e="audience-name"
               help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
@@ -162,7 +167,7 @@
         <div v-if="!isEdit" class="d-flex align-center justify-center px-7">
           <text-field
             v-model="audience.name"
-            placeholder-text="Audience name"
+            placeholder-text="Edit name"
             height="40"
             background-color="white"
             required
@@ -506,5 +511,9 @@ export default {
       border-color: var(--v-black-lighten3);
     }
   }
+}
+
+.h-86 {
+  height: 86px;
 }
 </style>

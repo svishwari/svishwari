@@ -1,5 +1,5 @@
 <template>
-  <v-card class="overview-card rounded-lg card-shadow py-4 px-6" height="311">
+  <v-card class="overview-card rounded-lg card-shadow py-4 px-6" height="323">
     <v-card-title class="d-flex justify-space-between pa-0">
       <h3 class="text-h3">Overview</h3>
       <div class="d-flex align-center">
