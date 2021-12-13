@@ -512,7 +512,7 @@ class UpdateEngagement(SwaggerView):
 
         database = get_db_client()
 
-        for audience in body[api_c.AUDIENCES]:
+        for audience in body.get(api_c.AUDIENCES, []):
             if audience.get(api_c.DESTINATIONS):
                 data_added = bool(
                     get_delivery_platforms_by_id(
@@ -717,7 +717,7 @@ class AddAudienceEngagement(SwaggerView):
         data_added = False
         # validate audiences exist
         audience_names = []
-        for audience in body[api_c.AUDIENCES]:
+        for audience in body.get(api_c.AUDIENCES, []):
             audience_to_attach = get_audience(database, audience[api_c.ID])
             if audience.get(api_c.DESTINATIONS):
                 data_added = bool(

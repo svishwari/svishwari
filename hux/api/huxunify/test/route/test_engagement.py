@@ -1374,7 +1374,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsNone(response.json.get(db_c.DATA_ADDED))
 
     def test_set_engagement_without_destinations_in_audience(self):
@@ -1398,7 +1398,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsNone(response.json.get(db_c.DATA_ADDED))
 
     def test_set_engagement_without_description(self):
