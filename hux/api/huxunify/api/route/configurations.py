@@ -1,7 +1,7 @@
 # pylint: disable=no-self-use
 """Paths for Configurations API"""
 from http import HTTPStatus
-from typing import Tuple, List
+from typing import Tuple
 from flask import Blueprint, jsonify, request, Response
 from flasgger import SwaggerView
 

@@ -5,7 +5,7 @@ from datetime import datetime
 from http import HTTPStatus
 from itertools import repeat
 from pathlib import Path
-from typing import Tuple, Union, Iterator, Optional, Any, List
+from typing import Tuple, Union
 
 import pandas as pd
 from flasgger import SwaggerView
