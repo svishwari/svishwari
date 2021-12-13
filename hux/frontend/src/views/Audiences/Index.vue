@@ -34,7 +34,7 @@
 
           <template slot="right">
             <router-link
-              :to="{ name: 'AudienceConfiguration' }"
+              :to="{ name: 'SegmentPlayground' }"
               class="text-decoration-none"
               append
             >
@@ -533,37 +533,41 @@ export default {
 
     attributeOptions() {
       const options = []
-      Object.entries(this.ruleAttributes.rule_attributes).forEach((attr) => {
-        Object.keys(attr[1]).forEach((optionKey) => {
-          if (
-            Object.values(attr[1][optionKey])
-              .map((o) => typeof o === "object" && !Array.isArray(o))
-              .includes(Boolean(true))
-          ) {
-            Object.keys(attr[1][optionKey]).forEach((att) => {
-              if (typeof attr[1][optionKey][att] === "object") {
-                options.push({
-                  key: att,
-                  name: attr[1][optionKey][att]["name"],
-                  category: attr[0],
-                })
-              }
-            })
-          } else {
-            options.push({
-              key: optionKey,
-              name: attr[1][optionKey]["name"],
-              category: attr[0],
-            })
-          }
+      if (this.ruleAttributes && this.ruleAttributes.rule_attributes) {
+        Object.entries(this.ruleAttributes.rule_attributes).forEach((attr) => {
+          Object.keys(attr[1]).forEach((optionKey) => {
+            if (
+              Object.values(attr[1][optionKey])
+                .map((o) => typeof o === "object" && !Array.isArray(o))
+                .includes(Boolean(true))
+            ) {
+              Object.keys(attr[1][optionKey]).forEach((att) => {
+                if (typeof attr[1][optionKey][att] === "object") {
+                  options.push({
+                    key: att,
+                    name: attr[1][optionKey][att]["name"],
+                    category: attr[0],
+                  })
+                }
+              })
+            } else {
+              options.push({
+                key: optionKey,
+                name: attr[1][optionKey]["name"],
+                category: attr[0],
+              })
+            }
+          })
         })
-      })
+      }
       return options
     },
 
     isUserFavorite(entity, type) {
       return (
-        this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
+        this.userFavorites &&
+        this.userFavorites[type] &&
+        this.userFavorites[type].includes(entity.id)
       )
     },
     handleActionFavorite(item, type) {
