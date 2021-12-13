@@ -11,7 +11,7 @@ describe("Orchestration > Audience > Create Audience", () => {
     cy.wait(3000)
   })
 
-  it("should be able to configure a new audience", () => {
+  it.skip("should be able to configure a new audience", () => {
     cy.location("pathname").should("eq", route.audiences)
     //click on add audience button
     cy.get(selector.audience.addAudiences).eq(0).click()
