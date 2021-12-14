@@ -369,7 +369,7 @@ class DeleteCdpDataSources(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    @requires_access_levels([api_c.ADMIN_LEVEL])
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def delete(self, user: dict) -> Tuple[dict, int]:
         """Deletes CDP data sources.
 
@@ -468,10 +468,8 @@ class BatchUpdateDataSources(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    @requires_access_levels(
-        [api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL]
-    )
     @api_error_handler()
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def patch(self, user: dict) -> Tuple[dict, int]:
         """Updates a list of data sources.
 

@@ -45,6 +45,7 @@ const getters = {
 
 const mutations = {
   SET_ALL(state, items) {
+    state.items = []
     items.forEach((item) => {
       item.audienceList = []
       item.isCurrentRow = false
@@ -116,6 +117,22 @@ const actions = {
   async getAll({ commit }) {
     try {
       const response = await api.engagements.all()
+      commit("SET_ALL", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getAllFiltered(
+    { commit },
+    { favorites = false, my_engagements = false }
+  ) {
+    try {
+      const response = await api.engagements.allFiltered({
+        favorites: favorites,
+        my_engagements: my_engagements,
+      })
       commit("SET_ALL", response.data)
     } catch (error) {
       handleError(error)

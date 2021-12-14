@@ -8,6 +8,7 @@ describe("Orchestration > Audience > Create Audience", () => {
   beforeEach(() => {
     cy.signin()
     cy.visit(route.audiences)
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000)
   })
 
