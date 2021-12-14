@@ -214,7 +214,7 @@ class SetModelStatus(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def post(self, user: dict) -> Tuple[dict, int]:
         """Request a model.
 
