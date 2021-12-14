@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use,C0302,unused-argument
 """Paths for engagement API"""
+import datetime
 from pathlib import Path
 import zipfile
 from http import HTTPStatus
@@ -374,17 +375,11 @@ class SetEngagement(SwaggerView):
 
         database = get_db_client()
 
+        # Set data_added field for destinations.
         for audience in body.get(db_c.AUDIENCES, []):
-            if audience.get(api_c.DESTINATIONS):
-                data_added = bool(
-                    get_delivery_platforms_by_id(
-                        database,
-                        [
-                            destination[api_c.ID]
-                            for destination in audience.get(api_c.DESTINATIONS)
-                        ],
-                    )
-                )
+            for destination in audience.get(api_c.DESTINATIONS):
+                if get_delivery_platform(database, destination.get(api_c.ID)):
+                    destination[api_c.DATA_ADDED] = datetime.datetime.utcnow()
 
         engagement_id = set_engagement(
             database=database,
@@ -393,7 +388,6 @@ class SetEngagement(SwaggerView):
             audiences=body.get(db_c.AUDIENCES),
             delivery_schedule=body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE),
             user_name=user[api_c.USER_NAME],
-            data_added=data_added,
         )
         engagement = get_engagement(database, engagement_id=engagement_id)
         logger.info(
@@ -512,17 +506,10 @@ class UpdateEngagement(SwaggerView):
 
         database = get_db_client()
 
-        for audience in body.get(api_c.AUDIENCES, []):
-            if audience.get(api_c.DESTINATIONS):
-                data_added = bool(
-                    get_delivery_platforms_by_id(
-                        database,
-                        [
-                            destination[api_c.ID]
-                            for destination in audience.get(api_c.DESTINATIONS)
-                        ],
-                    )
-                )
+        for audience in body.get(db_c.AUDIENCES, []):
+            for destination in audience.get(api_c.DESTINATIONS):
+                if get_delivery_platform(database, destination.get(api_c.ID)):
+                    destination[api_c.DATA_ADDED] = datetime.datetime.utcnow()
 
         engagement = update_engagement(
             database=database,
@@ -535,7 +522,6 @@ class UpdateEngagement(SwaggerView):
             if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
             else {},
             status=body.get(db_c.STATUS),
-            data_added=data_added,
         )
         logger.info(
             "Successfully updated engagement with ID %s.", engagement_id
@@ -713,22 +699,13 @@ class AddAudienceEngagement(SwaggerView):
         body = AudienceEngagementSchema().load(
             request.get_json(), partial=True
         )
-        # Set to true if a destination is added in an audience.
-        data_added = False
         # validate audiences exist
         audience_names = []
         for audience in body.get(api_c.AUDIENCES, []):
             audience_to_attach = get_audience(database, audience[api_c.ID])
-            if audience.get(api_c.DESTINATIONS):
-                data_added = bool(
-                    get_delivery_platforms_by_id(
-                        database,
-                        [
-                            destination[api_c.ID]
-                            for destination in audience.get(api_c.DESTINATIONS)
-                        ],
-                    )
-                )
+            for destination in audience.get(api_c.DESTINATIONS):
+                if get_delivery_platform(database, destination.get(api_c.ID)):
+                    destination[api_c.DATA_ADDED] = datetime.datetime.utcnow()
 
             if not audience_to_attach:
                 # check if lookalike
@@ -751,7 +728,6 @@ class AddAudienceEngagement(SwaggerView):
             ObjectId(engagement_id),
             user[api_c.USER_NAME],
             body[api_c.AUDIENCES],
-            data_added,
         )
 
         logger.info(
@@ -989,6 +965,7 @@ class AddDestinationEngagedAudience(SwaggerView):
             request.get_json(), partial=True
         )
         destination[api_c.ID] = ObjectId(destination.get(api_c.ID))
+        destination[api_c.DATA_ADDED] = datetime.datetime.utcnow()
 
         # get destinations
         destination_to_attach = get_delivery_platform(

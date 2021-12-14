@@ -393,7 +393,7 @@ class TestEngagementManagement(unittest.TestCase):
         }
 
         result = em.append_audiences_to_engagement(
-            self.database, engagement_id, self.user_name, [new_audience], True
+            self.database, engagement_id, self.user_name, [new_audience]
         )
         self.assertTrue(result)
 
@@ -404,7 +404,6 @@ class TestEngagementManagement(unittest.TestCase):
         # test audience appears as expected
         self.assertTrue(updated[db_c.AUDIENCES])
         self.assertEqual(len(updated[db_c.AUDIENCES]), 2)
-        self.assertTrue(updated[db_c.DATA_ADDED])
 
     def test_set_engagement_attach_audience_str_id(self) -> None:
         """Test creating an engagement and attaching an audience

@@ -27,7 +27,6 @@ def create_audience(
     destination_ids: list = None,
     user_name: str = None,
     size: int = 0,
-    data_added: bool = False,
 ) -> Union[dict, None]:
     """A function to create an audience.
 
@@ -40,7 +39,6 @@ def create_audience(
             attached to the audience.
         user_name (str): Name of the user creating / updating the audience.
         size (int): audience size.
-        data_added (bool): Set to true if destination is added.
 
     Returns:
         Union[list, None]: MongoDB audience doc.
@@ -75,9 +73,6 @@ def create_audience(
         db_c.DELETED: False,
         db_c.SIZE: size,
     }
-
-    if data_added:
-        audience_doc[db_c.DATA_ADDED] = curr_time
 
     try:
         audience_id = collection.insert_one(audience_doc).inserted_id

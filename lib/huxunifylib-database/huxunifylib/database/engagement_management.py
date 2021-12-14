@@ -27,7 +27,6 @@ def set_engagement(
     user_name: str,
     delivery_schedule: dict = None,
     deleted: bool = False,
-    data_added: bool = False,
 ) -> ObjectId:
     """A function to create an engagement.
 
@@ -87,8 +86,6 @@ def set_engagement(
 
     if delivery_schedule:
         doc[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = delivery_schedule
-    if data_added:
-        doc[db_c.DATA_ADDED] = current_time
     try:
         engagement_id = collection.insert_one(doc).inserted_id
         if engagement_id is not None:
@@ -295,7 +292,6 @@ def get_engagements_summary(
                     "created_by": "$created_by",
                     "updated_by": "$updated_by",
                     "update_time": "$update_time",
-                    "data_added": {"$ifNull": ["$data_added", None]},
                     # because the audience is a nested object, pull out the
                     # audience fields we need for later grouping
                     "audience_name": "$audiences.name",
@@ -318,6 +314,12 @@ def get_engagements_summary(
                         "is_ad_platform": "$audiences.destinations.is_ad_platform",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
+                        "data_added": {
+                            "$ifNull": [
+                                "$audiences.destinations.data_added",
+                                None,
+                            ]
+                        },
                         "delivery_schedule": {
                             "$ifNull": [
                                 "$audiences.destinations.delivery_schedule",
@@ -351,7 +353,6 @@ def get_engagements_summary(
                     "created_by": "$_id.created_by",
                     "updated_by": "$_id.updated_by",
                     "update_time": "$_id.update_time",
-                    "data_added": "$_id.data_added",
                     "delivery_schedule": "$_id.delivery_schedule",
                 },
                 # push all the audiences into an array
@@ -383,7 +384,6 @@ def get_engagements_summary(
                 "updated_by": "$_id.updated_by",
                 "update_time": "$_id.update_time",
                 "audiences": "$audiences",
-                "data_added": "$_id.data_added",
                 "delivery_schedule": "$_id.delivery_schedule",
                 "size": "$size",
             }
@@ -511,7 +511,6 @@ def update_engagement(
     audiences: list = None,
     delivery_schedule: dict = None,
     status: str = None,
-    data_added: bool = False,
 ) -> Union[dict, None]:
     """A function to update fields in an engagement.
 
@@ -550,8 +549,6 @@ def update_engagement(
         db_c.STATUS: status,
     }
 
-    if data_added:
-        update_doc[db_c.DATA_ADDED] = datetime.datetime.utcnow()
     # remove dict entries that are None
     update_doc = {k: v for k, v in update_doc.items() if v is not None}
 
@@ -639,7 +636,6 @@ def append_audiences_to_engagement(
     engagement_id: ObjectId,
     user_name: str,
     audiences: list,
-    data_added: bool = False,
 ) -> Union[dict, None]:
     """A function to allow for appending audiences to an engagement.
 
@@ -648,7 +644,6 @@ def append_audiences_to_engagement(
         engagement_id (ObjectId): ObjectID of the engagement to be updated.
         user_name (str): Name of the user attaching the audience.
         audiences (list): list of audiences.
-        data_added (bool, Optional): Flag set to true when destination added.
 
     Returns:
         Union[dict, None]: dict object of the engagement that has been updated.
@@ -664,8 +659,6 @@ def append_audiences_to_engagement(
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.UPDATED_BY: user_name,
     }
-    if data_added:
-        update_meta_info[db_c.DATA_ADDED] = datetime.datetime.utcnow()
 
     try:
         return collection.find_one_and_update(
@@ -895,7 +888,6 @@ def append_destination_to_engagement_audience(
     if updated:
         engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
         engagement_doc[db_c.UPDATED_BY] = user_name
-        engagement_doc[db_c.DATA_ADDED] = datetime.datetime.utcnow()
         collection.replace_one(
             {
                 db_c.ID: engagement_id,

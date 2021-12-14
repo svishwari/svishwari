@@ -1282,7 +1282,11 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
-        self.assertIsNotNone(response.json.get(db_c.DATA_ADDED))
+        self.assertIsNotNone(
+            response.json.get(api_c.AUDIENCES)[0]
+            .get(api_c.DESTINATIONS)[0]
+            .get(api_c.DATA_ADDED)
+        )
 
     @given(schedule=st.sampled_from(t_c.SCHEDULES))
     def test_set_engagement_with_delivery_schedule(self, schedule: dict):
@@ -1375,7 +1379,6 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        self.assertIsNone(response.json.get(db_c.DATA_ADDED))
 
     def test_set_engagement_without_destinations_in_audience(self):
         """Test set engagement API without destinations in audience."""
@@ -1399,7 +1402,6 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        self.assertIsNone(response.json.get(db_c.DATA_ADDED))
 
     def test_set_engagement_without_description(self):
         """Test set engagement API without description."""
@@ -1550,7 +1552,9 @@ class TestEngagementRoutes(TestCase):
             old_delivery_schedule_cron, new_delivery_schedule_cron
         )
 
-    def test_update_engagement_audience_with_destination_added(self):
+    def test_update_engagement_audience_with_destination_added(
+        self, request_mocker
+    ):
         """Test update an engagement with destination."""
 
         engagement = {
@@ -1582,9 +1586,12 @@ class TestEngagementRoutes(TestCase):
             json=update_doc,
             headers=t_c.STANDARD_HEADERS,
         )
-
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsNotNone(response.json.get(db_c.DATA_ADDED))
+        self.assertIsNotNone(
+            response.json.get(api_c.AUDIENCES)[0]
+            .get(api_c.DESTINATIONS)[0]
+            .get(api_c.DATA_ADDED)
+        )
 
     def test_add_audience_to_engagement(self):
         """Test add audience to engagement."""
@@ -1615,33 +1622,6 @@ class TestEngagementRoutes(TestCase):
             response.json,
         )
 
-    def test_add_audience_to_engagement_data_added(self):
-        """Check if data_added is present when audience added to engagement."""
-
-        engagement_id = self.engagement_ids[0]
-
-        new_audience = {
-            "audiences": [
-                {
-                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
-                    "destinations": [
-                        {db_c.OBJECT_ID: str(self.destinations[0][db_c.ID])},
-                    ],
-                }
-            ]
-        }
-
-        self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
-            json=new_audience,
-            headers=t_c.STANDARD_HEADERS,
-        )
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertIsNotNone(response.json.get(db_c.DATA_ADDED))
-
     def test_add_audience_to_engagement_without_destinations(self):
         """Check if data_added is none when audience added to
         engagement."""
@@ -1657,16 +1637,12 @@ class TestEngagementRoutes(TestCase):
             ]
         }
 
-        self.app.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
             json=new_audience,
             headers=t_c.STANDARD_HEADERS,
         )
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertIsNone(response.json.get(db_c.DATA_ADDED))
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
     def test_add_lookalike_audience_to_engagement(self) -> None:
         """Test add lookalike audience to engagement."""
@@ -1921,12 +1897,6 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertIsNotNone(response.json.get(db_c.DATA_ADDED))
 
     def test_remove_destination_from_engagement_audience(self):
         """Test remove destination from engagement audience."""

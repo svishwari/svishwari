@@ -333,15 +333,21 @@ class OrchestrationRouteTest(TestCase):
             response.json[api_c.AUDIENCE_NAME],
         )
 
+        self.assertIsNotNone(
+            response.json.get(api_c.DESTINATIONS)[0].get(api_c.DATA_ADDED)
+        )
+
         # validate audience in db
         audience_doc = get_audience(
             self.database, ObjectId(response.json[db_c.OBJECT_ID])
         )
         self.assertListEqual(
-            audience_doc[db_c.DESTINATIONS],
+            [
+                {api_c.ID: audience[api_c.ID]}
+                for audience in audience_doc[db_c.DESTINATIONS]
+            ],
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
-        self.assertIsNotNone(response.json.get(db_c.DATA_ADDED))
 
     def test_create_audience_empty_user_info(self):
         """Test create audience with destination given empty user info.
@@ -488,7 +494,6 @@ class OrchestrationRouteTest(TestCase):
             audience_post[api_c.AUDIENCE_NAME],
             response.json[api_c.AUDIENCE_NAME],
         )
-        self.assertIsNone(response.json.get(db_c.DATA_ADDED))
 
         # validate audience in db
         audience_doc = get_audience(
@@ -550,7 +555,10 @@ class OrchestrationRouteTest(TestCase):
         )
         # test destinations
         self.assertListEqual(
-            audience_doc[db_c.DESTINATIONS],
+            [
+                {api_c.ID: audience[api_c.ID]}
+                for audience in audience_doc[db_c.DESTINATIONS]
+            ],
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
@@ -573,6 +581,9 @@ class OrchestrationRouteTest(TestCase):
             engagement_audience = engagement[db_c.AUDIENCES][
                 engagement_audiences.index(audience_doc[db_c.ID])
             ]
+            # Remove data_added fields since timestamps can't be equal.
+            for destination in engagement_audience.get(api_c.DESTINATIONS, []):
+                destination.pop(api_c.DATA_ADDED)
 
             self.assertDictEqual(engagement_audience, expected_audience)
 
