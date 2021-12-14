@@ -38,7 +38,7 @@ def set_engagement(
         user_name (str): Name of the user creating the engagement.
         delivery_schedule (dict): Delivery Schedule dict.
         deleted (bool): if the engagement is deleted (soft-delete).
-        data_added (bool): if engagement created with destination set.
+
     Returns:
         ObjectId: id of the newly created engagement.
 
@@ -523,7 +523,6 @@ def update_engagement(
         audiences (list): list of audiences.
         delivery_schedule (dict): delivery schedule dict.
         status (str): Engagement status.
-        data_added (bool): Set to true if destination is added.
 
     Returns:
         Union[dict, None]: dict object of the engagement that has been updated.
@@ -655,16 +654,15 @@ def append_audiences_to_engagement(
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
     ]
-    update_meta_info = {
-        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-        db_c.UPDATED_BY: user_name,
-    }
 
     try:
         return collection.find_one_and_update(
             {db_c.ID: engagement_id},
             {
-                "$set": update_meta_info,
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                },
                 "$push": {db_c.AUDIENCES: {"$each": audiences}},
             },
             upsert=False,
@@ -888,6 +886,7 @@ def append_destination_to_engagement_audience(
     if updated:
         engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
         engagement_doc[db_c.UPDATED_BY] = user_name
+
         collection.replace_one(
             {
                 db_c.ID: engagement_id,
