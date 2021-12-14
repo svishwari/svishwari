@@ -1,7 +1,7 @@
 <template>
   <page max-width="100%">
     <div slot="header">
-      <page-header header-height="110">
+      <page-header header-height="110" is-sticky>
         <template slot="left">
           <div>
             <breadcrumb :items="breadcrumbs" />
@@ -13,7 +13,7 @@
         </template>
       </page-header>
 
-      <page-header v-if="isConnectionStarted" header-height="71">
+      <page-header v-if="isConnectionStarted" header-height="71" is-sticky>
         <template #left>
           <v-btn disabled icon color="black">
             <icon type="search" :size="20" color="black" variant="lighten3" />

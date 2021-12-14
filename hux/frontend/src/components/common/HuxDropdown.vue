@@ -31,7 +31,16 @@
           class="ma-2 main-button pr-1 text-body-1"
           @click="openMenu = true"
         >
-          {{ isSubMenu ? item.name : optionSelected["name"] || label }}
+          <tooltip>
+            <template #label-content>
+              <span class="text-ellipsis text-width">{{
+                isSubMenu ? item.name : optionSelected["name"] || label
+              }}</span>
+            </template>
+            <template #hover-content>
+              {{ isSubMenu ? item.name : optionSelected["name"] || label }}
+            </template>
+          </tooltip>
         </huxButton>
       </template>
       <v-list>
@@ -82,11 +91,14 @@
 <script>
 import huxButton from "@/components/common/huxButton"
 import Icon from "./Icon.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+
 export default {
   name: "HuxDropdown",
   components: {
     huxButton,
     Icon,
+    Tooltip,
   },
   props: {
     selected: {
@@ -172,5 +184,9 @@ export default {
     text-transform: uppercase;
     color: var(--v-black-lighten4);
   }
+}
+.text-width {
+  width: 150px;
+  text-align: left;
 }
 </style>

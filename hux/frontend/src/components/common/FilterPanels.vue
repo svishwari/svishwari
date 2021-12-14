@@ -49,5 +49,8 @@ export default defineComponent({
       border-top: 0;
     }
   }
+  ::v-deep .v-expansion-panel--active > .v-expansion-panel-header {
+    border-bottom: 1px solid var(--v-black-lighten2);
+  }
 }
 </style>

@@ -153,7 +153,7 @@ const routes = [
   {
     path: "/audiences/:id/update",
     name: "AudienceUpdate",
-    component: () => import("@/views/Audiences/Configuration.vue"),
+    component: () => import("@/views/SegmentPlayground/Index.vue"),
     meta: {
       layout: "app",
       title: "Update an Audience",
@@ -289,6 +289,19 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   document.title = pageTitle(to.meta.title)
+
+  // TODO: need to perform RCA for the actual problem
+  // THIS IS A TEMPORARY FIX
+  let app = document.getElementById("app")
+  let menuNodes = []
+  app.childNodes.forEach((each) => {
+    if (each.getAttribute("class").includes("menuable__content__active")) {
+      menuNodes.push(each)
+    }
+  })
+  menuNodes.forEach((each) => {
+    each.style.display = "none"
+  })
 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 

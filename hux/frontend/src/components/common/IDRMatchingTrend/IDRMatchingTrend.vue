@@ -33,7 +33,7 @@
             <div>
               <span class="append-circle color-primary-lighten9" />
               <span class="text-body-2 black--text">
-                Known IDs
+                Individual IDs
                 <br />
                 {{
                   currentData.known_ids | Numeric(false, false, true) | Empty

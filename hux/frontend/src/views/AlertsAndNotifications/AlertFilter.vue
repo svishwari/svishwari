@@ -2,59 +2,61 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
-    offset-val="214px"
-    content-height="560px"
+    content-height="262px"
+    :disable-clear="filterLength === 1 && selectedTimeType === 'Last week'"
     @clear="clear"
     @apply="apply"
     @close="close"
   >
-    <hux-filter-panels>
-      <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
-        <v-checkbox
-          v-for="data in alertType"
-          :key="data.id"
-          v-model="selctedAlertType"
-          multiple
-          color="#00a3e0"
-          class="text--base-1"
-          :label="data.title"
-          :value="data.title"
-        ></v-checkbox>
-      </hux-filter-panel>
-      <hux-filter-panel title="Category" :count="selctedCategory.length">
-        <v-checkbox
-          v-for="data in category"
-          :key="data.id"
-          v-model="selctedCategory"
-          multiple
-          color="#00a3e0"
-          :label="data.title"
-          :value="data.title"
-        ></v-checkbox>
-      </hux-filter-panel>
-      <hux-filter-panel title="Time" :count="1">
-        <v-radio-group v-model="selectedTimeType">
-          <v-radio
-            v-for="data in time"
+    <div class="filter-body">
+      <hux-filter-panels>
+        <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
+          <v-checkbox
+            v-for="data in alertType"
             :key="data.id"
+            v-model="selctedAlertType"
+            multiple
+            color="primary lighten-6"
+            class="text--base-1"
             :label="data.title"
-            color="#00a3e0"
             :value="data.title"
-          ></v-radio>
-        </v-radio-group>
-      </hux-filter-panel>
-      <hux-filter-panel title="User" :count="selctedUsers.length">
-        <v-checkbox
-          v-for="data in users"
-          :key="data.id"
-          v-model="selctedUsers"
-          multiple
-          color="#00a3e0"
-          :label="data.display_name"
-          :value="data.display_name"
-        ></v-checkbox>
-      </hux-filter-panel>
-    </hux-filter-panels>
+          ></v-checkbox>
+        </hux-filter-panel>
+        <hux-filter-panel title="Category" :count="selctedCategory.length">
+          <v-checkbox
+            v-for="data in category"
+            :key="data.id"
+            v-model="selctedCategory"
+            multiple
+            color="primary lighten-6"
+            :label="data.title"
+            :value="data.title"
+          ></v-checkbox>
+        </hux-filter-panel>
+        <hux-filter-panel title="Time" :count="1">
+          <v-radio-group v-model="selectedTimeType">
+            <v-radio
+              v-for="data in time"
+              :key="data.id"
+              :label="data.title"
+              color="primary lighten-6"
+              :value="data.title"
+            ></v-radio>
+          </v-radio-group>
+        </hux-filter-panel>
+        <hux-filter-panel title="User" :count="selctedUsers.length">
+          <v-checkbox
+            v-for="data in users"
+            :key="data.id"
+            v-model="selctedUsers"
+            multiple
+            color="primary lighten-6"
+            :label="data.display_name"
+            :value="data.display_name"
+          ></v-checkbox>
+        </hux-filter-panel>
+      </hux-filter-panels>
+    </div>
   </hux-filters-drawer>
 </template>
 
@@ -94,17 +96,13 @@ export default {
         },
         {
           id: 3,
-          title: "Feedback",
-        },
-        {
-          id: 4,
           title: "Informational",
         },
       ],
       category: [
         {
           id: 1,
-          title: "DataSources",
+          title: "Data Sources",
         },
         {
           id: 2,
@@ -200,6 +198,9 @@ export default {
       this.selectedTimeType = "Last week"
       this.selctedUsers = []
     },
+    clear() {
+      this.clearFilter()
+    },
     apply() {
       let getTime
       switch (this.selectedTimeType) {
@@ -236,7 +237,7 @@ export default {
   },
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 ::v-deep.v-input--selection-controls {
   margin-top: 0px !important;
   padding-top: 0px !important;
@@ -265,5 +266,10 @@ export default {
 }
 ::v-deep .drawer-header > .v-toolbar__content {
   height: 40px !important;
+}
+.filter-body {
+  ::v-deep .v-expansion-panel-content__wrap {
+    padding: 14px 24px 14px 24px !important;
+  }
 }
 </style>

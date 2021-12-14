@@ -44,6 +44,7 @@
               variant="white"
               height="40"
               is-tile
+              class="btn-border box-shadow-none"
               :style="{ float: 'left' }"
               @click="onBack()"
             >
