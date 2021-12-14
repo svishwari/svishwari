@@ -52,7 +52,7 @@
               />
             </template>
             <template #hover-content>
-              {{ column.hoverTooltip }}
+              <span v-html="column.hoverTooltip" />
             </template>
           </tooltip>
         </template>

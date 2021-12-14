@@ -578,7 +578,7 @@ class IDRDataFeeds(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[Response, int]:
-        """Retrieves a IDR data feeds.
+        """Retrieves all IDR data feeds.
 
         ---
         security:
@@ -648,7 +648,7 @@ class IDRDataFeedDetails(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, datafeed_id: str, user: dict) -> Tuple[dict, int]:
-        """Retrieves a IDR data feed waterfall report.
+        """Retrieves an IDR data feed waterfall report.
 
         ---
         security:
@@ -686,7 +686,7 @@ class CustomerGeoVisualView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "schema": {"type": "array", "items": CustomerGeoVisualSchema},
-            "description": "Customer Profiles Geographical Insights .",
+            "description": "Customer Profiles Geographical Insights.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get Customer Profiles Geographical Insights."
@@ -761,10 +761,10 @@ class CustomerDemoVisualView(SwaggerView):
                 "type": "body",
                 "items": CustomerDemographicInsightsSchema,
             },
-            "description": "Customer Demographical Visual Insights.",
+            "description": "Customer Demographic Visual Insights.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get customers Demographical Visual Insights."
+            "description": "Failed to get customers Demographic Visual Insights."
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -775,7 +775,7 @@ class CustomerDemoVisualView(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[dict, int]:
-        """Retrieves a Demographical customer insights.
+        """Retrieves customer demographic insights.
 
         ---
         security:
@@ -1290,7 +1290,7 @@ class CustomersInsightsCities(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[Response, int]:
-        """Retrieves customer lifetime values.
+        """Retrieves city-level geographic customer insights.
 
         ---
         security:
