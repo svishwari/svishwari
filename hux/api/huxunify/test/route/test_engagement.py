@@ -1552,9 +1552,7 @@ class TestEngagementRoutes(TestCase):
             old_delivery_schedule_cron, new_delivery_schedule_cron
         )
 
-    def test_update_engagement_audience_with_destination_added(
-        self, request_mocker
-    ):
+    def test_update_engagement_audience_with_destination_added(self):
         """Test update an engagement with destination."""
 
         engagement = {
