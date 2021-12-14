@@ -155,7 +155,7 @@ export default {
           metricType: "",
           result: "",
           toolTipText:
-            "A digital ID related to online visitors that have not yet been recognized and hence not assigned an individual ID",
+            "A digital ID related to online visitors that have not yet been recognized and hence not assigned an individual ID.",
         },
         {
           metric: "Individual IDs",

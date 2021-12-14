@@ -1,5 +1,5 @@
 <template>
-  <div class="white">
+  <div :class="!loading && hasDataFeeds == 0 ? 'blackdarken-4' : 'white'">
     <page-header v-if="selectedDataSource">
       <template #left>
         <breadcrumb :items="breadcrumbItems" />
@@ -100,15 +100,47 @@
         </template>
       </hux-data-table>
     </v-row>
-
-    <empty-page v-if="!loading && !hasDataFeeds">
-      <template #icon> mdi-alert-circle-outline </template>
-      <template #title> Oops! There’s nothing here yet </template>
-      <template #subtitle>
-        Our team is still working hard processing your datafeeds. <br />
-        Please be patient in the meantime!
-      </template>
-    </empty-page>
+    <v-card
+      v-else-if="!loading && hasDataFeeds == 0"
+      class="empty-error-card mx-7"
+    >
+      <v-row class="data-feed-frame py-14">
+        <empty-page
+          v-if="!datafeedErrorState"
+          type="lift-table-empty"
+          :size="50"
+        >
+          <template #title>
+            <div class="h2">No data feeds to show</div>
+          </template>
+          <template #subtitle>
+            <div class="body-2">
+              Data feeds will appear here once they have been properly ingested
+              and stored in the correct data warehouse location.
+            </div>
+          </template>
+        </empty-page>
+        <empty-page
+          v-else
+          class="title-no-notification"
+          type="error-on-screens"
+          :size="50"
+        >
+          <template #title>
+            <div class="h2">
+              {{ selectedDataSource.name }} data feed table is currently
+              unavailable
+            </div>
+          </template>
+          <template #subtitle>
+            <div class="body-2">
+              Our team is working hard to fix it. Please be patient and try
+              again soon!
+            </div>
+          </template>
+        </empty-page>
+      </v-row>
+    </v-card>
   </div>
 </template>
 
@@ -178,6 +210,7 @@ export default {
         },
       ],
       loading: true,
+      datafeedErrorState: false,
     }
   },
 
@@ -200,7 +233,7 @@ export default {
     },
 
     hasDataFeeds() {
-      return this.dataSourceDataFeeds.length
+      return this.dataSourceDataFeeds ? this.dataSourceDataFeeds.length : 0
     },
 
     breadcrumbItems() {
@@ -230,6 +263,8 @@ export default {
         id: this.selectedDataSource.id,
         type: this.selectedDataSource.type,
       })
+    } catch (error) {
+      this.datafeedErrorState = true
     } finally {
       this.loading = false
     }
@@ -278,5 +313,15 @@ export default {
       }
     }
   }
+}
+.empty-error-card {
+  height: 280px;
+  border: 1px solid var(--v-black-lighten2);
+  border-radius: 12px;
+  margin-top: 72px;
+}
+.data-feed-frame {
+  background-image: url("../../assets/images/no-lift-chart-frame.png");
+  background-position: center;
 }
 </style>

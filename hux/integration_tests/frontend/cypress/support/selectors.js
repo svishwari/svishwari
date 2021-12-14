@@ -193,6 +193,8 @@ export default {
     notificationlistmenu: "[data-e2e='notification-item']",
   },
   audience: {
+    audienceFilterToggle: "[data-e2e='audienceFilterToggle']",
+    audienceFilters: "[data-e2e='audienceFilters']",
     audiencelist: "[data-e2e='audiencelist']",
     audiencenameclick: "[data-e2e='audiencename']",
     audiencehistory: "[data-e2e='audience-history']",

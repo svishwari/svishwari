@@ -7,7 +7,7 @@
       color="white"
       class="hux-filters-drawer"
     >
-      <div class="wrapper" :style="minHeight">
+      <div class="wrapper">
         <div class="header">
           <slot name="header">
             <h2 class="text-h2">
@@ -20,7 +20,7 @@
               min-width="50"
               height="24"
               class="primary--text"
-              :disabled="!Boolean(count)"
+              :disabled="!Boolean(count) || disableClear"
               @click="$emit('clear')"
             >
               Clear
@@ -28,13 +28,13 @@
           </slot>
         </div>
 
-        <div class="content" :style="maxHeight">
+        <div class="content" :style="height">
           <slot name="default">
             <!-- `FilterPanels` live here -->
           </slot>
         </div>
 
-        <div class="footer mt-auto">
+        <div class="footer mt-auto white">
           <slot name="footer">
             <hux-button
               size="large"
@@ -91,27 +91,21 @@ export default defineComponent({
       default: 0,
     },
 
-    offsetVal: {
-      type: String,
+    disableClear: {
+      type: Boolean,
       required: false,
-      default: "180px",
+      default: false,
     },
-
     contentHeight: {
       type: String,
       required: false,
-      default: "252px",
+      default: "260px",
     },
   },
 
   computed: {
-    minHeight() {
-      return "min-height: " + `calc(100vh - ${this.offsetVal})`
-    },
-    maxHeight() {
-      return (
-        "max-height: " + this.contentHeight + "; height: " + this.contentHeight
-      )
+    height() {
+      return "height: calc(100vh - " + this.contentHeight
     },
   },
 })
@@ -122,16 +116,17 @@ $footerHeight: 80px;
 $headerHeight: 40px;
 $padding: 20px;
 $width: 300px;
-
+$zIndex: 4;
 .hux-filters-drawer {
   border-left: 1px solid var(--v-black-lighten3) !important;
   width: $width;
   height: 100%;
-
+  z-index: $zIndex;
+  position: absolute;
+  right: 0;
   .wrapper {
     display: flex;
     flex-direction: column;
-    position: fixed;
     width: $width;
   }
 
@@ -157,7 +152,10 @@ $width: 300px;
 
   .footer {
     height: $footerHeight;
-    border-top: 1px solid var(--v-black-lighten3);
+    border-top: 1px solid var(--v-black-lighten3) !important;
+    position: fixed;
+    bottom: 0;
+    z-index: $zIndex;
   }
 }
 </style>

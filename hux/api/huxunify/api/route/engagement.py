@@ -1400,13 +1400,16 @@ class UpdateCampaignsForAudience(SwaggerView):
             audience_id,
         )
 
+        # get audience
+        audience = get_audience(database, audience_id)
+
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
                 "Successfully attached campaigns to engagement %s audience %s.",
-                engagement_id,
-                audience_id,
+                engagement[db_c.NAME],
+                audience[db_c.NAME] if audience else audience_id,
             ),
             api_c.ENGAGEMENT_TAG,
             user[api_c.USER_NAME],

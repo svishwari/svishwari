@@ -13,7 +13,7 @@
   >
     <div v-if="icon || title" class="d-flex align-center">
       <logo :type="icon" />
-      <div class="pl-2 body-1">
+      <div class="pl-2 black--text body-1">
         {{ title }}
       </div>
     </div>
@@ -27,7 +27,7 @@
         :icon-size="12"
         :icon="isAdded ? 'mdi-check' : null"
         size="large"
-        :is-disabled="isAlreadyAdded"
+        :is-disabled="isAlreadyAdded || isModelRequested"
         :box-shadow="false"
         icon-position="left"
         class="ma-2"
@@ -35,10 +35,18 @@
         <span
           :class="[
             isAdded ? 'white--text' : 'black--text text--lighten4',
-            isAlreadyAdded ? 'black--text text--lighten-3' : '',
+            isAlreadyAdded || isModelRequested
+              ? 'black--text text--lighten-3'
+              : '',
           ]"
         >
-          <span v-if="requestedButton" class="text-button">
+          <span
+            v-if="requestedButton"
+            class="text-button"
+            :class="[
+              isModelRequested || isAdded ? '' : 'black--text text--lighten-4',
+            ]"
+          >
             {{ isModelRequested || isAdded ? "Requested" : "Request" }}
           </span>
           <span v-else class="text-button"

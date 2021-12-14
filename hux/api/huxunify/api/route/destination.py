@@ -39,6 +39,7 @@ from huxunifylib.connectors import (
     AudienceAlreadyExists,
     AuthenticationFailed,
 )
+from huxunifylib.connectors import connector_sfmc
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
     parameter_store,
@@ -911,9 +912,19 @@ class DestinationDataExtPostView(SwaggerView):
             status_code = HTTPStatus.CREATED
 
             try:
+                # work around to handle connector issue - deep copy list
+                # pylint: disable=unnecessary-comprehension
+                sfmc_cdp_prop_list = [
+                    x for x in connector_sfmc.SFMC_CDP_PROPERTIES_LIST
+                ]
+
                 extension = sfmc_connector.create_data_extension(
                     body.get(api_c.DATA_EXTENSION)
                 )
+
+                # work around to handle connector issue - set list back
+                connector_sfmc.SFMC_CDP_PROPERTIES_LIST = sfmc_cdp_prop_list
+
                 # pylint: disable=too-many-function-args
                 create_notification(
                     database,
