@@ -66,7 +66,7 @@ export default {
           disabled: true,
           icon: null,
         },
-      ], 
+      ],
       panelListItems: [
         {
           id: 1,
