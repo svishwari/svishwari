@@ -3,6 +3,7 @@ orchestration(audience/engagement) management.
 """
 
 import logging
+import re
 import datetime
 from typing import Union
 
@@ -243,7 +244,11 @@ def get_all_audiences(
             ]
         if filters.get(db_c.ATTRIBUTE):
             find_filters["$and"] = [
-                {db_c.ATTRIBUTE_FILTER_FIELD: attribute}
+                {
+                    db_c.ATTRIBUTE_FILTER_FIELD: {
+                        "$regex": re.compile(rf"^{attribute}$(?i)")
+                    }
+                }
                 for attribute in filters.get(db_c.ATTRIBUTE)
             ]
 
@@ -477,7 +482,12 @@ def get_audience_insights(
         return list(
             collection.aggregate(
                 [
-                    {"$match": {"audiences.id": audience_id}},
+                    {
+                        "$match": {
+                            "audiences.id": audience_id,
+                            db_c.DELETED: False,
+                        }
+                    },
                     {
                         "$unwind": {
                             "path": "$audiences",
@@ -704,7 +714,11 @@ def get_all_audiences_and_deliveries(
                 {
                     "$match": {
                         "$and": [
-                            {db_c.ATTRIBUTE_FILTER_FIELD: attribute}
+                            {
+                                db_c.ATTRIBUTE_FILTER_FIELD: {
+                                    "$regex": re.compile(rf"^{attribute}$(?i)")
+                                }
+                            }
                             for attribute in filters.get(db_c.ATTRIBUTE)
                         ]
                     }

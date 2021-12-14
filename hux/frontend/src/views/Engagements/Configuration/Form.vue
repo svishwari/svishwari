@@ -302,7 +302,7 @@
           tile
           color="primary"
           height="44"
-          :disabled="!isValid"
+          :is-disabled="!isValid || !isDateValid"
           data-e2e="create-engagement"
           @click="deliverNewEngagement()"
         >
@@ -314,7 +314,7 @@
           tile
           color="primary"
           height="44"
-          :disabled="!isValid || !isDateValid"
+          :is-disabled="!isValid || !isDateValid"
           @click="addNewEngagement()"
         >
           Create
@@ -442,21 +442,6 @@ export default {
     },
 
     payload() {
-      const recurringConfig = {}
-      recurringConfig["every"] = this.localSchedule.every
-      recurringConfig["periodicity"] = this.localSchedule.periodicity
-      recurringConfig["hour"] = this.localSchedule.hour
-      recurringConfig["minute"] = this.localSchedule.minute
-      recurringConfig["period"] = this.localSchedule.period
-      if (this.localSchedule && this.localSchedule.periodicity == "Weekly") {
-        recurringConfig["day_of_week"] = this.localSchedule.day_of_week
-      } else if (
-        this.localSchedule &&
-        this.localSchedule.periodicity == "Monthly"
-      ) {
-        recurringConfig["day_of_month"] = [this.localSchedule.monthlyDayDate]
-      }
-
       const requestPayload = {
         name: this.value.name,
         description: this.value.description,
@@ -469,12 +454,29 @@ export default {
       }
 
       if (this.value.delivery_schedule == 1) {
+        const recurringConfig = {}
+        recurringConfig["every"] = this.localSchedule.every
+        recurringConfig["periodicity"] = this.localSchedule.periodicity
+        recurringConfig["hour"] = this.localSchedule.hour
+        recurringConfig["minute"] = this.localSchedule.minute
+        recurringConfig["period"] = this.localSchedule.period
+        if (this.localSchedule && this.localSchedule.periodicity == "Weekly") {
+          recurringConfig["day_of_week"] = this.localSchedule.day_of_week
+        } else if (
+          this.localSchedule &&
+          this.localSchedule.periodicity == "Monthly"
+        ) {
+          recurringConfig["day_of_month"] = [this.localSchedule.monthlyDayDate]
+        }
         requestPayload["delivery_schedule"] = {
-          start_date: !this.isManualDelivery
-            ? new Date(this.selectedStartDate).toISOString()
-            : null,
+          start_date:
+            !this.isManualDelivery && this.selectedStartDate !== "Select date"
+              ? new Date(this.selectedStartDate).toISOString()
+              : null,
           end_date:
-            !this.isManualDelivery && this.selectedEndDate
+            !this.isManualDelivery &&
+            this.selectedEndDate !== "Select date" &&
+            this.selectedEndDate !== "No end date"
               ? new Date(this.selectedEndDate).toISOString()
               : null,
           schedule: recurringConfig,

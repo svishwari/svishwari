@@ -38,6 +38,8 @@ const mockVersionHistory = (num = 3) => {
 }
 
 export default {
+  category: () =>
+    faker.random.arrayElement(["Web", "Salesforecasting", "Email", "TrustiId"]),
   description: "Propensity of a customer unsubscribing to emails.",
   fulcrum_date: () => faker.date.past(),
   last_trained: () => faker.date.recent(),
@@ -56,14 +58,7 @@ export default {
       "Informational",
     ]),
   type: () =>
-    faker.random.arrayElement([
-      "purchase",
-      "prediction",
-      "ltv",
-      "churn",
-      "propensity",
-      "unsubscribe",
-    ]),
+    faker.random.arrayElement(["Classification", "Unknown", "Regression"]),
   version_history: () => mockVersionHistory(5),
   model_feature: (index) => mockModelFeature(index + 1),
 }

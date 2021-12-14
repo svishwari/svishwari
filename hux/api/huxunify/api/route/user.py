@@ -133,6 +133,14 @@ class UserProfile(SwaggerView):
                 },
             )
 
+            # merge lookalikes if any to audiences
+            if user[db_c.USER_FAVORITES]:
+                user[db_c.USER_FAVORITES][db_c.AUDIENCES] = user[
+                    db_c.USER_FAVORITES
+                ].get(db_c.AUDIENCES, []) + user[db_c.USER_FAVORITES].get(
+                    db_c.LOOKALIKE, []
+                )
+
             return (
                 UserSchema().dump(user),
                 HTTPStatus.OK,
@@ -413,7 +421,7 @@ class UserPatchView(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    @requires_access_levels([api_c.ADMIN_LEVEL])
     def patch(self, user: dict) -> Tuple[dict, int]:
         """Updates a user.
 

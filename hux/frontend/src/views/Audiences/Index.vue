@@ -16,6 +16,7 @@
           :size="22"
           class="cursor-pointer"
           color="black-darken4"
+          data-e2e="audienceFilterToggle"
           @click.native="isFilterToggled = !isFilterToggled"
         />
       </template>
@@ -33,7 +34,7 @@
 
           <template slot="right">
             <router-link
-              :to="{ name: 'AudienceConfiguration' }"
+              :to="{ name: 'SegmentPlayground' }"
               class="text-decoration-none"
               append
             >
@@ -52,17 +53,13 @@
             </router-link>
           </template>
         </page-header>
-        <v-progress-linear
-          :active="loading"
-          :indeterminate="loading"
-          class="tab-min-width"
-        />
+        <v-progress-linear :active="loading" :indeterminate="loading" />
         <div v-if="!loading" class="white">
           <hux-data-table
             v-if="isDataExists"
             :columns="columnDefs"
             :data-items="audienceList"
-            view-height="calc(100vh - 210px)"
+            view-height="calc(100vh - 253px)"
             sort-column="update_time"
             sort-desc="false"
             data-e2e="audience-table"
@@ -87,7 +84,7 @@
                   <span v-if="item.is_lookalike == true" class="mr-3">
                     <tooltip>
                       <template #label-content>
-                        <icon type="lookalike" :size="20" class="mr-2" />
+                        <icon type="lookalike" :size="20" />
                       </template>
                       <template #hover-content>Lookalike audience</template>
                     </tooltip>
@@ -101,6 +98,7 @@
                     has-favorite
                     :is-favorite="isUserFavorite(item, 'audiences')"
                     class="text-body-1"
+                    :show-star="!item.is_lookalike"
                     @actionFavorite="handleActionFavorite(item, 'audiences')"
                   />
                 </div>
@@ -115,11 +113,16 @@
                 <div v-if="header.value == 'size'">
                   <size :value="item[header.value]" />
                 </div>
-                <div
-                  v-if="header.value == 'filters' && item[header.value]"
-                  class="filter_col"
-                >
-                  <span v-if="item[header.value] === 'null'">—</span>
+                <div v-if="header.value == 'filters'" class="filter_col">
+                  <span
+                    v-if="
+                      item[header.value] == 'null' ||
+                      !item[header.value] ||
+                      item[header.value].length == 0
+                    "
+                  >
+                    —
+                  </span>
                   <span v-else>
                     <span
                       v-for="(filter, filterIndex) in filterTags[item.name]"
@@ -312,6 +315,8 @@
       <div class="ml-auto">
         <audience-filter
           v-model="isFilterToggled"
+          view-height="calc(100vh - 180px)"
+          :filter-options="attributeOptions()"
           @onSectionAction="applyFilter"
         />
       </div>
@@ -424,7 +429,7 @@ export default {
         {
           text: "Attributes",
           value: "filters",
-          width: "300px",
+          width: "362px",
         },
         {
           text: "Destinations",
@@ -469,6 +474,7 @@ export default {
     ...mapGetters({
       rowData: "audiences/list",
       userFavorites: "users/favorites",
+      ruleAttributes: "audiences/audiencesRules",
     }),
     audienceList() {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
@@ -494,7 +500,12 @@ export default {
           filterTagsObj[audience.name] = new Set()
           audience.filters.forEach((item) => {
             item.section_filters.forEach((obj) => {
-              filterTagsObj[audience.name].add(obj.field)
+              let nameObj = this.attributeOptions().find(
+                (item) => item.key == obj.field.toLowerCase()
+              )
+              if (nameObj) {
+                filterTagsObj[audience.name].add(nameObj.name)
+              }
             })
           })
         }
@@ -506,6 +517,7 @@ export default {
     this.loading = true
     try {
       await this.getAllAudiences({})
+      await this.getAudiencesRules()
     } finally {
       this.loading = false
     }
@@ -516,11 +528,46 @@ export default {
       markFavorite: "users/markFavorite",
       clearFavorite: "users/clearFavorite",
       deleteAudience: "audiences/remove",
+      getAudiencesRules: "audiences/fetchConstants",
     }),
+
+    attributeOptions() {
+      const options = []
+      if (this.ruleAttributes && this.ruleAttributes.rule_attributes) {
+        Object.entries(this.ruleAttributes.rule_attributes).forEach((attr) => {
+          Object.keys(attr[1]).forEach((optionKey) => {
+            if (
+              Object.values(attr[1][optionKey])
+                .map((o) => typeof o === "object" && !Array.isArray(o))
+                .includes(Boolean(true))
+            ) {
+              Object.keys(attr[1][optionKey]).forEach((att) => {
+                if (typeof attr[1][optionKey][att] === "object") {
+                  options.push({
+                    key: att,
+                    name: attr[1][optionKey][att]["name"],
+                    category: attr[0],
+                  })
+                }
+              })
+            } else {
+              options.push({
+                key: optionKey,
+                name: attr[1][optionKey]["name"],
+                category: attr[0],
+              })
+            }
+          })
+        })
+      }
+      return options
+    },
 
     isUserFavorite(entity, type) {
       return (
-        this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
+        this.userFavorites &&
+        this.userFavorites[type] &&
+        this.userFavorites[type].includes(entity.id)
       )
     },
     handleActionFavorite(item, type) {
@@ -547,7 +594,7 @@ export default {
       let actionItems = [
         {
           title: isFavorite ? "Unfavorite" : "Favorite",
-          isDisabled: false,
+          isDisabled: audience.is_lookalike,
           onClick: () => {
             this.handleActionFavorite(audience, "audiences")
           },

@@ -252,7 +252,13 @@ const actions = {
 
   async add({ commit }, audience) {
     try {
-      const response = await api.audiences.create(audience)
+      let response
+      if (audience.deliver) {
+        delete audience.deliver
+        response = await api.audiences.createAndDeliver(audience)
+      } else {
+        response = await api.audiences.create(audience)
+      }
       commit("SET_ONE", response.data)
       return response.data
     } catch (error) {
@@ -356,10 +362,12 @@ const actions = {
     }
   },
 
-  async fetchFilterSize({ commit }, filter) {
+  async fetchFilterSize({ commit }, { filter, overall }) {
     try {
       const response = await api.customers.getOverview(filter)
-      commit("customers/SET_OVERVIEW", response.data, { root: true })
+      if (overall) {
+        commit("customers/SET_OVERVIEW", response.data, { root: true })
+      }
       return response.data
     } catch (error) {
       handleError(error)

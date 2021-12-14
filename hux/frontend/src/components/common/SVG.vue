@@ -13,12 +13,12 @@ export default {
     },
 
     width: {
-      type: Number,
+      type: [Number, String],
       required: false,
     },
 
     height: {
-      type: Number,
+      type: [Number, String],
       required: false,
     },
 
