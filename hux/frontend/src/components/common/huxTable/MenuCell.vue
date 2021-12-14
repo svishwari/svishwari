@@ -2,7 +2,11 @@
   <v-row class="menu-cell-wrapper">
     <v-col class="d-flex pr-0 align-center" style="height: 100%">
       <slot name="expand-icon"></slot>
-      <router-link :to="routePath" class="text-decoration-none" append>
+      <router-link
+        :to="routePath"
+        class="text-decoration-none menu-link"
+        append
+      >
         <tooltip>
           <template slot="label-content">
             <span class="primary--text ellipsis menu-value" :class="labelClass">
@@ -18,7 +22,7 @@
       <div class="d-flex">
         <span class="action-icon font-weight-light menu-activator">
           <v-btn
-            v-if="hasFavorite"
+            v-if="hasFavorite && showStar"
             icon
             height="22"
             width="22"
@@ -152,6 +156,11 @@ export default Vue.extend({
       required: false,
       default: false,
     },
+    showStar: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
 
   data() {
@@ -229,6 +238,11 @@ export default Vue.extend({
     .action-icon {
       display: block;
     }
+  }
+  .menu-link {
+    position: absolute;
+    margin-left: 24px;
+    margin-top: 1px;
   }
 }
 .sub-menu-class {

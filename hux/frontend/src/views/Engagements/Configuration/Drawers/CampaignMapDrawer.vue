@@ -88,17 +88,23 @@
       </div>
     </template>
     <template #footer-left>
-      <v-btn
+      <hux-button
+        size="large"
         tile
-        color="white"
+        variant="white"
         class="btn-border box-shadow-none"
         @click="closeDrawer"
       >
         <span class="primary--text">Cancel</span>
-      </v-btn>
-      <v-btn tile color="primary" :disabled="!canMapNow" @click="mapSelections">
+      </hux-button>
+      <hux-button
+        tile
+        color="primary"
+        :disabled="!canMapNow"
+        @click="mapSelections"
+      >
         Map selection
-      </v-btn>
+      </hux-button>
     </template>
   </drawer>
 </template>
@@ -109,10 +115,11 @@ import Drawer from "@/components/common/Drawer.vue"
 import DataCards from "../../../../components/common/DataCards.vue"
 import HuxDropdown from "../../../../components/common/HuxDropdown.vue"
 import Tooltip from "../../../../components/common/Tooltip.vue"
+import huxButton from "@/components/common/huxButton"
 
 export default {
   name: "CampaignMapDrawer",
-  components: { Drawer, DataCards, HuxDropdown, Tooltip },
+  components: { Drawer, DataCards, HuxDropdown, Tooltip, huxButton },
   props: {
     toggle: {
       type: Boolean,

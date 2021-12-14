@@ -37,7 +37,7 @@
       <v-list v-if="!endDate">
         <v-date-picker
           v-model="start"
-          class="start-date-picker"
+          class="start-date-picker mb-4"
           :min="todaysDate"
           no-title
           scrollable
@@ -50,6 +50,7 @@
           </div>
           <v-spacer></v-spacer>
           <huxButton
+            size="large"
             variant="white"
             is-tile
             class="btn-cancel ml-4 btn-border box-shadow-none"

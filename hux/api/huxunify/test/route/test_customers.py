@@ -478,8 +478,13 @@ class TestCustomersOverview(TestCase):
             t_c.validate_schema(MatchingTrendsSchema(), response.json, True)
         )
 
-    def test_customer_events(self):
-        """Test customer events for a hux-id."""
+    @given(interval=st.sampled_from(["", api_c.DAY, api_c.WEEK, api_c.MONTH]))
+    def test_customer_events(self, interval: str):
+        """Test fetching customer events for default interval for a hux-id.
+
+        Args:
+            interval (str): Interval by which the data is to be fetched
+        """
 
         hux_id = "HUX123456789012345"
 
@@ -487,16 +492,24 @@ class TestCustomersOverview(TestCase):
             "start_date": "2021-01-01",
             "end_date": "2021-01-02",
         }
+        interval = interval if interval else api_c.DAY
+
+        expected_response = {
+            api_c.DAY: t_c.CUSTOMER_EVENT_BY_DAY_RESPONSE,
+            api_c.WEEK: t_c.CUSTOMER_EVENT_BY_WEEK_RESPONSE,
+            api_c.MONTH: t_c.CUSTOMER_EVENT_BY_MONTH_RESPONSE,
+        }
 
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{hux_id}/events",
-            json=t_c.CUSTOMER_EVENT_RESPONSE,
+            json=expected_response[interval],
         )
         self.request_mocker.start()
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
+            query_string={api_c.INTERVAL: interval},
             data=json.dumps(filter_attributes),
             headers=t_c.STANDARD_HEADERS,
         )
@@ -532,8 +545,9 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
-            json=t_c.MOCKED_GENDER_SPENDING,
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
+            f"/spending-by-day",
+            json=t_c.MOCKED_GENDER_SPENDING_BY_DAY,
         )
         self.request_mocker.start()
 
@@ -700,8 +714,15 @@ class TestCustomersOverview(TestCase):
 
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
-    def test_get_customer_events_dependency_failure(self) -> None:
-        """Test get customer events 424 dependency failure."""
+    @given(interval=st.sampled_from(["", api_c.DAY, api_c.WEEK, api_c.MONTH]))
+    def test_get_customer_events_dependency_failure(
+        self, interval: str
+    ) -> None:
+        """Test get customer events 424 dependency failure.
+
+        Args:
+            interval (str): Interval to aggregate events data on
+        """
 
         hux_id = "HUX123456789012345"
 
@@ -709,6 +730,8 @@ class TestCustomersOverview(TestCase):
             "start_date": "2021-01-01",
             "end_date": "2021-01-02",
         }
+
+        interval = interval if interval else api_c.DAY
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -719,6 +742,7 @@ class TestCustomersOverview(TestCase):
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
+            query_string={api_c.INTERVAL: interval},
             data=json.dumps(filter_attributes),
             headers=t_c.STANDARD_HEADERS,
         )
@@ -830,7 +854,8 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
+            f"/spending-by-day",
             json={},
         )
         self.request_mocker.start()

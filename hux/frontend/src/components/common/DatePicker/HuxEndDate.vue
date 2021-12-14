@@ -40,7 +40,7 @@
           <div class="dropdown-menuitems">
             <v-list-item v-if="isSubMenu" @click="onCancel()">
               <v-list-item-title
-                class="d-flex align-center"
+                class="d-flex align-center text-h6"
                 @click="resetDate()"
               >
                 No end date
@@ -58,7 +58,7 @@
               <v-list-item-title class="d-flex align-center">
                 <v-date-picker
                   v-model="end"
-                  class="end-date-picker"
+                  class="end-date-picker mb-4"
                   no-title
                   scrollable
                   :min="minDate"
@@ -70,6 +70,7 @@
                   </div>
                   <v-spacer></v-spacer>
                   <huxButton
+                    size="large"
                     variant="white"
                     is-tile
                     class="btn-cancel ml-4 btn-border box-shadow-none"

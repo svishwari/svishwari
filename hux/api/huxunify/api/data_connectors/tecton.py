@@ -115,8 +115,16 @@ class Tecton:
                 ),
                 headers=self.headers,
             )
-            record_health_status_metric(api_c.TECTON_CONNECTION_HEALTH, True)
-            return response.status_code, "Tecton available."
+
+            record_health_status_metric(
+                api_c.TECTON_CONNECTION_HEALTH, response.status_code == 200
+            )
+            if response.status_code == 200:
+                return True, "Tecton available."
+            return (
+                False,
+                f"Tecton not available. Received: {response.status_code}",
+            )
 
         except Exception as exception:  # pylint: disable=broad-except
             # report the generic error message
@@ -722,7 +730,7 @@ class TectonMockConnector(Tecton):
                 api_c.TYPE: str(feature[5]).lower(),
                 api_c.OWNER: feature[6],
                 api_c.STATUS: api_c.MODEL_STATUS_MAPPING.get(
-                    feature[8], api_c.STATUS_PENDING
+                    str(feature[8]).lower(), api_c.STATUS_PENDING
                 ),
                 api_c.LATEST_VERSION: feature[9],
                 api_c.PREDICTION_WINDOW: int(feature[3]),

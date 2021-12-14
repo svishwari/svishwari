@@ -1,6 +1,8 @@
 """This module contains database defines."""
 
 # General Defines
+from bson import ObjectId
+
 ID = "_id"
 CONNECT_RETRY_INTERVAL = 1
 DUPLICATE_ERR_CODE = 11000
@@ -349,6 +351,9 @@ LOOKALIKE_SOURCE_AUD_ID = "source_audience_id"
 LOOKALIKE_SOURCE_AUD_NAME = "source_audience_name"
 LOOKALIKE_SOURCE_AUD_SIZE = "source_audience_size"
 LOOKALIKE_SOURCE_AUD_FILTERS = "source_audience_filters"
+LOOKALIKE_ATTRIBUTE_FILTER_FIELD = (
+    f"{LOOKALIKE_SOURCE_AUD_FILTERS}.section_filters.field"
+)
 
 USER_ROLE = "role"
 USER_ID = "user_id"
@@ -537,7 +542,11 @@ ALLOWED_COLLECTIONS = [
     DELIVERY_PLATFORM_COLLECTION,
     LOOKALIKE_AUDIENCE_COLLECTION,
     MODELS_COLLECTION,
+    AUDIENCES_COLLECTION,
+    ENGAGEMENTS_COLLECTION,
 ]
 
 # 30 minutes.
 DELIVERY_JOB_TIMEOUT = 30
+
+ZERO_OBJECT_ID = ObjectId("0" * 24)
