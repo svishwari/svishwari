@@ -1378,7 +1378,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(response.status_code, HTTPStatus.CREATED)
 
     def test_set_engagement_without_destinations_in_audience(self):
         """Test set engagement API without destinations in audience."""

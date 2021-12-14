@@ -357,6 +357,7 @@ class SetEngagement(SwaggerView):
         Returns:
             Tuple[dict, int]: Engagement created, HTTP status code.
         """
+
         body = EngagementPostSchema().load(
             request.get_json(), partial=("delivery_schedule",)
         )
@@ -489,7 +490,6 @@ class UpdateEngagement(SwaggerView):
         body = EngagementPutSchema(unknown=api_c.EXCLUDE).load(
             request.get_json()
         )
-        # validate audiences exist
 
         # Check if delivery schedule exists, if exists generate cron string.
         if body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, None):
@@ -697,6 +697,7 @@ class AddAudienceEngagement(SwaggerView):
         body = AudienceEngagementSchema().load(
             request.get_json(), partial=True
         )
+
         # validate audiences exist
         audience_names = []
         for audience in body.get(api_c.AUDIENCES, []):

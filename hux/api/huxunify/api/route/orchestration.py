@@ -968,6 +968,7 @@ class AudiencePostView(SwaggerView):
         """
 
         body = AudiencePostSchema().load(request.get_json(), partial=True)
+
         token_response = get_token_from_request(request)
 
         # validate destinations

@@ -86,6 +86,7 @@ def set_engagement(
 
     if delivery_schedule:
         doc[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = delivery_schedule
+
     try:
         engagement_id = collection.insert_one(doc).inserted_id
         if engagement_id is not None:
