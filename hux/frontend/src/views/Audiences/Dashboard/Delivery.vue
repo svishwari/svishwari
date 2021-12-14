@@ -48,7 +48,7 @@
             height="2rem"
             class="primary--text text-body-1"
             data-e2e="drawerToggle"
-            @click="addEngagement()"
+            @click="$emit('addEngagement')"
           >
             An engagement
           </v-btn>

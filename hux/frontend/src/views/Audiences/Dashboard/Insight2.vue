@@ -167,6 +167,7 @@
                 "
                 @onAddDestination="addDestination($event)"
                 @engagementDeliveries="deliverEngagement($event)"
+                @addEngagement="openAttachEngagementDrawer()"
               >
                 <template #title-left>
                   <div class="d-flex align-center">
@@ -571,7 +572,7 @@ export default {
         case "deliver now":
           console.log("deliver now")
           await this.deliverAudienceDestination({
-            id: event.target.id,
+            id: event.parent.id,
             audienceId: this.audienceId,
             destinationId: event.data.delivery_platform_id,
           })
@@ -592,7 +593,7 @@ export default {
           this.deleteActionData = {
             engagementId: event.parent.id,
             audienceId: this.audienceId,
-            data: { id: event.target.id },
+            data: { id: event.data.delivery_platform_id },
           }
           this.showConfirmModal = true
           break
