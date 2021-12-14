@@ -180,7 +180,7 @@ class AudienceDownload(SwaggerView):
 
     # pylint: disable=no-self-use, too-many-locals
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def get(
         self, audience_id: str, download_type: str, user: dict
     ) -> Tuple[Response, int]:
@@ -666,7 +666,7 @@ class AudienceRulesLocation(SwaggerView):
         if field_type == api_c.CITY:
             data = jsonify(
                 [
-                    {x[1]: f"{x[1]}, {x[2]} USA"}
+                    {f"{x[1]}|{x[2]}|USA": f"{x[1]}, {x[2]} USA"}
                     for x in [
                         x
                         for x in stub_city_zip_data.city_zip_data
@@ -686,7 +686,9 @@ class AudienceRulesLocation(SwaggerView):
                 ]
             )
         else:
-            return {"message": "Incorrect Combination"}, HTTPStatus.NOT_FOUND
+            return {
+                "message": f"Field type received {field_type}"
+            }, HTTPStatus.NOT_FOUND
 
         return data, HTTPStatus.OK
 
@@ -745,7 +747,7 @@ class AudienceRulesHistogram(SwaggerView):
         """
 
         # TODO Remove stub once CDM API is integrated
-        if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA.keys():
+        if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA:
             return {
                 "message": f"Data not found for {field_type}"
             }, HTTPStatus.NOT_FOUND

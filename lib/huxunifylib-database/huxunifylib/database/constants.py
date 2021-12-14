@@ -1,6 +1,8 @@
 """This module contains database defines."""
 
 # General Defines
+from bson import ObjectId
+
 ID = "_id"
 CONNECT_RETRY_INTERVAL = 1
 DUPLICATE_ERR_CODE = 11000
@@ -46,6 +48,7 @@ NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
+MODELS_COLLECTION = "models"
 
 CONSTANT_NAME = "constant"
 CONSTANT_KEY = "key"
@@ -348,6 +351,9 @@ LOOKALIKE_SOURCE_AUD_ID = "source_audience_id"
 LOOKALIKE_SOURCE_AUD_NAME = "source_audience_name"
 LOOKALIKE_SOURCE_AUD_SIZE = "source_audience_size"
 LOOKALIKE_SOURCE_AUD_FILTERS = "source_audience_filters"
+LOOKALIKE_ATTRIBUTE_FILTER_FIELD = (
+    f"{LOOKALIKE_SOURCE_AUD_FILTERS}.section_filters.field"
+)
 
 USER_ROLE = "role"
 USER_ID = "user_id"
@@ -458,6 +464,12 @@ ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
 PAGINATION_ASCENDING = "ascending"
 PAGINATION_DESCENDING = "descending"
 
+# model constants
+MODEL_DESCRIPTION = "description"
+MODEL_USERNAME = "username"
+MODEL_ID = "model_id"
+
+
 # Custom type definitions
 CUSTOM_TYPE_BOOL = "boolean"
 CUSTOM_TYPE_CAT = "categorical"
@@ -487,7 +499,17 @@ REQUIRED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
         CONFIGURATION_FIELD_NAME,
         CONFIGURATION_FIELD_TYPE,
-    ]
+    ],
+    MODELS_COLLECTION: [
+        NAME,
+        TYPE,
+        CATEGORY,
+        MODEL_ID,
+        STATUS,
+        MODEL_DESCRIPTION,
+        ADDED,
+        ENABLED,
+    ],
 }
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
@@ -500,7 +522,18 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_STATUS,
         CONFIGURATION_FIELD_ENABLED,
         CONFIGURATION_FIELD_ROADMAP,
-    ]
+    ],
+    MODELS_COLLECTION: [
+        NAME,
+        TYPE,
+        CATEGORY,
+        STATUS,
+        MODEL_DESCRIPTION,
+        MODEL_ID,
+        MODEL_USERNAME,
+        ADDED,
+        ENABLED,
+    ],
 }
 
 # Allowed collections
@@ -508,7 +541,12 @@ ALLOWED_COLLECTIONS = [
     CONFIGURATIONS_COLLECTION,
     DELIVERY_PLATFORM_COLLECTION,
     LOOKALIKE_AUDIENCE_COLLECTION,
+    MODELS_COLLECTION,
+    AUDIENCES_COLLECTION,
+    ENGAGEMENTS_COLLECTION,
 ]
 
 # 30 minutes.
 DELIVERY_JOB_TIMEOUT = 30
+
+ZERO_OBJECT_ID = ObjectId("0" * 24)

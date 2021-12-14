@@ -13,6 +13,7 @@ import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import * as d3TimeFormat from "d3-time-format"
 import colors from "@/plugins/colors.js"
+import { max } from "lodash"
 
 export default {
   name: "MultiLineChart",
@@ -70,8 +71,17 @@ export default {
       let ids = [
         { label: "Unique Hux IDs", xValue: 0 },
         { label: "Anonymous IDs", xValue: 162 },
-        { label: "Known IDs", xValue: 325 },
+        { label: "Individual IDs", xValue: 325 },
       ]
+      let dataKeysMaxValue = {
+        unique_hux_ids: Math.max(this.data.map((d) => d.unique_hux_ids)),
+        anonymous_ids: Math.max(this.data.map((d) => d.anonymous_ids)),
+        known_ids: Math.max(this.data.map((d) => d.known_ids)),
+      }
+      let maxKey = max(
+        Object.keys(dataKeysMaxValue),
+        (o) => dataKeysMaxValue[o]
+      )
       let color = d3Scale
         .scaleOrdinal()
         .range([colors.darkBlue, colors.chart2, colors.chart3])
@@ -94,7 +104,7 @@ export default {
       let yScale = d3Scale
         .scaleLinear()
         .rangeRound([h, 0])
-        .domain([0, d3Array.max(this.data, (d) => d.known_ids)])
+        .domain([0, d3Array.max(this.data, (d) => d[maxKey])])
         .nice(4)
       svg
         .append("g")
@@ -264,7 +274,7 @@ export default {
         .append("svg")
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
-        .attr("width", 400)
+        .attr("width", 500)
         .style("margin-left", "20px")
         .style("margin-right", "20px")
         .style("margin-top", "10px")
