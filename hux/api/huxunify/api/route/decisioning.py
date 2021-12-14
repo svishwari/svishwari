@@ -112,7 +112,8 @@ class ModelsView(SwaggerView):
         all_models = Tecton().get_models()
 
         purchase_model = {
-            api_c.TYPE: "purchase",
+            api_c.TYPE: "Classification",
+            api_c.CATEGORY: "Email",
             api_c.FULCRUM_DATE: datetime(2021, 6, 26),
             api_c.PAST_VERSION_COUNT: 0,
             api_c.LAST_TRAINED: datetime(2021, 6, 26),
@@ -345,6 +346,13 @@ class RemoveRequestedModel(SwaggerView):
 
         model_id = request.args.get(api_c.MODEL_ID)
 
+        # get the model
+        model = collection_management.get_document(
+            database,
+            db_c.CONFIGURATIONS_COLLECTION,
+            {db_c.OBJECT_ID: model_id},
+        )
+
         deletion_status = collection_management.delete_document(
             database=database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
@@ -357,7 +365,7 @@ class RemoveRequestedModel(SwaggerView):
             notification_management.create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
-                f'Requested model "{model_id}" removed by {user[api_c.USER_NAME]}.',
+                f'Requested model "{model[db_c.NAME]}" removed by {user[api_c.USER_NAME]}.',
                 api_c.MODELS,
                 user[api_c.USER_NAME],
             )
