@@ -190,7 +190,7 @@ def get_audience_standalone_deliveries(audience_id: ObjectId) -> list:
     standalone_delivery_jobs = destination_management.get_delivery_jobs(
         database,
         audience_id=audience_id,
-        engagement_id=ObjectId("0" * 24),
+        engagement_id=db_c.ZERO_OBJECT_ID,
     )
 
     if standalone_delivery_jobs:

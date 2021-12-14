@@ -258,7 +258,7 @@ class OrchestrationRouteTest(TestCase):
                 self.audiences[0][db_c.ID],
                 destination[db_c.ID],
                 [],
-                ObjectId("0" * 24),
+                db_c.ZERO_OBJECT_ID,
             )
             for destination in self.destinations
         ]
