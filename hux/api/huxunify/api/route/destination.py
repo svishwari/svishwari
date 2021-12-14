@@ -296,6 +296,8 @@ class DestinationsView(SwaggerView):
                         ],
                         status=destination[db_c.DELIVERY_PLATFORM_STATUS],
                     )
+            # using a default here in case we do not have a proper mapping
+            # or just want to use the same constant value in the UI
             destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping.get(
                 destination[db_c.DELIVERY_PLATFORM_STATUS],
                 destination[db_c.DELIVERY_PLATFORM_STATUS],

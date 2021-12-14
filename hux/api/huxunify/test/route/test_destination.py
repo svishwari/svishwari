@@ -23,7 +23,10 @@ from huxunifylib.database.engagement_management import (
 )
 import huxunify.test.constants as t_c
 from huxunify.api.data_connectors.aws import parameter_store
-from huxunify.api.schema.destinations import DestinationDataExtGetSchema
+from huxunify.api.schema.destinations import (
+    DestinationDataExtGetSchema,
+    DestinationGetSchema,
+)
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
 
@@ -529,6 +532,8 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.destinations), len(response.json))
+        for destination in response.json:
+            self.assertEqual({}, DestinationGetSchema().validate(destination))
 
     def test_get_destination_with_valid_id(self):
         """Test get destination with valid ID."""
@@ -1218,7 +1223,7 @@ class TestDestinationRoutes(TestCase):
 
         # grab from database again and check update flag to False.
         destination = destination_management.get_delivery_platform(
-            self.database, self.destinations[0][db_c.ID]
+            self.database, destination[db_c.ID]
         )
         self.assertEqual(new_link, destination[db_c.LINK])
 
