@@ -562,8 +562,43 @@ export default {
       )
       this.showSelectDestinationsDrawer = true
     },
-    deliverEngagement(event) {
-      console.log("event", event)
+    async deliverEngagement(event) {
+      switch (event.target.title.toLowerCase()) {
+        case "Open destination":
+          console.log("Open destination")
+          break
+
+        case "deliver now":
+          console.log("deliver now")
+          await this.deliverAudienceDestination({
+            id: event.target.id,
+            audienceId: this.audienceId,
+            destinationId: event.data.delivery_platform_id,
+          })
+          this.dataPendingMesssage(event, "destination")
+          this.refreshEntity()
+          break
+
+        case "remove destination":
+          this.showConfirmModal = true
+          this.confirmDialog.actionType = "remove-destination"
+          this.confirmDialog.title = `Remove ${event.data.name} destination?`
+          this.confirmDialog.btnText = "Yes, remove it"
+          this.confirmDialog.icon = "sad-face"
+          this.confirmDialog.subtitle = ""
+          this.confirmDialog.type = "error"
+          this.confirmDialog.body =
+            "You will not be deleting this destination; this destination will not be attached to this specific audience anymore."
+          this.deleteActionData = {
+            engagementId: event.parent.id,
+            audienceId: this.audienceId,
+            data: { id: event.target.id },
+          }
+          this.showConfirmModal = true
+          break
+        default:
+          break
+      }
     },
     getAgeString(min_age, max_age) {
       if (min_age && max_age && min_age === max_age) {
@@ -644,7 +679,6 @@ export default {
       }
     },
     async triggerOverviewDestinationAction(event) {
-      console.log("hiiiiiiiiiiiiiiiii")
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":

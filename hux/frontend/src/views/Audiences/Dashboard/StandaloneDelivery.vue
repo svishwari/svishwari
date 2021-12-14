@@ -138,22 +138,7 @@ export default {
           width: "25%",
         },
       ],
-      deliveries: [
-        {
-          name: "Facebook",
-          type: "facebook",
-          status: "Active",
-          size: 878326,
-          next_delivery: "2021-11-30T00:21:21.857Z",
-        },
-        {
-          name: "Qualtrics",
-          type: "qualtrics",
-          status: "Active",
-          size: 838326,
-          next_delivery: "2021-11-30T01:31:31.957Z",
-        },
-      ],
+      deliveries: [],
     }
   },
   computed: {},

@@ -31,7 +31,7 @@
         </router-link>
       </span>
       <v-spacer> </v-spacer>
-      <div class="d-flex mr-4" @click="deliverAll(section)">
+      <div class="d-flex mr-4 cursor-pointer" @click="deliverAll(section)">
         <icon class="deliver-icon mr-2" type="deliver" :size="24" />
         Deliver all
       </div>
@@ -87,15 +87,20 @@
                 </template>
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group v-model="selection" active-class="">
-                    <v-list-item  @click="$emit('engagementDeliverySection', item)">
-                      <v-list-item-title> Deliver now </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title> Open destination </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
+                    <v-list-item
+                      v-for="option in destinationMenuOptions"
+                      :key="option.id"
+                      :disabled="!option.active"
+                      @click="
+                        $emit('engagementDeliverySection', {
+                          target: option,
+                          data: item,
+                          parent: section,
+                        })
+                      "
+                    >
                       <v-list-item-title>
-                        Remove destination
+                        {{ option.title }}
                       </v-list-item-title>
                     </v-list-item>
                   </v-list-item-group>
@@ -210,14 +215,6 @@ export default {
       engagementMenuOptions: [
         { id: 5, title: "Remove engagement", active: false },
       ],
-      destinationMenuOptions: [
-        { id: 2, title: "Create lookalike", active: false },
-        { id: 1, title: "Deliver now", active: true },
-        { id: 3, title: "Edit delivery schedule", active: true },
-        { id: 4, title: "Pause delivery", active: false },
-        { id: 5, title: "Open destination", active: false },
-        { id: 6, title: "Remove destination", active: false },
-      ],
       audienceMenuOptions: [
         {
           id: 1,
@@ -228,6 +225,11 @@ export default {
         { id: 3, title: "Create lookalike", active: false },
         { id: 4, title: "Pause all delivery", active: false },
         { id: 5, title: "Remove audience", active: true },
+      ],
+      destinationMenuOptions: [
+        { id: 1, title: "Deliver now", active: true },
+        { id: 3, title: "Open destination", active: false },
+        { id: 4, title: "Remove destination", active: true },
       ],
 
       stateListData: [],
