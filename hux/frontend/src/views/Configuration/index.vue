@@ -18,21 +18,12 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading" class="config-content">
-      <v-row v-if="false" class="">
+      <v-row v-if="isConfigActivated">
         <v-col>
           <!-- UI to show when configuration is activated -->
           <config-tabs />
         </v-col>
       </v-row>
-      <hux-empty
-        v-else-if="!isConfigActivated"
-        class="config-activating"
-        icon-type="settings"
-        :icon-size="50"
-        title="Nothing to show"
-        subtitle="Configuration is currently being activated. Please check back later. Thank you!"
-      >
-      </hux-empty>
       <error
         v-else
         icon-type="error-on-screens"
@@ -52,11 +43,11 @@ import Page from "@/components/Page"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import ConfigTabs from "./tabs"
 import TipsMenu from "@/components/common/TipsMenu.vue"
-import HuxEmpty from "@/components/common/screens/Empty"
+import Error from "@/components/common/screens/Error"
 
 export default {
   name: "Configuration",
-  components: { PageHeader, Page, Breadcrumb, HuxEmpty, ConfigTabs, TipsMenu },
+  components: { PageHeader, Page, Breadcrumb, ConfigTabs, TipsMenu, Error },
   data() {
     return {
       loading: false,
@@ -95,16 +86,21 @@ export default {
                 If you wish to view PII data, reach out to an an individual who has admin access. ",
         },
       ],
+      isConfigActivated: false,
     }
   },
-  computed: {
-    isConfigActivated() {
-      return true
-    },
-  },
+
   async mounted() {
-    await this.$store.dispatch("users/getUsers")
-    await this.$store.dispatch("configurations/getConfigModels")
+    this.loading = true
+    try {
+      await this.$store.dispatch("users/getUsers")
+      await this.$store.dispatch("configurations/getConfigModels")
+      this.isConfigActivated = true
+    } catch (error) {
+      this.isConfigActivated = false
+    } finally {
+      this.loading = false
+    }
   },
 }
 </script>
