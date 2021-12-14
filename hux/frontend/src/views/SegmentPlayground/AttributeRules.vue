@@ -434,7 +434,10 @@ export default {
         ],
       }
       try {
-        let data = await this.getRealtimeSize(filterJSON)
+        let data = await this.getRealtimeSize({
+          filter: filterJSON,
+          overall: false,
+        })
         condition.size = data.total_customers
         condition.awaitingSize = false
       } catch (error) {
@@ -487,7 +490,10 @@ export default {
         filterJSON.filters.push(sectionObject)
       }
       try {
-        let data = await this.getRealtimeSize(filterJSON)
+        let data = await this.getRealtimeSize({
+          filter: filterJSON,
+          overall: true,
+        })
         this.$emit("updateOverview", data)
         this.overAllSize = data.total_customers
         this.$emit("loadingOverAllSize", false)
@@ -557,7 +563,7 @@ export default {
         if (this.selectedValue === "Zip" || this.selectedValue === "City") {
           this.params.fieldType = this.selectedValue === "Zip" ? 'zip_code' : this.selectedValue.toLowerCase()
           this.params.key = value
-          console.log("valyue", this.params.key)
+          console.log("value", this.params.key)
           if (value.length > 2) {
             let data = await this.getAudiencesRulesByFields(this.params)
             // console.log("data", data)
@@ -566,6 +572,7 @@ export default {
         }
       }
     },
+ 
   },
 }
 </script>

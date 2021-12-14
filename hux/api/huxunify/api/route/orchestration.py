@@ -878,7 +878,7 @@ class AudiencePostView(SwaggerView):
     # pylint: disable=too-many-branches
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def post(self, user: dict) -> Tuple[dict, int]:
         """Creates a new audience.
 
@@ -1088,7 +1088,7 @@ class AudiencePutView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Updates an audience.
 
@@ -1441,9 +1441,9 @@ class SetLookalikeAudience(SwaggerView):
 
     # pylint: disable=no-self-use, unsubscriptable-object
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def post(self, user: dict) -> Tuple[dict, int]:
-        """Sets lookalike audience.
+        """Create lookalike audience.
 
         ---
         security:
@@ -1634,7 +1634,7 @@ class PutLookalikeAudience(SwaggerView):
 
     # pylint: disable=no-self-use, unsubscriptable-object
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Edits lookalike audience.
 
@@ -1719,7 +1719,7 @@ class DeleteAudienceView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels([api_c.ADMIN_LEVEL])
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def delete(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Deletes an audience.
 

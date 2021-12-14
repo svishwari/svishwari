@@ -660,8 +660,9 @@ class CDPTest(TestCase):
         end_date = datetime.utcnow().date()
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
-            json=t_c.MOCKED_GENDER_SPENDING,
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
+            f"/spending-by-day",
+            json=t_c.MOCKED_GENDER_SPENDING_BY_DAY,
         )
         self.request_mocker.start()
 

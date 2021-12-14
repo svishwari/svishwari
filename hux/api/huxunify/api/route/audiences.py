@@ -180,7 +180,7 @@ class AudienceDownload(SwaggerView):
 
     # pylint: disable=no-self-use, too-many-locals
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def get(
         self, audience_id: str, download_type: str, user: dict
     ) -> Tuple[Response, int]:
@@ -686,7 +686,9 @@ class AudienceRulesLocation(SwaggerView):
                 ]
             )
         else:
-            return {"message": "Incorrect Combination"}, HTTPStatus.NOT_FOUND
+            return {
+                "message": f"Field type received {field_type}"
+            }, HTTPStatus.NOT_FOUND
 
         return data, HTTPStatus.OK
 
