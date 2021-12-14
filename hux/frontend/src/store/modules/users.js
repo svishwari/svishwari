@@ -107,6 +107,16 @@ const actions = {
       throw error
     }
   },
+
+  async updatePIIAccess(_, payload) {
+    try {
+      const result = await api.users.batchUpdate(payload)
+      return result
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 const getters = {
