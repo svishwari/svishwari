@@ -47,6 +47,7 @@
                       false-color="var(--v-black-lighten4)"
                       :width="item[col.value] ? '57px' : '60px'"
                       :switch-labels="switchLabel"
+                      @input="toggleAccess($event, item)"
                     />
                   </template>
 
@@ -81,7 +82,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Avatar from "@/components/common/Avatar.vue"
 import EmptyPage from "@/components/common/EmptyPage"
 import HuxSwitch from "@/components/common/Switch.vue"
-import { mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "TeamMembers",
@@ -148,7 +149,17 @@ export default {
       return this.getTeamMembers.length > 0
     },
   },
-  methods: {},
+  methods: {
+    ...mapActions({
+      updateUser: "users/updatePIIAccess",
+    }),
+    toggleAccess(value, userDetails) {
+      this.updateUser({
+        id: userDetails.id,
+        pii_access: value,
+      })
+    },
+  },
 }
 </script>
 
