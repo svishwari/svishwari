@@ -6,7 +6,7 @@ import asyncio
 import random
 from collections import defaultdict
 from typing import Tuple, Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 
 import requests
 import aiohttp
@@ -36,6 +36,7 @@ DATETIME_FIELDS = [
     api_c.PINNING_TIMESTAMP,
     api_c.STITCHED_TIMESTAMP,
     api_c.TIMESTAMP,
+    api_c.DATE,
 ]
 
 
@@ -55,8 +56,16 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
             f"{config.CDP_SERVICE}/healthcheck",
             timeout=5,
         )
-        record_health_status_metric(api_c.CDM_API_CONNECTION_HEALTH, True)
-        return response.status_code, "CDM available."
+        record_health_status_metric(
+            api_c.CDM_API_CONNECTION_HEALTH, response.status_code == 200
+        )
+
+        if response.status_code == 200:
+            return True, "CDM available."
+        return (
+            False,
+            f"CDM not available. Received: {response.status_code}",
+        )
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
@@ -390,13 +399,13 @@ def fill_empty_customer_events(
                 api_c.DATE: curr_date,
                 api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
                 api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                    api_c.ABANDONED_CART_EVENT: 0,
-                    api_c.CUSTOMER_LOGIN_EVENT: 0,
-                    api_c.VIEWED_CART_EVENT: 0,
                     api_c.VIEWED_CHECKOUT_EVENT: 0,
-                    api_c.VIEWED_SALE_ITEM_EVENT: 0,
-                    api_c.ITEM_PURCHASED_EVENT: 0,
-                    api_c.TRAIT_COMPUTED_EVENT: 0,
+                    api_c.ABANDONED_CARTS: 0,
+                    api_c.TRAITS_ANALYZED: 0,
+                    api_c.SALES_MADE: 0,
+                    api_c.CONTENT_VIEWED: 0,
+                    api_c.PRODUCTS_SEARCHED: 0,
+                    api_c.PURCHASES_MADE: 0,
                 },
             }
         )
@@ -1008,7 +1017,7 @@ def get_revenue_by_day(
 
     # TODO: Update the API call to CDM with correct endpoint when available
     response = requests.post(
-        f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+        f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-day",
         json=request_payload,
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
@@ -1021,50 +1030,39 @@ def get_revenue_by_day(
             response.text,
         )
         raise iae.FailedAPIDependencyError(
-            f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-day",
             response.status_code,
         )
 
-    logger.info("Successfully retrieved spending insights by month.")
-    spending_by_month = sorted(
-        clean_cdm_fields(response.json()[api_c.BODY]),
-        key=lambda x: (x[api_c.YEAR], x[api_c.MONTH]),
-    )
+    logger.info("Successfully retrieved spending insights by day.")
 
     spending_by_day = []
 
-    for i, month_data in enumerate(spending_by_month):
+    for day_data in sorted(
+        clean_cdm_fields(response.json()[api_c.BODY]),
+        key=lambda x: x[api_c.DATE],
+    ):
         spending_by_day.append(
             {
-                api_c.DATE: datetime(
-                    year=month_data[api_c.YEAR],
-                    month=month_data[api_c.MONTH],
-                    day=int(
-                        datetime.strptime(
-                            start_date, api_c.DEFAULT_DATE_FORMAT
-                        ).day
-                    )
-                    if i == 0
-                    else 1,
-                ),
+                api_c.DATE: parse(day_data.get(api_c.DATE)),
                 api_c.LTV: (
                     (
-                        month_data[api_c.AVG_SPENT_MEN]
-                        * month_data[api_c.GENDER_MEN]
+                        day_data[api_c.AVG_SPENT_MEN]
+                        * day_data[api_c.GENDER_MEN]
                     )
                     + (
-                        month_data[api_c.AVG_SPENT_WOMEN]
-                        * month_data[api_c.GENDER_WOMEN]
+                        day_data[api_c.AVG_SPENT_WOMEN]
+                        * day_data[api_c.GENDER_WOMEN]
                     )
                     + (
-                        month_data[api_c.AVG_SPENT_OTHER]
-                        * month_data[api_c.GENDER_OTHER]
+                        day_data[api_c.AVG_SPENT_OTHER]
+                        * day_data[api_c.GENDER_OTHER]
                     )
                 )
                 / (
-                    month_data[api_c.GENDER_MEN]
-                    + month_data[api_c.GENDER_WOMEN]
-                    + month_data[api_c.GENDER_OTHER]
+                    day_data[api_c.GENDER_MEN]
+                    + day_data[api_c.GENDER_WOMEN]
+                    + day_data[api_c.GENDER_OTHER]
                 ),
             }
         )
@@ -1093,8 +1091,12 @@ def add_missing_revenue_data_by_day(
     """
     revenue_data_by_day = []
 
-    start_date = datetime.strptime(start_date, api_c.DEFAULT_DATE_FORMAT)
-    end_date = datetime.strptime(end_date, api_c.DEFAULT_DATE_FORMAT)
+    start_date = datetime.strptime(
+        start_date, api_c.DEFAULT_DATE_FORMAT
+    ).replace(tzinfo=timezone.utc)
+    end_date = datetime.strptime(end_date, api_c.DEFAULT_DATE_FORMAT).replace(
+        tzinfo=timezone.utc
+    )
     # TODO remove stub when data is returned from CDP.
     sample_ltv = sample_revenue = 27
 

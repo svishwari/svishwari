@@ -173,6 +173,75 @@ async def get_audience_insights_async(token: str, audience_filters: dict):
     return audience_insights
 
 
+def get_audience_standalone_deliveries(audience_id: ObjectId) -> list:
+    """Get standalone deliveries list of an audience built for GET audience
+    by ID response.
+
+     Args:
+        audience_id (ObjectId): ObjectId of an audience.
+
+    Returns:
+        list: List of standalone audience deliveries.
+    """
+
+    database = get_db_client()
+
+    standalone_deliveries = []
+    standalone_delivery_jobs = destination_management.get_delivery_jobs(
+        database,
+        audience_id=audience_id,
+        engagement_id=db_c.ZERO_OBJECT_ID,
+    )
+
+    if standalone_delivery_jobs:
+        # TODO: HUS-1864 uncomment the below block of code and remove the
+        # following line once destinations nested object in audiences
+        # collection gets populated in the future
+        # extract delivery platform ids from the audience
+        # destination_ids = [
+        #     x.get(api_c.ID)
+        #     for x in audience[api_c.DESTINATIONS]
+        #     if isinstance(x, dict)
+        # ]
+        destination_ids = [
+            x.get(db_c.DELIVERY_PLATFORM_ID) for x in standalone_delivery_jobs
+        ]
+
+        # get destinations at once to lookup name for each delivery job
+        destination_dict = {
+            x[db_c.ID]: x
+            for x in destination_management.get_delivery_platforms_by_id(
+                database, destination_ids
+            )
+        }
+
+        for job in standalone_delivery_jobs:
+            # ignore deliveries to destinations no longer attached to the
+            # audience
+            if (
+                job.get(db_c.DELIVERY_PLATFORM_ID)
+                not in destination_dict.keys()
+            ):
+                continue
+
+            # append the necessary schema to standalone_deliveries list
+            standalone_deliveries.append(
+                {
+                    db_c.METRICS_DELIVERY_PLATFORM_NAME: destination_dict.get(
+                        job.get(db_c.DELIVERY_PLATFORM_ID)
+                    ).get(api_c.NAME),
+                    api_c.DELIVERY_PLATFORM_TYPE: destination_dict.get(
+                        job.get(db_c.DELIVERY_PLATFORM_ID)
+                    ).get(api_c.DELIVERY_PLATFORM_TYPE),
+                    api_c.STATUS: job.get(api_c.STATUS),
+                    api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE, 0),
+                    db_c.UPDATE_TIME: job.get(db_c.UPDATE_TIME),
+                }
+            )
+
+    return standalone_deliveries
+
+
 @add_view_to_blueprint(
     orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView"
 )
@@ -662,6 +731,11 @@ class AudienceGetView(SwaggerView):
         # set the list of engagements for an audience
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
 
+        # set the list of standalone_deliveries for an audience
+        audience[
+            api_c.AUDIENCE_STANDALONE_DELIVERIES
+        ] = get_audience_standalone_deliveries(audience_id)
+
         # get the max last delivered date for all destinations in an audience
         delivery_times = [
             x[api_c.AUDIENCE_LAST_DELIVERED]
@@ -878,7 +952,7 @@ class AudiencePostView(SwaggerView):
     # pylint: disable=too-many-branches
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def post(self, user: dict) -> Tuple[dict, int]:
         """Creates a new audience.
 
@@ -1088,7 +1162,7 @@ class AudiencePutView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Updates an audience.
 
@@ -1441,9 +1515,9 @@ class SetLookalikeAudience(SwaggerView):
 
     # pylint: disable=no-self-use, unsubscriptable-object
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def post(self, user: dict) -> Tuple[dict, int]:
-        """Sets lookalike audience.
+        """Create lookalike audience.
 
         ---
         security:
@@ -1634,7 +1708,7 @@ class PutLookalikeAudience(SwaggerView):
 
     # pylint: disable=no-self-use, unsubscriptable-object
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Edits lookalike audience.
 
@@ -1719,7 +1793,7 @@ class DeleteAudienceView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels([api_c.ADMIN_LEVEL])
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def delete(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Deletes an audience.
 
@@ -1737,6 +1811,11 @@ class DeleteAudienceView(SwaggerView):
 
         database = get_db_client()
 
+        # get the audience first
+        audience = orchestration_management.get_audience(
+            database, ObjectId(audience_id)
+        )
+
         # attempt to delete the audience from audiences collection first
         deleted_audience = orchestration_management.delete_audience(
             database, ObjectId(audience_id)
@@ -1745,6 +1824,12 @@ class DeleteAudienceView(SwaggerView):
         # attempt to delete the audience from lookalike_audiences collection
         # if audience not found in audiences collection
         if not deleted_audience:
+            audience = cm.get_document(
+                database,
+                db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+                {db_c.ID: ObjectId(audience_id)},
+            )
+
             deleted_audience = delete_lookalike_audience(
                 database, ObjectId(audience_id), soft_delete=False
             )
@@ -1786,7 +1871,7 @@ class DeleteAudienceView(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Audience "{audience_id}" successfully deleted by {user[api_c.USER_NAME]}.',
+            f'Audience "{audience[db_c.NAME]}" successfully deleted by {user[api_c.USER_NAME]}.',
             api_c.ORCHESTRATION_TAG,
             user[api_c.USER_NAME],
         )

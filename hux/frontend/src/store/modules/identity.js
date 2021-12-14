@@ -18,19 +18,19 @@ const METRICS = {
   total_unique_ids: {
     title: "Unique Hux IDs",
     description:
-      "Unique number of total IDs we can match (individual IDs + anonymous IDs) ",
+      "Unique number of total IDs we can match (individual IDs + anonymous IDs).",
     format: "numeric",
   },
   total_anonymous_ids: {
     title: "Anonymous IDs",
     description:
-      "A digital ID related to online visitors that have not yet been recognized and hence not assigned an individual ID",
+      "A digital ID related to online visitors that have not yet been recognized and hence not assigned an individual ID.",
     format: "numeric",
   },
 
   total_individual_ids: {
     title: "Individual IDs",
-    description: "An individual that lives at an address",
+    description: "An individual that lives at an address.",
     format: "numeric",
   },
   total_household_ids: {
@@ -41,7 +41,7 @@ const METRICS = {
   },
   total_address_ids: {
     title: "Address IDs",
-    description: "A unique address (regardless of who lives there)",
+    description: "A unique address (regardless of who lives there).",
     format: "numeric",
   },
 }

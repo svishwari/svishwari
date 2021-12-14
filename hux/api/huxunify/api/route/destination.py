@@ -354,7 +354,7 @@ class DestinationAuthenticationPostView(SwaggerView):
         }
     )
     @validate_destination()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def put(self, destination_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Sets a destination's authentication details.
 
@@ -549,7 +549,7 @@ class DestinationValidatePostView(SwaggerView):
     @api_error_handler(
         custom_message={"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
     )
-    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, user: dict) -> Tuple[dict, int]:
         """Validates the credentials for a destination.
 
@@ -860,7 +860,7 @@ class DestinationDataExtPostView(SwaggerView):
     # pylint: disable=too-many-return-statements
     @api_error_handler()
     @validate_destination()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def post(self, destination_id: str, user: dict) -> Tuple[dict, int]:
         """Creates a destination data extension.
 
@@ -1113,7 +1113,7 @@ class DestinationsRequestView(SwaggerView):
 
     # pylint: disable=too-many-return-statements
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def post(self, user: dict) -> Tuple[list, int]:
         """Requests an unsupported destination.
 
@@ -1247,7 +1247,7 @@ class DestinationDeleteView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.ADMIN_LEVEL])
     def delete(self, destination_id: str, user: dict) -> Tuple[dict, int]:
         """Deletes a destination.
 

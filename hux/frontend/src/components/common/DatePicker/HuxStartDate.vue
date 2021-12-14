@@ -37,7 +37,7 @@
       <v-list v-if="!endDate">
         <v-date-picker
           v-model="start"
-          class="start-date-picker"
+          class="start-date-picker mb-4"
           :min="todaysDate"
           no-title
           scrollable

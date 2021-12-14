@@ -858,6 +858,7 @@ AUDIENCE_FILTER_VALUE = "value"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE_PERCENTAGE = "audience_size_percentage"
+AUDIENCE_STANDALONE_DELIVERIES = "standalone_deliveries"
 AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
@@ -1089,7 +1090,16 @@ VIEWED_CHECKOUT_EVENT = "viewed_checkout"
 VIEWED_SALE_ITEM_EVENT = "viewed_sale_item"
 TRAIT_COMPUTED_EVENT = "trait_computed"
 ITEM_PURCHASED_EVENT = "item_purchased"
-
+TRAIT = "trait"
+SALE = "sale"
+VIEW_CONTENT = "view_content"
+PRODUCT_SEARCH = "product_search"
+ABANDONED_CARTS = "abandoned_carts"
+TRAITS_ANALYZED = "traits_analysed"
+SALES_MADE = "sales_made"
+CONTENT_VIEWED = "content_viewed"
+PRODUCTS_SEARCHED = "products_searched"
+PURCHASES_MADE = "purchases_made"
 # FILTERING
 REDACTED = "++REDACTED++"
 CUSTOMER_PROFILE_REDACTED_FIELDS = [
@@ -1116,6 +1126,8 @@ TECTON_CONNECTION_HEALTH = "tecton_connection_health"
 OKTA_CONNECTION_HEALTH = "okta_connection_health"
 AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
 AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
+AWS_S3_CONNECTION_HEALTH = "aws_s3_connection_health"
+AWS_EVENTS_CONNECTION_HEALTH = "aws_events_connection_health"
 CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
 CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
     "cdm_connection_service_connection_health"
@@ -1190,24 +1202,6 @@ MODELS_STUB = [
     {
         CATEGORY: "Email",
         TYPE: "Classification",
-        NAME: "Propensity to Purchase",
-        DESCRIPTION: "Propensity for a customer to click"
-        " on a link in an email and make a purchase.",
-        ID: "f76a5e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Email",
-        TYPE: "Classification",
-        NAME: "Propensity to Unsubscribe",
-        DESCRIPTION: "Propensity for a customer to unsubscribe"
-        " from an email marketing list.",
-        ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Email",
-        TYPE: "Classification",
         NAME: "Propensity to Open",
         DESCRIPTION: " Propensity for a customer to open an email.",
         ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
@@ -1232,12 +1226,57 @@ MODELS_STUB = [
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Sales forecasting",
-        TYPE: "Regression",
-        NAME: "Customer Lifetime Value",
-        DESCRIPTION: "Predicting the lifetime value of a "
-        "customer over a defined time range.",
-        ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
+        CATEGORY: "Trust ID",
+        TYPE: "Classification",
+        NAME: "Capability Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral capability score.",
+        ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Trust ID",
+        TYPE: "Classification",
+        NAME: "Trust Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral trust score.",
+        ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Trust ID",
+        TYPE: "Classification",
+        NAME: "Humanity Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral humanity score.",
+        ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Trust ID",
+        TYPE: "Classification",
+        NAME: "Reliability Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral reliability score.",
+        ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Trust ID",
+        TYPE: "Classification",
+        NAME: "Transparency Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral transparency score.",
+        ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Retention",
+        TYPE: "Classification",
+        NAME: "Churn",
+        DESCRIPTION: "Propensity for a customer to leave a service "
+        "over a defined time range.",
+        ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1256,60 +1295,6 @@ MODELS_STUB = [
         DESCRIPTION: "Predicting sales for a store over a "
         "defined time range.",
         ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust",
-        TYPE: "Classification",
-        NAME: "Capability Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral capability score.",
-        ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust",
-        TYPE: "Classification",
-        NAME: "Trust Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral trust score.",
-        ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust",
-        TYPE: "Classification",
-        NAME: "Humanity Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral humanity score.",
-        ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust",
-        TYPE: "Classification",
-        NAME: "Reliability Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral reliability score.",
-        ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust",
-        TYPE: "Classification",
-        NAME: "Transparency Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral transparency score.",
-        ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Retention",
-        TYPE: "Classification",
-        NAME: "Churn",
-        DESCRIPTION: "Propensity for a customer to leave a service "
-        "over a defined time range.",
-        ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1335,6 +1320,14 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Propensity to Visit Website",
         DESCRIPTION: "Propensity for a customer to visit a website.",
+        ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Uncategorized",
+        TYPE: "Classification",
+        NAME: "Segmentation",
+        DESCRIPTION: "Segment a set of customers.",
         ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },

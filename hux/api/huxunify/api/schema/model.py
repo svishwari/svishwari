@@ -22,6 +22,7 @@ class ModelSchema(Schema):
     prediction_window = Int()
     fulcrum_date = DateTimeWithZ()
     type = Str()
+    category = Str()
 
 
 class ModelVersionSchema(Schema):

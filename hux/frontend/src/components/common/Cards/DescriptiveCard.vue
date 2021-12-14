@@ -86,7 +86,10 @@
             black--text
             text--lighten-4
           "
-          :style="{ 'padding-top': !icon ? '22px' : null }"
+          :style="{
+            'padding-top': !icon ? '22px' : null,
+            height: descriptionHeight,
+          }"
           data-e2e="card-description"
         >
           {{ description }}
@@ -179,6 +182,11 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    descriptionHeight: {
+      type: String,
+      required: false,
+      default: "auto",
     },
   },
 }

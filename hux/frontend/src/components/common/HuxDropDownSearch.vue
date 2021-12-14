@@ -26,15 +26,20 @@
           :class="{ 'search-item-selected': isItemAdded(item) !== -1 }"
           @click="toggleItem(item)"
         >
-          <v-icon
-            v-if="isItemAdded(item) !== -1"
-            :size="11"
-            color="primary"
-            class="pr-2"
-          >
-            mdi-check
-          </v-icon>
-          <span class="text-h5">{{ item.name }}</span>
+          <div class="d-flex align-center">
+            <v-icon
+              v-if="isItemAdded(item) !== -1"
+              :size="11"
+              color="primary"
+              class="pr-2"
+            >
+              mdi-check
+            </v-icon>
+            <span v-if="item.type" class="pr-2">
+              <logo :type="item.type" :size="21" />
+            </span>
+            <span class="text-h6">{{ item.name }}</span>
+          </div>
         </div>
       </div>
     </template>
@@ -42,8 +47,14 @@
 </template>
 
 <script>
+import Logo from "./Logo.vue"
+
 export default {
   name: "HuxDropDownSearch",
+
+  components: {
+    Logo,
+  },
 
   props: {
     value: {
