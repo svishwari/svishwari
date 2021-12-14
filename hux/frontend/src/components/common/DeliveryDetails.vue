@@ -31,7 +31,7 @@
         </router-link>
       </span>
       <v-spacer> </v-spacer>
-      <div class="d-flex mr-4" @click="deliverAll(section)">
+      <div class="d-flex mr-4 cursor-pointer" @click="deliverAll(section)">
         <icon class="deliver-icon mr-2" type="deliver" :size="24" />
         Deliver all
       </div>
