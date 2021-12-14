@@ -37,7 +37,6 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     get_delivery_platform_lookalike_audience,
     update_pending_delivery_jobs,
-    get_delivery_platforms_by_id,
 )
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
