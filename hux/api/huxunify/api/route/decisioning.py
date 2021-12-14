@@ -133,7 +133,11 @@ class ModelsView(SwaggerView):
             if api_c.CATEGORY not in model:
                 model[api_c.CATEGORY] = api_c.UNCATEGORIZED
 
-        all_models.extend([{**x} for x in api_c.MODELS_STUB])
+        database = get_db_client()
+        unified_models = collection_management.get_documents(
+            database, db_c.MODELS_COLLECTION
+        ).get(db_c.DOCUMENTS)
+        all_models.extend(unified_models)
 
         config_models = collection_management.get_documents(
             get_db_client(),
