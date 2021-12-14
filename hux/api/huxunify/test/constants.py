@@ -561,6 +561,21 @@ MOCKED_GENDER_SPENDING = {
     "message": "ok",
 }
 
+MOCKED_GENDER_SPENDING_BY_DAY = {
+    "code": 200,
+    "body": [
+        {
+            "date": "2021-07-19T00:00:00.000Z",
+            "avg_spent_men": 25.311363636363637,
+            "avg_spent_women": 24.12727272727273,
+            "avg_spent_other": 26.400000000000002,
+            "gender_men": 44,
+            "gender_women": 33,
+            "gender_other": 2,
+        }
+    ],
+}
+
 MOCKED_MODEL_PERFORMANCE_LTV = {
     "results": [
         {

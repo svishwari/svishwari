@@ -1,18 +1,46 @@
 <template>
   <v-expand-transition>
-    <div class="hux-table-filter-bar-container">
-      <div class="d-flex flex-wrap">
-        <hux-table-filter
+    <div class="hux-table-filter-bar-container pl-6">
+      <div class="d-flex justify-space-between">
+        <v-checkbox
+          v-model="showMatchRate"
+          color="primary lighten-6"
+          class="text-h5 px-5 withoutExpansion mt-0 pt-0 pl-0"
+          label="Show match rate"
+          @click="handleCheckboxValueChange()"
+        ></v-checkbox>
+        <div class="reset-filter" @click="resetAll()">Clear</div>
+      </div>
+      <div class="d-flex flex-wrap mb-2">
+        <hux-drop-down-search
           v-for="(filter, i) in filters"
           :key="i"
           v-model="filter.value"
+          :toggle-drop-down="toggleDropDown"
+          :min-selection="0"
+          :items="filter.data"
+          :is-search-enabled="false"
           :name="`${filter.name}${
             filter.value.length > 0 ? ` (${filter.value.length})` : ''
           }`"
-          :on-select="filter.onSelect"
-          :items="filter.data"
-          @onValueChange="handleFilterValueChange(i)"
-        />
+          @onToggle="handleFilterValueChange(i)"
+        >
+          <template #activator>
+            <div class="mr-2">
+              <v-select
+                dense
+                readonly
+                :placeholder="`${filter.name}${
+                  filter.value.length > 0 ? ` (${filter.value.length})` : ''
+                }`"
+                class="dropdown-select-placeholder"
+                outlined
+                background-color="white"
+                append-icon="mdi-chevron-down"
+              />
+            </div>
+          </template>
+        </hux-drop-down-search>
       </div>
       <div class="d-flex justify-space-between align-center">
         <div>
@@ -22,9 +50,9 @@
               :key="valueIndex"
               close
               small
-              class="mr-2 my-2 text--subtitle-1"
+              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
               text-color="primary"
-              color="primary lighten-4"
+              color="primary lighten-3"
               close-icon="mdi-close"
               @click:close="removeValue(filterIndex, valueIndex)"
             >
@@ -32,20 +60,19 @@
             </v-chip>
           </span>
         </div>
-        <div class="reset-filter" @click="resetAll()">Reset all</div>
       </div>
     </div>
   </v-expand-transition>
 </template>
 
 <script>
-import HuxTableFilter from "@/components/common/TableFilter.vue"
+import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 
 export default {
   name: "HuxTableFiltersBar",
 
   components: {
-    HuxTableFilter,
+    HuxDropDownSearch,
   },
 
   props: {
@@ -54,6 +81,12 @@ export default {
       required: false,
       default: () => [],
     },
+  },
+
+  data() {
+    return {
+      showMatchRate: true,
+    }
   },
 
   methods: {
@@ -74,19 +107,43 @@ export default {
         this.filters[filterIndex].onSelect(this.filters[filterIndex].value)
       }
     },
+
+    handleCheckboxValueChange() {
+      this.$emit("onCheckboxChange", this.showMatchRate)
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
 .hux-table-filter-bar-container {
-  background: var(--v-primary-lighten2);
   padding: 8px 11px;
   border-bottom: 1px solid var(--v-black-lighten3);
   .reset-filter {
     @extend .cursor-pointer;
     color: var(--v-primary-base);
     min-width: fit-content;
+  }
+
+  ::v-deep .v-input__control {
+    .v-label {
+      color: var(--v-black-base);
+    }
+    .v-messages {
+      display: none;
+    }
+  }
+  .dropdown-select-placeholder {
+    ::v-deep .v-input__control {
+      .v-input__slot {
+        input::placeholder {
+          color: var(--v-black-base);
+        }
+      }
+      .v-text-field__details {
+        display: none;
+      }
+    }
   }
 }
 </style>

@@ -7,7 +7,12 @@
       <div class="confirm-modal-wrapper">
         <div class="confirm-modal-body px-6">
           <slot name="icon">
-            <icon v-if="icon" :type="icon" :color="localIconColor" :size="42" />
+            <icon
+              v-if="icon"
+              :type="icon"
+              :color="localIconColor"
+              :size="iconSize"
+            />
           </slot>
           <slot name="title">
             <div v-if="title" class="black--text text--darken-4 text-h2 pt-3">
@@ -85,6 +90,11 @@ export default {
     iconColor: {
       type: String,
       required: false,
+    },
+    iconSize: {
+      type: [Number, String],
+      required: false,
+      default: 42,
     },
 
     type: {
