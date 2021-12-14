@@ -52,6 +52,7 @@ import Page from "@/components/Page"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import ConfigTabs from "./tabs"
 import TipsMenu from "@/components/common/TipsMenu.vue"
+import HuxEmpty from "@/components/common/screens/Empty"
 
 export default {
   name: "Configuration",
