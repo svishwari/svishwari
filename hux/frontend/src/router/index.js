@@ -42,7 +42,7 @@ const routes = [
   {
     path: "/configuration",
     name: "Configuration",
-    component: () => import("@/views/Settings"),
+    component: () => import("@/views/Configuration/index.vue"),
     meta: {
       layout: "app",
       title: "Configuration ",
@@ -153,7 +153,7 @@ const routes = [
   {
     path: "/audiences/:id/update",
     name: "AudienceUpdate",
-    component: () => import("@/views/Audiences/Configuration.vue"),
+    component: () => import("@/views/SegmentPlayground/Index.vue"),
     meta: {
       layout: "app",
       title: "Update an Audience",

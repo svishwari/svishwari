@@ -1,6 +1,8 @@
 """This module contains database defines."""
 
 # General Defines
+from bson import ObjectId
+
 ID = "_id"
 CONNECT_RETRY_INTERVAL = 1
 DUPLICATE_ERR_CODE = 11000
@@ -546,3 +548,5 @@ ALLOWED_COLLECTIONS = [
 
 # 30 minutes.
 DELIVERY_JOB_TIMEOUT = 30
+
+ZERO_OBJECT_ID = ObjectId("0" * 24)

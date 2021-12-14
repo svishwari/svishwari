@@ -13,4 +13,5 @@ export default {
   notifications: "/notifications",
   lookalike: "/lookalike-audiences",
   users: "/users",
+  configurations: "/configurations",
 }

@@ -12,6 +12,7 @@ import models from "@/store/modules/models"
 import users from "@/store/modules/users"
 import notifications from "@/store/modules/notifications"
 import alerts from "@/store/modules/alerts"
+import configurations from "@/store/modules/configurations"
 
 Vue.use(Vuex)
 
@@ -32,6 +33,7 @@ export default new Vuex.Store({
     models,
     users,
     notifications,
+    configurations,
   },
 
   strict: debug,
