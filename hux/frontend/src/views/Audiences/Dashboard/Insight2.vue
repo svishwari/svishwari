@@ -566,11 +566,9 @@ export default {
     async deliverEngagement(event) {
       switch (event.target.title.toLowerCase()) {
         case "Open destination":
-          console.log("Open destination")
           break
 
         case "deliver now":
-          console.log("deliver now")
           await this.deliverAudienceDestination({
             id: event.parent.id,
             audienceId: this.audienceId,
@@ -655,7 +653,6 @@ export default {
       }
     },
     async triggerOverviewAction(event) {
-      console.log("event", event)
       switch (event.target.title.toLowerCase()) {
         case "remove engagement": {
           this.confirmDialog.actionType = "remove-engagement"
@@ -826,7 +823,6 @@ export default {
       } else {
         const payload = { audience_ids: [] }
         payload.audience_ids.push(this.audienceId)
-        console.log(payload)
         await this.detachAudience({
           engagementId: event.data.id,
           data: payload,
@@ -839,7 +835,6 @@ export default {
       try {
         this.getAudiencesRules()
         await this.getAudienceById(this.$route.params.id)
-        debugger
         const _getAudience = this.getAudience(this.$route.params.id)
         // await this.loadEngagement(_getAudience.id)
         if (_getAudience && this.refreshAudience) {
