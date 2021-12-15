@@ -1040,7 +1040,7 @@ class TestEngagementManagement(unittest.TestCase):
     def test_remove_destination_from_all_engagement_audience(self):
         """Test removing a destination from all engagement audience"""
         audience_one = om.create_audience(
-            self.database, "Audience1", [], [], self.user_name, 201
+            self.database, "Audience1", [], self.user_name, [], 201
         )
 
         audience_one_dict = {

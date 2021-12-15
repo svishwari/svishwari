@@ -120,7 +120,7 @@ class CourierTest(TestCase):
             "audience two",
             [],
             t_c.TEST_USER_NAME,
-            self.destination_ids
+            self.destination_ids,
         )
         self.assertIsNotNone(self.audience_two)
 
@@ -874,7 +874,7 @@ class CourierTest(TestCase):
                     ],
                 },
             ],
-            db_c.CREATED_BY: ObjectId(),
+            db_c.CREATED_BY: t_c.TEST_USER_NAME,
         }
 
         # insert engagement doc in the collection
