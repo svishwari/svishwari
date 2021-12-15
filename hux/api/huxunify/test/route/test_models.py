@@ -102,7 +102,7 @@ class TestModelRoutes(TestCase):
                 db_c.STATUS: api_c.REQUESTED,
                 db_c.TYPE: api_c.MODELS_TAG,
             },
-            username="Test User"
+            username="Test User",
         )
         self.addCleanup(mock.patch.stopall)
 
@@ -142,8 +142,12 @@ class TestModelRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         for model in response.json:
-            self.assertEqual(self.stub_models.get(db_c.OBJECT_ID), model.get(api_c.ID))
-            self.assertEqual(self.stub_models.get(db_c.NAME), model.get(api_c.NAME))
+            self.assertEqual(
+                self.stub_models.get(db_c.OBJECT_ID), model.get(api_c.ID)
+            )
+            self.assertEqual(
+                self.stub_models.get(db_c.NAME), model.get(api_c.NAME)
+            )
 
     def test_retrieve_version_history_for_model(self):
         """Test get version history for a model from Tecton."""
