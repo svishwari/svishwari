@@ -1,21 +1,21 @@
 import MetricCard from "./MetricCard.vue"
 
 export default {
-    component: MetricCard,
-  
-    title: "Components",
-  
-    parameters: {
-      design: {
-        type: "figma",
-        url: "https://www.figma.com/file/4qNDv9mcu1ZWZkZxO3fVpP/6.0-Release?node-id=6852%3A108904",
-      },
-    },
-  }
+  component: MetricCard,
 
-  const Template = () => ({
-    components: { MetricCard },
-    template: `<metric-card
+  title: "Components",
+
+  parameters: {
+    design: {
+      type: "figma",
+      url: "https://www.figma.com/file/4qNDv9mcu1ZWZkZxO3fVpP/6.0-Release?node-id=6852%3A108904",
+    },
+  },
+}
+
+const Template = () => ({
+  components: { MetricCard },
+  template: `<metric-card
     class="ma-4"
     title="Metric Title"
     :max-width="203"

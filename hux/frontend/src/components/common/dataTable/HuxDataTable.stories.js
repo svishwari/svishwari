@@ -1,211 +1,347 @@
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
+import Status from "../Status.vue"
+import Size from "../huxTable/Size.vue"
 
 export default {
-    component: HuxDataTable,
-  
-    title: "Components",
-  
-    argTypes: {
-      dataItems: { control: { type: "array" } },
-      columns: { control: { type: "array" } },
-    },
-  
-    args: {
-        dataItems: [
-            {
-              engagementName: "Winter",
-              audiences: 159,
-              status: "Active",
-              size: "176M",
-              deliverySchedule: "Manual",
-              lastUpdated: "1 week ago",
-              lastUpdatedBy: "AZ",
-              created: "1 month ago",
-              createdBy: "JS",
-              child: [
-                {
-                  engagementName: "Frozen goods",
-                  audiences: 159,
-                  status: "Delivering",
-                  size: "565k",
-                  deliverySchedule: "-",
-                  lastUpdated: "1 week ago",
-                  lastUpdatedBy: "SA",
-                  created: "1 month ago",
-                  createdBy: "JS",
-                },
-                {
-                  engagementName: "Texas",
-                  audiences: 159,
-                  status: "Active",
-                  size: "30M",
-                  deliverySchedule: "-",
-                  lastUpdated: "1 week ago",
-                  lastUpdatedBy: "PR",
-                  created: "1 month ago",
-                  createdBy: "JS",
-                },
-              ],
-            },
-            {
-              engagementName: "Summer",
-              audiences: 100,
-              status: "Active",
-              size: "476M",
-              deliverySchedule: "Manual",
-              lastUpdated: "1 week ago",
-              lastUpdatedBy: "JS",
-              created: "1 month ago",
-              createdBy: "JS",
-            },
-          ],
-    
-          columns: [
-            {
-              text: "Engagement name",
-              align: "left",
-              value: "engagementName",
-            },
-            { text: "Audiences", value: "audiences" },
-            { text: "Status", value: "status" },
-            { text: "Size", value: "size" },
-            { text: "Delivery schedule", value: "deliverySchedule" },
-            { text: "Last updated", value: "lastUpdated" },
-            { text: "Last updated By", value: "lastUpdatedBy" },
-            { text: "Created", value: "created" },
-            { text: "Created By", value: "createdBy" },
-          ],
-    },
-  
-    parameters: {
-      design: {
-        type: "figma",
-        url: "https://www.figma.com/file/4qNDv9mcu1ZWZkZxO3fVpP/6.0-Release?node-id=6852%3A108904",
+  component: HuxDataTable,
+
+  title: "Components",
+
+  argTypes: {
+    dataItems: { control: { type: "array" } },
+    columns: { control: { type: "array" } },
+  },
+
+  args: {
+    dataItems: [
+      {
+        name: "Winter",
+        audiences: 159,
+        status: "Active",
+        size: 1000,
+        deliverySchedule: "Manual",
+        lastUpdated: "1 week ago",
+        lastUpdatedBy: "AZ",
+        created: "1 month ago",
+        createdBy: "JS",
+        child: [
+          {
+            name: "Frozen goods",
+            audiences: 209,
+            status: "Delivering",
+            size: 2000,
+            deliverySchedule: "-",
+            lastUpdated: "1 week ago",
+            lastUpdatedBy: "SA",
+            created: "1 month ago",
+            createdBy: "JS",
+            childNest: [
+              {
+                name: "Goods Frozen",
+                audiences: 259,
+                status: "Delivered",
+                size: "565k",
+                deliverySchedule: "-",
+                lastUpdated: "1 week ago",
+                lastUpdatedBy: "SA",
+                created: "1 month ago",
+                createdBy: "JS",
+              },
+              {
+                name: "Goods Frozen 1",
+                audiences: 259,
+                status: "Delivering",
+                size: "565k",
+                deliverySchedule: "-",
+                lastUpdated: "1 week ago",
+                lastUpdatedBy: "SA",
+                created: "1 month ago",
+                createdBy: "JS",
+              },
+            ],
+          },
+          {
+            name: "Texas",
+            audiences: 109,
+            status: "Delivering",
+            size: 3000,
+            deliverySchedule: "-",
+            lastUpdated: "1 week ago",
+            lastUpdatedBy: "PR",
+            created: "1 month ago",
+            createdBy: "JS",
+            childNest: [
+              {
+                name: "Texas goods",
+                audiences: 459,
+                status: "Delivered",
+                size: 0,
+                deliverySchedule: "-",
+                lastUpdated: "1 week ago",
+                lastUpdatedBy: "SA",
+                created: "1 month ago",
+                createdBy: "JS",
+              },
+              {
+                name: "Texas goods 1",
+                audiences: 459,
+                status: "Delivering",
+                size: 0,
+                deliverySchedule: "-",
+                lastUpdated: "1 week ago",
+                lastUpdatedBy: "SA",
+                created: "1 month ago",
+                createdBy: "JS",
+              },
+            ],
+          },
+        ],
       },
+      {
+        name: "Summer",
+        audiences: 100,
+        status: "Active",
+        size: 1000,
+        deliverySchedule: "Manual",
+        lastUpdated: "1 week ago",
+        lastUpdatedBy: "JS",
+        created: "1 month ago",
+        createdBy: "JS",
+        child: [
+          {
+            name: "Goods",
+            audiences: 209,
+            status: "Delivering",
+            size: 2000,
+            deliverySchedule: "-",
+            lastUpdated: "1 week ago",
+            lastUpdatedBy: "SA",
+            created: "1 month ago",
+            createdBy: "JS",
+            childNest: [
+              {
+                name: "Summer goods",
+                audiences: 159,
+                status: "Delivered",
+                size: 0,
+                deliverySchedule: "-",
+                lastUpdated: "1 week ago",
+                lastUpdatedBy: "SA",
+                created: "1 month ago",
+                createdBy: "JS",
+              },
+              {
+                name: "Summer goods 1",
+                audiences: 159,
+                status: "Delivering",
+                size: 0,
+                deliverySchedule: "-",
+                lastUpdated: "1 week ago",
+                lastUpdatedBy: "SA",
+                created: "1 month ago",
+                createdBy: "JS",
+              },
+            ],
+          },
+          {
+            name: "Texas Summer",
+            audiences: 109,
+            status: "Active",
+            size: 3000,
+            deliverySchedule: "-",
+            lastUpdated: "1 week ago",
+            lastUpdatedBy: "PR",
+            created: "1 month ago",
+            createdBy: "JS",
+            childNest: [
+              {
+                name: "Goods Texas Summer",
+                audiences: 359,
+                status: "Delivered",
+                size: 56,
+                deliverySchedule: "-",
+                lastUpdated: "1 week ago",
+                lastUpdatedBy: "SA",
+                created: "1 month ago",
+                createdBy: "JS",
+              },
+              {
+                name: "Goods Texas Summer 1",
+                audiences: 139,
+                status: "Delivering",
+                size: 565,
+                deliverySchedule: "-",
+                lastUpdated: "1 week ago",
+                lastUpdatedBy: "SA",
+                created: "1 month ago",
+                createdBy: "JS",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+
+    columns: [
+      { text: "Engagement name", value: "name", width: "auto" },
+      { text: "Audiences", value: "audiences", width: "auto" },
+      { text: "Status", value: "status", width: "auto" },
+      { text: "Size", value: "size", width: "auto" },
+    ],
+  },
+
+  parameters: {
+    design: {
+      type: "figma",
+      url: "https://www.figma.com/file/4qNDv9mcu1ZWZkZxO3fVpP/6.0-Release?node-id=11331%3A223042",
     },
-  }
+  },
+}
 
 const Template = (args, { argTypes }) => ({
-components: { HuxDataTable },
-props: Object.keys(argTypes),
-template: `
+  components: { HuxDataTable, Status, Size },
+  props: Object.keys(argTypes),
+  computed: {
+    headerNest() {
+      return args.columns
+    },
+  },
+  template: `
 <div>
-  <hux-data-table v-bind="$props" v-on="$props">
-      <template #un-expanded-row="{ field, item, expand, isExpanded }">
-        <span v-if="field == 'engagementName'" class="primary--text">
-          <v-icon
-            v-if="'child' in item"
-            color="primary"
-            :class="{ 'rotate-icon': isExpanded }"
-            @click="expand(!isExpanded)"
+<hux-data-table v-bind="$props" v-on="$props" nested>
+<template #item-row="{ item, expand, isExpanded }">
+  <tr :class="{ 'expanded-row': isExpanded }">
+    <td
+      v-for="header in headerNest"
+      :key="header.value"
+      :class="{
+        'expanded-row': isExpanded,
+      }"
+      :style="{ width: header.width, left: 0 }"
+    >
+      <div v-if="header.value == 'name'" class="w-80">
+        <v-icon
+          :class="{ 'normal-icon': isExpanded }"
+          @click="expand(!isExpanded)"
+        >
+          mdi-chevron-right
+        </v-icon>
+        {{ item[header.value] }}
+      </div>
+      <div v-if="header.value == 'audiences'">
+        {{ item[header.value] }}
+      </div>
+      <div v-if="header.value == 'status'">
+        <status
+          :status="item[header.value]"
+          :show-label="true"
+          collapsed
+          class="d-flex"
+          :icon-size="17"
+        />
+      </div>
+      <div v-if="header.value == 'size'">
+        <size :value="item[header.value]" />
+      </div>
+    </td>
+  </tr>
+</template>
+<template #expanded-row="{ expandedHeaders, item }">
+  <td :colspan="expandedHeaders.length" class="pa-0 child">
+    <hux-data-table
+      :columns="expandedHeaders"
+      :data-items="item.child"
+      :show-header="false"
+      class="expanded-table"
+      nested
+    >
+      <template #item-row="{ rowItem, expand, isExpanded }">
+        <tr :class="{ 'expanded-row': isExpanded }">
+          <td
+            v-for="header in headerNest"
+            :key="header.value"
+            :colspan="header.value == 'name' ? 0 : 0"
+            :class="{
+              'expanded-row': isExpanded,
+            }"
           >
-            mdi-chevron-right
-          </v-icon>
-          {{ item[field] }}
-        </span>
-        <span v-else-if="field == 'status'">
-          <v-icon
-            v-if="item[field] == 'Active'"
-            class="material-icons delivered"
-          >
-            mdi-checkbox-blank-circle
-          </v-icon>
-          <v-icon
-            v-if="item[field] == 'Delivering'"
-            class="material-icons alert"
-          >
-            mdi-alert-circle
-          </v-icon>
-        </span>
-        <span v-else-if="field == 'lastUpdatedBy'">
-          <v-menu bottom offset-y>
-            <template #activator="{ on, attrs }">
-              <span
-                class="avatar-border d-flex align-center justify-center"
-                v-bind="attrs"
-                :style="{ 'border-color': getColorCode(item[field]) }"
-                v-on="on"
+            <div v-if="header.value == 'name'">
+              <v-icon
+                :class="{ 'normal-icon': isExpanded }"
+                @click="expand(!isExpanded)"
               >
-                {{ item[field] }}
-              </span>
-            </template>
-          </v-menu>
-        </span>
-        <span v-else-if="field == 'createdBy'">
-          <v-menu bottom offset-y>
-            <template #activator="{ on, attrs }">
-              <span
-                class="avatar-border d-flex align-center justify-center"
-                v-bind="attrs"
-                :style="{ 'border-color': getColorCode(item[field]) }"
-                v-on="on"
-              >
-                {{ item[field] }}
-              </span>
-            </template>
-          </v-menu>
-        </span>
-        <span v-else>
-          <span v-if="field != 'child'">
-            {{ item[field] }}
-          </span>
-        </span>
+                mdi-chevron-right
+              </v-icon>
+              {{ rowItem[header.value] }}
+            </div>
+            <div v-if="header.value == 'audiences'">
+              <div>
+                <size :value="rowItem[header.value]" />
+              </div>
+            </div>
+            <div v-if="header.value == 'status'">
+              <status
+                :status="rowItem[header.value]"
+                :show-label="true"
+                collapsed
+                class="d-flex"
+                :icon-size="17"
+              />
+            </div>
+            <div v-if="header.value == 'size'">
+              <size :value="rowItem[header.value]" />
+            </div>
+          </td>
+        </tr>
       </template>
-      <template #expanded-row="{ field }">
-        <td class="primary--text">{{ field.engagementName }}</td>
-        <td>{{ field.audiences }}</td>
-        <td>
-          <v-icon
-            v-if="field.status == 'Active'"
-            class="material-icons delivered"
+      <template #expanded-row="{ subExpandedHeaders, expandedItem }">
+        <td :colspan="subExpandedHeaders.length" class="pa-0 child">
+          <hux-data-table
+            :columns="subExpandedHeaders"
+            :data-items="expandedItem.childNest"
+            :show-header="false"
+            class="expanded-table"
+            nested
           >
-            mdi-checkbox-blank-circle
-          </v-icon>
-          <v-icon
-            v-if="field.status == 'Delivering'"
-            class="material-icons alert"
-          >
-            mdi-alert-circle
-          </v-icon>
-        </td>
-        <td>{{ field.size }}</td>
-        <td>{{ field.deliverySchedule }}</td>
-        <td>{{ field.lastUpdated }}</td>
-        <td>
-          <v-menu bottom offset-y>
-            <template #activator="{ on, attrs }">
-              <span
-                class="avatar-border d-flex align-center justify-center"
-                v-bind="attrs"
-                :style="{
-                  'border-color': getColorCode(field.lastUpdatedBy),
-                }"
-                v-on="on"
-              >
-                {{ field.lastUpdatedBy }}
-              </span>
+            <template #item-row="{ rowItem }">
+              <tr>
+                <td
+                  v-for="subHeader in headerNest"
+                  :key="subHeader.value"
+                  :style="{ width: subHeader.width, left: 0 }"
+                >
+                  <div v-if="subHeader.value == 'name'">
+                    {{ rowItem[subHeader.value] }}
+                  </div>
+                  <div v-if="subHeader.value == 'audiences'">
+                    <div>
+                      <size :value="rowItem[subHeader.value]" />
+                    </div>
+                  </div>
+                  <div v-if="subHeader.value == 'status'">
+                    <status
+                      :status="rowItem[subHeader.value]"
+                      :show-label="true"
+                      collapsed
+                      class="d-flex"
+                      :icon-size="17"
+                    />
+                  </div>
+                  <div v-if="subHeader.value == 'size'">
+                    <size :value="rowItem[subHeader.value]" />
+                  </div>
+                </td>
+              </tr>
             </template>
-          </v-menu>
-        </td>
-        <td>{{ field.created }}</td>
-        <td>
-          <v-menu bottom offset-y>
-            <template #activator="{ on, attrs }">
-              <span
-                class="avatar-border d-flex align-center justify-center"
-                v-bind="attrs"
-                :style="{ 'border-color': getColorCode(field.createdBy) }"
-                v-on="on"
-              >
-                {{ field.createdBy }}
-              </span>
-            </template>
-          </v-menu>
+          </hux-data-table>
         </td>
       </template>
     </hux-data-table>
+  </td>
+</template>
+</hux-data-table>
 </div>
 `,
 })
 
-export const DataTable = Template.bind({})
+export const huxDataTable = Template.bind({})
