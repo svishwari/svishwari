@@ -677,8 +677,6 @@ export default {
     },
     async refresh() {
       await this.loadAudienceInsights()
-      // this.engagementId = 1
-      // await this.loadEngagement(1)
       this.sizeHandler()
     },
     addDestination(event) {

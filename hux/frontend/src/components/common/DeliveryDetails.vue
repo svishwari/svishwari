@@ -58,11 +58,7 @@
       </v-menu>
     </v-card-title>
 
-    <v-list
-      
-      dense
-      class="pa-0 delivery-table"
-    >
+    <v-list dense class="pa-0 delivery-table">
       <hux-data-table
         v-if="section.deliveries.length > 0"
         :columns="columnDefs"
