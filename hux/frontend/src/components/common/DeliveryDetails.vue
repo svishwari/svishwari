@@ -58,7 +58,7 @@
       </v-menu>
     </v-card-title>
 
-    <v-list v-if="section.deliveries.length > 0" dense class="pa-0">
+    <v-list v-if="section.deliveries.length > 0" dense class="pa-0 delivery-table">
       <hux-data-table
         :columns="columnDefs"
         :sort-desc="true"
@@ -68,7 +68,7 @@
           <td
             v-for="header in columnDefs"
             :key="header.value"
-            class="text-body-2"
+            class="text-body-2 column"
             :style="{ width: header.width }"
             data-e2e="map-state-list"
           >
@@ -79,33 +79,47 @@
                 class="mb-n1"
               ></logo>
               {{ item.name }}
-              <v-menu class="menu-wrapper" bottom offset-y>
-                <template #activator="{ on, attrs }">
-                  <v-icon v-bind="attrs" class="top-action" v-on="on">
-                    mdi-dots-vertical
-                  </v-icon>
-                </template>
-                <v-list class="menu-list-wrapper">
-                  <v-list-item-group v-model="selection" active-class="">
-                    <v-list-item
-                      v-for="option in destinationMenuOptions"
-                      :key="option.id"
-                      :disabled="!option.active"
-                      @click="
-                        $emit('engagementDeliverySection', {
-                          target: option,
-                          data: item,
-                          parent: section,
-                        })
-                      "
+              <span class="action-icon font-weight-light float-right d-none">
+                <v-menu
+                  v-model="openMenu[item.id]"
+                  class="menu-wrapper"
+                  bottom
+                  offset-y
+                >
+                  <template #activator="{ on, attrs }">
+                    <v-icon
+                      v-if="!section.lookalike"
+                      v-bind="attrs"
+                      class="mr-2 more-action"
+                      color="primary"
+                      v-on="on"
+                      @click.prevent
                     >
-                      <v-list-item-title>
-                        {{ option.title }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
-              </v-menu>
+                      mdi-dots-vertical
+                    </v-icon>
+                  </template>
+                  <v-list class="menu-list-wrapper">
+                    <v-list-item-group>
+                      <v-list-item
+                        v-for="option in destinationMenuOptions"
+                        :key="option.id"
+                        :disabled="!option.active"
+                        @click="
+                          $emit('onDestinationAction', {
+                            target: option,
+                            data: item,
+                            parent: section,
+                          })
+                        "
+                      >
+                        <v-list-item-title v-if="!option.menu">
+                          {{ option.title }}
+                        </v-list-item-title>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-menu>
+              </span>
             </div>
             <div v-if="header.value == 'status'" class="text-body-1">
               <status
@@ -125,7 +139,7 @@
         </template>
       </hux-data-table>
 
-      <v-list v-if="section.deliveries" dense class="add-list" :height="52">
+      <v-list dense class="add-list" :height="52">
         <v-list-item @click="$emit('onAddDestination', section)">
           <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
           <hux-icon
@@ -411,6 +425,22 @@ export default {
     flex-wrap: inherit;
     .top-action {
       color: var(--v-black-darken4);
+    }
+  }
+  .delivery-table {
+    ::v-deep .v-data-table__wrapper {
+      tbody {
+        tr {
+          td:nth-child(1){
+            &:hover,
+            &:focus {
+              .action-icon {
+                display: block !important;
+              }
+            }
+          }
+        }
+      }
     }
   }
   .add-list {
