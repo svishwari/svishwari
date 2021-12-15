@@ -91,7 +91,7 @@ class TestDestinationRoutes(TestCase):
 
         destinations = [
             {
-                db_c.DELIVERY_PLATFORM_NAME: "Facebook",
+                db_c.DELIVERY_PLATFORM_NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
                 db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
                 db_c.LINK: "https://business.facebook.com/",
                 db_c.CATEGORY: db_c.ADVERTISING,
