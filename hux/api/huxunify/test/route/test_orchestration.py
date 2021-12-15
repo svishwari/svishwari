@@ -351,12 +351,19 @@ class OrchestrationRouteTest(TestCase):
             response.json[api_c.AUDIENCE_NAME],
         )
 
+        self.assertIsNotNone(
+            response.json.get(api_c.DESTINATIONS)[0].get(db_c.DATA_ADDED)
+        )
+
         # validate audience in db
         audience_doc = get_audience(
             self.database, ObjectId(response.json[db_c.OBJECT_ID])
         )
         self.assertListEqual(
-            audience_doc[db_c.DESTINATIONS],
+            [
+                {api_c.ID: audience[api_c.ID]}
+                for audience in audience_doc[db_c.DESTINATIONS]
+            ],
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
@@ -566,7 +573,10 @@ class OrchestrationRouteTest(TestCase):
         )
         # test destinations
         self.assertListEqual(
-            audience_doc[db_c.DESTINATIONS],
+            [
+                {api_c.ID: audience[api_c.ID]}
+                for audience in audience_doc[db_c.DESTINATIONS]
+            ],
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
@@ -589,6 +599,9 @@ class OrchestrationRouteTest(TestCase):
             engagement_audience = engagement[db_c.AUDIENCES][
                 engagement_audiences.index(audience_doc[db_c.ID])
             ]
+            # Remove data_added fields since timestamps can't be equal.
+            for destination in engagement_audience.get(api_c.DESTINATIONS, []):
+                destination.pop(db_c.DATA_ADDED)
 
             self.assertDictEqual(engagement_audience, expected_audience)
 

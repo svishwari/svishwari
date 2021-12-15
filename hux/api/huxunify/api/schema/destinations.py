@@ -201,6 +201,7 @@ class DestinationGetSchema(Schema):
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
     delivery_platform_config = fields.Nested(DataExtensionSchema)
+    data_added = DateTimeWithZ(allow_none=True)
 
 
 class DestinationPatchSchema(Schema):

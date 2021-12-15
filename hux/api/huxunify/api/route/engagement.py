@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use,C0302,unused-argument
 """Paths for engagement API"""
+import datetime
 from pathlib import Path
 import zipfile
 from http import HTTPStatus
@@ -372,6 +373,13 @@ class SetEngagement(SwaggerView):
                 ] = cron_schedule
 
         database = get_db_client()
+
+        # Set data_added field for destinations.
+        for audience in body.get(db_c.AUDIENCES, []):
+            for destination in audience.get(api_c.DESTINATIONS):
+                if get_delivery_platform(database, destination.get(api_c.ID)):
+                    destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
+
         engagement_id = set_engagement(
             database=database,
             name=body.get(db_c.ENGAGEMENT_NAME),
@@ -494,6 +502,11 @@ class UpdateEngagement(SwaggerView):
                 ] = cron_schedule
 
         database = get_db_client()
+
+        for audience in body.get(db_c.AUDIENCES, []):
+            for destination in audience.get(api_c.DESTINATIONS):
+                if get_delivery_platform(database, destination.get(api_c.ID)):
+                    destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
 
         engagement = update_engagement(
             database=database,
@@ -686,9 +699,12 @@ class AddAudienceEngagement(SwaggerView):
 
         # validate audiences exist
         audience_names = []
-
-        for audience in body[api_c.AUDIENCES]:
+        for audience in body.get(api_c.AUDIENCES, []):
             audience_to_attach = get_audience(database, audience[api_c.ID])
+            for destination in audience.get(api_c.DESTINATIONS):
+                if get_delivery_platform(database, destination.get(api_c.ID)):
+                    destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
+
             if not audience_to_attach:
                 # check if lookalike
                 audience_to_attach = get_delivery_platform_lookalike_audience(
@@ -947,6 +963,7 @@ class AddDestinationEngagedAudience(SwaggerView):
             request.get_json(), partial=True
         )
         destination[api_c.ID] = ObjectId(destination.get(api_c.ID))
+        destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
 
         # get destinations
         destination_to_attach = get_delivery_platform(
