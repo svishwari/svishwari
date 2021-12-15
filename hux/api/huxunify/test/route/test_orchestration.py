@@ -352,7 +352,7 @@ class OrchestrationRouteTest(TestCase):
         )
 
         self.assertIsNotNone(
-            response.json.get(api_c.DESTINATIONS)[0].get(api_c.DATA_ADDED)
+            response.json.get(api_c.DESTINATIONS)[0].get(db_c.DATA_ADDED)
         )
 
         # validate audience in db
@@ -601,7 +601,7 @@ class OrchestrationRouteTest(TestCase):
             ]
             # Remove data_added fields since timestamps can't be equal.
             for destination in engagement_audience.get(api_c.DESTINATIONS, []):
-                destination.pop(api_c.DATA_ADDED)
+                destination.pop(db_c.DATA_ADDED)
 
             self.assertDictEqual(engagement_audience, expected_audience)
 

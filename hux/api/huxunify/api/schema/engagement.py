@@ -475,7 +475,7 @@ class EngagementAudienceDestinationSchema(Schema):
     delivery_platform_type = fields.String()
     delivery_schedule = fields.Dict()
     latest_delivery = fields.Nested(LatestDeliverySchema)
-    data_added = DateTimeWithZ()
+    data_added = DateTimeWithZ(allow_none=True)
 
 
 class EngagementAudienceSchema(Schema):

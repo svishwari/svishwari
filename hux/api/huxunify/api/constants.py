@@ -282,7 +282,6 @@ IS_ADDED = "is_added"
 DAY = "day"
 WEEK = "week"
 REQUESTED = "requested"
-DATA_ADDED = "data_added"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"

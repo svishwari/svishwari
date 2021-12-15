@@ -378,7 +378,7 @@ class SetEngagement(SwaggerView):
         for audience in body.get(db_c.AUDIENCES, []):
             for destination in audience.get(api_c.DESTINATIONS):
                 if get_delivery_platform(database, destination.get(api_c.ID)):
-                    destination[api_c.DATA_ADDED] = datetime.datetime.utcnow()
+                    destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
 
         engagement_id = set_engagement(
             database=database,
@@ -506,7 +506,7 @@ class UpdateEngagement(SwaggerView):
         for audience in body.get(db_c.AUDIENCES, []):
             for destination in audience.get(api_c.DESTINATIONS):
                 if get_delivery_platform(database, destination.get(api_c.ID)):
-                    destination[api_c.DATA_ADDED] = datetime.datetime.utcnow()
+                    destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
 
         engagement = update_engagement(
             database=database,
@@ -703,7 +703,7 @@ class AddAudienceEngagement(SwaggerView):
             audience_to_attach = get_audience(database, audience[api_c.ID])
             for destination in audience.get(api_c.DESTINATIONS):
                 if get_delivery_platform(database, destination.get(api_c.ID)):
-                    destination[api_c.DATA_ADDED] = datetime.datetime.utcnow()
+                    destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
 
             if not audience_to_attach:
                 # check if lookalike
@@ -963,7 +963,7 @@ class AddDestinationEngagedAudience(SwaggerView):
             request.get_json(), partial=True
         )
         destination[api_c.ID] = ObjectId(destination.get(api_c.ID))
-        destination[api_c.DATA_ADDED] = datetime.datetime.utcnow()
+        destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
 
         # get destinations
         destination_to_attach = get_delivery_platform(

@@ -1285,7 +1285,7 @@ class TestEngagementRoutes(TestCase):
         self.assertIsNotNone(
             response.json.get(api_c.AUDIENCES)[0]
             .get(api_c.DESTINATIONS)[0]
-            .get(api_c.DATA_ADDED)
+            .get(db_c.DATA_ADDED)
         )
 
     @given(schedule=st.sampled_from(t_c.SCHEDULES))
@@ -1588,7 +1588,7 @@ class TestEngagementRoutes(TestCase):
         self.assertIsNotNone(
             response.json.get(api_c.AUDIENCES)[0]
             .get(api_c.DESTINATIONS)[0]
-            .get(api_c.DATA_ADDED)
+            .get(db_c.DATA_ADDED)
         )
 
     def test_add_audience_to_engagement(self):
