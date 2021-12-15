@@ -29,10 +29,12 @@
           :destination-menu-items="destinationActions"
           data-e2e="status-list"
           class="mb-2"
+          :audience="audienceData"
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
           @onAddDestination="$emit('onAddDestination', $event)"
           @engagementDeliverySection="$emit('engagementDeliveries', $event)"
+          @refreshEntityDelivery="$emit('refreshEntityInsight')"
         >
           <template #empty-destinations>
             <slot name="empty-deliveries" :sectionId="item.id" />
@@ -85,6 +87,10 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    audienceData: {
+      type: Object,
+      required: false,
     },
   },
   data() {
