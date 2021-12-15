@@ -6,7 +6,7 @@ import asyncio
 import random
 from collections import defaultdict
 from typing import Tuple, Optional, List
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 
 import requests
 import aiohttp
@@ -36,6 +36,7 @@ DATETIME_FIELDS = [
     api_c.PINNING_TIMESTAMP,
     api_c.STITCHED_TIMESTAMP,
     api_c.TIMESTAMP,
+    api_c.DATE,
 ]
 
 
@@ -55,8 +56,16 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
             f"{config.CDP_SERVICE}/healthcheck",
             timeout=5,
         )
-        record_health_status_metric(api_c.CDM_API_CONNECTION_HEALTH, True)
-        return response.status_code, "CDM available."
+        record_health_status_metric(
+            api_c.CDM_API_CONNECTION_HEALTH, response.status_code == 200
+        )
+
+        if response.status_code == 200:
+            return True, "CDM available."
+        return (
+            False,
+            f"CDM not available. Received: {response.status_code}",
+        )
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
@@ -365,7 +374,7 @@ async def get_async_customers(
 
 
 def fill_empty_customer_events(
-    start_date: datetime, end_date: datetime
+    start_date: datetime, end_date: datetime, time_diff: dict
 ) -> list:
     """Fill empty events for dates between start_date and end_date.
 
@@ -374,31 +383,42 @@ def fill_empty_customer_events(
             be filled.
         end_date (datetime): End date between which dates, events need to
             be filled.
+        time_diff (dict): Time difference on which data needs to be added
 
     Returns:
         list: Customer events with zero.
     """
 
-    return [
-        {
-            api_c.DATE: start_date + timedelta(days=i),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 0,
-                api_c.CUSTOMER_LOGIN_EVENT: 0,
-                api_c.VIEWED_CART_EVENT: 0,
-                api_c.VIEWED_CHECKOUT_EVENT: 0,
-                api_c.VIEWED_SALE_ITEM_EVENT: 0,
-                api_c.ITEM_PURCHASED_EVENT: 0,
-                api_c.TRAIT_COMPUTED_EVENT: 0,
-            },
-        }
-        for i in range(1, (end_date - start_date).days)
-    ]
+    missing_data = []
+    skip = {k: 1 for k in time_diff.keys()}
+    curr_date = start_date + relativedelta(**skip)
+
+    while curr_date.date() < end_date.date():
+        missing_data.append(
+            {
+                api_c.DATE: curr_date,
+                api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
+                api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                    api_c.VIEWED_CHECKOUT_EVENT: 0,
+                    api_c.ABANDONED_CARTS: 0,
+                    api_c.TRAITS_ANALYZED: 0,
+                    api_c.SALES_MADE: 0,
+                    api_c.CONTENT_VIEWED: 0,
+                    api_c.PRODUCTS_SEARCHED: 0,
+                    api_c.PURCHASES_MADE: 0,
+                },
+            }
+        )
+        curr_date += relativedelta(**skip)
+
+    return missing_data
 
 
 def fill_customer_events_missing_dates(
-    customer_events: list, start_date: datetime, end_date: datetime
+    customer_events: list,
+    start_date: datetime,
+    end_date: datetime,
+    interval: str = "day",
 ) -> list:
     """Get events for a customer grouped by date.
 
@@ -406,41 +426,66 @@ def fill_customer_events_missing_dates(
         customer_events (list): Customer events in CDM API body.
         start_date (datetime): Start date in filter.
         end_date (datetime): End date in filter.
+        interval (str): Interval which the event data will be aggregated,
+            default to "day"
 
     Returns:
         list: Customer events including zeros for missing dates.
     """
 
+    # if interval == "day":
     prev_date = start_date
+    time_diff = {"days": 1}
+
+    if interval == "week":
+        prev_date = start_date - relativedelta(
+            days=(start_date.isoweekday() - 1)
+        )
+        time_diff = {"weeks": 1}
+    elif interval == "month":
+        prev_date = start_date - relativedelta(days=(start_date.day - 1))
+        time_diff = {"months": 1}
+
     customer_events_dates_filled = []
     # fill empty events so that no date(day) is missing
     for idx, customer_event in enumerate(customer_events):
         curr_date = parse(customer_event.get(api_c.DATE))
         # fill for 1 day previous
         if idx == 0:
-            if curr_date > prev_date and (curr_date - prev_date).days >= 1:
+            if (
+                curr_date.date() > prev_date.date()
+            ):  # curr_date > prev_date and (curr_date - prev_date).days >= 1:
                 customer_events_dates_filled = (
                     customer_events_dates_filled
                     + fill_empty_customer_events(
-                        prev_date - timedelta(1),
-                        prev_date + timedelta(1),
+                        prev_date - relativedelta(**time_diff),
+                        prev_date + relativedelta(**time_diff),
+                        time_diff,
                     )
                 )
 
         customer_event[api_c.DATE] = curr_date
         customer_events_dates_filled.append(customer_event)
 
-        if curr_date > prev_date and (curr_date - prev_date).days > 1:
+        if (
+            curr_date.date() > prev_date.date()
+        ):  # and (curr_date - prev_date).days > 1:
+            data_to_fill = fill_empty_customer_events(
+                prev_date, curr_date, time_diff
+            )
             customer_events_dates_filled = (
-                customer_events_dates_filled
-                + fill_empty_customer_events(prev_date, curr_date)
+                customer_events_dates_filled + data_to_fill
             )
         prev_date = curr_date
 
-    if end_date > prev_date and (end_date - prev_date).days >= 1:
+    if (
+        end_date.date() > prev_date.date()
+    ):  # and (end_date - prev_date).days >= 1:
         customer_events_dates_filled = (
             customer_events_dates_filled
-            + fill_empty_customer_events(prev_date, end_date + timedelta(1))
+            + fill_empty_customer_events(
+                prev_date, end_date + relativedelta(**time_diff), time_diff
+            )
         )
 
     customer_events_dates_filled.sort(
@@ -450,7 +495,11 @@ def fill_customer_events_missing_dates(
 
 
 def get_customer_events_data(
-    token: str, hux_id: str, start_date_str: str, end_date_str: str
+    token: str,
+    hux_id: str,
+    start_date_str: str,
+    end_date_str: str,
+    interval: str,
 ) -> list:
     """Get events for a customer grouped by date.
 
@@ -459,6 +508,7 @@ def get_customer_events_data(
         hux_id (str): hux id for a customer.
         start_date_str (str): Start date string for sql query.
         end_date_str (str): End date string for sql query.
+        interval (str): Interval i.e. day/week/month
 
     Returns:
         list: Customer events with respective counts.
@@ -475,7 +525,11 @@ def get_customer_events_data(
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
-        json={api_c.START_DATE: start_date_str, api_c.END_DATE: end_date_str},
+        json={
+            api_c.START_DATE: start_date_str,
+            api_c.END_DATE: end_date_str,
+            api_c.INTERVAL: interval,
+        },
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -499,6 +553,7 @@ def get_customer_events_data(
         customer_events,
         parse(start_date_str + "T00:00:00Z"),
         parse(end_date_str + "T00:00:00Z"),
+        interval,
     )
 
 
@@ -649,7 +704,12 @@ def get_demographic_by_country(
             else None
         )
         customer_insights_by_country.append(
-            {"name": country, "avg_ltv": avg_ltv, "size": total_customer_count}
+            {
+                "name": country,
+                "avg_ltv": avg_ltv,
+                "size": total_customer_count,
+                "country_label": api_c.COUNTRIES_LIST.get(country, " "),
+            }
         )
     # log execution time summary
     total_ticks = time.perf_counter() - timer
@@ -763,7 +823,33 @@ def get_city_ltvs(
 
     logger.info("Successfully retrieved city-level demographic insights.")
 
-    return [clean_cdm_fields(data) for data in response.json()[api_c.BODY]]
+    return get_customer_insights_by_cities(
+        [clean_cdm_fields(data) for data in response.json()[api_c.BODY]]
+    )
+
+
+def get_customer_insights_by_cities(customer_insights_by_cities: list) -> list:
+    """Get customer insights by cities
+
+    Args:
+        customer_insights_by_cities (list): List of customer insights
+
+    Returns:
+        list: Formatted List of customer insights
+
+    """
+    return [
+        {
+            api_c.CITY: x[api_c.CITY],
+            api_c.STATE: x[api_c.STATE],
+            api_c.STATE_LABEL: api_c.STATE_NAMES.get(x[api_c.STATE]),
+            api_c.COUNTRY: x[api_c.COUNTRY],
+            api_c.COUNTRY_LABEL: api_c.COUNTRIES_LIST.get(x[api_c.COUNTRY]),
+            api_c.AVG_LTV: x[api_c.AVG_LTV],
+            api_c.CUSTOMER_COUNT: x[api_c.CUSTOMER_COUNT],
+        }
+        for x in customer_insights_by_cities
+    ]
 
 
 def clean_cdm_gender_fields(response_body: dict) -> dict:
@@ -812,6 +898,7 @@ def get_geographic_customers_data(customer_count_by_state: list) -> list:
     return [
         {
             api_c.COUNTRY: x[api_c.COUNTRY],
+            api_c.COUNTRY_LABEL: api_c.COUNTRIES_LIST.get(x[api_c.COUNTRY]),
             api_c.STATE: x[api_c.STATE],
             api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
             api_c.POPULATION_PERCENTAGE: round(
@@ -930,7 +1017,7 @@ def get_revenue_by_day(
 
     # TODO: Update the API call to CDM with correct endpoint when available
     response = requests.post(
-        f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+        f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-day",
         json=request_payload,
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
@@ -943,50 +1030,39 @@ def get_revenue_by_day(
             response.text,
         )
         raise iae.FailedAPIDependencyError(
-            f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-day",
             response.status_code,
         )
 
-    logger.info("Successfully retrieved spending insights by month.")
-    spending_by_month = sorted(
-        clean_cdm_fields(response.json()[api_c.BODY]),
-        key=lambda x: (x[api_c.YEAR], x[api_c.MONTH]),
-    )
+    logger.info("Successfully retrieved spending insights by day.")
 
     spending_by_day = []
 
-    for i, month_data in enumerate(spending_by_month):
+    for day_data in sorted(
+        clean_cdm_fields(response.json()[api_c.BODY]),
+        key=lambda x: x[api_c.DATE],
+    ):
         spending_by_day.append(
             {
-                api_c.DATE: datetime(
-                    year=month_data[api_c.YEAR],
-                    month=month_data[api_c.MONTH],
-                    day=int(
-                        datetime.strptime(
-                            start_date, api_c.DEFAULT_DATE_FORMAT
-                        ).day
-                    )
-                    if i == 0
-                    else 1,
-                ),
+                api_c.DATE: parse(day_data.get(api_c.DATE)),
                 api_c.LTV: (
                     (
-                        month_data[api_c.AVG_SPENT_MEN]
-                        * month_data[api_c.GENDER_MEN]
+                        day_data[api_c.AVG_SPENT_MEN]
+                        * day_data[api_c.GENDER_MEN]
                     )
                     + (
-                        month_data[api_c.AVG_SPENT_WOMEN]
-                        * month_data[api_c.GENDER_WOMEN]
+                        day_data[api_c.AVG_SPENT_WOMEN]
+                        * day_data[api_c.GENDER_WOMEN]
                     )
                     + (
-                        month_data[api_c.AVG_SPENT_OTHER]
-                        * month_data[api_c.GENDER_OTHER]
+                        day_data[api_c.AVG_SPENT_OTHER]
+                        * day_data[api_c.GENDER_OTHER]
                     )
                 )
                 / (
-                    month_data[api_c.GENDER_MEN]
-                    + month_data[api_c.GENDER_WOMEN]
-                    + month_data[api_c.GENDER_OTHER]
+                    day_data[api_c.GENDER_MEN]
+                    + day_data[api_c.GENDER_WOMEN]
+                    + day_data[api_c.GENDER_OTHER]
                 ),
             }
         )
@@ -1015,8 +1091,14 @@ def add_missing_revenue_data_by_day(
     """
     revenue_data_by_day = []
 
-    start_date = datetime.strptime(start_date, api_c.DEFAULT_DATE_FORMAT)
-    end_date = datetime.strptime(end_date, api_c.DEFAULT_DATE_FORMAT)
+    start_date = datetime.strptime(
+        start_date, api_c.DEFAULT_DATE_FORMAT
+    ).replace(tzinfo=timezone.utc)
+    end_date = datetime.strptime(end_date, api_c.DEFAULT_DATE_FORMAT).replace(
+        tzinfo=timezone.utc
+    )
+    # TODO remove stub when data is returned from CDP.
+    sample_ltv = sample_revenue = 27
 
     for num_day in range(int((end_date - start_date).days) + 1):
         current_date = start_date + relativedelta(days=num_day)
@@ -1029,12 +1111,10 @@ def add_missing_revenue_data_by_day(
             revenue_data_by_day.append(
                 {
                     api_c.DATE: current_date,
-                    api_c.LTV: spending_by_day[0].get(api_c.LTV)
-                    if spending_by_day
-                    else revenue_data_by_day[-1][api_c.LTV],
-                    api_c.REVENUE: spending_by_day[0].get(api_c.REVENUE)
-                    if spending_by_day
-                    else revenue_data_by_day[-1][api_c.REVENUE],
+                    api_c.LTV: sample_ltv
+                    + (sample_ltv * random.uniform(-0.2, 0.3)),
+                    api_c.REVENUE: sample_revenue
+                    + (sample_revenue * random.uniform(-0.2, 0.3)),
                 }
             )
     return revenue_data_by_day

@@ -83,6 +83,7 @@ export default {
       let width = this.chartDimensions.width
       let height = this.chartDimensions.height
 
+      this.localData = []
       this.localData.push([this.min, 0])
       this.localData.push(...this.data)
       this.localData.push([this.max, 0])
@@ -91,7 +92,7 @@ export default {
       let svg = d3Select
         .select(this.$refs["hux-density-chart"])
         .append("svg")
-        .attr("width", "100%")
+        .attr("width", "105%")
         .attr("height", height)
 
       let yAxisMinMaxValue = d3Array.extent(this.localData, (d) => d[1])

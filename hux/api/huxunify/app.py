@@ -4,10 +4,13 @@ import logging
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
+from flask_apscheduler import APScheduler
 
 from huxunify.api.config import load_env_vars
 from huxunify.api.prometheus import monitor_app
 from huxunify.api.route import ROUTES
+from huxunify.api.data_connectors.scheduler import run_scheduled_deliveries
+from huxunify.api.route.utils import get_db_client
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_health_check
@@ -99,6 +102,23 @@ def create_app() -> Flask:
     if flask_app.env != api_c.TEST_MODE:
         monitor_app(flask_app)
 
+    # initialize scheduler
+    scheduler = APScheduler(app=flask_app)
+    scheduler.start()
+
+    # only add job if not test mode.
+    # TODO: mock scheduled job in flask test client using AsyncIO.
+    if flask_app.env != api_c.TEST_MODE:
+        # add delivery schedule cron
+        # lowest possible schedule denomination in unified is 15 minutes.
+        scheduler.add_job(
+            id="process_deliveries",
+            func=run_scheduled_deliveries,
+            trigger="cron",
+            minute=api_c.AUTOMATED_DELIVERY_MINUTE_CRON,
+            args=[get_db_client()],
+        )
+
     return flask_app
 
 
@@ -117,4 +137,4 @@ if __name__ == "__main__":
     app = create_app()
 
     # run the API
-    app.run(host="0.0.0.0", port=port, debug=True)  # nosec
+    app.run(host="0.0.0.0", port=port, debug=app.debug)  # nosec

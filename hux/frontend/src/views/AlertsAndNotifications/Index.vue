@@ -14,148 +14,162 @@
         />
       </template>
     </page-header>
-    <page-header class="top-bar mb-3" :header-height="71">
-      <template #left>
-        <v-btn disabled icon color="black">
-          <icon type="search" :size="20" color="black" variant="lighten3" />
-        </v-btn>
-      </template>
+    <div
+      class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
+    >
+      <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+        <page-header class="top-bar mb-3" :header-height="71">
+          <template #left>
+            <v-btn disabled icon color="black">
+              <icon type="search" :size="20" color="black" variant="lighten3" />
+            </v-btn>
+          </template>
 
-      <template #right>
-        <huxButton
-          variant="primary base"
-          icon="keyboard-return"
-          is-custom-icon
-          class="ma-2 text-button no-shadow mr-0"
-          size="large"
-          is-tile
-          :height="'40'"
-          :icon-size="18"
-          icon-color="white"
-          icon-variant="base"
-          data-e2e="notification-return"
-          @click="goBack()"
+          <template #right>
+            <huxButton
+              variant="primary base"
+              icon="keyboard-return"
+              is-custom-icon
+              class="ma-2 text-button no-shadow mr-0"
+              size="large"
+              is-tile
+              :height="'40'"
+              :icon-size="18"
+              icon-color="white"
+              icon-variant="base"
+              data-e2e="notification-return"
+              @click="goBack()"
+            >
+              Return to previous page
+            </huxButton>
+          </template>
+        </page-header>
+        <v-progress-linear :active="loading" :indeterminate="loading" />
+        <v-row
+          v-if="notificationData.length > 0 && !loading"
+          class="pb-7 pl-3 white"
         >
-          Return to previous page
-        </huxButton>
-      </template>
-    </page-header>
-    <alert-filter-drawer
-      v-model="isFilterToggled"
-      :users="getNotificationUsers"
-      @onSectionAction="alertfunction"
-    />
-    <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row
-      v-if="notificationData.length > 0 && !loading"
-      class="pb-7 pl-3 white"
-    >
-      <hux-data-table
-        :columns="columnDefs"
-        :data-items="notificationData"
-        sort-column="created"
-        sort-desc
-      >
-        <template #row-item="{ item }">
-          <td
-            v-for="header in columnDefs"
-            :key="header.value"
-            :class="{
-              'fixed-column': header.fixed,
-              'v-data-table__divider': header.fixed,
-              'primary--text': header.fixed,
-            }"
-            class="col-overflow text-body-1"
-            :style="{ width: header.width, left: 0 }"
+          <hux-data-table
+            :columns="columnDefs"
+            :data-items="notificationData"
+            sort-column="created"
+            sort-desc
+            class="big-table"
           >
-            <div v-if="header.value == 'id'">
-              <a @click="toggleDrawer(item[header.value])"
-                >{{ item[header.value] }}
-              </a>
-            </div>
+            <template #row-item="{ item }">
+              <td
+                v-for="header in columnDefs"
+                :key="header.value"
+                :class="{
+                  'fixed-column': header.fixed,
+                  'v-data-table__divider': header.fixed,
+                  'primary--text': header.fixed,
+                }"
+                class="col-overflow text-body-1"
+                :style="{ width: header.width, left: 0 }"
+              >
+                <div v-if="header.value == 'id'">
+                  <a @click="toggleDrawer(item[header.value])"
+                    >{{ item[header.value] }}
+                  </a>
+                </div>
 
-            <div v-if="header.value == 'category'">
-              {{ item[header.value] }}
-            </div>
+                <div v-if="header.value == 'category'">
+                  {{ item[header.value] }}
+                </div>
 
-            <div v-if="header.value == 'notification_type'" class="d-flex">
-              <icon
-                :type="
-                  item['notification_type'] === 'Success'
-                    ? 'success_new'
-                    : item['notification_type']
-                "
-                :size="18"
-                :color="getIconColor(item['notification_type'])"
-                :variant="getVariantColor(item['notification_type'])"
-                class="d-block mr-1"
-              />
-              {{ item["notification_type"] }}
-            </div>
+                <div v-if="header.value == 'notification_type'" class="d-flex">
+                  <icon
+                    :type="
+                      item['notification_type'] === 'Success'
+                        ? 'success_new'
+                        : item['notification_type']
+                    "
+                    :size="18"
+                    :color="getIconColor(item['notification_type'])"
+                    :variant="getVariantColor(item['notification_type'])"
+                    class="d-block mr-1"
+                  />
+                  {{ item["notification_type"] }}
+                </div>
 
-            <tooltip v-if="header.value == 'description'" position-top>
-              <template #label-content>
-                <span>{{ item[header.value] }}</span>
-              </template>
-              <template #hover-content>
-                <div class="text--body-1 pb-2">Description</div>
-                {{ item[header.value] }}
-              </template>
-            </tooltip>
+                <tooltip v-if="header.value == 'description'" position-top>
+                  <template #label-content>
+                    <span>{{ item[header.value] }}</span>
+                  </template>
+                  <template #hover-content>
+                    <div class="text--body-1 pb-2">Description</div>
+                    {{ item[header.value] }}
+                  </template>
+                </tooltip>
 
-            <div v-if="header.value == 'created'">
-              <time-stamp :value="item['created']" />
-            </div>
-          </td>
-        </template>
-      </hux-data-table>
-    </v-row>
-    <v-row
-      v-if="notificationData.length == 0 && !loading"
-      class="background-empty"
-    >
-      <empty-page type="no-alerts" :size="50">
-        <template #title>
-          <div class="title-no-notification">No alerts yet</div></template
+                <div v-if="header.value == 'created'">
+                  <time-stamp :value="item['created']" />
+                </div>
+              </td>
+            </template>
+          </hux-data-table>
+        </v-row>
+        <v-row
+          v-if="notificationData.length == 0 && !loading"
+          class="background-empty"
         >
-        <template #subtitle>
-          <div class="des-no-notification">
-            Currently there are no alerts available.<br />
-            Check back later or change your filters.
-          </div>
-        </template>
-        <template #button>
-          <huxButton
-            button-text="Clear filters"
-            variant="primary base"
-            size="large"
-            class="ma-2 font-weight-regular text-button"
-            is-tile
-            :height="'40'"
+          <empty-page type="no-alerts" :size="50">
+            <template #title>
+              <div class="title-no-notification">No alerts yet</div></template
+            >
+            <template #subtitle>
+              <div class="des-no-notification">
+                Currently there are no alerts available.<br />
+                Check back later or change your filters.
+              </div>
+            </template>
+            <template #button>
+              <huxButton
+                button-text="Clear filters"
+                variant="primary base"
+                size="large"
+                class="ma-2 font-weight-regular text-button"
+                is-tile
+                :height="'40'"
+              >
+                Clear filters
+              </huxButton>
+            </template>
+          </empty-page>
+        </v-row>
+        <v-row
+          v-if="
+            notificationData.length > 0 &&
+            notificationData.length <= 0 &&
+            !loading
+          "
+          class="d-flex justify-center align-center"
+        >
+          <error
+            icon-type="error-on-screens"
+            :icon-size="50"
+            title="Alerts &amp; notifications is currently unavailable"
+            subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
           >
-            Clear filters
-          </huxButton>
-        </template>
-      </empty-page>
-    </v-row>
-    <v-row
-      v-if="
-        notificationData.length > 0 && notificationData.length <= 0 && !loading
-      "
-      class="d-flex justify-center align-center"
-    >
-      <error
-        icon-type="error-on-screens"
-        :icon-size="50"
-        title="Alerts &amp; notifications is currently unavailable"
-        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-      >
-      </error>
-    </v-row>
-    <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
-    <v-divider v-if="enableLazyLoad" class="hr-devider"></v-divider>
-    <v-progress-linear v-if="enableLazyLoad" active indeterminate />
-    <observer v-if="notifications.length" @intersect="intersected"></observer>
+          </error>
+        </v-row>
+        <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
+        <v-divider v-if="enableLazyLoad" class="hr-divider"></v-divider>
+        <v-progress-linear v-if="enableLazyLoad" active indeterminate />
+        <observer
+          v-if="notifications.length"
+          @intersect="intersected"
+        ></observer>
+      </div>
+      <div class="ml-auto">
+        <alert-filter-drawer
+          v-model="isFilterToggled"
+          :users="getNotificationUsers"
+          @onSectionAction="alertfunction"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -284,6 +298,15 @@ export default {
       }
     }
   },
+
+  async beforeDestroy() {
+    delete this.batchDetails.notification_types
+    delete this.batchDetails.category
+    delete this.batchDetails.users
+    this.setDefaultData()
+    await this.fetchNotificationsByBatch()
+    this.calculateLastBatch()
+  },
   methods: {
     ...mapActions({
       getAllNotifications: "notifications/getAll",
@@ -299,7 +322,7 @@ export default {
       this.alertDrawer = !this.alertDrawer
     },
     intersected() {
-      if (this.batchDetails.batchNumber <= this.lastBatch) {
+      if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
         this.fetchNotificationsByBatch()
       } else {
@@ -308,14 +331,14 @@ export default {
     },
     async fetchNotificationsByBatch() {
       await this.getAllNotifications(this.batchDetails)
-      this.batchDetails.batchNumber++
+      this.batchDetails.batch_number++
     },
     async getUserData() {
       await this.getUsersNoti()
     },
     calculateLastBatch() {
       this.lastBatch = Math.ceil(
-        this.totalNotifications / this.batchDetails.batchSize
+        this.totalNotifications / this.batchDetails.batch_size
       )
     },
     toggleFilterDrawer() {
@@ -336,12 +359,80 @@ export default {
       }
     },
     setDefaultData() {
-      this.batchDetails.batchSize = 25
-      this.batchDetails.batchNumber = 1
+      let today_date = new Date()
+      let getStartDate = new Date(
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate() - 7
+      )
+      let getEndDate = new Date(
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate()
+      )
+      this.batchDetails.start_date = this.$options.filters.Date(
+        getStartDate,
+        "YYYY-MM-DD"
+      )
+      this.batchDetails.end_date = this.$options.filters.Date(
+        getEndDate,
+        "YYYY-MM-DD"
+      )
+      this.batchDetails.batch_size = 25
+      this.batchDetails.batch_number = 1
       this.batchDetails.isLazyLoad = false
     },
-    alertfunction() {
-      //TODO: Apply Filter API Integration
+    async alertfunction(data) {
+      this.isFilterToggled = false
+      this.loading = true
+      try {
+        let today_date = new Date()
+        let getEndDate = new Date(
+          today_date.getFullYear(),
+          today_date.getMonth(),
+          today_date.getDate()
+        )
+        this.batchDetails.batch_size = 25
+        this.batchDetails.batch_number = 1
+        if (data.selctedAlertType.length !== 0) {
+          this.batchDetails.notification_types =
+            data.selctedAlertType.toString()
+        } else {
+          delete this.batchDetails.notification_types
+        }
+        if (data.selctedCategory.length !== 0) {
+          this.batchDetails.category = data.selctedCategory.toString()
+        } else {
+          delete this.batchDetails.category
+        }
+        if (data.selctedUsers.length !== 0) {
+          this.batchDetails.users = data.selctedUsers.toString()
+        } else {
+          delete this.batchDetails.users
+        }
+
+        if (data.getTime === null || "") {
+          this.batchDetails.start_date = ""
+          this.batchDetails.end_date = ""
+        } else {
+          this.batchDetails.start_date = data.getTime
+          this.batchDetails.end_date = this.$options.filters.Date(
+            getEndDate,
+            "YYYY-MM-DD"
+          )
+        }
+        await this.fetchNotificationsByBatch()
+        this.calculateLastBatch()
+        this.loading = false
+        this.batchDetails.isLazyLoad = false
+      } finally {
+        this.isFilterToggled = false
+        this.loading = false
+        this.enableLazyLoad = true
+        if (this.notifications.length === 0) {
+          this.enableLazyLoad = false
+        }
+      }
     },
   },
 }
@@ -435,10 +526,11 @@ export default {
 .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
   padding-left: 32px !important;
 }
-.hr-devider {
+.hr-divider {
   margin-top: -27px !important;
 }
 .background-empty {
+  height: 70vh !important;
   background-image: url("../../assets/images/no-alert-frame.png");
   background-position: center;
 }
@@ -458,5 +550,10 @@ export default {
   font-weight: 400 !important;
   letter-spacing: 0 !important;
   color: var(--v-black-base);
+}
+::v-deep .empty-page {
+  max-height: 0 !important;
+  min-height: 100% !important;
+  min-width: 100% !important;
 }
 </style>

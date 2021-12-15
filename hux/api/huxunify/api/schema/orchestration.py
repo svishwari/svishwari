@@ -52,6 +52,7 @@ class AudienceDeliverySchema(Schema):
     delivery_platform_type = fields.String()
     last_delivered = DateTimeWithZ(attribute=db_c.UPDATE_TIME)
     status = fields.String()
+    size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
 
 
 class DeliveriesSchema(Schema):
@@ -114,6 +115,7 @@ class AudienceGetSchema(Schema):
 
     destinations = fields.List(fields.Nested(DestinationGetSchema))
     engagements = fields.List(fields.Nested(EngagementDeliverySchema))
+    standalone_deliveries = fields.List(fields.Nested(AudienceDeliverySchema))
     audience_insights = fields.Nested(CustomerOverviewSchema)
 
     status = fields.String(
@@ -130,6 +132,7 @@ class AudienceGetSchema(Schema):
             )
         ],
     )
+
     size = fields.Int(default=0)
     last_delivered = DateTimeWithZ(attribute=api_c.AUDIENCE_LAST_DELIVERED)
 
@@ -146,6 +149,7 @@ class AudienceGetSchema(Schema):
     source_id = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_ID)
     source_name = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_NAME)
     source_size = fields.Int(attribute=db_c.LOOKALIKE_SOURCE_AUD_SIZE)
+    source_exists = fields.Boolean()
     match_rate = fields.Float(default=0)
     favorite = fields.Boolean(default=False)
 
@@ -255,6 +259,12 @@ class LookalikeAudiencePostSchema(Schema):
     engagement_ids = fields.List(fields.String(), required=True)
 
 
+class LookalikeAudiencePutSchema(Schema):
+    """Schema for editing lookalike audience"""
+
+    name = fields.String(required=False)
+
+
 def is_audience_lookalikeable(audience: dict) -> str:
     """Identify if an audience is able to have a lookalike created from it.
     Three possible outcomes
@@ -293,7 +303,6 @@ def is_audience_lookalikeable(audience: dict) -> str:
         ):
             status = api_c.STATUS_INACTIVE
 
-            # TODO - HUS-815
             # add 30 min wait time before making it lookalikable
             if (
                 delivery.get(db_c.STATUS)

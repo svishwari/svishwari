@@ -5,7 +5,8 @@ import { handleError } from "@/utils"
 const METRICS = {
   total_records: {
     title: "Total no. of records",
-    description: "Total number of input records across all data feeds.",
+    description:
+      "All unique offline and online IDs that we receive as input across all data feeds.",
     format: "numeric",
   },
   match_rate: {
@@ -16,31 +17,31 @@ const METRICS = {
   },
   total_unique_ids: {
     title: "Unique Hux IDs",
-    description: "Total Hux IDs that represent an anonymous or known customer.",
+    description:
+      "Unique number of total IDs we can match (individual IDs + anonymous IDs).",
     format: "numeric",
   },
-  total_unknown_ids: {
+  total_anonymous_ids: {
     title: "Anonymous IDs",
     description:
-      "IDs related to online visitors that have not logged in, typically identified by a browser cookie or device ID.",
+      "A digital ID related to online visitors that have not yet been recognized and hence not assigned an individual ID.",
     format: "numeric",
   },
-  total_known_ids: {
-    title: "Known IDs",
-    description:
-      "IDs related to profiles that contain PII from online or offline engagement: name, postal address, email address, and phone number.",
-    format: "numeric",
-  },
+
   total_individual_ids: {
     title: "Individual IDs",
-    description:
-      "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
+    description: "An individual that lives at an address.",
     format: "numeric",
   },
   total_household_ids: {
     title: "Household IDs",
     description:
-      "Represents a Last Name and Address combination, used to identify family members that live at the same address.",
+      "A group of family members with the same last name that live at the same address.",
+    format: "numeric",
+  },
+  total_address_ids: {
+    title: "Address IDs",
+    description: "A unique address (regardless of who lives there).",
     format: "numeric",
   },
 }

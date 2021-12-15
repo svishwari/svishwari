@@ -7,7 +7,7 @@
         </div>
         <div class="text-subtitle-1 font-weight-regular">
           Start making meaningful connections with current and future customers
-          by targeting your created (or new) audiences.
+          by targeting intelligent audiences while staying organized.
         </div>
       </template>
       <template #right>
@@ -16,453 +16,318 @@
           :size="22"
           class="cursor-pointer"
           color="black-darken4"
+          @click.native="isFilterToggled = !isFilterToggled"
         />
       </template>
     </page-header>
-    <page-header class="top-bar" :header-height="71">
-      <template #left>
-        <v-btn disabled icon color="black">
-          <icon type="search" :size="20" color="black" variant="lighten3" />
-        </v-btn>
-      </template>
-
-      <template #right>
-        <router-link
-          :to="{ name: 'EngagementConfiguration' }"
-          class="text-decoration-none"
-          append
-          data-e2e="add-engagement"
-        >
-          <huxButton
-            variant="primary base"
-            icon-color="white"
-            icon-variant="base"
-            icon="plus"
-            size="large"
-            is-custom-icon
-            class="ma-2 font-weight-regular no-shadow mr-0 caption"
-            is-tile
-            height="40"
-          >
-            Engagement
-          </huxButton>
-        </router-link>
-      </template>
-    </page-header>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
-    <hux-data-table
-      v-if="!loading && rowData.length > 0"
-      :columns="columnDefs"
-      :data-items="rowData"
-      view-height="calc(100vh - 210px)"
-      sort-column="update_time"
-      sort-desc="false"
-      nested
-      data-e2e="engagement-table"
-      class="big-table"
+    <div
+      class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
-      <template #item-row="{ item, expandFunc, isExpanded }">
-        <tr :class="{ 'expanded-row': isExpanded }">
-          <td
-            v-for="header in columnDefs"
-            :key="header.value"
-            :class="{
-              'fixed-column': header.fixed,
-              'v-data-table__divider': header.fixed,
-              'primary--text': header.fixed,
-              'expanded-row': isExpanded,
-              'pl-3': header.value == 'audiences',
-            }"
-            :style="{ width: header.width }"
-          >
-            <div v-if="header.value == 'name'" class="w-80">
-              <menu-cell
-                :value="item[header.value]"
-                :menu-options="getActionItems(item)"
-                route-name="EngagementDashboard"
-                :route-param="item['id']"
-                :data="item"
-                :data-e2e="setEngagementSelector(item)"
-                has-favorite
-                :is-favorite="isUserFavorite(item, 'engagements')"
-                class="text-body-1"
-                @actionFavorite="handleActionFavorite(item, 'engagements')"
-              >
-                <template #expand-icon>
-                  <span
-                    v-if="item.audiences.length > 0"
-                    data-e2e="expand-engagement"
-                    @click="expandFunc(!isExpanded)"
-                  >
-                    <icon
-                      type="expand-arrow"
-                      :size="14"
-                      color="primary"
-                      class="
-                        cursor-pointer
-                        mdi-chevron-right
-                        mx-2
-                        d-inline-block
-                      "
-                      :class="{ 'normal-icon': isExpanded }"
-                    />
-                  </span>
-                </template>
-              </menu-cell>
-            </div>
-            <div v-if="header.value == 'audiences'">
-              {{ item[header.value].length }}
-            </div>
-            <div
-              v-if="header.value == 'destinations'"
-              class="d-flex align-center"
+      <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+        <page-header class="top-bar" :header-height="71">
+          <template #left>
+            <v-btn disabled icon color="black">
+              <icon type="search" :size="20" color="black" variant="lighten3" />
+            </v-btn>
+          </template>
+
+          <template #right>
+            <router-link
+              :to="{ name: 'EngagementConfiguration' }"
+              class="text-decoration-none"
+              append
+              data-e2e="add-engagement"
             >
-              <div class="d-flex align-center destination-ico">
-                <tooltip
-                  v-for="destination in getOverallDestinations(
-                    item[header.value]
-                  )"
-                  :key="destination.id"
-                >
-                  <template #label-content>
-                    <logo
-                      class="mr-1"
-                      :type="destination.delivery_platform_type"
-                      :size="18"
-                    />
-                  </template>
-                  <template #hover-content>
-                    <span>{{ destination.name }}</span>
-                  </template>
-                </tooltip>
-              </div>
-              <span v-if="item[header.value].length > 3" class="ml-1">
-                <tooltip>
-                  <template #label-content>
-                    + {{ item[header.value].length - 3 }}
-                  </template>
-                  <template #hover-content>
-                    <div class="d-flex flex-column">
-                      <div
-                        v-for="extraDestination in getExtraDestinations(
-                          item[header.value]
-                        )"
-                        :key="extraDestination.id"
-                        class="d-flex align-center py-2"
+              <huxButton
+                variant="primary base"
+                icon-color="white"
+                icon-variant="base"
+                icon="plus"
+                size="large"
+                is-custom-icon
+                class="ma-2 font-weight-regular no-shadow mr-0 caption"
+                is-tile
+                height="40"
+              >
+                Engagement
+              </huxButton>
+            </router-link>
+          </template>
+        </page-header>
+        <v-progress-linear :active="loading" :indeterminate="loading" />
+        <hux-data-table
+          v-if="!loading && rowData.length > 0"
+          :columns="columnDefs"
+          :data-items="rowData"
+          view-height="calc(100vh - 210px)"
+          sort-column="update_time"
+          sort-desc="false"
+          nested
+          data-e2e="engagement-table"
+          class="big-table"
+        >
+          <template #item-row="{ item, expandFunc, isExpanded }">
+            <tr :class="{ 'expanded-row': isExpanded }">
+              <td
+                v-for="header in columnDefs"
+                :key="header.value"
+                :class="{
+                  'fixed-column': header.fixed,
+                  'v-data-table__divider': header.fixed,
+                  'primary--text': header.fixed,
+                  'expanded-row': isExpanded,
+                  'pl-3': header.value == 'audiences',
+                }"
+                :style="{ width: header.width }"
+              >
+                <div v-if="header.value == 'name'" class="w-80">
+                  <menu-cell
+                    :value="item[header.value]"
+                    :menu-options="getActionItems(item)"
+                    route-name="EngagementDashboard"
+                    :route-param="item['id']"
+                    :data="item"
+                    :data-e2e="setEngagementSelector(item)"
+                    has-favorite
+                    :is-favorite="isUserFavorite(item, 'engagements')"
+                    class="text-body-1"
+                    @actionFavorite="handleActionFavorite(item, 'engagements')"
+                  >
+                    <template #expand-icon>
+                      <span
+                        v-if="item.audiences.length > 0"
+                        data-e2e="expand-engagement"
+                        @click="expandFunc(!isExpanded)"
                       >
-                        <logo
-                          :key="extraDestination.id"
-                          class="mr-4"
-                          :type="extraDestination.delivery_platform_type"
-                          :size="18"
+                        <icon
+                          type="expand-arrow"
+                          :size="14"
+                          color="primary"
+                          class="
+                            cursor-pointer
+                            mdi-chevron-right
+                            mx-2
+                            d-inline-block
+                          "
+                          :class="{ 'normal-icon': isExpanded }"
                         />
-                        <span>{{ extraDestination.name }}</span>
-                      </div>
-                    </div>
-                  </template>
-                </tooltip>
-              </span>
-              <span v-else-if="item[header.value].length == 0">—</span>
-            </div>
-            <div v-if="header.value == 'status'">
-              <status
-                :status="item[header.value]"
-                :show-label="true"
-                class="d-flex"
-                :icon-size="17"
-              />
-            </div>
-            <div v-if="header.value == 'last_delivered'">
-              <tooltip>
-                <template #label-content>
-                  {{ item[header.value] | Date("relative") | Empty }}
-                </template>
-                <template #hover-content>
-                  <div v-if="item[header.value] !== ''">
-                    <div class="neroBlack--text text-body-2 mb-2">
-                      Delivered to:
-                    </div>
-                    <div
-                      v-for="destination in item['destinations']"
+                      </span>
+                    </template>
+                  </menu-cell>
+                </div>
+                <div v-if="header.value == 'audiences'">
+                  {{ item[header.value].length }}
+                </div>
+                <div
+                  v-if="header.value == 'destinations'"
+                  class="d-flex align-center"
+                >
+                  <div class="d-flex align-center destination-ico">
+                    <tooltip
+                      v-for="destination in getOverallDestinations(
+                        item[header.value]
+                      )"
                       :key="destination.id"
-                      class="mb-2"
                     >
-                      <div class="d-flex align-center mb-1">
+                      <template #label-content>
                         <logo
+                          class="mr-1"
                           :type="destination.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-body-2">
-                          {{ destination.name }}
-                        </span>
-                      </div>
-                      <div class="neroBlack--text text-body-2">
-                        {{
-                          destination.latest_delivery
-                            ? destination.latest_delivery.update_time
-                            : "" | Date | Empty
-                        }}
-                      </div>
-                    </div>
-                  </div>
-                  <div v-else>—</div>
-                </template>
-              </tooltip>
-            </div>
-            <div v-if="header.value == 'delivery_schedule'">
-              <tooltip :max-width="280">
-                <template #label-content>
-                  {{ item[header.value] | DeliverySchedule }}
-                </template>
-                <template #hover-content>
-                  <span v-if="!item[header.value] || item[header.value] === {}">
-                    This engagement was delivered manually on
-                    {{
-                      item["last_delivered"]
-                        | Date("MMM D, YYYY [at] h:mm A")
-                        | Empty
-                    }}
-                  </span>
-                  <hux-delivery-text
-                    v-else
-                    :schedule="
-                      item[header.value] ? item[header.value].schedule : {}
-                    "
-                    :start-date="
-                      item[header.value] ? item[header.value].start_date : ''
-                    "
-                    :end-date="
-                      item[header.value] ? item[header.value].end_date : ''
-                    "
-                  />
-                </template>
-              </tooltip>
-            </div>
-            <div
-              v-if="
-                header.value == 'update_time' || header.value == 'create_time'
-              "
-            >
-              <time-stamp :value="item[header.value]" />
-            </div>
-            <div
-              v-if="
-                header.value == 'updated_by' || header.value == 'created_by'
-              "
-            >
-              <avatar :name="item[header.value]" />
-            </div>
-          </td>
-        </tr>
-      </template>
-      <template #expanded-row="{ expandedHeaders, parentItem }">
-        <td
-          v-if="parentItem.audiences.length > 0"
-          :colspan="expandedHeaders.length"
-          class="pa-0 child"
-        >
-          <hux-data-table
-            v-if="parentItem.audiences.length > 0"
-            :columns="expandedHeaders"
-            :data-items="parentItem.audiences"
-            :show-header="false"
-            class="expanded-table big-table"
-            view-height="auto"
-            nested
-            data-e2e="audience-table"
-          >
-            <template #item-row="{ item, expandFunc, isExpanded }">
-              <tr :class="{ 'expanded-row': isExpanded }">
-                <td :style="{ width: expandedHeaders[0].width }"></td>
-                <td
-                  v-for="header in getAudienceHeaders(subHeaders)"
-                  :key="header.value"
-                  :class="{
-                    'child-row pl-1': header.value == 'name',
-                  }"
-                  :style="{ width: header.width }"
-                >
-                  <div v-if="header.value == 'name'">
-                    <menu-cell
-                      :value="item[header.value]"
-                      :menu-options="
-                        getAudienceActionItems(item, parentItem.id)
-                      "
-                      route-name="AudienceInsight"
-                      :route-param="item['id']"
-                      :data="item"
-                      :label-class="{
-                        'no-expand': item.destinations.length == 0,
-                      }"
-                      class="text-body-1"
-                    >
-                      <template #expand-icon>
-                        <span
-                          v-if="item.destinations.length > 0"
-                          data-e2e="expand-audience"
-                          @click="expandFunc(!isExpanded)"
-                        >
-                          <icon
-                            type="expand-arrow"
-                            :size="14"
-                            color="primary"
-                            class="
-                              cursor-pointer
-                              mdi-chevron-right
-                              mx-2
-                              d-inline-block
-                            "
-                            :class="{ 'normal-icon': isExpanded }"
-                          />
-                        </span>
-                      </template>
-                    </menu-cell>
-                  </div>
-                  <div v-if="header.value == 'status'">
-                    <div>
-                      <status
-                        :status="item[header.value]"
-                        :show-label="true"
-                        class="d-flex"
-                        :icon-size="17"
-                      />
-                    </div>
-                  </div>
-                  <div
-                    v-if="header.value == 'destinations'"
-                    class="d-flex align-center"
-                  >
-                    <div class="d-flex align-center destination-ico">
-                      <tooltip
-                        v-for="destination in getOverallDestinations(
-                          item[header.value]
-                        )"
-                        :key="destination.id"
-                      >
-                        <template #label-content>
-                          <logo
-                            class="mr-1"
-                            :type="destination.delivery_platform_type"
-                            :size="18"
-                          />
-                        </template>
-                        <template #hover-content>
-                          <span>{{ destination.name }}</span>
-                        </template>
-                      </tooltip>
-                    </div>
-                    <span v-if="item[header.value].length > 3" class="ml-1">
-                      <tooltip>
-                        <template #label-content>
-                          + {{ item[header.value].length - 3 }}
-                        </template>
-                        <template #hover-content>
-                          <div class="d-flex flex-column">
-                            <div
-                              v-for="extraDestination in getExtraDestinations(
-                                item[header.value]
-                              )"
-                              :key="extraDestination.id"
-                              class="d-flex align-center py-2"
-                            >
-                              <logo
-                                :key="extraDestination.id"
-                                class="mr-4"
-                                :type="extraDestination.delivery_platform_type"
-                                :size="18"
-                              />
-                              <span>{{ extraDestination.name }}</span>
-                            </div>
-                          </div>
-                        </template>
-                      </tooltip>
-                    </span>
-                    <span v-else-if="item[header.value].length == 0">—</span>
-                  </div>
-                  <div v-if="header.value == 'last_delivered'">
-                    <tooltip>
-                      <template #label-content>
-                        <span data-e2e="last-delivered">
-                          {{ item[header.value] | Date("relative") | Empty }}
-                        </span>
                       </template>
                       <template #hover-content>
-                        <div>
-                          <div class="neroBlack--text text-body-2 mb-2">
-                            Delivered to:
-                          </div>
+                        <span>{{ destination.name }}</span>
+                      </template>
+                    </tooltip>
+                  </div>
+                  <span v-if="item[header.value].length > 3" class="ml-1">
+                    <tooltip>
+                      <template #label-content>
+                        + {{ item[header.value].length - 3 }}
+                      </template>
+                      <template #hover-content>
+                        <div class="d-flex flex-column">
                           <div
-                            v-for="destination in item['destinations']"
-                            :key="destination.id"
-                            class="mb-2"
+                            v-for="extraDestination in getExtraDestinations(
+                              item[header.value]
+                            )"
+                            :key="extraDestination.id"
+                            class="d-flex align-center py-2"
                           >
-                            <div class="d-flex align-center mb-1">
-                              <logo
-                                :type="destination.delivery_platform_type"
-                                :size="18"
-                              />
-                              <span class="ml-1 neroBlack--text text-body-2">
-                                {{ destination.name }}
-                              </span>
-                            </div>
-                            <div class="neroBlack--text text-body-2">
-                              {{
-                                destination.latest_delivery.update_time
-                                  | Date
-                                  | Empty
-                              }}
-                            </div>
+                            <logo
+                              :key="extraDestination.id"
+                              class="mr-4"
+                              :type="extraDestination.delivery_platform_type"
+                              :size="18"
+                            />
+                            <span>{{ extraDestination.name }}</span>
                           </div>
                         </div>
                       </template>
                     </tooltip>
-                  </div>
-                  <div v-if="header.value == 'delivery_schedule'">
-                    <tooltip>
-                      <template #label-content> - </template>
-                      <template #hover-content> - </template>
-                    </tooltip>
-                  </div>
-                  <div
-                    v-if="
-                      header.value == 'update_time' ||
-                      header.value == 'create_time'
-                    "
-                  >
-                    <time-stamp :value="item[header.value]" />
-                  </div>
-                  <div
-                    v-if="
-                      header.value == 'updated_by' ||
-                      header.value == 'created_by'
-                    "
-                  >
-                    <avatar :name="item[header.value]" />
-                  </div>
-                </td>
-              </tr>
-            </template>
-            <!-- eslint-disable vue/no-template-shadow -->
-            <template #expanded-row="{ expandedHeaders, parentItem }">
-              <td
-                v-if="parentItem.destinations.length > 0"
-                :colspan="expandedHeaders.length"
-                class="pa-0 child"
-              >
-                <hux-data-table
-                  v-if="parentItem"
-                  :columns="expandedHeaders"
-                  :data-items="getDestinations(parentItem)"
-                  :show-header="false"
-                  view-height="auto"
-                  class="big-table"
+                  </span>
+                  <span v-else-if="item[header.value].length == 0">—</span>
+                </div>
+                <div v-if="header.value == 'status'">
+                  <status
+                    :status="item[header.value]"
+                    :show-label="true"
+                    class="d-flex"
+                    :icon-size="17"
+                  />
+                </div>
+                <div v-if="header.value == 'last_delivered'">
+                  <tooltip>
+                    <template #label-content>
+                      {{ item[header.value] | Date("relative") | Empty }}
+                    </template>
+                    <template #hover-content>
+                      <div v-if="item[header.value] !== ''">
+                        <div class="neroBlack--text text-body-2 mb-2">
+                          Delivered to:
+                        </div>
+                        <div
+                          v-for="destination in item['destinations']"
+                          :key="destination.id"
+                          class="mb-2"
+                        >
+                          <div class="d-flex align-center mb-1">
+                            <logo
+                              :type="destination.delivery_platform_type"
+                              :size="18"
+                            />
+                            <span class="ml-1 neroBlack--text text-body-2">
+                              {{ destination.name }}
+                            </span>
+                          </div>
+                          <div class="neroBlack--text text-body-2">
+                            {{
+                              destination.latest_delivery
+                                ? destination.latest_delivery.update_time
+                                : "" | Date | Empty
+                            }}
+                          </div>
+                        </div>
+                      </div>
+                      <div v-else>—</div>
+                    </template>
+                  </tooltip>
+                </div>
+                <div v-if="header.value == 'delivery_schedule'">
+                  <tooltip :max-width="280">
+                    <template #label-content>
+                      {{ item[header.value] | DeliverySchedule }}
+                    </template>
+                    <template #hover-content>
+                      <span
+                        v-if="!item[header.value] || item[header.value] === {}"
+                      >
+                        This engagement was delivered manually on
+                        {{
+                          item["last_delivered"]
+                            | Date("MMM D, YYYY [at] h:mm A")
+                            | Empty
+                        }}
+                      </span>
+                      <hux-delivery-text
+                        v-else
+                        :schedule="
+                          item[header.value] ? item[header.value].schedule : {}
+                        "
+                        :start-date="
+                          item[header.value]
+                            ? item[header.value].start_date
+                            : ''
+                        "
+                        :end-date="
+                          item[header.value] ? item[header.value].end_date : ''
+                        "
+                      />
+                    </template>
+                  </tooltip>
+                </div>
+                <div
+                  v-if="
+                    header.value == 'update_time' ||
+                    header.value == 'create_time'
+                  "
                 >
-                  <template #row-item="{ item }">
+                  <time-stamp :value="item[header.value]" />
+                </div>
+                <div
+                  v-if="
+                    header.value == 'updated_by' || header.value == 'created_by'
+                  "
+                >
+                  <avatar :name="item[header.value]" />
+                </div>
+              </td>
+            </tr>
+          </template>
+          <template #expanded-row="{ expandedHeaders, parentItem }">
+            <td
+              v-if="parentItem.audiences.length > 0"
+              :colspan="expandedHeaders.length"
+              class="pa-0 child"
+            >
+              <hux-data-table
+                v-if="parentItem.audiences.length > 0"
+                :columns="expandedHeaders"
+                :data-items="parentItem.audiences"
+                :show-header="false"
+                class="expanded-table big-table"
+                view-height="auto"
+                nested
+                data-e2e="audience-table"
+              >
+                <template #item-row="{ item, expandFunc, isExpanded }">
+                  <tr :class="{ 'expanded-row': isExpanded }">
+                    <td :style="{ width: expandedHeaders[0].width }"></td>
                     <td
-                      v-for="header in columnDefs"
+                      v-for="header in getAudienceHeaders(subHeaders)"
                       :key="header.value"
+                      :class="{
+                        'child-row pl-1': header.value == 'name',
+                      }"
                       :style="{ width: header.width }"
                     >
+                      <div v-if="header.value == 'name'">
+                        <menu-cell
+                          :value="item[header.value]"
+                          :menu-options="
+                            getAudienceActionItems(item, parentItem.id)
+                          "
+                          route-name="AudienceInsight"
+                          :route-param="item['id']"
+                          :data="item"
+                          :label-class="{
+                            'no-expand': item.destinations.length == 0,
+                          }"
+                          class="text-body-1"
+                        >
+                          <template #expand-icon>
+                            <span
+                              v-if="item.destinations.length > 0"
+                              data-e2e="expand-audience"
+                              @click="expandFunc(!isExpanded)"
+                            >
+                              <icon
+                                type="expand-arrow"
+                                :size="14"
+                                color="primary"
+                                class="
+                                  cursor-pointer
+                                  mdi-chevron-right
+                                  mx-2
+                                  d-inline-block
+                                "
+                                :class="{ 'normal-icon': isExpanded }"
+                              />
+                            </span>
+                          </template>
+                        </menu-cell>
+                      </div>
                       <div v-if="header.value == 'status'">
                         <div>
                           <status
@@ -473,41 +338,107 @@
                           />
                         </div>
                       </div>
-                      <div v-if="header.value == 'destinations'">
+                      <div
+                        v-if="header.value == 'destinations'"
+                        class="d-flex align-center"
+                      >
+                        <div class="d-flex align-center destination-ico">
+                          <tooltip
+                            v-for="destination in getOverallDestinations(
+                              item[header.value]
+                            )"
+                            :key="destination.id"
+                          >
+                            <template #label-content>
+                              <logo
+                                class="mr-1"
+                                :type="destination.delivery_platform_type"
+                                :size="18"
+                              />
+                            </template>
+                            <template #hover-content>
+                              <span>{{ destination.name }}</span>
+                            </template>
+                          </tooltip>
+                        </div>
+                        <span v-if="item[header.value].length > 3" class="ml-1">
+                          <tooltip>
+                            <template #label-content>
+                              + {{ item[header.value].length - 3 }}
+                            </template>
+                            <template #hover-content>
+                              <div class="d-flex flex-column">
+                                <div
+                                  v-for="extraDestination in getExtraDestinations(
+                                    item[header.value]
+                                  )"
+                                  :key="extraDestination.id"
+                                  class="d-flex align-center py-2"
+                                >
+                                  <logo
+                                    :key="extraDestination.id"
+                                    class="mr-4"
+                                    :type="
+                                      extraDestination.delivery_platform_type
+                                    "
+                                    :size="18"
+                                  />
+                                  <span>{{ extraDestination.name }}</span>
+                                </div>
+                              </div>
+                            </template>
+                          </tooltip>
+                        </span>
+                        <span v-else-if="item[header.value].length == 0"
+                          >—</span
+                        >
+                      </div>
+                      <div v-if="header.value == 'last_delivered'">
                         <tooltip>
                           <template #label-content>
-                            <logo
-                              :key="item[header.value].id"
-                              :type="item[header.value].delivery_platform_type"
-                              :size="18"
-                              class="mr-1"
-                            />
+                            <span data-e2e="last-delivered">
+                              {{
+                                item[header.value] | Date("relative") | Empty
+                              }}
+                            </span>
                           </template>
                           <template #hover-content>
-                            {{ item[header.value].name }}
+                            <div>
+                              <div class="neroBlack--text text-body-2 mb-2">
+                                Delivered to:
+                              </div>
+                              <div
+                                v-for="destination in item['destinations']"
+                                :key="destination.id"
+                                class="mb-2"
+                              >
+                                <div class="d-flex align-center mb-1">
+                                  <logo
+                                    :type="destination.delivery_platform_type"
+                                    :size="18"
+                                  />
+                                  <span
+                                    class="ml-1 neroBlack--text text-body-2"
+                                  >
+                                    {{ destination.name }}
+                                  </span>
+                                </div>
+                                <div class="neroBlack--text text-body-2">
+                                  {{
+                                    destination.latest_delivery.update_time
+                                      | Date
+                                      | Empty
+                                  }}
+                                </div>
+                              </div>
+                            </div>
                           </template>
                         </tooltip>
                       </div>
-                      <div v-if="header.value == 'last_delivered'">
-                        <time-stamp :value="item[header.value]" />
-                      </div>
                       <div v-if="header.value == 'delivery_schedule'">
                         <tooltip>
-                          <template #label-content>
-                            {{
-                              item[header.value]
-                                ? item[header.value].periodicity
-                                : "-"
-                            }}
-                          </template>
-                          <template #hover-content>
-                            <hux-delivery-text
-                              v-if="item[header.value]"
-                              :schedule="item[header.value]"
-                              type="destination"
-                            />
-                            <span v-else>-</span>
-                          </template>
+                          <template #label-content> - </template>
+                          <template #hover-content> - </template>
                         </tooltip>
                       </div>
                       <div
@@ -527,56 +458,154 @@
                         <avatar :name="item[header.value]" />
                       </div>
                     </td>
-                  </template>
-                </hux-data-table>
-              </td>
+                  </tr>
+                </template>
+                <!-- eslint-disable vue/no-template-shadow -->
+                <template #expanded-row="{ expandedHeaders, parentItem }">
+                  <td
+                    v-if="parentItem.destinations.length > 0"
+                    :colspan="expandedHeaders.length"
+                    class="pa-0 child"
+                  >
+                    <hux-data-table
+                      v-if="parentItem"
+                      :columns="expandedHeaders"
+                      :data-items="getDestinations(parentItem)"
+                      :show-header="false"
+                      view-height="auto"
+                      class="big-table"
+                    >
+                      <template #row-item="{ item }">
+                        <td
+                          v-for="header in columnDefs"
+                          :key="header.value"
+                          :style="{ width: header.width }"
+                        >
+                          <div v-if="header.value == 'status'">
+                            <div>
+                              <status
+                                :status="item[header.value]"
+                                :show-label="true"
+                                class="d-flex"
+                                :icon-size="17"
+                              />
+                            </div>
+                          </div>
+                          <div v-if="header.value == 'destinations'">
+                            <tooltip>
+                              <template #label-content>
+                                <logo
+                                  :key="item[header.value].id"
+                                  :type="
+                                    item[header.value].delivery_platform_type
+                                  "
+                                  :size="18"
+                                  class="mr-1"
+                                />
+                              </template>
+                              <template #hover-content>
+                                {{ item[header.value].name }}
+                              </template>
+                            </tooltip>
+                          </div>
+                          <div v-if="header.value == 'last_delivered'">
+                            <time-stamp :value="item[header.value]" />
+                          </div>
+                          <div v-if="header.value == 'delivery_schedule'">
+                            <tooltip>
+                              <template #label-content>
+                                {{
+                                  item[header.value]
+                                    ? item[header.value].periodicity
+                                    : "-"
+                                }}
+                              </template>
+                              <template #hover-content>
+                                <hux-delivery-text
+                                  v-if="item[header.value]"
+                                  :schedule="item[header.value]"
+                                  type="destination"
+                                />
+                                <span v-else>-</span>
+                              </template>
+                            </tooltip>
+                          </div>
+                          <div
+                            v-if="
+                              header.value == 'update_time' ||
+                              header.value == 'create_time'
+                            "
+                          >
+                            <time-stamp :value="item[header.value]" />
+                          </div>
+                          <div
+                            v-if="
+                              header.value == 'updated_by' ||
+                              header.value == 'created_by'
+                            "
+                          >
+                            <avatar :name="item[header.value]" />
+                          </div>
+                        </td>
+                      </template>
+                    </hux-data-table>
+                  </td>
+                </template>
+                <!-- eslint-enable -->
+              </hux-data-table>
+            </td>
+          </template>
+        </hux-data-table>
+
+        <v-row v-if="rowData.length == 0 && !loading" class="pt-3 pb-7 pl-3">
+          <empty-page type="no-engagement" size="50">
+            <template #title>Oops! There’s nothing here yet</template>
+            <template #subtitle>
+              Plan your engagement ahead of time. You can create the <br />
+              framework first then add audiences later. <br />
+              Begin by selecting the button below.
             </template>
-            <!-- eslint-enable -->
-          </hux-data-table>
-        </td>
-      </template>
-    </hux-data-table>
+            <template #button>
+              <router-link
+                :to="{ name: 'AudienceConfiguration' }"
+                class="route-link text-decoration-none"
+                append
+              >
+                <huxButton
+                  button-text="Engagement"
+                  variant="primary base"
+                  icon-color="white"
+                  icon-variant="base"
+                  icon="plus"
+                  size="large"
+                  is-custom-icon
+                  class="ma-2 font-weight-regular caption"
+                  is-tile
+                  height="40"
+                >
+                  Engagement
+                </huxButton>
+              </router-link>
+            </template>
+          </empty-page>
+        </v-row>
 
-    <v-row v-if="rowData.length == 0 && !loading" class="pt-3 pb-7 pl-3">
-      <empty-page type="no-engagement" size="50">
-        <template #title>Oops! There’s nothing here yet</template>
-        <template #subtitle>
-          Plan your engagement ahead of time. You can create the <br />
-          framework first then add audiences later. <br />
-          Begin by selecting the button below.
-        </template>
-        <template #button>
-          <router-link
-            :to="{ name: 'AudienceConfiguration' }"
-            class="route-link text-decoration-none"
-            append
-          >
-            <huxButton
-              button-text="Engagement"
-              variant="primary base"
-              icon-color="white"
-              icon-variant="base"
-              icon="plus"
-              size="large"
-              is-custom-icon
-              class="ma-2 font-weight-regular caption"
-              is-tile
-              height="40"
-            >
-              Engagement
-            </huxButton>
-          </router-link>
-        </template>
-      </empty-page>
-    </v-row>
-
-    <look-alike-audience
-      ref="lookalikeWorkflow"
-      :toggle="showLookAlikeDrawer"
-      :selected-audience="selectedAudience"
-      @onBack="reloadAudienceData()"
-      @onCreate="onCreated()"
-    />
+        <look-alike-audience
+          ref="lookalikeWorkflow"
+          :toggle="showLookAlikeDrawer"
+          :selected-audience="selectedAudience"
+          @onBack="reloadAudienceData()"
+          @onCreate="onCreated()"
+        />
+      </div>
+      <div class="ml-auto">
+        <engagement-filter
+          v-model="isFilterToggled"
+          view-height="calc(100vh - 180px)"
+          @onSectionAction="applyFilter"
+        />
+      </div>
+    </div>
 
     <confirm-modal
       v-model="showAudienceRemoveConfirmation"
@@ -660,6 +689,7 @@ import Logo from "../../components/common/Logo.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
+import EngagementFilter from "./Configuration/Drawers/EngagementFilter.vue"
 export default {
   name: "Engagements",
   components: {
@@ -678,9 +708,11 @@ export default {
     Tooltip,
     ConfirmModal,
     HuxDeliveryText,
+    EngagementFilter,
   },
   data() {
     return {
+      isFilterToggled: false,
       confirmModal: false,
       confirmSubtitle: "",
       selectedEngagement: null,
@@ -841,6 +873,7 @@ export default {
   methods: {
     ...mapActions({
       getAllEngagements: "engagements/getAll",
+      getAllFilteredEngagements: "engagements/getAllFiltered",
       updateAudienceList: "engagements/updateAudienceList",
       updateEngagement: "engagements/updateEngagement",
       detachAudience: "engagements/detachAudience",
@@ -849,6 +882,14 @@ export default {
       clearFavorite: "users/clearFavorite",
       deleteEngagement: "engagements/remove",
     }),
+
+    async applyFilter(params) {
+      await this.getAllFilteredEngagements({
+        favorites: params.selectedFavourite,
+        my_engagements: params.selectedEngagementsWorkedWith,
+      })
+      this.isFilterToggled = false
+    },
 
     openModal(engagement) {
       this.selectedEngagement = engagement
@@ -1094,7 +1135,6 @@ export default {
     white-space: nowrap;
   }
   .mdi-chevron-right {
-    margin-top: -4px;
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
     &.normal-icon {
       transform: rotate(90deg);
@@ -1177,7 +1217,6 @@ export default {
         }
         td:nth-child(1) {
           position: sticky;
-          top: 0;
           left: 0;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           background-color: white;

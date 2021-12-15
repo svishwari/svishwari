@@ -237,6 +237,7 @@ class TestUserRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         t_c.validate_schema(UserSchema(), response.json)
+        self.assertIn(db_c.AUDIENCES, response.json[db_c.USER_FAVORITES])
 
     def test_get_all_users(self):
         """Tests getting all users."""
@@ -250,7 +251,7 @@ class TestUserRoutes(TestCase):
 
         t_c.validate_schema(UserSchema(), response.json, True)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(1, len(response.json))
+        self.assertEqual(2, len(response.json))
         self.assertIsNotNone(response.json[0][api_c.DISPLAY_NAME])
         self.assertIsNotNone(response.json[0][api_c.EMAIL])
         self.assertIsNotNone(response.json[0][api_c.USER_PHONE_NUMBER])

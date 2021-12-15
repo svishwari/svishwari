@@ -1,6 +1,7 @@
 import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
+import rules from "../../api/mock/factories/rules.json"
 
 const namespaced = true
 
@@ -112,6 +113,10 @@ const mutations = {
       state.audiences[data.id].lookalike_audiences = []
     }
     state.audiences[data.id].lookalike_audiences.push(data.lookalike)
+  },
+
+  UPDATE_LOOKALIKE(state, data) {
+    Vue.set(state.audiences[data.id], "name", data.name)
   },
 }
 
@@ -247,7 +252,13 @@ const actions = {
 
   async add({ commit }, audience) {
     try {
-      const response = await api.audiences.create(audience)
+      let response
+      if (audience.deliver) {
+        delete audience.deliver
+        response = await api.audiences.createAndDeliver(audience)
+      } else {
+        response = await api.audiences.create(audience)
+      }
       commit("SET_ONE", response.data)
       return response.data
     } catch (error) {
@@ -260,6 +271,20 @@ const actions = {
       const response = await api.audiences.update(id, payload)
       commit("SET_ONE", response.data)
       return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async updateLookalike({ commit, state }, { id, payload }) {
+    try {
+      const response = await api.lookalike.update(id, payload)
+      commit("UPDATE_LOOKALIKE", {
+        id: id,
+        name: response.data.name,
+      })
+      return state.audiences[id]
     } catch (error) {
       handleError(error)
       throw error
@@ -294,6 +319,41 @@ const actions = {
   async fetchConstants({ commit }) {
     try {
       const response = await api.audiences.getRules()
+      if (response.data.rule_attributes.general.email.options.length === 0) {
+        response.data.rule_attributes.general.email.options =
+          rules.rule_attributes.general.email.options
+      }
+      if (response.data.rule_attributes.general.gender.options.length === 0) {
+        response.data.rule_attributes.general.gender.options =
+          rules.rule_attributes.general.gender.options
+      }
+      if (
+        response.data.rule_attributes.general.location.zip_code.options
+          .length === 0
+      ) {
+        response.data.rule_attributes.general.location.zip_code.options =
+          rules.rule_attributes.general.location.zip_code.options
+      }
+      if (
+        response.data.rule_attributes.general.location.city.options.length === 0
+      ) {
+        response.data.rule_attributes.general.location.city.options =
+          rules.rule_attributes.general.location.city.options
+      }
+      if (
+        response.data.rule_attributes.general.location.country.options
+          .length === 0
+      ) {
+        response.data.rule_attributes.general.location.country.options =
+          rules.rule_attributes.general.location.country.options
+      }
+      if (
+        response.data.rule_attributes.general.location.state.options.length ===
+        0
+      ) {
+        response.data.rule_attributes.general.location.state.options =
+          rules.rule_attributes.general.location.state.options
+      }
       commit("SET_CONSTANTS", response.data)
       return response.data
     } catch (error) {
@@ -302,10 +362,12 @@ const actions = {
     }
   },
 
-  async fetchFilterSize({ commit }, filter) {
+  async fetchFilterSize({ commit }, { filter, overall }) {
     try {
       const response = await api.customers.getOverview(filter)
-      commit("customers/SET_OVERVIEW", response.data, { root: true })
+      if (overall) {
+        commit("customers/SET_OVERVIEW", response.data, { root: true })
+      }
       return response.data
     } catch (error) {
       handleError(error)

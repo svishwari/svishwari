@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument
 """Purpose of this script is for housing the
 decision routes for the API"""
 import pathlib
@@ -18,13 +19,12 @@ from huxunifylib.database import (
     notification_management,
 )
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.db_exceptions import DuplicateDocument
 
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -39,7 +39,8 @@ from huxunify.api.schema.model import (
     FeatureSchema,
     ModelRequestPOSTSchema,
 )
-from huxunify.api.data_connectors import tecton
+from huxunify.api.schema.configurations import ConfigurationsSchema
+from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
@@ -88,12 +89,16 @@ class ModelsView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[List[dict], int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[List[dict], int]:
         """Retrieves all models.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
 
         Returns:
             Tuple[List[dict], int]: list containing dict of models,
@@ -104,10 +109,11 @@ class ModelsView(SwaggerView):
         status = [
             status.lower() for status in request.args.getlist(api_c.STATUS)
         ]
-        all_models = tecton.get_models()
+        all_models = Tecton().get_models()
 
         purchase_model = {
-            api_c.TYPE: "purchase",
+            api_c.TYPE: "Classification",
+            api_c.CATEGORY: "Email",
             api_c.FULCRUM_DATE: datetime(2021, 6, 26),
             api_c.PAST_VERSION_COUNT: 0,
             api_c.LAST_TRAINED: datetime(2021, 6, 26),
@@ -127,7 +133,11 @@ class ModelsView(SwaggerView):
             if api_c.CATEGORY not in model:
                 model[api_c.CATEGORY] = api_c.UNCATEGORIZED
 
-        all_models.extend([{**x} for x in api_c.MODELS_STUB])
+        database = get_db_client()
+        unified_models = collection_management.get_documents(
+            database, db_c.MODELS_COLLECTION
+        ).get(db_c.DOCUMENTS)
+        all_models.extend(unified_models)
 
         config_models = collection_management.get_documents(
             get_db_client(),
@@ -172,13 +182,21 @@ class SetModelStatus(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Model request body.",
-            "example": {
-                api_c.TYPE: "purchase",
-                api_c.NAME: "Propensity to Purchase",
-                api_c.ID: 3,
-                api_c.STATUS: api_c.REQUESTED,
-            },
+            "description": "Models request body.",
+            "example": [
+                {
+                    api_c.TYPE: "purchase",
+                    api_c.NAME: "Propensity to Purchase",
+                    api_c.ID: "9a44c346ba034ac8a699ae0ab3314003",
+                    api_c.STATUS: api_c.REQUESTED,
+                },
+                {
+                    api_c.TYPE: "unsubscribe",
+                    api_c.NAME: "Propensity to Unsubscribe",
+                    api_c.ID: "eb5f35e34c0047d3b9022ef330952dd1",
+                    api_c.STATUS: api_c.REQUESTED,
+                },
+            ],
         }
     ]
 
@@ -200,8 +218,8 @@ class SetModelStatus(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @get_user_name()
-    def post(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
+    def post(self, user: dict) -> Tuple[dict, int]:
         """Request a model.
 
         ---
@@ -209,44 +227,73 @@ class SetModelStatus(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Model Requested, HTTP status code.
         """
 
-        body = ModelRequestPOSTSchema().load(request.get_json(), unknown=True)
+        models = ModelRequestPOSTSchema().load(
+            request.get_json(), unknown=True, many=True
+        )
         database = get_db_client()
 
-        # set type of configuration as model
-        body[api_c.TYPE] = api_c.MODELS_TAG
+        configurations = []
+        for model in models:
+            # set source of configuration as model
+            model[db_c.TYPE] = api_c.MODELS_TAG
 
-        try:
-            collection_management.create_document(
-                database=database,
-                collection=db_c.CONFIGURATIONS_COLLECTION,
-                new_doc=body,
-                username=user_name,
+            # check if document exists
+            model_document = collection_management.get_document(
+                database,
+                db_c.CONFIGURATIONS_COLLECTION,
+                {db_c.OBJECT_ID: model.get(db_c.OBJECT_ID)},
             )
-        except DuplicateDocument:
-            logger.info("Model already exists %s.", body.get(db_c.NAME))
-            return {api_c.MESSAGE: api_c.DUPLICATE_NAME}, HTTPStatus.CONFLICT
 
-        notification_management.create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Model requested "{body[db_c.NAME]}" ' f"by {user_name}.",
-            api_c.MODELS_TAG,
+            if model_document:
+                # TODO: TEMPORARILY update document.
+                logger.warning(
+                    "Requested model already exists %s.", model.get(db_c.NAME)
+                )
+                # update the document
+                configurations.append(
+                    collection_management.update_document(
+                        database,
+                        db_c.CONFIGURATIONS_COLLECTION,
+                        model_document[db_c.ID],
+                        model,
+                        user[api_c.USER_NAME],
+                    )
+                )
+                continue
+
+            configurations.append(
+                collection_management.create_document(
+                    database=database,
+                    collection=db_c.CONFIGURATIONS_COLLECTION,
+                    new_doc=model,
+                    username=user[api_c.USER_NAME],
+                )
+            )
+            notification_management.create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                f'Model requested "{model[db_c.NAME]}" '
+                f"by {user[api_c.USER_NAME]}.",
+                api_c.MODELS,
+                user[api_c.USER_NAME],
+            )
+            logger.info(
+                "Successfully requested model %s.", model.get(db_c.NAME)
+            )
+
+        return (
+            jsonify(ConfigurationsSchema(many=True).dump(configurations)),
+            HTTPStatus.OK.value,
         )
 
-        logger.info("Successfully requested model %s.", body.get(db_c.NAME))
 
-        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
-
-
-@add_view_to_blueprint(
-    model_bp, f"{api_c.MODELS_ENDPOINT}", "RemoveRequestedModel"
-)
+@add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "RemoveRequestedModel")
 class RemoveRequestedModel(SwaggerView):
     """Class to remove a requested model."""
 
@@ -279,8 +326,8 @@ class RemoveRequestedModel(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @get_user_name()
-    def delete(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def delete(self, user: dict) -> Tuple[dict, int]:
         """Remove a requested model.
 
         ---
@@ -288,7 +335,7 @@ class RemoveRequestedModel(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Model Removed, HTTP status code.
@@ -303,24 +350,30 @@ class RemoveRequestedModel(SwaggerView):
 
         model_id = request.args.get(api_c.MODEL_ID)
 
+        # get the model
+        model = collection_management.get_document(
+            database,
+            db_c.CONFIGURATIONS_COLLECTION,
+            {db_c.OBJECT_ID: model_id},
+        )
+
         deletion_status = collection_management.delete_document(
             database=database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
             query_filter={db_c.OBJECT_ID: model_id},
-            hard_delete=False,
-            username=user_name,
+            hard_delete=True,
+            username=user[api_c.USER_NAME],
         )
 
         if deletion_status:
             notification_management.create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
-                f'Requested model "{model_id}" removed by {user_name}.',
-                api_c.MODELS_TAG,
+                f'Requested model "{model[db_c.NAME]}" removed by {user[api_c.USER_NAME]}.',
+                api_c.MODELS,
+                user[api_c.USER_NAME],
             )
-
             logger.info("Successfully removed model %s.", model_id)
-
             return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
         return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.NOT_FOUND
@@ -348,7 +401,8 @@ class ModelVersionView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: str) -> Tuple[List[dict], int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
         """Retrieves model version history.
 
         ---
@@ -357,6 +411,7 @@ class ModelVersionView(SwaggerView):
 
         Args:
             model_id (str): Model ID.
+            user (dict): User object
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model versions,
@@ -384,7 +439,7 @@ class ModelVersionView(SwaggerView):
             ]
 
         else:
-            version_history = tecton.get_model_version_history(model_id)
+            version_history = Tecton().get_model_version_history(model_id)
 
         return (
             jsonify(ModelVersionSchema(many=True).dump(version_history)),
@@ -415,7 +470,8 @@ class ModelOverview(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, model_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves model overview.
 
         ---
@@ -424,6 +480,7 @@ class ModelOverview(SwaggerView):
 
         Args:
             model_id (str): Model ID.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: dict of model features, HTTP status code.
@@ -435,6 +492,7 @@ class ModelOverview(SwaggerView):
             overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
         else:
             version = None
+            tecton = Tecton()
             for version in tecton.get_model_version_history(model_id):
                 current_version = version.get(api_c.CURRENT_VERSION)
 
@@ -506,7 +564,8 @@ class ModelDriftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: str) -> Tuple[List[dict], int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -515,6 +574,7 @@ class ModelDriftView(SwaggerView):
 
         Args:
             model_id (str): Model ID.
+            user (dict): User object.
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model drift,
@@ -532,6 +592,8 @@ class ModelDriftView(SwaggerView):
                 for i in range(4)
             ]
         else:
+            tecton = Tecton()
+
             # get model information
             model_versions = tecton.get_model_version_history(model_id)
 
@@ -581,12 +643,15 @@ class ModelFeaturesView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
+
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
+        user: dict,
         model_id: str,
         model_version: str = None,
     ) -> Tuple[List[dict], int]:
@@ -597,6 +662,7 @@ class ModelFeaturesView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
+            user (dict): User object.
             model_id (str): Model ID.
             model_version (str): Model Version.
 
@@ -612,6 +678,8 @@ class ModelFeaturesView(SwaggerView):
         if model_id == "3":
             features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
         else:
+            tecton = Tecton()
+
             # get model versions
             model_versions = (
                 [{api_c.CURRENT_VERSION: model_version}]
@@ -689,8 +757,10 @@ class ModelImportanceFeaturesView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
+        user: dict,
         model_id: str,
         model_version: str = None,
         limit: int = 20,
@@ -702,6 +772,7 @@ class ModelImportanceFeaturesView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
+            user (dict): User object.
             model_id (str): Model ID.
             model_version (str): Model Version.
             limit (int): Limit of features to return, default is 20.
@@ -710,6 +781,8 @@ class ModelImportanceFeaturesView(SwaggerView):
             Tuple[List[dict], int]: List containing dict of model features,
                 HTTP status code.
         """
+
+        tecton = Tecton()
 
         model_versions = (
             [{api_c.CURRENT_VERSION: model_version}]
@@ -770,9 +843,11 @@ class ModelLiftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
         model_id: str,
+        user: dict,
     ) -> Tuple[List[dict], int]:
         """Retrieves model lift data.
 
@@ -782,6 +857,7 @@ class ModelLiftView(SwaggerView):
 
         Args:
             model_id (str): Model ID
+            user (dict): User object.
 
         Returns:
             Tuple[List[dict], int]: List containing a dict of model lift data,
@@ -804,7 +880,7 @@ class ModelLiftView(SwaggerView):
                 for i in range(1, 11)
             ]
         else:
-            lift_data = tecton.get_model_lift_async(model_id)
+            lift_data = Tecton().get_model_lift_async(model_id)
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
 
         return (

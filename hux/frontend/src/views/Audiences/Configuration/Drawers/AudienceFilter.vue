@@ -1,99 +1,64 @@
 <template>
-  <drawer
-    v-model="localDrawer"
-    :content-padding="'pa-0'"
-    :content-header-padding="'px-3'"
-    :expanded-width="300"
-    :width="300"
+  <hux-filters-drawer
+    :is-toggled="localDrawer"
+    :count="filterLength"
+    content-height="300px"
+    :style="{ height: viewHeight }"
+    data-e2e="audienceFilters"
+    @clear="clear"
+    @apply="apply"
+    @close="close"
   >
-    <template #header-left>
-      <span class="text-h2 black--text"> Filter ({{ filterLength }}) </span>
-    </template>
-    <template #header-right>
-      <v-btn
-        plain
-        :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
-        :disabled="!filterLength > 0"
-        class="text-button float-right clear-btn"
-        @click="clear()"
-      >
-        Clear
-      </v-btn>
-    </template>
-
-    <template #default>
+    <div class="filter-body">
       <hux-filter-panels :expanded="selectedAttributes.length > 0 ? [0] : []">
         <v-checkbox
           v-model="selectedFavourite"
-          color="#00a3e0"
-          class="text--base-1 px-5 withoutExpansion"
+          color="primary lighten-6"
+          class="text--base-1 px-5 withoutExpansion checkboxFavorite"
           label="My favorites only"
-          :style="{ 'border-bottom': '1px solid #E2EAEC' }"
         ></v-checkbox>
         <v-checkbox
           v-model="selectedAudienceWorkedWith"
-          color="#00a3e0"
+          color="primary lighten-6"
           class="text--base-1 px-5 withoutExpansion"
           label="Audiences I’ve worked on"
         ></v-checkbox>
         <hux-filter-panel title="Attributes" :count="selectedAttributes.length">
           <div class="text-body-1 black--text text--lighten-4 pb-2">MODELS</div>
-          <div v-for="data in attributes" :key="data.id">
+          <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
-              v-if="data.category == 'models'"
+              v-if="data.category == 'model_scores'"
               v-model="selectedAttributes"
               multiple
-              color="#00a3e0"
+              color="primary lighten-6"
               class="text--base-1"
-              :label="formatText(data.title)"
-              :value="data.title"
+              :label="data.name"
+              :value="data.key"
             ></v-checkbox>
           </div>
           <br />
           <div class="text-body-1 black--text text--lighten-4 pb-2">
             GENERAL
           </div>
-          <div v-for="data in attributes" :key="data.id">
+          <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
               v-if="data.category == 'general'"
               v-model="selectedAttributes"
               multiple
-              color="#00a3e0"
+              color="primary lighten-6"
               class="text--base-1"
-              :label="formatText(data.title)"
-              :value="data.title"
+              :label="data.name"
+              :value="data.key"
             ></v-checkbox>
           </div>
         </hux-filter-panel>
       </hux-filter-panels>
-    </template>
-    <template #footer-left>
-      <v-btn
-        tile
-        color="white"
-        class="text-button ml-1 primary-text btn-border box-shadow-none"
-        @click="cancel()"
-      >
-        Cancel
-      </v-btn>
-    </template>
-    <template #footer-right>
-      <v-btn
-        tile
-        color="primary"
-        class="text-button ml-4"
-        width="110"
-        :disabled="!filterLength > 0"
-        @click="apply()"
-      >
-        Apply filter
-      </v-btn>
-    </template>
-  </drawer>
+    </div>
+  </hux-filters-drawer>
 </template>
 
 <script>
-import Drawer from "@/components/common/Drawer"
+import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
 import HuxFilterPanels from "@/components/common/FilterPanels"
 import HuxFilterPanel from "@/components/common/FilterPanel"
 import { formatText } from "@/utils.js"
@@ -101,7 +66,7 @@ import { formatText } from "@/utils.js"
 export default {
   name: "AudienceFilterDrawer",
   components: {
-    Drawer,
+    HuxFiltersDrawer,
     HuxFilterPanels,
     HuxFilterPanel,
   },
@@ -111,62 +76,19 @@ export default {
       required: true,
       default: false,
     },
+    viewHeight: {
+      type: String,
+      required: false,
+      default: "auto",
+    },
+    filterOptions: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
       localDrawer: this.value,
-      attributes: [
-        {
-          id: 1,
-          title: "propensity_unsubscribe",
-          category: "models",
-        },
-        {
-          id: 2,
-          title: "predicted_lifetime_value",
-          category: "models",
-        },
-        {
-          id: 3,
-          title: "propensity_to_purchase",
-          category: "models",
-        },
-        {
-          id: 4,
-          title: "age",
-          category: "general",
-        },
-        {
-          id: 5,
-          title: "email",
-          category: "general",
-        },
-        {
-          id: 6,
-          title: "gender",
-          category: "general",
-        },
-        {
-          id: 7,
-          title: "country",
-          category: "general",
-        },
-        {
-          id: 8,
-          title: "state",
-          category: "general",
-        },
-        {
-          id: 9,
-          title: "city",
-          category: "general",
-        },
-        {
-          id: 10,
-          title: "zipcode",
-          category: "general",
-        },
-      ],
       selectedAttributes: [],
       selectedFavourite: false,
       selectedAudienceWorkedWith: false,
@@ -186,9 +108,6 @@ export default {
   watch: {
     value: function () {
       this.localDrawer = this.value
-    },
-    localDrawer: function () {
-      this.$emit("input", this.localDrawer)
     },
   },
   methods: {
@@ -220,11 +139,14 @@ export default {
       this.clearFilter()
       this.localDrawer = false
     },
+    close() {
+      this.localDrawer = false
+    },
     formatText: formatText,
   },
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 ::v-deep.v-input--selection-controls {
   margin-top: 0px !important;
   padding-top: 0px !important;
@@ -258,5 +180,13 @@ export default {
   line-height: 22px;
   letter-spacing: 0;
   color: var(--v-black-base);
+}
+.checkboxFavorite {
+  border-bottom: 1px solid var(--v-black-lighten2);
+}
+.filter-body {
+  ::v-deep .v-expansion-panel-content__wrap {
+    padding: 14px 24px 14px 24px !important;
+  }
 }
 </style>

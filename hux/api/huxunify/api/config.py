@@ -18,7 +18,7 @@ from huxunify.api import constants as api_c
 class Config:
     """Config Object."""
 
-    DEBUG = False
+    DEBUG = True
     FLASK_ENV = "test"
 
     # AWS_CONFIG
@@ -27,6 +27,7 @@ class Config:
     DISABLE_DELIVERIES = config(
         api_c.DISABLE_DELIVERIES, default=False, cast=bool
     )
+    MOCK_TECTON = config(api_c.MOCK_TECTON, default=True, cast=bool)
 
     # MONGO CONFIG
     MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")
@@ -107,13 +108,13 @@ class Config:
 class ProductionConfig(Config):
     """Production Config Object."""
 
+    DEBUG = False
     FLASK_ENV = api_c.PRODUCTION_MODE
 
 
 class DevelopmentConfig(Config):
     """Development Config Object."""
 
-    DEBUG = False
     FLASK_ENV = api_c.DEVELOPMENT_MODE
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_CONFIG = {
@@ -145,6 +146,7 @@ class PyTestConfig(Config):
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
+    MOCK_TECTON = False
 
     # OKTA CONFIGURATION
     OKTA_CLIENT_ID = "test-client-id"

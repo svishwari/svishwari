@@ -108,7 +108,7 @@
                       :min="condition.attribute.min"
                       :max="condition.attribute.max"
                       :range="condition.range"
-                      class="mx-2"
+                      class="ml-2 mr-0"
                     />
                     <hux-slider
                       v-model="condition.range"
@@ -426,7 +426,10 @@ export default {
         ],
       }
       try {
-        let data = await this.getRealtimeSize(filterJSON)
+        let data = await this.getRealtimeSize({
+          filter: filterJSON,
+          overall: false,
+        })
         condition.size = data.total_customers
         condition.awaitingSize = false
       } catch (error) {
@@ -480,7 +483,10 @@ export default {
         filterJSON.filters.push(sectionObject)
       }
       try {
-        let data = await this.getRealtimeSize(filterJSON)
+        let data = await this.getRealtimeSize({
+          filter: filterJSON,
+          overall: true,
+        })
         this.$emit("updateOverview", data)
         this.overAllSize = data.total_customers
         this.$emit("loadingOverAllSize", false)
@@ -654,6 +660,12 @@ export default {
           .hux-range-slider {
             .v-messages {
               display: none;
+            }
+            .v-slider--horizontal {
+              margin-right: 0px !important;
+              .v-slider__track-container {
+                width: 101%;
+              }
             }
           }
         }

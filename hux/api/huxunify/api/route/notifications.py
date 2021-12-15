@@ -24,7 +24,7 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api import constants as api_c
@@ -82,32 +82,26 @@ class NotificationsSearch(SwaggerView):
         {
             "name": api_c.QUERY_PARAMETER_NOTIFICATION_TYPES,
             "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
+            "type": "string",
             "description": "Type of Notification",
-            "example": "10",
+            "example": "Success,Informational",
             "required": False,
-            "default": [],
         },
         {
             "name": api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY,
             "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
+            "type": "string",
             "description": "Type of Notification Category",
-            "example": "10",
+            "example": "Delivery,Engagements",
             "required": False,
-            "default": [],
         },
         {
             "name": api_c.QUERY_PARAMETER_USERS,
             "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
+            "type": "string",
             "description": "Users Filter",
-            "example": "10",
+            "example": "Unified-Dev Test-User",
             "required": False,
-            "default": [],
         },
         {
             "name": api_c.START_DATE,
@@ -135,15 +129,20 @@ class NotificationsSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.NOTIFICATIONS_TAG]
 
+    # pylint: disable=unused-argument
     @api_error_handler(
         custom_message={ValueError: {"message": api_c.INVALID_BATCH_PARAMS}}
     )
-    def get(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves notifications.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int] dict of notifications, HTTP status code.
@@ -164,14 +163,16 @@ class NotificationsSearch(SwaggerView):
                 str(api_c.DEFAULT_BATCH_NUMBER),
             )
         )
+
         notification_types = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_TYPES, []
         )
         notification_types = (
-            list(map(lambda x: x.lower(), notification_types.split(",")))
+            [x.lower() for x in notification_types.split(",")]
             if notification_types
             else []
         )
+
         if notification_types and not set(notification_types).issubset(
             set(db_c.NOTIFICATION_TYPES)
         ):
@@ -184,10 +185,11 @@ class NotificationsSearch(SwaggerView):
             api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
         )
         notification_categories = (
-            list(map(lambda x: x.lower(), notification_categories.split(",")))
-            if notification_types
+            [x.lower() for x in notification_categories.split(",")]
+            if notification_categories
             else []
         )
+
         if notification_categories and not set(
             notification_categories
         ).issubset(set(api_c.NOTIFICATION_CATEGORIES)):
@@ -195,9 +197,11 @@ class NotificationsSearch(SwaggerView):
             return {
                 "message": "Invalid or incomplete arguments received"
             }, HTTPStatus.BAD_REQUEST
+
         users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
         if users:
             users = users.split(",")
+
         start_date = request.args.get(api_c.START_DATE, "")
         end_date = request.args.get(api_c.END_DATE, "")
         if start_date and end_date:
@@ -344,14 +348,17 @@ class NotificationSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.NOTIFICATIONS_TAG]
 
+    # pylint: disable=unused-argument
     @api_error_handler()
-    def get(self, notification_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, notification_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves notification.
         ---
         security:
             - Bearer: ["Authorization"]
         Args:
             notification_id (str): Notification Id
+            user (dict): user object.
         Returns:
             Tuple[dict, int] dict of notifications, HTTP status code.
         """
@@ -407,10 +414,10 @@ class DeleteNotification(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.NOTIFICATIONS_TAG]
 
-    @get_user_name()
     @api_error_handler()
+    @requires_access_levels([api_c.ADMIN_LEVEL])
     def delete(
-        self, notification_id: ObjectId, user_name: str
+        self, notification_id: ObjectId, user: dict
     ) -> Tuple[dict, int]:
         """Deletes a notification by ID.
 
@@ -420,7 +427,7 @@ class DeleteNotification(SwaggerView):
 
         Args:
             notification_id (ObjectId): Notification ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: message, HTTP status code.
@@ -432,7 +439,7 @@ class DeleteNotification(SwaggerView):
             logger.info(
                 "Successfully deleted notification %s by user %s.",
                 notification_id,
-                user_name,
+                user[api_c.USER_NAME],
             )
 
             return {}, HTTPStatus.NO_CONTENT

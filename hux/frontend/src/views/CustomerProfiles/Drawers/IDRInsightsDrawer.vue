@@ -133,7 +133,8 @@ export default {
           metric: "Total no. of records",
           metricType: "",
           result: "",
-          toolTipText: "Total number of input records across all data feeds.",
+          toolTipText:
+            "All unique offline and online IDs that we receive as input across all data feeds.",
         },
         {
           metric: "Match rate",
@@ -143,18 +144,18 @@ export default {
             "Percentage of input records that are consolidated into Hux IDs.",
         },
         {
+          metric: "Unique HUX IDs",
+          metricType: "",
+          result: "",
+          toolTipText:
+            "Unique number of total IDs we can match (individual IDs + anonymous IDs).",
+        },
+        {
           metric: "Anonymous IDs",
           metricType: "",
           result: "",
           toolTipText:
-            "IDs related to online visitors that have not logged in, typically identified by a browser cookie or device ID.",
-        },
-        {
-          metric: "Known IDs",
-          metricType: "",
-          result: "",
-          toolTipText:
-            "IDs related to profiles that contain PII from online or offline engagement: name, postal address, email address, and phone number.",
+            "A digital ID related to online visitors that have not yet been recognized and hence not assigned an individual ID.",
         },
         {
           metric: "Individual IDs",
@@ -169,6 +170,12 @@ export default {
           result: "",
           toolTipText:
             "Represents a Last Name and Address combination, used to identify family members that live at the same address.",
+        },
+        {
+          metric: "Address IDs",
+          metricType: "",
+          result: "",
+          toolTipText: "A unique address (regardless of who lives there).",
         },
       ],
     }
@@ -201,14 +208,16 @@ export default {
       this.idrItems[1].metricType = "numeric"
       this.idrItems[2].result = this.overview.match_rate
       this.idrItems[2].metricType = "percentage"
-      this.idrItems[3].result = this.overview.total_unknown_ids
+      this.idrItems[3].result = this.overview.total_unique_ids
       this.idrItems[3].metricType = "numeric"
-      this.idrItems[4].result = this.overview.total_known_ids
+      this.idrItems[4].result = this.overview.total_anonymous_ids
       this.idrItems[4].metricType = "numeric"
       this.idrItems[5].result = this.overview.total_individual_ids
       this.idrItems[5].metricType = "numeric"
       this.idrItems[6].result = this.overview.total_household_ids
       this.idrItems[6].metricType = "numeric"
+      this.idrItems[7].result = this.overview.total_address_ids
+      this.idrItems[7].metricType = "numeric"
     },
   },
 }

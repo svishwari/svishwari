@@ -34,9 +34,15 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
             timeout=5,
         )
         record_health_status_metric(
-            api_c.CDM_CONNECTION_SERVICE_CONNECTION_HEALTH, True
+            api_c.CDM_CONNECTION_SERVICE_CONNECTION_HEALTH,
+            response.status_code == 200,
         )
-        return response.status_code, "CDP connections available."
+        if response.status_code == 200:
+            return True, "CDP connections available."
+        return (
+            False,
+            f"CDP connections not available. Received {response.status_code}",
+        )
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message

@@ -7,85 +7,79 @@
     <template #header-left>
       <div class="d-flex align-baseline">
         <h3 class="text-h3 pr-2 d-flex align-center">
-          <logo type="sfmc" />
-          <div class="pl-2 font-weight-light">Salesforce Marketing Cloud</div>
+          <logo type="sfmc" :size="32" />
+          <div class="pl-2 font-weight-light text-h2">
+            Salesforce Marketing Cloud
+          </div>
         </h3>
       </div>
     </template>
 
     <template #default>
       <v-form ref="salesforceExtensionRef" v-model="isFormValid">
-        <div class="add-destination-wrapper pa-2 font-weight-regular">
-          <span class="black--text text--darken-4 text-caption"
-            >Extension type</span
-          >
+        <div class="add-destination-wrapper ma-6 font-weight-regular">
+          <div class="black--text text-body-1">Extension type</div>
           <div class="d-flex align-center mt-2">
             <div
-              class="extension-type mr-4 text-center"
-              :class="[isActive ? 'active' : '']"
+              class="cursor-pointer px-10 py-4 text-center mr-6 rounded-lg"
+              :class="[isActive ? 'active' : 'box-shadow-1']"
               @click="toggleClass($event)"
             >
-              <div class="child mt-4">
-                <div class="icon d-flex justify-center">
-                  <div v-if="isActive" class="check-wrap d-flex align-center">
-                    <icon type="check-icon" class="check-icon" />
-                  </div>
-                </div>
-                <extensionInactive1 v-if="!isActive" />
-                <div
-                  class="label primary--text"
-                  :class="[isActive ? 'mt-2' : 'mt-1']"
-                >
-                  New data extension
-                </div>
+              <icon
+                type="new-data-extension"
+                :color="isActive ? 'primary' : 'black'"
+                :variant="isActive ? 'lighten6' : ''"
+                :size="40"
+              />
+              <div
+                class="mt-2 text-button"
+                :class="isActive ? 'primary--text text--lighten-6' : ''"
+              >
+                New data extension
+              </div>
+              <div class="pt-2 black--text text--lighten-4 text-body-2">
+                Create a brand new data extension
               </div>
             </div>
-            <diV
-              class="extension-type mr-4 text-center"
-              :class="[!isActive ? 'active' : '']"
+            <div
+              class="cursor-pointer px-10 py-4 text-center rounded-lg"
+              :class="[!isActive ? 'active' : 'box-shadow-1']"
               @click="toggleClass($event)"
             >
-              <div class="child mt-4">
-                <div class="icon d-flex justify-center">
-                  <div v-if="!isActive" class="check-wrap d-flex align-center">
-                    <icon type="check-icon" class="check-icon" />
-                  </div>
-                </div>
-                <extensionInactive2 v-if="isActive" />
-                <div
-                  class="label primary--text"
-                  :class="[!isActive ? 'mt-2' : 'mt-1']"
-                >
-                  Existing data extension
-                </div>
+              <icon
+                type="existing-data-extension"
+                :color="!isActive ? 'primary' : 'black'"
+                :variant="!isActive ? 'lighten6' : ''"
+                :size="40"
+              />
+              <div
+                class="mt-2 text-button"
+                :class="!isActive ? 'primary--text text--lighten-6' : ''"
+              >
+                Existing data extension
               </div>
-            </diV>
+              <div class="pt-2 black--text text--lighten-4 text-body-2">
+                Select an existing data extension schema
+              </div>
+            </div>
           </div>
 
           <div v-if="isActive" class="mt-6">
-            <div>
-              <label class="d-flex align-items-center">
-                <span class="black--text text--darken-4 text-caption"
-                  >Journey type</span
-                >
-              </label>
-              <v-radio-group v-model="journeyType" row>
-                <v-radio value="radio-1">
-                  <template #label>
-                    <div class="black--text text--darken-2 text-caption">
-                      Automated (Batched)
-                    </div>
-                  </template>
-                </v-radio>
-                <v-radio value="radio-2" :disabled="true">
-                  <template #label>
-                    <div class="text-caption">
-                      Triggered (API) - coming soon
-                    </div>
-                  </template>
-                </v-radio>
-              </v-radio-group>
-            </div>
+            <div class="black--text text-body-1">Journey type</div>
+            <v-radio-group v-model="journeyType" row>
+              <v-radio value="radio-1">
+                <template #label>
+                  <div class="black--text text-body-1">Batch delivery</div>
+                </template>
+              </v-radio>
+              <v-radio value="radio-2" disabled>
+                <template #label>
+                  <div class="text-caption">
+                    API event - <span class="font-italic">coming soon</span>
+                  </div>
+                </template>
+              </v-radio>
+            </v-radio-group>
             <text-field
               v-model="extension"
               label-text="Data extension name"
@@ -109,52 +103,64 @@
           </div>
 
           <div v-else class="mt-6 data-extension">
-            <label
-              class="
-                d-flex
-                align-items-center
-                mb-2
-                black--text
-                text--darken-4 text-caption
-              "
-            >
-              Existing data extension
-            </label>
-
-            <v-select
-              v-model="extension"
-              :items="dataExtensionNames"
-              placeholder="Select an existing data extension"
-              dense
-              outlined
-              background-color="white"
-              append-icon="mdi-chevron-down"
-              required
-            />
+            <div class="existing-banner-notice">
+              <icon type="bulb" color="yellow" :size="46" />
+              <div class="black--text text-body-1 ml-1">
+                Modifying this data extension may impact any independent journey
+                in Salesforce.
+              </div>
+            </div>
+            <div class="black--text text-body-1 pb-2">
+              Select an existing data extension
+            </div>
+            <div class="data-extension-filter">
+              <icon
+                type="search"
+                color="black"
+                variant="lighten4"
+                :size="16"
+                class="mr-2"
+              />
+              <input
+                v-model="filterDataExtensionInput"
+                placeholder="Find a specific data extension"
+              />
+            </div>
           </div>
         </div>
-      </v-form>
-      <v-card
-        v-if="!isActive"
-        height="56"
-        class="feedback-card shadow mt-5 rounded-0"
-      >
-        <v-card-text class="mt-4">
-          <v-row align="center" class="mx-0">
-            <v-icon color="info" size="15" class="mr-2">
-              mdi-message-alert
-            </v-icon>
-            <div
-              class="text-body-1 primary--text text--lighten-8 font-weight-bold"
+        <hux-data-table
+          v-show="!isActive"
+          :columns="dataExtensionHeaders"
+          :data-items="filteredDataExtensions"
+        >
+          <template #row-item="{ item }">
+            <td
+              v-for="(col, index) in dataExtensionHeaders"
+              :key="index"
+              :style="{ width: col.width, height: col.height }"
+              class="text-body-1"
             >
-              FEEDBACK
-            </div>
-            <div class="mx-2 black--text text--darken-3 text-caption">
-              Modifying this data extension may impact any independent journey.
-            </div>
-          </v-row>
-        </v-card-text>
-      </v-card>
+              <template v-if="col.value === 'data_extension_id'">
+                <input
+                  v-model="selectedDataExtension"
+                  type="radio"
+                  name="selectedDataExtension"
+                  class="data-extension-radio"
+                  required
+                  :checked="item[col.value] === selectedDataExtension"
+                  :value="item['name']"
+                />
+              </template>
+              <template v-if="col.value === 'create_time'">
+                {{ item[col.value] | Date("relative") | Empty }}
+              </template>
+              <template v-if="col.value === 'name'">
+                {{ item[col.value] }}
+              </template>
+            </td>
+          </template>
+        </hux-data-table>
+      </v-form>
     </template>
 
     <template #footer-right>
@@ -165,7 +171,9 @@
           width="80"
           height="40"
           class="ma-2"
-          :is-disabled="isActive ? !isFormValid : !extension"
+          :is-disabled="
+            isActive ? !isFormValid : selectedDataExtension === null
+          "
           data-e2e="destination-added"
           @click="addDestination()"
         >
@@ -177,14 +185,15 @@
     <template #footer-left>
       <div class="d-flex align-baseline">
         <hux-button
+          size="large"
           variant="white"
           is-tile
           width="80"
           height="40"
-          class="ma-2 drawer-back"
+          class="ma-2 drawer-back btn-border box-shadow-none"
           @click="onBack()"
         >
-          Back
+          <span class="primary--text">Back</span>
         </hux-button>
       </div>
     </template>
@@ -196,9 +205,8 @@ import Drawer from "@/components/common/Drawer"
 import HuxButton from "@/components/common/huxButton"
 import Logo from "@/components/common/Logo"
 import TextField from "@/components/common/TextField"
-import extensionInactive1 from "@/assets/logos/extension-inactive-1.svg"
-import extensionInactive2 from "@/assets/logos/extension-inactive-2.svg"
 import Icon from "@/components/common/Icon"
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 export default {
   name: "DestinationDataExtensionDrawer",
 
@@ -207,8 +215,7 @@ export default {
     HuxButton,
     Logo,
     TextField,
-    extensionInactive1,
-    extensionInactive2,
+    HuxDataTable,
     Icon,
   },
 
@@ -243,6 +250,28 @@ export default {
       loading: false,
       localToggle: false,
       isFormValid: false,
+      filterDataExtensionInput: "",
+      selectedDataExtension: null,
+      dataExtensionHeaders: [
+        {
+          text: " ",
+          value: "data_extension_id",
+          width: "60px",
+          height: "40px",
+        },
+        {
+          text: "Data extension name",
+          value: "name",
+          width: "270px",
+          height: "40px",
+        },
+        {
+          text: "Created date",
+          value: "create_time",
+          width: "250px",
+          height: "40px",
+        },
+      ],
       newExtensionRules: [
         (v) => !!v || "Data extension name is required",
         (v) =>
@@ -254,8 +283,8 @@ export default {
           // Checks if data extension name is unique
           let trimmedValue = v ? v.trim() : ""
           return (
-            this.dataExtensionNames.findIndex(
-              (each) => each.text === trimmedValue
+            this.dataExtensions.findIndex(
+              (each) => each.name === trimmedValue
             ) === -1
           )
         },
@@ -270,13 +299,12 @@ export default {
       dataExtensions: "destinations/dataExtensions",
     }),
 
-    dataExtensionNames() {
-      return this.dataExtensions.map((each) => {
-        return {
-          text: each.name,
-          value: each,
-        }
-      })
+    filteredDataExtensions() {
+      return this.dataExtensions.filter((each) =>
+        each.name
+          .toLowerCase()
+          .includes(this.filterDataExtensionInput.toLowerCase())
+      )
     },
   },
 
@@ -301,6 +329,7 @@ export default {
     resetForm() {
       this.$nextTick(() => {
         this.extension = null
+        this.selectedDataExtension = null
         this.journeyType = "radio-1"
       })
     },
@@ -317,7 +346,7 @@ export default {
         JSON.stringify(this.destination)
       )
 
-      if (typeof this.extension !== "object") {
+      if (this.isActive) {
         const requestBody = {
           id: destinationWithDataExtension.id,
           data_extension: this.extension,
@@ -328,7 +357,7 @@ export default {
         }
       } else {
         destinationWithDataExtension.delivery_platform_config = {
-          data_extension_name: this.extension.name,
+          data_extension_name: this.selectedDataExtension,
         }
       }
 
@@ -356,34 +385,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .data-extension-drawer {
-  .check-wrap {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: var(--v-primary-lighten8);
-    padding: 11px;
-  }
   .add-destination-wrapper {
-    .extension-type {
-      height: 100px;
-      width: 196px;
-      top: 126px;
-      border-radius: 4px;
-      background: var(--v-white-base);
-      border: 1px solid var(--v-black-lighten3);
-      box-sizing: border-box;
-      &.active {
-        border: 1px solid var(--v-primary-base);
-      }
-      .child {
-        .label {
-          color: var(--v-darkBlue-base);
-        }
-      }
-      .check-icon {
-        width: 20px !important;
-        height: 15px !important;
-      }
+    .active {
+      border: 1px solid var(--v-primary-lighten6);
     }
     .data-extension {
       ::v-deep .v-input {
@@ -397,9 +401,38 @@ export default {
             input::placeholder {
               color: var(--v-black-darken1) !important;
             }
+            .v-input__prepend-inner {
+              margin-top: 12px;
+            }
           }
           .v-text-field__details {
             display: none;
+          }
+        }
+      }
+      .existing-banner-notice {
+        display: flex;
+        background: var(--v-yellow-lighten1);
+        border: 1px solid var(--v-black-lighten1);
+        align-items: center;
+        padding: 14px 22px 14px 16px;
+        margin-bottom: 24px;
+      }
+      .data-extension-filter {
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--v-black-lighten3);
+        padding: 8px 16px;
+        border-radius: 4px;
+        margin-bottom: 16px;
+        input {
+          outline: none;
+          width: 100%;
+          &::placeholder {
+            color: var(--v-black-lighten4);
+            font-size: 16px;
+            line-height: 22px;
+            font-weight: normal;
           }
         }
       }
@@ -409,15 +442,33 @@ export default {
         .v-text-field__slot {
           label {
             color: var(--v-black-darken1) !important;
+            font-size: 16px;
+            line-height: 22px;
+            font-weight: normal;
           }
         }
       }
     }
   }
-  .feedback-card {
-    left: 0;
-    position: absolute;
-    width: 100%;
+  .data-extension-radio {
+    width: 20px;
+    height: 20px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 1px solid var(--v-black-lighten4);
+    border-radius: 50%;
+
+    &:checked {
+      &::before {
+        content: " \25CF";
+        font-size: 24px;
+        color: var(--v-primary-base);
+        position: relative;
+        top: -4px;
+        left: 2px;
+      }
+    }
   }
 }
 </style>

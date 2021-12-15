@@ -13,43 +13,49 @@ describe("Decisioning > models", () => {
     cy.wait(2000)
     cy.get(selector.models.item).its("length").should("gt", 0)
 
-    cy.get(selector.models.activeStatus)
-      .eq(0)
-      .parentsUntil(selector.models.item)
-      .click()
+    cy.get(selector.models.item).each(($models) => {
+      if ($models.find(selector.models.activeStatus).length > 0) {
+        cy.get(selector.models.activeStatus)
+          .eq(0)
+          .parentsUntil(selector.models.item)
+          .click()
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
-    // should be able to view model overview
-    cy.get(selector.models.performancemetric)
-      .its("length")
-      .as("overviewListCount")
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(3000)
+        // should be able to view model overview
+        cy.get(selector.models.performancemetric)
+          .its("length")
+          .as("overviewListCount")
 
-    cy.get("@overviewListCount").then(() => {
-      cy.get(selector.models.performancemetric).its("length").should("eq", 5)
+        cy.get("@overviewListCount").then(() => {
+          cy.get(selector.models.performancemetric)
+            .its("length")
+            .should("eq", 5)
+        })
+
+        // should be able to view and validate Drift and Feature chart
+        cy.get(selector.models.driftchart).its("length").should("be.gt", 0)
+        cy.get(selector.models.featurechart).its("length").should("be.gt", 0)
+
+        // scroll down
+        cy.scrollTo("bottom", { duration: 1000 })
+
+        // should be able to hover over Feature chart"
+        cy.get(".bar")
+          .first()
+          .trigger("mouseover", { eventConstructor: "MouseEvent" })
+
+        // validate feature and lift table
+        cy.get(selector.models.lifttable).its("length").should("be.gt", 0)
+        cy.get(selector.models.featuretable).its("length").should("be.gt", 0)
+
+        // should be able to view version history list
+        cy.get(selector.models.modelDashboardOptions).find("svg").click()
+        cy.get(selector.models.versionhistorybutton).click()
+
+        //validate the history list
+        cy.get(selector.models.versionhistory).its("length").should("gt", 0)
+      }
     })
-
-    // should be able to view and validate Drift and Feature chart
-    cy.get(selector.models.driftchart).its("length").should("be.gt", 0)
-    cy.get(selector.models.featurechart).its("length").should("be.gt", 0)
-
-    // scroll down
-    cy.scrollTo("bottom", { duration: 1000 })
-
-    // should be able to hover over Feature chart"
-    cy.get(".bar")
-      .first()
-      .trigger("mouseover", { eventConstructor: "MouseEvent" })
-
-    // validate feature and lift table
-    cy.get(selector.models.lifttable).its("length").should("be.gt", 0)
-    cy.get(selector.models.featuretable).its("length").should("be.gt", 0)
-
-    // should be able to view version history list
-    cy.get(selector.models.modelDashboardOptions).find("svg").click()
-    cy.get(selector.models.versionhistorybutton).click()
-
-    //validate the history list
-    cy.get(selector.models.versionhistory).its("length").should("gt", 0)
   })
 })

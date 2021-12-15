@@ -227,24 +227,16 @@
         >
           <tooltip>
             <template #label-content>
-              {{
-                item.latest_delivery.update_time | Date("relative") | Empty("-")
-              }}
+              {{ item.update_time | Date("relative") | Empty("-") }}
             </template>
             <template #hover-content>
               <div class="py-2 white d-flex flex-column">
                 <span class="mb-1">Last delivered:</span>
-                <span>{{
-                  item.latest_delivery.update_time | Date | Empty("-")
-                }}</span>
+                <span>{{ item.update_time | Date | Empty("-") }}</span>
                 <span class="mt-2 mb-1">Next delivery:</span>
-                <span>{{
-                  item.latest_delivery.next_delivery | Date | Empty("-")
-                }}</span>
+                <span>{{ item.next_delivery | Date | Empty("-") }}</span>
                 <span class="mt-2 mb-1">Delivery schedule:</span>
-                <span>{{
-                  item.latest_delivery.delivery_schedule | Empty("-")
-                }}</span>
+                <span>{{ item.delivery_schedule | Empty("-") }}</span>
               </div>
             </template>
           </tooltip>

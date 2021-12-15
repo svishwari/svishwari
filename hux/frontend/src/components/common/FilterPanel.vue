@@ -30,26 +30,22 @@
 
 <script>
 import { defineComponent } from "@vue/composition-api"
-
 export default defineComponent({
   props: {
     title: {
       type: String,
       required: true,
     },
-
     count: {
       type: Number,
       required: false,
       default: 0,
     },
-
     disabled: {
       type: Boolean,
       required: false,
       default: false,
     },
-
     hideActions: {
       type: Boolean,
       required: false,
@@ -60,9 +56,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$padding: 30px;
+$padding: 24px;
 $headerHeight: 40px;
-
 .hux-filter-panel {
   .header {
     height: $headerHeight;
@@ -74,7 +69,6 @@ $headerHeight: 40px;
       border-bottom: 1px solid var(--v-black-lighten2);
     }
   }
-
   .content {
     ::v-deep .v-expansion-panel-content__wrap {
       padding: $padding;

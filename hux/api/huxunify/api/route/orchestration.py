@@ -1,6 +1,7 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,unused-argument
 """Paths for Orchestration API"""
 import asyncio
+import re
 from http import HTTPStatus
 from threading import Thread
 from typing import Tuple, Union
@@ -41,6 +42,7 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
+    LookalikeAudiencePutSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -55,7 +57,10 @@ from huxunify.api.data_connectors.cdp import (
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
-    introspect_token,
+)
+from huxunify.api.data_connectors.courier import (
+    get_destination_config,
+    get_audience_destination_pairs,
 )
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -67,7 +72,7 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -75,6 +80,7 @@ from huxunify.api.route.utils import (
     Validation as validation,
     is_component_favorite,
     get_user_favorites,
+    convert_unique_city_filter,
 )
 
 # setup the orchestration blueprint
@@ -167,6 +173,75 @@ async def get_audience_insights_async(token: str, audience_filters: dict):
     return audience_insights
 
 
+def get_audience_standalone_deliveries(audience_id: ObjectId) -> list:
+    """Get standalone deliveries list of an audience built for GET audience
+    by ID response.
+
+     Args:
+        audience_id (ObjectId): ObjectId of an audience.
+
+    Returns:
+        list: List of standalone audience deliveries.
+    """
+
+    database = get_db_client()
+
+    standalone_deliveries = []
+    standalone_delivery_jobs = destination_management.get_delivery_jobs(
+        database,
+        audience_id=audience_id,
+        engagement_id=db_c.ZERO_OBJECT_ID,
+    )
+
+    if standalone_delivery_jobs:
+        # TODO: HUS-1864 uncomment the below block of code and remove the
+        # following line once destinations nested object in audiences
+        # collection gets populated in the future
+        # extract delivery platform ids from the audience
+        # destination_ids = [
+        #     x.get(api_c.ID)
+        #     for x in audience[api_c.DESTINATIONS]
+        #     if isinstance(x, dict)
+        # ]
+        destination_ids = [
+            x.get(db_c.DELIVERY_PLATFORM_ID) for x in standalone_delivery_jobs
+        ]
+
+        # get destinations at once to lookup name for each delivery job
+        destination_dict = {
+            x[db_c.ID]: x
+            for x in destination_management.get_delivery_platforms_by_id(
+                database, destination_ids
+            )
+        }
+
+        for job in standalone_delivery_jobs:
+            # ignore deliveries to destinations no longer attached to the
+            # audience
+            if (
+                job.get(db_c.DELIVERY_PLATFORM_ID)
+                not in destination_dict.keys()
+            ):
+                continue
+
+            # append the necessary schema to standalone_deliveries list
+            standalone_deliveries.append(
+                {
+                    db_c.METRICS_DELIVERY_PLATFORM_NAME: destination_dict.get(
+                        job.get(db_c.DELIVERY_PLATFORM_ID)
+                    ).get(api_c.NAME),
+                    api_c.DELIVERY_PLATFORM_TYPE: destination_dict.get(
+                        job.get(db_c.DELIVERY_PLATFORM_ID)
+                    ).get(api_c.DELIVERY_PLATFORM_TYPE),
+                    api_c.STATUS: job.get(api_c.STATUS),
+                    api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE, 0),
+                    db_c.UPDATE_TIME: job.get(db_c.UPDATE_TIME),
+                }
+            )
+
+    return standalone_deliveries
+
+
 @add_view_to_blueprint(
     orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView"
 )
@@ -233,9 +308,10 @@ class AudienceView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    # pylint: disable=no-self-use,too-many-locals
-    def get(self, user_name: str) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    # TODO: HUS-1791 - refactor.
+    # pylint: disable=no-self-use,too-many-locals,too-many-statements,too-many-branches
+    def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves all audiences.
 
         ---
@@ -243,7 +319,7 @@ class AudienceView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[list, int]: list of audience, HTTP status code.
@@ -255,20 +331,20 @@ class AudienceView(SwaggerView):
         filter_dict = {}
         favorite_audiences = None
         favorite_lookalike_audiences = get_user_favorites(
-            database, user_name, api_c.LOOKALIKE
+            database, user[api_c.USER_NAME], api_c.LOOKALIKE
         )
 
         if request.args.get(api_c.FAVORITES) and validation.validate_bool(
             request.args.get(api_c.FAVORITES)
         ):
             favorite_audiences = get_user_favorites(
-                database, user_name, api_c.AUDIENCES
+                database, user[api_c.USER_NAME], api_c.AUDIENCES
             )
 
         if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
             request.args.get(api_c.WORKED_BY)
         ):
-            filter_dict[api_c.WORKED_BY] = user_name
+            filter_dict[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
         attribute_list = request.args.getlist(api_c.ATTRIBUTE)
         # set the attribute_list to filter_dict only if it is populated and
@@ -332,7 +408,7 @@ class AudienceView(SwaggerView):
         # Check if favourite audiences is not set
         if favorite_audiences is None:
             favorite_audiences = get_user_favorites(
-                database, user_name, api_c.AUDIENCES
+                database, user[api_c.USER_NAME], api_c.AUDIENCES
             )
 
         # process each audience object
@@ -343,6 +419,7 @@ class AudienceView(SwaggerView):
                 for x in audience_destinations
                 if x[db_c.ID] == audience[db_c.ID]
             ]
+
             # set the unique destinations
             audience[db_c.DESTINATIONS] = (
                 matched_destinations[0].get(db_c.DESTINATIONS, [])
@@ -350,15 +427,39 @@ class AudienceView(SwaggerView):
                 else []
             )
 
+            # remove any empty ones, and only preserve that are delivered or
+            # succeeded and if the delivery_platform_id is for a destination
+            # that is part of audience destinations
+            audience[api_c.DELIVERIES] = (
+                [
+                    aud_delivery
+                    for aud_delivery in audience[api_c.DELIVERIES]
+                    if aud_delivery
+                    and (
+                        aud_delivery.get(db_c.STATUS)
+                        in [
+                            db_c.AUDIENCE_STATUS_DELIVERED,
+                            db_c.STATUS_SUCCEEDED,
+                        ]
+                    )
+                    and (
+                        aud_delivery[db_c.DELIVERY_PLATFORM_ID]
+                        == aud_destination[db_c.ID]
+                        for aud_destination in audience[db_c.DESTINATIONS]
+                    )
+                ]
+                if audience[db_c.DESTINATIONS]
+                else []
+            )
+
+            # set the lookalikeable field in audience before limiting the
+            # number of deliveries in it based on delivery_limit
+            audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+
             # take the last X number of deliveries
-            # remove any empty ones, and only show the delivered/succeeded
-            audience[api_c.DELIVERIES] = [
-                x
-                for x in audience[api_c.DELIVERIES]
-                if x
-                and x.get(db_c.STATUS)
-                in [db_c.AUDIENCE_STATUS_DELIVERED, db_c.STATUS_SUCCEEDED]
-            ][:delivery_limit]
+            audience[api_c.DELIVERIES] = audience[api_c.DELIVERIES][
+                :delivery_limit
+            ]
 
             # set the weighted status for the audience based on deliveries
             audience[api_c.STATUS] = weight_delivery_status(audience)
@@ -368,7 +469,6 @@ class AudienceView(SwaggerView):
             if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
                 audience[api_c.AUDIENCE_LAST_DELIVERED] = None
 
-            audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
             audience[api_c.FAVORITE] = bool(
                 audience[db_c.ID] in favorite_audiences
             )
@@ -389,11 +489,21 @@ class AudienceView(SwaggerView):
                 query_filter.update(
                     {
                         "$or": [
-                            {db_c.CREATED_BY: user_name},
-                            {db_c.UPDATED_BY: user_name},
+                            {db_c.CREATED_BY: user[api_c.USER_NAME]},
+                            {db_c.UPDATED_BY: user[api_c.USER_NAME]},
                         ]
                     }
                 )
+
+            if attribute_list:
+                query_filter["$and"] = [
+                    {
+                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                            "$regex": re.compile(rf"^{attribute}$(?i)")
+                        }
+                    }
+                    for attribute in attribute_list
+                ]
 
             lookalikes = cm.get_documents(
                 database,
@@ -431,6 +541,11 @@ class AudienceView(SwaggerView):
                 lookalike[api_c.FAVORITE] = bool(
                     lookalike[db_c.ID] in favorite_lookalike_audiences
                 )
+                if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
+                    # rename the key
+                    lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
+                        db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                    )
 
             # combine the two lists and serve.
             audiences += lookalikes
@@ -486,7 +601,8 @@ class AudienceGetView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, audience_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves an audience.
 
         ---
@@ -495,13 +611,13 @@ class AudienceGetView(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: Audience, HTTP status code.
         """
 
         token_response = get_token_from_request(request)
-        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         database = get_db_client()
 
@@ -537,6 +653,13 @@ class AudienceGetView(SwaggerView):
             ]
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
             lookalike[api_c.MATCH_RATE] = 0
+            # check and set if source/seed audience this lookalike audience is
+            # created from exists in DB
+            lookalike[api_c.LOOKALIKE_SOURCE_EXISTS] = bool(
+                orchestration_management.get_audience(
+                    database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
+                )
+            )
 
             # set audience to lookalike
             audience = lookalike
@@ -608,6 +731,11 @@ class AudienceGetView(SwaggerView):
         # set the list of engagements for an audience
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
 
+        # set the list of standalone_deliveries for an audience
+        audience[
+            api_c.AUDIENCE_STANDALONE_DELIVERIES
+        ] = get_audience_standalone_deliveries(audience_id)
+
         # get the max last delivered date for all destinations in an audience
         delivery_times = [
             x[api_c.AUDIENCE_LAST_DELIVERED]
@@ -654,7 +782,7 @@ class AudienceGetView(SwaggerView):
         audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         audience[api_c.FAVORITE] = is_component_favorite(
-            user_id, api_c.AUDIENCES, str(audience_id)
+            user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
         )
 
         return (
@@ -699,7 +827,8 @@ class AudienceInsightsGetView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, audience_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves audience insights for an audience.
 
         ---
@@ -708,6 +837,7 @@ class AudienceInsightsGetView(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: AudienceInsights, HTTP status code.
@@ -737,12 +867,16 @@ class AudienceInsightsGetView(SwaggerView):
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
             )
 
-        audience_insights = asyncio.run(
-            get_audience_insights_async(
-                token_response[0],
-                audience[api_c.AUDIENCE_FILTERS],
+        audience_insights = {}
+
+        # check if the source audience exists.
+        if audience:
+            audience_insights = asyncio.run(
+                get_audience_insights_async(
+                    token_response[0],
+                    audience[api_c.AUDIENCE_FILTERS],
+                )
             )
-        )
 
         return (
             AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
@@ -759,6 +893,14 @@ class AudiencePostView(SwaggerView):
     """Audience Post view class."""
 
     parameters = [
+        {
+            "name": api_c.DELIVER,
+            "description": "Create and Deliver",
+            "in": "query",
+            "type": "boolean",
+            "required": "false",
+            "default": "false",
+        },
         {
             "name": "body",
             "in": "body",
@@ -810,8 +952,8 @@ class AudiencePostView(SwaggerView):
     # pylint: disable=too-many-branches
     # pylint: disable=no-self-use
     @api_error_handler()
-    @get_user_name()
-    def post(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, user: dict) -> Tuple[dict, int]:
         """Creates a new audience.
 
         ---
@@ -819,7 +961,7 @@ class AudiencePostView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: Created audience, HTTP status code.
@@ -872,20 +1014,22 @@ class AudiencePostView(SwaggerView):
                         f"does not exist."
                     }
                 engagement_ids.append(engagement_id)
-
+        audience_filters = convert_unique_city_filter(
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+        )
         # get live audience size
         customers = get_customers_overview(
             token_response[0],
-            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)},
+            audience_filters,
         )
 
         # create the audience
         audience_doc = orchestration_management.create_audience(
             database=database,
             name=body[api_c.AUDIENCE_NAME],
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
-            user_name=user_name,
+            user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
         )
 
@@ -895,9 +1039,10 @@ class AudiencePostView(SwaggerView):
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
                 f'New audience named "{audience_doc[db_c.NAME]}" '
-                f"added by {user_name}."
+                f"added by {user[api_c.USER_NAME]}."
             ),
             api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
         )
 
         # attach the audience to each of the engagements
@@ -905,7 +1050,7 @@ class AudiencePostView(SwaggerView):
             engagement = engagement_management.append_audiences_to_engagement(
                 database,
                 engagement_id,
-                user_name,
+                user[api_c.USER_NAME],
                 [
                     {
                         db_c.OBJECT_ID: audience_doc[db_c.ID],
@@ -920,10 +1065,33 @@ class AudiencePostView(SwaggerView):
                 (
                     f'Audience "{audience_doc[db_c.NAME]}" '
                     f'added to engagement "{engagement[db_c.NAME]}" '
-                    f"by {user_name}."
+                    f"by {user[api_c.USER_NAME]}."
                 ),
                 api_c.ORCHESTRATION_TAG,
+                user[api_c.USER_NAME],
             )
+
+        # deliver audience
+        if request.args.get(api_c.DELIVER):
+            # TODO: make this OOP between routes.
+
+            # get engagements
+            engagements = engagement_management.get_engagements_by_audience(
+                database, audience_doc[db_c.ID]
+            )
+
+            # submit jobs for the audience/destination pairs
+            for engagement in engagements:
+                for pair in get_audience_destination_pairs(
+                    engagement[api_c.AUDIENCES]
+                ):
+                    if pair[0] != audience_doc[db_c.ID]:
+                        continue
+                    batch_destination = get_destination_config(
+                        database, engagement[db_c.ID], *pair
+                    )
+                    batch_destination.register()
+                    batch_destination.submit()
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 
@@ -994,8 +1162,8 @@ class AudiencePutView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @get_user_name()
-    def put(self, audience_id: str, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Updates an audience.
 
         ---
@@ -1004,7 +1172,7 @@ class AudiencePutView(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: Audience doc, HTTP status code.
@@ -1025,7 +1193,7 @@ class AudiencePutView(SwaggerView):
                 )
 
                 if not destination_management.get_delivery_platform(
-                    get_db_client(), destination[db_c.OBJECT_ID]
+                    database, destination[db_c.OBJECT_ID]
                 ):
                     logger.error(
                         "Could not find destination with id %s.",
@@ -1034,53 +1202,75 @@ class AudiencePutView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
-
+        audience_filters = convert_unique_city_filter(
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+        )
         audience_doc = orchestration_management.update_audience(
             database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
-            user_name=user_name,
+            user_name=user[api_c.USER_NAME],
         )
 
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f'Audience "{audience_doc[db_c.NAME]}" updated by {user_name}.',
+            f'Audience "{audience_doc[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
             api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
         )
 
         # check if any engagements to add, otherwise return.
         if not body.get(api_c.ENGAGEMENT_IDS):
             return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
-        # remove the audience from existing engagements
-        engagement_deliveries = orchestration_management.get_audience_insights(
-            database,
-            audience_doc[db_c.ID],
-        )
+        # audience put engagement ids
+        put_engagement_ids = [
+            ObjectId(x) for x in body.get(api_c.ENGAGEMENT_IDS)
+        ]
 
-        # process each engagement that the audience is attached to.
-        for engagement in engagement_deliveries:
-            # remove the audience
-            engagement_management.remove_audiences_from_engagement(
-                database,
-                engagement[db_c.ID],
-                user_name,
-                [audience_doc[db_c.ID]],
-            )
+        # loop each engagement
+        removed = []
+        for engagement in engagement_management.get_engagements(database):
+            # check if audience is in the engagement doc
+            audience_in_engagement = audience_doc[db_c.ID] in [
+                x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
+            ]
 
-        # now attach each audience to the passed in engagements.
-        for engagement_id in body.get(api_c.ENGAGEMENT_IDS):
-            # the append function expects ID for audience _id.
-            audience_doc[db_c.OBJECT_ID] = audience_doc[db_c.ID]
-            engagement_management.append_audiences_to_engagement(
-                database,
-                ObjectId(engagement_id),
-                user_name,
-                [audience_doc],
-            )
+            # evaluate engagement
+            if (
+                engagement[db_c.ID] in put_engagement_ids
+                and audience_in_engagement
+            ):
+                # audience is in engagement and engagement is in PUT ids.
+                # no update is needed for this scenario.
+                pass
+            elif engagement[db_c.ID] in put_engagement_ids:
+                # engagement is in the PUT ids, but the audience is not.
+                # append audience to the engagement.
+                engagement_management.append_audiences_to_engagement(
+                    database,
+                    engagement.get(db_c.ID),
+                    user[api_c.USER_NAME],
+                    [
+                        {
+                            db_c.OBJECT_ID: audience_doc[db_c.ID],
+                            db_c.DESTINATIONS: audience_doc[db_c.DESTINATIONS],
+                        }
+                    ],
+                )
+            elif audience_in_engagement:
+                # audience is in engagement, but the engagement is not in the PUT ids.
+                # remove the audience from engagement.
+                engagement_management.remove_audiences_from_engagement(
+                    database,
+                    engagement[db_c.ID],
+                    user[api_c.USER_NAME],
+                    [audience_doc[db_c.ID]],
+                )
+                removed.append(engagement[db_c.ID])
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
@@ -1100,13 +1290,18 @@ class AudienceRules(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
+    # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves all audience rules.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: dict of audience rules, HTTP status code.
@@ -1231,11 +1426,17 @@ class AudienceRules(SwaggerView):
                     "gender": {
                         "name": "Gender",
                         "type": "list",  # text for 5.0, list for future
-                        "options": {
-                            "female": "Female",
-                            "male": "Male",
-                            "other": "Other",
-                        },
+                        "options": [
+                            {
+                                "female": "Female",
+                            },
+                            {
+                                "male": "Male",
+                            },
+                            {
+                                "other": "Other",
+                            },
+                        ],
                     },
                     "location": {
                         "name": "Location",
@@ -1314,16 +1515,16 @@ class SetLookalikeAudience(SwaggerView):
 
     # pylint: disable=no-self-use, unsubscriptable-object
     @api_error_handler()
-    @get_user_name()
-    def post(self, user_name: str) -> Tuple[dict, int]:
-        """Sets lookalike audience.
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, user: dict) -> Tuple[dict, int]:
+        """Create lookalike audience.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: lookalike audience configuration,
@@ -1416,7 +1617,7 @@ class SetLookalikeAudience(SwaggerView):
                 body[api_c.NAME],
                 body[api_c.AUDIENCE_SIZE_PERCENTAGE],
                 "US",
-                user_name,
+                user[api_c.USER_NAME],
                 0,  # TODO HUS-801 - set lookalike SIZE correctly.
                 status,
             )
@@ -1434,7 +1635,7 @@ class SetLookalikeAudience(SwaggerView):
             engagement_management.append_audiences_to_engagement(
                 database,
                 ObjectId(engagement_id),
-                user_name,
+                user[api_c.USER_NAME],
                 [
                     {
                         api_c.ID: lookalike_audience[db_c.ID],
@@ -1453,13 +1654,108 @@ class SetLookalikeAudience(SwaggerView):
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
                 f"New lookalike audience named "
-                f'"{lookalike_audience[db_c.NAME]}" added by {user_name}.'
+                f'"{lookalike_audience[db_c.NAME]}" added by {user[api_c.USER_NAME]}.'
             ),
             api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
         )
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
             HTTPStatus.ACCEPTED,
+        )
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}/<audience_id>",
+    "EditLookalikeAudience",
+)
+class PutLookalikeAudience(SwaggerView):
+    """Set Lookalike Audience Class."""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Lookalike Audience Parameters.",
+            "example": {
+                api_c.NAME: "New Lookalike Audience Name",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.ACCEPTED.value: {
+            "schema": LookalikeAudienceGetSchema,
+            "description": "Successfully edited lookalike audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to edit the lookalike audience"
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use, unsubscriptable-object
+    @api_error_handler()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
+        """Edits lookalike audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): ID of the audience to be deleted.
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: lookalike audience configuration,
+                HTTP status code.
+
+        Raises:
+            FailedDestinationDependencyError: Destination Dependency
+                error.
+        """
+
+        body = LookalikeAudiencePutSchema().load(
+            request.get_json(), partial=True
+        )
+
+        database = get_db_client()
+
+        update_doc = orchestration_management.update_lookalike_audience(
+            database,
+            ObjectId(audience_id),
+            body[api_c.NAME],
+            user[api_c.USER_NAME],
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Lookalike audience "{update_doc[db_c.NAME]}" '
+                f"edited by {user[api_c.USER_NAME]}."
+            ),
+            api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
+        )
+
+        return (
+            LookalikeAudienceGetSchema().dump(update_doc),
+            HTTPStatus.OK,
         )
 
 
@@ -1497,8 +1793,8 @@ class DeleteAudienceView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @get_user_name()
-    def delete(self, audience_id: str, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def delete(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Deletes an audience.
 
         ---
@@ -1507,13 +1803,18 @@ class DeleteAudienceView(SwaggerView):
 
         Args:
             audience_id (str): ID of the audience to be deleted.
-            user_name (str): user_name extracted from Okta.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: response dict, HTTP status code.
         """
 
         database = get_db_client()
+
+        # get the audience first
+        audience = orchestration_management.get_audience(
+            database, ObjectId(audience_id)
+        )
 
         # attempt to delete the audience from audiences collection first
         deleted_audience = orchestration_management.delete_audience(
@@ -1523,6 +1824,12 @@ class DeleteAudienceView(SwaggerView):
         # attempt to delete the audience from lookalike_audiences collection
         # if audience not found in audiences collection
         if not deleted_audience:
+            audience = cm.get_document(
+                database,
+                db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+                {db_c.ID: ObjectId(audience_id)},
+            )
+
             deleted_audience = delete_lookalike_audience(
                 database, ObjectId(audience_id), soft_delete=False
             )
@@ -1533,7 +1840,7 @@ class DeleteAudienceView(SwaggerView):
                 logger.info(
                     "Failed to delete audience %s by user %s.",
                     audience_id,
-                    user_name,
+                    user[api_c.USER_NAME],
                 )
                 return {
                     api_c.MESSAGE: api_c.OPERATION_FAILED
@@ -1541,7 +1848,7 @@ class DeleteAudienceView(SwaggerView):
 
         delete_audience_from_engagements = (
             engagement_management.remove_audience_from_all_engagements(
-                database, ObjectId(audience_id), user_name
+                database, ObjectId(audience_id), user[api_c.USER_NAME]
             )
         )
 
@@ -1549,7 +1856,7 @@ class DeleteAudienceView(SwaggerView):
             logger.info(
                 "Failed to delete audience %s from engagements by user %s.",
                 audience_id,
-                user_name,
+                user[api_c.USER_NAME],
             )
             return {
                 api_c.MESSAGE: api_c.OPERATION_FAILED
@@ -1558,14 +1865,15 @@ class DeleteAudienceView(SwaggerView):
         logger.info(
             "Successfully deleted audience %s by user %s.",
             audience_id,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Audience "{audience_id}" successfully deleted by {user_name}.',
+            f'Audience "{audience[db_c.NAME]}" successfully deleted by {user[api_c.USER_NAME]}.',
             api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
         )
 
         return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT

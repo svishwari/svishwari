@@ -1037,6 +1037,46 @@ class TestEngagementManagement(unittest.TestCase):
         for audience in updated_engagement[db_c.AUDIENCES]:
             self.assertFalse(audience[db_c.DESTINATIONS])
 
+    def test_remove_destination_from_all_engagement_audience(self):
+        """Test removing a destination from all engagement audience"""
+        audience_one = om.create_audience(
+            self.database, "Audience1", [], [], self.user_name, 201
+        )
+
+        audience_one_dict = {
+            db_c.OBJECT_ID: audience_one[db_c.ID],
+            db_c.DESTINATIONS: [
+                {db_c.OBJECT_ID: self.destinations[0][db_c.ID]}
+            ],
+        }
+
+        for i in range(5):
+            em.set_engagement(
+                self.database,
+                f"Engagement{i}",
+                f"Engagement{i}",
+                [audience_one_dict],
+                self.user_name,
+            )
+
+        em.remove_destination_from_all_engagements(
+            self.database,
+            self.destinations[0][db_c.ID],
+            self.user_name,
+        )
+
+        # get all engagements
+        persisted_destinations = []
+        for engagement in em.get_engagements(self.database):
+            for audience in engagement.get(db_c.AUDIENCES):
+                persisted_destinations += [
+                    d
+                    for d in audience.get(db_c.DESTINATIONS)
+                    if d.get(db_c.OBJECT_ID) == self.destinations[0][db_c.ID]
+                ]
+
+        self.assertFalse(persisted_destinations)
+
     def test_check_active_engagement_deliveries(self) -> None:
         """Test check_active_engagement_deliveries routine"""
 

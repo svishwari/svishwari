@@ -13,6 +13,7 @@ const state = {
     idToken: null,
     bugsReported: [],
   },
+  users: [],
 }
 
 const mutations = {
@@ -39,6 +40,10 @@ const mutations = {
   setApplicationUserProfile(state, userProfile) {
     Vue.set(state, "userProfile", { ...state.userProfile, ...userProfile })
   },
+
+  setApplicationAllUsers(state, users) {
+    Vue.set(state, "users", users)
+  },
 }
 
 const actions = {
@@ -52,6 +57,16 @@ const actions = {
     try {
       const response = await api.users.fetchProfile()
       commit("setApplicationUserProfile", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getUsers({ commit }) {
+    try {
+      const response = await api.users.all()
+      commit("setApplicationAllUsers", response.data)
     } catch (error) {
       handleError(error)
       throw error
@@ -88,7 +103,16 @@ const actions = {
         )
       }
     } catch (error) {
-      console.log(error)
+      handleError(error)
+      throw error
+    }
+  },
+
+  async updatePIIAccess(_, payload) {
+    try {
+      const result = await api.users.batchUpdate(payload)
+      return result
+    } catch (error) {
       handleError(error)
       throw error
     }
@@ -109,6 +133,10 @@ const getters = {
   },
 
   getEmailAddress: (state) => state.userProfile.email,
+
+  getUsers: (state) => state.users,
+
+  getCurrentUserRole: (state) => state.userProfile.role,
 }
 export default {
   namespaced,

@@ -182,8 +182,8 @@ export default {
     overview: "[data-e2e='overviewList']",
     datafeed: "[data-e2e='datafeedtable']",
     lastrun: "[data-e2e='lastrun']",
-    pinning: "[data-e2e='Pinning']",
-    stitched: "[data-e2e='Stitched']",
+    pinning: "[data-e2e='tab-pinning']",
+    stitched: "[data-e2e='tab-stitched']",
   },
   // notification
   notification: {
@@ -193,6 +193,8 @@ export default {
     notificationlistmenu: "[data-e2e='notification-item']",
   },
   audience: {
+    audienceFilterToggle: "[data-e2e='audienceFilterToggle']",
+    audienceFilters: "[data-e2e='audienceFilters']",
     audiencelist: "[data-e2e='audiencelist']",
     audiencenameclick: "[data-e2e='audiencename']",
     audiencehistory: "[data-e2e='audience-history']",
@@ -210,8 +212,9 @@ export default {
       audienceTableHeaders: "table thead tr",
       lastDeliveredColumn: "[data-e2e='last-delivered']",
     },
-    addAudiences: "a[href='/audiences/add']",
+    addAudiences: "a[href='/segment-playground']",
     audienceName: "[data-e2e='audience-name']",
+    actionAudience: "[data-e2e='action-audience']",
     addEngagement: "[data-e2e='add-engagement']",
     selectEngagement: "[data-e2e='engagement-list']",
     addDestination: "[data-e2e='add-destination-audience']",

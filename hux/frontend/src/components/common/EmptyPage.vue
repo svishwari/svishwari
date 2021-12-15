@@ -4,7 +4,7 @@
       <slot name="icon">
         <icon :type="type" :size="size" />
       </slot>
-      <h3 class="text-h3 my-4">
+      <h3 class="text-h2 my-4">
         <slot name="title"></slot>
       </h3>
       <p class="font-weight-regular mb-4">
@@ -27,7 +27,7 @@ export default {
       required: false,
     },
     size: {
-      type: String,
+      type: [String, Number],
       required: false,
       default: "24",
     },

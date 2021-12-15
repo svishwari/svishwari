@@ -118,7 +118,10 @@ export const defineRoutes = (server) => {
       // update data extension, assign the new `id` to its `data_extension_id`
       let updatedResponse = schema.dataExtensions
         .find(response.attrs.id)
-        .update({ data_extension_id: response.attrs.id })
+        .update({
+          data_extension_id: response.attrs.id,
+          create_time: new Date(),
+        })
       return updatedResponse.attrs
     }
   )
@@ -621,16 +624,8 @@ export const defineRoutes = (server) => {
 
   server.post("/audiences", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
-    if (requestData.engagements) {
-      requestData.engagements = requestData.engagements.map((id) => {
-        return schema.engagements.find(id)
-      })
-    }
-    if (requestData.destinations) {
-      requestData.destinations = requestData.destinations.map((des) => {
-        return schema.destinations.find(des.id)
-      })
-    }
+    requestData.engagements = []
+    requestData.destinations = []
 
     const now = dayjs().toJSON()
 
@@ -651,12 +646,6 @@ export const defineRoutes = (server) => {
     const payload = {
       name: requestData.name,
       filters: requestData.filters,
-      destinations: requestData.destinations,
-      // TODO: Need to update the blow 'engagements' update,
-      // once the Mirage Relationships between Audiences and Engagement Model are fixed.
-      // engagements: requestData.engagement_ids.map((engagementId) => {
-      //   return schema.engagements.find(engagementId)
-      // }),
     }
     return schema.audiences.find(audienceId).update(payload)
   })
@@ -731,5 +720,15 @@ export const defineRoutes = (server) => {
     delete attrs["engagement_ids"]
 
     return schema.audiences.create(attrs)
+  })
+
+  server.put("/lookalike-audiences/:id", (schema, request) => {
+    let requestData = JSON.parse(request.requestBody)
+    return schema.audiences.find(request.params.id).update(requestData)
+  })
+
+  //configuration
+  server.get("/configurations", (schema) => {
+    return schema.configurations.all()
   })
 }

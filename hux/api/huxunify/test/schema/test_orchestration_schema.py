@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use
 """Purpose of this file is to test the orchestration schemas."""
+import random
 from unittest import TestCase
 from datetime import datetime
 
@@ -10,6 +11,7 @@ from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     EngagementDeliveryHistorySchema,
     AudienceDeliveryHistorySchema,
+    AudienceDeliverySchema,
 )
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
@@ -76,6 +78,7 @@ class OrchestrationSchemaTest(TestCase):
             t_c.SOURCE_ID: "5f5f7262997acad4bac4385b",
             t_c.SOURCE_NAME: "Audience 1",
             t_c.SOURCE_SIZE: 2000,
+            api_c.LOOKALIKE_SOURCE_EXISTS: random.choice([True, False]),
             api_c.LOOKALIKEABLE: api_c.DISABLED,
             db_c.UPDATED_BY: "User",
             db_c.UPDATE_TIME: datetime.strftime(
@@ -313,3 +316,20 @@ class OrchestrationSchemaTest(TestCase):
         # test the schema to have the match_rate value set
         schema = AudienceDeliveryHistorySchema().load(delivery_history)
         self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0)
+
+    def test_audience_standalone_deliveries_schema(self) -> None:
+        """Test audience standalone deliveries schema."""
+
+        audience_standalone_delivery_doc = {
+            db_c.METRICS_DELIVERY_PLATFORM_NAME: "Facebook",
+            api_c.DELIVERY_PLATFORM_TYPE: "facebook",
+            api_c.STATUS: "Delivered",
+            db_c.SIZE: 1000,
+            db_c.AUDIENCE_LAST_DELIVERED: datetime.strftime(
+                datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
+            ),
+        }
+
+        self.assertFalse(
+            AudienceDeliverySchema().validate(audience_standalone_delivery_doc)
+        )

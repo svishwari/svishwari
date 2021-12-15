@@ -42,6 +42,7 @@ VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: "8548bfh8d",
     api_c.EMAIL: "davesmith@fake.com",
     api_c.NAME: "dave smith",
+    api_c.ROLE: "admin",
     api_c.USER_PII_ACCESS: True,
 }
 OKTA_ID = "okta_id"
@@ -146,34 +147,100 @@ CUSTOMER_INSIGHT_RESPONSE = {
     "message": "ok",
 }
 
-CUSTOMER_EVENT_RESPONSE = {
+CUSTOMER_EVENT_BY_DAY_RESPONSE = {
     "code": 200,
     "body": [
         {
             "total_event_count": 1,
             "event_type_counts": {
-                "abandoned_cart": 0,
-                "customer_login": 0,
-                "item_purchased": 0,
-                "trait_computed": 1,
-                "viewed_cart": 0,
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
                 "viewed_checkout": 0,
-                "viewed_sale_item": 0,
             },
             "date": "2021-01-01T00:00:00.000Z",
         },
         {
             "total_event_count": 1,
             "event_type_counts": {
-                "abandoned_cart": 0,
-                "customer_login": 0,
-                "item_purchased": 0,
-                "trait_computed": 1,
-                "viewed_cart": 0,
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
                 "viewed_checkout": 0,
-                "viewed_sale_item": 0,
             },
             "date": "2021-01-02T00:00:00.000Z",
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMER_EVENT_BY_WEEK_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-12-28T00:00:00.000Z",
+        },
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-01-18T00:00:00.000Z",
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMER_EVENT_BY_MONTH_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-01-01T00:00:00.000Z",
+        },
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-03-01T00:00:00.000Z",
         },
     ],
     "message": "ok",
@@ -296,7 +363,7 @@ MOCKED_MODEL_RESPONSE = [
         api_c.LOOKBACK_WINDOW: 365,
         api_c.PREDICTION_WINDOW: 365,
         api_c.FULCRUM_DATE: parser.isoparse("2021-06-22T11:33:19.658Z"),
-        api_c.TYPE: "test",
+        api_c.TYPE: "other",
     },
 ]
 
@@ -444,30 +511,35 @@ MOCKED_CITY_LTVS_RESPONSE = {
             "city": "Santa Anna",
             "state": "TX",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 668.03003,
         },
         {
             "city": "Solon Springs",
             "state": "WI",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 648.8791640000001,
         },
         {
             "city": "Gays Mills",
             "state": "WI",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 587.3708300000001,
         },
         {
             "city": "Hodgen",
             "state": "OK",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 573.278802,
         },
         {
             "city": "Noonan",
             "state": "ND",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 554.679386,
         },
     ],
@@ -489,6 +561,21 @@ MOCKED_GENDER_SPENDING = {
         }
     ],
     "message": "ok",
+}
+
+MOCKED_GENDER_SPENDING_BY_DAY = {
+    "code": 200,
+    "body": [
+        {
+            "date": "2021-07-19T00:00:00.000Z",
+            "avg_spent_men": 25.311363636363637,
+            "avg_spent_women": 24.12727272727273,
+            "avg_spent_other": 26.400000000000002,
+            "gender_men": 44,
+            "gender_women": 33,
+            "gender_other": 2,
+        }
+    ],
 }
 
 MOCKED_MODEL_PERFORMANCE_LTV = {
@@ -524,13 +611,6 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
             "joinKeys": ["21.7.30"],
         },
     ]
-}
-
-MOCKED_MODEL_LTV_PAYLOAD = {
-    "params": {
-        "feature_service_name": api_c.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE,
-        "join_key_map": {"model_id": "2"},
-    }
 }
 
 MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
@@ -584,13 +664,6 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
             "joinKeys": ["21.7.31"],
         },
     ]
-}
-
-MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
-    "params": {
-        "feature_service_name": api_c.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE,
-        "join_key_map": {"model_id": "1"},
-    }
 }
 
 MOCKED_MODEL_LIFT_CHART = [

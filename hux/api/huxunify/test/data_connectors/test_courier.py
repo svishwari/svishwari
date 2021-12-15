@@ -1,4 +1,5 @@
 """Purpose of this file is to house all the courier tests."""
+import asyncio
 from http import HTTPStatus
 from unittest import TestCase, mock
 import mongomock
@@ -15,7 +16,9 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_job_status,
     get_delivery_platform,
     set_connection_status,
+    get_delivery_jobs_using_metadata,
 )
+from huxunifylib.database.notification_management import get_notifications
 from huxunifylib.database.engagement_management import (
     get_engagement,
     set_engagement,
@@ -42,11 +45,14 @@ from huxunify.api.data_connectors.courier import (
     get_destination_config,
     get_audience_destination_pairs,
     toggle_event_driven_routers,
+    deliver_audience_to_destination,
 )
+from huxunify.api.data_connectors.scheduler import run_scheduled_deliveries
 from huxunify.api.config import get_config
 from huxunify.test import constants as t_c
 
 
+# pylint: disable=too-many-public-methods
 class CourierTest(TestCase):
     """Test Courier methods."""
 
@@ -96,7 +102,7 @@ class CourierTest(TestCase):
 
             destinations.append(destination_doc)
 
-        destination_ids = [d[db_c.ID] for d in destinations]
+        self.destination_ids = [d[db_c.ID] for d in destinations]
 
         # create first audience
         self.audience_one = create_audience(
@@ -104,7 +110,7 @@ class CourierTest(TestCase):
             "audience one",
             [],
             t_c.TEST_USER_NAME,
-            destination_ids,
+            self.destination_ids,
         )
         self.assertIsNotNone(self.audience_one)
 
@@ -114,7 +120,7 @@ class CourierTest(TestCase):
             "audience two",
             [],
             t_c.TEST_USER_NAME,
-            destination_ids,
+            self.destination_ids
         )
         self.assertIsNotNone(self.audience_two)
 
@@ -352,7 +358,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, self.engagement[db_c.ID], *pair
+                    self.database, *pair, self.engagement[db_c.ID]
                 )
             self.assertIsNotNone(batch_destination.aws_envs)
             self.assertIsNotNone(batch_destination.aws_secrets)
@@ -383,7 +389,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, self.engagement[db_c.ID], *pair
+                    self.database, *pair, self.engagement[db_c.ID]
                 )
             batch_destination.aws_envs[
                 AudienceRouterConfig.BATCH_SIZE.name
@@ -400,7 +406,7 @@ class CourierTest(TestCase):
                 "register_job",
                 return_value=return_value,
             ):
-                batch_destination.register(self.engagement)
+                batch_destination.register()
 
             self.assertEqual(
                 batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING
@@ -422,7 +428,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, self.engagement[db_c.ID], *pair
+                    self.database, *pair, self.engagement[db_c.ID]
                 )
 
             # Register job
@@ -434,7 +440,7 @@ class CourierTest(TestCase):
                 "register_job",
                 return_value=return_value,
             ):
-                batch_destination.register(self.engagement)
+                batch_destination.register()
             self.assertEqual(
                 batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING
             )
@@ -842,3 +848,123 @@ class CourierTest(TestCase):
         mock_boto_client.return_value = client
 
         self.assertIsNone(toggle_event_driven_routers(self.database))
+
+    def test_run_scheduled_delivery(self):
+        """Test run scheduled delivery for an audience in an engagement."""
+
+        # define a sample engagement to simulate the scheduled delivery
+        engagement_doc = {
+            db_c.AUDIENCE_NAME: "Seattle Space Needle",
+            db_c.NOTIFICATION_FIELD_DESCRIPTION: "Fun.",
+            db_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: self.audience_two[db_c.ID],
+                    db_c.DESTINATIONS: [
+                        {
+                            db_c.OBJECT_ID: x,
+                            api_c.DELIVERY_SCHEDULE: {
+                                api_c.PERIODICIY: "Daily",
+                                api_c.EVERY: 0,
+                                api_c.HOUR: 0,
+                                api_c.MINUTE: 0,
+                                api_c.PERIOD: "PM",
+                            },
+                        }
+                        for x in self.audience_two[db_c.DESTINATIONS]
+                    ],
+                },
+            ],
+            db_c.CREATED_BY: ObjectId(),
+        }
+
+        # insert engagement doc in the collection
+        engagement_id = set_engagement(
+            self.database,
+            engagement_doc[db_c.AUDIENCE_NAME],
+            engagement_doc[db_c.NOTIFICATION_FIELD_DESCRIPTION],
+            engagement_doc[db_c.AUDIENCES],
+            engagement_doc[db_c.CREATED_BY],
+        )
+
+        # mock parameter store
+        mock.patch.object(parameter_store, "get_store_value").start()
+
+        # mock AWS batch connector register job function
+        mock.patch.object(
+            AWSBatchConnector, "register_job", return_value=t_c.BATCH_RESPONSE
+        ).start()
+
+        # mock AWS batch connector submit job function
+        mock.patch.object(
+            AWSBatchConnector, "submit_job", return_value=t_c.BATCH_RESPONSE
+        ).start()
+
+        # manually set the delivery schedule of the engagement
+        run_scheduled_deliveries(self.database)
+
+        # validate delivery job created
+        delivery_jobs = get_delivery_jobs_using_metadata(
+            self.database, engagement_id
+        )
+        self.assertTrue(delivery_jobs)
+        self.assertEqual(1, len(delivery_jobs))
+        self.assertEqual(
+            db_c.AUDIENCE_STATUS_DELIVERING, delivery_jobs[0][db_c.STATUS]
+        )
+
+        # validate notification created
+        notifications = get_notifications(
+            self.database,
+            {
+                db_c.NOTIFICATION_FIELD_USERNAME: engagement_doc[
+                    db_c.CREATED_BY
+                ]
+            },
+        )
+        self.assertEqual(1, notifications["total_records"])
+
+    def test_deliver_audience_to_destination(self):
+        """Test delivering an audience to a destination without any
+        engagement."""
+
+        # mock parameter store
+        mock.patch.object(parameter_store, "get_store_value").start()
+
+        # mock AWS batch connector register job function
+        mock.patch.object(
+            AWSBatchConnector, "register_job", return_value=t_c.BATCH_RESPONSE
+        ).start()
+
+        # mock AWS batch connector submit job function
+        mock.patch.object(
+            AWSBatchConnector, "submit_job", return_value=t_c.BATCH_RESPONSE
+        ).start()
+
+        # manually deliver audience to a destination without any engagement
+        asyncio.run(
+            deliver_audience_to_destination(
+                database=self.database,
+                audience_id=self.audience_one[db_c.ID],
+                destination_id=self.destination_ids[0],
+                user_name="Delivery Test User",
+            )
+        )
+
+        # validate delivery job created
+        delivery_jobs = get_delivery_jobs_using_metadata(
+            database=self.database,
+            audience_id=self.audience_one[db_c.ID],
+            delivery_platform_id=self.destination_ids[0],
+        )
+        self.assertTrue(delivery_jobs)
+        self.assertEqual(1, len(delivery_jobs))
+        self.assertEqual(
+            db_c.AUDIENCE_STATUS_DELIVERING, delivery_jobs[0][db_c.STATUS]
+        )
+
+        # validate notification created
+        notifications = get_notifications(
+            self.database,
+            {db_c.NOTIFICATION_FIELD_USERNAME: "Delivery Test User"},
+        )
+        self.assertEqual(1, notifications["total_records"])

@@ -15,6 +15,8 @@ from huxunifylib.database.engagement_management import (
     add_delivery_job,
     check_active_engagement_deliveries,
 )
+from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
@@ -29,8 +31,6 @@ from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config, Config
 from huxunify.api.data_connectors.aws import (
-    set_cloud_watch_rule,
-    put_rule_targets_aws_batch,
     CloudWatchState,
 )
 from huxunify.api.exceptions.integration_api_exceptions import (
@@ -223,7 +223,6 @@ class DestinationBatchJob:
 
     def register(
         self,
-        engagement_doc: dict,
         job_head_name: str = "audiencerouter",
         aws_batch_mem_limit: int = 2048,
         aws_batch_connector: AWSBatchConnector = None,
@@ -231,7 +230,6 @@ class DestinationBatchJob:
         """Register a destination job
 
         Args:
-            engagement_doc (dict): Engagement document.
             job_head_name (str): The aws batch job head name.
             aws_batch_mem_limit (int): AWS Batch RAM limit.
             aws_batch_connector (AWSBatchConnector): AWS batch connector.
@@ -284,47 +282,6 @@ class DestinationBatchJob:
         )
         self.result = db_c.AUDIENCE_STATUS_DELIVERING
 
-        # check if engagement has a delivery flight schedule set
-        if not (
-            engagement_doc and engagement_doc.get(api_c.DELIVERY_SCHEDULE)
-        ):
-            logger.warning(
-                "Delivery schedule is not set for %s.",
-                engagement_doc[db_c.ID],
-            )
-            return
-
-        # create the rule name
-        cw_name = f"{engagement_doc[db_c.ID]}-{self.destination_type}"
-
-        # TODO hookup converted cron job expression HUS-794
-        if not set_cloud_watch_rule(
-            cw_name,
-            "cron(15 0 * * ? *)",
-            config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
-        ):
-            logger.error(
-                "Error creating cloud watch rule for engagement with ID %s.",
-                engagement_doc[db_c.ID],
-            )
-            return
-
-        # setup the batch params for the registered job.
-        batch_params = {
-            "JobDefinition": response_batch_register["jobDefinitionArn"],
-            "JobName": response_batch_register["jobDefinitionName"],
-        }
-
-        put_rule_targets_aws_batch(
-            cw_name,
-            batch_params,
-            self.audience_delivery_job_id,
-            config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
-            config.AUDIENCE_ROUTER_JOB_QUEUE,
-        )
-
-        self.scheduled = True
-
     def submit(self) -> None:
         """Submit a destination job
 
@@ -370,20 +327,21 @@ class DestinationBatchJob:
         self.result = status
 
 
+# pylint: disable=too-many-locals
 def get_destination_config(
     database: MongoClient,
-    engagement_id: ObjectId,
     audience_id: ObjectId,
     destination: dict,
+    engagement_id: ObjectId,
     audience_router_batch_size: int = 5000,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
     Args:
         database (MongoClient): The mongo database client.
-        engagement_id (ObjectId): The ID of the engagement.
         audience_id (ObjectId): The ID of the audience.
         destination (dict): Destination object.
+        engagement_id (ObjectId): The ID of the engagement.
         audience_router_batch_size (int): Audience router AWS batch size.
 
     Returns:
@@ -393,9 +351,15 @@ def get_destination_config(
         FailedDestinationDependencyError: Failed to connect to a destination.
     """
 
+    destination_id = (
+        destination[db_c.OBJECT_ID]
+        if db_c.OBJECT_ID in destination
+        else destination[db_c.ID]
+    )
+
     delivery_platform = get_delivery_platform(
         database,
-        destination[db_c.OBJECT_ID],
+        destination_id,
     )
 
     # validate destination status first.
@@ -413,7 +377,7 @@ def get_destination_config(
     audience_delivery_job = set_delivery_job(
         database,
         audience_id,
-        destination[db_c.OBJECT_ID],
+        destination_id,
         [],
         engagement_id,
         destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
@@ -436,7 +400,7 @@ def get_destination_config(
             database,
             engagement_id,
             audience_id,
-            destination[db_c.OBJECT_ID],
+            destination_id,
             audience_delivery_job[db_c.ID],
         )
     except TypeError as exc:
@@ -539,6 +503,79 @@ def toggle_event_driven_routers(
     # TODO - hookup after ORCH-401 deploys the FLDR and CPDR to a cloud watch event.
     # # toggle the routers
     # _ = [toggle_cloud_watch_rule(x, state) for x in routers]
+
+
+async def deliver_audience_to_destination(
+    database: MongoClient,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    user_name: str,
+):
+    """Async function that couriers delivery jobs.
+
+    Args:
+        database (MongoClient): The mongo database client.
+        audience_id (ObjectId): Audience ID.
+        destination_id (ObjectId): Destination ID.
+        user_name (str): Username.
+    """
+
+    # get audience object for delivering
+    audience = get_audience(database, audience_id)
+    if not audience:
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_CRITICAL,
+            (
+                f'Failed to deliver audience ID "{audience_id}" '
+                f"because the audience does not exist."
+            ),
+            api_c.DELIVERY_TAG,
+            user_name,
+        )
+        return
+
+    # get destination object for delivering
+    destination = get_delivery_platform(database, destination_id)
+    if not destination:
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_CRITICAL,
+            (
+                f'Failed to delivered audience ID "{audience_id}" '
+                f'to destination ID "{destination_id}"'
+                f"because the destination does not exist."
+            ),
+            api_c.DELIVERY_TAG,
+            user_name,
+        )
+        return
+
+    batch_destination = get_destination_config(
+        database=database,
+        audience_id=audience_id,
+        destination=destination,
+        engagement_id=db_c.ZERO_OBJECT_ID,
+    )
+    batch_destination.register()
+    batch_destination.submit()
+
+    logger.info(
+        "Successfully created delivery job %s.",
+        batch_destination.audience_delivery_job_id,
+    )
+
+    # create notification
+    create_notification(
+        database,
+        db_c.NOTIFICATION_TYPE_SUCCESS,
+        (
+            f'Successfully delivered audience "{audience[db_c.NAME]}" '
+            f'to destination {destination[db_c.NAME]}".'
+        ),
+        api_c.DELIVERY_TAG,
+        user_name,
+    )
 
 
 if __name__ == "__main__":

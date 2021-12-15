@@ -49,19 +49,19 @@ describe("Orchestration > Engagement > Create Engagement", () => {
           .type(`Test Engagement ${engagementName}`)
         // Close the data extension drawer
         cy.get(selector.engagement.exitDataExtensionDrawer).click()
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1000)
-        // Close the add destination drawer
-        cy.get(selector.engagement.exitDrawer).click()
       }
     })
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    // Close the add destination drawer
+    cy.get(selector.engagement.exitDrawer).click()
 
     // create engagement
     cy.get(selector.engagement.createEngagement).click()
   })
 
   // This test case is written to delete an engagement created above
-  it.skip("should be able to delete a newly added engagement", () => {
+  it("should be able to delete a newly added engagement", () => {
     cy.visit(route.engagements)
 
     //eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -71,9 +71,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
       if ($el.text().includes(`Test Engagement ${engagementName}`)) {
         // Make the vertical dots visible
         cy.wrap($el)
-          .find("span.action-icon")
-          .invoke("attr", "style", "display: block")
-          .find("button")
+          .find(".mdi-dots-vertical")
           .invoke("attr", "aria-expanded", "true")
           .click({ force: true })
 
