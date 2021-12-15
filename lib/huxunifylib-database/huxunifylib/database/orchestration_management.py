@@ -25,8 +25,8 @@ def create_audience(
     database: DatabaseClient,
     name: str,
     audience_filters: list,
+    user_name: str,
     destination_ids: list = None,
-    user_name: str = None,
     size: int = 0,
 ) -> Union[dict, None]:
     """A function to create an audience.
@@ -36,9 +36,9 @@ def create_audience(
         name (str): Name of the audience.
         audience_filters (list of list): Multiple sections of audience filters.
             These are aggregated using "OR".
+        user_name (str): Name of the user creating / updating the audience.
         destination_ids (list): List of destination/delivery platform ids
             attached to the audience.
-        user_name (str): Name of the user creating / updating the audience.
         size (int): audience size.
 
     Returns:
@@ -47,8 +47,10 @@ def create_audience(
     Raises:
         DuplicateName: Error if an audience with the same name exists
             already.
+        TypeError: Error if user_name is not a string.
     """
-
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
     am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[db_c.AUDIENCES_COLLECTION]
 
@@ -280,22 +282,22 @@ def get_all_audiences(
 def update_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
+    user_name: str,
     name: str = None,
     audience_filters: list = None,
     destination_ids: list = None,
-    user_name: str = None,
 ) -> Union[dict, None]:
     """A function to update an audience.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB ID of the audience.
+        user_name (str): Name of the user creating/updating the audience.
         name (str): New audience name.
         audience_filters (list of list): Multiple sections of audience filters.
             These are aggregated using "OR".
         destination_ids (list): List of destination/delivery platform
             ids attached to the audience.
-        user_name (str): Name of the user creating/updating the audience.
 
     Returns:
         Union[dict, None]: Updated audience configuration dict.
@@ -304,8 +306,10 @@ def update_audience(
         InvalidID: If the passed in audience_id did not fetch a doc from the
             relevant db collection.
         DuplicateName: Error if an audience with the same name exists already.
+        TypeError: Error if user_name is not a string.
     """
-
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
     am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[db_c.AUDIENCES_COLLECTION]
 

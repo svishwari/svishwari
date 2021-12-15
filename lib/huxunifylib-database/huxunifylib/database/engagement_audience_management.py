@@ -36,21 +36,34 @@ def get_all_engagement_audience_destinations(
         {"$unwind": {"path": "$audiences"}},
         {"$unwind": {"path": "$audiences.destinations"}},
         {
+            "$addFields": {
+                "data_added_destination": {
+                    "destination_id": "$audiences.destinations.id",
+                    "data_added": "$audiences.destinations.data_added",
+                }
+            }
+        },
+        {
             "$group": {
                 "_id": "$audiences.id",
-                "destinations": {"$addToSet": "$audiences.destinations.id"},
+                "destinations": {"$addToSet": "$data_added_destination"},
             }
         },
         {"$unwind": {"path": "$destinations"}},
         {
             "$lookup": {
                 "from": "delivery_platforms",
-                "localField": "destinations",
+                "localField": "destinations.destination_id",
                 "foreignField": "_id",
                 "as": "delivery_platform",
             }
         },
         {"$unwind": {"path": "$delivery_platform"}},
+        {
+            "$addFields": {
+                "delivery_platform.data_added": "$destinations.data_added"
+            }
+        },
         {
             "$group": {
                 "_id": "$_id",
@@ -68,11 +81,22 @@ def get_all_engagement_audience_destinations(
     # use the audience pipeline to aggregate and get all unique
     # delivery platforms per audience.
     try:
-        return list(
+        audience_delivery_platforms = list(
             database[db_c.DATA_MANAGEMENT_DATABASE][
                 db_c.ENGAGEMENTS_COLLECTION
             ].aggregate(pipeline)
         )
+        # Ensure no duplicates, since not using set while group by
+        for audience in audience_delivery_platforms:
+            encountered_destinations = {}
+            for i, destination in enumerate(audience[db_c.DESTINATIONS]):
+                if encountered_destinations.get(
+                    str(destination.get(db_c.ID, ""))
+                ):
+                    audience[db_c.DESTINATIONS].pop(i)
+                encountered_destinations[str(destination.get(db_c.ID))] = True
+
+        return audience_delivery_platforms
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

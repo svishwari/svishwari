@@ -136,6 +136,9 @@ export default {
   .dropdown-select-placeholder {
     ::v-deep .v-input__control {
       .v-input__slot {
+        fieldset {
+          border-color: var(--v-black-lighten3);
+        }
         input::placeholder {
           color: var(--v-black-base);
         }
