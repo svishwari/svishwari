@@ -335,6 +335,14 @@ client["audiences"].geoStates = (resourceId) => {
 client["audiences"].remove = (resourceId) => {
   return http.delete(`/audiences/${resourceId}`)
 }
+
+client["audiences"].histogram = (field, model) => {
+  let url = `/audiences/rules/${field}/histogram`
+  if (model) {
+    url = url + `?model_name=${model}`
+  }
+  return http.get(url)
+}
 //#endregion
 
 //#region Notifications

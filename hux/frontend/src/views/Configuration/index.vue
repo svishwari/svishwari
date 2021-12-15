@@ -12,6 +12,7 @@
           <tips-menu
             :panel-list-items="panelListItems"
             header="Configuration user guide"
+            class="mr-3"
           />
         </template>
       </page-header>

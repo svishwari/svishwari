@@ -1,5 +1,5 @@
 <template>
-  <span class="cursor-pointer mr-4 icon-bulb" :style="{ right: rightPosition }">
+  <span class="cursor-pointer mr-6 icon-bulb" :style="{ right: rightPosition }">
     <drop-menu
       :min-midth="300"
       :max-width="353"
