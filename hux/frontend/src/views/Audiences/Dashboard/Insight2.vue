@@ -88,7 +88,6 @@
             :interactable="false"
           >
             <template #subtitle-extended>
-              
               <tooltip>
                 <template #label-content>
                   <div class="men mr-1 font-weight-semi-bold">
@@ -115,7 +114,6 @@
                 </template>
               </tooltip>
 
-
               <tooltip>
                 <template #label-content>
                   <div class="other mx-1">
@@ -128,7 +126,6 @@
                   </span>
                 </template>
               </tooltip>
-
             </template>
           </metric-card>
 
