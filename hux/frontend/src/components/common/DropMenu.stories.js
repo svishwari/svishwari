@@ -1,4 +1,4 @@
-import TipsMenu from "../../views/SegmentPlayground/TipsMenu"
+import TipsMenu from "./TipsMenu.vue"
 export default {
   component: TipsMenu,
   title: "Components/TipsMenu",
