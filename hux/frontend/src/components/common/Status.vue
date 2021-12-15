@@ -481,17 +481,17 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["Active", "Delivered", "Succeeded"],
+        Active: ["Active", "Delivered", "Succeeded", "active"],
         Inactive: ["Caution", "Inactive"],
         Activating: ["Activating", "In progress"],
         Draft: ["Draft"],
         Error: ["Error", "Failed", "Critical"],
-        Pending: ["Pending", "Delivering"],
+        Pending: ["Pending", "Delivering", "pending"],
         Feedback: ["Feedback"],
         Success: ["Success"],
         Informational: ["Informational"],
         Stopped: ["Stopped"],
-        Requested: ["Requested"],
+        Requested: ["Requested", "requested"],
         "Not Delivered": ["Not Delivered"],
       },
     }

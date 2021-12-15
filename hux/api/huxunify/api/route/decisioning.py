@@ -133,7 +133,11 @@ class ModelsView(SwaggerView):
             if api_c.CATEGORY not in model:
                 model[api_c.CATEGORY] = api_c.UNCATEGORIZED
 
-        all_models.extend([{**x} for x in api_c.MODELS_STUB])
+        database = get_db_client()
+        unified_models = collection_management.get_documents(
+            database, db_c.MODELS_COLLECTION
+        ).get(db_c.DOCUMENTS)
+        all_models.extend(unified_models)
 
         config_models = collection_management.get_documents(
             get_db_client(),
@@ -214,7 +218,7 @@ class SetModelStatus(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def post(self, user: dict) -> Tuple[dict, int]:
         """Request a model.
 

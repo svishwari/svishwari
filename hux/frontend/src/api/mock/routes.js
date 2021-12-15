@@ -726,4 +726,9 @@ export const defineRoutes = (server) => {
     let requestData = JSON.parse(request.requestBody)
     return schema.audiences.find(request.params.id).update(requestData)
   })
+
+  //configuration
+  server.get("/configurations", (schema) => {
+    return schema.configurations.all()
+  })
 }
