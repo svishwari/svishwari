@@ -174,13 +174,9 @@ def check_aws_connection(
     try:
         # lookup the health test to run from api constants
         getattr(get_aws_client(client), client_method)(**extra_params)
-        record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, True)
-        record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, True)
         return True, f"{client} available."
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, False)
-        record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -191,11 +187,13 @@ def check_aws_ssm() -> Tuple[bool, str]:
         tuple[bool, str]: Returns if the AWS connection is valid,
             and the message.
     """
-    return check_aws_connection(
+    status = check_aws_connection(
         client_method="get_parameter",
         client=api_c.AWS_SSM_NAME,
         extra_params={"Name": "unifieddb_host_alias"},
     )
+    record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, status[0])
+    return status
 
 
 def check_aws_batch() -> Tuple[bool, str]:
@@ -205,11 +203,13 @@ def check_aws_batch() -> Tuple[bool, str]:
         tuple[bool, str]: Returns if the AWS connection is valid,
             and the message.
     """
-    return check_aws_connection(
+    status = check_aws_connection(
         client_method="cancel_job",
         client=api_c.AWS_BATCH_NAME,
         extra_params={"jobId": "test", "reason": "test"},
     )
+    record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, status[0])
+    return status
 
 
 def check_aws_s3() -> Tuple[bool, str]:
@@ -220,11 +220,13 @@ def check_aws_s3() -> Tuple[bool, str]:
             and the message.
 
     """
-    return check_aws_connection(
+    status = check_aws_connection(
         client_method="get_bucket_location",
         client=api_c.AWS_S3_NAME,
         extra_params={api_c.AWS_BUCKET: config.get_config().S3_DATASET_BUCKET},
     )
+    record_health_status_metric(api_c.AWS_S3_CONNECTION_HEALTH, status[0])
+    return status
 
 
 def check_aws_events() -> Tuple[bool, str]:
@@ -234,7 +236,7 @@ def check_aws_events() -> Tuple[bool, str]:
         tuple[bool, str]: Returns if the AWS connection is valid,
             and the message.
     """
-    return check_aws_connection(
+    status = check_aws_connection(
         client_method="put_rule",
         client=api_c.AWS_EVENTS_NAME,
         extra_params={
@@ -245,6 +247,8 @@ def check_aws_events() -> Tuple[bool, str]:
             "ScheduleExpression": "cron(15 0 * * ? *)",
         },
     )
+    record_health_status_metric(api_c.AWS_EVENTS_CONNECTION_HEALTH, status[0])
+    return status
 
 
 def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:

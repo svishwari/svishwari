@@ -145,34 +145,100 @@ CUSTOMER_INSIGHT_RESPONSE = {
     "message": "ok",
 }
 
-CUSTOMER_EVENT_RESPONSE = {
+CUSTOMER_EVENT_BY_DAY_RESPONSE = {
     "code": 200,
     "body": [
         {
             "total_event_count": 1,
             "event_type_counts": {
-                "abandoned_cart": 0,
-                "customer_login": 0,
-                "item_purchased": 0,
-                "trait_computed": 1,
-                "viewed_cart": 0,
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
                 "viewed_checkout": 0,
-                "viewed_sale_item": 0,
             },
             "date": "2021-01-01T00:00:00.000Z",
         },
         {
             "total_event_count": 1,
             "event_type_counts": {
-                "abandoned_cart": 0,
-                "customer_login": 0,
-                "item_purchased": 0,
-                "trait_computed": 1,
-                "viewed_cart": 0,
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
                 "viewed_checkout": 0,
-                "viewed_sale_item": 0,
             },
             "date": "2021-01-02T00:00:00.000Z",
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMER_EVENT_BY_WEEK_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-12-28T00:00:00.000Z",
+        },
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-01-18T00:00:00.000Z",
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMER_EVENT_BY_MONTH_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-01-01T00:00:00.000Z",
+        },
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_carts": 0,
+                "products_searched": 0,
+                "purchases_made": 0,
+                "sales_made": 1,
+                "traits_analysed": 0,
+                "content_viewed": 0,
+                "viewed_checkout": 0,
+            },
+            "date": "2021-03-01T00:00:00.000Z",
         },
     ],
     "message": "ok",
@@ -295,7 +361,7 @@ MOCKED_MODEL_RESPONSE = [
         api_c.LOOKBACK_WINDOW: 365,
         api_c.PREDICTION_WINDOW: 365,
         api_c.FULCRUM_DATE: parser.isoparse("2021-06-22T11:33:19.658Z"),
-        api_c.TYPE: "test",
+        api_c.TYPE: "other",
     },
 ]
 
@@ -493,6 +559,21 @@ MOCKED_GENDER_SPENDING = {
         }
     ],
     "message": "ok",
+}
+
+MOCKED_GENDER_SPENDING_BY_DAY = {
+    "code": 200,
+    "body": [
+        {
+            "date": "2021-07-19T00:00:00.000Z",
+            "avg_spent_men": 25.311363636363637,
+            "avg_spent_women": 24.12727272727273,
+            "avg_spent_other": 26.400000000000002,
+            "gender_men": 44,
+            "gender_women": 33,
+            "gender_other": 2,
+        }
+    ],
 }
 
 MOCKED_MODEL_PERFORMANCE_LTV = {

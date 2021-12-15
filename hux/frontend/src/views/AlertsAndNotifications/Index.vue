@@ -14,36 +14,36 @@
         />
       </template>
     </page-header>
-    <page-header class="top-bar mb-3" :header-height="71">
-      <template #left>
-        <v-btn disabled icon color="black">
-          <icon type="search" :size="20" color="black" variant="lighten3" />
-        </v-btn>
-      </template>
-
-      <template #right>
-        <huxButton
-          variant="primary base"
-          icon="keyboard-return"
-          is-custom-icon
-          class="ma-2 text-button no-shadow mr-0"
-          size="large"
-          is-tile
-          :height="'40'"
-          :icon-size="18"
-          icon-color="white"
-          icon-variant="base"
-          data-e2e="notification-return"
-          @click="goBack()"
-        >
-          Return to previous page
-        </huxButton>
-      </template>
-    </page-header>
     <div
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+        <page-header class="top-bar mb-3" :header-height="71">
+          <template #left>
+            <v-btn disabled icon color="black">
+              <icon type="search" :size="20" color="black" variant="lighten3" />
+            </v-btn>
+          </template>
+
+          <template #right>
+            <huxButton
+              variant="primary base"
+              icon="keyboard-return"
+              is-custom-icon
+              class="ma-2 text-button no-shadow mr-0"
+              size="large"
+              is-tile
+              :height="'40'"
+              :icon-size="18"
+              icon-color="white"
+              icon-variant="base"
+              data-e2e="notification-return"
+              @click="goBack()"
+            >
+              Return to previous page
+            </huxButton>
+          </template>
+        </page-header>
         <v-progress-linear :active="loading" :indeterminate="loading" />
         <v-row
           v-if="notificationData.length > 0 && !loading"
@@ -54,6 +54,7 @@
             :data-items="notificationData"
             sort-column="created"
             sort-desc
+            class="big-table"
           >
             <template #row-item="{ item }">
               <td
@@ -161,7 +162,7 @@
           @intersect="intersected"
         ></observer>
       </div>
-      <div class="ml-auto mt-n3">
+      <div class="ml-auto">
         <alert-filter-drawer
           v-model="isFilterToggled"
           :users="getNotificationUsers"
@@ -297,6 +298,15 @@ export default {
       }
     }
   },
+
+  async beforeDestroy() {
+    delete this.batchDetails.notification_types
+    delete this.batchDetails.category
+    delete this.batchDetails.users
+    this.setDefaultData()
+    await this.fetchNotificationsByBatch()
+    this.calculateLastBatch()
+  },
   methods: {
     ...mapActions({
       getAllNotifications: "notifications/getAll",
@@ -374,6 +384,7 @@ export default {
     },
     async alertfunction(data) {
       this.isFilterToggled = false
+      this.loading = true
       try {
         let today_date = new Date()
         let getEndDate = new Date(
@@ -411,6 +422,8 @@ export default {
           )
         }
         await this.fetchNotificationsByBatch()
+        this.calculateLastBatch()
+        this.loading = false
         this.batchDetails.isLazyLoad = false
       } finally {
         this.isFilterToggled = false
@@ -517,6 +530,7 @@ export default {
   margin-top: -27px !important;
 }
 .background-empty {
+  height: 70vh !important;
   background-image: url("../../assets/images/no-alert-frame.png");
   background-position: center;
 }
@@ -536,5 +550,10 @@ export default {
   font-weight: 400 !important;
   letter-spacing: 0 !important;
   color: var(--v-black-base);
+}
+::v-deep .empty-page {
+  max-height: 0 !important;
+  min-height: 100% !important;
+  min-width: 100% !important;
 }
 </style>

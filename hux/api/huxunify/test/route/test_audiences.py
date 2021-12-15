@@ -453,6 +453,8 @@ class AudienceInsightsTest(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
         substring_found = []
         for zip_code in response.json:
             substring_found.append(

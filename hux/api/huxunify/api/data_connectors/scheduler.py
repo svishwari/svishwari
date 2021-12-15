@@ -123,9 +123,9 @@ async def delivery_destination(
         ]:
             continue
         batch_destination = get_destination_config(
-            database, engagement[db_c.ID], *pair
+            database, *pair, engagement[db_c.ID]
         )
-        batch_destination.register(engagement)
+        batch_destination.register()
         batch_destination.submit()
         delivery_job_ids.append(
             str(batch_destination.audience_delivery_job_id)

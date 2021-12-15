@@ -559,9 +559,9 @@ class DeleteEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @requires_access_levels([api_c.ADMIN_LEVEL])
     @api_error_handler()
     @validate_engagement_and_audience()
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def delete(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Deletes an engagement.
 
@@ -1385,13 +1385,16 @@ class UpdateCampaignsForAudience(SwaggerView):
             audience_id,
         )
 
+        # get audience
+        audience = get_audience(database, audience_id)
+
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
                 "Successfully attached campaigns to engagement %s audience %s.",
-                engagement_id,
-                audience_id,
+                engagement[db_c.NAME],
+                audience[db_c.NAME] if audience else audience_id,
             ),
             api_c.ENGAGEMENT_TAG,
             user[api_c.USER_NAME],
@@ -1924,7 +1927,7 @@ class EngagementPerformanceDownload(SwaggerView):
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def get(self, engagement_id: str, user: dict) -> Tuple[Response, int]:
-        """Retrieves email performance metrics.
+        """Download email performance metrics.
 
         ---
         security:

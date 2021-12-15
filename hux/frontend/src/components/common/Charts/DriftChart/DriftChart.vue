@@ -60,6 +60,10 @@ export default {
       required: false,
       default: 5,
     },
+    yAxisZeroToOne: {
+      type: Boolean,
+      default: false,
+    },
     xAxisFormat: {
       type: String,
       required: false,
@@ -155,7 +159,10 @@ export default {
       let height = this.chartDimensions.height
 
       let xAxisMinMaxValue = d3Array.extent(this.value, (d) => d.xAxisValue)
-      let yAxisMinMaxValue = d3Array.extent(this.value, (d) => d.yAxisValue)
+      // TODO: Refactor this in upcoming changes.
+      let yAxisMinMaxValue = this.yAxisZeroToOne
+        ? [0, 1]
+        : d3Array.extent(this.value, (d) => d.yAxisValue)
 
       // generates an svg and appends to the dom
       let svg = d3Select

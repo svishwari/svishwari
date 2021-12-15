@@ -3,7 +3,7 @@
     <template #header-left>
       <div class="d-flex align-center">
         <icon type="clock" :size="32" class="mr-2" />
-        <h3 class="text-h3">Delivery history</h3>
+        <h2 class="text-h2">Delivery history</h2>
       </div>
     </template>
 
@@ -12,16 +12,14 @@
 
       <page-header header-height="40">
         <template #left>
-          <v-icon
-            size="21"
-            class="cursor-pointer"
-            :class="
-              isFilterToggled ? 'primary--text text--darken-2' : 'black--text'
-            "
-            @click="isFilterToggled = !isFilterToggled"
-          >
-            mdi-filter-variant
-          </v-icon>
+          <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+            <icon
+              type="filter"
+              :size="27"
+              :color="isFilterToggled ? 'primary' : 'black'"
+              :variant="isFilterToggled ? 'lighten6' : 'darken4'"
+            />
+          </v-btn>
         </template>
       </page-header>
 
@@ -30,6 +28,7 @@
         v-show="isFilterToggled"
         :filters="filters"
         @onReset="resetFilters"
+        @onCheckboxChange="showHideMatchRate"
       />
 
       <hux-data-table
@@ -65,10 +64,10 @@
                   primary--text
                 "
               >
-                {{ item[col.value].name }}
+                {{ item[col.value].name | Empty }}
               </router-link>
               <template #tooltip>
-                {{ item[col.value].name }}
+                {{ item[col.value].name | Empty }}
               </template>
             </tooltip>
             <tooltip v-if="col.value === 'destination' && item[col.value]">
@@ -76,7 +75,7 @@
                 <logo
                   :key="item[col.value].type"
                   :type="item[col.value].type"
-                  :size="18"
+                  :size="24"
                   class="mb-0"
                 >
                 </logo>
@@ -93,7 +92,7 @@
                 {{ item[col.value] | Numeric(true) }}
               </template>
             </tooltip>
-            <tooltip v-if="col.value === 'match_rate'">
+            <tooltip v-if="col.value === 'match_rate' && showMatchRate">
               <template #label-content>
                 <span v-if="item[col.value] == null">N/A</span>
                 <span v-else>{{ item[col.value] | Percentage }}</span>
@@ -171,6 +170,7 @@ export default {
   data() {
     return {
       localToggle: false,
+      showMatchRate: true,
       loading: false,
       isFilterToggled: false,
       filters: [],
@@ -194,6 +194,8 @@ export default {
           value: "size",
           text: "Target size",
           width: "20%",
+          hoverTooltip:
+            "Size of the customer list when it was last delivered to a destination.",
         },
         {
           value: "match_rate",
@@ -269,6 +271,19 @@ export default {
 
     resetFilters() {
       this.items = this.allDeliveries
+    },
+
+    showHideMatchRate(matchRateFlag) {
+      this.showMatchRate = matchRateFlag
+      if (!matchRateFlag) {
+        this.columns = this.columns.filter((data) => data.value != "match_rate")
+      } else {
+        this.columns.splice(3, 0, {
+          value: "match_rate",
+          text: "Match Rate",
+          width: "20%",
+        })
+      }
     },
 
     async fetchHistory() {
@@ -351,6 +366,7 @@ export default {
 
           let uniqueEngagements = uniqBy(allEngagements, "id")
           let uniqueDestinations = uniqBy(allDestinations, "id")
+
           this.filters = [
             {
               name: "Engagement name",
@@ -418,6 +434,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+::v-deep .page-header--wrap,
+.v-toolbar__content {
+  padding-left: 24px !important;
+}
 .hux-data-table {
   ::v-deep .v-data-table__wrapper {
     .v-data-table-header {
