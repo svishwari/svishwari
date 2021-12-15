@@ -270,6 +270,7 @@ export default {
         height: 0,
       },
       currentData: [],
+      currenCitytData: [],
       selectedValue: null,
       params: {},
     }
@@ -377,9 +378,13 @@ export default {
       } else return []
     },
     listOptions(condition) {
-      return condition.attribute.key === "City" || condition.attribute.key === "Zip"
-        ? this.currentData
-        : condition.attribute.options
+      if (condition.attribute.key === "City") {
+        return this.currenCitytData
+      } else if (condition.attribute.key === "Zip") {
+        return this.currentData
+      } else {
+        return condition.attribute.options
+      }
     },
     operatorOptions(condition) {
       // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
@@ -561,18 +566,23 @@ export default {
     async autoSearchFunc(value) {
       if (value !== null && value !== "") {
         if (this.selectedValue === "Zip" || this.selectedValue === "City") {
-          this.params.fieldType = this.selectedValue === "Zip" ? 'zip_code' : this.selectedValue.toLowerCase()
+          this.params.fieldType =
+            this.selectedValue === "Zip"
+              ? "zip_code"
+              : this.selectedValue.toLowerCase()
           this.params.key = value
           console.log("value", this.params.key)
-          if (value.length > 2) {
+          if (value.length > 2 && value.length <= 8) {
             let data = await this.getAudiencesRulesByFields(this.params)
-            // console.log("data", data)
-            this.currentData = [...data]
+            if (this.selectedValue === "Zip") {
+              this.currentData = [...data]
+            } else if (this.selectedValue === "City") {
+              this.currenCitytData = [...data]
+            }
           }
         }
       }
     },
- 
   },
 }
 </script>
