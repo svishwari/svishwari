@@ -8,13 +8,12 @@ from pathlib import Path
 from typing import Tuple, Union, Iterator, Optional
 
 import pandas as pd
+from pandas import DataFrame
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
 from huxunifylib.connectors import connector_cdp
-from pandas import DataFrame
-
 from huxunifylib.database import (
     orchestration_management,
 )
