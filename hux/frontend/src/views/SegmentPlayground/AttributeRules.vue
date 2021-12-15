@@ -570,7 +570,6 @@ export default {
               ? "zip_code"
               : this.selectedValue.toLowerCase()
           this.params.key = value
-          console.log("value", this.params.key)
           if (value.length > 2 && value.length <= 8) {
             let data = await this.getAudiencesRulesByFields(this.params)
             if (this.selectedValue === "Zip") {
