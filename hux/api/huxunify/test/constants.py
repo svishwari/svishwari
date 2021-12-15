@@ -58,6 +58,8 @@ VALID_DB_USER_RESPONSE = {
 INVALID_USER_RESPONSE = {
     api_c.EMAIL: "davesmith@fake.com",
 }
+TEST_USER_NAME = "test_user"
+
 INVALID_ID = "invalid_id"
 BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 TEST_CONFIG = get_config(api_c.TEST_MODE)

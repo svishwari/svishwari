@@ -427,12 +427,13 @@
             :active="loadingDemographics"
             :indeterminate="loadingDemographics"
           />
-          <v-divider class="ml-5 mr-8 mt-0 mb-1" />
+
           <map-state-list
             v-if="!loadingDemographics"
             :map-data="mapChartData"
             :configuration-data="configurationData"
             :header-config="mapStateHeaderList"
+            :height="377"
           />
         </v-card>
       </v-col>
@@ -981,6 +982,7 @@ export default {
     if (this.$refs.genderChart) {
       new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
     }
+    window.scroll(0, 0)
   },
   methods: {
     ...mapActions({

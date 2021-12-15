@@ -106,13 +106,21 @@ class CourierTest(TestCase):
 
         # create first audience
         self.audience_one = create_audience(
-            self.database, "audience one", [], self.destination_ids
+            self.database,
+            "audience one",
+            [],
+            t_c.TEST_USER_NAME,
+            self.destination_ids,
         )
         self.assertIsNotNone(self.audience_one)
 
         # create second audience
         self.audience_two = create_audience(
-            self.database, "audience two", [], self.destination_ids
+            self.database,
+            "audience two",
+            [],
+            t_c.TEST_USER_NAME,
+            self.destination_ids,
         )
         self.assertIsNotNone(self.audience_two)
 
@@ -136,7 +144,7 @@ class CourierTest(TestCase):
                     ],
                 },
             ],
-            db_c.CREATED_BY: ObjectId(),
+            db_c.CREATED_BY: t_c.TEST_USER_NAME,
         }
 
         # insert engagement doc in the collection
@@ -866,7 +874,7 @@ class CourierTest(TestCase):
                     ],
                 },
             ],
-            db_c.CREATED_BY: ObjectId(),
+            db_c.CREATED_BY: t_c.TEST_USER_NAME,
         }
 
         # insert engagement doc in the collection
