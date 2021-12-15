@@ -88,9 +88,47 @@
             :interactable="false"
           >
             <template #subtitle-extended>
-              <div class="men mr-1 font-weight-semi-bold">M: 100%</div>
-              <div class="women mx-1">W: 0%</div>
-              <div class="other mx-1">O: 0%</div>
+              
+              <tooltip>
+                <template #label-content>
+                  <div class="men mr-1 font-weight-semi-bold">
+                    M: {{ audienceInsights.gender_men | Percentage | Empty }}
+                  </div>
+                </template>
+                <template #hover-content>
+                  <span>
+                    {{ audienceInsights.gender_men | Percentage | Empty }}
+                  </span>
+                </template>
+              </tooltip>
+
+              <tooltip>
+                <template #label-content>
+                  <div class="women mx-1">
+                    W: {{ audienceInsights.gender_women | Percentage | Empty }}
+                  </div>
+                </template>
+                <template #hover-content>
+                  <span>
+                    {{ audienceInsights.gender_women | Percentage | Empty }}
+                  </span>
+                </template>
+              </tooltip>
+
+
+              <tooltip>
+                <template #label-content>
+                  <div class="other mx-1">
+                    O: {{ audienceInsights.gender_other | Percentage | Empty }}
+                  </div>
+                </template>
+                <template #hover-content>
+                  <span>
+                    {{ audienceInsights.gender_other | Percentage | Empty }}
+                  </span>
+                </template>
+              </tooltip>
+
             </template>
           </metric-card>
 
@@ -741,6 +779,10 @@ export default {
             false,
             true
           )
+        case "Women":
+        case "Men":
+        case "Other":
+          return this.$options.filters.Percentage(item.subtitle)
         default:
           return item.subtitle
       }
