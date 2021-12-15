@@ -468,6 +468,15 @@ PAGINATION_DESCENDING = "descending"
 MODEL_DESCRIPTION = "description"
 MODEL_USERNAME = "username"
 MODEL_ID = "model_id"
+MODEL_CATEGORY_EMAIL = "Email"
+MODEL_CATEGORY_SALES_FORECASTING = "Sales forecasting"
+MODEL_CATEGORY_TRUST_ID = "Trust ID"
+MODEL_CATEGORY_RETENTION = "Retention"
+MODEL_CATEGORY_WEB = "Web"
+MODEL_CATEGORY_UNCATEGORIZED = "Uncategorized"
+MODEL_TYPE_CLASSIFICATION = "Classification"
+MODEL_TYPE_REGRESSION = "Regression"
+MODEL_TYPE_UNKNOWN = "Unknown"
 
 
 # Custom type definitions

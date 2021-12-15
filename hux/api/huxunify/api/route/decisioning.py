@@ -417,7 +417,7 @@ class UpdateModels(SwaggerView):
     }
 
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.CDP_DATA_SOURCES_TAG]
+    tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @requires_access_levels(
