@@ -3,7 +3,7 @@
     <hux-data-table
       :columns="columnDefs"
       :height="height"
-      :sort-column="customMetric"
+      :sort-column="sortMetric ? sortMetric : customMetric"
       :sort-desc="true"
       :data-items="stateListData"
       class="small-table"
@@ -88,6 +88,10 @@ export default {
       type: Array,
       required: false,
     },
+    sortMetric: {
+      type: String,
+      required: false,
+    }
   },
   data() {
     return {
@@ -124,6 +128,9 @@ export default {
     customMetric() {
       return this.configurationData.custom_metric.key
     },
+    // sortMetric() {
+    // //  return this.sortMetric ? this.sortMetric : this.configurationData.custom_metric.key
+    // }
   },
   mounted() {
     this.processStateListData()

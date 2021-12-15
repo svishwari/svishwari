@@ -76,7 +76,7 @@ export default {
     }
   }
   .slider-value-display {
-    width: 31px;
+    width: 37px;
     height: 16px;
     color: var(--v-black-darken4);
     transform: rotate(-90deg);
@@ -90,7 +90,7 @@ export default {
     }
   }
   ::v-deep .v-slider--horizontal {
-    margin-left: 0px;
+    margin-left: -6px;
     .v-slider__track-container {
       width: 101%;
       height: 11px;
