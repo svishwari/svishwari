@@ -161,8 +161,8 @@ const routes = [
     },
   },
   {
-    path: "/audiences/:id/insight",
-    name: "AudienceInsight",
+    path: "/audiences/:id/insight2",
+    name: "AudienceInsight2",
     component: () => import("@/views/Audiences/Insight.vue"),
     meta: {
       layout: "app",
@@ -171,8 +171,8 @@ const routes = [
     },
   },
   {
-    path: "/audiences/:id/insight2",
-    name: "AudienceInsight2",
+    path: "/audiences/:id/insight",
+    name: "AudienceInsight",
     component: () => import("@/views/Audiences/Dashboard/Insight2.vue"),
     meta: {
       layout: "app",

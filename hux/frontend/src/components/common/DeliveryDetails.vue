@@ -31,8 +31,12 @@
         </router-link>
       </span>
       <v-spacer> </v-spacer>
-      <div class="d-flex mr-4 cursor-pointer" @click="deliverAll(section)">
-        <icon class="deliver-icon mr-2" type="deliver" :size="24" />
+      <div
+        class="d-flex mr-4 cursor-pointer deliver-icon"
+        @click="deliverAll(section)"
+        :class="{ disabled: section.deliveries.length == 0 }"
+      >
+        <icon class="mr-2" type="deliver" :size="24"/>
         Deliver all
       </div>
       <v-menu class="menu-wrapper" bottom offset-y>
@@ -74,12 +78,10 @@
             data-e2e="map-state-list"
           >
             <div v-if="header.value == 'name'" class="text-body-1">
-              <logo
-                :type="item.delivery_platform_type"
-                :size="22"
-                class="mb-n1"
-              ></logo>
-              {{ item.name }}
+              <logo :type="item.delivery_platform_type" :size="22"></logo>
+              <span class="ml-2 ellipsis">
+                {{ item.name }}
+              </span>
               <span class="action-icon font-weight-light float-right d-none">
                 <v-menu
                   v-model="openMenu[item.id]"
@@ -412,6 +414,11 @@ export default {
   box-sizing: border-box;
   border-radius: 12px !important;
   display: table;
+  .deliver-icon {
+    &.disabled {
+      color: #d0d0ce;
+    }
+  }
   .status-list {
     min-height: 20px !important;
     max-height: 30px !important;
@@ -419,7 +426,7 @@ export default {
   .ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 25ch;
+    max-width: 15ch;
     display: inline-block;
     white-space: nowrap;
   }

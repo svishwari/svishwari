@@ -14,7 +14,7 @@
               v-if="audience && !audience.is_lookalike"
               text
               color="primary"
-              class="body-2 ml-n3"
+              class="body-2 ml-n3 mt-n2"
               data-e2e="delivery-history"
               @click="openDeliveryHistoryDrawer()"
             >
@@ -131,47 +131,36 @@
 
           <metric-card
             v-if="Object.keys(appliedFilters).length > 0"
-            class="ma-2 audience-summary"
+            class="audience-summary"
             :title="'Attributes'"
-            :height="75"
+            :height="80"
           >
             <template #extra-item>
               <div class="container pl-0 pt-2">
                 <ul class="filter-list">
                   <li
-                    v-for="filterKey in Object.keys(appliedFilters)"
+                    v-for="(filterKey, filterIndex)  in Object.keys(appliedFilters)"
                     :key="filterKey"
                     class="filter-item ma-0 mr-1 d-flex align-center"
                   >
-                    <icon
-                      :type="filterKey == 'general' ? 'plus' : filterKey"
-                      :size="filterKey == 'general' ? 10 : 21"
-                      class="mr-1"
-                    />
                     <tooltip
                       v-for="filter in Object.keys(appliedFilters[filterKey])"
                       :key="filter"
                     >
                       <template #label-content>
-                        <span
-                          class="
-                            black--text
-                            text--darken-4
-                            font-weight-semi-bold
-                            text-over-2
-                            filter-title
-                          "
-                          v-html="appliedFilters[filterKey][filter].name"
-                        />
+                        <v-chip
+                          v-if="filterIndex < 4"
+                          small
+                          class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                          text-color="primary"
+                          color="var(--v-primary-lighten3)"
+                        >
+                        {{ appliedFilters[filterKey][filter].name }}
+                        </v-chip>
                       </template>
                       <template #hover-content>
-                        <span class="text-body-2 black--text text--darken-4">
-                          <div class="mb-2">
-                            {{ appliedFilters[filterKey][filter].name }}
-                          </div>
-                          <span
-                            v-html="appliedFilters[filterKey][filter].hover"
-                          />
+                        <span class="text-body-2 black--text text--darken-4" 
+                        v-html="appliedFilters[filterKey][filter].hover">
                         </span>
                       </template>
                     </tooltip>
