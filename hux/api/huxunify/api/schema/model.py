@@ -1,8 +1,10 @@
 """Schemas for the Model Object"""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, Float, Nested, Dict
+from marshmallow.fields import Str, Int, Float, Nested, Dict, Bool
+from marshmallow.validate import OneOf
 
+from huxunifylib.database import constants as db_c
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api import constants as api_c
 
@@ -23,6 +25,8 @@ class ModelSchema(Schema):
     fulcrum_date = DateTimeWithZ()
     type = Str()
     category = Str()
+    is_enabled = Bool(attribute=db_c.ENABLED, required=False)
+    is_added = Bool(attribute=db_c.ADDED, required=False)
 
 
 class ModelVersionSchema(Schema):
@@ -111,3 +115,32 @@ class ModelRequestPOSTSchema(Schema):
         validate=lambda x: x.lower() in [api_c.REQUESTED.lower()],
         required=True,
     )
+
+
+class ModelUpdatePATCHSchema(Schema):
+    """Model Request Post Schema"""
+
+    id = Str(required=True)
+    name = Str(required=True)
+    type = Str()
+    status = Str(
+        validate=lambda x: x.lower()
+        in [api_c.REQUESTED.lower(), api_c.STATUS_ACTIVE.lower()],
+        allow_none=True,
+    )
+    category = Str(
+        validate=OneOf(
+            [
+                db_c.MODEL_CATEGORY_EMAIL,
+                db_c.MODEL_CATEGORY_SALES_FORECASTING,
+                db_c.MODEL_CATEGORY_WEB,
+                db_c.MODEL_CATEGORY_RETENTION,
+                db_c.MODEL_CATEGORY_TRUST_ID,
+                db_c.MODEL_CATEGORY_UNCATEGORIZED,
+            ]
+        ),
+        required=False,
+        allow_none=True,
+    )
+    description = Str(required=False)
+    added = Bool(attribute=api_c.IS_ADDED, required=False)

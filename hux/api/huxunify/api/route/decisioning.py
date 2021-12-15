@@ -381,6 +381,103 @@ class RemoveRequestedModel(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
+    f"{api_c.MODELS_ENDPOINT}",
+    "UpdateModels",
+)
+class UpdateModels(SwaggerView):
+    """Class to partially update models."""
+
+    parameters = [
+        {
+            "name": api_c.BODY,
+            "in": api_c.BODY,
+            "type": "object",
+            "description": "Input model body.",
+            "example": [
+                {
+                    api_c.ID: "f561bcc9a68f4e959cc6479fcff5a3a1",
+                    api_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
+                    api_c.NAME: "Propensity to Purchase",
+                    api_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
+                    api_c.DESCRIPTION: "Likelihood of customer to purchase",
+                    api_c.STATUS: api_c.REQUESTED,
+                    api_c.IS_ADDED: True,
+                }
+            ],
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model updated.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update model.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CDP_DATA_SOURCES_TAG]
+
+    # pylint: disable=no-self-use
+    @requires_access_levels(
+        [api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL]
+    )
+    @api_error_handler()
+    def patch(self, user: dict) -> Tuple[list, int]:
+        """Updates a model.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
+
+        Returns:
+            Tuple[list, int]: List of updated requested models,
+                HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
+
+        models = request.json
+
+        updated_models = []
+
+        database = get_db_client()
+        for model in models:
+            # check if document exists in configurations collection
+            model_document = collection_management.get_document(
+                database,
+                db_c.CONFIGURATIONS_COLLECTION,
+                {
+                    db_c.OBJECT_ID: model.get(api_c.ID),
+                    db_c.NAME: model.get(api_c.NAME),
+                },
+            )
+
+            if model_document:
+                # update the document
+                updated_models.append(
+                    collection_management.update_document(
+                        database,
+                        db_c.CONFIGURATIONS_COLLECTION,
+                        model_document[db_c.ID],
+                        model,
+                        user[api_c.USER_NAME],
+                    )
+                )
+
+        return (
+            jsonify(ModelSchema().dump(updated_models, many=True)),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    model_bp,
     f"{api_c.MODELS_ENDPOINT}/<model_id>/version-history",
     "ModelVersionView",
 )

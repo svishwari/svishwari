@@ -4,6 +4,7 @@ from http import HTTPStatus
 import requests_mock
 import mongomock
 
+from huxunifylib.database import collection_management, constants as db_c
 from huxunifylib.database.client import DatabaseClient
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
@@ -74,6 +75,12 @@ class TestModelRoutes(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
+        # mock get_db_client() in decisioning
+        mock.patch(
+            "huxunify.api.route.decisioning.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # mock get_db_client() in decorators
         mock.patch(
             "huxunify.api.route.decorators.get_db_client",
@@ -86,6 +93,17 @@ class TestModelRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        self.stub_models = collection_management.create_document(
+            database=self.database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            new_doc={
+                db_c.OBJECT_ID: "956a43d17afa4f0fa0070d1ba40c8901",
+                db_c.NAME: "Test Stub Model",
+                db_c.STATUS: api_c.REQUESTED,
+                db_c.TYPE: api_c.MODELS_TAG,
+            },
+            username="Test User"
+        )
         self.addCleanup(mock.patch.stopall)
 
     def test_get_all_models(self):
@@ -98,18 +116,34 @@ class TestModelRoutes(TestCase):
         )
         self.request_mocker.start()
 
-        # mock get_db_client() in utils
-        mock.patch(
-            "huxunify.api.route.decisioning.get_db_client",
-            return_value=self.database,
-        ).start()
-
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_patch_models(self):
+        """Test patch models"""
+
+        models_data = [
+            {
+                api_c.ID: self.stub_models[db_c.OBJECT_ID],
+                api_c.NAME: self.stub_models[db_c.NAME],
+                api_c.STATUS: api_c.STATUS_ACTIVE,
+            }
+        ]
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            json=models_data,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        for model in response.json:
+            self.assertEqual(self.stub_models.get(db_c.OBJECT_ID), model.get(api_c.ID))
+            self.assertEqual(self.stub_models.get(db_c.NAME), model.get(api_c.NAME))
 
     def test_retrieve_version_history_for_model(self):
         """Test get version history for a model from Tecton."""
