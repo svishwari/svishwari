@@ -91,7 +91,7 @@ export default {
     sortMetric: {
       type: String,
       required: false,
-    }
+    },
   },
   data() {
     return {
@@ -128,9 +128,6 @@ export default {
     customMetric() {
       return this.configurationData.custom_metric.key
     },
-    // sortMetric() {
-    // //  return this.sortMetric ? this.sortMetric : this.configurationData.custom_metric.key
-    // }
   },
   mounted() {
     this.processStateListData()

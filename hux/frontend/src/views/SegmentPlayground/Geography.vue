@@ -40,7 +40,7 @@
           :map-data="data.geo"
           :configuration-data="configurationData"
           :header-config="headerConfig"
-          :sortMetric="sortMetric"
+          :sort-metric="sortMetric"
           :height="330"
         />
       </div>
