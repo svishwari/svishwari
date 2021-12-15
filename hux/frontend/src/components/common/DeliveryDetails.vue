@@ -396,7 +396,6 @@ export default {
     dataPendingMesssage(event) {
       const engagementName = event.name
       const audienceName = this.audience.name
-      console.log("data", engagementName, audienceName, event)
       this.setAlert({
         type: "pending",
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,

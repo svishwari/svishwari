@@ -738,7 +738,6 @@ export default {
       )
     },
     async refreshEntity() {
-      console.log("coming inside ENtity")
       this.loading = true
       this.$root.$emit("refresh-notifications")
       try {
