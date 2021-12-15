@@ -33,10 +33,10 @@
       <v-spacer> </v-spacer>
       <div
         class="d-flex mr-4 cursor-pointer deliver-icon"
-        @click="deliverAll(section)"
         :class="{ disabled: section.deliveries.length == 0 }"
+        @click="deliverAll(section)"
       >
-        <icon class="mr-2" type="deliver" :size="24"/>
+        <icon class="mr-2" type="deliver" :size="24" />
         Deliver all
       </div>
       <v-menu class="menu-wrapper" bottom offset-y>

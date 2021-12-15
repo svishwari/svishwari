@@ -139,7 +139,9 @@
               <div class="container pl-0 pt-2">
                 <ul class="filter-list">
                   <li
-                    v-for="(filterKey, filterIndex)  in Object.keys(appliedFilters)"
+                    v-for="(filterKey, filterIndex) in Object.keys(
+                      appliedFilters
+                    )"
                     :key="filterKey"
                     class="filter-item ma-0 mr-1 d-flex align-center"
                   >
@@ -155,12 +157,14 @@
                           text-color="primary"
                           color="var(--v-primary-lighten3)"
                         >
-                        {{ appliedFilters[filterKey][filter].name }}
+                          {{ appliedFilters[filterKey][filter].name }}
                         </v-chip>
                       </template>
                       <template #hover-content>
-                        <span class="text-body-2 black--text text--darken-4" 
-                        v-html="appliedFilters[filterKey][filter].hover">
+                        <span
+                          class="text-body-2 black--text text--darken-4"
+                          v-html="appliedFilters[filterKey][filter].hover"
+                        >
                         </span>
                       </template>
                     </tooltip>
