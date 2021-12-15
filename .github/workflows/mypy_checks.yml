@@ -31,8 +31,8 @@ jobs:
 #           pipenv install setuptools==56.1.0
 #           pipenv install --ignore-pipfile --dev
 #           pipenv run mypy --config-file=../../mypy.ini hux/api --show-error-code
-#      - if: always() && steps.changes.outputs.dblib == 'true'
-      - if 'true' == 'true'
+#- if: always() && steps.changes.outputs.dblib == 'true'
+      - if: always()
         working-directory: lib/huxunifylib-database
         run: |
           pipenv install setuptools==56.1.0
