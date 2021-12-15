@@ -388,7 +388,6 @@ export default {
     },
     operatorOptions(condition) {
       // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
-      // debugger;
       if (
         condition.attribute.type === "list" ||
         condition.attribute.key === "gender"

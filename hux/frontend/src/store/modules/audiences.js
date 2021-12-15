@@ -351,7 +351,6 @@ const actions = {
 
   async rulesByFields(_, params) {
     const response = await api.audiences.getrulesByFields(params)
-    // commit("SET_CONSTANTS", response.data)
     return response.data
   },
 
