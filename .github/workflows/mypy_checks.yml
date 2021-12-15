@@ -1,4 +1,4 @@
- name: Mypy Checks
+name: Mypy Checks
 on: [pull_request]
 jobs:
   setup:
