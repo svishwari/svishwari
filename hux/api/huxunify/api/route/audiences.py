@@ -134,12 +134,12 @@ def get_audience_data_async(
         max_workers=api_c.MAX_WORKERS_THREAD_POOL
     ) as executor:
         return executor.map(
-                get_batch_customers,
-                repeat(cdp_connector),
-                repeat(location_details),
-                batch_sizes,
-                offsets,
-            )
+            get_batch_customers,
+            repeat(cdp_connector),
+            repeat(location_details),
+            batch_sizes,
+            offsets,
+        )
 
 
 @add_view_to_blueprint(
