@@ -97,7 +97,7 @@ export default {
         {
           text: "State",
           value: "name",
-          width: "40%",
+          width: "44%",
         },
         {
           text: "Avg. spend",
