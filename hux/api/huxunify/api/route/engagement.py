@@ -127,7 +127,7 @@ class EngagementSearch(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[dict, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves all engagements.
 
         ---
@@ -138,7 +138,7 @@ class EngagementSearch(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[dict, int]: dict of engagements, HTTP status code.
+            Tuple[Response, int]: Response dict of engagements, HTTP status code.
         """
 
         database = get_db_client()
@@ -1233,7 +1233,7 @@ class UpdateCampaignsForAudience(SwaggerView):
         audience_id: ObjectId,
         destination_id: ObjectId,
         user: dict,
-    ) -> Tuple[dict, int]:
+    ) -> Tuple[Response, int]:
         """Updates campaigns for an engagement audience.
 
         ---
@@ -1247,7 +1247,7 @@ class UpdateCampaignsForAudience(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection success/failure,
+            Tuple[Response, int]: Response indicating connection success/failure,
                 HTTP status code.
         """
 
@@ -1260,9 +1260,10 @@ class UpdateCampaignsForAudience(SwaggerView):
             logger.error(
                 "Engagement %s does not have audiences.", engagement_id
             )
-            return {
-                api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                jsonify({api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES}),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         # validate that the audience is attached
         audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
@@ -1272,9 +1273,12 @@ class UpdateCampaignsForAudience(SwaggerView):
                 engagement_id,
                 audience_id,
             )
-            return {
-                api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                jsonify(
+                    {api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT}
+                ),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -1290,9 +1294,14 @@ class UpdateCampaignsForAudience(SwaggerView):
                 destination_id,
                 audience_id,
             )
-            return {
-                api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                jsonify(
+                    {
+                        api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE
+                    }
+                ),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         body = CampaignPutSchema().load(request.get_json())
 
@@ -1310,9 +1319,10 @@ class UpdateCampaignsForAudience(SwaggerView):
                 audience_id,
                 destination_id,
             )
-            return {
-                api_c.MESSAGE: api_c.DELIVERY_JOBS_NOT_FOUND_TO_MAP
-            }, HTTPStatus.NOT_FOUND
+            return (
+                jsonify({api_c.MESSAGE: api_c.DELIVERY_JOBS_NOT_FOUND_TO_MAP}),
+                HTTPStatus.NOT_FOUND,
+            )
 
         # Delete all the existing campaigns from associated delivery jobs
         delivery_platform_management.delete_delivery_job_generic_campaigns(
@@ -1341,9 +1351,14 @@ class UpdateCampaignsForAudience(SwaggerView):
                     engagement_id,
                     audience_id,
                 )
-                return {
-                    api_c.MESSAGE: "Invalid data, cannot attach campaign."
-                }, HTTPStatus.BAD_REQUEST
+                return (
+                    jsonify(
+                        {
+                            api_c.MESSAGE: "Invalid data, cannot attach campaign."
+                        }
+                    ),
+                    HTTPStatus.BAD_REQUEST,
+                )
 
             updated_campaigns = [
                 {
@@ -1474,7 +1489,7 @@ class AudienceCampaignsGetView(SwaggerView):
         audience_id: ObjectId,
         destination_id: ObjectId,
         user: dict,
-    ) -> Tuple[dict, int]:
+    ) -> Tuple[Response, int]:
         """Get the campaign mappings from mongo.
 
         ---
@@ -1488,7 +1503,7 @@ class AudienceCampaignsGetView(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection success/failure,
+            Tuple[Response, int]: Response indicating connection success/failure,
                 HTTP status code.
         """
 
@@ -1501,9 +1516,10 @@ class AudienceCampaignsGetView(SwaggerView):
             logger.error(
                 "Engagement with ID %s has no audiences.", engagement_id
             )
-            return {
-                api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                jsonify({api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES}),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         # validate that the audience is attached
         audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
@@ -1513,9 +1529,12 @@ class AudienceCampaignsGetView(SwaggerView):
                 audience_id,
                 engagement_id,
             )
-            return {
-                api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                jsonify(
+                    {api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT}
+                ),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -1531,9 +1550,14 @@ class AudienceCampaignsGetView(SwaggerView):
                 destination_id,
                 audience_id,
             )
-            return {
-                api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                jsonify(
+                    {
+                        api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE
+                    }
+                ),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
@@ -1549,9 +1573,10 @@ class AudienceCampaignsGetView(SwaggerView):
                 audience_id,
                 destination_id,
             )
-            return {
-                api_c.MESSAGE: api_c.DELIVERY_JOBS_NOT_FOUND_TO_MAP
-            }, HTTPStatus.NOT_FOUND
+            return (
+                jsonify({api_c.MESSAGE: api_c.DELIVERY_JOBS_NOT_FOUND_TO_MAP}),
+                HTTPStatus.NOT_FOUND,
+            )
 
         # Build response object
         campaigns = []
@@ -1816,7 +1841,6 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         # setup the database
         database = get_db_client()
-        database = get_db_client()
 
         engagement = get_engagement(database, ObjectId(engagement_id))
         if not engagement:
@@ -1947,9 +1971,10 @@ class EngagementPerformanceDownload(SwaggerView):
 
         engagement = get_engagement(database, ObjectId(engagement_id))
         if not engagement:
-            return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            return (
+                jsonify({"message": api_c.ENGAGEMENT_NOT_FOUND}),
+                HTTPStatus.NOT_FOUND,
+            )
 
         final_email_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.EMAIL

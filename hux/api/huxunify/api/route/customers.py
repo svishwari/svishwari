@@ -1,10 +1,10 @@
 # pylint: disable=no-self-use,too-many-lines,unused-argument
 """Paths for customer API"""
 from http import HTTPStatus
-from typing import Tuple, List
+from typing import Tuple
 from datetime import datetime
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
 from huxunifylib.database.cache_management import (
     create_cache_entry,
@@ -577,7 +577,7 @@ class IDRDataFeeds(SwaggerView):
     # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[List[dict], int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves all IDR data feeds.
 
         ---
@@ -588,7 +588,7 @@ class IDRDataFeeds(SwaggerView):
             user (dict): User doc
 
         Returns:
-            Tuple[List[dict], int]: list of IDR data feeds object dicts,
+            Tuple[Response, int]: Response list of IDR data feeds object dicts,
                 HTTP status code.
         """
 
@@ -703,7 +703,7 @@ class CustomerGeoVisualView(SwaggerView):
         }
     )
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[list, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves a Customer profiles geographical insights.
 
         ---
@@ -714,7 +714,7 @@ class CustomerGeoVisualView(SwaggerView):
             user (dict): User doc
 
         Returns:
-            Tuple[list, int]: list of Customer insights on geo overview,
+            Tuple[Response, int]: Response list of Customer insights on geo overview,
                 HTTP status code.
         """
 
@@ -864,7 +864,7 @@ class IDRMatchingTrends(SwaggerView):
     # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[dict, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves IDR Matching trends YTD data.
 
         ---
@@ -875,7 +875,7 @@ class IDRMatchingTrends(SwaggerView):
             user (dict): User doc
 
         Returns:
-            Tuple[dict, int]: dict of IDR Matching trends YTD,
+            Tuple[Response, int]: Response dict of IDR Matching trends YTD,
                 HTTP status code.
         """
         token_response = get_token_from_request(request)
@@ -955,7 +955,7 @@ class CustomerEvents(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def post(self, hux_id: str, user: dict) -> Tuple[dict, int]:
+    def post(self, hux_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves events for a given HUX ID.
 
         ---
@@ -967,7 +967,7 @@ class CustomerEvents(SwaggerView):
             user (dict): User object
 
         Returns:
-            Tuple[dict, int]: dict of Customer events grouped by day,
+            Tuple[Response, int]: Response dict of Customer events grouped by day,
                 HTTP status code.
         """
         token_response = get_token_from_request(request)
@@ -1028,7 +1028,7 @@ class TotalCustomersGraphView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[list, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves total customer insights.
 
         ---
@@ -1039,7 +1039,7 @@ class TotalCustomersGraphView(SwaggerView):
             user (dict): User doc
 
         Returns:
-            Tuple[list, int]: list of total customers & new customers added,
+            Tuple[Response, int]: Response list of total customers & new customers added,
                 HTTP status code.
         """
 
@@ -1095,7 +1095,7 @@ class CustomersRevenueInsightsGraphView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[list, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves customer revenue insights.
 
         ---
@@ -1106,7 +1106,7 @@ class CustomersRevenueInsightsGraphView(SwaggerView):
             user (dict): User doc
 
         Returns:
-            Tuple[list, int]: list of revenue details by date,
+            Tuple[Response, int]: Response list of revenue details by date,
                 HTTP status code.
         """
 
@@ -1157,7 +1157,7 @@ class CustomersInsightsCountries(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[list, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves country-level geographic customer insights.
 
         ---
@@ -1168,7 +1168,7 @@ class CustomersInsightsCountries(SwaggerView):
             user (dict): User doc
 
         Returns:
-            Tuple[list, int]: list of spend and size data by country,
+            Tuple[Response, int]: Response list of spend and size data by country,
                 HTTP status code.
         """
 
@@ -1213,7 +1213,7 @@ class CustomersInsightsStates(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[list, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves state-level geographic customer insights.
 
         ---
@@ -1224,7 +1224,7 @@ class CustomersInsightsStates(SwaggerView):
             user (dict): User doc
 
         Returns:
-            Tuple[list, int]: list of spend and size data by state,
+            Tuple[Response, int]: Response list of spend and size data by state,
                 HTTP status code.
         """
 
@@ -1289,7 +1289,7 @@ class CustomersInsightsCities(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[list, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves city-level geographic customer insights.
 
         ---
@@ -1300,7 +1300,7 @@ class CustomersInsightsCities(SwaggerView):
             user (dict): User doc
 
         Returns:
-            Tuple[list, int]: list of spend and size by city, HTTP status code.
+            Tuple[Response, int]: Response list of spend and size by city, HTTP status code.
         """
 
         # get auth token from request
