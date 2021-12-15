@@ -58,7 +58,11 @@
       </v-menu>
     </v-card-title>
 
-    <v-list v-if="section.deliveries.length > 0" dense class="pa-0 delivery-table">
+    <v-list
+      v-if="section.deliveries.length > 0"
+      dense
+      class="pa-0 delivery-table"
+    >
       <hux-data-table
         :columns="columnDefs"
         :sort-desc="true"
@@ -431,7 +435,7 @@ export default {
     ::v-deep .v-data-table__wrapper {
       tbody {
         tr {
-          td:nth-child(1){
+          td:nth-child(1) {
             &:hover,
             &:focus {
               .action-icon {
