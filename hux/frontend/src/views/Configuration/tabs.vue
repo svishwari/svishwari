@@ -5,12 +5,12 @@
       <div class="d-flex">
         <v-tab
           key="modules"
-          class="pa-2 mr-3 text-h3 black--text text--ligthen4"
+          class="pa-2 mr-3 text-h3 black--text text--lighten-4"
           color
         >
           Modules &amp; Solutions
         </v-tab>
-        <v-tab key="team" class="text-h3 black--text text--ligthen4">
+        <v-tab key="team" class="text-h3 black--text text--lighten-4">
           Team members
         </v-tab>
       </div>
@@ -50,5 +50,8 @@ export default {
 .sliderCss {
   position: absolute;
   top: 2px;
+}
+::v-deep .v-tabs .v-tabs-bar .v-tabs-bar__content .v-tab {
+  color: var(--v-black-lighten4) !important;
 }
 </style>
