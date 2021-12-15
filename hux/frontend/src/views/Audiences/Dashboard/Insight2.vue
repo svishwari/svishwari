@@ -687,7 +687,7 @@ export default {
       this.selectedDestinations = []
       this.selectedEngagements.push(event)
       this.selectedDestinations.push(
-        ...event.deliveries.map((dest) => ({ id: dest.id }))
+        ...event.deliveries.map((dest) => ({ id: dest.delivery_platform_id }))
       )
       this.showSelectDestinationsDrawer = true
     },
@@ -703,7 +703,7 @@ export default {
             destinationId: event.data.delivery_platform_id,
           })
           this.dataPendingMesssage(event, "destination")
-          this.refreshEntity()
+          this.refresh()
           break
 
         case "remove destination":
@@ -952,6 +952,7 @@ export default {
           engagementId: event.data.id,
           data: payload,
         })
+        this.refresh()
       } else {
         const payload = { audience_ids: [] }
         payload.audience_ids.push(this.audienceId)
@@ -959,6 +960,7 @@ export default {
           engagementId: event.data.id,
           data: payload,
         })
+        this.refresh()
       }
     },
     async loadAudienceInsights() {
