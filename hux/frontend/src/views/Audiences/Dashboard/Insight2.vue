@@ -234,6 +234,7 @@
                 :class="{
                   open: showAdvertising,
                   close: !showAdvertising,
+                  'float-right': !showAdvertising,
                 }"
                 @click="toggleAd()"
               >
