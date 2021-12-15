@@ -718,7 +718,7 @@ class TectonMockConnector(Tecton):
         models = []
 
         category_map = {
-            "Propensity to Unsubscribe": api_c.EMAIL,
+            "Propensity to Unsubscribe": api_c.EMAIL.title(),
             "LTV": api_c.SALES_FORECASTING,
             "Lifetime Value": api_c.SALES_FORECASTING,
         }
