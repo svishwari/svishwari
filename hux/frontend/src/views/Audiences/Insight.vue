@@ -982,6 +982,7 @@ export default {
     if (this.$refs.genderChart) {
       new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
     }
+    window.scroll(0, 0)
   },
   methods: {
     ...mapActions({
