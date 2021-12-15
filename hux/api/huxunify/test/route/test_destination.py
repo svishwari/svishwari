@@ -995,7 +995,7 @@ class TestDestinationRoutes(TestCase):
                 "Test engagement",
                 None,
                 audiences,
-                None,
+                t_c.TEST_USER_NAME,
                 None,
                 False,
             ),

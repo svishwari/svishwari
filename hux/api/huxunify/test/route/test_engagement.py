@@ -144,9 +144,9 @@ class TestEngagementMetricsDisplayAds(TestCase):
             return_value=self.database,
         ).start()
 
-        self.audience_id = create_audience(self.database, "Test Audience", [])[
-            db_c.ID
-        ]
+        self.audience_id = create_audience(
+            self.database, "Test Audience", [], t_c.TEST_USER_NAME
+        )[db_c.ID]
         self.delivery_platform = set_delivery_platform(
             self.database,
             db_c.DELIVERY_PLATFORM_FACEBOOK,
@@ -169,7 +169,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
             "Test engagement",
             None,
             self.audiences,
-            None,
+            t_c.TEST_USER_NAME,
             None,
             False,
         )
@@ -338,9 +338,9 @@ class TestEngagementMetricsEmail(TestCase):
             return_value=self.database,
         ).start()
 
-        self.audience_id = create_audience(self.database, "Test Audience", [])[
-            db_c.ID
-        ]
+        self.audience_id = create_audience(
+            self.database, "Test Audience", [], t_c.TEST_USER_NAME
+        )[db_c.ID]
 
         self.delivery_platform_sfmc = set_delivery_platform(
             self.database,
@@ -364,7 +364,7 @@ class TestEngagementMetricsEmail(TestCase):
             "Test engagement sfmc",
             None,
             self.audiences,
-            None,
+            t_c.TEST_USER_NAME,
             None,
             False,
         )
@@ -585,6 +585,7 @@ class TestEngagementRoutes(TestCase):
                         ],
                     }
                 ],
+                api_c.USER_NAME: self.user_name,
                 api_c.DESTINATION_IDS: [d[db_c.ID] for d in self.destinations],
             },
             {
@@ -601,6 +602,7 @@ class TestEngagementRoutes(TestCase):
                         ],
                     }
                 ],
+                api_c.USER_NAME: self.user_name,
             },
         ]
 

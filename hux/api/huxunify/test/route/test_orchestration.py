@@ -1210,8 +1210,8 @@ class OrchestrationRouteTest(TestCase):
                     self.database,
                     f"audience{i}",
                     [],
-                    [],
                     self.user_name,
+                    [],
                     100 + i,
                 )
             )
