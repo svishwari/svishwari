@@ -5,7 +5,7 @@ from datetime import datetime
 from http import HTTPStatus
 from itertools import repeat
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Tuple, Union, Iterator, Optional
 
 import pandas as pd
 from flasgger import SwaggerView
@@ -13,6 +13,8 @@ from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
 from huxunifylib.connectors import connector_cdp
+from pandas import DataFrame
+
 from huxunifylib.database import (
     orchestration_management,
 )
@@ -99,7 +101,7 @@ def get_audience_data_async(
     actual_size: int,
     location_details: dict,
     batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
-) -> list:
+) -> Iterator[Optional[DataFrame]]:
     """Creates a list of tasks, this is useful for asynchronous batch wise
     calls to a task.
 
@@ -131,15 +133,13 @@ def get_audience_data_async(
     with ThreadPoolExecutor(
         max_workers=api_c.MAX_WORKERS_THREAD_POOL
     ) as executor:
-        return list(
-            executor.map(
+        return executor.map(
                 get_batch_customers,
                 repeat(cdp_connector),
                 repeat(location_details),
                 batch_sizes,
                 offsets,
             )
-        )
 
 
 @add_view_to_blueprint(
