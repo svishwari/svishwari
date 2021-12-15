@@ -23,6 +23,7 @@ jobs:
               - 'lib/huxunifylib-database/huxunifylib/**'
             scripts:
               - 'scripts/database/**'
+#      Uncomment when mypy issues are resolved
 #      - if: steps.changes.outputs.api == 'true'
 #        working-directory: hux/api
 #        env:
@@ -30,17 +31,17 @@ jobs:
 #        run: |
 #           pipenv install setuptools==56.1.0
 #           pipenv install --ignore-pipfile --dev
-#           pipenv run mypy --config-file=../../mypy.ini hux/api --show-error-code
-#- if: always() && steps.changes.outputs.dblib == 'true'
-      - if: always()
+#           pipenv run mypy --config-file=../../mypy.ini ./ --show-error-code
+      - if: steps.changes.outputs.dblib == 'true'
         working-directory: lib/huxunifylib-database
         run: |
           pipenv install setuptools==56.1.0
           pipenv install --ignore-pipfile --dev
           pipenv run mypy --config-file=../../mypy.ini ./huxunifylib
-#      - if: always() && steps.changes.outputs.scripts == 'true'
+#      Uncomment when mypy issues are resolved
+#      - if: steps.changes.outputs.scripts == 'true'
 #        working-directory: scripts
 #        run: |
 #          pipenv install setuptools==56.1.0
 #          pipenv install --ignore-pipfile --dev
-#          pipenv run mypy --config-file=../../mypy.ini scripts
+#          pipenv run mypy --config-file=../../mypy.ini ./
