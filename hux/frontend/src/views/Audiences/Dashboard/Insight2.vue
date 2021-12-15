@@ -212,7 +212,7 @@
                 :sections="relatedEngagements"
                 section-type="engagement"
                 deliveries-key="deliveries"
-                :audienceData="audience"
+                :audience-data="audience"
                 @onOverviewSectionAction="triggerOverviewAction($event)"
                 @onOverviewDestinationAction="
                   triggerOverviewDestinationAction($event)

@@ -325,7 +325,7 @@ export default {
         audienceId: this.audienceId,
       })
       this.dataPendingMesssage(engagement)
-     this.$emit("refreshEntityDelivery")
+      this.$emit("refreshEntityDelivery")
     },
     addDestination() {},
     getSize(value) {
