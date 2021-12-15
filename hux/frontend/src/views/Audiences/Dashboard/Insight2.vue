@@ -212,6 +212,7 @@
                 :sections="relatedEngagements"
                 section-type="engagement"
                 deliveries-key="deliveries"
+                :audienceData="audience"
                 @onOverviewSectionAction="triggerOverviewAction($event)"
                 @onOverviewDestinationAction="
                   triggerOverviewDestinationAction($event)
@@ -219,6 +220,7 @@
                 @onAddDestination="addDestination($event)"
                 @engagementDeliveries="deliverEngagement($event)"
                 @addEngagement="openAttachEngagementDrawer()"
+                @refreshEntityInsight="refreshEntity()"
               >
                 <template #title-left>
                   <div class="d-flex align-center">
@@ -702,6 +704,7 @@ export default {
           })
           this.dataPendingMesssage(event, "destination")
           this.refresh()
+          this.refreshEntity()
           break
 
         case "remove destination":
@@ -739,6 +742,16 @@ export default {
       this.engagementList = JSON.parse(
         JSON.stringify(this.getEngagementObject(this.engagementId))
       )
+    },
+    async refreshEntity() {
+      console.log("coming inside ENtity")
+      this.loading = true
+      this.$root.$emit("refresh-notifications")
+      try {
+        await this.loadAudienceInsights()
+      } finally {
+        this.loading = false
+      }
     },
     async onConfirmAction() {
       this.showConfirmModal = false
@@ -813,9 +826,10 @@ export default {
             await this.deliverAudienceDestination({
               id: event.parent.id,
               audienceId: this.audienceId,
-              destinationId: event.data.id,
+              destinationId: event.data.delivery_platform_id,
             })
             this.dataPendingMesssage(event, "destination")
+            this.refreshEntity()
             break
           case "edit delivery schedule":
             this.confirmDialog.actionType = "edit-schedule"

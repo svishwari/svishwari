@@ -217,6 +217,10 @@ export default {
       type: String,
       required: false,
     },
+    audience: {
+      type: Object,
+      required: false,
+    },
   },
 
   data() {
@@ -313,13 +317,15 @@ export default {
     ...mapActions({
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
+      setAlert: "alerts/setAlert",
     }),
     async deliverAll(engagement) {
       await this.deliverAudience({
         id: engagement.id,
         audienceId: this.audienceId,
       })
-      this.dataPendingMesssage(event)
+      this.dataPendingMesssage(engagement)
+     this.$emit("refreshEntityDelivery")
     },
     addDestination() {},
     getSize(value) {
@@ -388,6 +394,7 @@ export default {
     dataPendingMesssage(event) {
       const engagementName = event.name
       const audienceName = this.audience.name
+      console.log("data", engagementName, audienceName, event)
       this.setAlert({
         type: "pending",
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
