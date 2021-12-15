@@ -95,37 +95,53 @@
           </metric-card>
 
           <metric-card
-            class="mr-3"
-            title="Attributes"
-            :height="80"
-            :interactable="false"
+            v-if="Object.keys(appliedFilters).length > 0"
+            class="ma-2 audience-summary"
+            :title="'Attributes'"
+            :height="75"
           >
-            <template #subtitle-extended>
-              <div class="">
-                <v-chip
-                  small
-                  class="mr-1 my-1 font-weight-semi-bold v-chip--active"
-                  text-color="primary"
-                  color="primary-lighten3"
-                >
-                  Gender: Men
-                </v-chip>
-                <v-chip
-                  small
-                  class="mr-1 my-1 font-weight-semi-bold v-chip--active"
-                  text-color="primary"
-                  color="primary-lighten3"
-                >
-                  State: Texas
-                </v-chip>
-                <v-chip
-                  small
-                  class="mr-1 my-1 font-weight-semi-bold v-chip--active"
-                  text-color="primary"
-                  color="primary-lighten3"
-                >
-                  Lifetime value: .1-.5
-                </v-chip>
+            <template #extra-item>
+              <div class="container pl-0 pt-2">
+                <ul class="filter-list">
+                  <li
+                    v-for="filterKey in Object.keys(appliedFilters)"
+                    :key="filterKey"
+                    class="filter-item ma-0 mr-1 d-flex align-center"
+                  >
+                    <icon
+                      :type="filterKey == 'general' ? 'plus' : filterKey"
+                      :size="filterKey == 'general' ? 10 : 21"
+                      class="mr-1"
+                    />
+                    <tooltip
+                      v-for="filter in Object.keys(appliedFilters[filterKey])"
+                      :key="filter"
+                    >
+                      <template #label-content>
+                        <span
+                          class="
+                            black--text
+                            text--darken-4
+                            font-weight-semi-bold
+                            text-over-2
+                            filter-title
+                          "
+                          v-html="appliedFilters[filterKey][filter].name"
+                        />
+                      </template>
+                      <template #hover-content>
+                        <span class="text-body-2 black--text text--darken-4">
+                          <div class="mb-2">
+                            {{ appliedFilters[filterKey][filter].name }}
+                          </div>
+                          <span
+                            v-html="appliedFilters[filterKey][filter].hover"
+                          />
+                        </span>
+                      </template>
+                    </tooltip>
+                  </li>
+                </ul>
               </div>
             </template>
           </metric-card>
@@ -303,6 +319,7 @@
 <script>
 // helpers
 import { mapGetters, mapActions } from "vuex"
+import filter from "lodash/filter"
 
 // common components
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
@@ -524,6 +541,56 @@ export default {
       }
       return items
     },
+    appliedFilters() {
+      // try {
+      let _filters = {}
+      const attributeOptions = this.attributeOptions()
+      if (this.audience && this.audience.filters) {
+        this.audience.filters.forEach((section) => {
+          section.section_filters.forEach((sectionFilter) => {
+            const model = this.modelInitial.filter(
+              (model) =>
+                typeof sectionFilter.field === "string" &&
+                sectionFilter.field.includes(model.value)
+            )
+            // TODO for the nestd filter check
+            let ruleFilterObject = filter(attributeOptions, {
+              key: sectionFilter.field.toLowerCase(),
+            })
+
+            const filterObj = {}
+            if (ruleFilterObject.length > 0) {
+              filterObj["name"] = ruleFilterObject[0]["name"]
+              filterObj["key"] = sectionFilter.field
+
+              filterObj.name = filterObj.name.replace(/_/gi, " ")
+              if (model.length > 0) {
+                filterObj["hover"] = "Between " + sectionFilter.value.join("-")
+                if (!_filters[model[0].icon]) _filters[model[0].icon] = {}
+                if (_filters[model[0].icon][sectionFilter.field])
+                  _filters[model[0].icon][sectionFilter.field]["hover"] +=
+                    "<br/> " + filterObj.hover
+                else _filters[model[0].icon][sectionFilter.field] = filterObj
+              } else {
+                if (!_filters["general"]) _filters["general"] = {}
+                filterObj["hover"] =
+                  sectionFilter.type === "range"
+                    ? "Include " + sectionFilter.value.join("-")
+                    : sectionFilter.value
+                if (_filters["general"][sectionFilter.field])
+                  _filters["general"][sectionFilter.field]["hover"] +=
+                    "<br/> " + filterObj.hover
+                else _filters["general"][sectionFilter.field] = filterObj
+              }
+            }
+          })
+        })
+      }
+      return _filters
+      // } catch (error) {
+      //   return []
+      // }
+    },
   },
   async mounted() {
     await this.loadAudienceInsights()
@@ -546,7 +613,33 @@ export default {
       getAudiencesRules: "audiences/fetchConstants",
       getEngagementById: "engagements/get",
     }),
-
+    attributeOptions() {
+      const options = []
+      Object.values(this.ruleAttributes.rule_attributes).forEach((attr) => {
+        Object.keys(attr).forEach((optionKey) => {
+          if (
+            Object.values(attr[optionKey])
+              .map((o) => typeof o === "object" && !Array.isArray(o))
+              .includes(Boolean(true))
+          ) {
+            Object.keys(attr[optionKey]).forEach((att) => {
+              if (typeof attr[optionKey][att] === "object") {
+                options.push({
+                  key: att,
+                  name: attr[optionKey][att]["name"],
+                })
+              }
+            })
+          } else {
+            options.push({
+              key: optionKey,
+              name: attr[optionKey]["name"],
+            })
+          }
+        })
+      })
+      return options
+    },
     async refresh() {
       await this.loadAudienceInsights()
       // this.engagementId = 1
@@ -960,8 +1053,6 @@ export default {
           background-size: cover !important;
         }
       }
-    }
-    .insights-tab {
     }
   }
 }
