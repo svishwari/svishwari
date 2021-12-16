@@ -513,6 +513,7 @@ export default {
             dataItem = data
           }
         }
+        condition[type] = dataItem
         condition.operator = ""
         condition.text = ""
         condition.type = dataItem.type
