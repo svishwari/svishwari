@@ -7,6 +7,23 @@
     <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-3">
       <div class="d-flex align-center">
         <span class="text-h3">Standalone deliveries</span>
+        <tooltip
+          :max-width="396"
+          position-top
+        >
+          <template #label-content>
+            <icon
+              type="info"
+              :size="8"
+              class="ml-1 mb-1"
+              color="primary"
+              variant="base"
+            />
+          </template>
+          <template #hover-content>
+            These are deliveries that are not part of an engagement.
+          </template>
+        </tooltip>
       </div>
       <v-spacer> </v-spacer>
       <div class="d-flex mr-4 deliver-all disabled" @click="deliverAll()">
@@ -116,10 +133,11 @@ import Status from "@/components/common/Status.vue"
 import Icon from "@/components/common/Icon.vue"
 import Logo from "@/components/common/Logo.vue"
 import HuxIcon from "@/components/common/Icon.vue"
+import Tooltip from "@/components/common/Tooltip"
 
 export default {
   name: "StandaloneDelivery",
-  components: { HuxDataTable, TimeStamp, Size, Status, Icon, Logo, HuxIcon },
+  components: { HuxDataTable, TimeStamp, Size, Status, Icon, Logo, HuxIcon, Tooltip },
   props: {},
   data() {
     return {
