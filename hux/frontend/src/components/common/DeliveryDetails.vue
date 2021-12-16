@@ -36,9 +36,13 @@
         :class="{ disabled: section.deliveries.length == 0 }"
         @click="deliverAll(section)"
       >
-        <icon class="mr-2" type="deliver" :size="24" 
-        :color="section.deliveries.length == 0 ? 'black' : 'primary' " 
-        :variant="section.deliveries.length == 0 ? 'lighten3' : 'base' "/>
+        <icon
+          class="mr-2"
+          type="deliver"
+          :size="24"
+          :color="section.deliveries.length == 0 ? 'black' : 'primary'"
+          :variant="section.deliveries.length == 0 ? 'lighten3' : 'base'"
+        />
         Deliver all
       </div>
       <v-menu class="menu-wrapper" bottom offset-y>

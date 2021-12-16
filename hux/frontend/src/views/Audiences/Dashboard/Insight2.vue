@@ -19,9 +19,13 @@
               data-e2e="delivery-history"
               @click="openDeliveryHistoryDrawer()"
             >
-              <icon class="mr-1" type="history" :size="14" 
-              :color="relatedEngagements.length == 0 ? 'black' : 'primary' " 
-              :variant="relatedEngagements.length == 0 ? 'lighten3' : 'base' "/>
+              <icon
+                class="mr-1"
+                type="history"
+                :size="14"
+                :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
+                :variant="relatedEngagements.length == 0 ? 'lighten3' : 'base'"
+              />
               Delivery history
             </v-btn>
           </div>
@@ -1163,7 +1167,7 @@ export default {
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
     background-color: var(--v-primary-lighten2) !important;
-    .bar-text{
+    .bar-text {
       display: none;
     }
   }

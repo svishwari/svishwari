@@ -1,12 +1,22 @@
 <template>
-  <v-card class="rounded-lg card-style standalone-delivery mt-4" flat height="156">
+  <v-card
+    class="rounded-lg card-style standalone-delivery mt-4"
+    flat
+    height="156"
+  >
     <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-3">
       <div class="d-flex align-center">
         <span class="text-h3">Standalone deliveries</span>
       </div>
       <v-spacer> </v-spacer>
       <div class="d-flex mr-4 deliver-all disabled" @click="deliverAll()">
-        <icon class="deliver-icon mr-2" type="deliver" color="black" variant="lighten3" :size="24" />
+        <icon
+          class="deliver-icon mr-2"
+          type="deliver"
+          color="black"
+          variant="lighten3"
+          :size="24"
+        />
         Deliver all
       </div>
     </v-card-title>
@@ -147,9 +157,9 @@ export default {
 
 <style lang="scss" scoped>
 .standalone-delivery {
-  .deliver-all{
+  .deliver-all {
     &.disabled {
-      color: var(--v-black-lighten3);;
+      color: var(--v-black-lighten3);
     }
   }
   .delivery-table {
