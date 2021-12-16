@@ -138,7 +138,7 @@ const getters = {
   getPiiAccess: (state) => state.userProfile.pii_access,
 
   getUsers: (state) => state.users,
-  
+
   getCurrentUserRole: (state) => state.userProfile.role,
 }
 export default {
