@@ -64,10 +64,18 @@
                   primary--text
                 "
               >
-                {{ item[col.value] && item[col.value].name && item[col.value].name | Empty }}
+                {{
+                  item[col.value] &&
+                  item[col.value].name &&
+                  item[col.value].name | Empty
+                }}
               </router-link>
               <template #tooltip>
-                {{ item[col.value] && item[col.value].name && item[col.value].name | Empty }}
+                {{
+                  item[col.value] &&
+                  item[col.value].name &&
+                  item[col.value].name | Empty
+                }}
               </template>
             </tooltip>
             <tooltip v-if="col.value === 'destination' && item[col.value]">
@@ -81,7 +89,11 @@
                 </logo>
               </template>
               <template #hover-content>
-                {{ item[col.value] && item[col.value].name && item[col.value].name }}
+                {{
+                  item[col.value] &&
+                  item[col.value].name &&
+                  item[col.value].name
+                }}
               </template>
             </tooltip>
             <tooltip v-if="col.value === 'size'">

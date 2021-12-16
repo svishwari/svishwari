@@ -1,7 +1,15 @@
 <template>
   <page-header class="background-border" :header-height-changes="'py-3'">
     <template #left>
-      <breadcrumb :items="breadcrumbItems" />
+      <span class="d-flex flex-row">
+        <breadcrumb :items="breadcrumbItems" />
+        <icon
+          v-if="audienceData.favorite"
+          class="ml-3 mt-2"
+          type="fav_filled"
+          :size="24"
+        />
+      </span>
     </template>
     <template #right>
       <div class="d-flex align-center">

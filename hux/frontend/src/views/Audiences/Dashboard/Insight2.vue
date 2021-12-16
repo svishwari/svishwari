@@ -1053,6 +1053,7 @@ export default {
     },
     favoriteAudience(data) {
       this.markFavorite({ id: data.id, type: "audiences" })
+      this.refreshEntity()
     },
   },
 }
