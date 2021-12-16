@@ -7,10 +7,7 @@
     <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-3">
       <div class="d-flex align-center">
         <span class="text-h3">Standalone deliveries</span>
-        <tooltip
-          :max-width="396"
-          position-top
-        >
+        <tooltip :max-width="396" position-top>
           <template #label-content>
             <icon
               type="info"
@@ -137,7 +134,16 @@ import Tooltip from "@/components/common/Tooltip"
 
 export default {
   name: "StandaloneDelivery",
-  components: { HuxDataTable, TimeStamp, Size, Status, Icon, Logo, HuxIcon, Tooltip },
+  components: {
+    HuxDataTable,
+    TimeStamp,
+    Size,
+    Status,
+    Icon,
+    Logo,
+    HuxIcon,
+    Tooltip,
+  },
   props: {},
   data() {
     return {

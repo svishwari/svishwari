@@ -67,7 +67,7 @@
             :icon="item.icon"
             :height="80"
             :interactable="item.action ? true : false"
-            :titleTooltip="item.titleTooltip"
+            :title-tooltip="item.titleTooltip"
             max-width="170"
             data-e2e="audience-overview"
           >
@@ -527,9 +527,9 @@ export default {
           title: "Size",
           subtitle: "",
           icon: "targetsize",
-          titleTooltip: "Current number of customers who fit the selected attributes.",
-          tooltipWidth: "231"
-          
+          titleTooltip:
+            "Current number of customers who fit the selected attributes.",
+          tooltipWidth: "231",
         },
         age: { title: "Age range", subtitle: "", icon: "birth" },
       }

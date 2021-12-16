@@ -152,7 +152,12 @@
         <v-list-item @click="$emit('onAddDestination', section)">
           <tooltip>
             <template #label-content>
-              <hux-icon type="plus" :size="16" color="primary" class="mr-4 mb-1" />
+              <hux-icon
+                type="plus"
+                :size="16"
+                color="primary"
+                class="mr-4 mb-1"
+              />
               <hux-icon
                 type="destination"
                 :size="24"
@@ -286,7 +291,7 @@ export default {
           width: "15%",
           hoverTooltip:
             "Average order value for all customers (known and anyonymous) for all time.",
-          tooltipWidth: "201px"
+          tooltipWidth: "201px",
         },
         {
           text: "Last delivery",
