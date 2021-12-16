@@ -92,7 +92,7 @@ export default {
     initiateDelete() {
       this.$emit("removeAudience", this.audienceData)
     },
-    favoriteAudience(){
+    favoriteAudience() {
       this.$emit("favoriteAudience", this.audienceData)
     },
   },

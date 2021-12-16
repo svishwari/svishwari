@@ -1037,18 +1037,19 @@ export default {
         this.showAdvertising = true
       }
     },
-    removeAudience(data){
+    removeAudience(data) {
       this.showConfirmModal = true
-      this.confirmDialog.title = "You are about to delete",
-      this.confirmDialog.btnText = "Yes, remove it"
+      ;(this.confirmDialog.title = "You are about to delete"),
+        (this.confirmDialog.btnText = "Yes, remove it")
       this.confirmDialog.icon = "sad-face"
-      this.confirmDialog.subtitle = data.name,
-      this.confirmDialog.type = "error"
-      this.confirmDialog.body= "By deleting this audience you will not be able to recover it and it may impact any associated engagements."
-      this.confirmDialog.actionType="remove audience"
+      ;(this.confirmDialog.subtitle = data.name),
+        (this.confirmDialog.type = "error")
+      this.confirmDialog.body =
+        "By deleting this audience you will not be able to recover it and it may impact any associated engagements."
+      this.confirmDialog.actionType = "remove audience"
       this.showConfirmModal = true
     },
-    favoriteAudience(data){
+    favoriteAudience(data) {
       this.markFavorite({ id: data.id, type: "audiences" })
     },
   },
