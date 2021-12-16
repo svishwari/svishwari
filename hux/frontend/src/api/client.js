@@ -314,8 +314,8 @@ client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
-client["audiences"].deliveries = (id) => {
-  return http.get(`/audiences/${id}/delivery-history`)
+client["audiences"].deliveries = (resourceId, query) => {
+  return http.get(`/audiences/${resourceId}/delivery-history?${query}`)
 }
 
 client["audiences"].geoCities = (resourceId, batchNumber, batchSize) => {
