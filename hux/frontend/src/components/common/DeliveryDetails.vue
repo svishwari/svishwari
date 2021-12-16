@@ -150,13 +150,27 @@
 
       <v-list dense class="add-list" :height="52">
         <v-list-item @click="$emit('onAddDestination', section)">
-          <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
-          <hux-icon
-            type="destination"
-            :size="24"
-            color="primary"
-            class="mr-2"
-          />
+          <tooltip>
+            <template #label-content>
+              <hux-icon
+                type="plus"
+                :size="16"
+                color="primary"
+                class="mr-4 mb-1"
+              />
+              <hux-icon
+                type="destination"
+                :size="24"
+                color="primary"
+                class="mr-2"
+              />
+            </template>
+            <template #hover-content>
+              <div class="py-2 white d-flex flex-column">
+                <span> Add a destination to this engagement </span>
+              </div>
+            </template>
+          </tooltip>
           <v-btn
             text
             min-width="7rem"
@@ -277,6 +291,7 @@ export default {
           width: "15%",
           hoverTooltip:
             "Average order value for all customers (known and anyonymous) for all time.",
+          tooltipWidth: "201px",
         },
         {
           text: "Last delivery",
