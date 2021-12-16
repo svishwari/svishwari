@@ -144,9 +144,9 @@ class TestEngagementMetricsDisplayAds(TestCase):
             return_value=self.database,
         ).start()
 
-        self.audience_id = create_audience(self.database, "Test Audience", [])[
-            db_c.ID
-        ]
+        self.audience_id = create_audience(
+            self.database, "Test Audience", [], t_c.TEST_USER_NAME
+        )[db_c.ID]
         self.delivery_platform = set_delivery_platform(
             self.database,
             db_c.DELIVERY_PLATFORM_FACEBOOK,
@@ -169,7 +169,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
             "Test engagement",
             None,
             self.audiences,
-            None,
+            t_c.TEST_USER_NAME,
             None,
             False,
         )
@@ -338,9 +338,9 @@ class TestEngagementMetricsEmail(TestCase):
             return_value=self.database,
         ).start()
 
-        self.audience_id = create_audience(self.database, "Test Audience", [])[
-            db_c.ID
-        ]
+        self.audience_id = create_audience(
+            self.database, "Test Audience", [], t_c.TEST_USER_NAME
+        )[db_c.ID]
 
         self.delivery_platform_sfmc = set_delivery_platform(
             self.database,
@@ -364,7 +364,7 @@ class TestEngagementMetricsEmail(TestCase):
             "Test engagement sfmc",
             None,
             self.audiences,
-            None,
+            t_c.TEST_USER_NAME,
             None,
             False,
         )
@@ -585,6 +585,7 @@ class TestEngagementRoutes(TestCase):
                         ],
                     }
                 ],
+                api_c.USER_NAME: self.user_name,
                 api_c.DESTINATION_IDS: [d[db_c.ID] for d in self.destinations],
             },
             {
@@ -601,6 +602,7 @@ class TestEngagementRoutes(TestCase):
                         ],
                     }
                 ],
+                api_c.USER_NAME: self.user_name,
             },
         ]
 
@@ -1282,6 +1284,11 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertIsNotNone(
+            response.json.get(api_c.AUDIENCES)[0]
+            .get(api_c.DESTINATIONS)[0]
+            .get(db_c.DATA_ADDED)
+        )
 
     @given(schedule=st.sampled_from(t_c.SCHEDULES))
     def test_set_engagement_with_delivery_schedule(self, schedule: dict):
@@ -1374,6 +1381,29 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
+
+    def test_set_engagement_without_destinations_in_audience(self):
+        """Test set engagement API without destinations in audience."""
+
+        engagement = {
+            db_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
+                    db_c.DESTINATIONS: [],
+                }
+            ],
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
+            db_c.ENGAGEMENT_DESCRIPTION: "Test Set Engagement",
+            db_c.ENGAGEMENT_NAME: "Test Engagement No Audience",
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            data=json.dumps(engagement),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
     def test_set_engagement_without_description(self):
         """Test set engagement API without description."""
@@ -1524,6 +1554,45 @@ class TestEngagementRoutes(TestCase):
             old_delivery_schedule_cron, new_delivery_schedule_cron
         )
 
+    def test_update_engagement_audience_with_destination_added(self):
+        """Test update an engagement with destination."""
+
+        engagement = {
+            db_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
+                    db_c.DESTINATIONS: [],
+                }
+            ],
+            db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
+            db_c.ENGAGEMENT_NAME: "Test Engagement Name",
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            data=json.dumps(engagement),
+            headers=t_c.STANDARD_HEADERS,
+        )
+        engagement_id = response.json.get(api_c.ID)
+        update_doc = response.json
+
+        # Add destination.
+        update_doc[api_c.AUDIENCES][0][db_c.DESTINATIONS].append(
+            {db_c.OBJECT_ID: str(self.destinations[0][db_c.ID])}
+        )
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            json=update_doc,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsNotNone(
+            response.json.get(api_c.AUDIENCES)[0]
+            .get(api_c.DESTINATIONS)[0]
+            .get(db_c.DATA_ADDED)
+        )
+
     def test_add_audience_to_engagement(self):
         """Test add audience to engagement."""
 
@@ -1552,6 +1621,28 @@ class TestEngagementRoutes(TestCase):
             {api_c.MESSAGE: api_c.OPERATION_SUCCESS},
             response.json,
         )
+
+    def test_add_audience_to_engagement_without_destinations(self):
+        """Check if data_added is none when audience added to
+        engagement."""
+
+        engagement_id = self.engagement_ids[0]
+
+        new_audience = {
+            "audiences": [
+                {
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
+                    "destinations": [],
+                }
+            ]
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
+            json=new_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
     def test_add_lookalike_audience_to_engagement(self) -> None:
         """Test add lookalike audience to engagement."""

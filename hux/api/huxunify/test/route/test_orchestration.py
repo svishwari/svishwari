@@ -252,6 +252,24 @@ class OrchestrationRouteTest(TestCase):
                 db_c.AUDIENCE_STATUS_DELIVERED,
             )
 
+        self.standalone_delivery_jobs = [
+            set_delivery_job(
+                self.database,
+                self.audiences[0][db_c.ID],
+                destination[db_c.ID],
+                [],
+                db_c.ZERO_OBJECT_ID,
+            )
+            for destination in self.destinations
+        ]
+
+        for standalone_delivery_job in self.standalone_delivery_jobs:
+            set_delivery_job_status(
+                self.database,
+                standalone_delivery_job[db_c.ID],
+                db_c.AUDIENCE_STATUS_DELIVERING,
+            )
+
         set_user(
             self.database,
             okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
@@ -333,12 +351,19 @@ class OrchestrationRouteTest(TestCase):
             response.json[api_c.AUDIENCE_NAME],
         )
 
+        self.assertIsNotNone(
+            response.json.get(api_c.DESTINATIONS)[0].get(db_c.DATA_ADDED)
+        )
+
         # validate audience in db
         audience_doc = get_audience(
             self.database, ObjectId(response.json[db_c.OBJECT_ID])
         )
         self.assertListEqual(
-            audience_doc[db_c.DESTINATIONS],
+            [
+                {api_c.ID: audience[api_c.ID]}
+                for audience in audience_doc[db_c.DESTINATIONS]
+            ],
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
@@ -548,7 +573,10 @@ class OrchestrationRouteTest(TestCase):
         )
         # test destinations
         self.assertListEqual(
-            audience_doc[db_c.DESTINATIONS],
+            [
+                {api_c.ID: audience[api_c.ID]}
+                for audience in audience_doc[db_c.DESTINATIONS]
+            ],
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
@@ -571,6 +599,9 @@ class OrchestrationRouteTest(TestCase):
             engagement_audience = engagement[db_c.AUDIENCES][
                 engagement_audiences.index(audience_doc[db_c.ID])
             ]
+            # Remove data_added fields since timestamps can't be equal.
+            for destination in engagement_audience.get(api_c.DESTINATIONS, []):
+                destination.pop(db_c.DATA_ADDED)
 
             self.assertDictEqual(engagement_audience, expected_audience)
 
@@ -636,17 +667,32 @@ class OrchestrationRouteTest(TestCase):
         self.assertIn(api_c.DESTINATIONS, audience)
         self.assertEqual(len(audience[api_c.DESTINATIONS]), 2)
 
-        # validate the facebook destination in the audience is set to "Not delivered"
-        for audience in audience[api_c.AUDIENCE_ENGAGEMENTS]:
+        # validate the facebook destination in the audience is set to
+        # "Not delivered"
+        for engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
             self.assertTrue(
                 all(
                     x[api_c.STATUS] == db_c.AUDIENCE_STATUS_NOT_DELIVERED
-                    for x in audience[api_c.DELIVERIES]
+                    for x in engagement[api_c.DELIVERIES]
                 )
             )
-            self.assertIn(db_c.DELIVERIES, audience)
-            for delivery in audience[db_c.DELIVERIES]:
+            self.assertIn(db_c.DELIVERIES, engagement)
+            for delivery in engagement[db_c.DELIVERIES]:
                 self.assertIn(db_c.DELIVERY_PLATFORM_ID, delivery)
+
+        # validate the standalone_deliveries in audience
+        self.assertTrue(audience[api_c.AUDIENCE_STANDALONE_DELIVERIES])
+        for standalone_delivery in audience[
+            api_c.AUDIENCE_STANDALONE_DELIVERIES
+        ]:
+            self.assertIn(
+                standalone_delivery[api_c.STATUS],
+                [y[api_c.STATUS] for y in self.standalone_delivery_jobs],
+            )
+            self.assertIn(
+                standalone_delivery[db_c.METRICS_DELIVERY_PLATFORM_NAME],
+                [x[db_c.DELIVERY_PLATFORM_NAME] for x in self.destinations],
+            )
 
     def test_get_lookalike_audience(self):
         """Test get audience for a lookalike audience for which the source
@@ -1177,8 +1223,8 @@ class OrchestrationRouteTest(TestCase):
                     self.database,
                     f"audience{i}",
                     [],
-                    [],
                     self.user_name,
+                    [],
                     100 + i,
                 )
             )
