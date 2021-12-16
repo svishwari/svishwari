@@ -439,7 +439,7 @@ const actions = {
     }
   },
 
-  async getRuleData(_, { field, model }) {
+  async getDensityChartData(_, { field, model }) {
     try {
       const response = await api.audiences.histogram(field, model)
       return response.data

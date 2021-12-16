@@ -302,7 +302,7 @@ export default {
     ...mapActions({
       getRealtimeSize: "audiences/fetchFilterSize",
       getAudiencesRules: "audiences/fetchConstants",
-      attributesData: "audiences/getRuleData",
+      attributesData: "audiences/getDensityChartData",
     }),
     sliderLabel(attribute, value) {
       if (attribute.key === "ltv_predicted") {
