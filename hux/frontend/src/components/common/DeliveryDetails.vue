@@ -13,7 +13,7 @@
         >
           <tooltip>
             <template #label-content>
-              <span class="ellipsis primary--text">
+              <span class="ellipsis primary--text text-h3">
                 {{ section.name }}
               </span>
             </template>
@@ -32,11 +32,17 @@
       </span>
       <v-spacer> </v-spacer>
       <div
-        class="d-flex mr-4 cursor-pointer deliver-icon"
+        class="d-flex mr-4 cursor-pointer deliver-icon text-body-1"
         :class="{ disabled: section.deliveries.length == 0 }"
         @click="deliverAll(section)"
       >
-        <icon class="mr-2" type="deliver" :size="24" />
+        <icon
+          class="mr-2"
+          type="deliver"
+          :size="24"
+          :color="section.deliveries.length == 0 ? 'black' : 'primary'"
+          :variant="section.deliveries.length == 0 ? 'lighten3' : 'base'"
+        />
         Deliver all
       </div>
       <v-menu class="menu-wrapper" bottom offset-y>
@@ -78,7 +84,7 @@
             data-e2e="map-state-list"
           >
             <div v-if="header.value == 'name'" class="text-body-1">
-              <logo :type="item.delivery_platform_type" :size="22"></logo>
+              <logo :type="item.delivery_platform_type" :size="24"></logo>
               <span class="ml-2 ellipsis">
                 {{ item.name }}
               </span>
@@ -396,7 +402,6 @@ export default {
     dataPendingMesssage(event) {
       const engagementName = event.name
       const audienceName = this.audience.name
-      console.log("data", engagementName, audienceName, event)
       this.setAlert({
         type: "pending",
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,

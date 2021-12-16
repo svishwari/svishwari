@@ -12,13 +12,20 @@
           <div class="d-flex align-center">
             <v-btn
               v-if="audience && !audience.is_lookalike"
+              :disabled="relatedEngagements.length == 0"
               text
               color="primary"
               class="body-2 ml-n3 mt-n2"
               data-e2e="delivery-history"
               @click="openDeliveryHistoryDrawer()"
             >
-              <icon type="history" color="primary" :size="14" class="mr-1" />
+              <icon
+                class="mr-1"
+                type="history"
+                :size="14"
+                :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
+                :variant="relatedEngagements.length == 0 ? 'lighten3' : 'base'"
+              />
               Delivery history
             </v-btn>
           </div>
@@ -237,7 +244,8 @@
                 <icon
                   type="expand-arrow"
                   :size="14"
-                  color="white"
+                  :color="showAdvertising ? 'primary' : 'white'"
+                  :class="{ 'rotate-icon-180': !showAdvertising }"
                   class="collapse-icon mx-2"
                 />
               </div>
@@ -738,7 +746,6 @@ export default {
       )
     },
     async refreshEntity() {
-      console.log("coming inside ENtity")
       this.loading = true
       this.$root.$emit("refresh-notifications")
       try {
@@ -1150,7 +1157,6 @@ export default {
 .collapsible-bar {
   margin-top: 16px;
   width: 24px;
-  background-color: var(--v-primary-base) !important;
   height: 368px;
 
   cursor: pointer;
@@ -1160,10 +1166,15 @@ export default {
   &.open {
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
+    background-color: var(--v-primary-lighten2) !important;
+    .bar-text {
+      display: none;
+    }
   }
   &.close {
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
+    background-color: var(--v-primary-base) !important;
   }
   .bar-text {
     writing-mode: vertical-rl;
@@ -1176,8 +1187,6 @@ export default {
     margin: 0;
     position: absolute;
     top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
   }
 }
 </style>
