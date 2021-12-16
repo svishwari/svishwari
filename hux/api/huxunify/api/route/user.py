@@ -529,6 +529,7 @@ class CreateTicket(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
         issue_details = TicketSchema().load(request.get_json())
+        # JIRA automated trigger activated when it sees '[REPORTED UI ISSUE]' in the title
         new_issue = JiraConnection().create_jira_issue(
             issue_type=issue_details[api_c.ISSUE_TYPE],
             summary=f"HUS: [REPORTED UI ISSUE] {issue_details[api_c.SUMMARY]}",
