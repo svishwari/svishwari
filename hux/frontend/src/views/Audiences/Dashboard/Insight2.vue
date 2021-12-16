@@ -2,7 +2,10 @@
   <div class="audience-insight-wrap">
     <dashboard-header
       :breadcrumb-items="breadcrumbItems"
+      :audience-data="audience"
       @onRefresh="refresh()"
+      @removeAudience="(data) => removeAudience(data)"
+      @favoriteAudience="(data) => favoriteAudience(data)"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div class="px-8 py-8">
@@ -655,6 +658,8 @@ export default {
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
       getEngagementById: "engagements/get",
+      deleteAudience: "audiences/remove",
+      markFavorite: "users/markFavorite",
     }),
     attributeOptions() {
       const options = []
@@ -769,6 +774,9 @@ export default {
           break
         case "remove-destination":
           await this.detachAudienceDestination(this.deleteActionData)
+          break
+        case "remove audience":
+          await this.deleteAudience({ id: this.audience.id })
           break
         default:
           break
@@ -1028,6 +1036,20 @@ export default {
         this.advertisingCols = 5
         this.showAdvertising = true
       }
+    },
+    removeAudience(data){
+      this.showConfirmModal = true
+      this.confirmDialog.title = "You are about to delete",
+      this.confirmDialog.btnText = "Yes, remove it"
+      this.confirmDialog.icon = "sad-face"
+      this.confirmDialog.subtitle = data.name,
+      this.confirmDialog.type = "error"
+      this.confirmDialog.body= "By deleting this audience you will not be able to recover it and it may impact any associated engagements."
+      this.confirmDialog.actionType="remove audience"
+      this.showConfirmModal = true
+    },
+    favoriteAudience(data){
+      this.markFavorite({ id: data.id, type: "audiences" })
     },
   },
 }

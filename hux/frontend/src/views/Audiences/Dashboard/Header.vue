@@ -31,12 +31,27 @@
             <div class="text--body-1 pb-2">Click to edit this audience</div>
           </template>
         </tooltip>
-        <icon
-          type="dots-vertical"
-          :size="18"
-          class="cursor-pointer mr-7"
-          color="black-darken4"
-        />
+        <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
+          <template #activator="{ on, attrs }">
+            <v-icon
+              v-bind="attrs"
+              class="cursor-pointer mr-7"
+              color="black-darken4"
+              :class="{ 'd-inline-block': openMenu }"
+              v-on="on"
+            >
+              mdi-dots-vertical
+            </v-icon>
+          </template>
+          <v-list class="list-wrapper">
+            <v-list-item-group>
+              <v-list-item @click="favoriteAudience()"> Favorite </v-list-item>
+              <v-list-item @click="initiateDelete()">
+                Delete audience
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
       </div>
     </template>
   </page-header>
@@ -57,13 +72,28 @@ export default {
       required: false,
       default: () => [],
     },
+    audienceData: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
   },
   data() {
-    return {}
+    return {
+      openMenu: false,
+    }
   },
   computed: {
     audienceId() {
       return this.$route.params.id
+    },
+  },
+  methods: {
+    initiateDelete() {
+      this.$emit("removeAudience", this.audienceData)
+    },
+    favoriteAudience(){
+      this.$emit("favoriteAudience", this.audienceData)
     },
   },
 }
