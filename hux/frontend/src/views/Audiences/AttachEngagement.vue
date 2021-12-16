@@ -489,19 +489,22 @@ export default {
       if (this.newEngagement.description) {
         payload["description"] = this.newEngagement.description
       }
-      const newEngagement = await this.addEngagementToDB(payload)
-      this.engagements.push(newEngagement)
-      this.engagements = this.engagements.sort((a, b) => {
-        return new Date(b.update_time) - new Date(a.update_time)
-      })
-      this.showSortIcon = false
-      this.onEngagementClick(newEngagement)
-      if (this.closeOnAction) {
-        this.$emit("onAddEngagement", newEngagement)
+      try {
+        const newEngagement = await this.addEngagementToDB(payload)
+        this.engagements.push(newEngagement)
+        this.engagements = this.engagements.sort((a, b) => {
+          return new Date(b.update_time) - new Date(a.update_time)
+        })
+        this.showSortIcon = false
+        this.onEngagementClick(newEngagement)
+        if (this.closeOnAction) {
+          this.$emit("onAddEngagement", newEngagement)
+          this.localDrawer = false
+        } else {
+          this.goToStep1()
+        }
         this.loading = false
-        this.localDrawer = false
-      } else {
-        this.goToStep1()
+      } finally {
         this.loading = false
       }
     },

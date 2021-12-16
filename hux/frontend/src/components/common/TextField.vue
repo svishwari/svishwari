@@ -160,6 +160,7 @@ export default {
       input {
         &::placeholder {
           color: var(--v-black-lighten4) !important;
+          font-size: 16px;
         }
       }
     }

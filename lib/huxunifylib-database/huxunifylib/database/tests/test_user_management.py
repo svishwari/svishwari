@@ -70,7 +70,12 @@ class TestUserManagement(unittest.TestCase):
             self.auth_details_facebook,
         )
 
-        self.audience = am.create_audience(self.database, "Test Audience", [])
+        self.audience = am.create_audience(
+            self.database,
+            "Test Audience",
+            [],
+            self.sample_user.get(db_c.USER_DISPLAY_NAME),
+        )
         self.lookalike_audience_doc = (
             dpm.create_delivery_platform_lookalike_audience(
                 self.database,

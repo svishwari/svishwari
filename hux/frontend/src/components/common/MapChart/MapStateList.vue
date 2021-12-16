@@ -3,7 +3,7 @@
     <hux-data-table
       :columns="columnDefs"
       :height="height"
-      :sort-column="customMetric"
+      :sort-column="sortMetric ? sortMetric : customMetric"
       :sort-desc="true"
       :data-items="stateListData"
       class="small-table"
@@ -88,6 +88,10 @@ export default {
       type: Array,
       required: false,
     },
+    sortMetric: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
@@ -97,7 +101,7 @@ export default {
         {
           text: "State",
           value: "name",
-          width: "40%",
+          width: "44%",
         },
         {
           text: "Avg. spend",

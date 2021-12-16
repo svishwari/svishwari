@@ -40,6 +40,7 @@
           :map-data="data.geo"
           :configuration-data="configurationData"
           :header-config="headerConfig"
+          :sort-metric="sortMetric"
           :height="330"
         />
       </div>
@@ -74,6 +75,7 @@ export default {
       showMapView: true,
       configurationData: configurationData,
       headerConfig: ["name", "population_percentage"],
+      sortMetric: "population_percentage",
     }
   },
 }

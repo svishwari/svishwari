@@ -982,6 +982,7 @@ class AudiencePostView(SwaggerView):
                 destination[db_c.OBJECT_ID] = ObjectId(
                     destination[db_c.OBJECT_ID]
                 )
+                destination[db_c.DATA_ADDED] = datetime.utcnow()
 
                 if not destination_management.get_delivery_platform(
                     get_db_client(), destination[db_c.OBJECT_ID]

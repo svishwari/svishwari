@@ -45,7 +45,10 @@ def set_engagement(
     Raises:
         DuplicateName: Error if an engagement with the same name exists
             already.
+        TypeError: Error user name is not a string.
     """
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
 
     # validate audiences
     validate_audiences(audiences, check_empty=False)
@@ -315,6 +318,12 @@ def get_engagements_summary(
                         "is_ad_platform": "$audiences.destinations.is_ad_platform",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
+                        "data_added": {
+                            "$ifNull": [
+                                "$audiences.destinations.data_added",
+                                None,
+                            ]
+                        },
                         "delivery_schedule": {
                             "$ifNull": [
                                 "$audiences.destinations.delivery_schedule",
@@ -501,7 +510,7 @@ def update_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
     user_name: str,
-    name: str = None,
+    name: str,
     description: str = None,
     audiences: list = None,
     delivery_schedule: dict = None,
@@ -524,7 +533,11 @@ def update_engagement(
 
     Raises:
         NoUpdatesSpecified: Error if no updates were done to the engagement.
+        TypeError: Error if user_name is not a string.
     """
+
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
 
     if audiences:
         validate_audiences(audiences, check_empty=True)
@@ -641,7 +654,11 @@ def append_audiences_to_engagement(
 
     Returns:
         Union[dict, None]: dict object of the engagement that has been updated.
+    Raises:
+        TypeError: Error user name is not a string.
     """
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
 
     # validate audiences
     validate_audiences(audiences)
@@ -850,7 +867,11 @@ def append_destination_to_engagement_audience(
 
     Returns:
         dict: updated engagement object.
+    Raises:
+        TypeError: Error user name is not a string.
     """
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION

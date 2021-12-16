@@ -32,7 +32,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # setup the audience
         self.audience = om.create_audience(
-            self.database, "all", [], [], self.user_name, 184
+            self.database, "all", [], self.user_name, [], 184
         )
 
         self.audience[db_c.OBJECT_ID] = self.audience[db_c.ID]
@@ -191,6 +191,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.database,
             engagement_id,
             self.user_name,
+            "Test Engagement",
             status="Inactive",
         )
 
@@ -680,7 +681,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # create another audience
         audience = om.create_audience(
-            self.database, "audience_group", [], [], self.user_name, 1560
+            self.database, "audience_group", [], self.user_name, [], 1560
         )
 
         for i in range(20):
@@ -770,8 +771,8 @@ class TestEngagementManagement(unittest.TestCase):
             self.database,
             "audience_group",
             [],
-            [],
             user_name=self.user_name,
+            destination_ids=[],
             size=1609,
         )
 
@@ -858,8 +859,8 @@ class TestEngagementManagement(unittest.TestCase):
             self.database,
             "audience_group",
             [],
-            [],
             user_name=self.user_name,
+            destination_ids=[],
             size=1609,
         )
 
@@ -960,10 +961,10 @@ class TestEngagementManagement(unittest.TestCase):
         }
 
         audience_one = om.create_audience(
-            self.database, "Audience1", [], [], self.user_name, 201
+            self.database, "Audience1", [], self.user_name, [], 201
         )
         audience_two = om.create_audience(
-            self.database, "Audience2", [], [], self.user_name, 202
+            self.database, "Audience2", [], self.user_name, [], 202
         )
 
         audience_one_dict = {
@@ -998,10 +999,10 @@ class TestEngagementManagement(unittest.TestCase):
     def test_remove_destination_from_engagement_audience(self):
         """Test removing a destination from an engagement audience"""
         audience_one = om.create_audience(
-            self.database, "Audience1", [], [], self.user_name, 201
+            self.database, "Audience1", [], self.user_name, [], 201
         )
         audience_two = om.create_audience(
-            self.database, "Audience2", [], [], self.user_name, 202
+            self.database, "Audience2", [], self.user_name, [], 202
         )
 
         audience_one_dict = {
@@ -1039,7 +1040,7 @@ class TestEngagementManagement(unittest.TestCase):
     def test_remove_destination_from_all_engagement_audience(self):
         """Test removing a destination from all engagement audience"""
         audience_one = om.create_audience(
-            self.database, "Audience1", [], [], self.user_name, 201
+            self.database, "Audience1", [], self.user_name, [], 201
         )
 
         audience_one_dict = {
@@ -1250,8 +1251,8 @@ class TestEngagementManagement(unittest.TestCase):
                     self.database,
                     f"audience{i}",
                     [],
-                    [],
                     self.user_name,
+                    [],
                     100 + i,
                 )
             )
