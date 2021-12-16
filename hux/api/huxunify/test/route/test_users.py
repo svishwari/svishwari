@@ -72,9 +72,9 @@ class TestUserRoutes(TestCase):
             return_value=self.database,
         ).start()
 
-        self.audience_id = create_audience(self.database, "Test Audience", [])[
-            db_c.ID
-        ]
+        self.audience_id = create_audience(
+            self.database, "Test Audience", [], "Felix Hernandez"
+        )[db_c.ID]
         self.delivery_platform = set_delivery_platform(
             self.database,
             db_c.DELIVERY_PLATFORM_FACEBOOK,
@@ -97,7 +97,7 @@ class TestUserRoutes(TestCase):
             "Test engagement",
             None,
             self.audiences,
-            None,
+            "Felix Hernandez",
             None,
             False,
         )
