@@ -80,7 +80,6 @@
       </div>
 
       <icon v-if="icon" :type="icon" :size="40" />
-      <!-- <v-icon v-if="icon" color="black lighten-2" x-large> {{ icon }} </v-icon> -->
 
       <slot name="short-name"></slot>
     </div>

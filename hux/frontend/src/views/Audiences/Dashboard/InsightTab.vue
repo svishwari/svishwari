@@ -199,16 +199,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-// ::v-deep .chart-container {
-//   margin-bottom: 16px !important;
-// }
-// ::v-deep .v-data-table {
-//   border-radius: 12px !important;
-// }
 .insight-tab {
-  //   .tab-padding {
-  //     padding-top: 0px !important;
-  //   }
   .list-tab {
     border-left: 1px solid var(--v-black-lighten3) !important;
     height: 386px !important;

@@ -124,10 +124,6 @@ export default {
   },
   computed: {
     availableRelationships() {
-      // const _sections = JSON.parse(JSON.stringify(this.sections))
-      // return _sections.sort(function (a, b) {
-      //   return new Date(b.update_time) - new Date(a.update_time)
-      // })
       return this.sections
     },
     sectionActions() {
