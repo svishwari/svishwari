@@ -144,6 +144,7 @@ class TestDeliveryRoutes(TestCase):
                         ],
                     }
                 ],
+                api_c.USER_NAME: self.user_name,
                 api_c.DESTINATION_IDS: [d[db_c.ID] for d in self.destinations],
             },
             {
@@ -160,6 +161,7 @@ class TestDeliveryRoutes(TestCase):
                         ],
                     }
                 ],
+                api_c.USER_NAME: self.user_name,
             },
         ]
 

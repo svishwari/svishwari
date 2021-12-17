@@ -122,6 +122,16 @@ client["destinations"].createDataExtension = (resourceId, data) => {
 //#endregion
 
 //#region Engagement custom endpoints
+client["engagements"].allFiltered = (data) => {
+  let URLData = []
+  for (const property in data) {
+    let formURL = property + "=" + data[property]
+    URLData.push(formURL)
+  }
+  let newURLFormat = URLData.join("@").toString().replace(/@/g, "&")
+  return http.get(`/engagements?${newURLFormat}`)
+}
+
 client["engagements"].deliver = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/deliver`, data)
 }
@@ -304,8 +314,8 @@ client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
-client["audiences"].deliveries = (id) => {
-  return http.get(`/audiences/${id}/delivery-history`)
+client["audiences"].deliveries = (resourceId, query) => {
+  return http.get(`/audiences/${resourceId}/delivery-history?${query}`)
 }
 
 client["audiences"].geoCities = (resourceId, batchNumber, batchSize) => {
@@ -324,6 +334,14 @@ client["audiences"].geoStates = (resourceId) => {
 
 client["audiences"].remove = (resourceId) => {
   return http.delete(`/audiences/${resourceId}`)
+}
+
+client["audiences"].histogram = (field, model) => {
+  let url = `/audiences/rules/${field}/histogram`
+  if (model) {
+    url = url + `?model_name=${model}`
+  }
+  return http.get(url)
 }
 //#endregion
 

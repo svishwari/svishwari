@@ -663,29 +663,31 @@ export default {
     }),
     attributeOptions() {
       const options = []
-      Object.values(this.ruleAttributes.rule_attributes).forEach((attr) => {
-        Object.keys(attr).forEach((optionKey) => {
-          if (
-            Object.values(attr[optionKey])
-              .map((o) => typeof o === "object" && !Array.isArray(o))
-              .includes(Boolean(true))
-          ) {
-            Object.keys(attr[optionKey]).forEach((att) => {
-              if (typeof attr[optionKey][att] === "object") {
-                options.push({
-                  key: att,
-                  name: attr[optionKey][att]["name"],
-                })
-              }
-            })
-          } else {
-            options.push({
-              key: optionKey,
-              name: attr[optionKey]["name"],
-            })
-          }
+      if (this.ruleAttributes && this.ruleAttributes.rule_attributes) {
+        Object.values(this.ruleAttributes.rule_attributes).forEach((attr) => {
+          Object.keys(attr).forEach((optionKey) => {
+            if (
+              Object.values(attr[optionKey])
+                .map((o) => typeof o === "object" && !Array.isArray(o))
+                .includes(Boolean(true))
+            ) {
+              Object.keys(attr[optionKey]).forEach((att) => {
+                if (typeof attr[optionKey][att] === "object") {
+                  options.push({
+                    key: att,
+                    name: attr[optionKey][att]["name"],
+                  })
+                }
+              })
+            } else {
+              options.push({
+                key: optionKey,
+                name: attr[optionKey]["name"],
+              })
+            }
+          })
         })
-      })
+      }
       return options
     },
     async refresh() {
@@ -1051,6 +1053,7 @@ export default {
     },
     favoriteAudience(data) {
       this.markFavorite({ id: data.id, type: "audiences" })
+      this.refreshEntity()
     },
   },
 }

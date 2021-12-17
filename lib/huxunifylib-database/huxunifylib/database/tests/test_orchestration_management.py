@@ -197,6 +197,7 @@ class TestAudienceManagement(unittest.TestCase):
         doc = am.update_audience(
             self.database,
             audience_doc[db_c.ID],
+            self.user_name,
             new_name,
         )
 
@@ -215,8 +216,8 @@ class TestAudienceManagement(unittest.TestCase):
         doc = am.update_audience(
             self.database,
             audience_doc[db_c.ID],
-            destination_ids=self.destination_ids,
             user_name=self.user_name,
+            destination_ids=self.destination_ids,
         )
         self.assertTrue(doc is not None)
         self.assertTrue(db_c.AUDIENCE_NAME in doc)
@@ -237,6 +238,7 @@ class TestAudienceManagement(unittest.TestCase):
                 self.database,
                 "Audience1",
                 self.audience_filters,
+                self.user_name,
             )
 
     def test_update_audience_filters(self):
@@ -272,9 +274,9 @@ class TestAudienceManagement(unittest.TestCase):
         doc = am.update_audience(
             self.database,
             audience_doc[db_c.ID],
+            self.user_name,
             audience_doc[db_c.AUDIENCE_NAME],
             new_filters,
-            user_name=self.user_name,
         )
 
         self.assertTrue(doc is not None)
@@ -295,8 +297,8 @@ class TestAudienceManagement(unittest.TestCase):
             self.database,
             "My Audience",
             self.audience_filters,
-            self.destination_ids,
             self.user_name,
+            self.destination_ids,
         )
         doc = am.get_audience(self.database, set_audience[db_c.ID])
 
@@ -313,8 +315,8 @@ class TestAudienceManagement(unittest.TestCase):
             self.database,
             "My Audience",
             self.audience_filters,
-            self.destination_ids,
             self.user_name,
+            self.destination_ids,
         )
         doc = am.get_audience(self.database, set_audience[db_c.ID])
 
@@ -328,6 +330,7 @@ class TestAudienceManagement(unittest.TestCase):
         am.update_audience(
             self.database,
             set_audience[db_c.ID],
+            self.user_name,
             "My Audience",
             self.audience_filters,
             new_destination_ids,
