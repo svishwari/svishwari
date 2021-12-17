@@ -11,14 +11,25 @@
         </div>
       </template>
       <template #right>
-        <icon
-          type="filter"
-          :size="22"
-          class="cursor-pointer"
-          color="black-darken4"
-          data-e2e="audienceFilterToggle"
-          @click.native="isFilterToggled = !isFilterToggled"
-        />
+        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+          <icon
+            type="filter"
+            :size="27"
+            :color="numFiltersSelected > 0 ? 'primary' : 'black'"
+            :variant="numFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+          />
+          <v-badge
+            v-if="numFiltersSelected > 0"
+            :content="numFiltersSelected"
+            color="white"
+            offset-x="6"
+            offset-y="4"
+            light
+            bottom
+            overlap
+            bordered
+          />
+        </v-btn>
       </template>
     </page-header>
     <div
@@ -317,6 +328,7 @@
           v-model="isFilterToggled"
           view-height="calc(100vh - 180px)"
           :filter-options="attributeOptions()"
+          @selected-filters="totalFiltersSelected"
           @onSectionAction="applyFilter"
         />
       </div>
@@ -399,6 +411,7 @@ export default {
   },
   data() {
     return {
+      numFiltersSelected: 0,
       breadcrumbItems: [
         {
           text: "Audiences",
@@ -530,6 +543,10 @@ export default {
       deleteAudience: "audiences/remove",
       getAudiencesRules: "audiences/fetchConstants",
     }),
+
+    totalFiltersSelected(value) {
+      this.numFiltersSelected = value
+    },
 
     attributeOptions() {
       const options = []
