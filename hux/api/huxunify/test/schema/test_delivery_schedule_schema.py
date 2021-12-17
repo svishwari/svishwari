@@ -43,9 +43,8 @@ class DeliveryScheduleSchemaTest(TestCase):
         }
 
         daily_schedule = DeliveryScheduleDailySchema().load(doc)
-        _ = [
-            self.assertIn(type(x), [int, str]) for x in daily_schedule.values()
-        ]
+        for value in daily_schedule.values():
+            self.assertIn(type(value), [int, str])
         self.assertEqual(daily_schedule[api_c.PERIODICIY], api_c.DAILY)
         self.assertFalse(DeliveryScheduleDailySchema().validate(doc))
 
@@ -88,10 +87,8 @@ class DeliveryScheduleSchemaTest(TestCase):
         }
 
         weekly_schedule = DeliveryScheduleWeeklySchema().load(doc)
-        _ = [
-            self.assertIn(type(x), [int, str, list])
-            for x in weekly_schedule.values()
-        ]
+        for value in weekly_schedule.values():
+            self.assertIn(type(value), [int, str, list])
         self.assertEqual(weekly_schedule[api_c.PERIODICIY], api_c.WEEKLY)
         self.assertFalse(DeliveryScheduleWeeklySchema().validate(doc))
 
@@ -135,9 +132,7 @@ class DeliveryScheduleSchemaTest(TestCase):
         }
 
         monthly_schedule = DeliveryScheduleMonthlySchema().load(doc)
-        _ = [
-            self.assertIn(type(x), [int, str, list])
-            for x in monthly_schedule.values()
-        ]
+        for value in monthly_schedule.values():
+            self.assertIn(type(value), [int, str, list])
         self.assertEqual(monthly_schedule[api_c.PERIODICIY], api_c.MONTHLY)
         self.assertFalse(DeliveryScheduleMonthlySchema().validate(doc))
