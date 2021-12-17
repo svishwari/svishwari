@@ -86,14 +86,14 @@ export default {
 <style lang="scss" scoped>
 .match-rate-wrapper {
   .match-rate {
-    background-color: #f9fafb !important;
+    background-color: var(--v-primary-lighten1) !important;
     .matchrate-header {
-      background-color: #f9fafb !important;
+      background-color: var(--v-primary-lighten1) !important;
       border: none !important;
     }
     .matchrate-list {
-      background-color: #ffffff !important;
-      border: 1px solid #e2eaec;
+      background-color: var(--v-white-base) !important;
+      border: 1px solid var(--v-black-lighten2);
       box-sizing: border-box;
       border-radius: 4px;
       display: flex;
@@ -102,7 +102,7 @@ export default {
     }
   }
   .no-match-rate {
-    background: #f9fafb;
+    background: var(--v-primary-lighten1);
   }
 }
 </style>

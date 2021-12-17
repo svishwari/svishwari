@@ -87,16 +87,17 @@ export default {
     }
     .lookialike-destination {
       .rounded-sm {
-        border: 1px solid #e2eaec;
+        border: 1px solid var(--v-black-lighten2);
         border-radius: 12px !important;
         .v-card__title {
-          background: #f9fafb;
+          background: var(--v-primary-lighten1);
         }
       }
     }
   }
   .no-lookalike {
-    background: #f9fafb;
+    background: var(--v-primary-lighten1);
   }
 }
 </style>
+lighten1

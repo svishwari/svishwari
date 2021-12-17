@@ -146,8 +146,8 @@ export default {
     height: 60px !important;
     display: inline-table;
     width: 100%;
-    background: #f9fafb;
-    border: 1px solid #e2eaec;
+    background: var(--v-primary-lighten1);
+    border: 1px solid var(--v-black-lighten2);
     border-radius: 5px;
   }
 }
