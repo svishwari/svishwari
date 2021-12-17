@@ -436,7 +436,7 @@ export default {
   display: table;
   .deliver-icon {
     &.disabled {
-      color: #d0d0ce;
+      color: var(--v-black-lighten3);
     }
   }
   .status-list {
