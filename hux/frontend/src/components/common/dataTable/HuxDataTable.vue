@@ -64,7 +64,8 @@
             :item="item"
             :expandFunc="expand"
             :isExpanded="isExpanded"
-          ></slot>
+          >
+          </slot>
         </template>
 
         <template v-if="hasData && !nested" #body="{ nestedHeaders, items }">
