@@ -6,6 +6,7 @@
       @onRefresh="refresh()"
       @removeAudience="(data) => removeAudience(data)"
       @favoriteAudience="(data) => favoriteAudience(data)"
+      @openDownloadDrawer="() => openDownloadDrawer()"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div class="px-8 py-8">
@@ -356,6 +357,12 @@
       data-e2e="delivery-history-drawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
+
+    <download-audience-drawer
+      :value="toggleDownloadAudienceDrawer"
+      :toggle="toggleDownloadAudienceDrawer"
+      @onToggle="(isToggled) => (toggleDownloadAudienceDrawer = isToggled)"
+    />
   </div>
 </template>
 
@@ -385,6 +392,7 @@ import StandaloneDelivery from "@/views/Audiences/Dashboard/StandaloneDelivery.v
 import Matchrate from "@/views/Audiences/Dashboard/Matchrate.vue"
 import Error from "@/components/common/screens/Error"
 import InsightTab from "@/views/Audiences/Dashboard/InsightTab.vue"
+import DownloadAudienceDrawer from "@/views/Shared/Drawers/DownloadAudienceDrawer.vue"
 
 export default {
   name: "AudienceInsight",
@@ -406,6 +414,7 @@ export default {
     Matchrate,
     Error,
     InsightTab,
+    DownloadAudienceDrawer,
   },
   data() {
     return {
@@ -504,6 +513,7 @@ export default {
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
         actionType: "remove-audience",
       },
+      toggleDownloadAudienceDrawer: false,
     }
   },
   computed: {
@@ -1054,6 +1064,9 @@ export default {
     favoriteAudience(data) {
       this.markFavorite({ id: data.id, type: "audiences" })
       this.refreshEntity()
+    },
+    openDownloadDrawer() {
+      this.toggleDownloadAudienceDrawer = true
     },
   },
 }

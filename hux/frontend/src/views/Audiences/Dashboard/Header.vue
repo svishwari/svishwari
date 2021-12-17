@@ -57,6 +57,9 @@
               <v-list-item @click="initiateDelete()">
                 Delete audience
               </v-list-item>
+              <v-list-item @click="openDownloadDrawer()">
+                Download as
+              </v-list-item>
             </v-list-item-group>
           </v-list>
         </v-menu>
@@ -102,6 +105,9 @@ export default {
     },
     favoriteAudience() {
       this.$emit("favoriteAudience", this.audienceData)
+    },
+    openDownloadDrawer() {
+      this.$emit("openDownloadDrawer")
     },
   },
 }

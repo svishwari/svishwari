@@ -12,6 +12,7 @@ const state = {
     token: null,
     idToken: null,
     bugsReported: [],
+    pii_access: false,
   },
   users: [],
 }
@@ -133,6 +134,8 @@ const getters = {
   },
 
   getEmailAddress: (state) => state.userProfile.email,
+
+  getPiiAccess: (state) => state.userProfile.pii_access,
 
   getUsers: (state) => state.users,
 
