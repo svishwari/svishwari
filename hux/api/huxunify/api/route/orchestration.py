@@ -737,9 +737,6 @@ class AudienceGetView(SwaggerView):
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
         # set the list of standalone_deliveries for an audience
         standalone_deliveries = get_audience_standalone_deliveries(audience_id)
-        # audience[
-        #     api_c.AUDIENCE_STANDALONE_DELIVERIES
-        # ] = get_audience_standalone_deliveries(audience_id)
 
         # get the max last delivered date for all destinations in an audience
         delivery_times = [
