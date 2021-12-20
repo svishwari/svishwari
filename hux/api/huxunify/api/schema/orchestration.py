@@ -66,7 +66,7 @@ class DeliveriesSchema(Schema):
     name = fields.String()
     status = fields.String()
     size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
-    match_rate = fields.Float(default=0, example=0.21)
+    match_rate = fields.Float(allow_none=True, example=0.21)
     delivery_platform_type = fields.String()
     delivery_platform_id = fields.String()
     is_ad_platform = fields.Bool(attribute=api_c.IS_AD_PLATFORM)
@@ -84,6 +84,20 @@ class EngagementDeliverySchema(EngagementGetSchema):
     # TOOO - HUS-740
     next_delivery = fields.String()
     delivery_schedule = fields.String(default="Daily")
+
+
+class DigitalAdvertisingMatchRates(Schema):
+    """Match rates schema for digital advertising."""
+
+    destination = fields.String(required=True, example="facebook")
+    match_rate = fields.Float(allow_none=True)
+    last_delivery = DateTimeWithZ(allow_none=True)
+
+
+class DigitAdvertising(Schema):
+    """Digital advertising schema."""
+
+    match_rates = fields.List(fields.Nested(DigitalAdvertisingMatchRates))
 
 
 class AudienceGetSchema(Schema):
@@ -154,6 +168,7 @@ class AudienceGetSchema(Schema):
     source_exists = fields.Boolean()
     match_rate = fields.Float(default=0)
     favorite = fields.Boolean(default=False)
+    digital_advertising = fields.Nested(DigitAdvertising, allow_none=True)
 
 
 class CityIncomeInsightsSchema(Schema):

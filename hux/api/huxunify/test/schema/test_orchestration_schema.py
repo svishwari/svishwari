@@ -48,6 +48,17 @@ class OrchestrationSchemaTest(TestCase):
             db_c.UPDATE_TIME: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
+            api_c.DIGITAL_ADVERTISING: {
+                api_c.MATCH_RATES: [
+                    {
+                        api_c.MATCH_RATE: 0,
+                        api_c.AUDIENCE_LAST_DELIVERY: datetime.strftime(
+                            datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
+                        ),
+                        api_c.DESTINATION: "facebook",
+                    }
+                ]
+            },
         }
 
         self.assertFalse(AudienceGetSchema().validate(doc))

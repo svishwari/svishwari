@@ -81,6 +81,7 @@ from huxunify.api.route.utils import (
     is_component_favorite,
     get_user_favorites,
     convert_unique_city_filter,
+    match_rate_data_for_audience,
 )
 
 # setup the orchestration blueprint
@@ -670,6 +671,7 @@ class AudienceGetView(SwaggerView):
             audience[db_c.ID],
         )
 
+        match_rate_data = {}
         # process each engagement
         logger.info("Processing each engagement.")
         engagements = []
@@ -697,12 +699,15 @@ class AudienceGetView(SwaggerView):
             # above to remove empty and not-delivered deliveries
             if api_c.DELIVERIES in engagement:
                 for delivery in engagement[api_c.DELIVERIES]:
-                    delivery[api_c.MATCH_RATE] = (
-                        0
-                        if delivery.get(api_c.IS_AD_PLATFORM, False)
-                        and not audience.get(api_c.IS_LOOKALIKE, False)
-                        else None
-                    )
+
+                    if delivery.get(api_c.IS_AD_PLATFORM) and not audience.get(
+                        api_c.IS_LOOKALIKE, False
+                    ):
+                        # Todo remove when actual match rates are
+                        #  populated.
+                        delivery[api_c.MATCH_RATE] = 0
+                        match_rate_data_for_audience(delivery, match_rate_data)
+
                     # Update time field can be missing if no deliveries.
                     if not delivery.get(db_c.UPDATE_TIME):
                         delivery[db_c.UPDATE_TIME] = None
@@ -730,11 +735,11 @@ class AudienceGetView(SwaggerView):
         logger.info("Successfully processed each engagement.")
         # set the list of engagements for an audience
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
-
         # set the list of standalone_deliveries for an audience
-        audience[
-            api_c.AUDIENCE_STANDALONE_DELIVERIES
-        ] = get_audience_standalone_deliveries(audience_id)
+        standalone_deliveries = get_audience_standalone_deliveries(audience_id)
+        # audience[
+        #     api_c.AUDIENCE_STANDALONE_DELIVERIES
+        # ] = get_audience_standalone_deliveries(audience_id)
 
         # get the max last delivered date for all destinations in an audience
         delivery_times = [
@@ -758,15 +763,14 @@ class AudienceGetView(SwaggerView):
             else []
         )
 
-        # get live audience size
-        customers = get_customers_overview(
+        # Add insights, size.
+        audience[api_c.AUDIENCE_INSIGHTS] = get_customers_overview(
             token_response[0],
             {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
         )
-
-        # Add insights, size.
-        audience[api_c.AUDIENCE_INSIGHTS] = customers
-        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS, 0)
+        audience[api_c.SIZE] = audience[api_c.AUDIENCE_INSIGHTS].get(
+            api_c.TOTAL_CUSTOMERS, 0
+        )
 
         # query DB and populate lookalike audiences in audience dict only if
         # the audience is not a lookalike audience since lookalike audience
@@ -779,12 +783,39 @@ class AudienceGetView(SwaggerView):
             else []
         )
 
-        audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+        for delivery in standalone_deliveries:
+            if delivery.get(api_c.IS_AD_PLATFORM) and not audience.get(
+                api_c.IS_LOOKALIKE, False
+            ):
+                match_rate_data_for_audience(delivery, match_rate_data)
 
-        audience[api_c.FAVORITE] = is_component_favorite(
-            user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
+        audience.update(
+            {
+                api_c.DIGITAL_ADVERTISING: {
+                    api_c.MATCH_RATES: [
+                        {
+                            api_c.DESTINATION: delivery_platform_data[0],
+                            api_c.MATCH_RATE: delivery_platform_data[1].get(
+                                api_c.MATCH_RATE
+                            ),
+                            api_c.AUDIENCE_LAST_DELIVERY: delivery_platform_data[
+                                1
+                            ].get(
+                                api_c.AUDIENCE_LAST_DELIVERY
+                            ),
+                        }
+                        for delivery_platform_data in match_rate_data.items()
+                    ]
+                }
+                if match_rate_data
+                else None,
+                api_c.AUDIENCE_STANDALONE_DELIVERIES: standalone_deliveries,
+                api_c.LOOKALIKEABLE: is_audience_lookalikeable(audience),
+                api_c.FAVORITE: is_component_favorite(
+                    user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
+                ),
+            }
         )
-
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,
