@@ -17,7 +17,6 @@ from huxunify.api import constants as api_c
 from huxunify.api.data_connectors import okta
 from huxunify.api.route.decorators import (
     secured,
-    get_user_name,
     requires_access_levels,
 )
 from huxunify.api.data_connectors.okta import (
@@ -25,7 +24,6 @@ from huxunify.api.data_connectors.okta import (
     get_token_from_request,
 )
 from huxunify.test import constants as t_c
-
 
 VALID_RESPONSE = {
     "active": True,
@@ -297,7 +295,7 @@ class OktaTest(TestCase):
         invalid_header = (api_c.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context("/"):
 
-            @get_user_name()
+            @requires_access_levels(api_c.USER_ROLE_ALL)
             def demo_endpoint():
                 """Demo endpoint.
 
@@ -326,18 +324,18 @@ class OktaTest(TestCase):
             "/", headers=t_c.AUTH_HEADER
         ):
 
-            @get_user_name()
-            def demo_endpoint(user_name=None) -> str:
+            @requires_access_levels(api_c.USER_ROLE_ALL)
+            def demo_endpoint(user=None) -> str:
                 """Demo endpoint.
 
                 Args:
-                    user_name (str): User name value.
+                    user (str): User object.
 
                 Returns:
                     user_name (str): User name value.
                 """
 
-                return user_name
+                return user[db_c.USER_NAME]
 
             # true means the endpoint and token call were successfully passed.
             self.assertIsInstance(demo_endpoint(), str)
