@@ -13,7 +13,7 @@
         >
           <tooltip>
             <template #label-content>
-              <span class="ellipsis primary--text text-h3">
+              <span class="primary--text text-h3">
                 {{ section.name }}
               </span>
             </template>

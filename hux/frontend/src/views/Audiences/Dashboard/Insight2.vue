@@ -101,7 +101,7 @@
             <template #subtitle-extended>
               <tooltip>
                 <template #label-content>
-                  <div class="men mr-1 font-weight-semi-bold">
+                  <div class="men mr-1">
                     M: {{ audienceInsights.gender_men | Percentage | Empty }}
                   </div>
                 </template>
@@ -980,6 +980,7 @@ export default {
           data: payload,
         })
         this.refresh()
+        this.refreshEntity()
       } else {
         const payload = { audience_ids: [] }
         payload.audience_ids.push(this.audienceId)
@@ -987,7 +988,9 @@ export default {
           engagementId: event.data.id,
           data: payload,
         })
-        this.refresh()
+        this.$router.push({
+          name: "AudienceUpdate",
+        })
       }
     },
     async loadAudienceInsights() {
@@ -997,7 +1000,6 @@ export default {
         this.getAudiencesRules()
         await this.getAudienceById(this.$route.params.id)
         const _getAudience = this.getAudience(this.$route.params.id)
-        // await this.loadEngagement(_getAudience.id)
         if (_getAudience && this.refreshAudience) {
           this.audienceData = JSON.parse(JSON.stringify(_getAudience))
         }
