@@ -60,6 +60,7 @@ export default {
       let count = 0
       if (this.selectedFavourite) count++
       if (this.selectedEngagementsWorkedWith) count++
+      this.$emit("selected-filters", count)
       return count
     },
   },

@@ -717,6 +717,11 @@ class TectonMockConnector(Tecton):
 
         models = []
 
+        category_map = {
+            "Propensity to Unsubscribe": api_c.EMAIL.title(),
+            "LTV": api_c.SALES_FORECASTING,
+            "Lifetime Value": api_c.SALES_FORECASTING,
+        }
         for meta_data in response.json()[api_c.RESULTS]:
             # get model metadata from tecton
             feature = meta_data[api_c.FEATURES]
@@ -735,6 +740,9 @@ class TectonMockConnector(Tecton):
                 api_c.LATEST_VERSION: feature[9],
                 api_c.PREDICTION_WINDOW: int(feature[3]),
                 api_c.PAST_VERSION_COUNT: 0,
+                api_c.CATEGORY: category_map.get(
+                    feature[4], api_c.UNCATEGORIZED
+                ),
             }
             models.append(model)
 
