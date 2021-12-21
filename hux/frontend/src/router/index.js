@@ -203,7 +203,7 @@ const routes = [
   //TODO: HUS-1817 remove once step 3 is also done.
   {
     path: "/eng/add",
-    name: "EngagementConfiguration",
+    name: "EngagementAdd",
     component: () => import("@/views/Engagements/Configuration/AddIndex.vue"),
     meta: {
       layout: "app",
