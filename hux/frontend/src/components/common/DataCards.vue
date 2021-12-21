@@ -16,7 +16,7 @@
         >
           <v-col v-for="field in fields" :key="field.label" :cols="field.col">
             <div class="px-4 py-2">
-              <span class="text-subtitle-2 black--text text--darken-1">
+              <span class="text-body-2 black--text text--lighten-4">
                 {{ field.label }}
                 <v-btn
                   v-if="field.sortable"
@@ -190,6 +190,7 @@ export default {
 }
 
 .bordered-card {
-  border-left: 8px solid var(--v-primary-lighten2);
+  border-left: 8px solid var(--v-primary-lighten6);
+  border-radius: 0px;
 }
 </style>
