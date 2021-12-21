@@ -1,5 +1,5 @@
 """Purpose of this file is to house route utilities"""
-from datetime import datetime
+from datetime import datetime, date
 import re
 import csv
 from typing import Tuple, Union
@@ -655,3 +655,44 @@ def convert_unique_city_filter(request_json: dict) -> dict:
     except ValueError:
         logger.info("Incorrect Audience Filter Object")
         return request_json
+
+
+def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
+    """To get digital platform data for engaged audience delivery.
+
+    Args:
+        delivery (dict): Audience delivery data.
+        match_rate_data (dict): Match rate data as dictionary, destination
+        will be the key.
+    """
+
+    if match_rate_data is None:
+        match_rate_data = {}
+    if delivery.get(api_c.STATUS, "").lower() == api_c.DELIVERED:
+        # Digital platform data will be populated based
+        # on last successful delivery to an ad_platform.
+        if match_rate_data.get(delivery.get(api_c.DELIVERY_PLATFORM_TYPE)):
+            # Always ensure the latest successful
+            # delivery is considered.
+            if delivery.get(db_c.UPDATE_TIME) > match_rate_data[
+                delivery.get(api_c.DELIVERY_PLATFORM_TYPE)
+            ].get(api_c.AUDIENCE_LAST_DELIVERY, date.min):
+                match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
+                    api_c.AUDIENCE_LAST_DELIVERY: delivery.get(
+                        db_c.UPDATE_TIME
+                    ),
+                    api_c.MATCH_RATE: 0,
+                }
+        else:
+            match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
+                api_c.AUDIENCE_LAST_DELIVERY: delivery.get(db_c.UPDATE_TIME),
+                api_c.MATCH_RATE: 0,
+            }
+
+    else:
+        # Delivery jobs on ad_platforms undelivered.
+        if not match_rate_data.get(delivery.get(api_c.DELIVERY_PLATFORM_TYPE)):
+            match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
+                api_c.AUDIENCE_LAST_DELIVERY: None,
+                api_c.MATCH_RATE: None,
+            }

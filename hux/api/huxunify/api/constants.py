@@ -111,6 +111,7 @@ HEALTH_CHECK = "healthcheck"
 
 TOTAL_RECORDS = "total_records"
 MATCH_RATE = "match_rate"
+MATCH_RATES = "match_rates"
 TOTAL = "total"
 TOTAL_UNIQUE_IDS = "total_unique_ids"
 TOTAL_UNKNOWN_IDS = "total_unknown_ids"
@@ -194,6 +195,7 @@ AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
+DIGITAL_ADVERTISING = "digital_advertising"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
     "AL": "Alabama",
@@ -857,6 +859,7 @@ AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
+AUDIENCE_LAST_DELIVERY = "last_delivery"
 AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE_PERCENTAGE = "audience_size_percentage"
 AUDIENCE_STANDALONE_DELIVERIES = "standalone_deliveries"
