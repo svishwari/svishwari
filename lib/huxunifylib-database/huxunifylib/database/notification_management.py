@@ -1,6 +1,5 @@
 """This module enables functionality related to notification management."""
 import logging
-import warnings
 from datetime import datetime
 from typing import Union, List, Any, Dict
 
@@ -13,7 +12,6 @@ import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.db_exceptions import (
     InvalidNotificationType,
-    InvalidValueException,
     MissingValueException,
 )
 
