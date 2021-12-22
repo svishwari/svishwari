@@ -847,6 +847,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.assertIn(db_c.DESTINATIONS, audience)
             self.assertIn(db_c.OBJECT_ID, audience)
             self.assertIn(db_c.SIZE, audience)
+            self.assertIn(db_c.AUDIENCE_FILTERS, audience)
             if not audience[db_c.DESTINATIONS]:
                 continue
             for destination in audience[db_c.DESTINATIONS]:
@@ -947,6 +948,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.assertIn(db_c.DESTINATIONS, audience)
             self.assertIn(db_c.OBJECT_ID, audience)
             self.assertIn(db_c.SIZE, audience)
+            self.assertIn(db_c.AUDIENCE_FILTERS, audience)
             if not audience[db_c.DESTINATIONS]:
                 continue
             for destination in audience[db_c.DESTINATIONS]:
