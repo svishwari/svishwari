@@ -45,14 +45,13 @@
           :key="index"
           :class="{
             'bordered-card': bordered,
-            'data-card-selected': isAdded(item),
             'mt-0': index == 0,
           }"
           class="data-card my-3"
         >
           <v-row align="center" no-gutters>
             <v-col v-for="field in fields" :key="field.key" :cols="field.col">
-              <div class="pa-4">
+              <div :class="cardClass">
                 <!-- cell slot -->
                 <slot
                   :name="`field:${field.key}`"
@@ -116,10 +115,11 @@ export default {
       required: false,
       default: false,
     },
-    selectedItems: {
-      type: [Object, Array],
+
+    cardClass: {
+      type: String,
       required: false,
-      default: () => [],
+      default: "pa-4",
     },
   },
 
@@ -156,19 +156,6 @@ export default {
     isSortedBy(key) {
       return Boolean(this.sortBy === key)
     },
-
-    isAdded(item) {
-      if (Array.isArray(this.selectedItems)) {
-        return Boolean(
-          this.selectedItems &&
-            this.selectedItems.filter(
-              (selectedItem) => selectedItem.id === item.id
-            ).length > 0
-        )
-      } else {
-        return Boolean(this.selectedItems && this.selectedItems[item.id])
-      }
-    },
   },
 }
 </script>
@@ -176,13 +163,6 @@ export default {
 <style lang="scss" scoped>
 .data-card {
   @extend .box-shadow-5;
-}
-.data-card-selected {
-  border: 1px solid var(--v-black-lighten2) !important;
-  background-color: var(--v-primary-lighten1) !important;
-  &:hover {
-    @extend .box-shadow-25;
-  }
 }
 .empty-card {
   border: 1px solid var(--v-black-lighten2) !important;

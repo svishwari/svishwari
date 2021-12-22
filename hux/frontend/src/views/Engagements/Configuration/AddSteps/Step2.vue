@@ -5,6 +5,7 @@
       v-show="Object.values(value.audiences).length > 0"
       bordered
       class="mr-4"
+      card-class="py-5 pa-4"
       :items="Object.values(value.audiences)"
       :fields="[
         {
@@ -291,7 +292,7 @@ export default {
   .add-aud-to-eng {
     display: flex;
     align-items: center;
-    padding: 15px 28px;
+    padding: 19px 28px;
     margin-right: 16px;
     border: 1px solid var(--v-black-lighten2) !important;
     background-color: var(--v-primary-lighten1) !important;
