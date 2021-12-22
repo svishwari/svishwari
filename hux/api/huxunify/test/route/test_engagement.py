@@ -1180,9 +1180,6 @@ class TestEngagementRoutes(TestCase):
                 for audience in return_engagement[api_c.AUDIENCES]
             )
         )
-        self.assertIn(
-            api_c.AUDIENCE_FILTERS, return_engagement[api_c.AUDIENCES]
-        )
         self.assertIn(t_c.DESTINATIONS_CATEGORY, return_engagement)
         self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
         self.assertTrue(return_engagement[api_c.FAVORITE])
