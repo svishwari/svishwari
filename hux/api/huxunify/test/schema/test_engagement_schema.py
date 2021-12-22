@@ -79,7 +79,9 @@ class EngagementSchemaTest(TestCase):
             for destination in audience[db_c.DESTINATIONS]:
                 # test destination id and delivery job id
                 self.assertIsInstance(destination[db_c.OBJECT_ID], ObjectId)
-                self.assertIsInstance(destination[db_c.DELIVERY_JOB_ID], ObjectId)
+                self.assertIsInstance(
+                    destination[db_c.DELIVERY_JOB_ID], ObjectId
+                )
 
     def test_unsuccessful_engagement_get_schema_bad_name(self) -> None:
         """Test unsuccessful EngagementGetSchema."""
@@ -387,7 +389,9 @@ class EngagementSchemaTest(TestCase):
         }
 
         # check engagement status per weighting
-        self.assertEqual(db_c.STATUS_FAILED, weight_delivery_status(engagement))
+        self.assertEqual(
+            db_c.STATUS_FAILED, weight_delivery_status(engagement)
+        )
 
     def test_weight_delivery_bad_status(self) -> None:
         """Test weight delivery status with a bad status."""
@@ -461,7 +465,8 @@ class EngagementSchemaTest(TestCase):
                                         api_c.MATCH_RATE: 0,
                                         api_c.STATUS: api_c.STATUS_DELIVERED,
                                         db_c.UPDATE_TIME: datetime.strftime(
-                                            datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
+                                            datetime.utcnow(),
+                                            "%Y-%m-%d %H:%M:%S.%f",
                                         ),
                                         api_c.SIZE: 2439,
                                     },
