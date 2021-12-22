@@ -16,6 +16,7 @@ from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
 from huxunify.api import constants as api_c
+import huxunify.test.constants as t_c
 
 
 class EngagementSchemaTest(TestCase):
@@ -78,9 +79,7 @@ class EngagementSchemaTest(TestCase):
             for destination in audience[db_c.DESTINATIONS]:
                 # test destination id and delivery job id
                 self.assertIsInstance(destination[db_c.OBJECT_ID], ObjectId)
-                self.assertIsInstance(
-                    destination[db_c.DELIVERY_JOB_ID], ObjectId
-                )
+                self.assertIsInstance(destination[db_c.DELIVERY_JOB_ID], ObjectId)
 
     def test_unsuccessful_engagement_get_schema_bad_name(self) -> None:
         """Test unsuccessful EngagementGetSchema."""
@@ -211,7 +210,7 @@ class EngagementSchemaTest(TestCase):
         }
         assert CampaignSchema().validate(doc) != {}
 
-    def test_successful_campaignmapping_get_schema(self) -> None:
+    def test_successful_campaign_mapping_get_schema(self) -> None:
         """Test Successful EngagementPutSchema."""
 
         doc = {
@@ -388,9 +387,7 @@ class EngagementSchemaTest(TestCase):
         }
 
         # check engagement status per weighting
-        self.assertEqual(
-            db_c.STATUS_FAILED, weight_delivery_status(engagement)
-        )
+        self.assertEqual(db_c.STATUS_FAILED, weight_delivery_status(engagement))
 
     def test_weight_delivery_bad_status(self) -> None:
         """Test weight delivery status with a bad status."""
@@ -409,8 +406,8 @@ class EngagementSchemaTest(TestCase):
         # check engagement status per weighting
         self.assertEqual("bad", weight_delivery_status(engagement))
 
-    def test_match_rate_engagement_get_schema(self) -> None:
-        """Test engagement get schema match_rate."""
+    def test_engagement_get_schema(self) -> None:
+        """Test engagement get schema."""
 
         engagement = {
             api_c.ID: "5f5f7262997acad4bac4374a",
@@ -420,6 +417,18 @@ class EngagementSchemaTest(TestCase):
                 {
                     api_c.ID: "5f5f7262997acad4bac4373a",
                     api_c.NAME: "facebook",
+                    api_c.AUDIENCE_FILTERS: [
+                        {
+                            api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                            api_c.AUDIENCE_SECTION_FILTERS: [
+                                {
+                                    api_c.AUDIENCE_FILTER_FIELD: api_c.GENDER,
+                                    api_c.AUDIENCE_FILTER_TYPE: api_c.TYPE,
+                                    api_c.AUDIENCE_FILTER_VALUE: "female",
+                                }
+                            ],
+                        }
+                    ],
                     api_c.DESTINATIONS: [
                         {
                             api_c.ID: "5f5f7262997acad4bac4373b",
@@ -440,6 +449,33 @@ class EngagementSchemaTest(TestCase):
                             },
                         },
                     ],
+                }
+            ],
+            t_c.DESTINATIONS_CATEGORY: [
+                {
+                    api_c.DESTINATIONS: [
+                        {
+                            api_c.DESTINATION_AUDIENCES: [
+                                {
+                                    api_c.LATEST_DELIVERY: {
+                                        api_c.MATCH_RATE: 0,
+                                        api_c.STATUS: api_c.STATUS_DELIVERED,
+                                        db_c.UPDATE_TIME: datetime.strftime(
+                                            datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
+                                        ),
+                                        api_c.SIZE: 2439,
+                                    },
+                                    api_c.ID: "6188e1db78e63f3eaa82fdb8",
+                                    api_c.IS_LOOKALIKE: False,
+                                    api_c.SIZE: 123444,
+                                    api_c.NAME: "Test Audience",
+                                }
+                            ],
+                            api_c.ID: "6188e1db78e63f3eaa82fdb8",
+                            api_c.NAME: "Qualtrics",
+                        }
+                    ],
+                    api_c.CATEGORY: db_c.ADVERTISING,
                 }
             ],
         }

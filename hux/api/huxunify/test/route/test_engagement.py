@@ -100,16 +100,12 @@ class TestEngagementMetricsDisplayAds(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient("localhost", 27017, None, None).connect()
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         mock.patch(
@@ -218,34 +214,24 @@ class TestEngagementMetricsDisplayAds(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            validate_schema(DisplayAdsSummary(), response.json["summary"])
-        )
+        self.assertTrue(validate_schema(DisplayAdsSummary(), response.json["summary"]))
         self.assertEqual(response.json["summary"]["impressions"], 70487)
         self.assertEqual(response.json["summary"]["spend"], 14507)
         self.assertTrue(response.json["audience_performance"])
         self.assertTrue(response.json["audience_performance"][0]["id"])
+        self.assertEqual(response.json["audience_performance"][0]["impressions"], 70487)
+        self.assertTrue(response.json["audience_performance"][0]["destinations"])
         self.assertEqual(
-            response.json["audience_performance"][0]["impressions"], 70487
-        )
-        self.assertTrue(
-            response.json["audience_performance"][0]["destinations"]
-        )
-        self.assertEqual(
-            response.json["audience_performance"][0]["destinations"][0][
-                "impressions"
-            ],
+            response.json["audience_performance"][0]["destinations"][0]["impressions"],
             70487,
         )
         self.assertTrue(
-            response.json["audience_performance"][0]["destinations"][0][
-                "campaigns"
-            ]
+            response.json["audience_performance"][0]["destinations"][0]["campaigns"]
         )
         self.assertEqual(
-            response.json["audience_performance"][0]["destinations"][0][
-                "campaigns"
-            ][0]["impressions"],
+            response.json["audience_performance"][0]["destinations"][0]["campaigns"][0][
+                "impressions"
+            ],
             70487,
         )
 
@@ -303,16 +289,12 @@ class TestEngagementMetricsEmail(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient("localhost", 27017, None, None).connect()
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         # mock get_db_client() for the engagement.
@@ -410,30 +392,20 @@ class TestEngagementMetricsEmail(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            validate_schema(EmailSummary(), response.json["summary"])
-        )
+        self.assertTrue(validate_schema(EmailSummary(), response.json["summary"]))
         self.assertEqual(response.json["summary"]["hard_bounces"], 125)
         self.assertEqual(response.json["summary"]["sent"], 125)
         self.assertTrue(response.json["audience_performance"])
         self.assertTrue(response.json["audience_performance"][0]["id"])
-        self.assertEqual(
-            response.json["audience_performance"][0]["hard_bounces"], 125
-        )
+        self.assertEqual(response.json["audience_performance"][0]["hard_bounces"], 125)
         self.assertEqual(response.json["audience_performance"][0]["sent"], 125)
-        self.assertTrue(
-            response.json["audience_performance"][0]["destinations"]
-        )
+        self.assertTrue(response.json["audience_performance"][0]["destinations"])
         self.assertEqual(
-            response.json["audience_performance"][0]["destinations"][0][
-                "hard_bounces"
-            ],
+            response.json["audience_performance"][0]["destinations"][0]["hard_bounces"],
             125,
         )
         self.assertEqual(
-            response.json["audience_performance"][0]["destinations"][0][
-                "sent"
-            ],
+            response.json["audience_performance"][0]["destinations"][0]["sent"],
             125,
         )
 
@@ -495,9 +467,7 @@ class TestEngagementRoutes(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient("localhost", 27017, None, None).connect()
 
         mock.patch(
             "huxunify.api.route.engagement.get_db_client",
@@ -545,6 +515,7 @@ class TestEngagementRoutes(TestCase):
                     api_c.FACEBOOK_APP_ID: "path3",
                     api_c.FACEBOOK_AD_ACCOUNT_ID: "path4",
                 },
+                db_c.CATEGORY: db_c.ADVERTISING,
             },
             {
                 db_c.DELIVERY_PLATFORM_NAME: "SFMC",
@@ -561,6 +532,7 @@ class TestEngagementRoutes(TestCase):
                     api_c.SFMC_SOAP_BASE_URI: "soap_base_uri",
                     api_c.SFMC_REST_BASE_URI: "rest_base_uri",
                 },
+                db_c.CATEGORY: db_c.MARKETING,
             },
         ]
 
@@ -606,9 +578,7 @@ class TestEngagementRoutes(TestCase):
             },
         ]
 
-        self.audiences = [
-            create_audience(self.database, **x) for x in audiences
-        ]
+        self.audiences = [create_audience(self.database, **x) for x in audiences]
 
         engagements = [
             {
@@ -1053,9 +1023,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {
-            api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT
-        }
+        valid_response = {api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1078,9 +1046,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {
-            api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT
-        }
+        valid_response = {api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1154,9 +1120,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(fetched_engagements)
         self.assertEqual(1, len(fetched_engagements))
-        self.assertEqual(
-            str(self.engagement_ids[0]), fetched_engagements[0][api_c.ID]
-        )
+        self.assertEqual(str(self.engagement_ids[0]), fetched_engagements[0][api_c.ID])
 
     def test_get_engagement_by_id_valid_id_favorite(self):
         """Test get engagement API with valid ID which is a favorite."""
@@ -1171,6 +1135,15 @@ class TestEngagementRoutes(TestCase):
         return_engagement = response.json
         self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
         self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
+        self.assertIn(api_c.AUDIENCES, return_engagement)
+        self.assertIsNotNone(
+            all(
+                audience[api_c.AUDIENCE_FILTERS]
+                for audience in return_engagement[api_c.AUDIENCES]
+            )
+        )
+        self.assertIn(api_c.AUDIENCE_FILTERS, return_engagement[api_c.AUDIENCES])
+        self.assertIn(t_c.DESTINATIONS_CATEGORY, return_engagement)
         self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
         self.assertTrue(return_engagement[api_c.FAVORITE])
 
@@ -1256,9 +1229,7 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
-        self.assertEqual(
-            {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}, response.json
-        )
+        self.assertEqual({api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}, response.json)
 
     def test_set_engagement(self):
         """Test set engagement API with valid params."""
@@ -1328,9 +1299,7 @@ class TestEngagementRoutes(TestCase):
         )
         # check if cron string is generated
         self.assertIsInstance(
-            response.json.get(api_c.DELIVERY_SCHEDULE).get(
-                api_c.SCHEDULE_CRON
-            ),
+            response.json.get(api_c.DELIVERY_SCHEDULE).get(api_c.SCHEDULE_CRON),
             str,
         )
 
@@ -1339,9 +1308,7 @@ class TestEngagementRoutes(TestCase):
     def test_set_engagement_with_invalid_delivery_schedule(self):
         """Test set engagement API with invalid delivery schedule params."""
 
-        engagement_delivery_schedule = {
-            api_c.SCHEDULE: t_c.DAILY_SCHEDULE_INVALID
-        }
+        engagement_delivery_schedule = {api_c.SCHEDULE: t_c.DAILY_SCHEDULE_INVALID}
 
         engagement = {
             db_c.AUDIENCES: [
@@ -1430,9 +1397,7 @@ class TestEngagementRoutes(TestCase):
             db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
         }
 
-        valid_response = {
-            db_c.ENGAGEMENT_NAME: ["Missing data for required field."]
-        }
+        valid_response = {db_c.ENGAGEMENT_NAME: ["Missing data for required field."]}
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
@@ -1497,9 +1462,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {
-            api_c.MESSAGE: api_c.BSON_INVALID_ID(bad_engagement_id)
-        }
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(bad_engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1528,9 +1491,9 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        old_delivery_schedule_cron = response.json.get(
-            api_c.DELIVERY_SCHEDULE
-        ).get(api_c.SCHEDULE_CRON)
+        old_delivery_schedule_cron = response.json.get(api_c.DELIVERY_SCHEDULE).get(
+            api_c.SCHEDULE_CRON
+        )
 
         engagement_id = response.json.get(api_c.ID)
         update_doc = response.json
@@ -1545,14 +1508,12 @@ class TestEngagementRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-        new_delivery_schedule_cron = response.json.get(
-            api_c.DELIVERY_SCHEDULE
-        ).get(api_c.SCHEDULE_CRON)
+        new_delivery_schedule_cron = response.json.get(api_c.DELIVERY_SCHEDULE).get(
+            api_c.SCHEDULE_CRON
+        )
 
         # Ensure the cron expressions are not equal.
-        self.assertNotEqual(
-            old_delivery_schedule_cron, new_delivery_schedule_cron
-        )
+        self.assertNotEqual(old_delivery_schedule_cron, new_delivery_schedule_cron)
 
     def test_update_engagement_audience_with_destination_added(self):
         """Test update an engagement with destination."""
@@ -1763,9 +1724,7 @@ class TestEngagementRoutes(TestCase):
             json=delete_audience,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(
-            HTTPStatus.NO_CONTENT, delete_audience_response.status_code
-        )
+        self.assertEqual(HTTPStatus.NO_CONTENT, delete_audience_response.status_code)
 
     def test_delete_audience_from_engagement_audience_not_found(self):
         """Test delete audience from engagement where the
@@ -1781,9 +1740,7 @@ class TestEngagementRoutes(TestCase):
             json=delete_audience,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(
-            HTTPStatus.NO_CONTENT, delete_audience_response.status_code
-        )
+        self.assertEqual(HTTPStatus.NO_CONTENT, delete_audience_response.status_code)
 
     def test_delete_audience_from_engagement_invalid_engagement_id(self):
         """Test delete audience from engagement with an invalid engagement ID."""
@@ -1820,13 +1777,9 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {
-            api_c.MESSAGE: api_c.BSON_INVALID_ID(bad_engagement_id)
-        }
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(bad_engagement_id)}
 
-        self.assertEqual(
-            HTTPStatus.BAD_REQUEST, delete_audience_response.status_code
-        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, delete_audience_response.status_code)
         self.assertEqual(valid_response, delete_audience_response.json)
 
     def test_delete_audience_from_engagement_invalid_audience_id(self):
@@ -1863,13 +1816,9 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {
-            api_c.MESSAGE: api_c.BSON_INVALID_ID(invalid_audience_id)
-        }
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(invalid_audience_id)}
 
-        self.assertEqual(
-            HTTPStatus.BAD_REQUEST, delete_audience_response.status_code
-        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, delete_audience_response.status_code)
         self.assertEqual(valid_response, delete_audience_response.json)
 
     def test_add_destination_to_engagement_audience(self):
