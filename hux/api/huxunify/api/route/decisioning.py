@@ -173,6 +173,96 @@ class ModelsView(SwaggerView):
         )
 
 
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>",
+    "ModelVersionView",
+)
+class ModelVersionView(SwaggerView):
+    """Model Version Class."""
+
+    parameters = [
+        {
+            "name": api_c.MODEL_ID,
+            "description": "Model id",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "1",
+        },
+        {
+            "name": api_c.VERSION,
+            "description": "Version id",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "1.0.0",
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": ModelVersionSchema,
+            "description": "Model Schema.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
+        """Retrieves model version.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            model_id (str): Model ID.
+            user (dict): User object
+
+        Returns:
+            Tuple[List[dict], int]: Model version,
+                HTTP status code.
+        """
+
+        # TODO Remove once Propensity to Purchase info
+        #  can be retrieved from tecton
+        if model_id == "3":
+            model_version = {
+                api_c.ID: model_id,
+                api_c.LAST_TRAINED: datetime(2021, 6, 24),
+                api_c.DESCRIPTION: "Propensity of a customer making "
+                "a purchase after receiving an email.",
+                api_c.FULCRUM_DATE: datetime(2021, 6, 24),
+                api_c.LOOKBACK_WINDOW: 90,
+                api_c.NAME: "Propensity to Purchase",
+                api_c.OWNER: "Susan Miller",
+                api_c.STATUS: api_c.STATUS_ACTIVE,
+                api_c.CURRENT_VERSION: request.args.get(api_c.VERSION),
+                api_c.PREDICTION_WINDOW: 90,
+            }
+        else:
+            version_history = Tecton().get_model_version_history(model_id)
+            model_version = (
+                next(
+                    x
+                    for x in version_history
+                    if x[api_c.VERSION] == request.args.get(api_c.VERSION)
+                )
+                if request.args.get(api_c.VERSION) is not None
+                else version_history[0]
+            )
+
+        return (
+            jsonify(ModelVersionSchema().dump(model_version)),
+            HTTPStatus.OK.value,
+        )
+
+
 @add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "SetModelStatus")
 class SetModelStatus(SwaggerView):
     """Class to request a model."""
