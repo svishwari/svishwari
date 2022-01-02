@@ -229,22 +229,18 @@ class ModelVersionView(SwaggerView):
                 HTTP status code.
         """
 
-        # TODO Remove once Propensity to Purchase info
-        #  can be retrieved from tecton
-        if model_id == "3":
-            model_version = {
-                api_c.ID: model_id,
-                api_c.LAST_TRAINED: datetime(2021, 6, 24),
-                api_c.DESCRIPTION: "Propensity of a customer making "
-                "a purchase after receiving an email.",
-                api_c.FULCRUM_DATE: datetime(2021, 6, 24),
-                api_c.LOOKBACK_WINDOW: 90,
-                api_c.NAME: "Propensity to Purchase",
-                api_c.OWNER: "Susan Miller",
-                api_c.STATUS: api_c.STATUS_ACTIVE,
-                api_c.CURRENT_VERSION: request.args.get(api_c.VERSION),
-                api_c.PREDICTION_WINDOW: 90,
-            }
+        filters = {db_c.MODEL_ID: model_id}
+        if request.args.get(api_c.VERSION) is not None:
+            filters[db_c.VERSION] = request.args.get(api_c.VERSION)
+
+        model_version = collection_management.get_documents(
+            get_db_client(),
+            db_c.MODELS_COLLECTION,
+            filters
+        )
+        
+        if model_version.get(db_c.DOCUMENTS):
+            model_version.get(db_c.DOCUMENTS)[0]
         else:
             version_history = Tecton().get_model_version_history(model_id)
             model_version = (
@@ -256,7 +252,6 @@ class ModelVersionView(SwaggerView):
                 if request.args.get(api_c.VERSION) is not None
                 else version_history[0]
             )
-
         return (
             jsonify(ModelVersionSchema().dump(model_version)),
             HTTPStatus.OK.value,

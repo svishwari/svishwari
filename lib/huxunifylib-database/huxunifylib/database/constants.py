@@ -469,6 +469,13 @@ PAGINATION_DESCENDING = "descending"
 MODEL_DESCRIPTION = "description"
 MODEL_USERNAME = "username"
 MODEL_ID = "model_id"
+VERSION= "version"
+FULCRUM = "fulcrum"
+LOOKBACK_DAYS = "lookback_days"
+PREDICTION_DAYS = "prediction_days"
+OWNER = "owneer"
+OWNER_EMAIL = "owner_email"
+DATE_TRAINED = "date_trained"
 
 
 # Custom type definitions
