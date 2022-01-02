@@ -9,7 +9,10 @@ from flask_apscheduler import APScheduler
 from huxunify.api.config import load_env_vars
 from huxunify.api.prometheus import monitor_app
 from huxunify.api.route import ROUTES
-from huxunify.api.data_connectors.scheduler import run_scheduled_deliveries
+from huxunify.api.data_connectors.scheduler import (
+    run_scheduled_deliveries,
+    run_scheduled_destination_checks,
+)
 from huxunify.api.route.utils import get_db_client
 
 from huxunify.api import constants as api_c
@@ -114,6 +117,13 @@ def create_app() -> Flask:
         scheduler.add_job(
             id="process_deliveries",
             func=run_scheduled_deliveries,
+            trigger="cron",
+            minute=api_c.AUTOMATED_DELIVERY_MINUTE_CRON,
+            args=[get_db_client()],
+        )
+        scheduler.add_job(
+            id="process_destination_validations",
+            func=run_scheduled_destination_checks(),
             trigger="cron",
             minute=api_c.AUTOMATED_DELIVERY_MINUTE_CRON,
             args=[get_db_client()],

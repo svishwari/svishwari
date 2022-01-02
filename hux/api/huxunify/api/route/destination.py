@@ -244,28 +244,14 @@ class DestinationsView(SwaggerView):
             type=lambda v: v.lower() == "true",
         )
 
-        connector_dict = {
-            db_c.DELIVERY_PLATFORM_FACEBOOK: FacebookConnector,
-            db_c.DELIVERY_PLATFORM_SFMC: SFMCConnector,
-            db_c.DELIVERY_PLATFORM_QUALTRICS: QualtricsConnector,
-            db_c.DELIVERY_PLATFORM_SENDGRID: SendgridConnector,
-            db_c.DELIVERY_PLATFORM_TWILIO: SendgridConnector,
-            db_c.DELIVERY_PLATFORM_GOOGLE: GoogleConnector,
-        }
-
-        # Map db status values to api status values
-        status_mapping = {
-            db_c.STATUS_SUCCEEDED: api_c.STATUS_ACTIVE,
-            db_c.STATUS_PENDING: api_c.STATUS_PENDING,
-            db_c.STATUS_FAILED: api_c.STATUS_ERROR,
-            db_c.STATUS_REQUESTED: api_c.STATUS_REQUESTED,
-        }
-
         for destination in destinations:
             if refresh_all:
-                if destination[api_c.DELIVERY_PLATFORM_TYPE] in connector_dict:
+                if (
+                    destination[api_c.DELIVERY_PLATFORM_TYPE]
+                    in api_c.DESTINATION_CONNECTORS
+                ):
                     try:
-                        connector_dict[
+                        api_c.DESTINATION_CONNECTORS[
                             destination[api_c.DELIVERY_PLATFORM_TYPE]
                         ](
                             auth_details=get_auth_from_parameter_store(
@@ -299,7 +285,9 @@ class DestinationsView(SwaggerView):
                     )
             # using a default here in case we do not have a proper mapping
             # or just want to use the same constant value in the UI
-            destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping.get(
+            destination[
+                db_c.DELIVERY_PLATFORM_STATUS
+            ] = api_c.DESTINATION_STATUS_MAPPING.get(
                 destination[db_c.DELIVERY_PLATFORM_STATUS],
                 destination[db_c.DELIVERY_PLATFORM_STATUS],
             )

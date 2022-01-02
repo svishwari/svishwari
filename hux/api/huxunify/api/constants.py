@@ -5,6 +5,13 @@ import random
 from collections import namedtuple
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.connectors import (
+    FacebookConnector,
+    SFMCConnector,
+    SendgridConnector,
+    GoogleConnector,
+    QualtricsConnector,
+)
 
 TEST_MODE = "pytest"
 DEVELOPMENT_MODE = "development"
@@ -661,6 +668,22 @@ DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
 GENERIC_DESTINATION = "generic_destination"
+DESTINATION_CONNECTORS = {
+    db_c.DELIVERY_PLATFORM_FACEBOOK: FacebookConnector,
+    db_c.DELIVERY_PLATFORM_SFMC: SFMCConnector,
+    db_c.DELIVERY_PLATFORM_QUALTRICS: QualtricsConnector,
+    db_c.DELIVERY_PLATFORM_SENDGRID: SendgridConnector,
+    db_c.DELIVERY_PLATFORM_TWILIO: SendgridConnector,
+    db_c.DELIVERY_PLATFORM_GOOGLE: GoogleConnector,
+}
+
+# Map db status values to api status values
+DESTINATION_STATUS_MAPPING = {
+    db_c.STATUS_SUCCEEDED: STATUS_ACTIVE,
+    db_c.STATUS_PENDING: STATUS_PENDING,
+    db_c.STATUS_FAILED: STATUS_ERROR,
+    db_c.STATUS_REQUESTED: STATUS_REQUESTED,
+}
 
 # Engagement fields
 ENGAGEMENT = "engagement"
