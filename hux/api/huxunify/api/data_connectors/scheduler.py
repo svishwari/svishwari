@@ -165,8 +165,8 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
     asyncio.set_event_loop(asyncio.SelectorEventLoop())
     loop = asyncio.get_event_loop()
 
-    # get engagements
-    for engagement in get_engagements(database):
+    # get active engagements
+    for engagement in get_engagements(database, active_only=True):
 
         # process audiences
         for audience in engagement.get(api_c.AUDIENCES):
