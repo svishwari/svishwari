@@ -438,6 +438,16 @@ const actions = {
       throw error
     }
   },
+
+  async getDensityChartData(_, { field, model }) {
+    try {
+      const response = await api.audiences.histogram(field, model)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 export default {

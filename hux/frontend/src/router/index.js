@@ -161,9 +161,19 @@ const routes = [
     },
   },
   {
+    path: "/audiences/:id/insight2",
+    name: "AudienceInsight2",
+    component: () => import("@/views/Audiences/Insight.vue"),
+    meta: {
+      layout: "app",
+      title: "Audience Insight",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/audiences/:id/insight",
     name: "AudienceInsight",
-    component: () => import("@/views/Audiences/Insight.vue"),
+    component: () => import("@/views/Audiences/Dashboard/Insight2.vue"),
     meta: {
       layout: "app",
       title: "Audience Insight",
@@ -184,6 +194,17 @@ const routes = [
     path: "/engagements/add",
     name: "EngagementConfiguration",
     component: () => import("@/views/Engagements/Configuration/Index.vue"),
+    meta: {
+      layout: "app",
+      title: "Add an Engagement",
+      requiresAuth: true,
+    },
+  },
+  //TODO: HUS-1817 remove once step 3 is also done.
+  {
+    path: "/eng/add",
+    name: "EngagementAdd",
+    component: () => import("@/views/Engagements/Configuration/AddIndex.vue"),
     meta: {
       layout: "app",
       title: "Add an Engagement",

@@ -30,7 +30,7 @@
           <span v-if="highLevel">
             <slot name="title"></slot>
           </span>
-          <span v-else>
+          <span v-else :class="titleClass">
             {{ title }}
           </span>
         </span>
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <v-icon v-if="icon" color="black lighten-2" x-large> {{ icon }} </v-icon>
+      <icon v-if="icon" :type="icon" :size="40" />
 
       <slot name="short-name"></slot>
     </div>
@@ -207,6 +207,10 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    titleClass: {
+      type: [String],
+      required: false,
     },
   },
 }

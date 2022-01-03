@@ -121,3 +121,9 @@ class InsufficientDataException(HuxAdvException):
     """Exception for insufficient values provided."""
 
     exception_message = "Insufficient data to fetch <{}>!"
+
+
+class MissingValueException(HuxAdvException):
+    """Exception for required values."""
+
+    exception_message = "No value provided for <{}>!"

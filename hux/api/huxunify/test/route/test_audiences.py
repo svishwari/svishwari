@@ -430,7 +430,6 @@ class AudienceInsightsTest(TestCase):
             f"{api_c.CITY}/{city_substring}",
             headers=t_c.STANDARD_HEADERS,
         )
-
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         substring_found = []
@@ -452,6 +451,7 @@ class AudienceInsightsTest(TestCase):
             f"{api_c.ZIP_CODE}/{zip_substring}",
             headers=t_c.STANDARD_HEADERS,
         )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 

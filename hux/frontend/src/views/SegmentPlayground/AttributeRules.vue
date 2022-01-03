@@ -268,6 +268,7 @@ export default {
         width: 0,
         height: 0,
       },
+      notHistogramKeys: ["gender", "email", "Country", "State", "City", "Zip"],
     }
   },
   computed: {
@@ -301,6 +302,7 @@ export default {
     ...mapActions({
       getRealtimeSize: "audiences/fetchFilterSize",
       getAudiencesRules: "audiences/fetchConstants",
+      attributesData: "audiences/getDensityChartData",
     }),
     sliderLabel(attribute, value) {
       if (attribute.key === "ltv_predicted") {
@@ -498,14 +500,26 @@ export default {
       }
     },
 
-    onSelect(type, condition, item) {
+    async onSelect(type, condition, item) {
+      let dataItem = item
       condition[type] = item
       if (type === "attribute") {
+        if (!this.notHistogramKeys.includes(item.key)) {
+          let data = await this.attributesData({
+            field: item.modelIcon ? "model" : item.key,
+            model: item.modelIcon ? item.key : null,
+          })
+          if (data) {
+            data.key = item.key
+            dataItem = data
+          }
+        }
+        condition[type] = dataItem
         condition.operator = ""
         condition.text = ""
-        condition.type = condition.attribute.type
-        condition.options = condition.attribute.options
-        condition.range = [condition.attribute.min, condition.attribute.max]
+        condition.type = dataItem.type
+        condition.options = dataItem.options
+        condition.range = [dataItem.min, dataItem.max]
         condition.awaitingSize = false
         condition.outputSummary = 0
       } else if (type === "operator") {

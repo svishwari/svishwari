@@ -5,15 +5,14 @@
     :width="drawerWidth"
     :loading="loading"
     @onClose="closeDrawer()"
-    @iconToggle="changeOverviewListItems"
   >
     <template #header-left>
-      <h3 class="text-h3">Create a new audience</h3>
+      <h3 class="text-h2">Create a new audience</h3>
     </template>
 
     <template #default>
-      <div class="pa-4">
-        <h6 class="pb-6 text-h6 black--text text--darken-4">
+      <div class="pa-6">
+        <h6 class="pt-2 pb-6 text-body-1">
           Build a target audience from the data you own.
         </h6>
         <v-form ref="newAudienceRef" v-model="newAudienceValidity">
@@ -26,27 +25,68 @@
             required
           />
         </v-form>
-        <div class="pt-4 pb-2 black--text text--darken-4 text-caption">
+        <div class="pb-2 black--text text--darken-4 text-caption">
           Audience overview
         </div>
         <div class="d-flex align-center pb-4">
           <metric-card
-            v-for="(item, i) in overviewListItems"
-            :key="i"
-            class="list-item ma-0 mr-3"
-            :title="item.title"
+            v-for="card in infoCards"
+            :key="card.id"
+            :title="card.title"
+            :icon="card.icon"
+            :title-tooltip="card.helpText"
+            :tooltip-width="card.helpWidth"
+            class="mr-2"
           >
             <template #subtitle-extended>
-              <tooltip>
+              <v-progress-linear
+                v-if="loading"
+                class="mt-2 mr-6"
+                indeterminate
+                buffer-value="0"
+                stream
+                rouded
+              />
+              <tooltip v-else-if="card.format !== 'multiple'">
                 <template #label-content>
-                  <span class="font-weight-semi-bold">
-                    {{ getFormattedValue(item) }}
+                  <span class="black--text text-subtitle-1 mt-1 pb-0 d-block">
+                    <span v-if="card.format == 'relative'">
+                      {{ getValue(card.title) | Numeric(true, false, true) }}
+                    </span>
+                    <span v-else>
+                      {{ getValue(card.title) }}
+                    </span>
                   </span>
                 </template>
                 <template #hover-content>
-                  {{ item.subtitle | Numeric | Empty }}
+                  <span v-if="card.format != 'multiple'">
+                    {{ getValue(card.title) }}
+                  </span>
                 </template>
               </tooltip>
+              <span
+                v-else-if="card.format == 'multiple'"
+                class="black--text text-subtitle-1 mt-1 pb-0 d-block"
+              >
+                <span
+                  v-for="gender in getValue(card.title)"
+                  :key="gender.id"
+                  class="mr-2"
+                  :class="{
+                    'black--text text--lighten-3': gender.value === 0,
+                  }"
+                >
+                  {{ gender.key }}:
+                  <tooltip>
+                    <template #label-content>
+                      {{ gender.value | Percentage() }}
+                    </template>
+                    <template #hover-content>
+                      {{ gender.value }}
+                    </template>
+                  </tooltip>
+                </span>
+              </span>
             </template>
           </metric-card>
         </div>
@@ -56,7 +96,6 @@
             :rules="attributeRules"
             apply-caption-style
             enable-title
-            @updateOverview="(data) => mapCDMOverview(data)"
           />
         </div>
       </div>
@@ -65,7 +104,7 @@
     <template #footer-left>
       <hux-button
         size="large"
-        tile
+        is-tile
         variant="white"
         class="btn-border box-shadow-none"
         @click="onCancelAndBack()"
@@ -74,7 +113,7 @@
       </hux-button>
       <hux-button
         :disabled="!newAudienceValidity"
-        tile
+        is-tile
         color="primary"
         @click="add()"
       >
@@ -132,18 +171,40 @@ export default {
       newAudience: {
         name: "",
       },
-      overviewListItems: [
-        { title: "Target size", subtitle: "" },
-        { title: "Countries", subtitle: "" },
-        { title: "US States", subtitle: "" },
-        { title: "Cities", subtitle: "" },
-        { title: "Age", subtitle: "" },
-        { title: "Women", subtitle: "" },
-        { title: "Men", subtitle: "" },
-        { title: "Other", subtitle: "" },
-      ],
       attributeRules: [],
-      expanded: false,
+      infoCards: [
+        {
+          title: "Size",
+          format: "relative",
+          helpText:
+            "Current number of customers who fit the selected attributes.",
+          helpWidth: 232,
+          icon: "targetsize",
+        },
+        {
+          title: "Countries",
+          value: "1",
+          icon: "countries",
+        },
+        {
+          title: "States",
+          value: "50",
+          helpText:
+            "US states or regions equivalent to US state-level (e.g. counties, districts, departments, divisions, parishes, provinces, etc).",
+          helpWidth: 283,
+          icon: "states",
+        },
+        {
+          title: "Age Range",
+          value: "24-68",
+          icon: "birth",
+        },
+        {
+          title: "Gender",
+          format: "multiple",
+          value: "Women",
+        },
+      ],
     }
   },
 
@@ -179,55 +240,38 @@ export default {
       this.reset()
     },
 
-    changeOverviewListItems(expanded) {
-      this.expanded = expanded
-    },
-
-    // Mapping Overview Data
-    mapCDMOverview(data) {
-      this.overviewListItems[0].subtitle = data.total_customers
-      this.overviewListItems[1].subtitle = data.total_countries
-      this.overviewListItems[2].subtitle = data.total_us_states
-      this.overviewListItems[3].subtitle = data.total_cities
-      let min_age = data.min_age
-      let max_age = data.max_age
-      if (min_age && max_age && min_age === max_age) {
-        this.overviewListItems[4].subtitle = min_age
-      } else if (min_age && max_age) {
-        this.overviewListItems[4].subtitle = `${min_age}-${max_age}`
-      } else {
-        this.overviewListItems[4].subtitle = "-"
-      }
-      this.overviewListItems[5].subtitle = data.gender_women
-      this.overviewListItems[6].subtitle = data.gender_men
-      this.overviewListItems[7].subtitle = data.gender_other
-    },
-
-    getFormattedValue(item) {
-      switch (item.title) {
-        case "Target size":
+    getValue(type) {
+      switch (type) {
+        case "Size":
+          return this.overview.total_customers
+        case "Age Range":
+          return `${this.overview.min_age}-${this.overview.max_age}`
         case "Countries":
-        case "US States":
-        case "Cities":
-          return this.$options.filters.Numeric(
-            item.subtitle,
-            false,
-            false,
-            true
-          )
-        case "Women":
-        case "Men":
-        case "Other":
-          return this.$options.filters.Percentage(item.subtitle)
+          return this.overview.total_countries
+        case "States":
+          return this.overview.total_us_states
         default:
-          return item.subtitle
+          // Gender
+          return [
+            {
+              key: "M",
+              value: this.overview.gender_men,
+            },
+            {
+              key: "W",
+              value: this.overview.gender_women,
+            },
+            {
+              key: "O",
+              value: this.overview.gender_other,
+            },
+          ]
       }
     },
 
     reset() {
       this.$refs.newAudienceRef.reset()
       this.attributeRules = []
-      this.expanded = false
     },
 
     async add() {
@@ -293,7 +337,6 @@ export default {
     async fetchDependencies() {
       this.loading = true
       await this.getOverview()
-      this.mapCDMOverview(this.overview)
       this.loading = false
     },
   },
