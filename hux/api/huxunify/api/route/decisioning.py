@@ -37,7 +37,8 @@ from huxunify.api.schema.model import (
     ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
-    ModelRequestPOSTSchema, ModelUpdatePATCHSchema,
+    ModelRequestPOSTSchema,
+    ModelUpdatePATCHSchema,
 )
 from huxunify.api.schema.configurations import ConfigurationsSchema
 from huxunify.api.data_connectors.tecton import Tecton
