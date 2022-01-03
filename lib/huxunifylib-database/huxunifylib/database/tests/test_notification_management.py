@@ -23,14 +23,18 @@ class NotificationManagementTest(TestCase):
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
+        self.test_username = "test_user"
+
         notifications = [
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_SUCCESS,
                 "description": "Successfully completed",
+                "username": self.test_username,
             },
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_CRITICAL,
                 "description": "Delivery Failed",
+                "username": self.test_username,
             },
         ]
 
@@ -46,6 +50,7 @@ class NotificationManagementTest(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             description="Some Information",
+            username=self.test_username,
         )
 
         current_time = datetime.utcnow()
@@ -68,7 +73,7 @@ class NotificationManagementTest(TestCase):
             notification[db_c.NOTIFICATION_FIELD_DESCRIPTION],
         )
         self.assertEqual(
-            "unknown", notification[db_c.NOTIFICATION_FIELD_USERNAME]
+            self.test_username, notification[db_c.NOTIFICATION_FIELD_USERNAME]
         )
         self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
         self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
@@ -80,6 +85,7 @@ class NotificationManagementTest(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description="Some Information",
+            username=self.test_username,
         )
 
         current_time = datetime.utcnow()
@@ -102,7 +108,7 @@ class NotificationManagementTest(TestCase):
             notification[db_c.NOTIFICATION_FIELD_DESCRIPTION],
         )
         self.assertEqual(
-            "unknown", notification[db_c.NOTIFICATION_FIELD_USERNAME]
+            self.test_username, notification[db_c.NOTIFICATION_FIELD_USERNAME]
         )
         self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
         self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
@@ -114,6 +120,7 @@ class NotificationManagementTest(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
             description="Some Information",
+            username=self.test_username,
         )
 
         current_time = datetime.utcnow()
@@ -136,7 +143,7 @@ class NotificationManagementTest(TestCase):
             notification[db_c.NOTIFICATION_FIELD_DESCRIPTION],
         )
         self.assertEqual(
-            "unknown", notification[db_c.NOTIFICATION_FIELD_USERNAME]
+            self.test_username, notification[db_c.NOTIFICATION_FIELD_USERNAME]
         )
         self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
         self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
@@ -214,6 +221,7 @@ class NotificationManagementTest(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
             description="Delivery Failed",
+            username=self.test_username,
         )
 
         self.assertIsNotNone(notification)
@@ -235,6 +243,7 @@ class NotificationManagementTest(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
             description="Delivery Failed",
+            username=self.test_username,
         )
 
         self.assertIsNotNone(notification)

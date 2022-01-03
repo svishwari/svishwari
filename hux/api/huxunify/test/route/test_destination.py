@@ -23,7 +23,10 @@ from huxunifylib.database.engagement_management import (
 )
 import huxunify.test.constants as t_c
 from huxunify.api.data_connectors.aws import parameter_store
-from huxunify.api.schema.destinations import DestinationDataExtGetSchema
+from huxunify.api.schema.destinations import (
+    DestinationDataExtGetSchema,
+    DestinationGetSchema,
+)
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
 
@@ -88,18 +91,34 @@ class TestDestinationRoutes(TestCase):
 
         destinations = [
             {
-                api_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
-                api_c.NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
-                api_c.AUTHENTICATION_DETAILS: {},
+                db_c.DELIVERY_PLATFORM_NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                db_c.LINK: "https://business.facebook.com/",
+                db_c.CATEGORY: db_c.ADVERTISING,
+                db_c.STATUS: db_c.ACTIVE,
+                db_c.ENABLED: True,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: True,
             },
             {
-                api_c.DELIVERY_PLATFORM_TYPE: "amazon-advertising",
-                api_c.NAME: "Amazon Advertising",
-                api_c.AUTHENTICATION_DETAILS: {},
+                db_c.DELIVERY_PLATFORM_NAME: "Google Ads",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_GOOGLE,
+                db_c.LINK: "https://ads.google.com/nav/login",
+                db_c.CATEGORY: db_c.ADVERTISING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: True,
             },
             {
-                api_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
-                api_c.NAME: "Salesforce Marketing Cloud",
+                db_c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
+                db_c.LINK: "https://members.exacttarget.com/Login.aspx?ReturnUrl=%2F",
+                db_c.CATEGORY: db_c.MARKETING,
+                db_c.STATUS: db_c.ACTIVE,
+                db_c.ENABLED: True,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
                 api_c.AUTHENTICATION_DETAILS: {
                     api_c.SFMC_ACCOUNT_ID: "id12345",
                     api_c.SFMC_AUTH_BASE_URI: "base_uri",
@@ -108,6 +127,226 @@ class TestDestinationRoutes(TestCase):
                     api_c.SFMC_SOAP_BASE_URI: "soap_base_uri",
                     api_c.SFMC_REST_BASE_URI: "rest_base_uri",
                 },
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Sendgrid by Twilio",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SENDGRID,
+                db_c.LINK: "https://app.sendgrid.com/login",
+                db_c.CATEGORY: db_c.MARKETING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Qualtrics",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_QUALTRICS,
+                db_c.LINK: "https://login.qualtrics.com/login",
+                db_c.CATEGORY: db_c.SURVEY,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Amazon Advertising",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_AMAZON,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.ADVERTISING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: True,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Liveramp",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_LIVERAMP,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.ADVERTISING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: True,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Pinterest",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_PINTEREST,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.ADVERTISING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: True,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "TheTradeDesk",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_THE_TRADEDESK,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.ADVERTISING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: True,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Twitter",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_TWITTER,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.ADVERTISING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: True,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Google DV360",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_GOOGLE_DV360,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.ADVERTISING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: True,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Fullstory",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FULLSTORY,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.ANALYTICS,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "QuantumMetric",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_QUANTUMMETRIC,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.ANALYTICS,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Salesforce Commerce Cloud",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFCC,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.COMMERCE,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "SAP",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SAP,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.COMMERCE,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Adobe Campaign",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_ADOBE_CAMPAIGN,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.MARKETING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Adobe Experience Platform",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_ADOBE,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.MARKETING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Salesforce CDP",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SALESFORCE_CDP,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.MARKETING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Salesforce Datorama",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SALESFORCE_DATORAMA,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.CATEGORY_REPORTING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Tableau",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_TABLEAU,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.CATEGORY_REPORTING,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "AWS S3",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_AMAZONS3,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.CATEGORY_STORAGE,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Azure Blob",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_AZUREBLOB,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.CATEGORY_STORAGE,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Google Cloud Storage",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_GOOGLE_CLOUD_STORAGE,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.CATEGORY_STORAGE,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "SFTP",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFTP,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.CATEGORY_STORAGE,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Medallia",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_MEDALLIA,
+                db_c.LINK: "",
+                db_c.CATEGORY: db_c.SURVEY,
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: False,
+                db_c.ADDED: False,
+                db_c.IS_AD_PLATFORM: False,
             },
         ]
 
@@ -276,7 +515,6 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.destinations), len(response.json))
-        self.assertEqual(response.json[0][db_c.STATUS], api_c.STATUS_PENDING)
 
         destination_id = self.destinations[0][db_c.ID]
 
@@ -294,8 +532,8 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.destinations), len(response.json))
-        self.assertEqual(response.json[0][db_c.STATUS], api_c.STATUS_ACTIVE)
-        self.assertEqual(response.json[2][db_c.STATUS], api_c.STATUS_ACTIVE)
+        for destination in response.json:
+            self.assertEqual({}, DestinationGetSchema().validate(destination))
 
     def test_get_destination_with_valid_id(self):
         """Test get destination with valid ID."""
@@ -937,35 +1175,75 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_patch_destination(self):
-        """Test patch destination."""
+    def test_patch_destination_set_enabled(self):
+        """Test patch destination set the field to be enabled."""
 
         # get destination ID
-        destination_id = self.destinations[0][db_c.ID]
-
-        # get from database
-        destination = destination_management.get_delivery_platform(
-            self.database, self.destinations[0][db_c.ID]
+        destination = destination_management.get_delivery_platform_by_type(
+            self.database, db_c.DELIVERY_PLATFORM_FACEBOOK
         )
 
         # validate enabled flag
-        self.assertFalse(destination.get(db_c.ENABLED))
+        self.assertTrue(destination.get(db_c.ENABLED))
 
         # patch destination
         self.assertTrue(
             HTTPStatus.OK,
             self.app.patch(
-                f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+                f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination[db_c.ID]}",
                 json={db_c.ENABLED: not destination.get(db_c.ENABLED)},
                 headers=t_c.STANDARD_HEADERS,
             ).status_code,
         )
 
-        # grab from database again and check update flag to True.
+        # grab from database again and check update flag to False.
         destination = destination_management.get_delivery_platform(
             self.database, self.destinations[0][db_c.ID]
         )
-        self.assertTrue(destination[db_c.ENABLED])
+        self.assertFalse(destination[db_c.ENABLED])
+
+    def test_patch_destination_set_new_link(self):
+        """Test patch destination edit the link field."""
+
+        # get destination ID
+        destination = destination_management.get_delivery_platform_by_type(
+            self.database, db_c.DELIVERY_PLATFORM_FACEBOOK
+        )
+        new_link = "https://www.new-link.com/login"
+
+        # patch destination
+        self.assertTrue(
+            HTTPStatus.OK,
+            self.app.patch(
+                f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination[db_c.ID]}",
+                json={db_c.LINK: new_link},
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
+
+        # grab from database again and check update flag to False.
+        destination = destination_management.get_delivery_platform(
+            self.database, destination[db_c.ID]
+        )
+        self.assertEqual(new_link, destination[db_c.LINK])
+
+    def test_patch_destination_no_body(self):
+        """Test patch destination where no body is provided."""
+
+        # get destination ID
+        destination = destination_management.get_delivery_platform_by_type(
+            self.database, db_c.DELIVERY_PLATFORM_FACEBOOK
+        )
+
+        # patch destination
+        self.assertTrue(
+            HTTPStatus.BAD_REQUEST,
+            self.app.patch(
+                f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination[db_c.ID]}",
+                json={},
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
 
     def test_patch_destination_removed(self):
         """Test patch destination added = False."""

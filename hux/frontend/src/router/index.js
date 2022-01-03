@@ -200,6 +200,17 @@ const routes = [
       requiresAuth: true,
     },
   },
+  //TODO: HUS-1817 remove once step 3 is also done.
+  {
+    path: "/eng/add",
+    name: "EngagementAdd",
+    component: () => import("@/views/Engagements/Configuration/AddIndex.vue"),
+    meta: {
+      layout: "app",
+      title: "Add an Engagement",
+      requiresAuth: true,
+    },
+  },
   {
     path: "/engagements/:id/update",
     name: "EngagementUpdate",

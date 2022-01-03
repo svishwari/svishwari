@@ -510,6 +510,7 @@ export default {
             model: item.modelIcon ? item.key : null,
           })
           if (data) {
+            data.key = item.key
             dataItem = data
           }
         }
