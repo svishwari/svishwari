@@ -37,7 +37,7 @@ from huxunify.api.schema.model import (
     ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
-    ModelRequestPOSTSchema,
+    ModelRequestPOSTSchema, ModelUpdatePATCHSchema,
 )
 from huxunify.api.schema.configurations import ConfigurationsSchema
 from huxunify.api.data_connectors.tecton import Tecton
@@ -420,9 +420,7 @@ class UpdateModels(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @requires_access_levels(
-        [api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL]
-    )
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     @api_error_handler()
     def patch(self, user: dict) -> Tuple[list, int]:
         """Updates a model.
@@ -442,7 +440,7 @@ class UpdateModels(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        models = request.json
+        models = ModelUpdatePATCHSchema(many=True).load(request.json)
 
         updated_models = []
 

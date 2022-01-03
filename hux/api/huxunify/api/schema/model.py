@@ -143,4 +143,4 @@ class ModelUpdatePATCHSchema(Schema):
         allow_none=True,
     )
     description = Str(required=False)
-    added = Bool(attribute=api_c.IS_ADDED, required=False)
+    is_added = Bool(attribute=db_c.ADDED, required=False)
