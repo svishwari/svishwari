@@ -26,6 +26,7 @@
             align-center
             cursor-pointer
           "
+          data-e2e="add-new-attr"
           @click="addNewSection()"
         >
           <icon type="plus" color="primary" :size="11" class="mr-2" />
@@ -66,6 +67,7 @@
                     :selected="condition.attribute"
                     :items="attributeOptions()"
                     label="Select attribute"
+                    data-e2e="select-attr-btn"
                     @on-select="onSelect('attribute', condition, $event)"
                   />
                   <hux-dropdown
@@ -73,6 +75,7 @@
                     label="Select operator"
                     :items="operatorOptions(condition)"
                     :selected="condition.operator"
+                    data-e2e="select-operator-btn"
                     @on-select="onSelect('operator', condition, $event)"
                   />
                   <text-field
@@ -92,6 +95,7 @@
                     "
                     v-model="condition.text"
                     :options="listOptions(condition)"
+                    data-e2e="auto-complete-btn"
                     @change="triggerSizing(condition)"
                   />
                   <div
