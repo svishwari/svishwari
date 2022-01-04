@@ -1,4 +1,4 @@
-"""Purpose of this file is to house route utilities"""
+"""Purpose of this file is to house route utilities."""
 from datetime import datetime, date
 import re
 import csv
@@ -261,7 +261,9 @@ def group_gender_spending(gender_spending: list) -> dict:
         response(dict): Gender spending grouped by gender / month.
     """
 
-    date_parser = lambda x, y: datetime.strptime(f"1-{str(x)}-{str(y)}", "%d-%m-%Y")
+    date_parser = lambda x, y: datetime.strptime(
+        f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
+    )
     return {
         api_c.GENDER_WOMEN: [
             {
@@ -440,7 +442,9 @@ def is_component_favorite(
     Returns:
         bool: If component is favorite or not.
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(api_c.FAVORITES)
+    user_favorites = get_user(get_db_client(), okta_user_id).get(
+        api_c.FAVORITES
+    )
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name)
@@ -529,9 +533,13 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     # checking if required keys are present in user_info
     if not required_keys.issubset(user_info.keys()):
         logger.info("Failure. Required keys not present in user_info dict.")
-        return {"message": api_c.AUTH401_ERROR_MESSAGE}, HTTPStatus.UNAUTHORIZED
+        return {
+            "message": api_c.AUTH401_ERROR_MESSAGE
+        }, HTTPStatus.UNAUTHORIZED
 
-    logger.info("Successfully validated required_keys are present in user_info.")
+    logger.info(
+        "Successfully validated required_keys are present in user_info."
+    )
 
     # check if the user is in the database
     database = get_db_client()
@@ -551,7 +559,9 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
         # return NOT_FOUND if user is still none
         if user is None:
-            logger.info("User not found in DB even after trying to create one.")
+            logger.info(
+                "User not found in DB even after trying to create one."
+            )
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
     return user
@@ -621,7 +631,10 @@ def convert_unique_city_filter(request_json: dict) -> dict:
     try:
         for filters in request_json[api_c.AUDIENCE_FILTERS]:
             for item in filters[api_c.AUDIENCE_SECTION_FILTERS]:
-                if item[api_c.AUDIENCE_FILTER_FIELD] == api_c.AUDIENCE_FILTER_CITY:
+                if (
+                    item[api_c.AUDIENCE_FILTER_FIELD]
+                    == api_c.AUDIENCE_FILTER_CITY
+                ):
                     city_value, state_value, _ = item.get(
                         api_c.AUDIENCE_FILTER_VALUE
                     ).split("|")
@@ -665,7 +678,9 @@ def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
                 delivery.get(api_c.DELIVERY_PLATFORM_TYPE)
             ].get(api_c.AUDIENCE_LAST_DELIVERY, date.min):
                 match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
-                    api_c.AUDIENCE_LAST_DELIVERY: delivery.get(db_c.UPDATE_TIME),
+                    api_c.AUDIENCE_LAST_DELIVERY: delivery.get(
+                        db_c.UPDATE_TIME
+                    ),
                     api_c.MATCH_RATE: 0,
                 }
         else:
@@ -722,14 +737,22 @@ def set_destination_category_in_engagement(engagement: dict):
                 for destination_category in destinations_categories:
                     # check if the destination category is already present to
                     # update the existing dict data
-                    if destination_category[api_c.CATEGORY] == dest[api_c.CATEGORY]:
+                    if (
+                        destination_category[api_c.CATEGORY]
+                        == dest[api_c.CATEGORY]
+                    ):
                         for destination_type in destination_category[
                             api_c.DESTINATIONS
                         ]:
                             # check if the destination_type is already present
                             # to update just the nested audiences object within
-                            if destination_type[api_c.NAME] == destination[api_c.NAME]:
-                                destination_type[api_c.DESTINATION_AUDIENCES].extend(
+                            if (
+                                destination_type[api_c.NAME]
+                                == destination[api_c.NAME]
+                            ):
+                                destination_type[
+                                    api_c.DESTINATION_AUDIENCES
+                                ].extend(
                                     destination[api_c.DESTINATION_AUDIENCES]
                                 )
                                 break
