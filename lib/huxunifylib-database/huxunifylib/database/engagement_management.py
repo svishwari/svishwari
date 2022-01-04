@@ -406,15 +406,11 @@ def get_engagements_summary(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagements(
-    database: DatabaseClient, active_only: bool = False
-) -> Union[list, None]:
+def get_engagements(database: DatabaseClient) -> Union[list, None]:
     """A function to get all engagements.
 
     Args:
         database (DatabaseClient): A database client.
-        active_only (bool): Flag to fetch active engagements only,
-            default False
 
     Returns:
         Union[list, None]: List of all engagement documents.
@@ -423,12 +419,8 @@ def get_engagements(
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
     ]
-    query_filter = {db_c.DELETED: False}
-    if active_only:
-        query_filter[db_c.STATUS] = {"$ne": db_c.STATUS_INACTIVE}
-
     try:
-        return list(collection.find(query_filter, {db_c.DELETED: 0}))
+        return list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
