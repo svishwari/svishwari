@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use,C0302,unused-argument,too-many-lines
+# pylint: disable=no-self-use,unused-argument,too-many-lines
 """Paths for engagement API."""
 import datetime
 from pathlib import Path
