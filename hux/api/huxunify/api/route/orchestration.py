@@ -1231,24 +1231,18 @@ class AudiencePutView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
-        audience_filters = convert_unique_city_filter(
-            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
-        )
+
         audience_doc = orchestration_management.update_audience(
             database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
-            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=convert_unique_city_filter(
+                {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+            )
+            if db_c.AUDIENCE_FILTERS in body
+            else body.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
-        )
-
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f'Audience "{audience_doc[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
-            api_c.ORCHESTRATION_TAG,
-            user[api_c.USER_NAME],
         )
 
         # check if any engagements to add, otherwise return.
@@ -1300,6 +1294,14 @@ class AudiencePutView(SwaggerView):
                     [audience_doc[db_c.ID]],
                 )
                 removed.append(engagement[db_c.ID])
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f'Audience "{audience_doc[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
+            api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
+        )
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
