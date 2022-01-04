@@ -419,6 +419,7 @@ def get_engagements(database: DatabaseClient) -> Union[list, None]:
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
     ]
+
     try:
         return list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
