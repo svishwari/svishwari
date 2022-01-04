@@ -459,7 +459,7 @@ export default {
     height: 60px;
     flex-wrap: inherit;
     .top-action {
-      color: var(--v-black-darken4);
+      color: var(--v-black-base);
     }
   }
   .delivery-table {
