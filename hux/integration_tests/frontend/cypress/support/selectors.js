@@ -226,4 +226,11 @@ export default {
     cancelAudience: "[data-e2e='cancel-audience']",
     removeAudience: "[data-e2e='remove-audience-confirmation']",
   },
+
+  segmentPlayground: {
+    addNewAttr: "[data-e2e='add-new-attr']",
+    selectAttrBtn: "[data-e2e='select-attr-btn']",
+    selectOperatorBtn: "[data-e2e='select-operator-btn']",
+    autoCompleteBtn: "[data-e2e='auto-complete-btn']",
+  },
 }
