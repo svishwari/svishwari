@@ -52,8 +52,8 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
 
     //should validate customer events chart
     cy.get(selector.customerProfile.customerEventchart)
-    .its("length")
-    .should("gt", 0)
+      .its("length")
+      .should("gt", 0)
 
     //should validate customer events drawer
     cy.get(selector.customerProfile.eventsDrawerButton).click()

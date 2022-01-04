@@ -229,7 +229,7 @@ export default {
           .attr("cy", this.scoreTip.yPosition)
           .attr("r", 5)
           .style("stroke", "#00A3E0")
-          .style("stroke-width", 2) 
+          .style("stroke-width", 2)
           .style("stroke-opacity", "1")
           .style("fill", "white")
           .style("pointer-events", "none")
