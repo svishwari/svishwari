@@ -207,9 +207,9 @@ export default {
       let changeHoverCirclePosition = (data) => {
         let featureData = data
         featureData.xPosition = x(data.score)
-        featureData.yPosition = y(data.name) + 12
+        featureData.yPosition = y(data.name) + 10
         this.scoreTip.xPosition = x(data.score)
-        this.scoreTip.yPosition = y(data.name) + 12
+        this.scoreTip.yPosition = y(data.name) + 10
         this.scoreTip.score = data.score.toFixed(2)
         this.tooltipDisplay(true, featureData)
         svg
@@ -229,6 +229,7 @@ export default {
           .attr("cy", this.scoreTip.yPosition)
           .attr("r", 5)
           .style("stroke", "#00A3E0")
+          .style("stroke-width", 2) 
           .style("stroke-opacity", "1")
           .style("fill", "white")
           .style("pointer-events", "none")

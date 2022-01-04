@@ -174,6 +174,7 @@ export default {
     },
     eventsDrawerButton: "[data-e2e='eventsDrawerButton']",
     customerEventRow: "[data-e2e='customerEventRow']",
+    customerEventchart:  "[data-e2e='customer-event-chart']",
   },
 
   //IDR
