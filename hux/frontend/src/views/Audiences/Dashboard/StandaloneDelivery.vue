@@ -4,7 +4,7 @@
     flat
     height="156"
   >
-    <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-3">
+    <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-6">
       <div class="d-flex align-center">
         <span class="text-h3">Standalone deliveries</span>
         <tooltip :max-width="396" position-top>
@@ -23,7 +23,10 @@
         </tooltip>
       </div>
       <v-spacer> </v-spacer>
-      <div class="d-flex mr-4 deliver-all disabled" @click="deliverAll()">
+      <div
+        class="d-flex mr-4 deliver-all disabled text-body-1"
+        @click="deliverAll()"
+      >
         <icon
           class="deliver-icon mr-2"
           type="deliver"

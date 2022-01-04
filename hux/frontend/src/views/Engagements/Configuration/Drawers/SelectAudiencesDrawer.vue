@@ -7,7 +7,7 @@
     <template #default>
       <div class="pa-6">
         <v-btn tile color="primary" class="mb-4" @click="$emit('onAdd')">
-          Create a new audience
+          <span class="text-button">Create a new audience</span>
         </v-btn>
 
         <data-cards
@@ -36,7 +36,9 @@
           <template #field:size="row">
             <tooltip>
               <template #label-content>
-                {{ row.value | Numeric(true, true) | Empty }}
+                <span class="text-body-1">
+                  {{ row.value | Numeric(true, true) | Empty }}
+                </span>
               </template>
               <template #hover-content>
                 {{
@@ -44,6 +46,12 @@
                 }}
               </template>
             </tooltip>
+          </template>
+
+          <template #field:name="row">
+            <span class="text-body-1">
+              {{ row.value }}
+            </span>
           </template>
 
           <template #field:manage="row">
