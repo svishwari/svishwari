@@ -1238,6 +1238,6 @@ export default {
   border-radius: 12px !important;
 }
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
-  color:  var(--v-black-base) !important;;
+  color: var(--v-black-base) !important;
 }
 </style>

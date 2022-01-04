@@ -49,8 +49,8 @@
         :height="156"
         :interactable="false"
         title-class="text-h3"
-        iconType="Lookalikes"
-        titleIcon="lookalike"
+        icon-type="Lookalikes"
+        title-icon="lookalike"
       >
         <template #subtitle-extended>
           <div class="black--text text--lighten-4 mt-4 text-body-2">

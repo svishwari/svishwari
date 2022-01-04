@@ -23,7 +23,10 @@
         </tooltip>
       </div>
       <v-spacer> </v-spacer>
-      <div class="d-flex mr-4 deliver-all disabled text-body-1" @click="deliverAll()">
+      <div
+        class="d-flex mr-4 deliver-all disabled text-body-1"
+        @click="deliverAll()"
+      >
         <icon
           class="deliver-icon mr-2"
           type="deliver"
