@@ -13,7 +13,7 @@
         >
           <tooltip>
             <template #label-content>
-              <span class="ellipsis primary--text text-h3">
+              <span class="primary--text text-h3">
                 {{ section.name }}
               </span>
             </template>
@@ -459,7 +459,7 @@ export default {
     height: 60px;
     flex-wrap: inherit;
     .top-action {
-      color: var(--v-black-darken4);
+      color: var(--v-black-base);
     }
   }
   .delivery-table {
