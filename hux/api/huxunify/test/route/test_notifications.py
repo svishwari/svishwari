@@ -57,22 +57,26 @@ class TestNotificationRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        self.test_username = "test_user"
+
         notifications = [
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_SUCCESS,
                 "description": "description 1",
                 "category": api_c.DELIVERY_TAG,
+                "username": self.test_username,
             },
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_INFORMATIONAL,
                 "description": "description 2",
                 "category": api_c.MODELS_TAG,
+                "username": self.test_username,
             },
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_CRITICAL,
                 "description": "description 3",
                 "category": api_c.ORCHESTRATION_TAG,
-                "username": "random_user_name",
+                "username": self.test_username,
             },
         ]
 
@@ -133,9 +137,7 @@ class TestNotificationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIn(
-            response.json["username"], ["random_user_name", "unknown"]
-        )
+        self.assertEqual(self.test_username, response.json["username"])
 
     def test_get_notifications_default_params(self):
         """Test get notifications failure."""
@@ -252,6 +254,7 @@ class TestNotificationRoutes(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description="Successfully delivered audience to platform A.",
+            username=self.test_username,
         )
 
         with self.app.get(
@@ -304,10 +307,10 @@ class TestNotificationRoutes(TestCase):
     def test_delete_notification_invalid_id(self):
         """Test delete notification API with invalid ID."""
 
-        notifcation_id = "some_random_id"
+        notification_id = "some_random_id"
 
         response = self.app.delete(
-            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notification_id}",
             headers=t_c.STANDARD_HEADERS,
         )
 

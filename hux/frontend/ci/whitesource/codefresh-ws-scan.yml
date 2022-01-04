@@ -19,11 +19,7 @@ steps:
     commands:
       - echo "Set branch in wss-agent.config..."
       - echo projectVersion=$CF_PULL_REQUEST_TARGET >> $CF_VOLUME_PATH/$CF_REPO_NAME/hux/frontend/$CONFIG_FILE
-      - echo "Configure NPM environment for Whitesource scan..."
       - cd ${{CF_REPO_NAME}}/hux/frontend/
-      - npm install --global yarn
-      - yarn ci
-      - yarn global add @vue/cli
       - cp /wss-scan/wss-runner.sh ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/hux/frontend/wss-runner.sh # Copy the file because the script refrences current directory.
       - ./wss-runner.sh $API_KEY $INSTALL_COMMANDS $CONFIG_FILE $PROJECT_DIRECTORY
     environment:

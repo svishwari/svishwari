@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h5 class="text-h5 mb-4">Engagement overview</h5>
+  <div class="eng-overview">
+    <h5 class="text-h3 mb-4">Engagement overview</h5>
 
     <v-row no-gutters>
       <metric-card
@@ -8,15 +8,17 @@
         :key="index"
         :title="item.title"
         :icon="item.icon"
-        :max-width="172"
         class="mr-4 py-3"
       >
         <template #subtitle-extended>
-          <span v-if="item.title === 'Target size'" class="text-subtitle-1">
+          <span v-if="item.title === 'Size'" class="text-subtitle-1">
             <tooltip>
               <template #label-content>
-                <span class="text-subtitle-1">
+                <span v-if="item.subtitle !== '—'" class="text-subtitle-1">
                   {{ item.subtitle | Numeric(false, false, true) }}
+                </span>
+                <span v-else class="text-subtitle-1">
+                  {{ item.subtitle }}
                 </span>
               </template>
               <template #hover-content>
@@ -26,10 +28,22 @@
           </span>
 
           <span
-            v-if="item.title === 'Delivery schedule'"
-            class="text-subtitle-1"
+            v-if="
+              item.title === 'Delivery schedule' ||
+              item.title === 'Engagement name' ||
+              item.title === 'No. of audiences'
+            "
           >
-            {{ item.subtitle }}
+            <tooltip>
+              <template #label-content>
+                <span class="text-subtitle-1 text-ellipsis max-width-15ch">
+                  {{ item.subtitle | Empty }}
+                </span>
+              </template>
+              <template #hover-content>
+                {{ item.subtitle | Empty }}
+              </template>
+            </tooltip>
           </span>
 
           <div v-if="item.destinations" class="d-flex align-center">
@@ -45,7 +59,7 @@
               </template>
             </tooltip>
             <span v-if="!item.destinations.length" class="text-subtitle-1">
-              0
+              —
             </span>
           </div>
         </template>
@@ -130,12 +144,23 @@ export default {
     overview() {
       return [
         {
-          title: "Destinations",
-          destinations: this.selectedDestinationTypes,
+          title: "Engagement name",
+          subtitle: this.value.name,
         },
         {
-          title: "Target size",
-          subtitle: this.sumAudienceSizes,
+          title: "No. of audiences",
+          subtitle:
+            this.selectedAudiences.length > 0
+              ? this.selectedAudiences.length
+              : "—",
+        },
+        {
+          title: "Size",
+          subtitle: this.sumAudienceSizes ? this.sumAudienceSizes : "—",
+        },
+        {
+          title: "Destinations",
+          destinations: this.selectedDestinationTypes,
         },
         {
           title: "Delivery schedule",

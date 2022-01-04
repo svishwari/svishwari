@@ -111,6 +111,7 @@ HEALTH_CHECK = "healthcheck"
 
 TOTAL_RECORDS = "total_records"
 MATCH_RATE = "match_rate"
+MATCH_RATES = "match_rates"
 TOTAL = "total"
 TOTAL_UNIQUE_IDS = "total_unique_ids"
 TOTAL_UNKNOWN_IDS = "total_unknown_ids"
@@ -194,6 +195,7 @@ AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
+DIGITAL_ADVERTISING = "digital_advertising"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
     "AL": "Alabama",
@@ -575,22 +577,6 @@ DESTINATION_SECRETS = {
         ],
     },
 }
-DESTINATION_PATCH_FIELDS = [
-    db_c.ADDED,
-    db_c.ENABLED,
-    db_c.DELETED,
-    db_c.IS_AD_PLATFORM,
-    db_c.DELIVERY_PLATFORM_STATUS,
-    db_c.NAME,
-    db_c.DELIVERY_PLATFORM_TYPE,
-    db_c.CONTACT_EMAIL,
-    db_c.CLIENT_REQUEST,
-    db_c.CLIENT_ACCOUNT,
-    db_c.USE_CASE,
-]
-DESTINATION_INVALID_PATCH_MESSAGE = (
-    f"Acceptable fields are {DESTINATION_PATCH_FIELDS}."
-)
 
 ONLY_ADDED = "only_added"
 DELETE_DATASOURCES_SUCCESS = "Successfully deleted data source(s) - {}."
@@ -857,6 +843,7 @@ AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
+AUDIENCE_LAST_DELIVERY = "last_delivery"
 AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE_PERCENTAGE = "audience_size_percentage"
 AUDIENCE_STANDALONE_DELIVERIES = "standalone_deliveries"

@@ -101,7 +101,7 @@ export default {
       count = this.selectedAttributes.length
       if (this.selectedFavourite) count++
       if (this.selectedAudienceWorkedWith) count++
-
+      this.$emit("selected-filters", count)
       return count
     },
   },

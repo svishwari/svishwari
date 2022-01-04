@@ -20,7 +20,6 @@
               sortable: false,
             },
           ]"
-          :selected-items="selectedDestinations"
           empty="No destinations have been connected and added yet."
         >
           <template #field:name="{ item }">
