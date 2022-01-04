@@ -55,9 +55,7 @@ describe("Filters", () => {
     })
 
     it("should show as 'calendar' format", () => {
-      expect(filters.Date("2021-12-25", "calendar")).toEqual(
-        "Saturday at 12:00 AM"
-      )
+      expect(filters.Date("2021-12-25", "calendar")).toEqual("12/25/2021")
       let testdate = dayjs().subtract(1, "day")
       expect(filters.Date(testdate.format(), "calendar")).toEqual(
         testdate.format("[Yesterday at] h:mm A")
