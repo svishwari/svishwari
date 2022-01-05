@@ -33,6 +33,7 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
     cy.get(selector.customerProfile.conversionTime).should("exist")
     cy.get(selector.customerProfile.lastClick).should("exist")
     cy.get(selector.customerProfile.lastPurchaseDate).should("exist")
+    cy.get(selector.customerProfile.lastOpen).should("exist")
 
     // should ++REDACTED++ value in customer insights table
     cy.get("table").contains("td", "++REDACTED++")
@@ -48,6 +49,11 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
 
     // should validate chord card
     cy.get(selector.customerProfile.chord).should("exist")
+
+    //should validate customer events chart
+    cy.get(selector.customerProfile.customerEventchart)
+      .its("length")
+      .should("gt", 0)
 
     //should validate customer events drawer
     cy.get(selector.customerProfile.eventsDrawerButton).click()
