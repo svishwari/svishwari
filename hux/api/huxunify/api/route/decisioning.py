@@ -37,8 +37,8 @@ from huxunify.api.schema.model import (
     ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
-    ModelRequestPOSTSchema,
-    ModelUpdatePATCHSchema,
+    ModelRequestPostSchema,
+    ModelUpdatePatchSchema,
 )
 from huxunify.api.schema.configurations import ConfigurationsSchema
 from huxunify.api.data_connectors.tecton import Tecton
@@ -234,7 +234,7 @@ class SetModelStatus(SwaggerView):
             Tuple[dict, int]: Model Requested, HTTP status code.
         """
 
-        models = ModelRequestPOSTSchema().load(
+        models = ModelRequestPostSchema().load(
             request.get_json(), unknown=True, many=True
         )
         database = get_db_client()
@@ -441,7 +441,7 @@ class UpdateModels(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        models = ModelUpdatePATCHSchema(many=True).load(request.json)
+        models = ModelUpdatePatchSchema(many=True).load(request.json)
 
         updated_models = []
 

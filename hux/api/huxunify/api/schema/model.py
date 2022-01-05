@@ -105,7 +105,7 @@ class ModelDashboardSchema(Schema):
     shap_data = Dict()
 
 
-class ModelRequestPOSTSchema(Schema):
+class ModelRequestPostSchema(Schema):
     """Model Request Post Schema"""
 
     id = Str(required=True)
@@ -117,8 +117,8 @@ class ModelRequestPOSTSchema(Schema):
     )
 
 
-class ModelUpdatePATCHSchema(Schema):
-    """Model Request Post Schema"""
+class ModelUpdatePatchSchema(Schema):
+    """Model Update Patch Schema"""
 
     id = Str(required=True)
     name = Str(required=True)
