@@ -104,7 +104,6 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import Icon from "@/components/common/Icon.vue"
 import Logo from "@/components/common/Logo.vue"
-import HuxIcon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip"
 
 export default {
