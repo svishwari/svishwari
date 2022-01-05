@@ -10,31 +10,29 @@
     </template>
 
     <template #default>
-        <div
-            v-for="(value, category, index) in groupByCategory"
-            :key="`destinations-${index}`"
-            class="mx-6"
-          >
-            <label class="d-block body-2 mt-6 mb-2">{{ category }}</label>
+      <div
+        v-for="(values, category, index) in groupByCategory"
+        :key="`destinations-${index}`"
+        class="mx-6"
+      >
+        <label class="d-block body-2 mt-6 mb-2">{{ category }}</label>
 
-            <card-horizontal
-              v-for="destination in value"
-              :key="destination.id"
-              :title="destination.name"
-              :icon="destination.type"
-              :is-added="isAdded(destination)"
-              :is-available="destination.is_enabled"
-              class="my-3"
-              :data-e2e="`destination-select-button-${destination.type}`"
-              @click="add(destination)"
-            />
-          </div>
+        <card-horizontal
+          v-for="destination in values"
+          :key="destination.id"
+          :title="destination.name"
+          :icon="destination.type"
+          :is-added="isAdded(destination)"
+          :is-available="destination.is_enabled"
+          class="my-3"
+          :data-e2e="`destination-select-button-${destination.type}`"
+          @click="add(destination)"
+        />
+      </div>
     </template>
 
     <template #footer-left>
-      <div
-        class="d-flex align-baseline body-2"
-      >
+      <div class="d-flex align-baseline body-2">
         {{ destinationsList.length }} results
       </div>
     </template>
@@ -97,7 +95,10 @@ export default {
     },
 
     groupByCategory() {
-      return groupBy(sortBy(this.destinationsList, ["category", "name"]), "category")
+      return groupBy(
+        sortBy(this.destinationsList, ["category", "name"]),
+        "category"
+      )
     },
   },
 
@@ -139,15 +140,17 @@ export default {
             this.$emit("onAddDestination", {
               destination: { id: destination.id },
             })
-            this.localToggle = false
           }
         }
       }
     },
 
     undoAdd(destination) {
-      const index = this.value.indexOf(destination)
+      const index = this.value.findIndex((each) => destination.id === each.id)
       this.value.splice(index, 1)
+      this.$emit("onRemoveDestination", {
+        destination: { id: destination.id },
+      })
     },
   },
 }

@@ -11,31 +11,33 @@
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
-        <div
-          v-for="(value, category, index) in groupByCategory"
-          :key="`destinations-${index}`"
-          class="mx-6"
-        >
-          <label class="d-block body-2 mt-6 mb-2">{{ category }}</label>
+      <div
+        v-for="(values, category, index) in groupByCategory"
+        :key="`destinations-${index}`"
+        class="mx-6"
+      >
+        <label class="d-block body-2 mt-6 mb-2">{{ category }}</label>
 
-          <card-horizontal
-            v-for="destination in value"
-            :key="destination.id"
-            :title="destination.name"
-            :icon="destination.type"
-            :is-added="isAdded(destination.id)"
-            :is-available="destination.is_enabled"
-            class="my-3"
-            :data-e2e="isAdded(destination.id)?'':`destination-select-button-${destination.type}`"
-            @click="addToggle(destination)"
-          />
-        </div>
+        <card-horizontal
+          v-for="destination in values"
+          :key="destination.id"
+          :title="destination.name"
+          :icon="destination.type"
+          :is-added="isAdded(destination.id)"
+          :is-available="destination.is_enabled"
+          class="my-3"
+          :data-e2e="
+            isAdded(destination.id)
+              ? ''
+              : `destination-select-button-${destination.type}`
+          "
+          @click="addToggle(destination)"
+        />
+      </div>
     </template>
 
     <template #footer-left>
-      <div
-        class="d-flex align-baseline body-2"
-      >
+      <div class="d-flex align-baseline body-2">
         {{ connectedDestinations.length }} results
       </div>
     </template>
@@ -103,9 +105,10 @@ export default {
     },
 
     groupByCategory() {
-      let temp = groupBy(sortBy(this.connectedDestinations, ["category", "name"]), "category")
-      console.log(temp)
-      return temp
+      return groupBy(
+        sortBy(this.connectedDestinations, ["category", "name"]),
+        "category"
+      )
     },
   },
 
@@ -125,17 +128,16 @@ export default {
     }),
 
     isAdded(id) {
-      return Boolean(
-        this.selectedDestinations.filter((destination) => destination.id === id)
-          .length
-      )
+      return this.selectedDestinations.findIndex((each) => id === each.id) !==
+        -1
+        ? true
+        : false
     },
 
     addToggle(destination) {
-      if(this.isAdded(destination.id)){
+      if (this.isAdded(destination.id)) {
         this.undoAdd(destination)
-      }
-      else{
+      } else {
         this.add(destination)
       }
     },
@@ -159,6 +161,9 @@ export default {
         (destination) => destination.id === id
       )
       this.selectedDestinations.splice(index, 1)
+      this.$emit("removeDestination", {
+        destination: { id: destination.id },
+      })
     },
 
     async fetchDependencies() {
