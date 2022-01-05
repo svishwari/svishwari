@@ -72,6 +72,10 @@
       <step-2 v-model="data" />
     </div>
 
+    <div v-if="currentStep === 3">
+      <step-3 v-model="data" />
+    </div>
+
     <hux-footer>
       <template #left>
         <hux-button
@@ -108,6 +112,27 @@
         >
           Next
         </hux-button>
+        <hux-button
+          v-if="currentStep == 3"
+          is-tile
+          color="primary"
+          height="40"
+          :is-disabled="!isValid"
+          @click="addNewEngagement()"
+        >
+          Create
+        </hux-button>
+        <hux-button
+          v-if="currentStep == 3"
+          is-tile
+          color="primary"
+          height="40"
+          class="ml-2"
+          :is-disabled="!isValid"
+          @click="deliverNewEngagement()"
+        >
+          Create & deliver
+        </hux-button>
       </template>
     </hux-footer>
 
@@ -124,6 +149,9 @@
 </template>
 
 <script>
+//Vuex
+import { mapActions } from "vuex"
+
 //Components
 import Page from "@/components/Page.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
@@ -133,6 +161,7 @@ import HuxButton from "@/components/common/huxButton"
 //Views
 import Step1 from "@/views/Engagements/Configuration/AddSteps/Step1.vue"
 import Step2 from "@/views/Engagements/Configuration/AddSteps/Step2.vue"
+import Step3 from "@/views/Engagements/Configuration/AddSteps/Step3.vue"
 import EngagementOverview from "./Overview.vue"
 
 export default {
@@ -145,6 +174,7 @@ export default {
     HuxButton,
     Step1,
     Step2,
+    Step3,
     EngagementOverview,
   },
 
@@ -174,6 +204,21 @@ export default {
       }
       return true
     },
+
+    payload() {
+      const requestPayload = {
+        name: this.data.name,
+        description: this.data.description,
+        audiences: Object.values(this.data.audiences).map((audience) => {
+          return {
+            id: audience.id,
+            destinations: audience.destinations,
+          }
+        }),
+      }
+      requestPayload["delivery_schedule"] = null
+      return requestPayload
+    },
   },
 
   beforeRouteLeave(to, from, next) {
@@ -186,6 +231,11 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      addEngagement: "engagements/add",
+      deliverEngagement: "engagements/deliver",
+    }),
+
     navigateaway() {
       this.showConfirmModal = false
       this.flagForModal = true
@@ -194,6 +244,33 @@ export default {
 
     nextStep() {
       this.currentStep = this.currentStep + 1
+    },
+
+    async addNewEngagement() {
+      try {
+        const engagement = await this.addEngagement(this.payload)
+        this.$router.push({
+          name: "EngagementDashboard",
+          params: { id: engagement.id },
+        })
+      } catch (error) {
+        this.errorMessages.push(error.response.data.message)
+        this.scrollToTop()
+      }
+    },
+
+    async deliverNewEngagement() {
+      try {
+        const engagement = await this.addEngagement(this.payload)
+        await this.deliverEngagement(engagement.id)
+        this.$router.push({
+          name: "EngagementDashboard",
+          params: { id: engagement.id },
+        })
+      } catch (error) {
+        this.errorMessages.push(error.response.data.message)
+        this.scrollToTop()
+      }
     },
   },
 }
