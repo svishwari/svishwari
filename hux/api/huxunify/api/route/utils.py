@@ -22,6 +22,7 @@ from huxunifylib.database.cdp_data_source_management import (
 from huxunifylib.database import (
     constants as db_c,
 )
+from huxunifylib.database.collection_management import get_document
 from huxunifylib.database.user_management import (
     get_user,
     get_all_users,
@@ -696,3 +697,34 @@ def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
                 api_c.AUDIENCE_LAST_DELIVERY: None,
                 api_c.MATCH_RATE: None,
             }
+
+
+def validate_if_resource_owner(
+    resource_name: str, resource_id: str, user_name: str
+) -> bool:
+    """Validates if the user given is the resource owner.
+
+    Args:
+         resource_name (str): Name of the resource.
+         resource_id (str): ID of the resource.
+         user_name (str): User name of the user.
+     Returns:
+         bool: True if the name of user is the same as created_by.
+    """
+
+    resource_collection_mapping = {
+        api_c.AUDIENCE: db_c.AUDIENCES_COLLECTION,
+        api_c.ENGAGEMENT: db_c.ENGAGEMENTS_COLLECTION,
+    }
+    # Get the collection from the mapping
+    collection = resource_collection_mapping.get(resource_name)
+    if collection:
+        resource = get_document(
+            database=get_db_client(),
+            collection=collection,
+            query_filter={db_c.ID: ObjectId(resource_id)},
+        )
+        if resource.get(db_c.CREATED_BY, "") == user_name:
+            return True
+
+    return False

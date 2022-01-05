@@ -13,10 +13,13 @@ import facebook_business.exceptions
 from flask import request
 from marshmallow import ValidationError
 
+import huxunify.test.constants as t_c
+
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import (
     CustomAudienceDeliveryStatusError,
 )
+
 from huxunifylib.database.engagement_management import get_engagement
 from huxunifylib.database import (
     orchestration_management,
@@ -25,7 +28,11 @@ from huxunifylib.database import (
 )
 import huxunifylib.database.db_exceptions as de
 
-from huxunify.api.route.utils import get_db_client, get_user_from_db
+from huxunify.api.route.utils import (
+    get_db_client,
+    get_user_from_db,
+    validate_if_resource_owner,
+)
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.okta import (
     introspect_token,
@@ -36,6 +43,7 @@ from huxunify.api.exceptions import (
     unified_exceptions as ue,
 )
 from huxunify.api.config import get_config
+from huxunify.api.schema.access import ResourceAttributes
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
@@ -136,6 +144,128 @@ def secured() -> object:
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
+        return decorator
+
+    return wrapper
+
+
+def requires_access_policy(
+    access_rule: str, resource_attributes: dict, access_levels=None
+) -> object:
+    """Purpose of this decorator is for validating access based on rules,
+    roles for requests.
+
+    Example: @requires_access_policy()
+
+    Args:
+        access_rule (str): The rule to be evaluated before grating access to
+            the resource.
+        resource_attributes (dict): Identifying characteristics of resource.
+        access_levels (list): list of access levels.
+
+    Returns:
+        Response (object): decorator
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for validating access and returning a user object.
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+
+            if get_config().TEST_AUTH_OVERRIDE:
+                user = {
+                    api_c.USER_NAME: t_c.VALID_USER_RESPONSE.get(
+                        api_c.NAME, ""
+                    ),
+                    api_c.USER_ACCESS_LEVEL: db_c.USER_ROLE_ADMIN,
+                    api_c.USER_PII_ACCESS: True,
+                    db_c.USER_DISPLAY_NAME: t_c.VALID_USER_RESPONSE.get(
+                        api_c.NAME, ""
+                    ),
+                }
+            else:
+                # get the access token
+                logger.info("Getting okta access token from request.")
+                token_response = get_token_from_request(request)
+
+                # if not 200, return response
+                if token_response[1] != 200:
+                    return token_response
+
+                # get the user info and the corresponding user document from db
+                # from the access_token
+                user = get_user_from_db(token_response[0])
+
+                # If the user_response object is of type tuple, then return
+                # it as such since a failure must have occurred while
+                # fetching user data from db.
+                if isinstance(user, tuple):
+                    return user
+
+            attributes = ResourceAttributes().load(resource_attributes)
+            resource_name = attributes.get(api_c.NAME)
+            # Todo Move access control to a different class when more than
+            #  two rules arises.
+            if (
+                access_rule == api_c.RESOURCE_OWNER
+                and validate_if_resource_owner(
+                    resource_name=resource_name,
+                    resource_id=kwargs.get(f"{resource_name}_{api_c.ID}"),
+                    user_name=user.get(db_c.USER_DISPLAY_NAME, ""),
+                )
+                and api_c.AccessLevel(user.get(db_c.USER_ROLE))
+                in api_c.USER_ROLE_ALL
+            ):
+
+                user[api_c.USER_NAME] = user.get(db_c.USER_DISPLAY_NAME, None)
+                user[api_c.USER_PII_ACCESS] = user.get(
+                    db_c.USER_PII_ACCESS, False
+                )
+                kwargs[api_c.USER] = user
+
+                return in_function(*args, **kwargs)
+
+            # Check for role based access if access not granted.
+            if access_levels:
+                access_level = api_c.AccessLevel(user.get(db_c.USER_ROLE))
+                if access_level not in access_levels:
+                    logger.info(
+                        "User has an invalid access level "
+                        "to access this resource."
+                    )
+                    return {
+                        api_c.MESSAGE: api_c.INVALID_AUTH
+                    }, HTTPStatus.UNAUTHORIZED
+
+                user[api_c.USER_NAME] = user.get(db_c.USER_DISPLAY_NAME, None)
+                user[api_c.USER_PII_ACCESS] = user.get(
+                    db_c.USER_PII_ACCESS, False
+                )
+                # return found user
+                kwargs[api_c.USER] = user
+                return in_function(*args, **kwargs)
+
+            # No access to resource
+            logger.info(
+                "User has an invalid access level to access this resource."
+            )
+            return {api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED
+
         return decorator
 
     return wrapper

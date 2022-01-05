@@ -73,6 +73,7 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
     requires_access_levels,
+    requires_access_policy,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -1822,7 +1823,11 @@ class DeleteAudienceView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    @requires_access_policy(
+        access_rule=api_c.RESOURCE_OWNER,
+        resource_attributes={api_c.NAME: api_c.AUDIENCE},
+        access_levels=[api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL],
+    )
     def delete(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Deletes an audience.
 

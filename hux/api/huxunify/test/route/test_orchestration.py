@@ -128,7 +128,7 @@ class OrchestrationRouteTest(TestCase):
                 },
             },
         ]
-        self.user_name = "dave smith"
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME, "")
         self.destinations = []
         for destination in destinations:
             self.destinations.append(
