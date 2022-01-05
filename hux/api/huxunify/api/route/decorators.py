@@ -13,8 +13,6 @@ import facebook_business.exceptions
 from flask import request
 from marshmallow import ValidationError
 
-import huxunify.test.constants as t_c
-
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import (
     CustomAudienceDeliveryStatusError,
@@ -27,6 +25,8 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
 import huxunifylib.database.db_exceptions as de
+
+import huxunify.test.constants as t_c
 
 from huxunify.api.route.utils import (
     get_db_client,
