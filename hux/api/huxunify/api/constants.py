@@ -577,22 +577,6 @@ DESTINATION_SECRETS = {
         ],
     },
 }
-DESTINATION_PATCH_FIELDS = [
-    db_c.ADDED,
-    db_c.ENABLED,
-    db_c.DELETED,
-    db_c.IS_AD_PLATFORM,
-    db_c.DELIVERY_PLATFORM_STATUS,
-    db_c.NAME,
-    db_c.DELIVERY_PLATFORM_TYPE,
-    db_c.CONTACT_EMAIL,
-    db_c.CLIENT_REQUEST,
-    db_c.CLIENT_ACCOUNT,
-    db_c.USE_CASE,
-]
-DESTINATION_INVALID_PATCH_MESSAGE = (
-    f"Acceptable fields are {DESTINATION_PATCH_FIELDS}."
-)
 
 ONLY_ADDED = "only_added"
 DELETE_DATASOURCES_SUCCESS = "Successfully deleted data source(s) - {}."

@@ -35,7 +35,15 @@
     <div
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
-      <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+      <v-progress-linear
+        v-if="rowData.length == 0"
+        :active="loading"
+        :indeterminate="loading"
+      />
+      <div
+        v-if="!loading && rowData.length > 0"
+        class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100"
+      >
         <page-header class="top-bar" :header-height="71">
           <template #left>
             <v-btn disabled icon color="black">
@@ -569,39 +577,6 @@
           </template>
         </hux-data-table>
 
-        <v-row v-if="rowData.length == 0 && !loading" class="pt-3 pb-7 pl-3">
-          <empty-page type="no-engagement" size="50">
-            <template #title>Oops! There’s nothing here yet</template>
-            <template #subtitle>
-              Plan your engagement ahead of time. You can create the <br />
-              framework first then add audiences later. <br />
-              Begin by selecting the button below.
-            </template>
-            <template #button>
-              <router-link
-                :to="{ name: 'AudienceConfiguration' }"
-                class="route-link text-decoration-none"
-                append
-              >
-                <huxButton
-                  button-text="Engagement"
-                  variant="primary base"
-                  icon-color="white"
-                  icon-variant="base"
-                  icon="plus"
-                  size="large"
-                  is-custom-icon
-                  class="ma-2 font-weight-regular caption"
-                  is-tile
-                  height="40"
-                >
-                  Engagement
-                </huxButton>
-              </router-link>
-            </template>
-          </empty-page>
-        </v-row>
-
         <look-alike-audience
           ref="lookalikeWorkflow"
           :toggle="showLookAlikeDrawer"
@@ -610,6 +585,7 @@
           @onCreate="onCreated()"
         />
       </div>
+
       <div class="ml-auto">
         <engagement-filter
           v-model="isFilterToggled"
@@ -620,6 +596,61 @@
       </div>
     </div>
 
+    <div v-if="rowData.length == 0 && !loading" class="background-empty">
+      <empty-page type="no-engagement" size="50">
+        <template #title>
+          <div class="title-no-engagement">No engagements</div>
+        </template>
+        <template #subtitle>
+          <div class="des-no-engagement mt-3">
+            <span v-if="numFiltersSelected <= 0">
+              Engagements will appear here once you start creating them.
+            </span>
+            <span v-else>
+              Currently there are no engagements available based on your applied
+              filters. <br />
+              Check back later or change your filters.
+            </span>
+          </div>
+        </template>
+        <template #button>
+          <span v-if="numFiltersSelected <= 0">
+            <router-link
+              :to="{ name: 'EngagementConfiguration' }"
+              class="text-decoration-none"
+              append
+              data-e2e="add-engagement"
+            >
+              <huxButton
+                variant="primary base"
+                icon-color="white"
+                icon-variant="base"
+                icon="plus"
+                size="large"
+                is-custom-icon
+                class="ma-2 font-weight-regular no-shadow mr-0 caption"
+                is-tile
+                height="40"
+              >
+                Create an engagement
+              </huxButton>
+            </router-link>
+          </span>
+          <span v-else>
+            <huxButton
+              button-text="Clear filters"
+              variant="primary base"
+              size="large"
+              class="ma-2 font-weight-regular text-button"
+              is-tile
+              :height="'40'"
+            >
+              Clear filters
+            </huxButton>
+          </span>
+        </template>
+      </empty-page>
+    </div>
     <confirm-modal
       v-model="showAudienceRemoveConfirmation"
       icon="modal-remove"
@@ -1294,5 +1325,32 @@ export default {
 }
 .icon-border {
   cursor: default !important;
+}
+.background-empty {
+  height: 60vh !important;
+  background-image: url("../../assets/images/no-alert-frame.png");
+  background-position: center;
+}
+
+//to overwrite the classes
+
+.title-no-engagement {
+  font-size: 24px !important;
+  line-height: 34px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.des-no-engagement {
+  font-size: 14px !important;
+  line-height: 16px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+::v-deep .empty-page {
+  max-height: 0 !important;
+  min-height: 100% !important;
+  min-width: 100% !important;
 }
 </style>

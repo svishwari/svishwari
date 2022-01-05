@@ -1,6 +1,6 @@
 <template>
   <div class="eng-overview">
-    <h5 class="text-h3 mb-4">Engagement overview</h5>
+    <h5 class="text-h3 mb-2">Engagement overview</h5>
 
     <v-row no-gutters>
       <metric-card

@@ -297,9 +297,13 @@ class DestinationsView(SwaggerView):
                         ],
                         status=destination[db_c.DELIVERY_PLATFORM_STATUS],
                     )
-            destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping[
-                destination[db_c.DELIVERY_PLATFORM_STATUS]
-            ]
+            # using a default here in case we do not have a proper mapping
+            # or just want to use the same constant value in the UI
+            destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping.get(
+                destination[db_c.DELIVERY_PLATFORM_STATUS],
+                destination[db_c.DELIVERY_PLATFORM_STATUS],
+            )
+
         return (
             jsonify(DestinationGetSchema().dump(destinations, many=True)),
             HTTPStatus.OK,
@@ -989,12 +993,10 @@ class DestinationPatchView(SwaggerView):
             "description": "Destination updated.",
             "schema": DestinationDataExtGetSchema,
         },
-        HTTPStatus.UNPROCESSABLE_ENTITY.value: {
+        HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to patch destination data.",
             "schema": {
-                "example": {
-                    "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
-                },
+                "example": {"message": "Invalid request received."},
             },
         },
     }
@@ -1022,23 +1024,11 @@ class DestinationPatchView(SwaggerView):
             Tuple[dict, int]: Destination doc, HTTP status code.
         """
 
-        # get update fields
-        patch_dict = {
-            k: v
-            for k, v in (
-                request.get_json() if request.get_json() else {}
-            ).items()
-            if k in api_c.DESTINATION_PATCH_FIELDS
-        }
-
-        if not patch_dict:
+        if not request.get_json():
             logger.info("Could not patch destination.")
-            return {
-                "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
-            }, HTTPStatus.UNPROCESSABLE_ENTITY
+            return {"message": "No body provided."}, HTTPStatus.BAD_REQUEST
 
-        # validate the schema first.
-        DestinationPatchSchema().validate(patch_dict)
+        DestinationPatchSchema().validate(request.get_json())
 
         database = get_db_client()
 
@@ -1047,7 +1037,7 @@ class DestinationPatchView(SwaggerView):
                 database,
                 destination_id,
                 {
-                    **patch_dict,
+                    **request.get_json(),
                     **{
                         db_c.UPDATED_BY: user[api_c.USER_NAME],
                         db_c.UPDATE_TIME: datetime.datetime.utcnow(),

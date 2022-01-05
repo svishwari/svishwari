@@ -1,31 +1,30 @@
 <template>
   <drawer v-model="localToggle" :width="640" :loading="loading">
     <template #header-left>
-      <h3 class="text-h3">Add audiences to this engagement</h3>
+      <h3 class="text-h2">Add audiences to this engagement</h3>
     </template>
 
     <template #default>
       <div class="pa-6">
         <v-btn tile color="primary" class="mb-4" @click="$emit('onAdd')">
-          <v-icon>mdi-plus</v-icon>
-          New audience
+          <span class="text-button">Create a new audience</span>
         </v-btn>
 
         <data-cards
           :items="audiences"
           sort="asc"
           empty="No audiences have been created."
-          :selected-items="value"
+          card-class="select-aud-card"
           :fields="[
             {
               key: 'name',
-              label: 'Name',
+              label: 'Audiences',
               sortable: true,
               col: '6',
             },
             {
               key: 'size',
-              label: 'Target size',
+              label: 'Size',
               sortable: true,
             },
             {
@@ -37,7 +36,9 @@
           <template #field:size="row">
             <tooltip>
               <template #label-content>
-                {{ row.value | Numeric(true, true) | Empty }}
+                <span class="text-body-1">
+                  {{ row.value | Numeric(true, true) | Empty }}
+                </span>
               </template>
               <template #hover-content>
                 {{
@@ -47,11 +48,17 @@
             </tooltip>
           </template>
 
+          <template #field:name="row">
+            <span class="text-body-1">
+              {{ row.value }}
+            </span>
+          </template>
+
           <template #field:manage="row">
             <div class="d-flex align-center justify-end">
               <hux-button
                 v-if="isAdded(row.item)"
-                variant="primary lighten-8"
+                variant="primary darken-2"
                 width="100"
                 height="40"
                 icon="mdi-check"
@@ -64,14 +71,14 @@
               <hux-button
                 v-else
                 is-outlined
-                variant="primary"
-                width="100"
+                variant="black lighten-3"
+                width="79"
                 height="40"
-                :box-shadow="false"
+                box-shadow
                 data-e2e="audience-select-button"
                 @click="add(row.item)"
               >
-                Add
+                <span class="black--text text--lighten-4">Add</span>
               </hux-button>
             </div>
           </template>
@@ -80,7 +87,7 @@
     </template>
 
     <template #footer-left>
-      <span class="black--text text--darken-1 text-caption">
+      <span class="black--text text--lighten-4 text-body-2">
         {{ audiences.length }} results
       </span>
     </template>
@@ -276,3 +283,9 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+::v-deep .select-aud-card {
+  padding: 10px 16px;
+}
+</style>

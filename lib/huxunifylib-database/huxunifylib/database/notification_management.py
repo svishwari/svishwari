@@ -1,6 +1,5 @@
 """This module enables functionality related to notification management."""
 import logging
-import warnings
 from datetime import datetime
 from typing import Union, List, Any, Dict
 
@@ -11,7 +10,10 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.db_exceptions import InvalidNotificationType
+from huxunifylib.database.db_exceptions import (
+    InvalidNotificationType,
+    MissingValueException,
+)
 
 
 @retry(
@@ -23,7 +25,7 @@ def create_notification(
     notification_type: str,
     description: str,
     category: str = None,
-    username: str = "unknown",
+    username: str = None,
 ) -> Union[dict, None]:
     """A function to create a new notification.
 
@@ -41,11 +43,15 @@ def create_notification(
     Raises:
         InvalidNotificationType: Error if the passed in notification_type value
             is not valid.
+        MissingValueException: Error if the username is not provided.
     """
 
     # validate type
     if notification_type.lower() not in db_c.NOTIFICATION_TYPES:
         raise InvalidNotificationType(notification_type)
+
+    if username is None:
+        raise MissingValueException("username")
 
     # get collection
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
@@ -67,12 +73,6 @@ def create_notification(
         expire_time = current_time + relativedelta(months=6)
     elif notification_type == db_c.NOTIFICATION_TYPE_CRITICAL:
         expire_time = current_time + relativedelta(months=6)
-
-    warnings.warn(
-        "Use of username field being optional with default value of unknown in"
-        " notification collection will be deprecated in the future release.",
-        DeprecationWarning,
-    )
 
     doc = {
         db_c.EXPIRE_AT: expire_time,
