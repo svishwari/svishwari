@@ -2,7 +2,7 @@
   <div class="insight-tab">
     <v-row>
       <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+        <v-card class="mt-4 rounded-lg box-shadow-5" height="365">
           <v-card-title class="pb-2 pl-6 pt-5">
             <h3 class="text-h3">Audience Size</h3>
             <span class="text-body-1 time-frame">
@@ -59,7 +59,7 @@
     </v-row>
     <v-row class="mt-2 mb-4">
       <v-col md="12">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="395">
+        <v-card class="mt-4 rounded-lg box-shadow-5" height="395">
           <v-row>
             <v-progress-linear
               v-if="loadingDemographics"
@@ -204,5 +204,8 @@ export default {
     border-left: 1px solid var(--v-black-lighten3) !important;
     height: 386px !important;
   }
+}
+::v-deep .hux-data-table .table-overflow {
+ border-top-right-radius: 12px !important;
 }
 </style>
