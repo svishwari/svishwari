@@ -131,7 +131,7 @@
           :is-disabled="!isValid"
           @click="deliverNewEngagement()"
         >
-          Create & deliver
+          Create &amp; deliver
         </hux-button>
       </template>
     </hux-footer>
