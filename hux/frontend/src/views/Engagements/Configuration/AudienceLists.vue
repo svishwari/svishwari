@@ -20,7 +20,7 @@
       >
         <template #row-item="{ item }">
           <td v-for="header in columnDefs" :key="header.value">
-            <div class="black--text text-body-1" v-if="header.value == 'name'">
+            <div v-if="header.value == 'name'" class="black--text text-body-1">
               <tooltip>
                 <template slot="label-content">
                   <span class="ellipsis">
@@ -32,7 +32,7 @@
                 </template>
               </tooltip>
             </div>
-            <div class="black--text text-body-1" v-if="header.value == 'size'">
+            <div v-if="header.value == 'size'" class="black--text text-body-1">
               <size :value="item[1].size" />
             </div>
             <div
@@ -88,7 +88,7 @@
     </v-card>
     <div class="info-widget d-flex mt-2 ml-7 pa-3">
       <div class="bulb">
-        <icon type="FAB-bulb" :size="18" class="mt-1"/>
+        <icon type="FAB-bulb" :size="18" class="mt-1" />
       </div>
       <div class="description ml-4">
         The lookalike audience will not be created in it's associated
@@ -114,7 +114,6 @@ export default {
     Size,
     Icon,
     Logo,
-    HuxIcon,
     Tooltip,
   },
   props: {

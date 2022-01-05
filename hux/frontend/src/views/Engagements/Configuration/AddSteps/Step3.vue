@@ -47,7 +47,7 @@
             Deliver this engagement during a chosen timeframe.
           </div>
         </div>
-        <audience-lists :value="value"/>
+        <audience-lists :value="value" />
       </div>
     </v-row>
   </div>
@@ -101,8 +101,9 @@ export default {
         width: 199px;
         border-radius: 12px;
       }
-      .manual.active, .recurring.active {
-          border: 1px solid var(--v-primary-lighten4);
+      .manual.active,
+      .recurring.active {
+        border: 1px solid var(--v-primary-lighten4);
       }
     }
   }
