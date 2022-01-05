@@ -3,8 +3,8 @@ import asyncio
 from datetime import datetime
 from pymongo import MongoClient
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.collection_management import get_documents
 from huxunifylib.database.notification_management import create_notification
-from huxunifylib.database.engagement_management import get_engagements
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
 )
@@ -165,8 +165,12 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
     asyncio.set_event_loop(asyncio.SelectorEventLoop())
     loop = asyncio.get_event_loop()
 
-    # get engagements
-    for engagement in get_engagements(database):
+    # get active engagements
+    for engagement in get_documents(
+        database=database,
+        collection=db_c.ENGAGEMENTS_COLLECTION,
+        query_filter={db_c.STATUS: {"$ne": db_c.STATUS_INACTIVE}},
+    )[db_c.DOCUMENTS]:
 
         # process audiences
         for audience in engagement.get(api_c.AUDIENCES):
