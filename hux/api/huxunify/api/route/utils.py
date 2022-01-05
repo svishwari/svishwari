@@ -716,7 +716,7 @@ def validate_if_resource_owner(
         api_c.AUDIENCE: db_c.AUDIENCES_COLLECTION,
         api_c.ENGAGEMENT: db_c.ENGAGEMENTS_COLLECTION,
     }
-    # Get the collection from the mapping
+    # Get the collection from the mapping.
     collection = resource_collection_mapping.get(resource_name)
     if collection:
         resource = get_document(
@@ -724,7 +724,7 @@ def validate_if_resource_owner(
             collection=collection,
             query_filter={db_c.ID: ObjectId(resource_id)},
         )
-        # Add check if resource name is audience, considering lookalikes
+        # Add check if resource name is audience, considering lookalikes.
         if not resource and resource_name == api_c.AUDIENCE:
             resource = get_document(
                 database=get_db_client(),
