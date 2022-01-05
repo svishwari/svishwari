@@ -195,7 +195,7 @@ class DestinationGetSchema(Schema):
     )
     is_added = fields.Bool(attribute=db_c.ADDED)
     is_enabled = fields.Bool(attribute=db_c.ENABLED)
-    link = fields.String(attribute=db_c.LINK)
+    link = fields.String(attribute=db_c.LINK, default="")
     is_ad_platform = fields.Bool(attribute=db_c.IS_AD_PLATFORM)
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
