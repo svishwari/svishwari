@@ -1074,7 +1074,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Email deliverability",
-        db_c.CONFIGURATION_FIELD_ICON: "email_deliverabilit",
+        db_c.CONFIGURATION_FIELD_ICON: "email_deliverability",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Ensure emails land in the right "
         "inbox by providing insights on all aspects of a "
