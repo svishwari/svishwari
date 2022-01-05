@@ -2,31 +2,38 @@
   <drawer v-model="localToggle" :loading="loading">
     <template #header-left>
       <div class="d-flex align-baseline">
-        <h3 class="text-h3 pr-2 d-flex align-center">
-          <icon type="map" :size="32" class="mr-2" />
-          <div class="pl-2 font-weight-light">Select a destination</div>
+        <h3 class="text-h2 pr-2 d-flex align-center">
+          <icon type="map" :size="32" class="mx-2" />
+          <div class="pl-1">Add a destination</div>
         </h3>
       </div>
     </template>
 
     <template #default>
-      <div class="ma-3 font-weight-light">
-        <card-horizontal
-          v-for="destination in destinationsList"
-          :key="destination.id"
-          :title="destination.name"
-          :icon="destination.type"
-          :is-added="isAdded(destination)"
-          :data-e2e="`destination-select-button-${destination.type}`"
-          class="my-3"
-          @click="add(destination)"
-        />
-      </div>
+        <div
+            v-for="(value, category, index) in groupByCategory"
+            :key="`destinations-${index}`"
+            class="mx-6"
+          >
+            <label class="d-block body-2 mt-6 mb-2">{{ category }}</label>
+
+            <card-horizontal
+              v-for="destination in value"
+              :key="destination.id"
+              :title="destination.name"
+              :icon="destination.type"
+              :is-added="isAdded(destination)"
+              :is-available="destination.is_enabled"
+              class="my-3"
+              :data-e2e="`destination-select-button-${destination.type}`"
+              @click="add(destination)"
+            />
+          </div>
     </template>
 
     <template #footer-left>
       <div
-        class="d-flex align-baseline black--text text--darken-1 text-caption"
+        class="d-flex align-baseline body-2"
       >
         {{ destinationsList.length }} results
       </div>
@@ -40,6 +47,9 @@ import { mapGetters, mapActions } from "vuex"
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Icon from "@/components/common/Icon"
+
+import { groupBy } from "@/utils"
+import sortBy from "lodash/sortBy"
 
 export default {
   name: "SelectDestinationsDrawer",
@@ -84,6 +94,10 @@ export default {
       return this.destinations.filter(
         (each) => each.is_added && each.is_enabled
       )
+    },
+
+    groupByCategory() {
+      return groupBy(sortBy(this.destinationsList, ["category", "name"]), "category")
     },
   },
 
