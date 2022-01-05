@@ -737,3 +737,72 @@ def get_all_audiences_and_deliveries(
         logging.error(exc)
 
     return None
+
+
+def append_destination_to_standalone_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    destination: dict,
+    user_name: str,
+) -> dict:
+    """A function to append destination to standalone audience.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        destination (dict): Destination to add to engagement audience.
+        user_name (str): Name of the user appending the destination to the
+            audience.
+
+    Returns:
+        dict: updated audience object.
+    Raises:
+        TypeError: Error user name is not a string.
+    """
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
+
+    # workaround due to limitation in DocumentDB
+    audience_doc = collection.find_one(
+        {
+            db_c.ID: audience_id,
+        }
+    )
+
+    if not audience_doc:
+        return {}
+
+    updated = False
+
+    # append destinations to the matched audience
+    audience_doc[db_c.DESTINATIONS] = audience_doc.get(db_c.DESTINATIONS) + [
+        destination
+    ]
+
+    # only update if the destination was added.
+    if updated:
+        audience_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
+        audience_doc[db_c.UPDATED_BY] = user_name
+
+        collection.replace_one(
+            {
+                db_c.ID: audience_id,
+            },
+            audience_doc,
+        )
+    else:
+        logging.error(
+            "There was no matching audience for appending " "destination %s.",
+            destination.get(db_c.OBJECT_ID),
+        )
+        return {}
+
+    return collection.find_one(
+        {
+            db_c.ID: audience_id,
+        }
+    )
