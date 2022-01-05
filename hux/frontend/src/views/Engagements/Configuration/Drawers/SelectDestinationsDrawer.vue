@@ -1,94 +1,65 @@
 <template>
   <drawer v-model="localToggle" :width="640">
     <template #header-left>
-      <h3 class="text-h3">Add destinations to this audience</h3>
+      <div class="d-flex align-baseline">
+        <h3 class="text-h2 pr-2 d-flex align-center">
+          <icon type="map" :size="32" class="mx-2" />
+          <div class="pl-1">Add a destination</div>
+        </h3>
+      </div>
     </template>
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
+      <div
+        v-for="(values, category, index) in groupByCategory"
+        :key="`destinations-${index}`"
+        class="mx-6"
+      >
+        <label class="d-block body-2 mt-6 mb-2">{{ category }}</label>
 
-      <div class="pa-8">
-        <data-cards
-          :items="connectedDestinations"
-          :fields="[
-            {
-              key: 'name',
-              label: 'Destination',
-            },
-            {
-              key: 'manage',
-              sortable: false,
-            },
-          ]"
-          empty="No destinations have been connected and added yet."
-        >
-          <template #field:name="{ item }">
-            <div class="d-flex align-center">
-              <logo
-                :key="item.type"
-                class="mr-2"
-                :type="item.type"
-                :size="26"
-              />
-              {{ item.name }}
-            </div>
-          </template>
-
-          <template #field:manage="{ item }">
-            <div class="d-flex align-center justify-end">
-              <hux-button
-                v-if="isAdded(item.id)"
-                variant="primary lighten-8"
-                width="100"
-                height="40"
-                icon="mdi-check"
-                icon-position="left"
-                :box-shadow="false"
-                @click="undoAdd(item)"
-              >
-                Added
-              </hux-button>
-              <hux-button
-                v-else
-                is-outlined
-                variant="primary"
-                width="100"
-                height="40"
-                :box-shadow="false"
-                :data-e2e="`destination-select-button-${item.type}`"
-                @click="add(item)"
-              >
-                Add
-              </hux-button>
-            </div>
-          </template>
-        </data-cards>
+        <card-horizontal
+          v-for="destination in values"
+          :key="destination.id"
+          :title="destination.name"
+          :icon="destination.type"
+          :is-added="isAdded(destination.id)"
+          :is-available="destination.is_enabled"
+          class="my-3"
+          :data-e2e="
+            isAdded(destination.id)
+              ? ''
+              : `destination-select-button-${destination.type}`
+          "
+          @click="addToggle(destination)"
+        />
       </div>
     </template>
 
     <template #footer-left>
-      <span class="black--text text--darken-1 text-caption">
+      <div class="d-flex align-baseline body-2">
         {{ connectedDestinations.length }} results
-      </span>
+      </div>
     </template>
   </drawer>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
-import HuxButton from "@/components/common/huxButton.vue"
-import Logo from "@/components/common/Logo.vue"
+import Icon from "@/components/common/Icon"
+import CardHorizontal from "@/components/common/CardHorizontal"
+
+import { groupBy } from "@/utils"
+import sortBy from "lodash/sortBy"
 
 export default {
   name: "DestinationsDrawer",
 
   components: {
-    DataCards,
     Drawer,
-    HuxButton,
-    Logo,
+    Icon,
+    CardHorizontal,
   },
 
   props: {
@@ -132,6 +103,13 @@ export default {
       }
       return []
     },
+
+    groupByCategory() {
+      return groupBy(
+        sortBy(this.connectedDestinations, ["category", "name"]),
+        "category"
+      )
+    },
   },
 
   watch: {
@@ -150,10 +128,18 @@ export default {
     }),
 
     isAdded(id) {
-      return Boolean(
-        this.selectedDestinations.filter((destination) => destination.id === id)
-          .length
-      )
+      return this.selectedDestinations.findIndex((each) => id === each.id) !==
+        -1
+        ? true
+        : false
+    },
+
+    addToggle(destination) {
+      if (this.isAdded(destination.id)) {
+        this.undoAdd(destination)
+      } else {
+        this.add(destination)
+      }
     },
 
     add(destination) {
@@ -175,6 +161,9 @@ export default {
         (destination) => destination.id === id
       )
       this.selectedDestinations.splice(index, 1)
+      this.$emit("removeDestination", {
+        destination: { id: destination.id },
+      })
     },
 
     async fetchDependencies() {

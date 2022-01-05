@@ -322,6 +322,7 @@
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
       @onAddDestination="triggerAttachDestination($event)"
+      @onRemoveDestination="triggerRemoveDestination($event)"
     />
     <!-- Salesforce extension workflow -->
     <destination-data-extension-drawer
@@ -973,6 +974,16 @@ export default {
         audienceId: this.audienceId,
         data: payload,
       })
+      await this.loadAudienceInsights()
+    },
+    async triggerRemoveDestination(event) {
+      this.deleteActionData = {
+        engagementId: this.engagementId,
+        audienceId: this.audienceId,
+        data: { id: event.destination.id },
+      }
+      await this.detachAudienceDestination(this.deleteActionData)
+
       await this.loadAudienceInsights()
     },
     async triggerAttachEngagement(event) {
