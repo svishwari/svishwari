@@ -16,7 +16,10 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
     collection_management,
 )
-from huxunifylib.database.orchestration_management import create_audience, get_audience
+from huxunifylib.database.orchestration_management import (
+    create_audience,
+    get_audience,
+)
 from huxunifylib.database.engagement_management import (
     set_engagement,
     get_engagement,
@@ -59,7 +62,9 @@ class TestDestinationRoutes(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         # mock get db client from destinations
         mock.patch(
@@ -349,7 +354,9 @@ class TestDestinationRoutes(TestCase):
         ]
 
         for destination in destinations:
-            destination_management.set_delivery_platform(self.database, **destination)
+            destination_management.set_delivery_platform(
+                self.database, **destination
+            )
 
         self.destinations = destination_management.get_all_delivery_platforms(
             self.database
@@ -387,7 +394,9 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    @mock.patch("huxunify.api.route.destination.JiraConnection.create_jira_issue")
+    @mock.patch(
+        "huxunify.api.route.destination.JiraConnection.create_jira_issue"
+    )
     @mock.patch("huxunify.api.route.destination.JiraConnection.__init__")
     def test_request_existing_destination(
         self, jira_class_init, jira_create_issue_mock
@@ -425,9 +434,13 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.CONFLICT, response.status_code)
 
-    @mock.patch("huxunify.api.route.destination.JiraConnection.create_jira_issue")
+    @mock.patch(
+        "huxunify.api.route.destination.JiraConnection.create_jira_issue"
+    )
     @mock.patch("huxunify.api.route.destination.JiraConnection.__init__")
-    def test_request_new_destination(self, jira_class_init, jira_create_issue_mock):
+    def test_request_new_destination(
+        self, jira_class_init, jira_create_issue_mock
+    ):
         """Test request new destinations.
 
         Args:
@@ -536,7 +549,9 @@ class TestDestinationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(self.destinations[0][db_c.NAME], response.json[db_c.NAME])
+        self.assertEqual(
+            self.destinations[0][db_c.NAME], response.json[db_c.NAME]
+        )
 
     def test_get_destination_where_destination_not_found(self):
         """Test get destination with a valid ID that is not in the DB."""
@@ -649,7 +664,9 @@ class TestDestinationRoutes(TestCase):
         )
 
         mock_facebook_connector.stop()
-        validation_success = {"message": api_c.DESTINATION_AUTHENTICATION_SUCCESS}
+        validation_success = {
+            "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+        }
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(validation_success, response.json)
@@ -658,7 +675,9 @@ class TestDestinationRoutes(TestCase):
         "huxunify.api.route.destination.FacebookConnector",
         **{"return_value.raiseError.side_effect": Exception()},
     )
-    def test_validate_facebook_failure_bad_credentials(self, mock_connector: MagicMock):
+    def test_validate_facebook_failure_bad_credentials(
+        self, mock_connector: MagicMock
+    ):
         """Test failure to authenticate with facebook due to bad credentials.
 
         Args:
@@ -684,7 +703,9 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        validation_failed = {"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
+        validation_failed = {
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }
 
         self.assertEqual(HTTPStatus.FORBIDDEN, response.status_code)
         self.assertEqual(validation_failed, response.json)
@@ -750,7 +771,9 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        validation_failed = {"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
+        validation_failed = {
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(validation_failed, response.json)
@@ -823,7 +846,9 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        validation_failed = {"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
+        validation_failed = {
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(validation_failed, response.json)
@@ -895,7 +920,9 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        validation_failed = {"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
+        validation_failed = {
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(validation_failed, response.json)
@@ -972,7 +999,9 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        validation_failed = {"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
+        validation_failed = {
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(validation_failed, response.json)
@@ -1037,7 +1066,9 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     @mock.patch("huxunify.api.route.destination.SFMCConnector")
-    def test_retrieve_ordered_destination_data_extensions(self, mock_sfmc: MagicMock):
+    def test_retrieve_ordered_destination_data_extensions(
+        self, mock_sfmc: MagicMock
+    ):
         """Test retrieve destination data extensions.
 
         Args:
@@ -1061,7 +1092,9 @@ class TestDestinationRoutes(TestCase):
             },
         ]
         mock_sfmc_instance = mock_sfmc.return_value
-        mock_sfmc_instance.get_list_of_data_extensions.return_value = return_value
+        mock_sfmc_instance.get_list_of_data_extensions.return_value = (
+            return_value
+        )
 
         expected_response = sorted(
             DestinationDataExtGetSchema().dump(return_value, many=True),
@@ -1090,7 +1123,9 @@ class TestDestinationRoutes(TestCase):
             )
 
     @mock.patch("huxunify.api.route.destination.SFMCConnector")
-    def test_retrieve_empty_destination_data_extensions(self, mock_sfmc: MagicMock):
+    def test_retrieve_empty_destination_data_extensions(
+        self, mock_sfmc: MagicMock
+    ):
         """Test retrieve destination data extensions.
 
         Args:
@@ -1099,7 +1134,9 @@ class TestDestinationRoutes(TestCase):
 
         return_value = []
         mock_sfmc_instance = mock_sfmc.return_value
-        mock_sfmc_instance.get_list_of_data_extensions.return_value = return_value
+        mock_sfmc_instance.get_list_of_data_extensions.return_value = (
+            return_value
+        )
 
         destination_id = self.destinations[2][db_c.ID]
 
@@ -1283,7 +1320,9 @@ class TestDestinationRoutes(TestCase):
 
         # validate the destination was removed from any engagements.
         # test engagement to ensure the destination exists
-        updated_engagement = get_engagement(self.database, engagement.get(db_c.ID))
+        updated_engagement = get_engagement(
+            self.database, engagement.get(db_c.ID)
+        )
 
         # test to ensure the destination is removed from the engagement.
         self.assertFalse(
