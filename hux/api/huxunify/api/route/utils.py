@@ -724,7 +724,15 @@ def validate_if_resource_owner(
             collection=collection,
             query_filter={db_c.ID: ObjectId(resource_id)},
         )
-        if resource.get(db_c.CREATED_BY, "") == user_name:
+        # Add check if resource name is audience, considering lookalikes
+        if not resource and resource_name == api_c.AUDIENCE:
+            resource = get_document(
+                database=get_db_client(),
+                collection=db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+                query_filter={db_c.ID: ObjectId(resource_id)},
+            )
+
+        if resource and resource.get(db_c.CREATED_BY, "") == user_name:
             return True
 
     return False
