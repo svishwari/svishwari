@@ -22,6 +22,9 @@ from huxunifylib.database.collection_management import (
     get_documents,
     delete_document,
 )
+from huxunifylib.database.orchestration_management import (
+    remove_destination_from_all_audiences,
+)
 import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import (
     FacebookCredentials,
@@ -107,24 +110,16 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
     """
 
     return {
-        SFMCCredentials.SFMC_ACCOUNT_ID.value: sfmc_auth.get(
-            api_c.SFMC_ACCOUNT_ID
-        ),
-        SFMCCredentials.SFMC_AUTH_URL.value: sfmc_auth.get(
-            api_c.SFMC_AUTH_BASE_URI
-        ),
-        SFMCCredentials.SFMC_CLIENT_ID.value: sfmc_auth.get(
-            api_c.SFMC_CLIENT_ID
-        ),
+        SFMCCredentials.SFMC_ACCOUNT_ID.value: sfmc_auth.get(api_c.SFMC_ACCOUNT_ID),
+        SFMCCredentials.SFMC_AUTH_URL.value: sfmc_auth.get(api_c.SFMC_AUTH_BASE_URI),
+        SFMCCredentials.SFMC_CLIENT_ID.value: sfmc_auth.get(api_c.SFMC_CLIENT_ID),
         SFMCCredentials.SFMC_CLIENT_SECRET.value: sfmc_auth.get(
             api_c.SFMC_CLIENT_SECRET
         ),
         SFMCCredentials.SFMC_SOAP_ENDPOINT.value: sfmc_auth.get(
             api_c.SFMC_SOAP_BASE_URI
         ),
-        SFMCCredentials.SFMC_URL.value: sfmc_auth.get(
-            api_c.SFMC_REST_BASE_URI
-        ),
+        SFMCCredentials.SFMC_URL.value: sfmc_auth.get(api_c.SFMC_REST_BASE_URI),
     }
 
 
@@ -187,9 +182,7 @@ class DestinationGetView(SwaggerView):
         return DestinationGetSchema().dump(destination), HTTPStatus.OK
 
 
-@add_view_to_blueprint(
-    dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsView"
-)
+@add_view_to_blueprint(dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsView")
 class DestinationsView(SwaggerView):
     """Destinations view class."""
 
@@ -218,9 +211,7 @@ class DestinationsView(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(
-        self, user: dict
-    ) -> Tuple[Response, int]:  # pylint: disable=no-self-use
+    def get(self, user: dict) -> Tuple[Response, int]:  # pylint: disable=no-self-use
         """Retrieves all destinations.
 
         ---
@@ -234,9 +225,7 @@ class DestinationsView(SwaggerView):
             Tuple[Response, int]: Response list of destinations, HTTP status code.
         """
         database = get_db_client()
-        destinations = destination_management.get_all_delivery_platforms(
-            database
-        )
+        destinations = destination_management.get_all_delivery_platforms(database)
 
         refresh_all = request.args.get(
             api_c.DESTINATION_REFRESH,
@@ -265,9 +254,7 @@ class DestinationsView(SwaggerView):
             if refresh_all:
                 if destination[api_c.DELIVERY_PLATFORM_TYPE] in connector_dict:
                     try:
-                        connector_dict[
-                            destination[api_c.DELIVERY_PLATFORM_TYPE]
-                        ](
+                        connector_dict[destination[api_c.DELIVERY_PLATFORM_TYPE]](
                             auth_details=get_auth_from_parameter_store(
                                 destination[api_c.AUTHENTICATION_DETAILS],
                                 destination[api_c.DELIVERY_PLATFORM_TYPE],
@@ -284,17 +271,13 @@ class DestinationsView(SwaggerView):
                             str(exception),
                             destination[api_c.DELIVERY_PLATFORM_TYPE],
                         )
-                        destination[
-                            db_c.DELIVERY_PLATFORM_STATUS
-                        ] = db_c.STATUS_FAILED
+                        destination[db_c.DELIVERY_PLATFORM_STATUS] = db_c.STATUS_FAILED
 
                     destination_management.update_delivery_platform(
                         database=database,
                         delivery_platform_id=destination[db_c.ID],
                         name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                        delivery_platform_type=destination[
-                            db_c.DELIVERY_PLATFORM_TYPE
-                        ],
+                        delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
                         status=destination[db_c.DELIVERY_PLATFORM_STATUS],
                     )
             # using a default here in case we do not have a proper mapping
@@ -344,18 +327,14 @@ class DestinationAuthenticationPostView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to update the authentication details of the destination.",
         },
-        HTTPStatus.NOT_FOUND.value: {
-            "description": api_c.DESTINATION_NOT_FOUND
-        },
+        HTTPStatus.NOT_FOUND.value: {"description": api_c.DESTINATION_NOT_FOUND},
     }
 
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler(
-        custom_message={
-            ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
-        }
+        custom_message={ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}}
     )
     @validate_destination()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
@@ -408,9 +387,7 @@ class DestinationAuthenticationPostView(SwaggerView):
                     {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
                     HTTPStatus.BAD_REQUEST,
                 )
-            campaign_de = sfmc_config.get(
-                api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION
-            )
+            campaign_de = sfmc_config.get(api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION)
             if not campaign_de:
                 logger.error("%s", api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
                 return (
@@ -453,9 +430,7 @@ class DestinationAuthenticationPostView(SwaggerView):
                 destination_management.update_delivery_platform(
                     database=database,
                     delivery_platform_id=destination_id,
-                    delivery_platform_type=destination[
-                        db_c.DELIVERY_PLATFORM_TYPE
-                    ],
+                    delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
                     name=destination[db_c.DELIVERY_PLATFORM_NAME],
                     authentication_details=authentication_parameters,
                     added=is_added,
@@ -533,9 +508,7 @@ class DestinationValidatePostView(SwaggerView):
         HTTPStatus.OK.value: {
             "description": "Validated destination successfully.",
             "schema": {
-                "example": {
-                    "message": "Destination is validated successfully"
-                },
+                "example": {"message": "Destination is validated successfully"},
             },
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -649,9 +622,7 @@ class DestinationValidatePostView(SwaggerView):
                     ).get(api_c.QUALTRICS_OWNER_ID),
                     QualtricsCredentials.QUALTRICS_DIRECTORY_ID.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
-                    ).get(
-                        api_c.QUALTRICS_DIRECTORY_ID
-                    ),
+                    ).get(api_c.QUALTRICS_DIRECTORY_ID),
                 }
             )
             if qualtrics_connector.check_connection():
@@ -672,9 +643,7 @@ class DestinationValidatePostView(SwaggerView):
                     ).get(api_c.GOOGLE_REFRESH_TOKEN),
                     GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
-                    ).get(
-                        api_c.GOOGLE_CLIENT_CUSTOMER_ID
-                    ),
+                    ).get(api_c.GOOGLE_CLIENT_CUSTOMER_ID),
                     GoogleCredentials.GOOGLE_CLIENT_ID.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
                     ).get(api_c.GOOGLE_CLIENT_ID),
@@ -692,16 +661,10 @@ class DestinationValidatePostView(SwaggerView):
             logger.error("Could not validate Google Ads successfully.")
 
         else:
-            logger.error(
-                "Destination type %s not supported yet.", body.get(db_c.TYPE)
-            )
-            return {
-                "message": api_c.DESTINATION_NOT_SUPPORTED
-            }, HTTPStatus.BAD_REQUEST
+            logger.error("Destination type %s not supported yet.", body.get(db_c.TYPE))
+            return {"message": api_c.DESTINATION_NOT_SUPPORTED}, HTTPStatus.BAD_REQUEST
 
-        logger.error(
-            "Could not validate destination type %s.", body.get(db_c.TYPE)
-        )
+        logger.error("Could not validate destination type %s.", body.get(db_c.TYPE))
         return (
             {"message": api_c.DESTINATION_AUTHENTICATION_FAILED},
             HTTPStatus.FORBIDDEN,
@@ -774,10 +737,7 @@ class DestinationDataExtView(SwaggerView):
                 HTTPStatus.BAD_REQUEST,
             )
 
-        if (
-            destination[api_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_SFMC
-        ):
+        if destination[api_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC:
             try:
                 sfmc_connector = SFMCConnector(
                     auth_details=get_auth_from_parameter_store(
@@ -793,9 +753,7 @@ class DestinationDataExtView(SwaggerView):
                 )
             except AuthenticationFailed:
                 return (
-                    jsonify(
-                        {"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
-                    ),
+                    jsonify({"message": api_c.DESTINATION_AUTHENTICATION_FAILED}),
                     HTTPStatus.FORBIDDEN,
                 )
 
@@ -856,9 +814,7 @@ class DestinationDataExtPostView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to create destination data extension.",
             "schema": {
-                "example": {
-                    "message": "Destination data extension cannot be created."
-                },
+                "example": {"message": "Destination data extension cannot be created."},
             },
         },
     }
@@ -896,14 +852,9 @@ class DestinationDataExtPostView(SwaggerView):
                 "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
             }, HTTPStatus.BAD_REQUEST
 
-        body = DestinationDataExtPostSchema().load(
-            request.get_json(), partial=True
-        )
+        body = DestinationDataExtPostSchema().load(request.get_json(), partial=True)
 
-        if (
-            destination[api_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_SFMC
-        ):
+        if destination[api_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC:
 
             sfmc_connector = SFMCConnector(
                 auth_details=get_auth_from_parameter_store(
@@ -957,9 +908,7 @@ class DestinationDataExtPostView(SwaggerView):
             return DestinationDataExtGetSchema().dump(extension), status_code
 
         logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
-        return {
-            "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
-        }, HTTPStatus.BAD_REQUEST
+        return {"message": api_c.DATA_EXTENSION_NOT_SUPPORTED}, HTTPStatus.BAD_REQUEST
 
 
 @add_view_to_blueprint(
@@ -1032,18 +981,16 @@ class DestinationPatchView(SwaggerView):
 
         database = get_db_client()
 
-        updated_destination = (
-            destination_management.update_delivery_platform_doc(
-                database,
-                destination_id,
-                {
-                    **request.get_json(),
-                    **{
-                        db_c.UPDATED_BY: user[api_c.USER_NAME],
-                        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                    },
+        updated_destination = destination_management.update_delivery_platform_doc(
+            database,
+            destination_id,
+            {
+                **request.get_json(),
+                **{
+                    db_c.UPDATED_BY: user[api_c.USER_NAME],
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
-            )
+            },
         )
 
         create_notification(
@@ -1058,10 +1005,19 @@ class DestinationPatchView(SwaggerView):
         )
 
         if not updated_destination.get(db_c.ADDED):
-            # TODO: HUS-1749 - remove destinations from standalone audiences.
             # remove from any engagement audiences
             Thread(
                 target=remove_destination_from_all_engagements,
+                args=[
+                    database,
+                    destination_id,
+                    user[api_c.USER_NAME],
+                ],
+            ).start()
+
+            # remove destinations from standalone audiences
+            Thread(
+                target=remove_destination_from_all_audiences,
                 args=[
                     database,
                     destination_id,
@@ -1142,9 +1098,7 @@ class DestinationsRequestView(SwaggerView):
         )
 
         # check if any found documents
-        destinations = (
-            destinations.get(db_c.DOCUMENTS, []) if destinations else []
-        )
+        destinations = destinations.get(db_c.DOCUMENTS, []) if destinations else []
 
         # check if it was requested
         if destinations:

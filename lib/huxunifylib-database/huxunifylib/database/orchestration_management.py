@@ -119,9 +119,7 @@ def get_audience_by_filter(
         InvalidValueException: If passed in limit value is invalid.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -447,9 +445,7 @@ def delete_audience(
         bool: A flag to indicate successful deletion.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     try:
         return collection.delete_one({db_c.ID: audience_id}).deleted_count > 0
@@ -583,9 +579,7 @@ def get_audience_insights(
                         "$group": {
                             "_id": "$_id",
                             "deliveries": {"$push": "$deliveries"},
-                            "last_delivered": {
-                                "$last": "$deliveries.update_time"
-                            },
+                            "last_delivered": {"$last": "$deliveries.update_time"},
                         }
                     },
                     {
@@ -737,3 +731,46 @@ def get_all_audiences_and_deliveries(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def remove_destination_from_all_audiences(
+    database: DatabaseClient, destination_id: ObjectId, user_name: str
+) -> bool:
+    """Remove a destination from all audience documents.
+
+    Args:
+        database (DatabaseClient): A database client.
+        destination_id (ObjectId): MongoDB ID of the destination.
+        user_name (str): Name of the user removing the destination from the
+            audience.
+
+    Returns:
+        bool: Boolean flag indicating if the destination has been removed from
+            all audiences.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
+
+    try:
+        collection.update_many(
+            filter={f"{db_c.DESTINATIONS}.{db_c.OBJECT_ID}": destination_id},
+            update={
+                "$pull": {
+                    f"{db_c.DESTINATIONS}": {db_c.OBJECT_ID: {"$in": [destination_id]}}
+                },
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                },
+            },
+        )
+
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
