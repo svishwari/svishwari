@@ -206,6 +206,6 @@ export default {
   }
 }
 ::v-deep .hux-data-table .table-overflow {
- border-top-right-radius: 12px !important;
+  border-top-right-radius: 12px !important;
 }
 </style>

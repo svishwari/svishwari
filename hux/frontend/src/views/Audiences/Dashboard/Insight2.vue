@@ -1251,8 +1251,12 @@ export default {
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
   color: var(--v-black-lighten4) !important;
 }
-::v-deep .v-tabs .v-tabs-bar .v-tabs-bar__content .v-tabs-slider-wrapper .v-tabs-slider {
+::v-deep
+  .v-tabs
+  .v-tabs-bar
+  .v-tabs-bar__content
+  .v-tabs-slider-wrapper
+  .v-tabs-slider {
   margin-top: 2px !important;
 }
-
 </style>
