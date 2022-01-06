@@ -254,14 +254,6 @@ class IndividualEngagementSearch(SwaggerView):
 
         engagements = get_engagements_summary(database, [engagement_id])
 
-        if not engagements:
-            logger.error(
-                "Engagements not found for engagement ID %s.", engagement_id
-            )
-            return {
-                api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
-
         # TODO: HUS-837 Change once match_rate data can be fetched from CDM
         for engagement in engagements:
             for audience in engagement[db_c.AUDIENCES]:
@@ -1273,12 +1265,12 @@ class UpdateCampaignsForAudience(SwaggerView):
         engagement = get_engagement(database, engagement_id)
 
         # validate that the engagement has audiences
-        if db_c.AUDIENCES not in engagement:
+        if not engagement[db_c.AUDIENCES]:
             logger.error(
                 "Engagement %s does not have audiences.", engagement_id
             )
             return (
-                jsonify({api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES}),
+                {api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES},
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -1291,9 +1283,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                 audience_id,
             )
             return (
-                jsonify(
-                    {api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT}
-                ),
+                {api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT},
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -1312,11 +1302,9 @@ class UpdateCampaignsForAudience(SwaggerView):
                 audience_id,
             )
             return (
-                jsonify(
-                    {
-                        api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE
-                    }
-                ),
+                {
+                    api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE
+                },
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -1529,7 +1517,7 @@ class AudienceCampaignsGetView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
 
         # validate that the engagement has audiences
-        if db_c.AUDIENCES not in engagement:
+        if not engagement[db_c.AUDIENCES]:
             logger.error(
                 "Engagement with ID %s has no audiences.", engagement_id
             )
@@ -1700,7 +1688,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
 
         # validate that the engagement has audiences
-        if db_c.AUDIENCES not in engagement:
+        if not engagement[db_c.AUDIENCES]:
             logger.error(
                 "Engagement with ID %s has no audiences.", engagement_id
             )
