@@ -88,7 +88,10 @@
                       </v-list-item-title>
                     </template>
                     <template #default>
-                      <v-list-item :disabled="item.menu.isDisabled" class="white">
+                      <v-list-item
+                        :disabled="item.menu.isDisabled"
+                        class="white"
+                      >
                         <v-list-item-title
                           class="sub-menu-class"
                           @click="item.menu.onClick(data)"

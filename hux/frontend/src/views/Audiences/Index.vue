@@ -94,7 +94,11 @@
                 >
                   <menu-cell
                     :value="item[header.value]"
-                    :menu-options="item.is_lookalike ? getLookalikeActionItems(item) : getActionItems(item)"
+                    :menu-options="
+                      item.is_lookalike
+                        ? getLookalikeActionItems(item)
+                        : getActionItems(item)
+                    "
                     route-name="AudienceInsight"
                     :route-param="item['id']"
                     data-e2e="audiencename"
@@ -629,7 +633,7 @@ export default {
         {
           title: "Clone audience",
           isDisabled: true,
-          onClick: () => { },
+          onClick: () => {},
         },
         {
           title: "Create a lookalike",
@@ -650,7 +654,7 @@ export default {
             title: "Facebook",
             isDisabled: true,
             onClick: () => {
-               window.open(audience.link, '_blank');
+              window.open(audience.link, "_blank")
             },
             icon: "facebook",
           },
@@ -666,7 +670,7 @@ export default {
 
       return actionItems
     },
-    getLookalikeActionItems(audience) { 
+    getLookalikeActionItems(audience) {
       let actionItems = [
         {
           title: "Favorite",
@@ -679,7 +683,7 @@ export default {
           title: "Open Facebook",
           isDisabled: true,
           onClick: () => {
-            window.open(audience.link, '_blank');
+            window.open(audience.link, "_blank")
           },
         },
         {
@@ -690,7 +694,7 @@ export default {
           },
         },
       ]
-      return actionItems;
+      return actionItems
     },
     getOverallDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
