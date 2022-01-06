@@ -58,6 +58,7 @@
                 is-custom-icon
                 is-tile
                 class="ma-2 font-weight-regular no-shadow mr-0"
+                data-e2e="add-audience"
               >
                 Audience
               </huxButton>

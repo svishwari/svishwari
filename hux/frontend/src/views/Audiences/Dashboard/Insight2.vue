@@ -233,7 +233,10 @@
                   </div>
                 </template>
               </delivery>
-              <standalone-delivery />
+              <standalone-delivery
+                :audience="audience"
+                @onAddStandaloneDestination="addStandaloneDestination($event)"
+              />
             </v-col>
             <v-col :cols="advertisingCols" class="">
               <div
@@ -713,6 +716,10 @@ export default {
       this.selectedDestinations.push(
         ...event.deliveries.map((dest) => ({ id: dest.delivery_platform_id }))
       )
+      this.showSelectDestinationsDrawer = true
+    },
+    addStandaloneDestination() {
+      this.closeAllDrawers()
       this.showSelectDestinationsDrawer = true
     },
     async deliverEngagement(event) {
