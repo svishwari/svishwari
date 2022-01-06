@@ -10,7 +10,7 @@
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div class="px-8 py-8">
-      <v-card class="overview-card pa-6 box-shadow-5">
+      <v-card class="overview-card pt-5 pb-6 pr-6 pl-6 box-shadow-5">
         <v-card-title class="d-flex justify-space-between pa-0">
           <h3 class="text-h3 mb-2">Audience overview</h3>
           <div class="d-flex align-center">
@@ -260,14 +260,14 @@
                 flat
                 height="100%"
               >
-                <v-card-title v-if="showAdvertising" class="ml-1 text-h3">
+                <v-card-title v-if="showAdvertising" class="ml-2 text-h3">
                   Digital advertising
                 </v-card-title>
                 <v-card-text v-if="showAdvertising" class="">
-                  <div class="match-rates mx-1 my-1">
+                  <div class="match-rates mx-2 my-1">
                     <matchrate />
                   </div>
-                  <div class="lookalikes mx-1 my-4">
+                  <div class="lookalikes mx-2 my-6">
                     <lookalikes />
                   </div>
                 </v-card-text>
@@ -322,6 +322,7 @@
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
       @onAddDestination="triggerAttachDestination($event)"
+      @onRemoveDestination="triggerRemoveDestination($event)"
     />
     <!-- Salesforce extension workflow -->
     <destination-data-extension-drawer
@@ -975,6 +976,16 @@ export default {
       })
       await this.loadAudienceInsights()
     },
+    async triggerRemoveDestination(event) {
+      this.deleteActionData = {
+        engagementId: this.engagementId,
+        audienceId: this.audienceId,
+        data: { id: event.destination.id },
+      }
+      await this.detachAudienceDestination(this.deleteActionData)
+
+      await this.loadAudienceInsights()
+    },
     async triggerAttachEngagement(event) {
       if (event.action === "Attach") {
         const payload = {
@@ -1136,7 +1147,7 @@ export default {
   .tabs-item {
     .delivery-tab {
       .digital-adv {
-        height: 368px !important;
+        height: 380px !important;
         .match-rates {
         }
         .lookalikes {
@@ -1202,7 +1213,7 @@ export default {
 .collapsible-bar {
   margin-top: 16px;
   width: 24px;
-  height: 368px;
+  height: 380px;
 
   cursor: pointer;
   float: left;
@@ -1238,6 +1249,14 @@ export default {
   border-radius: 12px !important;
 }
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
-  color: var(--v-black-base) !important;
+  color: var(--v-black-lighten4) !important;
+}
+::v-deep
+  .v-tabs
+  .v-tabs-bar
+  .v-tabs-bar__content
+  .v-tabs-slider-wrapper
+  .v-tabs-slider {
+  margin-top: 2px !important;
 }
 </style>
