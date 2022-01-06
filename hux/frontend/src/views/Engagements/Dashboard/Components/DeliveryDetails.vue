@@ -75,27 +75,11 @@
 <script>
 import { mapActions } from "vuex"
 import { getApproxSize } from "@/utils"
-import Logo from "@/components/common/Logo.vue"
-// import Icon from "@/components/common/Icon.vue"
-import Status from "@/components/common/Status.vue"
-import Tooltip from "@/components/common/Tooltip.vue"
-import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
-import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
-import Size from "@/components/common/huxTable/Size.vue"
-import HuxIcon from "@/components/common/Icon.vue"
 import DeliveryTable from "./DeliveryTable.vue"
 
 export default {
   name: "DeliveryDetails",
   components: {
-    Logo,
-    // Icon,
-    Status,
-    Tooltip,
-    HuxDataTable,
-    TimeStamp,
-    Size,
-    HuxIcon,
     DeliveryTable,
   },
 
