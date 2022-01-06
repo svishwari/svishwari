@@ -79,7 +79,7 @@
                   class="mb-n1"
                 >
                 </logo>
-                <span class="ml-2 ellipsis mb-n1">
+                <span class="ml-2 text-ellipsis mb-n1">
                   {{ item.delivery_platform_name }}
                 </span>
                 <span class="action-icon font-weight-light float-right d-none">
@@ -295,13 +295,6 @@ export default {
       border-top-right-radius: 12px !important;
     }
   }
-}
-.ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 15ch;
-  display: inline-block;
-  white-space: nowrap;
 }
 .list-border {
   border-bottom: thin solid rgba(0, 0, 0, 0.12) !important;
