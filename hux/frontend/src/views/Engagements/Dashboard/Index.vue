@@ -33,91 +33,13 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
-    <div v-if="!loading" class="inner-wrap px-15 py-8">
-      <div>
-        <!-- Summary Cards Wrapper -->
-        <engagement-overview-summary
-          data-e2e="overview-summary"
-          :data="engagementList"
-        />
-        <!-- Audience Destination Cards Wrapper -->
-        <delivery-overview
-          :sections="engagementList && engagementList.audiences"
-          section-type="audience"
-          deliveries-key="destinations"
-          :loading-relationships="loadingAudiences"
-          @onOverviewSectionAction="triggerOverviewAction($event)"
-          @onOverviewDestinationAction="
-            triggerOverviewDestinationAction($event)
-          "
-        >
-          <template #title-left>
-            <div class="d-flex align-center">
-              <icon
-                type="audiences"
-                :size="24"
-                color="black-darken4"
-                class="mr-2"
-              /><span class="text-h5">Audiences</span>
-            </div>
-          </template>
-          <template #title-right>
-            <div class="d-flex align-center">
-              <v-btn
-                text
-                class="
-                  d-flex
-                  align-center
-                  primary--text
-                  text-decoration-none
-                  mr-9
-                "
-                @click="triggerSelectAudience()"
-              >
-                <icon
-                  type="audiences"
-                  color="primary"
-                  :size="16"
-                  class="mr-1"
-                />
-                Add an audience
-              </v-btn>
-              <v-btn
-                text
-                color="primary"
-                data-e2e="deliver-history"
-                @click="openDeliveryHistoryDrawer()"
-              >
-                <icon type="history" color="primary" :size="26" class="mr-1" />
-                Delivery history
-              </v-btn>
-            </div>
-          </template>
-          <template #empty-deliveries="{ sectionId }">
-            <div class="pt-1 empty-audience pb-1">
-              There are no destinations assigned to this audience.
-              <br />
-              Add one now.
-              <br />
-              <v-icon
-                size="30"
-                class="add-icon cursor-pointer pt-2"
-                color="primary"
-                @click="triggerSelectDestination(sectionId)"
-              >
-                mdi-plus-circle
-              </v-icon>
-            </div>
-          </template>
-        </delivery-overview>
-        <engagement-performance-metrics
-          :engagement-id="engagementId"
-          :ad-data="audiencePerformanceAds"
-          :email-data="audiencePerformanceEmail"
-          :loading-metrics="loadingTab"
-          @fetchMetrics="fetchCampaignPerformanceDetails($event)"
-        />
-      </div>
+    <div v-if="!loading" class="inner-wrap px-15">
+      <tabs
+        :data="engagementList"
+        :loading-audiences="loadingAudiences"
+        @openDeliveryHistoryDrawer="openDeliveryHistoryDrawer()"
+        @triggerSelectAudience="triggerSelectAudience()"
+      />
     </div>
     <!-- Select Audience Drawer -->
     <select-audiences-drawer
@@ -145,7 +67,6 @@
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforce="triggerDataExtensionDrawer"
       @addedDestination="triggerAttachDestination($event)"
-      @removeDestination="triggerDetachDestination($event)"
     />
 
     <destination-data-extension-drawer
@@ -195,30 +116,26 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
-import Status from "@/components/common/Status"
-import Icon from "@/components/common/Icon"
-import SelectAudiencesDrawer from "./Configuration/Drawers/SelectAudiencesDrawer.vue"
-import AddAudienceDrawer from "./Configuration/Drawers/AddAudienceDrawer.vue"
-import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinationsDrawer.vue"
-import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
-import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
-import DeliveryOverview from "../../components/DeliveryOverview.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
-import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
-import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
-import EngagementOverviewSummary from "./Overview.vue"
-import EngagementPerformanceMetrics from "./PerformanceMetrics.vue"
+import Icon from "@/components/common/Icon"
+import Status from "@/components/common/Status"
 import Tooltip from "@/components/common/Tooltip.vue"
+import PageHeader from "@/components/PageHeader"
+import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
+import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
+import { mapActions, mapGetters } from "vuex"
+import AddAudienceDrawer from "../Configuration/Drawers/AddAudienceDrawer.vue"
+import DestinationDataExtensionDrawer from "../Configuration/Drawers/DestinationDataExtensionDrawer.vue"
+import SelectAudiencesDrawer from "../Configuration/Drawers/SelectAudiencesDrawer.vue"
+import SelectDestinationsDrawer from "../Configuration/Drawers/SelectDestinationsDrawer.vue"
+import Tabs from "./Tabs.vue"
 
 export default {
   name: "EngagementDashboard",
   components: {
     PageHeader,
-    EngagementOverviewSummary,
-    EngagementPerformanceMetrics,
     Breadcrumb,
     Status,
     Icon,
@@ -227,11 +144,11 @@ export default {
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
     DeliveryHistoryDrawer,
-    DeliveryOverview,
     ConfirmModal,
     EditDeliverySchedule,
     LookAlikeAudience,
     Tooltip,
+    Tabs,
   },
   data() {
     return {
@@ -402,21 +319,6 @@ export default {
           audienceId: this.selectedAudienceId,
           data: payload,
         })
-        await this.loadEngagement(this.engagementId)
-      } catch (error) {
-        this.loadingAudiences = false
-      }
-    },
-    async triggerDetachDestination(event) {
-      this.loadingAudiences = true
-      try {
-        this.deleteActionData = {
-          engagementId: this.engagementId,
-          audienceId: this.selectedAudienceId,
-          data: { id: event.destination.id },
-        }
-        await this.detachAudienceDestination(this.deleteActionData)
-        this.deleteActionData = {}
         await this.loadEngagement(this.engagementId)
       } catch (error) {
         this.loadingAudiences = false

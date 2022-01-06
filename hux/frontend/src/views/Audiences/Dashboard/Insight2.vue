@@ -9,8 +9,8 @@
       @openDownloadDrawer="() => openDownloadDrawer()"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="px-8 py-8">
-      <v-card class="overview-card pt-5 pb-6 pr-6 pl-6 box-shadow-5">
+    <div class="pa-8">
+      <v-card class="overview-card pa-6 box-shadow-5">
         <v-card-title class="d-flex justify-space-between pa-0">
           <h3 class="text-h3 mb-2">Audience overview</h3>
           <div class="d-flex align-center">
@@ -26,7 +26,7 @@
               <icon
                 class="mr-1"
                 type="history"
-                :size="14"
+                :size="24"
                 :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
                 :variant="relatedEngagements.length == 0 ? 'lighten3' : 'base'"
               />

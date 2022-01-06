@@ -1,0 +1,369 @@
+<template>
+  <v-card class="rounded-sm status-card mr-2 box-shadow-none">
+    <v-card-title v-if="showTitle" class="d-flex justify-space-between">
+      <span class="d-flex">
+        <status status="Active" :icon-size="19" collapsed class="float-left" />
+        <router-link
+          :to="{
+            name: routeName,
+            params: { id: section.id },
+          }"
+          class="text-decoration-none"
+          append
+        >
+          <tooltip>
+            <template #label-content>
+              <span class="primary--text text-h3">
+                {{ section.name }}
+              </span>
+            </template>
+            <template #hover-content>
+              <div class="py-2 white d-flex flex-column">
+                <span>
+                  {{ section.name }}
+                </span>
+                <span v-if="section.description" class="mt-3">
+                  {{ section.description }}
+                </span>
+              </div>
+            </template>
+          </tooltip>
+        </router-link>
+      </span>
+      <v-spacer> </v-spacer>
+      <div
+        class="d-flex mr-4 cursor-pointer deliver-icon text-body-1"
+        :class="{ disabled: section.destinations.length == 0 }"
+        @click="deliverAll(section)"
+      >
+        <icon
+          class="mr-1"
+          type="deliver_2"
+          :size="27"
+          :color="section.destinations.length == 0 ? 'black' : 'primary'"
+          :variant="section.destinations.length == 0 ? 'lighten3' : 'base'"
+        />
+        Deliver all
+      </div>
+      <v-menu class="menu-wrapper" bottom offset-y>
+        <template #activator="{ on, attrs }">
+          <v-icon v-bind="attrs" class="top-action" v-on="on">
+            mdi-dots-vertical
+          </v-icon>
+        </template>
+        <v-list class="menu-list-wrapper">
+          <v-list-item-group v-model="selection" active-class="">
+            <v-list-item
+              v-for="item in sectionActionItems(section)"
+              :key="item.id"
+              :disabled="!item.active"
+              @click="$emit('onSectionAction', { target: item, data: section })"
+            >
+              <v-list-item-title>
+                {{ item.title }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
+    </v-card-title>
+
+    <delivery-table />
+  </v-card>
+</template>
+
+<script>
+import { mapActions } from "vuex"
+import { getApproxSize } from "@/utils"
+import Logo from "@/components/common/Logo.vue"
+// import Icon from "@/components/common/Icon.vue"
+import Status from "@/components/common/Status.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
+import Size from "@/components/common/huxTable/Size.vue"
+import HuxIcon from "@/components/common/Icon.vue"
+import DeliveryTable from "./DeliveryTable.vue"
+
+export default {
+  name: "DeliveryDetails",
+  components: {
+    Logo,
+    // Icon,
+    Status,
+    Tooltip,
+    HuxDataTable,
+    TimeStamp,
+    Size,
+    HuxIcon,
+    DeliveryTable,
+  },
+
+  props: {
+    section: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
+
+    engagementId: {
+      type: String,
+      required: false,
+    },
+    statusIcon: {
+      type: Number,
+      required: false,
+      default: 24,
+    },
+    menuItems: {
+      type: Array,
+      required: false,
+    },
+    deliveriesKey: {
+      type: String,
+      required: true,
+      default: "destinations",
+    },
+    sectionType: {
+      type: String,
+      required: false,
+    },
+    audience: {
+      type: Object,
+      required: false,
+    },
+    showTitle: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+  },
+
+  data() {
+    return {
+      openMenu: {},
+      isSubMenuOpen: {},
+      showDeliveryAlert: false,
+      selection: null,
+      matchRatePlatforms: ["facebook", "google-ads"],
+      lookALikeAllowedEntries: ["Facebook"],
+      engagementMenuOptions: [
+        { id: 5, title: "Remove engagement", active: false },
+      ],
+
+      destinationMenuOptions: [
+        { id: 1, title: "Deliver now", active: true },
+        { id: 2, title: "Open destination", active: false },
+        { id: 3, title: "Remove destination", active: true },
+      ],
+
+      stateListData: [],
+    }
+  },
+
+  computed: {
+    sectionTypePrefix() {
+      return this.$options.filters.TitleCase(this.sectionType)
+    },
+    routeName() {
+      return this.sectionType === "engagement"
+        ? "EngagementDashboard"
+        : "AudienceInsight"
+    },
+    sectionActions() {
+      return this.sectionType === "engagement"
+        ? this.engagementMenuOptions
+        : this.audienceMenuOptions
+    },
+    destinationActions() {
+      return this.sectionType === "engagement"
+        ? this.destinationMenuOptions
+        : []
+    },
+    audienceId() {
+      return this.$route.params.id
+    },
+  },
+
+  watch: {
+    // To reset the value of the openMenu
+    openMenu(newValue) {
+      if (!newValue) this.openMenu = {}
+    },
+    isSubMenuOpen(newValue) {
+      if (!newValue) this.isSubMenuOpen = {}
+    },
+  },
+  mounted() {
+    console.log(this.section)
+  },
+
+  methods: {
+    ...mapActions({
+      deliverAudience: "engagements/deliverAudience",
+      deliverAudienceDestination: "engagements/deliverAudienceDestination",
+      setAlert: "alerts/setAlert",
+    }),
+    async deliverAll(engagement) {
+      await this.deliverAudience({
+        id: engagement.id,
+        audienceId: this.audienceId,
+      })
+      this.dataPendingMesssage(engagement)
+      this.$emit("refreshEntityDelivery")
+    },
+    addDestination() {},
+    getSize(value) {
+      return getApproxSize(value)
+    },
+    // sectionActionItems(section) {
+    //   if (this.sectionType === "engagement") {
+    //     this.engagementMenuOptions.forEach((element) => {
+    //       switch (element.title.toLowerCase()) {
+    //         case "remove engagement":
+    //           element["active"] = true
+    //           break
+    //         default:
+    //           break
+    //       }
+    //     })
+    //     return this.engagementMenuOptions
+    //   } else {
+    //     this.audienceMenuOptions.forEach((element) => {
+    //       switch (element.title.toLowerCase()) {
+    //         case "deliver now":
+    //           element["active"] = section[this.deliveriesKey].length > 0
+    //           break
+
+    //         case "create lookalike":
+    //           element["active"] = section.lookalikable === "Active"
+    //           break
+
+    //         case "Pause all delivery":
+    //           element["active"] =
+    //             section[this.deliveriesKey].filter(
+    //               (delivery) => delivery.status === "Delivering"
+    //             ).length > 0
+    //           break
+
+    //         default:
+    //           break
+    //       }
+    //     })
+    //     return this.audienceMenuOptions
+    //   }
+    // },
+    deliveryActionItems(delivery) {
+      const createLookaLikeOption = {
+        id: 1,
+        title: "Create lookalike",
+        active: false,
+      }
+      if (delivery.name === "Facebook") {
+        ;(createLookaLikeOption["active"] = true),
+          (createLookaLikeOption["menu"] = {
+            id: "1.1",
+            title: "Facebook",
+            icon: "facebook",
+          })
+      }
+      return [
+        { ...createLookaLikeOption },
+        { id: 2, title: "Deliver now", active: true },
+        { id: 3, title: "Edit delivery schedule", active: true },
+        { id: 4, title: "Pause delivery", active: false },
+        { id: 5, title: "Open destination", active: false },
+        { id: 6, title: "Remove destination", active: true },
+      ]
+    },
+    dataPendingMesssage(event) {
+      const engagementName = event.name
+      const audienceName = this.audience.name
+      this.setAlert({
+        type: "pending",
+        message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
+      })
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.status-card {
+  width: 100%;
+  background: var(--v-white-base);
+  border: 1px solid var(--v-black-lighten2);
+  box-sizing: border-box;
+  border-radius: 12px !important;
+  display: table;
+  .deliver-icon {
+    &.disabled {
+      color: var(--v-black-lighten3);
+    }
+  }
+  .status-list {
+    min-height: 20px !important;
+    max-height: 30px !important;
+  }
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 15ch;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .v-card__title {
+    background: var(--v-primary-lighten1);
+    border-radius: 12px 12px 0px 0px;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--v-primary-base);
+    height: 60px;
+    flex-wrap: inherit;
+    .top-action {
+      color: var(--v-black-base);
+    }
+  }
+  .delivery-table {
+    ::v-deep .v-data-table__wrapper {
+      tbody {
+        tr {
+          td:nth-child(1) {
+            &:hover,
+            &:focus {
+              .action-icon {
+                display: block !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .add-list {
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+  }
+  .hux-data-table {
+    ::v-deep table {
+      .v-data-table-header {
+        tr {
+          th {
+            background: var(--v-primary-lighten2);
+            height: 40px !important;
+          }
+        }
+      }
+      tbody {
+        tr {
+          td {
+            height: 40px !important;
+          }
+        }
+      }
+      border-radius: 12px 12px 0px 0px;
+      overflow: hidden;
+    }
+  }
+}
+</style>
