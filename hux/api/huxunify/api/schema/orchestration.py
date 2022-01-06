@@ -9,7 +9,7 @@ from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
 )
-from huxunify.api.schema.destinations import DestinationGetSchema
+from huxunify.api.schema.destinations import DestinationGetSchema, DataExtensionSchema
 from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
@@ -98,6 +98,15 @@ class DigitAdvertising(Schema):
     """Digital advertising schema."""
 
     match_rates = fields.List(fields.Nested(DigitalAdvertisingMatchRates))
+
+
+class AudienceDestinationSchema(Schema):
+    """Schema for Audience Destination"""
+
+    id = fields.String(example="5f5f7262997acad4bac4373b",
+                       required=True,
+                       validate=validate_object_id)
+    delivery_platform_config = fields.Nested(DataExtensionSchema)
 
 
 class AudienceGetSchema(Schema):
@@ -315,23 +324,23 @@ def is_audience_lookalikeable(audience: dict) -> str:
     for delivery in deliveries:
         # check if delivered to facebook.
         if (
-            delivery.get(db_c.DELIVERY_PLATFORM_TYPE)
-            == db_c.DELIVERY_PLATFORM_FACEBOOK
+                delivery.get(db_c.DELIVERY_PLATFORM_TYPE)
+                == db_c.DELIVERY_PLATFORM_FACEBOOK
         ):
             status = api_c.STATUS_INACTIVE
 
             # add 30 min wait time before making it lookalikable
             if (
-                delivery.get(db_c.STATUS)
-                in [
-                    db_c.STATUS_SUCCEEDED,
-                    db_c.AUDIENCE_STATUS_DELIVERED,
-                ]
-                and (
+                    delivery.get(db_c.STATUS)
+                    in [
+                db_c.STATUS_SUCCEEDED,
+                db_c.AUDIENCE_STATUS_DELIVERED,
+            ]
+                    and (
                     datetime.datetime.utcnow() - delivery.get(db_c.UPDATE_TIME)
-                ).total_seconds()
-                / 60
-                > 30
+            ).total_seconds()
+                    / 60
+                    > 30
             ):
                 # success, break the loop and return active.
                 return api_c.STATUS_ACTIVE

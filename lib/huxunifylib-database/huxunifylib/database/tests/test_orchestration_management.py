@@ -607,3 +607,28 @@ class TestAudienceManagement(unittest.TestCase):
         audiences = am.get_all_audiences(self.database)
 
         self.assertEqual(len(all_audiences) - 1, len(audiences))
+
+    def test_append_destination_to_standalone_audience(self):
+        """Test add destination to audience."""
+
+        set_audience = am.create_audience(
+            self.database,
+            "My Audience",
+            self.audience_filters,
+            self.user_name,
+            self.destination_ids,
+        )
+        destination = {
+            "id": "60b9601a6021710aa146df2f",
+            "delivery_platform_config": {
+                "data_extension_name": "SFMC Test Audience"
+            }
+        }
+        doc = am.append_destination_to_standalone_audience(
+            database=self.database,
+            audience_id=set_audience[db_c.ID],
+            destination=destination,
+            user_name=self.user_name
+        )
+
+        self.assertIn(destination, doc[db_c.DESTINATIONS])

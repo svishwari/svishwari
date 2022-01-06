@@ -1,5 +1,6 @@
 """Purpose of this file is to house audience related tests."""
 import csv
+import json
 import string
 from datetime import datetime
 from http import HTTPStatus
@@ -508,3 +509,87 @@ class AudienceInsightsTest(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(response.status_code, 404)
+
+
+class TestAudienceDestination(TestCase):
+    """Test for Audience Destination"""
+
+    def setUp(self):
+        """Setup tests."""
+        self.audiences_endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
+        )
+        self.config = get_config(api_c.TEST_MODE)
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        # mock get_db_client() in utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in audiences
+        mock.patch(
+            "huxunify.api.route.audiences.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        mock.patch("huxunify.api.route.audiences.get_delivery_platform", return_value=t_c.MOCKED_DESTINATION).start()
+
+        # mock request for introspect call
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.get(
+            t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE
+        )
+        self.request_mocker.start()
+
+        # stop all mocks in cleanup
+        self.addCleanup(mock.patch.stopall)
+
+        # setup the flask test client
+        self.test_client = create_app().test_client()
+
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
+
+        self.user_name = "Joe Smithers"
+
+
+        # create audience
+        audience = {
+            db_c.AUDIENCE_NAME: "Test Audience",
+            "audience_filters": [],
+            api_c.USER_NAME: self.user_name,
+            api_c.DESTINATION_IDS: [],
+        }
+        self.audience = create_audience(self.database, **audience)
+
+    def test_add_destination_audience(self) -> None:
+        """Test Adding destination to audience"""
+        destination = {
+            "id": "60b9601a6021710aa146df2f"
+        }
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/"
+            f"destinations",
+            json=destination,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertIn(destination[api_c.ID], [x[api_c.ID] for x in response.json[api_c.DESTINATIONS]])

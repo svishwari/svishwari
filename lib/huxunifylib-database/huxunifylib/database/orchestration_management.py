@@ -22,12 +22,12 @@ from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_audience(
-    database: DatabaseClient,
-    name: str,
-    audience_filters: list,
-    user_name: str,
-    destination_ids: list = None,
-    size: int = 0,
+        database: DatabaseClient,
+        name: str,
+        audience_filters: list,
+        user_name: str,
+        destination_ids: list = None,
+        size: int = 0,
 ) -> Union[dict, None]:
     """A function to create an audience.
 
@@ -94,11 +94,11 @@ def create_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_audience_by_filter(
-    database: DatabaseClient,
-    filter_dict: dict = None,
-    projection: dict = None,
-    sort_list: list = None,
-    limit: int = None,
+        database: DatabaseClient,
+        filter_dict: dict = None,
+        projection: dict = None,
+        sort_list: list = None,
+        limit: int = None,
 ) -> Union[list, None]:
     """A function to get all delivery platform lookalike audience
     configurations.
@@ -156,9 +156,9 @@ def get_audience_by_filter(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_audience(
-    database: DatabaseClient,
-    audience_id: ObjectId,
-    include_users: bool = False,
+        database: DatabaseClient,
+        audience_id: ObjectId,
+        include_users: bool = False,
 ) -> Union[dict, None]:
     """A function to get an audience.
 
@@ -215,10 +215,10 @@ def get_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audiences(
-    database: DatabaseClient,
-    include_users: bool = False,
-    filters: dict = None,
-    audience_ids: list = None,
+        database: DatabaseClient,
+        include_users: bool = False,
+        filters: dict = None,
+        audience_ids: list = None,
 ) -> Union[list, None]:
     """A function to get all existing audiences.
 
@@ -280,12 +280,12 @@ def get_all_audiences(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_audience(
-    database: DatabaseClient,
-    audience_id: ObjectId,
-    user_name: str,
-    name: str = None,
-    audience_filters: list = None,
-    destination_ids: list = None,
+        database: DatabaseClient,
+        audience_id: ObjectId,
+        user_name: str,
+        name: str = None,
+        audience_filters: list = None,
+        destination_ids: list = None,
 ) -> Union[dict, None]:
     """A function to update an audience.
 
@@ -325,8 +325,8 @@ def update_audience(
                 {db_c.DELETED: 0},
             )
             if (
-                duplicate_name_doc is not None
-                and duplicate_name_doc[db_c.ID] != audience_id
+                    duplicate_name_doc is not None
+                    and duplicate_name_doc[db_c.ID] != audience_id
             ):
                 raise de.DuplicateName(name)
     except pymongo.errors.OperationFailure as exc:
@@ -364,10 +364,10 @@ def update_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_lookalike_audience(
-    database: DatabaseClient,
-    audience_id: ObjectId,
-    name: str = None,
-    user_name: str = None,
+        database: DatabaseClient,
+        audience_id: ObjectId,
+        name: str = None,
+        user_name: str = None,
 ) -> Union[dict, None]:
     """A function to update an audience.
 
@@ -402,8 +402,8 @@ def update_lookalike_audience(
                 {db_c.DELETED: 0},
             )
             if (
-                duplicate_name_doc is not None
-                and duplicate_name_doc[db_c.ID] != audience_id
+                    duplicate_name_doc is not None
+                    and duplicate_name_doc[db_c.ID] != audience_id
             ):
                 raise de.DuplicateName(name)
     except pymongo.errors.OperationFailure as exc:
@@ -434,8 +434,8 @@ def update_lookalike_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_audience(
-    database: DatabaseClient,
-    audience_id: ObjectId,
+        database: DatabaseClient,
+        audience_id: ObjectId,
 ) -> bool:
     """A function to delete an audience.
 
@@ -464,8 +464,8 @@ def delete_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_audience_insights(
-    database: DatabaseClient,
-    audience_id: ObjectId,
+        database: DatabaseClient,
+        audience_id: ObjectId,
 ) -> Union[list, None]:
     """A function to get audience insights.
 
@@ -624,9 +624,9 @@ def get_audience_insights(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audiences_and_deliveries(
-    database: DatabaseClient,
-    filters: dict = None,
-    audience_ids: list = None,
+        database: DatabaseClient,
+        filters: dict = None,
+        audience_ids: list = None,
 ) -> Union[list, None]:
     """A function to get all audiences and their latest deliveries.
 
@@ -740,10 +740,10 @@ def get_all_audiences_and_deliveries(
 
 
 def append_destination_to_standalone_audience(
-    database: DatabaseClient,
-    audience_id: ObjectId,
-    destination: dict,
-    user_name: str,
+        database: DatabaseClient,
+        audience_id: ObjectId,
+        destination: dict,
+        user_name: str,
 ) -> dict:
     """A function to append destination to standalone audience.
 
@@ -777,11 +777,14 @@ def append_destination_to_standalone_audience(
         return {}
 
     updated = False
-
-    # append destinations to the matched audience
-    audience_doc[db_c.DESTINATIONS] = audience_doc.get(db_c.DESTINATIONS) + [
-        destination
-    ]
+    try:
+        # append destinations to the matched audience
+        audience_doc[db_c.DESTINATIONS] = audience_doc.get(db_c.DESTINATIONS) + [
+            destination
+        ]
+        updated = True
+    except Exception as exc:
+        logging.error(exc)
 
     # only update if the destination was added.
     if updated:
@@ -796,7 +799,7 @@ def append_destination_to_standalone_audience(
         )
     else:
         logging.error(
-            "There was no matching audience for appending " "destination %s.",
+            "There was no matching audience for appending destination %s.",
             destination.get(db_c.OBJECT_ID),
         )
         return {}
