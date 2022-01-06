@@ -90,7 +90,7 @@
       <div class="bulb">
         <icon type="FAB-bulb" :size="18" class="mt-1" />
       </div>
-      <div class="description ml-4">
+      <div class="description ml-4 text-body-1 black-base">
         The lookalike audience will not be created in it's associated
         destination until the original audience is delivered. That delivery will
         trigger the lookalike creation.
