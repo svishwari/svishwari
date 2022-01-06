@@ -134,6 +134,7 @@
                 <div
                   class="condition-actions pa-0 cursor-pointer"
                   @click="removeCondition(rule, ixcondition)"
+                  data-e2e="remove-attr"
                 >
                   <icon type="trash" :size="18" color="black" />
                 </div>
