@@ -1,9 +1,5 @@
 <template>
-  <v-card
-    class="rounded-lg card-style standalone-delivery mt-4"
-    flat
-    height="156"
-  >
+  <v-card class="rounded-lg card-style standalone-delivery mt-4" flat>
     <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-6">
       <div class="d-flex align-center">
         <span class="text-h3">Standalone deliveries</span>
@@ -24,27 +20,35 @@
       </div>
       <v-spacer> </v-spacer>
       <div
-        class="d-flex mr-4 deliver-all disabled text-body-1"
+        :class="{ disabled: audience.standalone_deliveries.length == 0 }"
+        class="d-flex mr-4 cursor-pointer deliver-icon text-body-1"
         @click="deliverAll()"
       >
         <icon
-          class="deliver-icon mr-2"
+          class="mr-2"
           type="deliver"
-          color="black"
-          variant="lighten3"
           :size="24"
+          :color="
+            audience.standalone_deliveries.length == 0 ? 'black' : 'primary'
+          "
+          :variant="
+            audience.standalone_deliveries.length == 0 ? 'lighten3' : 'base'
+          "
         />
         Deliver all
       </div>
     </v-card-title>
-    <v-card-text class="pl-6 pr-6 pb-4 pt-0">
+    <v-card-text class="pl-6 pr-6 pb-6 pt-3">
       <div
-        v-if="deliveries.length == 0"
+        v-if="audience.standalone_deliveries.length == 0"
         class="empty-state py-4 black--text text--lighten-4 text-body-1"
       >
         This audience has no standalone deliveries. Add a destination below.
         <v-list dense class="add-list" :height="52">
-          <v-list-item class="px-0" @click="$emit('onAddDestination', section)">
+          <v-list-item
+            class="px-0"
+            @click="$emit('onAddDestination', audience)"
+          >
             <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
             <hux-icon
               type="destination"
@@ -68,7 +72,7 @@
         class="delivery-table"
         :columns="columnDefs"
         :sort-desc="true"
-        :data-items="deliveries"
+        :data-items="audience.standalone_deliveries"
       >
         <template #row-item="{ item }">
           <td
@@ -78,9 +82,16 @@
             :style="{ width: header.width }"
             data-e2e="map-state-list"
           >
-            <div v-if="header.value == 'name'" class="text-body-1">
-              <logo :type="item.type" :size="22" class="mb-n1"></logo>
-              {{ item.name }}
+            <div
+              v-if="header.value == 'delivery_platform_name'"
+              class="text-body-1"
+            >
+              <logo
+                :type="item.delivery_platform_type"
+                :size="22"
+                class="mb-n1"
+              ></logo>
+              {{ item.delivery_platform_name }}
               <v-menu class="menu-wrapper float-right" bottom offset-y>
                 <template #activator="{ on, attrs }">
                   <v-icon v-bind="attrs" class="top-action" v-on="on">
@@ -88,16 +99,15 @@
                   </v-icon>
                 </template>
                 <v-list class="menu-list-wrapper">
-                  <v-list-item-group v-model="selection" active-class="">
-                    <v-list-item>
-                      <v-list-item-title> Deliver now </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title> Open destination </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title>
-                        Remove destination
+                  <v-list-item-group>
+                    <v-list-item
+                      v-for="option in destinationMenuOptions"
+                      :key="option.id"
+                      :disabled="!option.active"
+                      @click="standaloneOptions(option)"
+                    >
+                      <v-list-item-title v-if="!option.menu">
+                        {{ option.title }}
                       </v-list-item-title>
                     </v-list-item>
                   </v-list-item-group>
@@ -115,12 +125,46 @@
             <div v-if="header.value == 'size'" class="text-body-1">
               <size :value="item['size']" />
             </div>
-            <div v-if="header.value == 'next_delivery'" class="text-body-1">
-              <time-stamp :value="item['next_delivery']" />
+            <div v-if="header.value == 'last_delivered'" class="text-body-1">
+              <time-stamp :value="item['last_delivered']" />
             </div>
           </td>
         </template>
       </hux-data-table>
+
+      <v-list dense class="add-list" :height="52">
+        <v-list-item @click="$emit('onAddStandaloneDestination', audience)">
+          <tooltip>
+            <template #label-content>
+              <hux-icon
+                type="plus"
+                :size="16"
+                color="primary"
+                class="mr-4 mb-1"
+              />
+              <hux-icon
+                type="destination"
+                :size="24"
+                color="primary"
+                class="mr-2"
+              />
+            </template>
+            <template #hover-content>
+              <div class="py-2 white d-flex flex-column">
+                <span> Add a destination to this engagement </span>
+              </div>
+            </template>
+          </tooltip>
+          <v-btn
+            text
+            min-width="7rem"
+            height="2rem"
+            class="primary--text text-body-1"
+          >
+            Destination
+          </v-btn>
+        </v-list-item>
+      </v-list>
     </v-card-text>
   </v-card>
 </template>
@@ -147,14 +191,20 @@ export default {
     HuxIcon,
     Tooltip,
   },
-  props: {},
+  props: {
+    audience: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
+  },
   data() {
     return {
       selection: null,
       columnDefs: [
         {
           text: "Destination",
-          value: "name",
+          value: "delivery_platform_name",
           width: "35%",
         },
         {
@@ -171,20 +221,29 @@ export default {
         },
         {
           text: "Last delivery",
-          value: "next_delivery",
+          value: "last_delivered",
           width: "25%",
         },
       ],
-      deliveries: [],
+      destinationMenuOptions: [
+        { id: 1, title: "Deliver now", active: true },
+        { id: 3, title: "Open destination", active: false },
+        { id: 4, title: "Remove destination", active: true },
+      ],
     }
   },
   computed: {},
+  methods: {
+    standaloneOptions() {
+      // TODO:APIs are not ready
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .standalone-delivery {
-  .deliver-all {
+  .deliver-icon {
     &.disabled {
       color: var(--v-black-lighten3);
     }
