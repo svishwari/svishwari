@@ -109,22 +109,5 @@ export const audience = {
       delivery_platform_name: "Facebook",
     },
   ],
-  standalone_deliveries: [
-    {
-      status: "Delivered",
-      delivery_platform_id: "2",
-      last_delivered: () => faker.date.recent(),
-      delivery_platform_type: "sendgrid",
-      delivery_platform_name: "Sendgrid by Twilio",
-      size: 0,
-    },
-    {
-      status: "Delivering",
-      delivery_platform_id: "7",
-      last_delivered: () => faker.date.recent(),
-      delivery_platform_type: "facebook",
-      delivery_platform_name: "Facebook",
-      size: 0,
-    },
-  ],
+  standalone_deliveries: [],
 }
