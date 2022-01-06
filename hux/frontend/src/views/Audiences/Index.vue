@@ -92,17 +92,9 @@
                   class="w-100 d-flex"
                   data-e2e="audiencelist"
                 >
-                  <span v-if="item.is_lookalike == true" class="mr-3">
-                    <tooltip>
-                      <template #label-content>
-                        <icon type="lookalike" :size="20" />
-                      </template>
-                      <template #hover-content>Lookalike audience</template>
-                    </tooltip>
-                  </span>
                   <menu-cell
                     :value="item[header.value]"
-                    :menu-options="getActionItems(item)"
+                    :menu-options="item.is_lookalike ? getLookalikeActionItems(item) : getActionItems(item)"
                     route-name="AudienceInsight"
                     :route-param="item['id']"
                     data-e2e="audiencename"
@@ -421,6 +413,7 @@ export default {
       ],
       columnDefs: [
         {
+          id: 1,
           text: "Audience name",
           value: "name",
           width: "331px",
@@ -428,48 +421,58 @@ export default {
           divider: true,
         },
         {
+          id: 2,
           text: "Status",
           value: "status",
           width: "200px",
         },
         {
+          id: 3,
           text: "Size",
           value: "size",
           width: "112px",
           hoverTooltip:
             "Current number of customers who fit the selected attributes.",
+          tooltipWidth: "231px",
         },
         {
+          id: 4,
           text: "Attributes",
           value: "filters",
           width: "362px",
         },
         {
+          id: 5,
           text: "Destinations",
           value: "destinations",
           width: "150px",
         },
         {
+          id: 6,
           text: "Last delivered",
           value: "last_delivered",
           width: "170",
         },
         {
+          id: 7,
           text: "Last updated",
           value: "update_time",
           width: "180",
         },
         {
+          id: 8,
           text: "Last updated by",
           value: "updated_by",
           width: "181",
         },
         {
+          id: 9,
           text: "Created",
           value: "create_time",
           width: "182",
         },
         {
+          id: 10,
           text: "Created by",
           value: "created_by",
           width: "182",
@@ -616,7 +619,6 @@ export default {
             this.handleActionFavorite(audience, "audiences")
           },
         },
-        { title: "Export", isDisabled: true },
         {
           title: "Edit audience",
           isDisabled: false,
@@ -624,15 +626,31 @@ export default {
             this.editAudience(audience.id)
           },
         },
-        { title: "Duplicate", isDisabled: true },
+        {
+          title: "Clone audience",
+          isDisabled: true,
+          onClick: () => { },
+        },
         {
           title: "Create a lookalike",
           isDisabled: !isLookalikeableActive,
           menu: {
             title: "Facebook",
+            isDisabled: true,
             onClick: () => {
               this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
               this.openLookAlikeDrawer(audience)
+            },
+            icon: "facebook",
+          },
+        },
+        {
+          title: "Open destination",
+          menu: {
+            title: "Facebook",
+            isDisabled: true,
+            onClick: () => {
+               window.open(audience.link, '_blank');
             },
             icon: "facebook",
           },
@@ -647,6 +665,32 @@ export default {
       ]
 
       return actionItems
+    },
+    getLookalikeActionItems(audience) { 
+      let actionItems = [
+        {
+          title: "Favorite",
+          isDisabled: false,
+          onClick: () => {
+            this.handleActionFavorite(audience, "lookalike")
+          },
+        },
+        {
+          title: "Open Facebook",
+          isDisabled: true,
+          onClick: () => {
+            window.open(audience.link, '_blank');
+          },
+        },
+        {
+          title: "Delete audience",
+          isDisabled: false,
+          onClick: () => {
+            this.openModal(audience)
+          },
+        },
+      ]
+      return actionItems;
     },
     getOverallDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]

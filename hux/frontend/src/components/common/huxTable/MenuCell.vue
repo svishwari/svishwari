@@ -1,7 +1,17 @@
 <template>
   <v-row class="menu-cell-wrapper">
-    <v-col class="d-flex pr-0 align-center" style="height: 100%">
+    <v-col
+      :class="{ 'pl-9': !showStar }"
+      class="d-flex pr-0 align-center"
+      style="height: 100%"
+    >
       <slot name="expand-icon"></slot>
+      <tooltip v-if="!showStar">
+        <template #label-content>
+          <icon type="lookalike" :size="20" />
+        </template>
+        <template #hover-content>Lookalike audience</template>
+      </tooltip>
       <router-link
         :to="routePath"
         class="text-decoration-none menu-link"
@@ -78,17 +88,19 @@
                       </v-list-item-title>
                     </template>
                     <template #default>
-                      <div
-                        class="sub-menu-class white"
-                        @click="item.menu.onClick(data)"
-                      >
-                        <logo
-                          v-if="item.menu.icon"
-                          :size="18"
-                          :type="item.menu.icon"
-                        />
-                        <span class="ml-1">{{ item.menu.title }}</span>
-                      </div>
+                      <v-list-item :disabled="item.menu.isDisabled" class="white">
+                        <v-list-item-title
+                          class="sub-menu-class"
+                          @click="item.menu.onClick(data)"
+                        >
+                          <logo
+                            v-if="item.menu.icon"
+                            :size="18"
+                            :type="item.menu.icon"
+                          />
+                          <span class="ml-1">{{ item.menu.title }}</span>
+                        </v-list-item-title>
+                      </v-list-item>
                     </template>
                   </v-menu>
                 </v-list-item>

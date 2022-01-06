@@ -20,7 +20,9 @@
         <template v-for="column in columns" #[`header.${column.value}`]>
           <tooltip v-if="column.tooltipValue" :key="column.id">
             <template #label-content>
-              {{ column.text }}
+              <span :class="{ 'ml-5': column.id==1 }">
+                {{ column.text }}
+              </span>
             </template>
             <template #hover-content>
               <span
@@ -32,7 +34,7 @@
           </tooltip>
           <template v-if="!column.tooltipValue">
             <!-- TODO: find a better solution and remove v-html -->
-            <span :key="column.value" v-html="column.text" />
+            <span :key="column.value" v-html="column.text" :class="{ 'ml-5': column.id==1 }"/>
           </template>
           <tooltip
             v-if="column.hoverTooltip"
