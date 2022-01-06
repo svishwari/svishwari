@@ -78,7 +78,7 @@
                 pt-3
                 h-86
               "
-              data-e2e="audience-name"
+              data-e2e="edit-audience-name"
               help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
               icon="mdi-information-outline"
             />
