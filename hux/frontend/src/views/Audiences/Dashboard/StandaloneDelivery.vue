@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="rounded-lg card-style standalone-delivery mt-4"
+    class="rounded-lg card-style standalone-delivery mt-6"
     flat
     height="156"
   >
