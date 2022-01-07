@@ -494,9 +494,9 @@ class EngagementAudienceSchema(Schema):
                 api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
                 api_c.AUDIENCE_SECTION_FILTERS: [
                     {
-                        api_c.AUDIENCE_FILTER_FIELD: "filter_field",
-                        api_c.AUDIENCE_FILTER_TYPE: "type",
-                        api_c.AUDIENCE_FILTER_VALUE: "value",
+                        api_c.AUDIENCE_FILTER_FIELD: "gender",
+                        api_c.AUDIENCE_FILTER_TYPE: "equals",
+                        api_c.AUDIENCE_FILTER_VALUE: "female",
                     }
                 ],
             }
