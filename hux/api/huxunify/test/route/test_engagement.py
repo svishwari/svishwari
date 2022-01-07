@@ -715,6 +715,7 @@ class TestEngagementRoutes(TestCase):
                     api_c.FACEBOOK_APP_ID: "path3",
                     api_c.FACEBOOK_AD_ACCOUNT_ID: "path4",
                 },
+                db_c.CATEGORY: db_c.ADVERTISING,
             },
             {
                 db_c.DELIVERY_PLATFORM_NAME: "SFMC",
@@ -731,6 +732,7 @@ class TestEngagementRoutes(TestCase):
                     api_c.SFMC_SOAP_BASE_URI: "soap_base_uri",
                     api_c.SFMC_REST_BASE_URI: "rest_base_uri",
                 },
+                db_c.CATEGORY: db_c.MARKETING,
             },
         ]
 
@@ -1472,6 +1474,14 @@ class TestEngagementRoutes(TestCase):
         return_engagement = response.json
         self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
         self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
+        self.assertIn(api_c.AUDIENCES, return_engagement)
+        self.assertIsNotNone(
+            all(
+                audience[api_c.AUDIENCE_FILTERS]
+                for audience in return_engagement[api_c.AUDIENCES]
+            )
+        )
+        self.assertIn(t_c.DESTINATIONS_CATEGORY, return_engagement)
         self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
         self.assertTrue(return_engagement[api_c.FAVORITE])
 

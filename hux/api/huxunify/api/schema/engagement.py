@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use
-"""Schemas for the Engagements API"""
+"""Schemas for the Engagements API."""
 import logging
 from datetime import datetime
 from bson import ObjectId
@@ -486,6 +486,22 @@ class EngagementAudienceSchema(Schema):
     status = fields.String()
     is_lookalike = fields.Boolean(default=False)
     size = fields.Integer(default=0)
+    filters = fields.List(
+        fields.Dict(),
+        attribute=api_c.AUDIENCE_FILTERS,
+        example=[
+            {
+                api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                api_c.AUDIENCE_SECTION_FILTERS: [
+                    {
+                        api_c.AUDIENCE_FILTER_FIELD: "gender",
+                        api_c.AUDIENCE_FILTER_TYPE: "equals",
+                        api_c.AUDIENCE_FILTER_VALUE: "female",
+                    }
+                ],
+            }
+        ],
+    )
     destinations = fields.Nested(
         EngagementAudienceDestinationSchema, many=True
     )
@@ -493,6 +509,39 @@ class EngagementAudienceSchema(Schema):
     created_by = fields.String(attribute=db_c.CREATED_BY)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
+
+
+class EngagementDestinationAudienceSchema(Schema):
+    """Engagement Destination Audience Schema"""
+
+    id = fields.String(
+        required=True,
+        validate=validate_object_id,
+    )
+    name = fields.String()
+    is_lookalike = fields.Boolean(default=False)
+    size = fields.Integer(default=0)
+    latest_delivery = fields.Nested(LatestDeliverySchema)
+
+
+class EngagementDestinationSchema(Schema):
+    """Engagement Destination Schema"""
+
+    id = fields.String(
+        required=True,
+        validate=validate_object_id,
+    )
+    name = fields.String()
+    destination_audiences = fields.List(
+        fields.Nested(EngagementDestinationAudienceSchema)
+    )
+
+
+class EngagementDestinationCategorySchema(Schema):
+    """Engagement Destination Category Schema"""
+
+    category = fields.String()
+    destinations = fields.List(fields.Nested(EngagementDestinationSchema))
 
 
 class EngagementGetSchema(Schema):
@@ -510,6 +559,12 @@ class EngagementGetSchema(Schema):
     audiences = fields.Nested(
         EngagementAudienceSchema, many=True, attribute=api_c.AUDIENCES
     )
+
+    destinations_category = fields.List(
+        fields.Nested(EngagementDestinationCategorySchema),
+        attribute=api_c.DESTINATION_CATEGORIES,
+    )
+
     status = fields.String(
         attribute=api_c.STATUS,
         required=True,

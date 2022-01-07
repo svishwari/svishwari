@@ -1,5 +1,5 @@
-# pylint: disable=no-self-use,C0302,unused-argument
-"""Paths for engagement API"""
+# pylint: disable=no-self-use,unused-argument,too-many-lines
+"""Paths for engagement API."""
 import datetime
 from pathlib import Path
 import zipfile
@@ -75,6 +75,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     get_user_favorites,
     Validation as validation,
+    set_destination_category_in_engagement,
 )
 from huxunify.api import constants as api_c
 
@@ -278,6 +279,9 @@ class IndividualEngagementSearch(SwaggerView):
             favorite_engagements
             and engagement.get(db_c.ID) in favorite_engagements
         )
+
+        # set destination_category object in engagement dict
+        set_destination_category_in_engagement(engagement)
 
         return (
             EngagementGetSchema().dump(engagement),
