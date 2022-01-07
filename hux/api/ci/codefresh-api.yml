@@ -105,7 +105,7 @@ steps:
       pylintCheck:
         title: 'pylintCheck'
         environment:
-          - TOXENV=checkCoverage
+          - TOXENV=pylintCheck
     fail_fast: false
 
   Tox_UnitTests:

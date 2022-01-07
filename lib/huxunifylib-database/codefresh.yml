@@ -16,8 +16,8 @@ steps:
     git: "DeloitteHux_github"
 
   safety_test_check:
-    stage: "safety_bandit_test_check"
-    title: "Safety, bandit and test checks"
+    stage: "pylint_&_unittest_check"
+    title: "Pylint and Unittest check"
     image: huxhub.repo.mgnt.in/tox-ci
     working_directory: '${{CF_REPO_NAME}}/lib/huxunifylib-database'
     description: "run tests using tox"
@@ -28,6 +28,10 @@ steps:
         title: 'tests'
         environment:
           - TOXENV=py37
+        pylintCheck:
+          title: 'pylintCheck'
+          environment:
+            - TOXENV=pylintCheck
     fail_fast: false
 
   coverageStyleCheck:
