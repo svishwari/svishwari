@@ -91,7 +91,7 @@ steps:
 
   Tox_Tests:
     stage: tox_parallel
-    title: "Tox - Safety, Bandit and Coverage checks."
+    title: "Tox Pylint and Coverage checks."
     image: huxhub.repo.mgnt.in/tox-ci
     working_directory: '${{CF_REPO_NAME}}/hux/api'
     description: "run tests using tox"
@@ -100,6 +100,10 @@ steps:
     scale:
       checkCoverage:
         title: 'checkCoverage'
+        environment:
+          - TOXENV=checkCoverage
+      pylintCheck:
+        title: 'pylintCheck'
         environment:
           - TOXENV=checkCoverage
     fail_fast: false
