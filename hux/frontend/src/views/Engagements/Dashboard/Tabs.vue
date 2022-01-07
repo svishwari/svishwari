@@ -34,6 +34,10 @@
       <v-tab-item key="digital">
         <digital-advertising
           :data="data"
+          :engagement-id="engagementId"
+          :ad-data="adData"
+          :loading-metrics="loadingMetrics"
+          @fetchMetrics="$emit('fetchMetrics', $event)"
           @openDeliveryHistoryDrawer="
             $emit('openDeliveryHistoryDrawer', $event)
           "
@@ -42,6 +46,8 @@
       <v-tab-item key="email">
         <email-marketing
           :data="data"
+          :email-data="emailData"
+          :loading-metrics="loadingMetrics"
           @openDeliveryHistoryDrawer="
             $emit('openDeliveryHistoryDrawer', $event)
           "
@@ -68,6 +74,25 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    adData: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
+    emailData: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
+    engagementId: {
+      type: String,
+      required: true,
+      default: () => "",
+    },
+    loadingMetrics: {
+      type: Boolean,
+      required: true,
     },
   },
   data() {

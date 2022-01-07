@@ -37,6 +37,11 @@
       <tabs
         :data="engagementList"
         :loading-audiences="loadingAudiences"
+        :engagement-id="engagementId"
+        :ad-data="audiencePerformanceAds"
+        :email-data="audiencePerformanceEmail"
+        :loading-metrics="loadingTab"
+        @fetchMetrics="fetchCampaignPerformanceDetails($event)"
         @openDeliveryHistoryDrawer="openDeliveryHistoryDrawer()"
         @triggerSelectAudience="triggerSelectAudience()"
       />
