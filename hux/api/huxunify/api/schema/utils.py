@@ -1,43 +1,14 @@
 """Purpose of this file is to house schema utilities"""
-import uuid
 from typing import AnyStr, Union
 from http import HTTPStatus
-from datetime import datetime, timedelta
-import random
+from datetime import datetime
 from bson import ObjectId
 from flask_marshmallow import Schema
 from marshmallow import ValidationError
-from marshmallow.fields import Boolean, DateTime, Int, Str, Float
+from marshmallow.fields import Int, Str
 from croniter import croniter, CroniterNotAlphaError, CroniterBadCronError
-from huxunifylib.database import constants as db_c
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
-
-# get random data back based on marshmallow field type
-SPEC_TYPE_LOOKUP = {
-    Boolean: bool(random.getrandbits(1)),
-    DateTime: datetime.now() + timedelta(random.randint(0, 1e4)),
-    Int: random.randint(0, 1e4),
-    Str: str(uuid.uuid4()),
-    Float: random.random(),
-}
-
-
-def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
-    """This function generates synthetic data for marshmallow
-
-    Args:
-        schema_obj (Schema): a marshmallow schema object
-
-    Returns:
-        dict: a dictionary that simulates the passed in marshmallow schema obj
-
-    """
-    # get random data based on marshmallow type
-    return {
-        field: SPEC_TYPE_LOOKUP[type(val)]
-        for field, val in schema_obj().fields.items()
-    }
 
 
 def must_not_be_blank(data: AnyStr) -> None:
@@ -62,36 +33,6 @@ def validate_object_id(data: AnyStr) -> None:
 
     """
     ObjectId(data)
-
-
-def validate_dest_constants(data: dict) -> None:
-    """This function validates destination auth details.
-
-    Args:
-        data (dict): input dict
-
-    Raises:
-        ValidationError:
-            - raised if data is not a dict
-            - raised if an account id is not in the dict
-            - raised if improper fields are in the dict
-
-    """
-    # check if dictionary first
-    if not isinstance(data, dict):
-        raise ValidationError(api_c.INVALID_DESTINATION_AUTH)
-
-    # check which destination auth is being set
-    if api_c.FACEBOOK_APP_ID in data:
-        destination_key_name = db_c.DELIVERY_PLATFORM_FACEBOOK
-    elif api_c.SFMC_ACCOUNT_ID in data:
-        destination_key_name = db_c.DELIVERY_PLATFORM_SFMC
-    else:
-        raise ValidationError(api_c.INVALID_DESTINATION_AUTH)
-
-    # check all keys to ensure coverage by checking against destination constants
-    if api_c.DESTINATION_CONSTANTS[destination_key_name].keys() != data.keys():
-        raise ValidationError(api_c.INVALID_DESTINATION_AUTH)
 
 
 class UnAuth401Schema(Schema):
@@ -186,7 +127,3 @@ def get_next_schedule(
         except CroniterBadCronError:
             logger.error("Bad Cron Expression error, returning None")
     return None
-
-
-if __name__ == "__main__":
-    pass
