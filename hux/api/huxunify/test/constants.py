@@ -861,17 +861,17 @@ CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE = {
         },
     ],
 }
-MOCKED_DESTINATION={
-                db_c.DELIVERY_PLATFORM_NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
-                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
-                db_c.LINK: "https://business.facebook.com/",
-                db_c.CATEGORY: db_c.ADVERTISING,
-                db_c.STATUS: db_c.ACTIVE,
-                db_c.ENABLED: True,
-                db_c.ADDED: False,
-                db_c.IS_AD_PLATFORM: True,
-                db_c.ID:"60b9601a6021710aa146df2f"
-            }
+MOCKED_DESTINATION = {
+    db_c.DELIVERY_PLATFORM_NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
+    db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+    db_c.LINK: "https://business.facebook.com/",
+    db_c.CATEGORY: db_c.ADVERTISING,
+    db_c.STATUS: db_c.ACTIVE,
+    db_c.ENABLED: True,
+    db_c.ADDED: False,
+    db_c.IS_AD_PLATFORM: True,
+    db_c.ID: "60b9601a6021710aa146df2f",
+}
 CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE = {
     "code": 200,
     "body": [

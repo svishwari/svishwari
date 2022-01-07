@@ -1,6 +1,8 @@
 """Audience Management tests."""
 
 import unittest
+from unittest import mock
+
 import mongomock
 import pymongo
 from bson import ObjectId
@@ -616,8 +618,19 @@ class TestAudienceManagement(unittest.TestCase):
             "My Audience",
             self.audience_filters,
             self.user_name,
-            self.destination_ids,
         )
+        mock.patch("huxunifylib.database.delivery_platform_management"
+                   ".get_delivery_platforms_by_id", return_value=[{
+            db_c.DELIVERY_PLATFORM_NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.LINK: "https://business.facebook.com/",
+            db_c.CATEGORY: db_c.ADVERTISING,
+            db_c.STATUS: db_c.ACTIVE,
+            db_c.ENABLED: True,
+            db_c.ADDED: False,
+            db_c.IS_AD_PLATFORM: True,
+            db_c.ID: "60b9601a6021710aa146df2f"
+        }]).start()
         destination = {
             "id": "60b9601a6021710aa146df2f",
             "delivery_platform_config": {
@@ -631,4 +644,4 @@ class TestAudienceManagement(unittest.TestCase):
             user_name=self.user_name
         )
 
-        self.assertIn(destination, doc[db_c.DESTINATIONS])
+        self.assertIn(destination[db_c.OBJECT_ID], [x[db_c.ID] for x in doc[db_c.DESTINATIONS]])

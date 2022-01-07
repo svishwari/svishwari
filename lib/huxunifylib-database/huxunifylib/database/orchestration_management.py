@@ -15,6 +15,7 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
+import huxunifylib.database.delivery_platform_management as destination_management
 
 
 @retry(
@@ -803,9 +804,19 @@ def append_destination_to_standalone_audience(
             destination.get(db_c.OBJECT_ID),
         )
         return {}
-
-    return collection.find_one(
+    audience = collection.find_one(
         {
             db_c.ID: audience_id,
         }
     )
+    destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
+
+    # get destinations at once to lookup name for each delivery job
+    destination_dict = [
+        x
+        for x in destination_management.get_delivery_platforms_by_id(
+            database, destination_ids
+        )
+    ]
+    audience[db_c.DESTINATIONS] = destination_dict
+    return audience

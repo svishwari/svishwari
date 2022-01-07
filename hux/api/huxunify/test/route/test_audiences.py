@@ -547,7 +547,16 @@ class TestAudienceDestination(TestCase):
             return_value=self.database,
         ).start()
 
-        mock.patch("huxunify.api.route.audiences.get_delivery_platform", return_value=t_c.MOCKED_DESTINATION).start()
+        mock.patch(
+            "huxunify.api.route.audiences.get_delivery_platform",
+            return_value=t_c.MOCKED_DESTINATION,
+        ).start()
+
+        mock.patch(
+            "huxunifylib.database.delivery_platform_management"
+            ".get_delivery_platforms_by_id",
+            return_value=[t_c.MOCKED_DESTINATION],
+        ).start()
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
@@ -570,7 +579,6 @@ class TestAudienceDestination(TestCase):
 
         self.user_name = "Joe Smithers"
 
-
         # create audience
         audience = {
             db_c.AUDIENCE_NAME: "Test Audience",
@@ -582,9 +590,7 @@ class TestAudienceDestination(TestCase):
 
     def test_add_destination_audience(self) -> None:
         """Test Adding destination to audience"""
-        destination = {
-            "id": "60b9601a6021710aa146df2f"
-        }
+        destination = {"id": "60b9601a6021710aa146df2f"}
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/"
@@ -592,4 +598,7 @@ class TestAudienceDestination(TestCase):
             json=destination,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertIn(destination[api_c.ID], [x[api_c.ID] for x in response.json[api_c.DESTINATIONS]])
+        self.assertIn(
+            destination[api_c.ID],
+            [x[api_c.ID] for x in response.json[api_c.DESTINATIONS]],
+        )

@@ -8,8 +8,13 @@ from pathlib import Path
 from typing import Tuple, Union, Iterator, Optional
 
 import pandas as pd
-from huxunifylib.database.delivery_platform_management import get_delivery_platform
-from huxunifylib.database.orchestration_management import get_audience, append_destination_to_standalone_audience
+from huxunifylib.database.delivery_platform_management import (
+    get_delivery_platform,
+)
+from huxunifylib.database.orchestration_management import (
+    get_audience,
+    append_destination_to_standalone_audience,
+)
 from pandas import DataFrame
 from flasgger import SwaggerView
 from bson import ObjectId
@@ -77,10 +82,10 @@ def before_request():
 
 
 def get_batch_customers(
-        cdp_connector: connector_cdp,
-        location_details: dict,
-        batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
-        offset: int = 0,
+    cdp_connector: connector_cdp,
+    location_details: dict,
+    batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+    offset: int = 0,
 ) -> Union[pd.DataFrame, None]:
     """Fetch audience batch using connector asynchronously.
 
@@ -101,10 +106,10 @@ def get_batch_customers(
 
 
 def get_audience_data_async(
-        cdp_connector: connector_cdp,
-        actual_size: int,
-        location_details: dict,
-        batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+    cdp_connector: connector_cdp,
+    actual_size: int,
+    location_details: dict,
+    batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
 ) -> Iterator[Optional[DataFrame]]:
     """Creates a list of tasks, this is useful for asynchronous batch wise
     calls to a task.
@@ -135,7 +140,7 @@ def get_audience_data_async(
         batch_sizes.append(batch_size)
         offsets.append(offset)
     with ThreadPoolExecutor(
-            max_workers=api_c.MAX_WORKERS_THREAD_POOL
+        max_workers=api_c.MAX_WORKERS_THREAD_POOL
     ) as executor:
         return executor.map(
             get_batch_customers,
@@ -188,7 +193,7 @@ class AudienceDownload(SwaggerView):
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def get(
-            self, audience_id: str, download_type: str, user: dict
+        self, audience_id: str, download_type: str, user: dict
     ) -> Tuple[Response, int]:
         """Downloads an audience.
 
@@ -288,7 +293,7 @@ class AudienceDownload(SwaggerView):
         )
 
         with open(
-                audience_file_name, "w", newline="", encoding="utf-8"
+            audience_file_name, "w", newline="", encoding="utf-8"
         ) as csvfile:
             for dataframe_batch in data_batches:
                 transform_function(dataframe_batch).to_csv(
@@ -303,11 +308,11 @@ class AudienceDownload(SwaggerView):
             config.S3_DATASET_BUCKET,
         )
         if upload_file(
-                file_name=audience_file_name,
-                bucket=config.S3_DATASET_BUCKET,
-                object_name=audience_file_name,
-                user_name=user[api_c.USER_NAME],
-                file_type=api_c.AUDIENCE,
+            file_name=audience_file_name,
+            bucket=config.S3_DATASET_BUCKET,
+            object_name=audience_file_name,
+            user_name=user[api_c.USER_NAME],
+            file_type=api_c.AUDIENCE,
         ):
             create_audience_audit(
                 database=database,
@@ -688,10 +693,10 @@ class AudienceRulesLocation(SwaggerView):
                 [
                     {f"{x[1]}|{x[2]}|USA": f"{x[1]}, {x[2]} USA"}
                     for x in [
-                    x
-                    for x in stub_city_zip_data.city_zip_data
-                    if key.lower() in x[1].lower()
-                ]
+                        x
+                        for x in stub_city_zip_data.city_zip_data
+                        if key.lower() in x[1].lower()
+                    ]
                 ]
             )
         elif field_type == api_c.ZIP_CODE:
@@ -699,10 +704,10 @@ class AudienceRulesLocation(SwaggerView):
                 [
                     {x[0]: f"{x[0]}, {x[1]} {x[2]}"}
                     for x in [
-                    x
-                    for x in stub_city_zip_data.city_zip_data
-                    if key.lower() in x[0].lower()
-                ]
+                        x
+                        for x in stub_city_zip_data.city_zip_data
+                        if key.lower() in x[0].lower()
+                    ]
                 ]
             )
         else:
@@ -777,7 +782,7 @@ class AudienceRulesHistogram(SwaggerView):
         if field_type == api_c.MODEL:
             model_name = request.args.get(api_c.MODEL_NAME, "")
             if model_name in list(
-                    api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL]
+                api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL]
             ):
                 return (
                     api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL][
@@ -842,7 +847,7 @@ class AddDestinationAudience(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def post(self, audience_id: str,user:dict) -> Tuple[Response, int]:
+    def post(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Adds Destination to Standalone Audience
 
         ---
@@ -882,14 +887,14 @@ class AddDestinationAudience(SwaggerView):
                 "Could not find destination with id %s.", destination[api_c.ID]
             )
             return {
-                       "message": api_c.DESTINATION_NOT_FOUND
-                   }, HTTPStatus.NOT_FOUND
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
-        append_destination_to_standalone_audience(
+        audience = append_destination_to_standalone_audience(
             database=database,
             audience_id=ObjectId(audience_id),
             destination=destination,
-            user_name=user[api_c.USER_NAME]
+            user_name=user[api_c.USER_NAME],
         )
 
         logger.info(
@@ -909,12 +914,7 @@ class AddDestinationAudience(SwaggerView):
             user[api_c.USER_NAME],
         )
 
-        # toggle routers since the engagement was updated.
-        toggle_event_driven_routers(database)
-        abc=get_audience(database, ObjectId(audience_id))
         return (
-            AudienceGetSchema().dump(
-                get_audience(database, ObjectId(audience_id))
-            ),
+            AudienceGetSchema().dump(audience),
             HTTPStatus.CREATED.value,
         )
