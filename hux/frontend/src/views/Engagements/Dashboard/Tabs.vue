@@ -12,10 +12,15 @@
         <v-tab
           key="digital"
           class="pa-2 mr-3 text-h3 black--text text--lighten-4"
+          @click="$emit('fetchMetrics', 'ads')"
         >
           Digital Advertising
         </v-tab>
-        <v-tab key="email" class="text-h3 black--text text--lighten-4">
+        <v-tab
+          key="email"
+          class="text-h3 black--text text--lighten-4"
+          @click="$emit('fetchMetrics', 'email')"
+        >
           Email Marketing
         </v-tab>
       </div>
