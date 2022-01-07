@@ -650,7 +650,7 @@ export default {
       let actionItems = [
         {
           title: isFavorite ? "Unfavorite" : "Favorite",
-          isDisabled: audience.is_lookalike,
+          isDisabled: false,
           onClick: () => {
             this.handleActionFavorite(audience, "audiences")
           },
@@ -703,12 +703,13 @@ export default {
       return actionItems
     },
     getLookalikeActionItems(audience) {
+      let isFavorite = this.isUserFavorite(audience, "audiences")
       let actionItems = [
         {
-          title: "Favorite",
+          title: isFavorite ? "Unfavorite" : "Favorite",
           isDisabled: false,
           onClick: () => {
-            this.handleActionFavorite(audience, "lookalike")
+            this.handleActionFavorite(audience, "audiences")
           },
         },
         {

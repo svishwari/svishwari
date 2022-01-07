@@ -32,7 +32,7 @@
       <div class="d-flex">
         <span class="action-icon font-weight-light menu-activator">
           <v-btn
-            v-if="hasFavorite && showStar"
+            v-if="hasFavorite"
             icon
             height="22"
             width="22"
