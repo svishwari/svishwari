@@ -16,7 +16,10 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
     collection_management,
 )
-from huxunifylib.database.audience_management import create_audience
+from huxunifylib.database.orchestration_management import (
+    create_audience,
+    get_audience,
+)
 from huxunifylib.database.engagement_management import (
     set_engagement,
     get_engagement,
@@ -1252,11 +1255,18 @@ class TestDestinationRoutes(TestCase):
         destination_id = self.destinations[0][db_c.ID]
 
         # create audience
+        audience = create_audience(
+            self.database,
+            "Audience for Destination Removal",
+            [],
+            "test user",
+            [{api_c.ID: destination_id}],
+            100,
+        )
+
         audiences = [
             {
-                api_c.ID: create_audience(self.database, "Test Audience", [])[
-                    db_c.ID
-                ],
+                api_c.ID: audience[db_c.ID],
                 api_c.DESTINATIONS: [
                     {
                         api_c.ID: destination_id,
@@ -1289,6 +1299,15 @@ class TestDestinationRoutes(TestCase):
             ]
         )
 
+        # test to ensure the destination is assigned to the audience
+        self.assertTrue(
+            [
+                d
+                for d in audience.get(db_c.DESTINATIONS)
+                if d.get(db_c.OBJECT_ID) == destination_id
+            ]
+        )
+
         # patch destination
         self.assertTrue(
             HTTPStatus.OK,
@@ -1312,6 +1331,19 @@ class TestDestinationRoutes(TestCase):
                 for x in updated_engagement.get(db_c.AUDIENCES)
                 for a in x.get(db_c.DESTINATIONS)
                 if a.get(db_c.OBJECT_ID) == destination_id
+            ]
+        )
+
+        # validate the destination was removed from any audiences
+        # test audience to ensure the destination exists
+        updated_audience = get_audience(self.database, audience.get(db_c.ID))
+
+        # test to ensure the destination is removed from the audience
+        self.assertFalse(
+            [
+                d
+                for d in updated_audience.get(db_c.DESTINATIONS)
+                if d.get(db_c.OBJECT_ID) == destination_id
             ]
         )
 
