@@ -1542,8 +1542,9 @@ class TestEngagementRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
-    def test_delete_engagement_valid_id_failed(self):
-        """Test delete engagement API with valid ID."""
+    def test_delete_engagement_valid_id_delete_failed(self):
+        """Test delete engagement API with valid ID
+        when deletion from db failed."""
 
         engagement_id = self.engagement_ids[0]
 
