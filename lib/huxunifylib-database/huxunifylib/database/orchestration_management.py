@@ -120,9 +120,7 @@ def get_audience_by_filter(
         InvalidValueException: If passed in limit value is invalid.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -448,9 +446,7 @@ def delete_audience(
         bool: A flag to indicate successful deletion.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     try:
         return collection.delete_one({db_c.ID: audience_id}).deleted_count > 0
@@ -584,9 +580,7 @@ def get_audience_insights(
                         "$group": {
                             "_id": "$_id",
                             "deliveries": {"$push": "$deliveries"},
-                            "last_delivered": {
-                                "$last": "$deliveries.update_time"
-                            },
+                            "last_delivered": {"$last": "$deliveries.update_time"},
                         }
                     },
                     {
@@ -763,9 +757,7 @@ def append_destination_to_standalone_audience(
     if not isinstance(user_name, str):
         raise TypeError("user_name must be a string")
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     # workaround due to limitation in DocumentDB
     audience_doc = collection.find_one(
@@ -780,11 +772,11 @@ def append_destination_to_standalone_audience(
     updated = False
     try:
         # append destinations to the matched audience
-        audience_doc[db_c.DESTINATIONS] = audience_doc.get(
-            db_c.DESTINATIONS
-        ) + [destination]
+        audience_doc[db_c.DESTINATIONS] = audience_doc.get(db_c.DESTINATIONS) + [
+            destination
+        ]
         updated = True
-    except Exception as exc:
+    except TypeError as exc:
         logging.error(exc)
 
     # only update if the destination was added.
@@ -811,12 +803,8 @@ def append_destination_to_standalone_audience(
     )
     destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
 
-    # get destinations at once to lookup name for each delivery job
-    destination_dict = [
-        x
-        for x in destination_management.get_delivery_platforms_by_id(
-            database, destination_ids
-        )
-    ]
-    audience[db_c.DESTINATIONS] = destination_dict
+    destinations_list = destination_management.get_delivery_platforms_by_id(
+        database, destination_ids
+    )
+    audience[db_c.DESTINATIONS] = destinations_list
     return audience
