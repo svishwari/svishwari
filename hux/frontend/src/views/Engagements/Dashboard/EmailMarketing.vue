@@ -1,6 +1,6 @@
 <template>
   <div>
-    <delivery :section="data" />
+    <delivery :section="data" class="mb-5" />
 
     <v-progress-linear
       :active="loadingMetrics"
