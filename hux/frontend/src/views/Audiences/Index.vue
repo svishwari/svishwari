@@ -59,16 +59,12 @@
             >
               <huxButton
                 variant="primary base"
-                icon-color="white"
-                icon-variant="base"
-                icon="plus"
                 size="large"
-                is-custom-icon
                 is-tile
                 class="ma-2 font-weight-regular no-shadow mr-0"
                 data-e2e="add-audience"
               >
-                Audience
+                Create an audience
               </huxButton>
             </router-link>
           </template>
@@ -300,6 +296,7 @@
 
       <div class="ml-auto">
         <audience-filter
+          ref="filters"
           v-model="isFilterToggled"
           view-height="calc(100vh - 180px)"
           :filter-options="attributeOptions()"
@@ -356,6 +353,7 @@
               class="ma-2 font-weight-regular text-button"
               is-tile
               :height="'40'"
+              @click="clearFilters()"
             >
               Clear filters
             </huxButton>
@@ -587,7 +585,9 @@ export default {
     totalFiltersSelected(value) {
       this.numFiltersSelected = value
     },
-
+    clearFilters() {
+      this.$refs.filters.clear()
+    },
     attributeOptions() {
       const options = []
       if (this.ruleAttributes && this.ruleAttributes.rule_attributes) {
@@ -761,12 +761,14 @@ export default {
     },
 
     async applyFilter(params) {
+      this.loading = true
       await this.getAllAudiences({
         favorites: params.selectedFavourite,
         worked_by: params.selectedAudienceWorkedWith,
         attribute: params.selectedAttributes,
       })
       this.isFilterToggled = false
+      this.loading = false
     },
     formatText: formatText,
   },
@@ -843,7 +845,6 @@ export default {
         }
         td.fixed-column {
           z-index: 1 !important;
-          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
           &:hover {
             z-index: 2 !important;
             background: var(--v-primary-lighten2) !important;
