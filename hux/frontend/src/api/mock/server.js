@@ -29,7 +29,7 @@ import modelFactory from "./factories/model"
 import audiencePerformanceFactory from "./factories/audiencePerformance"
 import dataExtensionFactory from "./factories/dataExtensions"
 import deliveryFactory from "./factories/delivery"
-import { configuration as configurationFactory } from "./factories/configuration"
+import configurationFactory from "./factories/configuration"
 import {
   CampaignMappingOptionsFactory,
   CampaignFactory,
