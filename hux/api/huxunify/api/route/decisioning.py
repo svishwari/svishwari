@@ -529,7 +529,7 @@ class ModelOverview(SwaggerView):
                 ),
                 api_c.DESCRIPTION: version.get(api_c.DESCRIPTION, ""),
                 api_c.MODEL_SHAP_DATA: shap_data,
-                # api_c.PERFORMANCE_METRIC: performance_metrics,
+                api_c.PERFORMANCE_METRIC: performance_metrics,
             }
 
         # dump schema and return to client.

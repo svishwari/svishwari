@@ -585,7 +585,7 @@ def read_csv_shap_data(file_path: str, features: list = None) -> dict:
     index = {}
 
     # load in the necessary data
-    with open(file_path, "r") as csv_file:
+    with open(file_path, "r", encoding="utf-8") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=",")
         column_names = next(csv_reader)
 
@@ -617,7 +617,7 @@ def read_json_shap_data(file_path: str, features: list = None) -> dict:
     """
 
     # load the stubbed data
-    with open(file_path, "r") as json_file:
+    with open(file_path, "r", encoding="utf-8") as json_file:
         stubbed_shap_data = json.load(json_file)
 
     # return required shap feature data
@@ -637,7 +637,7 @@ def read_stub_city_zip_data(file_path: str) -> list:
     Returns:
         list: City & Zip data list
     """
-    with open(file_path, "r") as csv_file:
+    with open(file_path, "r", encoding="utf-8") as csv_file:
         data = list(csv.reader(csv_file))
 
     return data[1:]
