@@ -1,6 +1,5 @@
 """Purpose of this file is to house audience related tests."""
 import csv
-import json
 import string
 from datetime import datetime
 from http import HTTPStatus
@@ -8,12 +7,19 @@ from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
+from bson import ObjectId
 from hypothesis import given, strategies as st
 
 from huxunifylib.connectors.connector_cdp import ConnectorCDP
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.orchestration_management import create_audience
+from huxunifylib.database.orchestration_management import (
+    create_audience,
+    get_audience,
+)
+from huxunifylib.database.delivery_platform_management import (
+    set_delivery_platform,
+)
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
@@ -552,12 +558,6 @@ class TestAudienceDestination(TestCase):
             return_value=t_c.MOCKED_DESTINATION,
         ).start()
 
-        mock.patch(
-            "huxunifylib.database.delivery_platform_management"
-            ".get_delivery_platforms_by_id",
-            return_value=[t_c.MOCKED_DESTINATION],
-        ).start()
-
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
@@ -586,11 +586,23 @@ class TestAudienceDestination(TestCase):
             api_c.USER_NAME: self.user_name,
             api_c.DESTINATION_IDS: [],
         }
+
+        self.delivery_platform_doc = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            {
+                "facebook_access_token": "path1",
+                "facebook_app_secret": "path2",
+                "facebook_app_id": "path3",
+                "facebook_ad_account_id": "path4",
+            },
+        )
         self.audience = create_audience(self.database, **audience)
 
     def test_add_destination_audience(self) -> None:
         """Test Adding destination to audience"""
-        destination = {"id": "60b9601a6021710aa146df2f"}
+        destination = {"id": str(self.delivery_platform_doc[db_c.ID])}
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/"
@@ -601,4 +613,12 @@ class TestAudienceDestination(TestCase):
         self.assertIn(
             destination[api_c.ID],
             [x[api_c.ID] for x in response.json[api_c.DESTINATIONS]],
+        )
+
+        audience_doc = get_audience(
+            database=self.database, audience_id=self.audience[db_c.ID]
+        )
+        self.assertIn(
+            ObjectId(destination[api_c.ID]),
+            [x[api_c.ID] for x in audience_doc[api_c.DESTINATIONS]],
         )

@@ -833,7 +833,7 @@ class AddDestinationAudience(SwaggerView):
     responses = {
         HTTPStatus.CREATED.value: {
             "schema": AudienceGetSchema,
-            "description": "Destination added to Standalone Audience.",
+            "description": "Destination added to Audience.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to Add destination to the audience",
@@ -847,7 +847,7 @@ class AddDestinationAudience(SwaggerView):
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def post(self, audience_id: str, user: dict) -> Tuple[Response, int]:
-        """Adds Destination to Standalone Audience
+        """Adds Destination to Audience
 
         ---
         security:

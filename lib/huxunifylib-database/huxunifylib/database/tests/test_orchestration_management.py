@@ -1,7 +1,6 @@
 """Audience Management tests."""
-
+# pylint: disable=R0904
 import unittest
-from unittest import mock
 
 import mongomock
 import pymongo
@@ -660,28 +659,19 @@ class TestAudienceManagement(unittest.TestCase):
             self.audience_filters,
             self.user_name,
         )
-        mock.patch(
-            "huxunifylib.database.delivery_platform_management"
-            ".get_delivery_platforms_by_id",
-            return_value=[
-                {
-                    db_c.DELIVERY_PLATFORM_NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
-                    db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
-                    db_c.LINK: "https://business.facebook.com/",
-                    db_c.CATEGORY: db_c.ADVERTISING,
-                    db_c.STATUS: db_c.ACTIVE,
-                    db_c.ENABLED: True,
-                    db_c.ADDED: False,
-                    db_c.IS_AD_PLATFORM: True,
-                    db_c.ID: "60b9601a6021710aa146df2f",
-                }
-            ],
-        ).start()
-        destination = {
-            "id": "60b9601a6021710aa146df2f",
-            "delivery_platform_config": {
-                "data_extension_name": "SFMC Test Audience"
+        delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            {
+                "facebook_access_token": "path1",
+                "facebook_app_secret": "path2",
+                "facebook_app_id": "path3",
+                "facebook_ad_account_id": "path4",
             },
+        )
+        destination = {
+            "id": delivery_platform_doc[db_c.ID],
         }
         doc = am.append_destination_to_standalone_audience(
             database=self.database,

@@ -814,48 +814,20 @@ def append_destination_to_standalone_audience(
         db_c.AUDIENCES_COLLECTION
     ]
 
-    # workaround due to limitation in DocumentDB
-    audience_doc = collection.find_one(
+    audience = collection.find_one_and_update(
         {
             db_c.ID: audience_id,
-        }
-    )
-
-    if not audience_doc:
-        return {}
-
-    updated = False
-    try:
-        # append destinations to the matched audience
-        audience_doc[db_c.DESTINATIONS] = audience_doc.get(
-            db_c.DESTINATIONS
-        ) + [destination]
-        updated = True
-    except TypeError as exc:
-        logging.error(exc)
-
-    # only update if the destination was added.
-    if updated:
-        audience_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
-        audience_doc[db_c.UPDATED_BY] = user_name
-
-        collection.replace_one(
-            {
-                db_c.ID: audience_id,
+        },
+        {
+            "$push": {"destinations": destination},
+            "$set": {
+                db_c.UPDATE_TIME: datetime.datetime.now(),
+                db_c.UPDATED_BY: user_name,
             },
-            audience_doc,
-        )
-    else:
-        logging.error(
-            "There was no matching audience for appending destination %s.",
-            destination.get(db_c.OBJECT_ID),
-        )
-        return {}
-    audience = collection.find_one(
-        {
-            db_c.ID: audience_id,
-        }
+        },
+        return_document=pymongo.ReturnDocument.AFTER,
     )
+
     destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
 
     destinations_list = destination_management.get_delivery_platforms_by_id(
