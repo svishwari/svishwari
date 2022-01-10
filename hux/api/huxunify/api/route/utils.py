@@ -798,6 +798,7 @@ def create_description_for_user_request(
     okta_app: str = api_c.DEFAULT_OKTA_APP,
 ) -> str:
     """Create HUS issue description using new user request data.
+
     Args:
         first_name (str): First name of the user requested.
         last_name (str): Last name of the user requested.
@@ -812,6 +813,7 @@ def create_description_for_user_request(
             must be added.
         okta_app (str, Optional): Okta app name to which user needs
             permission.
+
     Returns:
         str: Description for HUS issue.
     """
