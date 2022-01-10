@@ -1,8 +1,67 @@
 <template>
   <div>
-    <delivery :section="data" class="mb-5" />
+    <delivery
+      :sections="
+        data &&
+        data.destinations_category.find((item) => item.category == 'Marketing')
+          .destinations
+      "
+      :headers="columnDefs"
+      section-type="destinations"
+      deliveries-key="destination_audiences"
+      class="mb-5"
+      @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+      @onOverviewDestinationAction="
+        $emit('onOverviewDestinationAction', $event)
+      "
+    >
+      <template #title-left>
+        <div class="d-flex align-center text-h3">
+          <icon
+            type="destinations"
+            :size="24"
+            color="black-darken4"
+            class="mr-2"
+          />
+          Delivery Overview
+        </div>
+      </template>
+      <template #title-right>
+        <div class="d-flex align-center">
+          <v-btn
+            text
+            color="primary"
+            class="text-body-1 ml-n3 mt-n2 mr-8"
+            data-e2e="deliver-all"
+            @triggerSelectDestination="
+              $emit('triggerSelectDestination', $event)
+            "
+          >
+            <icon type="plus" :size="12" color="primary" class="mr-1" />
+            <icon type="destination" :size="24" color="primary" class="mr-1" />
+            Destination
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            class="text-body-1 ml-n3 mt-n2"
+            data-e2e="delivery-history"
+            @click="$emit('openDeliveryHistoryDrawer', $event)"
+          >
+            <icon
+              class="mr-1"
+              type="history"
+              :size="24"
+              :color="'primary'"
+              :variant="'base'"
+            />
+            Delivery History
+          </v-btn>
+        </div>
+      </template>
+    </delivery>
 
-    <v-progress-linear
+    <!-- <v-progress-linear
       :active="loadingMetrics"
       :indeterminate="loadingMetrics"
     />
@@ -11,17 +70,18 @@
       :campaign-data="emailDataData"
       type="email"
       data-e2e="email-data"
-    />
+    /> -->
   </div>
 </template>
 
 <script>
-import CampaignSummary from "@/components/CampaignSummary.vue"
+// import CampaignSummary from "@/components/CampaignSummary.vue"
 import Delivery from "./Components/Delivery.vue"
+import Icon from "@/components/common/Icon.vue"
 
 export default {
   name: "EmailMarketing",
-  components: { CampaignSummary, Delivery },
+  components: { Delivery, Icon },
   props: {
     data: {
       type: Object,
@@ -36,6 +96,35 @@ export default {
       type: Boolean,
       required: true,
     },
+  },
+  data() {
+    return {
+      columnDefs: [
+        {
+          text: "Audiences",
+          value: "name",
+          width: "50%",
+        },
+        {
+          text: "Status",
+          value: "status",
+          width: "20%",
+        },
+        {
+          text: "Target size",
+          value: "size",
+          width: "15%",
+          hoverTooltip:
+            "Average order value for all customers (known and anyonymous) for all time.",
+          tooltipWidth: "201px",
+        },
+        {
+          text: "Last Delivery",
+          value: "update_time",
+          width: "15%",
+        },
+      ],
+    }
   },
   computed: {
     emailDataData() {

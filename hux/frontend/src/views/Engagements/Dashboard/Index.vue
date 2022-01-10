@@ -1,36 +1,14 @@
 <template>
   <div class="engagement-dash">
     <!-- Page Header -->
-    <page-header class="d-flex">
-      <template #left>
-        <div class="d-flex align-center bread-crumb">
-          <breadcrumb :items="breadcrumbItems" />
-          <div v-if="engagementList && engagementList.status" class="ml-3">
-            <status :status="engagementList.status" :icon-size="17"></status>
-          </div>
-        </div>
-      </template>
-      <template #right>
-        <div class="d-flex align-center">
-          <tooltip>
-            <template #label-content>
-              <icon
-                type="pencil"
-                :size="18"
-                class="cursor-pointer mr-7"
-                color="black-darken4"
-                @click.native="editEngagement()"
-              />
-            </template>
-            <template #hover-content>
-              <span>
-                <span> Click to edit this engagement </span>
-              </span>
-            </template>
-          </tooltip>
-        </div>
-      </template>
-    </page-header>
+    <dashboard-header
+      :breadcrumb-items="breadcrumbItems"
+      :engagement-data="engagementList"
+      @removeEngagement="(data) => removeEngagement(data)"
+      @favoriteEngagement="(data) => favoriteEngagement(data)"
+      @openDownloadDrawer="() => openDownloadDrawer()"
+      @inactiveEngagement="(data) => inactiveEngagement()"
+    />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
     <div v-if="!loading" class="inner-wrap px-15">
@@ -44,6 +22,8 @@
         @fetchMetrics="fetchCampaignPerformanceDetails($event)"
         @openDeliveryHistoryDrawer="openDeliveryHistoryDrawer()"
         @triggerSelectAudience="triggerSelectAudience()"
+        @onOverviewSectionAction="triggerOverviewAction($event)"
+        @onOverviewDestinationAction="triggerOverviewDestinationAction($event)"
       />
     </div>
     <!-- Select Audience Drawer -->
@@ -121,12 +101,7 @@
 </template>
 
 <script>
-import Breadcrumb from "@/components/common/Breadcrumb"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
-import Icon from "@/components/common/Icon"
-import Status from "@/components/common/Status"
-import Tooltip from "@/components/common/Tooltip.vue"
-import PageHeader from "@/components/PageHeader"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
@@ -136,14 +111,11 @@ import DestinationDataExtensionDrawer from "../Configuration/Drawers/Destination
 import SelectAudiencesDrawer from "../Configuration/Drawers/SelectAudiencesDrawer.vue"
 import SelectDestinationsDrawer from "../Configuration/Drawers/SelectDestinationsDrawer.vue"
 import Tabs from "./Tabs.vue"
+import DashboardHeader from "./Components/Header.vue"
 
 export default {
   name: "EngagementDashboard",
   components: {
-    PageHeader,
-    Breadcrumb,
-    Status,
-    Icon,
     AddAudienceDrawer,
     SelectAudiencesDrawer,
     SelectDestinationsDrawer,
@@ -152,8 +124,8 @@ export default {
     ConfirmModal,
     EditDeliverySchedule,
     LookAlikeAudience,
-    Tooltip,
     Tabs,
+    DashboardHeader,
   },
   data() {
     return {
@@ -221,6 +193,7 @@ export default {
         items.push({
           text: this.engagementList.name,
           disabled: false,
+          status: this.engagementList.status,
         })
       }
       return items
@@ -251,6 +224,7 @@ export default {
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
       setAlert: "alerts/setAlert",
+      deleteEngagement: "engagements/remove",
     }),
     async refreshEntity() {
       this.loading = true
@@ -455,10 +429,10 @@ export default {
       this.engagementList = JSON.parse(
         JSON.stringify(this.getEngagementObject(this.engagementId))
       )
-      await this.getAudiencePerformanceById({
-        type: "ads",
-        id: this.engagementList.id,
-      })
+      // await this.getAudiencePerformanceById({
+      //   type: "ads",
+      //   id: this.engagementList.id,
+      // })
       this.mapDeliveries()
     },
     //#region Delivery Overview Region
@@ -490,6 +464,9 @@ export default {
           this.confirmDialog.body =
             "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement."
           this.deleteActionData = event.data
+          break
+        case "create lookalike":
+          this.openLookAlikeDrawer(event)
           break
         default:
           break
@@ -538,9 +515,6 @@ export default {
           }
           this.showConfirmModal = true
           break
-        case "create lookalike":
-          this.openLookAlikeDrawer(event)
-          break
         default:
           break
       }
@@ -570,7 +544,7 @@ export default {
       this.showDeliveryHistoryDrawer = true
     },
     openLookAlikeDrawer(event) {
-      this.selectedAudience = event.parent
+      this.selectedAudience = event.data
       this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
@@ -591,6 +565,10 @@ export default {
         name: "EngagementUpdate",
         params: { id: this.getRouteId },
       })
+    },
+    async removeEngagement(data) {
+      await this.deleteEngagement(data)
+      this.$router.push({ path: "engagements" })
     },
   },
 }

@@ -10,6 +10,12 @@
           Overview
         </v-tab>
         <v-tab
+          v-if="
+            data &&
+            data.destinations_category.find(
+              (item) => item.category == 'Advertising'
+            )
+          "
           key="digital"
           class="pa-2 mr-3 text-h3 black--text text--lighten-4"
           @click="$emit('fetchMetrics', 'ads')"
@@ -17,6 +23,12 @@
           Digital Advertising
         </v-tab>
         <v-tab
+          v-if="
+            data &&
+            data.destinations_category.find(
+              (item) => item.category == 'Marketing'
+            )
+          "
           key="email"
           class="text-h3 black--text text--lighten-4"
           @click="$emit('fetchMetrics', 'email')"
@@ -34,9 +46,18 @@
             $emit('openDeliveryHistoryDrawer', $event)
           "
           @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+          @triggerOverviewAction="$emit('onOverviewSectionAction', $event)"
         />
       </v-tab-item>
-      <v-tab-item key="digital">
+      <v-tab-item
+        v-if="
+          data &&
+          data.destinations_category.find(
+            (item) => item.category == 'Advertising'
+          )
+        "
+        key="digital"
+      >
         <digital-advertising
           :data="data"
           :engagement-id="engagementId"
@@ -46,15 +67,33 @@
           @openDeliveryHistoryDrawer="
             $emit('openDeliveryHistoryDrawer', $event)
           "
+          @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+          @triggerSelectDestination="$emit('triggerSelectDestination', $event)"
+          @onOverviewDestinationAction="
+            $emit('onOverviewDestinationAction', $event)
+          "
         />
       </v-tab-item>
-      <v-tab-item key="email">
+      <v-tab-item
+        v-if="
+          data &&
+          data.destinations_category.find(
+            (item) => item.category == 'Marketing'
+          )
+        "
+        key="email"
+      >
         <email-marketing
           :data="data"
           :email-data="emailData"
           :loading-metrics="loadingMetrics"
           @openDeliveryHistoryDrawer="
             $emit('openDeliveryHistoryDrawer', $event)
+          "
+          @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+          @triggerSelectDestination="$emit('triggerSelectDestination', $event)"
+          @onOverviewDestinationAction="
+            $emit('onOverviewDestinationAction', $event)
           "
         />
       </v-tab-item>

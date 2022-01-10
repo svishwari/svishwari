@@ -1,6 +1,66 @@
 <template>
   <div>
-    <delivery :section="data" class="mb-5" />
+    <delivery
+      :sections="
+        data &&
+        data.destinations_category.find(
+          (item) => item.category == 'Advertising'
+        ).destinations
+      "
+      :headers="columnDefs"
+      section-type="destinations"
+      deliveries-key="destination_audiences"
+      class="mb-5"
+      @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+      @onOverviewDestinationAction="
+        $emit('onOverviewDestinationAction', $event)
+      "
+    >
+      <template #title-left>
+        <div class="d-flex align-center text-h3">
+          <icon
+            type="destinations"
+            :size="24"
+            color="black-darken4"
+            class="mr-2"
+          />
+          Delivery Overview
+        </div>
+      </template>
+      <template #title-right>
+        <div class="d-flex align-center">
+          <v-btn
+            text
+            color="primary"
+            class="text-body-1 ml-n3 mt-n2 mr-8"
+            data-e2e="deliver-all"
+            @triggerSelectDestination="
+              $emit('triggerSelectDestination', $event)
+            "
+          >
+            <icon type="plus" :size="12" color="primary" class="mr-1" />
+            <icon type="destination" :size="24" color="primary" class="mr-1" />
+            Destination
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            class="text-body-1 ml-n3 mt-n2"
+            data-e2e="delivery-history"
+            @click="$emit('openDeliveryHistoryDrawer', $event)"
+          >
+            <icon
+              class="mr-1"
+              type="history"
+              :size="24"
+              :color="'primary'"
+              :variant="'base'"
+            />
+            Delivery History
+          </v-btn>
+        </div>
+      </template>
+    </delivery>
     <v-progress-linear
       :active="loadingMetrics"
       :indeterminate="loadingMetrics"
@@ -19,10 +79,11 @@
 <script>
 import Delivery from "./Components/Delivery.vue"
 import CampaignSummary from "@/components/CampaignSummary.vue"
+import Icon from "@/components/common/Icon.vue"
 
 export default {
   name: "DigitalAdvertising",
-  components: { Delivery, CampaignSummary },
+  components: { Delivery, CampaignSummary, Icon },
   props: {
     data: {
       type: Object,
@@ -42,6 +103,40 @@ export default {
       required: true,
       default: () => {},
     },
+  },
+  data() {
+    return {
+      columnDefs: [
+        {
+          text: "Audiences",
+          value: "name",
+          width: "35%",
+        },
+        {
+          text: "Status",
+          value: "status",
+          width: "20%",
+        },
+        {
+          text: "Target size",
+          value: "size",
+          width: "15%",
+          hoverTooltip:
+            "Average order value for all customers (known and anyonymous) for all time.",
+          tooltipWidth: "201px",
+        },
+        {
+          text: "Match Rate",
+          value: "match_rate",
+          width: "15%",
+        },
+        {
+          text: "Last Delivery",
+          value: "update_time",
+          width: "15%",
+        },
+      ],
+    }
   },
   computed: {
     audiencePerformanceAdsData() {

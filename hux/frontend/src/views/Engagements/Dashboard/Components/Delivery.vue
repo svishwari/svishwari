@@ -17,29 +17,42 @@
         This audience is not part of an engagement. Add it to an engagement
         below.
       </div>
-      <div v-else class="pl-0 pt-0 pr-0 overflow-auto pb-0">
-        <delivery-details
-          v-for="item in availableRelationships"
-          :key="item.id"
-          :section="item"
-          :status-icon="17"
-          :menu-items="sectionActions"
-          :deliveries-key="deliveriesKey"
-          :section-type="sectionType"
-          :destination-menu-items="destinationActions"
-          data-e2e="status-list"
-          class="mb-4"
-          :audience="audienceData"
-          @onSectionAction="$emit('onOverviewSectionAction', $event)"
-          @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
-          @onAddDestination="$emit('onAddDestination', $event)"
-          @engagementDeliverySection="$emit('engagementDeliveries', $event)"
-          @refreshEntityDelivery="$emit('refreshEntityInsight')"
-        >
-          <template #empty-destinations>
-            <slot name="empty-deliveries" :sectionId="item.id" />
-          </template>
-        </delivery-details>
+      <div v-else class="pa-0 overflow-auto">
+        <v-row>
+          <v-col
+            v-for="(item, index) in availableRelationships"
+            :key="item.id"
+            :cols="
+              availableRelationships.length % 2 != 0 &&
+              index == availableRelationships.length - 1
+                ? 12
+                : 6
+            "
+          >
+            <delivery-details
+              :key="item.id"
+              :section="item"
+              :status-icon="17"
+              :menu-items="sectionActions"
+              :deliveries-key="deliveriesKey"
+              :section-type="sectionType"
+              :destination-menu-items="destinationActions"
+              :headers="headers"
+              data-e2e="status-list"
+              class="mb-4"
+              :audience="audienceData"
+              @onAddDestination="$emit('onAddDestination', $event)"
+              @engagementDeliverySection="$emit('engagementDeliveries', $event)"
+              @refreshEntityDelivery="$emit('refreshEntityInsight')"
+              @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+              @onSectionAction="$emit('onOverviewDestinationAction', $event)"
+            >
+              <template #empty-destinations>
+                <slot name="empty-deliveries" :sectionId="item.id" />
+              </template>
+            </delivery-details>
+          </v-col>
+        </v-row>
       </div>
     </v-card-text>
   </v-card>
@@ -76,6 +89,10 @@ export default {
       type: Object,
       required: false,
     },
+    headers: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
@@ -83,15 +100,12 @@ export default {
         { id: 1, title: "View delivery history", active: false },
         { id: 2, title: "Deliver all", active: true },
         { id: 3, title: "Add a destination", active: true },
-        { id: 5, title: "Remove engagement", active: false },
+        { id: 5, title: "ps.history", active: false },
       ],
       destinationMenuOptions: [
-        { id: 2, title: "Create lookalike", active: false },
         { id: 1, title: "Deliver now", active: true },
         { id: 3, title: "Edit delivery schedule", active: true },
-        { id: 4, title: "Pause delivery", active: false },
-        { id: 5, title: "Open destination", active: false },
-        { id: 6, title: "Remove destination", active: false },
+        { id: 6, title: "Remove destination", active: true },
       ],
       audienceMenuOptions: [
         {
@@ -113,7 +127,7 @@ export default {
     sectionActions() {
       return this.sectionType === "engagement"
         ? this.engagementMenuOptions
-        : this.audienceMenuOptions
+        : this.destinationMenuOptions
     },
     destinationActions() {
       return this.sectionType === "engagement"

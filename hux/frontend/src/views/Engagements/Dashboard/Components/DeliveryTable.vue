@@ -2,25 +2,25 @@
   <div>
     <v-list dense class="pa-0 delivery-table">
       <hux-data-table
-        v-if="section.audiences.length > 0"
-        :columns="columnDefs"
+        v-if="section[audienceKey].length > 0"
+        :columns="headers"
         :sort-desc="true"
-        :data-items="section.audiences"
+        :data-items="section[audienceKey]"
       >
         <template #row-item="{ item }">
           <td
-            v-for="header in columnDefs"
+            v-for="header in headers"
             :key="header.value"
             class="text-body-2 column"
             :style="{ width: header.width }"
             data-e2e="map-state-list"
           >
-            <div v-if="header.value == 'name'" class="text-body-1">
-              <logo
+            <div v-if="header.value == 'name'" class="text-body-1 d-flex">
+              <hux-icon
                 v-if="item.is_lookalike"
-                :type="item.delivery_platform_type"
+                type="lookalike"
                 :size="24"
-              ></logo>
+              ></hux-icon>
               <span class="ml-2 ellipsis primary--text">
                 {{ item.name }}
               </span>
@@ -67,7 +67,9 @@
             </div>
             <div v-if="header.value == 'status'" class="text-body-1">
               <status
-                :status="item['status']"
+                :status="
+                  tableData != '' ? item[tableData]['status'] : item['status']
+                "
                 :show-label="true"
                 class="d-flex"
                 :icon-size="17"
@@ -83,10 +85,81 @@
               />
             </div>
             <div v-if="header.value == 'size'" class="text-body-1">
-              <size :value="item['size']" />
+              <size
+                :value="
+                  tableData != '' ? item[tableData]['size'] : item['size']
+                "
+              />
             </div>
-            <div v-if="header.value == 'next_delivery'" class="text-body-1">
-              <time-stamp :value="item['next_delivery']" />
+            <div v-if="header.value == 'filters'" class="filter_col">
+              <span
+                v-if="
+                  item[header.value] == 'null' ||
+                  !item[header.value] ||
+                  item[header.value].length == 0
+                "
+              >
+                —
+              </span>
+              <span v-else>
+                <span
+                  v-for="(filter, filterIndex) in filterTags[item.name]"
+                  :key="filterIndex"
+                >
+                  <v-chip
+                    v-if="filterIndex < 4"
+                    small
+                    class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                    text-color="primary"
+                    color="var(--v-primary-lighten3)"
+                  >
+                    {{ formatText(filter) }}
+                  </v-chip>
+                </span>
+                <tooltip>
+                  <template #label-content>
+                    <span
+                      v-if="filterTags[item.name].size > 4"
+                      class="text-subtitle-2 primary--text"
+                    >
+                      +{{ filterTags[item.name].size - 4 }}
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    <span
+                      v-for="(filter, filterIndex) in filterTags[item.name]"
+                      :key="filterIndex"
+                    >
+                      <v-chip
+                        v-if="filterIndex >= 4"
+                        small
+                        class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                        text-color="primary"
+                        color="var(--v-primary-lighten3)"
+                      >
+                        {{ formatText(filter) }}
+                      </v-chip>
+                      <br v-if="filterIndex >= 4" />
+                    </span>
+                  </template>
+                </tooltip>
+              </span>
+            </div>
+            <div v-if="header.value == 'update_time'" class="text-body-1">
+              <time-stamp
+                :value="
+                  tableData != ''
+                    ? item[tableData]['update_time']
+                    : item['update_time']
+                "
+              />
+            </div>
+            <div v-if="header.value == 'match_rate'" class="text-body-1">
+              {{
+                tableData != ""
+                  ? item[tableData]["match_rate"]
+                  : item["match_rate"] | Percentage
+              }}
             </div>
           </td>
         </template>
@@ -136,10 +209,19 @@ import Logo from "@/components/common/Logo.vue"
 import Status from "@/components/common/Status.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
+import { formatText } from "@/utils.js"
 
 export default {
   name: "DeliveryTable",
-  components: { HuxDataTable, Tooltip, HuxIcon, Logo, Status, Size, TimeStamp },
+  components: {
+    HuxDataTable,
+    Tooltip,
+    HuxIcon,
+    Logo,
+    Status,
+    Size,
+    TimeStamp,
+  },
   props: {
     section: {
       type: Object,
@@ -149,52 +231,33 @@ export default {
       type: Array,
       required: false,
     },
+    audienceMenuOptions: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    audienceKey: {
+      type: String,
+      required: true,
+    },
+    filterTags: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
+    headers: {
+      type: Array,
+      required: true,
+    },
+    tableData: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   data() {
     return {
       openMenu: {},
-      columnDefs: [
-        {
-          text: "Audiences",
-          value: "name",
-          width: "20%",
-        },
-        {
-          text: "Status",
-          value: "status",
-          width: "15%",
-        },
-        {
-          text: "Destination",
-          value: "destinations",
-          width: "15%",
-        },
-        {
-          text: "Target size",
-          value: "size",
-          width: "15%",
-          hoverTooltip:
-            "Average order value for all customers (known and anyonymous) for all time.",
-          tooltipWidth: "201px",
-        },
-        {
-          text: "Attributes",
-          value: "attributes",
-          width: "25%",
-        },
-        {
-          text: "Last delivery",
-          value: "update_time",
-          width: "10%",
-        },
-      ],
-
-      audienceMenuOptions: [
-        { id: 1, title: "Deliver now", active: true },
-        { id: 2, title: "Create lookalike", active: true },
-        { id: 3, title: "Add a destination", active: true },
-        { id: 4, title: "Remove audience", active: true },
-      ],
     }
   },
   computed: {
@@ -203,6 +266,19 @@ export default {
         ? this.engagementMenuOptions
         : this.audienceMenuOptions
     },
+    buttonActions() {
+      this.audienceMenuOptions.forEach((element) => {
+        switch (element.title.toLowerCase()) {
+          case "create lookalike":
+            element["active"] = this.section.lookalikable === "Active"
+            break
+
+          default:
+            break
+        }
+      })
+      return this.audienceMenuOptions
+    },
   },
   watch: {
     // To reset the value of the openMenu
@@ -210,33 +286,33 @@ export default {
       if (!newValue) this.openMenu = {}
     },
   },
+  methods: {
+    formatText: formatText,
+  },
 }
 </script>
 
 <style lang="scss" scoped>
-.hux-data-table {
-  ::v-deep table {
-    .v-data-table-header {
-      tr {
-        th {
-          background: var(--v-primary-lighten2);
-          height: 40px !important;
-        }
-      }
-    }
-    tbody {
-      tr {
-        td {
-          height: 40px !important;
-        }
-      }
-    }
-    border-radius: 12px 12px 0px 0px;
-    overflow: hidden;
-  }
+.filter_col {
+  height: 59px !important;
+  overflow: auto;
+  display: table-cell;
+  vertical-align: middle;
 }
 .delivery-table {
-  border-radius: 12px;
-  border: 1px solid var(--v-black-lighten2);
+  ::v-deep .v-data-table__wrapper {
+    tbody {
+      tr {
+        td:nth-child(1) {
+          &:hover,
+          &:focus {
+            .action-icon {
+              display: block !important;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 </style>

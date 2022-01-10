@@ -22,9 +22,6 @@
                 <span>
                   {{ section.name }}
                 </span>
-                <span v-if="section.description" class="mt-3">
-                  {{ section.description }}
-                </span>
               </div>
             </template>
           </tooltip>
@@ -33,15 +30,19 @@
       <v-spacer> </v-spacer>
       <div
         class="d-flex mr-4 cursor-pointer deliver-icon text-body-1"
-        :class="{ disabled: section.destinations.length == 0 }"
+        :class="{ disabled: section.destination_audiences.length == 0 }"
         @click="deliverAll(section)"
       >
         <icon
           class="mr-1"
           type="deliver_2"
           :size="27"
-          :color="section.destinations.length == 0 ? 'black' : 'primary'"
-          :variant="section.destinations.length == 0 ? 'lighten3' : 'base'"
+          :color="
+            section.destination_audiences.length == 0 ? 'black' : 'primary'
+          "
+          :variant="
+            section.destination_audiences.length == 0 ? 'lighten3' : 'base'
+          "
         />
         Deliver all
       </div>
@@ -54,7 +55,7 @@
         <v-list class="menu-list-wrapper">
           <v-list-item-group v-model="selection" active-class="">
             <v-list-item
-              v-for="item in sectionActionItems(section)"
+              v-for="item in sectionActions"
               :key="item.id"
               :disabled="!item.active"
               @click="$emit('onSectionAction', { target: item, data: section })"
@@ -68,7 +69,14 @@
       </v-menu>
     </v-card-title>
 
-    <delivery-table />
+    <delivery-table
+      :section="updateSection()"
+      audience-key="destination_audiences"
+      table-data="latest_delivery"
+      :headers="headers"
+      :audience-menu-options="audienceMenuOptions"
+      @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+    />
   </v-card>
 </template>
 
@@ -76,11 +84,17 @@
 import { mapActions } from "vuex"
 import { getApproxSize } from "@/utils"
 import DeliveryTable from "./DeliveryTable.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+import Icon from "@/components/common/Icon.vue"
+import Status from "@/components/common/Status.vue"
 
 export default {
   name: "DeliveryDetails",
   components: {
     DeliveryTable,
+    Tooltip,
+    Icon,
+    Status,
   },
 
   props: {
@@ -121,6 +135,10 @@ export default {
       required: false,
       default: true,
     },
+    headers: {
+      type: Array,
+      required: true,
+    },
   },
 
   data() {
@@ -134,10 +152,14 @@ export default {
       engagementMenuOptions: [
         { id: 5, title: "Remove engagement", active: false },
       ],
-
-      destinationMenuOptions: [
+      audienceMenuOptions: [
         { id: 1, title: "Deliver now", active: true },
-        { id: 2, title: "Open destination", active: false },
+        { id: 2, title: "Create lookalike", active: true },
+        { id: 3, title: "Remove audience", active: true },
+      ],
+      destinationMenuOptions: [
+        { id: 1, title: "Open destination", active: true },
+        { id: 2, title: "Edit delivery schedule", active: true },
         { id: 3, title: "Remove destination", active: true },
       ],
 
@@ -157,7 +179,7 @@ export default {
     sectionActions() {
       return this.sectionType === "engagement"
         ? this.engagementMenuOptions
-        : this.audienceMenuOptions
+        : this.destinationMenuOptions
     },
     destinationActions() {
       return this.sectionType === "engagement"
@@ -200,43 +222,6 @@ export default {
     getSize(value) {
       return getApproxSize(value)
     },
-    // sectionActionItems(section) {
-    //   if (this.sectionType === "engagement") {
-    //     this.engagementMenuOptions.forEach((element) => {
-    //       switch (element.title.toLowerCase()) {
-    //         case "remove engagement":
-    //           element["active"] = true
-    //           break
-    //         default:
-    //           break
-    //       }
-    //     })
-    //     return this.engagementMenuOptions
-    //   } else {
-    //     this.audienceMenuOptions.forEach((element) => {
-    //       switch (element.title.toLowerCase()) {
-    //         case "deliver now":
-    //           element["active"] = section[this.deliveriesKey].length > 0
-    //           break
-
-    //         case "create lookalike":
-    //           element["active"] = section.lookalikable === "Active"
-    //           break
-
-    //         case "Pause all delivery":
-    //           element["active"] =
-    //             section[this.deliveriesKey].filter(
-    //               (delivery) => delivery.status === "Delivering"
-    //             ).length > 0
-    //           break
-
-    //         default:
-    //           break
-    //       }
-    //     })
-    //     return this.audienceMenuOptions
-    //   }
-    // },
     deliveryActionItems(delivery) {
       const createLookaLikeOption = {
         id: 1,
@@ -268,6 +253,12 @@ export default {
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
     },
+    updateSection() {
+      this.section.destination_audiences.forEach((element) => {
+        element["latest_delivery"].name = element.name
+      })
+      return this.section
+    },
   },
 }
 </script>
@@ -279,6 +270,7 @@ export default {
   border: 1px solid var(--v-black-lighten2);
   box-sizing: border-box;
   border-radius: 12px !important;
+  overflow: hidden;
   display: table;
   .deliver-icon {
     &.disabled {
