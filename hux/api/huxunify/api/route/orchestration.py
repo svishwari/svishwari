@@ -414,6 +414,8 @@ class AudienceView(SwaggerView):
 
         # process each audience object
         for audience in audiences:
+            if audience[db_c.NAME] != "Maui 2 Edit #8":
+                continue
             # find the matched audience destinations
             matched_destinations = [
                 x
@@ -441,6 +443,7 @@ class AudienceView(SwaggerView):
                         in [
                             db_c.AUDIENCE_STATUS_DELIVERED,
                             db_c.STATUS_SUCCEEDED,
+                            db_c.AUDIENCE_STATUS_DELIVERING,
                         ]
                     )
                     and (
@@ -457,13 +460,13 @@ class AudienceView(SwaggerView):
             # number of deliveries in it based on delivery_limit
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
+            # set the weighted status for the audience based on deliveries
+            audience[api_c.STATUS] = weight_delivery_status(audience)
+
             # take the last X number of deliveries
             audience[api_c.DELIVERIES] = audience[api_c.DELIVERIES][
                 :delivery_limit
             ]
-
-            # set the weighted status for the audience based on deliveries
-            audience[api_c.STATUS] = weight_delivery_status(audience)
 
             # if not a part of any engagements and not delivered.
             # set last delivery date to None.
