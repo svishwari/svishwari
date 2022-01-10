@@ -27,30 +27,6 @@ class JiraConnection:
         )
         self.project_key = config.JIRA_PROJECT_KEY
 
-    def check_jira_connection(self) -> bool:
-        """Check JIRA connections status
-
-        Returns:
-            bool: True/False specifying if connection to JIRA is established
-
-        """
-        try:
-            return self.get_project_details() is not None
-        except JIRAError:
-            return False
-
-    def get_project_details(self) -> dict:
-        """Fetch details of a JIRA project
-
-        Args:
-
-        Returns:
-            dict: Dictionary of project details
-        """
-        project = self.jira_client.project(self.project_key)
-
-        return dict(id=project.id, name=project.name, key=project.key)
-
     def create_jira_issue(
         self, issue_type: str, summary: str, description: str
     ):
