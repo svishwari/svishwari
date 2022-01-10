@@ -86,15 +86,6 @@ class CDPConnectionsTest(TestCase):
             message,
         )
 
-    # def test_check_cdp_connections_api_connection_failure(self) -> None:
-    #     """Test cdp connections health check function failure."""
-    #     mock.patch.object(
-    #         requests, "get", side_effect=Exception()
-    #     )
-    #
-    #     status, _ = check_cdp_connections_api_connection()
-    #     self.assertEqual("Exception()", status)
-
     def test_get_idr_data_feeds(self) -> None:
         """Test fetch IDR data feeds."""
 
