@@ -1134,7 +1134,9 @@ def set_delivery_job(
         db_c.UPDATE_TIME: curr_time,
         db_c.JOB_STATUS: db_c.AUDIENCE_STATUS_DELIVERING,
         db_c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-        db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (delivery_platform_generic_campaigns),
+        db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
+            delivery_platform_generic_campaigns
+        ),
         db_c.DELETED: False,
         db_c.DELIVERY_PLATFORM_AUD_SIZE: 0,
     }
@@ -1232,7 +1234,11 @@ def get_delivery_jobs_using_metadata(
             delivery_platform_id is None.
     """
 
-    if engagement_id is None and audience_id is None and delivery_platform_id is None:
+    if (
+        engagement_id is None
+        and audience_id is None
+        and delivery_platform_id is None
+    ):
         raise de.InvalidID()
 
     am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
@@ -1248,7 +1254,9 @@ def get_delivery_jobs_using_metadata(
         if delivery_platform_id:
             mongo_filter[db_c.DELIVERY_PLATFORM_ID] = delivery_platform_id
         if delivery_platform_ids:
-            mongo_filter[db_c.DELIVERY_PLATFORM_ID] = {"$in": delivery_platform_ids}
+            mongo_filter[db_c.DELIVERY_PLATFORM_ID] = {
+                "$in": delivery_platform_ids
+            }
         if engagement_ids:
             mongo_filter[db_c.ENGAGEMENT_ID] = {"$in": engagement_ids}
         if audience_ids:
@@ -1513,7 +1521,9 @@ def get_all_delivery_jobs(
         Union[list, None]: List of n delivery jobs.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.DELIVERY_JOBS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.DELIVERY_JOBS_COLLECTION
+    ]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -1530,7 +1540,9 @@ def get_all_delivery_jobs(
     # if sort list is none, set to default, otherwise set to the passed in list.
     # note, if an empty list is passed in, no sorting will happen.
     sort_list = (
-        [(db_c.CREATE_TIME, pymongo.DESCENDING)] if sort_list is None else sort_list
+        [(db_c.CREATE_TIME, pymongo.DESCENDING)]
+        if sort_list is None
+        else sort_list
     )
 
     try:
@@ -1666,7 +1678,11 @@ def create_delivery_job_generic_campaigns(
     try:
         return collection.find_one_and_update(
             {db_c.ID: delivery_job_id, db_c.DELETED: False},
-            {"$set": {db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign}},
+            {
+                "$set": {
+                    db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign
+                }
+            },
             upsert=False,
             new=True,
         )
@@ -2081,16 +2097,22 @@ def _get_performance_metrics(
     metric_queries = [{db_c.DELIVERY_JOB_ID: delivery_job_id}]
 
     if min_start_time:
-        metric_queries.append({db_c.METRICS_START_TIME: {"$gte": min_start_time}})
+        metric_queries.append(
+            {db_c.METRICS_START_TIME: {"$gte": min_start_time}}
+        )
 
     if max_end_time:
         metric_queries.append({db_c.METRICS_END_TIME: {"$lte": max_end_time}})
 
     if pending_transfer_for_feedback:
-        metric_queries.append({db_c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}})
+        metric_queries.append(
+            {db_c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+        )
 
     if pending_transfer_for_report:
-        metric_queries.append({db_c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}})
+        metric_queries.append(
+            {db_c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}}
+        )
 
     try:
         return list(collection.find({"$and": metric_queries}))
@@ -2153,7 +2175,9 @@ def get_performance_metrics_by_engagement_details(
         # Get performance metrics for all delivery jobs
         collection = platform_db[db_c.PERFORMANCE_METRICS_COLLECTION]
         delivery_job_ids = [x[db_c.ID] for x in delivery_jobs]
-        return list(collection.find({db_c.DELIVERY_JOB_ID: {"$in": delivery_job_ids}}))
+        return list(
+            collection.find({db_c.DELIVERY_JOB_ID: {"$in": delivery_job_ids}})
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -2277,11 +2301,15 @@ def _get_all_performance_metrics(
     try:
         if pending_transfer_for_feedback:
             return list(
-                collection.find({db_c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}})
+                collection.find(
+                    {db_c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+                )
             )
         if pending_transfer_for_report:
             return list(
-                collection.find({db_c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}})
+                collection.find(
+                    {db_c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}}
+                )
             )
         return list(collection.find())
     except pymongo.errors.OperationFailure as exc:
@@ -2591,7 +2619,9 @@ def update_pending_delivery_jobs(database: DatabaseClient) -> int:
             },
             {"$set": {db_c.STATUS: db_c.AUDIENCE_STATUS_ERROR}},
         )
-        logging.info("Updated %d delivery job status.", updated_doc.modified_count)
+        logging.info(
+            "Updated %d delivery job status.", updated_doc.modified_count
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
     return updated_doc.modified_count
