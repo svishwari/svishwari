@@ -50,13 +50,9 @@ def configure_flask(flask_app: Flask) -> None:
     # setup the environment config
     try:
         if flask_app.config["ENV"] == api_c.PRODUCTION_MODE:
-            flask_app.config.from_object(
-                "huxunify.api.config.ProductionConfig"
-            )
+            flask_app.config.from_object("huxunify.api.config.ProductionConfig")
         elif flask_app.config["ENV"] == api_c.DEVELOPMENT_MODE:
-            flask_app.config.from_object(
-                "huxunify.api.config.DevelopmentConfig"
-            )
+            flask_app.config.from_object("huxunify.api.config.DevelopmentConfig")
         else:
             # use http by default for local testing.
             SWAGGER_CONFIG["schemes"].insert(0, "http")
@@ -125,7 +121,7 @@ def create_app() -> Flask:
             id="process_destination_validations",
             func=run_scheduled_destination_checks(),
             trigger="cron",
-            minute=api_c.AUTOMATED_DELIVERY_MINUTE_CRON,
+            minute=api_c.DESTINATION_CHECK_CRON,
             args=[get_db_client()],
         )
 
