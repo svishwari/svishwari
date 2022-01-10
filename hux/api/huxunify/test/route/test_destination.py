@@ -16,7 +16,10 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
     collection_management,
 )
-from huxunifylib.database.audience_management import create_audience
+from huxunifylib.database.orchestration_management import (
+    create_audience,
+    get_audience,
+)
 from huxunifylib.database.engagement_management import (
     set_engagement,
     get_engagement,
@@ -99,6 +102,12 @@ class TestDestinationRoutes(TestCase):
                 db_c.ENABLED: True,
                 db_c.ADDED: False,
                 db_c.IS_AD_PLATFORM: True,
+                api_c.AUTHENTICATION_DETAILS: {
+                    api_c.FACEBOOK_APP_ID: "afgv21464",
+                    api_c.FACEBOOK_APP_SECRET: "faugfuweabvkjhasugfkuhabv",
+                    api_c.FACEBOOK_AD_ACCOUNT_ID: "HUX_3531234",
+                    api_c.FACEBOOK_ACCESS_TOKEN: "gfghoiughevlsdehgejdbvk$&*%)&zvdfh",
+                },
             },
             {
                 db_c.DELIVERY_PLATFORM_NAME: "Google Ads",
@@ -109,6 +118,13 @@ class TestDestinationRoutes(TestCase):
                 db_c.ENABLED: False,
                 db_c.ADDED: False,
                 db_c.IS_AD_PLATFORM: True,
+                api_c.AUTHENTICATION_DETAILS: {
+                    api_c.GOOGLE_CLIENT_ID: "afgv21464",
+                    api_c.GOOGLE_CLIENT_SECRET: "faugfuweabvkjhasugfkuhabv",
+                    api_c.GOOGLE_CLIENT_CUSTOMER_ID: "HUX_3531234",
+                    api_c.GOOGLE_REFRESH_TOKEN: "gfghoiughevlsdehgejdbvk$&*%)&zvdfh",
+                    api_c.GOOGLE_DEVELOPER_TOKEN: "aggaajnaevdevdfvdffejdbvk$&*%)&z",
+                },
             },
             {
                 db_c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
@@ -137,6 +153,9 @@ class TestDestinationRoutes(TestCase):
                 db_c.ENABLED: False,
                 db_c.ADDED: False,
                 db_c.IS_AD_PLATFORM: False,
+                api_c.AUTHENTICATION_DETAILS: {
+                    api_c.SENDGRID_AUTH_TOKEN: "afasuhfgk258$^#jvsdfjadvch"
+                },
             },
             {
                 db_c.DELIVERY_PLATFORM_NAME: "Qualtrics",
@@ -147,6 +166,12 @@ class TestDestinationRoutes(TestCase):
                 db_c.ENABLED: False,
                 db_c.ADDED: False,
                 db_c.IS_AD_PLATFORM: False,
+                api_c.AUTHENTICATION_DETAILS: {
+                    api_c.QUALTRICS_OWNER_ID: "id12345",
+                    api_c.QUALTRICS_DATA_CENTER: "base_uri",
+                    api_c.QUALTRICS_DIRECTORY_ID: "id12345",
+                    api_c.QUALTRICS_API_TOKEN: "fgagbskjh30651^(*^Vjhgftyfk",
+                },
             },
             {
                 db_c.DELIVERY_PLATFORM_NAME: "Amazon Advertising",
@@ -366,6 +391,18 @@ class TestDestinationRoutes(TestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.destinations), len(response.json))
+
+    def test_get_all_destinations_refresh_all(self):
+        """Test get all destinations with refresh all."""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
+            query_string={api_c.DESTINATION_REFRESH: True},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -1252,11 +1289,18 @@ class TestDestinationRoutes(TestCase):
         destination_id = self.destinations[0][db_c.ID]
 
         # create audience
+        audience = create_audience(
+            self.database,
+            "Audience for Destination Removal",
+            [],
+            "test user",
+            [{api_c.ID: destination_id}],
+            100,
+        )
+
         audiences = [
             {
-                api_c.ID: create_audience(self.database, "Test Audience", [])[
-                    db_c.ID
-                ],
+                api_c.ID: audience[db_c.ID],
                 api_c.DESTINATIONS: [
                     {
                         api_c.ID: destination_id,
@@ -1289,6 +1333,15 @@ class TestDestinationRoutes(TestCase):
             ]
         )
 
+        # test to ensure the destination is assigned to the audience
+        self.assertTrue(
+            [
+                d
+                for d in audience.get(db_c.DESTINATIONS)
+                if d.get(db_c.OBJECT_ID) == destination_id
+            ]
+        )
+
         # patch destination
         self.assertTrue(
             HTTPStatus.OK,
@@ -1312,6 +1365,19 @@ class TestDestinationRoutes(TestCase):
                 for x in updated_engagement.get(db_c.AUDIENCES)
                 for a in x.get(db_c.DESTINATIONS)
                 if a.get(db_c.OBJECT_ID) == destination_id
+            ]
+        )
+
+        # validate the destination was removed from any audiences
+        # test audience to ensure the destination exists
+        updated_audience = get_audience(self.database, audience.get(db_c.ID))
+
+        # test to ensure the destination is removed from the audience
+        self.assertFalse(
+            [
+                d
+                for d in updated_audience.get(db_c.DESTINATIONS)
+                if d.get(db_c.OBJECT_ID) == destination_id
             ]
         )
 

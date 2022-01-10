@@ -23,7 +23,7 @@ export default {
 
   // customer insights
   customerProfiles: "/customers",
-  segmentPlayground: "/audiences/add",
+  segmentPlayground: "/segment-playground",
 
   // orchestration
   destinations: "/destinations",

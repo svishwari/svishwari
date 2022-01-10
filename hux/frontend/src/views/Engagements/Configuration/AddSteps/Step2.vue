@@ -113,7 +113,7 @@
         class="mr-2"
         data-e2e="add-audience"
       />
-      <span class="primary--text">Audience</span>
+      <span class="primary--text text-body-1">Audience</span>
     </div>
 
     <!-- Drawers -->

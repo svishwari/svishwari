@@ -74,6 +74,7 @@
             <customer-event-chart
               v-if="!loadingCustomerEvents"
               :customers-data="events"
+              data-e2e="customer-event-chart"
             />
           </v-card>
         </v-col>

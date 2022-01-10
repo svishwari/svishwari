@@ -105,4 +105,10 @@ export default {
     background: var(--v-primary-lighten1);
   }
 }
+::v-deep .titleColor {
+  color: var(--v-black-base) !important;
+}
+::v-deep .metric-card-wrapper {
+  padding: 20px 24px !important;
+}
 </style>
