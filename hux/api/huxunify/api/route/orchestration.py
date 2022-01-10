@@ -1003,7 +1003,6 @@ class AudiencePostView(SwaggerView):
         database = get_db_client()
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
-            print("Iterating over destinations ...")
             for destination in body[api_c.DESTINATIONS]:
                 # validate object id
                 # map to an object ID field
@@ -1849,6 +1848,7 @@ class DeleteAudienceView(SwaggerView):
         database = get_db_client()
 
         # get the audience first
+        # The code exists like this to cover scenario of two users deleting the same resource at almost the same time
         audience = cm.get_document(
             database,
             db_c.AUDIENCES_COLLECTION,
@@ -1863,15 +1863,14 @@ class DeleteAudienceView(SwaggerView):
 
             if deleted_audience:
                 return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
-            else:
-                logger.info(
-                    "Failed to delete audience %s by user %s.",
-                    audience_id,
-                    user[api_c.USER_NAME],
-                )
-                return {
-                    api_c.MESSAGE: api_c.OPERATION_FAILED
-                }, HTTPStatus.INTERNAL_SERVER_ERROR
+            logger.info(
+                "Failed to delete audience %s by user %s.",
+                audience_id,
+                user[api_c.USER_NAME],
+            )
+            return {
+                api_c.MESSAGE: api_c.OPERATION_FAILED
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         # attempt to delete the audience from lookalike_audiences collection
         # if audience not found in audiences collection

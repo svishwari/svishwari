@@ -985,7 +985,7 @@ class CustomerEvents(SwaggerView):
             )
         else:
             start_date, end_date = get_start_end_dates(request, 6)
-        Validation.validate_date_range(start_date, end_date),
+        Validation.validate_date_range(start_date, end_date)
 
         return (
             jsonify(
