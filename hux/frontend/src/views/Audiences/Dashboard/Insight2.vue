@@ -10,16 +10,16 @@
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div class="px-8 py-8">
-      <v-card class="rounded pa-5 box-shadow-5">
+      <v-card class="overview-card pt-5 pb-6 pr-6 pl-6 box-shadow-5">
         <v-card-title class="d-flex justify-space-between pa-0">
-          <h5 class="text-h5 mb-2">Audience overview</h5>
+          <h3 class="text-h3 mb-2">Audience overview</h3>
           <div class="d-flex align-center">
             <v-btn
               v-if="audience && !audience.is_lookalike"
               :disabled="relatedEngagements.length == 0"
               text
               color="primary"
-              class="body-2 ml-n3 mt-n2"
+              class="body-1 ml-n3 mt-n2"
               data-e2e="delivery-history"
               @click="openDeliveryHistoryDrawer()"
             >
@@ -102,7 +102,7 @@
             <template #subtitle-extended>
               <tooltip>
                 <template #label-content>
-                  <div class="men mr-1 font-weight-semi-bold">
+                  <div class="men mr-1">
                     M: {{ audienceInsights.gender_men | Percentage | Empty }}
                   </div>
                 </template>
@@ -209,7 +209,7 @@
           </v-tab>
         </div>
       </v-tabs>
-      <v-tabs-items v-model="tabOption" class="tabs-item mt-2">
+      <v-tabs-items v-model="tabOption" class="tabs-item">
         <v-tab-item key="delivery" class="delivery-tab">
           <v-row class="">
             <v-col :cols="deliveryCols" class="">
@@ -233,7 +233,10 @@
                   </div>
                 </template>
               </delivery>
-              <standalone-delivery />
+              <standalone-delivery
+                :audience="audience"
+                @onAddStandaloneDestination="addStandaloneDestination($event)"
+              />
             </v-col>
             <v-col :cols="advertisingCols" class="">
               <div
@@ -251,7 +254,7 @@
                   :size="14"
                   :color="showAdvertising ? 'primary' : 'white'"
                   :class="{ 'rotate-icon-180': !showAdvertising }"
-                  class="collapse-icon mx-2"
+                  class="collapse-icon ml-1 mr-2"
                 />
               </div>
               <v-card
@@ -260,14 +263,14 @@
                 flat
                 height="100%"
               >
-                <v-card-title v-if="showAdvertising" class="ml-6 text-h3">
+                <v-card-title v-if="showAdvertising" class="ml-2 text-h3">
                   Digital advertising
                 </v-card-title>
                 <v-card-text v-if="showAdvertising" class="">
-                  <div class="match-rates mx-6 my-1">
+                  <div class="match-rates mx-2 my-1">
                     <matchrate />
                   </div>
-                  <div class="lookalikes mx-6 my-4">
+                  <div class="lookalikes mx-2 my-6">
                     <lookalikes />
                   </div>
                 </v-card-text>
@@ -322,6 +325,7 @@
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
       @onAddDestination="triggerAttachDestination($event)"
+      @onRemoveDestination="triggerRemoveDestination($event)"
     />
     <!-- Salesforce extension workflow -->
     <destination-data-extension-drawer
@@ -714,6 +718,10 @@ export default {
       )
       this.showSelectDestinationsDrawer = true
     },
+    addStandaloneDestination() {
+      this.closeAllDrawers()
+      this.showSelectDestinationsDrawer = true
+    },
     async deliverEngagement(event) {
       switch (event.target.title.toLowerCase()) {
         case "Open destination":
@@ -975,6 +983,16 @@ export default {
       })
       await this.loadAudienceInsights()
     },
+    async triggerRemoveDestination(event) {
+      this.deleteActionData = {
+        engagementId: this.engagementId,
+        audienceId: this.audienceId,
+        data: { id: event.destination.id },
+      }
+      await this.detachAudienceDestination(this.deleteActionData)
+
+      await this.loadAudienceInsights()
+    },
     async triggerAttachEngagement(event) {
       if (event.action === "Attach") {
         const payload = {
@@ -990,6 +1008,7 @@ export default {
           data: payload,
         })
         this.refresh()
+        this.refreshEntity()
       } else {
         const payload = { audience_ids: [] }
         payload.audience_ids.push(this.audienceId)
@@ -997,7 +1016,9 @@ export default {
           engagementId: event.data.id,
           data: payload,
         })
-        this.refresh()
+        this.$router.push({
+          name: "AudienceUpdate",
+        })
       }
     },
     async loadAudienceInsights() {
@@ -1007,7 +1028,6 @@ export default {
         this.getAudiencesRules()
         await this.getAudienceById(this.$route.params.id)
         const _getAudience = this.getAudience(this.$route.params.id)
-        // await this.loadEngagement(_getAudience.id)
         if (_getAudience && this.refreshAudience) {
           this.audienceData = JSON.parse(JSON.stringify(_getAudience))
         }
@@ -1134,7 +1154,7 @@ export default {
   .tabs-item {
     .delivery-tab {
       .digital-adv {
-        height: 368px !important;
+        height: 380px !important;
         .match-rates {
         }
         .lookalikes {
@@ -1200,7 +1220,7 @@ export default {
 .collapsible-bar {
   margin-top: 16px;
   width: 24px;
-  height: 368px;
+  height: 380px;
 
   cursor: pointer;
   float: left;
@@ -1231,5 +1251,19 @@ export default {
     position: absolute;
     top: 50%;
   }
+}
+.overview-card {
+  border-radius: 12px !important;
+}
+::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
+  color: var(--v-black-lighten4) !important;
+}
+::v-deep
+  .v-tabs
+  .v-tabs-bar
+  .v-tabs-bar__content
+  .v-tabs-slider-wrapper
+  .v-tabs-slider {
+  margin-top: 2px !important;
 }
 </style>

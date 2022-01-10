@@ -607,3 +607,44 @@ class TestAudienceManagement(unittest.TestCase):
         audiences = am.get_all_audiences(self.database)
 
         self.assertEqual(len(all_audiences) - 1, len(audiences))
+
+    def test_remove_destination_from_all_audiences(self) -> None:
+        """Test removing a destination from all audiences"""
+
+        for i in range(3):
+            am.create_audience(
+                self.database,
+                f"Audience for Destination Removal {i}",
+                self.audience_filters,
+                self.user_name,
+                list(
+                    {db_c.OBJECT_ID: destination_id}
+                    for destination_id in self.destination_ids
+                ),
+                100 + i,
+            )
+
+        # test to ensure that destination to be removed is linked to audiences
+        for audience in am.get_all_audiences(self.database):
+            self.assertTrue(
+                list(
+                    d
+                    for d in audience.get(db_c.DESTINATIONS)
+                    if d.get(db_c.OBJECT_ID) == self.destination_ids[0]
+                )
+            )
+
+        am.remove_destination_from_all_audiences(
+            self.database, self.destination_ids[0], self.user_name
+        )
+
+        # test to ensure that destination removed is no longer linked to any
+        # audiences
+        for audience in am.get_all_audiences(self.database):
+            self.assertFalse(
+                list(
+                    d
+                    for d in audience.get(db_c.DESTINATIONS)
+                    if d.get(db_c.OBJECT_ID) == self.destination_ids[0]
+                )
+            )

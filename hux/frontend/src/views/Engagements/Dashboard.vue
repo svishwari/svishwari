@@ -145,6 +145,7 @@
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforce="triggerDataExtensionDrawer"
       @addedDestination="triggerAttachDestination($event)"
+      @removeDestination="triggerDetachDestination($event)"
     />
 
     <destination-data-extension-drawer
@@ -401,6 +402,21 @@ export default {
           audienceId: this.selectedAudienceId,
           data: payload,
         })
+        await this.loadEngagement(this.engagementId)
+      } catch (error) {
+        this.loadingAudiences = false
+      }
+    },
+    async triggerDetachDestination(event) {
+      this.loadingAudiences = true
+      try {
+        this.deleteActionData = {
+          engagementId: this.engagementId,
+          audienceId: this.selectedAudienceId,
+          data: { id: event.destination.id },
+        }
+        await this.detachAudienceDestination(this.deleteActionData)
+        this.deleteActionData = {}
         await this.loadEngagement(this.engagementId)
       } catch (error) {
         this.loadingAudiences = false
