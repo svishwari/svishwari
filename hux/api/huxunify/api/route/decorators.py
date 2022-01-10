@@ -207,8 +207,12 @@ def requires_access_levels(access_levels: list) -> object:
             # check access level
             access_level = api_c.AccessLevel(user.get(db_c.USER_ROLE))
             if access_level not in access_levels:
-                logger.info("User has an invalid access level to access this resource.")
-                return {api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED
+                logger.info(
+                    "User has an invalid access level to access this resource."
+                )
+                return {
+                    api_c.MESSAGE: api_c.INVALID_AUTH
+                }, HTTPStatus.UNAUTHORIZED
 
             user[api_c.USER_NAME] = user.get(db_c.USER_DISPLAY_NAME, None)
             user[api_c.USER_PII_ACCESS] = user.get(db_c.USER_PII_ACCESS, False)
@@ -369,7 +373,9 @@ def api_error_handler(custom_message: dict = None) -> object:
 
             except iae.FailedDestinationDependencyError as exc:
                 error_message = (
-                    exc.args[0] if exc.args else api_c.DESTINATION_CONNECTION_FAILED
+                    exc.args[0]
+                    if exc.args
+                    else api_c.DESTINATION_CONNECTION_FAILED
                 )
                 logger.error(
                     "%s: %s Error encountered while executing %s in module %s.",
@@ -434,7 +440,9 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__qualname__,
                     in_function.__module__,
                 )
-                return {"message": "Document already exists"}, HTTPStatus.FORBIDDEN
+                return {
+                    "message": "Document already exists"
+                }, HTTPStatus.FORBIDDEN
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
@@ -514,7 +522,9 @@ def validate_delivery_params(func) -> object:
                     func.__qualname__,
                     func.__module__,
                 )
-                return {"message": api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
+                return {
+                    "message": api_c.ENGAGEMENT_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
         # check if audience id exists
         audience_id = kwargs.get(api_c.AUDIENCE_ID, None)
         if audience_id:
@@ -528,11 +538,15 @@ def validate_delivery_params(func) -> object:
                     func.__qualname__,
                     func.__module__,
                 )
-                return {"message": "Audience does not exist."}, HTTPStatus.BAD_REQUEST
+                return {
+                    "message": "Audience does not exist."
+                }, HTTPStatus.BAD_REQUEST
 
             if audience_id and engagement_id:
                 # validate that the audience is attached
-                audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
+                audience_ids = [
+                    x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
+                ]
                 if ObjectId(audience_id) not in audience_ids:
                     logger.error(
                         "Audience %s is not attached to engagement %s while executing %s in %s.",
@@ -665,7 +679,9 @@ def validate_engagement_and_audience() -> object:
 
             if audience_id is not None:
                 audience_id = ObjectId(audience_id)
-                if not orchestration_management.get_audience(database, audience_id):
+                if not orchestration_management.get_audience(
+                    database, audience_id
+                ):
                     logger.error(
                         "Audience with audience ID %s not found.",
                         audience_id,

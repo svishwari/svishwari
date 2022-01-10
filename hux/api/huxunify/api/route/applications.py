@@ -112,7 +112,9 @@ class ApplicationsPostView(SwaggerView):
             application,
             user[api_c.USER_NAME],
         )
-        logger.info("Successfully created application %s.", application.get(db_c.NAME))
+        logger.info(
+            "Successfully created application %s.", application.get(db_c.NAME)
+        )
 
         return (
             jsonify(ApplicationsGETSchema().dump(document)),

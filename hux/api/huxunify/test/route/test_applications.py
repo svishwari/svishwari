@@ -33,7 +33,9 @@ class ApplicationsTests(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         mock.patch(
             "huxunify.api.route.applications.get_db_client",
