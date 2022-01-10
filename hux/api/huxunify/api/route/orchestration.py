@@ -1238,7 +1238,7 @@ class AudiencePutView(SwaggerView):
             name=body.get(api_c.AUDIENCE_NAME),
             audience_filters=convert_unique_city_filter(
                 {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
-            )
+            ) if body.get(api_c.AUDIENCE_FILTERS) else body.get(api_c.AUDIENCE_FILTERS)
             if db_c.AUDIENCE_FILTERS in body
             else body.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
