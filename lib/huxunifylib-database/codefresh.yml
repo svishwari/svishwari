@@ -28,10 +28,10 @@ steps:
         title: 'tests'
         environment:
           - TOXENV=py37
-        pylintCheck:
-          title: 'pylintCheck'
-          environment:
-            - TOXENV=pylintCheck
+      pylintCheck:
+        title: 'pylintCheck'
+        environment:
+          - TOXENV=pylintCheck
     fail_fast: false
 
   coverageStyleCheck:
