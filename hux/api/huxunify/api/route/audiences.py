@@ -125,7 +125,9 @@ def get_audience_data_async(
     offset = 0
     if actual_size <= batch_size:
         return [
-            get_batch_customers(cdp_connector, location_details, actual_size, offset)
+            get_batch_customers(
+                cdp_connector, location_details, actual_size, offset
+            )
         ]
     batch_sizes = []
     offsets = []
@@ -136,7 +138,9 @@ def get_audience_data_async(
     if actual_size % batch_size != 0:
         batch_sizes.append(batch_size)
         offsets.append(offset)
-    with ThreadPoolExecutor(max_workers=api_c.MAX_WORKERS_THREAD_POOL) as executor:
+    with ThreadPoolExecutor(
+        max_workers=api_c.MAX_WORKERS_THREAD_POOL
+    ) as executor:
         return executor.map(
             get_batch_customers,
             repeat(cdp_connector),
@@ -225,7 +229,9 @@ class AudienceDownload(SwaggerView):
         if not download_types.get(download_type):
             return (
                 jsonify(
-                    {"message": "Invalid download type or download type not supported"}
+                    {
+                        "message": "Invalid download type or download type not supported"
+                    }
                 ),
                 HTTPStatus.BAD_REQUEST,
             )
@@ -254,7 +260,9 @@ class AudienceDownload(SwaggerView):
                 config.RETURN_EMPTY_AUDIENCE_FILE,
                 download_type,
             )
-            data_batches = [pd.DataFrame(columns=download_types.get(download_type)[1])]
+            data_batches = [
+                pd.DataFrame(columns=download_types.get(download_type)[1])
+            ]
             # change transform function to not transform any fields if config
             # is set to download empty audience file
             transform_function = do_not_transform_fields
@@ -272,7 +280,9 @@ class AudienceDownload(SwaggerView):
                 audience.get(api_c.SIZE),
                 batch_size=api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
                 location_details={
-                    api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS)
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS
+                    )
                 },
             )
 
@@ -281,7 +291,9 @@ class AudienceDownload(SwaggerView):
             f"_{audience_id}_{download_type}.csv"
         )
 
-        with open(audience_file_name, "w", newline="", encoding="utf-8") as csvfile:
+        with open(
+            audience_file_name, "w", newline="", encoding="utf-8"
+        ) as csvfile:
             for dataframe_batch in data_batches:
                 transform_function(dataframe_batch).to_csv(
                     csvfile,
@@ -592,7 +604,9 @@ class AudienceInsightsCountries(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        audience = orchestration_management.get_audience(get_db_client(), audience_id)
+        audience = orchestration_management.get_audience(
+            get_db_client(), audience_id
+        )
 
         return (
             jsonify(
@@ -600,7 +614,9 @@ class AudienceInsightsCountries(SwaggerView):
                     get_demographic_by_country(
                         token_response[0],
                         filters={
-                            api_c.AUDIENCE_FILTERS: audience.get(db_c.AUDIENCE_FILTERS)
+                            api_c.AUDIENCE_FILTERS: audience.get(
+                                db_c.AUDIENCE_FILTERS
+                            )
                         },
                     ),
                     many=True,
@@ -644,7 +660,9 @@ class AudienceRulesLocation(SwaggerView):
             },
             "description": "Location Constants List",
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get Audience Rules."},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Audience Rules."
+        },
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
@@ -729,7 +747,9 @@ class AudienceRulesHistogram(SwaggerView):
         HTTPStatus.OK.value: {
             "description": "Get audience rules " "histogram dictionary"
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get Audience Rules."},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Audience Rules."
+        },
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
@@ -760,9 +780,13 @@ class AudienceRulesHistogram(SwaggerView):
 
         if field_type == api_c.MODEL:
             model_name = request.args.get(api_c.MODEL_NAME, "")
-            if model_name in list(api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL]):
+            if model_name in list(
+                api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL]
+            ):
                 return (
-                    api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL][model_name],
+                    api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL][
+                        model_name
+                    ],
                     HTTPStatus.OK,
                 )
             return (
@@ -861,7 +885,9 @@ class AddDestinationAudience(SwaggerView):
             logger.error(
                 "Could not find destination with id %s.", destination[api_c.ID]
             )
-            return {"message": api_c.DESTINATION_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         audience = append_destination_to_standalone_audience(
             database=database,
