@@ -11,7 +11,6 @@ from huxunify.api.schema.utils import (
 )
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
-    DataExtensionSchema,
 )
 from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunify.api.schema.customers import (
@@ -101,17 +100,6 @@ class DigitAdvertising(Schema):
     """Digital advertising schema."""
 
     match_rates = fields.List(fields.Nested(DigitalAdvertisingMatchRates))
-
-
-class AudienceDestinationSchema(Schema):
-    """Schema for Audience Destination"""
-
-    id = fields.String(
-        example="5f5f7262997acad4bac4373b",
-        required=True,
-        validate=validate_object_id,
-    )
-    delivery_platform_config = fields.Nested(DataExtensionSchema)
 
 
 class AudienceGetSchema(Schema):
