@@ -1240,8 +1240,6 @@ class AudiencePutView(SwaggerView):
                 {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
             ).get(api_c.AUDIENCE_FILTERS)
             if body.get(api_c.AUDIENCE_FILTERS)
-            else body.get(api_c.AUDIENCE_FILTERS)
-            if db_c.AUDIENCE_FILTERS in body
             else body.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
