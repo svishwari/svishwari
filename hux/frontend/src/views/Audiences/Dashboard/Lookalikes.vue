@@ -49,12 +49,14 @@
         :height="156"
         :interactable="false"
         title-class="text-h3"
+        icon-type="Lookalikes"
+        title-icon="lookalike"
       >
         <template #subtitle-extended>
           <div class="black--text text--lighten-4 mt-4 text-body-2">
             No lookalike audiences have been created. Once this audience has
-            been delivered to an advertising destination, you can click the
-            button above to configure a lookalike audience in that destination.
+            been delivered to an advertising destination, you can configure a
+            lookalike audience in that destination.
           </div>
         </template>
       </metric-card>
@@ -99,5 +101,10 @@ export default {
     background: var(--v-primary-lighten1);
   }
 }
+::v-deep .titleColor {
+  color: var(--v-black-base) !important;
+}
+::v-deep .metric-card-wrapper {
+  padding: 20px 24px !important;
+}
 </style>
-lighten1

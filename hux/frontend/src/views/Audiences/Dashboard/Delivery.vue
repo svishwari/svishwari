@@ -1,6 +1,6 @@
 <template>
   <v-card class="rounded-lg card-style delivery-overview mt-4" flat>
-    <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-3">
+    <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-5">
       <slot name="title-left"></slot>
       <slot name="title-right"></slot>
     </v-card-title>
@@ -9,7 +9,7 @@
       :active="loadingRelationships"
       :indeterminate="loadingRelationships"
     />
-    <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
+    <v-card-text v-else class="pl-6 pr-6 pb-6 pt-0">
       <div
         v-if="sections.length == 0"
         class="empty-state py-4 black--text text--lighten-4 text-body-1"
@@ -17,7 +17,7 @@
         This audience is not part of an engagement. Add it to an engagement
         below.
       </div>
-      <div v-else class="pl-0 pt-0 pr-0 overflow-auto pb-3">
+      <div v-else class="pl-0 pt-0 pr-0 overflow-auto pb-0">
         <delivery-details
           v-for="item in availableRelationships"
           :key="item.id"
@@ -28,7 +28,7 @@
           :section-type="sectionType"
           :destination-menu-items="destinationActions"
           data-e2e="status-list"
-          class="mb-2"
+          class="mb-4"
           :audience="audienceData"
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"

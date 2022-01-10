@@ -13,7 +13,7 @@
         >
           <tooltip>
             <template #label-content>
-              <span class="ellipsis primary--text text-h3">
+              <span class="primary--text text-h3">
                 {{ section.name }}
               </span>
             </template>
@@ -37,9 +37,9 @@
         @click="deliverAll(section)"
       >
         <icon
-          class="mr-2"
-          type="deliver"
-          :size="24"
+          class="mr-1"
+          type="deliver_2"
+          :size="27"
           :color="section.deliveries.length == 0 ? 'black' : 'primary'"
           :variant="section.deliveries.length == 0 ? 'lighten3' : 'base'"
         />
@@ -459,7 +459,7 @@ export default {
     height: 60px;
     flex-wrap: inherit;
     .top-action {
-      color: var(--v-black-darken4);
+      color: var(--v-black-base);
     }
   }
   .delivery-table {

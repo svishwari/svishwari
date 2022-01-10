@@ -551,9 +551,6 @@ def upload_file(
     if object_name is None:
         object_name = os.path.basename(file_name)
 
-    # Upload the file
-    s3_client = get_aws_client(api_c.AWS_S3_NAME)
-
     extraargs = {
         "Metadata": {
             api_c.CREATED_BY: user_name if user_name else "",
@@ -562,6 +559,8 @@ def upload_file(
     }
     logging.info("Uploading %s file to %s", file_name, bucket)
     try:
+        # Upload the file
+        s3_client = get_aws_client(api_c.AWS_S3_NAME)
         _ = s3_client.upload_file(file_name, bucket, object_name, extraargs)
 
     except botocore.exceptions.ClientError as exception:
@@ -587,9 +586,9 @@ def download_file(
         bool: True for successful download else False
     """
     object_name = object_name if object_name else file_name
-    s3_client = get_aws_client(api_c.AWS_S3_NAME)
     logging.info("Downloading %s file to %s", file_name, bucket)
     try:
+        s3_client = get_aws_client(api_c.AWS_S3_NAME)
         with open(file_name, "wb") as file:
             s3_client.download_fileobj(bucket, object_name, file)
     except botocore.exceptions.ClientError as exception:

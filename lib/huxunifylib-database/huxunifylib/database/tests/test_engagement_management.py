@@ -1,4 +1,4 @@
-"""Engagement Management Tests"""
+"""Engagement Management Tests."""
 # pylint: disable=too-many-lines
 import unittest
 import mongomock
@@ -56,6 +56,7 @@ class TestEngagementManagement(unittest.TestCase):
                 destination,
                 destination,
                 user_name=self.user_name,
+                category=db_c.ADVERTISING,
             )
             dpm.set_connection_status(
                 self.database,
@@ -757,11 +758,13 @@ class TestEngagementManagement(unittest.TestCase):
                 self.assertIn(db_c.DESTINATIONS, audience)
                 self.assertIn(db_c.OBJECT_ID, audience)
                 self.assertIn(db_c.SIZE, audience)
+                self.assertIn(db_c.AUDIENCE_FILTERS, audience)
                 if not audience[db_c.DESTINATIONS]:
                     continue
                 for destination in audience[db_c.DESTINATIONS]:
                     self.assertIn(db_c.NAME, destination)
                     self.assertIn(db_c.OBJECT_ID, destination)
+                    self.assertIn(db_c.CATEGORY, destination)
 
     def test_get_engagements_summary_engagement_ids(self) -> None:
         """Test get_engagements_summary from a list of engagement_ids."""
@@ -844,11 +847,13 @@ class TestEngagementManagement(unittest.TestCase):
             self.assertIn(db_c.DESTINATIONS, audience)
             self.assertIn(db_c.OBJECT_ID, audience)
             self.assertIn(db_c.SIZE, audience)
+            self.assertIn(db_c.AUDIENCE_FILTERS, audience)
             if not audience[db_c.DESTINATIONS]:
                 continue
             for destination in audience[db_c.DESTINATIONS]:
                 self.assertIn(db_c.NAME, destination)
                 self.assertIn(db_c.OBJECT_ID, destination)
+                self.assertIn(db_c.CATEGORY, destination)
 
     def test_get_engagements_summary_filter_query(self) -> None:
         """Test get_engagements_summary from a list of engagement_ids based on
@@ -943,11 +948,13 @@ class TestEngagementManagement(unittest.TestCase):
             self.assertIn(db_c.DESTINATIONS, audience)
             self.assertIn(db_c.OBJECT_ID, audience)
             self.assertIn(db_c.SIZE, audience)
+            self.assertIn(db_c.AUDIENCE_FILTERS, audience)
             if not audience[db_c.DESTINATIONS]:
                 continue
             for destination in audience[db_c.DESTINATIONS]:
                 self.assertIn(db_c.NAME, destination)
                 self.assertIn(db_c.OBJECT_ID, destination)
+                self.assertIn(db_c.CATEGORY, destination)
 
     def test_append_destination_to_engagement_audience(self):
         """Test appending a destination to an engagement audience"""
