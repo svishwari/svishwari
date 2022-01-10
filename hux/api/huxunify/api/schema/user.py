@@ -72,3 +72,14 @@ class TicketGetSchema(Schema):
     issue_type = Str(example=api_c.TICKET_TYPE_BUG)
     summary = Str(example="Audience and Engagement Dashboard not loading")
     description = Str(example="Description of the issue.")
+
+
+class NewUserRequest(Schema):
+    """New User Request Schema"""
+
+    first_name = Str(required=True, example="Sarah")
+    last_name = Str(required=True, example="Huxley")
+    email = Str(required=True)
+    access_level = Str(required=True, validate=validate.OneOf(db_c.USER_ROLES))
+    pii_access = Bool(required=True)
+    reason_for_request = Str(required=True)

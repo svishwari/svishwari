@@ -1442,3 +1442,11 @@ AUDIENCE_RULES_HISTOGRAM_DATA = {
         ],
     },
 }
+
+REASON_FOR_REQUEST = "reason_for_request"
+NEW_USER_REQUEST_PREFIX = "[NEW USER REQUEST]"
+DEFAULT_NEW_USER_PROJECT_NAME = "ADV"
+DEFAULT_OKTA_GROUP_NAME = "team-unified--base"
+DEFAULT_OKTA_APP = "HUX Audience Builder"
+REQUEST_NEW_USER = "request_new_user"
+REQUESTED_BY = "requested_by"

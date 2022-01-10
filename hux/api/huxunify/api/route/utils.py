@@ -696,3 +696,49 @@ def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
                 api_c.AUDIENCE_LAST_DELIVERY: None,
                 api_c.MATCH_RATE: None,
             }
+
+
+def create_description_for_user_request(
+    first_name: str,
+    last_name: str,
+    email: str,
+    access_level: str,
+    pii_access: bool,
+    reason_for_request: str,
+    requested_by: str,
+    project_name: str = api_c.DEFAULT_NEW_USER_PROJECT_NAME,
+    okta_group_name: str = api_c.DEFAULT_OKTA_GROUP_NAME,
+    okta_app: str = api_c.DEFAULT_OKTA_APP,
+) -> str:
+    """Create HUS issue description using new user request data.
+    Args:
+        first_name (str): First name of the user requested.
+        last_name (str): Last name of the user requested.
+        email (str): Email of the user requested.
+        access_level (str): Access level of the user requested.
+        pii_access (bool): If allowed PII access.
+        reason_for_request (str): Description of why access request.
+        requested_by (str): User Name of the person requesting.
+        project_name (str, Optional): Project name which user needs to
+            be granted access.
+        okta_group_name (str, Optional): Okta group name to which user
+            must be added.
+        okta_app (str, Optional): Okta app name to which user needs
+            permission.
+    Returns:
+        str: Description for HUS issue.
+    """
+
+    return (
+        f"*Project Name:* {project_name} \n"
+        f"*Required Info:* Please add {first_name} {last_name} to the"
+        f" {okta_group_name} group. \n"
+        f"*Reason for Request:* {reason_for_request} \n"
+        f"*User:* {first_name}, {last_name} \n"
+        f"*Email:* {email} \n"
+        f"*Access Level:* {access_level} \n"
+        f"*PII Access:* {pii_access} \n"
+        f"*Okta Group Name:* {okta_group_name} \n"
+        f"*Okta App:* {okta_app} \n"
+        f"*Requested by:* {requested_by}"
+    )
