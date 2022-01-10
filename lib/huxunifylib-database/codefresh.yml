@@ -1,7 +1,7 @@
 version: "1.0"
 stages:
   - clone
-  - safety_bandit_test_check
+  - pylint_&_unittest_check
   - coverage_style_check
   - publish
 
