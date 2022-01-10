@@ -989,7 +989,7 @@ models_list = [
         db_c.TYPE: "churn",
         db_c.NAME: "Propensity to churn",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-                                "churn in a future time window.",
+        "churn in a future time window.",
         db_c.MODEL_ID: "4",
         db_c.VERSION: "21.11.22",
         db_c.FULCRUM: "2021-11-22",
@@ -1007,7 +1007,7 @@ models_list = [
         db_c.TYPE: "churn",
         db_c.NAME: "Propensity to churn",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-                                "churn in a future time window.",
+        "churn in a future time window.",
         db_c.MODEL_ID: "4",
         db_c.VERSION: "21.11.23",
         db_c.FULCRUM: "2021-11-23",
@@ -1025,7 +1025,7 @@ models_list = [
         db_c.TYPE: "churn",
         db_c.NAME: "Propensity to churn",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-                                "churn in a future time window.",
+        "churn in a future time window.",
         db_c.MODEL_ID: "4",
         db_c.VERSION: "21.11.24",
         db_c.FULCRUM: "2021-11-24",
@@ -1043,7 +1043,7 @@ models_list = [
         db_c.TYPE: "Purchase",
         db_c.NAME: "Propensity to purchase",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-                                "purchase in a future time window.",
+        "purchase in a future time window.",
         db_c.MODEL_ID: "3",
         db_c.VERSION: "21.10.7",
         db_c.FULCRUM: "2021-10-07",
@@ -1061,7 +1061,7 @@ models_list = [
         db_c.TYPE: "Purchase",
         db_c.NAME: "Propensity to purchase",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-                                "purchase in a future time window.",
+        "purchase in a future time window.",
         db_c.MODEL_ID: "3",
         db_c.VERSION: "21.10.8",
         db_c.FULCRUM: "2021-10-08",
@@ -1079,7 +1079,7 @@ models_list = [
         db_c.TYPE: "Purchase",
         db_c.NAME: "Propensity to purchase",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-                                "purchase in a future time window.",
+        "purchase in a future time window.",
         db_c.MODEL_ID: "3",
         db_c.VERSION: "21.10.9",
         db_c.FULCRUM: "2021-10-09",
@@ -1256,7 +1256,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
-    }
+    },
 ]
 
 

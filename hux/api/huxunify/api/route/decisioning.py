@@ -233,14 +233,14 @@ class ModelVersionView(SwaggerView):
         if request.args.get(api_c.VERSION) is not None:
             filters[db_c.VERSION] = request.args.get(api_c.VERSION)
 
-        model_version = collection_management.get_documents(
+        models = collection_management.get_documents(
             get_db_client(),
             db_c.MODELS_COLLECTION,
             filters
         )
-        
-        if model_version.get(db_c.DOCUMENTS):
-            model_version.get(db_c.DOCUMENTS)[0]
+
+        if models.get(db_c.DOCUMENTS):
+            model_version = models.get(db_c.DOCUMENTS)[0]
         else:
             version_history = Tecton().get_model_version_history(model_id)
             model_version = (
@@ -467,9 +467,9 @@ class RemoveRequestedModel(SwaggerView):
 @add_view_to_blueprint(
     model_bp,
     f"{api_c.MODELS_ENDPOINT}/<model_id>/version-history",
-    "ModelVersionView",
+    "ModelVersionHistoryView",
 )
-class ModelVersionView(SwaggerView):
+class ModelVersionHistoryView(SwaggerView):
     """Model Version Class."""
 
     parameters = api_c.MODEL_ID_PARAMS
