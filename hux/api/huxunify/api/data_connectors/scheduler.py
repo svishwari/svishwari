@@ -13,7 +13,9 @@ from huxunifylib.database.delivery_platform_management import (
     get_all_delivery_platforms,
 )
 from huxunifylib.database.orchestration_management import get_audience
-from huxunifylib.connectors.util.selector import get_delivery_platform_connector
+from huxunifylib.connectors.util.selector import (
+    get_delivery_platform_connector,
+)
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import get_next_schedule
@@ -57,12 +59,16 @@ def generate_cron(schedule: dict) -> str:
 
         cron_exp["day_of_week"] = ",".join(schedule.get("day_of_week"))
         if schedule["every"] > 1:
-            cron_exp["day_of_week"] = f"{cron_exp['day_of_week']}#{schedule['every']}"
+            cron_exp[
+                "day_of_week"
+            ] = f"{cron_exp['day_of_week']}#{schedule['every']}"
 
     if schedule["periodicity"] == "Daily":
         cron_exp["day_of_month"] = "*"
         if schedule["every"] > 1:
-            cron_exp["day_of_month"] = f"{cron_exp['day_of_month']}/{schedule['every']}"
+            cron_exp[
+                "day_of_month"
+            ] = f"{cron_exp['day_of_month']}/{schedule['every']}"
 
     if schedule["periodicity"] == "Monthly":
         cron_exp["day_of_month"] = ",".join(schedule.get("day_of_month"))
@@ -71,7 +77,9 @@ def generate_cron(schedule: dict) -> str:
     return " ".join([str(val) for val in cron_exp.values()])
 
 
-async def delivery_destination(database, engagement, audience_id, destination_id):
+async def delivery_destination(
+    database, engagement, audience_id, destination_id
+):
     """Async function that couriers delivery jobs.
 
     Args:
@@ -122,10 +130,14 @@ async def delivery_destination(database, engagement, audience_id, destination_id
             destination_id,
         ]:
             continue
-        batch_destination = get_destination_config(database, *pair, engagement[db_c.ID])
+        batch_destination = get_destination_config(
+            database, *pair, engagement[db_c.ID]
+        )
         batch_destination.register()
         batch_destination.submit()
-        delivery_job_ids.append(str(batch_destination.audience_delivery_job_id))
+        delivery_job_ids.append(
+            str(batch_destination.audience_delivery_job_id)
+        )
 
     logger.info(
         "Successfully created delivery jobs %s.",
@@ -239,7 +251,8 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     api_c.TASK,
                     f"Removing Destination '{destination[api_c.NAME]}'.",
                     "\n".join(
-                        f"{key.title()}: {value}" for key, value in destination.items()
+                        f"{key.title()}: {value}"
+                        for key, value in destination.items()
                     ),
                 )
 
@@ -247,7 +260,9 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     database=database,
                     delivery_platform_id=destination[db_c.ID],
                     name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+                    delivery_platform_type=destination[
+                        db_c.DELIVERY_PLATFORM_TYPE
+                    ],
                     enabled=False,
                     deleted=True,
                 )

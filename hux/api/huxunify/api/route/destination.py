@@ -252,43 +252,47 @@ class DestinationsView(SwaggerView):
 
         for destination in destinations:
             if refresh_all:
-                try:
-                    connector = get_delivery_platform_connector(
-                        destination[api_c.DELIVERY_PLATFORM_TYPE],
-                        auth_details=get_auth_from_parameter_store(
-                            destination[api_c.AUTHENTICATION_DETAILS],
+                if (
+                    destination[api_c.DELIVERY_PLATFORM_TYPE]
+                    in db_c.SUPPORTED_DELIVERY_PLATFORMS
+                ):
+                    try:
+                        connector = get_delivery_platform_connector(
                             destination[api_c.DELIVERY_PLATFORM_TYPE],
-                        ),
-                    )
-                    if connector is not None:
-                        destination[
-                            db_c.DELIVERY_PLATFORM_STATUS
-                        ] = db_c.STATUS_SUCCEEDED
-                    else:
+                            get_auth_from_parameter_store(
+                                destination[api_c.AUTHENTICATION_DETAILS],
+                                destination[api_c.DELIVERY_PLATFORM_TYPE],
+                            ),
+                        )
+                        if connector is not None:
+                            destination[
+                                db_c.DELIVERY_PLATFORM_STATUS
+                            ] = db_c.STATUS_SUCCEEDED
+                        else:
+                            destination[
+                                db_c.DELIVERY_PLATFORM_STATUS
+                            ] = db_c.STATUS_FAILED
+                        # pylint: disable=broad-except
+                    except Exception as exception:
+                        logger.error(
+                            "%s: %s while connecting to destination %s.",
+                            exception.__class__,
+                            str(exception),
+                            destination[api_c.DELIVERY_PLATFORM_TYPE],
+                        )
                         destination[
                             db_c.DELIVERY_PLATFORM_STATUS
                         ] = db_c.STATUS_FAILED
-                    # pylint: disable=broad-except
-                except Exception as exception:
-                    logger.error(
-                        "%s: %s while connecting to destination %s.",
-                        exception.__class__,
-                        str(exception),
-                        destination[api_c.DELIVERY_PLATFORM_TYPE],
-                    )
-                    destination[
-                        db_c.DELIVERY_PLATFORM_STATUS
-                    ] = db_c.STATUS_FAILED
 
-                destination_management.update_delivery_platform(
-                    database=database,
-                    delivery_platform_id=destination[db_c.ID],
-                    name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    delivery_platform_type=destination[
-                        db_c.DELIVERY_PLATFORM_TYPE
-                    ],
-                    status=destination[db_c.DELIVERY_PLATFORM_STATUS],
-                )
+                    destination_management.update_delivery_platform(
+                        database=database,
+                        delivery_platform_id=destination[db_c.ID],
+                        name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                        delivery_platform_type=destination[
+                            db_c.DELIVERY_PLATFORM_TYPE
+                        ],
+                        status=destination[db_c.DELIVERY_PLATFORM_STATUS],
+                    )
             # using a default here in case we do not have a proper mapping
             # or just want to use the same constant value in the UI
             destination[
