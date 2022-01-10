@@ -400,12 +400,12 @@ def fill_empty_customer_events(
                 api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
                 api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
                     api_c.VIEWED_CHECKOUT_EVENT: 0,
-                    api_c.ABANDONED_CARTS: 0,
-                    api_c.TRAITS_ANALYZED: 0,
-                    api_c.SALES_MADE: 0,
-                    api_c.CONTENT_VIEWED: 0,
-                    api_c.PRODUCTS_SEARCHED: 0,
-                    api_c.PURCHASES_MADE: 0,
+                    api_c.ABANDONED_CART: 0,
+                    api_c.TRAIT: 0,
+                    api_c.SALE: 0,
+                    api_c.VIEW_CONTENT: 0,
+                    api_c.PRODUCT_SEARCHED: 0,
+                    api_c.PURCHASE: 0,
                 },
             }
         )
@@ -1013,7 +1013,7 @@ def get_revenue_by_day(
 
     # get config
     config = get_config()
-    logger.info("Retrieving spending by month.")
+    logger.info("Retrieving spending by day.")
 
     # TODO: Update the API call to CDM with correct endpoint when available
     response = requests.post(
@@ -1025,7 +1025,7 @@ def get_revenue_by_day(
     )
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve spending insights by month, %s %s.",
+            "Failed to retrieve spending insights by day, %s %s.",
             response.status_code,
             response.text,
         )

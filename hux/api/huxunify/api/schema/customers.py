@@ -379,19 +379,17 @@ class CustomerEventCountSchema(Schema):
 
     viewed_checkout = Integer(required=True, example=1)
     abandoned_cart = Integer(
-        required=True, example=1, attribute=api_c.ABANDONED_CARTS
+        required=True, example=1, attribute=api_c.ABANDONED_CART
     )
-    trait = Integer(required=True, example=1, attribute=api_c.TRAITS_ANALYZED)
-    sale = Integer(required=True, example=1, attribute=api_c.SALES_MADE)
+    trait = Integer(required=True, example=1, attribute=api_c.TRAIT)
+    sale = Integer(required=True, example=1, attribute=api_c.SALE)
     view_content = Integer(
-        required=True, example=1, attribute=api_c.CONTENT_VIEWED
+        required=True, example=1, attribute=api_c.VIEW_CONTENT
     )
     product_search = Integer(
-        required=True, example=1, attribute=api_c.PRODUCTS_SEARCHED
+        required=True, example=1, attribute=api_c.PRODUCT_SEARCHED
     )
-    purchase = Integer(
-        required=True, example=1, attribute=api_c.PURCHASES_MADE
-    )
+    purchase = Integer(required=True, example=1, attribute=api_c.PURCHASE)
 
 
 class CustomerEventsSchema(Schema):

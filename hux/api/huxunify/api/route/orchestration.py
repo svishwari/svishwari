@@ -1003,6 +1003,7 @@ class AudiencePostView(SwaggerView):
         database = get_db_client()
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
+            print("Iterating over destinations ...")
             for destination in body[api_c.DESTINATIONS]:
                 # validate object id
                 # map to an object ID field
@@ -1041,7 +1042,7 @@ class AudiencePostView(SwaggerView):
                     return {
                         "message": f"Engagement with ID {engagement_id} "
                         f"does not exist."
-                    }
+                    }, HTTPStatus.NOT_FOUND
                 engagement_ids.append(engagement_id)
         audience_filters = convert_unique_city_filter(
             {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
@@ -1210,6 +1211,13 @@ class AudiencePutView(SwaggerView):
         # load into the schema object
         body = AudiencePutSchema().load(request.get_json(), partial=True)
         database = get_db_client()
+
+        if not orchestration_management.get_audience(
+            database, ObjectId(audience_id)
+        ):
+            return {
+                api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # validate destinations
         if db_c.DESTINATIONS in body:
@@ -1841,31 +1849,21 @@ class DeleteAudienceView(SwaggerView):
         database = get_db_client()
 
         # get the audience first
-        audience = orchestration_management.get_audience(
-            database, ObjectId(audience_id)
+        audience = cm.get_document(
+            database,
+            db_c.AUDIENCES_COLLECTION,
+            {db_c.ID: ObjectId(audience_id)},
         )
 
         # attempt to delete the audience from audiences collection first
-        deleted_audience = orchestration_management.delete_audience(
-            database, ObjectId(audience_id)
-        )
-
-        # attempt to delete the audience from lookalike_audiences collection
-        # if audience not found in audiences collection
-        if not deleted_audience:
-            audience = cm.get_document(
-                database,
-                db_c.LOOKALIKE_AUDIENCE_COLLECTION,
-                {db_c.ID: ObjectId(audience_id)},
+        if audience:
+            deleted_audience = orchestration_management.delete_audience(
+                database, ObjectId(audience_id)
             )
 
-            deleted_audience = delete_lookalike_audience(
-                database, ObjectId(audience_id), soft_delete=False
-            )
-
-            # return failure if no document is deleted from either audiences
-            # or lookalike_audiences collection
-            if not deleted_audience:
+            if deleted_audience:
+                return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
+            else:
                 logger.info(
                     "Failed to delete audience %s by user %s.",
                     audience_id,
@@ -1874,6 +1872,33 @@ class DeleteAudienceView(SwaggerView):
                 return {
                     api_c.MESSAGE: api_c.OPERATION_FAILED
                 }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        # attempt to delete the audience from lookalike_audiences collection
+        # if audience not found in audiences collection
+        audience = cm.get_document(
+            database,
+            db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+            {db_c.ID: ObjectId(audience_id)},
+        )
+
+        if not audience:
+            return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
+
+        deleted_audience = delete_lookalike_audience(
+            database, ObjectId(audience_id), soft_delete=False
+        )
+
+        # return failure if no document is deleted from either audiences
+        # or lookalike_audiences collection
+        if not deleted_audience:
+            logger.info(
+                "Failed to delete audience %s by user %s.",
+                audience_id,
+                user[api_c.USER_NAME],
+            )
+            return {
+                api_c.MESSAGE: api_c.OPERATION_FAILED
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         delete_audience_from_engagements = (
             engagement_management.remove_audience_from_all_engagements(
