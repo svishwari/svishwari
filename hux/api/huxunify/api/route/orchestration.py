@@ -408,8 +408,6 @@ class AudienceView(SwaggerView):
 
         # process each audience object
         for audience in audiences:
-            if audience[db_c.NAME] != "Maui 2 Edit #8":
-                continue
             # find the matched audience destinations
             matched_destinations = [
                 x
