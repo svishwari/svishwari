@@ -553,11 +553,6 @@ class TestAudienceDestination(TestCase):
             return_value=self.database,
         ).start()
 
-        mock.patch(
-            "huxunify.api.route.audiences.get_delivery_platform",
-            return_value=t_c.MOCKED_DESTINATION,
-        ).start()
-
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
