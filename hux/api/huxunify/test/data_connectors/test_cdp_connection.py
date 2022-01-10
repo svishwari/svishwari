@@ -1,21 +1,26 @@
 """Purpose of this file is to house all the cdp connections tests."""
+from http import HTTPStatus
 from unittest import TestCase, mock
 import string
+
 import requests_mock
 from hypothesis import given, strategies as st
+from requests_mock import Mocker
 
 from huxunify.api import constants as api_c
+from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
-from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
     get_data_source_data_feeds,
     get_idr_matching_trends,
     get_data_sources,
+    check_cdp_connections_api_connection,
 )
+from huxunify.test import constants as t_c
 from huxunify.app import create_app
 
 
@@ -28,6 +33,7 @@ class CDPConnectionsTest(TestCase):
         # setup the flask test client
         self.test_client = create_app().test_client()
 
+        self.config = get_config(api_c.TEST_MODE)
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
         self.request_mocker.start()
@@ -38,6 +44,56 @@ class CDPConnectionsTest(TestCase):
         """Tear down tests."""
 
         self.request_mocker.stop()
+
+    @requests_mock.Mocker()
+    def test_check_cdp_connections_api_connection_success(
+        self, request_mocker: Mocker
+    ) -> None:
+        """Test cdp connections health check function success.
+
+        Args:
+            request_mocker (Mocker): request_mocker object
+        """
+        request_mocker.get(
+            f"{self.config.CDP_CONNECTION_SERVICE}/healthcheck",
+            json={
+                "code": 200,
+                "status": "success",
+                "message": "Health Check Performed",
+            },
+        )
+        status, message = check_cdp_connections_api_connection()
+        self.assertTrue(status)
+        self.assertEqual("CDP connections available.", message)
+
+    @requests_mock.Mocker()
+    def test_check_cdp_connections_api_connection_failure(
+        self, request_mocker: Mocker
+    ) -> None:
+        """Test cdp connections health check function failure.
+
+        Args:
+            request_mocker (Mocker): request_mocker object
+        """
+        request_mocker.get(
+            f"{self.config.CDP_CONNECTION_SERVICE}/healthcheck",
+            status_code=HTTPStatus.BAD_REQUEST,
+        )
+        status, message = check_cdp_connections_api_connection()
+        self.assertFalse(status)
+        self.assertEqual(
+            f"CDP connections not available. Received {HTTPStatus.BAD_REQUEST}",
+            message,
+        )
+
+    # def test_check_cdp_connections_api_connection_failure(self) -> None:
+    #     """Test cdp connections health check function failure."""
+    #     mock.patch.object(
+    #         requests, "get", side_effect=Exception()
+    #     )
+    #
+    #     status, _ = check_cdp_connections_api_connection()
+    #     self.assertEqual("Exception()", status)
 
     def test_get_idr_data_feeds(self) -> None:
         """Test fetch IDR data feeds."""
