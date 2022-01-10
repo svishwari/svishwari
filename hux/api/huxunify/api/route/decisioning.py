@@ -234,9 +234,7 @@ class ModelVersionView(SwaggerView):
             filters[db_c.VERSION] = request.args.get(api_c.VERSION)
 
         models = collection_management.get_documents(
-            get_db_client(),
-            db_c.MODELS_COLLECTION,
-            filters
+            get_db_client(), db_c.MODELS_COLLECTION, filters
         )
 
         if models.get(db_c.DOCUMENTS):
