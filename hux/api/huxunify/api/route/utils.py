@@ -628,21 +628,6 @@ def read_json_shap_data(file_path: str, features: list = None) -> dict:
     }
 
 
-def read_stub_city_zip_data(file_path: str) -> list:
-    """Read in City & Zip Data CSV into a dict
-
-    Args:
-        file_path(str): relative file path of the csv file
-
-    Returns:
-        list: City & Zip data list
-    """
-    with open(file_path, "r", encoding="utf-8") as csv_file:
-        data = list(csv.reader(csv_file))
-
-    return data[1:]
-
-
 def convert_unique_city_filter(request_json: dict) -> dict:
     """To convert request json to have unique city
 
