@@ -5,13 +5,6 @@ import random
 from collections import namedtuple
 
 from huxunifylib.database import constants as db_c
-from huxunifylib.connectors import (
-    FacebookConnector,
-    SFMCConnector,
-    SendgridConnector,
-    GoogleConnector,
-    QualtricsConnector,
-)
 
 TEST_MODE = "pytest"
 DEVELOPMENT_MODE = "development"
