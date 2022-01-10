@@ -17,9 +17,6 @@ export default {
   created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   create_time: () => faker.date.recent(),
   update_time: () => faker.date.recent(),
-  type: () => faker.random.arrayElement([
-    "module",
-    "business_solution",
-  ]),
+  type: () => faker.random.arrayElement(["module", "business_solution"]),
   description: `description for ${faker.address.state()}`,
 }

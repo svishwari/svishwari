@@ -78,13 +78,7 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="
-            px-3
-            d-block
-            description
-            text-body-2
-            black--text
-          "
+          class="px-3 d-block description text-body-2 black--text"
           :style="{
             'padding-top': !icon ? '22px' : null,
             height: descriptionHeight,

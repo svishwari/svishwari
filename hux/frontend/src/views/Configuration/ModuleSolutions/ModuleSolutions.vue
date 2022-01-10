@@ -7,6 +7,7 @@
         color="primary lighten-6"
         class="text-body-2 c-black"
         label="Only show active items"
+        data-e2e="activeItem"
       ></v-checkbox>
       <div
         v-if="
