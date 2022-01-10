@@ -84,7 +84,6 @@
             description
             text-body-2
             black--text
-            text--lighten-4
           "
           :style="{
             'padding-top': !icon ? '22px' : null,
