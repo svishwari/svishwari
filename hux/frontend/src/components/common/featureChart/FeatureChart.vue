@@ -3,7 +3,6 @@
     <horizontal-bar-chart
       v-model="features"
       :chart-dimensions="chartDimensions"
-      @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
     <chart-tooltip
@@ -16,14 +15,14 @@
     >
       <template #content>
         <div class="bar-hover">
-          <div class="text-body-2 black--text">Feature</div>
-          <div class="text-body-2 black--text">
+          <div class="text-body-2 black--text text--base mb-1">Feature</div>
+          <div class="text-body-2 black--text text--base mb-1">
             <span class="dot"></span> {{ currentData.name }}
           </div>
-          <div class="text-body-2 black--text">
+          <div class="text-body-2 black--text text--base mb-1">
             {{ currentData.score }}
           </div>
-          <div class="text-body-2 black--text text--lighten-4">
+          <div class="text-body-2 black--text text--lighten-4 mb-1">
             {{ currentData.description }}
           </div>
         </div>
@@ -75,12 +74,9 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
+        this.tooltip.x = arg[1].xPosition
+        this.tooltip.y = arg[1].yPosition
       }
-    },
-
-    getCordinates(args) {
-      this.tooltip.x = args.x
-      this.tooltip.y = args.y
     },
 
     sizeHandler() {
@@ -104,7 +100,7 @@ export default {
   padding: 0px !important;
   position: relative;
   .bar-hover {
-    padding: 7px 20px 20px 20px;
+    padding: 8px !important;
   }
 }
 .dot {

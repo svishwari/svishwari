@@ -14,7 +14,6 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors import okta
 from huxunify.api.route.decorators import (
     secured,
     requires_access_levels,
@@ -22,6 +21,8 @@ from huxunify.api.route.decorators import (
 from huxunify.api.data_connectors.okta import (
     get_user_info,
     get_token_from_request,
+    introspect_token,
+    check_okta_connection,
 )
 from huxunify.test import constants as t_c
 
@@ -92,6 +93,57 @@ class OktaTest(TestCase):
         self.addCleanup(unittest.mock.patch.stopall)
 
     @requests_mock.Mocker()
+    def test_check_okta_connection_connected(self, request_mocker: Mocker):
+        """Test check okta connection connected.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+        """
+
+        # setup the request mock post
+        request_mocker.get(
+            f"{self.config.OKTA_ISSUER}"
+            f"/oauth2/v1/keys?client_id="
+            f"{self.config.OKTA_CLIENT_ID}",
+            json=VALID_RESPONSE,
+        )
+
+        status, message = check_okta_connection()
+
+        self.assertTrue(status)
+        self.assertEqual("OKTA available.", message)
+
+    @requests_mock.Mocker()
+    def test_check_okta_connection_disconnected(self, request_mocker: Mocker):
+        """Test check okta connection disconnected.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+        """
+
+        # setup the request mock post
+        request_mocker.get(
+            f"{self.config.OKTA_ISSUER}"
+            f"/oauth2/v1/keys?client_id="
+            f"{self.config.OKTA_CLIENT_ID}",
+            status_code=HTTPStatus.BAD_REQUEST,
+        )
+
+        status, message = check_okta_connection()
+
+        self.assertFalse(status)
+        self.assertEqual(
+            f"OKTA not available. Received: {HTTPStatus.BAD_REQUEST}", message
+        )
+
+    def test_check_okta_connection_exception(self):
+        """Test check okta connection exception raised."""
+
+        status, _ = check_okta_connection()
+
+        self.assertFalse(status)
+
+    @requests_mock.Mocker()
     def test_introspection_invalid_call(self, request_mocker: Mocker):
         """Test token introspection with an invalid token.
 
@@ -105,7 +157,7 @@ class OktaTest(TestCase):
             text=json.dumps(INVALID_RESPONSE, default=json_util.default),
         )
 
-        response = okta.introspect_token("invalid")
+        response = introspect_token("invalid")
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
@@ -129,7 +181,7 @@ class OktaTest(TestCase):
         # setup the request mock post
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
-        response = okta.introspect_token("valid")
+        response = introspect_token("valid")
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
@@ -408,7 +460,7 @@ class OktaTest(TestCase):
 
         # valid response after introspection with token
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        response = okta.introspect_token("access_token")
+        response = introspect_token("access_token")
         expected_response = {"user_id": "1234567", "user_name": "davesmith"}
         self.assertDictEqual(response, expected_response)
 
@@ -430,7 +482,7 @@ class OktaTest(TestCase):
 
         # valid response after introspection with token
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        response = okta.introspect_token("access_token")
+        response = introspect_token("access_token")
         expected_response = {"user_id": "1234567", "user_name": "davesmith"}
         self.assertDictEqual(response, expected_response)
 

@@ -174,12 +174,12 @@ async def get_audience_insights_async(token: str, audience_filters: dict):
     return audience_insights
 
 
-def get_audience_standalone_deliveries(audience_id: ObjectId) -> list:
+def get_audience_standalone_deliveries(audience: dict) -> list:
     """Get standalone deliveries list of an audience built for GET audience
     by ID response.
 
      Args:
-        audience_id (ObjectId): ObjectId of an audience.
+        audience (dict): audience dictionary.
 
     Returns:
         list: List of standalone audience deliveries.
@@ -190,22 +190,16 @@ def get_audience_standalone_deliveries(audience_id: ObjectId) -> list:
     standalone_deliveries = []
     standalone_delivery_jobs = destination_management.get_delivery_jobs(
         database,
-        audience_id=audience_id,
+        audience_id=audience[db_c.ID],
         engagement_id=db_c.ZERO_OBJECT_ID,
     )
 
     if standalone_delivery_jobs:
-        # TODO: HUS-1864 uncomment the below block of code and remove the
-        # following line once destinations nested object in audiences
-        # collection gets populated in the future
         # extract delivery platform ids from the audience
-        # destination_ids = [
-        #     x.get(api_c.ID)
-        #     for x in audience[api_c.DESTINATIONS]
-        #     if isinstance(x, dict)
-        # ]
         destination_ids = [
-            x.get(db_c.DELIVERY_PLATFORM_ID) for x in standalone_delivery_jobs
+            x.get(api_c.ID)
+            for x in audience[api_c.DESTINATIONS]
+            if isinstance(x, dict)
         ]
 
         # get destinations at once to lookup name for each delivery job
@@ -736,7 +730,7 @@ class AudienceGetView(SwaggerView):
         # set the list of engagements for an audience
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
         # set the list of standalone_deliveries for an audience
-        standalone_deliveries = get_audience_standalone_deliveries(audience_id)
+        standalone_deliveries = get_audience_standalone_deliveries(audience)
 
         # get the max last delivered date for all destinations in an audience
         delivery_times = [

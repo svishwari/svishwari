@@ -174,6 +174,7 @@ export default {
     },
     eventsDrawerButton: "[data-e2e='eventsDrawerButton']",
     customerEventRow: "[data-e2e='customerEventRow']",
+    customerEventchart: "[data-e2e='customer-event-chart']",
   },
 
   //IDR
@@ -225,5 +226,15 @@ export default {
     createNewEngagement: "[data-e2e='create-engagement-new']",
     cancelAudience: "[data-e2e='cancel-audience']",
     removeAudience: "[data-e2e='remove-audience-confirmation']",
+    addNewAudience: "[data-e2e='add-audience']",
+    editAudienceName: "[data-e2e='edit-audience-name']",
+  },
+
+  segmentPlayground: {
+    addNewAttr: "[data-e2e='add-new-attr']",
+    removeAttr: "[data-e2e='remove-attr']",
+    selectAttrBtn: "[data-e2e='select-attr-btn']",
+    selectOperatorBtn: "[data-e2e='select-operator-btn']",
+    autoCompleteBtn: "[data-e2e='auto-complete-btn']",
   },
 }

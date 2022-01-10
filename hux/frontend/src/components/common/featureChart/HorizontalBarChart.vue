@@ -2,11 +2,7 @@
   <div>
     <div class="chart-container" :style="{ maxWidth: chartWidth }">
       <div class="chart-style pb-6 pl-4 pt-1">
-        <div
-          ref="huxChart"
-          class="chart-section"
-          @mouseover="getCordinates($event)"
-        ></div>
+        <div ref="huxChart" class="chart-section"></div>
       </div>
     </div>
   </div>
@@ -41,16 +37,10 @@ export default {
       chartWidth: "",
       width: 350,
       height: 620,
-      show: false,
-      showScoreTip: false,
       scoreTip: {
         score: 0,
         xPosition: 0,
         yPosition: 0,
-      },
-      tooltip: {
-        x: 0,
-        y: 0,
       },
       margin: { top: 5, right: 50, bottom: 75, left: 180 },
     }
@@ -113,13 +103,6 @@ export default {
       let appendElipsis = (text) =>
         text && text.length > 20 ? text.slice(0, 20) + "..." : text
 
-      let featureLabelHover = (srcData) => {
-        let currentFeature = this.chartData.find(
-          (data) => data.name == srcData.getAttribute("data")
-        )
-        this.tooltipDisplay(true, currentFeature)
-      }
-
       svg
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
@@ -142,8 +125,10 @@ export default {
         .attr("fill", "#4f4f4f")
         .style("font-size", "14px")
         .style("text-anchor", "end")
-        .on("mouseover", (d) => featureLabelHover(d.srcElement))
-        .on("mouseout", () => this.tooltipDisplay(false))
+        .on("mouseover", (d) =>
+          applyHoverEffects(d.srcElement.getAttribute("data"))
+        )
+        .on("mouseout", () => removeHoverEffects())
 
       svg
         .append("g")
@@ -169,59 +154,94 @@ export default {
         )
 
       svg
+        .append("line")
+        .attr("class", "hover-line-y")
+        .style("stroke", "#1E1E1E")
+        .style("stroke-width", 1)
+        .style("pointer-events", "none")
+
+      svg
         .selectAll("myRect")
         .data(this.chartData)
         .enter()
         .append("rect")
         .attr("x", 0)
+        .attr("rx", 2)
+        .attr("ry", 2)
+        .attr("data", (d) => d.name)
         .attr("y", (d) => y(d.name))
         .attr("width", (d) => x(d.score))
-        .attr("height", y.bandwidth())
-        .attr("fill", "#93d8f2")
+        .attr("height", 20)
+        .attr("fill", "#00A3E0")
         .attr("class", "bar")
-        .on("mouseover", (d) => applyHoverEffects(d))
+        .style("fill-opacity", "0.5")
+        .on("mouseover", (d) =>
+          applyHoverEffects(d.srcElement.getAttribute("data"))
+        )
         .on("mouseout", () => removeHoverEffects())
 
-      let applyHoverEffects = (d) => {
+      let applyHoverEffects = (data) => {
         d3Select.selectAll("rect").style("fill-opacity", "0.5")
+        svg.select(`rect[data='${data}']`).style("fill-opacity", "1")
         d3Select
-          .select(d.srcElement)
-          .attr("fill-opacity", (d) => changeHoverCirclePosition(d))
-          .style("fill-opacity", "1")
+          .selectAll("text")
+          .filter(function () {
+            return d3Select.select(this).data() == data
+          })
+          .attr("fill", "#1E1E1E")
+        let currentData = this.chartData.find((feature) => feature.name == data)
+        changeHoverCirclePosition(currentData)
       }
 
       let removeHoverEffects = () => {
-        d3Select.selectAll("rect").style("fill-opacity", "1")
+        d3Select.selectAll("rect").style("fill-opacity", "0.5")
+        svg.selectAll(".hover-line-y").style("display", "none")
+        svg.selectAll(".removeableCircleParent").style("display", "none")
+        svg.selectAll(".removeableCircleChild").style("display", "none")
         this.showTip = false
         d3Select.select(this.$refs.huxChart).select("circle").remove()
-        this.showScoreTip = false
         this.tooltipDisplay(false)
+        d3Select.selectAll("text").attr("fill", "#4f4f4f")
       }
 
       let changeHoverCirclePosition = (data) => {
         let featureData = data
+        featureData.xPosition = x(data.score)
+        featureData.yPosition = y(data.name) + 10
         this.scoreTip.xPosition = x(data.score)
-        this.scoreTip.yPosition = y(data.name) + 12
+        this.scoreTip.yPosition = y(data.name) + 10
         this.scoreTip.score = data.score.toFixed(2)
         this.tooltipDisplay(true, featureData)
         svg
           .append("circle")
-          .classed("removeableCircle", true)
+          .classed("removeableCircleParent", true)
           .attr("cx", this.scoreTip.xPosition)
           .attr("cy", this.scoreTip.yPosition)
           .attr("r", 7)
-          .style("stroke", "#00A3E0")
+          .style("stroke", "white")
           .style("stroke-opacity", "1")
           .style("fill", "white")
           .style("pointer-events", "none")
-        this.showScoreTip = true
-      }
-    },
+        svg
+          .append("circle")
+          .classed("removeableCircleChild", true)
+          .attr("cx", this.scoreTip.xPosition)
+          .attr("cy", this.scoreTip.yPosition)
+          .attr("r", 5)
+          .style("stroke", "#00A3E0")
+          .style("stroke-width", 2)
+          .style("stroke-opacity", "1")
+          .style("fill", "white")
+          .style("pointer-events", "none")
 
-    getCordinates(event) {
-      this.tooltip.x = event.offsetX
-      this.tooltip.y = event.offsetY
-      this.$emit("cordinates", this.tooltip)
+        svg
+          .selectAll(".hover-line-y")
+          .attr("x1", this.scoreTip.xPosition)
+          .attr("x2", this.scoreTip.xPosition)
+          .attr("y1", 0)
+          .attr("y2", this.height)
+          .style("display", "block")
+      }
     },
 
     tooltipDisplay(showTip, featureData) {
