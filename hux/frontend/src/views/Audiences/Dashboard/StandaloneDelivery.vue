@@ -153,7 +153,7 @@
               text
               min-width="7rem"
               height="2rem"
-              class="primary--text text-body-1"
+              class="primary--text text-body-1 mt-n1"
             >
               Destination
             </v-btn>
@@ -181,7 +181,7 @@
               text
               min-width="7rem"
               height="2rem"
-              class="primary--text text-body-1 mt-n1"
+              class="primary--text text-body-1"
             >
               Destination
             </v-btn>
