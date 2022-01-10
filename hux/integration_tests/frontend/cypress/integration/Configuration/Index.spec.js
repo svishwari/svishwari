@@ -26,10 +26,8 @@ describe("View configuration", () => {
 
     // should click on module-solutions tab
     cy.get(selector.configuration.moduleSolution).click()
-    cy.wait(2000)
     // should click & checked on checkbox to show only active items
     cy.get(selector.configuration.activeItem).click({ force: true })
-    cy.wait(500)
     // should click & un-checked on checkbox to show all items
     cy.get(selector.configuration.activeItem).click({ force: true })
     // should open tips menu
