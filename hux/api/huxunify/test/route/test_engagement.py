@@ -458,6 +458,27 @@ class TestEngagementMetricsEmail(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
+    def test_email_non_existent_engagement(self):
+        """Tests email for non existent engagement."""
+
+        engagement_id = str(ObjectId())
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+            f"{engagement_id}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.EMAIL}"
+        )
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
     def test_email_audience_performance(self):
         """Test email audience performance success response."""
 
@@ -473,6 +494,155 @@ class TestEngagementMetricsEmail(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+
+# pylint: disable=too-many-instance-attributes
+class TestEngagementPerformanceDownload(TestCase):
+    """Purpose of this class is to test downloading of engagement performance  metrics."""
+
+    def setUp(self):
+        """Sets up Test Client."""
+
+        self.app = create_app().test_client()
+
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        # mock request for introspect call
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        # mock get_db_client() for the engagement.
+        mock.patch(
+            "huxunify.api.route.engagement.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in performance metrics
+        mock.patch(
+            "huxunify.api.data_connectors.performance_metrics.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get db client from utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        self.audience_id = create_audience(
+            self.database, "Test Audience", [], t_c.TEST_USER_NAME
+        )[db_c.ID]
+
+        self.delivery_platform_sfmc = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_SFMC,
+            "sfmc_delivery_platform",
+            authentication_details={},
+            status=db_c.STATUS_SUCCEEDED,
+        )
+        self.delivery_platform_facebook = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            "facebook_delivery_platform",
+            authentication_details={},
+            status=db_c.STATUS_SUCCEEDED,
+        )
+        self.audiences = [
+            {
+                api_c.ID: self.audience_id,
+                api_c.DESTINATIONS: [
+                    {
+                        api_c.ID: self.delivery_platform_sfmc[db_c.ID],
+                    },
+                ],
+            }
+        ]
+        self.engagement_id_sfmc = set_engagement(
+            self.database,
+            "Test engagement sfmc",
+            None,
+            self.audiences,
+            t_c.TEST_USER_NAME,
+            None,
+            False,
+        )
+
+        self.delivery_job_sfmc = set_delivery_job(
+            self.database,
+            self.audience_id,
+            self.delivery_platform_sfmc[db_c.ID],
+            [
+                {
+                    db_c.ENGAGEMENT_ID: self.engagement_id_sfmc,
+                    db_c.AUDIENCE_ID: self.audience_id,
+                }
+            ],
+            self.engagement_id_sfmc,
+        )
+
+        set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_sfmc[db_c.ID],
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_SFMC,
+            delivery_job_id=self.delivery_job_sfmc[db_c.ID],
+            metrics_dict=EMAIL_METRICS,
+            start_time=datetime.utcnow(),
+            end_time=datetime.utcnow(),
+            generic_campaigns=[],
+        )
+
+        self.addCleanup(mock.patch.stopall)
+
+    def test_performance_metric_download(self):
+        """Test downloading performance metric success response."""
+
+        endpoint = (
+            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
+            f"{self.engagement_id_sfmc}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/download"
+        )
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual("application/zip", response.content_type)
+
+    def test_performance_metric_download_non_existent_engagement(self):
+        """Test downloading performance metric success response for non existent engagement."""
+
+        endpoint = (
+            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
+            f"{str(ObjectId())}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/download"
+        )
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}, response.json
+        )
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
@@ -652,7 +822,7 @@ class TestEngagementRoutes(TestCase):
                 db_c.AUDIENCES: [
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
-                        api_c.DESTINATIONS_TAG: [],
+                        api_c.DESTINATIONS: [],
                     },
                 ],
                 api_c.USER_NAME: self.user_name,
@@ -865,7 +1035,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_put_campaign_mappings_for_non_existent_engagement(self):
-        """Test delivery of a destination for a non-existent engagement."""
+        """Test mapping campaign for a non-existent engagement."""
 
         engagement_id = str(ObjectId())
         audience_id = self.audiences[0][db_c.ID]
@@ -883,6 +1053,84 @@ class TestEngagementRoutes(TestCase):
         valid_response = {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_put_campaign_mappings_for_engagement_with_no_attached_audience(
+        self,
+    ):
+        """Test mapping campaign for an engagement with no attached audience."""
+        engagement = {
+            db_c.ENGAGEMENT_NAME: "Test Engagement No Audience",
+            db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
+            db_c.AUDIENCES: [],
+            api_c.USER_NAME: self.user_name,
+        }
+        engagement_id = str(set_engagement(self.database, **engagement))
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.put(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_put_campaign_mappings_for_engagement_requested_audience_unattached(
+        self,
+    ):
+        """Test mapping campaign for an engagement with requested audience unattached."""
+
+        engagement_id = self.engagement_ids[1]
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.put(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {
+            api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT
+        }
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_put_campaign_mappings_for_engagement_audience_attached_destination(
+        self,
+    ):
+        """Test mapping campaign for an engagement audience with unattached destination."""
+
+        engagement_id = self.engagement_ids[1]
+        audience_id = self.audiences[1][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.put(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {
+            api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE
+        }
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
     def test_put_campaigns_for_non_existent_audience(self):
@@ -949,6 +1197,32 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
+    def test_get_campaigns_for_an_engagement_with_no_audience(self):
+        """Test fetching campaigns for an engagement with no audience."""
+        engagement = {
+            db_c.ENGAGEMENT_NAME: "Test Engagement No Audience",
+            db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
+            db_c.AUDIENCES: [],
+            api_c.USER_NAME: self.user_name,
+        }
+        engagement_id = str(set_engagement(self.database, **engagement))
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
     def test_get_campaign_mappings_for_an_engagement_invalid_audience_id(self):
         """Test delivery of an audience for an engagement with invalid
         audience ID."""
@@ -967,6 +1241,33 @@ class TestEngagementRoutes(TestCase):
         )
 
         valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(audience_id)}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_get_campaign_mappings_for_an_engagement_with_no_audiences(self):
+        """Test get campaign-mappings for an engagement with no audience."""
+
+        engagement = {
+            db_c.ENGAGEMENT_NAME: "Test Engagement No Audience",
+            db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
+            db_c.AUDIENCES: [],
+            api_c.USER_NAME: self.user_name,
+        }
+        engagement_id = str(set_engagement(self.database, **engagement))
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaign-mappings"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1240,6 +1541,27 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_delete_engagement_valid_id_delete_failed(self):
+        """Test delete engagement API with valid ID
+        when deletion from db failed."""
+
+        engagement_id = self.engagement_ids[0]
+
+        mock.patch(
+            "huxunify.api.route.engagement.delete_engagement",
+            return_value=False,
+        ).start()
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.OPERATION_FAILED}, response.json
+        )
 
     def test_delete_engagement_invalid_id(self):
         """Test delete engagement API with invalid ID."""
@@ -1908,6 +2230,82 @@ class TestEngagementRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    def test_add_non_existent_destination_to_engagement_audience(self):
+        """Test add non existent destination to engagement audience."""
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = self.audiences[1][db_c.ID]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/{api_c.DESTINATIONS}",
+            json={db_c.OBJECT_ID: str(ObjectId())},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.DESTINATION_NOT_FOUND}, response.json
+        )
+
+    def test_add_destination_to_non_existent_engagement_audience(self):
+        """Test add destination to engagement audience when engagement does not exist."""
+
+        engagement_id = str(ObjectId())
+        audience_id = self.audiences[1][db_c.ID]
+
+        new_destination = {
+            db_c.DELIVERY_PLATFORM_NAME: db_c.DELIVERY_PLATFORM_SFMC.title(),
+            db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
+            db_c.STATUS: db_c.STATUS_SUCCEEDED,
+            db_c.ENABLED: True,
+            db_c.ADDED: True,
+            db_c.DELETED: False,
+        }
+
+        destination = set_delivery_platform(self.database, **new_destination)
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/{api_c.DESTINATIONS}",
+            json={db_c.OBJECT_ID: str(destination[db_c.ID])},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}, response.json
+        )
+
+    def test_add_destination_to_engagement_non_existent_audience(self):
+        """Test add destination to engagement audience when audience does not exist."""
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = str(ObjectId())
+
+        new_destination = {
+            db_c.DELIVERY_PLATFORM_NAME: db_c.DELIVERY_PLATFORM_SFMC.title(),
+            db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
+            db_c.STATUS: db_c.STATUS_SUCCEEDED,
+            db_c.ENABLED: True,
+            db_c.ADDED: True,
+            db_c.DELETED: False,
+        }
+
+        destination = set_delivery_platform(self.database, **new_destination)
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/{api_c.DESTINATIONS}",
+            json={db_c.OBJECT_ID: str(destination[db_c.ID])},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND}, response.json
+        )
+
     def test_remove_destination_from_engagement_audience(self):
         """Test remove destination from engagement audience."""
 
@@ -1931,14 +2329,74 @@ class TestEngagementRoutes(TestCase):
         engagement_id = self.engagement_ids[0]
         audience_id = self.audiences[1][db_c.ID]
 
-        response = self.app.post(
+        response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
             json={},
             headers=t_c.STANDARD_HEADERS,
         )
 
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.DESTINATION_NOT_FOUND}, response.json
+        )
+
+    def test_remove_non_existent_destination_from_engagement_audience(self):
+        """Test remove non existent destination from engagement audience."""
+
+        engagement_id = self.engagement_ids[1]
+        audience_id = self.audiences[1][db_c.ID]
+
+        destination_to_remove = {api_c.ID: str(ObjectId())}
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
+            json=destination_to_remove,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_remove_destination_from_non_existent_engagement_audience(self):
+        """Test remove destination from engagement audience when engagement does not exist."""
+
+        engagement_id = str(ObjectId())
+        audience_id = self.audiences[1][db_c.ID]
+
+        destination_to_remove = {api_c.ID: str(self.destinations[0][db_c.ID])}
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
+            json=destination_to_remove,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}, response.json
+        )
+
+    def test_remove_destination_from_engagement_non_existent_audience(self):
+        """Test remove destination from engagement audience when audience not existent."""
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = str(ObjectId())
+
+        destination_to_remove = {api_c.ID: str(self.destinations[0][db_c.ID])}
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
+            json=destination_to_remove,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND}, response.json
+        )
 
     def test_set_engagement_flight_schedule(self):
         """Test setting an engagement flight schedule."""
