@@ -28,7 +28,7 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
-    read_csv_shap_data,
+    read_json_shap_data,
 )
 from huxunify.api.schema.model import (
     ModelSchema,
@@ -509,9 +509,9 @@ class ModelOverview(SwaggerView):
                 return {}, HTTPStatus.NOT_FOUND
 
             stub_shap_data = (
-                pathlib.Path(stubbed_data.__file__).parent / "shap_data.csv"
+                pathlib.Path(stubbed_data.__file__).parent / "shap_data.json"
             )
-            shap_data = read_csv_shap_data(
+            shap_data = read_json_shap_data(
                 str(stub_shap_data),
                 api_c.MODEL_ONE_SHAP_DATA
                 if model_id == "17e1565dbd2821adaf88fd26658744aba9419a6f"
@@ -529,7 +529,7 @@ class ModelOverview(SwaggerView):
                 ),
                 api_c.DESCRIPTION: version.get(api_c.DESCRIPTION, ""),
                 api_c.MODEL_SHAP_DATA: shap_data,
-                api_c.PERFORMANCE_METRIC: performance_metrics,
+                # api_c.PERFORMANCE_METRIC: performance_metrics,
             }
 
         # dump schema and return to client.

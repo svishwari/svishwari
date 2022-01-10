@@ -1,4 +1,5 @@
 """Purpose of this file is to house route utilities."""
+import json
 from datetime import datetime, date
 import re
 import csv
@@ -567,7 +568,6 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     return user
 
 
-# pylint: disable=unspecified-encoding
 def read_csv_shap_data(file_path: str, features: list = None) -> dict:
     """Read in Shap Models Data CSV into a dict
 
@@ -603,7 +603,31 @@ def read_csv_shap_data(file_path: str, features: list = None) -> dict:
     return data
 
 
-# pylint: disable=unspecified-encoding
+def read_json_shap_data(file_path: str, features: list = None) -> dict:
+    """Read in Shap Models Data JSON into a dict
+
+    Args:
+        file_path (str): relative file path of the csv file
+        features (list): string list of the features to be returned.
+        If none is passed, all features are returned
+
+    Returns:
+        dict: data placed into a dict where the keys are the column names
+
+    """
+
+    # load the stubbed data
+    with open(file_path, "r") as json_file:
+        stubbed_shap_data = json.load(json_file)
+
+    # return required shap feature data
+    return {
+        feature: data
+        for feature, data in stubbed_shap_data.items()
+        if feature in features
+    }
+
+
 def read_stub_city_zip_data(file_path: str) -> list:
     """Read in City & Zip Data CSV into a dict
 
