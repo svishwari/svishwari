@@ -62,7 +62,6 @@ class ApplicationsPostView(SwaggerView):
                 api_c.NAME: "Custom Application",
                 api_c.URL: "URL_Link",
             },
-            "required": True,
         },
     ]
 

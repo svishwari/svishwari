@@ -47,13 +47,17 @@ def create_document(
 
     # validate allowed fields, any invalid returns, raise error
     key_check = [
-        key for key in new_doc.keys() if key not in db_c.ALLOWED_FIELDS[collection]
+        key
+        for key in new_doc.keys()
+        if key not in db_c.ALLOWED_FIELDS[collection]
     ]
     if any(key_check):
         raise de.InvalidValueException(",".join(key_check))
 
     key_check = [
-        key for key in db_c.REQUIRED_FIELDS[collection] if key not in new_doc.keys()
+        key
+        for key in db_c.REQUIRED_FIELDS[collection]
+        if key not in new_doc.keys()
     ]
     if any(key_check):
         raise de.InvalidValueException(",".join(key_check))
@@ -77,7 +81,9 @@ def create_document(
         document_id = coll.insert_one(new_doc).inserted_id
         if document_id is not None:
             return coll.find_one({db_c.ID: document_id})
-        logging.error("Failed to create a document in collection : %s", collection)
+        logging.error(
+            "Failed to create a document in collection : %s", collection
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -123,7 +129,9 @@ def update_document(
 
     # validate allowed fields, any invalid returns, raise error
     key_check = [
-        key for key in update_doc.keys() if key not in db_c.ALLOWED_FIELDS[collection]
+        key
+        for key in update_doc.keys()
+        if key not in db_c.ALLOWED_FIELDS[collection]
     ]
     if any(key_check):
         raise de.InvalidValueException(",".join(key_check))
@@ -239,7 +247,11 @@ def get_documents(
             total_records=coll.count_documents(query_filter),
             documents=list(
                 coll.find(query_filter, projection)
-                .sort(sort_order if sort_order else [("$natural", pymongo.ASCENDING)])
+                .sort(
+                    sort_order
+                    if sort_order
+                    else [("$natural", pymongo.ASCENDING)]
+                )
                 .skip(skips)
                 .limit(batch_size)
             ),
