@@ -192,12 +192,12 @@ class Tecton:
                 api_c.LAST_TRAINED: parser.parse(feature[0])
                 if feature[0]
                 else None,
-                api_c.DESCRIPTION: feature[1],
+                api_c.DESCRIPTION: feature[2],
                 api_c.FULCRUM_DATE: parser.parse(feature[3]),
                 api_c.LOOKBACK_WINDOW: feature[10],
                 api_c.NAME: feature[6],
-                api_c.TYPE: str(feature[2]).lower(),
-                api_c.OWNER: feature[9],
+                api_c.TYPE: str(feature[7]).lower(),
+                api_c.OWNER: feature[8],
                 api_c.STATUS: feature[11],
                 api_c.CURRENT_VERSION: meta_data[api_c.JOIN_KEYS][0],
                 api_c.PREDICTION_WINDOW: int(feature[4]),
