@@ -5,7 +5,7 @@
       :breadcrumb-items="breadcrumbItems"
       :engagement-data="engagementList"
       @removeEngagement="(data) => removeEngagement(data)"
-      @favoriteEngagement="(data) => favoriteEngagement(data)"
+      @favoriteEngagement="(data) => handleActionFavorite(data, 'engagements')"
       @openDownloadDrawer="() => openDownloadDrawer()"
       @inactiveEngagement="(data) => inactiveEngagement()"
     />
@@ -225,6 +225,8 @@ export default {
       getEngagementById: "engagements/get",
       setAlert: "alerts/setAlert",
       deleteEngagement: "engagements/remove",
+      markFavorite: "users/markFavorite",
+      clearFavorite: "users/clearFavorite",
     }),
     async refreshEntity() {
       this.loading = true
@@ -251,6 +253,10 @@ export default {
         case "remove-destination":
           await this.detachAudienceDestination(this.deleteActionData)
           await this.loadEngagement(this.engagementId)
+          break
+        case "remove-engagement":
+          this.deleteEngagement(this.deleteActionData)
+          this.$router.push({ name: "Engagements" })
           break
         default:
           break
@@ -567,8 +573,26 @@ export default {
       })
     },
     async removeEngagement(data) {
-      await this.deleteEngagement(data)
-      this.$router.push({ path: "engagements" })
+      this.showConfirmModal = true
+      this.confirmDialog.actionType = "remove-engagement"
+      this.confirmDialog.title = "You are about to remove"
+      this.confirmDialog.icon = "modal-remove"
+      this.confirmDialog.type = "error"
+      this.confirmDialog.subtitle = data.name
+      this.confirmDialog.btnText = "Yes, delete engagement"
+      this.confirmDialog.body =
+        "Are you sure you want to delete this Engagement?\
+By deleting this engagement you will not be able to recover it and it may impact any associated destinations."
+      this.deleteActionData = data
+    },
+
+    handleActionFavorite(item, type) {
+      if (!item.favorite) {
+        this.markFavorite({ id: item.id, type: type })
+      } else {
+        this.clearFavorite({ id: item.id, type: type })
+      }
+      this.refreshEntity()
     },
   },
 }

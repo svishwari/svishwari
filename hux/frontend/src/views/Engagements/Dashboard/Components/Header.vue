@@ -46,7 +46,9 @@
           </template>
           <v-list class="list-wrapper">
             <v-list-item-group>
-              <v-list-item @click="favoriteAudience()"> Favorite </v-list-item>
+              <v-list-item @click="favoriteAudience()">
+                {{ engagementData.favorite ? "Unfavorite" : "Favorite" }}
+              </v-list-item>
               <v-list-item @click="openDownloadDrawer()">
                 <tooltip>
                   <template #label-content> Download KPIs as .csv </template>
