@@ -70,7 +70,6 @@ from huxunify.api.route.decorators import (
     validate_destination,
     validate_engagement_and_audience,
     requires_access_levels,
-    requires_access_policy,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -571,11 +570,7 @@ class DeleteEngagement(SwaggerView):
 
     @api_error_handler()
     @validate_engagement_and_audience()
-    @requires_access_policy(
-        access_rule=api_c.RESOURCE_OWNER,
-        resource_attributes={api_c.NAME: api_c.ENGAGEMENT},
-        access_levels=[api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL],
-    )
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
     def delete(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Deletes an engagement.
 
