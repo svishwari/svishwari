@@ -179,7 +179,7 @@ class ApplicationsPatchView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            application_id (str): application
+            application_id (str): Application ID.
             user (dict): user object.
 
         Returns:
