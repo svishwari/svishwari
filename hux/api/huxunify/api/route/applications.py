@@ -173,7 +173,7 @@ class ApplicationsPatchView(SwaggerView):
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def patch(self, application_id: str, user: dict) -> Tuple[dict, int]:
-        """Modifies an existing application.
+        """Patches an existing application.
 
         ---
         security:
