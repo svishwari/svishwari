@@ -32,6 +32,7 @@
         {
           key: 'name',
           label: 'Audience name',
+          col: '5',
         },
         {
           key: 'size',
@@ -184,37 +185,37 @@
     </h5>
     <div class="d-flex align-items-center">
       <plain-card
-        :icon="!isRecurring ? 'manual-light' : 'manual-dark'"
+        :icon="!isRecurringFlag ? 'manual-light' : 'manual-dark'"
         title="Manual"
         description="Deliver this engagement when you are ready."
         :style="
-          !isRecurring
+          !isRecurringFlag
             ? { float: 'left', color: 'var(--v-primary-lighten6)' }
             : { float: 'left', color: 'var(--v-black-base)' }
         "
         title-color="black--text"
         height="175"
         width="200"
-        :class="!isRecurring ? 'border-card' : 'model-desc-card mr-0'"
-        @onClick="changeSchedule(true)"
+        :class="!isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
+        @onClick="changeSchedule(false)"
       />
       <plain-card
-        :icon="!isRecurring ? 'recurring-dark' : 'recurring-light'"
+        :icon="!isRecurringFlag ? 'recurring-dark' : 'recurring-light'"
         title="Recurring"
         description="Deliver this engagement during a chosen timeframe."
         :style="
-          isRecurring
+          isRecurringFlag
             ? { float: 'left', color: 'var(--v-primary-lighten6)' }
             : { float: 'left', color: 'var(--v-black-base)' }
         "
         title-color="black--text"
         height="175"
         width="200"
-        :class="isRecurring ? 'border-card' : 'model-desc-card mr-0'"
-        @onClick="changeSchedule(false)"
+        :class="isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
+        @onClick="changeSchedule(true)"
       />
     </div>
-    <div v-if="isRecurring" class="delivery-background px-4 pt-4 pb-6">
+    <div v-if="isRecurringFlag" class="delivery-background px-4 pt-4 pb-6">
       <v-row class="delivery-schedule mt-6 ml-n2">
         <div>
           <span
@@ -278,8 +279,12 @@
           tile
           color="primary"
           height="44"
-          :disabled="!isValid"
-          @click="restoreEngagement()"
+          :is-disabled="
+            !isValid ||
+            (isRecurringFlag &&
+              (selectedStartDate == 'Select date' || selectedStartDate == null))
+          "
+          @click="showUpdateModal = true"
         >
           Update
         </hux-button>
@@ -342,6 +347,20 @@
       @onToggle="(val) => (showDataExtensionDrawer = val)"
       @onBack="openSelectDestinationsDrawer"
     />
+
+    <confirm-modal
+      v-model="showUpdateModal"
+      icon="alert-edit"
+      type="error"
+      title="Edit"
+      :sub-title="`${value.name}?`"
+      left-btn-text="Cancel"
+      right-btn-text="Yes, edit"
+      body="Are you sure you want to edit this engagement?
+By changing the engagement, you may need to reschedule the delivery time and it will impact all associated audiences and destinations."
+      @onCancel="showUpdateModal = false"
+      @onConfirm="restoreEngagement()"
+    />
   </v-form>
 </template>
 
@@ -362,6 +381,7 @@ import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 import Icon from "@/components/common/Icon.vue"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
 import PlainCard from "@/components/common/Cards/PlainCard.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import { deliverySchedule } from "@/utils"
 
 export default {
@@ -383,6 +403,7 @@ export default {
     HuxSchedulePicker,
     huxButton,
     PlainCard,
+    ConfirmModal,
   },
 
   props: {
@@ -410,6 +431,8 @@ export default {
       ).toISOString(),
       engagementList: {},
       dontShowModal: false,
+      isRecurringFlag: false,
+      showUpdateModal: false,
     }
   },
 
@@ -438,7 +461,7 @@ export default {
         }),
       }
 
-      if (this.value.delivery_schedule == 1) {
+      if (this.isRecurringFlag) {
         const recurringConfig = {}
         recurringConfig["every"] = this.localSchedule.every
         recurringConfig["periodicity"] = this.localSchedule.periodicity
@@ -455,11 +478,10 @@ export default {
         }
         requestPayload["delivery_schedule"] = {
           start_date:
-            !this.isManualDelivery && this.selectedStartDate !== "Select date"
+            this.selectedStartDate !== "Select date"
               ? new Date(this.selectedStartDate).toISOString()
               : null,
           end_date:
-            !this.isManualDelivery &&
             this.selectedEndDate !== "Select date" &&
             this.selectedEndDate !== "No end date"
               ? new Date(this.selectedEndDate).toISOString()
@@ -520,6 +542,9 @@ export default {
         )
       }
     },
+    isRecurring() {
+      this.isRecurringFlag = this.isRecurring
+    },
   },
 
   methods: {
@@ -533,7 +558,8 @@ export default {
       this.localSchedule = JSON.parse(JSON.stringify(deliverySchedule()))
     },
 
-    changeSchedule() {
+    changeSchedule(val) {
+      this.isRecurringFlag = val
       if (this.value.delivery_schedule) {
         this.selectedStartDate = "Select date"
         this.selectedEndDate = "Select date"
@@ -629,6 +655,7 @@ export default {
     },
 
     async restoreEngagement() {
+      this.showUpdateModal = false
       try {
         const requestPayload = { ...this.payload }
         if (requestPayload.delivery_schedule === 0) {
@@ -738,7 +765,7 @@ export default {
   color: transparent;
   top: 18px;
   position: absolute;
-  left: 680px;
+  left: 820px;
   &:hover {
     cursor: pointer;
   }
