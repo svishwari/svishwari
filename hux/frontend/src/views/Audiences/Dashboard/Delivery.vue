@@ -9,7 +9,7 @@
       :active="loadingRelationships"
       :indeterminate="loadingRelationships"
     />
-    <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
+    <v-card-text v-else class="pl-6 pr-6 pb-6 pt-0">
       <div
         v-if="sections.length == 0"
         class="empty-state py-4 black--text text--lighten-4 text-body-1"
@@ -28,7 +28,7 @@
           :section-type="sectionType"
           :destination-menu-items="destinationActions"
           data-e2e="status-list"
-          class="mb-2"
+          class="mb-4"
           :audience="audienceData"
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"

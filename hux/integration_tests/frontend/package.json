@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint:fix": "npm run lint -- --fix",
-    "lint": "eslint './**/**.js'",
+    "lint": "eslint \"./**/**.js\"",
     "style:fix": "npx prettier --write .",
     "style": "npx prettier --check .",
     "postinstall": "npm run precommit:prepare",

@@ -1233,6 +1233,8 @@ BATCH_SIZE_BAD_PARAM = "100@"
 REVENUE = "revenue"
 AVG_SPEND = "avg_spend"
 
+DESTINATIONS_CATEGORY = "destinations_category"
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
