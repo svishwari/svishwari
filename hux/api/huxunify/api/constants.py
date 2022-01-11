@@ -989,7 +989,13 @@ PROFILE_SIZE_PERCENT = "profile_size_percent"
 RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
-CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
+CLASSIFICATION_MODELS = [
+    UNSUBSCRIBE,
+    PURCHASE,
+    "propensity_positive_click type: binary",
+    "propensity_positive_open type: binary",
+    "propensity_positive_unsub type: binary",
+]
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
