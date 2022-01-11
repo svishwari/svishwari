@@ -46,6 +46,7 @@
               @refreshEntityDelivery="$emit('refreshEntityInsight')"
               @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
               @onSectionAction="$emit('onOverviewDestinationAction', $event)"
+              @triggerOverviewAction="$emit('triggerOverviewAction', $event)"
             >
               <template #empty-destinations>
                 <slot name="empty-deliveries" :sectionId="item.id" />

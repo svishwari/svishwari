@@ -75,7 +75,8 @@
       table-data="latest_delivery"
       :headers="headers"
       :audience-menu-options="audienceMenuOptions"
-      @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+      @triggerSelectAudience="$emit('triggerSelectAudience', section.id)"
+      @onSectionAction="$emit('triggerOverviewAction', $event)"
     />
   </v-card>
 </template>
@@ -199,9 +200,6 @@ export default {
     isSubMenuOpen(newValue) {
       if (!newValue) this.isSubMenuOpen = {}
     },
-  },
-  mounted() {
-    console.log(this.section)
   },
 
   methods: {

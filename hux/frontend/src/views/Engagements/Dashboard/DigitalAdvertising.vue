@@ -15,6 +15,7 @@
       @onOverviewDestinationAction="
         $emit('onOverviewDestinationAction', $event)
       "
+      @triggerOverviewAction="$emit('triggerOverviewAction', $event)"
     >
       <template #title-left>
         <div class="d-flex align-center text-h3">
@@ -29,19 +30,6 @@
       </template>
       <template #title-right>
         <div class="d-flex align-center">
-          <v-btn
-            text
-            color="primary"
-            class="text-body-1 ml-n3 mt-n2 mr-8"
-            data-e2e="deliver-all"
-            @triggerSelectDestination="
-              $emit('triggerSelectDestination', $event)
-            "
-          >
-            <icon type="plus" :size="12" color="primary" class="mr-1" />
-            <icon type="destination" :size="24" color="primary" class="mr-1" />
-            Destination
-          </v-btn>
           <v-btn
             text
             color="primary"

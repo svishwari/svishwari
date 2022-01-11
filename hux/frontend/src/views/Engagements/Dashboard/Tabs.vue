@@ -47,6 +47,7 @@
           "
           @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
           @triggerOverviewAction="$emit('onOverviewSectionAction', $event)"
+          @deliverEngagement="$emit('deliverEngagement', $event)"
         />
       </v-tab-item>
       <v-tab-item
@@ -72,6 +73,7 @@
           @onOverviewDestinationAction="
             $emit('onOverviewDestinationAction', $event)
           "
+          @triggerOverviewAction="$emit('onOverviewSectionAction', $event)"
         />
       </v-tab-item>
       <v-tab-item
@@ -95,6 +97,7 @@
           @onOverviewDestinationAction="
             $emit('onOverviewDestinationAction', $event)
           "
+          @triggerOverviewAction="$emit('onOverviewSectionAction', $event)"
         />
       </v-tab-item>
     </v-tabs-items>

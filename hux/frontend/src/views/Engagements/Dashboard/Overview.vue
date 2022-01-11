@@ -44,7 +44,7 @@
             color="primary"
             class="text-body-1 ml-n3 mt-n2"
             data-e2e="deliver-all"
-            @click="openDeliveryHistoryDrawer()"
+            @click="$emit('deliverEngagement', $event)"
           >
             <icon
               class="mr-1"

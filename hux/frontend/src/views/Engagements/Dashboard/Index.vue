@@ -7,7 +7,7 @@
       @removeEngagement="(data) => removeEngagement(data)"
       @favoriteEngagement="(data) => handleActionFavorite(data, 'engagements')"
       @openDownloadDrawer="() => openDownloadDrawer()"
-      @inactiveEngagement="(data) => inactiveEngagement()"
+      @inactiveEngagement="(data) => makeInactiveEngagement(data)"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
@@ -21,9 +21,10 @@
         :loading-metrics="loadingTab"
         @fetchMetrics="fetchCampaignPerformanceDetails($event)"
         @openDeliveryHistoryDrawer="openDeliveryHistoryDrawer()"
-        @triggerSelectAudience="triggerSelectAudience()"
+        @triggerSelectAudience="triggerSelectAudience($event)"
         @onOverviewSectionAction="triggerOverviewAction($event)"
         @onOverviewDestinationAction="triggerOverviewDestinationAction($event)"
+        @deliverEngagement="deliverEngagement()"
       />
     </div>
     <!-- Select Audience Drawer -->
@@ -31,6 +32,7 @@
       ref="selectAudiences"
       v-model="selectedAudiences"
       :toggle="showSelectAudiencesDrawer"
+      :destination-id="destinationId"
       enable-multiple
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
       @onAdd="triggerCreateAudience()"
@@ -171,6 +173,7 @@ export default {
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
         actionType: "remove-audience",
       },
+      destinationId: "",
     }
   },
   computed: {
@@ -178,6 +181,7 @@ export default {
       audiencePerformanceAds: "engagements/audiencePerformanceByAds",
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
       getEngagementObject: "engagements/engagement",
+      getDestination: "destinations/single",
     }),
 
     breadcrumbItems() {
@@ -227,6 +231,9 @@ export default {
       deleteEngagement: "engagements/remove",
       markFavorite: "users/markFavorite",
       clearFavorite: "users/clearFavorite",
+      updateEngagement: "engagements/updateEngagement",
+      deliverEngagementApi: "engagements/deliver",
+      callDestination: "destinations/get",
     }),
     async refreshEntity() {
       this.loading = true
@@ -270,8 +277,9 @@ export default {
       this.showDataExtensionDrawer = false
     },
 
-    triggerSelectAudience() {
+    triggerSelectAudience(id) {
       this.closeDrawers()
+      this.destinationId = id
       this.$refs.selectAudiences.fetchAudiences()
       this.showSelectAudiencesDrawer = true
       this.$refs.selectAudiences.localSelectedAudiences = JSON.parse(
@@ -316,7 +324,7 @@ export default {
           const addPayload = {
             audiences: Object.values(audiences.added).map((aud) => ({
               id: aud.id,
-              destinations: [],
+              destinations: aud.destinations,
             })),
           }
           await this.attachAudience({
@@ -464,7 +472,7 @@ export default {
           this.confirmDialog.actionType = "remove-audience"
           this.confirmDialog.title = "You are about to remove"
           this.confirmDialog.icon = "modal-remove"
-          this.confirmDialog.type = "primary"
+          this.confirmDialog.type = "error"
           this.confirmDialog.subtitle = event.data.name
           this.confirmDialog.btnText = "Yes, remove audience"
           this.confirmDialog.body =
@@ -480,17 +488,10 @@ export default {
     },
 
     async triggerOverviewDestinationAction(event) {
-      const engagementId = this.engagementId
-      this.selectedAudienceId = event.parent.id
       switch (event.target.title.toLowerCase()) {
-        case "deliver now":
-          await this.deliverAudienceDestination({
-            id: engagementId,
-            audienceId: this.selectedAudienceId,
-            destinationId: event.data.id,
-          })
-          this.dataPendingMesssage(event, "destination")
-          this.refreshEntity()
+        case "open destination":
+          await this.callDestination(event.data.id)
+          window.open(this.getDestination(event.data.id).link)
           break
         case "edit delivery schedule":
           this.confirmDialog.icon = "edit"
@@ -586,12 +587,26 @@ By deleting this engagement you will not be able to recover it and it may impact
       this.deleteActionData = data
     },
 
-    handleActionFavorite(item, type) {
+    async handleActionFavorite(item, type) {
       if (!item.favorite) {
-        this.markFavorite({ id: item.id, type: type })
+        await this.markFavorite({ id: item.id, type: type })
       } else {
-        this.clearFavorite({ id: item.id, type: type })
+        await this.clearFavorite({ id: item.id, type: type })
       }
+      this.refreshEntity()
+    },
+
+    async makeInactiveEngagement(value) {
+      const inactiveEngagementPayload = {
+        status: "Inactive",
+      }
+      const payload = { id: value.id, data: inactiveEngagementPayload }
+      await this.updateEngagement(payload)
+      this.refreshEntity()
+    },
+
+    async deliverEngagement() {
+      await this.deliverEngagementApi(this.engagementId)
       this.refreshEntity()
     },
   },
