@@ -423,7 +423,7 @@ class TestUserRoutes(TestCase):
         new_user_request = {
             api_c.FIRST_NAME: "Sarah",
             api_c.LAST_NAME: "Huxley",
-            api_c.EMAIL: "sh@deloitte.com",
+            api_c.EMAIL: "sh@fake.com",
             api_c.USER_ACCESS_LEVEL: "admin",
             api_c.USER_PII_ACCESS: True,
             api_c.REASON_FOR_REQUEST: "na",
