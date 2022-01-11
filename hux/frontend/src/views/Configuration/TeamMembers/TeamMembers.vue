@@ -9,6 +9,7 @@
               :columns="columnDefs"
               :sort-column="'display_name'"
               :data-items="getTeamMembers"
+              data-e2e="team-members-table"
             >
               <template #row-item="{ item }">
                 <td

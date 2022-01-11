@@ -205,15 +205,14 @@ class TestEngagementMetricsDisplayAds(TestCase):
         """Test display ads summary success."""
 
         engagement_id = self.engagement_id
-        endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
-            f"{engagement_id}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/"
-            f"{api_c.DISPLAY_ADS}"
-        )
 
         response = self.app.get(
-            endpoint,
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+                f"{engagement_id}/"
+                f"{api_c.AUDIENCE_PERFORMANCE}/"
+                f"{api_c.DISPLAY_ADS}"
+            ),
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -253,15 +252,14 @@ class TestEngagementMetricsDisplayAds(TestCase):
         """Tests display ads response for invalid engagement ID."""
 
         engagement_id = "random_id"
-        endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
-            f"{engagement_id}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/"
-            f"{api_c.DISPLAY_ADS}"
-        )
 
         response = self.app.get(
-            endpoint,
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+                f"{engagement_id}/"
+                f"{api_c.AUDIENCE_PERFORMANCE}/"
+                f"{api_c.DISPLAY_ADS}"
+            ),
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -274,15 +272,14 @@ class TestEngagementMetricsDisplayAds(TestCase):
         """Test display ads audience performance with invalid engagement ID."""
 
         engagement_id = ObjectId()
-        endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
-            f"{engagement_id}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/"
-            f"{api_c.DISPLAY_ADS}"
-        )
 
         response = self.app.get(
-            endpoint,
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+                f"{engagement_id}/"
+                f"{api_c.AUDIENCE_PERFORMANCE}/"
+                f"{api_c.DISPLAY_ADS}"
+            ),
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -398,14 +395,13 @@ class TestEngagementMetricsEmail(TestCase):
     def test_email_summary(self):
         """Test email summary success response."""
 
-        endpoint = (
-            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
-            f"{self.engagement_id_sfmc}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/"
-            f"{api_c.EMAIL}"
-        )
         response = self.app.get(
-            endpoint,
+            (
+                f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
+                f"{self.engagement_id_sfmc}/"
+                f"{api_c.AUDIENCE_PERFORMANCE}/"
+                f"{api_c.EMAIL}"
+            ),
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -441,15 +437,14 @@ class TestEngagementMetricsEmail(TestCase):
         """Tests email for invalid engagement ID."""
 
         engagement_id = "invalid_object_id"
-        endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
-            f"{engagement_id}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/"
-            f"{api_c.EMAIL}"
-        )
 
         response = self.app.get(
-            endpoint,
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+                f"{engagement_id}/"
+                f"{api_c.AUDIENCE_PERFORMANCE}/"
+                f"{api_c.EMAIL}"
+            ),
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -462,15 +457,14 @@ class TestEngagementMetricsEmail(TestCase):
         """Tests email for non existent engagement."""
 
         engagement_id = str(ObjectId())
-        endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
-            f"{engagement_id}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/"
-            f"{api_c.EMAIL}"
-        )
 
         response = self.app.get(
-            endpoint,
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+                f"{engagement_id}/"
+                f"{api_c.AUDIENCE_PERFORMANCE}/"
+                f"{api_c.EMAIL}"
+            ),
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -482,14 +476,13 @@ class TestEngagementMetricsEmail(TestCase):
     def test_email_audience_performance(self):
         """Test email audience performance success response."""
 
-        endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
-            f"{self.engagement_id_sfmc}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/"
-            f"{api_c.EMAIL}"
-        )
         response = self.app.get(
-            endpoint,
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+                f"{self.engagement_id_sfmc}/"
+                f"{api_c.AUDIENCE_PERFORMANCE}/"
+                f"{api_c.EMAIL}"
+            ),
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -613,13 +606,12 @@ class TestEngagementPerformanceDownload(TestCase):
     def test_performance_metric_download(self):
         """Test downloading performance metric success response."""
 
-        endpoint = (
-            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
-            f"{self.engagement_id_sfmc}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/download"
-        )
         response = self.app.get(
-            endpoint,
+            (
+                f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
+                f"{self.engagement_id_sfmc}/"
+                f"{api_c.AUDIENCE_PERFORMANCE}/download"
+            ),
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -629,13 +621,12 @@ class TestEngagementPerformanceDownload(TestCase):
     def test_performance_metric_download_non_existent_engagement(self):
         """Test downloading performance metric success response for non existent engagement."""
 
-        endpoint = (
-            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
-            f"{str(ObjectId())}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/download"
-        )
         response = self.app.get(
-            endpoint,
+            (
+                f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
+                f"{str(ObjectId())}/"
+                f"{api_c.AUDIENCE_PERFORMANCE}/download"
+            ),
             headers=t_c.STANDARD_HEADERS,
         )
 

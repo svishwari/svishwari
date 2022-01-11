@@ -400,7 +400,6 @@ class TestUserRoutes(TestCase):
         expected_response.update({api_c.ID: 1234, api_c.KEY: "ABC-123"})
 
         mock_jira_instance = mock_jira.return_value
-        mock_jira_instance.check_jira_connection.return_value = True
         mock_jira_instance.create_jira_issue.return_value = expected_response
 
         response = self.app.post(
