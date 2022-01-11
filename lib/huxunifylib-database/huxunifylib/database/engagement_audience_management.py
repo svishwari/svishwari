@@ -59,11 +59,7 @@ def get_all_engagement_audience_destinations(
             }
         },
         {"$unwind": {"path": "$delivery_platform"}},
-        {
-            "$addFields": {
-                "delivery_platform.data_added": "$destinations.data_added"
-            }
-        },
+        {"$addFields": {"delivery_platform.data_added": "$destinations.data_added"}},
         {
             "$group": {
                 "_id": "$_id",
@@ -90,9 +86,7 @@ def get_all_engagement_audience_destinations(
         for audience in audience_delivery_platforms:
             encountered_destinations = {}
             for i, destination in enumerate(audience[db_c.DESTINATIONS]):
-                if encountered_destinations.get(
-                    str(destination.get(db_c.ID, ""))
-                ):
+                if encountered_destinations.get(str(destination.get(db_c.ID, ""))):
                     audience[db_c.DESTINATIONS].pop(i)
                 encountered_destinations[str(destination.get(db_c.ID))] = True
 
@@ -131,9 +125,7 @@ def set_engagement_audience_destination_schedule(
         list: updated engagement objects
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     # get the engagement doc
     engagement_doc = collection.find_one(
@@ -160,9 +152,7 @@ def set_engagement_audience_destination_schedule(
                 destination.pop(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, None)
             else:
                 # set the cron expression
-                destination[
-                    db_c.ENGAGEMENT_DELIVERY_SCHEDULE
-                ] = cron_expression
+                destination[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = cron_expression
 
             engagement_doc[db_c.UPDATE_TIME] = datetime.utcnow()
             engagement_doc[db_c.UPDATED_BY] = user_name
@@ -185,3 +175,121 @@ def set_engagement_audience_destination_schedule(
             db_c.ID: engagement_id,
         }
     )
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_engagement_audience_deliveries(
+    database: DatabaseClient,
+    audience_ids: list = None,
+) -> Union[list, None]:
+    """A function to get delivery jobs for all engagements and corresponding
+    audiences nested within.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_ids (list, Optional): A list of audience ids.
+
+    Returns:
+        Union[list, None]:  A list of delivery job ids.
+    """
+
+    # pipeline to aggregate and fetch the delivery jobs from delivery_jobs
+    # using engagement_id and audience_id from engagements
+    pipeline = [
+        {"$unwind": {"path": "$audiences", "preserveNullAndEmptyArrays": False}},
+        {"$addFields": {"audience_id": "$audiences.id"}},
+        {"$project": {"audience_id": 1}},
+        {"$group": {"_id": {"_id": "$_id", "audience_id": "$audience_id"}}},
+        {
+            "$addFields": {
+                "engagement_id": "$_id._id",
+                "audience_id": "$_id.audience_id",
+            }
+        },
+        {"$project": {"_id": 0, "engagement_id": 1, "audience_id": 1}},
+        {
+            "$lookup": {
+                "from": "delivery_jobs",
+                "localField": "engagement_id",
+                "foreignField": "engagement_id",
+                "as": "delivery_jobs",
+            }
+        },
+        {"$unwind": {"path": "$delivery_jobs", "preserveNullAndEmptyArrays": False}},
+        {
+            "$redact": {
+                "$cond": [
+                    {"$eq": ["$audience_id", "$delivery_jobs.audience_id"]},
+                    "$$KEEP",
+                    "$$PRUNE",
+                ]
+            }
+        },
+        {"$project": {"audience_id": 1, "delivery_jobs": 1}},
+        {
+            "$lookup": {
+                "from": "delivery_platforms",
+                "localField": "delivery_jobs.delivery_platform_id",
+                "foreignField": "_id",
+                "as": "delivery_platform",
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$delivery_platform",
+                "preserveNullAndEmptyArrays": False,
+            }
+        },
+        {
+            "$addFields": {
+                "delivery_jobs.delivery_platform_name": "$delivery_platform.name",
+                "delivery_jobs.delivery_platform_type": "$delivery_platform.delivery_platform_type",
+            }
+        },
+        {"$project": {"audience_id": 1, "delivery_jobs": 1}},
+        {"$sort": {"audience_id": 1, "delivery_jobs.update_time": -1}},
+        {
+            "$group": {
+                "_id": "$audience_id",
+                "deliveries": {"$push": "$delivery_jobs"},
+                "last_delivered": {"$first": "$delivery_jobs.update_time"},
+            }
+        },
+        {"$addFields": {"audience_id": "$_id"}},
+        {
+            "$project": {
+                "_id": 0,
+                "audience_id": 1,
+                "deliveries": 1,
+                "last_delivered": 1,
+            }
+        },
+        {"$project": {"deliveries.deleted": 0}},
+    ]
+
+    stage_count_in_pipeline = 19
+    if audience_ids is not None:
+        pipeline.insert(
+            stage_count_in_pipeline,
+            {"$match": {db_c.AUDIENCE_ID: {"$in": audience_ids}}},
+        )
+        stage_count_in_pipeline += 1
+
+    # use the engagement pipeline to aggregate and get all unique delivery jobs
+    # per nested audience
+    try:
+        engagement_audience_deliveries = list(
+            database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.ENGAGEMENTS_COLLECTION
+            ].aggregate(pipeline)
+        )
+
+        return engagement_audience_deliveries
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None

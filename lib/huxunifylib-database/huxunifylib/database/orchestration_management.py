@@ -119,9 +119,7 @@ def get_audience_by_filter(
         InvalidValueException: If passed in limit value is invalid.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -447,9 +445,7 @@ def delete_audience(
         bool: A flag to indicate successful deletion.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     try:
         return collection.delete_one({db_c.ID: audience_id}).deleted_count > 0
@@ -583,9 +579,7 @@ def get_audience_insights(
                         "$group": {
                             "_id": "$_id",
                             "deliveries": {"$push": "$deliveries"},
-                            "last_delivered": {
-                                "$last": "$deliveries.update_time"
-                            },
+                            "last_delivered": {"$last": "$deliveries.update_time"},
                         }
                     },
                     {
@@ -689,14 +683,14 @@ def get_all_audiences_and_deliveries(
         },
         {"$project": {"deliveries.deleted": 0}},
     ]
-    stage_count_in_pipeline = 0
 
+    stage_count_in_pipeline = 0
     if audience_ids is not None:
         pipeline.insert(
             stage_count_in_pipeline,
             {"$match": {db_c.ID: {"$in": audience_ids}}},
         )
-    stage_count_in_pipeline += 1
+        stage_count_in_pipeline += 1
 
     if filters:
         if filters.get(db_c.WORKED_BY):
@@ -728,6 +722,7 @@ def get_all_audiences_and_deliveries(
                     }
                 },
             )
+            stage_count_in_pipeline += 1
 
     # use the audience pipeline to aggregate and join all the delivery data
     try:
