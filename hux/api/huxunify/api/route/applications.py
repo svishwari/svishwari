@@ -13,6 +13,7 @@ from huxunifylib.database import (
 from huxunify.api.schema.applications import (
     ApplicationsGETSchema,
     ApplicationsPostSchema,
+    ApplicationsPatchSchema,
 )
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -118,5 +119,86 @@ class ApplicationsPostView(SwaggerView):
 
         return (
             jsonify(ApplicationsGETSchema().dump(document)),
+            HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    applications_bp,
+    f"{api_c.APPLICATIONS_ENDPOINT}/<application_id>",
+    "ApplicationsPatchView",
+)
+class ApplicationsPatchView(SwaggerView):
+    """Applications Patch view class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Application's fields to edit.",
+            "example": {
+                api_c.URL: "URL_Link",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": ApplicationsGETSchema,
+            "description": "Application created.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create application.",
+        },
+        HTTPStatus.FORBIDDEN.value: {
+            "description": "Application already exists.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.APPLICATIONS_TAG]
+
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-branches
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def patch(self, application_id: str, user: dict) -> Tuple[dict, int]:
+        """Modifies an existing application.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            application_id (str): application
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: Updated application, HTTP status code.
+        """
+        if not request.get_json():
+            logger.info("Could not patch destination.")
+            return {"message": "No body provided."}, HTTPStatus.BAD_REQUEST
+
+        ApplicationsPatchSchema().validate(
+            request.get_json(),
+        )
+        database = get_db_client()
+
+        updated_application = collection_management.update_document(
+            database,
+            db_c.APPLICATIONS_COLLECTION,
+            application_id,
+            request.get_json(),
+            user[api_c.USER_NAME],
+        )
+        logger.info(
+            "Successfully updated application %s.",
+            updated_application.get(db_c.NAME),
+        )
+
+        return (
+            jsonify(ApplicationsGETSchema().dump(updated_application)),
             HTTPStatus.OK.value,
         )

@@ -29,3 +29,9 @@ class ApplicationsGETSchema(Schema):
     created_by = Str(attribute=db_c.CREATED_BY, allow_none=True)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = Str(attribute=db_c.UPDATED_BY, allow_none=True)
+
+
+class ApplicationsPatchSchema(Schema):
+    """Applications Patch Schema"""
+
+    url = Str()
