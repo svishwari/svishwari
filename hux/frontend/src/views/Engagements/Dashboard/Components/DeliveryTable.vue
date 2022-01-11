@@ -21,7 +21,7 @@
                 type="lookalike"
                 :size="24"
               ></hux-icon>
-              <span class="ml-2 ellipsis primary--text">
+              <span class="ml-1 ellipsis primary--text">
                 {{ item.name }}
               </span>
               <span class="action-icon font-weight-light float-right d-none">
@@ -191,7 +191,7 @@
           <span
             min-width="7rem"
             height="2rem"
-            class="primary--text text-body-1 mb-2"
+            class="primary--text text-body-1 mb-1"
           >
             Audience
           </span>

@@ -9,7 +9,7 @@
       :active="loadingRelationships"
       :indeterminate="loadingRelationships"
     />
-    <v-card-text v-else class="pl-6 pr-6 pb-6 pt-0">
+    <v-card-text v-else class="pl-6 pr-6 pb-6 pt-1">
       <div
         v-if="sections.length == 0"
         class="empty-state py-4 black--text text--lighten-4 text-body-1"
@@ -17,7 +17,7 @@
         This audience is not part of an engagement. Add it to an engagement
         below.
       </div>
-      <div v-else class="pa-0 overflow-auto">
+      <div v-else class="pa-0">
         <v-row>
           <v-col
             v-for="(item, index) in availableRelationships"

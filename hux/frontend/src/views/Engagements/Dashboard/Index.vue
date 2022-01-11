@@ -11,7 +11,7 @@
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
-    <div v-if="!loading" class="inner-wrap px-15">
+    <div v-if="!loading" class="inner-wrap px-8">
       <tabs
         :data="engagementList"
         :loading-audiences="loadingAudiences"
