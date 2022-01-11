@@ -119,7 +119,9 @@ def get_audience_by_filter(
         InvalidValueException: If passed in limit value is invalid.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -445,7 +447,9 @@ def delete_audience(
         bool: A flag to indicate successful deletion.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
 
     try:
         return collection.delete_one({db_c.ID: audience_id}).deleted_count > 0
@@ -579,7 +583,9 @@ def get_audience_insights(
                         "$group": {
                             "_id": "$_id",
                             "deliveries": {"$push": "$deliveries"},
-                            "last_delivered": {"$last": "$deliveries.update_time"},
+                            "last_delivered": {
+                                "$last": "$deliveries.update_time"
+                            },
                         }
                     },
                     {
