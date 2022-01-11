@@ -948,7 +948,7 @@ class DeleteDestinationAudience(SwaggerView):
         },
     ]
     responses = {
-        HTTPStatus.NO_CONTENT.value: {
+        HTTPStatus.OK.value: {
             "schema": AudienceGetSchema,
             "description": "Destination deleted from Audience.",
         },
