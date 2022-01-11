@@ -34,11 +34,12 @@
       <div
         class="d-flex mr-4 cursor-pointer deliver-icon text-body-1"
         :class="{ disabled: section.deliveries.length == 0 }"
+        data-e2e="deliver-all"
         @click="deliverAll(section)"
       >
         <icon
-          class="mr-1"
-          type="deliver_2"
+          class="mr-2 mt-n1"
+          :type="section.deliveries.length == 0 ? 'deliver' : 'deliver_2'"
           :size="27"
           :color="section.deliveries.length == 0 ? 'black' : 'primary'"
           :variant="section.deliveries.length == 0 ? 'lighten3' : 'base'"
@@ -81,7 +82,7 @@
             :key="header.value"
             class="text-body-2 column"
             :style="{ width: header.width }"
-            data-e2e="map-state-list"
+            data-e2e="destination-list-audience"
           >
             <div v-if="header.value == 'name'" class="text-body-1">
               <logo :type="item.delivery_platform_type" :size="24"></logo>
@@ -175,6 +176,7 @@
             text
             min-width="7rem"
             height="2rem"
+            data-e2e="add-audience-destination"
             class="primary--text text-body-1"
           >
             Destination

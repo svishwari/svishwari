@@ -1,5 +1,5 @@
 <template>
-  <v-card class="rounded-lg card-style standalone-delivery mt-4" flat>
+  <v-card class="rounded-lg card-style standalone-delivery mt-6" flat>
     <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-6">
       <div class="d-flex align-center">
         <span class="text-h3">Standalone deliveries</span>
@@ -32,11 +32,11 @@
         @click="deliverAll()"
       >
         <icon
-          class="mr-1"
+          class="mr-2 mt-n1"
           :type="
             audience.standalone_deliveries.length == 0 ? 'deliver' : 'deliver_2'
           "
-          :size="28"
+          :size="27"
           :color="
             audience.standalone_deliveries.length == 0 ? 'black' : 'primary'
           "
