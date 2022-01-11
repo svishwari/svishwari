@@ -22,7 +22,7 @@ class HuxResponse:
         data_schema: Schema = None,
         extra_fields: dict = None,
     ) -> Tuple[Response, int]:
-        """ OK (200)
+        """OK (200)
         Args:
             message (str): Message to be returned.
             data (dict): Data to be returned.
@@ -42,7 +42,7 @@ class HuxResponse:
         data_schema: Schema = None,
         extra_fields: dict = None,
     ) -> Tuple[Response, int]:
-        """ Created (201)
+        """Created (201)
         Args:
             message (str): Message to be returned.
             data (Union[dict, list]): Data to be returned.
@@ -62,7 +62,7 @@ class HuxResponse:
         data_schema: Schema = None,
         extra_fields: dict = None,
     ) -> Tuple[Response, int]:
-        """ Accepted (202)
+        """Accepted (202)
         Args:
             message (str): Message to be returned.
             data (Union[dict, list]): Data to be returned.
@@ -77,7 +77,7 @@ class HuxResponse:
 
     @staticmethod
     def NO_CONTENT() -> Tuple[Response, int]:
-        """ Non content (204)
+        """Non content (204)
         Returns:
             Tuple[Response, int]: Response entity, response code
         """
@@ -88,7 +88,7 @@ class HuxResponse:
     def BAD_REQUEST(
         message: str = None, extra_fields: dict = None
     ) -> Tuple[Response, int]:
-        """ Bad request (400)
+        """Bad request (400)
         Args:
             message (str): Message to be returned.
             extra_fields (dict): dict containing any additional body parameters.
@@ -103,7 +103,7 @@ class HuxResponse:
     def UNAUTHORIZED(
         message: str = None, extra_fields: dict = None
     ) -> Tuple[Response, int]:
-        """ Unauthorized (401)
+        """Unauthorized (401)
         Args:
             message (str): Message to be returned.
             extra_fields (dict): dict containing any additional body parameters.
@@ -118,7 +118,7 @@ class HuxResponse:
     def FORBIDDEN(
         message: str = None, extra_fields: dict = None
     ) -> Tuple[Response, int]:
-        """ Forbidden (403)
+        """Forbidden (403)
         Args:
             message (str): Message to be returned.
             extra_fields (dict): dict containing any additional body parameters.
@@ -133,7 +133,7 @@ class HuxResponse:
     def NOT_FOUND(
         message: str = None, extra_fields: dict = None
     ) -> Tuple[Response, int]:
-        """ Not found (404)
+        """Not found (404)
         Args:
             message (str): Message to be returned.
             extra_fields (dict): dict containing any additional body parameters.
@@ -148,7 +148,7 @@ class HuxResponse:
     def CONFLICT(
         message: str = None, extra_fields: dict = None
     ) -> Tuple[Response, int]:
-        """ Conflict (409)
+        """Conflict (409)
         Args:
             message (str): Message to be returned.
             extra_fields (dict): dict containing any additional body parameters.
@@ -167,7 +167,7 @@ class HuxResponse:
         data_schema: Schema = None,
         extra_fields: dict = None,
     ) -> Tuple[Response, int]:
-        """ Base response
+        """Base response
         Args:
             code (int): Status code.
             message (str): Message to be returned.
