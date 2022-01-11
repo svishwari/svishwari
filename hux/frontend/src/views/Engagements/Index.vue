@@ -590,6 +590,7 @@
         <engagement-filter
           v-model="isFilterToggled"
           view-height="calc(100vh - 180px)"
+          :clear-filter-data="clearFilterData"
           @selected-filters="totalFiltersSelected"
           @onSectionAction="applyFilter"
         />
@@ -625,9 +626,7 @@
                 variant="primary base"
                 icon-color="white"
                 icon-variant="base"
-                icon="plus"
                 size="large"
-                is-custom-icon
                 class="ma-2 font-weight-regular no-shadow mr-0 caption"
                 is-tile
                 height="40"
@@ -636,7 +635,7 @@
               </huxButton>
             </router-link>
           </span>
-          <span v-else>
+          <span v-if="numFiltersSelected > 0 && rowData.length <= 0">
             <huxButton
               button-text="Clear filters"
               variant="primary base"
@@ -644,6 +643,7 @@
               class="ma-2 font-weight-regular text-button"
               is-tile
               :height="'40'"
+              @click="clearFilter()"
             >
               Clear filters
             </huxButton>
@@ -837,6 +837,7 @@ export default {
           class: "sticky-header",
         },
       ],
+      clearFilterData: false,
     }
   },
   computed: {
@@ -927,6 +928,10 @@ export default {
       clearFavorite: "users/clearFavorite",
       deleteEngagement: "engagements/remove",
     }),
+
+    clearFilter() {
+      this.clearFilterData = true
+    },
 
     totalFiltersSelected(value) {
       this.numFiltersSelected = value

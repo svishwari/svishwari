@@ -46,6 +46,11 @@ export default {
       required: false,
       default: "auto",
     },
+    clearFilterData: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   data() {
     return {
@@ -67,6 +72,9 @@ export default {
   watch: {
     value: function () {
       this.localDrawer = this.value
+    },
+    clearFilterData: function () {
+      this.clear()
     },
   },
   methods: {

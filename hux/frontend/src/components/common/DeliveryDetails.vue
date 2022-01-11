@@ -37,9 +37,9 @@
         @click="deliverAll(section)"
       >
         <icon
-          class="mr-2"
-          type="deliver"
-          :size="24"
+          class="mr-1"
+          type="deliver_2"
+          :size="27"
           :color="section.deliveries.length == 0 ? 'black' : 'primary'"
           :variant="section.deliveries.length == 0 ? 'lighten3' : 'base'"
         />

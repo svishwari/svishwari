@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use,too-many-lines,unused-argument
-"""Paths for destinations API"""
+"""Paths for destinations API."""
 import datetime
 from threading import Thread
 from http import HTTPStatus
@@ -21,6 +21,9 @@ from huxunifylib.database.engagement_management import (
 from huxunifylib.database.collection_management import (
     get_documents,
     delete_document,
+)
+from huxunifylib.database.orchestration_management import (
+    remove_destination_from_all_audiences,
 )
 import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import (
@@ -1058,10 +1061,19 @@ class DestinationPatchView(SwaggerView):
         )
 
         if not updated_destination.get(db_c.ADDED):
-            # TODO: HUS-1749 - remove destinations from standalone audiences.
             # remove from any engagement audiences
             Thread(
                 target=remove_destination_from_all_engagements,
+                args=[
+                    database,
+                    destination_id,
+                    user[api_c.USER_NAME],
+                ],
+            ).start()
+
+            # remove destinations from standalone audiences
+            Thread(
+                target=remove_destination_from_all_audiences,
                 args=[
                     database,
                     destination_id,
