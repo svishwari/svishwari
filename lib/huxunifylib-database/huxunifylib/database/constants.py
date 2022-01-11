@@ -25,6 +25,7 @@ DOCUMENTS = "documents"
 AGE = "age"
 MIN = "min"
 MAX = "max"
+LINK = "link"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
@@ -191,6 +192,7 @@ STATUS_FAILED = "Failed"
 STATUS_SUCCEEDED = "Succeeded"
 STATUS_PAUSED = "Paused"
 STATUS_DELIVERED = "Delivered"
+STATUS_INACTIVE = "Inactive"
 STATUS_TRANSFERRED_FOR_FEEDBACK = "transferred_for_feedback"
 STATUS_TRANSFERRED_FOR_REPORT = "transferred_for_report"
 

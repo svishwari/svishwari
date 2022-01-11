@@ -1,5 +1,5 @@
 <template>
-  <span class="cursor-pointer mr-4 icon-bulb" :style="{ right: rightPosition }">
+  <span class="cursor-pointer mr-6 icon-bulb" :style="{ right: rightPosition }">
     <drop-menu
       :min-midth="300"
       :max-width="353"
@@ -96,7 +96,7 @@ export default {
   position: absolute;
   bottom: -2.5rem;
   right: 0;
-  z-index: 2;
+  z-index: 99;
 }
 .drop-menu-div {
   z-index: 1;

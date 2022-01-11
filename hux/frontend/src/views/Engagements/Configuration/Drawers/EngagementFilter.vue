@@ -46,6 +46,11 @@ export default {
       required: false,
       default: "auto",
     },
+    clearFilterData: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   data() {
     return {
@@ -60,12 +65,16 @@ export default {
       let count = 0
       if (this.selectedFavourite) count++
       if (this.selectedEngagementsWorkedWith) count++
+      this.$emit("selected-filters", count)
       return count
     },
   },
   watch: {
     value: function () {
       this.localDrawer = this.value
+    },
+    clearFilterData: function () {
+      this.clear()
     },
   },
   methods: {

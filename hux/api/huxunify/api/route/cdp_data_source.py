@@ -5,7 +5,7 @@ from typing import Tuple
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -91,7 +91,7 @@ class DataSourceSearch(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[list, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves all CDP data sources.
 
         ---
@@ -102,7 +102,7 @@ class DataSourceSearch(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[list, int]: list of CDP data sources, HTTP status code.
+            Tuple[Response, int]: Response list of CDP data sources, HTTP status code.
 
         Raises:
             ProblemException: Any exception raised during endpoint execution.
@@ -269,7 +269,7 @@ class CreateCdpDataSources(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def post(self, user: dict) -> Tuple[list, int]:
+    def post(self, user: dict) -> Tuple[Response, int]:
         """Creates new CDP data sources.
 
         ---
@@ -280,7 +280,7 @@ class CreateCdpDataSources(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[list, int]: List of CDP Data sources created, HTTP status code.
+            Tuple[Response, int]: Response list of CDP Data sources created, HTTP status code.
         """
 
         database = get_db_client()
@@ -470,7 +470,7 @@ class BatchUpdateDataSources(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
-    def patch(self, user: dict) -> Tuple[dict, int]:
+    def patch(self, user: dict) -> Tuple[Response, int]:
         """Updates a list of data sources.
 
         ---
@@ -481,7 +481,7 @@ class BatchUpdateDataSources(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[dict, int]: Data source updated, HTTP status code.
+            Tuple[Response, int]: Data source updated, HTTP status code.
 
         Raises:
             ProblemException: Any exception raised during endpoint execution.
@@ -496,7 +496,7 @@ class BatchUpdateDataSources(SwaggerView):
                 api_c.CDP_DATA_SOURCE_IDS,
             )
             return (
-                self.responses[HTTPStatus.BAD_REQUEST.value],
+                jsonify(self.responses[HTTPStatus.BAD_REQUEST.value]),
                 HTTPStatus.BAD_REQUEST.value,
             )
 
@@ -511,7 +511,7 @@ class BatchUpdateDataSources(SwaggerView):
         ):
             logger.error("Invalid Object ID/IDs found.")
             return (
-                self.responses[HTTPStatus.BAD_REQUEST.value],
+                jsonify(self.responses[HTTPStatus.BAD_REQUEST.value]),
                 HTTPStatus.BAD_REQUEST.value,
             )
 
@@ -524,7 +524,7 @@ class BatchUpdateDataSources(SwaggerView):
         if not data:
             logger.error("Data does not contain allowed fields.")
             return (
-                self.responses[HTTPStatus.BAD_REQUEST.value],
+                jsonify(self.responses[HTTPStatus.BAD_REQUEST.value]),
                 HTTPStatus.BAD_REQUEST.value,
             )
 
@@ -579,7 +579,7 @@ class BatchUpdateDataSources(SwaggerView):
                 )
             logger.error("Could not update data sources.")
             return (
-                self.responses[HTTPStatus.BAD_REQUEST.value],
+                jsonify(self.responses[HTTPStatus.BAD_REQUEST.value]),
                 HTTPStatus.BAD_REQUEST.value,
             )
 

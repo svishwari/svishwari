@@ -5,9 +5,10 @@ from datetime import datetime
 from http import HTTPStatus
 from itertools import repeat
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Tuple, Union, Iterator, Optional
 
 import pandas as pd
+from pandas import DataFrame
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
@@ -99,7 +100,7 @@ def get_audience_data_async(
     actual_size: int,
     location_details: dict,
     batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
-) -> list:
+) -> Iterator[Optional[DataFrame]]:
     """Creates a list of tasks, this is useful for asynchronous batch wise
     calls to a task.
 
@@ -110,7 +111,7 @@ def get_audience_data_async(
         batch_size (int, Optional): Size of batch to be retrieved.
 
     Returns:
-        list: List of each batch's data.
+        list: list of each batch's data.
     """
     offset = 0
     if actual_size <= batch_size:
@@ -217,9 +218,14 @@ class AudienceDownload(SwaggerView):
         token_response = get_token_from_request(request)
 
         if not download_types.get(download_type):
-            return {
-                "message": "Invalid download type or download type not supported"
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                jsonify(
+                    {
+                        "message": "Invalid download type or download type not supported"
+                    }
+                ),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         database = get_db_client()
         audience = orchestration_management.get_audience(
@@ -227,7 +233,10 @@ class AudienceDownload(SwaggerView):
         )
 
         if not audience:
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return (
+                jsonify({"message": api_c.AUDIENCE_NOT_FOUND}),
+                HTTPStatus.NOT_FOUND,
+            )
 
         # set transform function based on download type in request
         transform_function = download_types.get(download_type)[0]
@@ -369,7 +378,7 @@ class AudienceInsightsStates(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, audience_id: str, user: dict) -> Tuple[list, int]:
+    def get(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves state-level geographic customer insights for the audience.
 
         ---
@@ -381,7 +390,7 @@ class AudienceInsightsStates(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[list, int]: list of spend and size data by state,
+            Tuple[Response, int]: Response list of spend and size data by state,
                 HTTP status code.
         """
 
@@ -393,7 +402,10 @@ class AudienceInsightsStates(SwaggerView):
         )
 
         if not audience:
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return (
+                jsonify({"message": api_c.AUDIENCE_NOT_FOUND}),
+                HTTPStatus.NOT_FOUND,
+            )
 
         return (
             jsonify(
@@ -464,7 +476,7 @@ class AudienceInsightsCities(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, audience_id: str, user: dict) -> Tuple[list, int]:
+    def get(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves city-level geographic customer insights for the audience.
 
         ---
@@ -476,7 +488,7 @@ class AudienceInsightsCities(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[list, int]: list of spend and size by city, HTTP status code.
+            Tuple[Response, int]: Response list of spend and size by city, HTTP status code.
         """
         # get auth token from request
         token_response = get_token_from_request(request)
@@ -499,7 +511,10 @@ class AudienceInsightsCities(SwaggerView):
         )
 
         if not audience:
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return (
+                jsonify({"message": api_c.AUDIENCE_NOT_FOUND}),
+                HTTPStatus.NOT_FOUND,
+            )
 
         filters = (
             {api_c.AUDIENCE_FILTERS: audience.get(db_c.AUDIENCE_FILTERS)}
@@ -561,7 +576,7 @@ class AudienceInsightsCountries(SwaggerView):
     @validate_engagement_and_audience()
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, audience_id: ObjectId, user: dict) -> Tuple[list, int]:
+    def get(self, audience_id: ObjectId, user: dict) -> Tuple[Response, int]:
         """Retrieves country-level geographic customer insights for the audience.
 
         ---
@@ -573,7 +588,7 @@ class AudienceInsightsCountries(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[list, int]: list of spend and size data by country,
+            Tuple[Response, int]: Response list of spend and size data by country,
                 HTTP status code.
         """
 
@@ -646,7 +661,7 @@ class AudienceRulesLocation(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, field_type: str, key: str) -> Tuple[dict, int]:
+    def get(self, field_type: str, key: str) -> Tuple[Response, int]:
         """Retrieves Location Rules constants.
 
         ---
@@ -659,7 +674,7 @@ class AudienceRulesLocation(SwaggerView):
 
 
         Returns:
-            Tuple[list, int]: rules constants for email
+            Tuple[Response, int]: rules constants for email, Http status code
         """
 
         # TODO Remove stub once CDM API is integrated
@@ -686,9 +701,10 @@ class AudienceRulesLocation(SwaggerView):
                 ]
             )
         else:
-            return {
-                "message": f"Field type received {field_type}"
-            }, HTTPStatus.NOT_FOUND
+            return (
+                jsonify({"message": f"Field type received {field_type}"}),
+                HTTPStatus.NOT_FOUND,
+            )
 
         return data, HTTPStatus.OK
 
@@ -732,7 +748,7 @@ class AudienceRulesHistogram(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, field_type: str) -> Tuple[dict, int]:
+    def get(self, field_type: str) -> Tuple[Response, int]:
         """Retrieves Histogram data for rules.
 
         ---
@@ -743,14 +759,15 @@ class AudienceRulesHistogram(SwaggerView):
             field_type (str): Field Type
 
         Returns:
-            Tuple[list, int]: rules constants
+            Tuple[Response, int]: rules constants
         """
 
         # TODO Remove stub once CDM API is integrated
         if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA:
-            return {
-                "message": f"Data not found for {field_type}"
-            }, HTTPStatus.NOT_FOUND
+            return (
+                jsonify({"message": f"Data not found for {field_type}"}),
+                HTTPStatus.NOT_FOUND,
+            )
 
         if field_type == api_c.MODEL:
             model_name = request.args.get(api_c.MODEL_NAME, "")
@@ -763,8 +780,12 @@ class AudienceRulesHistogram(SwaggerView):
                     ],
                     HTTPStatus.OK,
                 )
-            return {
-                "message": f"Data not found for {model_name}"
-            }, HTTPStatus.NOT_FOUND
+            return (
+                jsonify({"message": f"Data not found for {model_name}"}),
+                HTTPStatus.NOT_FOUND,
+            )
 
-        return api_c.AUDIENCE_RULES_HISTOGRAM_DATA[field_type], HTTPStatus.OK
+        return (
+            jsonify(api_c.AUDIENCE_RULES_HISTOGRAM_DATA[field_type]),
+            HTTPStatus.OK,
+        )

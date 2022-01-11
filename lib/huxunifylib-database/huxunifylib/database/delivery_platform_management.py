@@ -38,6 +38,7 @@ def set_delivery_platform(
     configuration: dict = None,
     is_ad_platform: bool = False,
     category: str = db_c.CATEGORY_UNKNOWN,
+    link: str = "",
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -57,7 +58,8 @@ def set_delivery_platform(
         configuration (dict): A dictionary consisting of any platform
             specific configurations.
         is_ad_platform (bool): If the delivery platform is an AD platform.
-        category (str): Categoruy of the delivery platform.
+        category (str): Category of the delivery platform.
+        link (str): Url to the sign in page for the delivery platform
 
     Returns:
         Union[dict, None]: MongoDB audience doc.
@@ -98,6 +100,7 @@ def set_delivery_platform(
         db_c.FAVORITE: False,
         db_c.IS_AD_PLATFORM: is_ad_platform,
         db_c.CATEGORY: category,
+        db_c.LINK: link,
     }
     if authentication_details is not None:
         doc[db_c.DELIVERY_PLATFORM_AUTH] = authentication_details

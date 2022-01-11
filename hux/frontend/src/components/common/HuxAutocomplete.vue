@@ -7,6 +7,8 @@
     append-icon="mdi-chevron-down"
     solo
     :height="40"
+    :cache-items="false"
+    :loading="loader"
     @update:search-input="(val) => $emit('search-update', val)"
   ></v-autocomplete>
 </template>

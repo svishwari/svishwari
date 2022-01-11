@@ -694,6 +694,15 @@ class OrchestrationRouteTest(TestCase):
                 [x[db_c.DELIVERY_PLATFORM_NAME] for x in self.destinations],
             )
 
+        # Validate digital_advertising is present since we have facebook.
+        self.assertTrue(audience.get(api_c.DIGITAL_ADVERTISING))
+        # Since no deliveries to facebook ensure match rate is set to None.
+        self.assertIsNone(
+            audience.get(api_c.DIGITAL_ADVERTISING, {})
+            .get(api_c.MATCH_RATES, [])[0]
+            .get(api_c.MATCH_RATE)
+        )
+
     def test_get_lookalike_audience(self):
         """Test get audience for a lookalike audience for which the source
         audience exists in DB."""
@@ -1526,3 +1535,48 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(new_name, response.json[db_c.NAME])
+
+    def test_create_audience_with_no_ad_platform(self):
+        """Test create audience with no ad_platform destination."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Engagements",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            # The second destination is sfmc.
+            api_c.DESTINATIONS: [
+                {db_c.OBJECT_ID: str(self.destinations[1].get(db_c.ID))}
+            ],
+            api_c.AUDIENCE_ENGAGEMENTS: self.engagement_ids,
+        }
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience_id = response.json.get(db_c.OBJECT_ID)
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{audience_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience = response.json
+        # Validate digital_advertising is not present since we have sfmc.
+        self.assertFalse(audience.get(api_c.DIGITAL_ADVERTISING))

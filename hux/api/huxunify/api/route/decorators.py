@@ -1,6 +1,5 @@
 """File for decorators used in the API routes"""
 # pylint: disable=too-many-statements,disable=unused-argument
-import warnings
 import getpass
 from functools import wraps
 from typing import Any
@@ -137,77 +136,6 @@ def secured() -> object:
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
-        return decorator
-
-    return wrapper
-
-
-def get_user_name() -> object:
-    """This decorator takes an API request and extracts the user name.
-
-    Example: @get_user_name()
-
-    Returns:
-        Response (object): decorator
-    """
-
-    def wrapper(in_function) -> object:
-        """Decorator for wrapping a function.
-
-        Args:
-            in_function (object): function object.
-
-        Returns:
-           Response (object): returns a wrapped decorated function object.
-        """
-
-        warnings.warn(
-            "This function is being deprecated for requires_access_level().",
-            DeprecationWarning,
-        )
-
-        @wraps(in_function)
-        def decorator(*args, **kwargs) -> object:
-            """Decorator for extracting the user_name.
-
-            Args:
-                *args (object): function arguments.
-                **kwargs (dict): function keyword arguments.
-
-            Returns:
-               Response (object): returns a decorated function object.
-            """
-
-            # override if flag set locally
-            if get_config().TEST_AUTH_OVERRIDE:
-                # Return a default user name.
-                kwargs[api_c.USER_NAME] = "test user"
-                return in_function(*args, **kwargs)
-
-            # get the access token
-            logger.info("Getting okta access token from request.")
-            token_response = get_token_from_request(request)
-
-            # if not 200, return response
-            if token_response[1] != 200:
-                logger.info("Failure. Okta token response code is not 200.")
-                return token_response
-
-            # get the user info and the corresponding user document from db
-            # from the access_token
-            user_response = get_user_from_db(token_response[0])
-
-            # if the user_response object is of type tuple, then return it as
-            # such since a failure must have occurred while fetching user data
-            # from db
-            if isinstance(user_response, tuple):
-                return user_response
-
-            # return found user
-            kwargs[api_c.USER_NAME] = user_response[db_c.USER_DISPLAY_NAME]
-
-            return in_function(*args, **kwargs)
-
         return decorator
 
     return wrapper

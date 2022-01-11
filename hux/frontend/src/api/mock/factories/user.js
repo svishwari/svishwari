@@ -26,4 +26,5 @@ export const user = {
   profile_photo: faker.image.imageUrl(),
   login_count: 0,
   modified: faker.date.recent(),
+  pii_access: faker.random.arrayElement([true, false]),
 }

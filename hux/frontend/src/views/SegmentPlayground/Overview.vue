@@ -86,7 +86,7 @@ import MetricCard from "../../components/common/MetricCard.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 
 export default {
-  name: "Ovefrview",
+  name: "Overview",
   components: { Icon, MetricCard, Tooltip },
   props: {
     data: {

@@ -1,5 +1,5 @@
-"""Purpose of this file is to house route utilities"""
-from datetime import datetime
+"""Purpose of this file is to house route utilities."""
+from datetime import datetime, date
 import re
 import csv
 from typing import Tuple, Union
@@ -655,3 +655,131 @@ def convert_unique_city_filter(request_json: dict) -> dict:
     except ValueError:
         logger.info("Incorrect Audience Filter Object")
         return request_json
+
+
+def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
+    """To get digital platform data for engaged audience delivery.
+
+    Args:
+        delivery (dict): Audience delivery data.
+        match_rate_data (dict): Match rate data as dictionary, destination
+        will be the key.
+    """
+
+    if match_rate_data is None:
+        match_rate_data = {}
+    if delivery.get(api_c.STATUS, "").lower() == api_c.DELIVERED:
+        # Digital platform data will be populated based
+        # on last successful delivery to an ad_platform.
+        if match_rate_data.get(delivery.get(api_c.DELIVERY_PLATFORM_TYPE)):
+            # Always ensure the latest successful
+            # delivery is considered.
+            if delivery.get(db_c.UPDATE_TIME) > match_rate_data[
+                delivery.get(api_c.DELIVERY_PLATFORM_TYPE)
+            ].get(api_c.AUDIENCE_LAST_DELIVERY, date.min):
+                match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
+                    api_c.AUDIENCE_LAST_DELIVERY: delivery.get(
+                        db_c.UPDATE_TIME
+                    ),
+                    api_c.MATCH_RATE: 0,
+                }
+        else:
+            match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
+                api_c.AUDIENCE_LAST_DELIVERY: delivery.get(db_c.UPDATE_TIME),
+                api_c.MATCH_RATE: 0,
+            }
+
+    else:
+        # Delivery jobs on ad_platforms undelivered.
+        if not match_rate_data.get(delivery.get(api_c.DELIVERY_PLATFORM_TYPE)):
+            match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
+                api_c.AUDIENCE_LAST_DELIVERY: None,
+                api_c.MATCH_RATE: None,
+            }
+
+
+# pylint: disable=too-many-nested-blocks
+def set_destination_category_in_engagement(engagement: dict):
+    """Set destination_category in engagement dictionary.
+
+    Args:
+        engagement (dict): engagement dict to be set with destination_category
+    """
+
+    # build destination_category object that groups audiences by destinations
+    destinations_categories = []
+    for aud in engagement[db_c.AUDIENCES]:
+        # build the audience dict with necessary fields for grouped destination
+        audience = {
+            api_c.ID: aud[api_c.ID],
+            api_c.NAME: aud.get(api_c.NAME, None),
+            api_c.IS_LOOKALIKE: aud[api_c.IS_LOOKALIKE],
+            api_c.SIZE: aud.get(api_c.SIZE, 0),
+        }
+
+        for dest in aud[db_c.DESTINATIONS]:
+            destinations = []
+
+            # build the destination dict nested with corresponding audience
+            # and latest delivery data
+            audience[api_c.LATEST_DELIVERY] = dest[api_c.LATEST_DELIVERY]
+            destination = {
+                api_c.ID: dest[api_c.ID],
+                api_c.NAME: dest[api_c.NAME],
+                api_c.DESTINATION_AUDIENCES: [],
+            }
+            destination[api_c.DESTINATION_AUDIENCES].append(audience)
+            destinations.append(destination)
+
+            # if destinations_categories is not populated yet, then append a
+            # destination_category dict as required by the response schema
+            if destinations_categories:
+                for destination_category in destinations_categories:
+                    # check if the destination category is already present to
+                    # update the existing dict data
+                    if (
+                        destination_category[api_c.CATEGORY]
+                        == dest[api_c.CATEGORY]
+                    ):
+                        for destination_type in destination_category[
+                            api_c.DESTINATIONS
+                        ]:
+                            # check if the destination_type is already present
+                            # to update just the nested audiences object within
+                            if (
+                                destination_type[api_c.NAME]
+                                == destination[api_c.NAME]
+                            ):
+                                destination_type[
+                                    api_c.DESTINATION_AUDIENCES
+                                ].extend(
+                                    destination[api_c.DESTINATION_AUDIENCES]
+                                )
+                                break
+                        # if the current destination is still not grouped,
+                        # then this is the first time this particular
+                        # destination_type is encountered
+                        else:
+                            destination_category[api_c.DESTINATIONS].extend(
+                                destinations
+                            )
+                        break
+                # if the current destination is still not grouped, then this
+                # is the first time this particular destination_category is
+                # encountered
+                else:
+                    destinations_categories.append(
+                        {
+                            api_c.CATEGORY: dest[api_c.CATEGORY],
+                            api_c.DESTINATIONS: destinations,
+                        }
+                    )
+            else:
+                destinations_categories.append(
+                    {
+                        api_c.CATEGORY: dest[api_c.CATEGORY],
+                        api_c.DESTINATIONS: destinations,
+                    }
+                )
+
+    engagement[api_c.DESTINATION_CATEGORIES] = destinations_categories

@@ -300,8 +300,8 @@ export default {
     filteredDataExtensions() {
       return this.dataExtensions.filter((each) =>
         each.name
-          .toLowerCase()
-          .includes(this.filterDataExtensionInput.toLowerCase())
+          ?.toLowerCase()
+          .includes(this.filterDataExtensionInput?.toLowerCase())
       )
     },
   },

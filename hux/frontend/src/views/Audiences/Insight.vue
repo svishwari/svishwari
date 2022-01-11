@@ -25,6 +25,31 @@
               </span>
             </template>
           </tooltip>
+          <v-menu class="menu-wrapper" bottom offset-y>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                v-bind="attrs"
+                class="mr-2 more-action"
+                color="primary"
+                v-on="on"
+              >
+                mdi-dots-vertical
+              </v-icon>
+            </template>
+            <v-list class="list-wrapper">
+              <v-list-item-group>
+                <v-list-item
+                  v-for="(item, index) in menuOptions"
+                  :key="index"
+                  :disabled="item.isDisabled"
+                >
+                  <v-list-item-title @click="toggleMenuDrawer()">
+                    {{ item.title }}
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-menu>
         </div>
       </template>
       <!-- Keeping this in TODO until more updates -->
@@ -592,6 +617,12 @@
       @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
     />
 
+    <download-audience-drawer
+      :audience-id="audienceId"
+      :toggle="menuDrawer"
+      @onToggle="(isToggled) => (menuDrawer = isToggled)"
+    />
+
     <confirm-modal
       v-model="editConfirmModal"
       right-btn-text="Save"
@@ -654,6 +685,7 @@ import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
+import DownloadAudienceDrawer from "@/views/Shared/Drawers/DownloadAudienceDrawer.vue"
 
 export default {
   name: "AudienceInsight",
@@ -682,6 +714,7 @@ export default {
     Tooltip,
     GenderSpendChart,
     GeoDrawer,
+    DownloadAudienceDrawer,
   },
   data() {
     return {
@@ -696,6 +729,13 @@ export default {
       audienceData: {},
       is_lookalike: false,
       percentageColumns: ["Women", "Men", "Other"],
+      menuDrawer: false,
+      menuOptions: [
+        {
+          title: "Download as",
+          isDisabled: false,
+        },
+      ],
       items: [
         {
           text: "Audiences",
@@ -1000,6 +1040,9 @@ export default {
       getAudiencesRules: "audiences/fetchConstants",
       updateLookalikeAudience: "audiences/updateLookalike",
     }),
+    toggleMenuDrawer() {
+      this.menuDrawer = !this.menuDrawer
+    },
     attributeOptions() {
       const options = []
       Object.values(this.ruleAttributes.rule_attributes).forEach((attr) => {

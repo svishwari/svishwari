@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use,too-many-lines,unused-argument
-"""Paths for destinations API"""
+"""Paths for destinations API."""
 import datetime
 from threading import Thread
 from http import HTTPStatus
@@ -21,6 +21,9 @@ from huxunifylib.database.engagement_management import (
 from huxunifylib.database.collection_management import (
     get_documents,
     delete_document,
+)
+from huxunifylib.database.orchestration_management import (
+    remove_destination_from_all_audiences,
 )
 import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import (
@@ -297,9 +300,13 @@ class DestinationsView(SwaggerView):
                         ],
                         status=destination[db_c.DELIVERY_PLATFORM_STATUS],
                     )
-            destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping[
-                destination[db_c.DELIVERY_PLATFORM_STATUS]
-            ]
+            # using a default here in case we do not have a proper mapping
+            # or just want to use the same constant value in the UI
+            destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping.get(
+                destination[db_c.DELIVERY_PLATFORM_STATUS],
+                destination[db_c.DELIVERY_PLATFORM_STATUS],
+            )
+
         return (
             jsonify(DestinationGetSchema().dump(destinations, many=True)),
             HTTPStatus.OK,
@@ -616,16 +623,21 @@ class DestinationValidatePostView(SwaggerView):
             db_c.DELIVERY_PLATFORM_SENDGRID,
             db_c.DELIVERY_PLATFORM_TWILIO,
         ]:
-            SendgridConnector(
+            sendgrid_connector = SendgridConnector(
                 auth_details={
                     SendgridCredentials.SENDGRID_AUTH_TOKEN.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
                     ).get(api_c.SENDGRID_AUTH_TOKEN),
                 },
             )
-            return {
-                "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
-            }, HTTPStatus.OK
+            if sendgrid_connector.check_connection():
+                logger.info(
+                    "%s destination validated successfully.",
+                    platform_type.capitalize(),
+                )
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+                }, HTTPStatus.OK
         elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             qualtrics_connector = QualtricsConnector(
                 auth_details={
@@ -984,12 +996,10 @@ class DestinationPatchView(SwaggerView):
             "description": "Destination updated.",
             "schema": DestinationDataExtGetSchema,
         },
-        HTTPStatus.UNPROCESSABLE_ENTITY.value: {
+        HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to patch destination data.",
             "schema": {
-                "example": {
-                    "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
-                },
+                "example": {"message": "Invalid request received."},
             },
         },
     }
@@ -1017,23 +1027,11 @@ class DestinationPatchView(SwaggerView):
             Tuple[dict, int]: Destination doc, HTTP status code.
         """
 
-        # get update fields
-        patch_dict = {
-            k: v
-            for k, v in (
-                request.get_json() if request.get_json() else {}
-            ).items()
-            if k in api_c.DESTINATION_PATCH_FIELDS
-        }
-
-        if not patch_dict:
+        if not request.get_json():
             logger.info("Could not patch destination.")
-            return {
-                "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
-            }, HTTPStatus.UNPROCESSABLE_ENTITY
+            return {"message": "No body provided."}, HTTPStatus.BAD_REQUEST
 
-        # validate the schema first.
-        DestinationPatchSchema().validate(patch_dict)
+        DestinationPatchSchema().validate(request.get_json())
 
         database = get_db_client()
 
@@ -1042,7 +1040,7 @@ class DestinationPatchView(SwaggerView):
                 database,
                 destination_id,
                 {
-                    **patch_dict,
+                    **request.get_json(),
                     **{
                         db_c.UPDATED_BY: user[api_c.USER_NAME],
                         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
@@ -1063,10 +1061,19 @@ class DestinationPatchView(SwaggerView):
         )
 
         if not updated_destination.get(db_c.ADDED):
-            # TODO: HUS-1749 - remove destinations from standalone audiences.
             # remove from any engagement audiences
             Thread(
                 target=remove_destination_from_all_engagements,
+                args=[
+                    database,
+                    destination_id,
+                    user[api_c.USER_NAME],
+                ],
+            ).start()
+
+            # remove destinations from standalone audiences
+            Thread(
+                target=remove_destination_from_all_audiences,
                 args=[
                     database,
                     destination_id,

@@ -81,6 +81,7 @@ from huxunify.api.route.utils import (
     is_component_favorite,
     get_user_favorites,
     convert_unique_city_filter,
+    match_rate_data_for_audience,
 )
 
 # setup the orchestration blueprint
@@ -173,12 +174,12 @@ async def get_audience_insights_async(token: str, audience_filters: dict):
     return audience_insights
 
 
-def get_audience_standalone_deliveries(audience_id: ObjectId) -> list:
+def get_audience_standalone_deliveries(audience: dict) -> list:
     """Get standalone deliveries list of an audience built for GET audience
     by ID response.
 
      Args:
-        audience_id (ObjectId): ObjectId of an audience.
+        audience (dict): audience dictionary.
 
     Returns:
         list: List of standalone audience deliveries.
@@ -189,22 +190,16 @@ def get_audience_standalone_deliveries(audience_id: ObjectId) -> list:
     standalone_deliveries = []
     standalone_delivery_jobs = destination_management.get_delivery_jobs(
         database,
-        audience_id=audience_id,
+        audience_id=audience[db_c.ID],
         engagement_id=db_c.ZERO_OBJECT_ID,
     )
 
     if standalone_delivery_jobs:
-        # TODO: HUS-1864 uncomment the below block of code and remove the
-        # following line once destinations nested object in audiences
-        # collection gets populated in the future
         # extract delivery platform ids from the audience
-        # destination_ids = [
-        #     x.get(api_c.ID)
-        #     for x in audience[api_c.DESTINATIONS]
-        #     if isinstance(x, dict)
-        # ]
         destination_ids = [
-            x.get(db_c.DELIVERY_PLATFORM_ID) for x in standalone_delivery_jobs
+            x.get(api_c.ID)
+            for x in audience[api_c.DESTINATIONS]
+            if isinstance(x, dict)
         ]
 
         # get destinations at once to lookup name for each delivery job
@@ -236,6 +231,9 @@ def get_audience_standalone_deliveries(audience_id: ObjectId) -> list:
                     api_c.STATUS: job.get(api_c.STATUS),
                     api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE, 0),
                     db_c.UPDATE_TIME: job.get(db_c.UPDATE_TIME),
+                    db_c.DELIVERY_PLATFORM_ID: job.get(
+                        db_c.DELIVERY_PLATFORM_ID
+                    ),
                 }
             )
 
@@ -670,6 +668,7 @@ class AudienceGetView(SwaggerView):
             audience[db_c.ID],
         )
 
+        match_rate_data = {}
         # process each engagement
         logger.info("Processing each engagement.")
         engagements = []
@@ -697,12 +696,15 @@ class AudienceGetView(SwaggerView):
             # above to remove empty and not-delivered deliveries
             if api_c.DELIVERIES in engagement:
                 for delivery in engagement[api_c.DELIVERIES]:
-                    delivery[api_c.MATCH_RATE] = (
-                        0
-                        if delivery.get(api_c.IS_AD_PLATFORM, False)
-                        and not audience.get(api_c.IS_LOOKALIKE, False)
-                        else None
-                    )
+
+                    if delivery.get(api_c.IS_AD_PLATFORM) and not audience.get(
+                        api_c.IS_LOOKALIKE, False
+                    ):
+                        # Todo remove when actual match rates are
+                        #  populated.
+                        delivery[api_c.MATCH_RATE] = 0
+                        match_rate_data_for_audience(delivery, match_rate_data)
+
                     # Update time field can be missing if no deliveries.
                     if not delivery.get(db_c.UPDATE_TIME):
                         delivery[db_c.UPDATE_TIME] = None
@@ -730,11 +732,8 @@ class AudienceGetView(SwaggerView):
         logger.info("Successfully processed each engagement.")
         # set the list of engagements for an audience
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
-
         # set the list of standalone_deliveries for an audience
-        audience[
-            api_c.AUDIENCE_STANDALONE_DELIVERIES
-        ] = get_audience_standalone_deliveries(audience_id)
+        standalone_deliveries = get_audience_standalone_deliveries(audience)
 
         # get the max last delivered date for all destinations in an audience
         delivery_times = [
@@ -758,15 +757,14 @@ class AudienceGetView(SwaggerView):
             else []
         )
 
-        # get live audience size
-        customers = get_customers_overview(
+        # Add insights, size.
+        audience[api_c.AUDIENCE_INSIGHTS] = get_customers_overview(
             token_response[0],
             {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
         )
-
-        # Add insights, size.
-        audience[api_c.AUDIENCE_INSIGHTS] = customers
-        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS, 0)
+        audience[api_c.SIZE] = audience[api_c.AUDIENCE_INSIGHTS].get(
+            api_c.TOTAL_CUSTOMERS, 0
+        )
 
         # query DB and populate lookalike audiences in audience dict only if
         # the audience is not a lookalike audience since lookalike audience
@@ -779,12 +777,39 @@ class AudienceGetView(SwaggerView):
             else []
         )
 
-        audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+        for delivery in standalone_deliveries:
+            if delivery.get(api_c.IS_AD_PLATFORM) and not audience.get(
+                api_c.IS_LOOKALIKE, False
+            ):
+                match_rate_data_for_audience(delivery, match_rate_data)
 
-        audience[api_c.FAVORITE] = is_component_favorite(
-            user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
+        audience.update(
+            {
+                api_c.DIGITAL_ADVERTISING: {
+                    api_c.MATCH_RATES: [
+                        {
+                            api_c.DESTINATION: delivery_platform_data[0],
+                            api_c.MATCH_RATE: delivery_platform_data[1].get(
+                                api_c.MATCH_RATE
+                            ),
+                            api_c.AUDIENCE_LAST_DELIVERY: delivery_platform_data[
+                                1
+                            ].get(
+                                api_c.AUDIENCE_LAST_DELIVERY
+                            ),
+                        }
+                        for delivery_platform_data in match_rate_data.items()
+                    ]
+                }
+                if match_rate_data
+                else None,
+                api_c.AUDIENCE_STANDALONE_DELIVERIES: standalone_deliveries,
+                api_c.LOOKALIKEABLE: is_audience_lookalikeable(audience),
+                api_c.FAVORITE: is_component_favorite(
+                    user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
+                ),
+            }
         )
-
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,
@@ -1203,24 +1228,18 @@ class AudiencePutView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
-        audience_filters = convert_unique_city_filter(
-            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
-        )
+
         audience_doc = orchestration_management.update_audience(
             database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
-            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=convert_unique_city_filter(
+                {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+            ).get(api_c.AUDIENCE_FILTERS)
+            if body.get(api_c.AUDIENCE_FILTERS)
+            else body.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
-        )
-
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f'Audience "{audience_doc[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
-            api_c.ORCHESTRATION_TAG,
-            user[api_c.USER_NAME],
         )
 
         # check if any engagements to add, otherwise return.
@@ -1272,6 +1291,14 @@ class AudiencePutView(SwaggerView):
                     [audience_doc[db_c.ID]],
                 )
                 removed.append(engagement[db_c.ID])
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f'Audience "{audience_doc[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
+            api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
+        )
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 

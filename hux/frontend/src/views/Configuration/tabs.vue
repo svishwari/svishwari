@@ -1,12 +1,18 @@
 <template>
   <div class="tabs-wrapper">
     <v-tabs v-model="tabOption" class="mt-8">
-      <v-tabs-slider color="primary"></v-tabs-slider>
+      <v-tabs-slider color="primary" class="sliderCss"></v-tabs-slider>
       <div class="d-flex">
-        <v-tab key="modules" class="pa-2 mr-3 text-h3" color>
+        <v-tab
+          key="modules"
+          class="pa-2 mr-3 text-h3 black--text text--lighten-4"
+          color
+        >
           Modules &amp; Solutions
         </v-tab>
-        <v-tab key="team" class="text-h3"> Team members </v-tab>
+        <v-tab key="team" class="text-h3 black--text text--lighten-4">
+          Team members
+        </v-tab>
       </div>
     </v-tabs>
     <v-tabs-items v-model="tabOption" class="mt-2">
@@ -40,4 +46,12 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.sliderCss {
+  position: absolute;
+  top: 2px;
+}
+::v-deep .v-tabs .v-tabs-bar .v-tabs-bar__content .v-tab {
+  color: var(--v-black-lighten4) !important;
+}
+</style>

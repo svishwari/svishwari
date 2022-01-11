@@ -37,6 +37,7 @@ class OrchestrationSchemaTest(TestCase):
                     db_c.AUDIENCE_LAST_DELIVERED: datetime.strftime(
                         datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
                     ),
+                    db_c.DELIVERY_PLATFORM_ID: "60b9601a6021710aa146df2f",
                 },
             ],
             db_c.SIZE: 1000,
@@ -48,6 +49,17 @@ class OrchestrationSchemaTest(TestCase):
             db_c.UPDATE_TIME: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
+            api_c.DIGITAL_ADVERTISING: {
+                api_c.MATCH_RATES: [
+                    {
+                        api_c.MATCH_RATE: 0,
+                        api_c.AUDIENCE_LAST_DELIVERY: datetime.strftime(
+                            datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
+                        ),
+                        api_c.DESTINATION: "facebook",
+                    }
+                ]
+            },
         }
 
         self.assertFalse(AudienceGetSchema().validate(doc))
@@ -69,6 +81,7 @@ class OrchestrationSchemaTest(TestCase):
                     db_c.AUDIENCE_LAST_DELIVERED: datetime.strftime(
                         datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
                     ),
+                    db_c.DELIVERY_PLATFORM_ID: "60b9601a6021710aa146df2f",
                 },
             ],
             db_c.SIZE: 1000,
@@ -328,6 +341,7 @@ class OrchestrationSchemaTest(TestCase):
             db_c.AUDIENCE_LAST_DELIVERED: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
+            db_c.DELIVERY_PLATFORM_ID: "60b9601a6021710aa146df2f",
         }
 
         self.assertFalse(

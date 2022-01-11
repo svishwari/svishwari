@@ -26,6 +26,7 @@
             align-center
             cursor-pointer
           "
+          data-e2e="add-new-attr"
           @click="addNewSection()"
         >
           <icon type="plus" color="primary" :size="11" class="mr-2" />
@@ -66,6 +67,7 @@
                     :selected="condition.attribute"
                     :items="attributeOptions()"
                     label="Select attribute"
+                    data-e2e="select-attr-btn"
                     @on-select="onSelect('attribute', condition, $event)"
                   />
                   <hux-dropdown
@@ -73,6 +75,7 @@
                     label="Select operator"
                     :items="operatorOptions(condition)"
                     :selected="condition.operator"
+                    data-e2e="select-operator-btn"
                     @on-select="onSelect('operator', condition, $event)"
                   />
                   <text-field
@@ -85,13 +88,14 @@
                     required
                     @blur="triggerSizing(condition)"
                   />
-
                   <hux-autocomplete
                     v-if="
                       condition.operator && condition.attribute.type === 'list'
                     "
                     v-model="condition.text"
                     :options="listOptions(condition)"
+                    data-e2e="auto-complete-btn"
+                    :loader="loaderValue"
                     @change="triggerSizing(condition)"
                     @search-update="autoSearchFunc"
                   />
@@ -130,6 +134,7 @@
                 </div>
                 <div
                   class="condition-actions pa-0 cursor-pointer"
+                  data-e2e="remove-attr"
                   @click="removeCondition(rule, ixcondition)"
                 >
                   <icon type="trash" :size="18" color="black" />
@@ -273,6 +278,8 @@ export default {
       currenCitytData: [],
       selectedValue: null,
       params: {},
+      notHistogramKeys: ["gender", "email", "Country", "State", "City", "Zip"],
+      loaderValue: false,
     }
   },
   computed: {
@@ -307,6 +314,7 @@ export default {
       getRealtimeSize: "audiences/fetchFilterSize",
       getAudiencesRules: "audiences/fetchConstants",
       getAudiencesRulesByFields: "audiences/rulesByFields",
+      attributesData: "audiences/getDensityChartData",
     }),
     sliderLabel(attribute, value) {
       if (attribute.key === "ltv_predicted") {
@@ -509,15 +517,27 @@ export default {
       }
     },
 
-    onSelect(type, condition, item) {
+    async onSelect(type, condition, item) {
+      let dataItem = item
       condition[type] = item
       if (type === "attribute") {
         this.selectedValue = item.key
+        if (!this.notHistogramKeys.includes(item.key)) {
+          let data = await this.attributesData({
+            field: item.modelIcon ? "model" : item.key,
+            model: item.modelIcon ? item.key : null,
+          })
+          if (data) {
+            data.key = item.key
+            dataItem = data
+          }
+        }
+        condition[type] = dataItem
         condition.operator = ""
         condition.text = ""
-        condition.type = condition.attribute.type
-        condition.options = condition.attribute.options
-        condition.range = [condition.attribute.min, condition.attribute.max]
+        condition.type = dataItem.type
+        condition.options = dataItem.options
+        condition.range = [dataItem.min, dataItem.max]
         condition.awaitingSize = false
         condition.outputSummary = 0
       } else if (type === "operator") {
@@ -571,13 +591,26 @@ export default {
               : this.selectedValue.toLowerCase()
           this.params.key = value
           if (value.length > 2 && value.length <= 8) {
+            this.loaderValue = true
             let data = await this.getAudiencesRulesByFields(this.params)
             if (this.selectedValue === "Zip") {
+              this.loaderValue = false
               this.currentData = [...data]
             } else if (this.selectedValue === "City") {
+              this.loaderValue = false
               this.currenCitytData = [...data]
             }
           }
+        }
+      }
+      if (value === null || value === "" || value.length < 3) {
+        if (this.selectedValue === "Zip") {
+          this.currentData = []
+        } else if (this.selectedValue === "City") {
+          this.currenCitytData = []
+        } else {
+          this.currentData = []
+          this.currenCitytData = []
         }
       }
     },

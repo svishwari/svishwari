@@ -212,7 +212,6 @@ export default {
       }
       th {
         background: var(--v-primary-lighten2) !important;
-        color: var(--v-black-base) !important;
         padding-left: 0px !important;
       }
       th:nth-child(1) {
