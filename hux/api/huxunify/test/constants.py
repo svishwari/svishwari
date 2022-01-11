@@ -861,7 +861,6 @@ CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE = {
         },
     ],
 }
-
 CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE = {
     "code": 200,
     "body": [

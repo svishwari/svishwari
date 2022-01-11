@@ -58,7 +58,10 @@
                   </template>
                 </tooltip>
               </v-list-item>
-              <v-list-item @click="inactiveEngagement()">
+              <v-list-item
+                :disabled="engagementData.status == 'Inactive'"
+                @click="inactiveEngagement()"
+              >
                 Make inactive
               </v-list-item>
               <v-list-item @click="initiateDelete()">

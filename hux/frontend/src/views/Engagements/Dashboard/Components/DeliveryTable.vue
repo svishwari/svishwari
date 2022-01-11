@@ -76,13 +76,21 @@
               />
             </div>
             <div v-if="header.value == 'destinations'">
-              <logo
+              <tooltip
                 v-for="destination_logo in item[header.value]"
                 :key="destination_logo.delivery_platform_type"
-                :type="destination_logo.delivery_platform_type"
-                size="24"
-                class="ml-n1"
-              />
+              >
+                <template #label-content>
+                  <logo
+                    :type="destination_logo.delivery_platform_type"
+                    size="24"
+                    class="ml-n1"
+                  />
+                </template>
+                <template #hover-content>
+                  {{ destination_logo.name }}
+                </template>
+              </tooltip>
             </div>
             <div v-if="header.value == 'size'" class="text-body-1">
               <size

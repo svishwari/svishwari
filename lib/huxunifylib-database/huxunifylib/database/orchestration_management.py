@@ -15,6 +15,7 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
+import huxunifylib.database.delivery_platform_management as destination_management
 
 
 @retry(
@@ -784,3 +785,53 @@ def remove_destination_from_all_audiences(
         logging.error(exc)
 
     return False
+
+
+def append_destination_to_standalone_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    destination: dict,
+    user_name: str,
+) -> dict:
+    """A function to append destination to standalone audience.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        destination (dict): Destination to add to engagement audience.
+        user_name (str): Name of the user appending the destination to the
+            audience.
+
+    Returns:
+        dict: updated audience object.
+    Raises:
+        TypeError: Error user name is not a string.
+    """
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
+
+    audience = collection.find_one_and_update(
+        {
+            db_c.ID: audience_id,
+        },
+        {
+            "$push": {"destinations": destination},
+            "$set": {
+                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                db_c.UPDATED_BY: user_name,
+            },
+        },
+        return_document=pymongo.ReturnDocument.AFTER,
+    )
+
+    destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
+
+    destinations_list = destination_management.get_delivery_platforms_by_id(
+        database, destination_ids
+    )
+    audience[db_c.DESTINATIONS] = destinations_list
+    return audience

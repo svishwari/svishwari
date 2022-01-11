@@ -7,12 +7,19 @@ from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
+from bson import ObjectId
 from hypothesis import given, strategies as st
 
 from huxunifylib.connectors.connector_cdp import ConnectorCDP
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.orchestration_management import create_audience
+from huxunifylib.database.orchestration_management import (
+    create_audience,
+    get_audience,
+)
+from huxunifylib.database.delivery_platform_management import (
+    set_delivery_platform,
+)
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
@@ -508,3 +515,105 @@ class AudienceInsightsTest(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(response.status_code, 404)
+
+
+class TestAudienceDestination(TestCase):
+    """Test for Audience Destination"""
+
+    def setUp(self):
+        """Setup tests."""
+        self.audiences_endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
+        )
+        self.config = get_config(api_c.TEST_MODE)
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        # mock get_db_client() in utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in audiences
+        mock.patch(
+            "huxunify.api.route.audiences.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock request for introspect call
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.get(
+            t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE
+        )
+        self.request_mocker.start()
+
+        # stop all mocks in cleanup
+        self.addCleanup(mock.patch.stopall)
+
+        # setup the flask test client
+        self.test_client = create_app().test_client()
+
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
+
+        self.user_name = "Joe Smithers"
+
+        # create audience
+        audience = {
+            db_c.AUDIENCE_NAME: "Test Audience",
+            "audience_filters": [],
+            api_c.USER_NAME: self.user_name,
+            api_c.DESTINATION_IDS: [],
+        }
+
+        self.delivery_platform_doc = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            {
+                "facebook_access_token": "path1",
+                "facebook_app_secret": "path2",
+                "facebook_app_id": "path3",
+                "facebook_ad_account_id": "path4",
+            },
+        )
+        self.audience = create_audience(self.database, **audience)
+
+    def test_add_destination_audience(self) -> None:
+        """Test Adding destination to audience"""
+        destination = {"id": str(self.delivery_platform_doc[db_c.ID])}
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/"
+            f"destinations",
+            json=destination,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertIn(
+            destination[api_c.ID],
+            [x[api_c.ID] for x in response.json[api_c.DESTINATIONS]],
+        )
+
+        audience_doc = get_audience(
+            database=self.database, audience_id=self.audience[db_c.ID]
+        )
+        self.assertIn(
+            ObjectId(destination[api_c.ID]),
+            [x[api_c.ID] for x in audience_doc[api_c.DESTINATIONS]],
+        )
