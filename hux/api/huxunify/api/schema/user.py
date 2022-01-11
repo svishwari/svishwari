@@ -81,5 +81,5 @@ class NewUserRequest(Schema):
     last_name = Str(required=True, example="Huxley")
     email = Str(required=True)
     access_level = Str(required=True, validate=validate.OneOf(db_c.USER_ROLES))
-    pii_access = Bool(required=True)
+    pii_access = Bool(required=True, default=False)
     reason_for_request = Str(required=True)
