@@ -1,6 +1,7 @@
 """Audience Management tests."""
-
+# pylint: disable=too-many-public-methods
 import unittest
+
 import mongomock
 import pymongo
 from bson import ObjectId
@@ -648,3 +649,38 @@ class TestAudienceManagement(unittest.TestCase):
                     if d.get(db_c.OBJECT_ID) == self.destination_ids[0]
                 )
             )
+
+    def test_append_destination_to_standalone_audience(self):
+        """Test add destination to audience."""
+
+        set_audience = am.create_audience(
+            self.database,
+            "My Audience",
+            self.audience_filters,
+            self.user_name,
+        )
+        delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            {
+                "facebook_access_token": "path1",
+                "facebook_app_secret": "path2",
+                "facebook_app_id": "path3",
+                "facebook_ad_account_id": "path4",
+            },
+        )
+        destination = {
+            "id": delivery_platform_doc[db_c.ID],
+        }
+        doc = am.append_destination_to_standalone_audience(
+            database=self.database,
+            audience_id=set_audience[db_c.ID],
+            destination=destination,
+            user_name=self.user_name,
+        )
+
+        self.assertIn(
+            destination[db_c.OBJECT_ID],
+            [x[db_c.ID] for x in doc[db_c.DESTINATIONS]],
+        )

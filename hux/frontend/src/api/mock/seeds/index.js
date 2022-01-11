@@ -5,6 +5,7 @@ import engagementSeeds from "./engagement"
 import modelSeeds from "./model"
 import userSeeds from "./user"
 import geoCountry from "./geoCountry"
+import configurationSeeds from "./configuration"
 
 /**
  * Seeds the Mirage.js server with mock data.
@@ -19,6 +20,7 @@ export default function (server) {
   engagementSeeds.forEach((seed) => server.create("engagement", seed))
   userSeeds.forEach((seed) => server.create("user", seed))
   geoCountry.forEach((seed) => server.create("geoCountry", seed))
+  configurationSeeds.forEach((seed) => server.create("configuration", seed))
 
   server.createList("audience", 10)
   server.createList("engagement", 5)
@@ -31,4 +33,5 @@ export default function (server) {
   server.createList("geoCity", 14659)
   server.createList("geoState", 52)
   server.createList("user", 1)
+  server.createList("configuration", 5)
 }

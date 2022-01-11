@@ -83,6 +83,12 @@ class ApplicationsTests(TestCase):
             json=applications_request,
         )
 
+        self.assertEqual(
+            response.json[api_c.TYPE],
+            applications_request[api_c.TYPE],
+        )
+        self.assertTrue(response.json[api_c.IS_ADDED])
+
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
         applications = get_documents(
@@ -101,6 +107,7 @@ class ApplicationsTests(TestCase):
             applications[db_c.DOCUMENTS][0][api_c.TYPE],
             applications_request[api_c.TYPE],
         )
+        self.assertTrue(applications[db_c.DOCUMENTS][0][db_c.ADDED])
 
     def test_success_invalid_applications(self):
         """Test get configurations."""

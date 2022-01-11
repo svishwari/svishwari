@@ -1,272 +1,260 @@
 <template>
   <v-form>
-    <form-steps>
-      <form-step :step="1" label="General information">
-        <v-row class="pt-2">
-          <v-col>
-            <text-field
-              v-model="value.name"
-              label-text="Engagement name"
-              placeholder="Give this engagement a name"
-              :rules="[(value) => !!value || 'Engagement name is required']"
-              :error-messages="errorMessages"
-              required
-              data-e2e="engagement-name"
-              @blur="errorMessages = []"
-            />
-          </v-col>
-          <v-col>
-            <text-field
-              v-model="value.description"
-              label-text="Description"
-              placeholder="What is the purpose of this engagement?"
-              data-e2e="engagement-description"
-            />
-          </v-col>
-        </v-row>
-      </form-step>
+    <h5 class="text-h3 mb-2">General information</h5>
+    <v-row class="pt-2">
+      <v-col>
+        <text-field
+          v-model="value.name"
+          label-text="Engagement name"
+          placeholder="Give this engagement a name"
+          :rules="[(value) => !!value || 'Engagement name is required']"
+          :error-messages="errorMessages"
+          required
+          data-e2e="engagement-name"
+          @blur="errorMessages = []"
+        />
+      </v-col>
+      <v-col>
+        <text-field
+          v-model="value.description"
+          label-text="Description"
+          placeholder="What is the purpose of this engagement?"
+          data-e2e="engagement-description"
+        />
+      </v-col>
+    </v-row>
 
-      <form-step :step="2">
-        <template slot="label">
-          <h5 class="text-h5 d-flex align-start">
-            Setup a delivery schedule
-
-            <tooltip>
-              <template #label-content>
-                <v-icon color="primary" :size="8" class="ml-1 mb-1">
-                  mdi-information-outline
-                </v-icon>
-              </template>
-              <template #hover-content>
-                <v-sheet max-width="240px">
-                  <h6 class="text-caption mb-2">Manual delivery</h6>
-                  <p class="black--text text--darken-1">
-                    Choose this option if you want the engagement delivered
-                    immediately or at a future date and time.
-                  </p>
-                  <h6 class="text-caption mb-2">Recurring delivery</h6>
-                  <p class="black--text text--darken-1">
-                    Choose this option if you want the engagement delivered on a
-                    specific recurring basis you selected.
-                  </p>
-                </v-sheet>
-              </template>
-            </tooltip>
-          </h5>
-        </template>
-
-        <v-row class="delivery-schedule mt-2">
-          <v-radio-group
-            v-model="value.delivery_schedule"
-            row
-            class="ma-0 radio-div"
-            @change="changeSchedule()"
-          >
-            <v-radio
-              :value="0"
-              selected
-              :class="
-                value.delivery_schedule == 0
-                  ? 'btn-radio-active'
-                  : 'btn-radio-inactive'
-              "
-            >
-              <template #label>
-                <v-icon small color="primary" class="mr-1">
-                  mdi-gesture-tap
-                </v-icon>
-                <span class="primary--text">Manual</span>
-              </template>
-            </v-radio>
-
-            <v-radio
-              :value="1"
-              :class="isRecurring ? 'btn-radio-active' : 'btn-radio-inactive'"
-            >
-              <template #label>
-                <v-icon small color="primary" class="mr-1"
-                  >mdi-clock-check-outline</v-icon
-                >
-                <span class="primary--text">Recurring</span>
-              </template>
-            </v-radio>
-          </v-radio-group>
-        </v-row>
-        <v-row v-if="isRecurring" class="delivery-schedule mt-10 ml-n2">
-          <div>
-            <span
-              class="date-picker-label black--text text--darken-4 text-caption"
-            >
-              Start date
-            </span>
-            <hux-start-date
-              class="mt-n4"
-              :label="selectedStartDate"
-              :selected="selectedStartDate"
-              @on-date-select="onStartDateSelect"
-            />
-          </div>
-          <icon class="mx-2" type="arrow" :size="28" color="black-lighten3" />
-          <div>
-            <span
-              class="date-picker-label black--text text--darken-4 text-caption"
-            >
-              End date
-            </span>
-            <hux-end-date
-              class="mt-n4"
-              :label="selectedEndDate"
-              :selected="selectedEndDate"
-              :is-sub-menu="true"
-              :min-date="endMinDate"
-              @on-date-select="onEndDateSelect"
-            />
-          </div>
-        </v-row>
-
-        <v-row class="delivery-schedule mt-5">
-          <hux-schedule-picker
-            v-if="isRecurring"
-            v-model="localSchedule"
-            :start-date="selectedStartDate"
-            :end-date="selectedEndDate"
-          />
-        </v-row>
-      </form-step>
-
-      <form-step :step="3" label="Select audience(s) and destination(s)">
-        <p v-if="hasAudiences" class="text-h6">
-          First add and deliver an audience to Facebook in order to create a
-          lookalike audience from this engagement’s dashboard.
-        </p>
-
-        <data-cards
-          bordered
-          :items="Object.values(value.audiences)"
-          :fields="[
-            {
-              key: 'name',
-              label: 'Audience name',
-            },
-            {
-              key: 'size',
-              label: 'Target size',
-            },
-            {
-              key: 'destinations',
-              label: 'Destinations',
-            },
-            {
-              key: 'manage',
-            },
-          ]"
+    <h5 class="text-h3 mb-2">Audience(s) and destination(s)</h5>
+    <data-cards
+      bordered
+      :items="Object.values(value.audiences)"
+      :fields="[
+        {
+          key: 'name',
+          label: 'Audience name',
+          col: '5',
+        },
+        {
+          key: 'size',
+          label: 'Size',
+        },
+        {
+          key: 'destinations',
+          label: 'Destination(s)',
+        },
+        {
+          key: 'manage',
+        },
+      ]"
+    >
+      <template #field:name="row">
+        <span v-if="row.item.is_lookalike" class="d-flex align-items-center"
+          ><icon type="lookalike" :size="24" class="mr-1" /><span
+            class="body-1"
+            >{{ row.value }}</span
+          ></span
         >
-          <template #field:size="row">
-            <tooltip>
-              <template #label-content>
-                {{ row.value | Numeric(true, true) | Empty }}
-              </template>
-              <template #hover-content>
-                {{
-                  row.value | Numeric | Empty("Size unavailable at this time")
-                }}
-              </template>
-            </tooltip>
-          </template>
+        <span v-else class="not-lookalike-color body-1">{{ row.value }}</span>
+      </template>
 
-          <template #field:destinations="row">
-            <div class="destinations-wrap">
-              <v-row class="align-center">
-                <div>
-                  <tooltip
-                    v-for="destination in row.value"
-                    :key="destination.id"
-                  >
-                    <template #label-content>
-                      <div class="destination-logo-wrapper">
-                        <div class="logo-wrapper">
-                          <logo
-                            class="added-logo ml-2 svg-icon"
-                            :type="destinationType(destination.id)"
-                            :size="24"
-                          />
-                          <logo
-                            class="delete-icon"
-                            type="delete"
-                            @click.native="
-                              removeDestination(row, destination.id)
-                            "
-                          />
-                        </div>
-                      </div>
-                    </template>
-                    <template #hover-content>
-                      <div class="d-flex align-center">Remove</div>
-                    </template>
-                  </tooltip>
-                </div>
-                <div>
-                  <tooltip>
-                    <template #label-content>
-                      <v-btn
-                        x-small
-                        fab
-                        class="primary ml-2 box-shadow-25"
-                        data-e2e="add-destination"
-                        @click="openSelectDestinationsDrawer(row.item.id)"
-                      >
-                        <v-icon size="16">mdi-plus</v-icon>
-                      </v-btn>
-                    </template>
-                    <template #hover-content>Add destination(s)</template>
-                  </tooltip>
-                </div>
-              </v-row>
-            </div>
+      <template #field:size="row">
+        <tooltip>
+          <template #label-content>
+            {{ row.value | Numeric(true, true) | Empty("n/a") }}
           </template>
+          <template #hover-content>
+            {{ row.value | Numeric | Empty("Size unavailable at this time") }}
+          </template>
+        </tooltip>
+      </template>
 
-          <template #field:manage="row">
-            <div class="d-flex align-center justify-end">
-              <tooltip v-if="isLastItem(row.index)">
+      <template #field:destinations="row">
+        <div class="destinations-wrap">
+          <v-row class="align-center">
+            <div>
+              <tooltip v-for="destination in row.value" :key="destination.id">
                 <template #label-content>
-                  <v-btn
-                    x-small
-                    fab
-                    class="primary mr-2 box-shadow-25"
-                    @click="openSelectAudiencesDrawer()"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
+                  <div class="destination-logo-wrapper">
+                    <div class="logo-wrapper">
+                      <logo
+                        class="added-logo svg-icon"
+                        :type="destinationType(destination.id)"
+                        :size="24"
+                      />
+                      <logo
+                        class="delete-icon"
+                        type="delete"
+                        @click.native="removeDestination(row, destination.id)"
+                      />
+                    </div>
+                  </div>
                 </template>
-                <template #hover-content>Add another audience</template>
+                <template #hover-content>
+                  <div class="d-flex align-center">Remove</div>
+                </template>
               </tooltip>
-
-              <v-btn icon color="primary" @click="removeAudience(row.item)">
-                <v-icon>mdi-delete-outline</v-icon>
-              </v-btn>
             </div>
-          </template>
+            <div v-if="!row.item.is_lookalike">
+              <tooltip>
+                <template #label-content>
+                  <div
+                    class="
+                      resize-destination-button
+                      d-flex
+                      align-items-center
+                      ml-2
+                    "
+                    data-e2e="add-destination"
+                    @click="openSelectDestinationsDrawer(row.item.id)"
+                  >
+                    <icon
+                      type="plus"
+                      :size="12"
+                      color="primary"
+                      class="mr-1 mt-1"
+                    />
+                    <icon
+                      type="destination"
+                      :size="24"
+                      color="primary"
+                      class="mr-2"
+                    />
+                  </div>
+                </template>
+                <template #hover-content>Add destination(s)</template>
+              </tooltip>
+            </div>
+          </v-row>
+        </div>
+      </template>
 
-          <template slot="empty">
-            <v-col class="shrink pl-5">
-              <v-btn
-                x-small
-                fab
-                color="primary box-shadow-25"
-                elevation="0"
-                data-e2e="add-audience"
-                @click="openSelectAudiencesDrawer()"
-              >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </v-col>
-            <v-col class="grow pl-2">
-              You have not added any audiences, yet.
-            </v-col>
-          </template>
-        </data-cards>
-      </form-step>
-    </form-steps>
+      <template #field:manage="row">
+        <div class="d-flex align-center justify-end">
+          <div @click="removeAudience(row.item)">
+            <icon size="19" type="delete-button" />
+          </div>
+        </div>
+      </template>
+
+      <template slot="empty">
+        <v-col class="grow pl-2">
+          You have not added any audiences, yet.
+        </v-col>
+      </template>
+    </data-cards>
+    <v-alert
+      color="primary"
+      class="empty-card mb-8"
+      data-e2e="add-audience"
+      @click="openSelectAudiencesDrawer()"
+    >
+      <v-row align="center">
+        <v-col class="grow d-flex align-items-center hover-button"
+          ><icon
+            type="plus"
+            :size="12"
+            color="primary"
+            class="mr-1 mt-1"
+          /><span class="body-1 not-lookalike-color">Audience</span></v-col
+        >
+      </v-row>
+    </v-alert>
+    <h5 class="text-h3 mb-2">
+      Setup a delivery schedule
+      <tooltip>
+        <template #label-content>
+          <v-icon color="primary" :size="8" class="ml-1 mb-1">
+            mdi-information-outline
+          </v-icon>
+        </template>
+        <template #hover-content>
+          <v-sheet max-width="240px">
+            <h6 class="text-caption mb-2">Manual delivery</h6>
+            <p class="black--text text--darken-1">
+              Choose this option if you want the engagement delivered
+              immediately or at a future date and time.
+            </p>
+            <h6 class="text-caption mb-2">Recurring delivery</h6>
+            <p class="black--text text--darken-1">
+              Choose this option if you want the engagement delivered on a
+              specific recurring basis you selected.
+            </p>
+          </v-sheet>
+        </template>
+      </tooltip>
+    </h5>
+    <div class="d-flex align-items-center">
+      <plain-card
+        :icon="!isRecurringFlag ? 'manual-light' : 'manual-dark'"
+        title="Manual"
+        description="Deliver this engagement when you are ready."
+        :style="
+          !isRecurringFlag
+            ? { float: 'left', color: 'var(--v-primary-lighten6)' }
+            : { float: 'left', color: 'var(--v-black-base)' }
+        "
+        title-color="black--text"
+        height="175"
+        width="200"
+        :class="!isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
+        @onClick="changeSchedule(false)"
+      />
+      <plain-card
+        :icon="!isRecurringFlag ? 'recurring-dark' : 'recurring-light'"
+        title="Recurring"
+        description="Deliver this engagement during a chosen timeframe."
+        :style="
+          isRecurringFlag
+            ? { float: 'left', color: 'var(--v-primary-lighten6)' }
+            : { float: 'left', color: 'var(--v-black-base)' }
+        "
+        title-color="black--text"
+        height="175"
+        width="200"
+        :class="isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
+        @onClick="changeSchedule(true)"
+      />
+    </div>
+    <div v-if="isRecurringFlag" class="delivery-background px-4 pt-4 pb-6">
+      <v-row class="delivery-schedule mt-6 ml-n2">
+        <div>
+          <span
+            class="date-picker-label black--text text--darken-4 text-caption"
+          >
+            Start date
+          </span>
+          <hux-start-date
+            class="mt-n4"
+            :label="selectedStartDate"
+            :selected="selectedStartDate"
+            @on-date-select="onStartDateSelect"
+          />
+        </div>
+        <icon class="mx-2" type="arrow" :size="28" color="black-lighten3" />
+        <div>
+          <span
+            class="date-picker-label black--text text--darken-4 text-caption"
+          >
+            End date
+          </span>
+          <hux-end-date
+            class="mt-n4"
+            :label="selectedEndDate"
+            :selected="selectedEndDate"
+            :is-sub-menu="true"
+            :min-date="endMinDate"
+            @on-date-select="onEndDateSelect"
+          />
+        </div>
+      </v-row>
+      <v-row class="delivery-schedule mt-5">
+        <hux-schedule-picker
+          v-model="localSchedule"
+          :start-date="selectedStartDate"
+          :end-date="selectedEndDate"
+        />
+      </v-row>
+    </div>
 
     <hux-footer>
       <template #left>
@@ -291,8 +279,12 @@
           tile
           color="primary"
           height="44"
-          :disabled="!isValid"
-          @click="restoreEngagement()"
+          :is-disabled="
+            !isValid ||
+            (isRecurringFlag &&
+              (selectedStartDate == 'Select date' || selectedStartDate == null))
+          "
+          @click="showUpdateModal = true"
         >
           Update
         </hux-button>
@@ -355,14 +347,26 @@
       @onToggle="(val) => (showDataExtensionDrawer = val)"
       @onBack="openSelectDestinationsDrawer"
     />
+
+    <confirm-modal
+      v-model="showUpdateModal"
+      icon="alert-edit"
+      type="error"
+      title="Edit"
+      :sub-title="`${value.name}?`"
+      left-btn-text="Cancel"
+      right-btn-text="Yes, edit"
+      body="Are you sure you want to edit this engagement?
+By changing the engagement, you may need to reschedule the delivery time and it will impact all associated audiences and destinations."
+      @onCancel="showUpdateModal = false"
+      @onConfirm="restoreEngagement()"
+    />
   </v-form>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
-import FormStep from "@/components/common/FormStep.vue"
-import FormSteps from "@/components/common/FormSteps.vue"
 import HuxFooter from "@/components/common/HuxFooter.vue"
 import huxButton from "@/components/common/huxButton"
 import Logo from "@/components/common/Logo.vue"
@@ -376,6 +380,8 @@ import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 import Icon from "@/components/common/Icon.vue"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
+import PlainCard from "@/components/common/Cards/PlainCard.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import { deliverySchedule } from "@/utils"
 
 export default {
@@ -383,8 +389,6 @@ export default {
 
   components: {
     DataCards,
-    FormStep,
-    FormSteps,
     Logo,
     HuxFooter,
     TextField,
@@ -398,6 +402,8 @@ export default {
     Icon,
     HuxSchedulePicker,
     huxButton,
+    PlainCard,
+    ConfirmModal,
   },
 
   props: {
@@ -425,6 +431,8 @@ export default {
       ).toISOString(),
       engagementList: {},
       dontShowModal: false,
+      isRecurringFlag: false,
+      showUpdateModal: false,
     }
   },
 
@@ -453,7 +461,7 @@ export default {
         }),
       }
 
-      if (this.value.delivery_schedule == 1) {
+      if (this.isRecurringFlag) {
         const recurringConfig = {}
         recurringConfig["every"] = this.localSchedule.every
         recurringConfig["periodicity"] = this.localSchedule.periodicity
@@ -470,11 +478,10 @@ export default {
         }
         requestPayload["delivery_schedule"] = {
           start_date:
-            !this.isManualDelivery && this.selectedStartDate !== "Select date"
+            this.selectedStartDate !== "Select date"
               ? new Date(this.selectedStartDate).toISOString()
               : null,
           end_date:
-            !this.isManualDelivery &&
             this.selectedEndDate !== "Select date" &&
             this.selectedEndDate !== "No end date"
               ? new Date(this.selectedEndDate).toISOString()
@@ -535,6 +542,9 @@ export default {
         )
       }
     },
+    isRecurring() {
+      this.isRecurringFlag = this.isRecurring
+    },
   },
 
   methods: {
@@ -548,7 +558,8 @@ export default {
       this.localSchedule = JSON.parse(JSON.stringify(deliverySchedule()))
     },
 
-    changeSchedule() {
+    changeSchedule(val) {
+      this.isRecurringFlag = val
       if (this.value.delivery_schedule) {
         this.selectedStartDate = "Select date"
         this.selectedEndDate = "Select date"
@@ -644,6 +655,7 @@ export default {
     },
 
     async restoreEngagement() {
+      this.showUpdateModal = false
       try {
         const requestPayload = { ...this.payload }
         if (requestPayload.delivery_schedule === 0) {
@@ -699,28 +711,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.btn-radio {
-  padding: 8px 16px;
-  border-radius: 4px;
-
-  &.v-radio--is-disabled {
-    border-color: var(--v-black-lighten3);
-  }
-}
-.btn-radio-inactive {
-  border: 1px solid var(--v-black-lighten3);
-  @extend .btn-radio;
-}
-.btn-radio-active {
-  border: 1px solid var(--v-primary-base);
-  @extend .btn-radio;
-}
-.radio-div {
-  margin-top: -11px !important;
-  .v-radio {
-    width: 175px;
-  }
-}
 .destinations-wrap {
   display: flex;
   align-items: center;
@@ -737,7 +727,6 @@ export default {
       .delete-icon {
         z-index: 1;
         position: absolute;
-        left: 8px;
         top: 8px;
         background: var(--v-white-base);
         display: none;
@@ -769,5 +758,38 @@ export default {
   ::v-deep .form-step__content {
     padding-top: 0px !important;
   }
+}
+.resize-destination-button {
+  width: 80px;
+  height: 24px;
+  color: transparent;
+  top: 18px;
+  position: absolute;
+  left: 820px;
+  &:hover {
+    cursor: pointer;
+  }
+}
+.not-lookalike-color {
+  color: var(--v-primary-base);
+}
+.empty-card {
+  border: 1px solid var(--v-black-lighten2) !important;
+  background: var(--v-primary-lighten1) !important;
+}
+.hover-button {
+  &:hover {
+    cursor: pointer;
+  }
+}
+.border-card {
+  border: solid 1px var(--v-primary-lighten6);
+}
+.delivery-background {
+  width: 612px;
+  border: solid 1px var(--v-black-lighten2);
+  background: #f9fafb;
+  position: relative;
+  bottom: 25px;
 }
 </style>

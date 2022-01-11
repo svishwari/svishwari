@@ -8,7 +8,9 @@
       <template #subtitle-extended>
         <tooltip :max-width="280">
           <template #label-content>
-            {{ data.delivery_schedule | DeliverySchedule }}
+            <span class="text-subtitle-1 black--text">{{
+              data.delivery_schedule | DeliverySchedule
+            }}</span>
           </template>
           <template #hover-content>
             <span v-if="!data.delivery_schedule">
@@ -36,63 +38,45 @@
       :title="summaryCards[1].title"
       :height="75"
     >
-      <template v-if="summaryCards[1].subLabel" #subtitle-extended>
+      <template #subtitle-extended>
         <span class="mr-2">
           <tooltip>
             <template #label-content>
               <span
                 data-e2e="updated-metric"
-                class="black--text text--darken-4"
+                class="text-subtitle-1 black--text"
               >
                 {{ summaryCards[1].value }}
               </span>
             </template>
             <template #hover-content>
-              {{ summaryCards[1].hoverValue | Date | Empty }}
+              {{ summaryCards[1].hoverValue }}
             </template>
           </tooltip>
-        </span>
-        <span class="avatar">
-          <avatar :name="summaryCards[1].subLabel" />
         </span>
       </template>
     </metric-card>
     <metric-card
-      class="mr-3 pt-4 shrink"
+      class="mr-3 pt-4 grow"
       :title="summaryCards[2].title"
+      max-width="100%"
       :height="75"
     >
-      <template v-if="summaryCards[2].subLabel" #subtitle-extended>
+      <template #subtitle-extended>
         <span class="mr-2">
           <tooltip>
             <template #label-content>
               <span
-                class="black--text text--darken-4"
-                data-e2e="created-metric"
+                data-e2e="updated-metric"
+                class="text-body-1 black--text text--darken-4"
               >
                 {{ summaryCards[2].value }}
               </span>
             </template>
             <template #hover-content>
-              {{ summaryCards[2].hoverValue | Date | Empty }}
+              {{ summaryCards[2].value }}
             </template>
           </tooltip>
-        </span>
-        <span class="avatar">
-          <avatar :name="summaryCards[2].subLabel" />
-        </span>
-      </template>
-    </metric-card>
-    <metric-card
-      v-if="data && data.description"
-      class="grow"
-      title=""
-      max-width="100%"
-      :height="75"
-    >
-      <template #subtitle-extended>
-        <span class="text--subtitle-1">
-          {{ summaryCards[3].title }}
         </span>
       </template>
     </metric-card>
@@ -101,7 +85,6 @@
 
 <script>
 import MetricCard from "@/components/common/MetricCard"
-import Avatar from "@/components/common/Avatar"
 import Tooltip from "@/components/common/Tooltip.vue"
 import HuxDeliveryText from "@/components/common/DatePicker/HuxDeliveryText.vue"
 
@@ -109,7 +92,6 @@ export default {
   name: "EngagementOverviewSummary",
   components: {
     MetricCard,
-    Avatar,
     Tooltip,
     HuxDeliveryText,
   },
@@ -131,36 +113,14 @@ export default {
         },
         {
           id: 2,
-          title: "Last updated",
-          // TODO: need to remove mapping to created by
-          value:
-            this.formattedDate(this.fetchKey(this.data, "update_time")) !== "-"
-              ? this.formattedDate(this.fetchKey(this.data, "update_time"))
-              : this.formattedDate(this.fetchKey(this.data, "create_time")),
-          hoverValue:
-            this.fetchKey(this.data, "update_time") !== "-"
-              ? this.fetchKey(this.data, "update_time")
-              : this.fetchKey(this.data, "create_time"),
-          subLabel:
-            this.fetchKey(this.data, "updated_by") !== "-"
-              ? this.fetchKey(this.data, "updated_by")
-              : this.fetchKey(this.data, "created_by"),
-          width: "19%",
-          minWidth: "164px",
+          title: "Target Size",
+          value: this.fetchKey(this.data, "size"),
+          subLabel: null,
         },
         {
           id: 3,
-          title: "Created",
-          value: this.formattedDate(this.fetchKey(this.data, "create_time")),
-          hoverValue: this.fetchKey(this.data, "create_time"),
-          subLabel: this.fetchKey(this.data, "created_by"),
-          width: "19%",
-          minWidth: "164px",
-        },
-        {
-          id: 4,
-          title: this.fetchKey(this.data, "description"),
-          value: null,
+          title: "Description",
+          value: this.fetchKey(this.data, "description"),
           subLabel: null,
         },
       ]
