@@ -231,6 +231,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                     api_c.STATUS: job.get(api_c.STATUS),
                     api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE, 0),
                     db_c.UPDATE_TIME: job.get(db_c.UPDATE_TIME),
+                    db_c.DELIVERY_PLATFORM_ID: job.get(
+                        db_c.DELIVERY_PLATFORM_ID
+                    ),
                 }
             )
 
