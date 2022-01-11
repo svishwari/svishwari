@@ -425,7 +425,7 @@ class TestUserRoutes(TestCase):
             api_c.LAST_NAME: "Huxley",
             api_c.EMAIL: "sh@fake.com",
             api_c.USER_ACCESS_LEVEL: "admin",
-            api_c.USER_PII_ACCESS: True,
+            api_c.USER_PII_ACCESS: False,
             api_c.REASON_FOR_REQUEST: "na",
         }
 
