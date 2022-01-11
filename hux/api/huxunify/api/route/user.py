@@ -586,7 +586,7 @@ class RequestNewUser(SwaggerView):
             "description": "Details of ticket created in JIRA.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to report issue."
+            "description": "Failed to request user."
         },
     }
     responses.update(AUTH401_RESPONSE)
