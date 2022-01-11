@@ -148,18 +148,20 @@ class Tecton:
             feature = meta_data[api_c.FEATURES]
             model = {
                 api_c.ID: meta_data[api_c.JOIN_KEYS][0],
-                api_c.LAST_TRAINED: parser.parse(feature[0]),
-                api_c.DESCRIPTION: feature[1],
-                api_c.FULCRUM_DATE: parser.parse(feature[2]),
-                api_c.LOOKBACK_WINDOW: int(feature[8]),
-                api_c.NAME: feature[4],
-                api_c.TYPE: str(feature[5]).lower(),
-                api_c.OWNER: feature[6],
+                api_c.LAST_TRAINED: parser.parse(feature[1])
+                if feature[1]
+                else None,
+                api_c.DESCRIPTION: feature[2],
+                api_c.FULCRUM_DATE: parser.parse(feature[3]),
+                api_c.LOOKBACK_WINDOW: int(feature[4]),
+                api_c.NAME: feature[5],
+                api_c.TYPE: str(feature[6]).lower(),
+                api_c.OWNER: feature[8],
                 api_c.STATUS: api_c.MODEL_STATUS_MAPPING.get(
-                    feature[9], api_c.STATUS_PENDING
+                    feature[10], api_c.STATUS_PENDING
                 ),
-                api_c.LATEST_VERSION: feature[10],
-                api_c.PREDICTION_WINDOW: int(feature[3]),
+                api_c.LATEST_VERSION: feature[11],
+                api_c.PREDICTION_WINDOW: int(feature[9]),
                 api_c.PAST_VERSION_COUNT: 0,
             }
             models.append(model)
@@ -187,16 +189,18 @@ class Tecton:
             feature = meta_data[api_c.FEATURES]
             model = {
                 api_c.ID: model_id,
-                api_c.LAST_TRAINED: parser.parse(feature[0]),
+                api_c.LAST_TRAINED: parser.parse(feature[0])
+                if feature[0]
+                else None,
                 api_c.DESCRIPTION: feature[1],
-                api_c.FULCRUM_DATE: parser.parse(feature[2]),
-                api_c.LOOKBACK_WINDOW: 7,
-                api_c.NAME: feature[5],
-                api_c.TYPE: str(feature[6]).lower(),
-                api_c.OWNER: feature[7],
-                api_c.STATUS: feature[9],
+                api_c.FULCRUM_DATE: parser.parse(feature[3]),
+                api_c.LOOKBACK_WINDOW: feature[10],
+                api_c.NAME: feature[6],
+                api_c.TYPE: str(feature[2]).lower(),
+                api_c.OWNER: feature[9],
+                api_c.STATUS: feature[11],
                 api_c.CURRENT_VERSION: meta_data[api_c.JOIN_KEYS][0],
-                api_c.PREDICTION_WINDOW: int(feature[3]),
+                api_c.PREDICTION_WINDOW: int(feature[4]),
             }
             models.append(model)
 
@@ -286,7 +290,7 @@ class Tecton:
             feature = meta_data[api_c.FEATURES]
 
             # get version based on model type and skip if not the provided version.
-            if feature[4] != model_version:
+            if feature[5] != model_version:
                 continue
 
             # grab the metrics based on model type and return.
@@ -298,10 +302,10 @@ class Tecton:
                 api_c.AUC: float(feature[0])
                 if model_type in api_c.CLASSIFICATION_MODELS
                 else metric_default_value,
-                api_c.PRECISION: float(feature[5])
+                api_c.PRECISION: float(feature[6])
                 if model_type in api_c.CLASSIFICATION_MODELS
                 else metric_default_value,
-                api_c.RECALL: float(feature[6])
+                api_c.RECALL: float(feature[7])
                 if model_type in api_c.CLASSIFICATION_MODELS
                 else metric_default_value,
                 api_c.CURRENT_VERSION: model_version,
@@ -454,14 +458,14 @@ class Tecton:
                 {
                     api_c.BUCKET: response[1],
                     api_c.ACTUAL_VALUE: latest_lift_data[0],
-                    api_c.ACTUAL_LIFT: latest_lift_data[2],
-                    api_c.PREDICTED_LIFT: latest_lift_data[3],
-                    api_c.PREDICTED_VALUE: latest_lift_data[8],
-                    api_c.PROFILE_COUNT: int(latest_lift_data[9]),
-                    api_c.ACTUAL_RATE: latest_lift_data[10],
-                    api_c.PREDICTED_RATE: latest_lift_data[11],
-                    api_c.PROFILE_SIZE_PERCENT: latest_lift_data[13] * 100
-                    if latest_lift_data[13]
+                    api_c.ACTUAL_LIFT: latest_lift_data[3],
+                    api_c.PREDICTED_LIFT: latest_lift_data[4],
+                    api_c.PREDICTED_VALUE: latest_lift_data[9],
+                    api_c.PROFILE_COUNT: int(latest_lift_data[10]),
+                    api_c.ACTUAL_RATE: latest_lift_data[11],
+                    api_c.PREDICTED_RATE: latest_lift_data[12],
+                    api_c.PROFILE_SIZE_PERCENT: latest_lift_data[14] * 100
+                    if latest_lift_data[14]
                     else 0,
                 }
             )
