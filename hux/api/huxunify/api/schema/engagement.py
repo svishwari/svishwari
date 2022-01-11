@@ -631,23 +631,23 @@ def weighted_engagement_status(engagements: list) -> list:
                 - Latest_delivery object has Status field
 
         UI needs:
-            SHow status for Engagement
+            Show status for Engagement
             Show status for audience
             Show status for audience / destination
 
         Application Logic :
             Show status for audience/destination
-                If there is atleast one delivery for the destination,
+                If there is at least one delivery for the destination,
                 engagement.audience.destination.latest_delivery SHOULD exist
                     status = latest_delivery.status
                 If not : status = NOT_DELIVERED
                 status need to be one [delivering, delivered,
                 not delivered, delivery paused, error]
             Show status for audience
-                status need to be one [delivering - 8, delivered - 10,
+                status needs to be one [delivering - 8, delivered - 10,
                 not delivered - 9, delivery paused - 7, error - 0]
                 GET all status of audience.destinations.status ->
-                A list of status value use the weighted status in
+                A list of status values use the weighted status in
                 api/constants.py to pick status with least weight
             Show status for engagement
                 status need to be one [active - 11, inactive - 5,
