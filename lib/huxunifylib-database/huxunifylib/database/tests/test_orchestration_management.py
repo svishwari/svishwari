@@ -1,5 +1,5 @@
 """Audience Management tests."""
-# pylint: disable=R0904
+# pylint: disable=too-many-public-methods
 import unittest
 
 import mongomock
