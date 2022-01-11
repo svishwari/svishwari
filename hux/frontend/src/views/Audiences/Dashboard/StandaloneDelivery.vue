@@ -32,11 +32,11 @@
         @click="deliverAll()"
       >
         <icon
-          class="mr-2"
+          class="mr-1"
           :type="
             audience.standalone_deliveries.length == 0 ? 'deliver' : 'deliver_2'
           "
-          :size="24"
+          :size="28"
           :color="
             audience.standalone_deliveries.length == 0 ? 'black' : 'primary'
           "
@@ -69,10 +69,7 @@
               :style="{ width: header.width }"
               data-e2e="map-state-list"
             >
-              <div
-                v-if="header.value == 'delivery_platform_name'"
-                class="text-body-1"
-              >
+              <div v-if="header.value == 'name'" class="text-body-1">
                 <logo
                   :type="item.delivery_platform_type"
                   :size="22"
@@ -156,7 +153,7 @@
               text
               min-width="7rem"
               height="2rem"
-              class="primary--text text-body-1"
+              class="primary--text text-body-1 mt-n1"
             >
               Destination
             </v-btn>
@@ -230,7 +227,7 @@ export default {
       columnDefs: [
         {
           text: "Destination",
-          value: "delivery_platform_name",
+          value: "name",
           width: "35%",
         },
         {
@@ -312,5 +309,8 @@ export default {
       }
     }
   }
+}
+::v-deep .theme--light.v-data-table.v-data-table--fixed-header thead th {
+  box-shadow: none !important;
 }
 </style>

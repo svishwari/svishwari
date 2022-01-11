@@ -162,6 +162,7 @@ def get_engagements_summary(
             "$addFields": {
                 "audiences.name": "$audience.name",
                 "audiences.size": "$audience.size",
+                "audiences.filters": "$audience.filters",
                 "audiences.created_by": "$audience.created_by",
                 "audiences.updated_by": "$audience.updated_by",
                 "audiences.update_time": "$audience.update_time",
@@ -206,7 +207,8 @@ def get_engagements_summary(
                 }
             }
         },
-        # add the lookalike flag, lookalike audience id and destination id
+        # add the lookalike flag, lookalike audience id, audience filters and
+        # destination id
         {
             "$addFields": {
                 "audiences.is_lookalike": {
@@ -214,6 +216,12 @@ def get_engagements_summary(
                 },
                 "audiences.id": {
                     "$ifNull": ["$audiences.id", "$audiences._id"]
+                },
+                "audiences.filters": {
+                    "$ifNull": [
+                        "$audiences.filters",
+                        "$audiences.source_audience_filters",
+                    ]
                 },
                 "audiences.destinations": {
                     "$cond": [
@@ -254,6 +262,7 @@ def get_engagements_summary(
             "$addFields": {
                 "audiences.destinations.is_ad_platform": "$destination.is_ad_platform",
                 "audiences.destinations.name": "$destination.name",
+                "audiences.destinations.category": "$destination.category",
                 "audiences.destinations.delivery_platform_type"
                 "": "$destination.delivery_platform_type",
             }
@@ -301,6 +310,7 @@ def get_engagements_summary(
                     "audience_name": "$audiences.name",
                     "audience_id": "$audiences.id",
                     "audience_size": "$audiences.size",
+                    "filters": "$audiences.filters",
                     "audience_created_by": "$audiences.created_by",
                     "audience_updated_by": "$audiences.updated_by",
                     "audience_update_time": "$audiences.update_time",
@@ -317,6 +327,7 @@ def get_engagements_summary(
                         "name": "$audiences.destinations.name",
                         "is_ad_platform": "$audiences.destinations.is_ad_platform",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
+                        "category": "$audiences.destinations.category",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "data_added": {
                             "$ifNull": [
@@ -365,6 +376,7 @@ def get_engagements_summary(
                         "id": "$_id.audience_id",
                         "name": "$_id.audience_name",
                         "size": "$_id.audience_size",
+                        "filters": "$_id.filters",
                         "created_by": "$_id.audience_created_by",
                         "updated_by": "$_id.audience_updated_by",
                         "update_time": "$_id.audience_update_time",
