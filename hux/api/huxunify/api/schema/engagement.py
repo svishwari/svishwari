@@ -652,7 +652,7 @@ def weighted_engagement_status(engagements: list) -> list:
             Show status for engagement
                 status need to be one [active - 11, inactive - 5,
                 delivering - 8, error - 0]
-                GET all status of audience.status -> A list of status value
+                GET status of each audience for this engagement -> list
                 Use the weighted status in api/constants.py to pick
                 status with least weight
                 How do we map audience status to engagement status??

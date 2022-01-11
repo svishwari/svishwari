@@ -453,6 +453,7 @@ class AudienceView(SwaggerView):
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
             # set the weighted status for the audience based on deliveries
+            # Calculate status before filtering deliveries by delivery_limit
             audience[api_c.STATUS] = weight_delivery_status(audience)
 
             # take the last X number of deliveries
