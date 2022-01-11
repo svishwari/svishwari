@@ -31,7 +31,7 @@
             v-if="
               item.title === 'Delivery schedule' ||
               item.title === 'Engagement name' ||
-              item.title === 'No. of audiences'
+              item.title === 'Audiences'
             "
           >
             <tooltip>
@@ -52,7 +52,11 @@
               :key="destination.type"
             >
               <template #label-content>
-                <logo class="mr-2" :type="destination.type" :size="20" />
+                <logo
+                  class="overlap-destination"
+                  :type="destination.type"
+                  :size="24"
+                />
               </template>
               <template #hover-content>
                 <span>{{ destination.name }}</span>
@@ -148,7 +152,7 @@ export default {
           subtitle: this.value.name,
         },
         {
-          title: "No. of audiences",
+          title: "Audiences",
           subtitle:
             this.selectedAudiences.length > 0
               ? this.selectedAudiences.length
@@ -171,3 +175,10 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.overlap-destination {
+  margin-right: -3px;
+  position: relative;
+  top: 5px;
+}
+</style>
