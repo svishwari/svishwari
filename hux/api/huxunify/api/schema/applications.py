@@ -18,7 +18,7 @@ class ApplicationsPostSchema(Schema):
 
 class ApplicationsGETSchema(Schema):
     """Applications GET Schema"""
-
+id = Str(attribute=db_c.ID, validate=validate_object_id, required=True)
     category = Str()
     type = Str()
     name = Str()

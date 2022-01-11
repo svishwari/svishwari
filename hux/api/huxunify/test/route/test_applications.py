@@ -80,7 +80,7 @@ class ApplicationsTests(TestCase):
             json=applications_request,
         )
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
     def test_success_invalid_applications(self):
         """Test get configurations."""
@@ -113,7 +113,7 @@ class ApplicationsTests(TestCase):
             json=applications_request,
         )
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
         applications_request = {
             api_c.CATEGORY: "uncategorized",

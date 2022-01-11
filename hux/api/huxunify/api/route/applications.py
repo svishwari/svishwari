@@ -76,7 +76,6 @@ class ApplicationsPostView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.APPLICATIONS_TAG]
 
     # pylint: disable=too-many-return-statements
@@ -85,7 +84,7 @@ class ApplicationsPostView(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, user: dict) -> Tuple[dict, int]:
-        """Creates a new applications.
+        """Creates a new application.
 
         ---
         security:
@@ -118,5 +117,5 @@ class ApplicationsPostView(SwaggerView):
 
         return (
             jsonify(ApplicationsGETSchema().dump(document)),
-            HTTPStatus.OK.value,
+            HTTPStatus.CREATED.value,
         )
