@@ -1848,7 +1848,8 @@ class DeleteAudienceView(SwaggerView):
         database = get_db_client()
 
         # get the audience first
-        # The code exists like this to cover scenario of two users deleting the same resource at almost the same time
+        # The code exists like this to cover scenario of two users
+        # deleting the same resource at almost the same time
         audience = cm.get_document(
             database,
             db_c.AUDIENCES_COLLECTION,
