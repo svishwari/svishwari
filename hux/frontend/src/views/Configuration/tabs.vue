@@ -7,10 +7,15 @@
           key="modules"
           class="pa-2 mr-3 text-h3 black--text text--lighten-4"
           color
+          data-e2e="moduleSolution"
         >
           Modules &amp; Solutions
         </v-tab>
-        <v-tab key="team" class="text-h3 black--text text--lighten-4">
+        <v-tab
+          key="team"
+          class="text-h3 black--text text--lighten-4"
+          data-e2e="teamMembers"
+        >
           Team members
         </v-tab>
       </div>

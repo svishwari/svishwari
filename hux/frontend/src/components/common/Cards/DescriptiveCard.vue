@@ -1,14 +1,7 @@
 <template>
   <v-card
     :outlined="disabled"
-    class="
-      descriptive-card
-      align-center
-      text-center
-      rounded-lg
-      card-space
-      mb-10
-    "
+    class="descriptive-card align-center text-center rounded-lg card-space mb-6"
     :class="[
       disabled ? 'in-active' : '',
       interactable ? 'interactable' : 'non-interactable',
@@ -78,14 +71,7 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="
-            px-3
-            d-block
-            description
-            text-body-2
-            black--text
-            text--lighten-4
-          "
+          class="px-3 d-block description text-body-2 black--text"
           :style="{
             'padding-top': !icon ? '22px' : null,
             height: descriptionHeight,

@@ -319,7 +319,6 @@ export default {
         }
 
         const newAudience = await this.addAudience(data)
-
         this.$set(this.value, newAudience.id, {
           id: newAudience.id,
           name: newAudience.name,

@@ -55,6 +55,9 @@ class AudienceDeliverySchema(Schema):
     last_delivered = DateTimeWithZ(attribute=db_c.UPDATE_TIME)
     status = fields.String()
     size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
+    delivery_platform_id = fields.String(
+        required=True, validate=validate_object_id
+    )
 
 
 class DeliveriesSchema(Schema):
