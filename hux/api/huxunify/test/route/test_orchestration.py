@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 """Purpose of this file is to house all tests related to orchestration."""
 from http import HTTPStatus
+from datetime import datetime
 from unittest import TestCase, mock
 from bson import ObjectId
 import mongomock
@@ -651,6 +652,12 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -661,7 +668,7 @@ class OrchestrationRouteTest(TestCase):
             ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
         )
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
-        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_INACTIVE)
+        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_DISABLED)
         self.assertFalse(audience[api_c.IS_LOOKALIKE])
 
         self.assertIn(api_c.DESTINATIONS, audience)
@@ -713,6 +720,12 @@ class OrchestrationRouteTest(TestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.start()
+
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/"
@@ -795,6 +808,12 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{lookalike_audience[db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -848,6 +867,44 @@ class OrchestrationRouteTest(TestCase):
 
     def test_get_audiences(self):
         """Test get all audiences."""
+
+        #  mock the return value for this db function since mongomock throwns
+        #  the following error when the pipeline containing $redact is executed
+        #  "NotImplementedError: Although '$redact' is a valid operator for the
+        #  aggregation pipeline, it is currently not implemented in Mongomock."
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[
+                {
+                    api_c.AUDIENCE_ID: self.audiences[0][db_c.ID],
+                    api_c.DELIVERIES: [
+                        {
+                            api_c.STATUS: "Delivered",
+                            db_c.AUDIENCE_LAST_DELIVERED: "2022-01-10T15:07:07.084Z",
+                            api_c.DELIVERY_PLATFORM_TYPE: "facebook",
+                            api_c.SIZE: 378,
+                            "delivery_platform_name": "Facebook",
+                            db_c.UPDATE_TIME: datetime.strptime(
+                                "2022-01-10 14:48:47.878",
+                                "%Y-%m-%d %H:%M:%S.%f",
+                            ),
+                        },
+                        {
+                            api_c.STATUS: "Delivered",
+                            db_c.AUDIENCE_LAST_DELIVERED: "2022-01-10T14:48:47.878Z",
+                            api_c.DELIVERY_PLATFORM_TYPE: "sfmc",
+                            api_c.SIZE: 378,
+                            "delivery_platform_name": "SFMC",
+                            db_c.UPDATE_TIME: datetime.strptime(
+                                "2022-01-10 14:48:47.878",
+                                "%Y-%m-%d %H:%M:%S.%f",
+                            ),
+                        },
+                    ],
+                }
+            ],
+        ).start()
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}",
@@ -1047,6 +1104,12 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{lookalike_audience_id}",
             headers=t_c.STANDARD_HEADERS,
@@ -1153,6 +1216,12 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -1190,6 +1259,12 @@ class OrchestrationRouteTest(TestCase):
             FacebookConnector,
             "get_new_lookalike_audience",
             return_value="LA_ID_12345",
+        ).start()
+
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
         ).start()
 
         response = self.test_client.post(
@@ -1400,6 +1475,12 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{self.audiences[1][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -1453,6 +1534,12 @@ class OrchestrationRouteTest(TestCase):
             component_id=self.audiences[0][db_c.ID],
         )
 
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -1462,6 +1549,12 @@ class OrchestrationRouteTest(TestCase):
 
     def test_get_audiences_with_valid_filters(self):
         """Test get all audiences with valid filters."""
+
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&"
@@ -1483,6 +1576,12 @@ class OrchestrationRouteTest(TestCase):
     def test_get_lookalike_audiences_with_valid_filters(self):
         """Test get all audiences with valid filters."""
 
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&",
             headers=t_c.STANDARD_HEADERS,
@@ -1501,6 +1600,12 @@ class OrchestrationRouteTest(TestCase):
 
     def test_get_worked_by_audiences_with_valid_filters(self):
         """Test get all audiences with valid filters."""
+
+        mock.patch(
+            "huxunifylib.database.engagement_audience_management."
+            "get_all_engagement_audience_deliveries",
+            return_value=[],
+        ).start()
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}?{api_c.WORKED_BY}=True",
