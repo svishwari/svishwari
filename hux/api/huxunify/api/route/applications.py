@@ -2,6 +2,8 @@
 """Paths for applications API"""
 from http import HTTPStatus
 from typing import Tuple
+
+from bson import ObjectId
 from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
 
@@ -113,9 +115,7 @@ class ApplicationsPostView(SwaggerView):
             application,
             user[api_c.USER_NAME],
         )
-        logger.info(
-            "Successfully created application %s.", application.get(db_c.NAME)
-        )
+        logger.info("Successfully created application %s.", application.get(db_c.NAME))
 
         return (
             jsonify(ApplicationsGETSchema().dump(document)),
@@ -186,13 +186,21 @@ class ApplicationsPatchView(SwaggerView):
         )
         database = get_db_client()
 
+        if not collection_management.get_document(
+            database, db_c.APPLICATIONS_COLLECTION, {db_c.ID: ObjectId(application_id)}
+        ):
+            return {
+                "message": f"Application {application_id} not found"
+            }, HTTPStatus.NOT_FOUND
+
         updated_application = collection_management.update_document(
             database,
             db_c.APPLICATIONS_COLLECTION,
-            application_id,
+            ObjectId(application_id),
             request.get_json(),
             user[api_c.USER_NAME],
         )
+
         logger.info(
             "Successfully updated application %s.",
             updated_application.get(db_c.NAME),
