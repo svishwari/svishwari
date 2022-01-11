@@ -506,12 +506,6 @@ class ModelOverview(SwaggerView):
                 # if model versions not found, return not found.
                 return {}, HTTPStatus.NOT_FOUND
 
-            shap_data = get_required_shap_data(
-                api_c.MODEL_ONE_SHAP_DATA
-                if model_id == "17e1565dbd2821adaf88fd26658744aba9419a6f"
-                else api_c.MODEL_TWO_SHAP_DATA,
-            )
-
             # generate the output
             overview_data = {
                 api_c.MODEL_ID: version.get(api_c.ID),
@@ -522,7 +516,11 @@ class ModelOverview(SwaggerView):
                     api_c.NAME, db_c.CATEGORY_UNKNOWN
                 ),
                 api_c.DESCRIPTION: version.get(api_c.DESCRIPTION, ""),
-                api_c.MODEL_SHAP_DATA: shap_data,
+                api_c.MODEL_SHAP_DATA: get_required_shap_data(
+                    api_c.MODEL_ONE_SHAP_DATA
+                    if model_id == "17e1565dbd2821adaf88fd26658744aba9419a6f"
+                    else api_c.MODEL_TWO_SHAP_DATA,
+                ),
                 api_c.PERFORMANCE_METRIC: performance_metrics,
             }
 
