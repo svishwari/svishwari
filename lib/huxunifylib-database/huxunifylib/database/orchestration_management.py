@@ -821,7 +821,7 @@ def append_destination_to_standalone_audience(
         {
             "$push": {"destinations": destination},
             "$set": {
-                db_c.UPDATE_TIME: datetime.datetime.now(),
+                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 db_c.UPDATED_BY: user_name,
             },
         },
