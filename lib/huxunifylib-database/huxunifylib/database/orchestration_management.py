@@ -854,6 +854,9 @@ def remove_destination_from_audience(
 
     Returns:
         dict: updated audience object.
+
+    Raises:
+        TypeError: Error user name is not a string.
     """
 
     if not isinstance(user_name, str):
