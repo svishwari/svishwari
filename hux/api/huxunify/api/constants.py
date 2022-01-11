@@ -193,6 +193,7 @@ DAY_OF_MONTH_NAME_LIST = [
 ]
 DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
+DESTINATION_CHECK_CRON = "*/15"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
@@ -664,6 +665,14 @@ DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
 GENERIC_DESTINATION = "generic_destination"
 DESTINATION_CATEGORIES = "destination_categories"
 DESTINATION_AUDIENCES = "destination_audiences"
+
+# Map db status values to api status values
+DESTINATION_STATUS_MAPPING = {
+    db_c.STATUS_SUCCEEDED: STATUS_ACTIVE,
+    db_c.STATUS_PENDING: STATUS_PENDING,
+    db_c.STATUS_FAILED: STATUS_ERROR,
+    db_c.STATUS_REQUESTED: STATUS_REQUESTED,
+}
 
 # Engagement fields
 ENGAGEMENT = "engagement"
