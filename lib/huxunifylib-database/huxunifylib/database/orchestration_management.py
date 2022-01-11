@@ -835,3 +835,52 @@ def append_destination_to_standalone_audience(
     )
     audience[db_c.DESTINATIONS] = destinations_list
     return audience
+
+
+def remove_destination_from_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    user_name: str,
+) -> dict:
+    """A function to remove destination from audience.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        destination_id (ObjectId): MongoDB ID of the destination to be removed.
+        user_name (str): Name of the user removing the destination from the
+            audience.
+
+    Returns:
+        dict: updated audience object.
+    """
+
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
+
+    audience = collection.find_one_and_update(
+        {
+            db_c.ID: audience_id,
+        },
+        {
+            "$pull": {"destinations": {db_c.OBJECT_ID: destination_id}},
+            "$set": {
+                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                db_c.UPDATED_BY: user_name,
+            },
+        },
+        return_document=pymongo.ReturnDocument.AFTER,
+    )
+
+    destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
+
+    destinations_list = destination_management.get_delivery_platforms_by_id(
+        database, destination_ids
+    )
+    audience[db_c.DESTINATIONS] = destinations_list
+    return audience

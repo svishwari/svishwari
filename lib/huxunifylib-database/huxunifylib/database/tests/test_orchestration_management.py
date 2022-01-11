@@ -684,3 +684,44 @@ class TestAudienceManagement(unittest.TestCase):
             destination[db_c.OBJECT_ID],
             [x[db_c.ID] for x in doc[db_c.DESTINATIONS]],
         )
+
+    def test_remove_destination_from_audience(self):
+        """Test to remove destination from audience."""
+        set_audience = am.create_audience(
+            self.database,
+            "My Audience",
+            self.audience_filters,
+            self.user_name,
+        )
+        delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            {
+                "facebook_access_token": "path1",
+                "facebook_app_secret": "path2",
+                "facebook_app_id": "path3",
+                "facebook_ad_account_id": "path4",
+            },
+        )
+        destination = {
+            "id": delivery_platform_doc[db_c.ID],
+        }
+        am.append_destination_to_standalone_audience(
+            database=self.database,
+            audience_id=set_audience[db_c.ID],
+            destination=destination,
+            user_name=self.user_name,
+        )
+
+        doc = am.remove_destination_from_audience(
+            database=self.database,
+            audience_id=set_audience[db_c.ID],
+            destination_id=delivery_platform_doc[db_c.ID],
+            user_name=self.user_name,
+        )
+
+        self.assertNotIn(
+            delivery_platform_doc[db_c.ID],
+            [x[db_c.ID] for x in doc[db_c.DESTINATIONS]],
+        )
