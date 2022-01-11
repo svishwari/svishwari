@@ -534,6 +534,8 @@ class EngagementDestinationSchema(Schema):
     destination_audiences = fields.List(
         fields.Nested(EngagementDestinationAudienceSchema)
     )
+    type = fields.String()
+    link = fields.String(default=None)
 
 
 class EngagementDestinationCategorySchema(Schema):

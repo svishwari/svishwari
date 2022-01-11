@@ -21,6 +21,9 @@
             :class="addBoxShadow ? 'logo-box-shadow br-50' : ''"
           />
         </div>
+        <div v-if="item.status">
+          <status :status="item.status" :icon-size="21" collapsed></status>
+        </div>
         <span
           :class="{
             'black--text': item.disabled,
@@ -40,10 +43,12 @@
 <script>
 import Icon from "@/components/common/Icon"
 import Logo from "@/components/common/Logo"
+import Status from "@/components/common/Status.vue"
+
 export default {
   name: "Breadcrumb",
 
-  components: { Icon, Logo },
+  components: { Icon, Logo, Status },
 
   props: {
     items: {
