@@ -1,7 +1,6 @@
 # pylint: disable=unused-argument
 """Purpose of this script is for housing the
 decision routes for the API"""
-import pathlib
 from random import uniform, randint
 from datetime import datetime, timedelta
 from http import HTTPStatus
@@ -28,7 +27,7 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
-    read_csv_shap_data,
+    get_required_shap_data,
 )
 from huxunify.api.schema.model import (
     ModelSchema,
@@ -46,7 +45,6 @@ from huxunify.api.schema.utils import (
     FAILED_DEPENDENCY_424_RESPONSE,
     EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE,
 )
-from huxunify.api import stubbed_data
 from huxunify.api import constants as api_c
 
 # setup the models blueprint
@@ -508,16 +506,6 @@ class ModelOverview(SwaggerView):
                 # if model versions not found, return not found.
                 return {}, HTTPStatus.NOT_FOUND
 
-            stub_shap_data = (
-                pathlib.Path(stubbed_data.__file__).parent / "shap_data.csv"
-            )
-            shap_data = read_csv_shap_data(
-                str(stub_shap_data),
-                api_c.MODEL_ONE_SHAP_DATA
-                if model_id == "17e1565dbd2821adaf88fd26658744aba9419a6f"
-                else api_c.MODEL_TWO_SHAP_DATA,
-            )
-
             # generate the output
             overview_data = {
                 api_c.MODEL_ID: version.get(api_c.ID),
@@ -528,7 +516,11 @@ class ModelOverview(SwaggerView):
                     api_c.NAME, db_c.CATEGORY_UNKNOWN
                 ),
                 api_c.DESCRIPTION: version.get(api_c.DESCRIPTION, ""),
-                api_c.MODEL_SHAP_DATA: shap_data,
+                api_c.MODEL_SHAP_DATA: get_required_shap_data(
+                    api_c.MODEL_ONE_SHAP_DATA
+                    if model_id == "17e1565dbd2821adaf88fd26658744aba9419a6f"
+                    else api_c.MODEL_TWO_SHAP_DATA,
+                ),
                 api_c.PERFORMANCE_METRIC: performance_metrics,
             }
 

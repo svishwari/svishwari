@@ -133,7 +133,7 @@
             color="black-darken4"
             class="mr-2"
           />
-          <span class="text-h5 black--text text--darken-4">
+          <span class="text-h3 black--text text--darken-4">
             Audience performance
           </span>
         </div>

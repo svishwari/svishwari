@@ -152,6 +152,11 @@ export default {
       required: false,
       default: false,
     },
+    destinationId: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
 
   data() {
@@ -258,7 +263,8 @@ export default {
           id: audience.id,
           name: audience.name,
           size: audience.size,
-          destinations: [],
+          destinations:
+            this.destinationId != "" ? [{ id: this.destinationId }] : [],
         }
       )
     },

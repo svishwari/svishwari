@@ -28,12 +28,14 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     get_user_from_db,
+    create_description_for_user_request,
 )
 from huxunify.api.schema.user import (
     UserSchema,
     UserPatchSchema,
     TicketSchema,
     TicketGetSchema,
+    NewUserRequest,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -536,6 +538,90 @@ class CreateTicket(SwaggerView):
             description=(
                 f"{issue_details[api_c.DESCRIPTION]}\n\n"
                 f"Reported By: {user[api_c.USER_NAME]}\nEnvironment: {request.url_root}"
+            ),
+        )
+
+        create_notification(
+            database=get_db_client(),
+            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            description=f"{user[api_c.USER_NAME]} created a new issue"
+            f"{new_issue.get(api_c.KEY)} in JIRA.",
+            category=api_c.TICKET_TYPE_BUG,
+            username=user[api_c.USER_NAME],
+        )
+        return (
+            TicketGetSchema().dump(new_issue),
+            HTTPStatus.CREATED,
+        )
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/{api_c.REQUEST_NEW_USER}",
+    "RequestNewUser",
+)
+class RequestNewUser(SwaggerView):
+    """Request new user class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Details of user to be given access.",
+            "example": {
+                api_c.FIRST_NAME: "Sarah",
+                api_c.LAST_NAME: "Huxley",
+                api_c.EMAIL: "sh@fake.com",
+                api_c.USER_ACCESS_LEVEL: "admin",
+                api_c.USER_PII_ACCESS: False,
+                api_c.REASON_FOR_REQUEST: "New member to our team",
+            },
+        }
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": TicketGetSchema,
+            "description": "Details of ticket created in JIRA.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to request user."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels([api_c.ADMIN_LEVEL])
+    def post(self, user: dict) -> Tuple[dict, int]:
+        """Create a user request ticket in JIRA
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
+
+        Returns:
+            Tuple[dict, int]: dict of message, HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
+        user_request_details = NewUserRequest().load(request.get_json())
+        user_request_details.update(
+            {api_c.REQUESTED_BY: user.get(api_c.USER_NAME, "")}
+        )
+        # JIRA automated trigger activated when it sees '[NEW_USER_REQUEST]'
+        # in the title
+        new_issue = JiraConnection().create_jira_issue(
+            issue_type=api_c.TASK,
+            summary=f"{api_c.NEW_USER_REQUEST_PREFIX} for "
+            f"{user_request_details.get(api_c.EMAIL, '')}",
+            description=create_description_for_user_request(
+                **user_request_details
             ),
         )
 

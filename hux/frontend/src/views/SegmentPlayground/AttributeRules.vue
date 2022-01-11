@@ -88,7 +88,6 @@
                     required
                     @blur="triggerSizing(condition)"
                   />
-
                   <hux-autocomplete
                     v-if="
                       condition.operator && condition.attribute.type === 'list'
@@ -96,7 +95,9 @@
                     v-model="condition.text"
                     :options="listOptions(condition)"
                     data-e2e="auto-complete-btn"
+                    :loader="loaderValue"
                     @change="triggerSizing(condition)"
+                    @search-update="autoSearchFunc"
                   />
                   <div
                     v-if="condition.attribute && !isTextORSelect(condition)"
@@ -273,7 +274,12 @@ export default {
         width: 0,
         height: 0,
       },
+      currentData: [],
+      currenCitytData: [],
+      selectedValue: null,
+      params: {},
       notHistogramKeys: ["gender", "email", "Country", "State", "City", "Zip"],
+      loaderValue: false,
     }
   },
   computed: {
@@ -307,6 +313,7 @@ export default {
     ...mapActions({
       getRealtimeSize: "audiences/fetchFilterSize",
       getAudiencesRules: "audiences/fetchConstants",
+      getAudiencesRulesByFields: "audiences/rulesByFields",
       attributesData: "audiences/getDensityChartData",
     }),
     sliderLabel(attribute, value) {
@@ -379,7 +386,13 @@ export default {
       } else return []
     },
     listOptions(condition) {
-      return condition.attribute.options
+      if (condition.attribute.key === "City") {
+        return this.currenCitytData
+      } else if (condition.attribute.key === "Zip") {
+        return this.currentData
+      } else {
+        return condition.attribute.options
+      }
     },
     operatorOptions(condition) {
       // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
@@ -444,7 +457,6 @@ export default {
         condition.awaitingSize = false
       }
     },
-
     async triggerSizingForRule(rule) {
       for (let i = 0; i < rule.conditions.length; i++) {
         let triggerOverallSize = rule.conditions.length - 1 === i ? true : false
@@ -509,6 +521,7 @@ export default {
       let dataItem = item
       condition[type] = item
       if (type === "attribute") {
+        this.selectedValue = item.key
         if (!this.notHistogramKeys.includes(item.key)) {
           let data = await this.attributesData({
             field: item.modelIcon ? "model" : item.key,
@@ -568,6 +581,38 @@ export default {
       newSection.id = Math.floor(Math.random() * 1024).toString(16)
       this.rules.push(newSection)
       this.addNewCondition(newSection.id)
+    },
+    async autoSearchFunc(value) {
+      if (value !== null && value !== "") {
+        if (this.selectedValue === "Zip" || this.selectedValue === "City") {
+          this.params.fieldType =
+            this.selectedValue === "Zip"
+              ? "zip_code"
+              : this.selectedValue.toLowerCase()
+          this.params.key = value
+          if (value.length > 2 && value.length <= 8) {
+            this.loaderValue = true
+            let data = await this.getAudiencesRulesByFields(this.params)
+            if (this.selectedValue === "Zip") {
+              this.loaderValue = false
+              this.currentData = [...data]
+            } else if (this.selectedValue === "City") {
+              this.loaderValue = false
+              this.currenCitytData = [...data]
+            }
+          }
+        }
+      }
+      if (value === null || value === "" || value.length < 3) {
+        if (this.selectedValue === "Zip") {
+          this.currentData = []
+        } else if (this.selectedValue === "City") {
+          this.currenCitytData = []
+        } else {
+          this.currentData = []
+          this.currenCitytData = []
+        }
+      }
     },
   },
 }
