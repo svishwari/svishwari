@@ -28,7 +28,6 @@ from huxunify.api import constants as api_c
 
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
-    FAILED_DEPENDENCY_424_RESPONSE,
 )
 
 # setup the applications blueprint
@@ -79,7 +78,6 @@ class ApplicationsPostView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.APPLICATIONS_TAG]
 
     # pylint: disable=too-many-return-statements
@@ -88,7 +86,7 @@ class ApplicationsPostView(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, user: dict) -> Tuple[dict, int]:
-        """Creates a new applications.
+        """Creates a new application.
 
         ---
         security:
@@ -107,7 +105,7 @@ class ApplicationsPostView(SwaggerView):
         database = get_db_client()
 
         application[api_c.STATUS] = api_c.STATUS_PENDING
-        application[api_c.IS_ADDED] = True
+        application[db_c.ADDED] = True
 
         document = collection_management.create_document(
             database,
@@ -115,11 +113,13 @@ class ApplicationsPostView(SwaggerView):
             application,
             user[api_c.USER_NAME],
         )
-        logger.info("Successfully created application %s.", application.get(db_c.NAME))
+        logger.info(
+            "Successfully created application %s.", application.get(db_c.NAME)
+        )
 
         return (
             jsonify(ApplicationsGETSchema().dump(document)),
-            HTTPStatus.OK.value,
+            HTTPStatus.CREATED.value,
         )
 
 

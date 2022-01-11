@@ -20,7 +20,6 @@ OBJECT_ID = "id"
 CONFIGURATION = "configuration"
 SIZE = "size"
 DOCUMENTS = "documents"
-IS_ADDED = "is_added"
 
 # general fields
 AGE = "age"
@@ -549,7 +548,7 @@ ALLOWED_FIELDS = {
         CATEGORY,
         URL,
         STATUS,
-        IS_ADDED,
+        ADDED,
     ],
 }
 
