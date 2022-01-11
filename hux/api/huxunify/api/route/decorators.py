@@ -158,7 +158,7 @@ def requires_access_policy(
     Example: @requires_access_policy()
 
     Args:
-        access_rule (str): The rule to be evaluated before grating access to
+        access_rule (str): The rule to be evaluated before granting access to
             the resource.
         resource_attributes (dict): Identifying characteristics of resource.
         access_levels (list): list of access levels.

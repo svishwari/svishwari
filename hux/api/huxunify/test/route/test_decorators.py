@@ -20,6 +20,7 @@ class TestDecorators(TestCase):
     """Purpose of this class is to test Decorators."""
 
     def setUp(self) -> None:
+        """Initialize resources before each test."""
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
@@ -60,6 +61,11 @@ class TestDecorators(TestCase):
             api_c.USER_PII_ACCESS: True,
             db_c.USER_DISPLAY_NAME: self.user_name,
         }
+
+    def tearDown(self) -> None:
+        """Tear down after tests."""
+
+        mock.patch.stopall()
 
     def test_requires_access_policy(self):
         """Test requires_access_policy decorators"""
