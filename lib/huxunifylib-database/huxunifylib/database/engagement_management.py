@@ -263,6 +263,7 @@ def get_engagements_summary(
                 "audiences.destinations.is_ad_platform": "$destination.is_ad_platform",
                 "audiences.destinations.name": "$destination.name",
                 "audiences.destinations.category": "$destination.category",
+                "audiences.destinations.link": "$destination.link",
                 "audiences.destinations.delivery_platform_type"
                 "": "$destination.delivery_platform_type",
             }
@@ -327,6 +328,7 @@ def get_engagements_summary(
                         "name": "$audiences.destinations.name",
                         "is_ad_platform": "$audiences.destinations.is_ad_platform",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
+                        "link": "$audiences.destinations.link",
                         "category": "$audiences.destinations.category",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "data_added": {
