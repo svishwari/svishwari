@@ -123,7 +123,7 @@ def create_app() -> Flask:
         )
         scheduler.add_job(
             id="process_destination_validations",
-            func=run_scheduled_destination_checks(),
+            func=run_scheduled_destination_checks,
             trigger="cron",
             minute=api_c.DESTINATION_CHECK_CRON,
             args=[get_db_client()],
