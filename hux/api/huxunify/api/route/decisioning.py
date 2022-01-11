@@ -173,89 +173,6 @@ class ModelsView(SwaggerView):
         )
 
 
-@add_view_to_blueprint(
-    model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<model_id>",
-    "ModelVersionView",
-)
-class ModelVersionView(SwaggerView):
-    """Model Version Class."""
-
-    parameters = [
-        {
-            "name": api_c.MODEL_ID,
-            "description": "Model id",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "1",
-        },
-        {
-            "name": api_c.VERSION,
-            "description": "Version id",
-            "type": "string",
-            "in": "query",
-            "required": False,
-            "example": "1.0.0",
-        },
-    ]
-    responses = {
-        HTTPStatus.OK.value: {
-            "schema": ModelVersionSchema,
-            "description": "Model Schema.",
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
-    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
-    tags = [api_c.MODELS_TAG]
-
-    # pylint: disable=no-self-use
-    @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
-        """Retrieves model version.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Args:
-            model_id (str): Model ID.
-            user (dict): User object
-
-        Returns:
-            Tuple[List[dict], int]: Model version,
-                HTTP status code.
-        """
-
-        filters = {db_c.MODEL_ID: model_id}
-        if request.args.get(api_c.VERSION) is not None:
-            filters[db_c.VERSION] = request.args.get(api_c.VERSION)
-
-        models = collection_management.get_documents(
-            get_db_client(), db_c.MODELS_COLLECTION, filters
-        )
-
-        if models.get(db_c.DOCUMENTS):
-            model_version = models.get(db_c.DOCUMENTS)[0]
-        else:
-            version_history = Tecton().get_model_version_history(model_id)
-            model_version = (
-                next(
-                    x
-                    for x in version_history
-                    if x[api_c.VERSION] == request.args.get(api_c.VERSION)
-                )
-                if request.args.get(api_c.VERSION) is not None
-                else version_history[0]
-            )
-        return (
-            jsonify(ModelVersionSchema().dump(model_version)),
-            HTTPStatus.OK.value,
-        )
-
-
 @add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "SetModelStatus")
 class SetModelStatus(SwaggerView):
     """Class to request a model."""
@@ -536,7 +453,24 @@ class ModelVersionHistoryView(SwaggerView):
 class ModelOverview(SwaggerView):
     """Model Overview Class."""
 
-    parameters = api_c.MODEL_ID_PARAMS
+    parameters = [
+        {
+            "name": api_c.MODEL_ID,
+            "description": "Model id",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "1",
+        },
+        {
+            "name": api_c.VERSION,
+            "description": "Version id",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "1.0.0",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model features.",
@@ -585,7 +519,18 @@ class ModelOverview(SwaggerView):
                     version[api_c.TYPE],
                     current_version,
                 )
-                if performance_metrics:
+
+                if request.args.get(api_c.VERSION) is not None:
+                    if (
+                        current_version == request.args.get(api_c.VERSION)
+                        and performance_metrics
+                    ):
+                        break
+
+                if (
+                    request.args.get(api_c.VERSION) is None
+                    and performance_metrics
+                ):
                     break
             else:
                 # if model versions not found, return not found.
