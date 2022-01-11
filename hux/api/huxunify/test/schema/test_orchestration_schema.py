@@ -37,6 +37,7 @@ class OrchestrationSchemaTest(TestCase):
                     db_c.AUDIENCE_LAST_DELIVERED: datetime.strftime(
                         datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
                     ),
+                    db_c.DELIVERY_PLATFORM_ID: "60b9601a6021710aa146df2f",
                 },
             ],
             db_c.SIZE: 1000,
@@ -80,6 +81,7 @@ class OrchestrationSchemaTest(TestCase):
                     db_c.AUDIENCE_LAST_DELIVERED: datetime.strftime(
                         datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
                     ),
+                    db_c.DELIVERY_PLATFORM_ID: "60b9601a6021710aa146df2f",
                 },
             ],
             db_c.SIZE: 1000,
@@ -339,6 +341,7 @@ class OrchestrationSchemaTest(TestCase):
             db_c.AUDIENCE_LAST_DELIVERED: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
+            db_c.DELIVERY_PLATFORM_ID: "60b9601a6021710aa146df2f",
         }
 
         self.assertFalse(
