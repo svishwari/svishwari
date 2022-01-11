@@ -248,6 +248,8 @@ export default {
 
     async addNewEngagement() {
       try {
+        this.flagForModal = true
+        this.navigateTo = true
         const engagement = await this.addEngagement(this.payload)
         this.$router.push({
           name: "EngagementDashboard",
@@ -261,6 +263,8 @@ export default {
 
     async deliverNewEngagement() {
       try {
+        this.flagForModal = true
+        this.navigateTo = true
         const engagement = await this.addEngagement(this.payload)
         await this.deliverEngagement(engagement.id)
         this.$router.push({
