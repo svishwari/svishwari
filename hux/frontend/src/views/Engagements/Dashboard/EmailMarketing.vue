@@ -91,7 +91,7 @@ export default {
         {
           text: "Audiences",
           value: "name",
-          width: "50%",
+          width: "30%",
         },
         {
           text: "Status",

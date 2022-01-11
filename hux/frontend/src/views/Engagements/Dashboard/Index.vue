@@ -11,7 +11,7 @@
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
-    <div v-if="!loading" class="inner-wrap px-15">
+    <div v-if="!loading" class="inner-wrap px-8">
       <tabs
         :data="engagementList"
         :loading-audiences="loadingAudiences"
@@ -181,7 +181,6 @@ export default {
       audiencePerformanceAds: "engagements/audiencePerformanceByAds",
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
       getEngagementObject: "engagements/engagement",
-      getDestination: "destinations/single",
     }),
 
     breadcrumbItems() {
@@ -233,7 +232,6 @@ export default {
       clearFavorite: "users/clearFavorite",
       updateEngagement: "engagements/updateEngagement",
       deliverEngagementApi: "engagements/deliver",
-      callDestination: "destinations/get",
     }),
     async refreshEntity() {
       this.loading = true
@@ -490,8 +488,7 @@ export default {
     async triggerOverviewDestinationAction(event) {
       switch (event.target.title.toLowerCase()) {
         case "open destination":
-          await this.callDestination(event.data.id)
-          window.open(this.getDestination(event.data.id).link)
+          window.open(event.data.link)
           break
         case "edit delivery schedule":
           this.confirmDialog.icon = "edit"
