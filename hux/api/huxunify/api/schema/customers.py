@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-few-public-methods
 """Schemas for the Customers API"""
 from flask_marshmallow import Schema
 from marshmallow import post_dump
