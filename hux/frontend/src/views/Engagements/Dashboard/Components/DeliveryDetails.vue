@@ -2,7 +2,7 @@
   <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title v-if="showTitle" class="d-flex justify-space-between">
       <span class="d-flex">
-        <icon :type="section.delivery_platform_type" :size="26" class="mr-2" />
+        <icon :type="section.type" :size="26" class="mr-2" />
         <router-link
           :to="{
             name: routeName,
