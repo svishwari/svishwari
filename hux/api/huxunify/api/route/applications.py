@@ -25,7 +25,6 @@ from huxunify.api import constants as api_c
 
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
-    FAILED_DEPENDENCY_424_RESPONSE,
 )
 
 # setup the applications blueprint
@@ -103,7 +102,7 @@ class ApplicationsPostView(SwaggerView):
         database = get_db_client()
 
         application[api_c.STATUS] = api_c.STATUS_PENDING
-        application[api_c.IS_ADDED] = True
+        application[db_c.ADDED] = True
 
         document = collection_management.create_document(
             database,

@@ -9,6 +9,10 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.user_management import (
     set_user,
 )
+from huxunifylib.database.collection_management import (
+    get_documents,
+)
+from huxunifylib.database import constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
@@ -81,6 +85,23 @@ class ApplicationsTests(TestCase):
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
+
+        applications = get_documents(
+            self.database, db_c.APPLICATIONS_COLLECTION
+        )
+        self.assertIsNotNone(applications[db_c.DOCUMENTS][0])
+        self.assertEqual(
+            applications[db_c.DOCUMENTS][0][api_c.NAME],
+            applications_request[api_c.NAME],
+        )
+        self.assertEqual(
+            applications[db_c.DOCUMENTS][0][api_c.CATEGORY],
+            applications_request[api_c.CATEGORY],
+        )
+        self.assertEqual(
+            applications[db_c.DOCUMENTS][0][api_c.TYPE],
+            applications_request[api_c.TYPE],
+        )
 
     def test_success_invalid_applications(self):
         """Test get configurations."""
