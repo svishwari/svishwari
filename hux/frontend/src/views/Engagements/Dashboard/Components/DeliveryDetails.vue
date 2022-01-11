@@ -2,7 +2,7 @@
   <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title v-if="showTitle" class="d-flex justify-space-between">
       <span class="d-flex">
-        <status status="Active" :icon-size="19" collapsed class="float-left" />
+        <icon :type="section.delivery_platform_type" :size="26" class="mr-2" />
         <router-link
           :to="{
             name: routeName,
@@ -87,7 +87,6 @@ import { getApproxSize } from "@/utils"
 import DeliveryTable from "./DeliveryTable.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon.vue"
-import Status from "@/components/common/Status.vue"
 
 export default {
   name: "DeliveryDetails",
@@ -95,7 +94,6 @@ export default {
     DeliveryTable,
     Tooltip,
     Icon,
-    Status,
   },
 
   props: {
