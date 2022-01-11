@@ -62,6 +62,7 @@ class ApplicationsPostView(SwaggerView):
                 api_c.NAME: "Custom Application",
                 api_c.URL: "URL_Link",
             },
+            "required": True,
         },
     ]
 
@@ -133,6 +134,14 @@ class ApplicationsPatchView(SwaggerView):
 
     parameters = [
         {
+            "name": api_c.APPLICATION_ID,
+            "description": "Application ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
@@ -144,15 +153,15 @@ class ApplicationsPatchView(SwaggerView):
     ]
 
     responses = {
-        HTTPStatus.CREATED.value: {
+        HTTPStatus.OK.value: {
             "schema": ApplicationsGETSchema,
-            "description": "Application created.",
+            "description": "Application patched.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to create application.",
+            "description": "Failed to patch application.",
         },
-        HTTPStatus.FORBIDDEN.value: {
-            "description": "Application already exists.",
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "Failed to find application.",
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -178,7 +187,7 @@ class ApplicationsPatchView(SwaggerView):
             Tuple[dict, int]: Updated application, HTTP status code.
         """
         if not request.get_json():
-            logger.info("Could not patch destination.")
+            logger.info("Could not patch application.")
             return {"message": "No body provided."}, HTTPStatus.BAD_REQUEST
 
         ApplicationsPatchSchema().validate(
@@ -187,7 +196,9 @@ class ApplicationsPatchView(SwaggerView):
         database = get_db_client()
 
         if not collection_management.get_document(
-            database, db_c.APPLICATIONS_COLLECTION, {db_c.ID: ObjectId(application_id)}
+            database,
+            db_c.APPLICATIONS_COLLECTION,
+            {db_c.ID: ObjectId(application_id)},
         ):
             return {
                 "message": f"Application {application_id} not found"
