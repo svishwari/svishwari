@@ -47,6 +47,7 @@ CAMPAIGN_ACTIVITY_COLLECTION = "campaign_activity"
 USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
+APPLICATIONS_COLLECTION = "applications"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 MODELS_COLLECTION = "models"
@@ -184,6 +185,7 @@ MARKETING = "Marketing"
 COMMERCE = "Commerce"
 ANALYTICS = "Analytics"
 SURVEY = "Survey"
+URL = "url"
 
 STATUS_PENDING = "Pending"
 STATUS_REQUESTED = "Requested"
@@ -512,6 +514,10 @@ REQUIRED_FIELDS = {
         ADDED,
         ENABLED,
     ],
+    APPLICATIONS_COLLECTION: [
+        NAME,
+        CATEGORY,
+    ],
 }
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
@@ -536,6 +542,14 @@ ALLOWED_FIELDS = {
         ADDED,
         ENABLED,
     ],
+    APPLICATIONS_COLLECTION: [
+        NAME,
+        TYPE,
+        CATEGORY,
+        URL,
+        STATUS,
+        ADDED,
+    ],
 }
 
 # Allowed collections
@@ -546,6 +560,7 @@ ALLOWED_COLLECTIONS = [
     MODELS_COLLECTION,
     AUDIENCES_COLLECTION,
     ENGAGEMENTS_COLLECTION,
+    APPLICATIONS_COLLECTION,
 ]
 
 # 30 minutes.

@@ -98,6 +98,7 @@ CLIENT_ACCOUNT = "client_account"
 USE_CASE = "use_case"
 FIELD_TYPE = "field_type"
 INTERVAL = "interval"
+URL = "url"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -1327,6 +1328,11 @@ MODELS_STUB = [
 CONFIGURATIONS_TAG = "configurations"
 CONFIGURATION_ID = "configuration_id"
 CONFIGURATIONS_ENDPOINT = "/configurations"
+
+# Applications
+APPLICATIONS_TAG = "applications"
+APPLICATION_ID = "application_id"
+APPLICATIONS_ENDPOINT = "/applications"
 
 # Histogram data stub.
 VALUES = "values"
