@@ -10,8 +10,7 @@ from huxunify.api import constants as api_c
 
 
 class HuxResponse:
-    """
-    Utility class to hold all response functions
+    """Utility class to hold all response functions
     """
 
     # 2XX response codes
