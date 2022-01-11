@@ -18,9 +18,7 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient("localhost", 27017, None, None).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -57,9 +55,7 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         audience_id = ObjectId()
         destination_id = ObjectId()
         engagement_id = (
-            self.database[db_c.DATA_MANAGEMENT_DATABASE][
-                db_c.ENGAGEMENTS_COLLECTION
-            ]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
             .insert_one(
                 {
                     "name": "arkells",
@@ -132,9 +128,7 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         audience_id = ObjectId()
         destination_id = ObjectId()
         engagement_id = (
-            self.database[db_c.DATA_MANAGEMENT_DATABASE][
-                db_c.ENGAGEMENTS_COLLECTION
-            ]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
             .insert_one(
                 {
                     "name": "arkells 2",
@@ -235,36 +229,30 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
                 engagement_id,
             )
 
-        # TODO: Commented out the below test validation since mongomock throws
-        #  the following error when the pipeline containing $redact is executed
-        #  NotImplementedError: Although '$redact' is a valid operator for the
-        #  aggregation pipeline, it is currently not implemented in Mongomock.
         # get all audiences and deliveries
-        # audience_deliveries = eam.get_all_engagement_audience_deliveries(
-        #     self.database, audience_ids=list(x.get(db_c.ID) for x in audiences)
-        # )
-        # self.assertTrue(audience_deliveries)
-        # self.assertGreater(len(audience_deliveries), 10)
-        #
-        # for audience_delivery in audience_deliveries:
-        #     # test each audience_delivery
-        #     self.assertIn(db_c.DELIVERIES, audience_delivery)
-        #     self.assertIn(db_c.AUDIENCE_LAST_DELIVERED, audience_delivery)
-        #     self.assertIn(db_c.AUDIENCE_ID, audience_delivery)
-        #
-        #     # test there are deliveries
-        #     self.assertTrue(audience_delivery[db_c.DELIVERIES])
-        #
-        #     for delivery in audience_delivery[db_c.DELIVERIES]:
-        #         self.assertEqual(
-        #             delivery[db_c.DELIVERY_PLATFORM_TYPE],
-        #             db_c.DELIVERY_PLATFORM_FACEBOOK,
-        #         )
-        #         self.assertEqual(
-        #             delivery[db_c.METRICS_DELIVERY_PLATFORM_NAME],
-        #             self.destination[db_c.DELIVERY_PLATFORM_TYPE],
-        #         )
-        #         self.assertIn(db_c.UPDATE_TIME, delivery)
-        #         self.assertEqual(
-        #             delivery[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING
-        #         )
+        audience_deliveries = eam.get_all_engagement_audience_deliveries(
+            self.database, audience_ids=list(x.get(db_c.ID) for x in audiences)
+        )
+        self.assertTrue(audience_deliveries)
+        self.assertGreater(len(audience_deliveries), 10)
+
+        for audience_delivery in audience_deliveries:
+            # test each audience_delivery
+            self.assertIn(db_c.DELIVERIES, audience_delivery)
+            self.assertIn(db_c.AUDIENCE_LAST_DELIVERED, audience_delivery)
+            self.assertIn(db_c.AUDIENCE_ID, audience_delivery)
+
+            # test there are deliveries
+            self.assertTrue(audience_delivery[db_c.DELIVERIES])
+
+            for delivery in audience_delivery[db_c.DELIVERIES]:
+                self.assertEqual(
+                    delivery[db_c.DELIVERY_PLATFORM_TYPE],
+                    self.destination[db_c.DELIVERY_PLATFORM_TYPE],
+                )
+                self.assertEqual(
+                    delivery[db_c.METRICS_DELIVERY_PLATFORM_NAME],
+                    self.destination[db_c.DELIVERY_PLATFORM_NAME],
+                )
+                self.assertIn(db_c.UPDATE_TIME, delivery)
+                self.assertEqual(delivery[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING)

@@ -59,11 +59,7 @@ def get_all_engagement_audience_destinations(
             }
         },
         {"$unwind": {"path": "$delivery_platform"}},
-        {
-            "$addFields": {
-                "delivery_platform.data_added": "$destinations.data_added"
-            }
-        },
+        {"$addFields": {"delivery_platform.data_added": "$destinations.data_added"}},
         {
             "$group": {
                 "_id": "$_id",
@@ -90,9 +86,7 @@ def get_all_engagement_audience_destinations(
         for audience in audience_delivery_platforms:
             encountered_destinations = {}
             for i, destination in enumerate(audience[db_c.DESTINATIONS]):
-                if encountered_destinations.get(
-                    str(destination.get(db_c.ID, ""))
-                ):
+                if encountered_destinations.get(str(destination.get(db_c.ID, ""))):
                     audience[db_c.DESTINATIONS].pop(i)
                 encountered_destinations[str(destination.get(db_c.ID))] = True
 
@@ -131,9 +125,7 @@ def set_engagement_audience_destination_schedule(
         list: updated engagement objects
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     # get the engagement doc
     engagement_doc = collection.find_one(
@@ -160,9 +152,7 @@ def set_engagement_audience_destination_schedule(
                 destination.pop(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, None)
             else:
                 # set the cron expression
-                destination[
-                    db_c.ENGAGEMENT_DELIVERY_SCHEDULE
-                ] = cron_expression
+                destination[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = cron_expression
 
             engagement_doc[db_c.UPDATE_TIME] = datetime.utcnow()
             engagement_doc[db_c.UPDATED_BY] = user_name
@@ -230,22 +220,24 @@ def get_all_engagement_audience_deliveries(
                 "from": "delivery_jobs",
                 "localField": "engagement_id",
                 "foreignField": "engagement_id",
-                "as": "delivery_jobs",
+                "as": "engagement_delivery_jobs",
             }
         },
+        {
+            "$addFields": {
+                "delivery_jobs": {
+                    "$filter": {
+                        "input": "$engagement_delivery_jobs",
+                        "cond": {"$eq": ["$$this.audience_id", "$audience_id"]},
+                    }
+                }
+            }
+        },
+        {"$project": {"engagement_delivery_jobs": 0}},
         {
             "$unwind": {
                 "path": "$delivery_jobs",
                 "preserveNullAndEmptyArrays": False,
-            }
-        },
-        {
-            "$redact": {
-                "$cond": [
-                    {"$eq": ["$audience_id", "$delivery_jobs.audience_id"]},
-                    "$$KEEP",
-                    "$$PRUNE",
-                ]
             }
         },
         {"$project": {"audience_id": 1, "delivery_jobs": 1}},
@@ -269,7 +261,7 @@ def get_all_engagement_audience_deliveries(
                 "delivery_jobs.delivery_platform_type": "$delivery_platform.delivery_platform_type",
             }
         },
-        {"$project": {"audience_id": 1, "delivery_jobs": 1}},
+        {"$project": {"delivery_platform": 0}},
         {"$sort": {"audience_id": 1, "delivery_jobs.update_time": -1}},
         {
             "$group": {
@@ -290,7 +282,7 @@ def get_all_engagement_audience_deliveries(
         {"$project": {"deliveries.deleted": 0}},
     ]
 
-    stage_count_in_pipeline = 19
+    stage_count_in_pipeline = 20
     if audience_ids is not None:
         pipeline.insert(
             stage_count_in_pipeline,
