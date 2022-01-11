@@ -400,12 +400,43 @@ class TestUserRoutes(TestCase):
         expected_response.update({api_c.ID: 1234, api_c.KEY: "ABC-123"})
 
         mock_jira_instance = mock_jira.return_value
-        mock_jira_instance.check_jira_connection.return_value = True
         mock_jira_instance.create_jira_issue.return_value = expected_response
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.CONTACT_US}",
             json=reported_issue,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertDictEqual(expected_response, response.json)
+
+    @mock.patch("huxunify.api.route.user.JiraConnection")
+    def test_create_new_user_request(self, mock_jira: MagicMock):
+        """Test new user request.
+
+        Args:
+            mock_jira (MagicMock): magic mock of JiraConnection
+        """
+
+        new_user_request = {
+            api_c.FIRST_NAME: "Sarah",
+            api_c.LAST_NAME: "Huxley",
+            api_c.EMAIL: "sh@fake.com",
+            api_c.USER_ACCESS_LEVEL: "admin",
+            api_c.USER_PII_ACCESS: False,
+            api_c.REASON_FOR_REQUEST: "na",
+        }
+
+        expected_response = {api_c.ID: 1234, api_c.KEY: "ABC-123"}
+
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.check_jira_connection.return_value = True
+        mock_jira_instance.create_jira_issue.return_value = expected_response
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.REQUEST_NEW_USER}",
+            json=new_user_request,
             headers=t_c.STANDARD_HEADERS,
         )
 

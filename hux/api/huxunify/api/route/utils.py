@@ -1,7 +1,6 @@
 """Purpose of this file is to house route utilities."""
 from datetime import datetime, date
 import re
-import csv
 from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
@@ -48,6 +47,7 @@ from huxunify.api.exceptions import (
     unified_exceptions as ue,
 )
 from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.stubbed_data.stub_shap_data import shap_data
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -567,12 +567,10 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     return user
 
 
-# pylint: disable=unspecified-encoding
-def read_csv_shap_data(file_path: str, features: list = None) -> dict:
-    """Read in Shap Models Data CSV into a dict
+def get_required_shap_data(features: list = None) -> dict:
+    """Read in Shap Models Data JSON into a dict
 
     Args:
-        file_path (str): relative file path of the csv file
         features (list): string list of the features to be returned.
         If none is passed, all features are returned
 
@@ -581,42 +579,12 @@ def read_csv_shap_data(file_path: str, features: list = None) -> dict:
 
     """
 
-    data = {}
-    index = {}
-
-    # load in the necessary data
-    with open(file_path, "r") as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=",")
-        column_names = next(csv_reader)
-
-        if not features:
-            features = column_names
-
-        for feature in features:
-            index[feature] = column_names.index(feature)
-            data[feature] = []
-
-        for row in csv_reader:
-            for feature in features:
-                data[feature].append(row[index[feature]])
-
-    return data
-
-
-# pylint: disable=unspecified-encoding
-def read_stub_city_zip_data(file_path: str) -> list:
-    """Read in City & Zip Data CSV into a dict
-
-    Args:
-        file_path(str): relative file path of the csv file
-
-    Returns:
-        list: City & Zip data list
-    """
-    with open(file_path, "r") as csv_file:
-        data = list(csv.reader(csv_file))
-
-    return data[1:]
+    # return required shap feature data
+    return {
+        feature: data
+        for feature, data in shap_data.items()
+        if feature in features
+    }
 
 
 def convert_unique_city_filter(request_json: dict) -> dict:
@@ -783,3 +751,51 @@ def set_destination_category_in_engagement(engagement: dict):
                 )
 
     engagement[api_c.DESTINATION_CATEGORIES] = destinations_categories
+
+
+def create_description_for_user_request(
+    first_name: str,
+    last_name: str,
+    email: str,
+    access_level: str,
+    pii_access: bool,
+    reason_for_request: str,
+    requested_by: str,
+    project_name: str = api_c.DEFAULT_NEW_USER_PROJECT_NAME,
+    okta_group_name: str = api_c.DEFAULT_OKTA_GROUP_NAME,
+    okta_app: str = api_c.DEFAULT_OKTA_APP,
+) -> str:
+    """Create HUS issue description using new user request data.
+
+    Args:
+        first_name (str): First name of the user requested.
+        last_name (str): Last name of the user requested.
+        email (str): Email of the user requested.
+        access_level (str): Access level of the user requested.
+        pii_access (bool): If allowed PII access.
+        reason_for_request (str): Description of why access request.
+        requested_by (str): User Name of the person requesting.
+        project_name (str, Optional): Project name which user needs to
+            be granted access.
+        okta_group_name (str, Optional): Okta group name to which user
+            must be added.
+        okta_app (str, Optional): Okta app name to which user needs
+            permission.
+
+    Returns:
+        str: Description for HUS issue.
+    """
+
+    return (
+        f"*Project Name:* {project_name} \n"
+        f"*Required Info:* Please add {first_name} {last_name} to the"
+        f" {okta_group_name} group. \n"
+        f"*Reason for Request:* {reason_for_request} \n"
+        f"*User:* {first_name}, {last_name} \n"
+        f"*Email:* {email} \n"
+        f"*Access Level:* {access_level} \n"
+        f"*PII Access:* {pii_access} \n"
+        f"*Okta Group Name:* {okta_group_name} \n"
+        f"*Okta App:* {okta_app} \n"
+        f"*Requested by:* {requested_by}"
+    )

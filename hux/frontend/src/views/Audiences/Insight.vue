@@ -332,7 +332,7 @@
                   <icon
                     type="history"
                     color="primary"
-                    :size="14"
+                    :size="24"
                     class="mr-1"
                   />
                   Delivery history

@@ -7,6 +7,7 @@
         color="primary lighten-6"
         class="text-body-2 c-black"
         label="Only show active items"
+        data-e2e="activeItem"
       ></v-checkbox>
       <div
         v-if="
@@ -17,7 +18,7 @@
         class="pb-2"
       >
         <span class="text-body-1 black--text"> Modules </span>
-        <span class="text-body-2 black--text text--lighten4 pl-4">
+        <span class="text-body-2 black--text text--lighten-4 pl-4">
           Our core capabilities built intentionally with modularity to enable a
           wide set of use cases and business solutions.
         </span>
@@ -63,7 +64,7 @@
         class="pb-2 pt-4"
       >
         <span class="text-body-1 black--text"> Business Solutions </span>
-        <span class="text-body-2 black--text text--lighten4 pl-4">
+        <span class="text-body-2 black--text text--lighten-4 pl-4">
           Our end-to-end solutions that combine modules to target specific
           business objectives and meet the needs of our clients.
         </span>
@@ -156,6 +157,8 @@ export default {
   }
 }
 .c-black {
-  color: black !important;
+  ::v-deep .v-label {
+    color: var(--v-black-base) !important;
+  }
 }
 </style>

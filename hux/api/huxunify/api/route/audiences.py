@@ -13,6 +13,13 @@ from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
+from huxunifylib.database.delivery_platform_management import (
+    get_delivery_platform,
+)
+from huxunifylib.database.orchestration_management import (
+    get_audience,
+    append_destination_to_standalone_audience,
+)
 from huxunifylib.connectors import connector_cdp
 from huxunifylib.database import (
     orchestration_management,
@@ -47,6 +54,8 @@ from huxunify.api.schema.customers import (
     CustomersInsightsStatesSchema,
     CustomersInsightsCountriesSchema,
 )
+from huxunify.api.schema.engagement import DestinationEngagedAudienceSchema
+from huxunify.api.schema.orchestration import AudienceGetSchema
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
@@ -788,4 +797,123 @@ class AudienceRulesHistogram(SwaggerView):
         return (
             jsonify(api_c.AUDIENCE_RULES_HISTOGRAM_DATA[field_type]),
             HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/<audience_id>/destinations",
+    "AddDestinationAudience",
+)
+class AddDestinationAudience(SwaggerView):
+    """Add destination to Audience"""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience Id",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destinations body.",
+            "example": {
+                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                db_c.DELIVERY_PLATFORM_CONFIG: {
+                    db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                },
+            },
+        },
+    ]
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": AudienceGetSchema,
+            "description": "Destination added to Audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to Add destination to the audience",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, audience_id: str, user: dict) -> Tuple[Response, int]:
+        """Adds Destination to Audience
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience Id
+            user (dict): User Object
+
+        Returns:
+            Tuple[Response, int]: Destination Audience added,
+                HTTP status code.
+        """
+
+        database = get_db_client()
+
+        audience = get_audience(database, ObjectId(audience_id))
+
+        if not audience:
+            logger.error("Audience not found for audience ID %s.", audience_id)
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        destination = DestinationEngagedAudienceSchema().load(
+            request.get_json(), partial=True
+        )
+        destination[api_c.ID] = ObjectId(destination.get(api_c.ID))
+        destination[db_c.DATA_ADDED] = datetime.utcnow()
+
+        # get destinations
+        destination_to_attach = get_delivery_platform(
+            database, destination.get(api_c.ID)
+        )
+
+        if not destination_to_attach:
+            logger.error(
+                "Could not find destination with id %s.", destination[api_c.ID]
+            )
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        audience = append_destination_to_standalone_audience(
+            database=database,
+            audience_id=ObjectId(audience_id),
+            destination=destination,
+            user_name=user[api_c.USER_NAME],
+        )
+
+        logger.info(
+            "Destination %s added to audience %s.",
+            destination_to_attach[db_c.NAME],
+            audience[db_c.NAME],
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Destination "{destination_to_attach[db_c.NAME]}" added to '
+                f'audience "{audience[db_c.NAME]}" '
+            ),
+            api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
+        )
+
+        return (
+            AudienceGetSchema().dump(audience),
+            HTTPStatus.CREATED.value,
         )
