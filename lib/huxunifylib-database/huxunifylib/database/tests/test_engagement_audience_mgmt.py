@@ -18,7 +18,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -55,7 +57,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         audience_id = ObjectId()
         destination_id = ObjectId()
         engagement_id = (
-            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.ENGAGEMENTS_COLLECTION
+            ]
             .insert_one(
                 {
                     "name": "arkells",
@@ -128,7 +132,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         audience_id = ObjectId()
         destination_id = ObjectId()
         engagement_id = (
-            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.ENGAGEMENTS_COLLECTION
+            ]
             .insert_one(
                 {
                     "name": "arkells 2",
@@ -255,4 +261,6 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
                     self.destination[db_c.DELIVERY_PLATFORM_NAME],
                 )
                 self.assertIn(db_c.UPDATE_TIME, delivery)
-                self.assertEqual(delivery[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING)
+                self.assertEqual(
+                    delivery[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING
+                )
