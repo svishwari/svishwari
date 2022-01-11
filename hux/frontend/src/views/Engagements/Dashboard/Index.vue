@@ -1,129 +1,38 @@
 <template>
   <div class="engagement-dash">
     <!-- Page Header -->
-    <page-header class="d-flex">
-      <template #left>
-        <div class="d-flex align-center bread-crumb">
-          <breadcrumb :items="breadcrumbItems" />
-          <div v-if="engagementList && engagementList.status" class="ml-3">
-            <status :status="engagementList.status" :icon-size="17"></status>
-          </div>
-        </div>
-      </template>
-      <template #right>
-        <div class="d-flex align-center">
-          <tooltip>
-            <template #label-content>
-              <icon
-                type="pencil"
-                :size="18"
-                class="cursor-pointer mr-7"
-                color="black-darken4"
-                @click.native="editEngagement()"
-              />
-            </template>
-            <template #hover-content>
-              <span>
-                <span> Click to edit this engagement </span>
-              </span>
-            </template>
-          </tooltip>
-        </div>
-      </template>
-    </page-header>
+    <dashboard-header
+      :breadcrumb-items="breadcrumbItems"
+      :engagement-data="engagementList"
+      @removeEngagement="(data) => removeEngagement(data)"
+      @favoriteEngagement="(data) => handleActionFavorite(data, 'engagements')"
+      @openDownloadDrawer="() => openDownloadDrawer()"
+      @inactiveEngagement="(data) => makeInactiveEngagement(data)"
+    />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
-    <div v-if="!loading" class="inner-wrap px-15 py-8">
-      <div>
-        <!-- Summary Cards Wrapper -->
-        <engagement-overview-summary
-          data-e2e="overview-summary"
-          :data="engagementList"
-        />
-        <!-- Audience Destination Cards Wrapper -->
-        <delivery-overview
-          :sections="engagementList && engagementList.audiences"
-          section-type="audience"
-          deliveries-key="destinations"
-          :loading-relationships="loadingAudiences"
-          @onOverviewSectionAction="triggerOverviewAction($event)"
-          @onOverviewDestinationAction="
-            triggerOverviewDestinationAction($event)
-          "
-        >
-          <template #title-left>
-            <div class="d-flex align-center">
-              <icon
-                type="audiences"
-                :size="24"
-                color="black-darken4"
-                class="mr-2"
-              /><span class="text-h5">Audiences</span>
-            </div>
-          </template>
-          <template #title-right>
-            <div class="d-flex align-center">
-              <v-btn
-                text
-                class="
-                  d-flex
-                  align-center
-                  primary--text
-                  text-decoration-none
-                  mr-9
-                "
-                @click="triggerSelectAudience()"
-              >
-                <icon
-                  type="audiences"
-                  color="primary"
-                  :size="16"
-                  class="mr-1"
-                />
-                Add an audience
-              </v-btn>
-              <v-btn
-                text
-                color="primary"
-                data-e2e="deliver-history"
-                @click="openDeliveryHistoryDrawer()"
-              >
-                <icon type="history" color="primary" :size="26" class="mr-1" />
-                Delivery history
-              </v-btn>
-            </div>
-          </template>
-          <template #empty-deliveries="{ sectionId }">
-            <div class="pt-1 empty-audience pb-1">
-              There are no destinations assigned to this audience.
-              <br />
-              Add one now.
-              <br />
-              <v-icon
-                size="30"
-                class="add-icon cursor-pointer pt-2"
-                color="primary"
-                @click="triggerSelectDestination(sectionId)"
-              >
-                mdi-plus-circle
-              </v-icon>
-            </div>
-          </template>
-        </delivery-overview>
-        <engagement-performance-metrics
-          :engagement-id="engagementId"
-          :ad-data="audiencePerformanceAds"
-          :email-data="audiencePerformanceEmail"
-          :loading-metrics="loadingTab"
-          @fetchMetrics="fetchCampaignPerformanceDetails($event)"
-        />
-      </div>
+    <div v-if="!loading" class="inner-wrap px-15">
+      <tabs
+        :data="engagementList"
+        :loading-audiences="loadingAudiences"
+        :engagement-id="engagementId"
+        :ad-data="audiencePerformanceAds"
+        :email-data="audiencePerformanceEmail"
+        :loading-metrics="loadingTab"
+        @fetchMetrics="fetchCampaignPerformanceDetails($event)"
+        @openDeliveryHistoryDrawer="openDeliveryHistoryDrawer()"
+        @triggerSelectAudience="triggerSelectAudience($event)"
+        @onOverviewSectionAction="triggerOverviewAction($event)"
+        @onOverviewDestinationAction="triggerOverviewDestinationAction($event)"
+        @deliverEngagement="deliverEngagement()"
+      />
     </div>
     <!-- Select Audience Drawer -->
     <select-audiences-drawer
       ref="selectAudiences"
       v-model="selectedAudiences"
       :toggle="showSelectAudiencesDrawer"
+      :destination-id="destinationId"
       enable-multiple
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
       @onAdd="triggerCreateAudience()"
@@ -145,7 +54,6 @@
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforce="triggerDataExtensionDrawer"
       @addedDestination="triggerAttachDestination($event)"
-      @removeDestination="triggerDetachDestination($event)"
     />
 
     <destination-data-extension-drawer
@@ -195,43 +103,31 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-import PageHeader from "@/components/PageHeader"
-import Breadcrumb from "@/components/common/Breadcrumb"
-import Status from "@/components/common/Status"
-import Icon from "@/components/common/Icon"
-import SelectAudiencesDrawer from "./Configuration/Drawers/SelectAudiencesDrawer.vue"
-import AddAudienceDrawer from "./Configuration/Drawers/AddAudienceDrawer.vue"
-import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinationsDrawer.vue"
-import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
-import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
-import DeliveryOverview from "../../components/DeliveryOverview.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
-import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
-import EngagementOverviewSummary from "./Overview.vue"
-import EngagementPerformanceMetrics from "./PerformanceMetrics.vue"
-import Tooltip from "@/components/common/Tooltip.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
+import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
+import { mapActions, mapGetters } from "vuex"
+import AddAudienceDrawer from "../Configuration/Drawers/AddAudienceDrawer.vue"
+import DestinationDataExtensionDrawer from "../Configuration/Drawers/DestinationDataExtensionDrawer.vue"
+import SelectAudiencesDrawer from "../Configuration/Drawers/SelectAudiencesDrawer.vue"
+import SelectDestinationsDrawer from "../Configuration/Drawers/SelectDestinationsDrawer.vue"
+import Tabs from "./Tabs.vue"
+import DashboardHeader from "./Components/Header.vue"
 
 export default {
   name: "EngagementDashboard",
   components: {
-    PageHeader,
-    EngagementOverviewSummary,
-    EngagementPerformanceMetrics,
-    Breadcrumb,
-    Status,
-    Icon,
     AddAudienceDrawer,
     SelectAudiencesDrawer,
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
     DeliveryHistoryDrawer,
-    DeliveryOverview,
     ConfirmModal,
     EditDeliverySchedule,
     LookAlikeAudience,
-    Tooltip,
+    Tabs,
+    DashboardHeader,
   },
   data() {
     return {
@@ -277,6 +173,7 @@ export default {
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
         actionType: "remove-audience",
       },
+      destinationId: "",
     }
   },
   computed: {
@@ -284,6 +181,7 @@ export default {
       audiencePerformanceAds: "engagements/audiencePerformanceByAds",
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
       getEngagementObject: "engagements/engagement",
+      getDestination: "destinations/single",
     }),
 
     breadcrumbItems() {
@@ -299,6 +197,7 @@ export default {
         items.push({
           text: this.engagementList.name,
           disabled: false,
+          status: this.engagementList.status,
         })
       }
       return items
@@ -329,6 +228,12 @@ export default {
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
       setAlert: "alerts/setAlert",
+      deleteEngagement: "engagements/remove",
+      markFavorite: "users/markFavorite",
+      clearFavorite: "users/clearFavorite",
+      updateEngagement: "engagements/updateEngagement",
+      deliverEngagementApi: "engagements/deliver",
+      callDestination: "destinations/get",
     }),
     async refreshEntity() {
       this.loading = true
@@ -356,6 +261,10 @@ export default {
           await this.detachAudienceDestination(this.deleteActionData)
           await this.loadEngagement(this.engagementId)
           break
+        case "remove-engagement":
+          this.deleteEngagement(this.deleteActionData)
+          this.$router.push({ name: "Engagements" })
+          break
         default:
           break
       }
@@ -368,8 +277,9 @@ export default {
       this.showDataExtensionDrawer = false
     },
 
-    triggerSelectAudience() {
+    triggerSelectAudience(id) {
       this.closeDrawers()
+      this.destinationId = id
       this.$refs.selectAudiences.fetchAudiences()
       this.showSelectAudiencesDrawer = true
       this.$refs.selectAudiences.localSelectedAudiences = JSON.parse(
@@ -407,21 +317,6 @@ export default {
         this.loadingAudiences = false
       }
     },
-    async triggerDetachDestination(event) {
-      this.loadingAudiences = true
-      try {
-        this.deleteActionData = {
-          engagementId: this.engagementId,
-          audienceId: this.selectedAudienceId,
-          data: { id: event.destination.id },
-        }
-        await this.detachAudienceDestination(this.deleteActionData)
-        this.deleteActionData = {}
-        await this.loadEngagement(this.engagementId)
-      } catch (error) {
-        this.loadingAudiences = false
-      }
-    },
     async triggerAttachAudiences(audiences) {
       this.loadingAudiences = true
       try {
@@ -429,7 +324,7 @@ export default {
           const addPayload = {
             audiences: Object.values(audiences.added).map((aud) => ({
               id: aud.id,
-              destinations: [],
+              destinations: aud.destinations,
             })),
           }
           await this.attachAudience({
@@ -548,10 +443,10 @@ export default {
       this.engagementList = JSON.parse(
         JSON.stringify(this.getEngagementObject(this.engagementId))
       )
-      await this.getAudiencePerformanceById({
-        type: "ads",
-        id: this.engagementList.id,
-      })
+      // await this.getAudiencePerformanceById({
+      //   type: "ads",
+      //   id: this.engagementList.id,
+      // })
       this.mapDeliveries()
     },
     //#region Delivery Overview Region
@@ -577,12 +472,15 @@ export default {
           this.confirmDialog.actionType = "remove-audience"
           this.confirmDialog.title = "You are about to remove"
           this.confirmDialog.icon = "modal-remove"
-          this.confirmDialog.type = "primary"
+          this.confirmDialog.type = "error"
           this.confirmDialog.subtitle = event.data.name
           this.confirmDialog.btnText = "Yes, remove audience"
           this.confirmDialog.body =
             "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement."
           this.deleteActionData = event.data
+          break
+        case "create lookalike":
+          this.openLookAlikeDrawer(event)
           break
         default:
           break
@@ -590,17 +488,10 @@ export default {
     },
 
     async triggerOverviewDestinationAction(event) {
-      const engagementId = this.engagementId
-      this.selectedAudienceId = event.parent.id
       switch (event.target.title.toLowerCase()) {
-        case "deliver now":
-          await this.deliverAudienceDestination({
-            id: engagementId,
-            audienceId: this.selectedAudienceId,
-            destinationId: event.data.id,
-          })
-          this.dataPendingMesssage(event, "destination")
-          this.refreshEntity()
+        case "open destination":
+          await this.callDestination(event.data.id)
+          window.open(this.getDestination(event.data.id).link)
           break
         case "edit delivery schedule":
           this.confirmDialog.icon = "edit"
@@ -631,9 +522,6 @@ export default {
           }
           this.showConfirmModal = true
           break
-        case "create lookalike":
-          this.openLookAlikeDrawer(event)
-          break
         default:
           break
       }
@@ -663,7 +551,7 @@ export default {
       this.showDeliveryHistoryDrawer = true
     },
     openLookAlikeDrawer(event) {
-      this.selectedAudience = event.parent
+      this.selectedAudience = event.data
       this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
@@ -684,6 +572,42 @@ export default {
         name: "EngagementUpdate",
         params: { id: this.getRouteId },
       })
+    },
+    async removeEngagement(data) {
+      this.showConfirmModal = true
+      this.confirmDialog.actionType = "remove-engagement"
+      this.confirmDialog.title = "You are about to remove"
+      this.confirmDialog.icon = "modal-remove"
+      this.confirmDialog.type = "error"
+      this.confirmDialog.subtitle = data.name
+      this.confirmDialog.btnText = "Yes, delete engagement"
+      this.confirmDialog.body =
+        "Are you sure you want to delete this Engagement?\
+By deleting this engagement you will not be able to recover it and it may impact any associated destinations."
+      this.deleteActionData = data
+    },
+
+    async handleActionFavorite(item, type) {
+      if (!item.favorite) {
+        await this.markFavorite({ id: item.id, type: type })
+      } else {
+        await this.clearFavorite({ id: item.id, type: type })
+      }
+      this.refreshEntity()
+    },
+
+    async makeInactiveEngagement(value) {
+      const inactiveEngagementPayload = {
+        status: "Inactive",
+      }
+      const payload = { id: value.id, data: inactiveEngagementPayload }
+      await this.updateEngagement(payload)
+      this.refreshEntity()
+    },
+
+    async deliverEngagement() {
+      await this.deliverEngagementApi(this.engagementId)
+      this.refreshEntity()
     },
   },
 }

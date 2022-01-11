@@ -13,6 +13,7 @@
             :panel-list-items="panelListItems"
             header="Configuration user guide"
             class="mr-3"
+            data-e2e="tips-menu"
           />
         </template>
       </page-header>

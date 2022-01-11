@@ -61,6 +61,18 @@ export default {
     allNotificationsLink: "[data-e2e='all-notifications-link']",
   },
 
+  // configuration
+  configuration: {
+    moduleSolution: "[data-e2e='moduleSolution']",
+    teamMembers: "[data-e2e='teamMembers']",
+    activeItem: "[data-e2e='activeItem']",
+    tipsMenu: "[data-e2e='tips-menu']",
+    list: {
+      teamMembersTable: "[data-e2e='team-members-table']",
+      teamMembersTableHeaders: "table thead tr",
+    },
+  },
+
   // data sources
   datasources: "[data-e2e='dataSourcesList']",
   destinations: "[data-e2e='destination-list']",

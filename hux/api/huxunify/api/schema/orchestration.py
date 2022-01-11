@@ -9,7 +9,9 @@ from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
 )
-from huxunify.api.schema.destinations import DestinationGetSchema
+from huxunify.api.schema.destinations import (
+    DestinationGetSchema,
+)
 from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
