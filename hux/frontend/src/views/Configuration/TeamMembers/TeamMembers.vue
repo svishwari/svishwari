@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <v-card class="rounded-lg box-shadow-5 mt-4">
-          <div v-if="isDataExist" class="pa-5">
+          <div v-if="isDataExist" class="px-6 py-5">
             <div class="pb-4 black--text text-h3">Team Members</div>
             <hux-data-table
               :columns="columnDefs"
@@ -177,7 +177,8 @@ export default {
       tr {
         th {
           background: var(--v-primary-lighten2);
-          height: 40px !important;
+          height: 32px !important;
+          box-shadow: none !important;
         }
       }
     }
