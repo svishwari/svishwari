@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument
+# pylint: disable=too-many-lines,unused-argument
 """Purpose of this script is for housing the
 decision routes for the API"""
 from random import uniform, randint
