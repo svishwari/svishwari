@@ -32,19 +32,19 @@
       </span>
       <v-spacer> </v-spacer>
       <div
-        class="d-flex mr-4 cursor-pointer deliver-icon text-body-1"
+        class="d-flex mr-4 cursor-pointer deliver-icon text-body-1 mt-2"
         :class="{ disabled: section.deliveries.length == 0 }"
         data-e2e="deliver-all"
         @click="deliverAll(section)"
       >
         <icon
-          class="mr-2 mt-n1"
+          class="mr-1 mt-n1"
           :type="section.deliveries.length == 0 ? 'deliver' : 'deliver_2'"
-          :size="27"
+          :size="37"
           :color="section.deliveries.length == 0 ? 'black' : 'primary'"
           :variant="section.deliveries.length == 0 ? 'lighten3' : 'base'"
         />
-        Deliver all
+        <span class="deliverAll"> Deliver all </span>
       </div>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
@@ -111,11 +111,11 @@
                   <v-list class="menu-list-wrapper">
                     <v-list-item-group>
                       <v-list-item
-                        v-for="option in destinationMenuOptions"
+                        v-for="option in sectionActions"
                         :key="option.id"
                         :disabled="!option.active"
                         @click="
-                          $emit('onDestinationAction', {
+                          $emit('onSectionAction', {
                             target: option,
                             data: item,
                             parent: section,
@@ -157,13 +157,13 @@
                 type="plus"
                 :size="16"
                 color="primary"
-                class="mr-4 mb-1"
+                class="mr-2 plus-icon"
               />
               <hux-icon
-                type="destination"
-                :size="24"
+                type="destination_button"
+                :size="34"
                 color="primary"
-                class="mr-2"
+                class="mr-0 mb-n1"
               />
             </template>
             <template #hover-content>
@@ -179,7 +179,7 @@
             data-e2e="add-audience-destination"
             class="primary--text text-body-1"
           >
-            Destination
+            <span class="destination_text">Destination</span>
           </v-btn>
         </v-list-item>
       </v-list>
@@ -484,5 +484,14 @@ export default {
     border-bottom-right-radius: 16px;
     border-bottom-left-radius: 16px;
   }
+}
+.deliverAll {
+  margin-top: 2px;
+}
+.destination_text {
+  margin-top: -2px;
+}
+.plus-icon {
+  margin-bottom: 7px;
 }
 </style>

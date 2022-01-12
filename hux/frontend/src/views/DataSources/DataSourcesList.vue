@@ -7,6 +7,7 @@
           :key="dataSource.id"
           :icon="dataSource.type"
           :title="dataSource.name"
+          :logoSize="45"
           :description="dataSource.category"
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active'"
@@ -176,5 +177,11 @@ export default {
       }
     }
   }
+}
+::v-deep circle {
+  stroke: rgb(255, 255, 255) !important;
+}
+::v-deep .path_aqfer {
+  stroke: rgb(255, 255, 255) !important;
 }
 </style>

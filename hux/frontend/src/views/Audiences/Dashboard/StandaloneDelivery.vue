@@ -32,11 +32,11 @@
         @click="deliverAll()"
       >
         <icon
-          class="mr-2 mt-n1"
+         class="mr-1 mt-n1"
           :type="
             audience.standalone_deliveries.length == 0 ? 'deliver' : 'deliver_2'
           "
-          :size="27"
+          :size="37"
           :color="
             audience.standalone_deliveries.length == 0 ? 'black' : 'primary'
           "
@@ -44,7 +44,7 @@
             audience.standalone_deliveries.length == 0 ? 'lighten3' : 'base'
           "
         />
-        Deliver all
+       <span class="deliverAll"> Deliver all </span>
       </div>
     </v-card-title>
     <v-card-text class="pl-6 pr-6 pb-6 pt-3">
@@ -130,18 +130,18 @@
           <v-list-item @click="$emit('onAddStandaloneDestination', audience)">
             <tooltip>
               <template #label-content>
-                <hux-icon
-                  type="plus"
-                  :size="16"
-                  color="primary"
-                  class="mr-4 mb-1"
-                />
-                <hux-icon
-                  type="destination"
-                  :size="24"
-                  color="primary"
-                  class="mr-2"
-                />
+                 <hux-icon
+                type="plus"
+                :size="16"
+                color="primary"
+                class="mr-2 plus-icon"
+              />
+               <hux-icon
+                type="destination_button"
+                :size="34"
+                color="primary"
+                class="mr-0 mb-n1"
+              />
               </template>
               <template #hover-content>
                 <div class="py-2 white d-flex flex-column">
@@ -155,7 +155,7 @@
               height="2rem"
               class="primary--text text-body-1 mt-n1"
             >
-              Destination
+             <span class="destination_text">Destination</span>
             </v-btn>
           </v-list-item>
         </v-list>
@@ -170,12 +170,12 @@
             class="px-0"
             @click="$emit('onAddStandaloneDestination', audience)"
           >
-            <hux-icon type="plus" :size="16" color="primary" class="mr-3" />
+            <hux-icon type="plus" :size="16" color="primary" class="mr-2" />
             <hux-icon
-              type="destination"
-              :size="24"
+              type="destination_button"
+              :size="34"
               color="primary"
-              class="mr-1"
+             class="mr-0 mb-n1"
             />
             <v-btn
               text
@@ -183,7 +183,7 @@
               height="2rem"
               class="primary--text text-body-1"
             >
-              Destination
+               <span class="destination_empty">Destination</span>
             </v-btn>
           </v-list-item>
         </v-list>
@@ -312,5 +312,17 @@ export default {
 }
 ::v-deep .theme--light.v-data-table.v-data-table--fixed-header thead th {
   box-shadow: none !important;
+}
+.deliverAll {
+  margin-top: 2px;
+}
+.destination_text {
+  margin-top: -2px;
+}
+.plus-icon {
+  margin-bottom: 7px;
+}
+.destination_empty{
+    margin-top: 2px;
 }
 </style>
