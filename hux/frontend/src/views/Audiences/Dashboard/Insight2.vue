@@ -9,9 +9,9 @@
       @openDownloadDrawer="() => openDownloadDrawer()"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="px-8 py-8">
-      <v-card class="overview-card pt-5 pb-6 pr-6 pl-6 box-shadow-5">
-        <v-card-title class="d-flex justify-space-between pa-0">
+    <div class="pa-8">
+      <v-card class="overview-card pt-5 pb-6 pl-6 pr-6 box-shadow-5">
+        <v-card-title class="d-flex justify-space-between pa-0 pr-2">
           <h3 class="text-h3 mb-2">Audience overview</h3>
           <div class="d-flex align-center">
             <v-btn
@@ -26,7 +26,7 @@
               <icon
                 class="mr-1"
                 type="history"
-                :size="14"
+                :size="24"
                 :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
                 :variant="relatedEngagements.length == 0 ? 'lighten3' : 'base'"
               />
@@ -60,7 +60,7 @@
         </div>
         <div
           v-if="audience && !audience.is_lookalike"
-          class="row overview-list mb-0 ml-0 mt-1"
+          class="row overview-list mb-0 ml-0 mt-1 mr-1"
         >
           <metric-card
             v-for="(item, i) in Object.values(audienceOverview)"

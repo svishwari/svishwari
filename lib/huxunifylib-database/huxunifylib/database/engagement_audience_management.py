@@ -185,3 +185,135 @@ def set_engagement_audience_destination_schedule(
             db_c.ID: engagement_id,
         }
     )
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_engagement_audience_deliveries(
+    database: DatabaseClient,
+    audience_ids: list = None,
+) -> Union[list, None]:
+    """A function to get delivery jobs for all engagements and corresponding
+    audiences nested within.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_ids (list, Optional): A list of audience ids.
+
+    Returns:
+        Union[list, None]:  A list of delivery job ids.
+    """
+
+    # pipeline to aggregate and fetch the delivery jobs from delivery_jobs
+    # using engagement_id and audience_id from engagements
+    pipeline = [
+        {
+            "$unwind": {
+                "path": "$audiences",
+                "preserveNullAndEmptyArrays": False,
+            }
+        },
+        {"$addFields": {"audience_id": "$audiences.id"}},
+        {"$project": {"audience_id": 1}},
+        {"$group": {"_id": {"_id": "$_id", "audience_id": "$audience_id"}}},
+        {
+            "$addFields": {
+                "engagement_id": "$_id._id",
+                "audience_id": "$_id.audience_id",
+            }
+        },
+        {"$project": {"_id": 0, "engagement_id": 1, "audience_id": 1}},
+        {
+            "$lookup": {
+                "from": "delivery_jobs",
+                "localField": "engagement_id",
+                "foreignField": "engagement_id",
+                "as": "engagement_delivery_jobs",
+            }
+        },
+        {
+            "$addFields": {
+                "delivery_jobs": {
+                    "$filter": {
+                        "input": "$engagement_delivery_jobs",
+                        "cond": {
+                            "$eq": ["$$this.audience_id", "$audience_id"]
+                        },
+                    }
+                }
+            }
+        },
+        {"$project": {"engagement_delivery_jobs": 0}},
+        {
+            "$unwind": {
+                "path": "$delivery_jobs",
+                "preserveNullAndEmptyArrays": False,
+            }
+        },
+        {"$project": {"audience_id": 1, "delivery_jobs": 1}},
+        {
+            "$lookup": {
+                "from": "delivery_platforms",
+                "localField": "delivery_jobs.delivery_platform_id",
+                "foreignField": "_id",
+                "as": "delivery_platform",
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$delivery_platform",
+                "preserveNullAndEmptyArrays": False,
+            }
+        },
+        {
+            "$addFields": {
+                "delivery_jobs.delivery_platform_name": "$delivery_platform.name",
+                "delivery_jobs.delivery_platform_type": "$delivery_platform.delivery_platform_type",
+            }
+        },
+        {"$project": {"delivery_platform": 0}},
+        {"$sort": {"audience_id": 1, "delivery_jobs.update_time": -1}},
+        {
+            "$group": {
+                "_id": "$audience_id",
+                "deliveries": {"$push": "$delivery_jobs"},
+                "last_delivered": {"$first": "$delivery_jobs.update_time"},
+            }
+        },
+        {"$addFields": {"audience_id": "$_id"}},
+        {
+            "$project": {
+                "_id": 0,
+                "audience_id": 1,
+                "deliveries": 1,
+                "last_delivered": 1,
+            }
+        },
+        {"$project": {"deliveries.deleted": 0}},
+    ]
+
+    stage_count_in_pipeline = 20
+    if audience_ids is not None:
+        pipeline.insert(
+            stage_count_in_pipeline,
+            {"$match": {db_c.AUDIENCE_ID: {"$in": audience_ids}}},
+        )
+        stage_count_in_pipeline += 1
+
+    # use the engagement pipeline to aggregate and get all unique delivery jobs
+    # per nested audience
+    try:
+        engagement_audience_deliveries = list(
+            database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.ENGAGEMENTS_COLLECTION
+            ].aggregate(pipeline)
+        )
+
+        return engagement_audience_deliveries
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None

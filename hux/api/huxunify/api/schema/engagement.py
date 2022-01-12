@@ -1,6 +1,5 @@
 # pylint: disable=no-self-use
-"""Schemas for the Engagements API."""
-import logging
+"""Schemas for the Engagements API"""
 from datetime import datetime
 from bson import ObjectId
 from flask_marshmallow import Schema
@@ -535,6 +534,8 @@ class EngagementDestinationSchema(Schema):
     destination_audiences = fields.List(
         fields.Nested(EngagementDestinationAudienceSchema)
     )
+    type = fields.String()
+    link = fields.String(default=None)
 
 
 class EngagementDestinationCategorySchema(Schema):
@@ -621,6 +622,48 @@ def weighted_engagement_status(engagements: list) -> list:
 
     Returns:
         list: list of engagement documents.
+
+    Capturing details as to how status is calculated for Engagement,
+            Audience and destinations
+        Data Model :
+            Engagement has [audiences]
+                - Engagement has a Status field
+            Each audience has [destinations]
+            Each destination can have a latest_delivery object
+                - Latest_delivery object has Status field
+
+        UI needs:
+            Show status for Engagement
+            Show status for audience
+            Show status for audience / destination
+
+        Application Logic :
+            Show status for audience/destination
+                If there is at least one delivery for the destination,
+                engagement.audience.destination.latest_delivery SHOULD exist
+                    status = latest_delivery.status
+                If not : status = NOT_DELIVERED
+                status need to be one [delivering, delivered,
+                not delivered, delivery paused, error]
+            Show status for audience
+                status needs to be one [delivering - 8, delivered - 10,
+                not delivered - 9, delivery paused - 7, error - 0]
+                GET all status of audience.destinations.status ->
+                A list of status values use the weighted status in
+                api/constants.py to pick status with least weight
+            Show status for engagement
+                status need to be one [active - 11, inactive - 5,
+                delivering - 8, error - 0]
+                GET status of each audience for this engagement -> list
+                Use the weighted status in api/constants.py to pick
+                status with least weight
+                How do we map audience status to engagement status??
+                    - If audience.status list has delivering / error,
+                        status = delivering / error
+                    - else current_time falls with in delivery_schedule,
+                        status = active
+                    - else current_time falls with in delivery_schedule,
+                        status = inactive
     """
 
     # process each engagement and calculated the weights status value
@@ -656,46 +699,12 @@ def weighted_engagement_status(engagements: list) -> list:
                     break
 
                 # TODO after ORCH-285 so no status mapping needed.
-                status = destination[api_c.LATEST_DELIVERY][api_c.STATUS]
-                if status in [
-                    db_c.STATUS_IN_PROGRESS,
-                    db_c.AUDIENCE_STATUS_DELIVERING,
-                ]:
-                    # map pending to delivering status
-                    status = api_c.STATUS_DELIVERING
-
-                elif status in [
-                    db_c.STATUS_SUCCEEDED,
-                    db_c.AUDIENCE_STATUS_DELIVERED,
-                ]:
-                    # map succeeded to delivered status
-                    status = api_c.STATUS_DELIVERED
-
-                elif status in [
-                    db_c.STATUS_FAILED,
-                    db_c.AUDIENCE_STATUS_ERROR,
-                ]:
-                    # map failed to delivered status
-                    status = api_c.STATUS_ERROR
-
-                elif status == db_c.AUDIENCE_STATUS_PAUSED:
-                    # map paused to delivered status
-                    status = api_c.STATUS_DELIVERY_PAUSED
-
-                elif status == db_c.AUDIENCE_STATUS_NOT_DELIVERED:
-                    # map paused to delivered status
-                    status = api_c.STATUS_NOT_DELIVERED
-
-                else:
-                    # map failed to delivered status
-                    logging.error(
-                        "Unable to map any status for destination_id: %s, engagement_id: %s",
-                        destination[db_c.OBJECT_ID],
-                        engagement[db_c.ID],
-                    )
-                    status = api_c.STATUS_ERROR
-
+                status = api_c.STATUS_MAPPING.get(
+                    destination[api_c.LATEST_DELIVERY][api_c.STATUS],
+                    api_c.STATUS_ERROR,
+                )
                 destination[api_c.LATEST_DELIVERY][api_c.STATUS] = status
+
                 if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
                     destination[api_c.LATEST_DELIVERY][
                         db_c.ENGAGEMENT_DELIVERY_SCHEDULE
@@ -723,13 +732,12 @@ def weighted_engagement_status(engagements: list) -> list:
                     api_c.STATUS: status,
                     api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(status, 0),
                 }
-                status_ranks.append(status_rank)
                 audience_status_rank.append(status_rank)
                 destinations.append(destination)
 
             audience[api_c.DESTINATIONS] = destinations
 
-            # sort delivery status list of dict by weight.
+            # sort delivery status list of destinations by weight.
             audience_status_rank.sort(key=lambda x: x[api_c.WEIGHT])
 
             # take the first item in the sorted list, and grab the status
@@ -739,17 +747,13 @@ def weighted_engagement_status(engagements: list) -> list:
                 else api_c.STATUS_NOT_DELIVERED
             )
 
-            # handle if no status ranks, assume audience status
-            if not status_ranks:
-                status_ranks = [
-                    {
-                        api_c.STATUS: audience[api_c.STATUS],
-                        api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(
-                            audience[api_c.STATUS], 0
-                        ),
-                    }
-                ]
-
+            status_rank = {
+                api_c.STATUS: audience[api_c.STATUS],
+                api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(
+                    audience[api_c.STATUS], 0
+                ),
+            }
+            status_ranks.append(status_rank)
             audiences.append(audience)
 
         engagement[api_c.AUDIENCES] = audiences
@@ -795,12 +799,12 @@ def weighted_engagement_status(engagements: list) -> list:
     return engagements
 
 
-def weight_delivery_status(engagements: list) -> str:
+def weight_delivery_status(audience: list) -> str:
     """Returns a weighted delivery status by rolling up the individual
     delivery status values.
 
     Args:
-        engagements (list): input engagement delivery list.
+        audience (list): input engagement delivery list.
 
     Returns:
         str: a string denoting engagement status.
@@ -813,7 +817,7 @@ def weight_delivery_status(engagements: list) -> str:
             api_c.STATUS: x[api_c.STATUS],
             api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(x[api_c.STATUS], 0),
         }
-        for x in engagements[api_c.DELIVERIES]
+        for x in audience[api_c.DELIVERIES]
         if api_c.STATUS in x
     ]
 

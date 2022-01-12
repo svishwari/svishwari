@@ -47,6 +47,7 @@ CAMPAIGN_ACTIVITY_COLLECTION = "campaign_activity"
 USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
+APPLICATIONS_COLLECTION = "applications"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 MODELS_COLLECTION = "models"
@@ -184,6 +185,7 @@ MARKETING = "Marketing"
 COMMERCE = "Commerce"
 ANALYTICS = "Analytics"
 SURVEY = "Survey"
+URL = "url"
 
 STATUS_PENDING = "Pending"
 STATUS_REQUESTED = "Requested"
@@ -470,6 +472,15 @@ PAGINATION_DESCENDING = "descending"
 MODEL_DESCRIPTION = "description"
 MODEL_USERNAME = "username"
 MODEL_ID = "model_id"
+MODEL_CATEGORY_EMAIL = "Email"
+MODEL_CATEGORY_SALES_FORECASTING = "Sales forecasting"
+MODEL_CATEGORY_TRUST_ID = "Trust ID"
+MODEL_CATEGORY_RETENTION = "Retention"
+MODEL_CATEGORY_WEB = "Web"
+MODEL_CATEGORY_UNCATEGORIZED = "Uncategorized"
+MODEL_TYPE_CLASSIFICATION = "Classification"
+MODEL_TYPE_REGRESSION = "Regression"
+MODEL_TYPE_UNKNOWN = "Unknown"
 
 
 # Custom type definitions
@@ -512,6 +523,10 @@ REQUIRED_FIELDS = {
         ADDED,
         ENABLED,
     ],
+    APPLICATIONS_COLLECTION: [
+        NAME,
+        CATEGORY,
+    ],
 }
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
@@ -536,6 +551,14 @@ ALLOWED_FIELDS = {
         ADDED,
         ENABLED,
     ],
+    APPLICATIONS_COLLECTION: [
+        NAME,
+        TYPE,
+        CATEGORY,
+        URL,
+        STATUS,
+        ADDED,
+    ],
 }
 
 # Allowed collections
@@ -546,6 +569,7 @@ ALLOWED_COLLECTIONS = [
     MODELS_COLLECTION,
     AUDIENCES_COLLECTION,
     ENGAGEMENTS_COLLECTION,
+    APPLICATIONS_COLLECTION,
 ]
 
 # 30 minutes.

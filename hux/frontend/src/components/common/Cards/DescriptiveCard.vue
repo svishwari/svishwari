@@ -1,14 +1,7 @@
 <template>
   <v-card
     :outlined="disabled"
-    class="
-      descriptive-card
-      align-center
-      text-center
-      rounded-lg
-      card-space
-      mb-10
-    "
+    class="descriptive-card align-center text-center rounded-lg card-space mb-6"
     :class="[
       disabled ? 'in-active' : '',
       interactable ? 'interactable' : 'non-interactable',
@@ -45,9 +38,10 @@
         <logo
           v-if="logoOption"
           :type="icon"
-          :size="32"
+          :size="logoSize"
           :color="iconColor"
           class="d-block"
+          :class="logoSize === 45 ? 'icon-margin' : ''"
         />
         <icon
           v-else
@@ -78,14 +72,7 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="
-            px-3
-            d-block
-            description
-            text-body-2
-            black--text
-            text--lighten-4
-          "
+          class="px-3 d-block description text-body-2 black--text"
           :style="{
             'padding-top': !icon ? '22px' : null,
             height: descriptionHeight,
@@ -188,6 +175,11 @@ export default {
       required: false,
       default: "auto",
     },
+    logoSize: {
+      type: Number,
+      required: false,
+      default: 32,
+    },
   },
 }
 </script>
@@ -250,5 +242,9 @@ export default {
 }
 .card-space {
   margin-right: 24px !important;
+}
+.icon-margin {
+  margin-left: -6px !important;
+  margin-top: -6px !important;
 }
 </style>

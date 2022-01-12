@@ -5,10 +5,17 @@ from pymongo import MongoClient
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.collection_management import get_documents
 from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database import (
+    delivery_platform_management as destination_management,
+)
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
+    get_all_delivery_platforms,
 )
 from huxunifylib.database.orchestration_management import get_audience
+from huxunifylib.connectors.util.selector import (
+    get_delivery_platform_connector,
+)
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import get_next_schedule
@@ -16,6 +23,7 @@ from huxunify.api.data_connectors.courier import (
     get_destination_config,
     get_audience_destination_pairs,
 )
+from huxunify.api.data_connectors.jira import JiraConnection
 
 
 def generate_cron(schedule: dict) -> str:
@@ -203,3 +211,58 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
                     )
                 )
                 loop.run_until_complete(task)
+
+
+def run_scheduled_destination_checks(database: MongoClient) -> None:
+    """function to run scheduled destination validations.
+
+    Args:
+        database (MongoClient): The mongo database client.
+
+    """
+
+    # set the event loop
+    asyncio.set_event_loop(asyncio.SelectorEventLoop())
+    loop = asyncio.get_event_loop()
+
+    for destination in get_all_delivery_platforms(database, enabled=True):
+        connector = get_delivery_platform_connector(
+            destination[api_c.DELIVERY_PLATFORM_TYPE],
+            destination[api_c.AUTHENTICATION_DETAILS],
+        )
+        if connector is not None:
+            try:
+                # fire and forget task.
+                task = loop.create_task(connector)
+                loop.run_until_complete(task)
+
+            # pylint: disable=broad-except
+            except Exception as exception:
+                logger.error(
+                    "%s: %s while connecting to destination %s.",
+                    exception.__class__,
+                    str(exception),
+                    destination[api_c.DELIVERY_PLATFORM_TYPE],
+                )
+                destination[db_c.DELIVERY_PLATFORM_STATUS] = db_c.STATUS_FAILED
+
+                # create JIRA ticket for the request.
+                JiraConnection().create_jira_issue(
+                    api_c.TASK,
+                    f"Removing Destination '{destination[api_c.NAME]}'.",
+                    "\n".join(
+                        f"{key.title()}: {value}"
+                        for key, value in destination.items()
+                    ),
+                )
+
+                destination_management.update_delivery_platform(
+                    database=database,
+                    delivery_platform_id=destination[db_c.ID],
+                    name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                    delivery_platform_type=destination[
+                        db_c.DELIVERY_PLATFORM_TYPE
+                    ],
+                    enabled=False,
+                    deleted=True,
+                )

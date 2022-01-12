@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Union
 
 import pymongo
+from bson import ObjectId
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as db_c
@@ -96,7 +97,7 @@ def create_document(
 def update_document(
     database: DatabaseClient,
     collection: str,
-    document_id: str,
+    document_id: ObjectId,
     update_doc: dict,
     username: str = "unknown",
 ) -> Union[dict, None]:
@@ -105,7 +106,7 @@ def update_document(
     Args:
         database (DatabaseClient): A database client.
         collection (str): Collection name.
-        document_id (str): Document ID of a doc.
+        document_id (ObjectId): Document ID of a doc.
         update_doc (dict): Dict of key values to update.
         username (str): Username.
 

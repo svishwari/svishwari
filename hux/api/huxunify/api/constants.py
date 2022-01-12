@@ -98,6 +98,7 @@ CLIENT_ACCOUNT = "client_account"
 USE_CASE = "use_case"
 FIELD_TYPE = "field_type"
 INTERVAL = "interval"
+URL = "url"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -192,6 +193,7 @@ DAY_OF_MONTH_NAME_LIST = [
 ]
 DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
+DESTINATION_CHECK_CRON = "*/15"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
@@ -299,6 +301,17 @@ STATUS_REQUESTED = "Requested"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
+
+STATUS_MAPPING = {
+    db_c.STATUS_IN_PROGRESS: STATUS_DELIVERING,
+    db_c.AUDIENCE_STATUS_DELIVERING: STATUS_DELIVERING,
+    db_c.STATUS_SUCCEEDED: STATUS_DELIVERED,
+    db_c.AUDIENCE_STATUS_DELIVERED: STATUS_DELIVERED,
+    db_c.STATUS_FAILED: STATUS_ERROR,
+    db_c.AUDIENCE_STATUS_ERROR: STATUS_ERROR,
+    db_c.AUDIENCE_STATUS_PAUSED: STATUS_DELIVERY_PAUSED,
+    db_c.AUDIENCE_STATUS_NOT_DELIVERED: STATUS_NOT_DELIVERED,
+}
 
 # used for weighting the rollup status for engagement deliveries
 # 0 being the highest.
@@ -665,6 +678,14 @@ GENERIC_DESTINATION = "generic_destination"
 DESTINATION_CATEGORIES = "destination_categories"
 DESTINATION_AUDIENCES = "destination_audiences"
 
+# Map db status values to api status values
+DESTINATION_STATUS_MAPPING = {
+    db_c.STATUS_SUCCEEDED: STATUS_ACTIVE,
+    db_c.STATUS_PENDING: STATUS_PENDING,
+    db_c.STATUS_FAILED: STATUS_ERROR,
+    db_c.STATUS_REQUESTED: STATUS_REQUESTED,
+}
+
 # Engagement fields
 ENGAGEMENT = "engagement"
 ENGAGEMENT_ID = "engagement_id"
@@ -989,7 +1010,13 @@ PROFILE_SIZE_PERCENT = "profile_size_percent"
 RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
-CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
+CLASSIFICATION_MODELS = [
+    UNSUBSCRIBE,
+    PURCHASE,
+    "propensity_positive_click type: binary",
+    "propensity_positive_open type: binary",
+    "propensity_positive_unsub type: binary",
+]
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
@@ -1329,6 +1356,11 @@ CONFIGURATIONS_TAG = "configurations"
 CONFIGURATION_ID = "configuration_id"
 CONFIGURATIONS_ENDPOINT = "/configurations"
 
+# Applications
+APPLICATIONS_TAG = "applications"
+APPLICATION_ID = "application_id"
+APPLICATIONS_ENDPOINT = "/applications"
+
 # Histogram data stub.
 VALUES = "values"
 # TODO Remove once we have data from CDP
@@ -1445,3 +1477,15 @@ AUDIENCE_RULES_HISTOGRAM_DATA = {
         ],
     },
 }
+
+REASON_FOR_REQUEST = "reason_for_request"
+NEW_USER_REQUEST_PREFIX = "[NEW USER REQUEST]"
+DEFAULT_NEW_USER_PROJECT_NAME = "ADV"
+DEFAULT_OKTA_GROUP_NAME = "team-unified--base"
+DEFAULT_OKTA_APP = "HUX Audience Builder"
+REQUEST_NEW_USER = "request_new_user"
+REQUESTED_BY = "requested_by"
+
+RESOURCE_OWNER = "resource_owner"
+ALLOWED_RESOURCES_FOR_ABAC = [AUDIENCE, ENGAGEMENT]
+ALLOWED_ACCESS_RULES = [RESOURCE_OWNER]

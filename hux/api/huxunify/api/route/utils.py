@@ -1,7 +1,6 @@
 """Purpose of this file is to house route utilities."""
 from datetime import datetime, date
 import re
-import csv
 from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
@@ -22,6 +21,7 @@ from huxunifylib.database.cdp_data_source_management import (
 from huxunifylib.database import (
     constants as db_c,
 )
+from huxunifylib.database.collection_management import get_document
 from huxunifylib.database.user_management import (
     get_user,
     get_all_users,
@@ -48,6 +48,7 @@ from huxunify.api.exceptions import (
     unified_exceptions as ue,
 )
 from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.stubbed_data.stub_shap_data import shap_data
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -567,12 +568,10 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     return user
 
 
-# pylint: disable=unspecified-encoding
-def read_csv_shap_data(file_path: str, features: list = None) -> dict:
-    """Read in Shap Models Data CSV into a dict
+def get_required_shap_data(features: list = None) -> dict:
+    """Read in Shap Models Data JSON into a dict
 
     Args:
-        file_path (str): relative file path of the csv file
         features (list): string list of the features to be returned.
         If none is passed, all features are returned
 
@@ -581,42 +580,12 @@ def read_csv_shap_data(file_path: str, features: list = None) -> dict:
 
     """
 
-    data = {}
-    index = {}
-
-    # load in the necessary data
-    with open(file_path, "r") as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=",")
-        column_names = next(csv_reader)
-
-        if not features:
-            features = column_names
-
-        for feature in features:
-            index[feature] = column_names.index(feature)
-            data[feature] = []
-
-        for row in csv_reader:
-            for feature in features:
-                data[feature].append(row[index[feature]])
-
-    return data
-
-
-# pylint: disable=unspecified-encoding
-def read_stub_city_zip_data(file_path: str) -> list:
-    """Read in City & Zip Data CSV into a dict
-
-    Args:
-        file_path(str): relative file path of the csv file
-
-    Returns:
-        list: City & Zip data list
-    """
-    with open(file_path, "r") as csv_file:
-        data = list(csv.reader(csv_file))
-
-    return data[1:]
+    # return required shap feature data
+    return {
+        feature: data
+        for feature, data in shap_data.items()
+        if feature in features
+    }
 
 
 def convert_unique_city_filter(request_json: dict) -> dict:
@@ -727,6 +696,8 @@ def set_destination_category_in_engagement(engagement: dict):
                 api_c.ID: dest[api_c.ID],
                 api_c.NAME: dest[api_c.NAME],
                 api_c.DESTINATION_AUDIENCES: [],
+                api_c.DESTINATION_TYPE: dest[api_c.DELIVERY_PLATFORM_TYPE],
+                db_c.LINK: dest.get(db_c.LINK),
             }
             destination[api_c.DESTINATION_AUDIENCES].append(audience)
             destinations.append(destination)
@@ -783,3 +754,90 @@ def set_destination_category_in_engagement(engagement: dict):
                 )
 
     engagement[api_c.DESTINATION_CATEGORIES] = destinations_categories
+
+
+def create_description_for_user_request(
+    first_name: str,
+    last_name: str,
+    email: str,
+    access_level: str,
+    pii_access: bool,
+    reason_for_request: str,
+    requested_by: str,
+    project_name: str = api_c.DEFAULT_NEW_USER_PROJECT_NAME,
+    okta_group_name: str = api_c.DEFAULT_OKTA_GROUP_NAME,
+    okta_app: str = api_c.DEFAULT_OKTA_APP,
+) -> str:
+    """Create HUS issue description using new user request data.
+
+    Args:
+        first_name (str): First name of the user requested.
+        last_name (str): Last name of the user requested.
+        email (str): Email of the user requested.
+        access_level (str): Access level of the user requested.
+        pii_access (bool): If allowed PII access.
+        reason_for_request (str): Description of why access request.
+        requested_by (str): User Name of the person requesting.
+        project_name (str, Optional): Project name which user needs to
+            be granted access.
+        okta_group_name (str, Optional): Okta group name to which user
+            must be added.
+        okta_app (str, Optional): Okta app name to which user needs
+            permission.
+
+    Returns:
+        str: Description for HUS issue.
+    """
+
+    return (
+        f"*Project Name:* {project_name} \n"
+        f"*Required Info:* Please add {first_name} {last_name} to the"
+        f" {okta_group_name} group. \n"
+        f"*Reason for Request:* {reason_for_request} \n"
+        f"*User:* {first_name}, {last_name} \n"
+        f"*Email:* {email} \n"
+        f"*Access Level:* {access_level} \n"
+        f"*PII Access:* {pii_access} \n"
+        f"*Okta Group Name:* {okta_group_name} \n"
+        f"*Okta App:* {okta_app} \n"
+        f"*Requested by:* {requested_by}"
+    )
+
+
+def validate_if_resource_owner(
+    resource_name: str, resource_id: str, user_name: str
+) -> bool:
+    """Validates if the user given is the resource owner.
+
+    Args:
+         resource_name (str): Name of the resource.
+         resource_id (str): ID of the resource.
+         user_name (str): User name of the user.
+     Returns:
+         bool: True if the name of user is the same as created_by.
+    """
+
+    resource_collection_mapping = {
+        api_c.AUDIENCE: db_c.AUDIENCES_COLLECTION,
+        api_c.ENGAGEMENT: db_c.ENGAGEMENTS_COLLECTION,
+    }
+    # Get the collection from the mapping.
+    collection = resource_collection_mapping.get(resource_name)
+    if collection:
+        resource = get_document(
+            database=get_db_client(),
+            collection=collection,
+            query_filter={db_c.ID: ObjectId(resource_id)},
+        )
+        # Add check if resource name is audience, considering lookalikes.
+        if not resource and resource_name == api_c.AUDIENCE:
+            resource = get_document(
+                database=get_db_client(),
+                collection=db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+                query_filter={db_c.ID: ObjectId(resource_id)},
+            )
+
+        if resource and resource.get(db_c.CREATED_BY, "") == user_name:
+            return True
+
+    return False
