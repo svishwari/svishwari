@@ -238,11 +238,13 @@ def get_delivery_platform_by_type(
 )
 def get_all_delivery_platforms(
     database: DatabaseClient,
+    enabled: bool = None,
 ) -> Union[list, None]:
     """A function to get all configured delivery platforms.
 
     Args:
         database (DatabaseClient): A database client.
+        enabled (Boolean): Enabled flag.
 
     Returns:
         Union[list, None]: A list of all delivery platform configuration dicts.
@@ -252,8 +254,12 @@ def get_all_delivery_platforms(
     platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
+    query_filter = {db_c.DELETED: False}
+    if enabled is not None:
+        query_filter[db_c.ENABLED] = enabled
+
     try:
-        doc = list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
+        doc = list(collection.find(query_filter, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

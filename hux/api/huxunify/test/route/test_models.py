@@ -15,6 +15,7 @@ MOCK_MODEL_RESPONSE = {
         {
             "features": [
                 "2021-04-26 00:00:00",
+                "2021-04-26 00:00:00",
                 "Propensity of a customer making a purchase after "
                 "receiving an email.",
                 "2021-04-26 00:00:00",
@@ -31,6 +32,7 @@ MOCK_MODEL_RESPONSE = {
         },
         {
             "features": [
+                "2021-01-25 00:00:00",
                 "2021-01-25 00:00:00",
                 "Predict the lifetime value of a customer.",
                 "2021-01-25 00:00:00",
