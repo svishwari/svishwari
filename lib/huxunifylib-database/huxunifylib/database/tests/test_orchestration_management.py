@@ -682,7 +682,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIn(
             destination[db_c.OBJECT_ID],
-            [x[db_c.ID] for x in doc[db_c.DESTINATIONS]],
+            [x[db_c.OBJECT_ID] for x in doc[db_c.DESTINATIONS]],
         )
 
     def test_remove_destination_from_audience(self):
