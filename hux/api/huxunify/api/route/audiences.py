@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument,too-many-lines
 """Paths for Orchestration API"""
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
@@ -13,6 +13,15 @@ from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
+from huxunifylib.database.delivery_platform_management import (
+    get_delivery_platform,
+    get_delivery_platforms_by_id,
+)
+from huxunifylib.database.orchestration_management import (
+    get_audience,
+    append_destination_to_standalone_audience,
+    remove_destination_from_audience,
+)
 from huxunifylib.connectors import connector_cdp
 from huxunifylib.database import (
     orchestration_management,
@@ -32,6 +41,8 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_demographic_by_state,
     get_demographic_by_country,
+    get_customers_insights_count_by_day,
+    get_revenue_by_day,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.route.decorators import (
@@ -46,7 +57,11 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
     CustomersInsightsCountriesSchema,
+    TotalCustomersInsightsSchema,
+    CustomerRevenueInsightsSchema,
 )
+from huxunify.api.schema.engagement import DestinationEngagedAudienceSchema
+from huxunify.api.schema.orchestration import AudienceGetSchema
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
@@ -56,6 +71,7 @@ from huxunify.api.route.utils import (
     do_not_transform_fields,
     logger,
     Validation,
+    get_start_end_dates,
 )
 
 # setup the audiences blueprint
@@ -787,5 +803,401 @@ class AudienceRulesHistogram(SwaggerView):
 
         return (
             jsonify(api_c.AUDIENCE_RULES_HISTOGRAM_DATA[field_type]),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/<audience_id>/destinations",
+    "AddDestinationAudience",
+)
+class AddDestinationAudience(SwaggerView):
+    """Add destination to Audience"""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience Id",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destinations body.",
+            "example": {
+                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                db_c.DELIVERY_PLATFORM_CONFIG: {
+                    db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                },
+            },
+        },
+    ]
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": AudienceGetSchema,
+            "description": "Destination added to Audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to Add destination to the audience",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @validate_engagement_and_audience()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, audience_id: ObjectId, user: dict) -> Tuple[Response, int]:
+        """Adds Destination to Audience
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (ObjectId): Audience Id
+            user (dict): User Object
+
+        Returns:
+            Tuple[Response, int]: Destination Audience added,
+                HTTP status code.
+        """
+
+        database = get_db_client()
+
+        destination = DestinationEngagedAudienceSchema().load(
+            request.get_json(), partial=True
+        )
+        destination[api_c.ID] = ObjectId(destination.get(api_c.ID))
+        destination[db_c.DATA_ADDED] = datetime.utcnow()
+
+        # get destinations
+        destination_to_attach = get_delivery_platform(
+            database, destination.get(api_c.ID)
+        )
+
+        if not destination_to_attach:
+            logger.error(
+                "Could not find destination with id %s.", destination[api_c.ID]
+            )
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        audience = append_destination_to_standalone_audience(
+            database=database,
+            audience_id=audience_id,
+            destination=destination,
+            user_name=user[api_c.USER_NAME],
+        )
+
+        destination_ids = [
+            x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]
+        ]
+
+        destinations_list = get_delivery_platforms_by_id(
+            database, destination_ids
+        )
+        audience[db_c.DESTINATIONS] = destinations_list
+
+        logger.info(
+            "Destination %s added to audience %s.",
+            destination_to_attach[db_c.NAME],
+            audience[db_c.NAME],
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Destination "{destination_to_attach[db_c.NAME]}" added to '
+                f'audience "{audience[db_c.NAME]}" '
+            ),
+            api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
+        )
+
+        return (
+            AudienceGetSchema().dump(audience),
+            HTTPStatus.CREATED.value,
+        )
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/<audience_id>/destinations",
+    "DeleteDestinationAudience",
+)
+class DeleteDestinationAudience(SwaggerView):
+    """Delete destination to Audience"""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience Id",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destinations body.",
+            "example": {
+                api_c.ID: "60ae035b6c5bf45da27f17e6",
+            },
+        },
+    ]
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "schema": AudienceGetSchema,
+            "description": "Destination successfully deleted from audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to delete destination from the audience",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @validate_engagement_and_audience()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def delete(
+        self, audience_id: ObjectId, user: dict
+    ) -> Tuple[Response, int]:
+        """Adds Destination to Audience
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (ObjectId): Audience Id
+            user (dict): User Object
+
+        Returns:
+            Tuple[Response, int]: Destination Audience added,
+                HTTP status code.
+        """
+
+        database = get_db_client()
+
+        destination = DestinationEngagedAudienceSchema().load(
+            request.get_json(), partial=True
+        )
+        destination[api_c.ID] = ObjectId(destination.get(api_c.ID))
+
+        # get destinations
+        destination_to_remove = get_delivery_platform(
+            database, destination.get(api_c.ID)
+        )
+
+        if not destination_to_remove:
+            logger.error(
+                "Could not find destination with id %s.", destination[api_c.ID]
+            )
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        audience = remove_destination_from_audience(
+            database=database,
+            audience_id=audience_id,
+            destination_id=destination[api_c.ID],
+            user_name=user[api_c.USER_NAME],
+        )
+        if audience:
+            logger.info(
+                "Destination %s removed from audience %s.",
+                destination_to_remove[db_c.NAME],
+                audience[db_c.NAME],
+            )
+
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f'Destination "{destination_to_remove[db_c.NAME]}" removed from '
+                    f'audience "{audience[db_c.NAME]}" '
+                ),
+                api_c.ORCHESTRATION_TAG,
+                user[api_c.USER_NAME],
+            )
+
+            return Response(), HTTPStatus.NO_CONTENT
+
+        logger.info("Could not delete engagement with ID %s.", audience_id)
+        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/<audience_id>/{api_c.TOTAL}",
+    "AudienceTrendGraphView",
+)
+class TotalAudienceGraphView(SwaggerView):
+    """Total audience insights graph view class."""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": TotalCustomersInsightsSchema},
+            "description": "Total Audience Insights .",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Total Audience Insights."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, audience_id: str, user: dict) -> Tuple[Response, int]:
+        """Retrieves total audience insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience ID
+            user (dict): User doc
+
+        Returns:
+            Tuple[Response, int]: Response list of total audience trend data,
+                HTTP status code.
+        """
+
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        start_date, end_date = get_start_end_dates(request, 9)
+        # create a dict for date_filters required by cdp endpoint
+        date_filters = {
+            api_c.START_DATE: start_date,
+            api_c.END_DATE: end_date,
+        }
+
+        # get the audience
+        audience_id = ObjectId(audience_id)
+
+        audience = get_audience(get_db_client(), audience_id)
+
+        audience_insights_total = get_customers_insights_count_by_day(
+            token_response[0],
+            date_filters,
+            audience.get(db_c.AUDIENCE_FILTERS),
+        )
+
+        return (
+            jsonify(
+                TotalCustomersInsightsSchema().dump(
+                    audience_insights_total,
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/<audience_id>/{api_c.REVENUE}",
+    "CustomersRevenueInsightsGraphView",
+)
+class AudienceRevenueInsightsGraphView(SwaggerView):
+    """Audience revenue insights graph view class."""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomerRevenueInsightsSchema,
+            },
+            "description": "Audience Revenue Insights .",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Audience Revenue Insights."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, audience_id: str, user: dict) -> Tuple[Response, int]:
+        """Retrieves audience revenue insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience ID
+            user (dict): User doc
+
+        Returns:
+            Tuple[Response, int]: Response list of revenue details by date,
+                HTTP status code.
+        """
+
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        start_date, end_date = get_start_end_dates(request, 6)
+
+        audience_id = ObjectId(audience_id)
+
+        audience = get_audience(get_db_client(), audience_id)
+
+        audience_revenue_insight = get_revenue_by_day(
+            token_response[0],
+            start_date,
+            end_date,
+            {api_c.AUDIENCE_FILTERS: audience[db_c.AUDIENCE_FILTERS]},
+        )
+
+        return (
+            jsonify(
+                CustomerRevenueInsightsSchema().dump(
+                    audience_revenue_insight,
+                    many=True,
+                )
+            ),
             HTTPStatus.OK,
         )

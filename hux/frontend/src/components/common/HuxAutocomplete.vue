@@ -7,6 +7,9 @@
     append-icon="mdi-chevron-down"
     solo
     :height="40"
+    :cache-items="false"
+    :loading="loader"
+    @update:search-input="(val) => $emit('search-update', val)"
   ></v-autocomplete>
 </template>
 
@@ -24,6 +27,11 @@ export default defineComponent({
       type: Array,
       required: true,
       default: () => [],
+    },
+    loader: {
+      type: Boolean,
+      required: false,
+      default: null,
     },
   },
   emits: ["input", "change"],

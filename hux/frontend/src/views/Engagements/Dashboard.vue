@@ -88,7 +88,7 @@
                 data-e2e="deliver-history"
                 @click="openDeliveryHistoryDrawer()"
               >
-                <icon type="history" color="primary" :size="16" class="mr-1" />
+                <icon type="history" color="primary" :size="26" class="mr-1" />
                 Delivery history
               </v-btn>
             </div>

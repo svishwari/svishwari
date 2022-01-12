@@ -4,12 +4,11 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
 
-    <h2 class="text-h2">{{ formTitle }}</h2>
+    <h2 class="text-h1">{{ formTitle }}</h2>
 
-    <p class="mb-10">
-      Tell us a little bit about this engagement. What are its goals? When are
-      you planning to run it? Who are you targeting? If you don’t know yet -
-      that’s okay! You can always fill out the details later.
+    <p class="body-1 mb-10">
+      Keep in mind that by editing this engagement you may impact related
+      audiences and destinations.
     </p>
 
     <engagement-overview v-model="data" />

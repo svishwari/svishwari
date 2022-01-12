@@ -800,19 +800,8 @@ delivery_platforms_constants = [
 # Models List
 models_list = [
     {
-        db_c.CATEGORY: "Email",
-        db_c.TYPE: "Classification",
-        db_c.NAME: "Propensity to Purchase",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to click"
-        " on a link in an email and make a purchase.",
-        db_c.MODEL_ID: "f76a5e0bd7edaad4c36bec4a3682f02d36441fe1",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-    },
-    {
-        db_c.CATEGORY: "Email",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Unsubscribe",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to unsubscribe"
         " from an email marketing list.",
@@ -822,8 +811,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Email",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Open",
         db_c.MODEL_DESCRIPTION: " Propensity for a customer to open an email.",
         db_c.MODEL_ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
@@ -832,8 +821,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Email",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Click",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to click "
         "on a link in an email.",
@@ -843,8 +832,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Email",
-        db_c.TYPE: "Unknown",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
+        db_c.TYPE: db_c.MODEL_TYPE_UNKNOWN,
         db_c.NAME: "Email Content Optimization",
         db_c.MODEL_DESCRIPTION: "Alter email content to optimize "
         "email campaign performance.",
@@ -854,8 +843,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Sales forecasting",
-        db_c.TYPE: "Regression",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
+        db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
         db_c.NAME: "Customer Lifetime Value",
         db_c.MODEL_DESCRIPTION: "Predicting the lifetime value of a "
         "customer over a defined time range.",
@@ -865,8 +854,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Sales forecasting",
-        db_c.TYPE: "Regression",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
+        db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
         db_c.NAME: "Predicted Sales Per Customer",
         db_c.MODEL_DESCRIPTION: "Predicting sales for a customer over a "
         "defined time range.",
@@ -876,8 +865,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Sales forecasting",
-        db_c.TYPE: "Regression",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
+        db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
         db_c.NAME: "Predicted Sales Per Store",
         db_c.MODEL_DESCRIPTION: "Predicting sales for a store over a "
         "defined time range.",
@@ -887,8 +876,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Trust",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Capability Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral capability score.",
@@ -898,8 +887,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Trust",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Trust Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral trust score.",
@@ -909,8 +898,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Trust",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Humanity Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral humanity score.",
@@ -920,8 +909,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Trust",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Reliability Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral reliability score.",
@@ -931,8 +920,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Trust",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Transparency Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral transparency score.",
@@ -942,8 +931,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Retention",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_RETENTION,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Churn",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to leave a service "
         "over a defined time range.",
@@ -953,8 +942,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Web",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Purchase Product Category",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web purchase"
         " in a particular product category.",
@@ -964,8 +953,8 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Web",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Visit Product Category",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web visit"
         " in a particular product category.",
@@ -975,11 +964,21 @@ models_list = [
         db_c.ENABLED: True,
     },
     {
-        db_c.CATEGORY: "Web",
-        db_c.TYPE: "Classification",
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Visit Website",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to visit a website.",
         db_c.MODEL_ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
+        db_c.STATUS: db_c.PENDING,
+        db_c.ADDED: False,
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.CATEGORY: db_c.MODEL_CATEGORY_UNCATEGORIZED,
+        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
+        db_c.NAME: "Segmentation",
+        db_c.MODEL_DESCRIPTION: "Segment a set of customers.",
+        db_c.MODEL_ID: "d7480a81b3c84fd696e43c18e31a481a",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -1098,7 +1097,7 @@ models_list = [
 configurations_constants = [
     {
         db_c.CONFIGURATION_FIELD_NAME: "Data Management",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Monitor data quality "
         "throughout ingestion and create a peristent"
@@ -1109,7 +1108,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Track performance of "
         "decisioning models and reveal actionable"
@@ -1120,7 +1119,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Customer Insights",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "A 360 degree view of "
         "each customer, understanding not only their needs and "
@@ -1131,7 +1130,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Orchestration",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Seamlessly route audiences to"
         " an activation channel of choice to deliver a personalized"
@@ -1142,7 +1141,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Content",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Content allows you to present"
         " visitors with unique experiences tailored to their needs.",
@@ -1152,7 +1151,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Measurement",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Find out why your audiences"
         " think what they think, behave as they "
@@ -1163,7 +1162,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Commerce personal",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "commerce_personal",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
         "consectetur adipiscing elit ut aliquam.",
@@ -1173,7 +1172,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Digital Giant",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "digital_advertising",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
         "consectetur adipiscing elit ut aliquam.",
@@ -1183,7 +1182,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Email deliverability",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "email_deliverability",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Ensure emails land in the right "
         "inbox by providing insights on all aspects of a "
@@ -1205,7 +1204,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Insight IQ",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "insight_iq",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your customer profiles"
         " with this collections of data sources at"
@@ -1216,7 +1215,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Intelligent marketing",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "intelligent_marketing",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "These capabilities were folded "
         "into the segmentation engine, as was Hux Audience.",
@@ -1226,7 +1225,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Trust ID",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "trust_id",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain "
         "visibility, monitor and  engage with their customers "
@@ -1237,7 +1236,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Search AI",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "search_ai",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to"
         " optimize the creation, placement, and timing of online "
@@ -1248,7 +1247,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Cognitive spark",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "cognitive_spark",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "A modular cloud-based product"
         " designed to enable brands and portfolios "

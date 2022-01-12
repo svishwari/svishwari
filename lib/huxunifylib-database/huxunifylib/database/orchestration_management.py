@@ -689,14 +689,14 @@ def get_all_audiences_and_deliveries(
         },
         {"$project": {"deliveries.deleted": 0}},
     ]
-    stage_count_in_pipeline = 0
 
+    stage_count_in_pipeline = 0
     if audience_ids is not None:
         pipeline.insert(
             stage_count_in_pipeline,
             {"$match": {db_c.ID: {"$in": audience_ids}}},
         )
-    stage_count_in_pipeline += 1
+        stage_count_in_pipeline += 1
 
     if filters:
         if filters.get(db_c.WORKED_BY):
@@ -728,6 +728,7 @@ def get_all_audiences_and_deliveries(
                     }
                 },
             )
+            stage_count_in_pipeline += 1
 
     # use the audience pipeline to aggregate and join all the delivery data
     try:
@@ -784,3 +785,106 @@ def remove_destination_from_all_audiences(
         logging.error(exc)
 
     return False
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def append_destination_to_standalone_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    destination: dict,
+    user_name: str,
+) -> dict:
+    """A function to append destination to standalone audience.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        destination (dict): Destination to add to engagement audience.
+        user_name (str): Name of the user appending the destination to the
+            audience.
+
+    Returns:
+        dict: updated audience object.
+    Raises:
+        TypeError: Error user name is not a string.
+    """
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
+
+    try:
+        audience = collection.find_one_and_update(
+            {
+                db_c.ID: audience_id,
+            },
+            {
+                "$push": {"destinations": destination},
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                },
+            },
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return audience
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def remove_destination_from_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    user_name: str,
+) -> dict:
+    """A function to remove destination from audience.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        destination_id (ObjectId): MongoDB ID of the destination to be removed.
+        user_name (str): Name of the user removing the destination from the
+            audience.
+
+    Returns:
+        dict: updated audience object.
+
+    Raises:
+        TypeError: Error user name is not a string.
+    """
+
+    if not isinstance(user_name, str):
+        raise TypeError("user_name must be a string")
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
+    try:
+        audience = collection.find_one_and_update(
+            {
+                db_c.ID: audience_id,
+            },
+            {
+                "$pull": {"destinations": {db_c.OBJECT_ID: destination_id}},
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                },
+            },
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return audience

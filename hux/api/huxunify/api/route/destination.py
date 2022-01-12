@@ -43,6 +43,9 @@ from huxunifylib.connectors import (
     AuthenticationFailed,
 )
 from huxunifylib.connectors import connector_sfmc
+from huxunifylib.connectors.util.selector import (
+    get_delivery_platform_connector,
+)
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
     parameter_store,
@@ -247,39 +250,29 @@ class DestinationsView(SwaggerView):
             type=lambda v: v.lower() == "true",
         )
 
-        connector_dict = {
-            db_c.DELIVERY_PLATFORM_FACEBOOK: FacebookConnector,
-            db_c.DELIVERY_PLATFORM_SFMC: SFMCConnector,
-            db_c.DELIVERY_PLATFORM_QUALTRICS: QualtricsConnector,
-            db_c.DELIVERY_PLATFORM_SENDGRID: SendgridConnector,
-            db_c.DELIVERY_PLATFORM_TWILIO: SendgridConnector,
-            db_c.DELIVERY_PLATFORM_GOOGLE: GoogleConnector,
-        }
-
-        # Map db status values to api status values
-        status_mapping = {
-            db_c.STATUS_SUCCEEDED: api_c.STATUS_ACTIVE,
-            db_c.STATUS_PENDING: api_c.STATUS_PENDING,
-            db_c.STATUS_FAILED: api_c.STATUS_ERROR,
-            db_c.STATUS_REQUESTED: api_c.STATUS_REQUESTED,
-        }
-
         for destination in destinations:
             if refresh_all:
-                if destination[api_c.DELIVERY_PLATFORM_TYPE] in connector_dict:
+                if (
+                    destination[api_c.DELIVERY_PLATFORM_TYPE]
+                    in db_c.SUPPORTED_DELIVERY_PLATFORMS
+                ):
                     try:
-                        connector_dict[
-                            destination[api_c.DELIVERY_PLATFORM_TYPE]
-                        ](
-                            auth_details=get_auth_from_parameter_store(
+                        connector = get_delivery_platform_connector(
+                            destination[api_c.DELIVERY_PLATFORM_TYPE],
+                            get_auth_from_parameter_store(
                                 destination[api_c.AUTHENTICATION_DETAILS],
                                 destination[api_c.DELIVERY_PLATFORM_TYPE],
-                            )
+                            ),
                         )
-                        destination[
-                            db_c.DELIVERY_PLATFORM_STATUS
-                        ] = db_c.STATUS_SUCCEEDED
-                    # pylint: disable=broad-except
+                        if connector is not None:
+                            destination[
+                                db_c.DELIVERY_PLATFORM_STATUS
+                            ] = db_c.STATUS_SUCCEEDED
+                        else:
+                            destination[
+                                db_c.DELIVERY_PLATFORM_STATUS
+                            ] = db_c.STATUS_FAILED
+                        # pylint: disable=broad-except
                     except Exception as exception:
                         logger.error(
                             "%s: %s while connecting to destination %s.",
@@ -302,7 +295,9 @@ class DestinationsView(SwaggerView):
                     )
             # using a default here in case we do not have a proper mapping
             # or just want to use the same constant value in the UI
-            destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping.get(
+            destination[
+                db_c.DELIVERY_PLATFORM_STATUS
+            ] = api_c.DESTINATION_STATUS_MAPPING.get(
                 destination[db_c.DELIVERY_PLATFORM_STATUS],
                 destination[db_c.DELIVERY_PLATFORM_STATUS],
             )
