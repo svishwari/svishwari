@@ -846,8 +846,9 @@ class AddDestinationAudience(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @validate_engagement_and_audience()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def post(self, audience_id: str, user: dict) -> Tuple[Response, int]:
+    def post(self, audience_id: ObjectId, user: dict) -> Tuple[Response, int]:
         """Adds Destination to Audience
 
         ---
@@ -855,7 +856,7 @@ class AddDestinationAudience(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            audience_id (str): Audience Id
+            audience_id (ObjectId): Audience Id
             user (dict): User Object
 
         Returns:
@@ -865,11 +866,11 @@ class AddDestinationAudience(SwaggerView):
 
         database = get_db_client()
 
-        audience = get_audience(database, ObjectId(audience_id))
-
-        if not audience:
-            logger.error("Audience not found for audience ID %s.", audience_id)
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+        # audience = get_audience(database, ObjectId(audience_id))
+        #
+        # if not audience:
+        #     logger.error("Audience not found for audience ID %s.", audience_id)
+        #     return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
@@ -892,7 +893,7 @@ class AddDestinationAudience(SwaggerView):
 
         audience = append_destination_to_standalone_audience(
             database=database,
-            audience_id=ObjectId(audience_id),
+            audience_id=audience_id,
             destination=destination,
             user_name=user[api_c.USER_NAME],
         )
@@ -962,8 +963,11 @@ class DeleteDestinationAudience(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @validate_engagement_and_audience()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def delete(self, audience_id: str, user: dict) -> Tuple[Response, int]:
+    def delete(
+        self, audience_id: ObjectId, user: dict
+    ) -> Tuple[Response, int]:
         """Adds Destination to Audience
 
         ---
@@ -971,7 +975,7 @@ class DeleteDestinationAudience(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            audience_id (str): Audience Id
+            audience_id (ObjectId): Audience Id
             user (dict): User Object
 
         Returns:
@@ -981,11 +985,11 @@ class DeleteDestinationAudience(SwaggerView):
 
         database = get_db_client()
 
-        audience = get_audience(database, ObjectId(audience_id))
-
-        if not audience:
-            logger.error("Audience not found for audience ID %s.", audience_id)
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+        # audience = get_audience(database, ObjectId(audience_id))
+        #
+        # if not audience:
+        #     logger.error("Audience not found for audience ID %s.", audience_id)
+        #     return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
@@ -1007,7 +1011,7 @@ class DeleteDestinationAudience(SwaggerView):
 
         audience = remove_destination_from_audience(
             database=database,
-            audience_id=ObjectId(audience_id),
+            audience_id=audience_id,
             destination_id=destination[api_c.ID],
             user_name=user[api_c.USER_NAME],
         )

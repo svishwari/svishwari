@@ -814,19 +814,22 @@ def append_destination_to_standalone_audience(
         db_c.AUDIENCES_COLLECTION
     ]
 
-    audience = collection.find_one_and_update(
-        {
-            db_c.ID: audience_id,
-        },
-        {
-            "$push": {"destinations": destination},
-            "$set": {
-                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                db_c.UPDATED_BY: user_name,
+    try:
+        audience = collection.find_one_and_update(
+            {
+                db_c.ID: audience_id,
             },
-        },
-        return_document=pymongo.ReturnDocument.AFTER,
-    )
+            {
+                "$push": {"destinations": destination},
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                },
+            },
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
 
     destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
 
@@ -865,20 +868,22 @@ def remove_destination_from_audience(
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.AUDIENCES_COLLECTION
     ]
-
-    audience = collection.find_one_and_update(
-        {
-            db_c.ID: audience_id,
-        },
-        {
-            "$pull": {"destinations": {db_c.OBJECT_ID: destination_id}},
-            "$set": {
-                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                db_c.UPDATED_BY: user_name,
+    try:
+        audience = collection.find_one_and_update(
+            {
+                db_c.ID: audience_id,
             },
-        },
-        return_document=pymongo.ReturnDocument.AFTER,
-    )
+            {
+                "$pull": {"destinations": {db_c.OBJECT_ID: destination_id}},
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                },
+            },
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
 
     destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
 
