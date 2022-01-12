@@ -175,16 +175,20 @@ class ApplicationsTests(TestCase):
             headers=t_c.STANDARD_HEADERS,
             json=applications_request,
         )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        application_id = response.json.get(api_c.ID)
 
         response = self.app.patch(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
-            f"{response.json.get(api_c.ID)}",
+            f"{application_id}",
             headers=t_c.STANDARD_HEADERS,
             json=patch_request_body,
         )
 
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(application_id, response.json.get(api_c.ID))
         self.assertEqual(
-            response.json.get(api_c.URL), patch_request_body.get(api_c.URL)
+            patch_request_body.get(api_c.URL), response.json.get(api_c.URL)
         )
 
     def test_applications_patch_endpoint_invalid_id(self):
@@ -201,4 +205,4 @@ class ApplicationsTests(TestCase):
             json=patch_request_body,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)

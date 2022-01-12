@@ -185,6 +185,7 @@ class ApplicationsPatchView(SwaggerView):
         Returns:
             Tuple[dict, int]: Updated application, HTTP status code.
         """
+
         if not request.get_json():
             logger.info("Could not patch application.")
             return {"message": "No body provided."}, HTTPStatus.BAD_REQUEST
