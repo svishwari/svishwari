@@ -836,12 +836,6 @@ def append_destination_to_standalone_audience(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
-
-    destinations_list = destination_management.get_delivery_platforms_by_id(
-        database, destination_ids
-    )
-    audience[db_c.DESTINATIONS] = destinations_list
     return audience
 
 
@@ -894,10 +888,4 @@ def remove_destination_from_audience(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
-
-    destinations_list = destination_management.get_delivery_platforms_by_id(
-        database, destination_ids
-    )
-    audience[db_c.DESTINATIONS] = destinations_list
     return audience
