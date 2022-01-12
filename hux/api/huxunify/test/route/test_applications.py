@@ -4,6 +4,7 @@ from http import HTTPStatus
 
 import requests_mock
 import mongomock
+from bson import ObjectId
 
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.user_management import (
@@ -156,3 +157,52 @@ class ApplicationsTests(TestCase):
         )
 
         self.assertEqual(HTTPStatus.FORBIDDEN, response.status_code)
+
+    def test_applications_patch_endpoint_valid_request(self):
+        """Test patch with correct request body"""
+        applications_request = {
+            api_c.CATEGORY: "uncategorized",
+            api_c.TYPE: "custom-application",
+            api_c.NAME: "Custom Application",
+            api_c.URL: "URL_Link",
+        }
+
+        patch_request_body = {
+            api_c.URL: "NEW_URL_Link",
+        }
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        application_id = response.json.get(api_c.ID)
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
+            f"{application_id}",
+            headers=t_c.STANDARD_HEADERS,
+            json=patch_request_body,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(application_id, response.json.get(api_c.ID))
+        self.assertEqual(
+            patch_request_body.get(api_c.URL), response.json.get(api_c.URL)
+        )
+
+    def test_applications_patch_endpoint_invalid_id(self):
+        """Test patch with incorrect application id"""
+
+        patch_request_body = {
+            api_c.URL: "NEW_URL_Link",
+        }
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
+            f"{ObjectId()}",
+            headers=t_c.STANDARD_HEADERS,
+            json=patch_request_body,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
