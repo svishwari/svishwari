@@ -1,5 +1,5 @@
 # pylint: disable=too-many-lines,unused-argument
-"""Paths for Orchestration API"""
+"""Paths for Orchestration API."""
 import asyncio
 import re
 from http import HTTPStatus
@@ -359,26 +359,12 @@ class AudienceView(SwaggerView):
             ],
         ).start()
 
-        # get all audiences and deliveries
-        audiences = orchestration_management.get_all_audiences_and_deliveries(
+        # get all audiences
+        audiences = orchestration_management.get_all_audiences(
             database=database,
             filters=filter_dict,
             audience_ids=favorite_audiences,
         )
-
-        # get all audiences because document DB does not allow for replaceRoot
-        audience_dict = {
-            x[db_c.ID]: x
-            for x in orchestration_management.get_all_audiences(
-                database=database,
-                filters=filter_dict,
-                audience_ids=favorite_audiences,
-            )
-        }
-
-        # workaround because DocumentDB does not allow $replaceRoot
-        # do replace root by bringing the nested audience up a level.
-        _ = [x.update(audience_dict.get(x[db_c.ID])) for x in audiences]
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
         # # get customer sizes
@@ -409,8 +395,33 @@ class AudienceView(SwaggerView):
                 database, user[api_c.USER_NAME], api_c.AUDIENCES
             )
 
+        # get list of deliveries and last_delivered for engagement, audience
+        # pair by aggregating from engagements collection because document DB
+        # does not allow for $replaceRoot
+        audience_deliveries_dict = {
+            x[db_c.AUDIENCE_ID]: {
+                api_c.DELIVERIES: x.get(api_c.DELIVERIES, []),
+                api_c.AUDIENCE_LAST_DELIVERED: x.get(
+                    api_c.AUDIENCE_LAST_DELIVERED
+                ),
+            }
+            for x in eam.get_all_engagement_audience_deliveries(
+                database, audience_ids=list(x.get(db_c.ID) for x in audiences)
+            )
+        }
+
         # process each audience object
         for audience in audiences:
+
+            # update the audience object with deliveries and last_delivery
+            # fields from audience_deliveries_dict
+            deliveries_dict = audience_deliveries_dict.get(audience[db_c.ID])
+            if deliveries_dict:
+                audience.update(deliveries_dict)
+            else:
+                audience[api_c.DELIVERIES] = []
+                audience[api_c.AUDIENCE_LAST_DELIVERED] = None
+
             # find the matched audience destinations
             matched_destinations = [
                 x
@@ -449,6 +460,14 @@ class AudienceView(SwaggerView):
                 ]
                 if audience[db_c.DESTINATIONS]
                 else []
+            )
+
+            # sort audience deliveries based on delivery_job's update_time in
+            # descending order since document DB does not preserve soft order
+            # if sort is done before group stage until version 4.0 as per
+            # documentation
+            audience[api_c.DELIVERIES].sort(
+                key=lambda delivery: delivery[db_c.UPDATE_TIME], reverse=True
             )
 
             # set the lookalikeable field in audience before limiting the
@@ -599,7 +618,8 @@ class AudienceGetView(SwaggerView):
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use, too-many-locals, too-many-branches
+    # pylint: disable=too-many-statements
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, audience_id: str, user: dict) -> Tuple[dict, int]:
@@ -785,6 +805,45 @@ class AudienceGetView(SwaggerView):
             ):
                 match_rate_data_for_audience(delivery, match_rate_data)
 
+        # TODO: HUS-1992 - below code needs to be revised to set
+        #  audience["lookalikeable"] by passing in the audience object that
+        #  has deliveries populated within
+        # set lookalikeable value in audience as per history of deliveries made
+        # against all engagements the audience is attached to to keep it
+        # consistent with GET all audiences response
+        audience_deliveries = eam.get_all_engagement_audience_deliveries(
+            database, audience_ids=[audience_id]
+        )
+        if audience_deliveries:
+            audience_deliveries[0][api_c.DELIVERIES] = (
+                [
+                    aud_delivery
+                    for aud_delivery in audience_deliveries[0].get(
+                        api_c.DELIVERIES, []
+                    )
+                    if aud_delivery
+                    and (
+                        aud_delivery.get(db_c.STATUS)
+                        in [
+                            db_c.AUDIENCE_STATUS_DELIVERED,
+                            db_c.STATUS_SUCCEEDED,
+                        ]
+                    )
+                    and (
+                        aud_delivery[db_c.DELIVERY_PLATFORM_ID]
+                        == aud_destination[db_c.ID]
+                        for aud_destination in audience[db_c.DESTINATIONS]
+                    )
+                ]
+                if audience[db_c.DESTINATIONS]
+                else []
+            )
+            audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(
+                audience_deliveries[0]
+            )
+        else:
+            audience[api_c.LOOKALIKEABLE] = api_c.STATUS_DISABLED
+
         audience.update(
             {
                 api_c.DIGITAL_ADVERTISING: {
@@ -806,7 +865,6 @@ class AudienceGetView(SwaggerView):
                 if match_rate_data
                 else None,
                 api_c.AUDIENCE_STANDALONE_DELIVERIES: standalone_deliveries,
-                api_c.LOOKALIKEABLE: is_audience_lookalikeable(audience),
                 api_c.FAVORITE: is_component_favorite(
                     user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
                 ),
