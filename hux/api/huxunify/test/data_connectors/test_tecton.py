@@ -21,6 +21,7 @@ MOCK_MODEL_RESPONSE = {
     "results": [
         {
             "features": [
+                "2021-08-13",
                 "2021-04-26 00:00:00",
                 "Propensity of a customer making a purchase after "
                 "receiving an email.",
@@ -38,6 +39,7 @@ MOCK_MODEL_RESPONSE = {
         },
         {
             "features": [
+                "2022-01-10",
                 "2021-01-25 00:00:00",
                 "Predict the lifetime value of a customer.",
                 "2021-01-25 00:00:00",
@@ -264,7 +266,7 @@ class TectonTest(TestCase):
                 "description": "Propensity of a customer unsubscribing "
                 "after receiving an email.",
                 "fulcrum_date": datetime(2021, 7, 17, 0, 0),
-                "lookback_window": 7,
+                "lookback_window": "7",
                 "name": "Propensity to Unsubscribe",
                 "type": "unsubscribe",
                 "owner": "Susan Miller",

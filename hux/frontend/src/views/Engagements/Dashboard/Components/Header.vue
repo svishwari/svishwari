@@ -22,8 +22,8 @@
               color="black-darken4"
               @click.native="
                 $router.push({
-                  name: 'AudienceUpdate',
-                  params: { id: audienceId },
+                  name: 'EngagementUpdate',
+                  params: { id: engagementId },
                 })
               "
             />
@@ -102,7 +102,7 @@ export default {
     }
   },
   computed: {
-    audienceId() {
+    engagementId() {
       return this.$route.params.id
     },
   },

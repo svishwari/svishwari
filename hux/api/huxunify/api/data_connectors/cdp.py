@@ -721,7 +721,7 @@ def get_demographic_by_country(
 
 
 def get_customers_insights_count_by_day(
-    token: str, date_filters: dict
+    token: str, date_filters: dict, audience_filter: dict = None
 ) -> dict:
     """Fetch customer insights count by day data.
 
@@ -729,6 +729,8 @@ def get_customers_insights_count_by_day(
         token (str): OKTA JWT Token.
         date_filters (dict): filters to pass into customer insights count by
             day endpoint.
+        audience_filter (dict): audience filters to pass into
+            count by day endpoint, defaults to None
 
     Returns:
         dict: dictionary of customer count data.
@@ -742,9 +744,13 @@ def get_customers_insights_count_by_day(
 
     logger.info("Attempting to get customer insights count by day from CDP.")
 
+    filters = date_filters
+    if audience_filter:
+        filters.update({api_c.AUDIENCE_FILTERS: audience_filter})
+
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-day",
-        json=date_filters,
+        json=filters,
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
@@ -1047,16 +1053,28 @@ def get_revenue_by_day(
                 api_c.DATE: parse(day_data.get(api_c.DATE)),
                 api_c.LTV: (
                     (
-                        day_data[api_c.AVG_SPENT_MEN]
-                        * day_data[api_c.GENDER_MEN]
+                        (
+                            day_data[api_c.AVG_SPENT_MEN]
+                            * day_data[api_c.GENDER_MEN]
+                        )
+                        if day_data[api_c.GENDER_MEN]
+                        else 0
                     )
                     + (
-                        day_data[api_c.AVG_SPENT_WOMEN]
-                        * day_data[api_c.GENDER_WOMEN]
+                        (
+                            day_data[api_c.AVG_SPENT_WOMEN]
+                            * day_data[api_c.GENDER_WOMEN]
+                        )
+                        if day_data[api_c.GENDER_WOMEN]
+                        else 0
                     )
                     + (
-                        day_data[api_c.AVG_SPENT_OTHER]
-                        * day_data[api_c.GENDER_OTHER]
+                        (
+                            day_data.get(api_c.AVG_SPENT_OTHER, 0)
+                            * day_data[api_c.GENDER_OTHER]
+                        )
+                        if day_data[api_c.GENDER_OTHER]
+                        else 0
                     )
                 )
                 / (
