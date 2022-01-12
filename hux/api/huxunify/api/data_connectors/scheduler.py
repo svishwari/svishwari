@@ -179,20 +179,26 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
         collection=db_c.ENGAGEMENTS_COLLECTION,
         query_filter={db_c.STATUS: {"$ne": db_c.STATUS_INACTIVE}},
     )[db_c.DOCUMENTS]:
-
         # process audiences
         for audience in engagement.get(api_c.AUDIENCES):
-
             # process each destination
             for destination in audience.get(api_c.DESTINATIONS):
-                if not isinstance(destination, dict) or not destination.get(
-                    api_c.DELIVERY_SCHEDULE
-                ):
+                if not isinstance(destination, dict):
+                    continue
+                delivery_schedule = (
+                    destination.get(api_c.DELIVERY_SCHEDULE)
+                    if destination.get(api_c.DELIVERY_SCHEDULE)
+                    else audience.get(api_c.DELIVERY_SCHEDULE)
+                    if audience.get(api_c.DELIVERY_SCHEDULE)
+                    else engagement.get(api_c.DELIVERY_SCHEDULE)
+                )
+                # if no delivery schedule exists, continue
+                if not delivery_schedule:
                     continue
 
                 # check if the schedule falls within the cron time frame.
                 next_schedule = get_next_schedule(
-                    generate_cron(destination.get(api_c.DELIVERY_SCHEDULE)),
+                    generate_cron(delivery_schedule),
                     current_time,
                 )
 
