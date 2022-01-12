@@ -958,16 +958,15 @@ class DeleteDestinationAudience(SwaggerView):
         },
     ]
     responses = {
-        HTTPStatus.OK.value: {
+        HTTPStatus.NO_CONTENT.value: {
             "schema": AudienceGetSchema,
-            "description": "Destination deleted from Audience.",
+            "description": "Destination successfully deleted from audience.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to delete destination from the audience",
         },
     }
     responses.update(AUTH401_RESPONSE)
-    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
