@@ -16,6 +16,7 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.orchestration_management import (
     create_audience,
     get_audience,
+    append_destination_to_standalone_audience,
 )
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
@@ -663,4 +664,35 @@ class TestAudienceDestination(TestCase):
         self.assertIn(
             ObjectId(destination[api_c.ID]),
             [x[api_c.ID] for x in audience_doc[api_c.DESTINATIONS]],
+        )
+
+    def test_delete_destination_audience(self) -> None:
+        """Test Removing destination to audience"""
+        destination = {"id": str(self.delivery_platform_doc[db_c.ID])}
+
+        # append destination first
+        append_destination_to_standalone_audience(
+            database=self.database,
+            audience_id=self.audience[db_c.ID],
+            destination=destination,
+            user_name=self.user_name,
+        )
+
+        # removing destination
+        response = self.test_client.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/"
+            f"destinations",
+            json=destination,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+        audience_doc = get_audience(
+            database=self.database, audience_id=self.audience[db_c.ID]
+        )
+        self.assertNotIn(
+            ObjectId(destination[api_c.ID]),
+            audience_doc[api_c.DESTINATIONS],
         )
