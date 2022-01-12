@@ -15,7 +15,7 @@
             :style="{ width: header.width }"
             data-e2e="map-state-list"
           >
-            <div v-if="header.value == 'name'" class="text-body-1 d-flex">
+            <div v-if="header.value == 'name'" class="text-body-1 h-25">
               <hux-icon
                 v-if="item.is_lookalike"
                 type="lookalike"
@@ -322,5 +322,8 @@ export default {
       }
     }
   }
+}
+.h-25 {
+  height: 25px;
 }
 </style>
