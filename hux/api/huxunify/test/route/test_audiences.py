@@ -28,6 +28,8 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
     CustomersInsightsCountriesSchema,
+    TotalCustomersInsightsSchema,
+    CustomerRevenueInsightsSchema,
 )
 from huxunify.app import create_app
 from huxunify.test import constants as t_c
@@ -339,7 +341,9 @@ class AudienceInsightsTest(TestCase):
         # create audience first
         audience = {
             db_c.AUDIENCE_NAME: "Test Audience",
-            "audience_filters": [],
+            "audience_filters": api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER[
+                api_c.AUDIENCE_FILTERS
+            ],
             api_c.USER_NAME: self.user_name,
             api_c.DESTINATION_IDS: [],
         }
@@ -517,15 +521,58 @@ class AudienceInsightsTest(TestCase):
         )
         self.assertEqual(response.status_code, 404)
 
+    def test_total_audience_insights_success(self) -> None:
+        """Test get total audience insights success response."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-day",
+            json=t_c.CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/{api_c.TOTAL}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                TotalCustomersInsightsSchema(), response.json, True
+            )
+        )
+
+    def test_audience_revenue_insights_success(self) -> None:
+        """Test get audience revenue insights success response."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
+            f"/spending-by-day",
+            json=t_c.MOCKED_GENDER_SPENDING_BY_DAY,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/{api_c.REVENUE}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomerRevenueInsightsSchema(), response.json, True
+            )
+        )
+
 
 class TestAudienceDestination(TestCase):
     """Test for Audience Destination"""
 
     def setUp(self):
         """Setup tests."""
-        self.audiences_endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
-        )
         self.config = get_config(api_c.TEST_MODE)
         # init mongo patch initially
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
@@ -575,14 +622,6 @@ class TestAudienceDestination(TestCase):
 
         self.user_name = "Joe Smithers"
 
-        # create audience
-        audience = {
-            db_c.AUDIENCE_NAME: "Test Audience",
-            "audience_filters": [],
-            api_c.USER_NAME: self.user_name,
-            api_c.DESTINATION_IDS: [],
-        }
-
         self.delivery_platform_doc = set_delivery_platform(
             self.database,
             db_c.DELIVERY_PLATFORM_FACEBOOK,
@@ -594,7 +633,15 @@ class TestAudienceDestination(TestCase):
                 "facebook_ad_account_id": "path4",
             },
         )
-        self.audience = create_audience(self.database, **audience)
+        self.audience = create_audience(
+            self.database,
+            **{
+                db_c.AUDIENCE_NAME: "Test Audience",
+                "audience_filters": [],
+                api_c.USER_NAME: self.user_name,
+                api_c.DESTINATION_IDS: [],
+            },
+        )
 
     def test_add_destination_audience(self) -> None:
         """Test Adding destination to audience"""

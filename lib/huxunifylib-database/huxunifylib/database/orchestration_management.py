@@ -690,14 +690,14 @@ def get_all_audiences_and_deliveries(
         },
         {"$project": {"deliveries.deleted": 0}},
     ]
-    stage_count_in_pipeline = 0
 
+    stage_count_in_pipeline = 0
     if audience_ids is not None:
         pipeline.insert(
             stage_count_in_pipeline,
             {"$match": {db_c.ID: {"$in": audience_ids}}},
         )
-    stage_count_in_pipeline += 1
+        stage_count_in_pipeline += 1
 
     if filters:
         if filters.get(db_c.WORKED_BY):
@@ -729,6 +729,7 @@ def get_all_audiences_and_deliveries(
                     }
                 },
             )
+            stage_count_in_pipeline += 1
 
     # use the audience pipeline to aggregate and join all the delivery data
     try:

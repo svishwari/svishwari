@@ -405,6 +405,7 @@ MOCKED_MODEL_VERSION_HISTORY = {
         {
             "features": [
                 "2021-07-28",
+                "2021-07-28",
                 "Propensity of a customer unsubscribing after "
                 "receiving an email.",
                 "2021-07-14",
@@ -414,12 +415,14 @@ MOCKED_MODEL_VERSION_HISTORY = {
                 "unsubscribe",
                 "Susan Miller",
                 "smiller@xyz.com",
+                "7",
                 "Stopped",
             ],
             "joinKeys": ["21.7.28"],
         },
         {
             "features": [
+                "2021-07-29",
                 "2021-07-29",
                 "Propensity of a customer unsubscribing after "
                 "receiving an email.",
@@ -430,12 +433,14 @@ MOCKED_MODEL_VERSION_HISTORY = {
                 "unsubscribe",
                 "Susan Miller",
                 "smiller@xyz.com",
+                "7",
                 "Active",
             ],
             "joinKeys": ["21.7.29"],
         },
         {
             "features": [
+                "2021-07-30",
                 "2021-07-30",
                 "Propensity of a customer unsubscribing after "
                 "receiving an email.",
@@ -446,12 +451,14 @@ MOCKED_MODEL_VERSION_HISTORY = {
                 "unsubscribe",
                 "Susan Miller",
                 "smiller@xyz.com",
+                "7",
                 "Active",
             ],
             "joinKeys": ["21.7.30"],
         },
         {
             "features": [
+                "2021-07-31",
                 "2021-07-31",
                 "Propensity of a customer unsubscribing after "
                 "receiving an email.",
@@ -462,6 +469,7 @@ MOCKED_MODEL_VERSION_HISTORY = {
                 "unsubscribe",
                 "Susan Miller",
                 "smiller@xyz.com",
+                "7",
                 "Active",
             ],
             "joinKeys": ["21.7.31"],
@@ -584,6 +592,7 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
             "features": [
                 233.5,
                 "2021-07-28",
+                "2021-07-28",
                 "Lifetime Value",
                 "ltv",
                 "21.7.28",
@@ -594,6 +603,7 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
             "features": [
                 263.3,
                 "2021-07-29",
+                "2021-07-29",
                 "Lifetime Value",
                 "ltv",
                 "21.7.29",
@@ -603,6 +613,7 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
         {
             "features": [
                 215.5,
+                "2021-07-30",
                 "2021-07-30",
                 "Lifetime Value",
                 "ltv",
@@ -619,6 +630,7 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
             "features": [
                 0.84,
                 "2021-07-28",
+                "2021-07-28",
                 "Propensity to Unsubscribe",
                 "unsubscribe",
                 "21.7.28",
@@ -630,6 +642,7 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
         {
             "features": [
                 0.86,
+                "2021-07-29",
                 "2021-07-29",
                 "Propensity to Unsubscribe",
                 "unsubscribe",
@@ -643,6 +656,7 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
             "features": [
                 0.81,
                 "2021-07-30",
+                "2021-07-30",
                 "Propensity to Unsubscribe",
                 "unsubscribe",
                 "21.7.30",
@@ -654,6 +668,7 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
         {
             "features": [
                 0.85,
+                "2021-07-31",
                 "2021-07-31",
                 "Propensity to Unsubscribe",
                 "unsubscribe",
@@ -683,6 +698,7 @@ MOCKED_MODEL_LIFT_CHART = [
 MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
     {
         api_c.ID: 1,
+        api_c.CREATE_TIME: datetime.utcnow(),
         api_c.LAST_TRAINED: datetime.utcnow(),
         api_c.DESCRIPTION: "Predicts the propensity of a customer",
         api_c.FULCRUM_DATE: datetime.utcnow(),
@@ -696,6 +712,7 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
     },
     {
         api_c.ID: 1,
+        api_c.CREATE_TIME: datetime.utcnow(),
         api_c.LAST_TRAINED: datetime.utcnow(),
         api_c.DESCRIPTION: "Predicts the propensity of a customer",
         api_c.FULCRUM_DATE: datetime.utcnow(),
@@ -709,6 +726,7 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
     },
     {
         api_c.ID: 1,
+        api_c.CREATE_TIME: datetime.utcnow(),
         api_c.LAST_TRAINED: datetime.utcnow(),
         api_c.DESCRIPTION: "Predicts the propensity of a customer",
         api_c.FULCRUM_DATE: datetime.utcnow(),

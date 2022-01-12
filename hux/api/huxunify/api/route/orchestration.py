@@ -1,5 +1,5 @@
 # pylint: disable=too-many-lines,unused-argument
-"""Paths for Orchestration API"""
+"""Paths for Orchestration API."""
 import asyncio
 import re
 from http import HTTPStatus
@@ -359,26 +359,12 @@ class AudienceView(SwaggerView):
             ],
         ).start()
 
-        # get all audiences and deliveries
-        audiences = orchestration_management.get_all_audiences_and_deliveries(
+        # get all audiences
+        audiences = orchestration_management.get_all_audiences(
             database=database,
             filters=filter_dict,
             audience_ids=favorite_audiences,
         )
-
-        # get all audiences because document DB does not allow for replaceRoot
-        audience_dict = {
-            x[db_c.ID]: x
-            for x in orchestration_management.get_all_audiences(
-                database=database,
-                filters=filter_dict,
-                audience_ids=favorite_audiences,
-            )
-        }
-
-        # workaround because DocumentDB does not allow $replaceRoot
-        # do replace root by bringing the nested audience up a level.
-        _ = [x.update(audience_dict.get(x[db_c.ID])) for x in audiences]
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
         # # get customer sizes
@@ -409,8 +395,33 @@ class AudienceView(SwaggerView):
                 database, user[api_c.USER_NAME], api_c.AUDIENCES
             )
 
+        # get list of deliveries and last_delivered for engagement, audience
+        # pair by aggregating from engagements collection because document DB
+        # does not allow for $replaceRoot
+        audience_deliveries_dict = {
+            x[db_c.AUDIENCE_ID]: {
+                api_c.DELIVERIES: x.get(api_c.DELIVERIES, []),
+                api_c.AUDIENCE_LAST_DELIVERED: x.get(
+                    api_c.AUDIENCE_LAST_DELIVERED
+                ),
+            }
+            for x in eam.get_all_engagement_audience_deliveries(
+                database, audience_ids=list(x.get(db_c.ID) for x in audiences)
+            )
+        }
+
         # process each audience object
         for audience in audiences:
+
+            # update the audience object with deliveries and last_delivery
+            # fields from audience_deliveries_dict
+            deliveries_dict = audience_deliveries_dict.get(audience[db_c.ID])
+            if deliveries_dict:
+                audience.update(deliveries_dict)
+            else:
+                audience[api_c.DELIVERIES] = []
+                audience[api_c.AUDIENCE_LAST_DELIVERED] = None
+
             # find the matched audience destinations
             matched_destinations = [
                 x
@@ -438,6 +449,7 @@ class AudienceView(SwaggerView):
                         in [
                             db_c.AUDIENCE_STATUS_DELIVERED,
                             db_c.STATUS_SUCCEEDED,
+                            db_c.AUDIENCE_STATUS_DELIVERING,
                         ]
                     )
                     and (
@@ -450,17 +462,26 @@ class AudienceView(SwaggerView):
                 else []
             )
 
+            # sort audience deliveries based on delivery_job's update_time in
+            # descending order since document DB does not preserve soft order
+            # if sort is done before group stage until version 4.0 as per
+            # documentation
+            audience[api_c.DELIVERIES].sort(
+                key=lambda delivery: delivery[db_c.UPDATE_TIME], reverse=True
+            )
+
             # set the lookalikeable field in audience before limiting the
             # number of deliveries in it based on delivery_limit
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+
+            # set the weighted status for the audience based on deliveries
+            # Calculate status before filtering deliveries by delivery_limit
+            audience[api_c.STATUS] = weight_delivery_status(audience)
 
             # take the last X number of deliveries
             audience[api_c.DELIVERIES] = audience[api_c.DELIVERIES][
                 :delivery_limit
             ]
-
-            # set the weighted status for the audience based on deliveries
-            audience[api_c.STATUS] = weight_delivery_status(audience)
 
             # if not a part of any engagements and not delivered.
             # set last delivery date to None.
@@ -597,7 +618,8 @@ class AudienceGetView(SwaggerView):
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use, too-many-locals, too-many-branches
+    # pylint: disable=too-many-statements
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, audience_id: str, user: dict) -> Tuple[dict, int]:
@@ -783,6 +805,45 @@ class AudienceGetView(SwaggerView):
             ):
                 match_rate_data_for_audience(delivery, match_rate_data)
 
+        # TODO: HUS-1992 - below code needs to be revised to set
+        #  audience["lookalikeable"] by passing in the audience object that
+        #  has deliveries populated within
+        # set lookalikeable value in audience as per history of deliveries made
+        # against all engagements the audience is attached to to keep it
+        # consistent with GET all audiences response
+        audience_deliveries = eam.get_all_engagement_audience_deliveries(
+            database, audience_ids=[audience_id]
+        )
+        if audience_deliveries:
+            audience_deliveries[0][api_c.DELIVERIES] = (
+                [
+                    aud_delivery
+                    for aud_delivery in audience_deliveries[0].get(
+                        api_c.DELIVERIES, []
+                    )
+                    if aud_delivery
+                    and (
+                        aud_delivery.get(db_c.STATUS)
+                        in [
+                            db_c.AUDIENCE_STATUS_DELIVERED,
+                            db_c.STATUS_SUCCEEDED,
+                        ]
+                    )
+                    and (
+                        aud_delivery[db_c.DELIVERY_PLATFORM_ID]
+                        == aud_destination[db_c.ID]
+                        for aud_destination in audience[db_c.DESTINATIONS]
+                    )
+                ]
+                if audience[db_c.DESTINATIONS]
+                else []
+            )
+            audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(
+                audience_deliveries[0]
+            )
+        else:
+            audience[api_c.LOOKALIKEABLE] = api_c.STATUS_DISABLED
+
         audience.update(
             {
                 api_c.DIGITAL_ADVERTISING: {
@@ -804,7 +865,6 @@ class AudienceGetView(SwaggerView):
                 if match_rate_data
                 else None,
                 api_c.AUDIENCE_STANDALONE_DELIVERIES: standalone_deliveries,
-                api_c.LOOKALIKEABLE: is_audience_lookalikeable(audience),
                 api_c.FAVORITE: is_component_favorite(
                     user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
                 ),
@@ -1351,6 +1411,77 @@ class AudienceRules(SwaggerView):
         rules_from_cdm = {
             "rule_attributes": {
                 "model_scores": {
+                    "age_density": {
+                        "name": "Propensity to unsubscribe",
+                        "type": "range",
+                        "min": 0,
+                        "max": 99,
+                        "steps": 5,
+                        "values": [
+                            (46, 3631),
+                            (51, 2807),
+                            (55, 2131),
+                            (54, 2261),
+                            (25, 3284),
+                            (69, 421),
+                            (43, 4012),
+                            (26, 3386),
+                            (63, 955),
+                            (24, 3099),
+                            (59, 1485),
+                            (70, 350),
+                            (77, 107),
+                            (18, 8804),
+                            (64, 867),
+                            (31, 4097),
+                            (56, 1916),
+                            (34, 4392),
+                            (21, 2623),
+                            (44, 3878),
+                            (48, 3394),
+                            (19, 2207),
+                            (52, 2703),
+                            (78, 86),
+                            (61, 1125),
+                            (73, 218),
+                            (36, 4417),
+                            (57, 1835),
+                            (60, 1265),
+                            (49, 3188),
+                            (39, 4407),
+                            (20, 2453),
+                            (45, 3883),
+                            (30, 3997),
+                            (28, 3855),
+                            (65, 760),
+                            (32, 4348),
+                            (40, 4370),
+                            (22, 2797),
+                            (27, 3612),
+                            (50, 2944),
+                            (72, 265),
+                            (67, 571),
+                            (29, 3914),
+                            (33, 4233),
+                            (42, 4111),
+                            (58, 1597),
+                            (23, 2989),
+                            (38, 4394),
+                            (53, 2381),
+                            (68, 443),
+                            (47, 3531),
+                            (71, 303),
+                            (37, 4298),
+                            (75, 202),
+                            (66, 658),
+                            (41, 4261),
+                            (62, 1063),
+                            (79, 65),
+                            (35, 4500),
+                            (74, 208),
+                            (76, 128),
+                        ],
+                    },
                     "propensity_to_unsubscribe": {
                         "name": "Propensity to unsubscribe",
                         "type": "range",
