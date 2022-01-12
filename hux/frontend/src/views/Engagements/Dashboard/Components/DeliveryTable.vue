@@ -14,7 +14,7 @@
           :style="{ width: header.width }"
           data-e2e="map-state-list"
         >
-          <div v-if="header.value == 'name'" class="text-body-1 d-flex">
+          <div v-if="header.value == 'name'" class="text-body-1 d-flex h-25">
             <hux-icon
               v-if="item.is_lookalike"
               type="lookalike"
@@ -174,7 +174,11 @@
             {{
               tableData != ""
                 ? item[tableData]["match_rate"]
-                : item["match_rate"] | Percentage
+                  ? item[tableData]["match_rate"]
+                  : "—"
+                : item["match_rate"]
+                ? item["match_rate"]
+                : "—" | Percentage
             }}
           </div>
         </td>
@@ -330,6 +334,10 @@ export default {
     }
   }
 }
+.h-25 {
+  height: 25px;
+}
+
 ::v-deep .v-data-table__wrapper tbody tr td {
   height: 45px !important;
 }

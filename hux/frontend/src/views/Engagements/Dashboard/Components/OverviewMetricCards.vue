@@ -57,7 +57,7 @@
       </template>
     </metric-card>
     <metric-card
-      class="mr-3 pt-4 grow"
+      class="pt-4 grow"
       :title="summaryCards[2].title"
       max-width="100%"
       :height="75"
