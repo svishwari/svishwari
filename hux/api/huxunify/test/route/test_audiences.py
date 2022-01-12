@@ -687,11 +687,7 @@ class TestAudienceDestination(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertNotIn(
-            destination[api_c.ID],
-            response.json.get(api_c.DESTINATIONS),
-        )
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
         audience_doc = get_audience(
             database=self.database, audience_id=self.audience[db_c.ID]

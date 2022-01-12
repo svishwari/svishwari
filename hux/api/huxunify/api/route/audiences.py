@@ -1018,35 +1018,28 @@ class DeleteDestinationAudience(SwaggerView):
             destination_id=destination[api_c.ID],
             user_name=user[api_c.USER_NAME],
         )
-        destination_ids = [
-            x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]
-        ]
+        if audience:
+            logger.info(
+                "Destination %s removed from audience %s.",
+                destination_to_remove[db_c.NAME],
+                audience[db_c.NAME],
+            )
 
-        destinations_list = get_delivery_platforms_by_id(
-            database, destination_ids
-        )
-        audience[db_c.DESTINATIONS] = destinations_list
-        logger.info(
-            "Destination %s removed from audience %s.",
-            destination_to_remove[db_c.NAME],
-            audience[db_c.NAME],
-        )
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f'Destination "{destination_to_remove[db_c.NAME]}" removed from '
+                    f'audience "{audience[db_c.NAME]}" '
+                ),
+                api_c.ORCHESTRATION_TAG,
+                user[api_c.USER_NAME],
+            )
 
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
-                f'Destination "{destination_to_remove[db_c.NAME]}" removed from '
-                f'audience "{audience[db_c.NAME]}" '
-            ),
-            api_c.ORCHESTRATION_TAG,
-            user[api_c.USER_NAME],
-        )
+            return Response(), HTTPStatus.NO_CONTENT
 
-        return (
-            AudienceGetSchema().dump(audience),
-            HTTPStatus.OK.value,
-        )
+        logger.info("Could not delete engagement with ID %s.", audience_id)
+        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
 
 
 @add_view_to_blueprint(
