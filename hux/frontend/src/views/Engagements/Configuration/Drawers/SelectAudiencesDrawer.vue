@@ -255,7 +255,6 @@ export default {
       this.closeDrawer()
     },
     add(audience) {
-      debugger
       if (!this.enableMultiple) this.$emit("onAddAudience", audience)
       this.$set(
         this.enableMultiple ? this.localSelectedAudiences : this.value,
