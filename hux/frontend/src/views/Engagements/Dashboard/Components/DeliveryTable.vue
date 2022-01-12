@@ -166,7 +166,11 @@
               {{
                 tableData != ""
                   ? item[tableData]["match_rate"]
-                  : item["match_rate"] | Percentage
+                    ? item[tableData]["match_rate"]
+                    : "—"
+                  : item["match_rate"]
+                  ? item["match_rate"]
+                  : "—" | Percentage
               }}
             </div>
           </td>
