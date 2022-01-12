@@ -6,7 +6,7 @@
         :key="destination.id"
         :icon="destination.type"
         :icon-color="'white'"
-        :logoSize="45"
+        :logo-size="45"
         :title="destination.name"
         :description="destination.category"
         :disabled="['Pending', 'Requested'].includes(destination.status)"

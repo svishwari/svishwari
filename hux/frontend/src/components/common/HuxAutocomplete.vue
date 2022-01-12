@@ -32,7 +32,7 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: null,
-    }
+    },
   },
   emits: ["input", "change"],
   setup(props, { emit }) {

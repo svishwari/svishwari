@@ -7,7 +7,7 @@
           :key="dataSource.id"
           :icon="dataSource.type"
           :title="dataSource.name"
-          :logoSize="45"
+          :logo-size="45"
           :description="dataSource.category"
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active'"

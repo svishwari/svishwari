@@ -32,7 +32,7 @@
         @click="deliverAll()"
       >
         <icon
-         class="mr-1 mt-n1"
+          class="mr-1 mt-n1"
           :type="
             audience.standalone_deliveries.length == 0 ? 'deliver' : 'deliver_2'
           "
@@ -44,7 +44,7 @@
             audience.standalone_deliveries.length == 0 ? 'lighten3' : 'base'
           "
         />
-       <span class="deliverAll"> Deliver all </span>
+        <span class="deliverAll"> Deliver all </span>
       </div>
     </v-card-title>
     <v-card-text class="pl-6 pr-6 pb-6 pt-3">
@@ -130,18 +130,18 @@
           <v-list-item @click="$emit('onAddStandaloneDestination', audience)">
             <tooltip>
               <template #label-content>
-                 <hux-icon
-                type="plus"
-                :size="16"
-                color="primary"
-                class="mr-2 plus-icon"
-              />
-               <hux-icon
-                type="destination_button"
-                :size="34"
-                color="primary"
-                class="mr-0 mb-n1"
-              />
+                <hux-icon
+                  type="plus"
+                  :size="16"
+                  color="primary"
+                  class="mr-2 plus-icon"
+                />
+                <hux-icon
+                  type="destination_button"
+                  :size="34"
+                  color="primary"
+                  class="mr-0 mb-n1"
+                />
               </template>
               <template #hover-content>
                 <div class="py-2 white d-flex flex-column">
@@ -155,7 +155,7 @@
               height="2rem"
               class="primary--text text-body-1 mt-n1"
             >
-             <span class="destination_text">Destination</span>
+              <span class="destination_text">Destination</span>
             </v-btn>
           </v-list-item>
         </v-list>
@@ -175,7 +175,7 @@
               type="destination_button"
               :size="34"
               color="primary"
-             class="mr-0 mb-n1"
+              class="mr-0 mb-n1"
             />
             <v-btn
               text
@@ -183,7 +183,7 @@
               height="2rem"
               class="primary--text text-body-1"
             >
-               <span class="destination_empty">Destination</span>
+              <span class="destination_empty">Destination</span>
             </v-btn>
           </v-list-item>
         </v-list>
@@ -322,7 +322,7 @@ export default {
 .plus-icon {
   margin-bottom: 7px;
 }
-.destination_empty{
-    margin-top: 2px;
+.destination_empty {
+  margin-top: 2px;
 }
 </style>

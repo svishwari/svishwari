@@ -35,7 +35,7 @@
             section.destination_audiences.length == 0 ? 'lighten3' : 'base'
           "
         />
-         <span class="deliverAll"> Deliver all </span>
+        <span class="deliverAll"> Deliver all </span>
       </div>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
@@ -78,7 +78,6 @@ import { getApproxSize } from "@/utils"
 import DeliveryTable from "./DeliveryTable.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon.vue"
-import Status from "@/components/common/Status.vue"
 import Logo from "@/components/common/Logo"
 
 export default {
@@ -86,8 +85,8 @@ export default {
   components: {
     DeliveryTable,
     Tooltip,
-    Icon,Status,
-    Logo
+    Icon,
+    Logo,
   },
 
   props: {
