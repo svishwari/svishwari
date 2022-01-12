@@ -6,6 +6,7 @@
         :key="destination.id"
         :icon="destination.type"
         :icon-color="'white'"
+        :logo-size="45"
         :title="destination.name"
         :description="destination.category"
         :disabled="['Pending', 'Requested'].includes(destination.status)"
@@ -250,5 +251,8 @@ export default {
 }
 ::v-deep.descriptive-card.in-active {
   box-shadow: none !important;
+}
+::v-deep circle {
+  stroke: rgb(255, 255, 255) !important;
 }
 </style>
