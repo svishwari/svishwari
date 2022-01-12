@@ -196,9 +196,15 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
                 if not delivery_schedule:
                     continue
 
+                if delivery_schedule.get(api_c.SCHEDULE_CRON):
+                    schedule_cron = delivery_schedule.get(api_c.SCHEDULE_CRON)
+                else:
+                    schedule_cron = generate_cron(
+                        delivery_schedule[api_c.SCHEDULE]
+                    )
                 # check if the schedule falls within the cron time frame.
                 next_schedule = get_next_schedule(
-                    generate_cron(delivery_schedule),
+                    schedule_cron,
                     current_time,
                 )
 
