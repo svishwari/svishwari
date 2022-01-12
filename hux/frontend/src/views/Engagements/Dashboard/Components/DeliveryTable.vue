@@ -16,13 +16,15 @@
             data-e2e="map-state-list"
           >
             <div v-if="header.value == 'name'" class="text-body-1 h-25">
-              <hux-icon
-                v-if="item.is_lookalike"
-                type="lookalike"
-                :size="24"
-              ></hux-icon>
-              <span class="ml-1 ellipsis primary--text">
-                {{ item.name }}
+              <span class="d-flex">
+                <hux-icon
+                  v-if="item.is_lookalike"
+                  type="lookalike"
+                  :size="24"
+                ></hux-icon>
+                <span class="ml-1 ellipsis primary--text">
+                  {{ item.name }}
+                </span>
               </span>
               <span class="action-icon font-weight-light float-right d-none">
                 <v-menu

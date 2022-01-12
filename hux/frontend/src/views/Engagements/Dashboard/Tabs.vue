@@ -105,9 +105,9 @@
 </template>
 
 <script>
-import DigitalAdvertising from "./DigitalAdvertising.vue"
-import EmailMarketing from "./EmailMarketing.vue"
-import Overview from "./Overview.vue"
+const DigitalAdvertising = () => import("./DigitalAdvertising.vue")
+const EmailMarketing = () => import("./EmailMarketing.vue")
+const Overview = () => import("./Overview.vue")
 
 export default {
   name: "EngagementDashboardTabs",

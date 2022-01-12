@@ -65,7 +65,7 @@
         :headers="columnDefs"
         :audience-menu-options="audienceMenuOptions"
         class="audience-table"
-        @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+        @triggerSelectAudience="$emit('triggerSelectAudience', '')"
         @onSectionAction="$emit('triggerOverviewAction', $event)"
       />
     </v-card>
