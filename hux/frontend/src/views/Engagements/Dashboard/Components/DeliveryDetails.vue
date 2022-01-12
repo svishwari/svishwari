@@ -2,41 +2,32 @@
   <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title v-if="showTitle" class="d-flex justify-space-between">
       <span class="d-flex">
-        <logo :type="section.type" :size="26" class="mr-2" />
-        <router-link
-          :to="{
-            name: routeName,
-            params: { id: section.id },
-          }"
-          class="text-decoration-none"
-          append
-        >
-          <tooltip>
-            <template #label-content>
-              <span class="primary--text text-h3">
+        <logo :type="section.type" :size="24" class="mr-2" />
+        <tooltip>
+          <template #label-content>
+            <span class="text-h3 black--text">
+              {{ section.name }}
+            </span>
+          </template>
+          <template #hover-content>
+            <div class="py-2 white d-flex flex-column">
+              <span>
                 {{ section.name }}
               </span>
-            </template>
-            <template #hover-content>
-              <div class="py-2 white d-flex flex-column">
-                <span>
-                  {{ section.name }}
-                </span>
-              </div>
-            </template>
-          </tooltip>
-        </router-link>
+            </div>
+          </template>
+        </tooltip>
       </span>
       <v-spacer> </v-spacer>
       <div
-        class="d-flex mr-4 cursor-pointer deliver-icon text-body-1"
+        class="d-flex mr-4 cursor-pointer deliver-icon text-body-1 mt-2"
         :class="{ disabled: section.destination_audiences.length == 0 }"
         @click="deliverAll(section)"
       >
         <icon
-          class="mr-1"
+          class="mr-1 mt-n1"
           type="deliver_2"
-          :size="27"
+          :size="37"
           :color="
             section.destination_audiences.length == 0 ? 'black' : 'primary'
           "
@@ -44,7 +35,7 @@
             section.destination_audiences.length == 0 ? 'lighten3' : 'base'
           "
         />
-        Deliver all
+        <span class="deliverAll"> Deliver all </span>
       </div>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
@@ -87,7 +78,7 @@ import { getApproxSize } from "@/utils"
 import DeliveryTable from "./DeliveryTable.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon.vue"
-import Logo from "@/components/common/Logo.vue"
+import Logo from "@/components/common/Logo"
 
 export default {
   name: "DeliveryDetails",
@@ -339,5 +330,8 @@ export default {
       overflow: hidden;
     }
   }
+}
+.deliverAll {
+  margin-top: 2px;
 }
 </style>

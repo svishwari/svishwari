@@ -10,7 +10,7 @@
           :size="14"
           class="mr-1"
         />
-        <span class="text-body-2 black--text text--lighten-4">
+        <span class="body-2 black--text text--lighten-4">
           Today {{ lastRefreshed | Date("hh:mm A", (local = true)) }}
         </span>
       </div>

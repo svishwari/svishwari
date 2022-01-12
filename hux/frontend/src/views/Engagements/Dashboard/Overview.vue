@@ -47,7 +47,7 @@
             @click="$emit('deliverEngagement', $event)"
           >
             <icon
-              class="mr-1"
+              class="mr-2"
               type="deliver_2"
               :size="24"
               :color="'primary'"
