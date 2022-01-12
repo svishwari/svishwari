@@ -787,6 +787,10 @@ def remove_destination_from_all_audiences(
     return False
 
 
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def append_destination_to_standalone_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -840,6 +844,10 @@ def append_destination_to_standalone_audience(
     return audience
 
 
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def remove_destination_from_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
