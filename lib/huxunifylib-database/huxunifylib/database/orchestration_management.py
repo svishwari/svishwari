@@ -15,7 +15,6 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
-import huxunifylib.database.delivery_platform_management as destination_management
 
 
 @retry(

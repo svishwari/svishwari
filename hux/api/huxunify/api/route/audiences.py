@@ -15,7 +15,7 @@ from flask import Blueprint, Response, request, jsonify
 
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
-get_delivery_platforms_by_id
+    get_delivery_platforms_by_id,
 )
 from huxunifylib.database.orchestration_management import (
     get_audience,
@@ -898,7 +898,9 @@ class AddDestinationAudience(SwaggerView):
             user_name=user[api_c.USER_NAME],
         )
 
-        destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
+        destination_ids = [
+            x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]
+        ]
 
         destinations_list = get_delivery_platforms_by_id(
             database, destination_ids
@@ -1016,7 +1018,9 @@ class DeleteDestinationAudience(SwaggerView):
             destination_id=destination[api_c.ID],
             user_name=user[api_c.USER_NAME],
         )
-        destination_ids = [x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]]
+        destination_ids = [
+            x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]
+        ]
 
         destinations_list = get_delivery_platforms_by_id(
             database, destination_ids
