@@ -96,14 +96,10 @@ class ApplicationGetView(SwaggerView):
             else False
         )
 
-        query_filter = (
-            {api_c.STATUS: api_c.STATUS_ACTIVE} if only_active else None
-        )
-
         applications = collection_management.get_documents(
             get_db_client(),
             db_c.APPLICATIONS_COLLECTION,
-            query_filter,
+            {api_c.STATUS: api_c.STATUS_ACTIVE} if only_active else None,
         ).get(db_c.DOCUMENTS)
 
         logger.info("Successfully retrieved all applications.")
