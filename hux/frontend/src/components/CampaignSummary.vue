@@ -125,7 +125,7 @@
       </v-card-text>
     </v-card>
     <v-card min-height="145px" flat class="mt-6 card-style">
-      <v-card-title class="d-flex justify-space-between pb-4 pl-7">
+      <v-card-title class="d-flex justify-space-between pb-3 pl-6">
         <div class="d-flex align-center">
           <icon
             type="audiences"
@@ -138,7 +138,7 @@
           </span>
         </div>
       </v-card-title>
-      <v-card-text class="pl-6 pb-6 mt-0 pr-0">
+      <v-card-text class="pl-6 pb-6 pr-6 mt-0">
         <div
           v-if="!hasData(data, 'performance')"
           class="empty-state pa-5 text--gray"
@@ -769,6 +769,7 @@ export default {
       .v-data-table-header {
         th {
           background: var(--v-primary-lighten2);
+          box-shadow: none;
           &:first-child {
             border-radius: 12px 0px 0px 0px;
           }
@@ -778,6 +779,11 @@ export default {
         }
         th:nth-child(1) {
           border-right: thin solid rgba(0, 0, 0, 0.12);
+          position: sticky;
+          left: 0;
+          z-index: 3;
+          overflow-y: visible;
+          overflow-x: visible;
         }
         border-radius: 12px 12px 0px 0px;
       }
@@ -787,9 +793,9 @@ export default {
         }
         height: 64px;
         td {
-          font-size: 14px !important;
+          font-size: 16px !important;
           line-height: 22px;
-          color: var(--v-black-darken4);
+          color: var(--v-black-base);
           .audience-name {
             span {
               display: flex;
@@ -798,7 +804,12 @@ export default {
         }
         td:nth-child(1) {
           background: var(--v-white-base);
+          position: sticky;
+          left: 0;
+          z-index: 3;
           border-right: thin solid rgba(0, 0, 0, 0.12);
+          overflow-y: visible;
+          overflow-x: visible;
           &:hover {
             background: var(--v-primary-lighten2) !important;
           }
@@ -807,7 +818,7 @@ export default {
       .ellipsis {
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 21ch;
+        max-width: 21ch !important;
         display: inline-block;
         white-space: nowrap;
       }
@@ -825,7 +836,8 @@ export default {
     .child {
       ::v-deep .theme--light {
         background: var(--v-primary-lighten1);
-        .v-data-table__wrapper {
+        .v-data-table__wrapper,
+        .empty-table {
           box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }

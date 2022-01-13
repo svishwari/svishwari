@@ -1,7 +1,7 @@
 <template>
   <div class="pt-2">
     <v-card class="overview-card px-6 py-5 card-style">
-      <v-card-title class="d-flex justify-space-between pa-0">
+      <v-card-title class="d-flex justify-space-between pa-0 mb-2">
         <h3 class="text-h3 mb-2">Engagement overview</h3>
         <div class="d-flex align-center">
           <v-btn
@@ -65,7 +65,7 @@
         :headers="columnDefs"
         :audience-menu-options="audienceMenuOptions"
         class="audience-table"
-        @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+        @triggerSelectAudience="$emit('triggerSelectAudience', '')"
         @onSectionAction="$emit('triggerOverviewAction', $event)"
       />
     </v-card>
