@@ -77,14 +77,18 @@ class ApplicationGetView(SwaggerView):
     # pylint: disable=too-many-return-statements
     # pylint: disable=too-many-branches
     # pylint: disable=no-self-use
+    # pylint: disable=unused-argument
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self) -> Tuple[dict, int]:
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Fetch all applications.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Created application, HTTP status code.
