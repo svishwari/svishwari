@@ -169,7 +169,7 @@
         <div v-if="!isEdit" class="d-flex align-center justify-center px-7">
           <text-field
             v-model="audience.name"
-            placeholder-text="Edit name"
+            placeholder-text="Audience name"
             height="40"
             background-color="white"
             required
