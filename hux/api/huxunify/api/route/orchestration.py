@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import aiohttp
 from flasgger import SwaggerView
 from bson import ObjectId
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from marshmallow import INCLUDE
 from pymongo import MongoClient
 
@@ -19,6 +19,7 @@ from huxunifylib.connectors import (
     FacebookConnector,
 )
 
+from huxunify.api.route.return_util import HuxResponse
 from huxunifylib.database.delete_util import delete_lookalike_audience
 from huxunifylib.database.delivery_platform_management import (
     update_pending_delivery_jobs,
@@ -622,7 +623,7 @@ class AudienceGetView(SwaggerView):
     # pylint: disable=too-many-statements
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, audience_id: str, user: dict) -> Tuple[dict, int]:
+    def get(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves an audience.
 
         ---
@@ -634,7 +635,7 @@ class AudienceGetView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: Audience, HTTP status code.
+            Tuple[Response, int]: Audience, HTTP status code.
         """
 
         token_response = get_token_from_request(request)
@@ -662,9 +663,7 @@ class AudienceGetView(SwaggerView):
 
             if not lookalike:
                 logger.error("Audience with id %s not found.", audience_id)
-                return {
-                    "message": api_c.AUDIENCE_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
+                return HuxResponse.NOT_FOUND(api_c.AUDIENCE_NOT_FOUND)
 
             lookalike[api_c.IS_LOOKALIKE] = True
             # set source audience attribute filters for the lookalike
@@ -870,9 +869,9 @@ class AudienceGetView(SwaggerView):
                 ),
             }
         )
-        return (
-            AudienceGetSchema(unknown=INCLUDE).dump(audience),
-            HTTPStatus.OK,
+
+        return HuxResponse.OK(
+            data=audience, data_schema=AudienceGetSchema(unknown=INCLUDE)
         )
 
 
@@ -913,7 +912,7 @@ class AudienceInsightsGetView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, audience_id: str, user: dict) -> Tuple[dict, int]:
+    def get(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves audience insights for an audience.
 
         ---
@@ -925,7 +924,7 @@ class AudienceInsightsGetView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: AudienceInsights, HTTP status code.
+            Tuple[Response, int]: AudienceInsights, HTTP status code.
         """
 
         token_response = get_token_from_request(request)
@@ -944,7 +943,7 @@ class AudienceInsightsGetView(SwaggerView):
 
         if not audience and not lookalike:
             logger.error("Audience with id %s not found.", audience_id)
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return HuxResponse.NOT_FOUND(api_c.AUDIENCE_NOT_FOUND)
 
         if not audience and lookalike:
             # grab the source audience ID of the lookalike
@@ -963,9 +962,9 @@ class AudienceInsightsGetView(SwaggerView):
                 )
             )
 
-        return (
-            AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
-            HTTPStatus.OK,
+        return HuxResponse.OK(
+            data=audience_insights,
+            data_schema=AudienceInsightsGetSchema(unknown=INCLUDE),
         )
 
 
@@ -1038,7 +1037,7 @@ class AudiencePostView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def post(self, user: dict) -> Tuple[dict, int]:
+    def post(self, user: dict) -> Tuple[Response, int]:
         """Creates a new audience.
 
         ---
@@ -1049,7 +1048,7 @@ class AudiencePostView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: Created audience, HTTP status code.
+            Tuple[Response, int]: Created audience, HTTP status code.
         """
 
         body = AudiencePostSchema().load(request.get_json(), partial=True)
@@ -1076,9 +1075,7 @@ class AudiencePostView(SwaggerView):
                         "Could not find destination with id %s.",
                         destination[db_c.OBJECT_ID],
                     )
-                    return {
-                        "message": api_c.DESTINATION_NOT_FOUND
-                    }, HTTPStatus.NOT_FOUND
+                    return HuxResponse.NOT_FOUND(api_c.DESTINATION_NOT_FOUND)
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
@@ -1095,10 +1092,10 @@ class AudiencePostView(SwaggerView):
                     logger.error(
                         "Engagement with ID %s does not exist.", engagement_id
                     )
-                    return {
-                        "message": f"Engagement with ID {engagement_id} "
+                    return HuxResponse.NOT_FOUND(
+                        f"Engagement with ID {engagement_id} "
                         f"does not exist."
-                    }, HTTPStatus.NOT_FOUND
+                    )
                 engagement_ids.append(engagement_id)
         audience_filters = convert_unique_city_filter(
             {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
@@ -1179,7 +1176,9 @@ class AudiencePostView(SwaggerView):
                     batch_destination.register()
                     batch_destination.submit()
 
-        return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
+        return HuxResponse.CREATED(
+            data=audience_doc, data_schema=AudienceGetSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -1249,7 +1248,7 @@ class AudiencePutView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
+    def put(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Updates an audience.
 
         ---
@@ -1261,7 +1260,7 @@ class AudiencePutView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: Audience doc, HTTP status code.
+            Tuple[Response, int]: Audience doc, HTTP status code.
         """
 
         # load into the schema object
@@ -1271,9 +1270,7 @@ class AudiencePutView(SwaggerView):
         if not orchestration_management.get_audience(
             database, ObjectId(audience_id)
         ):
-            return {
-                api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            return HuxResponse.NOT_FOUND(api_c.AUDIENCE_NOT_FOUND)
 
         # validate destinations
         if db_c.DESTINATIONS in body:
@@ -1292,9 +1289,7 @@ class AudiencePutView(SwaggerView):
                         "Could not find destination with id %s.",
                         destination[db_c.OBJECT_ID],
                     )
-                    return {
-                        "message": api_c.DESTINATION_NOT_FOUND
-                    }, HTTPStatus.NOT_FOUND
+                    return HuxResponse.NOT_FOUND(api_c.DESTINATION_NOT_FOUND)
 
         audience_doc = orchestration_management.update_audience(
             database=database,
@@ -1311,7 +1306,9 @@ class AudiencePutView(SwaggerView):
 
         # check if any engagements to add, otherwise return.
         if not body.get(api_c.ENGAGEMENT_IDS):
-            return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
+            return HuxResponse.OK(
+                data=audience_doc, data_schema=AudienceGetSchema()
+            )
 
         # audience put engagement ids
         put_engagement_ids = [
@@ -1367,7 +1364,9 @@ class AudiencePutView(SwaggerView):
             user[api_c.USER_NAME],
         )
 
-        return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
+        return HuxResponse.OK(
+            data=audience_doc, data_schema=AudienceGetSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -1388,7 +1387,7 @@ class AudienceRules(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[dict, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves all audience rules.
 
         ---
@@ -1399,7 +1398,7 @@ class AudienceRules(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: dict of audience rules, HTTP status code.
+            Tuple[Response, int]: dict of audience rules, HTTP status code.
         """
 
         rules_constants = {
@@ -1636,7 +1635,7 @@ class AudienceRules(SwaggerView):
 
         rules_constants.update(rules_from_cdm)
 
-        return rules_constants, HTTPStatus.OK.value
+        return HuxResponse.response(HTTPStatus.OK, data=rules_constants)
 
 
 @add_view_to_blueprint(
@@ -1682,7 +1681,7 @@ class SetLookalikeAudience(SwaggerView):
     # pylint: disable=no-self-use, unsubscriptable-object
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def post(self, user: dict) -> Tuple[dict, int]:
+    def post(self, user: dict) -> Tuple[Response, int]:
         """Create lookalike audience.
 
         ---
@@ -1693,7 +1692,7 @@ class SetLookalikeAudience(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: lookalike audience configuration,
+            Tuple[Response, int]: lookalike audience configuration,
                 HTTP status code.
 
         Raises:
@@ -1714,7 +1713,7 @@ class SetLookalikeAudience(SwaggerView):
 
         if not source_audience:
             logger.error("Audience %s not found.", body[api_c.AUDIENCE_ID])
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return HuxResponse.NOT_FOUND(api_c.AUDIENCE_NOT_FOUND)
 
         destination = destination_management.get_delivery_platform_by_type(
             database, db_c.DELIVERY_PLATFORM_FACEBOOK
@@ -1755,9 +1754,9 @@ class SetLookalikeAudience(SwaggerView):
         most_recent_job = most_recent_job[0] if most_recent_job else None
         if most_recent_job is None:
             logger.error("%s.", api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND)
-            return {
-                "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            return HuxResponse.NOT_FOUND(
+                api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
+            )
 
         try:
             # set status to error for now.
@@ -1789,13 +1788,11 @@ class SetLookalikeAudience(SwaggerView):
             )
 
         except CustomAudienceDeliveryStatusError:
-            return {
-                "message": (
-                    f"Failed to create a lookalike audience, "
-                    f"{body[api_c.NAME]}: the selected audience "
-                    f"to create a lookalike from is inactive or unusable.",
-                ),
-            }, HTTPStatus.NOT_FOUND
+            return HuxResponse.NOT_FOUND(
+                f"Failed to create a lookalike audience, "
+                f"{body[api_c.NAME]}: the selected audience "
+                f"to create a lookalike from is inactive or unusable."
+            )
 
         for engagement_id in body[api_c.ENGAGEMENT_IDS]:
             engagement_management.append_audiences_to_engagement(
@@ -1825,9 +1822,8 @@ class SetLookalikeAudience(SwaggerView):
             api_c.ORCHESTRATION_TAG,
             user[api_c.USER_NAME],
         )
-        return (
-            LookalikeAudienceGetSchema().dump(lookalike_audience),
-            HTTPStatus.ACCEPTED,
+        return HuxResponse.ACCEPTED(
+            data=lookalike_audience, data_schema=LookalikeAudienceGetSchema()
         )
 
 
@@ -1875,7 +1871,7 @@ class PutLookalikeAudience(SwaggerView):
     # pylint: disable=no-self-use, unsubscriptable-object
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
+    def put(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Edits lookalike audience.
 
         ---
@@ -1887,7 +1883,7 @@ class PutLookalikeAudience(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: lookalike audience configuration,
+            Tuple[Response, int]: lookalike audience configuration,
                 HTTP status code.
 
         Raises:
@@ -1919,9 +1915,8 @@ class PutLookalikeAudience(SwaggerView):
             user[api_c.USER_NAME],
         )
 
-        return (
-            LookalikeAudienceGetSchema().dump(update_doc),
-            HTTPStatus.OK,
+        return HuxResponse.OK(
+            data=update_doc, data_schema=LookalikeAudienceGetSchema()
         )
 
 
@@ -1960,7 +1955,7 @@ class DeleteAudienceView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def delete(self, audience_id: str, user: dict) -> Tuple[dict, int]:
+    def delete(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Deletes an audience.
 
         ---
@@ -1972,7 +1967,7 @@ class DeleteAudienceView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: response dict, HTTP status code.
+            Tuple[Response, int]: response dict, HTTP status code.
         """
 
         database = get_db_client()
@@ -1993,15 +1988,13 @@ class DeleteAudienceView(SwaggerView):
             )
 
             if deleted_audience:
-                return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
+                return HuxResponse.NO_CONTENT()
             logger.info(
                 "Failed to delete audience %s by user %s.",
                 audience_id,
                 user[api_c.USER_NAME],
             )
-            return {
-                api_c.MESSAGE: api_c.OPERATION_FAILED
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
+            return HuxResponse.INTERNAL_SERVER_ERROR(api_c.OPERATION_FAILED)
 
         # attempt to delete the audience from lookalike_audiences collection
         # if audience not found in audiences collection
@@ -2012,7 +2005,7 @@ class DeleteAudienceView(SwaggerView):
         )
 
         if not audience:
-            return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
+            return HuxResponse.NO_CONTENT()
 
         deleted_audience = delete_lookalike_audience(
             database, ObjectId(audience_id), soft_delete=False
@@ -2026,9 +2019,7 @@ class DeleteAudienceView(SwaggerView):
                 audience_id,
                 user[api_c.USER_NAME],
             )
-            return {
-                api_c.MESSAGE: api_c.OPERATION_FAILED
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
+            return HuxResponse.INTERNAL_SERVER_ERROR(api_c.OPERATION_FAILED)
 
         delete_audience_from_engagements = (
             engagement_management.remove_audience_from_all_engagements(
@@ -2042,9 +2033,7 @@ class DeleteAudienceView(SwaggerView):
                 audience_id,
                 user[api_c.USER_NAME],
             )
-            return {
-                api_c.MESSAGE: api_c.OPERATION_FAILED
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
+            return HuxResponse.INTERNAL_SERVER_ERROR(api_c.OPERATION_FAILED)
 
         logger.info(
             "Successfully deleted audience %s by user %s.",
@@ -2060,4 +2049,4 @@ class DeleteAudienceView(SwaggerView):
             user[api_c.USER_NAME],
         )
 
-        return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
+        return HuxResponse.NO_CONTENT()
