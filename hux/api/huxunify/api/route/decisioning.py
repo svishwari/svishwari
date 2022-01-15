@@ -651,7 +651,7 @@ class ModelDriftView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
         """Retrieves model drift details.

@@ -198,7 +198,9 @@ class Tecton:
                 api_c.NAME: feature[6],
                 api_c.TYPE: str(feature[7]).lower(),
                 api_c.OWNER: feature[8],
-                api_c.STATUS: feature[11],
+                api_c.STATUS: api_c.MODEL_STATUS_MAPPING.get(
+                    str(feature[11]).lower(), api_c.STATUS_PENDING
+                ),
                 api_c.CURRENT_VERSION: meta_data[api_c.JOIN_KEYS][0],
                 api_c.PREDICTION_WINDOW: int(feature[4]),
             }
