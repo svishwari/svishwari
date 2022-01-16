@@ -304,7 +304,6 @@ export default {
     delete this.batchDetails.category
     delete this.batchDetails.users
     this.setDefaultData()
-    await this.fetchNotificationsByBatch()
     this.calculateLastBatch()
   },
   methods: {
