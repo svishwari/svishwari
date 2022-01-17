@@ -790,6 +790,12 @@ export default {
       tr {
         &:hover {
           background: var(--v-primary-lighten2) !important;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          td:nth-child(1) {
+            z-index: 3 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: none !important;
+          }
         }
         height: 64px;
         td {
@@ -803,16 +809,13 @@ export default {
           }
         }
         td:nth-child(1) {
-          background: var(--v-white-base);
+          background-color: white;
           position: sticky;
           left: 0;
           z-index: 3;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
-          &:hover {
-            background: var(--v-primary-lighten2) !important;
-          }
         }
       }
       .ellipsis {

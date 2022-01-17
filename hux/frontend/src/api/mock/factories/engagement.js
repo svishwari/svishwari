@@ -90,4 +90,132 @@ export const engagement = {
   status: faker.random.arrayElement(["Active", "Delivering", "Not Delivered"]),
   campaign_performance: {},
   campaign_mappings: {}, // This will enable us to maintain the mapping saved by user for the respective destination.
+  destinations_category: [
+    {
+      category: "Advertising",
+      destinations: [
+        {
+          destination_audiences: [
+            {
+              id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+              is_lookalike: false,
+              latest_delivery: {
+                delivery_schedule: faker.random.arrayElement([
+                  "Daily",
+                  "Weekly",
+                  "Monthly",
+                ]),
+                match_rate: null,
+                next_delivery: "2021-08-12T14:23:11.250Z",
+                size: () =>
+                  faker.datatype.number({ min: 10000000, max: 999999999 }),
+                status: faker.random.arrayElement([
+                  "Delivered",
+                  "Delivering",
+                  "Not Delivered",
+                  "Error",
+                ]),
+                update_time: "2022-01-12T15:11:51.314Z",
+              },
+              name: `Audience for ${faker.company.companyName()}`,
+              size: () =>
+                faker.datatype.number({ min: 10000000, max: 999999999 }),
+            },
+            {
+              id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+              is_lookalike: true,
+              latest_delivery: {
+                delivery_schedule: faker.random.arrayElement([
+                  "Daily",
+                  "Weekly",
+                  "Monthly",
+                ]),
+                match_rate: null,
+                next_delivery: "2021-08-12T14:23:11.250Z",
+                size: () =>
+                  faker.datatype.number({ min: 10000000, max: 999999999 }),
+                status: faker.random.arrayElement([
+                  "Delivered",
+                  "Delivering",
+                  "Not Delivered",
+                  "Error",
+                ]),
+                update_time: "2022-01-12T15:11:51.314Z",
+              },
+              name: `Audience for ${faker.company.companyName()}`,
+              size: () =>
+                faker.datatype.number({ min: 10000000, max: 999999999 }),
+            },
+          ],
+          id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+          link: "https://business.facebook.com/",
+          name: "Facebook",
+          type: "facebook",
+        },
+      ],
+    },
+    {
+      category: "Marketing",
+      destinations: [
+        {
+          destination_audiences: [
+            {
+              id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+              is_lookalike: false,
+              latest_delivery: {
+                delivery_schedule: faker.random.arrayElement([
+                  "Daily",
+                  "Weekly",
+                  "Monthly",
+                ]),
+                match_rate: null,
+                next_delivery: "2021-08-12T14:23:11.250Z",
+                size: () =>
+                  faker.datatype.number({ min: 10000000, max: 999999999 }),
+                status: faker.random.arrayElement([
+                  "Delivered",
+                  "Delivering",
+                  "Not Delivered",
+                  "Error",
+                ]),
+                update_time: "2022-01-12T15:11:51.314Z",
+              },
+              name: `Audience for ${faker.company.companyName()}`,
+              size: () =>
+                faker.datatype.number({ min: 10000000, max: 999999999 }),
+            },
+            {
+              id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+              is_lookalike: true,
+              latest_delivery: {
+                delivery_schedule: faker.random.arrayElement([
+                  "Daily",
+                  "Weekly",
+                  "Monthly",
+                ]),
+                match_rate: null,
+                next_delivery: "2021-08-12T14:23:11.250Z",
+                size: () =>
+                  faker.datatype.number({ min: 10000000, max: 999999999 }),
+                status: faker.random.arrayElement([
+                  "Delivered",
+                  "Delivering",
+                  "Not Delivered",
+                  "Error",
+                ]),
+                update_time: "2022-01-12T15:11:51.314Z",
+              },
+              name: `Audience for ${faker.company.companyName()}`,
+              size: () =>
+                faker.datatype.number({ min: 10000000, max: 999999999 }),
+            },
+          ],
+          id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+          link: "https://business.facebook.com/",
+          name: "Facebook",
+          type: "facebook",
+        },
+      ],
+    },
+  ],
 }
