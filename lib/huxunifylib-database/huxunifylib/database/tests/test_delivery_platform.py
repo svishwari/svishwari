@@ -486,7 +486,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             name="Updated name",
             delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
             authentication_details=new_auth_details,
-            link="fake.com"
+            link="fake.com",
         )
 
         self.assertIsNotNone(doc)
