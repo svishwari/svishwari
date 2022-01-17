@@ -299,7 +299,7 @@ export default {
     }
   },
 
-  async beforeDestroy() {
+  beforeDestroy() {
     delete this.batchDetails.notification_types
     delete this.batchDetails.category
     delete this.batchDetails.users
