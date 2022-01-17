@@ -8,7 +8,7 @@ class JiraConnectionTest(TestCase):
     """Tests for Jira Connection."""
 
     def tearDown(self) -> None:
-        """Run after every class"""
+        """Run after every test."""
 
         mock.patch.stopall()
 
