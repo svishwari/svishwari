@@ -1011,13 +1011,13 @@ PROFILE_SIZE_PERCENT = "profile_size_percent"
 RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
-CLASSIFICATION_MODELS = [
-    UNSUBSCRIBE,
-    PURCHASE,
-    "propensity_positive_click type: binary",
-    "propensity_positive_open type: binary",
-    "propensity_positive_unsub type: binary",
-]
+CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
+# todo: remove in the future when we remove tecton.
+TEMP_MODELS_TYPE_MAPPING = {
+    "propensity_positive_click": UNSUBSCRIBE,
+    "propensity_positive_open": UNSUBSCRIBE,
+    "propensity_positive_unsub": UNSUBSCRIBE,
+}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"

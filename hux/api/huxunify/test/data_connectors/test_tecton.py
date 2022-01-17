@@ -249,7 +249,9 @@ class TectonTest(TestCase):
             headers=self.tecton.headers,
         )
 
-        models = self.tecton.get_model_version_history(1)
+        models = self.tecton.get_model_version_history(
+            "propensity_positive_click"
+        )
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
@@ -261,18 +263,17 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             models[0],
             {
-                "id": 1,
-                "last_trained": datetime(2021, 7, 31, 0, 0),
-                "description": "Propensity of a customer unsubscribing "
-                "after receiving an email.",
-                "fulcrum_date": datetime(2021, 7, 17, 0, 0),
+                "id": "propensity_positive_click",
+                "last_trained": datetime(2021, 11, 14, 0, 0),
+                "description": "Predicts the propensity of a customer to unsubscribe",
+                "fulcrum_date": datetime(2021, 11, 7, 0, 0),
                 "lookback_window": "7",
-                "name": "Propensity to Unsubscribe",
+                "name": "Unsubscribe Model",
                 "type": "unsubscribe",
-                "owner": "Susan Miller",
-                "status": "Active",
-                "current_version": "21.7.31",
-                "prediction_window": 90,
+                "owner": "Decisioning",
+                "status": api_c.STATUS_ACTIVE,
+                "current_version": "21.11.14",
+                "prediction_window": 60,
             },
         )
 
@@ -318,7 +319,7 @@ class TectonTest(TestCase):
             headers=self.tecton.headers,
         )
 
-        model_features = self.tecton.get_model_features(1, "21.7.30")
+        model_features = self.tecton.get_model_features("1", "21.7.30")
 
         self.assertTrue(model_features)
         self.assertTrue(
@@ -372,7 +373,7 @@ class TectonTest(TestCase):
             headers=self.tecton.headers,
         )
 
-        models = self.tecton.get_model_version_history(2)
+        models = self.tecton.get_model_version_history("2")
 
         # setup the request mock post
         request_mocker.post(
@@ -384,7 +385,7 @@ class TectonTest(TestCase):
             headers=self.tecton.headers,
         )
 
-        drift_data = self.tecton.get_model_drift(2, api_c.LTV, models)
+        drift_data = self.tecton.get_model_drift("2", api_c.LTV, models)
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 2)
@@ -397,7 +398,7 @@ class TectonTest(TestCase):
             drift_data[-1],
             {
                 api_c.DRIFT: 215.5,
-                api_c.RUN_DATE: datetime(2021, 7, 30, 0, 0),
+                api_c.RUN_DATE: datetime(2021, 11, 14, 0, 0),
             },
         )
 
@@ -462,10 +463,12 @@ class TectonTest(TestCase):
             headers=self.tecton.headers,
         )
 
-        with self.assertRaises(EmptyAPIResponseError):
+        # return empty response if 200.
+        self.assertFalse(
             self.tecton.get_model_drift(
                 model_id=model_id, model_type=model_type, models=[]
             )
+        )
 
     @requests_mock.Mocker()
     @given(
