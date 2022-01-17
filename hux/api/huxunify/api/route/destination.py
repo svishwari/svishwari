@@ -460,7 +460,7 @@ class DestinationAuthenticationPostView(SwaggerView):
                 campaign_de=campaign_de,
                 user_name=user[api_c.USER_NAME],
                 status=db_c.STATUS_SUCCEEDED,
-                link=body.get(db_c.LINK)
+                link=body.get(db_c.LINK),
             ),
             data_schema=DestinationGetSchema(),
         )
