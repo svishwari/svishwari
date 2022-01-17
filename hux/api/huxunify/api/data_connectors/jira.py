@@ -54,6 +54,28 @@ class JiraConnection:
             )
             record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, 200)
             return True, "Jira available"
+
+        except JIRAError as jira_error:
+            logger.error(
+                "Encountered Error: %s while connecting to JIRA and %s Status "
+                "code.",
+                jira_error.text,
+                jira_error.status_code,
+            )
+            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, False)
+            return False, jira_error.text
+
+        except AttributeError as attribute_error:
+            logger.error(
+                "Could not connect to JIRA %s",
+                getattr(attribute_error, "message", repr(attribute_error)),
+            )
+            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, False)
+            return (
+                False,
+                getattr(attribute_error, "message", repr(attribute_error)),
+            )
+
         except Exception as exception:  # pylint: disable=broad-except
             logger.error(
                 "Could not connect to JIRA %s",

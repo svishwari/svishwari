@@ -119,7 +119,10 @@ class TestRouteUtils(TestCase):
             "huxunify.api.route.utils.check_aws_batch",
             return_value=(True, "AWS Batch available"),
         ).start()
-
+        mock.patch(
+            "huxunify.api.route.utils.JiraConnection.check_jira_connection",
+            return_value=(True, "Jira available"),
+        ).start()
         health = get_health_check()
         self.assertTrue(health)
 
