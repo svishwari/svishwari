@@ -35,6 +35,16 @@ export default {
     headerHeight: {
       control: { type: "text" },
     },
+    loading: { table: { disable: true } },
+    "header-right": { table: { disable: true } },
+    "header-left": { table: { disable: true } },
+    default: { table: { disable: true } },
+    value: { table: { disable: true } },
+    "footer-left": { table: { disable: true } },
+    "footer-right": { table: { disable: true } },
+    input: { table: { disable: true } },
+    onClose: { table: { disable: true } },
+    iconToggle: { table: { disable: true } },
   },
   args: {
     loading: false,
