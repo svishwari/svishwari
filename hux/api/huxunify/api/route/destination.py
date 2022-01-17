@@ -7,7 +7,7 @@ from typing import Tuple
 
 from bson import ObjectId
 from flasgger import SwaggerView
-from flask import Blueprint, request, jsonify, Response
+from flask import Blueprint, request, Response
 from marshmallow import ValidationError
 
 from huxunifylib.util.general.logging import logger
@@ -46,6 +46,7 @@ from huxunifylib.connectors import connector_sfmc
 from huxunifylib.connectors.util.selector import (
     get_delivery_platform_connector,
 )
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
     parameter_store,
@@ -171,7 +172,7 @@ class DestinationGetView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, destination_id: str, user: dict) -> Tuple[dict, int]:
+    def get(self, destination_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves a destination.
 
         ---
@@ -183,14 +184,16 @@ class DestinationGetView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: Destination dict, HTTP status code.
+            Tuple[Response, int]: Destination dict, HTTP status code.
         """
 
         destination = destination_management.get_delivery_platform(
             get_db_client(), destination_id
         )
 
-        return DestinationGetSchema().dump(destination), HTTPStatus.OK
+        return HuxResponse.OK(
+            data=destination, data_schema=DestinationGetSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -302,9 +305,8 @@ class DestinationsView(SwaggerView):
                 destination[db_c.DELIVERY_PLATFORM_STATUS],
             )
 
-        return (
-            jsonify(DestinationGetSchema().dump(destinations, many=True)),
-            HTTPStatus.OK,
+        return HuxResponse.OK(
+            data=destinations, data_schema=DestinationGetSchema()
         )
 
 
@@ -357,7 +359,9 @@ class DestinationAuthenticationPostView(SwaggerView):
     )
     @validate_destination()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def put(self, destination_id: ObjectId, user: dict) -> Tuple[dict, int]:
+    def put(
+        self, destination_id: ObjectId, user: dict
+    ) -> Tuple[Response, int]:
         """Sets a destination's authentication details.
 
         ---
@@ -369,7 +373,7 @@ class DestinationAuthenticationPostView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: Destination doc, HTTP status code.
+            Tuple[Response, int]: Destination doc, HTTP status code.
         """
 
         # load into the schema object
@@ -392,9 +396,8 @@ class DestinationAuthenticationPostView(SwaggerView):
             sfmc_config = body.get(db_c.CONFIGURATION)
             if not sfmc_config or not isinstance(sfmc_config, dict):
                 logger.error("%s", api_c.SFMC_CONFIGURATION_MISSING)
-                return (
-                    {"message": api_c.SFMC_CONFIGURATION_MISSING},
-                    HTTPStatus.BAD_REQUEST,
+                return HuxResponse.BAD_REQUEST(
+                    api_c.SFMC_CONFIGURATION_MISSING
                 )
 
             performance_de = sfmc_config.get(
@@ -402,25 +405,22 @@ class DestinationAuthenticationPostView(SwaggerView):
             )
             if not performance_de:
                 logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED)
-                return (
-                    {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
-                    HTTPStatus.BAD_REQUEST,
+                return HuxResponse.BAD_REQUEST(
+                    api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED
                 )
             campaign_de = sfmc_config.get(
                 api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION
             )
             if not campaign_de:
                 logger.error("%s", api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
-                return (
-                    {"message": api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED},
-                    HTTPStatus.BAD_REQUEST,
+                return HuxResponse.BAD_REQUEST(
+                    api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED
                 )
             DestinationDataExtConfigSchema().load(sfmc_config)
             if performance_de == campaign_de:
                 logger.error("%s", api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR)
-                return (
-                    {"message": api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR},
-                    HTTPStatus.BAD_REQUEST,
+                return HuxResponse.BAD_REQUEST(
+                    api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR
                 )
         elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
             FacebookAuthCredsSchema().load(auth_details)
@@ -446,24 +446,22 @@ class DestinationAuthenticationPostView(SwaggerView):
             )
             is_added = True
 
-        return (
-            DestinationGetSchema().dump(
-                destination_management.update_delivery_platform(
-                    database=database,
-                    delivery_platform_id=destination_id,
-                    delivery_platform_type=destination[
-                        db_c.DELIVERY_PLATFORM_TYPE
-                    ],
-                    name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    authentication_details=authentication_parameters,
-                    added=is_added,
-                    performance_de=performance_de,
-                    campaign_de=campaign_de,
-                    user_name=user[api_c.USER_NAME],
-                    status=db_c.STATUS_SUCCEEDED,
-                )
+        return HuxResponse.OK(
+            data=destination_management.update_delivery_platform(
+                database=database,
+                delivery_platform_id=destination_id,
+                delivery_platform_type=destination[
+                    db_c.DELIVERY_PLATFORM_TYPE
+                ],
+                name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                authentication_details=authentication_parameters,
+                added=is_added,
+                performance_de=performance_de,
+                campaign_de=campaign_de,
+                user_name=user[api_c.USER_NAME],
+                status=db_c.STATUS_SUCCEEDED,
             ),
-            HTTPStatus.OK,
+            data_schema=DestinationGetSchema(),
         )
 
 
@@ -489,7 +487,7 @@ class DestinationsConstants(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[dict, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves all destination constants.
 
         ---
@@ -500,12 +498,12 @@ class DestinationsConstants(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: dict of destination constants, HTTP status code.
+            Tuple[Response, int]: dict of destination constants, HTTP status code.
         """
 
-        return (
-            DestinationConstantsSchema().dump(api_c.DESTINATION_CONSTANTS),
-            HTTPStatus.OK,
+        return HuxResponse.OK(
+            data=api_c.DESTINATION_CONSTANTS,
+            data_schema=DestinationConstantsSchema(),
         )
 
 
@@ -552,7 +550,7 @@ class DestinationValidatePostView(SwaggerView):
         custom_message={"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
     )
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def post(self, user: dict) -> Tuple[dict, int]:
+    def post(self, user: dict) -> Tuple[Response, int]:
         """Validates the credentials for a destination.
 
         ---
@@ -563,7 +561,7 @@ class DestinationValidatePostView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection success/failure,
+            Tuple[Response, int]: Message indicating connection success/failure,
                 HTTP status code.
         """
 
@@ -591,9 +589,7 @@ class DestinationValidatePostView(SwaggerView):
             )
             if destination_connector.check_connection():
                 logger.info("Facebook destination validated successfully.")
-                return {
-                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
-                }, HTTPStatus.OK
+                return HuxResponse.OK(api_c.DESTINATION_AUTHENTICATION_SUCCESS)
             logger.error("Could not validate Facebook successfully.")
         elif platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             logger.info("Validating SFMC destination.")
@@ -610,10 +606,12 @@ class DestinationValidatePostView(SwaggerView):
                 key=lambda i: i[api_c.NAME].lower(),
             )
             logger.info("Successfully validated SFMC destination.")
-            return {
-                "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
-                api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
-            }, HTTPStatus.OK
+            return HuxResponse.OK(
+                api_c.DESTINATION_AUTHENTICATION_SUCCESS,
+                extra_fields={
+                    api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list
+                },
+            )
         elif platform_type in [
             db_c.DELIVERY_PLATFORM_SENDGRID,
             db_c.DELIVERY_PLATFORM_TWILIO,
@@ -630,9 +628,7 @@ class DestinationValidatePostView(SwaggerView):
                     "%s destination validated successfully.",
                     platform_type.capitalize(),
                 )
-                return {
-                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
-                }, HTTPStatus.OK
+                return HuxResponse.OK(api_c.DESTINATION_AUTHENTICATION_SUCCESS)
         elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             qualtrics_connector = QualtricsConnector(
                 auth_details={
@@ -654,9 +650,7 @@ class DestinationValidatePostView(SwaggerView):
             )
             if qualtrics_connector.check_connection():
                 logger.info("Qualtrics destination validated successfully.")
-                return {
-                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
-                }, HTTPStatus.OK
+                return HuxResponse.OK(api_c.DESTINATION_AUTHENTICATION_SUCCESS)
 
             logger.error("Could not validate Qualtrics successfully.")
         elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
@@ -683,9 +677,7 @@ class DestinationValidatePostView(SwaggerView):
             )
             if google_connector.check_connection():
                 logger.info("Google Ads destination validated successfully.")
-                return {
-                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
-                }, HTTPStatus.OK
+                return HuxResponse.OK(api_c.DESTINATION_AUTHENTICATION_SUCCESS)
 
             logger.error("Could not validate Google Ads successfully.")
 
@@ -693,17 +685,12 @@ class DestinationValidatePostView(SwaggerView):
             logger.error(
                 "Destination type %s not supported yet.", body.get(db_c.TYPE)
             )
-            return {
-                "message": api_c.DESTINATION_NOT_SUPPORTED
-            }, HTTPStatus.BAD_REQUEST
+            return HuxResponse.BAD_REQUEST(api_c.DESTINATION_NOT_SUPPORTED)
 
         logger.error(
             "Could not validate destination type %s.", body.get(db_c.TYPE)
         )
-        return (
-            {"message": api_c.DESTINATION_AUTHENTICATION_FAILED},
-            HTTPStatus.FORBIDDEN,
-        )
+        return HuxResponse.FORBIDDEN(api_c.DESTINATION_AUTHENTICATION_FAILED)
 
 
 @add_view_to_blueprint(
@@ -767,9 +754,8 @@ class DestinationDataExtView(SwaggerView):
                 "details missing.",
                 destination_id,
             )
-            return (
-                jsonify({"message": api_c.DESTINATION_AUTHENTICATION_FAILED}),
-                HTTPStatus.BAD_REQUEST,
+            return HuxResponse.BAD_REQUEST(
+                api_c.DESTINATION_AUTHENTICATION_FAILED
             )
 
         if (
@@ -790,30 +776,21 @@ class DestinationDataExtView(SwaggerView):
                     destination_id,
                 )
             except AuthenticationFailed:
-                return (
-                    jsonify(
-                        {"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
-                    ),
-                    HTTPStatus.FORBIDDEN,
+                return HuxResponse.FORBIDDEN(
+                    api_c.DESTINATION_AUTHENTICATION_FAILED
                 )
 
         else:
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
-            return (
-                jsonify({"message": api_c.DATA_EXTENSION_NOT_SUPPORTED}),
-                HTTPStatus.BAD_REQUEST,
-            )
+            return HuxResponse.BAD_REQUEST(api_c.DATA_EXTENSION_NOT_SUPPORTED)
 
-        return (
-            jsonify(
-                sorted(
-                    DestinationDataExtGetSchema().dump(ext_list, many=True),
-                    key=lambda i: i[db_c.CREATE_TIME],
-                    reverse=True,
-                )
-            ),
-            HTTPStatus.OK,
+        new_ext_list = sorted(
+            DestinationDataExtGetSchema().dump(ext_list, many=True),
+            key=lambda i: i[db_c.CREATE_TIME],
+            reverse=True,
         )
+
+        return HuxResponse.OK(data=new_ext_list)
 
 
 @add_view_to_blueprint(
@@ -868,7 +845,7 @@ class DestinationDataExtPostView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def post(self, destination_id: str, user: dict) -> Tuple[dict, int]:
+    def post(self, destination_id: str, user: dict) -> Tuple[Response, int]:
         """Creates a destination data extension.
 
         ---
@@ -880,7 +857,7 @@ class DestinationDataExtPostView(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[dict, int]: Data Extension ID, HTTP status code.
+            Tuple[Response, int]: Data Extension ID, HTTP status code.
         """
 
         database = get_db_client()
@@ -890,9 +867,7 @@ class DestinationDataExtPostView(SwaggerView):
 
         if api_c.AUTHENTICATION_DETAILS not in destination:
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
-            return {
-                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
-            }, HTTPStatus.BAD_REQUEST
+            return HuxResponse.BAD_REQUEST(api_c.DATA_EXTENSION_NOT_SUPPORTED)
 
         body = DestinationDataExtPostSchema().load(
             request.get_json(), partial=True
@@ -912,9 +887,9 @@ class DestinationDataExtPostView(SwaggerView):
 
             if not sfmc_connector.check_connection():
                 logger.info("Could not validate SFMC successfully.")
-                return {
-                    "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-                }, HTTPStatus.FORBIDDEN
+                return HuxResponse.FORBIDDEN(
+                    api_c.DESTINATION_AUTHENTICATION_FAILED
+                )
 
             status_code = HTTPStatus.CREATED
 
@@ -952,12 +927,14 @@ class DestinationDataExtPostView(SwaggerView):
                 for ext in sfmc_connector.get_list_of_data_extensions():
                     if ext["CustomerKey"] == body.get(api_c.DATA_EXTENSION):
                         extension = ext
-            return DestinationDataExtGetSchema().dump(extension), status_code
+            return HuxResponse.response(
+                status_code,
+                data=extension,
+                data_schema=DestinationDataExtGetSchema(),
+            )
 
         logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
-        return {
-            "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
-        }, HTTPStatus.BAD_REQUEST
+        return HuxResponse.BAD_REQUEST(api_c.DATA_EXTENSION_NOT_SUPPORTED)
 
 
 @add_view_to_blueprint(
@@ -1007,7 +984,7 @@ class DestinationPatchView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def patch(self, destination_id: str, user: dict) -> Tuple[dict, int]:
+    def patch(self, destination_id: str, user: dict) -> Tuple[Response, int]:
         """Updates a destination.
 
         ---
@@ -1019,12 +996,12 @@ class DestinationPatchView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: Destination doc, HTTP status code.
+            Tuple[Response, int]: Destination doc, HTTP status code.
         """
 
         if not request.get_json():
             logger.info("Could not patch destination.")
-            return {"message": "No body provided."}, HTTPStatus.BAD_REQUEST
+            return HuxResponse.BAD_REQUEST("No body provided.")
 
         DestinationPatchSchema().validate(request.get_json())
 
@@ -1077,9 +1054,8 @@ class DestinationPatchView(SwaggerView):
             ).start()
 
         # update the document
-        return (
-            DestinationGetSchema().dump(updated_destination),
-            HTTPStatus.OK,
+        return HuxResponse.OK(
+            data=updated_destination, data_schema=DestinationGetSchema()
         )
 
 
@@ -1116,7 +1092,7 @@ class DestinationsRequestView(SwaggerView):
     # pylint: disable=too-many-return-statements
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def post(self, user: dict) -> Tuple[list, int]:
+    def post(self, user: dict) -> Tuple[Response, int]:
         """Requests an unsupported destination.
 
         ---
@@ -1127,7 +1103,7 @@ class DestinationsRequestView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: Destination doc, HTTP status code.
+            Tuple[Response, int]: Destination doc, HTTP status code.
         """
 
         destination_request = DestinationRequestSchema().load(
@@ -1162,9 +1138,7 @@ class DestinationsRequestView(SwaggerView):
                 db_c.STATUS_SUCCEEDED,
             ]:
                 # return already requested, return 409, with message.
-                return {
-                    api_c.MESSAGE: "Destination already present."
-                }, HTTPStatus.CONFLICT
+                return HuxResponse.CONFLICT(api_c.DESTINATION_ALREADY_PRESENT)
             # otherwise set the status to requested
             destination = destination_management.update_delivery_platform_doc(
                 database,
@@ -1214,9 +1188,8 @@ class DestinationsRequestView(SwaggerView):
             user[api_c.USER_NAME],
         )
 
-        return (
-            DestinationGetSchema().dump(destination),
-            HTTPStatus.OK,
+        return HuxResponse.OK(
+            data=destination, data_schema=DestinationGetSchema()
         )
 
 
@@ -1250,7 +1223,7 @@ class DestinationDeleteView(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels([api_c.ADMIN_LEVEL])
-    def delete(self, destination_id: str, user: dict) -> Tuple[dict, int]:
+    def delete(self, destination_id: str, user: dict) -> Tuple[Response, int]:
         """Deletes a destination.
 
         ---
@@ -1262,7 +1235,7 @@ class DestinationDeleteView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: Destination doc, HTTP status code.
+            Tuple[Response, int]: Destination doc, HTTP status code.
         """
         database = get_db_client()
 
@@ -1281,7 +1254,7 @@ class DestinationDeleteView(SwaggerView):
                 api_c.DESTINATION,
                 user[api_c.USER_NAME],
             )
-            return {}, HTTPStatus.NO_CONTENT
+            return HuxResponse.NO_CONTENT()
 
         deleted_flag = delete_document(
             database,
@@ -1302,4 +1275,4 @@ class DestinationDeleteView(SwaggerView):
             user[api_c.USER_NAME],
         )
 
-        return {}, HTTPStatus.NO_CONTENT
+        return HuxResponse.NO_CONTENT()

@@ -645,6 +645,7 @@ AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = (
 DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
+DESTINATION_ALREADY_PRESENT = "Destination already present."
 DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
 USER_NOT_FOUND = "User not found."
 
@@ -1100,23 +1101,13 @@ STITCHED_TIMESTAMP = "stitched_timestamp"
 # customer event fields
 CUSTOMER_TOTAL_DAILY_EVENT_COUNT = "total_event_count"
 CUSTOMER_DAILY_EVENT_WISE_COUNT = "event_type_counts"
-ABANDONED_CART_EVENT = "abandoned_cart"
-CUSTOMER_LOGIN_EVENT = "customer_login"
-VIEWED_CART_EVENT = "viewed_cart"
 VIEWED_CHECKOUT_EVENT = "viewed_checkout"
-VIEWED_SALE_ITEM_EVENT = "viewed_sale_item"
-TRAIT_COMPUTED_EVENT = "trait_computed"
-ITEM_PURCHASED_EVENT = "item_purchased"
 TRAIT = "trait"
 SALE = "sale"
 VIEW_CONTENT = "view_content"
 PRODUCT_SEARCH = "product_search"
-ABANDONED_CARTS = "abandoned_carts"
-TRAITS_ANALYZED = "traits_analysed"
-SALES_MADE = "sales_made"
-CONTENT_VIEWED = "content_viewed"
-PRODUCTS_SEARCHED = "products_searched"
-PURCHASES_MADE = "purchases_made"
+ABANDONED_CART = "abandoned_cart"
+PRODUCT_SEARCHED = "product_searched"
 # FILTERING
 REDACTED = "++REDACTED++"
 CUSTOMER_PROFILE_REDACTED_FIELDS = [
@@ -1135,7 +1126,6 @@ DEFAULT_BATCH_SIZE = 5
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
-NOTIFICATION_ID = "notification_id"
 
 # health check prometheus metric constants
 MONGO_CONNECTION_HEALTH = "mongo_connection_health"
@@ -1149,6 +1139,7 @@ CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
 CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
     "cdm_connection_service_connection_health"
 )
+JIRA_CONNECTION_HEALTH = "jira_connection_health"
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
@@ -1359,6 +1350,7 @@ CONFIGURATIONS_ENDPOINT = "/configurations"
 APPLICATIONS_TAG = "applications"
 APPLICATION_ID = "application_id"
 APPLICATIONS_ENDPOINT = "/applications"
+ONLY_ACTIVE = "only_active"
 
 # Histogram data stub.
 VALUES = "values"

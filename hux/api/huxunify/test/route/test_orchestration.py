@@ -1370,12 +1370,7 @@ class OrchestrationRouteTest(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
-        )
-        self.assertEqual(
-            {api_c.MESSAGE: api_c.OPERATION_FAILED}, response.json
-        )
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
     def test_delete_audience_with_invalid_id(self) -> None:
         """Test delete audience API with invalid ID."""
