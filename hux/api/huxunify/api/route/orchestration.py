@@ -19,7 +19,6 @@ from huxunifylib.connectors import (
     FacebookConnector,
 )
 
-from huxunify.api.route.return_util import HuxResponse
 from huxunifylib.database.delete_util import delete_lookalike_audience
 from huxunifylib.database.delivery_platform_management import (
     update_pending_delivery_jobs,
@@ -34,6 +33,7 @@ from huxunifylib.database import (
 )
 import huxunifylib.database.constants as db_c
 
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
