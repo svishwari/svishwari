@@ -4,7 +4,34 @@
       <v-col>
         <v-card class="rounded-lg box-shadow-5 mt-4">
           <div v-if="isDataExist" class="px-6 py-5">
-            <div class="pb-4 black--text text-h3">Team Members</div>
+            <div class="pb-4 d-flex justify-space-between">
+            <div class="black--text text-h3">Team Members</div>
+            <v-btn
+                text
+                min-width="80"
+                class="
+                  d-flex
+                  align-right
+                  primary--text
+                  text-decoration-none
+                  pl-0
+                  pr-0
+                  idr-link
+                  text-body-1
+                  mt-n2
+                  mr-1
+                "
+                data-e2e="eventsDrawerButton"
+                @click="toggleTeamMemberRequestDrawer()"
+              >
+                <icon
+                  type="request-team-member"
+                  :size="16"
+                  class="mr-3"
+                />
+                <span class="body-1">Request a team member</span>
+              </v-btn>
+            </div>
             <hux-data-table
               :columns="columnDefs"
               :sort-column="'display_name'"
@@ -75,6 +102,12 @@
         </v-card>
       </v-col>
     </v-row>
+    <team-member-request-drawer
+      :toggle="teamMemberDrawer"
+      @onToggle="(val) => (teamMemberDrawer = val)"
+      @onAdd="toggleTeamMemberRequestDrawer()"
+      class="z-index-high"
+    />
   </div>
 </template>
 
@@ -84,10 +117,12 @@ import Avatar from "@/components/common/Avatar.vue"
 import EmptyPage from "@/components/common/EmptyPage"
 import HuxSwitch from "@/components/common/Switch.vue"
 import { mapActions, mapGetters } from "vuex"
+import Icon from "@/components/common/Icon.vue"
+import TeamMemberRequestDrawer from "./TeamMemberRequestDrawer.vue"
 
 export default {
   name: "TeamMembers",
-  components: { EmptyPage, HuxDataTable, Avatar, HuxSwitch },
+  components: { EmptyPage, HuxDataTable, Avatar, HuxSwitch, Icon, TeamMemberRequestDrawer },
   data() {
     return {
       columnDefs: [
@@ -138,6 +173,7 @@ export default {
           label: "OFF",
         },
       ],
+      teamMemberDrawer: false,
     }
   },
   computed: {
@@ -154,6 +190,9 @@ export default {
     ...mapActions({
       updateUser: "users/updatePIIAccess",
     }),
+    toggleTeamMemberRequestDrawer() {
+      this.teamMemberDrawer = !this.teamMemberDrawer
+    },
     toggleAccess(value, userDetails) {
       this.updateUser({
         id: userDetails.id,
@@ -202,5 +241,8 @@ export default {
 .you-tag {
   height: 20px;
   width: 39px;
+}
+.z-index-high {
+  z-index: 100;
 }
 </style>
