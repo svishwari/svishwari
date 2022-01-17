@@ -486,6 +486,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             name="Updated name",
             delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
             authentication_details=new_auth_details,
+            link="fake.com"
         )
 
         self.assertIsNotNone(doc)
@@ -500,6 +501,8 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc[db_c.DELIVERY_PLATFORM_AUTH], new_auth_details)
         self.assertFalse(doc[db_c.ADDED])
         self.assertFalse(db_c.DELETED in doc)
+        self.assertTrue(db_c.LINK in doc)
+        self.assertEqual(doc[db_c.LINK], "fake.com")
 
         # update two fields
         doc = dpm.update_delivery_platform(
