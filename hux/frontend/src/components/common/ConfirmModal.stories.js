@@ -33,6 +33,16 @@ export default {
     leftBtnText: { control: { type: "text" } },
     onConfirm: { action: "Confirmed" },
     onCancel: { action: "Cancelled" },
+    icon: { table: { disable: true } },
+    title: { table: { disable: true } }, 
+    body: { table: { disable: true } },
+    activator: { table: { disable: true } },
+    "sub-title": { table: { disable: true } },
+    footer: { table: { disable: true } }, 
+    input: { table: { disable: true } },
+    onClose: { table: { disable: true } }, 
+    onCancel: { table: { disable: true } },
+    onConfirm: { table: { disable: true } }, 
   },
 
   args: {

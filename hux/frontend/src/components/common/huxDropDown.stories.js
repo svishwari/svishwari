@@ -44,6 +44,7 @@ export default {
         disable: true,
       },
     },
+    "on-select": { table: { disable: true } }, 
   },
 
   args: {

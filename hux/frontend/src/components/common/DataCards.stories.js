@@ -28,6 +28,10 @@ export default {
     selectedItems: {
       control: { type: "object" },
     },
+    icon: { table: { disable: true } },
+    title: { table: { disable: true } }, 
+    empty: { table: { disable: true } },
+    default: { table: { disable: true } }, 
   },
   args: {
     items: [

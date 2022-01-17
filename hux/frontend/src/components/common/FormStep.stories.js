@@ -9,6 +9,7 @@ export default {
     optional: { control: { type: "text" } },
     disabled: { control: { type: "boolean" } },
     border: { options: ["active", "inactive"], control: { type: "select" } },
+    "default": { table: { disable: true } },
   },
   args: {
     step: 1,
