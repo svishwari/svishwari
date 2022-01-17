@@ -1,11 +1,15 @@
 """Purpose of this file is for holding methods to query and push data to JIRA
 """
+from typing import Tuple
+
 from jira import JIRA, JIRAError
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
+from huxunify.api.prometheus import record_health_status_metric
+from huxunifylib.util.general.logging import logger
 
 
 class JiraConnection:
@@ -26,6 +30,35 @@ class JiraConnection:
             },
         )
         self.project_key = config.JIRA_PROJECT_KEY
+
+    @staticmethod
+    def check_jira_connection() -> Tuple[bool, str]:
+        """Validates JIRA connection.
+
+        Returns:
+            Tuple[bool, str]: Flag if connection is valid and message.
+        """
+        config = get_config()
+        try:
+            JIRA(
+                server=config.JIRA_SERVER,
+                validate=True,
+                options={
+                    "headers": {
+                        **JIRA.DEFAULT_OPTIONS["headers"],
+                        api_c.AUTHORIZATION: f"Bearer {config.JIRA_API_KEY}",
+                    }
+                },
+            )
+            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, 200)
+            return True, "Jira available"
+        except Exception as exception:  # pylint: disable=broad-except
+            logger.error(
+                "Could not connect to JIRA %s",
+                getattr(exception, "message", repr(exception)),
+            )
+            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, False)
+            return False, getattr(exception, "message", repr(exception))
 
     def create_jira_issue(
         self, issue_type: str, summary: str, description: str

@@ -1139,6 +1139,7 @@ CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
 CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
     "cdm_connection_service_connection_health"
 )
+JIRA_CONNECTION_HEALTH = "jira_connection_health"
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
