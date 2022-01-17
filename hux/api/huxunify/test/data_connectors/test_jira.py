@@ -1,3 +1,4 @@
+"""Purpose of this file to house all Jira Connection Tests."""
 from unittest import TestCase, mock
 from jira import JIRAError
 from huxunify.api.data_connectors.jira import JiraConnection
@@ -42,5 +43,3 @@ class JiraConnectionTest(TestCase):
             side_effect=Exception(),
         ).start()
         self.assertFalse(JiraConnection.check_jira_connection()[0])
-
-
