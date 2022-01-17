@@ -1349,6 +1349,7 @@ CONFIGURATIONS_ENDPOINT = "/configurations"
 APPLICATIONS_TAG = "applications"
 APPLICATION_ID = "application_id"
 APPLICATIONS_ENDPOINT = "/applications"
+ONLY_ACTIVE = "only_active"
 
 # Histogram data stub.
 VALUES = "values"
