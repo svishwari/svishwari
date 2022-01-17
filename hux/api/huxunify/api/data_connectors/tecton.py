@@ -782,7 +782,7 @@ class TectonMockConnector(Tecton):
                 "params": {
                     "feature_service_name": self.feature_service.FEATURE_TOP_SERVICE,
                     "join_key_map": {
-                        "model_id": f"{model_id}",
+                        "api_c.MODEL_ID": f"{model_id}",
                         "rank": str(i),
                     },
                 }
