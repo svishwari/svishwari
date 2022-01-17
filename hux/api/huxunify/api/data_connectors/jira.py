@@ -3,13 +3,15 @@
 from typing import Tuple
 
 from jira import JIRA, JIRAError
+
+from huxunifylib.util.general.logging import logger
+
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
 from huxunify.api.prometheus import record_health_status_metric
-from huxunifylib.util.general.logging import logger
 
 
 class JiraConnection:
