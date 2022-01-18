@@ -56,7 +56,7 @@ export default {
   height: 100%;
 }
 .toggle-icon {
-  background: #ffffff;
+  background: var(--v-white-base);
   box-shadow: 1.5px 1.5px 5px rgb(57 98 134 / 15%);
   border-radius: 50%;
   padding: 4px;
