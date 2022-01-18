@@ -645,8 +645,10 @@ def update_delivery_platform(
         db_c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         db_c.DELIVERY_PLATFORM_AUTH: authentication_details,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-        db_c.LINK: link,
     }
+
+    if link:
+        update_doc[db_c.LINK] = link
 
     if (
         cur_doc is not None
