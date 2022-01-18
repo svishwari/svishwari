@@ -108,6 +108,16 @@ class Config:
         api_c.DISABLE_SCHEDULED_DELIVERIES, default=True, cast=bool
     )
 
+    DEFAULT_NEW_USER_PROJECT_NAME = config(
+        api_c.DEFAULT_NEW_USER_PROJECT_NAME, default="ADV", cast=str
+    )
+    DEFAULT_OKTA_GROUP_NAME = config(
+        api_c.DEFAULT_OKTA_GROUP_NAME, default="team-unified--base", cast=str
+    )
+    DEFAULT_OKTA_APP = config(
+        api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder", cast=str
+    )
+
 
 class ProductionConfig(Config):
     """Production Config Object."""
