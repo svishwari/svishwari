@@ -29,7 +29,11 @@ stages:
         - gender_women: !anyfloat
         - gender_men: !anyfloat
         - gender_other: !anyfloat
-        - ltv: !anyfloat
+        - avg_spend: !anyfloat
+        - min_spend: !anyfloat
+        - max_spend: !anyfloat
+        - min_age: !anyint
+        - max_age: !anyint
       headers:
         content-type: application/json
 
@@ -66,8 +70,8 @@ stages:
         "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
         "total_us_states": !anyint
         "total_known_ids": !anyint
-        "total_anonymous_ids":!anyint
-        "total_address_ids":!anyint
+        "total_anonymous_ids": !anyint
+        "total_address_ids": !anyint
         "min_age": !anyint
         "avg_age" : !anyint
         "min_ltv_predicted": !anyfloat
@@ -336,16 +340,14 @@ stages:
           "start_date": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
           "end_date": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
         "overview":
-          "total_household_ids": !anyint
-          "total_unknown_ids": !anyint
-          "total_known_ids": !anyint
-          "total_customers": !anyint
           "total_records": !anyint
-          "match_rate": !anyfloat
-          "total_unique_ids": !anyint
           "total_individual_ids": !anyint
-          "total_address_ids":!anyint
-          "total_anonymous_ids":!anyint
+          "total_customers": !anyint
+          "total_anonymous_ids": !anyint
+          "total_unique_ids": !anyint
+          "total_household_ids": !anyint
+          "match_rate": !anyfloat
+          "total_address_ids": !anyint
       headers:
         content-type: application/json
 
@@ -399,10 +401,10 @@ stages:
       status_code: 200
       json:
         "contact_preferences":
-          "preference_push": !anybool
-          "preference_email": !anybool
-          "preference_in_app": !anybool
-          "preference_sms": !anybool
+          "preference_push": !anystr
+          "preference_email": !anystr
+          "preference_in_app": !anystr
+          "preference_sms": !anystr
         "overview":
           "last_email_open": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
           "match_confidence": !anyfloat
@@ -491,8 +493,9 @@ stages:
       status_code: 200
       json:
         - size: !anyint
-          revenue: !anyfloat
+          avg_spend: !anyfloat
           country: !anystr
+          country_label: !anystr
       headers:
         content-type: application/json
 
@@ -522,9 +525,10 @@ stages:
       status_code: 200
       json:
         - size: !anyint
-          revenue: !anyfloat
+          avg_spend: !anyfloat
           state: !anystr
           country: !anystr
+          country_label: !anystr
       headers:
         content-type: application/json
 
@@ -554,10 +558,12 @@ stages:
       status_code: 200
       json:
         - size: !anyint
-          revenue: !anyfloat
+          avg_spend: !anyfloat
           city: !anystr
           state: !anystr
+          state_label: !anystr
           country: !anystr
+          country_label: !anystr
       headers:
         content-type: application/json
 
@@ -637,6 +643,9 @@ stages:
       headers:
         content-type: application/json
         Authorization: "Bearer {token}"
+      json:
+        start_date: "2020-06-01"
+        end_date: "2020-12-30"
 
     # ...and the expected response code and body
     response:
@@ -648,11 +657,11 @@ stages:
           event_type_counts:
             abandoned_cart: !anyint
             viewed_cart: !anyint
-            customer_login: !anyint
-            viewed_checkout: !anyint
-            viewed_sale_item: !anyint
-            item_purchased: !anyint
-            trait_computed: !anyint
+            trait: !anyint
+            sale: !anyint
+            view_content: !anyint
+            product_search: !anyint
+            purchase: !anyint
       headers:
         content-type: application/json
 

@@ -23,7 +23,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     requires_access_levels,
 )
-from huxunify.api.route.utils import get_db_client
+from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api import constants as api_c
 
 from huxunify.api.schema.utils import (
@@ -40,6 +40,78 @@ def before_request():
     """Protect all of the applications endpoints."""
 
     pass  # pylint: disable=unnecessary-pass
+
+
+@add_view_to_blueprint(
+    applications_bp,
+    api_c.APPLICATIONS_ENDPOINT,
+    "ApplicationsGetView",
+)
+class ApplicationGetView(SwaggerView):
+    """Applications Get view class."""
+
+    parameters = [
+        {
+            "name": api_c.ONLY_ACTIVE,
+            "description": "Flag to specify if only active applications are to be fetched.",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "default": False,
+            "example": "false",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": ApplicationsGETSchema},
+            "description": "List of applications.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve applications"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.APPLICATIONS_TAG]
+
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-branches
+    # pylint: disable=no-self-use
+    # pylint: disable=unused-argument
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
+        """Fetch all applications.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
+
+        Returns:
+            Tuple[dict, int]: Created application, HTTP status code.
+        """
+
+        only_active = (
+            Validation.validate_bool(request.args.get(api_c.ONLY_ACTIVE))
+            if request.args.get(api_c.ONLY_ACTIVE)
+            else False
+        )
+
+        applications = collection_management.get_documents(
+            get_db_client(),
+            db_c.APPLICATIONS_COLLECTION,
+            {api_c.STATUS: api_c.STATUS_ACTIVE} if only_active else None,
+        ).get(db_c.DOCUMENTS)
+
+        logger.info("Successfully retrieved all applications.")
+
+        return (
+            jsonify(ApplicationsGETSchema(many=True).dump(applications)),
+            HTTPStatus.OK.value,
+        )
 
 
 @add_view_to_blueprint(

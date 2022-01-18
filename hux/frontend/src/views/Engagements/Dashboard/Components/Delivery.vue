@@ -9,7 +9,7 @@
       :active="loadingRelationships"
       :indeterminate="loadingRelationships"
     />
-    <v-card-text v-else class="pl-6 pr-6 pb-6 pt-1">
+    <v-card-text v-else class="pl-6 pr-6 pb-3 pt-1">
       <div
         v-if="sections.length == 0"
         class="empty-state py-4 black--text text--lighten-4 text-body-1"

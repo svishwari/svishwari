@@ -488,7 +488,14 @@ export default {
     async triggerOverviewDestinationAction(event) {
       switch (event.target.title.toLowerCase()) {
         case "open destination":
-          window.open(event.data.link)
+          if (event.data.link) {
+            window.open("https://" + event.data.link)
+          } else {
+            this.setAlert({
+              type: "error",
+              message: "Destination link is not available",
+            })
+          }
           break
         case "edit delivery schedule":
           this.confirmDialog.icon = "edit"

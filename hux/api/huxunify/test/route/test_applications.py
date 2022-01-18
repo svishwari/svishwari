@@ -1,17 +1,22 @@
 """Purpose of this file is to house all tests related to configurations."""
+import string
+from typing import Any
 from unittest import TestCase, mock
 from http import HTTPStatus
 
 import requests_mock
 import mongomock
 from bson import ObjectId
+from hypothesis import given, strategies as st
 
+from huxunify.api.schema.applications import ApplicationsGETSchema
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.user_management import (
     set_user,
 )
 from huxunifylib.database.collection_management import (
     get_documents,
+    create_document,
 )
 from huxunifylib.database import constants as db_c
 import huxunify.test.constants as t_c
@@ -68,10 +73,114 @@ class ApplicationsTests(TestCase):
             display_name=self.user_name,
         )
 
+        applications = [
+            {
+                api_c.CATEGORY: "uncategorized",
+                api_c.TYPE: "custom-test-application-1",
+                api_c.NAME: "Custom Test Application 1",
+                api_c.URL: "CTA1_URL_Link",
+                api_c.STATUS: "Active",
+            },
+            {
+                api_c.CATEGORY: "uncategorized",
+                api_c.TYPE: "custom-test-application-2",
+                api_c.NAME: "Custom Test Application 2",
+                api_c.URL: "CTA2_URL_Link",
+                api_c.STATUS: "Pending",
+            },
+        ]
+
+        self.applications = [
+            create_document(
+                self.database, db_c.APPLICATIONS_COLLECTION, application
+            )
+            for application in applications
+        ]
+
         self.addCleanup(mock.patch.stopall)
 
+    def test_get_all_applications_success_no_params(self):
+        """Test get all applications successfully with no params."""
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(
+            ApplicationsGETSchema(many=True).validate(response.json)
+        )
+        for application in response.json:
+            self.assertIn(
+                application[api_c.STATUS],
+                [api_c.STATUS_ACTIVE, api_c.STATUS_PENDING],
+            )
+
+    def test_get_all_applications_success_with_params(self):
+        """Test get all applications successfully with params."""
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            query_string={api_c.ONLY_ACTIVE: False},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(
+            ApplicationsGETSchema(many=True).validate(response.json)
+        )
+        for application in response.json:
+            self.assertIn(
+                application[api_c.STATUS],
+                [api_c.STATUS_ACTIVE, api_c.STATUS_PENDING],
+            )
+
+    def test_get_active_applications_success(self):
+        """Test get all active applications successfully with params."""
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            query_string={api_c.ONLY_ACTIVE: True},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(
+            ApplicationsGETSchema(many=True).validate(response.json)
+        )
+        for application in response.json:
+            self.assertEqual(application[api_c.STATUS], api_c.STATUS_ACTIVE)
+            self.assertNotEqual(
+                application[api_c.STATUS], api_c.STATUS_PENDING
+            )
+
+    @given(
+        value=st.one_of(
+            [
+                st.text(alphabet=string.ascii_letters, min_size=1),
+                st.integers(),
+                st.floats(),
+            ]
+        )
+    )
+    def test_get_all_applications_with_invalid_param_values(self, value: Any):
+        """Test get all applications with invalid param values.
+
+        Args:
+            value (Any): param value, can be integer, float or string
+        """
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            query_string={api_c.ONLY_ACTIVE: value},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: f"'{value}' is not a valid boolean value"},
+            response.json,
+        )
+
     def test_success_create_applications(self):
-        """Test get configurations."""
+        """Test creating application successfully."""
 
         applications_request = {
             api_c.CATEGORY: "uncategorized",
@@ -93,26 +202,15 @@ class ApplicationsTests(TestCase):
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
-        applications = get_documents(
-            self.database, db_c.APPLICATIONS_COLLECTION
+        applications = ApplicationsGETSchema(many=True).dump(
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
+                db_c.DOCUMENTS
+            ]
         )
-        self.assertIsNotNone(applications[db_c.DOCUMENTS][0])
-        self.assertEqual(
-            applications[db_c.DOCUMENTS][0][api_c.NAME],
-            applications_request[api_c.NAME],
-        )
-        self.assertEqual(
-            applications[db_c.DOCUMENTS][0][api_c.CATEGORY],
-            applications_request[api_c.CATEGORY],
-        )
-        self.assertEqual(
-            applications[db_c.DOCUMENTS][0][api_c.TYPE],
-            applications_request[api_c.TYPE],
-        )
-        self.assertTrue(applications[db_c.DOCUMENTS][0][db_c.ADDED])
+        self.assertIn(response.json, applications)
 
-    def test_success_invalid_applications(self):
-        """Test get configurations."""
+    def test_create_invalid_application(self):
+        """Test create invalid application."""
 
         applications_request = {
             api_c.CATEGORY: "uncategorized",
@@ -127,8 +225,8 @@ class ApplicationsTests(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_success_duplicate_applications(self):
-        """Test get configurations."""
+    def test_create_duplicate_applications(self):
+        """Test creating duplicate application."""
 
         applications_request = {
             api_c.CATEGORY: "uncategorized",
@@ -160,36 +258,38 @@ class ApplicationsTests(TestCase):
 
     def test_applications_patch_endpoint_valid_request(self):
         """Test patch with correct request body"""
-        applications_request = {
-            api_c.CATEGORY: "uncategorized",
-            api_c.TYPE: "custom-application",
-            api_c.NAME: "Custom Application",
-            api_c.URL: "URL_Link",
-        }
-
         patch_request_body = {
             api_c.URL: "NEW_URL_Link",
         }
-        response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
-            headers=t_c.STANDARD_HEADERS,
-            json=applications_request,
-        )
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        application_id = response.json.get(api_c.ID)
 
         response = self.app.patch(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
-            f"{application_id}",
+            f"{self.applications[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
             json=patch_request_body,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(application_id, response.json.get(api_c.ID))
+        self.assertFalse(ApplicationsGETSchema().validate(response.json))
+        self.assertEqual(
+            str(self.applications[0][db_c.ID]), response.json.get(api_c.ID)
+        )
         self.assertEqual(
             patch_request_body.get(api_c.URL), response.json.get(api_c.URL)
         )
+
+    def test_applications_patch_endpoint_empty_body(self):
+        """Test patch with empty request body"""
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
+            f"{self.applications[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+            json={},
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual({api_c.MESSAGE: "No body provided."}, response.json)
 
     def test_applications_patch_endpoint_invalid_id(self):
         """Test patch with incorrect application id"""

@@ -38,9 +38,10 @@
         <logo
           v-if="logoOption"
           :type="icon"
-          :size="32"
+          :size="logoSize"
           :color="iconColor"
           class="d-block"
+          :class="logoSize === 45 ? 'icon-margin' : ''"
         />
         <icon
           v-else
@@ -174,6 +175,11 @@ export default {
       required: false,
       default: "auto",
     },
+    logoSize: {
+      type: Number,
+      required: false,
+      default: 32,
+    },
   },
 }
 </script>
@@ -236,5 +242,9 @@ export default {
 }
 .card-space {
   margin-right: 24px !important;
+}
+.icon-margin {
+  margin-left: -6px !important;
+  margin-top: -6px !important;
 }
 </style>
