@@ -44,6 +44,7 @@ from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
+from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.exceptions import (
     unified_exceptions as ue,
 )
@@ -127,6 +128,7 @@ def get_health_check() -> HealthCheck:
     # health.add_check(check_aws_events)
     health.add_check(check_cdm_api_connection)
     health.add_check(check_cdp_connections_api_connection)
+    health.add_check(JiraConnection.check_jira_connection)
     return health
 
 
@@ -611,7 +613,7 @@ def convert_unique_city_filter(request_json: dict) -> dict:
 
                     filters[api_c.AUDIENCE_SECTION_FILTERS].append(
                         {
-                            api_c.AUDIENCE_FILTER_FIELD: api_c.STATE,
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.STATE.title(),
                             api_c.AUDIENCE_FILTER_TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
                             api_c.AUDIENCE_FILTER_VALUE: state_value,
                         }

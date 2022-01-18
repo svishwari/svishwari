@@ -162,7 +162,7 @@ class TestModelRoutes(TestCase):
         )
         self.request_mocker.start()
 
-        model_id = 2
+        model_id = "1"
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/version-history",
             headers=t_c.STANDARD_HEADERS,
@@ -170,10 +170,10 @@ class TestModelRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(response.json)
-        self.assertEqual(len(response.json), 4)
+        self.assertEqual(len(response.json), 3)
         self.assertEqual(response.json[0][api_c.STATUS], api_c.STATUS_ACTIVE)
-        self.assertEqual(response.json[0][api_c.VERSION], "21.7.31")
-        self.assertEqual(response.json[-1][api_c.VERSION], "21.7.28")
+        self.assertEqual(response.json[0][api_c.VERSION], "21.11.14")
+        self.assertEqual(response.json[-1][api_c.VERSION], "21.10.12")
 
     def test_retrieve_drift_details_for_model(self):
         """Test get drift details for a model from Tecton."""
@@ -192,7 +192,7 @@ class TestModelRoutes(TestCase):
             return_value=t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE,
         ).start()
 
-        model_id = 2
+        model_id = "1"
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/drift",
             headers=t_c.STANDARD_HEADERS,

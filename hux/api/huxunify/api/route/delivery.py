@@ -887,7 +887,10 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
         },
         {
             "name": api_c.AUDIENCE_ID,
-            "description": "Audience ID.",
+            "description": "Audience ID. Note, for "
+            "applying the delivery schedule "
+            "to all audiences that have the "
+            f"destination, simply set the input to {db_c.ZERO_OBJECT_ID}",
             "type": "string",
             "in": "path",
             "required": True,
@@ -970,12 +973,14 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
+        valid_audience_ids = []
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
                 if isinstance(
                     destination, dict
                 ) and destination_id == destination.get(db_c.OBJECT_ID):
                     valid_destination = True
+                    valid_audience_ids.append(audience.get(db_c.OBJECT_ID))
 
         if not valid_destination:
             logger.error(
@@ -988,29 +993,51 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                 "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
-        # set the delivery schedule for the engaged audience destination
-        # TODO - convert the schedule object into a CRON expression in another PR.
-        set_engagement_audience_destination_schedule(
-            database,
-            engagement_id,
-            audience_id,
-            destination_id,
-            delivery_schedule,
-            user[api_c.USER_NAME],
-        )
+        # if zero object ID was provided, we set the delivery schedule
+        # for all valid audiences that have the destination.
+        if audience_id == db_c.ZERO_OBJECT_ID:
+            for valid_audience_id in valid_audience_ids:
+                set_engagement_audience_destination_schedule(
+                    database,
+                    engagement_id,
+                    valid_audience_id,
+                    destination_id,
+                    delivery_schedule,
+                    user[api_c.USER_NAME],
+                )
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"Successfully updated the delivery schedule for all audiences"
+                    f' in engagement "{engagement_id}".'
+                    f' for destination "{destination_id}".'
+                ),
+                api_c.DELIVERY_TAG,
+                user[api_c.USER_NAME],
+            )
+        else:
+            set_engagement_audience_destination_schedule(
+                database,
+                engagement_id,
+                audience_id,
+                destination_id,
+                delivery_schedule,
+                user[api_c.USER_NAME],
+            )
 
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
-                f"Successfully updated the delivery schedule"
-                f' for destination "{destination_id}"'
-                f' from audience "{audience_id}"'
-                f' in engagement "{engagement_id}".'
-            ),
-            api_c.DELIVERY_TAG,
-            user[api_c.USER_NAME],
-        )
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"Successfully updated the delivery schedule"
+                    f' for destination "{destination_id}"'
+                    f' from audience "{audience_id}"'
+                    f' in engagement "{engagement_id}".'
+                ),
+                api_c.DELIVERY_TAG,
+                user[api_c.USER_NAME],
+            )
 
         # TODO schedule the actual JOB, in another PR for HUS-1148
 
@@ -1052,12 +1079,14 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
+        valid_audience_ids = []
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
                 if isinstance(
                     destination, dict
                 ) and destination_id == destination.get(db_c.OBJECT_ID):
                     valid_destination = True
+                    valid_audience_ids.append(audience.get(db_c.OBJECT_ID))
 
         if not valid_destination:
             logger.error(
@@ -1070,30 +1099,55 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                 "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
-        # set the delivery schedule for the engaged audience destination
-        set_engagement_audience_destination_schedule(
-            database,
-            engagement_id,
-            audience_id,
-            destination_id,
-            None,
-            user[api_c.USER_NAME],
-            unset=True,
-        )
-        # TODO remove the scheduled JOB from AWS, in another PR for HUS-1148
+        # if zero object ID was provided, we unset the delivery schedule
+        # for all valid audiences that have the destination.
+        if audience_id == db_c.ZERO_OBJECT_ID:
+            for valid_audience_id in valid_audience_ids:
+                set_engagement_audience_destination_schedule(
+                    database,
+                    engagement_id,
+                    valid_audience_id,
+                    destination_id,
+                    None,
+                    user[api_c.USER_NAME],
+                    unset=True,
+                )
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"Successfully removed the delivery schedule "
+                    f"for all audiences"
+                    f' in engagement "{engagement_id}".'
+                    f' for destination "{destination_id}".'
+                ),
+                api_c.DELIVERY_TAG,
+                user[api_c.USER_NAME],
+            )
+        else:
+            # set the delivery schedule for the engaged audience destination
+            set_engagement_audience_destination_schedule(
+                database,
+                engagement_id,
+                audience_id,
+                destination_id,
+                None,
+                user[api_c.USER_NAME],
+                unset=True,
+            )
 
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
-                f"Successfully removed the delivery schedule"
-                f' for destination "{destination_id}"'
-                f' from audience "{audience_id}"'
-                f' in engagement "{engagement_id}".'
-            ),
-            api_c.DELIVERY_TAG,
-            user[api_c.USER_NAME],
-        )
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"Successfully removed the delivery schedule"
+                    f' for destination "{destination_id}"'
+                    f' from audience "{audience_id}"'
+                    f' in engagement "{engagement_id}".'
+                ),
+                api_c.DELIVERY_TAG,
+                user[api_c.USER_NAME],
+            )
 
         return {
             "message": "Successfully removed the delivery schedule."

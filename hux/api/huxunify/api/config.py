@@ -104,6 +104,10 @@ class Config:
         api_c.TEST_AUTH_OVERRIDE, default=False, cast=bool
     )
 
+    DISABLE_SCHEDULED_DELIVERIES = config(
+        api_c.DISABLE_SCHEDULED_DELIVERIES, default=True, cast=bool
+    )
+
 
 class ProductionConfig(Config):
     """Production Config Object."""
