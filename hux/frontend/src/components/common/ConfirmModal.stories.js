@@ -1,6 +1,7 @@
 import ConfirmModal from "./ConfirmModal.vue"
 import HuxButton from "./huxButton.vue"
 import AllIcons from "@/stories/icons/Icons"
+import { action } from '@storybook/addon-actions'
 
 export default {
   component: ConfirmModal,
@@ -67,6 +68,15 @@ export default {
 const Template = (args, { argTypes }) => ({
   components: { ConfirmModal, HuxButton },
   props: Object.keys(argTypes),
+  methods: { 
+    openModal: action('openModal'),
+    onCancel: action('onCancel'),
+    onConfirm: action('onConfirm')
+  },
+  argTypes: {
+    onCancel: {},
+    onConfirm: {},
+  },
   data() {
     return {
       openModal: false,
@@ -78,8 +88,8 @@ const Template = (args, { argTypes }) => ({
       v-model="openModal"
       v-bind="$props"
       v-on="$props"
-      @onCancel="openModal = !openModal"
-      @onConfirm="openModal = !openModal"
+      @onCancel="onCancel()"
+      @onConfirm="onConfirm()"
     />
       <hux-button @click="openModal = true"> Open Modal</hux-button>
     </div>`,

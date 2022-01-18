@@ -148,7 +148,18 @@ export default {
       default: false,
     },
   },
-
+  emits: ["on-cancel", "on-confirm"],
+  setup(props, { emit }) {
+    props = reactive(props)
+    return {
+      onCancel() {
+        emit("onCancel")
+      },
+      onConfirm() {
+        emit("onConfirm")
+      },
+    }
+  },
   data() {
     return {
       localModal: this.value,
