@@ -15,8 +15,8 @@
           <icon
             type="filter"
             :size="27"
-            :color="numFiltersSelected > 0 ? 'primary' : 'black'"
-            :variant="numFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+            :color="isFilterToggled === true ? 'primary' : 'black'"
+            :variant="isFilterToggled === true ? 'lighten6' : 'darken4'"
           />
           <v-badge
             v-if="numFiltersSelected > 0"
@@ -938,6 +938,8 @@ export default {
     },
 
     async applyFilter(params) {
+      console.log("params",params)
+      debugger;
       await this.getAllFilteredEngagements({
         favorites: params.selectedFavourite,
         my_engagements: params.selectedEngagementsWorkedWith,

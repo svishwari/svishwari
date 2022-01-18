@@ -132,6 +132,16 @@
       >
         <s-f-m-c :data-extensions="dataExtensions" @select="setExtension" />
       </div>
+      <v-col cols="6" class="py-0">
+        <text-field
+          v-model="DestinationUrl"
+          label-text="Destination URL"
+          icon="mdi-alert-circle-outline"
+          placeholder-text="URL"
+          help-text="Get directed to a specific destination to open and view your audiences. Input the domain/URL where you want to go."
+          required
+        ></text-field>
+      </v-col>
     </v-form>
 
     <!-- request destination form -->
@@ -465,6 +475,7 @@ export default {
       showConfirmModal: false,
       navigateTo: false,
       flagForModal: false,
+      DestinationUrl: null,
     }
   },
 
