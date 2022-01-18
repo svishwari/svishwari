@@ -240,7 +240,7 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 }
             )
 
-    [
+    _ = [
         standalone_deliveries.append(
             {
                 db_c.METRICS_DELIVERY_PLATFORM_NAME: destination_dict.get(
