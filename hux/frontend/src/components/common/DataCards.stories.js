@@ -14,10 +14,6 @@ export default {
       control: { type: "array" },
     },
 
-    empty: {
-      control: { type: "text" },
-    },
-
     sort: {
       control: { type: "text" },
     },
@@ -29,9 +25,9 @@ export default {
       control: { type: "object" },
     },
     icon: { table: { disable: true } },
-    title: { table: { disable: true } }, 
+    title: { table: { disable: true } },
     empty: { table: { disable: true } },
-    default: { table: { disable: true } }, 
+    default: { table: { disable: true } },
   },
   args: {
     items: [

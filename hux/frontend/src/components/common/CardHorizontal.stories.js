@@ -44,7 +44,7 @@ export default {
       control: { type: "boolean" },
     },
     click: { table: { disable: true } },
-    default: { table: { disable: true } }, 
+    default: { table: { disable: true } },
   },
   args: {
     icon: "google-ads",

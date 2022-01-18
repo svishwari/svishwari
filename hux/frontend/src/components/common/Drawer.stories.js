@@ -1,15 +1,12 @@
 import Drawer from "./Drawer.vue"
 import HuxButton from "./huxButton.vue"
-import { action } from '@storybook/addon-actions'
+import { action } from "@storybook/addon-actions"
 
 export default {
   component: Drawer,
   title: "Components",
   argTypes: {
     toRight: {
-      control: { type: "boolean" },
-    },
-    value: {
       control: { type: "boolean" },
     },
     width: {
@@ -22,9 +19,6 @@ export default {
       control: { type: "boolean" },
     },
     disableTransition: {
-      control: { type: "boolean" },
-    },
-    loading: {
       control: { type: "boolean" },
     },
     contentPadding: {
@@ -63,10 +57,10 @@ const Template = (args, { argTypes }) => ({
   components: { Drawer, HuxButton },
   props: Object.keys(argTypes),
   methods: {
-    onCancel: action('onCancel'),
-    onCreate: action('onCreate'),
-    toggleDrawer: action('toggleDrawer'),
-    onClose: action('onClose'),
+    onCancel: action("onCancel"),
+    onCreate: action("onCreate"),
+    toggleDrawer: action("toggleDrawer"),
+    onClose: action("onClose"),
   },
   argTypes: {
     onClose: {},

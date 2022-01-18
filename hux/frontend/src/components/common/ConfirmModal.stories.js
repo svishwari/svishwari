@@ -1,7 +1,6 @@
 import ConfirmModal from "./ConfirmModal.vue"
 import HuxButton from "./huxButton.vue"
-import AllIcons from "@/stories/icons/Icons"
-import { action } from '@storybook/addon-actions'
+import { action } from "@storybook/addon-actions"
 
 export default {
   component: ConfirmModal,
@@ -14,12 +13,6 @@ export default {
         type: "text",
       },
     },
-    icon: {
-      options: AllIcons,
-      control: {
-        type: "select",
-      },
-    },
     type: {
       options: ["success", "info", "warning", "error"],
       control: { type: "select" },
@@ -28,22 +21,19 @@ export default {
       options: ["success", "info", "warning", "error"],
       control: { type: "select" },
     },
-    title: { control: { type: "text" } },
     subTitle: { control: { type: "text" } },
     rightBtnText: { control: { type: "text" } },
     leftBtnText: { control: { type: "text" } },
-    onConfirm: { action: "Confirmed" },
-    onCancel: { action: "Cancelled" },
     icon: { table: { disable: true } },
-    title: { table: { disable: true } }, 
+    title: { table: { disable: true } },
     body: { table: { disable: true } },
     activator: { table: { disable: true } },
     "sub-title": { table: { disable: true } },
-    footer: { table: { disable: true } }, 
+    footer: { table: { disable: true } },
     input: { table: { disable: true } },
-    onClose: { table: { disable: true } }, 
+    onClose: { table: { disable: true } },
     onCancel: { table: { disable: true } },
-    onConfirm: { table: { disable: true } }, 
+    onConfirm: { table: { disable: true } },
   },
 
   args: {
@@ -68,10 +58,10 @@ export default {
 const Template = (args, { argTypes }) => ({
   components: { ConfirmModal, HuxButton },
   props: Object.keys(argTypes),
-  methods: { 
-    openModal: action('openModal'),
-    onCancel: action('onCancel'),
-    onConfirm: action('onConfirm')
+  methods: {
+    openModal: action("openModal"),
+    onCancel: action("onCancel"),
+    onConfirm: action("onConfirm"),
   },
   argTypes: {
     onCancel: {},
