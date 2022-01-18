@@ -99,7 +99,7 @@ def before_request():
 
 
 def add_destinations(
-    database: MongoClient, destinations: list
+        database: MongoClient, destinations: list
 ) -> Union[list, None]:
     """Add destinations data using destination ids.
 
@@ -193,29 +193,28 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
         audience_id=audience[db_c.ID],
         engagement_id=db_c.ZERO_OBJECT_ID,
     )
+    # extract delivery platform ids from the audience
+    destination_ids = [
+        x.get(api_c.ID)
+        for x in audience[api_c.DESTINATIONS]
+        if isinstance(x, dict)
+    ]
 
+    # get destinations at once to lookup name for each delivery job
+    destination_dict = {
+        x[db_c.ID]: x
+        for x in destination_management.get_delivery_platforms_by_id(
+            database, destination_ids
+        )
+    }
     if standalone_delivery_jobs:
-        # extract delivery platform ids from the audience
-        destination_ids = [
-            x.get(api_c.ID)
-            for x in audience[api_c.DESTINATIONS]
-            if isinstance(x, dict)
-        ]
-
-        # get destinations at once to lookup name for each delivery job
-        destination_dict = {
-            x[db_c.ID]: x
-            for x in destination_management.get_delivery_platforms_by_id(
-                database, destination_ids
-            )
-        }
 
         for job in standalone_delivery_jobs:
             # ignore deliveries to destinations no longer attached to the
             # audience
             if (
-                job.get(db_c.DELIVERY_PLATFORM_ID)
-                not in destination_dict.keys()
+                    job.get(db_c.DELIVERY_PLATFORM_ID)
+                    not in destination_dict.keys()
             ):
                 continue
 
@@ -234,8 +233,20 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                     db_c.DELIVERY_PLATFORM_ID: job.get(
                         db_c.DELIVERY_PLATFORM_ID
                     ),
+                    db_c.IS_AD_PLATFORM: destination_dict.get(
+                        job.get(db_c.DELIVERY_PLATFORM_ID)
+                    ).get(db_c.IS_AD_PLATFORM)
                 }
             )
+
+    [standalone_deliveries.append({
+        db_c.METRICS_DELIVERY_PLATFORM_NAME: destination_dict.get(x).get(api_c.NAME),
+        api_c.DELIVERY_PLATFORM_TYPE: destination_dict.get(x).get(api_c.DELIVERY_PLATFORM_TYPE),
+        api_c.STATUS: api_c.STATUS_NOT_DELIVERED,
+        api_c.SIZE: 0,
+        db_c.UPDATE_TIME: None,
+        db_c.DELIVERY_PLATFORM_ID: x
+    }) for x in destination_ids if x not in [y.get(db_c.DELIVERY_PLATFORM_ID) for y in standalone_deliveries]]
 
     return standalone_deliveries
 
@@ -333,14 +344,14 @@ class AudienceView(SwaggerView):
         )
 
         if request.args.get(api_c.FAVORITES) and validation.validate_bool(
-            request.args.get(api_c.FAVORITES)
+                request.args.get(api_c.FAVORITES)
         ):
             favorite_audiences = get_user_favorites(
                 database, user[api_c.USER_NAME], api_c.AUDIENCES
             )
 
         if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
-            request.args.get(api_c.WORKED_BY)
+                request.args.get(api_c.WORKED_BY)
         ):
             filter_dict[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
@@ -444,19 +455,19 @@ class AudienceView(SwaggerView):
                     aud_delivery
                     for aud_delivery in audience[api_c.DELIVERIES]
                     if aud_delivery
-                    and (
-                        aud_delivery.get(db_c.STATUS)
-                        in [
-                            db_c.AUDIENCE_STATUS_DELIVERED,
-                            db_c.STATUS_SUCCEEDED,
-                            db_c.AUDIENCE_STATUS_DELIVERING,
-                        ]
-                    )
-                    and (
-                        aud_delivery[db_c.DELIVERY_PLATFORM_ID]
-                        == aud_destination[db_c.ID]
-                        for aud_destination in audience[db_c.DESTINATIONS]
-                    )
+                       and (
+                               aud_delivery.get(db_c.STATUS)
+                               in [
+                                   db_c.AUDIENCE_STATUS_DELIVERED,
+                                   db_c.STATUS_SUCCEEDED,
+                                   db_c.AUDIENCE_STATUS_DELIVERING,
+                               ]
+                       )
+                       and (
+                           aud_delivery[db_c.DELIVERY_PLATFORM_ID]
+                           == aud_destination[db_c.ID]
+                           for aud_destination in audience[db_c.DESTINATIONS]
+                       )
                 ]
                 if audience[db_c.DESTINATIONS]
                 else []
@@ -480,8 +491,8 @@ class AudienceView(SwaggerView):
 
             # take the last X number of deliveries
             audience[api_c.DELIVERIES] = audience[api_c.DELIVERIES][
-                :delivery_limit
-            ]
+                                         :delivery_limit
+                                         ]
 
             # if not a part of any engagements and not delivered.
             # set last delivery date to None.
@@ -498,12 +509,12 @@ class AudienceView(SwaggerView):
             # get all lookalikes and append to the audience list
             query_filter = {db_c.DELETED: False}
             if request.args.get(api_c.FAVORITES) and validation.validate_bool(
-                request.args.get(api_c.FAVORITES)
+                    request.args.get(api_c.FAVORITES)
             ):
                 query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
 
             if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
-                request.args.get(api_c.WORKED_BY)
+                    request.args.get(api_c.WORKED_BY)
             ):
                 query_filter.update(
                     {
@@ -663,8 +674,8 @@ class AudienceGetView(SwaggerView):
             if not lookalike:
                 logger.error("Audience with id %s not found.", audience_id)
                 return {
-                    "message": api_c.AUDIENCE_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
+                           "message": api_c.AUDIENCE_NOT_FOUND
+                       }, HTTPStatus.NOT_FOUND
 
             lookalike[api_c.IS_LOOKALIKE] = True
             # set source audience attribute filters for the lookalike
@@ -720,7 +731,7 @@ class AudienceGetView(SwaggerView):
                 for delivery in engagement[api_c.DELIVERIES]:
 
                     if delivery.get(api_c.IS_AD_PLATFORM) and not audience.get(
-                        api_c.IS_LOOKALIKE, False
+                            api_c.IS_LOOKALIKE, False
                     ):
                         # Todo remove when actual match rates are
                         #  populated.
@@ -801,39 +812,43 @@ class AudienceGetView(SwaggerView):
 
         for delivery in standalone_deliveries:
             if delivery.get(api_c.IS_AD_PLATFORM) and not audience.get(
-                api_c.IS_LOOKALIKE, False
+                    api_c.IS_LOOKALIKE, False
             ):
                 match_rate_data_for_audience(delivery, match_rate_data)
 
-        # TODO: HUS-1992 - below code needs to be revised to set
-        #  audience["lookalikeable"] by passing in the audience object that
-        #  has deliveries populated within
-        # set lookalikeable value in audience as per history of deliveries made
-        # against all engagements the audience is attached to to keep it
-        # consistent with GET all audiences response
-        audience_deliveries = eam.get_all_engagement_audience_deliveries(
-            database, audience_ids=[audience_id]
-        )
+        if engagements:
+            # TODO: HUS-1992 - below code needs to be revised to set
+            #  audience["lookalikeable"] by passing in the audience object that
+            #  has deliveries populated within
+            # set lookalikeable value in audience as per history of deliveries made
+            # against all engagements the audience is attached to to keep it
+            # consistent with GET all audiences response
+            audience_deliveries = eam.get_all_engagement_audience_deliveries(
+                database, audience_ids=[audience_id]
+            )
+            audience_deliveries = audience_deliveries + standalone_deliveries
+        else:
+            audience_deliveries = standalone_deliveries
         if audience_deliveries:
             audience_deliveries[0][api_c.DELIVERIES] = (
                 [
                     aud_delivery
                     for aud_delivery in audience_deliveries[0].get(
-                        api_c.DELIVERIES, []
-                    )
+                    api_c.DELIVERIES, []
+                )
                     if aud_delivery
-                    and (
-                        aud_delivery.get(db_c.STATUS)
-                        in [
-                            db_c.AUDIENCE_STATUS_DELIVERED,
-                            db_c.STATUS_SUCCEEDED,
-                        ]
-                    )
-                    and (
-                        aud_delivery[db_c.DELIVERY_PLATFORM_ID]
-                        == aud_destination[db_c.ID]
-                        for aud_destination in audience[db_c.DESTINATIONS]
-                    )
+                       and (
+                               aud_delivery.get(db_c.STATUS)
+                               in [
+                                   db_c.AUDIENCE_STATUS_DELIVERED,
+                                   db_c.STATUS_SUCCEEDED,
+                               ]
+                       )
+                       and (
+                           aud_delivery[db_c.DELIVERY_PLATFORM_ID]
+                           == aud_destination[db_c.ID]
+                           for aud_destination in audience[db_c.DESTINATIONS]
+                       )
                 ]
                 if audience[db_c.DESTINATIONS]
                 else []
@@ -1070,15 +1085,15 @@ class AudiencePostView(SwaggerView):
                 destination[db_c.DATA_ADDED] = datetime.utcnow()
 
                 if not destination_management.get_delivery_platform(
-                    get_db_client(), destination[db_c.OBJECT_ID]
+                        get_db_client(), destination[db_c.OBJECT_ID]
                 ):
                     logger.error(
                         "Could not find destination with id %s.",
                         destination[db_c.OBJECT_ID],
                     )
                     return {
-                        "message": api_c.DESTINATION_NOT_FOUND
-                    }, HTTPStatus.NOT_FOUND
+                               "message": api_c.DESTINATION_NOT_FOUND
+                           }, HTTPStatus.NOT_FOUND
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
@@ -1090,15 +1105,15 @@ class AudiencePostView(SwaggerView):
 
                 # validate the engagement object exists.
                 if not engagement_management.get_engagement(
-                    database, engagement_id
+                        database, engagement_id
                 ):
                     logger.error(
                         "Engagement with ID %s does not exist.", engagement_id
                     )
                     return {
-                        "message": f"Engagement with ID {engagement_id} "
-                        f"does not exist."
-                    }, HTTPStatus.NOT_FOUND
+                               "message": f"Engagement with ID {engagement_id} "
+                                          f"does not exist."
+                           }, HTTPStatus.NOT_FOUND
                 engagement_ids.append(engagement_id)
         audience_filters = convert_unique_city_filter(
             {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
@@ -1169,7 +1184,7 @@ class AudiencePostView(SwaggerView):
             # submit jobs for the audience/destination pairs
             for engagement in engagements:
                 for pair in get_audience_destination_pairs(
-                    engagement[api_c.AUDIENCES]
+                        engagement[api_c.AUDIENCES]
                 ):
                     if pair[0] != audience_doc[db_c.ID]:
                         continue
@@ -1269,11 +1284,11 @@ class AudiencePutView(SwaggerView):
         database = get_db_client()
 
         if not orchestration_management.get_audience(
-            database, ObjectId(audience_id)
+                database, ObjectId(audience_id)
         ):
             return {
-                api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+                       api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND
+                   }, HTTPStatus.NOT_FOUND
 
         # validate destinations
         if db_c.DESTINATIONS in body:
@@ -1286,15 +1301,15 @@ class AudiencePutView(SwaggerView):
                 )
 
                 if not destination_management.get_delivery_platform(
-                    database, destination[db_c.OBJECT_ID]
+                        database, destination[db_c.OBJECT_ID]
                 ):
                     logger.error(
                         "Could not find destination with id %s.",
                         destination[db_c.OBJECT_ID],
                     )
                     return {
-                        "message": api_c.DESTINATION_NOT_FOUND
-                    }, HTTPStatus.NOT_FOUND
+                               "message": api_c.DESTINATION_NOT_FOUND
+                           }, HTTPStatus.NOT_FOUND
 
         audience_doc = orchestration_management.update_audience(
             database=database,
@@ -1328,8 +1343,8 @@ class AudiencePutView(SwaggerView):
 
             # evaluate engagement
             if (
-                engagement[db_c.ID] in put_engagement_ids
-                and audience_in_engagement
+                    engagement[db_c.ID] in put_engagement_ids
+                    and audience_in_engagement
             ):
                 # audience is in engagement and engagement is in PUT ids.
                 # no update is needed for this scenario.
@@ -1756,8 +1771,8 @@ class SetLookalikeAudience(SwaggerView):
         if most_recent_job is None:
             logger.error("%s.", api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND)
             return {
-                "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+                       "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
+                   }, HTTPStatus.NOT_FOUND
 
         try:
             # set status to error for now.
@@ -1790,12 +1805,12 @@ class SetLookalikeAudience(SwaggerView):
 
         except CustomAudienceDeliveryStatusError:
             return {
-                "message": (
-                    f"Failed to create a lookalike audience, "
-                    f"{body[api_c.NAME]}: the selected audience "
-                    f"to create a lookalike from is inactive or unusable.",
-                ),
-            }, HTTPStatus.NOT_FOUND
+                       "message": (
+                           f"Failed to create a lookalike audience, "
+                           f"{body[api_c.NAME]}: the selected audience "
+                           f"to create a lookalike from is inactive or unusable.",
+                       ),
+                   }, HTTPStatus.NOT_FOUND
 
         for engagement_id in body[api_c.ENGAGEMENT_IDS]:
             engagement_management.append_audiences_to_engagement(
@@ -2000,8 +2015,8 @@ class DeleteAudienceView(SwaggerView):
                 user[api_c.USER_NAME],
             )
             return {
-                api_c.MESSAGE: api_c.OPERATION_FAILED
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
+                       api_c.MESSAGE: api_c.OPERATION_FAILED
+                   }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         # attempt to delete the audience from lookalike_audiences collection
         # if audience not found in audiences collection
@@ -2027,8 +2042,8 @@ class DeleteAudienceView(SwaggerView):
                 user[api_c.USER_NAME],
             )
             return {
-                api_c.MESSAGE: api_c.OPERATION_FAILED
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
+                       api_c.MESSAGE: api_c.OPERATION_FAILED
+                   }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         delete_audience_from_engagements = (
             engagement_management.remove_audience_from_all_engagements(
@@ -2043,8 +2058,8 @@ class DeleteAudienceView(SwaggerView):
                 user[api_c.USER_NAME],
             )
             return {
-                api_c.MESSAGE: api_c.OPERATION_FAILED
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
+                       api_c.MESSAGE: api_c.OPERATION_FAILED
+                   }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         logger.info(
             "Successfully deleted audience %s by user %s.",
