@@ -809,7 +809,7 @@ export default {
           }
         }
         td:nth-child(1) {
-          background-color: white;
+          background: var(--v-white-base);
           position: sticky;
           left: 0;
           z-index: 3;
