@@ -642,7 +642,7 @@ def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
     if delivery.get(api_c.STATUS, "").lower() == api_c.DELIVERED:
         # Digital platform data will be populated based
         # on last successful delivery to an ad_platform.
-        if match_rate_data.get(delivery.get(api_c.DELIVERY_PLATFORM_TYPE)).get(api_c.AUDIENCE_LAST_DELIVERY, date.min):
+        if match_rate_data.get(delivery.get(api_c.DELIVERY_PLATFORM_TYPE)):
             # Always ensure the latest successful
             # delivery is considered.
             if delivery.get(db_c.UPDATE_TIME) > match_rate_data[
