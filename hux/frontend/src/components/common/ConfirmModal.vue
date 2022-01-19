@@ -49,6 +49,7 @@
               height="40"
               is-tile
               class="btn-border box-shadow-none"
+              :class="{ invisible: !showLeftButton }"
               @click="onCancel()"
             >
               <span class="primary--text">{{ leftBtnText }}</span>
@@ -147,6 +148,12 @@ export default {
       required: false,
       default: false,
     },
+
+    showLeftButton: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
 
   data() {
@@ -202,5 +209,8 @@ export default {
     padding: 20px 40px;
     background: var(--v-primary-lighten1);
   }
+}
+.invisible {
+  visibility: hidden;
 }
 </style>

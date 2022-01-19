@@ -1016,9 +1016,11 @@ export default {
           engagementId: event.data.id,
           data: payload,
         })
-        this.$router.push({
-          name: "AudienceUpdate",
-        })
+        // this.$router.push({
+        //   name: "AudienceUpdate",
+        // })
+        this.refresh()
+        this.refreshEntity()
       }
     },
     async loadAudienceInsights() {
