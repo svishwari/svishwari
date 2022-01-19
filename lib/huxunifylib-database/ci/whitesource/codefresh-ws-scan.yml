@@ -72,7 +72,7 @@ steps:
       - echo updateInventory=true >> $CF_VOLUME_PATH/$CF_REPO_NAME/$APPDIR/$CONFIG_FILE
       - echo scanReportFilenameFormat=static >> $CF_VOLUME_PATH/$CF_REPO_NAME/$APPDIR/$CONFIG_FILE
       ## "Configure Python environment for Whitesource scan..."
-      - cd ${{CF_REPO_NAME}}/
+      - cd ${{CF_REPO_NAME}}/$APPDIR
       - pip install pip --upgrade
       ## "Prep and run Whitesource Scan..."
       - cp /wss-scan/wss-runner.sh ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/wss-runner.sh # Copy the file because the script refrences current directory.
