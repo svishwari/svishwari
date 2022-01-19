@@ -8,7 +8,7 @@
     :to="to"
     @click="onClick"
   >
-    <div v-if="icon" class="d-flex justify-center mt-6">
+    <div v-if="icon" class="d-flex justify-center" :class="topAdjustment">
       <div class="dot">
         <logo
           v-if="logoOption"
@@ -122,6 +122,11 @@ export default {
       type: String,
       required: false,
       default: "Primary",
+    },
+    topAdjustment: {
+      type: String,
+      required: false,
+      default: "mt-6",
     },
   },
 
