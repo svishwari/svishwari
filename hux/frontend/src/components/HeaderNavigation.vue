@@ -22,12 +22,15 @@
           <tooltip :z-index="99">
             <template #label-content>
               <span :class="{ 'icon-shadow': menu }">
-                <icon class="mx-2 my-2 nav-icon" type="more" :size="24" :class="{ 'active-icon': menu }"/>
+                <icon
+                  class="mx-2 my-2 nav-icon"
+                  type="more"
+                  :size="24"
+                  :class="{ 'active-icon': menu }"
+                />
               </span>
             </template>
-            <template #hover-content>
-              Create / Add
-            </template>
+            <template #hover-content> Create / Add </template>
           </tooltip>
         </span>
       </template>

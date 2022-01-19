@@ -51,7 +51,7 @@ export default {
       required: false,
       default: 0,
     },
-     zIndex: {
+    zIndex: {
       type: [String, Number],
       required: false,
       default: undefined,
