@@ -169,7 +169,7 @@ class HuxResponse:
             Tuple[Response, int]: Response entity, response code
         """
         return HuxResponse.response(
-            HTTPStatus.CONFLICT, message, None, None, extra_fields
+            HTTPStatus.INTERNAL_SERVER_ERROR, message, None, None, extra_fields
         )
 
     @staticmethod
