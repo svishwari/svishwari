@@ -129,20 +129,7 @@ export default {
     },
 
     deliverySchedule() {
-      const schedule = JSON.parse(this.value.delivery_schedule)
-      if (!schedule) {
-        return "Manual"
-      } else {
-        if (this.value && this.value.recurring) {
-          return (
-            this.value.recurring.start +
-            (this.value.recurring.end ? " - " : "") +
-            (this.value.recurring.end ? this.value.recurring.end : "")
-          )
-        } else {
-          return "Now"
-        }
-      }
+      return this.value.delivery_schedule?.start_date ? "Recurring" : "Manual"
     },
 
     overview() {

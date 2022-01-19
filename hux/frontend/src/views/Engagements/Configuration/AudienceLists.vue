@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="rounded-lg card-style audiences-lists ml-7" flat width="451">
+    <v-card class="rounded-lg card-style audiences-lists ml-7" flat>
       <v-card-title class="d-flex justify-space-between">
         <div class="d-flex align-center">
           <icon
@@ -91,9 +91,8 @@
         <icon type="FAB-bulb" :size="18" class="mt-1" />
       </div>
       <div class="description ml-4 text-body-1 black-base">
-        The lookalike audience will not be created in it's associated
-        destination until the original audience is delivered. That delivery will
-        trigger the lookalike creation.
+        You may create a lookalike audience for this engagement after delivering
+        an audience to a digital advertising platform.
       </div>
     </div>
   </div>
@@ -128,17 +127,17 @@ export default {
         {
           text: "Audience name",
           value: "name",
-          width: "200px",
+          width: "180px",
         },
         {
           text: "Size",
           value: "size",
-          width: "133px",
+          width: "100px",
         },
         {
           text: "Destination(s)",
           value: "destinations",
-          width: "117px",
+          width: "130px",
         },
       ],
       deliveries: [],
@@ -189,8 +188,6 @@ export default {
   }
 }
 .info-widget {
-  width: 451px;
-  height: 114px;
   background: var(--v-yellow-lighten1);
   border: 1px solid var(--v-primary-lighten1);
   text-align: justify;
