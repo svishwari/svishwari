@@ -56,10 +56,6 @@ export default {
       alerts: "alerts/list",
     }),
 
-    getAlerts() {
-      return this.alerts.length > 0 ? this.alerts[0] : {}
-    },
-
     marginLeft() {
       return this.toggleMini ? "77px" : "207px"
     },
