@@ -679,6 +679,7 @@ GENERIC_DESTINATION = "generic_destination"
 DESTINATION_CATEGORIES = "destination_categories"
 DESTINATION_AUDIENCES = "destination_audiences"
 DELIVERY_PLATFORM_LINK = "delivery_platform_link"
+DELIVERY_PLATFORM_NAME = "delivery_platform_name"
 
 # Map db status values to api status values
 DESTINATION_STATUS_MAPPING = {

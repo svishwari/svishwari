@@ -831,13 +831,18 @@ class AudienceGetView(SwaggerView):
 
         if audience[api_c.LOOKALIKE_AUDIENCES]:
             for lookalike_audience in audience[api_c.LOOKALIKE_AUDIENCES]:
+                destination = destination_management.get_delivery_platform(
+                    database, lookalike_audience.get(db_c.DELIVERY_PLATFORM_ID)
+                )
+                lookalike_audience[
+                    db_c.DELIVERY_PLATFORM_TYPE
+                ] = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+                lookalike_audience[
+                    api_c.DELIVERY_PLATFORM_NAME
+                ] = destination.get(db_c.NAME)
                 lookalike_audience[
                     api_c.DELIVERY_PLATFORM_LINK
-                ] = destination_management.get_delivery_platform(
-                    database, lookalike_audience.get(db_c.DELIVERY_PLATFORM_ID)
-                ).get(
-                    db_c.LINK
-                )
+                ] = destination.get(db_c.LINK)
 
         for delivery in standalone_deliveries:
             if delivery.get(api_c.IS_AD_PLATFORM) and not audience.get(

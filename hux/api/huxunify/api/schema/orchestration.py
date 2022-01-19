@@ -46,6 +46,8 @@ class LookalikeAudienceGetSchema(Schema):
     is_lookalike = fields.Boolean(default=True)
     status = fields.String(default=db_c.AUDIENCE_STATUS_ERROR)
     delivery_platform_link = fields.String(default=None)
+    delivery_platform_name = fields.String()
+    delivery_platform_type = fields.String()
 
 
 class AudienceDeliverySchema(Schema):
