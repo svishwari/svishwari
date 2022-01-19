@@ -15,10 +15,12 @@ from flask import Blueprint, Response, request, jsonify
 
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
+    get_delivery_platforms_by_id,
 )
 from huxunifylib.database.orchestration_management import (
     get_audience,
     append_destination_to_standalone_audience,
+    remove_destination_from_audience,
 )
 from huxunifylib.connectors import connector_cdp
 from huxunifylib.database import (
@@ -850,8 +852,9 @@ class AddDestinationAudience(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @validate_engagement_and_audience()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def post(self, audience_id: str, user: dict) -> Tuple[Response, int]:
+    def post(self, audience_id: ObjectId, user: dict) -> Tuple[Response, int]:
         """Adds Destination to Audience
 
         ---
@@ -859,7 +862,7 @@ class AddDestinationAudience(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            audience_id (str): Audience Id
+            audience_id (ObjectId): Audience Id
             user (dict): User Object
 
         Returns:
@@ -868,12 +871,6 @@ class AddDestinationAudience(SwaggerView):
         """
 
         database = get_db_client()
-
-        audience = get_audience(database, ObjectId(audience_id))
-
-        if not audience:
-            logger.error("Audience not found for audience ID %s.", audience_id)
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
@@ -896,10 +893,19 @@ class AddDestinationAudience(SwaggerView):
 
         audience = append_destination_to_standalone_audience(
             database=database,
-            audience_id=ObjectId(audience_id),
+            audience_id=audience_id,
             destination=destination,
             user_name=user[api_c.USER_NAME],
         )
+
+        destination_ids = [
+            x[db_c.OBJECT_ID] for x in audience[db_c.DESTINATIONS]
+        ]
+
+        destinations_list = get_delivery_platforms_by_id(
+            database, destination_ids
+        )
+        audience[db_c.DESTINATIONS] = destinations_list
 
         logger.info(
             "Destination %s added to audience %s.",
@@ -922,6 +928,117 @@ class AddDestinationAudience(SwaggerView):
             AudienceGetSchema().dump(audience),
             HTTPStatus.CREATED.value,
         )
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/<audience_id>/destinations",
+    "DeleteDestinationAudience",
+)
+class DeleteDestinationAudience(SwaggerView):
+    """Delete destination to Audience"""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience Id",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destinations body.",
+            "example": {
+                api_c.ID: "60ae035b6c5bf45da27f17e6",
+            },
+        },
+    ]
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "schema": AudienceGetSchema,
+            "description": "Destination successfully deleted from audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to delete destination from the audience",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @validate_engagement_and_audience()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def delete(
+        self, audience_id: ObjectId, user: dict
+    ) -> Tuple[Response, int]:
+        """Adds Destination to Audience
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (ObjectId): Audience Id
+            user (dict): User Object
+
+        Returns:
+            Tuple[Response, int]: Destination Audience added,
+                HTTP status code.
+        """
+
+        database = get_db_client()
+
+        destination = DestinationEngagedAudienceSchema().load(
+            request.get_json(), partial=True
+        )
+        destination[api_c.ID] = ObjectId(destination.get(api_c.ID))
+
+        # get destinations
+        destination_to_remove = get_delivery_platform(
+            database, destination.get(api_c.ID)
+        )
+
+        if not destination_to_remove:
+            logger.error(
+                "Could not find destination with id %s.", destination[api_c.ID]
+            )
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        audience = remove_destination_from_audience(
+            database=database,
+            audience_id=audience_id,
+            destination_id=destination[api_c.ID],
+            user_name=user[api_c.USER_NAME],
+        )
+        if audience:
+            logger.info(
+                "Destination %s removed from audience %s.",
+                destination_to_remove[db_c.NAME],
+                audience[db_c.NAME],
+            )
+
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f'Destination "{destination_to_remove[db_c.NAME]}" removed from '
+                    f'audience "{audience[db_c.NAME]}" '
+                ),
+                api_c.ORCHESTRATION_TAG,
+                user[api_c.USER_NAME],
+            )
+
+            return Response(), HTTPStatus.NO_CONTENT
+
+        logger.info("Could not delete engagement with ID %s.", audience_id)
+        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
 
 
 @add_view_to_blueprint(

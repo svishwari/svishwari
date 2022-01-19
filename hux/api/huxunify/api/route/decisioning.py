@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument
+# pylint: disable=too-many-lines,unused-argument
 """Purpose of this script is for housing the
 decision routes for the API"""
 from random import uniform, randint
@@ -476,9 +476,9 @@ class UpdateModels(SwaggerView):
 @add_view_to_blueprint(
     model_bp,
     f"{api_c.MODELS_ENDPOINT}/<model_id>/version-history",
-    "ModelVersionView",
+    "ModelVersionHistoryView",
 )
-class ModelVersionView(SwaggerView):
+class ModelVersionHistoryView(SwaggerView):
     """Model Version Class."""
 
     parameters = api_c.MODEL_ID_PARAMS
@@ -547,7 +547,24 @@ class ModelVersionView(SwaggerView):
 class ModelOverview(SwaggerView):
     """Model Overview Class."""
 
-    parameters = api_c.MODEL_ID_PARAMS
+    parameters = [
+        {
+            "name": api_c.MODEL_ID,
+            "description": "Model id",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "1",
+        },
+        {
+            "name": api_c.VERSION,
+            "description": "Version id",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "1.0.0",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model features.",
@@ -596,7 +613,18 @@ class ModelOverview(SwaggerView):
                     version[api_c.TYPE],
                     current_version,
                 )
-                if performance_metrics:
+
+                if request.args.get(api_c.VERSION) is not None:
+                    if (
+                        current_version == request.args.get(api_c.VERSION)
+                        and performance_metrics
+                    ):
+                        break
+
+                if (
+                    request.args.get(api_c.VERSION) is None
+                    and performance_metrics
+                ):
                     break
             else:
                 # if model versions not found, return not found.

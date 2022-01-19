@@ -657,7 +657,7 @@ def validate_delivery_params(func) -> object:
                 }, HTTPStatus.NOT_FOUND
         # check if audience id exists
         audience_id = kwargs.get(api_c.AUDIENCE_ID, None)
-        if audience_id:
+        if audience_id and audience_id != db_c.ZERO_OBJECT_ID:
             # check if audience id exists
             audience = orchestration_management.get_audience(
                 database, ObjectId(audience_id)

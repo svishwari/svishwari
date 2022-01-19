@@ -202,8 +202,7 @@ stages:
 
     response:
       strict: false
-      # TODO HUS-1164 change this to 404 when the code has been changed
-      status_code: 400
+      status_code: 404
       headers:
         content-type: application/json
 
@@ -372,6 +371,12 @@ stages:
             delivery_platform_config:
               data_extension_name: "txt"
         engagements: []
+        filters:
+          - section_aggregator: "ALL"
+            section_filters:
+              - field: "country"
+                type: "equals"
+                value: "US"
 
     response:
       status_code: 201
@@ -501,7 +506,7 @@ stages:
         content-type: application/json
         Authorization: "Bearer {token}"
       json:
-        name: "TAVERN_TEST_AUDIENCE_UPDATED"
+        name: "TAVERN_TEST_AUDIENCE_UPDATED_"
         destinations:
           - id: "{destination.id}"
             delivery_platform_config:
@@ -513,7 +518,7 @@ stages:
       headers:
         content-type: application/json
       json:
-        name: "TAVERN_TEST_AUDIENCE_UPDATED"
+        name: "TAVERN_TEST_AUDIENCE_UPDATED_{timestamp}"
         id: "{audience_id}"
 
   - name: Delete the new audience

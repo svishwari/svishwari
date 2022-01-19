@@ -36,7 +36,11 @@
           </template>
           <v-list class="list-wrapper">
             <v-list-item-group>
-              <v-list-item key="delete-action" @click="initiateDelete()">
+              <v-list-item
+                key="delete-action"
+                class="body-1 delete-tooltip"
+                @click="initiateDelete()"
+              >
                 Delete audience
               </v-list-item>
             </v-list-item-group>
@@ -56,10 +60,10 @@
           :class="isEdit ? 'py-7' : 'py-6'"
         >
           <div v-if="isEdit" class="edit-wrap">
-            <div class="text-body-1">
-              You are currently editing the current audience,
-              <span class="text-body-2">{{ audience.originalName }}</span
-              >. Please update and/or add any attributes.
+            <div class="body-1">
+              You are currently editing the current audience, "{{
+                audience.originalName
+              }}". Please update and/or add any attributes.
             </div>
             <text-field
               v-model="audience.name"
@@ -69,18 +73,15 @@
               background-color="white"
               required
               class="
-                mt-1
+                mt-2
                 text-caption
                 black--text
                 text--darken-4
-                pt-2
                 input-placeholder
                 pt-3
                 h-86
               "
               data-e2e="edit-audience-name"
-              help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
-              icon="mdi-information-outline"
             />
           </div>
           <attribute-rules
@@ -112,7 +113,8 @@
             variant="white"
             height="40"
             is-tile
-            class="btn-border box-shadow-none"
+            class="btn-border box-shadow-none cancel-color"
+            @click.native="$router.go(-1)"
           >
             Cancel &#38; return
           </hux-button>
@@ -167,7 +169,7 @@
         <div v-if="!isEdit" class="d-flex align-center justify-center px-7">
           <text-field
             v-model="audience.name"
-            placeholder-text="Edit name"
+            placeholder-text="Audience name"
             height="40"
             background-color="white"
             required
@@ -310,7 +312,7 @@ export default {
     buttonText() {
       return this.isEdit
         ? "Apply changes & save"
-        : "Save this segment as an audience"
+        : "Save segmentation as an audience"
     },
   },
   beforeRouteLeave(to, from, next) {
@@ -515,5 +517,20 @@ export default {
 
 .h-86 {
   height: 86px;
+  width: 360px;
+}
+
+.delete-tooltip {
+  width: 191px;
+  height: 32px;
+  margin: -5px 0px -5px 0px;
+}
+
+.cancel-color {
+  color: var(--v-primary-base);
+}
+
+.menuable__content__active {
+  z-index: 100 !important;
 }
 </style>

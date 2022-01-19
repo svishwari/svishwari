@@ -158,7 +158,7 @@ class Tecton:
                 api_c.TYPE: str(feature[6]).lower(),
                 api_c.OWNER: feature[8],
                 api_c.STATUS: api_c.MODEL_STATUS_MAPPING.get(
-                    feature[10], api_c.STATUS_PENDING
+                    str(feature[10]).lower(), api_c.STATUS_PENDING
                 ),
                 api_c.LATEST_VERSION: feature[11],
                 api_c.PREDICTION_WINDOW: int(feature[9]),
@@ -191,17 +191,26 @@ class Tecton:
                 api_c.ID: model_id,
                 api_c.LAST_TRAINED: parser.parse(feature[0])
                 if feature[0]
-                else None,
+                else parser.parse(feature[1]),
                 api_c.DESCRIPTION: feature[2],
                 api_c.FULCRUM_DATE: parser.parse(feature[3]),
                 api_c.LOOKBACK_WINDOW: feature[10],
                 api_c.NAME: feature[6],
                 api_c.TYPE: str(feature[7]).lower(),
                 api_c.OWNER: feature[8],
-                api_c.STATUS: feature[11],
+                api_c.STATUS: api_c.MODEL_STATUS_MAPPING.get(
+                    str(feature[11]).lower(), api_c.STATUS_PENDING
+                ),
                 api_c.CURRENT_VERSION: meta_data[api_c.JOIN_KEYS][0],
                 api_c.PREDICTION_WINDOW: int(feature[4]),
             }
+
+            # check model type and map.
+            if model[api_c.ID].lower() in api_c.TEMP_MODELS_TYPE_MAPPING:
+                model[api_c.TYPE] = api_c.TEMP_MODELS_TYPE_MAPPING[
+                    model[api_c.ID].lower()
+                ]
+
             models.append(model)
 
         # sort the models based on the last trained date.
@@ -366,17 +375,14 @@ class Tecton:
             total_ticks,
         )
 
-        if api_c.RESULTS not in response.json():
+        if response.status_code != 200 or api_c.RESULTS not in response.json():
             logger.error(
                 "Unable to retrieve model drift, %s %s.",
                 response.status_code,
                 response.text,
             )
             if response.status_code == 200:
-                raise iae.EmptyAPIResponseError(
-                    f"{self.service} returned empty object",
-                    response.status_code,
-                )
+                return {}
             raise iae.FailedAPIDependencyError(
                 f"{self.service} : in_function={self.get_model_drift.__name__}",
                 response.status_code,
@@ -391,7 +397,7 @@ class Tecton:
             run_dates = [
                 m[api_c.LAST_TRAINED]
                 for m in models
-                if m[api_c.CURRENT_VERSION] == result[api_c.FEATURES][4]
+                if m[api_c.CURRENT_VERSION] == result[api_c.FEATURES][5]
             ]
 
             result_drift.append(
@@ -531,9 +537,9 @@ class Tecton:
                 score = 0
                 try:
                     score = (
-                        log10(float(feature[2]))
-                        if float(feature[2]) > 0
-                        else -log10(float(abs(feature[2])))
+                        log10(float(feature[3]))
+                        if float(feature[3]) > 0
+                        else -log10(float(abs(feature[3])))
                     )
                 except ValueError:
                     pass
@@ -542,8 +548,8 @@ class Tecton:
                     {
                         api_c.ID: model_id,
                         api_c.VERSION: model_version,
-                        api_c.NAME: feature[1],
-                        api_c.FEATURE_SERVICE: feature[4],
+                        api_c.NAME: feature[2],
+                        api_c.FEATURE_SERVICE: feature[5],
                         api_c.DATA_SOURCE: random.choice(
                             [
                                 "Buyers",
@@ -751,3 +757,102 @@ class TectonMockConnector(Tecton):
             models.append(model)
 
         return models
+
+    def get_model_features(
+        self, model_id: str, model_version: str
+    ) -> List[FeatureSchema]:
+        """Get model features based on model id.
+
+        Args:
+            model_id (str): Model id.
+            model_version (str): model version.
+
+        Returns:
+            List[FeatureSchema]: List of model features.
+
+        Raises:
+            FailedAPIDependencyError: Integrated dependent API failure error.
+        """
+
+        # Tecton forces us to get the feature at the version level, so we have to
+        # query the service in succession. We break on the first empty value.
+        result_features = []
+        for i in range(200):
+            payload = {
+                "params": {
+                    "feature_service_name": self.feature_service.FEATURE_TOP_SERVICE,
+                    "join_key_map": {
+                        api_c.MODEL_ID: f"{model_id}",
+                        "rank": str(i),
+                    },
+                }
+            }
+
+            response = requests.post(
+                self.service,
+                dumps(payload),
+                headers=self.headers,
+            )
+
+            if response.status_code != 200:
+                break
+
+            if api_c.RESULTS not in response.json():
+                break
+
+            # grab the features and match model version.
+            features = [
+                x[api_c.FEATURES]
+                for x in response.json()[api_c.RESULTS]
+                if x["joinKeys"][0] == model_version
+            ]
+
+            # check if any features available for the first bucket,
+            # if not it means there are none for that version.
+            if not features:
+                break
+
+            for feature in features:
+                # get score.
+                score = 0
+                try:
+                    score = (
+                        log10(float(feature[2]))
+                        if float(feature[2]) > 0
+                        else -log10(float(abs(feature[2])))
+                    )
+                except ValueError:
+                    pass
+
+                result_features.append(
+                    {
+                        api_c.ID: model_id,
+                        api_c.VERSION: model_version,
+                        api_c.NAME: feature[1],
+                        api_c.FEATURE_SERVICE: feature[4],
+                        api_c.DATA_SOURCE: random.choice(
+                            [
+                                "Buyers",
+                                "Retail",
+                                "Promotion",
+                                "Email",
+                                "Ecommerce",
+                            ]
+                        ),
+                        api_c.CREATED_BY: random.choice(
+                            ["Susan Miller", "Jack Miller"]
+                        ),
+                        api_c.STATUS: api_c.STATUS_ACTIVE,
+                        api_c.POPULARITY: random.randint(1, 3),
+                        api_c.SCORE: round(score, 4),
+                    }
+                )
+
+        if not result_features:
+            logger.error(
+                "Unable to retrieve model features, %s %s.",
+                response.status_code,
+                response.text,
+            )
+
+        return result_features

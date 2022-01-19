@@ -327,7 +327,7 @@
         <template #button>
           <span v-if="numFiltersSelected <= 0">
             <router-link
-              :to="{ name: 'AudienceConfiguration' }"
+              :to="{ name: 'SegmentPlayground' }"
               class="text-decoration-none"
               append
               data-e2e="add-audience"

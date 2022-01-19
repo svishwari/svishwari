@@ -18,7 +18,6 @@ from huxunify.api.route.utils import get_db_client
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_health_check
 
-
 # set config variables
 SWAGGER_CONFIG = {
     "uiversion": "3",
@@ -111,7 +110,10 @@ def create_app() -> Flask:
 
     # only add job if not test mode.
     # TODO: mock scheduled job in flask test client using AsyncIO.
-    if flask_app.env != api_c.TEST_MODE:
+    if (
+        flask_app.env != api_c.TEST_MODE
+        and not flask_app.config[api_c.DISABLE_SCHEDULED_DELIVERIES]
+    ):
         # add delivery schedule cron
         # lowest possible schedule denomination in unified is 15 minutes.
         scheduler.add_job(
