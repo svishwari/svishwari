@@ -109,13 +109,13 @@ class Config:
     )
 
     DEFAULT_NEW_USER_PROJECT_NAME = config(
-        api_c.DEFAULT_NEW_USER_PROJECT_NAME, default="ADV", cast=str
+        api_c.DEFAULT_NEW_USER_PROJECT_NAME, default="ADV"
     )
     DEFAULT_OKTA_GROUP_NAME = config(
-        api_c.DEFAULT_OKTA_GROUP_NAME, default="team-unified--base", cast=str
+        api_c.DEFAULT_OKTA_GROUP_NAME, default="team-unified--base"
     )
     DEFAULT_OKTA_APP = config(
-        api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder", cast=str
+        api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder"
     )
 
 
