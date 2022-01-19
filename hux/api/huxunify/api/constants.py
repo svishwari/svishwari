@@ -678,6 +678,7 @@ DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
 GENERIC_DESTINATION = "generic_destination"
 DESTINATION_CATEGORIES = "destination_categories"
 DESTINATION_AUDIENCES = "destination_audiences"
+DELIVERY_PLATFORM_LINK = "delivery_platform_link"
 
 # Map db status values to api status values
 DESTINATION_STATUS_MAPPING = {
