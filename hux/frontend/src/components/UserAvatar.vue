@@ -25,7 +25,7 @@
         </span>
       </span>
     </template>
-    <v-list min-width="192px">
+    <v-list min-width="192px" class="user-avatar-menu">
       <v-list-item class="mb-4">
         <v-avatar class="mr-2" size="45">
           <icon type="user_avatar" :size="45" color="white" />
@@ -111,6 +111,8 @@ export default {
   }
 }
 .v-menu__content {
+  margin-left: 12px !important;
+  margin-top: 20px !important;
   .user-role {
     font-size: 10px;
     line-height: 13.62px;
