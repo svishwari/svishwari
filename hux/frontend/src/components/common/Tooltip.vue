@@ -7,6 +7,7 @@
     :max-width="maxWidth"
     :min-width="minWidth"
     :nudge-right="nudgeRight"
+    :z-index="zIndex"
   >
     <template #activator="{ on }">
       <span v-on="on">
@@ -49,6 +50,11 @@ export default {
       type: [String, Number],
       required: false,
       default: 0,
+    },
+     zIndex: {
+      type: [String, Number],
+      required: false,
+      default: undefined,
     },
   },
 }
