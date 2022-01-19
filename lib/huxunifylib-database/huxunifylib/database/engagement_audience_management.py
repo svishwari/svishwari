@@ -294,13 +294,10 @@ def get_all_engagement_audience_deliveries(
         {"$project": {"deliveries.deleted": 0}},
     ]
 
-    stage_count_in_pipeline = 20
     if audience_ids is not None:
-        pipeline.insert(
-            stage_count_in_pipeline,
+        pipeline.append(
             {"$match": {db_c.AUDIENCE_ID: {"$in": audience_ids}}},
         )
-        stage_count_in_pipeline += 1
 
     # use the engagement pipeline to aggregate and get all unique delivery jobs
     # per nested audience

@@ -1,5 +1,5 @@
 <template>
-  <div class="summary-wrap d-flex mb-6">
+  <div class="summary-wrap d-flex">
     <metric-card
       class="mr-3 pt-4 shrink"
       :title="summaryCards[0].title"

@@ -65,7 +65,7 @@ export default {
       dropdownLinks: [
         { name: "Data Source", path: "DataSources" },
         { name: "Destination", path: "DestinationConfiguration" },
-        { name: "Audience", path: "AudienceConfiguration" },
+        { name: "Audience", path: "SegmentPlayground" },
         { name: "Engagement", path: "EngagementConfiguration" },
       ],
       appLoadTime: new Date(),

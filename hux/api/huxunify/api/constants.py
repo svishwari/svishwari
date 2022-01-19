@@ -40,6 +40,7 @@ AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
 DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
+DISABLE_SCHEDULED_DELIVERIES = "DISABLE_SCHEDULED_DELIVERIES"
 DISABLE_DELIVERY_MSG = "Deliveries are disabled."
 SALES_FORECASTING = "Sales forecasting"
 
@@ -1010,13 +1011,13 @@ PROFILE_SIZE_PERCENT = "profile_size_percent"
 RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
-CLASSIFICATION_MODELS = [
-    UNSUBSCRIBE,
-    PURCHASE,
-    "propensity_positive_click type: binary",
-    "propensity_positive_open type: binary",
-    "propensity_positive_unsub type: binary",
-]
+CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
+# todo: remove in the future when we remove tecton.
+TEMP_MODELS_TYPE_MAPPING = {
+    "propensity_positive_click": UNSUBSCRIBE,
+    "propensity_positive_open": UNSUBSCRIBE,
+    "propensity_positive_unsub": UNSUBSCRIBE,
+}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
@@ -1139,6 +1140,7 @@ CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
 CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
     "cdm_connection_service_connection_health"
 )
+JIRA_CONNECTION_HEALTH = "jira_connection_health"
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"

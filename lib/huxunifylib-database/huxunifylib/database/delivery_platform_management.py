@@ -584,6 +584,7 @@ def update_delivery_platform(
     campaign_de: dict = None,
     is_ad_platform: bool = None,
     status: str = None,
+    link: str = None,
 ) -> Union[dict, None]:
     """A function to update delivery platform configuration.
 
@@ -603,6 +604,7 @@ def update_delivery_platform(
         campaign_de (dict): Campaign Data Extension for only SFMC.
         is_ad_platform (bool): If the delivery platform is an AD platform.
         status (str): Connection status
+        link (str): Destination URL
 
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
@@ -644,6 +646,9 @@ def update_delivery_platform(
         db_c.DELIVERY_PLATFORM_AUTH: authentication_details,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
+
+    if link:
+        update_doc[db_c.LINK] = link
 
     if (
         cur_doc is not None
