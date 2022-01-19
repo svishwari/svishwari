@@ -184,7 +184,8 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
     Returns:
         list: List of standalone audience deliveries.
     """
-
+    if not audience.get(api_c.DESTINATIONS):
+        return []
     database = get_db_client()
 
     standalone_deliveries = []
@@ -193,22 +194,21 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
         audience_id=audience[db_c.ID],
         engagement_id=db_c.ZERO_OBJECT_ID,
     )
+    # extract delivery platform ids from the audience
+    destination_ids = [
+        x.get(api_c.ID)
+        for x in audience[api_c.DESTINATIONS]
+        if isinstance(x, dict)
+    ]
 
+    # get destinations at once to lookup name for each delivery job
+    destination_dict = {
+        x[db_c.ID]: x
+        for x in destination_management.get_delivery_platforms_by_id(
+            database, destination_ids
+        )
+    }
     if standalone_delivery_jobs:
-        # extract delivery platform ids from the audience
-        destination_ids = [
-            x.get(api_c.ID)
-            for x in audience[api_c.DESTINATIONS]
-            if isinstance(x, dict)
-        ]
-
-        # get destinations at once to lookup name for each delivery job
-        destination_dict = {
-            x[db_c.ID]: x
-            for x in destination_management.get_delivery_platforms_by_id(
-                database, destination_ids
-            )
-        }
 
         for job in standalone_delivery_jobs:
             # ignore deliveries to destinations no longer attached to the
@@ -234,8 +234,33 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                     db_c.DELIVERY_PLATFORM_ID: job.get(
                         db_c.DELIVERY_PLATFORM_ID
                     ),
+                    db_c.IS_AD_PLATFORM: destination_dict.get(
+                        job.get(db_c.DELIVERY_PLATFORM_ID)
+                    ).get(db_c.IS_AD_PLATFORM),
                 }
             )
+
+    _ = [
+        standalone_deliveries.append(
+            {
+                db_c.METRICS_DELIVERY_PLATFORM_NAME: destination_dict.get(
+                    x
+                ).get(api_c.NAME),
+                api_c.DELIVERY_PLATFORM_TYPE: destination_dict.get(x).get(
+                    api_c.DELIVERY_PLATFORM_TYPE
+                ),
+                api_c.STATUS: api_c.STATUS_NOT_DELIVERED,
+                api_c.SIZE: 0,
+                db_c.UPDATE_TIME: None,
+                db_c.DELIVERY_PLATFORM_ID: x,
+            }
+        )
+        for x in destination_ids
+        if x
+        not in [
+            y.get(db_c.DELIVERY_PLATFORM_ID) for y in standalone_deliveries
+        ]
+    ]
 
     return standalone_deliveries
 
@@ -805,15 +830,19 @@ class AudienceGetView(SwaggerView):
             ):
                 match_rate_data_for_audience(delivery, match_rate_data)
 
-        # TODO: HUS-1992 - below code needs to be revised to set
-        #  audience["lookalikeable"] by passing in the audience object that
-        #  has deliveries populated within
-        # set lookalikeable value in audience as per history of deliveries made
-        # against all engagements the audience is attached to to keep it
-        # consistent with GET all audiences response
-        audience_deliveries = eam.get_all_engagement_audience_deliveries(
-            database, audience_ids=[audience_id]
-        )
+        if engagements:
+            # TODO: HUS-1992 - below code needs to be revised to set
+            #  audience["lookalikeable"] by passing in the audience object that
+            #  has deliveries populated within
+            # set lookalikeable value in audience as per history of deliveries made
+            # against all engagements the audience is attached to to keep it
+            # consistent with GET all audiences response
+            audience_deliveries = eam.get_all_engagement_audience_deliveries(
+                database, audience_ids=[audience_id]
+            )
+            audience_deliveries = audience_deliveries + standalone_deliveries
+        else:
+            audience_deliveries = standalone_deliveries
         if audience_deliveries:
             audience_deliveries[0][api_c.DELIVERIES] = (
                 [
