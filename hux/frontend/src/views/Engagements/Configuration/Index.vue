@@ -3,14 +3,28 @@
     <template #header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
+    <div class="d-flex align-items-center justify-space-between">
+      <div>
+        <h2 class="text-h1">{{ formTitle }}</h2>
 
-    <h2 class="text-h1">{{ formTitle }}</h2>
-
-    <p class="body-1 mb-10">
-      Keep in mind that by editing this engagement you may impact related
-      audiences and destinations.
-    </p>
-
+        <p class="body-1 mb-10">
+          Keep in mind that by editing this engagement you may impact related
+          audiences and destinations.
+        </p>
+      </div>
+      <div class="pt-5 re-align-delete">
+        <tooltip>
+          <template #label-content>
+            <div @click="openModal()">
+              <icon size="23" type="delete-button" />
+            </div>
+          </template>
+          <template #hover-content>
+            <span>Delete engagement</span>
+          </template>
+        </tooltip>
+      </div>
+    </div>
     <engagement-overview v-model="data" />
 
     <v-divider class="divider my-4 mb-8"></v-divider>
@@ -26,6 +40,36 @@
       @onCancel="showConfirmModal = false"
       @onConfirm="navigateaway()"
     />
+    <confirm-modal
+      v-model="confirmModal"
+      icon="sad-face"
+      type="error"
+      title="You are about to delete"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, delete engagement"
+      left-btn-text="Nevermind!"
+      @onCancel="confirmModal = !confirmModal"
+      @onConfirm="confirmRemoval()"
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to delete this Engagement&#63;
+        </div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By deleting this engagement you will not be able to recover it and it
+          may impact any associated destinations.
+        </div>
+      </template>
+    </confirm-modal>
   </page>
 </template>
 
@@ -35,6 +79,8 @@ import Page from "@/components/Page.vue"
 import EngagementOverview from "./Overview.vue"
 import EngagementForm from "./Form.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import Icon from "@/components/common/Icon.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "Configuration",
@@ -44,6 +90,8 @@ export default {
     EngagementOverview,
     EngagementForm,
     ConfirmModal,
+    Icon,
+    Tooltip,
   },
 
   data() {
@@ -59,6 +107,8 @@ export default {
       showConfirmModal: false,
       navigateTo: false,
       flagForModal: false,
+      confirmModal: false,
+      confirmSubtitle: "",
     }
   },
 
@@ -75,7 +125,7 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-    if (this.$refs.editEngagement.dontShowModal) {
+    if (this.$refs.editEngagement.dontShowModal || !this.confirmModal) {
       next()
     } else {
       if (this.flagForModal == false) {
@@ -105,7 +155,19 @@ export default {
       getAudiences: "audiences/getAll",
       getDestinations: "destinations/getAll",
       getEngagementById: "engagements/get",
+      deleteEngagement: "engagements/remove",
     }),
+    openModal() {
+      this.confirmSubtitle = this.data.name
+      this.confirmModal = true
+    },
+    async confirmRemoval() {
+      await this.deleteEngagement({ id: this.$route.params.id })
+      this.confirmModal = false
+      this.$router.push({
+        name: "Engagements",
+      })
+    },
     navigateaway() {
       this.showConfirmModal = false
       this.flagForModal = true
@@ -152,3 +214,13 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.re-align-delete {
+  position: relative;
+  left: 125px;
+  &:hover {
+    cursor: pointer;
+  }
+}
+</style>
