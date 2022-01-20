@@ -329,7 +329,7 @@ export default {
     goBack() {
       this.$router.go(-1)
     },
-        totalFiltersSelected(value) {
+    totalFiltersSelected(value) {
       this.numFiltersSelected = value
     },
     async toggleDrawer(notificationId) {

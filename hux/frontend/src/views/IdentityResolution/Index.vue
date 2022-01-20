@@ -216,14 +216,14 @@
           </v-row>
 
           <v-row>
-          <v-col :md="isFilterToggled ? 9 : 12">
-          <data-feeds
-            :data="dataFeeds"
-            :is-loading="loadingDataFeeds"
-            :is-error-state="dataFeedsErrorState"
-            class="mt-3 mx-2"
-            data-e2e="datafeedtable"
-          />
+            <v-col :md="isFilterToggled ? 9 : 12">
+              <data-feeds
+                :data="dataFeeds"
+                :is-loading="loadingDataFeeds"
+                :is-error-state="dataFeedsErrorState"
+                class="mt-3 mx-2"
+                data-e2e="datafeedtable"
+              />
             </v-col>
           </v-row>
         </div>
