@@ -13,7 +13,7 @@ from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.database.util.client import db_client_factory
 
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,

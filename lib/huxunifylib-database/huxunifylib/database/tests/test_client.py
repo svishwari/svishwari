@@ -19,7 +19,9 @@ class TestClient(unittest.TestCase):
         password = ""
 
         # set up the database client
-        client = DatabaseClient(host, port, username, password)
+        client = DatabaseClient(
+            host=host, port=port, username=username, password=password
+        )
 
         # verify the setup
         self.assertTrue(client is not None)
@@ -38,7 +40,13 @@ class TestClient(unittest.TestCase):
         ssl_path = "test.pem"
 
         # set up the database client
-        client = DatabaseClient(host, port, username, password, ssl_path)
+        client = DatabaseClient(
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+            ssl_cert_path=ssl_path,
+        )
 
         # verify the setup
         self.assertIsNotNone(client)
