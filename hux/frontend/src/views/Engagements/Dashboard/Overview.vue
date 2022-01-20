@@ -48,9 +48,9 @@
           >
             <icon
               class="mr-1"
-               type="deliver_2"
+              type="deliver_2"
               :size="37"
-             :color="'primary'"
+              :color="'primary'"
               :variant="'base'"
             />
             <span class="deliverAll"> Deliver all </span>

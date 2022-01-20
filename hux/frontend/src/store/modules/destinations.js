@@ -72,7 +72,7 @@ const actions = {
     try {
       const body = {
         authentication_details: destination.authentication_details,
-        link: destination.link
+        link: destination.link,
       }
       if (Object.prototype.hasOwnProperty.call(destination, "configuration")) {
         body.configuration = destination.configuration

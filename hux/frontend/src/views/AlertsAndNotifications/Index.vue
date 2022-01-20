@@ -70,7 +70,7 @@
               >
                 <div v-if="header.value == 'id'">
                   <a @click="toggleDrawer(item[header.value])"
-                    >{{ item[header.value] | Empty("-")  }}
+                    >{{ item[header.value] | Empty("-") }}
                   </a>
                 </div>
 
@@ -90,7 +90,7 @@
                     :variant="getVariantColor(item['notification_type'])"
                     class="d-block mr-1"
                   />
-                  {{ item["notification_type"] | Empty("-")  }}
+                  {{ item["notification_type"] | Empty("-") }}
                 </div>
 
                 <tooltip v-if="header.value == 'description'" position-top>
@@ -99,7 +99,7 @@
                   </template>
                   <template #hover-content>
                     <div class="text--body-1 pb-2">Description</div>
-                    {{ item[header.value] | Empty("-")  }}
+                    {{ item[header.value] | Empty("-") }}
                   </template>
                 </tooltip>
 
@@ -380,7 +380,7 @@ export default {
       this.batchDetails.batch_size = 25
       this.batchDetails.batch_number = 1
       this.batchDetails.isLazyLoad = false
-    },  
+    },
     async alertfunction(data) {
       this.isFilterToggled = false
       this.loading = true

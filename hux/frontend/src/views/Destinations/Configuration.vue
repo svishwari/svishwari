@@ -654,7 +654,7 @@ export default {
         let data = {
           id: this.selectedDestination.id,
           authentication_details: this.authenticationDetails,
-          link: this.DestinationUrl
+          link: this.DestinationUrl,
         }
         if (this.isSFMCSelected) {
           data.configuration = this.selectedDataExtension
