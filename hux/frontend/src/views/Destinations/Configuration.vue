@@ -344,8 +344,9 @@
           >
             <label
               class="d-block text-body-2 black--text text--lighten-4 mb-2 mt-6"
-              >{{ category }}</label
             >
+              {{ category }}
+            </label>
 
             <card-horizontal
               v-for="destination in value"
@@ -653,6 +654,7 @@ export default {
         let data = {
           id: this.selectedDestination.id,
           authentication_details: this.authenticationDetails,
+          link: this.DestinationUrl
         }
         if (this.isSFMCSelected) {
           data.configuration = this.selectedDataExtension

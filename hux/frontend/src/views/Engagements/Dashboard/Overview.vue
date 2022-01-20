@@ -47,13 +47,13 @@
             @click="$emit('deliverEngagement', $event)"
           >
             <icon
-              class="mr-2"
-              type="deliver_2"
-              :size="24"
-              :color="'primary'"
+              class="mr-1"
+               type="deliver_2"
+              :size="37"
+             :color="'primary'"
               :variant="'base'"
             />
-            Deliver All
+            <span class="deliverAll"> Deliver all </span>
           </v-btn>
         </div>
       </v-card-title>
@@ -220,5 +220,8 @@ export default {
       }
     }
   }
+}
+.deliverAll {
+  margin-top: 2px;
 }
 </style>
