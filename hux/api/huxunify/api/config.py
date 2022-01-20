@@ -30,6 +30,9 @@ class Config:
     MOCK_TECTON = config(api_c.MOCK_TECTON, default=True, cast=bool)
 
     # MONGO CONFIG
+    MONGO_CONNECTION_STRING = config(
+        api_c.MONGO_CONNECTION_STRING, default=None
+    )
     MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")
     MONGO_DB_PORT = config(api_c.MONGO_DB_PORT, default=27017, cast=int)
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
@@ -40,6 +43,7 @@ class Config:
     )
 
     MONGO_DB_CONFIG = {
+        api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
         api_c.PORT: MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
@@ -108,6 +112,16 @@ class Config:
         api_c.DISABLE_SCHEDULED_DELIVERIES, default=True, cast=bool
     )
 
+    DEFAULT_NEW_USER_PROJECT_NAME = config(
+        api_c.DEFAULT_NEW_USER_PROJECT_NAME, default="ADV"
+    )
+    DEFAULT_OKTA_GROUP_NAME = config(
+        api_c.DEFAULT_OKTA_GROUP_NAME, default="team-unified--base"
+    )
+    DEFAULT_OKTA_APP = config(
+        api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder"
+    )
+
 
 class ProductionConfig(Config):
     """Production Config Object."""
@@ -122,6 +136,7 @@ class DevelopmentConfig(Config):
     FLASK_ENV = api_c.DEVELOPMENT_MODE
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_CONFIG = {
+        api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
         api_c.HOST: Config.MONGO_DB_HOST,
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
@@ -144,6 +159,7 @@ class PyTestConfig(Config):
     S3_DATASET_BUCKET = "test-bucket"
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_CONFIG = {
+        api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
         api_c.HOST: Config.MONGO_DB_HOST,
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,

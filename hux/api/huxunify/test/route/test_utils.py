@@ -5,7 +5,7 @@ from unittest import TestCase, mock
 
 import mongomock
 from bson import ObjectId
-from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.client import DatabaseClient
 from hypothesis import given, strategies as st
 
