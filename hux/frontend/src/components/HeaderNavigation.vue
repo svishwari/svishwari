@@ -39,7 +39,7 @@
           <v-list-item-title
             class="font-weight-semi-bold text-h6 black--text mb-1"
           >
-            Add
+            Create / Add
           </v-list-item-title>
         </v-list-item>
         <v-list-item
