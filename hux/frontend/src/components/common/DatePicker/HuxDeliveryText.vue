@@ -1,5 +1,5 @@
 <template>
-  <div class="black--text text-body-2">
+  <div class="black--text body-1">
     <span v-if="deliveryType"> Delivery takes place </span>
     <span v-if="deliveryType">every</span>
     <span v-else>Every</span>

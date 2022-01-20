@@ -217,8 +217,8 @@ export default {
 
 <style lang="scss">
 .re-align-delete {
-  position: relative;
-  left: 125px;
+  position: absolute;
+  right: 35px;
   &:hover {
     cursor: pointer;
   }
