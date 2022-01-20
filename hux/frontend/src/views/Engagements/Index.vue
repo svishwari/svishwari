@@ -942,7 +942,7 @@ export default {
         favorites: params.selectedFavourite,
         my_engagements: params.selectedEngagementsWorkedWith,
       })
-      this.isFilterToggled = false
+      this.isFilterToggled = true
     },
 
     openModal(engagement) {

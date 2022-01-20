@@ -122,7 +122,7 @@
           </div>
 
           <v-row class="px-2 mt-0 mb-1">
-            <v-col md="12">
+            <v-col :md="isFilterToggled ? 9 : 12">
               <v-card
                 class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
                 :class="
@@ -215,6 +215,8 @@
             </v-col>
           </v-row>
 
+          <v-row>
+          <v-col :md="isFilterToggled ? 9 : 12">
           <data-feeds
             :data="dataFeeds"
             :is-loading="loadingDataFeeds"
@@ -222,6 +224,8 @@
             class="mt-3 mx-2"
             data-e2e="datafeedtable"
           />
+            </v-col>
+          </v-row>
         </div>
 
         <div class="ml-auto">

@@ -169,6 +169,12 @@ export default {
       let category = this.initializeValue(this.selctedCategory)
       let time = 1
       let users = this.initializeValue(this.selctedUsers)
+      let totalFiltersCount =
+        this.selctedAlertType.length +
+        this.selctedCategory.length +
+        this.selctedUsers.length +
+        time
+      this.$emit("selected-filters", totalFiltersCount)
       return alert + category + time + users
     },
   },
