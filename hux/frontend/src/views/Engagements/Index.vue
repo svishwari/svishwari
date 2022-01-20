@@ -938,8 +938,6 @@ export default {
     },
 
     async applyFilter(params) {
-      console.log("params",params)
-      debugger;
       await this.getAllFilteredEngagements({
         favorites: params.selectedFavourite,
         my_engagements: params.selectedEngagementsWorkedWith,
