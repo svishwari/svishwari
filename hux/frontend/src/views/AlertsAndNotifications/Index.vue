@@ -5,13 +5,25 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <icon
-          type="filter"
-          :size="22"
-          class="cursor-pointer"
-          color="black-darken4"
-          @click.native="toggleFilterDrawer()"
-        />
+        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+          <icon
+            type="filter"
+            :size="27"
+            :color="numFiltersSelected > 0 ? 'primary' : 'black'"
+            :variant="numFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+          />
+          <v-badge
+            v-if="numFiltersSelected > 0"
+            :content="numFiltersSelected"
+            color="white"
+            offset-x="6"
+            offset-y="4"
+            light
+            bottom
+            overlap
+            bordered
+          />
+        </v-btn>
       </template>
     </page-header>
     <div
@@ -167,6 +179,7 @@
           v-model="isFilterToggled"
           :users="getNotificationUsers"
           @onSectionAction="alertfunction"
+          @selected-filters="totalFiltersSelected"
         />
       </div>
     </div>
@@ -260,6 +273,7 @@ export default {
       batchDetails: {},
       isFilterToggled: false,
       notificationId: null,
+      numFiltersSelected: 0,
     }
   },
   computed: {
@@ -314,6 +328,9 @@ export default {
     }),
     goBack() {
       this.$router.go(-1)
+    },
+    totalFiltersSelected(value) {
+      this.numFiltersSelected = value
     },
     async toggleDrawer(notificationId) {
       this.notificationId = notificationId
@@ -382,7 +399,7 @@ export default {
       this.batchDetails.isLazyLoad = false
     },
     async alertfunction(data) {
-      this.isFilterToggled = false
+      this.isFilterToggled = true
       this.loading = true
       try {
         let today_date = new Date()
@@ -425,7 +442,7 @@ export default {
         this.loading = false
         this.batchDetails.isLazyLoad = false
       } finally {
-        this.isFilterToggled = false
+        this.isFilterToggled = true
         this.loading = false
         this.enableLazyLoad = true
         if (this.notifications.length === 0) {
