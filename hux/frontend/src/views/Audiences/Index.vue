@@ -767,7 +767,6 @@ export default {
         worked_by: params.selectedAudienceWorkedWith,
         attribute: params.selectedAttributes,
       })
-      this.isFilterToggled = true
       this.loading = false
     },
     formatText: formatText,
