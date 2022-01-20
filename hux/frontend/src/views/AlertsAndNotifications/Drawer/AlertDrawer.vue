@@ -39,7 +39,7 @@
             {{ data.title }}
           </div>
           <div class="text-body-1 black--text text--lighten-4 mt-1">
-            {{ data.value }}
+            {{ data.value | Empty("-") }}
           </div>
         </div>
       </div>

@@ -82,12 +82,12 @@
               >
                 <div v-if="header.value == 'id'">
                   <a @click="toggleDrawer(item[header.value])"
-                    >{{ item[header.value] }}
+                    >{{ item[header.value] | Empty("-") }}
                   </a>
                 </div>
 
                 <div v-if="header.value == 'category'">
-                  {{ item[header.value] }}
+                  {{ item[header.value] | Empty("-") }}
                 </div>
 
                 <div v-if="header.value == 'notification_type'" class="d-flex">
@@ -102,7 +102,7 @@
                     :variant="getVariantColor(item['notification_type'])"
                     class="d-block mr-1"
                   />
-                  {{ item["notification_type"] }}
+                  {{ item["notification_type"] | Empty("-") }}
                 </div>
 
                 <tooltip v-if="header.value == 'description'" position-top>
@@ -111,7 +111,7 @@
                   </template>
                   <template #hover-content>
                     <div class="text--body-1 pb-2">Description</div>
-                    {{ item[header.value] }}
+                    {{ item[header.value] | Empty("-") }}
                   </template>
                 </tooltip>
 
