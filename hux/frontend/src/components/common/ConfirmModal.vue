@@ -155,7 +155,7 @@ export default {
       default: true,
     },
   },
-
+  emits: ["on-cancel", "on-confirm"],
   data() {
     return {
       localModal: this.value,

@@ -6,7 +6,7 @@ export default {
   title: "Components/Card Info",
 
   argTypes: {
-    click: { action: "clicked" },
+    click: { table: { disable: true } },
   },
 
   args: {

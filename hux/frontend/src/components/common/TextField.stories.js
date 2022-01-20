@@ -12,7 +12,7 @@ export default {
       },
     },
     variant: { control: "color" },
-    click: { action: "clicked" },
+    click: { table: { disable: true } },
   },
 
   args: {
