@@ -12,7 +12,7 @@
         class="toggle-icon"
         :class="{ 'rotate-icon-180': !toggleMini }"
         :size="24"
-        color="primary"
+        color="black"
         variant="base"
       />
     </div>
@@ -84,7 +84,7 @@ export default {
 }
 .toggle-icon {
   background: var(--v-white-base);
-  box-shadow: 1.5px 1.5px 5px rgb(57 98 134 / 15%);
+  box-shadow: -1.5px 1.5px 5px rgb(57 98 134 / 15%);
   border-radius: 50%;
   padding: 4px;
   transition-duration: 0.2s;
@@ -92,7 +92,7 @@ export default {
   transition-property: transform, visibility, width;
 }
 .toggle-menu {
-  bottom: 0;
+  bottom: 10px;
   position: fixed;
   z-index: 9;
 }
