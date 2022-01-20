@@ -108,7 +108,7 @@
       >
         <template #left>
           <hux-button
-            v-if="isEdit"
+            v-if="isEdit || isClone"
             size="large"
             variant="white"
             height="40"
@@ -144,7 +144,10 @@
       :right-btn-text="confirmData.rightButtonText"
       :left-btn-text="confirmData.leftButtonText"
       data-e2e="audience-confirmation"
-      @onCancel="confirmModal = !confirmModal"
+      @onCancel="
+        audience.name = ''
+        confirmModal = !confirmModal
+      "
       @onConfirm="confirmRemoval()"
     >
       <template #body>
@@ -239,6 +242,7 @@ export default {
         attributeRules: [],
       },
       isEdit: false,
+      isClone: false,
       loading: false,
       overviewLoading: false,
       overviewLoadingStamp: new Date(),
@@ -329,6 +333,15 @@ export default {
     try {
       if (this.$route.name === "AudienceUpdate") {
         this.isEdit = true
+        this.isClone = false
+        await this.getOverview()
+        this.audienceId = this.$route.params.id
+        await this.getAudienceById(this.audienceId)
+        const data = this.getAudience(this.audienceId)
+        this.mapAudienceData(data)
+      } else if (this.$route.name === "CloneAudience") {
+        this.isEdit = false
+        this.isClone = true
         await this.getOverview()
         this.audienceId = this.$route.params.id
         await this.getAudienceById(this.audienceId)
@@ -491,6 +504,9 @@ export default {
         })
       })
       this.$set(this, "audience", _audienceObject)
+      if (this.isClone) {
+        this.audience.name = ""
+      }
       this.$nextTick(function () {
         this.$refs.filters.getOverallSize()
       })
