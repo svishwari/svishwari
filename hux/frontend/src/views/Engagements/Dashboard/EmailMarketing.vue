@@ -49,7 +49,7 @@
       </template>
     </delivery>
 
-    <!-- <v-progress-linear
+    <v-progress-linear
       :active="loadingMetrics"
       :indeterminate="loadingMetrics"
     />
@@ -58,18 +58,18 @@
       :campaign-data="emailDataData"
       type="email"
       data-e2e="email-data"
-    /> -->
+    />
   </div>
 </template>
 
 <script>
-// import CampaignSummary from "@/components/CampaignSummary.vue"
+import CampaignSummary from "@/components/CampaignSummary.vue"
 import Delivery from "./Components/Delivery.vue"
 import Icon from "@/components/common/Icon.vue"
 
 export default {
   name: "EmailMarketing",
-  components: { Delivery, Icon },
+  components: { CampaignSummary, Delivery, Icon },
   props: {
     data: {
       type: Object,

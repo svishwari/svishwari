@@ -1,13 +1,21 @@
 <template>
-  <v-menu :min-width="200" left offset-y close-on-click>
+  <v-menu v-model="menu" :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
       <span class="d-flex cursor-pointer mr-4" v-on="on">
-        <icon
-          data-e2e="notification-bell"
-          class="mx-2 my-2 nav-icon"
-          type="bell-notification"
-          :size="24"
-        />
+        <tooltip :z-index="99">
+          <template #label-content>
+            <span :class="{ 'icon-shadow': menu }">
+              <icon
+                data-e2e="notification-bell"
+                class="mx-2 my-2 nav-icon"
+                type="bell-notification"
+                :size="24"
+                :class="{ 'active-icon': menu }"
+              />
+            </span>
+          </template>
+          <template #hover-content> Alerts </template>
+        </tooltip>
       </span>
     </template>
     <v-list class="alert-menu-main">
@@ -92,6 +100,7 @@ export default {
         batch_size: 5,
         batch_number: 1,
         isLazyLoad: false,
+        menu: false,
       },
     }
   },
@@ -141,7 +150,8 @@ export default {
   margin-bottom: 22px !important;
 }
 .v-menu__content {
-  top: 64px !important;
+  margin-left: 70px !important;
+  top: 70px !important;
   overflow-y: hidden !important;
   .alert-menu-main {
     width: 296px !important;

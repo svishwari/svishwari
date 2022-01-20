@@ -126,7 +126,7 @@ def get_engagements_summary(
     ]
 
     match_statement = {db_c.DELETED: False}
-    if engagement_ids:
+    if engagement_ids is not None:
         match_statement[db_c.ID] = {"$in": engagement_ids}
 
     if query_filter:

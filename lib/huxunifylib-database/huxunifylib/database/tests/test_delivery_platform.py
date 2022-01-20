@@ -23,9 +23,7 @@ class TestDeliveryPlatform(unittest.TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
 
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient(host="localhost", port=27017).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -486,6 +484,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             name="Updated name",
             delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
             authentication_details=new_auth_details,
+            link="fake.com",
         )
 
         self.assertIsNotNone(doc)
@@ -500,6 +499,8 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc[db_c.DELIVERY_PLATFORM_AUTH], new_auth_details)
         self.assertFalse(doc[db_c.ADDED])
         self.assertFalse(db_c.DELETED in doc)
+        self.assertIn(db_c.LINK, doc)
+        self.assertEqual(doc[db_c.LINK], "fake.com")
 
         # update two fields
         doc = dpm.update_delivery_platform(
@@ -521,6 +522,26 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertEqual(doc[db_c.DELIVERY_PLATFORM_AUTH], new_auth_details)
         self.assertTrue(doc[db_c.ADDED])
+
+    def test_update_delivery_platform_no_link(self):
+        """Test delivery platform update function with None link"""
+
+        new_auth_details = {
+            "facebook_access_token": "path10",
+            "facebook_app_secret": "path20",
+            "facebook_app_id": "path30",
+            "facebook_ad_account_id": "path40",
+        }
+
+        doc = dpm.update_delivery_platform(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            name="Updated name",
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
+            authentication_details=new_auth_details,
+            link=None,
+        )
+        self.assertFalse(doc.get(db_c.LINK))
 
     def test_update_sfmc_performance_data_extension(self) -> None:
         """For testing update of Performance Data Extension only for SFMC"""

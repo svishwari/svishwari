@@ -1491,6 +1491,28 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
         self.assertFalse(return_engagement[api_c.FAVORITE])
 
+    def test_get_engagements_with_no_favorites(self):
+        """Test to get engagements with no favorites"""
+
+        # remove favorite engagement
+        manage_user_favorites(
+            self.database,
+            self.user_doc[db_c.OKTA_ID],
+            db_c.ENGAGEMENTS,
+            ObjectId(self.engagement_ids[0]),
+            True,
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}?"
+            f"{api_c.FAVORITES}=True&{api_c.MY_ENGAGEMENTS}=True",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        fetched_engagements = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(fetched_engagements)
+
     def test_get_engagement_by_id_invalid_id(self):
         """Test get engagements API with invalid ID."""
 

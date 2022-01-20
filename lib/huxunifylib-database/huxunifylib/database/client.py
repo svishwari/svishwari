@@ -5,12 +5,14 @@ from pathlib import Path
 import pymongo
 
 
+# pylint: disable=too-many-instance-attributes
 class DatabaseClient:
     """Database client for handling operations on the database."""
 
     def __init__(
         self,
-        host: Union[str, list],
+        connection_string: Optional[str] = None,
+        host: Union[str, list, None] = None,
         port: Optional[int] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
@@ -20,6 +22,7 @@ class DatabaseClient:
         """Initialize a DatabaseClient object.
 
         Args:
+            connection_string (Optional(str)): Connection string of database.
             host (Union[str, list]): Host name or list of host names.
             port (Optional(int)): Port number (optional).
             username ((Optional(str)): Username for database
@@ -31,7 +34,7 @@ class DatabaseClient:
             ssl_flag (Optional(bool)): SSL flag for database
                 connecting to MongoDB (optional).
         """
-
+        self._connection_string = connection_string
         self._host = host
         self._port = port
         self._username = username
@@ -45,7 +48,17 @@ class DatabaseClient:
         self._use_ssl_flag = ssl_flag
 
     @property
-    def host(self) -> Union[str, list]:
+    def connection_string(self) -> Union[str, None]:
+        """Get the connection string.
+
+        Returns:
+            Union[str, None]: Connection string to connect to mongo instance.
+        """
+
+        return self._connection_string
+
+    @property
+    def host(self) -> Union[str, list, None]:
         """Get the host name or list of host names.
 
         Returns:
@@ -102,6 +115,9 @@ class DatabaseClient:
         # authentication information and using the default
         # write concern to ensure acknowledgement of the write
         # to at least one database member (w=1)
+        if self._connection_string:
+            return pymongo.MongoClient(self._connection_string)
+
         mongo_args = {
             "host": self._host,
             "port": self._port,
@@ -115,4 +131,5 @@ class DatabaseClient:
         elif self._use_ssl_flag:
             mongo_args["ssl"] = True
             mongo_args["retrywrites"] = False
+
         return pymongo.MongoClient(**mongo_args)
