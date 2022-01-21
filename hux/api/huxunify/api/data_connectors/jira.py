@@ -141,7 +141,6 @@ class JiraConnection:
             f"{self.project_key} AND "
             f"{jql}"
         )
-        issues = self.jira_client.search_issues(
+        return self.jira_client.search_issues(
             jql_str=jql, json_result=True, fields=fields
         )
-        return issues
