@@ -34,7 +34,7 @@ from huxunify.api.schema.customers import (
 from huxunify.app import create_app
 
 
-# pylint: disable=R0904
+# pylint: disable=too-many-public-methods,too-many-lines
 class TestCustomersOverview(TestCase):
     """Purpose of this class is to test Customers overview."""
 
@@ -511,6 +511,29 @@ class TestCustomersOverview(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
             query_string={api_c.INTERVAL: interval},
             data=json.dumps(filter_attributes),
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(CustomerEventsSchema(), response.json, True)
+        )
+
+    def test_customer_events_default_interval_empty_body(self):
+        """Test fetching customer events for default interval for a hux-id
+        with empty body."""
+
+        hux_id = "HUX123456789012345"
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{hux_id}/events",
+            json=t_c.CUSTOMER_EVENT_BY_DAY_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
+            data=json.dumps({}),
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
