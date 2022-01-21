@@ -333,7 +333,6 @@ def get_destination_config(
     audience_id: ObjectId,
     destination: dict,
     engagement_id: ObjectId,
-    audience_router_batch_size: int = 5000,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
@@ -342,7 +341,6 @@ def get_destination_config(
         audience_id (ObjectId): The ID of the audience.
         destination (dict): Destination object.
         engagement_id (ObjectId): The ID of the engagement.
-        audience_router_batch_size (int): Audience router AWS batch size.
 
     Returns:
         DestinationBatchJob: Destination batch job object.
@@ -414,7 +412,6 @@ def get_destination_config(
         AudienceRouterConfig.DELIVERY_JOB_ID.name: str(
             audience_delivery_job[db_c.ID]
         ),
-        AudienceRouterConfig.BATCH_SIZE.name: str(audience_router_batch_size),
         MongoDBCredentials.MONGO_DB_HOST.name: config.MONGO_DB_HOST,
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
