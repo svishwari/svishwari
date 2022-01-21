@@ -266,6 +266,7 @@ export default {
   methods: {
     ...mapActions({
       deliverStandaloneAudience: "audiences/deliverStandaloneAudience",
+      setAlert: "alerts/setAlert",
     }),
     async standaloneOptions(option, data) {
       switch (option.title.toLowerCase()) {
@@ -292,7 +293,14 @@ export default {
         id: this.audienceId,
         payload: allIDs,
       })
+      this.dataPendingMesssage()
       this.$emit("onDeliveryStandaloneDestination")
+    },
+    dataPendingMesssage() {
+      this.setAlert({
+        type: "pending",
+        message: `All standalone destination, has started delivering as a standalone deliveries`,
+      })
     },
   },
 }
