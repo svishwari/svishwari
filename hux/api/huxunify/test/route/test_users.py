@@ -442,3 +442,61 @@ class TestUserRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertDictEqual(expected_response, response.json)
+
+    @mock.patch("huxunify.api.route.user.JiraConnection")
+    def test_get_requested_user(self, mock_jira: MagicMock):
+        """Test get requested users.
+
+        Args:
+            mock_jira (MagicMock): magic mock of JiraConnection
+        """
+        expected_response = {
+            "display_name": "Sarah, Huxley",
+            "created": "2022-01-12T15:25:54.000Z",
+            "updated": "2022-01-12T15:25:55.000Z",
+            "key": "HUS-2010",
+            "email": "sh@fake.com",
+            "pii_access": False,
+            "status": "In Progress",
+            "access_level": "admin",
+        }
+
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.check_jira_connection.return_value = True
+        mock_jira_instance.get_issues.return_value = (
+            t_c.SAMPLE_USER_REQUEST_JIRA_ISSUES
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.REQUESTED_USERS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertDictEqual(expected_response, response.json[0])
+
+    @mock.patch("huxunify.api.route.user.JiraConnection")
+    def test_get_requested_users_no_requests(self, mock_jira: MagicMock):
+        """Test get requested users when no issues for request found.
+
+        Args:
+            mock_jira (MagicMock): magic mock of JiraConnection
+        """
+        empty_issue_jira_response = {
+            "startAt": 0,
+            "maxResults": 50,
+            "total": 0,
+            "issues": [],
+        }
+
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.check_jira_connection.return_value = True
+        mock_jira_instance.get_issues.return_value = empty_issue_jira_response
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.REQUESTED_USERS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            "No user requests found.", response.json.get(api_c.MESSAGE)
+        )

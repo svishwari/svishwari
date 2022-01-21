@@ -1483,3 +1483,13 @@ REQUESTED_BY = "requested_by"
 RESOURCE_OWNER = "resource_owner"
 ALLOWED_RESOURCES_FOR_ABAC = [AUDIENCE, ENGAGEMENT]
 ALLOWED_ACCESS_RULES = [RESOURCE_OWNER]
+
+REQUESTED_USERS = "requested_users"
+ISSUES = "issues"
+CREATED = "created"
+FIELDS = "fields"
+# Jira States.
+STATE_IN_PROGRESS = "In Progress"
+STATE_TO_DO = "To Do"
+STATE_IN_REVIEW = "In Review"
+STATE_DONE = "Done"

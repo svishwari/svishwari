@@ -29,6 +29,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     get_user_from_db,
     create_description_for_user_request,
+    filter_team_member_requests,
 )
 from huxunify.api.schema.user import (
     UserSchema,
@@ -36,6 +37,7 @@ from huxunify.api.schema.user import (
     TicketSchema,
     TicketGetSchema,
     NewUserRequest,
+    RequestedUserSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -636,4 +638,65 @@ class RequestNewUser(SwaggerView):
         return (
             TicketGetSchema().dump(new_issue),
             HTTPStatus.CREATED,
+        )
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/{api_c.REQUESTED_USERS}",
+    "UsersRequested",
+)
+class UsersRequested(SwaggerView):
+    """User Profile Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Retrieve requested users.",
+            "schema": {"type": "array", "items": RequestedUserSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get requested users."
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
+        """Retrieves requested users.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: dict of requested users, HTTP status code.
+        """
+        summary = api_c.NEW_USER_REQUEST_PREFIX
+        summary = summary.replace("[", '"').replace("]", '"')
+
+        jira_issues = JiraConnection().get_issues(
+            jql=f"summary~{summary} ORDER BY updated DESC",
+            fields=f"{api_c.DESCRIPTION},{api_c.STATUS},{api_c.UPDATED},"
+            f"{api_c.CREATED}",
+        )
+
+        jira_issues = jira_issues.get(api_c.ISSUES)
+        if not jira_issues:
+            return {"message": "No user requests found."}, HTTPStatus.OK
+
+        return (
+            jsonify(
+                RequestedUserSchema().dump(
+                    filter_team_member_requests(jira_issues, remove_done=True),
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
         )
