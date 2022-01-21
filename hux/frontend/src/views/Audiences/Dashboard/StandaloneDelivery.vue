@@ -258,33 +258,41 @@ export default {
       ],
     }
   },
-  computed: {},
+  computed: {
+    audienceId() {
+      return this.$route.params.id
+    },
+  },
   methods: {
     ...mapActions({
       deliverStandaloneAudience: "audiences/deliverStandaloneAudience",
     }),
-
     async standaloneOptions(option, data) {
-      debugger
       switch (option.title.toLowerCase()) {
         case "deliver now":
           const payload = {
             destinations: [{ id: data.delivery_platform_id }],
           }
-          await this.deliverStandaloneAudience({ 
-            id: option.id,
+          await this.deliverStandaloneAudience({
+            id: this.audienceId,
             payload: payload,
           })
           this.$emit("onDeliveryStandaloneDestination")
           break
-          
+
         default:
           break
       }
     },
-    deliverAll() {
-      // TODO:APIs are not ready
-      
+    async deliverAll() {
+      let allIDs = this.audience.standalone_deliveries.map((obj) => ({
+        id: obj.delivery_platform_id,
+      }))
+      await this.deliverStandaloneAudience({
+        id: this.audienceId,
+        payload: allIDs,
+      })
+      this.$emit("onDeliveryStandaloneDestination")
     },
   },
 }
