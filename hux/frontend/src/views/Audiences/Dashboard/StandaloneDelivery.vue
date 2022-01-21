@@ -97,7 +97,7 @@
                           v-for="option in destinationMenuOptions"
                           :key="option.id"
                           :disabled="!option.active"
-                          @click="standaloneOptions(option)"
+                          @click="standaloneOptions(option, item)"
                         >
                           <v-list-item-title v-if="!option.menu">
                             {{ option.title }}
@@ -193,6 +193,9 @@
 </template>
 
 <script>
+// helpers
+import { mapGetters, mapActions } from "vuex"
+// views
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import Size from "@/components/common/huxTable/Size.vue"
@@ -249,7 +252,7 @@ export default {
         },
       ],
       destinationMenuOptions: [
-        { id: 1, title: "Deliver now", active: false },
+        { id: 1, title: "Deliver now", active: true },
         { id: 3, title: "Open destination", active: false },
         { id: 4, title: "Remove destination", active: false },
       ],
@@ -257,11 +260,31 @@ export default {
   },
   computed: {},
   methods: {
-    standaloneOptions() {
-      // TODO:APIs are not ready
+    ...mapActions({
+      deliverStandaloneAudience: "audiences/deliverStandaloneAudience",
+    }),
+
+    async standaloneOptions(option, data) {
+      debugger
+      switch (option.title.toLowerCase()) {
+        case "deliver now":
+          const payload = {
+            destinations: [{ id: data.delivery_platform_id }],
+          }
+          await this.deliverStandaloneAudience({ 
+            id: option.id,
+            payload: payload,
+          })
+          this.$emit("onDeliveryStandaloneDestination")
+          break
+          
+        default:
+          break
+      }
     },
     deliverAll() {
       // TODO:APIs are not ready
+      
     },
   },
 }

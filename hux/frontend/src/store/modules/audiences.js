@@ -84,6 +84,10 @@ const mutations = {
     state.filteredDeliveries = deliveries
   },
 
+  SET_STANDALONE_DELIVERIES(state, { id, deliveries }) {
+    Vue.set(state.audiences.standaloneDeliveries, id, deliveries)
+  },
+
   SET_DEMOGRAPHICS(state, data) {
     state.demographics = data
   },
@@ -285,6 +289,16 @@ const actions = {
         name: response.data.name,
       })
       return state.audiences[id]
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async deliverStandaloneAudience({ commit, state }, { id, payload }) {
+    try {
+      const response = await api.audiences.deliver(id, payload)
+      return response.data
     } catch (error) {
       handleError(error)
       throw error

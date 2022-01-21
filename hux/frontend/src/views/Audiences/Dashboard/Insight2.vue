@@ -236,6 +236,7 @@
               <standalone-delivery
                 :audience="audience"
                 @onAddStandaloneDestination="addStandaloneDestination($event)"
+                @onDeliveryStandaloneDestination="refreshEntity()"
               />
             </v-col>
             <v-col :cols="advertisingCols" class="">
