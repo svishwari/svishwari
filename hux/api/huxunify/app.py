@@ -6,7 +6,6 @@ from flasgger import Swagger
 from flask_cors import CORS
 from flask_apscheduler import APScheduler
 
-from huxunify.api.config import load_env_vars
 from huxunify.api.prometheus import monitor_app
 from huxunify.api.route import ROUTES
 from huxunify.api.data_connectors.scheduler import (
@@ -71,8 +70,6 @@ def create_app() -> Flask:
     Returns:
         Flask: Returns a flask object.
     """
-
-    load_env_vars()
 
     # setup the flask app
     flask_app = Flask(__name__)
