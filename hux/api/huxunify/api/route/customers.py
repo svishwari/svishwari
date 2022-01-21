@@ -975,7 +975,7 @@ class CustomerEvents(SwaggerView):
         Validation.validate_hux_id(hux_id)
         interval = request.args.get(api_c.INTERVAL, api_c.DAY).lower()
 
-        if request.json is not None:
+        if request.json:
             start_date = request.json.get(api_c.START_DATE)
             end_date = min(
                 request.json.get(api_c.END_DATE),
