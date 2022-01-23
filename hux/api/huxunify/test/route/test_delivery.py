@@ -727,3 +727,95 @@ class TestDeliveryRoutes(TestCase):
             },
             response.json,
         )
+
+    def test_set_delivery_schedule_for_all_destinations(self):
+        """Test setting a delivery schedule for all engaged destination(s)"""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        delivery_schedule = {
+            api_c.PERIODICIY: "Daily",
+            api_c.EVERY: 2,
+            api_c.HOUR: 11,
+            api_c.MINUTE: 15,
+            api_c.PERIOD: "PM",
+        }
+
+        self.assertEqual(
+            HTTPStatus.OK,
+            self.app.post(
+                (
+                    f"{t_c.BASE_ENDPOINT}"
+                    f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                    f"{api_c.AUDIENCE}/{db_c.ZERO_OBJECT_ID}/"
+                    f"{api_c.DESTINATION}/{self.destinations[0][db_c.ID]}/"
+                    f"{api_c.SCHEDULE}"
+                ),
+                json=delivery_schedule,
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
+
+        # validate the schedule was actually set.
+        engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+        self.assertIn(db_c.AUDIENCES, engagement)
+
+        destinations = [
+            d for a in engagement[db_c.AUDIENCES] for d in a[db_c.DESTINATIONS]
+        ]
+
+        # check length of destinations
+        self.assertEqual(2, len(destinations))
+
+        # process each destination and validate
+        for destination in destinations:
+            self.assertIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, destination)
+            self.assertDictEqual(
+                destination[db_c.ENGAGEMENT_DELIVERY_SCHEDULE],
+                delivery_schedule,
+            )
+
+    def test_delete_delivery_schedule_for_all_destinations(self):
+        """Test setting a delivery schedule for all engaged
+        destinations."""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        response = self.app.delete(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                f"{api_c.AUDIENCE}/{db_c.ZERO_OBJECT_ID}/"
+                f"{api_c.DESTINATION}/{self.destinations[0][db_c.ID]}/"
+                f"{api_c.SCHEDULE}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(
+            HTTPStatus.OK,
+            response.status_code,
+        )
+
+        # validate the schedule was actually unset.
+        engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+        self.assertIn(db_c.AUDIENCES, engagement)
+        self.assertTrue(
+            not any(
+                d.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)
+                for x in engagement[db_c.AUDIENCES]
+                for d in x[db_c.DESTINATIONS]
+            )
+        )

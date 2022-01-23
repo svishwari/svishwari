@@ -176,7 +176,18 @@
     color: var(--v-primary-lighten6);
   }
 }
-
+.active-icon {
+  fill: var(--v-primary-lighten6);
+  color: var(--v-primary-lighten6);
+}
+.icon-shadow {
+  display: block;
+  width: 40px;
+  height: 40px;
+  background: var(--v-primary-lighten1);
+  border-radius: 100px;
+  margin-bottom: 6px;
+}
 .no-background {
   background: none !important;
 }

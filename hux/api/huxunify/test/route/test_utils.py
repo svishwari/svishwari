@@ -5,7 +5,7 @@ from unittest import TestCase, mock
 
 import mongomock
 from bson import ObjectId
-from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.client import DatabaseClient
 from hypothesis import given, strategies as st
 
@@ -119,7 +119,10 @@ class TestRouteUtils(TestCase):
             "huxunify.api.route.utils.check_aws_batch",
             return_value=(True, "AWS Batch available"),
         ).start()
-
+        mock.patch(
+            "huxunify.api.route.utils.JiraConnection.check_jira_connection",
+            return_value=(True, "Jira available"),
+        ).start()
         health = get_health_check()
         self.assertTrue(health)
 
@@ -299,13 +302,16 @@ class TestRouteUtils(TestCase):
                 self.assertEqual(
                     city, section_filter[api_c.AUDIENCE_FILTER_VALUE]
                 )
-            if section_filter[api_c.AUDIENCE_FILTER_FIELD] == api_c.STATE:
+            if (
+                section_filter[api_c.AUDIENCE_FILTER_FIELD]
+                == api_c.STATE.title()
+            ):
                 self.assertEqual(
                     state, section_filter[api_c.AUDIENCE_FILTER_VALUE]
                 )
 
         self.assertIn(api_c.AUDIENCE_FILTER_CITY, section_filters)
-        self.assertIn(api_c.STATE, section_filters)
+        self.assertIn(api_c.STATE.title(), section_filters)
 
     def test_convert_unique_city_filter_value_error(self):
         """Test conversion of unique city filter for value error."""

@@ -17,9 +17,7 @@ class NotificationManagementTest(TestCase):
     def setUp(self):
         """Setup resources before each test."""
 
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient(host="localhost", port=27017).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 

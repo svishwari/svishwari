@@ -29,7 +29,9 @@ const actions = {
     let id = state.id
     commit("SET_ALERT", alert)
     setTimeout(() => {
-      commit("REMOVE_ALERT", id)
+      if (alert.code != 401) {
+        commit("REMOVE_ALERT", id)
+      }
     }, 5000)
   },
   removeAlert({ commit }, id) {

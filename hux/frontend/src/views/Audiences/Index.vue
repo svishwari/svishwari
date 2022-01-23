@@ -327,7 +327,7 @@
         <template #button>
           <span v-if="numFiltersSelected <= 0">
             <router-link
-              :to="{ name: 'AudienceConfiguration' }"
+              :to="{ name: 'SegmentPlayground' }"
               class="text-decoration-none"
               append
               data-e2e="add-audience"
@@ -588,6 +588,13 @@ export default {
     clearFilters() {
       this.$refs.filters.clear()
     },
+    initiateClone(audienceId) {
+      this.$router.push({
+        name: "CloneAudience",
+        params: { id: audienceId },
+      })
+      //CloneAudience
+    },
     attributeOptions() {
       const options = []
       if (this.ruleAttributes && this.ruleAttributes.rule_attributes) {
@@ -665,8 +672,10 @@ export default {
         },
         {
           title: "Clone audience",
-          isDisabled: true,
-          onClick: () => {},
+          isDisabled: false,
+          onClick: () => {
+            this.initiateClone(audience.id)
+          },
         },
         {
           title: "Create a lookalike",
@@ -767,7 +776,6 @@ export default {
         worked_by: params.selectedAudienceWorkedWith,
         attribute: params.selectedAttributes,
       })
-      this.isFilterToggled = false
       this.loading = false
     },
     formatText: formatText,

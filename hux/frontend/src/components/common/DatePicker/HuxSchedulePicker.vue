@@ -1,74 +1,84 @@
 <template>
   <div>
-    <div class="edit-schedule-wrapper">
-      <span class="pr-2">
-        <span class="black--text text--darken-4 text-caption">Repeat</span>
-        <v-select
-          v-model="value.periodicity"
-          :items="repeatItems"
-          :menu-props="menuProps"
-          dense
-          outlined
-          background-color="white"
-          class="select-common periodicity-select mt-1"
-          append-icon="mdi-chevron-down"
-        />
-      </span>
-      <span class="pr-2">
-        <span class="black--text text--darken-4 text-caption">Every</span>
-        <v-select
-          v-model="value.every"
-          :items="everyItems"
-          :menu-props="menuProps"
-          dense
-          outlined
-          background-color="white"
-          class="select-common every-select mt-1"
-          append-icon="mdi-chevron-down"
-        />
-      </span>
-      <span class="black--text text--darken-4 text-h6 pt-3 pr-3">
-        {{ timeFrame }}(s) at
-      </span>
-      <span class="pr-2">
-        <v-select
-          v-model="value.hour"
-          :items="hourItems"
-          :menu-props="menuProps"
-          dense
-          outlined
-          background-color="white"
-          class="select-common hour-select pt-5 mt-1"
-          append-icon="mdi-chevron-down"
-        />
-      </span>
-      <span class="pr-2">
-        <v-select
-          v-model="minute"
-          :items="minItems"
-          :menu-props="menuProps"
-          dense
-          outlined
-          background-color="white"
-          class="select-common minute-select pt-5 mt-1"
-          append-icon="mdi-chevron-down"
-        />
-      </span>
-      <span>
-        <v-select
-          v-model="value.period"
-          :items="periodItems"
-          :menu-props="menuProps"
-          dense
-          outlined
-          background-color="white"
-          class="select-common period-select pt-5 mt-1"
-          append-icon="mdi-chevron-down"
-        />
-      </span>
+    <div
+      class="edit-schedule-wrapper"
+      :class="short ? '' : 'd-flex align-center'"
+    >
+      <div class="d-flex align-center">
+        <span class="pr-2">
+          <span class="black--text text--darken-4 text-caption">Repeat</span>
+          <v-select
+            v-model="value.periodicity"
+            :items="repeatItems"
+            :menu-props="menuProps"
+            dense
+            outlined
+            background-color="white"
+            class="select-common periodicity-select mt-1"
+            append-icon="mdi-chevron-down"
+          />
+        </span>
+        <span class="pr-2">
+          <span class="black--text text--darken-4 text-caption">Every</span>
+          <v-select
+            v-model="value.every"
+            :items="everyItems"
+            :menu-props="menuProps"
+            dense
+            outlined
+            background-color="white"
+            class="select-common every-select mt-1"
+            append-icon="mdi-chevron-down"
+          />
+        </span>
+        <span class="black--text text--darken-4 text-h6 pt-3 pr-3">
+          {{ timeFrame }}(s) at
+        </span>
+      </div>
+      <div class="d-flex align-center">
+        <span class="pr-2">
+          <v-select
+            v-model="value.hour"
+            :items="hourItems"
+            :menu-props="menuProps"
+            dense
+            outlined
+            background-color="white"
+            class="select-common hour-select mt-1"
+            :class="short ? 'pt-2' : 'pt-5'"
+            append-icon="mdi-chevron-down"
+          />
+        </span>
+        <span class="pr-2">
+          <v-select
+            v-model="minute"
+            :items="minItems"
+            :menu-props="menuProps"
+            dense
+            outlined
+            background-color="white"
+            class="select-common minute-select mt-1"
+            :class="short ? 'pt-2' : 'pt-5'"
+            append-icon="mdi-chevron-down"
+          />
+        </span>
+        <span>
+          <v-select
+            v-model="value.period"
+            :items="periodItems"
+            :menu-props="menuProps"
+            dense
+            outlined
+            background-color="white"
+            class="select-common period-select mt-1"
+            :class="short ? 'pt-2' : 'pt-5'"
+            append-icon="mdi-chevron-down"
+          />
+        </span>
+      </div>
     </div>
 
-    <div v-if="value.periodicity === 'Weekly'" class="mt-6">
+    <div v-if="value.periodicity === 'Weekly'" class="weekly-buttons mt-4">
       <div class="text-caption black--text mb-1">On</div>
       <v-btn
         v-for="day in day_of_week"
@@ -78,16 +88,18 @@
         height="30"
         min-height="30"
         class="day-button"
+        :class="
+          isDaySelected(day) ? 'day-button-selected primary lighten-1' : 'white'
+        "
         :ripple="false"
-        :color="isDaySelected(day) ? 'primary lighten-1' : 'primary lighten-2'"
         @click="toggleWeekDay(day)"
       >
         <span
           class="text-h6"
           :class="
             isDaySelected(day)
-              ? 'primary--text text--lighten-8'
-              : 'black--text text--darken-1'
+              ? 'primary--text text--lighten-6'
+              : 'black--text text--lighten-4'
           "
         >
           {{ day.day }}
@@ -95,7 +107,7 @@
       </v-btn>
     </div>
 
-    <div v-if="value.periodicity === 'Monthly'" class="mt-6">
+    <div v-if="value.periodicity === 'Monthly'" class="mt-4">
       <div class="text-caption black--text mb-1">On</div>
       <div class="d-flex">
         <v-select
@@ -176,6 +188,10 @@ export default {
     endDate: {
       type: String,
       required: false,
+    },
+    short: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -309,9 +325,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .edit-schedule-wrapper {
-  display: flex;
-  align-items: center;
-
   ::v-deep .periodicity-select {
     width: 130px;
   }
@@ -366,9 +379,15 @@ export default {
     }
   }
 }
-.day-button {
-  border-radius: 2px;
-  margin-right: 2px;
-  @extend .no-shadow;
+.weekly-buttons {
+  .day-button {
+    padding: 0;
+    border-radius: 2px;
+    margin-right: 2px;
+    @extend .no-shadow;
+  }
+  .day-button-selected {
+    border: 1px solid var(--v-primary-lighten6) !important;
+  }
 }
 </style>

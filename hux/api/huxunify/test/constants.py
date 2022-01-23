@@ -406,75 +406,54 @@ MOCKED_MODEL_VERSION_HISTORY = {
     "results": [
         {
             "features": [
-                "2021-07-28",
-                "2021-07-28",
-                "Propensity of a customer unsubscribing after "
-                "receiving an email.",
-                "2021-07-14",
-                "90",
+                None,
+                "2021-10-13 18:59:30",
+                "Predicts the propensity of a customer to unsubscribe",
+                "2021-10-05",
+                "60",
                 "HUS",
-                "Propensity to Unsubscribe",
+                "Unsubscribe Model",
                 "unsubscribe",
-                "Susan Miller",
-                "smiller@xyz.com",
+                "Decisioning",
+                "decisioning@fake.com",
                 "7",
-                "Stopped",
+                "success",
             ],
-            "joinKeys": ["21.7.28"],
+            "joinKeys": ["21.10.12"],
         },
         {
             "features": [
-                "2021-07-29",
-                "2021-07-29",
-                "Propensity of a customer unsubscribing after "
-                "receiving an email.",
-                "2021-07-15",
-                "90",
+                None,
+                "2021-11-08 14:53:56",
+                "Predicts the propensity of a customer to unsubscribe",
+                "2021-10-28",
+                "60",
                 "HUS",
-                "Propensity to Unsubscribe",
+                "Unsubscribe Model",
                 "unsubscribe",
-                "Susan Miller",
-                "smiller@xyz.com",
+                "Decisioning",
+                "decisioning@fake.com",
                 "7",
-                "Active",
+                "success",
             ],
-            "joinKeys": ["21.7.29"],
+            "joinKeys": ["21.11.04"],
         },
         {
             "features": [
-                "2021-07-30",
-                "2021-07-30",
-                "Propensity of a customer unsubscribing after "
-                "receiving an email.",
-                "2021-07-16",
-                "90",
+                "2021-11-14",
+                "2021-11-15 17:21:06",
+                "Predicts the propensity of a customer to unsubscribe",
+                "2021-11-07",
+                "60",
                 "HUS",
-                "Propensity to Unsubscribe",
+                "Unsubscribe Model",
                 "unsubscribe",
-                "Susan Miller",
-                "smiller@xyz.com",
+                "Decisioning",
+                "decisioning@fake.com",
                 "7",
-                "Active",
+                "success",
             ],
-            "joinKeys": ["21.7.30"],
-        },
-        {
-            "features": [
-                "2021-07-31",
-                "2021-07-31",
-                "Propensity of a customer unsubscribing after "
-                "receiving an email.",
-                "2021-07-17",
-                "90",
-                "HUS",
-                "Propensity to Unsubscribe",
-                "unsubscribe",
-                "Susan Miller",
-                "smiller@xyz.com",
-                "7",
-                "Active",
-            ],
-            "joinKeys": ["21.7.31"],
+            "joinKeys": ["21.11.14"],
         },
     ]
 }
@@ -484,32 +463,35 @@ MOCKED_MODEL_DRIFT = {
         {
             "features": [
                 233.5,
+                None,
                 "2021-07-28",
                 "Lifetime Value",
                 "ltv",
-                "21.7.28",
+                "21.10.12",
             ],
-            "joinKeys": ["21.7.28"],
+            "joinKeys": ["21.10.12"],
         },
         {
             "features": [
                 263.3,
+                None,
                 "2021-07-29",
                 "Lifetime Value",
                 "ltv",
-                "21.7.29",
+                "21.11.04",
             ],
-            "joinKeys": ["21.7.29"],
+            "joinKeys": ["21.11.04"],
         },
         {
             "features": [
                 215.5,
                 "2021-07-30",
+                "2021-07-30",
                 "Lifetime Value",
                 "ltv",
-                "21.7.30",
+                "21.11.14",
             ],
-            "joinKeys": ["21.7.30"],
+            "joinKeys": ["21.11.14"],
         },
     ]
 }
@@ -699,7 +681,7 @@ MOCKED_MODEL_LIFT_CHART = [
 
 MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
     {
-        api_c.ID: 1,
+        api_c.ID: "1",
         api_c.CREATE_TIME: datetime.utcnow(),
         api_c.LAST_TRAINED: datetime.utcnow(),
         api_c.DESCRIPTION: "Predicts the propensity of a customer",
@@ -709,11 +691,11 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
         api_c.TYPE: api_c.PURCHASE,
         api_c.OWNER: "Susan Miller",
         api_c.STATUS: api_c.STATUS_ACTIVE,
-        api_c.CURRENT_VERSION: "21.7.28",
+        api_c.CURRENT_VERSION: "21.10.12",
         api_c.PREDICTION_WINDOW: 90,
     },
     {
-        api_c.ID: 1,
+        api_c.ID: "1",
         api_c.CREATE_TIME: datetime.utcnow(),
         api_c.LAST_TRAINED: datetime.utcnow(),
         api_c.DESCRIPTION: "Predicts the propensity of a customer",
@@ -723,11 +705,11 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
         api_c.TYPE: api_c.PURCHASE,
         api_c.OWNER: "Susan Miller",
         api_c.STATUS: api_c.STATUS_ACTIVE,
-        api_c.CURRENT_VERSION: "21.7.29",
+        api_c.CURRENT_VERSION: "21.11.04",
         api_c.PREDICTION_WINDOW: 90,
     },
     {
-        api_c.ID: 1,
+        api_c.ID: "1",
         api_c.CREATE_TIME: datetime.utcnow(),
         api_c.LAST_TRAINED: datetime.utcnow(),
         api_c.DESCRIPTION: "Predicts the propensity of a customer",
@@ -737,7 +719,7 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
         api_c.TYPE: api_c.PURCHASE,
         api_c.OWNER: "Susan Miller",
         api_c.STATUS: api_c.STATUS_ACTIVE,
-        api_c.CURRENT_VERSION: "21.7.30",
+        api_c.CURRENT_VERSION: "21.11.14",
         api_c.PREDICTION_WINDOW: 90,
     },
 ]
@@ -795,6 +777,7 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
     api_c.RESULTS: [
         {
             api_c.FEATURES: [
+                None,
                 "2021-07-28",
                 "1to2y-COGS-sum",
                 -1165.89062,
@@ -806,6 +789,7 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
         },
         {
             api_c.FEATURES: [
+                None,
                 "2021-07-29",
                 "1to2y-data_source-orders",
                 -880.273438,
@@ -817,6 +801,7 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
         },
         {
             api_c.FEATURES: [
+                None,
                 "2021-07-30",
                 "1to2y-ITEMQTY-avg",
                 -210.867187,
@@ -828,6 +813,7 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
         },
         {
             api_c.FEATURES: [
+                None,
                 "2021-07-31",
                 "1to2y-COGS-sum",
                 -364.695312,
@@ -839,6 +825,7 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
         },
         {
             api_c.FEATURES: [
+                "2021-07-31",
                 "2021-07-31",
                 "1to2y-COGS-sum",
                 "not a number",

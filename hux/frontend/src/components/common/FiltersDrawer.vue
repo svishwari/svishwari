@@ -39,6 +39,7 @@
             <hux-button
               size="large"
               variant="white"
+              :is-disabled="!Boolean(count)"
               is-tile
               class="
                 text-button
@@ -58,6 +59,7 @@
               color="primary"
               class="text-button ml-auto"
               width="157"
+              :is-disabled="!Boolean(count)"
               @click="$emit('apply')"
             >
               Apply filter

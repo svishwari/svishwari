@@ -1,8 +1,8 @@
 <template>
   <div class="pt-2">
     <v-card class="overview-card px-6 py-5 card-style">
-      <v-card-title class="d-flex justify-space-between pa-0 mb-2">
-        <h3 class="text-h3 mb-2">Engagement overview</h3>
+      <v-card-title class="d-flex justify-space-between pa-0 pb-2">
+        <h3 class="text-h3 pb-2">Engagement overview</h3>
         <div class="d-flex align-center">
           <v-btn
             text
@@ -47,13 +47,13 @@
             @click="$emit('deliverEngagement', $event)"
           >
             <icon
-              class="mr-2"
+              class="mr-1"
               type="deliver_2"
-              :size="24"
+              :size="37"
               :color="'primary'"
               :variant="'base'"
             />
-            Deliver All
+            <span class="deliverAll"> Deliver all </span>
           </v-btn>
         </div>
       </v-card-title>
@@ -205,7 +205,7 @@ export default {
   position: absolute !important;
 }
 .overview-card {
-  height: 150px;
+  height: 156px;
 }
 .audience-table {
   border-radius: 12px;
@@ -220,5 +220,8 @@ export default {
       }
     }
   }
+}
+.deliverAll {
+  margin-top: 2px;
 }
 </style>

@@ -73,6 +73,9 @@ export default {
     value: function () {
       this.localDrawer = this.value
     },
+    localDrawer: function () {
+      this.$emit("input", this.localDrawer)
+    },
     clearFilterData: function () {
       this.clear()
     },

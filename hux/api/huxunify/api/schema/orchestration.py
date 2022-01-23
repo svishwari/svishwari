@@ -45,6 +45,9 @@ class LookalikeAudienceGetSchema(Schema):
     favorite = fields.Boolean(required=True)
     is_lookalike = fields.Boolean(default=True)
     status = fields.String(default=db_c.AUDIENCE_STATUS_ERROR)
+    delivery_platform_link = fields.String(default=None)
+    delivery_platform_name = fields.String()
+    delivery_platform_type = fields.String()
 
 
 class AudienceDeliverySchema(Schema):
@@ -58,6 +61,7 @@ class AudienceDeliverySchema(Schema):
     delivery_platform_id = fields.String(
         required=True, validate=validate_object_id
     )
+    link = fields.String()
 
 
 class DeliveriesSchema(Schema):
@@ -77,6 +81,7 @@ class DeliveriesSchema(Schema):
     is_ad_platform = fields.Bool(attribute=api_c.IS_AD_PLATFORM)
     delivery_schedule = fields.String()
     next_delivery = DateTimeWithZ()
+    link = fields.String()
 
 
 class EngagementDeliverySchema(EngagementGetSchema):

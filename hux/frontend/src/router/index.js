@@ -161,6 +161,16 @@ const routes = [
     },
   },
   {
+    path: "/audiences/:id/clone",
+    name: "CloneAudience",
+    component: () => import("@/views/SegmentPlayground/Index.vue"),
+    meta: {
+      layout: "app",
+      title: "Clone an Audience",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/audiences/:id/insight2",
     name: "AudienceInsight2",
     component: () => import("@/views/Audiences/Insight.vue"),

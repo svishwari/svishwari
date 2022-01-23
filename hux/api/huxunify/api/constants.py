@@ -17,6 +17,7 @@ PORT = "port"
 USER = "user"
 USERNAME = "username"
 PASSWORD = "password"
+CONNECTION_STRING = "connection_string"
 SSL_CERT_PATH = "ssl_cert_path"
 AWS_REGION = "AWS_REGION"
 AWS_S3_BUCKET_CONST = "S3_DATASET_BUCKET"
@@ -24,6 +25,7 @@ MONGO_DB_HOST = "MONGO_DB_HOST"
 MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
 MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
+MONGO_CONNECTION_STRING = "MONGO_CONNECTION_STRING"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
 RETURN_EMPTY_AUDIENCE_FILE = "RETURN_EMPTY_AUDIENCE_FILE"
@@ -40,8 +42,12 @@ AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
 DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
+DISABLE_SCHEDULED_DELIVERIES = "DISABLE_SCHEDULED_DELIVERIES"
 DISABLE_DELIVERY_MSG = "Deliveries are disabled."
 SALES_FORECASTING = "Sales forecasting"
+DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
+DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
+DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
 
 # ORCH ROUTER PARAMS FOR OKTA
 UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
@@ -681,6 +687,8 @@ DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
 GENERIC_DESTINATION = "generic_destination"
 DESTINATION_CATEGORIES = "destination_categories"
 DESTINATION_AUDIENCES = "destination_audiences"
+DELIVERY_PLATFORM_LINK = "delivery_platform_link"
+DELIVERY_PLATFORM_NAME = "delivery_platform_name"
 
 # Map db status values to api status values
 DESTINATION_STATUS_MAPPING = {
@@ -1015,13 +1023,13 @@ PROFILE_SIZE_PERCENT = "profile_size_percent"
 RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
-CLASSIFICATION_MODELS = [
-    UNSUBSCRIBE,
-    PURCHASE,
-    "propensity_positive_click type: binary",
-    "propensity_positive_open type: binary",
-    "propensity_positive_unsub type: binary",
-]
+CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
+# todo: remove in the future when we remove tecton.
+TEMP_MODELS_TYPE_MAPPING = {
+    "propensity_positive_click": UNSUBSCRIBE,
+    "propensity_positive_open": UNSUBSCRIBE,
+    "propensity_positive_unsub": UNSUBSCRIBE,
+}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
@@ -1144,6 +1152,7 @@ CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
 CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
     "cdm_connection_service_connection_health"
 )
+JIRA_CONNECTION_HEALTH = "jira_connection_health"
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
@@ -1354,6 +1363,7 @@ CONFIGURATIONS_ENDPOINT = "/configurations"
 APPLICATIONS_TAG = "applications"
 APPLICATION_ID = "application_id"
 APPLICATIONS_ENDPOINT = "/applications"
+ONLY_ACTIVE = "only_active"
 
 # Histogram data stub.
 VALUES = "values"
@@ -1474,9 +1484,6 @@ AUDIENCE_RULES_HISTOGRAM_DATA = {
 
 REASON_FOR_REQUEST = "reason_for_request"
 NEW_USER_REQUEST_PREFIX = "[NEW USER REQUEST]"
-DEFAULT_NEW_USER_PROJECT_NAME = "ADV"
-DEFAULT_OKTA_GROUP_NAME = "team-unified--base"
-DEFAULT_OKTA_APP = "HUX Audience Builder"
 REQUEST_NEW_USER = "request_new_user"
 REQUESTED_BY = "requested_by"
 
