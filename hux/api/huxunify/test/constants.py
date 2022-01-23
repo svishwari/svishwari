@@ -104,6 +104,8 @@ SOURCE_NAME = "source_name"
 SOURCE_SIZE = "source_size"
 SOURCE_ID = "source_id"
 
+TICKETS = "tickets"
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
@@ -1251,6 +1253,39 @@ REVENUE = "revenue"
 AVG_SPEND = "avg_spend"
 
 DESTINATIONS_CATEGORY = "destinations_category"
+
+SAMPLE_USER_JIRA_TICKETS = {
+    "expand": "names,schema",
+    "startAt": 0,
+    "maxResults": 50,
+    "total": 1,
+    "issues": [
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "id": "1234",
+            "self": "https://jira.hux.deloitte.com/rest/api/2/issue/117518",
+            "key": "HUS-0000",
+            "fields": {
+                "summary": "Test ticket summary",
+                "created": "2021-12-01T15:35:18.000+0000",
+                "status": {
+                    "self": "https://jira.hux.deloitte.com/rest/api/2/status/10000",
+                    "description": "",
+                    "iconUrl": "https://jira.hux.deloitte.com/images/icons/statuses/open.png",
+                    "name": "To Do",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "https://jira.hux.deloitte.com/rest/api/2/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "To Do",
+                    },
+                },
+            },
+        }
+    ],
+}
 
 
 def validate_schema(
