@@ -28,7 +28,7 @@
         description=""
         logo-option="true"
         data-e2e="client"
-        logoSize="60"
+        logo-size="60"
         logo-box-padding="0px"
         top-right-adjustment="mt-6 mr-0"
         interactable="false"
@@ -36,7 +36,7 @@
       >
         <template slot="default">
           <v-chip color="yellow" text-color="black" class="height-pill mt-n2">
-            Remove
+            Admin access
           </v-chip>
         </template>
       </descriptive-card>
@@ -45,7 +45,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import PageHeader from "@/components/PageHeader"

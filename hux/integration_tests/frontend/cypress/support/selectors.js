@@ -67,7 +67,7 @@ export default {
     clientPanelOpen: "[data-e2e='client_panel']",
     clientHeader: "[data-e2e='client-header']",
     clientDropdown: "[data-e2e='client_panel_dropdown']",
-    clientLists: "[data-e2e='client-lists']",
+    clientLists: "[data-e2e='clients-list']",
     client: "[data-e2e='client']",
   },
 

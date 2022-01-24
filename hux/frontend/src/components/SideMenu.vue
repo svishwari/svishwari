@@ -15,40 +15,45 @@
         class="d-flex ma-6"
         data-e2e="click-outside"
       />
-      <v-menu v-if="!isMini" v-model="menu" content-class="ml-n3" close-on-click offset-y>
+      <v-menu
+        v-if="!isMini"
+        v-model="menu"
+        content-class="ml-n3"
+        close-on-click
+        offset-y
+      >
         <template #activator="{ on }">
           <div class="pl-4 client py-2 mb-2" v-on="on">
             <span class="d-flex align-center justify-space-between">
-            <span class="d-flex align-center black--text">
-
-              <logo :type="client.logo" :size="24" class="mr-2" />
-              {{ client.name }}
-            </span>
+              <span class="d-flex align-center black--text">
+                <logo :type="client.logo" :size="24" class="mr-2" />
+                {{ client.name }}
+              </span>
               <span class="mr-3">
-          <icon
-            type="chevron-down"
-            :size="14"
-            class="arrow-icon d-block"
-            color="black"
-            :class="{ 'menu-active rotate-icon-180': menu }"
-            data-e2e="client_panel_dropdown"
-          ></icon>
-        </span>
+                <icon
+                  type="chevron-down"
+                  :size="14"
+                  class="arrow-icon d-block"
+                  color="black"
+                  :class="{ 'menu-active rotate-icon-180': menu }"
+                  data-e2e="client_panel_dropdown"
+                ></icon>
+              </span>
             </span>
           </div>
         </template>
-         <v-list-item class="white height-fix" data-e2e="client_panel">
-        <v-list-item-title class="body-1">
-          <a
-            class="text-decoration-none black--text"
-            href="/clients"
-            height="32px"
-            width="220px"
-          >
-            Switch client project
-          </a>
-        </v-list-item-title>
-      </v-list-item>
+        <v-list-item class="white height-fix" data-e2e="client_panel">
+          <v-list-item-title class="body-1">
+            <a
+              class="text-decoration-none black--text"
+              href="/clients"
+              height="32px"
+              width="220px"
+            >
+              Switch client project
+            </a>
+          </v-list-item-title>
+        </v-list-item>
       </v-menu>
     </template>
 
