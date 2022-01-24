@@ -424,7 +424,7 @@ class EngagementDeliverView(SwaggerView):
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
         ):
-            if destinations and pair[1]["id"] not in destinations:
+            if destinations and pair[1][db_c.OBJECT_ID] not in destinations:
                 continue
             if audiences and pair[0] in audiences:
                 continue
