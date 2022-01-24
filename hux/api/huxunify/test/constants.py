@@ -724,13 +724,37 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
     },
 ]
 
+# api_c.FEATURES: [
+#     "2021-07-28",
+#     "1to2y-COGS-sum",
+#     1165.89062,
+#     "Propensity to Unsubscribe",
+#     api_c.UNSUBSCRIBE,
+#     "21.7.28",
+#
+#     "2022-01-06",
+#     "2022-01-06 00:00:00",
+#     "4w-data_source-click",
+#     "'click' 'number of events by data source' in 'last 4 weeks'",
+#     0.1745832178355047,
+#     100351.13774108887,
+#     17519.624540293255,
+#     "Propensity positive click",
+#     "binary",
+#     "2022.01.06"
+# ],
+
+
 MOCKED_MODEL_PROPENSITY_FEATURES = {
     api_c.RESULTS: [
         {
             api_c.FEATURES: [
+                "2022-01-06",
                 "2021-07-28",
                 "1to2y-COGS-sum",
-                1165.89062,
+                0.1745832178355047,
+                100351.13774108887,
+                17519.624540293255,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.28",
@@ -740,7 +764,10 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
         {
             api_c.FEATURES: [
                 "2021-07-29",
+                "2021-07-29",
                 "1to2y-data_source-orders",
+                0.1745832178355047,
+                100351.13774108887,
                 880.273438,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
@@ -751,7 +778,10 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
         {
             api_c.FEATURES: [
                 "2021-07-30",
+                "2021-07-30",
                 "1to2y-ITEMQTY-avg",
+                0.1745832178355047,
+                100351.13774108887,
                 210.867187,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
