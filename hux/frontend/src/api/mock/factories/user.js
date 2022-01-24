@@ -26,5 +26,23 @@ export const user = {
   profile_photo: faker.image.imageUrl(),
   login_count: 0,
   modified: faker.date.recent(),
-  pii_access: faker.random.arrayElement([true, false]),
+  pii_access: true,
+  access_level: "Admin",
 }
+
+export const requestedUser = [
+  {
+    email: faker.internet.email(),
+    pii_access: faker.random.arrayElement([true, false]),
+    display_name: faker.name.findName(),
+    access_level: faker.random.arrayElement(["admin", "viewer", "editor"]),
+    status: faker.random.arrayElement([
+      "To Do",
+      "In Progress",
+      "In Review",
+      "Done",
+    ]),
+    created: faker.date.recent(),
+    updated: faker.date.recent(),
+  },
+]

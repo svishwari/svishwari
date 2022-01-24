@@ -13,6 +13,7 @@ import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import { dataFeeds } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
+import { requestedUser } from "./factories/user.js"
 import audienceCSVData from "./factories/audienceCSVData"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
@@ -63,6 +64,27 @@ export const defineRoutes = (server) => {
     }
     return new Response(code, headers, body)
   })
+  server.post("users/request_new_user", (_, request) => {
+    const code = 201
+    const headers = {}
+    const requestData = JSON.parse(request.requestBody)
+    const body = {
+      description:
+        "*Project Name:* ADV \n*Required Info:* Please add them to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* " +
+        requestData.first_name +
+        "\n*Email:*" +
+        requestData.email +
+        "\n*Access Level:* admin \n*PII Access:*" +
+        requestData.pii_access +
+        " \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:*" +
+        me.full_name(),
+      key: "HUS-" + `${faker.datatype.number({ min: 1000, max: 3000 })}`,
+      id: faker.datatype.number({ min: 100000, max: 1000000 }),
+      summary: "[NEW USER REQUEST] for " + requestData.email,
+    }
+    return new Response(code, headers, body)
+  })
+  server.get("users/requested_users", () => requestedUser)
 
   // data sources
   server.get("/data-sources")

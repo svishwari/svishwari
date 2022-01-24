@@ -28,7 +28,7 @@ class UserSchema(Schema):
         required=True,
         validate=validate_object_id,
     )
-    email = Str(required=True, attribute="email_address")
+    email = Str(required=True, attribute=api_c.USER_EMAIL_ADDRESS)
     display_name = Str(example="Joe M")
     first_name = Str()
     last_name = Str()
@@ -69,9 +69,15 @@ class TicketGetSchema(Schema):
 
     id = Int(example=1)
     key = Str(example="ABC-123")
-    issue_type = Str(example=api_c.TICKET_TYPE_BUG)
-    summary = Str(example="Audience and Engagement Dashboard not loading")
-    description = Str(example="Description of the issue.")
+    issue_type = Str(required=False, example=api_c.TICKET_TYPE_BUG)
+    summary = Str(example="Summary of the issue")
+    description = Str(required=False, example="Description of the issue.")
+    status = Str(required=False, example="To Do")
+    create_time = DateTimeWithZ(
+        attribute="created",
+        required=False,
+        example="2021-08-05T14:44:42.694Z",
+    )
 
 
 class NewUserRequest(Schema):

@@ -62,6 +62,7 @@ class Config:
 
     # JIRA
     JIRA_PROJECT_KEY = config(api_c.JIRA_PROJECT_KEY, default="")
+    JIRA_USER_EMAIL = config(api_c.JIRA_USER_EMAIL, default="")
     JIRA_API_KEY = config(api_c.JIRA_API_KEY, default="")
     JIRA_SERVER = config(api_c.JIRA_SERVER, default="")
 
@@ -171,6 +172,7 @@ class PyTestConfig(Config):
 
     # JIRA
     JIRA_PROJECT_KEY = "fake-jira-project"
+    JIRA_USER_EMAIL = "sh@fake.com"
     JIRA_API_KEY = "fake-jira-key"
     JIRA_SERVER = "https://fake.fake.jira.fake"
 
