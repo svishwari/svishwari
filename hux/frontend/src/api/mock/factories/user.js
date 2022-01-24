@@ -32,12 +32,17 @@ export const user = {
 
 export const requestedUser = [
   {
-    email: "sh@fake.com",
-    pii_access: false,
-    display_name: "Sarah, Huxley",
-    access_level: "admin",
-    status: "To Do",
-    created: "2022-01-21T08:42:12.300Z",
-    updated: "2022-01-21T08:42:12.300Z",
+    email: faker.internet.email(),
+    pii_access: faker.random.arrayElement([true, false]),
+    display_name: faker.name.findName(),
+    access_level: faker.random.arrayElement(["admin", "viewer", "editor"]),
+    status: faker.random.arrayElement([
+      "To Do",
+      "In Progress",
+      "In Review",
+      "Done",
+    ]),
+    created: faker.date.recent(),
+    updated: faker.date.recent(),
   },
 ]
