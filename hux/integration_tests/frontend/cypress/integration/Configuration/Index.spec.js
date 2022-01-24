@@ -24,6 +24,24 @@ describe("View configuration", () => {
         expect($elm.text()).equal(tableHeaders[i])
       })
 
+    cy.get(selector.configuration.teamMemberDrawer.teamMemberRequest).click()
+    cy.get(selector.configuration.teamMemberDrawer.firstName)
+      .eq(0)
+      .type("Sarah")
+    cy.get(selector.configuration.teamMemberDrawer.lastName)
+      .eq(0)
+      .type("Huxley")
+    cy.get(selector.configuration.teamMemberDrawer.email)
+      .eq(0)
+      .type("Huxley@gmail.com")
+    cy.get(selector.configuration.teamMemberDrawer.accessLevel).click()
+    cy.get(".dropdown-menuitems").contains("Admin").click()
+    cy.get(selector.configuration.teamMemberDrawer.togglePii).click()
+    cy.get(selector.configuration.teamMemberDrawer.requestText)
+      .eq(0)
+      .type("New team member")
+    cy.get(selector.configuration.teamMemberDrawer.request).click()
+
     // should click on module-solutions tab
     cy.get(selector.configuration.moduleSolution).click()
     // should click & checked on checkbox to show only active items

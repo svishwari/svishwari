@@ -28,6 +28,7 @@
     <data-cards
       bordered
       :items="Object.values(value.audiences)"
+      card-class="pa-4 body-1"
       :fields="[
         {
           key: 'name',
@@ -242,7 +243,7 @@
           tile
           variant="white"
           height="40"
-          class="btn-border box-shadow-none"
+          class="btn-border box-shadow-none rounded-0"
           @click.native="
             dontShowModal = true
             $router.go(-1)
@@ -258,6 +259,7 @@
           tile
           color="primary"
           height="44"
+          class="rounded-0"
           :is-disabled="
             !isValid ||
             (isRecurringFlag &&
@@ -769,5 +771,6 @@ export default {
   background: #f9fafb;
   position: relative;
   bottom: 25px;
+  border-radius: 5px;
 }
 </style>
