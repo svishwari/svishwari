@@ -253,9 +253,12 @@
                   close: !showAdvertising,
                   'float-right': !showAdvertising,
                 }"
+                :style="{ height: matchrateStyles.height }"
                 @click="toggleAd()"
               >
-                <span class="bar-text"> Digital advertising </span>
+                <span class="bar-text">
+                  Digital advertising </span
+                >
                 <icon
                   type="expand-arrow"
                   :size="14"
@@ -268,14 +271,14 @@
                 v-if="showAdvertising"
                 class="digital-adv ml-6 mt-4"
                 flat
-                height="100%"
+                ref="infoBox"
               >
                 <v-card-title v-if="showAdvertising" class="ml-2 text-h3">
                   Digital advertising
                 </v-card-title>
                 <v-card-text v-if="showAdvertising" class="">
                   <div class="match-rates mx-2 my-1">
-                    <matchrate />
+                    <matchrate :matchrate="audience.match_rates" />
                   </div>
                   <div class="lookalikes mx-2 my-6">
                     <lookalikes />
@@ -378,6 +381,8 @@
 </template>
 
 <script>
+import Vue from "vue"
+
 // helpers
 import { mapGetters, mapActions } from "vuex"
 import filter from "lodash/filter"
@@ -525,6 +530,7 @@ export default {
         actionType: "remove-audience",
       },
       toggleDownloadAudienceDrawer: false,
+      matchrateStyles: {},
     }
   },
   computed: {
@@ -662,6 +668,7 @@ export default {
   async mounted() {
     await this.loadAudienceInsights()
     this.sizeHandler()
+    this.matchHeight()
   },
 
   methods: {
@@ -1124,6 +1131,10 @@ export default {
         window.open(data.link, "_blank")
       }
     },
+    matchHeight() {
+      var heightString = this.$refs.infoBox.$el.clientHeight + "px"
+      Vue.set(this.matchrateStyles, "height", heightString)
+    },
   },
 }
 </script>
@@ -1190,7 +1201,7 @@ export default {
   .tabs-item {
     .delivery-tab {
       .digital-adv {
-        height: 380px !important;
+        height: auto !important;
         .match-rates {
         }
         .lookalikes {

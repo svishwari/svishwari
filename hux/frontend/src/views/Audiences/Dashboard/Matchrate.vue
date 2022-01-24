@@ -1,6 +1,6 @@
 <template>
-  <div class="match-rate-wrapper">
-    <div v-if="false" class="match-rate mx-6">
+  <div class="match-rate-wrapper pb-4">
+    <div v-if="true" class="match-rate mx-6">
       <div class="text-h3 black-base pt-5">Match rates</div>
 
       <v-row class="matchrate-header mt-4">
@@ -12,8 +12,7 @@
         </v-col>
         <v-col cols="12" md="4"> Last delivery </v-col>
       </v-row>
-
-      <v-row v-for="d in deliveries" :key="d.type" class="matchrate-list">
+      <v-row v-for="d in matchrate" :key="d.type" class="matchrate-list">
         <v-col cols="12" md="4">
           <v-item>
             <logo :type="d.type" :size="22"></logo>
@@ -25,11 +24,11 @@
           </v-item>
         </v-col>
         <v-col cols="12" md="4">
-          <time-stamp :value="d.next_delivery" />
+          <time-stamp :value="d.last_delivery" />
         </v-col>
       </v-row>
     </div>
-    <div v-if="true" class="no-match-rate">
+    <div v-if="false" class="no-match-rate">
       <metric-card
         class=""
         title="Match rates"
@@ -57,7 +56,13 @@ import MetricCard from "@/components/common/MetricCard"
 export default {
   name: "StandaloneDelivery",
   components: { TimeStamp, Size, Logo, MetricCard },
-  props: {},
+  props: {
+    matchrate: {
+      type: Array,
+      required: false,
+      default: [],
+    },
+  },
   data() {
     return {
       selection: null,
@@ -85,6 +90,10 @@ export default {
 
 <style lang="scss" scoped>
 .match-rate-wrapper {
+  background-color: var(--v-primary-lighten1) !important;
+  border: 1px solid var(--v-black-lighten2);
+  box-sizing: border-box;
+  border-radius: 5px;
   .match-rate {
     background-color: var(--v-primary-lighten1) !important;
     .matchrate-header {
