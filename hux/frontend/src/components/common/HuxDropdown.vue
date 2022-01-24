@@ -29,6 +29,7 @@
           icon-position="right"
           tile
           class="ma-2 main-button pr-1 text-body-1"
+          :style="{width:minWidth+'px !important'}"
           @click="openMenu = true"
         >
           <tooltip>
@@ -117,6 +118,10 @@ export default {
     isOpenOnHover: { type: Boolean, default: false },
     isSubMenu: { type: Boolean, default: false },
     transition: { type: String, default: "scale-transition" },
+    minWidth: {
+      type:String, required: false,
+      default:"200"
+    }
   },
   data: function () {
     return {

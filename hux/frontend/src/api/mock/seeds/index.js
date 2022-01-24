@@ -33,5 +33,6 @@ export default function (server) {
   server.createList("geoCity", 14659)
   server.createList("geoState", 52)
   server.createList("user", 1)
+  //server.createList("requestedUser", 1)
   server.createList("configuration", 5)
 }

@@ -15,6 +15,7 @@ const state = {
     pii_access: false,
   },
   users: [],
+  requestedUsers: [],
 }
 
 const mutations = {
@@ -45,6 +46,10 @@ const mutations = {
   setApplicationAllUsers(state, users) {
     Vue.set(state, "users", users)
   },
+
+  setAllRequestedUsers(state, requestedUsers) {
+    Vue.set(state, "requestedUsers", requestedUsers)
+  },
 }
 
 const actions = {
@@ -68,6 +73,16 @@ const actions = {
     try {
       const response = await api.users.all()
       commit("setApplicationAllUsers", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getRequestedUsers({ commit }) {
+    try {
+      const response = await api.users.getRequestedUsers()
+      commit("setAllRequestedUsers", response.data)
     } catch (error) {
       handleError(error)
       throw error
@@ -118,6 +133,17 @@ const actions = {
       throw error
     }
   },
+
+  async requestTeamMember(_,payload) {
+    try {
+      const result = await api.users.requestTeamMember(payload)
+      dispatch("getRequestedUsers")
+      return result
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  }
 }
 
 const getters = {
@@ -140,6 +166,8 @@ const getters = {
   getUsers: (state) => state.users,
 
   getCurrentUserRole: (state) => state.userProfile.role,
+
+  getRequestedUsers: (state) => state.requestedUsers,
 }
 export default {
   namespaced,

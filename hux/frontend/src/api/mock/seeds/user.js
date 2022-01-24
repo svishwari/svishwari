@@ -11,8 +11,10 @@ export default [
     organization: "",
     login_count: 0,
     role: "viewer",
-    display_name: "Sameer Kumar Singh",
+    display_name: "Sameer K. Singh",
     profile_photo: "",
-    email: "sameerksingh@deloitte.com",
+    email: "samsingh@deloitte.com",
+    access_level: "View-only",
+    pii_access: false,
   },
 ]

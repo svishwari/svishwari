@@ -26,5 +26,18 @@ export const user = {
   profile_photo: faker.image.imageUrl(),
   login_count: 0,
   modified: faker.date.recent(),
-  pii_access: faker.random.arrayElement([true, false]),
+  pii_access: true,
+  access_level: "Admin",
 }
+
+export const requestedUser = [
+  {
+  email: "sh@fake.com",
+  pii_access: false,
+  display_name: "Sarah, Huxley",
+  access_level: "admin",
+  status: "To Do",
+  created: "2022-01-21T08:42:12.300Z",
+  updated: "2022-01-21T08:42:12.300Z",
+  }
+]
