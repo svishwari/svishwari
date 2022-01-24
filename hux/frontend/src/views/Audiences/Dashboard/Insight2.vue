@@ -240,7 +240,9 @@
                 @onRemoveStandaloneDestination="
                   onRemoveStandaloneDestination($event, data)
                 "
-                @onOpenStandaloneDestination="onOpenStandaloneDestination($event, data)"
+                @onOpenStandaloneDestination="
+                  onOpenStandaloneDestination($event, data)
+                "
               />
             </v-col>
             <v-col :cols="advertisingCols" class="">
@@ -805,11 +807,10 @@ export default {
           await this.deleteAudience({ id: this.audience.id })
           break
         case "remove-standalone-destination":
-          const data = {
+          await this.detachStandaloneDestination({
             deleteActionData: this.deleteActionData,
             audienceId: this.audienceId,
-          }
-          await this.detachStandaloneDestination(data)
+          })
           break
         default:
           break
@@ -1119,10 +1120,10 @@ export default {
       this.showConfirmModal = true
     },
     onOpenStandaloneDestination(data) {
-      if(data && data.link){
+      if (data && data.link) {
         window.open(data.link, "_blank")
       }
-    }
+    },
   },
 }
 </script>

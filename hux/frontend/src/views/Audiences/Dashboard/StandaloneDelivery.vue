@@ -194,7 +194,7 @@
 
 <script>
 // helpers
-import { mapGetters, mapActions } from "vuex"
+import { mapActions } from "vuex"
 // views
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
@@ -271,12 +271,11 @@ export default {
     async standaloneOptions(option, data) {
       switch (option.title.toLowerCase()) {
         case "deliver now":
-          const payload = {
-            destinations: [{ id: data.delivery_platform_id }],
-          }
           await this.deliverStandaloneAudience({
             id: this.audienceId,
-            payload: payload,
+            payload: {
+              destinations: [{ id: data.delivery_platform_id }],
+            },
           })
           this.$emit("onDeliveryStandaloneDestination")
           break
@@ -304,7 +303,8 @@ export default {
     dataPendingMesssage() {
       this.setAlert({
         type: "pending",
-        message: `All standalone destination, has started delivering as a standalone deliveries`,
+        message:
+          "All standalone destination, has started delivering as a standalone deliveries",
       })
     },
   },

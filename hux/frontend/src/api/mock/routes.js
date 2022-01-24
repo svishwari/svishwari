@@ -706,7 +706,11 @@ export const defineRoutes = (server) => {
     const destination_deleted = schema.destinations.find(id)
     const destination_deleted_name = destination_deleted.name
     destination_deleted.destroy()
-    return "Standalone destination " + destination_deleted_name + " successfully deleted"
+    return (
+      "Standalone destination " +
+      destination_deleted_name +
+      " successfully deleted"
+    )
   })
 
   //lookalike audiences
