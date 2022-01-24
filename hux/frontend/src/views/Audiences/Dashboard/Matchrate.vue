@@ -1,6 +1,9 @@
 <template>
-  <div class="match-rate-wrapper pb-4">
-    <div v-if="true" class="match-rate mx-6">
+  <div
+    class="match-rate-wrapper pb-4"
+    :class="{ 'match-rate-exist': matchrate.length > 0 }"
+  >
+    <div v-if="matchrate.length > 0" class="match-rate mx-6">
       <div class="text-h3 black-base pt-5">Match rates</div>
 
       <v-row class="matchrate-header mt-4">
@@ -28,7 +31,7 @@
         </v-col>
       </v-row>
     </div>
-    <div v-if="false" class="no-match-rate">
+    <div v-if="matchrate.length == 0" class="no-match-rate">
       <metric-card
         class=""
         title="Match rates"
@@ -90,10 +93,12 @@ export default {
 
 <style lang="scss" scoped>
 .match-rate-wrapper {
-  background-color: var(--v-primary-lighten1) !important;
-  border: 1px solid var(--v-black-lighten2);
-  box-sizing: border-box;
-  border-radius: 5px;
+  &.match-rate-exist {
+    background-color: var(--v-primary-lighten1) !important;
+    border: 1px solid var(--v-black-lighten2);
+    box-sizing: border-box;
+    border-radius: 5px;
+  }
   .match-rate {
     background-color: var(--v-primary-lighten1) !important;
     .matchrate-header {
