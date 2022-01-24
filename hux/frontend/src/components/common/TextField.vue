@@ -163,6 +163,10 @@ export default {
           font-size: 16px;
         }
       }
+      label {
+        color: var(--v-black-lighten4) !important;
+        font-size: 16px;
+      }
     }
   }
 }

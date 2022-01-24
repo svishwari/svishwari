@@ -194,7 +194,7 @@
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <span class="text-caption black--text text--darken-1">
+          <span class="text-body-2 black--text text--lighten-4">
             {{ applications.length }} results
           </span>
         </div>

@@ -238,6 +238,7 @@ export default {
 
 <style lang="scss" scoped>
 .v-menu__content {
+  top: 70px !important;
   margin-left: 8px !important;
   .v-list {
     .v-list-item {
@@ -265,5 +266,8 @@ export default {
 }
 .mt-half {
   margin-top: 2px;
+}
+.app-menu {
+  top: 170px !important;
 }
 </style>
