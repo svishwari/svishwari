@@ -40,6 +40,16 @@ const routes = [
     },
   },
   {
+    path: "/clients",
+    name: "ClientPanel",
+    component: () => import("@/views/ClientPanel.vue"),
+    meta: {
+      layout: "app",
+      title: "Client Panel ",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/configuration",
     name: "Configuration",
     component: () => import("@/views/Configuration/index.vue"),

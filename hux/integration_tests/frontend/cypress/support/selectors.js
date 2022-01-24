@@ -61,6 +61,16 @@ export default {
     allNotificationsLink: "[data-e2e='all-notifications-link']",
   },
 
+  //client
+  client: {
+    clientDropdown: "[data-e2e='client_panel_dropdown']",
+    clientPanelOpen: "[data-e2e='client_panel']",
+    clientHeader: "[data-e2e='client-header']",
+    clientDropdown: "[data-e2e='client_panel_dropdown']",
+    clientLists: "[data-e2e='client-lists']",
+    client: "[data-e2e='client']",
+  },
+
   // configuration
   configuration: {
     moduleSolution: "[data-e2e='moduleSolution']",
