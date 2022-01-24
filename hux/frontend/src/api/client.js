@@ -340,8 +340,8 @@ client["audiences"].remove = (resourceId) => {
   return http.delete(`/audiences/${resourceId}`)
 }
 
-client["audiences"].removeStandaloneDestination = (resourceId) => {
-  return http.delete(`audiences/${resourceId}/destinations`)
+client["audiences"].removeStandaloneDestination = (resourceId, data) => {
+  return http.delete(`audiences/${resourceId}/destinations`, { data: data })
 }
 
 client["audiences"].histogram = (field, model) => {

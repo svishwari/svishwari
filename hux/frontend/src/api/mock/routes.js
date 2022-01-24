@@ -702,8 +702,8 @@ export const defineRoutes = (server) => {
   })
 
   server.del("/audiences/:id/destinations", (schema, request) => {
-    const id = request.params.id
-    const destination_deleted = schema.destinations.find(id)
+    let requestData = JSON.parse(request.requestBody)
+    const destination_deleted = schema.audiences.find(requestData.id)
     const destination_deleted_name = destination_deleted.name
     destination_deleted.destroy()
     return (
