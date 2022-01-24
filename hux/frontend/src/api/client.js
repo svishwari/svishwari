@@ -409,4 +409,17 @@ client.dataSources.dataFeeds = (type) => {
 }
 //#endregion
 
+//#region Application
+client.applications.getActiveApplications = (flag) => {
+  return http.get(`/applications?only_active=${flag}`)
+}
+
+client.applications.createApplication = (data) => {
+  return http.post("/applications", data)
+}
+
+client.applications.updateApplication = (id, data) => {
+  return http.post(`/applications/${id}`, data)
+}
+
 export default client

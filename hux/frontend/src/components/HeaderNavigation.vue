@@ -54,6 +54,7 @@
         </v-list-item>
       </v-list>
     </v-menu>
+    <application />
     <notification />
     <help />
   </div>
@@ -64,6 +65,8 @@ import Notification from "../components/Notification.vue"
 import Help from "../components/Help.vue"
 import Icon from "@/components/common/Icon"
 import Tooltip from "./common/Tooltip.vue"
+import Application from "./Application.vue"
+
 export default {
   name: "HeaderNavigation",
   components: {
@@ -71,6 +74,7 @@ export default {
     Help,
     Icon,
     Tooltip,
+    Application,
   },
   data() {
     return {

@@ -489,7 +489,7 @@ export default {
         {
           text: "Sent",
           value: "sent",
-          width: "90px",
+          width: "125px",
           tooltipValue: "Number of emails sent (including bounces etc)",
         },
         {
@@ -518,7 +518,7 @@ export default {
         {
           text: "Open",
           value: "open",
-          width: "90px",
+          width: "125px",
           tooltipValue: "Number of messages that was opened",
         },
         {
@@ -529,7 +529,7 @@ export default {
         {
           text: "CTR",
           value: "clicks",
-          width: "90px",
+          width: "125px",
           tooltipValue: "Number of email links or content clicked",
         },
         {
