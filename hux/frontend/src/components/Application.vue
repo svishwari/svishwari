@@ -51,6 +51,7 @@
               nudge-right="16"
               nudge-top="4"
               left
+              nudge-left="45"
               min-width="300"
               z-index="8"
               content-class="app-menu"
@@ -85,17 +86,17 @@
                   >
                     <v-list-item-title
                       class="d-flex text-body-1"
-                      @click="app.onClick && app.onClick(data)"
+                      @click="app.onClick && app.onClick()"
                     >
                       <logo v-if="app.icon" :size="24" :type="app.icon" />
                       <span class="ml-1 mt-half">{{ app.title }}</span>
                     </v-list-item-title>
-                    <icon
-                      :size="18"
-                      type="delete-button"
+                    <span
                       class="d-none delete-button"
-                      @click="removeApplication(app.id)"
-                    />
+                      @click="app.onDelete && app.onDelete()"
+                    >
+                      <icon :size="18" type="delete-button" />
+                    </span>
                   </v-list-item>
                 </span>
               </template>
