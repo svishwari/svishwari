@@ -2045,7 +2045,7 @@ class DeleteAudienceView(SwaggerView):
             if deleted_audience:
                 # remove the engagement from user favorites
                 manage_user_favorites(
-                    get_db_client(),
+                    database,
                     okta_id=user[db_c.OKTA_ID],
                     component_name=db_c.AUDIENCES,
                     component_id=ObjectId(audience_id),
@@ -2071,7 +2071,7 @@ class DeleteAudienceView(SwaggerView):
 
         if not audience:
             manage_user_favorites(
-                get_db_client(),
+                database,
                 okta_id=user[db_c.OKTA_ID],
                 component_name=db_c.LOOKALIKE,
                 component_id=ObjectId(audience_id),
