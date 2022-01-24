@@ -237,6 +237,7 @@ class DecisioningTests(TestCase):
         )
 
     @given(model_id=st.integers())
+    @settings(deadline=100)
     def test_remove_model_failure_invalid_model_id(self, model_id: int):
         """Test removing requested models from Unified DB with invalid model id.
 

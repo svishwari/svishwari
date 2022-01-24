@@ -6,7 +6,7 @@ from http import HTTPStatus
 import requests_mock
 import mongomock
 from dateutil.relativedelta import relativedelta
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, settings
 
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -630,6 +630,7 @@ class CDPTest(TestCase):
             lambda date: date.strftime(api_c.DEFAULT_DATE_FORMAT)
         ),
     )
+    @settings(deadline=100)
     def test_get_spending_by_gender_raise_dependency_error(
         self, start_date: str, end_date: str
     ) -> None:
