@@ -2,17 +2,7 @@
   <div class="pa-0 campaign-summary">
     <v-card flat class="card-style" style="position: sticky">
       <v-card-text>
-        <div
-          v-if="!hasData(summaryCards, 'summary')"
-          class="empty-state pa-5 black--text text--darken-1"
-        >
-          Be patient! Performance data is currently not available, check back
-          tomorrow to see if the magic is ready.
-        </div>
-        <div
-          v-if="hasData(summaryCards, 'summary')"
-          class="d-flex summary-tab-wrap"
-        >
+        <div class="d-flex summary-tab-wrap">
           <metric-card
             v-for="(item, i) in summaryCards"
             :key="item.id"
@@ -23,7 +13,8 @@
             :height="70"
           >
             <template #subtitle-extended>
-              <span v-if="item.field.includes('|')">
+              <span v-if="item.value === '-|-'"> - </span>
+              <span v-else-if="item.field.includes('|')">
                 <tooltip>
                   <template #label-content>
                     <span class="text--subtitle-1 font-weight-semi-bold">
@@ -124,7 +115,12 @@
         </div>
       </v-card-text>
     </v-card>
-    <v-card min-height="145px" flat class="mt-6 card-style">
+    <v-card
+      v-if="campaignData.length > 0"
+      min-height="145px"
+      flat
+      class="mt-6 card-style"
+    >
       <v-card-title class="d-flex justify-space-between pb-3 pl-6">
         <div class="d-flex align-center">
           <icon
@@ -364,6 +360,24 @@
         </hux-data-table>
       </v-card-text>
     </v-card>
+    <div v-else class="no-data-container">
+      <div class="no-data">
+        <icon type="lift-table-empty" size="50" />
+        <div v-if="type == 'ads'" class="text-h2 mb-3">
+          No advertising data to show
+        </div>
+        <div v-if="type == 'ads'" class="text-body-2">
+          Advertising data will appear here once you add and deliver an
+          audience.
+        </div>
+        <div v-if="type == 'email'" class="text-h2 mb-3">
+          No marketing data to show
+        </div>
+        <div v-if="type == 'email'" class="text-body-2">
+          Marketing data will appear here once you add and deliver an audience.
+        </div>
+      </div>
+    </div>
     <campaign-map-drawer
       ref="campaignMapDrawer"
       :toggle="showCampaignMapDrawer"
@@ -733,6 +747,21 @@ export default {
 
 <style lang="scss" scoped>
 .campaign-summary {
+  .no-data-container {
+    padding: 32px 55px 24px 55px;
+    background: var(--v-white-base);
+    margin-top: 24px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    @extend .box-shadow-5;
+    .no-data {
+      text-align: center;
+      padding-top: 16px;
+      padding-bottom: 15px;
+      background-image: url("../assets/images/no-lift-chart-frame.png");
+      background-size: cover;
+    }
+  }
   .empty-state {
     background: rgba(236, 244, 249, 0.3);
     width: 100%;
