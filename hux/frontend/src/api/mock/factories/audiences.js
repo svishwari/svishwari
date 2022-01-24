@@ -117,6 +117,7 @@ export const audience = {
       delivery_platform_type: "sendgrid",
       delivery_platform_name: "Sendgrid by Twilio",
       size: 0,
+      link: null,
     },
     {
       status: "Delivering",
@@ -125,6 +126,7 @@ export const audience = {
       delivery_platform_type: "facebook",
       delivery_platform_name: "Facebook",
       size: 0,
+      link: "https://business.facebook.com/",
     },
   ],
 }

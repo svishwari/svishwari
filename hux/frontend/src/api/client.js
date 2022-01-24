@@ -340,6 +340,10 @@ client["audiences"].remove = (resourceId) => {
   return http.delete(`/audiences/${resourceId}`)
 }
 
+client["audiences"].removeStandaloneDestination = (resourceId) => {
+  return http.delete(`audiences/${resourceId}/destinations`)
+}
+
 client["audiences"].histogram = (field, model) => {
   let url = `/audiences/rules/${field}/histogram`
   if (model) {

@@ -253,8 +253,8 @@ export default {
       ],
       destinationMenuOptions: [
         { id: 1, title: "Deliver now", active: true },
-        { id: 3, title: "Open destination", active: false },
-        { id: 4, title: "Remove destination", active: false },
+        { id: 3, title: "Open destination", active: true },
+        { id: 4, title: "Remove destination", active: true },
       ],
     }
   },
@@ -280,7 +280,12 @@ export default {
           })
           this.$emit("onDeliveryStandaloneDestination")
           break
-
+        case "remove destination":
+          this.$emit("onRemoveStandaloneDestination", data)
+          break
+        case "open destination":
+          this.$emit("onOpenStandaloneDestination", data)
+          break
         default:
           break
       }

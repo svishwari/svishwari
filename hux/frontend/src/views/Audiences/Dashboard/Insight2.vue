@@ -237,6 +237,10 @@
                 :audience="audience"
                 @onAddStandaloneDestination="addStandaloneDestination($event)"
                 @onDeliveryStandaloneDestination="refreshEntity()"
+                @onRemoveStandaloneDestination="
+                  onRemoveStandaloneDestination($event, data)
+                "
+                @onOpenStandaloneDestination="onOpenStandaloneDestination($event, data)"
               />
             </v-col>
             <v-col :cols="advertisingCols" class="">
@@ -675,6 +679,7 @@ export default {
       getEngagementById: "engagements/get",
       deleteAudience: "audiences/remove",
       markFavorite: "users/markFavorite",
+      detachStandaloneDestination: "audiences/removeStandaloneDestination",
     }),
     attributeOptions() {
       const options = []
@@ -798,6 +803,13 @@ export default {
           break
         case "remove audience":
           await this.deleteAudience({ id: this.audience.id })
+          break
+        case "remove-standalone-destination":
+          const data = {
+            deleteActionData: this.deleteActionData,
+            audienceId: this.audienceId,
+          }
+          await this.detachStandaloneDestination(data)
           break
         default:
           break
@@ -1091,6 +1103,26 @@ export default {
     openDownloadDrawer() {
       this.toggleDownloadAudienceDrawer = true
     },
+    onRemoveStandaloneDestination(data) {
+      this.audienceId = data.delivery_platform_id
+      this.confirmDialog.actionType = "remove-standalone-destination"
+      this.confirmDialog.icon = "sad-face"
+      this.confirmDialog.type = "error"
+      this.confirmDialog.subtitle = ""
+      this.confirmDialog.title = `Remove ${data.delivery_platform_name} destination?`
+      this.confirmDialog.btnText = "Yes, remove it"
+      this.confirmDialog.body =
+        "You will not be deleting this destination; this destination will not be attached to this specific engagement anymore."
+      this.deleteActionData = {
+        destination_id: data.delivery_platform_id,
+      }
+      this.showConfirmModal = true
+    },
+    onOpenStandaloneDestination(data) {
+      if(data && data.link){
+        window.open(data.link, "_blank")
+      }
+    }
   },
 }
 </script>

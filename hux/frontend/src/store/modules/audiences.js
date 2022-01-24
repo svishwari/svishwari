@@ -112,6 +112,17 @@ const mutations = {
     Vue.delete(state.audiences, id)
   },
 
+  REMOVE_STANDALONE_DESTINATION(state, data) {
+    const destination = Object.values(state.audiences).filter((item) => {
+      return item.id == data.audienceId
+    })[0]
+    
+    var removeIndex = destination.standalone_deliveries.map(item => item.delivery_platform_id).indexOf(data.deleteActionData.destination_id);
+    ~removeIndex && destination.standalone_deliveries.splice(removeIndex, 1);
+
+    Vue.set(state.audiences[data.audienceId], 'standalone_deliveries', destination.standalone_deliveries)
+  },
+
   SET_AUDIENCE_LOOKALIKE(state, data) {
     if (!state.audiences[data.id].lookalike_audiences) {
       state.audiences[data.id].lookalike_audiences = []
@@ -299,6 +310,16 @@ const actions = {
     try {
       const response = await api.audiences.deliver(id, payload)
       return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async removeStandaloneDestination({ commit }, data) {
+    try {
+      await api.audiences.remove(data.deleteActionData.destination_id)
+      commit("REMOVE_STANDALONE_DESTINATION", data)
     } catch (error) {
       handleError(error)
       throw error

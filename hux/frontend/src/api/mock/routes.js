@@ -701,6 +701,14 @@ export const defineRoutes = (server) => {
     return "Audience " + audience_deleted_name + " successfully deleted"
   })
 
+  server.del("/audiences/:id/destinations", (schema, request) => {
+    const id = request.params.id
+    const destination_deleted = schema.destinations.find(id)
+    const destination_deleted_name = destination_deleted.name
+    destination_deleted.destroy()
+    return "Standalone destination " + destination_deleted_name + " successfully deleted"
+  })
+
   //lookalike audiences
   server.post("/lookalike-audiences", (schema, request) => {
     let requestData = JSON.parse(request.requestBody)
