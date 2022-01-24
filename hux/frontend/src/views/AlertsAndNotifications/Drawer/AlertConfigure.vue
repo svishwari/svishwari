@@ -28,21 +28,79 @@
           <hux-switch
             v-model="showAlerts"
             false-color="var(--v-black-lighten4)"
-            :width="showAlerts ? '57px' : '60px'"
+            width="57px"
             :switch-labels="switchLabelFullAlerts"
             class="w-53"
-            @input="toggleAccess($event, item)"
+            @input="toggleAccessFullAlerts($event, item)"
           />
         </div>
-        <div class="pb-4">
+        <div class="pb-4 h-77">
+          <tooltip position-top>
+            <template #label-content>
+              Email
+              <icon
+                type="info"
+                :size="8"
+                class="mb-1"
+                color="primary"
+                variant="base"
+              />
+            </template>
+            <template #hover-content>
+              <span
+                v-html="
+                  'Email address is pre-populated from your profile and can’t be modified.'
+                "
+              />
+            </template>
+          </tooltip>
           <text-field
             v-model="getCurrentUserEmail"
-            label-text="Email"
             input-type="text"
             height="40"
             :disabled="true"
-            required
+            :required="true"
+            class="disabledColor"
           />
+        </div>
+        <div class="pt-2 text-body-1">
+          What categories do you wish to receive?
+        </div>
+        <div>
+          <!-- <v-list>
+            <v-list-item-group v-model="model">
+              <v-list-item v-for="(item, i) in alertsSectionGroup" :key="i">
+                <v-list-item-content class="d-flex full-alert">
+                  <v-list-item-title v-text="item.name"></v-list-item-title>
+                  <hux-switch
+                    v-model="showAlerts"
+                    false-color="var(--v-black-lighten4)"
+                    :width="showAlerts ? '57px' : '60px'"
+                    :switch-labels="switchLabel"
+                    class="w-53"
+                    @input="toggleAccess($event, item)"
+                  />
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list> -->
+          <v-treeview
+            v-model="tree"
+            :items="alertsSectionGroup"
+            activatable
+            item-key="show"
+            open-all
+          >
+            <template v-slot:append="{ item }">
+              <hux-switch
+                v-model="item.show"
+                false-color="var(--v-black-lighten4)"
+                width="100px"
+                :switch-labels="switchLabel"
+                class="w-89"
+              />
+            </template>
+          </v-treeview>
         </div>
       </div>
     </template>
@@ -55,6 +113,7 @@ import Icon from "@/components/common/Icon"
 import HuxSwitch from "@/components/common/Switch.vue"
 import TextField from "@/components/common/TextField.vue"
 import { mapGetters } from "vuex"
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "AlertConfigureDrawer",
@@ -63,6 +122,7 @@ export default {
     Icon,
     HuxSwitch,
     TextField,
+    Tooltip,
   },
 
   props: {
@@ -101,6 +161,190 @@ export default {
           label: "OPT OUT",
         },
       ],
+      alertsSectionGroup: [
+        {
+          name: "Category",
+          type: "header",
+          show: true,
+          children: [
+            {
+              name: "Data management",
+              type: "header",
+              show: true,
+              children: [
+                {
+                  name: "Data sources",
+                  type: "header",
+                  show: true,
+                  children: [
+                    {
+                      name: "Error",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Success",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Informational",
+                      type: "child",
+                      show: true,
+                    },
+                  ],
+                },
+                {
+                  name: "Identity resolution",
+                  type: "header",
+                  show: true,
+                  children: [
+                    {
+                      name: "Error",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Success",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Informational",
+                      type: "child",
+                      show: true,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "Decisioning",
+              type: "header",
+              show: true,
+              children: [
+                {
+                  name: "Models",
+                  type: "header",
+                  show: true,
+                  children: [
+                    {
+                      name: "Error",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Success",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Informational",
+                      type: "child",
+                      show: true,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "Orchestration",
+              type: "header",
+              show: true,
+              children: [
+                {
+                  name: "Destinations",
+                  type: "header",
+                  show: true,
+                  children: [
+                    {
+                      name: "Error",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Success",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Informational",
+                      type: "child",
+                      show: true,
+                    },
+                  ],
+                },
+                {
+                  name: "Delivery",
+                  type: "header",
+                  show: true,
+                  children: [
+                    {
+                      name: "Error",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Success",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Informational",
+                      type: "child",
+                      show: true,
+                    },
+                  ],
+                },
+                {
+                  name: "Audiences",
+                  type: "header",
+                  show: true,
+                  children: [
+                    {
+                      name: "Error",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Success",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Informational",
+                      type: "child",
+                      show: true,
+                    },
+                  ],
+                },
+                {
+                  name: "Engagements",
+                  type: "header",
+                  show: true,
+                  children: [
+                    {
+                      name: "Error",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Success",
+                      type: "child",
+                      show: true,
+                    },
+                    {
+                      name: "Informational",
+                      type: "child",
+                      show: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     }
   },
 
@@ -131,7 +375,10 @@ export default {
     },
   },
   methods: {
-    toggleAccess(val) {
+    toggleAccessFullAlerts(val) {
+      this.showAlerts = val
+    },
+    toggleAccessIndivisualAlerts(val) {
       this.showAlerts = val
     },
   },
@@ -149,5 +396,14 @@ export default {
 }
 .w-53 {
   width: 53px;
+}
+.w-89 {
+  width: 89px;
+}
+.disabledColor .v-input__slot {
+  background-color: var(--v-primary-lighten1) !important;
+}
+.h-77 {
+  height: 77px;
 }
 </style>
