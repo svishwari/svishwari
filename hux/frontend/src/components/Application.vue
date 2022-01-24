@@ -116,9 +116,11 @@
       right-btn-text="Remove"
       left-btn-text="Cancel"
       data-e2e="remove-application-confirmation"
+      body="Are you sure you want to remove this application shortcut?"
       @onCancel="showConfirmModal = !showConfirmModal"
       @onConfirm="deleteApplication()"
-    />
+    >
+    </confirm-modal>
   </div>
 </template>
 
@@ -221,6 +223,7 @@ export default {
     },
 
     async deleteApplication() {
+      this.showConfirmModal = false
       await this.$store.dispatch("application/updateApplications", {
         id: this.selectedId,
         data: {

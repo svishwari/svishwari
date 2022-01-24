@@ -12,7 +12,7 @@
     </label>
 
     <div class="d-flex align-center mb-3">
-      <template v-if="!selectedApplication">
+      <template v-if="!(selectedApplication || customApp)">
         <hux-icon
           type="plus"
           :size="16"
@@ -39,8 +39,9 @@
         </v-btn>
       </template>
       <p v-else class="text-body-1 mb-0 d-inline-flex">
-        <template v-if="selectedApplicationNotListed">
-          Application not on list
+        <template v-if="customApp">
+          <logo type="custom-application" :size="26" />
+          <span class="pl-2"> Custom Application </span>
         </template>
         <template v-else>
           <logo :type="selectedApplication.type" :size="26" />
@@ -57,7 +58,7 @@
     </div>
 
     <!-- add application form -->
-    <v-form v-if="showUncategorizedAddForm">
+    <v-form v-if="customApp">
       <v-alert
         outlined
         tile
@@ -115,7 +116,7 @@
         </v-col>
       </v-row>
     </v-form>
-    <v-form v-if="showCategorizedAddForm" class="pt-3">
+    <v-form v-if="customApp == false" class="pt-3">
       <div
         class="
           primary
@@ -169,7 +170,7 @@
           variant="primary"
           size="large"
           :is-tile="true"
-          :is-disabled="!showUncategorizedAddForm && !showCategorizedAddForm"
+          :is-disabled="customApp == null"
           @click="add()"
         >
           Add &amp; return
@@ -204,11 +205,6 @@
             v-for="(value, category, index) in groupByCategory(applications)"
             :key="`active-${index}`"
           >
-            <v-divider
-              v-if="category == 'uncategorized'"
-              class="black--border border--lighten-2 mt-8 pb-2"
-            />
-
             <label
               class="d-block text-body-2 black--text text--lighten-4 mb-2 mt-6"
             >
@@ -225,6 +221,24 @@
               class="mb-2"
               data-e2e="applicationsDrawer"
               @click="onAddApplication(application.id)"
+            />
+          </div>
+          <div>
+            <v-divider class="black--border border--lighten-2 mt-8 pb-2" />
+
+            <label
+              class="d-block text-body-2 black--text text--lighten-4 mb-2 mt-6"
+            >
+              Uncategorized
+            </label>
+
+            <card-horizontal
+              title="Custom Application"
+              icon="custom-application"
+              :is-added="false"
+              :is-already-added="false"
+              class="mb-2"
+              @click="onAddApplication(null)"
             />
           </div>
         </div>
@@ -305,6 +319,7 @@ export default {
       flagForModal: false,
       ApplicationUrl: null,
       categoryOptions: ["Data tools", "Reporting", "Sandbox", "Uncategorized"],
+      customApp: null,
     }
   },
 
@@ -320,17 +335,11 @@ export default {
     },
 
     showUncategorizedAddForm() {
-      return Boolean(
-        this.selectedApplication &&
-          this.selectedApplication["category"] == "uncategorized"
-      )
+      return Boolean(!this.selectedApplicationId)
     },
 
     showCategorizedAddForm() {
-      return Boolean(
-        this.selectedApplication &&
-          this.selectedApplication["category"] != "uncategorized"
-      )
+      return Boolean(this.selectedApplicationId)
     },
   },
 
@@ -379,19 +388,24 @@ export default {
     },
 
     onAddApplication(id) {
-      let application = this.applications.find((item) => item.id == id)
-      if (application.category == "uncategorized") {
+      if (!id) {
         this.newAppDetails = {
           category: "Uncategorized",
           name: null,
           url: null,
+          type: "custom-application",
         }
+        this.customApp = true
       } else {
+        let application = this.applications.find((item) => item.id == id)
+
         this.newAppDetails = {
           category: application.category,
           name: application.name,
           url: application.url,
+          type: application.type,
         }
+        this.customApp = false
       }
       this.selectedApplicationId = id
       this.drawer = false
@@ -399,9 +413,9 @@ export default {
 
     async add() {
       try {
-        if (this.showUncategorizedAddForm) {
+        if (!this.selectedApplicationId) {
           await this.createApplication(this.newAppDetails)
-        } else if (this.showCategorizedAddForm) {
+        } else if (this.selectedApplicationId) {
           await this.updateApplication({
             id: this.selectedApplicationId,
             data: this.newAppDetails,

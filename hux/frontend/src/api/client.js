@@ -419,7 +419,7 @@ client.applications.createApplication = (data) => {
 }
 
 client.applications.updateApplication = (id, data) => {
-  return http.post(`/applications/${id}`, data)
+  return http.patch(`/applications/${id}`, data)
 }
 
 export default client

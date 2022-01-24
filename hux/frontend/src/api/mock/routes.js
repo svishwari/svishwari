@@ -746,5 +746,8 @@ export const defineRoutes = (server) => {
     )
   })
 
-  server.put("/applications")
+  server.patch("/applications/:id", (schema, request) => {
+    let app = applications.find((x) => x.id == JSON.parse(request.params.id))
+    return "Application " + app.name + " is successfully updated"
+  })
 }

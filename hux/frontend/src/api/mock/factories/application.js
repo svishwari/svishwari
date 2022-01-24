@@ -4,7 +4,7 @@ export const applications = [
     create_time: "2022-01-12T15:20:43.999Z",
     created_by: "rakommaraju",
     id: "1",
-    is_added: false,
+    is_added: true,
     name: "Custom Application",
     status: "Pending",
     type: "custom-application",
