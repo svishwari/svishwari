@@ -325,7 +325,7 @@ const actions = {
   async removeStandaloneDestination({ commit }, data) {
     try {
       const payload = {
-        id: data.deleteActionData.destination_id
+        id: data.deleteActionData.destination_id,
       }
       await api.audiences.removeStandaloneDestination(data.audienceId, payload)
       commit("REMOVE_STANDALONE_DESTINATION", data)
