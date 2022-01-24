@@ -3,11 +3,12 @@
     <template #label-content>
       <span
         class="blue-grey d-flex align-center justify-center text-body-1"
-        :class="requested?'dashed-border':''"
+        :class="requested ? 'dashed-border' : ''"
         :style="{ 'border-color': getColorCode(localName) }"
       >
-      <span :class="requested?'grey-color':''">{{ localName | shortName }}</span>
-
+        <span :class="requested ? 'grey-color' : ''">{{
+          localName | shortName
+        }}</span>
       </span>
     </template>
     <template #hover-content>
@@ -38,7 +39,7 @@ export default {
       type: Boolean,
       required: false,
       default: false,
-    }
+    },
   },
 
   computed: {
@@ -49,7 +50,7 @@ export default {
 
   methods: {
     getColorCode(name) {
-      if(this.requested){
+      if (this.requested) {
         return "#D0D0CE !important"
       }
       return generateColor(name, 30, 60) + " !important"
@@ -75,10 +76,10 @@ export default {
   border-style: dashed !important;
 }
 .grey-color {
-font-style: italic;
-font-weight: normal;
-font-size: 16px;
-line-height: 22px;
-color: var(--v-black-lighten3)
+  font-style: italic;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--v-black-lighten3);
 }
 </style>

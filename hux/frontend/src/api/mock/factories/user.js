@@ -32,12 +32,12 @@ export const user = {
 
 export const requestedUser = [
   {
-  email: "sh@fake.com",
-  pii_access: false,
-  display_name: "Sarah, Huxley",
-  access_level: "admin",
-  status: "To Do",
-  created: "2022-01-21T08:42:12.300Z",
-  updated: "2022-01-21T08:42:12.300Z",
-  }
+    email: "sh@fake.com",
+    pii_access: false,
+    display_name: "Sarah, Huxley",
+    access_level: "admin",
+    status: "To Do",
+    created: "2022-01-21T08:42:12.300Z",
+    updated: "2022-01-21T08:42:12.300Z",
+  },
 ]

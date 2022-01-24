@@ -134,16 +134,16 @@ const actions = {
     }
   },
 
-  async requestTeamMember(_,payload) {
+  async requestTeamMember(_, payload) {
     try {
       const result = await api.users.requestTeamMember(payload)
-      dispatch("getRequestedUsers")
+      //dispatch("getRequestedUsers")
       return result
     } catch (error) {
       handleError(error)
       throw error
     }
-  }
+  },
 }
 
 const getters = {

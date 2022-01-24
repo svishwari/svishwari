@@ -1,19 +1,17 @@
 <template>
   <drawer v-model="localToggle" :width="600" :loading="loading">
     <template #header-left>
-        <div class="d-flex align-center">
-            <icon
-                type="team-member-drawer"
-                :size="32"
-                class="mr-3"
-            />
-            <h3 class="text-h2">Request a team member to add</h3>
-        </div>
+      <div class="d-flex align-center">
+        <icon type="team-member-drawer" :size="32" class="mr-3" />
+        <h3 class="text-h2">Request a team member to add</h3>
+      </div>
     </template>
 
     <template #default>
-        <div class="pa-6">
-        <span class="body-1">Provide the information about the new team member. </span>
+      <div class="pa-6">
+        <span class="body-1"
+          >Provide the information about the new team member.
+        </span>
         <v-row>
           <v-col class="py-0 mt-7">
             <span class="body-2 adjust-label">First name</span>
@@ -50,63 +48,57 @@
         <v-row>
           <v-col cols="7" class="py-0 adjust-access">
             <span class="body-2 adjust-label">
-              <tooltip
-            :max-width="access.tooltipWidth"
-            position-top
-          >
-            <template #label-content>
-            <span class="body-2 adjust-label">Access level</span>
-              <icon
-                type="info"
-                :size="8"
-                class="ml-1 mb-1"
-                color="primary"
-                variant="base"
-              />
-            </template>
-            <template #hover-content>
-              <span v-html="access.hoverTooltip" class="body-2"/>
-            </template>
-          </tooltip>
-          </span>
+              <tooltip :max-width="access.tooltipWidth" position-top>
+                <template #label-content>
+                  <span class="body-2 adjust-label">Access level</span>
+                  <icon
+                    type="info"
+                    :size="8"
+                    class="ml-1 mb-1"
+                    color="primary"
+                    variant="base"
+                  />
+                </template>
+                <template #hover-content>
+                  <span class="body-2" v-html="access.hoverTooltip" />
+                </template>
+              </tooltip>
+            </span>
             <hux-dropdown
               :label="accessLevel"
               :selected="accessLevel"
               :items="listOfLevels"
               min-width="340"
-              @on-select="onSelectMenuItem"
               data-e2e="accessLevel"
+              @on-select="onSelectMenuItem"
             />
           </v-col>
           <v-col cols="5" class="py-0">
             <div class="d-flex align-items-center pii-box">
-            <span class="body-2 adjust-pii mr-1">
-              <tooltip
-            :max-width="pii.tooltipWidth"
-            position-top
-          >
-            <template #label-content>
-            <span class="body-2">PII access</span>
-              <icon
-                type="info"
-                :size="8"
-                class="ml-1 mb-1"
-                color="primary"
-                variant="base"
+              <span class="body-2 adjust-pii mr-1">
+                <tooltip :max-width="pii.tooltipWidth" position-top>
+                  <template #label-content>
+                    <span class="body-2">PII access</span>
+                    <icon
+                      type="info"
+                      :size="8"
+                      class="ml-1 mb-1"
+                      color="primary"
+                      variant="base"
+                    />
+                  </template>
+                  <template #hover-content>
+                    <span v-html="pii.hoverTooltip" />
+                  </template>
+                </tooltip>
+              </span>
+              <hux-switch
+                v-model="togglePii"
+                false-color="var(--v-black-lighten4)"
+                :width="togglePii ? '57px' : '60px'"
+                :switch-labels="switchLabel"
+                data-e2e="togglePii"
               />
-            </template>
-            <template #hover-content>
-              <span v-html="pii.hoverTooltip" />
-            </template>
-          </tooltip>
-          </span>
-            <hux-switch
-              v-model="togglePii"
-              false-color="var(--v-black-lighten4)"
-              :width="togglePii ? '57px' : '60px'"
-              :switch-labels="switchLabel"
-              data-e2e="togglePii"
-            />
             </div>
           </v-col>
         </v-row>
@@ -126,24 +118,22 @@
             />
           </v-col>
         </v-row>
-        </div>
+      </div>
     </template>
 
     <template #footer-left>
       <hux-button
-          variant="white"
-          size="large"
-          :is-tile="true"
-          class="mr-2 btn-border box-shadow-none"
-          @click="closeDrawer"
-        >
-          <span class="primary--text">Cancel</span>
-        </hux-button>
+        variant="white"
+        size="large"
+        :is-tile="true"
+        class="mr-2 btn-border box-shadow-none"
+        @click="closeDrawer"
+      >
+        <span class="primary--text">Cancel</span>
+      </hux-button>
     </template>
     <template #footer-right>
-      <div
-        class="d-flex align-baseline"
-      >
+      <div class="d-flex align-baseline">
         <hux-button
           variant="primary"
           size="large"
@@ -200,33 +190,35 @@ export default {
         {
           name: "Admin",
           type: "admin",
-        },{
+        },
+        {
           name: "View-only",
           type: "viewer",
-        },{
+        },
+        {
           name: "Edit",
           type: "editor",
         },
       ],
-      firstName:"",
-      lastName:"",
-      email:"",
+      firstName: "",
+      lastName: "",
+      email: "",
       togglePii: false,
-      requestText:"",
+      requestText: "",
       access: {
-          hoverTooltip:
-            "Admin access <br /><br />\
+        hoverTooltip:
+          "Admin access <br /><br />\
             Ability to select who has access to view PII data and have removal/add functionality across Hux.<br /><br />\
             Edit access <br /><br />\
             Have removal/add functionality across Hux.<br /><br />\
             View-only access <br /><br />\
             Unable to edit a client’s team, or remove and add any solutions across Hux.",
-          tooltipWidth: "200px",
-        },
+        tooltipWidth: "200px",
+      },
       pii: {
-          hoverTooltip:
-            "Sensitive and PII data are only accessible to individuals tha been granted permission by an Admin.",
-          tooltipWidth: "300px",
+        hoverTooltip:
+          "Sensitive and PII data are only accessible to individuals tha been granted permission by an Admin.",
+        tooltipWidth: "300px",
       },
       switchLabel: [
         {
@@ -242,11 +234,16 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-    }),
+    ...mapGetters({}),
     formFilled() {
-      return !(this.firstName && this.lastName && this.email && this.accessLevelType && this.requestText)
-    }
+      return !(
+        this.firstName &&
+        this.lastName &&
+        this.email &&
+        this.accessLevelType &&
+        this.requestText
+      )
+    },
   },
 
   watch: {
@@ -279,27 +276,27 @@ export default {
     },
     async requestTeamMember() {
       this.loading = true
-      const payload={
-        "first_name":this.firstName,
-        "last_name":this.lastName,
-        "email":this.email,
-        "access_level":this.accessLevelType,
-        "pii_access":this.togglePii,
-        "reason_for_request":this.requestText,
+      const payload = {
+        first_name: this.firstName,
+        last_name: this.lastName,
+        email: this.email,
+        access_level: this.accessLevelType,
+        pii_access: this.togglePii,
+        reason_for_request: this.requestText,
       }
-      try{
-      await this.reqTeamMember(payload)
-      await this.getreqMembers()
-      }finally{
+      try {
+        await this.reqTeamMember(payload)
+        await this.getreqMembers()
+      } finally {
         this.loading = false
       }
-    }
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.adjust-label{
+.adjust-label {
   position: relative;
   bottom: -4px !important;
   margin-left: 6px !important;
@@ -320,7 +317,7 @@ export default {
   left: 70px;
   width: 150px !important;
 }
-.border-fix{
-  border: 1px solid #D0D0CE;
+.border-fix {
+  border: 1px solid #d0d0ce;
 }
 </style>

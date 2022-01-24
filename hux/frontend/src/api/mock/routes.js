@@ -69,10 +69,17 @@ export const defineRoutes = (server) => {
     const headers = {}
     const requestData = JSON.parse(request.requestBody)
     const body = {
-        description: "*Project Name:* ADV \n*Required Info:* Please add them to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* "+requestData.first_ame+ "\n*Email:*"+requestData.email+"\n*Access Level:* admin \n*PII Access:*"+requestData.pii_access+" \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:* Sameer Kumar Singh",
-        key: "HUS-2068",
-        id: 122029,
-        summary: "[NEW USER REQUEST] for"+requestData.email,
+      description:
+        "*Project Name:* ADV \n*Required Info:* Please add them to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* " +
+        requestData.first_ame +
+        "\n*Email:*" +
+        requestData.email +
+        "\n*Access Level:* admin \n*PII Access:*" +
+        requestData.pii_access +
+        " \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:* Sameer Kumar Singh",
+      key: "HUS-2068",
+      id: 122029,
+      summary: "[NEW USER REQUEST] for" + requestData.email,
     }
     return new Response(code, headers, body)
   })
