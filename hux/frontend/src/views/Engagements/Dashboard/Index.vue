@@ -11,7 +11,7 @@
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
-    <div v-if="!loading" class="inner-wrap px-8">
+    <div v-if="!loading && !errorLoading" class="inner-wrap px-8">
       <tabs
         :data="engagementList"
         :loading-audiences="loadingAudiences"
@@ -26,6 +26,19 @@
         @onOverviewDestinationAction="triggerOverviewDestinationAction($event)"
         @deliverEngagement="deliverEngagement()"
       />
+    </div>
+
+    <div v-if="!loading && errorLoading">
+      <div class="eng-dash-error-state">
+        <icon type="bug" size="50" />
+        <div class="text-h2 mb-3">
+          Engagement dashboard is currently unavailable
+        </div>
+        <div class="text-body-2">
+          Our team is working hard to fix it. Please be patient and try again
+          soon!
+        </div>
+      </div>
     </div>
     <!-- Select Audience Drawer -->
     <select-audiences-drawer
@@ -104,6 +117,7 @@
 
 <script>
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import Icon from "@/components/common/Icon"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
@@ -119,6 +133,7 @@ export default {
   name: "EngagementDashboard",
   components: {
     AddAudienceDrawer,
+    Icon,
     SelectAudiencesDrawer,
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
@@ -139,6 +154,7 @@ export default {
       destinationArr: [],
       audienceMergedData: [],
       loading: false,
+      errorLoading: false,
       loadingTab: false,
       loadingAudiences: false,
       tabOption: 0,
@@ -211,6 +227,8 @@ export default {
     this.engagementId = this.getRouteId
     try {
       await this.loadEngagement(this.getRouteId)
+    } catch {
+      this.errorLoading = true
     } finally {
       this.currentSchedule = this.engagementList.delivery_schedule?.schedule
       this.loading = false
@@ -623,6 +641,14 @@ By deleting this engagement you will not be able to recover it and it may impact
     width: 190px;
     text-align: center;
     margin: 0 auto;
+  }
+  .eng-dash-error-state {
+    margin: 30px;
+    padding-top: 75px;
+    padding-bottom: 75px;
+    background: var(--v-white-base);
+    border-radius: 12px;
+    text-align: center;
   }
   .empty-state {
     background: var(--v-primary-lighten2);

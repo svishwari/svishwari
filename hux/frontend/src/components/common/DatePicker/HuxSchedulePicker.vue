@@ -31,7 +31,7 @@
             append-icon="mdi-chevron-down"
           />
         </span>
-        <span class="black--text text--darken-4 text-h6 pt-3 pr-3">
+        <span class="black--text text--darken-4 body-1 pt-3 pr-3">
           {{ timeFrame }}(s) at
         </span>
       </div>
@@ -95,7 +95,7 @@
         @click="toggleWeekDay(day)"
       >
         <span
-          class="text-h6"
+          class="body-1"
           :class="
             isDaySelected(day)
               ? 'primary--text text--lighten-6'
@@ -149,7 +149,7 @@
       :schedule="value"
       :start-date="startDate"
       :end-date="endDate"
-      class="pt-4"
+      class="pt-4 body-1"
     />
 
     <div

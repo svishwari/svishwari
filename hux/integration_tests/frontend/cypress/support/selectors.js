@@ -81,6 +81,16 @@ export default {
       teamMembersTable: "[data-e2e='team-members-table']",
       teamMembersTableHeaders: "table thead tr",
     },
+    teamMemberDrawer: {
+      teamMemberRequest: "[data-e2e='teamMemberRequest']",
+      firstName: "[data-e2e='firstName']",
+      lastName: "[data-e2e='lastName']",
+      email: "[data-e2e='email']",
+      accessLevel: "[data-e2e='accessLevel']",
+      togglePii: "[data-e2e='togglePii']",
+      requestText: "[data-e2e='requestText']",
+      request: "[data-e2e='request']",
+    },
   },
 
   // data sources

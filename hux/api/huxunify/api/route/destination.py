@@ -1163,7 +1163,7 @@ class DestinationsRequestView(SwaggerView):
 
             destination_request.update(
                 {
-                    "Requested By": user[api_c.USER_NAME],
+                    "Requested By": f"{user[api_c.USER_NAME]} ({user[api_c.USER_EMAIL_ADDRESS]})",
                     "Environment": request.url_root,
                 }
             )
