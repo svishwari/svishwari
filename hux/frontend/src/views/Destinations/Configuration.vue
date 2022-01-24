@@ -132,6 +132,16 @@
       >
         <s-f-m-c :data-extensions="dataExtensions" @select="setExtension" />
       </div>
+      <v-col cols="6" class="py-0">
+        <text-field
+          v-model="DestinationUrl"
+          label-text="Destination URL"
+          icon="mdi-alert-circle-outline"
+          placeholder-text="URL"
+          help-text="Get directed to a specific destination to open and view your audiences. Input the domain/URL where you want to go."
+          required
+        ></text-field>
+      </v-col>
     </v-form>
 
     <!-- request destination form -->
@@ -334,8 +344,9 @@
           >
             <label
               class="d-block text-body-2 black--text text--lighten-4 mb-2 mt-6"
-              >{{ category }}</label
             >
+              {{ category }}
+            </label>
 
             <card-horizontal
               v-for="destination in value"
@@ -466,6 +477,7 @@ export default {
       showConfirmModal: false,
       navigateTo: false,
       flagForModal: false,
+      DestinationUrl: null,
     }
   },
 
@@ -642,6 +654,7 @@ export default {
         let data = {
           id: this.selectedDestination.id,
           authentication_details: this.authenticationDetails,
+          link: this.DestinationUrl,
         }
         if (this.isSFMCSelected) {
           data.configuration = this.selectedDataExtension

@@ -39,7 +39,7 @@
           <v-list-item-title
             class="font-weight-semi-bold text-h6 black--text mb-1"
           >
-            Add
+            Create / Add
           </v-list-item-title>
         </v-list-item>
         <v-list-item
@@ -112,7 +112,7 @@ export default {
 <style lang="scss" scoped>
 .v-menu__content {
   margin-left: 126px;
-  top: 64px !important;
+  top: 70px !important;
   .v-list {
     .v-list-item {
       min-height: 32px !important;

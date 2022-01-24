@@ -23,6 +23,7 @@ export default {
       options: ["scale-transition", "slide-x-transition", "slide-y-transition"],
       control: { type: "select" },
     },
+    "on-date-select": { table: { disable: true } },
   },
   args: {
     selected: [],
