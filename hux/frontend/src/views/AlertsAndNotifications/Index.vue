@@ -24,6 +24,13 @@
             bordered
           />
         </v-btn>
+        <v-btn
+          icon
+          class="ml-5"
+          @click.native="isAlertsToggled = !isAlertsToggled"
+        >
+          <icon type="setting-gear" :size="27" color="black" />
+        </v-btn>
       </template>
     </page-header>
     <div
@@ -181,6 +188,10 @@
           @onSectionAction="alertfunction"
           @selected-filters="totalFiltersSelected"
         />
+        <alert-configure-drawer
+          v-model="isAlertsToggled"
+          :users="getNotificationUsers"
+        />
       </div>
     </div>
   </div>
@@ -200,6 +211,7 @@ import AlertFilterDrawer from "./AlertFilter"
 import AlertDrawer from "./Drawer/AlertDrawer"
 import EmptyPage from "@/components/common/EmptyPage"
 import Error from "@/components/common/screens/Error"
+import AlertConfigureDrawer from "./Drawer/AlertConfigure.vue"
 
 export default {
   name: "AlertsAndNotifications",
@@ -216,6 +228,7 @@ export default {
     AlertDrawer,
     EmptyPage,
     Error,
+    AlertConfigureDrawer,
   },
   data() {
     return {
@@ -272,6 +285,7 @@ export default {
       lastBatch: 0,
       batchDetails: {},
       isFilterToggled: false,
+      isAlertsToggled: false,
       notificationId: null,
       numFiltersSelected: 0,
     }
@@ -359,6 +373,9 @@ export default {
     },
     toggleFilterDrawer() {
       this.isFilterToggled = !this.isFilterToggled
+    },
+    toggleAlertDrawer() {
+      this.isAlertsToggled = !this.isAlertsToggled
     },
     getIconColor(value) {
       if (value) {
