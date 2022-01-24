@@ -2038,19 +2038,19 @@ class DeleteAudienceView(SwaggerView):
 
         # attempt to delete the audience from audiences collection first
         if audience:
+            # remove the engagement from user favorites
+            manage_user_favorites(
+                database,
+                okta_id=user[db_c.OKTA_ID],
+                component_name=db_c.AUDIENCES,
+                component_id=ObjectId(audience_id),
+                delete_flag=True,
+            )
             deleted_audience = orchestration_management.delete_audience(
                 database, ObjectId(audience_id)
             )
 
             if deleted_audience:
-                # remove the engagement from user favorites
-                manage_user_favorites(
-                    database,
-                    okta_id=user[db_c.OKTA_ID],
-                    component_name=db_c.AUDIENCES,
-                    component_id=ObjectId(audience_id),
-                    delete_flag=True,
-                )
                 return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
             logger.info(
                 "Failed to delete audience %s by user %s.",
