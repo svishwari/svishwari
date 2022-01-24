@@ -850,15 +850,12 @@ def validate_if_resource_owner(
     return False
 
 
-def filter_team_member_requests(
-    team_member_request_issues: list, remove_done: bool = False
-) -> list:
+def filter_team_member_requests(team_member_request_issues: list) -> list:
     """Filters Jira team member requests.
 
     Args:
         team_member_request_issues (list): List of Jira issues.
-        remove_done (bool, Optional): Flag to not include issues with Done
-            status.
+
     Returns:
         list: Filtered and reformatted user requests.
     """
@@ -877,11 +874,6 @@ def filter_team_member_requests(
             request_details = extract_user_request_details_from_issue(issue)
 
             if RequestedUserSchema().validate(data=request_details):
-                if (
-                    remove_done
-                    and request_details.get(api_c.STATUS) == api_c.STATE_DONE
-                ):
-                    continue
                 user_info[request_details.get(api_c.EMAIL)].append(
                     request_details
                 )

@@ -679,11 +679,12 @@ class UsersRequested(SwaggerView):
         Returns:
             Tuple[dict, int]: dict of requested users, HTTP status code.
         """
+
         summary = api_c.NEW_USER_REQUEST_PREFIX
         summary = summary.replace("[", '"').replace("]", '"')
 
         jira_issues = JiraConnection().get_issues(
-            jql=f"summary~{summary} ORDER BY updated DESC",
+            jql=f"summary~{summary} AND status != Done ORDER BY updated DESC",
             fields=f"{api_c.DESCRIPTION},{api_c.STATUS},{api_c.UPDATED},"
             f"{api_c.CREATED}",
         )
@@ -695,7 +696,7 @@ class UsersRequested(SwaggerView):
         return (
             jsonify(
                 RequestedUserSchema().dump(
-                    filter_team_member_requests(jira_issues, remove_done=True),
+                    filter_team_member_requests(jira_issues),
                     many=True,
                 )
             ),

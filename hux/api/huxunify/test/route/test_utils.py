@@ -358,6 +358,7 @@ class TestRouteUtils(TestCase):
 
     def test_filter_team_member_requests(self):
         """Test filter_team_member_requests method."""
+
         filtered_requests = filter_team_member_requests(
             t_c.SAMPLE_USER_REQUEST_JIRA_ISSUES[api_c.ISSUES]
         )
@@ -370,9 +371,3 @@ class TestRouteUtils(TestCase):
             api_c.STATE_IN_PROGRESS,
             [request.get(api_c.STATUS) for request in filtered_requests],
         )
-
-        filtered_requests_pending = filter_team_member_requests(
-            t_c.SAMPLE_USER_REQUEST_JIRA_ISSUES[api_c.ISSUES], remove_done=True
-        )
-        # To ensure no repetition of user requests and Done issues.
-        self.assertEqual(1, len(filtered_requests_pending))

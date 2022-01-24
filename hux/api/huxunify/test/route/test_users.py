@@ -450,6 +450,7 @@ class TestUserRoutes(TestCase):
         Args:
             mock_jira (MagicMock): magic mock of JiraConnection
         """
+
         expected_response = {
             "display_name": "Sarah, Huxley",
             "created": "2022-01-12T15:25:54.000Z",
@@ -472,7 +473,7 @@ class TestUserRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertDictEqual(expected_response, response.json[0])
+        self.assertIn(expected_response, response.json)
 
     @mock.patch("huxunify.api.route.user.JiraConnection")
     def test_get_requested_users_no_requests(self, mock_jira: MagicMock):
@@ -481,6 +482,7 @@ class TestUserRoutes(TestCase):
         Args:
             mock_jira (MagicMock): magic mock of JiraConnection
         """
+
         empty_issue_jira_response = {
             "startAt": 0,
             "maxResults": 50,

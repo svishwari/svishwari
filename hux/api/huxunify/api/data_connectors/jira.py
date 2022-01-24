@@ -136,6 +136,7 @@ class JiraConnection:
         Returns:
             dict: Dict of issues found.
         """
+
         jql = (
             f"project={self.project_key} AND component="
             f"{self.project_key} AND "
