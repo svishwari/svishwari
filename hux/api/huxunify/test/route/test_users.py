@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-public-methods
 """Purpose of this file is to house all the engagement API tests."""
 from unittest import TestCase, mock
 from unittest.mock import MagicMock
@@ -14,7 +14,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.database.user_management import set_user
+from huxunifylib.database.user_management import set_user, get_user
 
 from huxunify.app import create_app
 
@@ -44,7 +44,9 @@ class TestUserRoutes(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         # mock get_db_client() in users
         mock.patch(
@@ -167,9 +169,12 @@ class TestUserRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         expected_response_message = (
-            f"The ID <{invalid_audience_id}> does " f"not exist in the database!"
+            f"The ID <{invalid_audience_id}> does "
+            f"not exist in the database!"
         )
-        self.assertEqual(response.json.get("message"), expected_response_message)
+        self.assertEqual(
+            response.json.get("message"), expected_response_message
+        )
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
     def test_deleting_audience_from_favorite(self):
@@ -213,8 +218,12 @@ class TestUserRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        expected_response_message = f"{self.audience_id} not part of user " f"favorites"
-        self.assertEqual(response.json.get("message"), expected_response_message)
+        expected_response_message = (
+            f"{self.audience_id} not part of user " f"favorites"
+        )
+        self.assertEqual(
+            response.json.get("message"), expected_response_message
+        )
 
     def test_get_user_profile_success(self):
         """Test success response of getting user profile using Okta ID."""
@@ -257,7 +266,9 @@ class TestUserRoutes(TestCase):
 
         # mock invalid request for introspect call
         request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE)
+        request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+        )
         request_mocker.start()
 
         endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
@@ -367,7 +378,9 @@ class TestUserRoutes(TestCase):
 
     def test_get_user_favorites_user_does_not_exist(self):
         """Test getting user favorites with a user that does not exist."""
-        self.assertFalse(get_user_favorites(self.database, None, db_c.ENGAGEMENTS))
+        self.assertFalse(
+            get_user_favorites(self.database, None, db_c.ENGAGEMENTS)
+        )
 
     @mock.patch("huxunify.api.route.user.JiraConnection")
     def test_create_jira_issue(self, mock_jira: MagicMock):
@@ -439,7 +452,9 @@ class TestUserRoutes(TestCase):
                     api_c.DATASOURCES: {
                         db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
                     },
-                    api_c.IDENTITY_RESOLUTION: {db_c.NOTIFICATION_TYPE_CRITICAL: True},
+                    api_c.IDENTITY_RESOLUTION: {
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True
+                    },
                 },
                 api_c.DECISIONING: {
                     api_c.MODELS: {
@@ -448,7 +463,9 @@ class TestUserRoutes(TestCase):
                 },
                 api_c.ORCHESTRATION_TAG: {
                     api_c.DESTINATIONS: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
-                    api_c.AUDIENCE_ENGAGEMENTS: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
+                    api_c.AUDIENCE_ENGAGEMENTS: {
+                        db_c.NOTIFICATION_TYPE_SUCCESS: True
+                    },
                     api_c.AUDIENCES: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
                     api_c.DELIVERY_TAG: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
                 },
@@ -517,9 +534,9 @@ class TestUserRoutes(TestCase):
 
         # get the user again and validate that the alerts are empty.
         self.assertFalse(
-            get_user(self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB])[
-                db_c.USER_ALERTS
-            ]
+            get_user(
+                self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB]
+            )[db_c.USER_ALERTS]
         )
 
     @mock.patch("huxunify.api.route.user.JiraConnection")
@@ -570,7 +587,9 @@ class TestUserRoutes(TestCase):
 
         mock_jira_instance = mock_jira.return_value
         mock_jira_instance.check_jira_connection.return_value = True
-        mock_jira_instance.search_jira_issues.return_value = empty_jira_response
+        mock_jira_instance.search_jira_issues.return_value = (
+            empty_jira_response
+        )
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{t_c.TICKETS}",
