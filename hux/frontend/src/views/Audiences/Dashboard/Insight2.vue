@@ -256,9 +256,7 @@
                 :style="{ height: matchrateStyles.height }"
                 @click="toggleAd()"
               >
-                <span class="bar-text">
-                  Digital advertising </span
-                >
+                <span class="bar-text"> Digital advertising </span>
                 <icon
                   type="expand-arrow"
                   :size="14"
@@ -269,9 +267,9 @@
               </div>
               <v-card
                 v-if="showAdvertising"
+                ref="infoBox"
                 class="digital-adv ml-6 mt-4"
                 flat
-                ref="infoBox"
               >
                 <v-card-title v-if="showAdvertising" class="ml-2 text-h3">
                   Digital advertising

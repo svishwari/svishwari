@@ -60,7 +60,7 @@ export default {
     matchrate: {
       type: Array,
       required: false,
-      default: [],
+      default: () => [],
     },
   },
   data() {

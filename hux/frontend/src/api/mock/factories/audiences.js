@@ -85,12 +85,12 @@ export const audience = {
       size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
     },
     {
-      destination:  "Google Ads",
+      destination: "Google Ads",
       type: "google-ads",
       last_delivery: "2022-01-18T17:17:27.266Z",
       match_rate: 0,
       size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
-    }
+    },
   ],
   status: () =>
     faker.random.arrayElement([
