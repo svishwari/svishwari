@@ -4,7 +4,7 @@ from unittest import TestCase, mock
 import string
 
 import requests_mock
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, settings
 from requests_mock import Mocker
 
 from huxunify.api import constants as api_c
@@ -238,6 +238,7 @@ class CDPConnectionsTest(TestCase):
             )
 
     @given(data_source_type=st.text(alphabet=string.ascii_letters))
+    @settings(deadline=100)
     def test_get_data_source_data_feeds_raise_dependency_error(
         self, data_source_type: str
     ) -> None:

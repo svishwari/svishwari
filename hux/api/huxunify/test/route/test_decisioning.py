@@ -236,19 +236,12 @@ class DecisioningTests(TestCase):
             {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, response.json
         )
 
-    @given(model_id=st.integers())
-    @settings(deadline=100)
-    def test_remove_model_failure_invalid_model_id(self, model_id: int):
-        """Test removing requested models from Unified DB with invalid model id.
-
-        Args:
-            model_id (int): Model Id
-        """
-
+    def test_remove_model_failure_invalid_model_id(self):
+        """Test removing requested models from Unified DB with invalid model id."""
         # API call to delete the requested model
         response = self.test_client.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-            query_string={api_c.MODEL_ID: model_id},
+            query_string={api_c.MODEL_ID: 96},
             headers=t_c.STANDARD_HEADERS,
         )
 
