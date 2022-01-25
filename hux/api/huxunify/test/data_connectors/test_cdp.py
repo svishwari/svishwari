@@ -6,7 +6,7 @@ from http import HTTPStatus
 import requests_mock
 import mongomock
 from dateutil.relativedelta import relativedelta
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, settings
 
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -448,19 +448,8 @@ class CDPTest(TestCase):
         with self.assertRaises(FailedAPIDependencyError):
             get_customers_overview(token=t_c.TEST_AUTH_TOKEN)
 
-    @given(
-        batch_size=st.integers(min_value=1, max_value=10),
-        offset=st.integers(min_value=10, max_value=100),
-    )
-    def test_get_customer_profiles_raise_dependency_error(
-        self, batch_size: int, offset: int
-    ) -> None:
-        """Test get customer profiles raise dependency error.
-
-        Args:
-            batch_size (int): batch size query param in request.
-            offset (int): offset query param in request.
-        """
+    def test_get_customer_profiles_raise_dependency_error(self) -> None:
+        """Test get customer profiles raise dependency error."""
 
         self.request_mocker.stop()
         self.request_mocker.get(
@@ -471,7 +460,7 @@ class CDPTest(TestCase):
 
         with self.assertRaises(FailedAPIDependencyError):
             get_customer_profiles(
-                token=t_c.TEST_AUTH_TOKEN, batch_size=batch_size, offset=offset
+                token=t_c.TEST_AUTH_TOKEN, batch_size=5, offset=3
             )
 
     @given(customer_id=st.text(alphabet=string.ascii_letters))
@@ -630,6 +619,7 @@ class CDPTest(TestCase):
             lambda date: date.strftime(api_c.DEFAULT_DATE_FORMAT)
         ),
     )
+    @settings(deadline=100)
     def test_get_spending_by_gender_raise_dependency_error(
         self, start_date: str, end_date: str
     ) -> None:

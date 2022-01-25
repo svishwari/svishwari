@@ -47,7 +47,13 @@
           <logo :type="selectedDestination.type" />
           <span class="pl-2">{{ selectedDestination.name }}</span>
         </template>
-        <a class="pl-4" color="primary" @click="toggleDrawer()"> Change </a>
+        <a
+          class="pl-4 text-body-2 mt-1"
+          color="primary"
+          @click="toggleDrawer()"
+        >
+          Change
+        </a>
       </p>
     </div>
 
@@ -290,7 +296,7 @@
           data-e2e="cancel-destination-request"
           @click="cancel()"
         >
-          Cancel
+          Cancel & return
         </hux-button>
       </template>
       <template #right>
@@ -710,5 +716,15 @@ export default {
 }
 .destination-field ::v-deep .theme--light {
   font-size: 16px !important;
+}
+::v-deep .theme--light.v-input {
+  color: var(--v-black-lighten4) !important;
+}
+::v-deep .theme--light.v-input input {
+  color: var(--v-black-lighten4) !important;
+}
+::v-deep .v-text-field__slot textarea {
+  font-size: 16px !important;
+  color: var(--v-black-lighten4) !important;
 }
 </style>

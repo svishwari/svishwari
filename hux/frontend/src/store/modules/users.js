@@ -16,6 +16,7 @@ const state = {
   },
   users: [],
   requestedUsers: [],
+  tickets: [],
 }
 
 const mutations = {
@@ -47,6 +48,10 @@ const mutations = {
     Vue.set(state, "users", users)
   },
 
+  setTickets(state, tickets) {
+    Vue.set(state, "tickets", tickets)
+  },
+
   setAllRequestedUsers(state, requestedUsers) {
     Vue.set(state, "requestedUsers", requestedUsers)
   },
@@ -73,6 +78,16 @@ const actions = {
     try {
       const response = await api.users.all()
       commit("setApplicationAllUsers", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getTickets({ commit }) {
+    try {
+      const response = await api.users.tickets()
+      commit("setTickets", response.data)
     } catch (error) {
       handleError(error)
       throw error
@@ -168,6 +183,8 @@ const getters = {
   getCurrentUserRole: (state) => state.userProfile.role,
 
   getRequestedUsers: (state) => state.requestedUsers,
+
+  getAllTickets: (state) => state.tickets,
 }
 export default {
   namespaced,
