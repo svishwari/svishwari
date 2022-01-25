@@ -89,3 +89,47 @@ class NewUserRequest(Schema):
     access_level = Str(required=True, validate=validate.OneOf(db_c.USER_ROLES))
     pii_access = Bool(required=True, default=False)
     reason_for_request = Str(required=True)
+
+
+class UserAlertSchema(Schema):
+    """User alert schema"""
+
+    critical = Bool(default=False)
+    success = Bool(default=False)
+    informational = Bool(default=False)
+
+
+class UserAlertDataManagementSchema(Schema):
+    """User alert data management schema"""
+
+    datasources = Nested(UserAlertSchema, required=False)
+    identity_resolution = Nested(UserAlertSchema, required=False)
+
+
+class UserAlertDecisioningSchema(Schema):
+    """User alert decisioning schema"""
+
+    models = Nested(UserAlertSchema, required=False)
+
+
+class UserAlertOrchestrationSchema(Schema):
+    """User alert orchestration schema"""
+
+    destinations = Nested(UserAlertSchema, required=False)
+    delivery = Nested(UserAlertSchema, required=False)
+    audiences = Nested(UserAlertSchema, required=False)
+    engagements = Nested(UserAlertSchema, required=False)
+
+
+class UserAlertCategorySchema(Schema):
+    """User alert category schema"""
+
+    data_management = Nested(UserAlertDataManagementSchema)
+    decisioning = Nested(UserAlertDecisioningSchema)
+    orchestration = Nested(UserAlertOrchestrationSchema)
+
+
+class UserPreferencesSchema(Schema):
+    """User preferences schema"""
+
+    alerts = Nested(UserAlertCategorySchema)
