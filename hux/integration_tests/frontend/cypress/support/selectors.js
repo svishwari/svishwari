@@ -62,6 +62,15 @@ export default {
     allNotificationsLink: "[data-e2e='all-notifications-link']",
   },
 
+  //client
+  client: {
+    clientDropdown: "[data-e2e='client_panel_dropdown']",
+    clientPanelOpen: "[data-e2e='client_panel']",
+    clientHeader: "[data-e2e='client-header']",
+    clientLists: "[data-e2e='clients-list']",
+    client: "[data-e2e='client']",
+  },
+
   // my issues
   myIssues: {
     header: "[data-e2e='issues-header']",
