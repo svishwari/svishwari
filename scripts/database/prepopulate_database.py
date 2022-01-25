@@ -1259,30 +1259,30 @@ configurations_constants = [
 ]
 
 # Client Projects List
-client_projects_constants = [
+client_projects_list = [
     {
-        db_c.CLIENT_PROJECT_FIELD_NAME: "Monamie",
-        db_c.CLIENT_PROJECT_FIELD_TYPE: "monamie",
-        db_c.CLIENT_PROJECT_FIELD_DESCRIPTION: "Monamie Project",
-        db_c.CLIENT_PROJECT_FIELD_URL: "https://localhost/monamie",
-        db_c.CLIENT_PROJECT_FIELD_ICON: "default.ico",
-        db_c.CLIENT_PROJECT_FIELD_ACCESS_LEVEL: "viewer",
+        db_c.NAME: "Monamie",
+        db_c.TYPE: "monamie",
+        db_c.DESCRIPTION: "Monamie Project",
+        db_c.URL: "https://localhost/monamie",
+        db_c.ICON: "default.ico",
+        db_c.ACCESS_LEVEL: "viewer",
     },
     {
-        db_c.CLIENT_PROJECT_FIELD_NAME: "Creatiff Inc.",
-        db_c.CLIENT_PROJECT_FIELD_TYPE: "creatiff-inc",
-        db_c.CLIENT_PROJECT_FIELD_DESCRIPTION: "Creatiff Inc. Project",
-        db_c.CLIENT_PROJECT_FIELD_URL: "https://localhost/creatiff",
-        db_c.CLIENT_PROJECT_FIELD_ICON: "default.ico",
-        db_c.CLIENT_PROJECT_FIELD_ACCESS_LEVEL: "editor",
+        db_c.NAME: "Creatiff Inc.",
+        db_c.TYPE: "creatiff-inc",
+        db_c.DESCRIPTION: "Creatiff Inc. Project",
+        db_c.URL: "https://localhost/creatiff",
+        db_c.ICON: "default.ico",
+        db_c.ACCESS_LEVEL: "editor",
     },
     {
-        db_c.CLIENT_PROJECT_FIELD_NAME: ".am",
-        db_c.CLIENT_PROJECT_FIELD_TYPE: ".am",
-        db_c.CLIENT_PROJECT_FIELD_DESCRIPTION: ".am Project",
-        db_c.CLIENT_PROJECT_FIELD_URL: "https://localhost/am",
-        db_c.CLIENT_PROJECT_FIELD_ICON: "default.ico",
-        db_c.CLIENT_PROJECT_FIELD_ACCESS_LEVEL: "admin",
+        db_c.NAME: ".am",
+        db_c.TYPE: ".am",
+        db_c.DESCRIPTION: ".am Project",
+        db_c.URL: "https://localhost/am",
+        db_c.ICON: "default.ico",
+        db_c.ACCESS_LEVEL: "admin",
     },
 ]
 
@@ -1324,15 +1324,11 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
             source_type=data_source[db_c.DATA_SOURCE_TYPE],
             status=data_source[db_c.STATUS],
         )[db_c.ID]
-        logging.info(
-            "Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id
-        )
+        logging.info("Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id)
     logging.info("Prepopulate data sources complete.")
 
 
-def insert_delivery_platforms(
-    database: MongoClient, delivery_platforms: list
-) -> None:
+def insert_delivery_platforms(database: MongoClient, delivery_platforms: list) -> None:
     """Insertion of Delivery Platforms Collection.
 
     Args:
@@ -1393,17 +1389,13 @@ def insert_models(database: MongoClient, models: list) -> None:
     logging.info("Prepopulate models.")
 
     for model in models:
-        model_id = create_document(database, db_c.MODELS_COLLECTION, model)[
-            db_c.ID
-        ]
+        model_id = create_document(database, db_c.MODELS_COLLECTION, model)[db_c.ID]
         logging.info("Added %s, %s.", model[db_c.NAME], model_id)
 
     logging.info("Prepopulate models complete.")
 
 
-def insert_client_projects(
-    database: MongoClient, client_projects: list
-) -> None:
+def insert_client_projects(database: MongoClient, client_projects: list) -> None:
     """Insert data into client_projects collection.
 
     Args:
@@ -1437,5 +1429,5 @@ if __name__ == "__main__":
     insert_delivery_platforms(db_client, delivery_platforms_constants)
     insert_configurations(db_client, configurations_constants)
     insert_models(db_client, models_list)
-    insert_client_projects(db_client, client_projects_constants)
+    insert_client_projects(db_client, client_projects_list)
     logging.info("Prepopulate complete.")
