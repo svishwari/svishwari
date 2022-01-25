@@ -15,7 +15,7 @@ class Cloud:
         Args:
             config (config): config object.
             args (list): function arguments.
-            kwargs (dict): function keyword arguments.
+            **kwargs (dict): function keyword arguments.
 
         Returns:
             None
@@ -36,7 +36,7 @@ class Cloud:
 
         Args:
             secret_name (str): Name of the secret.
-            kwargs (dict): function keyword arguments.
+            **kwargs (dict): function keyword arguments.
 
         Returns:
             str: The value of the secret.
@@ -49,7 +49,7 @@ class Cloud:
         Args:
             secret_name (str): Name of the secret.
             value (str): The value of the secret.
-            kwargs (dict): function keyword arguments.
+            **kwargs (dict): function keyword arguments.
 
         Returns:
             None
@@ -66,7 +66,7 @@ class Cloud:
             file_name (str): Name of the file to upload.
             file_type (str): Type of the file to upload.
             user_name (str): Name of the user uploading the file.
-            kwargs (dict): function keyword arguments.
+            **kwargs (dict): function keyword arguments.
 
         Returns:
 
@@ -79,7 +79,7 @@ class Cloud:
         Args:
             file_name (str): Name of the file to upload.
             user_name (str): Name of the user uploading the file.
-            kwargs (dict): function keyword arguments.
+            **kwargs (dict): function keyword arguments.
 
         Returns:
             bool: indication that download was successful.

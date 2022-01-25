@@ -36,7 +36,7 @@ class Azure(Cloud):
         Args:
             secret_name (str): Name of the secret.
             value (str): The value of the secret.
-            **kwargs: function keyword arguments.
+            **kwargs (dict): function keyword arguments.
 
         Returns:
         """
@@ -59,7 +59,7 @@ class Azure(Cloud):
             file_name (str): name of the file to upload.
             file_type (str): type of the file to upload.
             user_name (str): name of the user uploading the file.
-            kwargs (dict): function keyword arguments.
+            **kwargs (dict): function keyword arguments.
 
         Returns:
             bool: bool indicator if the upload was successful
@@ -73,7 +73,7 @@ class Azure(Cloud):
         Args:
             file_name (str): Name of the file to upload.
             user_name (str): Name of the user uploading the file.
-            kwargs (dict): function keyword arguments.
+            **kwargs (dict): function keyword arguments.
 
         Returns:
             bool: indication that download was successful.
