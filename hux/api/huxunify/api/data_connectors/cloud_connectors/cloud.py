@@ -1,7 +1,7 @@
 """ Module for base class for cloud operations"""
 from huxunify.api.config import Config, get_config
 
-
+# pylint: disable=missing-raises-doc
 class Cloud:
     """Base class for cloud operations"""
 

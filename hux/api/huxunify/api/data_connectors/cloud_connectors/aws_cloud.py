@@ -5,7 +5,7 @@ import botocore
 from huxunify.api.data_connectors.cloud_connectors.cloud import Cloud
 import huxunify.api.constants as api_c
 
-
+# pylint: disable=missing-raises-doc
 class AWS(Cloud):
     """Class for AWS cloud operations"""
 

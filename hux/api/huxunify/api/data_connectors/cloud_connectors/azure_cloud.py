@@ -4,7 +4,7 @@ from azure.keyvault.secrets import SecretClient
 
 from huxunify.api.data_connectors.cloud_connectors.cloud import Cloud
 
-
+# pylint: disable=missing-raises-doc
 class Azure(Cloud):
     """Class for Azure cloud operations"""
 
