@@ -729,6 +729,10 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(
             self.lookalike_audience_doc[api_c.NAME], audience[api_c.NAME]
         )
+        self.assertEqual(
+            self.lookalike_audience_doc[db_c.LOOKALIKE_AUD_SIZE_PERCENTAGE],
+            audience[db_c.LOOKALIKE_AUD_SIZE_PERCENTAGE],
+        )
         self.assertEqual(self.user_name, audience[db_c.CREATED_BY])
         self.assertTrue(audience[api_c.IS_LOOKALIKE])
         self.assertTrue(audience[api_c.LOOKALIKE_SOURCE_EXISTS])

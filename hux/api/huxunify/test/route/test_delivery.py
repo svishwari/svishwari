@@ -480,6 +480,19 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    def test_deliver_audience_for_engagement_with_destinations(self):
+        """Test delivery of audience for a valid engagement ID."""
+
+        engagement_id = self.engagement_ids[0]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVER}?{api_c.DESTINATIONS}=60b9601a6021710aa146df30",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
     def test_get_engagement_delivery_history(self):
         """Test get delivery history API with valid ID."""
 
