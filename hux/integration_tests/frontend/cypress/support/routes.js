@@ -13,6 +13,7 @@ export default {
   home: "/home",
   configuration: "/configuration",
   notifications: "/notifications",
+  myIssues: "/my-issues",
 
   // data management
   dataSources: "/data-sources",

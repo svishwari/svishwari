@@ -48,6 +48,7 @@ export default {
     profile: "[data-e2e='profile']",
     logout: "[data-e2e='logout']",
     help: "[data-e2e='help-dropdown']",
+    myIssues: "[data-e2e='myIssues']",
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
     dataSourceButton: "[data-e2e='Data Source']",
@@ -59,6 +60,17 @@ export default {
     totalCustomersChart: "[data-e2e='total-customers-chart']",
     latestNotifications: "[data-e2e='latest-notifications']",
     allNotificationsLink: "[data-e2e='all-notifications-link']",
+  },
+
+  // my issues
+  myIssues: {
+    header: "[data-e2e='issues-header']",
+    table: "[data-e2e='issues-table']",
+    key: "[data-e2e='issues-key']",
+    status: "[data-e2e='issues-status']",
+    summary: "[data-e2e='issues-summary']",
+    time: "[data-e2e='issues-time']",
+    return: "[data-e2e='issues-return']",
   },
 
   // configuration
