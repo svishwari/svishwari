@@ -100,10 +100,10 @@
         >
           <empty-page type="no-alerts" :size="50">
             <template #title>
-              <div class="title-no-notification">No issues yet</div></template
+              <div class="text-h2 black-text">No issues yet</div></template
             >
             <template #subtitle>
-              <div class="des-no-notification">
+              <div class="body-2 black-text">
                 Currently there are no issues available.<br />
                 Check back later.
               </div>
@@ -251,11 +251,9 @@ export default {
   .hux-data-table {
     margin-top: 1px;
     table {
-      tr {
-        td {
-          font-size: 14px;
-          height: 63px;
-        }
+      td {
+        font-size: 14px;
+        height: 63px;
       }
     }
   }
@@ -278,33 +276,7 @@ export default {
   > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
   background: white !important;
 }
-::v-deep
-  .theme--light.v-data-table
-  > .v-data-table__wrapper
-  > table
-  > thead
-  > tr:last-child
-  > th {
-  padding-left: 32px !important;
-}
-::v-deep
-  .theme--light.v-data-table
-  > .v-data-table__wrapper
-  > table
-  > tbody
-  > tr:not(:last-child)
-  > td:not(.v-data-table__mobile-row),
-.theme--light.v-data-table
-  > .v-data-table__wrapper
-  > table
-  > tbody
-  > tr:not(:last-child)
-  > th:not(.v-data-table__mobile-row) {
-  padding-left: 32px !important;
-}
-::v-deep .v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
-.v-data-table > .v-data-table__wrapper > table > thead > tr > td,
-.v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
+::v-deep .v-data-table > .v-data-table__wrapper > table > td {
   padding-left: 32px !important;
 }
 .background-empty {
@@ -313,22 +285,6 @@ export default {
   background-position: center;
 }
 
-//to overwrite the classes
-
-.title-no-notification {
-  font-size: 24px !important;
-  line-height: 34px !important;
-  font-weight: 300 !important;
-  letter-spacing: 0 !important;
-  color: var(--v-black-base);
-}
-.des-no-notification {
-  font-size: 14px !important;
-  line-height: 16px !important;
-  font-weight: 400 !important;
-  letter-spacing: 0 !important;
-  color: var(--v-black-base);
-}
 ::v-deep .empty-page {
   max-height: 0 !important;
   min-height: 100% !important;

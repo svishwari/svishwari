@@ -48,7 +48,7 @@ export default {
     profile: "[data-e2e='profile']",
     logout: "[data-e2e='logout']",
     help: "[data-e2e='help-dropdown']",
-    myIssues: "[data-e2e='myissues']",
+    myIssues: "[data-e2e='myIssues']",
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
     dataSourceButton: "[data-e2e='Data Source']",
