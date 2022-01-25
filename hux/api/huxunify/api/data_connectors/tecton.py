@@ -532,33 +532,6 @@ class Tecton:
             if not features:
                 break
 
-            # id = Str()
-            # version = Str()
-            # feature_service = Str()
-            # data_source = Str()
-            # created_by = Str()
-            # description = Str(default="")
-            # name = Str(required=True)
-            # status = Str()
-            # score = Float()
-            # popularity = Int()
-
-            # api_c.FEATURES: [
-            #     "2022-01-06",
-            #     "2022-01-06 00:00:00",
-            #     "4w-data_source-click",
-            #     "'click' 'number of events by data source' in 'last 4 weeks'",
-            #     0.1745832178355047,
-            #     100351.13774108887,
-            #     17519.624540293255,
-            #     "Propensity positive click",
-            #     "binary",
-            #     "2022.01.06"
-            # ],
-
-            # lift = gain * feature presence
-            #
-
             for feature in features:
                 # get score.
                 lift = 0
