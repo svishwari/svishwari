@@ -22,16 +22,16 @@ class Config:
     FLASK_ENV = "test"
 
     # Cloud Provider
-    CLOUD_PROVIDER = config(api_c.CLOUD_PROVIDER)
+    CLOUD_PROVIDER = config(api_c.CLOUD_PROVIDER, default="")
 
     # Azure Config
-    AZURE_BATCH_ACCOUNT_NAME = config(api_c.AZURE_BATCH_ACCOUNT_NAME)
-    AZURE_BATCH_ACCOUNT_KEY = config(api_c.AZURE_BATCH_ACCOUNT_KEY)
-    AZURE_BATCH_ACCOUNT_URL = config(api_c.AZURE_BATCH_ACCOUNT_URL)
-    AZURE_STORAGE_ACCOUNT_NAME = config(api_c.AZURE_STORAGE_ACCOUNT_NAME)
-    AZURE_STORAGE_ACCOUNT_KEY = config(api_c.AZURE_STORAGE_ACCOUNT_KEY)
-    AZURE_BLOB_CONTAINER_NAME = config(api_c.AZURE_BLOB_CONTAINER_NAME)
-    AZURE_KEY_VAULT_NAME = config(api_c.AZURE_KEY_VAULT_NAME)
+    AZURE_BATCH_ACCOUNT_NAME = config(api_c.AZURE_BATCH_ACCOUNT_NAME, default="")
+    AZURE_BATCH_ACCOUNT_KEY = config(api_c.AZURE_BATCH_ACCOUNT_KEY, default="")
+    AZURE_BATCH_ACCOUNT_URL = config(api_c.AZURE_BATCH_ACCOUNT_URL, default="")
+    AZURE_STORAGE_ACCOUNT_NAME = config(api_c.AZURE_STORAGE_ACCOUNT_NAME, default="")
+    AZURE_STORAGE_ACCOUNT_KEY = config(api_c.AZURE_STORAGE_ACCOUNT_KEY, default="")
+    AZURE_BLOB_CONTAINER_NAME = config(api_c.AZURE_BLOB_CONTAINER_NAME, default="")
+    AZURE_KEY_VAULT_NAME = config(api_c.AZURE_KEY_VAULT_NAME, default="")
 
     # AWS_CONFIG
     AWS_REGION = config(api_c.AWS_REGION, default="")
