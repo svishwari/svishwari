@@ -189,6 +189,126 @@ def get_okta_test_user_creds(config: Config) -> tuple:
 
 
 # pylint: disable=too-many-instance-attributes,too-many-arguments
+class BaseDestinationBatchJob:
+    """Base class for housing the Destination batch config."""
+
+    provider = None
+
+    def __new__(cls, config: Config = get_config(), *args, **kwargs):
+        cls.config = config
+        subclass = next(
+            filter(
+                lambda clazz: clazz.provider.lower()
+                == config.CLOUD_PROVIDER.lower(),
+                cls.__subclasses__(),
+            )
+        )
+        return object.__new__(subclass)
+
+    def __init__(
+        self,
+        database: MongoClient,
+        audience_delivery_job_id: ObjectId,
+        destination_type: str,
+        **kwargs,
+    ) -> None:
+        """Init the class with the config variables
+
+        Args:
+            database (MongoClient): The mongo database client.
+            audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
+            destination_type (str): The type of destination (i.e. facebook, sfcm)
+            **kwargs: extra parameters.
+
+        Returns:
+
+        """
+        self.database = database
+        self.audience_delivery_job_id = audience_delivery_job_id
+        self.destination_type = destination_type
+        # TODO Azure connector to be written by orchestration team
+        # TODO (type should be a base class also provided by orch)
+        self.batch_connector = None
+        self.result = None
+        self.scheduled = False
+
+    def register(self, job_name: str = "audiencerouter", **kwargs) -> None:
+        """Register a destination job
+
+        Args:
+            job_name (str): The batch job name.
+            **kwargs: extra parameters.
+
+        Returns:
+
+        """
+        raise NotImplementedError()
+
+    def submit(self, **kwargs) -> None:
+        """Submit a destination job to the cloud
+
+        Args:
+            **kwargs: extra parameters.
+
+        Returns:
+
+        Raises:
+            Exception: Exception raised if a job is missing.
+        """
+        raise NotImplementedError()
+
+
+class AWSDestinationBatchJob(BaseDestinationBatchJob):
+
+    provider = "AWS"
+
+    def __init__(
+        self,
+        database: MongoClient,
+        audience_delivery_job_id: ObjectId,
+        destination_type: str,
+        **kwargs,
+    ):
+        """Init the class with the config variables
+
+        Args:
+            database (MongoClient): The mongo database client.
+            audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
+            destination_type (str): The type of destination (i.e. facebook, sfcm)
+            **kwargs: extra parameters.
+
+        Returns:
+
+        """
+        super().__init__(database, audience_delivery_job_id, destination_type)
+
+    def register(self, job_name: str = "audiencerouter", **kwargs) -> None:
+        """Register a destination job
+
+        Args:
+            job_name (str): The batch job name.
+            **kwargs: extra parameters.
+
+        Returns:
+
+        """
+        raise NotImplementedError()
+
+    def submit(self, **kwargs) -> None:
+        """Submit a destination job to the cloud
+
+        Args:
+            **kwargs: extra parameters.
+
+        Returns:
+
+        Raises:
+            Exception: Exception raised if a job is missing.
+        """
+        raise NotImplementedError()
+
+
+# pylint: disable=too-many-instance-attributes,too-many-arguments
 class DestinationBatchJob:
     """Class for housing the Destination batch config."""
 
