@@ -238,7 +238,6 @@ class DecisioningTests(TestCase):
 
     def test_remove_model_failure_invalid_model_id(self):
         """Test removing requested models from Unified DB with invalid model id."""
-
         # API call to delete the requested model
         response = self.test_client.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",

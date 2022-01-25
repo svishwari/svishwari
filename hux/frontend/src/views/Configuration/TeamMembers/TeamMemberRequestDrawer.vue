@@ -263,7 +263,6 @@ export default {
     }),
     closeDrawer() {
       this.localToggle = false
-      this.localSelectedAudiences = this.value
     },
     onSelectMenuItem(item) {
       if (this.accessLevel == item.name) {
@@ -273,6 +272,15 @@ export default {
         this.accessLevel = item.name
         this.accessLevelType = item.type
       }
+    },
+    reset() {
+      this.firstName = ""
+      this.lastName = ""
+      this.email = ""
+      this.togglePii = false
+      this.requestText = ""
+      this.accessLevel = "Select access"
+      this.accessLevelType = ""
     },
     async requestTeamMember() {
       this.loading = true
@@ -284,6 +292,8 @@ export default {
         pii_access: this.togglePii,
         reason_for_request: this.requestText,
       }
+      this.reset()
+      this.closeDrawer()
       try {
         await this.reqTeamMember(payload)
         await this.getreqMembers()
