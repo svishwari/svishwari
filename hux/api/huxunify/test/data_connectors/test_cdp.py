@@ -448,19 +448,8 @@ class CDPTest(TestCase):
         with self.assertRaises(FailedAPIDependencyError):
             get_customers_overview(token=t_c.TEST_AUTH_TOKEN)
 
-    @given(
-        batch_size=st.integers(min_value=1, max_value=10),
-        offset=st.integers(min_value=10, max_value=100),
-    )
-    def test_get_customer_profiles_raise_dependency_error(
-        self, batch_size: int, offset: int
-    ) -> None:
-        """Test get customer profiles raise dependency error.
-
-        Args:
-            batch_size (int): batch size query param in request.
-            offset (int): offset query param in request.
-        """
+    def test_get_customer_profiles_raise_dependency_error(self) -> None:
+        """Test get customer profiles raise dependency error."""
 
         self.request_mocker.stop()
         self.request_mocker.get(
@@ -471,7 +460,7 @@ class CDPTest(TestCase):
 
         with self.assertRaises(FailedAPIDependencyError):
             get_customer_profiles(
-                token=t_c.TEST_AUTH_TOKEN, batch_size=batch_size, offset=offset
+                token=t_c.TEST_AUTH_TOKEN, batch_size=5, offset=3
             )
 
     @given(customer_id=st.text(alphabet=string.ascii_letters))
