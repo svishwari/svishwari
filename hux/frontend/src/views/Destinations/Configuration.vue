@@ -711,4 +711,15 @@ export default {
 .destination-field ::v-deep .theme--light {
   font-size: 16px !important;
 }
+::v-deep .theme--light.v-input {
+  color: var(--v-black-lighten4) !important;
+}
+::v-deep .theme--light.v-input input {
+   color: var(--v-black-lighten4) !important;
+}
+::v-deep .v-text-field__slot textarea {
+   font-size: 16px !important;
+ color: var(--v-black-lighten4) !important;
+
+}
 </style>

@@ -1,16 +1,16 @@
 <template>
-  <v-menu v-model="menu" :min-width="200" left offset-y close-on-click>
+  <v-menu v-model="batchDetails.menu" :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
       <span class="d-flex cursor-pointer mr-4" v-on="on">
         <tooltip :z-index="99">
           <template #label-content>
-            <span :class="{ 'icon-shadow': menu }">
+            <span :class="{ 'icon-shadow': batchDetails.menu }">
               <icon
                 data-e2e="notification-bell"
                 class="mx-2 my-2 nav-icon"
                 type="bell-notification"
                 :size="24"
-                :class="{ 'active-icon': menu }"
+                :class="{ 'active-icon': batchDetails.menu }"
               />
             </span>
           </template>
@@ -22,7 +22,7 @@
       <v-list-item>
         <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
           <span v-if="mostRecentNotifications.length > 0"
-            >Most recent alerts
+            > Most recent alerts
           </span>
           <span v-else>No unread alerts </span>
         </v-list-item-title>

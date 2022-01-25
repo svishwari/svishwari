@@ -22,21 +22,37 @@
         />
         <tooltip position-bottom>
           <template #label-content>
-            <icon
-              type="pencil"
-              :size="18"
-              class="cursor-pointer mr-7"
-              color="black-darken4"
-              @click.native="
-                $router.push({
-                  name: 'AudienceUpdate',
-                  params: { id: audienceId },
-                })
-              "
-            />
+            <span v-if="audienceData.is_lookalike === true" @click="openLookalikeEditModal()">
+              <icon
+                type="pencil"
+                :size="18"
+                class="cursor-pointer mr-7"
+                color="black-darken4"
+              />
+            </span>
+            <span v-else>
+              <icon
+                type="pencil"
+                :size="18"
+                class="cursor-pointer mr-7"
+                color="black-darken4"
+                @click.native="
+                  $router.push({
+                    name: 'AudienceUpdate',
+                    params: { id: audienceId },
+                  })
+                "
+              />
+            </span>
           </template>
           <template #hover-content>
-            <div class="text--body-1 pb-2">Click to edit this audience</div>
+            <div class="text--body-1 pb-2">
+              <span v-if="audienceData.is_lookalike === true">
+                Edit {{audienceData.name}}
+              </span>
+              <span v-else>  Click to edit this audience</span>
+             
+              </div>
           </template>
         </tooltip>
         <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
@@ -44,7 +60,7 @@
             <v-icon
               v-bind="attrs"
               class="cursor-pointer mr-7"
-              color="black-darken4"
+              color="black base"
               :class="{ 'd-inline-block': openMenu }"
               v-on="on"
             >
@@ -57,7 +73,10 @@
               <v-list-item @click="initiateDelete()">
                 Delete audience
               </v-list-item>
-              <v-list-item @click="openDownloadDrawer()">
+              <v-list-item
+                v-if="!audienceData.is_lookalike"
+                @click="openDownloadDrawer()"
+              >
                 Download as
               </v-list-item>
             </v-list-item-group>
@@ -108,6 +127,9 @@ export default {
     },
     openDownloadDrawer() {
       this.$emit("openDownloadDrawer")
+    },
+    openLookalikeEditModal() {
+      this.$emit("openLookalikeEditModal")
     },
   },
 }
