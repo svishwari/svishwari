@@ -46,3 +46,38 @@ export const requestedUser = [
     updated: faker.date.recent(),
   },
 ]
+
+/**
+ * A single ticket schema
+ *
+ * @returns {object} ticket
+ */
+const ticket = () => {
+  return {
+    status: faker.random.arrayElement([
+      "To do",
+      "In progress",
+      "In review",
+      "Done",
+    ]),
+
+    id: faker.datatype.number(),
+
+    key: `HUS-${faker.datatype.number({ min: 1000, max: 3000 })}`,
+
+    summary: faker.lorem.words(3),
+
+    create_time: faker.date.recent(),
+  }
+}
+
+/**
+ * Users tickets schema
+ *
+ * @returns {object} tickets response schema
+ */
+export const someTickets = () => {
+  let num = faker.datatype.number({ min: 5, max: 10 })
+
+  return Array.from({ length: num }, () => ticket())
+}

@@ -28,6 +28,14 @@
             Help
           </v-list-item-title>
         </v-list-item>
+        <v-list-item class="v-list-item--link" data-e2e="myissues">
+          <a
+            href="/my-issues"
+            class="text-body-1 black--text view-all text-decoration-none"
+          >
+            My issues
+          </a>
+        </v-list-item>
         <v-list-item
           class="v-list-item--link"
           data-e2e="contactus"

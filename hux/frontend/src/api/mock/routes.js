@@ -13,7 +13,7 @@ import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import { dataFeeds } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
-import { requestedUser } from "./factories/user.js"
+import { requestedUser, someTickets } from "./factories/user.js"
 import audienceCSVData from "./factories/audienceCSVData"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
@@ -85,6 +85,7 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
   server.get("users/requested_users", () => requestedUser)
+  server.get("users/tickets", () => someTickets())
 
   // data sources
   server.get("/data-sources")
