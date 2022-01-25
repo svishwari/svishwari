@@ -7,9 +7,12 @@
         :disabled="item.disabled"
         class="font-weight-light"
       >
-     
-        <div v-if="item.status"  class="d-flex pr-2">
-          <status :status="item.status" :icon-size="item.statusSize ? item.statusSize : 21" collapsed></status>
+        <div v-if="item.status" class="d-flex pr-2">
+          <status
+            :status="item.status"
+            :icon-size="item.statusSize ? item.statusSize : 21"
+            collapsed
+          ></status>
         </div>
         <div v-if="item.icon" class="d-flex pr-2">
           <icon

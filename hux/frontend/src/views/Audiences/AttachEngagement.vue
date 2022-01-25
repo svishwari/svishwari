@@ -415,6 +415,7 @@ export default {
 
   watch: {
     value: function () {
+      console.log("this.value", this.value)
       this.localDrawer = this.value
     },
     localDrawer: function () {

@@ -10,14 +10,16 @@
       @openLookalikeEditModal="() => openLookalikeEditModal()"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="pa-8" v-if="audience && audience.is_lookalike === true">
-      <AudienceLookalikeDashboard
+    <div v-if="audience && audience.is_lookalike === true" class="pa-8">
+      <audience-lookalike-dashboard
         :audience-data="audience"
-        :appliedFilters="appliedFilters"
-        :relatedEngagements="relatedEngagements"
+        :applied-filters="appliedFilters"
+        :audience-id="audienceId"
+        :related-engagements="relatedEngagements"
+        @onRefresh="refresh()"
       />
     </div>
-    <div class="pa-8" v-else v-cloak>
+    <div v-else v-cloak class="pa-8">
       <v-card class="overview-card pt-5 pb-6 pl-6 pr-6 box-shadow-5">
         <v-card-title class="d-flex justify-space-between pa-0 pr-2">
           <h3 class="text-h3 mb-2">Audience overview</h3>
@@ -753,6 +755,7 @@ export default {
       return options
     },
     async refresh() {
+      console.log("refresh")
       await this.loadAudienceInsights()
       this.sizeHandler()
     },
@@ -849,17 +852,19 @@ export default {
         default:
           break
       }
-      await this.loadAudienceInsights()
+      if (this.confirmDialog.actionType === "remove audience") {
+        this.$router.push({ name: "Audiences" })
+      } else {
+        await this.loadAudienceInsights()
+      }
     },
 
     /**
-     *
-     Formatting the values to the desired format using predefined application filters.
+     * Formatting the values to the desired format using predefined application filters.
      *
      * @param {object} item item
      * @param {string} item.title item's title
      * @returns {number | string } formatted value
-     * @param item
      */
     getFormattedValue(item) {
       switch (item.title) {

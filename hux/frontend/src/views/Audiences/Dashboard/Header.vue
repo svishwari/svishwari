@@ -22,7 +22,10 @@
         />
         <tooltip position-bottom>
           <template #label-content>
-            <span v-if="audienceData.is_lookalike === true" @click="openLookalikeEditModal()">
+            <span
+              v-if="audienceData.is_lookalike === true"
+              @click="openLookalikeEditModal()"
+            >
               <icon
                 type="pencil"
                 :size="18"
@@ -48,11 +51,10 @@
           <template #hover-content>
             <div class="text--body-1 pb-2">
               <span v-if="audienceData.is_lookalike === true">
-                Edit {{audienceData.name}}
+                Edit {{ audienceData.name }}
               </span>
-              <span v-else>  Click to edit this audience</span>
-             
-              </div>
+              <span v-else> Click to edit this audience</span>
+            </div>
           </template>
         </tooltip>
         <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>

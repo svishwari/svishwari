@@ -290,7 +290,7 @@
           data-e2e="cancel-destination-request"
           @click="cancel()"
         >
-          Cancel
+          Cancel & return
         </hux-button>
       </template>
       <template #right>
@@ -715,11 +715,10 @@ export default {
   color: var(--v-black-lighten4) !important;
 }
 ::v-deep .theme--light.v-input input {
-   color: var(--v-black-lighten4) !important;
+  color: var(--v-black-lighten4) !important;
 }
 ::v-deep .v-text-field__slot textarea {
-   font-size: 16px !important;
- color: var(--v-black-lighten4) !important;
-
+  font-size: 16px !important;
+  color: var(--v-black-lighten4) !important;
 }
 </style>

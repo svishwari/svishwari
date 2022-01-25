@@ -116,7 +116,11 @@
           </div>
         </v-card>
         <div>
-          <lookalike-engagement :headers="columnDefs" :sections="relatedEngagements" />
+          <lookalike-engagement
+            :headers="columnDefs"
+            :sections="relatedEngagements"
+            @addEngagement="openAttachEngagementDrawer()"
+          />
         </div>
       </v-col>
       <v-col cols="5">
@@ -256,32 +260,34 @@
         </v-card>
       </v-col>
     </v-row>
+    <!-- Engagement workflow -->
+    <attach-engagement
+      ref="selectEngagements"
+      v-model="engagementDrawer"
+      close-on-action
+      :final-engagements="selectedEngagements"
+      @onEngagementChange="setSelectedEngagements"
+      @onAddEngagement="triggerAttachEngagement($event)"
+    />
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-
-import Breadcrumb from "@/components/common/Breadcrumb.vue"
+import { mapActions } from "vuex"
 import MetricCard from "@/components/common/MetricCard.vue"
-import DashboardHeader from "@/views/Audiences/Dashboard/Header.vue"
-import Delivery from "@/views/Audiences/Dashboard/Delivery.vue"
 import Logo from "@/components/common/Logo"
-import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import LookalikeEngagement from "@/views/Audiences/Lookalike/LookalikeEngagement.vue"
+import AttachEngagement from "@/views/Audiences/AttachEngagement.vue"
 
 export default {
   name: "AudienceLookalikeDashboard",
   components: {
-    Breadcrumb,
     MetricCard,
     Logo,
-    DashboardHeader,
-    Delivery,
-    TimeStamp,
     Tooltip,
     LookalikeEngagement,
+    AttachEngagement,
   },
   props: {
     audienceData: {
@@ -297,6 +303,10 @@ export default {
       type: Array,
       required: false,
       default: () => [],
+    },
+    audienceId: {
+      type: [String, Number],
+      required: false,
     },
   },
   data() {
@@ -315,9 +325,56 @@ export default {
           value: "created",
         },
       ],
+      engagementDrawer: false,
+      selectedEngagements: [],
     }
   },
   computed: {},
+  methods: {
+    ...mapActions({
+      attachAudience: "engagements/attachAudience",
+    }),
+    // Drawer Section Starts
+    setSelectedEngagements(engagementsList) {
+      this.selectedEngagements = engagementsList
+    },
+    closeAllDrawers() {
+      this.engagementDrawer = false
+    },
+    openAttachEngagementDrawer() {
+      this.closeAllDrawers()
+      this.$refs.selectEngagements.fetchDependencies()
+      this.selectedEngagements = this.relatedEngagements.map((eng) => ({
+        id: eng.id,
+      }))
+      this.engagementDrawer = true
+    },
+    async triggerAttachEngagement(event) {
+      if (event.action === "Attach") {
+        const payload = {
+          audiences: [
+            {
+              id: this.audienceId,
+              destinations: [],
+            },
+          ],
+        }
+        await this.attachAudience({
+          engagementId: event.data.id,
+          data: payload,
+        })
+        this.$emit("onRefresh")
+      } else {
+        const payload = { audience_ids: [] }
+        payload.audience_ids.push(this.audienceId)
+        await this.detachAudience({
+          engagementId: event.data.id,
+          data: payload,
+        })
+        this.$emit("onRefresh")
+      }
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>

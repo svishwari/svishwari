@@ -1,5 +1,11 @@
 <template>
-  <v-menu v-model="batchDetails.menu" :min-width="200" left offset-y close-on-click>
+  <v-menu
+    v-model="batchDetails.menu"
+    :min-width="200"
+    left
+    offset-y
+    close-on-click
+  >
     <template #activator="{ on }">
       <span class="d-flex cursor-pointer mr-4" v-on="on">
         <tooltip :z-index="99">
@@ -21,8 +27,8 @@
     <v-list class="alert-menu-main">
       <v-list-item>
         <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
-          <span v-if="mostRecentNotifications.length > 0"
-            > Most recent alerts
+          <span v-if="mostRecentNotifications.length > 0">
+            Most recent alerts
           </span>
           <span v-else>No unread alerts </span>
         </v-list-item-title>
