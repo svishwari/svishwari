@@ -95,8 +95,6 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch("users/getUsers")
-      await this.$store.dispatch("users/getRequestedUsers")
       await this.$store.dispatch("configurations/getConfigModels")
       this.isConfigActivated = true
     } catch (error) {
