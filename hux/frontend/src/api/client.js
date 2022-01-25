@@ -42,6 +42,9 @@ client["users"].requestTeamMember = (data) => {
 client["users"].getRequestedUsers = () => {
   return http.get("users/requested_users")
 }
+client["users"].tickets = () => {
+  return http.get("users/tickets")
+}
 //#endregion
 
 //#region Customers

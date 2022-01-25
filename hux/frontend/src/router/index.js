@@ -59,6 +59,16 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/my-issues",
+    name: "MyIssues",
+    component: () => import("@/views/MyIssues.vue"),
+    meta: {
+      layout: "app",
+      title: "My Issues",
+      requiresAuth: true,
+    },
+  },
   //#region Data Management
   {
     path: "/datasources/:id",
