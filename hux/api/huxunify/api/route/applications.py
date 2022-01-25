@@ -258,12 +258,12 @@ class ApplicationsPatchView(SwaggerView):
             Tuple[dict, int]: Updated application, HTTP status code.
         """
 
-        if not request.get_json():
+        if not request.json:
             logger.info("Could not patch application.")
             return {"message": "No body provided."}, HTTPStatus.BAD_REQUEST
 
         ApplicationsPatchSchema().validate(
-            request.get_json(),
+            request.json,
         )
         database = get_db_client()
 
@@ -280,7 +280,7 @@ class ApplicationsPatchView(SwaggerView):
             database,
             db_c.APPLICATIONS_COLLECTION,
             ObjectId(application_id),
-            request.get_json(),
+            ApplicationsPatchSchema().load(request.json),
             user[api_c.USER_NAME],
         )
 
