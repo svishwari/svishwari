@@ -546,7 +546,9 @@ def get_audience_insights(
                     },
                     {
                         "$addFields": {
-                            "deliveries.delivery_platform_id": "$delivery_platforms._id"
+                            "deliveries.delivery_platform_id": {
+                                "$ifNull": ["$delivery_platforms._id", None]
+                            }
                         }
                     },
                     {"$project": {"audiences": 0, "delivery_platforms": 0}},
