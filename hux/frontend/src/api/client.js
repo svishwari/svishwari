@@ -36,6 +36,12 @@ client["users"].clearFavorite = (resourceId, entityType) => {
 client["users"].contactUs = (data) => {
   return http.post("users/contact-us", data)
 }
+client["users"].requestTeamMember = (data) => {
+  return http.post("users/request_new_user", data)
+}
+client["users"].getRequestedUsers = () => {
+  return http.get("users/requested_users")
+}
 //#endregion
 
 //#region Customers

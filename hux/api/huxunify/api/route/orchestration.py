@@ -237,6 +237,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                     db_c.IS_AD_PLATFORM: destination_dict.get(
                         job.get(db_c.DELIVERY_PLATFORM_ID)
                     ).get(db_c.IS_AD_PLATFORM),
+                    db_c.LINK: destination_dict.get(
+                        job.get(db_c.DELIVERY_PLATFORM_ID)
+                    ).get(db_c.LINK),
                 }
             )
 
@@ -253,6 +256,7 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 api_c.SIZE: 0,
                 db_c.UPDATE_TIME: None,
                 db_c.DELIVERY_PLATFORM_ID: x,
+                db_c.LINK: destination_dict.get(x).get(db_c.LINK),
             }
         )
         for x in destination_ids
@@ -816,6 +820,7 @@ class AudienceGetView(SwaggerView):
         # query DB and populate lookalike audiences in audience dict only if
         # the audience is not a lookalike audience since lookalike audience
         # cannot have lookalike audiences of its own
+
         audience[api_c.LOOKALIKE_AUDIENCES] = (
             destination_management.get_all_delivery_platform_lookalike_audiences(
                 database, {db_c.LOOKALIKE_SOURCE_AUD_ID: audience_id}
@@ -823,6 +828,21 @@ class AudienceGetView(SwaggerView):
             if not audience.get(api_c.IS_LOOKALIKE, False)
             else []
         )
+
+        if audience[api_c.LOOKALIKE_AUDIENCES]:
+            for lookalike_audience in audience[api_c.LOOKALIKE_AUDIENCES]:
+                destination = destination_management.get_delivery_platform(
+                    database, lookalike_audience.get(db_c.DELIVERY_PLATFORM_ID)
+                )
+                lookalike_audience[
+                    db_c.DELIVERY_PLATFORM_TYPE
+                ] = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+                lookalike_audience[
+                    api_c.DELIVERY_PLATFORM_NAME
+                ] = destination.get(db_c.NAME)
+                lookalike_audience[
+                    api_c.DELIVERY_PLATFORM_LINK
+                ] = destination.get(db_c.LINK)
 
         for delivery in standalone_deliveries:
             if delivery.get(api_c.IS_AD_PLATFORM) and not audience.get(

@@ -31,7 +31,10 @@ class JiraConnection:
                 }
             },
         )
+
         self.project_key = config.JIRA_PROJECT_KEY
+
+        self.jira_user_email = config.JIRA_USER_EMAIL
 
     @staticmethod
     def check_jira_connection() -> Tuple[bool, str]:
@@ -86,8 +89,8 @@ class JiraConnection:
 
     def create_jira_issue(
         self, issue_type: str, summary: str, description: str
-    ):
-        """Create a new issue in JIRA
+    ) -> dict:
+        """Create a new issue in JIRA.
 
         Args:
             issue_type (str): Type of issue
@@ -98,7 +101,8 @@ class JiraConnection:
             dict: Object of new issue created
 
         Raises:
-            FailedAPIDependencyError: Any exception raised during endpoint execution.
+            FailedAPIDependencyError: Any exception raised during endpoint
+                execution.
         """
 
         try:
@@ -125,6 +129,51 @@ class JiraConnection:
             api_c.SUMMARY: summary,
             api_c.DESCRIPTION: description,
         }
+
+    def search_jira_issues(
+        self,
+        jql_suffix: str,
+        return_fields: list,
+        order_by_field: str = None,
+        sort_order: str = None,
+    ) -> list:
+        """Searches for issues in the configured project on Jira that matches
+        jql_suffix in the ticket ordered by order_by_field and returns the
+        return_fields.
+
+        Args:
+            jql_suffix (str): Suffix to append to the pre-cooked jql string.
+            return_fields (list): List of fields that are to be returned.
+            order_by_field (str): field based on which the results are to be
+                ordered.
+            sort_order (str): Order by value (ASC or DESC).
+
+        Returns:
+            list: List of matching issues returned via search api.
+
+        Raises:
+            FailedAPIDependencyError: Any exception raised during endpoint
+                execution.
+        """
+
+        jql = f"project={self.project_key} AND reporter={self.jira_user_email} AND {jql_suffix}"
+        if order_by_field:
+            sort_order = sort_order if sort_order else "ASC"
+            jql = f"{jql} ORDER BY {order_by_field} {sort_order}"
+
+        try:
+            matched_issues = self.jira_client.search_issues(
+                jql_str=jql,
+                json_result=True,
+                fields=",".join(x for x in return_fields),
+            )
+        except JIRAError as jira_error:
+            raise FailedAPIDependencyError(
+                "Failed to connect to JIRA.",
+                jira_error.status_code,
+            ) from jira_error
+
+        return matched_issues
 
     def get_issues(self, jql: str, fields: str) -> dict:
         """Getting issues from Jira.

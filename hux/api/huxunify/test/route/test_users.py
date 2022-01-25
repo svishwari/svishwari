@@ -444,6 +444,68 @@ class TestUserRoutes(TestCase):
         self.assertDictEqual(expected_response, response.json)
 
     @mock.patch("huxunify.api.route.user.JiraConnection")
+    def test_get_user_tickets(self, mock_jira: MagicMock):
+        """Test get user tickets endpoint.
+
+        Args:
+            mock_jira (MagicMock): magic mock of JiraConnection
+        """
+
+        expected_response = {
+            api_c.ID: 1234,
+            api_c.KEY: "HUS-0000",
+            api_c.SUMMARY: "Test ticket summary",
+            api_c.STATUS: "To Do",
+            api_c.CREATE_TIME: "2021-12-01T15:35:18.000Z",
+        }
+
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.check_jira_connection.return_value = True
+        mock_jira_instance.search_jira_issues.return_value = (
+            t_c.SAMPLE_USER_JIRA_TICKETS
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{t_c.TICKETS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(response.json), 1)
+        self.assertDictEqual(expected_response, response.json[0])
+
+    @mock.patch("huxunify.api.route.user.JiraConnection")
+    def test_get_user_tickets_no_tickets(self, mock_jira: MagicMock):
+        """Test get user tickets endpoint no tickets returned.
+
+        Args:
+            mock_jira (MagicMock): magic mock of JiraConnection
+        """
+
+        empty_jira_response = {
+            "startAt": 0,
+            "maxResults": 50,
+            "total": 0,
+            "issues": [],
+        }
+
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.check_jira_connection.return_value = True
+        mock_jira_instance.search_jira_issues.return_value = (
+            empty_jira_response
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{t_c.TICKETS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            "No matching tickets found for user", response.json[api_c.MESSAGE]
+        )
+
+    @mock.patch("huxunify.api.route.user.JiraConnection")
     def test_get_requested_user(self, mock_jira: MagicMock):
         """Test get requested users.
 
