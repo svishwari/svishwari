@@ -755,7 +755,6 @@ export default {
       return options
     },
     async refresh() {
-      console.log("refresh")
       await this.loadAudienceInsights()
       this.sizeHandler()
     },
@@ -1154,7 +1153,6 @@ export default {
       this.showConfirmModal = true
     },
     favoriteAudience(data) {
-      console.log("data", data)
       let param
       if (data.is_lookalike === true) {
         param = { id: data.id, type: "lookalike" }
