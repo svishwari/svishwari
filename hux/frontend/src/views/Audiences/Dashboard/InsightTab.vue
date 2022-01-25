@@ -9,9 +9,11 @@
             :indeterminate="loadingAudienceChart"
           />
           <v-card-title class="pb-2 pl-6 pt-5">
-            <h3 class="text-h3">Audience Size</h3>
-            <span class="text-body-1 time-frame">
-              &nbsp;({{ timeFrameLabel }})
+            <span v-if="!loadingAudienceChart && totalCustomers.length != 0">
+              <h3 class="text-h3">Audience Size</h3>
+              <span class="text-body-1 time-frame">
+                &nbsp;({{ timeFrameLabel }})
+              </span>
             </span>
           </v-card-title>
           <total-customer-chart
@@ -34,7 +36,7 @@
                 </div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div class="des-no-notification mt-2">
                   Audience size chart will appear here once you create an
                   audience.
                 </div>
@@ -52,7 +54,7 @@
                 </div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div class="des-no-notification mt-2">
                   Our team is working hard to fix it. Please be patient.
                   <br />Thank you!
                 </div>
@@ -69,24 +71,26 @@
             :indeterminate="loadingSpendChart"
           />
           <v-card-title class="pb-2 pl-6 pt-5">
-            <h3 class="text-h3">Total audience spend</h3>
-            <tooltip position-top>
-              <template #label-content>
-                <icon
-                  type="info"
-                  :size="8"
-                  class="mb-1 ml-1"
-                  color="primary"
-                  variant="base"
-                />
-              </template>
-              <template #hover-content>
-                Total order value for all customers (known and anyonymous) over
-                time.
-              </template>
-            </tooltip>
-            <span class="text-body-1 time-frame">
-              &nbsp;({{ timeFrameLabel }})
+            <span v-if="!loadingAudienceChart && totalCustomers.length != 0">
+              <h3 class="text-h3">Total audience spend</h3>
+              <tooltip position-top>
+                <template #label-content>
+                  <icon
+                    type="info"
+                    :size="8"
+                    class="mb-1 ml-1"
+                    color="primary"
+                    variant="base"
+                  />
+                </template>
+                <template #hover-content>
+                  Total order value for all customers (known and anyonymous)
+                  over time.
+                </template>
+              </tooltip>
+              <span class="text-body-1 time-frame">
+                &nbsp;({{ timeFrameLabel }})
+              </span>
             </span>
           </v-card-title>
           <total-customer-spend-chart
@@ -109,7 +113,7 @@
                 </div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div class="des-no-notification mt-2">
                   Audience spend chart will appear here once you create an
                   audience.
                 </div>
@@ -127,7 +131,7 @@
                 </div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div class="des-no-notification mt-2">
                   Our team is working hard to fix it. Please be patient.
                   <br />Thank you!
                 </div>
@@ -148,7 +152,7 @@
             />
             <!-- <span > -->
             <v-col
-              v-if="!loadingDemographics && configurationData.length != 0"
+              v-if="!loadingDemographics && mapChartData.length != 0"
               md="7"
             >
               <v-card-title class="pb-2 pl-5 pt-2">
@@ -170,7 +174,7 @@
               />
             </v-col>
             <v-col
-              v-if="!loadingDemographics && configurationData.length != 0"
+              v-if="!loadingDemographics && mapChartData.length != 0"
               md="5 pt-0 pl-0"
             >
               <div class="list-tab">
@@ -186,12 +190,12 @@
             <!-- </span> -->
 
             <v-col
-              v-else-if="!loadingDemographics && configurationData.length == 0"
+              v-else-if="!loadingDemographics && mapChartData.length == 0"
               md="12"
               class="py-14"
             >
               <empty-page
-                v-if="configurationData.length == 0 && !geoOverviewError"
+                v-if="mapChartData.length == 0 && !geoOverviewError"
                 type="drift-chart-empty"
                 :size="50"
               >
@@ -201,7 +205,7 @@
                   </div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
+                  <div class="des-no-notification mt-2">
                     Map feature chart will appear here once you create an
                     audience.
                   </div>
@@ -219,7 +223,7 @@
                   </div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
+                  <div class="des-no-notification mt-2">
                     Our team is working hard to fix it. Please be patient and
                     try again soon!
                   </div>
@@ -242,6 +246,7 @@ import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCust
 import TotalCustomerSpendChart from "@/components/common/TotalCustomerSpend/TotalCustomerSpendChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
+import EmptyPage from "@/components/common/EmptyPage"
 
 export default {
   name: "InsightTab",
@@ -251,7 +256,7 @@ export default {
     MapChart,
     mapSlider,
     MapStateList,
-
+    EmptyPage,
     TotalCustomerChart,
     TotalCustomerSpendChart,
   },
