@@ -896,7 +896,8 @@ class UsersRequested(SwaggerView):
         summary = summary.replace("[", '"').replace("]", '"')
 
         jira_issues = JiraConnection().get_issues(
-            jql=f"summary~{summary} AND status != {api_c.STATUS_DONE} ORDER BY updated DESC",
+            jql=f"summary~{summary} AND status != {api_c.STATE_DONE} ORDER BY "
+            f"updated DESC",
             fields=f"{api_c.DESCRIPTION},{api_c.STATUS},{api_c.UPDATED},"
             f"{api_c.CREATED}",
         )
