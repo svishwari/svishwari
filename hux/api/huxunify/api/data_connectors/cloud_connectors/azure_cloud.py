@@ -1,4 +1,6 @@
 """Module for Azure cloud operations"""
+import logging
+
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
@@ -9,6 +11,15 @@ class Azure(Cloud):
     """Class for Azure cloud operations"""
 
     provider = "AZURE"
+
+    def __init__(self):
+        """Initialize Azure Cloud object
+
+        Args:
+        """
+        self.vault_url = (
+            f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
+        )
 
     def get_secret(self, secret_name: str, **kwargs) -> str:
         """Retrieve secret from cloud.
@@ -21,13 +32,15 @@ class Azure(Cloud):
             str: The value of the secret.
         """
         try:
-            vault_uri = (
-                f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
-            )
             credential = DefaultAzureCredential()
-            client = SecretClient(vault_url=vault_uri, credential=credential)
+            client = SecretClient(
+                vault_url=self.vault_url, credential=credential
+            )
             return client.get_secret(secret_name).value
         except Exception as exc:
+            logging.error(
+                "Failed to get %s from Azure key vault.", secret_name
+            )
             raise exc
 
     def set_secret(self, secret_name: str, value: str, **kwargs) -> None:
@@ -41,13 +54,13 @@ class Azure(Cloud):
         Returns:
         """
         try:
-            vault_uri = (
-                f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
-            )
             credential = DefaultAzureCredential()
-            client = SecretClient(vault_url=vault_uri, credential=credential)
+            client = SecretClient(
+                vault_url=self.vault_url, credential=credential
+            )
             client.set_secret(name=secret_name, value=value)
         except Exception as exc:
+            logging.error("Failed to set %s in Azure key vault.", secret_name)
             raise exc
 
     def upload_file(

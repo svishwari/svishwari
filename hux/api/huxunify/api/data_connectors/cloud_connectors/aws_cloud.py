@@ -1,4 +1,6 @@
 """Module for AWS cloud operations"""
+import logging
+
 import boto3
 import botocore
 
@@ -12,7 +14,7 @@ class AWS(Cloud):
     provider = "AWS"
 
     # pylint: disable=no-self-use
-    def _get_aws_client(
+    def get_aws_client(
         self,
         client: str = "s3",
         region_name: str = "",
@@ -45,9 +47,7 @@ class AWS(Cloud):
         """
         try:
             return (
-                self._get_aws_client(
-                    api_c.AWS_SSM_NAME, self.config.AWS_REGION
-                )
+                self.get_aws_client(api_c.AWS_SSM_NAME, self.config.AWS_REGION)
                 .get_parameter(
                     Name=secret_name,
                     WithDecryption=True,
@@ -56,6 +56,9 @@ class AWS(Cloud):
                 .get("Value")
             )
         except botocore.exceptions.ClientError as error:
+            logging.error(
+                "Failed to get %s from AWS parameter store.", secret_name
+            )
             raise error
 
     def set_secret(self, secret_name: str, value: str, **kwargs) -> None:
@@ -69,13 +72,16 @@ class AWS(Cloud):
         Returns:
         """
         try:
-            self._get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
+            self.get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
                 Name=secret_name,
                 Value=value,
                 Type="SecureString",
                 Overwrite=False,
             )
         except Exception as exc:
+            logging.error(
+                "Failed to set %s in AWS parameter store.", secret_name
+            )
             raise exc
 
     def upload_file(
