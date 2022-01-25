@@ -1,5 +1,5 @@
 <template>
-  <v-card class="rounded-lg card-style delivery-overview mt-4" flat>
+  <v-card class="rounded-lg card-style delivery-overview mt-6" flat>
     <v-card-title class="d-flex justify-space-between pb-0 pl-6 pt-5">
       <div class="text-h3 mb-2">Engagements</div>
     </v-card-title>
@@ -171,5 +171,8 @@ export default {
 }
 .list-border {
   border-bottom: thin solid rgba(0, 0, 0, 0.12) !important;
+}
+::v-deep .theme--light.v-data-table.v-data-table--fixed-header thead th {
+  box-shadow: none !important;
 }
 </style>

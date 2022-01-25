@@ -3,26 +3,71 @@
     <v-row>
       <v-col md="6">
         <v-card class="mt-4 rounded-lg box-shadow-5" height="365">
+          <v-progress-linear
+            v-if="loadingAudienceChart"
+            :active="loadingAudienceChart"
+            :indeterminate="loadingAudienceChart"
+          />
           <v-card-title class="pb-2 pl-6 pt-5">
             <h3 class="text-h3">Audience Size</h3>
             <span class="text-body-1 time-frame">
               &nbsp;({{ timeFrameLabel }})
             </span>
           </v-card-title>
-          <v-progress-linear
-            v-if="loadingAudienceChart"
-            :active="loadingAudienceChart"
-            :indeterminate="loadingAudienceChart"
-          />
           <total-customer-chart
-            v-if="!loadingAudienceChart"
+            v-if="!loadingAudienceChart && totalCustomers.length != 0"
             :customers-data="totalCustomers"
             data-e2e="total-audience-chart"
           />
+          <v-row
+            v-else-if="!loadingAudienceChart && totalCustomers.length == 0"
+            class="model-features-frame py-14"
+          >
+            <empty-page
+              v-if="totalCustomers.length == 0 && !totalAudienceError"
+              type="model-features-empty"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">
+                  No audience data to show
+                </div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Audience size chart will appear here once you create an
+                  audience.
+                </div>
+              </template>
+            </empty-page>
+            <empty-page
+              v-else-if="totalAudienceError"
+              class="title-no-notification"
+              type="error-on-screens"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">
+                  Audience chart is currently unavailable
+                </div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Our team is working hard to fix it. Please be patient.
+                  <br />Thank you!
+                </div>
+              </template>
+            </empty-page>
+          </v-row>
         </v-card>
       </v-col>
       <v-col md="6">
         <v-card class="mt-4 rounded-lg box-shadow-5" height="365">
+          <v-progress-linear
+            v-if="loadingSpendChart"
+            :active="loadingSpendChart"
+            :indeterminate="loadingSpendChart"
+          />
           <v-card-title class="pb-2 pl-6 pt-5">
             <h3 class="text-h3">Total audience spend</h3>
             <tooltip position-top>
@@ -44,16 +89,51 @@
               &nbsp;({{ timeFrameLabel }})
             </span>
           </v-card-title>
-          <v-progress-linear
-            v-if="loadingSpendChart"
-            :active="loadingSpendChart"
-            :indeterminate="loadingSpendChart"
-          />
           <total-customer-spend-chart
-            v-if="!loadingSpendChart"
+            v-if="!loadingSpendChart && totalCustomerSpend.length != 0"
             :customer-spend-data="totalCustomerSpend"
             data-e2e="audience-spend-chart"
           />
+          <v-row
+            v-else-if="!loadingSpendChart && totalCustomerSpend.length == 0"
+            class="drift-chart-frame py-14"
+          >
+            <empty-page
+              v-if="totalCustomerSpend.length == 0 && !audienceSpendError"
+              type="drift-chart-empty"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">
+                  No audience data to show
+                </div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Audience spend chart will appear here once you create an
+                  audience.
+                </div>
+              </template>
+            </empty-page>
+            <empty-page
+              v-else-if="audienceSpendError"
+              class="title-no-notification"
+              type="error-on-screens"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">
+                  Revenue chart is currently unavailable
+                </div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Our team is working hard to fix it. Please be patient.
+                  <br />Thank you!
+                </div>
+              </template>
+            </empty-page>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -66,7 +146,11 @@
               :active="loadingDemographics"
               :indeterminate="loadingDemographics"
             />
-            <v-col md="7">
+            <!-- <span > -->
+            <v-col
+              v-if="!loadingDemographics && configurationData.length != 0"
+              md="7"
+            >
               <v-card-title class="pb-2 pl-5 pt-2">
                 <div class="mt-2">
                   <span class="black--text text--darken-4 text-h3"> USA </span>
@@ -85,7 +169,10 @@
                 :configuration-data="configurationData"
               />
             </v-col>
-            <v-col md="5 pt-0 pl-0">
+            <v-col
+              v-if="!loadingDemographics && configurationData.length != 0"
+              md="5 pt-0 pl-0"
+            >
               <div class="list-tab">
                 <map-state-list
                   v-if="!loadingDemographics"
@@ -95,6 +182,49 @@
                   :height="395"
                 />
               </div>
+            </v-col>
+            <!-- </span> -->
+
+            <v-col
+              v-else-if="!loadingDemographics && configurationData.length == 0"
+              md="12"
+              class="py-14"
+            >
+              <empty-page
+                v-if="configurationData.length == 0 && !geoOverviewError"
+                type="drift-chart-empty"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">
+                    No audience data to show
+                  </div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Map feature chart will appear here once you create an
+                    audience.
+                  </div>
+                </template>
+              </empty-page>
+              <empty-page
+                v-else-if="geoOverviewError"
+                class="title-no-notification"
+                type="error-on-screens"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">
+                    Map feature is currently unavailable
+                  </div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Our team is working hard to fix it. Please be patient and
+                    try again soon!
+                  </div>
+                </template>
+              </empty-page>
             </v-col>
           </v-row>
         </v-card>
@@ -135,6 +265,9 @@ export default {
       loadingSpendChart: false,
       loadingAudienceChart: false,
       loadingGeoOverview: false,
+      totalAudienceError: false,
+      audienceSpendError: false,
+      geoOverviewError: false,
     }
   },
   computed: {
@@ -165,33 +298,36 @@ export default {
       this.loadingDemographics = true
       try {
         await this.getDemographics(this.$route.params.id)
-      } finally {
-        this.loadingDemographics = false
+      } catch (error) {
+        this.geoOverviewError = true
       }
+      this.loadingDemographics = false
     },
 
     async fetchTotalCustomers() {
       this.loadingAudienceChart = true
       try {
         await this.getTotalCustomers()
-      } finally {
-        this.loadingAudienceChart = false
+      } catch (error) {
+        this.totalAudienceError = true
       }
+      this.loadingAudienceChart = false
     },
 
     async fetchCustomerSpend() {
       this.loadingSpendChart = true
       try {
         await this.getCustomerSpend()
-      } finally {
-        this.loadingSpendChart = false
+      } catch (error) {
+        this.audienceSpendError = true
       }
+      this.loadingSpendChart = false
     },
     async fetchGeoOverview() {
       this.loadingGeoOverview = true
       try {
         await this.getGeoOverview()
-      } finally {
+      } catch (error) {
         this.loadingGeoOverview = false
       }
     },
@@ -207,5 +343,30 @@ export default {
 }
 ::v-deep .hux-data-table .table-overflow {
   border-top-right-radius: 12px !important;
+}
+.model-features-frame {
+  background-image: url("../../../assets/images/no-barchart-frame.png");
+  background-position: center;
+}
+.drift-chart-frame {
+  background-image: url("../../../assets/images/no-drift-chart-frame.png");
+  background-position: center;
+}
+.title-no-notification {
+  font-size: 24px !important;
+  line-height: 34px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.des-no-notification {
+  font-size: 14px !important;
+  line-height: 16px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.pre-formatted {
+  white-space: pre;
 }
 </style>
