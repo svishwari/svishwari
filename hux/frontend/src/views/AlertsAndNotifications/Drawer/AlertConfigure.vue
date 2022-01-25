@@ -31,77 +31,110 @@
             width="57px"
             :switch-labels="switchLabelFullAlerts"
             class="w-53"
-            @input="toggleAccessFullAlerts($event, item)"
           />
         </div>
-        <div class="pb-4 h-77">
-          <tooltip position-top>
-            <template #label-content>
-              Email
-              <icon
-                type="info"
-                :size="8"
-                class="mb-1"
-                color="primary"
-                variant="base"
-              />
-            </template>
-            <template #hover-content>
-              <span
-                v-html="
-                  'Email address is pre-populated from your profile and can’t be modified.'
-                "
-              />
-            </template>
-          </tooltip>
-          <text-field
-            v-model="getCurrentUserEmail"
-            input-type="text"
-            height="40"
-            :disabled="true"
-            :required="true"
-            class="disabledColor"
-          />
+        <div v-if="showAlerts">
+          <div class="pb-4 h-77">
+            <tooltip position-top>
+              <template #label-content>
+                Email
+                <icon
+                  type="info"
+                  :size="8"
+                  class="mb-1"
+                  color="primary"
+                  variant="base"
+                />
+              </template>
+              <template #hover-content>
+                <span
+                  v-html="
+                    'Email address is pre-populated from your profile and can’t be modified.'
+                  "
+                />
+              </template>
+            </tooltip>
+            <text-field
+              v-model="getCurrentUserEmail"
+              input-type="text"
+              height="40"
+              :disabled="true"
+              :required="true"
+              class="disabledColor"
+            />
+          </div>
+          <div class="pt-2 text-body-1">
+            What categories do you wish to receive?
+          </div>
+          <div>
+            <v-treeview
+              v-model="tree"
+              :items="alertsSectionGroup"
+              item-key="show"
+              open-all
+              disabled
+              class="header-class"
+            >
+              <template v-slot:append="{ item }">
+                <hux-switch
+                  v-if="item.name != 'Categories'"
+                  v-model="item.show"
+                  false-color="var(--v-black-lighten4)"
+                  :width="item.show ? '80px' : '100px'"
+                  :switch-labels="switchLabel"
+                  :class="item.show ? 'w-75' : 'w-97'"
+                />
+              </template>
+              <template v-slot:label="{ item }">
+                <span
+                  :class="
+                    item.name != 'Categories'
+                      ? 'text-body-1'
+                      : 'text-body-2 black--text text--lighten-4'
+                  "
+                  :data-type="item.type"
+                  >{{ item.name }}</span
+                >
+              </template>
+            </v-treeview>
+          </div>
         </div>
-        <div class="pt-2 text-body-1">
-          What categories do you wish to receive?
+        <div v-else>
+          <v-alert outlined tile class="yellow lighten-1 black--text h-60">
+            <div class="d-flex align-center">
+              <div class="mr-3 mt-n2">
+                <icon type="bulb" :size="36" color="yellow" />
+              </div>
+              <p class="text-body-1 ma-0 mt-n3">
+                You have opted out from receiving alerts &amp; notifications.
+              </p>
+            </div>
+          </v-alert>
         </div>
-        <div>
-          <!-- <v-list>
-            <v-list-item-group v-model="model">
-              <v-list-item v-for="(item, i) in alertsSectionGroup" :key="i">
-                <v-list-item-content class="d-flex full-alert">
-                  <v-list-item-title v-text="item.name"></v-list-item-title>
-                  <hux-switch
-                    v-model="showAlerts"
-                    false-color="var(--v-black-lighten4)"
-                    :width="showAlerts ? '57px' : '60px'"
-                    :switch-labels="switchLabel"
-                    class="w-53"
-                    @input="toggleAccess($event, item)"
-                  />
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list> -->
-          <v-treeview
-            v-model="tree"
-            :items="alertsSectionGroup"
-            activatable
-            item-key="show"
-            open-all
-          >
-            <template v-slot:append="{ item }">
-              <hux-switch
-                v-model="item.show"
-                false-color="var(--v-black-lighten4)"
-                width="100px"
-                :switch-labels="switchLabel"
-                class="w-89"
-              />
-            </template>
-          </v-treeview>
-        </div>
+      </div>
+    </template>
+    <template #footer-left>
+      <hux-button
+        variant="white"
+        size="large"
+        :is-tile="true"
+        class="mr-2 btn-border box-shadow-none"
+        @click="closeDrawer"
+      >
+        <span class="primary--text">Cancel</span>
+      </hux-button>
+    </template>
+    <template #footer-right>
+      <div class="d-flex align-baseline">
+        <hux-button
+          variant="primary"
+          size="large"
+          :is-tile="true"
+          data-e2e="save"
+          @click="closeDrawer"
+        >
+          Save
+        </hux-button>
       </div>
     </template>
   </drawer>
@@ -114,6 +147,7 @@ import HuxSwitch from "@/components/common/Switch.vue"
 import TextField from "@/components/common/TextField.vue"
 import { mapGetters } from "vuex"
 import Tooltip from "@/components/common/Tooltip.vue"
+import HuxButton from "@/components/common/huxButton.vue"
 
 export default {
   name: "AlertConfigureDrawer",
@@ -123,6 +157,7 @@ export default {
     HuxSwitch,
     TextField,
     Tooltip,
+    HuxButton,
   },
 
   props: {
@@ -141,6 +176,7 @@ export default {
     return {
       localDrawer: this.value,
       showAlerts: true,
+      tree: null,
       switchLabelFullAlerts: [
         {
           condition: true,
@@ -163,34 +199,40 @@ export default {
       ],
       alertsSectionGroup: [
         {
-          name: "Category",
+          name: "Categories",
           type: "header",
           show: true,
+          id: 1,
           children: [
             {
               name: "Data management",
               type: "header",
               show: true,
+              id: 2,
               children: [
                 {
                   name: "Data sources",
                   type: "header",
                   show: true,
+                  id: 3,
                   children: [
                     {
                       name: "Error",
                       type: "child",
+                      id: 4,
                       show: true,
                     },
                     {
                       name: "Success",
                       type: "child",
+                      id: 5,
                       show: true,
                     },
                     {
                       name: "Informational",
                       type: "child",
                       show: true,
+                      id: 6,
                     },
                   ],
                 },
@@ -198,21 +240,25 @@ export default {
                   name: "Identity resolution",
                   type: "header",
                   show: true,
+                  id: 7,
                   children: [
                     {
                       name: "Error",
                       type: "child",
                       show: true,
+                      id: 8,
                     },
                     {
                       name: "Success",
                       type: "child",
                       show: true,
+                      id: 9,
                     },
                     {
                       name: "Informational",
                       type: "child",
                       show: true,
+                      id: 10,
                     },
                   ],
                 },
@@ -222,26 +268,31 @@ export default {
               name: "Decisioning",
               type: "header",
               show: true,
+              id: 11,
               children: [
                 {
                   name: "Models",
                   type: "header",
                   show: true,
+                  id: 12,
                   children: [
                     {
                       name: "Error",
                       type: "child",
                       show: true,
+                      id: 13,
                     },
                     {
                       name: "Success",
                       type: "child",
                       show: true,
+                      id: 14,
                     },
                     {
                       name: "Informational",
                       type: "child",
                       show: true,
+                      id: 15,
                     },
                   ],
                 },
@@ -251,26 +302,31 @@ export default {
               name: "Orchestration",
               type: "header",
               show: true,
+              id: 16,
               children: [
                 {
                   name: "Destinations",
                   type: "header",
                   show: true,
+                  id: 17,
                   children: [
                     {
                       name: "Error",
                       type: "child",
                       show: true,
+                      id: 18,
                     },
                     {
                       name: "Success",
                       type: "child",
                       show: true,
+                      id: 19,
                     },
                     {
                       name: "Informational",
                       type: "child",
                       show: true,
+                      id: 20,
                     },
                   ],
                 },
@@ -278,21 +334,25 @@ export default {
                   name: "Delivery",
                   type: "header",
                   show: true,
+                  id: 21,
                   children: [
                     {
                       name: "Error",
                       type: "child",
                       show: true,
+                      id: 22,
                     },
                     {
                       name: "Success",
                       type: "child",
                       show: true,
+                      id: 23,
                     },
                     {
                       name: "Informational",
                       type: "child",
                       show: true,
+                      id: 24,
                     },
                   ],
                 },
@@ -300,21 +360,25 @@ export default {
                   name: "Audiences",
                   type: "header",
                   show: true,
+                  id: 25,
                   children: [
                     {
                       name: "Error",
                       type: "child",
                       show: true,
+                      id: 26,
                     },
                     {
                       name: "Success",
                       type: "child",
                       show: true,
+                      id: 27,
                     },
                     {
                       name: "Informational",
                       type: "child",
                       show: true,
+                      id: 28,
                     },
                   ],
                 },
@@ -322,21 +386,25 @@ export default {
                   name: "Engagements",
                   type: "header",
                   show: true,
+                  id: 29,
                   children: [
                     {
                       name: "Error",
                       type: "child",
                       show: true,
+                      id: 30,
                     },
                     {
                       name: "Success",
                       type: "child",
                       show: true,
+                      id: 31,
                     },
                     {
                       name: "Informational",
                       type: "child",
                       show: true,
+                      id: 32,
                     },
                   ],
                 },
@@ -373,13 +441,19 @@ export default {
     localDrawer: function () {
       this.$emit("input", this.localDrawer)
     },
+    tree: function () {
+      console.log("tree", this.tree)
+    },
   },
   methods: {
     toggleAccessFullAlerts(val) {
       this.showAlerts = val
     },
-    toggleAccessIndivisualAlerts(val) {
-      this.showAlerts = val
+    toggleAccessIndivisualAlerts(e, val) {
+      val.show = e
+    },
+    closeDrawer() {
+      this.localDrawer = false
     },
   },
 }
@@ -397,13 +471,39 @@ export default {
 .w-53 {
   width: 53px;
 }
-.w-89 {
-  width: 89px;
+.w-75 {
+  width: 75px;
+}
+.w-97 {
+  width: 97px;
 }
 .disabledColor .v-input__slot {
   background-color: var(--v-primary-lighten1) !important;
 }
 .h-77 {
   height: 77px;
+}
+.h-60 {
+  height: 60px;
+}
+::v-deep .v-treeview .v-treeview-node__root {
+  border-top: 1px solid var(--v-black-lighten2);
+  height: 45px;
+  padding: 0;
+}
+::v-deep .v-treeview-node__root:first {
+  border-top: none;
+}
+::v-deep .v-treeview-node__toggle {
+  display: none;
+}
+::v-deep .v-treeview-node__content {
+  padding: 10px 24px 11px 16px;
+  height: 45px;
+  margin-left: 0 !important;
+}
+.header-class {
+  border: 1px solid var(--v-black-lighten2);
+  border-radius: 12px;
 }
 </style>

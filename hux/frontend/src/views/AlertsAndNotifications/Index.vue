@@ -304,8 +304,8 @@ export default {
     getNotificationUsers() {
       let sortedUsers = this.getUsers
       return sortedUsers.sort(function (a, b) {
-        var textA = a["display_name"].toUpperCase()
-        var textB = b["display_name"].toUpperCase()
+        var textA = a["display_name"]?.toUpperCase()
+        var textB = b["display_name"]?.toUpperCase()
         return textA < textB ? -1 : textA > textB ? 1 : 0
       })
     },
