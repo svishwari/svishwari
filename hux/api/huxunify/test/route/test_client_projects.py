@@ -36,7 +36,9 @@ class ClientProjectsTests(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         mock.patch(
             "huxunify.api.route.client_projects.get_db_client",
@@ -46,6 +48,12 @@ class ClientProjectsTests(TestCase):
         # mock get_db_client() for the userinfo decorator.
         mock.patch(
             "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() for the userinfo utils.
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -95,7 +103,9 @@ class ClientProjectsTests(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertFalse(ClientProjectGetSchema(many=True).validate(response.json))
+        self.assertFalse(
+            ClientProjectGetSchema(many=True).validate(response.json)
+        )
 
     def test_client_project_patch_endpoint_valid_request(self):
         """Test client project patch with correct request body."""
@@ -131,7 +141,9 @@ class ClientProjectsTests(TestCase):
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual({api_c.MESSAGE: "No request body provided."}, response.json)
+        self.assertEqual(
+            {api_c.MESSAGE: "No request body provided."}, response.json
+        )
 
     def test_client_project__patch_endpoint_invalid_id(self):
         """Test client project patch with incorrect client_project_id"""
@@ -141,7 +153,8 @@ class ClientProjectsTests(TestCase):
         }
 
         response = self.app.patch(
-            f"{t_c.BASE_ENDPOINT}{api_c.CLIENT_PROJECTS_ENDPOINT}/" f"{ObjectId()}",
+            f"{t_c.BASE_ENDPOINT}{api_c.CLIENT_PROJECTS_ENDPOINT}/"
+            f"{ObjectId()}",
             headers=t_c.STANDARD_HEADERS,
             json=patch_request_body,
         )
