@@ -1239,6 +1239,24 @@ AVG_SPEND = "avg_spend"
 
 DESTINATIONS_CATEGORY = "destinations_category"
 
+TEST_NAVIGATION_SETTINGS = {
+    "settings": [
+        {
+            "enabled": True,
+            "name": "Data Management",
+            "children": [
+                {"name": "Data Sources", "enabled": False},
+                {"name": "Identity Resolution", "enabled": True},
+            ],
+        },
+        {
+            "enabled": True,
+            "name": "Decisioning",
+            "children": [{"name": "Models", "enabled": True}],
+        },
+    ]
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
