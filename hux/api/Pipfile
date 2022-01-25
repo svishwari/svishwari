@@ -38,6 +38,10 @@ prometheus-client = "*"
 prometheus-flask-exporter = "*"
 pyperclip = "*"
 jira = "*"
+azure-batch = "*"
+azure-mgmt-batch = "*"
+azure-keyvault-secrets = "*"
+azure-identity = "*"
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
