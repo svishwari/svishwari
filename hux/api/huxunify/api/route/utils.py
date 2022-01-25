@@ -13,7 +13,7 @@ from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.database.util.client import db_client_factory
 
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -766,9 +766,9 @@ def create_description_for_user_request(
     pii_access: bool,
     reason_for_request: str,
     requested_by: str,
-    project_name: str = api_c.DEFAULT_NEW_USER_PROJECT_NAME,
-    okta_group_name: str = api_c.DEFAULT_OKTA_GROUP_NAME,
-    okta_app: str = api_c.DEFAULT_OKTA_APP,
+    project_name: str = get_config().DEFAULT_NEW_USER_PROJECT_NAME,
+    okta_group_name: str = get_config().DEFAULT_OKTA_GROUP_NAME,
+    okta_app: str = get_config().DEFAULT_OKTA_APP,
 ) -> str:
     """Create HUS issue description using new user request data.
 

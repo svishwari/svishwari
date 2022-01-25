@@ -2,13 +2,43 @@
   <div class="team-members-wrapper">
     <v-row>
       <v-col>
-        <v-card class="rounded-lg box-shadow-5 mt-4">
+        <v-card class="rounded-lg box-shadow-5 mt-3">
           <div v-if="isDataExist" class="px-6 py-5">
-            <div class="pb-4 black--text text-h3">Team Members</div>
+            <div class="pb-1 d-flex justify-space-between">
+              <div class="black--text text-h3">Team Members</div>
+              <v-btn
+                text
+                min-width="80"
+                :disabled="getRole != 'admin'"
+                class="
+                  d-flex
+                  align-right
+                  primary--text
+                  text-decoration-none
+                  pl-0
+                  pr-0
+                  idr-link
+                  text-body-1
+                  mt-n2
+                  mr-1
+                "
+                data-e2e="teamMemberRequest"
+                @click="toggleTeamMemberRequestDrawer()"
+              >
+                <icon
+                  type="request-team-member"
+                  :size="16"
+                  :color="getRole == 'admin' ? 'primary' : 'black'"
+                  :variant="getRole == 'admin' ? 'base' : 'lighten3'"
+                  class="mr-3"
+                />
+                <span class="body-1">Request a team member</span>
+              </v-btn>
+            </div>
             <hux-data-table
               :columns="columnDefs"
               :sort-column="'display_name'"
-              :data-items="getTeamMembers"
+              :data-items="getAllTeamMembers"
               data-e2e="team-members-table"
             >
               <template #row-item="{ item }">
@@ -20,11 +50,28 @@
                   :style="{ width: col.width }"
                 >
                   <template v-if="col.value === ''">
-                    <avatar :name="item['display_name']" class="text-center" />
+                    <avatar
+                      :name="item['display_name']"
+                      class="text-center"
+                      :requested="
+                        getRequestedMembers.findIndex(
+                          (x) => x.email == item['email']
+                        ) != -1
+                      "
+                    />
                   </template>
 
                   <template v-else-if="col.value === 'display_name'">
-                    <span class="ellipsis mt-1 d-inline">
+                    <span
+                      class="ellipsis mt-1 d-inline"
+                      :class="
+                        getRequestedMembers.findIndex(
+                          (x) => x.email == item['email']
+                        ) != -1
+                          ? 'requested'
+                          : ''
+                      "
+                    >
                       {{ item[col.value] }}
                     </span>
                     <v-chip
@@ -36,6 +83,19 @@
                     >
                       You
                     </v-chip>
+                    <v-chip
+                      v-if="
+                        getRequestedMembers.findIndex(
+                          (x) => x.email == item['email']
+                        ) != -1
+                      "
+                      small
+                      class="ml-1 mr-2 my-2 text-subtitle-2 requested-tag pl-2"
+                      text-color="white"
+                      color="grey"
+                    >
+                      Requested
+                    </v-chip>
                   </template>
 
                   <template v-else-if="col.value === 'pii_access'">
@@ -43,7 +103,10 @@
                       v-model="item[col.value]"
                       :is-disabled="
                         item['email'] == getCurrentUserEmail ||
-                        getRole != 'admin'
+                        getRole != 'admin' ||
+                        getRequestedMembers.findIndex(
+                          (x) => x.email == item['email']
+                        ) != -1
                       "
                       false-color="var(--v-black-lighten4)"
                       :width="item[col.value] ? '57px' : '60px'"
@@ -53,7 +116,20 @@
                   </template>
 
                   <template v-else>
-                    {{ item[col.value] }}
+                    <!-- <template v-if="getRequestedMembers.findIndex(x => x.email == item['email'])!=-1">
+                      <span class="requested">{{team[col.value]}}</span>
+                    </template> -->
+                    <span
+                      :class="
+                        getRequestedMembers.findIndex(
+                          (x) => x.email == item['email']
+                        ) != -1
+                          ? 'requested'
+                          : ''
+                      "
+                    >
+                      {{ consistentNaming(item[col.value]) }}
+                    </span>
                   </template>
                 </td>
               </template>
@@ -75,6 +151,12 @@
         </v-card>
       </v-col>
     </v-row>
+    <team-member-request-drawer
+      :toggle="teamMemberDrawer"
+      class="z-index-high"
+      @onToggle="(val) => (teamMemberDrawer = val)"
+      @onAdd="toggleTeamMemberRequestDrawer()"
+    />
   </div>
 </template>
 
@@ -84,10 +166,19 @@ import Avatar from "@/components/common/Avatar.vue"
 import EmptyPage from "@/components/common/EmptyPage"
 import HuxSwitch from "@/components/common/Switch.vue"
 import { mapActions, mapGetters } from "vuex"
+import Icon from "@/components/common/Icon.vue"
+import TeamMemberRequestDrawer from "./TeamMemberRequestDrawer.vue"
 
 export default {
   name: "TeamMembers",
-  components: { EmptyPage, HuxDataTable, Avatar, HuxSwitch },
+  components: {
+    EmptyPage,
+    HuxDataTable,
+    Avatar,
+    HuxSwitch,
+    Icon,
+    TeamMemberRequestDrawer,
+  },
   data() {
     return {
       columnDefs: [
@@ -138,22 +229,52 @@ export default {
           label: "OFF",
         },
       ],
+      teamMemberDrawer: false,
     }
   },
   computed: {
     ...mapGetters({
       getTeamMembers: "users/getUsers",
+      getRequestedMembers: "users/getRequestedUsers",
       getCurrentUserEmail: "users/getEmailAddress",
       getRole: "users/getCurrentUserRole",
     }),
     isDataExist() {
       return this.getTeamMembers.length > 0
     },
+    getAllTeamMembers() {
+      return this.getRequestedMembers
+        ? [...this.getRequestedMembers, ...this.getTeamMembers]
+        : this.getTeamMembers
+    },
   },
   methods: {
     ...mapActions({
       updateUser: "users/updatePIIAccess",
     }),
+    toggleTeamMemberRequestDrawer() {
+      this.teamMemberDrawer = !this.teamMemberDrawer
+    },
+    consistentNaming(word) {
+      let replace_word = ""
+      switch (word) {
+        case "admin":
+          replace_word = "Admin"
+          break
+
+        case "viewer":
+          replace_word = "View-only"
+          break
+
+        case "editor":
+          replace_word = "Edit"
+          break
+
+        default:
+          replace_word = word
+      }
+      return replace_word
+    },
     toggleAccess(value, userDetails) {
       this.updateUser({
         id: userDetails.id,
@@ -202,5 +323,19 @@ export default {
 .you-tag {
   height: 20px;
   width: 39px;
+}
+.z-index-high {
+  z-index: 100;
+}
+.requested {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--v-black-lighten3);
+}
+.requested-tag {
+  height: 20px;
+  width: 80px;
 }
 </style>

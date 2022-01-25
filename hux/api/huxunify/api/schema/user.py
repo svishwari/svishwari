@@ -28,7 +28,7 @@ class UserSchema(Schema):
         required=True,
         validate=validate_object_id,
     )
-    email = Str(required=True, attribute="email_address")
+    email = Str(required=True, attribute=api_c.USER_EMAIL_ADDRESS)
     display_name = Str(example="Joe M")
     first_name = Str()
     last_name = Str()
@@ -69,9 +69,15 @@ class TicketGetSchema(Schema):
 
     id = Int(example=1)
     key = Str(example="ABC-123")
-    issue_type = Str(example=api_c.TICKET_TYPE_BUG)
-    summary = Str(example="Audience and Engagement Dashboard not loading")
-    description = Str(example="Description of the issue.")
+    issue_type = Str(required=False, example=api_c.TICKET_TYPE_BUG)
+    summary = Str(example="Summary of the issue")
+    description = Str(required=False, example="Description of the issue.")
+    status = Str(required=False, example="To Do")
+    create_time = DateTimeWithZ(
+        attribute="created",
+        required=False,
+        example="2021-08-05T14:44:42.694Z",
+    )
 
 
 class NewUserRequest(Schema):
@@ -83,3 +89,47 @@ class NewUserRequest(Schema):
     access_level = Str(required=True, validate=validate.OneOf(db_c.USER_ROLES))
     pii_access = Bool(required=True, default=False)
     reason_for_request = Str(required=True)
+
+
+class UserAlertSchema(Schema):
+    """User alert schema"""
+
+    critical = Bool(default=False)
+    success = Bool(default=False)
+    informational = Bool(default=False)
+
+
+class UserAlertDataManagementSchema(Schema):
+    """User alert data management schema"""
+
+    datasources = Nested(UserAlertSchema, required=False)
+    identity_resolution = Nested(UserAlertSchema, required=False)
+
+
+class UserAlertDecisioningSchema(Schema):
+    """User alert decisioning schema"""
+
+    models = Nested(UserAlertSchema, required=False)
+
+
+class UserAlertOrchestrationSchema(Schema):
+    """User alert orchestration schema"""
+
+    destinations = Nested(UserAlertSchema, required=False)
+    delivery = Nested(UserAlertSchema, required=False)
+    audiences = Nested(UserAlertSchema, required=False)
+    engagements = Nested(UserAlertSchema, required=False)
+
+
+class UserAlertCategorySchema(Schema):
+    """User alert category schema"""
+
+    data_management = Nested(UserAlertDataManagementSchema)
+    decisioning = Nested(UserAlertDecisioningSchema)
+    orchestration = Nested(UserAlertOrchestrationSchema)
+
+
+class UserPreferencesSchema(Schema):
+    """User preferences schema"""
+
+    alerts = Nested(UserAlertCategorySchema)

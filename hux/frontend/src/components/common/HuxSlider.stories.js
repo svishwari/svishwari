@@ -12,6 +12,13 @@ export default {
     isRangeSlider: true,
   },
   parameters: {},
+  argTypes: {
+    input: { table: { disable: true } },
+    onFinalValue: { table: { disable: true } },
+    customLabel: { table: { disable: true } },
+    sliderTextColor: { table: { disable: true } },
+    readOnly: { table: { disable: true } },
+  },
 }
 
 const Template = (args, { argTypes }) => ({

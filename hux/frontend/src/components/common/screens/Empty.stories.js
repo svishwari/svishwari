@@ -1,6 +1,7 @@
 import HuxEmpty from "./Empty.vue"
 import HuxButton from "../huxButton.vue"
 import AllIcons from "@/stories/icons/Icons"
+import { action } from "@storybook/addon-actions"
 
 export default {
   component: HuxEmpty,
@@ -16,6 +17,7 @@ export default {
     },
     iconSize: { control: { type: "number" } },
     title: { control: { type: "text" } },
+    button: { table: { disable: true } },
   },
 
   args: {
@@ -37,6 +39,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   components: { HuxEmpty, HuxButton },
   props: Object.keys(argTypes),
+  methods: { toggleDrawer: action("clicked") },
   data() {
     return {
       openModal: false,

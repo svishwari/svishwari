@@ -1,12 +1,13 @@
 """Purpose of this file is to house the main application code."""
 import logging
+from os import environ
 
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
 from flask_apscheduler import APScheduler
 
-from huxunify.api.config import load_env_vars
+from huxunify.api.config import get_config
 from huxunify.api.prometheus import monitor_app
 from huxunify.api.route import ROUTES
 from huxunify.api.data_connectors.scheduler import (
@@ -33,6 +34,8 @@ SWAGGER_CONFIG = {
         "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
     },
 }
+
+environ[api_c.FLASK_ENV] = get_config().FLASK_ENV
 
 
 def configure_flask(flask_app: Flask) -> None:
@@ -71,8 +74,6 @@ def create_app() -> Flask:
     Returns:
         Flask: Returns a flask object.
     """
-
-    load_env_vars()
 
     # setup the flask app
     flask_app = Flask(__name__)

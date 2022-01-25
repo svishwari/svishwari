@@ -22,9 +22,7 @@ class TestEngagementManagement(unittest.TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self) -> None:
 
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient(host="localhost", port=27017).connect()
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         # write a user to the database

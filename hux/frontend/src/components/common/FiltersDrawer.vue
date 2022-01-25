@@ -58,6 +58,7 @@
               color="primary"
               class="text-button ml-auto"
               width="157"
+              :is-disabled="!Boolean(count)"
               @click="$emit('apply')"
             >
               Apply filter

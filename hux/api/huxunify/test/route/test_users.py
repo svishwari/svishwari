@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-public-methods
 """Purpose of this file is to house all the engagement API tests."""
 from unittest import TestCase, mock
 from unittest.mock import MagicMock
@@ -14,7 +14,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.database.user_management import set_user
+from huxunifylib.database.user_management import set_user, get_user
 
 from huxunify.app import create_app
 
@@ -442,3 +442,161 @@ class TestUserRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertDictEqual(expected_response, response.json)
+
+    def test_update_user_notifications(self):
+        """Test successfully updating a users notification preferences"""
+
+        update_body = {
+            api_c.ALERTS: {
+                api_c.DATA_MANAGEMENT: {
+                    api_c.DATASOURCES: {
+                        db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                    },
+                    api_c.IDENTITY_RESOLUTION: {
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True
+                    },
+                },
+                api_c.DECISIONING: {
+                    api_c.MODELS: {
+                        db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                    },
+                },
+                api_c.ORCHESTRATION_TAG: {
+                    api_c.DESTINATIONS: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
+                    api_c.AUDIENCE_ENGAGEMENTS: {
+                        db_c.NOTIFICATION_TYPE_SUCCESS: True
+                    },
+                    api_c.AUDIENCES: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
+                    api_c.DELIVERY_TAG: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
+                },
+            }
+        }
+
+        # get user before update
+        user_pre_update = get_user(
+            self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB]
+        )
+        self.assertIsNone(user_pre_update)
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.USER_PREFERENCES}",
+            headers=t_c.STANDARD_HEADERS,
+            json=update_body,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        # get user post update
+        user_post_update = get_user(
+            self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB]
+        )
+        self.assertDictEqual(
+            update_body[db_c.USER_ALERTS], user_post_update[db_c.USER_ALERTS]
+        )
+
+    def test_remove_user_notifications(self):
+        """Test successfully removing a users notification preferences"""
+
+        update_body = {
+            api_c.ALERTS: {
+                api_c.ORCHESTRATION_TAG: {
+                    api_c.DESTINATIONS: {db_c.NOTIFICATION_TYPE_SUCCESS: True}
+                },
+            }
+        }
+
+        # set alerts first
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.USER_PREFERENCES}",
+            headers=t_c.STANDARD_HEADERS,
+            json=update_body,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        # get user post update
+        user_post_update = get_user(
+            self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB]
+        )
+        self.assertDictEqual(
+            update_body[db_c.USER_ALERTS], user_post_update[db_c.USER_ALERTS]
+        )
+
+        # remove alerts
+        self.assertEqual(
+            HTTPStatus.OK,
+            self.app.put(
+                f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.USER_PREFERENCES}",
+                headers=t_c.STANDARD_HEADERS,
+                json={db_c.USER_ALERTS: {}},
+            ).status_code,
+        )
+
+        # get the user again and validate that the alerts are empty.
+        self.assertFalse(
+            get_user(
+                self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB]
+            )[db_c.USER_ALERTS]
+        )
+
+    @mock.patch("huxunify.api.route.user.JiraConnection")
+    def test_get_user_tickets(self, mock_jira: MagicMock):
+        """Test get user tickets endpoint.
+
+        Args:
+            mock_jira (MagicMock): magic mock of JiraConnection
+        """
+
+        expected_response = {
+            api_c.ID: 1234,
+            api_c.KEY: "HUS-0000",
+            api_c.SUMMARY: "Test ticket summary",
+            api_c.STATUS: "To Do",
+            api_c.CREATE_TIME: "2021-12-01T15:35:18.000Z",
+        }
+
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.check_jira_connection.return_value = True
+        mock_jira_instance.search_jira_issues.return_value = (
+            t_c.SAMPLE_USER_JIRA_TICKETS
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{t_c.TICKETS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(response.json), 1)
+        self.assertDictEqual(expected_response, response.json[0])
+
+    @mock.patch("huxunify.api.route.user.JiraConnection")
+    def test_get_user_tickets_no_tickets(self, mock_jira: MagicMock):
+        """Test get user tickets endpoint no tickets returned.
+
+        Args:
+            mock_jira (MagicMock): magic mock of JiraConnection
+        """
+
+        empty_jira_response = {
+            "startAt": 0,
+            "maxResults": 50,
+            "total": 0,
+            "issues": [],
+        }
+
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.check_jira_connection.return_value = True
+        mock_jira_instance.search_jira_issues.return_value = (
+            empty_jira_response
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{t_c.TICKETS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            "No matching tickets found for user", response.json[api_c.MESSAGE]
+        )

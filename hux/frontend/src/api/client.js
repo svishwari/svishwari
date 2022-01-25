@@ -36,6 +36,15 @@ client["users"].clearFavorite = (resourceId, entityType) => {
 client["users"].contactUs = (data) => {
   return http.post("users/contact-us", data)
 }
+client["users"].requestTeamMember = (data) => {
+  return http.post("users/request_new_user", data)
+}
+client["users"].getRequestedUsers = () => {
+  return http.get("users/requested_users")
+}
+client["users"].tickets = () => {
+  return http.get("users/tickets")
+}
 //#endregion
 
 //#region Customers
@@ -408,5 +417,18 @@ client.dataSources.dataFeeds = (type) => {
   return http.get(`/data-sources/${type}/datafeeds`)
 }
 //#endregion
+
+//#region Application
+client.applications.getActiveApplications = (flag) => {
+  return http.get(`/applications?only_active=${flag}`)
+}
+
+client.applications.createApplication = (data) => {
+  return http.post("/applications", data)
+}
+
+client.applications.updateApplication = (id, data) => {
+  return http.patch(`/applications/${id}`, data)
+}
 
 export default client

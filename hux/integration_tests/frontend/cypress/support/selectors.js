@@ -48,6 +48,7 @@ export default {
     profile: "[data-e2e='profile']",
     logout: "[data-e2e='logout']",
     help: "[data-e2e='help-dropdown']",
+    myIssues: "[data-e2e='myIssues']",
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
     dataSourceButton: "[data-e2e='Data Source']",
@@ -61,6 +62,26 @@ export default {
     allNotificationsLink: "[data-e2e='all-notifications-link']",
   },
 
+  //client
+  client: {
+    clientDropdown: "[data-e2e='client_panel_dropdown']",
+    clientPanelOpen: "[data-e2e='client_panel']",
+    clientHeader: "[data-e2e='client-header']",
+    clientLists: "[data-e2e='clients-list']",
+    client: "[data-e2e='client']",
+  },
+
+  // my issues
+  myIssues: {
+    header: "[data-e2e='issues-header']",
+    table: "[data-e2e='issues-table']",
+    key: "[data-e2e='issues-key']",
+    status: "[data-e2e='issues-status']",
+    summary: "[data-e2e='issues-summary']",
+    time: "[data-e2e='issues-time']",
+    return: "[data-e2e='issues-return']",
+  },
+
   // configuration
   configuration: {
     moduleSolution: "[data-e2e='moduleSolution']",
@@ -70,6 +91,16 @@ export default {
     list: {
       teamMembersTable: "[data-e2e='team-members-table']",
       teamMembersTableHeaders: "table thead tr",
+    },
+    teamMemberDrawer: {
+      teamMemberRequest: "[data-e2e='teamMemberRequest']",
+      firstName: "[data-e2e='firstName']",
+      lastName: "[data-e2e='lastName']",
+      email: "[data-e2e='email']",
+      accessLevel: "[data-e2e='accessLevel']",
+      togglePii: "[data-e2e='togglePii']",
+      requestText: "[data-e2e='requestText']",
+      request: "[data-e2e='request']",
     },
   },
 

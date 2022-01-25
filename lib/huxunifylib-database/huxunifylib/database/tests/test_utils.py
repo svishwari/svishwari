@@ -15,6 +15,9 @@ from huxunifylib.database import db_exceptions, delete_util
 
 
 # pylint: disable=R0902,R0914,R0915
+from huxunifylib.database.util.client import db_client_factory
+
+
 class TestUtils(unittest.TestCase):
     """Test utils module."""
 
@@ -22,9 +25,7 @@ class TestUtils(unittest.TestCase):
     def setUp(self):
 
         # Connect
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient(host="localhost", port=27017).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -622,6 +623,12 @@ class TestUtils(unittest.TestCase):
         except db_exceptions.InvalidID:
             check_doc = None
         self.assertIsNone(check_doc)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_check_get_db_client(self):
+        """Test for get_db_client"""
+        db_client = db_client_factory.get_resource("mongodb://localhost:27017")
+        self.assertEqual("localhost", db_client.host)
 
 
 if __name__ == "__main__":

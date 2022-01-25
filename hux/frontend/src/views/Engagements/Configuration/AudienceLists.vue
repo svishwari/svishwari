@@ -88,9 +88,9 @@
     </v-card>
     <div class="info-widget d-flex mt-2 ml-7 pa-3">
       <div class="bulb">
-        <icon type="FAB-bulb" :size="18" class="mt-1" />
+        <icon type="FAB-bulb" :size="21" class="mt-1" />
       </div>
-      <div class="description ml-4 text-body-1 black-base">
+      <div class="description ml-4 text-body-1 black-base text-left">
         You may create a lookalike audience for this engagement after delivering
         an audience to a digital advertising platform.
       </div>

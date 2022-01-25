@@ -45,6 +45,9 @@ class LookalikeAudienceGetSchema(Schema):
     favorite = fields.Boolean(required=True)
     is_lookalike = fields.Boolean(default=True)
     status = fields.String(default=db_c.AUDIENCE_STATUS_ERROR)
+    delivery_platform_link = fields.String(default=None)
+    delivery_platform_name = fields.String()
+    delivery_platform_type = fields.String()
 
 
 class AudienceDeliverySchema(Schema):
@@ -58,6 +61,7 @@ class AudienceDeliverySchema(Schema):
     delivery_platform_id = fields.String(
         required=True, validate=validate_object_id
     )
+    link = fields.String()
 
 
 class DeliveriesSchema(Schema):
@@ -77,6 +81,7 @@ class DeliveriesSchema(Schema):
     is_ad_platform = fields.Bool(attribute=api_c.IS_AD_PLATFORM)
     delivery_schedule = fields.String()
     next_delivery = DateTimeWithZ()
+    link = fields.String()
 
 
 class EngagementDeliverySchema(EngagementGetSchema):
@@ -170,6 +175,9 @@ class AudienceGetSchema(Schema):
     source_id = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_ID)
     source_name = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_NAME)
     source_size = fields.Int(attribute=db_c.LOOKALIKE_SOURCE_AUD_SIZE)
+    audience_size_percentage = fields.Float(
+        attribute=db_c.LOOKALIKE_AUD_SIZE_PERCENTAGE, default=0
+    )
     source_exists = fields.Boolean()
     match_rate = fields.Float(default=0)
     favorite = fields.Boolean(default=False)

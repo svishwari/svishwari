@@ -104,6 +104,8 @@ SOURCE_NAME = "source_name"
 SOURCE_SIZE = "source_size"
 SOURCE_ID = "source_id"
 
+TICKETS = "tickets"
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
@@ -722,13 +724,18 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
     },
 ]
 
+
 MOCKED_MODEL_PROPENSITY_FEATURES = {
     api_c.RESULTS: [
         {
             api_c.FEATURES: [
+                "2022-01-06",
                 "2021-07-28",
                 "1to2y-COGS-sum",
-                1165.89062,
+                "description",
+                0.1745832178355047,
+                100351.13774108887,
+                17519.624540293255,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.28",
@@ -738,7 +745,11 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
         {
             api_c.FEATURES: [
                 "2021-07-29",
+                "2021-07-29",
                 "1to2y-data_source-orders",
+                "description",
+                0.1745832178355047,
+                100351.13774108887,
                 880.273438,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
@@ -749,7 +760,11 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
         {
             api_c.FEATURES: [
                 "2021-07-30",
+                "2021-07-30",
                 "1to2y-ITEMQTY-avg",
+                "description",
+                0.1745832178355047,
+                100351.13774108887,
                 210.867187,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
@@ -760,8 +775,12 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
         {
             api_c.FEATURES: [
                 "2021-07-31",
+                "2021-07-31",
                 "1to2y-COGS-sum",
-                364.695312,
+                "description",
+                0.1745832178355047,
+                100351.13774108887,
+                210.867187,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.31",
@@ -778,6 +797,9 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
                 None,
                 "2021-07-28",
                 "1to2y-COGS-sum",
+                "description",
+                -1165.89062,
+                -1165.89062,
                 -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
@@ -790,7 +812,10 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
                 None,
                 "2021-07-29",
                 "1to2y-data_source-orders",
+                "description",
                 -880.273438,
+                -1165.89062,
+                -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.29",
@@ -802,7 +827,10 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
                 None,
                 "2021-07-30",
                 "1to2y-ITEMQTY-avg",
+                "description",
                 -210.867187,
+                -1165.89062,
+                -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.30",
@@ -814,7 +842,10 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
                 None,
                 "2021-07-31",
                 "1to2y-COGS-sum",
+                "description",
                 -364.695312,
+                -1165.89062,
+                -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.31",
@@ -826,7 +857,10 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
                 "2021-07-31",
                 "2021-07-31",
                 "1to2y-COGS-sum",
+                "description",
                 "not a number",
+                -1165.89062,
+                -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.31",
@@ -1255,6 +1289,38 @@ TEST_NAVIGATION_SETTINGS = {
             "children": [{"name": "Models", "enabled": True}],
         },
     ]
+}
+SAMPLE_USER_JIRA_TICKETS = {
+    "expand": "names,schema",
+    "startAt": 0,
+    "maxResults": 50,
+    "total": 1,
+    "issues": [
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "id": "1234",
+            "self": "https://jira.hux.deloitte.com/rest/api/2/issue/117518",
+            "key": "HUS-0000",
+            "fields": {
+                "summary": "Test ticket summary",
+                "created": "2021-12-01T15:35:18.000+0000",
+                "status": {
+                    "self": "https://jira.hux.deloitte.com/rest/api/2/status/10000",
+                    "description": "",
+                    "iconUrl": "https://jira.hux.deloitte.com/images/icons/statuses/open.png",
+                    "name": "To Do",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "https://jira.hux.deloitte.com/rest/api/2/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "To Do",
+                    },
+                },
+            },
+        }
+    ],
 }
 
 

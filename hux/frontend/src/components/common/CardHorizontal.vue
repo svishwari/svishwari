@@ -12,7 +12,7 @@
     @click="$emit('click')"
   >
     <div v-if="icon || title" class="d-flex align-center">
-      <logo :type="icon" />
+      <logo :type="icon" :size="26" />
       <div class="pl-2 black--text body-1">
         {{ title }}
       </div>
