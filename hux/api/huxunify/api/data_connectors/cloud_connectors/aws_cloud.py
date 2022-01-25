@@ -67,7 +67,6 @@ class AWS(Cloud):
             kwargs (dict): function keyword arguments.
 
         Returns:
-            None
         """
         try:
             self._get_aws_client(api_c.AWS_SSM_NAME).put_parameter(

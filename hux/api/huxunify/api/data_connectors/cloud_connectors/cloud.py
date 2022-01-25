@@ -9,7 +9,17 @@ class Cloud:
     config = None
 
     # pylint: disable=unused-argument, keyword-arg-before-vararg
-    def __new__(cls, config: Config = get_config(), *args, **kwargs):
+    def __new__(cls, config: Config = get_config(), *args, **kwargs) -> None:
+        """Instantiate a new Cloud object.
+
+        Args:
+            config (config): config object.
+            args (list): function arguments.
+            kwargs (dict): function keyword arguments.
+
+        Returns:
+            None
+        """
         cls.config = config
         subclass = next(
             filter(

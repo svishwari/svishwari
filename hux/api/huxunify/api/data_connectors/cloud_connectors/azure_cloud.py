@@ -39,7 +39,6 @@ class Azure(Cloud):
             kwargs (dict): function keyword arguments.
 
         Returns:
-            None
         """
         try:
             vault_uri = (
