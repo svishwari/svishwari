@@ -305,6 +305,16 @@ const routes = [
     },
   },
   {
+    path: "/application/add",
+    name: "AddApplication",
+    component: () => import("@/views/Application/AddApplication"),
+    meta: {
+      layout: "app",
+      title: "Add an Application",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/login",
     name: "Login",
     component: () => import("@/views/Login"),

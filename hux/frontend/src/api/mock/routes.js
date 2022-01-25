@@ -23,6 +23,7 @@ import totalCustomersData from "./fixtures/totalCustomersData.js"
 import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
+import { applications } from "./factories/application"
 
 export const defineRoutes = (server) => {
   // Users
@@ -753,5 +754,23 @@ export const defineRoutes = (server) => {
   //configuration
   server.get("/configurations", (schema) => {
     return schema.configurations.all()
+  })
+
+  //applications
+  server.get("/applications", () => {
+    return applications
+  })
+
+  server.post("/applications", (schema, request) => {
+    return (
+      "Application " +
+      JSON.parse(request.requestBody).name +
+      " is successfully created"
+    )
+  })
+
+  server.patch("/applications/:id", (schema, request) => {
+    let app = applications.find((x) => x.id == JSON.parse(request.params.id))
+    return "Application " + app.name + " is successfully updated"
   })
 }
