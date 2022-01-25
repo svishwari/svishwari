@@ -22,7 +22,11 @@ class ClientProjectGetSchema(Schema):
     url = Str()
     access_level = Str(
         validate=OneOf(
-            choices=[db_c.USER_ROLE_ADMIN, db_c.USER_ROLE_EDITOR, db_c.USER_ROLE_VIEWER]
+            choices=[
+                db_c.USER_ROLE_ADMIN,
+                db_c.USER_ROLE_EDITOR,
+                db_c.USER_ROLE_VIEWER,
+            ]
         ),
         default=db_c.USER_ROLE_VIEWER,
         required=True,

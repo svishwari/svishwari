@@ -31,7 +31,9 @@ from huxunify.api.schema.utils import (
 )
 
 # setup the client-projects blueprint
-client_projects_bp = Blueprint(api_c.CLIENT_PROJECTS_ENDPOINT, import_name=__name__)
+client_projects_bp = Blueprint(
+    api_c.CLIENT_PROJECTS_ENDPOINT, import_name=__name__
+)
 
 
 @client_projects_bp.before_request
@@ -154,7 +156,9 @@ class ClientProjectPatchView(SwaggerView):
 
         if not request.get_json():
             logger.info("Could not patch client project.")
-            return {api_c.MESSAGE: "No request body provided."}, HTTPStatus.BAD_REQUEST
+            return {
+                api_c.MESSAGE: "No request body provided."
+            }, HTTPStatus.BAD_REQUEST
 
         ClientProjectPatchSchema().validate(request.get_json())
 
