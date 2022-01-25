@@ -9,7 +9,10 @@
             :indeterminate="loadingAudienceChart"
           />
           <v-card-title class="pb-2 pl-6 pt-5">
-            <span v-if="!loadingAudienceChart && totalCustomers.length != 0">
+            <span
+              v-if="!loadingAudienceChart && totalCustomers.length != 0"
+              class="d-flex"
+            >
               <h3 class="text-h3">Audience Size</h3>
               <span class="text-body-1 time-frame">
                 &nbsp;({{ timeFrameLabel }})
@@ -71,7 +74,10 @@
             :indeterminate="loadingSpendChart"
           />
           <v-card-title class="pb-2 pl-6 pt-5">
-            <span v-if="!loadingAudienceChart && totalCustomers.length != 0">
+            <span
+              v-if="!loadingAudienceChart && totalCustomers.length != 0"
+              class="d-flex"
+            >
               <h3 class="text-h3">Total audience spend</h3>
               <tooltip position-top>
                 <template #label-content>
