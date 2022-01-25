@@ -534,13 +534,15 @@ class Tecton:
 
             for feature in features:
                 # get score.
-                score = 0
+                lift = 0
                 try:
-                    score = (
-                        log10(float(feature[3]))
-                        if float(feature[3]) > 0
-                        else -log10(float(abs(feature[3])))
-                    )
+                    lift = float(feature[4])
+                except ValueError:
+                    pass
+
+                gain = 0
+                try:
+                    gain = float(feature[5])
                 except ValueError:
                     pass
 
@@ -549,7 +551,8 @@ class Tecton:
                         api_c.ID: model_id,
                         api_c.VERSION: model_version,
                         api_c.NAME: feature[2],
-                        api_c.FEATURE_SERVICE: feature[5],
+                        api_c.DESCRIPTION: feature[3],
+                        api_c.FEATURE_SERVICE: feature[9],
                         api_c.DATA_SOURCE: random.choice(
                             [
                                 "Buyers",
@@ -563,8 +566,8 @@ class Tecton:
                             ["Susan Miller", "Jack Miller"]
                         ),
                         api_c.STATUS: api_c.STATUS_ACTIVE,
-                        api_c.POPULARITY: random.randint(1, 3),
-                        api_c.SCORE: round(score, 4),
+                        api_c.POPULARITY: round(gain, 4),
+                        api_c.SCORE: round(lift, 4),
                     }
                 )
 

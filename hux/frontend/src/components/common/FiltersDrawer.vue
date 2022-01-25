@@ -39,7 +39,6 @@
             <hux-button
               size="large"
               variant="white"
-              :is-disabled="!Boolean(count)"
               is-tile
               class="
                 text-button

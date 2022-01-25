@@ -2,9 +2,9 @@
   <div class="team-members-wrapper">
     <v-row>
       <v-col>
-        <v-card class="rounded-lg box-shadow-5 mt-4">
+        <v-card class="rounded-lg box-shadow-5 mt-3">
           <div v-if="isDataExist" class="px-6 py-5">
-            <div class="pb-4 d-flex justify-space-between">
+            <div class="pb-1 d-flex justify-space-between">
               <div class="black--text text-h3">Team Members</div>
               <v-btn
                 text

@@ -39,6 +39,7 @@ from huxunify.api.route.utils import (
 from huxunify.api.schema.user import (
     UserSchema,
     UserPatchSchema,
+    UserPreferencesSchema,
     TicketSchema,
     TicketGetSchema,
     NewUserRequest,
@@ -526,7 +527,7 @@ class CreateTicket(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, user: dict) -> Tuple[dict, int]:
-        """Create a ticket in JIRA.
+        """Create a ticket in JIRA
 
         ---
         security:
@@ -745,6 +746,111 @@ class UserTickets(SwaggerView):
             ) from error
 
         return HuxResponse.OK(data=my_tickets, data_schema=TicketGetSchema())
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/{api_c.USER_PREFERENCES}",
+    "UserPreferencesView",
+)
+class UserPreferencesView(SwaggerView):
+    """User Preferences class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input user preferences body.",
+            "example": {
+                api_c.ALERTS: {
+                    api_c.DATA_MANAGEMENT: {
+                        api_c.DATASOURCES: {
+                            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        },
+                        api_c.IDENTITY_RESOLUTION: {
+                            db_c.NOTIFICATION_TYPE_CRITICAL: True
+                        },
+                    },
+                    api_c.DECISIONING: {
+                        api_c.MODELS: {
+                            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        },
+                    },
+                    api_c.ORCHESTRATION_TAG: {
+                        api_c.DESTINATIONS: {
+                            db_c.NOTIFICATION_TYPE_SUCCESS: True
+                        },
+                        api_c.AUDIENCE_ENGAGEMENTS: {
+                            db_c.NOTIFICATION_TYPE_SUCCESS: True
+                        },
+                        api_c.AUDIENCES: {
+                            db_c.NOTIFICATION_TYPE_SUCCESS: True
+                        },
+                        api_c.DELIVERY_TAG: {
+                            db_c.NOTIFICATION_TYPE_SUCCESS: True
+                        },
+                    },
+                }
+            },
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "User preferences updated.",
+            "schema": UserSchema,
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Invalid data received.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "User not found.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels([api_c.ADMIN_LEVEL])
+    def put(self, user: dict) -> Tuple[dict, int]:
+        """Updates a user preferences.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
+
+        Returns:
+            Tuple[dict, int]: User doc, HTTP status code.
+        """
+
+        body = UserPreferencesSchema().load(request.get_json())
+
+        if not body:
+            return {
+                api_c.MESSAGE: "No alert body provided."
+            }, HTTPStatus.BAD_REQUEST
+
+        updated_user = update_user(
+            get_db_client(),
+            okta_id=user[db_c.OKTA_ID],
+            update_doc={
+                **body,
+                **{
+                    db_c.UPDATED_BY: user[api_c.USER_NAME],
+                },
+            },
+        )
+
+        # update the document
+        return (
+            UserSchema().dump(updated_user),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(

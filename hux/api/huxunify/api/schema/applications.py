@@ -39,3 +39,4 @@ class ApplicationsPatchSchema(Schema):
     """Applications Patch Schema"""
 
     url = Str()
+    is_added = Boolean(attribute=db_c.ADDED)
