@@ -63,7 +63,7 @@
               class="disabledColor"
             />
           </div>
-          <div class="pt-2 text-body-1">
+          <div class="pt-2 text-body-1 mb-2">
             What categories do you wish to receive?
           </div>
           <div>
