@@ -33,8 +33,8 @@
       </div>
     </div>
 
-    <div v-if="icon" class="d-flex justify-center mt-2 mr-8">
-      <div class="dot">
+    <div v-if="icon" class="d-flex justify-center" :class="topRightAdjustment">
+      <div class="dot" :style="{ padding: logoBoxPadding }">
         <logo
           v-if="logoOption"
           :type="icon"
@@ -53,7 +53,11 @@
       </div>
     </div>
 
-    <tooltip nudge-right="100px" min-width="auto !important">
+    <tooltip
+      v-if="!noDescription"
+      nudge-right="100px"
+      min-width="auto !important"
+    >
       <template #label-content>
         <div
           class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title text-h4"
@@ -69,7 +73,22 @@
       </template>
     </tooltip>
 
-    <tooltip nudge-right="100px" min-width="auto !important">
+    <template v-else>
+      <div
+        class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title text-h4"
+        :class="disabled || !interactable ? 'black--text' : 'primary--text'"
+        :style="{ 'padding-top': !icon ? '56px' : null }"
+        data-e2e="card-title"
+      >
+        {{ title }}
+      </div>
+    </template>
+
+    <tooltip
+      v-if="!noDescription"
+      nudge-right="100px"
+      min-width="auto !important"
+    >
       <template #label-content>
         <div
           class="px-3 d-block description text-body-2 black--text"
@@ -121,6 +140,11 @@ export default {
       type: String,
       required: false,
       default: "Descriptive text for the model item chosen above",
+    },
+    noDescription: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     disabled: {
       type: Boolean,
@@ -180,6 +204,16 @@ export default {
       required: false,
       default: 32,
     },
+    logoBoxPadding: {
+      type: String,
+      required: false,
+      default: "14px",
+    },
+    topRightAdjustment: {
+      type: String,
+      required: false,
+      default: "mt-2 mr-8",
+    },
   },
 }
 </script>
@@ -230,7 +264,6 @@ export default {
     @extend .box-shadow-1;
     background: var(--v-white-base);
     text-align: -webkit-center;
-    padding: 14px;
   }
   .description {
     min-height: 36px;

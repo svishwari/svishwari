@@ -119,6 +119,9 @@ export default {
     inactiveEngagement() {
       this.$emit("inactiveEngagement", this.engagementData)
     },
+    editLookalike() {
+      this.$emit("editLookalike")
+    },
   },
 }
 </script>

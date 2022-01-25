@@ -40,12 +40,32 @@ const routes = [
     },
   },
   {
+    path: "/clients",
+    name: "ClientPanel",
+    component: () => import("@/views/ClientPanel.vue"),
+    meta: {
+      layout: "app",
+      title: "Client Panel ",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/configuration",
     name: "Configuration",
     component: () => import("@/views/Configuration/index.vue"),
     meta: {
       layout: "app",
       title: "Configuration ",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/my-issues",
+    name: "MyIssues",
+    component: () => import("@/views/MyIssues.vue"),
+    meta: {
+      layout: "app",
+      title: "My Issues",
       requiresAuth: true,
     },
   },
@@ -281,6 +301,16 @@ const routes = [
     meta: {
       layout: "app",
       title: "Alerts and Notifications",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/application/add",
+    name: "AddApplication",
+    component: () => import("@/views/Application/AddApplication"),
+    meta: {
+      layout: "app",
+      title: "Add an Application",
       requiresAuth: true,
     },
   },
