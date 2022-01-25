@@ -195,7 +195,17 @@ class BaseDestinationBatchJob:
 
     provider = None
 
-    def __new__(cls, config: Config = get_config(), *args, **kwargs):
+    def __new__(cls, config: Config = get_config(), *args, **kwargs) -> None:
+        """Instantiate a new Destination batch object.
+
+        Args:
+            config (config): config object.
+            args (list): function arguments.
+            **kwargs (dict): function keyword arguments.
+
+        Returns:
+            None
+        """
         cls.config = config
         subclass = next(
             filter(
@@ -400,17 +410,6 @@ class AzureDestinationBatchJob:
     """Class for housing Azure delivery jobs"""
 
     provider = "Azure"
-
-    def __new__(cls, config: Config = get_config(), *args, **kwargs):
-        cls.config = config
-        subclass = next(
-            filter(
-                lambda clazz: clazz.provider.lower()
-                == config.CLOUD_PROVIDER.lower(),
-                cls.__subclasses__(),
-            )
-        )
-        return object.__new__(subclass)
 
     def __init__(
         self,
