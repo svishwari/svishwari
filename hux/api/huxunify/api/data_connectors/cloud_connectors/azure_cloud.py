@@ -15,7 +15,7 @@ class Azure(Cloud):
 
         Args:
             secret_name (str): Name of the secret.
-            kwargs (dict): extra parameters.
+            **kwargs (dict): extra parameters.
 
         Returns:
             str: The value of the secret.
@@ -36,7 +36,7 @@ class Azure(Cloud):
         Args:
             secret_name (str): Name of the secret.
             value (str): The value of the secret.
-            kwargs (dict): function keyword arguments.
+            **kwargs: function keyword arguments.
 
         Returns:
         """
