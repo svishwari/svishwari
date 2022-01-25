@@ -23,7 +23,7 @@
           />
           <v-row
             v-else-if="!loadingAudienceChart && totalCustomers.length == 0"
-            class="model-features-frame py-14"
+            class="model-features-frame py-14 mt-4"
           >
             <empty-page
               v-if="totalCustomers.length == 0 && !totalAudienceError"
@@ -100,7 +100,7 @@
           />
           <v-row
             v-else-if="!loadingSpendChart && totalCustomerSpend.length == 0"
-            class="drift-chart-frame py-14"
+            class="drift-chart-frame py-14 mt-4"
           >
             <empty-page
               v-if="totalCustomerSpend.length == 0 && !audienceSpendError"
@@ -192,7 +192,7 @@
             <v-col
               v-else-if="!loadingDemographics && mapChartData.length == 0"
               md="12"
-              class="py-14"
+              class="py-14 mt-14"
             >
               <empty-page
                 v-if="mapChartData.length == 0 && !geoOverviewError"
