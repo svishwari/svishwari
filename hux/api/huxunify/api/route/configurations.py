@@ -75,12 +75,15 @@ class ConfigurationsModules(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self) -> Tuple[Response, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves all configurations.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
 
         Returns:
             Tuple[Response, int]: Response list containing dict of configurations,

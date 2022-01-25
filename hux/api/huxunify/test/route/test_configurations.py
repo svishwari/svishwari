@@ -166,7 +166,7 @@ class ConfigurationsTests(TestCase):
             "Data Management",
         )
         self.assertTrue(
-            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["enabled"]
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.ENABLED]
         )
 
     def test_success_put_configurations_navigation(self):
@@ -189,15 +189,15 @@ class ConfigurationsTests(TestCase):
             "Data Management",
         )
         self.assertTrue(
-            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["enabled"]
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.ENABLED]
         )
         self.assertFalse(
             response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["children"][0][
-                "enabled"
+                api_c.ENABLED
             ]
         )
         self.assertTrue(
             response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["children"][1][
-                "enabled"
+                api_c.ENABLED
             ]
         )
