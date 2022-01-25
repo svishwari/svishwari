@@ -1,4 +1,4 @@
-"""Purpose of this file is for populating the following database documents
+"""Purpose of this file is for populating the following database documents.
  - data sources
  - destinations (delivery platforms)
 """
@@ -1324,11 +1324,15 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
             source_type=data_source[db_c.DATA_SOURCE_TYPE],
             status=data_source[db_c.STATUS],
         )[db_c.ID]
-        logging.info("Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id)
+        logging.info(
+            "Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id
+        )
     logging.info("Prepopulate data sources complete.")
 
 
-def insert_delivery_platforms(database: MongoClient, delivery_platforms: list) -> None:
+def insert_delivery_platforms(
+    database: MongoClient, delivery_platforms: list
+) -> None:
     """Insertion of Delivery Platforms Collection.
 
     Args:
@@ -1389,13 +1393,17 @@ def insert_models(database: MongoClient, models: list) -> None:
     logging.info("Prepopulate models.")
 
     for model in models:
-        model_id = create_document(database, db_c.MODELS_COLLECTION, model)[db_c.ID]
+        model_id = create_document(database, db_c.MODELS_COLLECTION, model)[
+            db_c.ID
+        ]
         logging.info("Added %s, %s.", model[db_c.NAME], model_id)
 
     logging.info("Prepopulate models complete.")
 
 
-def insert_client_projects(database: MongoClient, client_projects: list) -> None:
+def insert_client_projects(
+    database: MongoClient, client_projects: list
+) -> None:
     """Insert data into client_projects collection.
 
     Args:
