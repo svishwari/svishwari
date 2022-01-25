@@ -3,6 +3,10 @@
     <v-row>
       <v-col>
         <v-card class="rounded-lg box-shadow-5 mt-3">
+          <v-progress-linear
+            :active="loadingAllUsers"
+            :indeterminate="loadingAllUsers"
+          />
           <div v-if="isDataExist" class="px-6 py-5">
             <div class="pb-1 d-flex justify-space-between">
               <div class="black--text text-h3">Team Members</div>
@@ -116,9 +120,6 @@
                   </template>
 
                   <template v-else>
-                    <!-- <template v-if="getRequestedMembers.findIndex(x => x.email == item['email'])!=-1">
-                      <span class="requested">{{team[col.value]}}</span>
-                    </template> -->
                     <span
                       :class="
                         getRequestedMembers.findIndex(
@@ -230,6 +231,7 @@ export default {
         },
       ],
       teamMemberDrawer: false,
+      loadingAllUsers: false,
     }
   },
   computed: {
@@ -248,9 +250,20 @@ export default {
         : this.getTeamMembers
     },
   },
+  async mounted() {
+    this.loadingAllUsers = true
+    try {
+      await this.existingUsers()
+      await this.requestUsers()
+    } finally {
+      this.loadingAllUsers = false
+    }
+  },
   methods: {
     ...mapActions({
       updateUser: "users/updatePIIAccess",
+      existingUsers: "users/getUsers",
+      requestUsers: "users/getRequestedUsers",
     }),
     toggleTeamMemberRequestDrawer() {
       this.teamMemberDrawer = !this.teamMemberDrawer
