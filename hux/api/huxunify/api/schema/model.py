@@ -56,7 +56,7 @@ class FeatureSchema(Schema):
     name = Str(required=True)
     status = Str()
     score = Float()
-    popularity = Int()
+    popularity = Float()
 
 
 class ModelLiftSchema(Schema):
