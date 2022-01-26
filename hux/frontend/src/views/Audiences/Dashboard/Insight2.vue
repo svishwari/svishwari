@@ -491,7 +491,7 @@ export default {
           disabled: true,
           href: this.$route.path,
           icon: "lookalike",
-          statusSize: 30,
+          statusSize: 21,
           size: 12,
         },
       ],
@@ -643,7 +643,7 @@ export default {
             disabled: true,
             href: this.$route.path,
             status: this.audience.status,
-            statusSize: 30,
+            statusSize: 21,
           })
         }
         return items

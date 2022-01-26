@@ -1,6 +1,6 @@
 <template>
   <div class="audience-lookalike-insight">
-    <div class="mb-7 text-body-1">
+    <div class="mb-7 text-body-1 black--text text--lighten-4">
       This is a lookalike audience of
       <span v-if="audienceData.source_exists === false">
         <router-link
@@ -19,7 +19,7 @@
           {{ audienceData.source_name }}
         </router-link>
       </span>
-      <span v-else class="'black--text text--base'">
+      <span v-else class="black--text inactive-audi">
         {{ audienceData.source_name }}
       </span>
       (the seed audience). The customer list of this lookalike resides in the
@@ -156,7 +156,7 @@
             </metric-card>
           </div>
           <div class="mt-1 mb-5">
-            <v-row>
+            <v-row class="mr-n5">
               <v-col cols="7">
                 <metric-card
                   title="Seed audience size"
@@ -387,6 +387,9 @@ export default {
   }
   .metric-row {
     margin-right: -46px !important;
+  }
+  .inactive-audi {
+    font-weight: 500 !important;
   }
 }
 </style>

@@ -1323,6 +1323,132 @@ SAMPLE_USER_JIRA_TICKETS = {
     ],
 }
 
+SAMPLE_USER_REQUEST_JIRA_ISSUES = {
+    "expand": "schema,names",
+    "startAt": 0,
+    "maxResults": 50,
+    "total": 3,
+    "issues": [
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "id": "121524",
+            "self": "https://jira.hux.fake.com/rest/api/2/issue/121524",
+            "key": "HUS-2005",
+            "fields": {
+                "description": "*Project Name:* ADV \n*Required Info:* Please add Risheek New to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* Risheek, New \n*Email:* rn@fake.com \n*Access Level:* admin \n*PII Access:* False \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:* Risheek Chandra",
+                "assignee": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/user?username=rgchandra%40fake.com",
+                    "name": "rgchandra@fake.com",
+                    "key": "JIRAUSER13410",
+                    "emailAddress": "rgchandra@fake.com",
+                    "avatarUrls": {
+                        "48x48": "https://jira.hux.fake.com/secure/useravatar?avatarId=10338",
+                        "24x24": "https://jira.hux.fake.com/secure/useravatar?size=small&avatarId=10338",
+                        "16x16": "https://jira.hux.fake.com/secure/useravatar?size=xsmall&avatarId=10338",
+                        "32x32": "https://jira.hux.fake.com/secure/useravatar?size=medium&avatarId=10338",
+                    },
+                    "displayName": "Risheek Chandra",
+                    "timeZone": "America/New_York",
+                },
+                "updated": "2022-01-12T12:09:24.000+0000",
+                "created": "2022-01-12T12:09:23.000+0000",
+                "status": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/status/10000",
+                    "description": "",
+                    "iconUrl": "https://jira.hux.fake.com/images/icons/statuses/open.png",
+                    "name": "To Do",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "https://jira.hux.fake.com/rest/api/2/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "To Do",
+                    },
+                },
+            },
+        },
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "id": "121619",
+            "self": "https://jira.hux.fake.com/rest/api/2/issue/121619",
+            "key": "HUS-2008",
+            "fields": {
+                "description": "*Project Name:* ADV \n*Required Info:* Please add Sarah Huxley to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* Sarah, Huxley \n*Email:* sh@fake.com \n*Access Level:* admin \n*PII Access:* False \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:* Risheek Chandra",
+                "assignee": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/user?username=rgchandra%40fake.com",
+                    "name": "rgchandra@fake.com",
+                    "key": "JIRAUSER13410",
+                    "emailAddress": "rgchandra@fake.com",
+                    "avatarUrls": {
+                        "48x48": "https://jira.hux.fake.com/secure/useravatar?avatarId=10338",
+                        "24x24": "https://jira.hux.fake.com/secure/useravatar?size=small&avatarId=10338",
+                        "16x16": "https://jira.hux.fake.com/secure/useravatar?size=xsmall&avatarId=10338",
+                        "32x32": "https://jira.hux.fake.com/secure/useravatar?size=medium&avatarId=10338",
+                    },
+                    "displayName": "Risheek Chandra",
+                    "timeZone": "America/New_York",
+                },
+                "updated": "2022-01-12T14:13:50.000+0000",
+                "created": "2022-01-12T14:13:50.000+0000",
+                "status": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/status/10000",
+                    "description": "",
+                    "iconUrl": "https://jira.hux.fake.com/images/icons/statuses/open.png",
+                    "name": "To Do",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "https://jira.hux.fake.com/rest/api/2/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "To Do",
+                    },
+                },
+            },
+        },
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "id": "121621",
+            "self": "https://jira.hux.fake.com/rest/api/2/issue/121621",
+            "key": "HUS-2010",
+            "fields": {
+                "description": "*Project Name:* ADV \n*Required Info:* Please add Sarah Huxley to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* Sarah, Huxley \n*Email:* sh@fake.com \n*Access Level:* admin \n*PII Access:* False \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:* Risheek Chandra",
+                "assignee": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/user?username=rgchandra%40fake.com",
+                    "name": "rgchandra@fake.com",
+                    "key": "JIRAUSER13410",
+                    "emailAddress": "rgchandra@fake.com",
+                    "avatarUrls": {
+                        "48x48": "https://jira.hux.fake.com/secure/useravatar?avatarId=10338",
+                        "24x24": "https://jira.hux.fake.com/secure/useravatar?size=small&avatarId=10338",
+                        "16x16": "https://jira.hux.fake.com/secure/useravatar?size=xsmall&avatarId=10338",
+                        "32x32": "https://jira.hux.fake.com/secure/useravatar?size=medium&avatarId=10338",
+                    },
+                    "displayName": "Risheek Chandra",
+                    "timeZone": "America/New_York",
+                },
+                "updated": "2022-01-12T15:25:55.000+0000",
+                "created": "2022-01-12T15:25:54.000+0000",
+                "status": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/status/10000",
+                    "description": "",
+                    "iconUrl": "https://jira.hux.fake.com/images/icons/statuses/open.png",
+                    "name": "In Progress",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "https://jira.hux.fake.com/rest/api/2/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "In Progress",
+                    },
+                },
+            },
+        },
+    ],
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False

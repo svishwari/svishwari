@@ -12,7 +12,7 @@
       </span>
     </template>
     <template #right>
-      <div class="d-flex align-center">
+      <div class="d-flex align-center insight-height">
         <icon
           type="refresh-2"
           :size="18"
@@ -137,4 +137,11 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.insight-height {
+  height: 30px !important;
+}
+::v-deep .mdi-dots-vertical::before {
+  height: 28px !important;
+}
+</style>

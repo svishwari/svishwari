@@ -133,3 +133,26 @@ class UserPreferencesSchema(Schema):
     """User preferences schema"""
 
     alerts = Nested(UserAlertCategorySchema)
+
+
+class RequestedUserSchema(Schema):
+    """Requested User Schema"""
+
+    email = Str(required=True, exmaple="sh@fake.com")
+    pii_access = Bool(default=False)
+    display_name = Str(example="Sarah, Huxley")
+    access_level = Str(default=db_c.USER_ROLE_VIEWER)
+    status = Str(
+        required=True,
+        validate=validate.OneOf(
+            [
+                api_c.STATE_TO_DO,
+                api_c.STATE_IN_PROGRESS,
+                api_c.STATE_IN_REVIEW,
+                api_c.STATE_DONE,
+            ]
+        ),
+    )
+    created = DateTimeWithZ(required=True)
+    updated = DateTimeWithZ(required=True)
+    key = Str(example="ABC-123", required=True)
