@@ -536,13 +536,13 @@ class Tecton:
                 # get score.
                 lift = 0
                 try:
-                    lift = float(feature[4])
+                    lift = float(feature[5])
                 except ValueError:
                     pass
 
-                gain = 0
+                popularity = 0
                 try:
-                    gain = float(feature[5])
+                    popularity = float(feature[4])
                 except ValueError:
                     pass
 
@@ -566,7 +566,7 @@ class Tecton:
                             ["Susan Miller", "Jack Miller"]
                         ),
                         api_c.STATUS: api_c.STATUS_ACTIVE,
-                        api_c.POPULARITY: round(gain, 4),
+                        api_c.POPULARITY: round(popularity, 4),
                         api_c.SCORE: round(lift, 4),
                     }
                 )
