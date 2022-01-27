@@ -604,7 +604,7 @@ class ModelOverview(SwaggerView):
         else:
             version = None
             tecton = Tecton()
-            for version in Tecton().get_model_version_history(model_id):
+            for version in tecton.get_model_version_history(model_id):
                 current_version = version.get(api_c.CURRENT_VERSION)
 
                 # try to get model performance
