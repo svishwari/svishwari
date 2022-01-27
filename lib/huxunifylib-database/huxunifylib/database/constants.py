@@ -588,3 +588,7 @@ DELIVERY_JOB_TIMEOUT = 30
 ZERO_OBJECT_ID = ObjectId("0" * 24)
 
 DATA_ADDED = "data_added"
+
+# MongoDB Platforms
+AWS_DOCUMENT_DB = "aws_document_db"
+AZURE_COSMOS_DB = "azure_cosmos_db"
