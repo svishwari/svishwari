@@ -235,27 +235,23 @@ class Tecton:
             EmptyAPIResponseError: Response from integrated API call is empty.
         """
 
-        try:
-            # payload
-            payload = {
-                "params": {
-                    "feature_service_name": self.feature_service.FEATURE_MODEL_HISTORY,
-                    "join_key_map": {"model_id": f"{model_id}"},
-                }
-            }
-
-            response = requests.post(
-                self.service,
-                dumps(payload),
-                headers=self.headers,
-            )
-
-        except Exception as exc:  # pylint: disable=broad-except
-            logging.error(
-                "Failed to connect to Tecton: %s",
-                getattr(exc, "message", repr(exc)),
-            )
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
             return []
+
+        # payload
+        payload = {
+            "params": {
+                "feature_service_name": self.feature_service.FEATURE_MODEL_HISTORY,
+                "join_key_map": {"model_id": f"{model_id}"},
+            }
+        }
+
+        response = requests.post(
+            self.service,
+            dumps(payload),
+            headers=self.headers,
+        )
 
         if api_c.RESULTS not in response.json():
             logger.error(
@@ -350,6 +346,9 @@ class Tecton:
             FailedAPIDependencyError: Integrated dependent API failure error.
             EmptyAPIResponseError: Response from integrated API call is empty.
         """
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return []
 
         if model_type in api_c.CLASSIFICATION_MODELS:
             service_name = (
@@ -435,6 +434,10 @@ class Tecton:
              List[ModelLiftSchema]: List of model lift.
         """
 
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return []
+
         # set the event loop
         asyncio.set_event_loop(asyncio.SelectorEventLoop())
 
@@ -513,6 +516,10 @@ class Tecton:
 
         # Tecton forces us to get the feature at the version level, so we have to
         # query the service in succession. We break on the first empty value.
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return []
+
         result_features = []
         for i in range(200):
             payload = {
@@ -525,24 +532,16 @@ class Tecton:
                 }
             }
 
-            try:
-                response = requests.post(
-                    self.service,
-                    dumps(payload),
-                    headers=self.headers,
-                )
+            response = requests.post(
+                self.service,
+                dumps(payload),
+                headers=self.headers,
+            )
 
-                if (
-                    response.status_code != 200
-                    or api_c.RESULTS not in response.json()
-                ):
-                    break
-
-            except Exception as exc:  # pylint: disable=broad-except
-                logging.error(
-                    "Failed to connect to Tecton: %s",
-                    getattr(exc, "message", repr(exc)),
-                )
+            if (
+                response.status_code != 200
+                or api_c.RESULTS not in response.json()
+            ):
                 break
 
             # grab the features and match model version.
@@ -616,37 +615,29 @@ class Tecton:
         Raises:
             FailedAPIDependencyError: Integrated dependent API failure error.
         """
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return []
 
-        try:
-            # submit the post request to get the models
-            response = requests.post(
-                self.service,
-                dumps(
-                    {
-                        "params": {
-                            "feature_service_name": self.feature_service.FEATURE_MODELS,
-                            "join_key_map": {"model_metadata_client": "HUS"},
-                        }
+        # submit the post request to get the models
+        response = requests.post(
+            self.service,
+            dumps(
+                {
+                    "params": {
+                        "feature_service_name": self.feature_service.FEATURE_MODELS,
+                        "join_key_map": {"model_metadata_client": "HUS"},
                     }
-                ),
-                headers=self.headers,
-            )
+                }
+            ),
+            headers=self.headers,
+        )
 
-            if (
-                response.status_code != 200
-                or api_c.RESULTS not in response.json()
-            ):
-                logger.error(
-                    "Unable to retrieve models, %s %s.",
-                    response.status_code,
-                    response.text,
-                )
-                return []
-
-        except Exception as exc:  # pylint: disable=broad-except
-            logging.error(
-                "Failed to connect to Tecton: %s",
-                getattr(exc, "message", repr(exc)),
+        if response.status_code != 200 or api_c.RESULTS not in response.json():
+            logger.error(
+                "Unable to retrieve models, %s %s.",
+                response.status_code,
+                response.text,
             )
             return []
 
@@ -707,6 +698,9 @@ class Tecton:
         Returns:
              dict: Model performance metrics.
         """
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return {}
 
         # regression models calculate RMSE
         if model_type in api_c.REGRESSION_MODELS:
@@ -730,21 +724,12 @@ class Tecton:
         }
 
         logger.info("Querying Tecton for model performance metrics.")
-        try:
-            response = requests.post(
-                self.service,
-                dumps(payload),
-                headers=self.headers,
-            )
-            logger.info(
-                "Querying Tecton for model performance metrics complete."
-            )
-        except Exception as exc:  # pylint: disable=broad-except
-            logging.error(
-                "Failed to connect to Tecton: %s",
-                getattr(exc, "message", repr(exc)),
-            )
-            return {}
+        response = requests.post(
+            self.service,
+            dumps(payload),
+            headers=self.headers,
+        )
+        logger.info("Querying Tecton for model performance metrics complete.")
 
         # submit the post request to get the model metrics.
         return self.map_model_performance_response(
