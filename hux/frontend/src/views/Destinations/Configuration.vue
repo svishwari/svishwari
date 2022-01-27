@@ -47,7 +47,13 @@
           <logo :type="selectedDestination.type" />
           <span class="pl-2">{{ selectedDestination.name }}</span>
         </template>
-        <a class="pl-4" color="primary" @click="toggleDrawer()"> Change </a>
+        <a
+          class="pl-4 text-body-2 mt-1"
+          color="primary"
+          @click="toggleDrawer()"
+        >
+          Change
+        </a>
       </p>
     </div>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="audience-lookalike-insight">
-    <div class="mb-7 text-body-1">
+    <div class="mb-7 text-body-1 black--text text--lighten-4">
       This is a lookalike audience of
       <span v-if="audienceData.source_exists === false">
         <router-link
@@ -19,7 +19,7 @@
           {{ audienceData.source_name }}
         </router-link>
       </span>
-      <span v-else class="'black--text text--base'">
+      <span v-else class="black--text inactive-audi">
         {{ audienceData.source_name }}
       </span>
       (the seed audience). The customer list of this lookalike resides in the
@@ -136,27 +136,40 @@
             >
               <template #subtitle-extended>
                 <div class="mt-1">
-                  <router-link
-                    :to="{
-                      name: 'AudienceInsight',
-                      params: { id: audienceData.source_id },
-                    }"
+                  <span v-if="audienceData.source_exists === false">
+                    <router-link
+                      :to="{
+                        name: 'AudienceInsight',
+                        params: { id: audienceData.source_id },
+                      }"
+                      class="
+                        text-body-1
+                        primary--text
+                        text--base
+                        font-weight-semi-bold
+                        text-decoration-none
+                      "
+                    >
+                      {{ audienceData.source_name | Empty("-") }}
+                    </router-link>
+                  </span>
+                  <span
+                    v-else
                     class="
-                      text-body-1
-                      primary--text
-                      text--base
+                      caption
+                      black--text
+                      text--darken-4
                       font-weight-semi-bold
-                      text-decoration-none
                     "
                   >
-                    {{ audienceData.source_name | Empty("-") }}
-                  </router-link>
+                    {{ audienceData.source_name }}
+                  </span>
                 </div>
               </template>
             </metric-card>
           </div>
           <div class="mt-1 mb-5">
-            <v-row>
+            <v-row class="mr-n5">
               <v-col cols="7">
                 <metric-card
                   title="Seed audience size"
@@ -387,6 +400,9 @@ export default {
   }
   .metric-row {
     margin-right: -46px !important;
+  }
+  .inactive-audi {
+    font-weight: 500 !important;
   }
 }
 </style>
