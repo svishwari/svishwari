@@ -21,22 +21,25 @@
 
     <v-row v-if="!loading" class="pa-11" data-e2e="clients-list">
       <descriptive-card
+        v-for="client in clients"
+        :key="client.id"
         width="255"
         height="225"
-        icon="demo-client"
-        title="Client"
+        :icon="client.icon"
+        :title="client.name"
         description=""
         logo-option="true"
         data-e2e="client"
-        logo-size="60"
-        logo-box-padding="0px"
+        logo-size="44"
+        logo-box-padding="8px"
         top-right-adjustment="mt-6 mr-0"
         interactable="false"
+        to="home"
         no-description
       >
         <template slot="default">
           <v-chip color="yellow" text-color="black" class="height-pill mt-n2">
-            Admin access
+            {{ accessLevel(client.access_level) }} access
           </v-chip>
         </template>
       </descriptive-card>
@@ -45,6 +48,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
+
 import Breadcrumb from "@/components/common/Breadcrumb"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import PageHeader from "@/components/PageHeader"
@@ -62,6 +67,43 @@ export default {
     return {
       loading: false,
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      getClients: "clients/getClients",
+    }),
+
+    clients() {
+      return this.getClients.length ? this.getClients : []
+    },
+  },
+
+  async mounted() {
+    this.loading = true
+    try {
+      await this.getClientProjects()
+    } finally {
+      this.loading = false
+    }
+  },
+
+  methods: {
+    ...mapActions({
+      getClientProjects: "clients/getClientProjects",
+    }),
+    accessLevel(lvl) {
+      switch (lvl) {
+        case "admin":
+          return "Admin"
+
+        case "editor":
+          return "Edit"
+
+        default:
+          return "View-only"
+      }
+    },
   },
 }
 </script>

@@ -32,7 +32,7 @@ const dataFeed = (type) => {
   return {
     name: `${type}_data_feed_${faker.name.firstName()}`.toLowerCase(),
 
-    status: "Pending",
+    status: faker.random.arrayElement(["Pending", "Active", "Error"]),
 
     records_received: faker.datatype.number(),
 

@@ -234,17 +234,22 @@
 
   <div v-else-if="Statuses.Error.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="error" class="mr-2" :size="iconSize">
-        mdi-checkbox-blank-circle
-      </v-icon>
+      <icon
+        :size="iconSize > 10 ? iconSize - 3 : iconSize"
+        type="failed-error"
+        class="mr-2"
+      />
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon color="error" class="mr-2" :size="iconSize" v-on="on">
-          mdi-checkbox-blank-circle
-        </v-icon>
+        <icon
+          :size="iconSize > 10 ? iconSize - 3 : iconSize"
+          type="failed-error"
+          class="mr-2"
+          v-on="on"
+        />
       </template>
       <div
         v-if="showLabel"
@@ -438,8 +443,14 @@
 </template>
 
 <script>
+import Icon from "@/components/common/Icon.vue"
+
 export default {
   name: "Status",
+
+  components: {
+    Icon,
+  },
 
   props: {
     status: {
@@ -481,12 +492,12 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["Active", "Delivered", "Succeeded", "active"],
+        Active: ["Active", "Delivered", "Succeeded", "active", "Complete"],
         Inactive: ["Caution", "Inactive"],
         Activating: ["Activating", "In progress"],
         Draft: ["Draft"],
         Error: ["Error", "Failed", "Critical"],
-        Pending: ["Pending", "Delivering", "pending"],
+        Pending: ["Pending", "Delivering", "pending", "Incomplete"],
         Feedback: ["Feedback"],
         Success: ["Success"],
         Informational: ["Informational"],
