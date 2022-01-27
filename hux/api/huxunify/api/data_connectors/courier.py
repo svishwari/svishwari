@@ -2,8 +2,11 @@
  - delivery of an audience
 """
 from http import HTTPStatus
+from typing import TypeVar
+
 from bson import ObjectId
 from pymongo import MongoClient
+
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
@@ -36,6 +39,7 @@ from huxunify.api.data_connectors.aws import (
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedDestinationDependencyError,
 )
+from huxunifylib.database.util.client import db_client_factory
 
 
 def map_destination_credentials_to_dict(destination: dict) -> tuple:
@@ -189,19 +193,18 @@ def get_okta_test_user_creds(config: Config) -> tuple:
 
 
 # pylint: disable=too-many-arguments,too-many-instance-attributes
-# pylint: disable=keyword-arg-before-vararg,unused-argument
 class BaseDestinationBatchJob:
     """Base class for housing the Destination batch config."""
 
     provider = None
 
-    def __new__(cls, config: Config = get_config(), *args, **kwargs) -> None:
+    def __new__(
+        cls, config: Config = get_config()
+    ) -> TypeVar("T", bound="BaseDestinationBatchJob"):
         """Instantiate a new Destination batch object.
 
         Args:
             config (config): config object.
-            args (list): function arguments.
-            **kwargs (dict): function keyword arguments.
 
         Returns:
             None
@@ -214,7 +217,7 @@ class BaseDestinationBatchJob:
                 cls.__subclasses__(),
             )
         )
-        return object.__new__(subclass)
+        return super(BaseDestinationBatchJob, subclass).__new__(subclass)
 
     def __init__(
         self,
@@ -223,7 +226,6 @@ class BaseDestinationBatchJob:
         secrets_dict: dict,
         env_dict: dict,
         destination_type: str,
-        **kwargs,
     ) -> None:
         """Init the class with the config variables
 
@@ -233,7 +235,6 @@ class BaseDestinationBatchJob:
             secrets_dict (dict): The AWS secret dict for a batch job.
             env_dict (dict): The AWS env dict for a batch job.
             destination_type (str): The type of destination (i.e. facebook, sfcm)
-            **kwargs: extra parameters.
 
         Returns:
 
@@ -273,7 +274,6 @@ class BaseDestinationBatchJob:
         raise NotImplementedError()
 
 
-# pylint: disable=unused-argument,keyword-arg-before-vararg
 class AWSDestinationBatchJob(BaseDestinationBatchJob):
     """Class for housing AWS delivery jobs"""
 
@@ -286,7 +286,6 @@ class AWSDestinationBatchJob(BaseDestinationBatchJob):
         secrets_dict: dict,
         env_dict: dict,
         destination_type: str,
-        **kwargs,
     ):
         """Init the class with the config variables
 
@@ -296,7 +295,6 @@ class AWSDestinationBatchJob(BaseDestinationBatchJob):
             secrets_dict (dict): The AWS secret dict for a batch job.
             env_dict (dict): The AWS env dict for a batch job.
             destination_type (str): The type of destination (i.e. facebook, sfcm)
-            **kwargs: extra parameters.
 
         Returns:
 
@@ -405,8 +403,7 @@ class AWSDestinationBatchJob(BaseDestinationBatchJob):
         self.result = status
 
 
-# pylint: disable=unused-argument,keyword-arg-before-vararg
-class AzureDestinationBatchJob:
+class AzureDestinationBatchJob(BaseDestinationBatchJob):
     """Class for housing Azure delivery jobs"""
 
     provider = "Azure"
@@ -418,7 +415,6 @@ class AzureDestinationBatchJob:
         secrets_dict: dict,
         env_dict: dict,
         destination_type: str,
-        **kwargs,
     ) -> None:
         """Init the class with the config variables
 
@@ -428,19 +424,17 @@ class AzureDestinationBatchJob:
             secrets_dict (dict): The AWS secret dict for a batch job.
             env_dict (dict): The AWS env dict for a batch job.
             destination_type (str): The type of destination (i.e. facebook, sfcm)
-            **kwargs: extra parameters.
 
         Returns:
 
         """
-        self.database = database
-        self.audience_delivery_job_id = audience_delivery_job_id
-        self.destination_type = destination_type
-        self.secrets_dict = secrets_dict
-        self.env_dict = env_dict
-        self.batch_connector = None
-        self.result = None
-        self.scheduled = False
+        super().__init__(
+            database,
+            audience_delivery_job_id,
+            secrets_dict,
+            env_dict,
+            destination_type,
+        )
 
     def register(self, job_name: str = "audiencerouter", **kwargs) -> None:
         """Register a destination job with Azure.
@@ -861,4 +855,7 @@ async def deliver_audience_to_destination(
 
 
 if __name__ == "__main__":
-    pass
+    db = db_client_factory.get_resource(**get_config().MONGO_DB_CONFIG)
+    b = BaseDestinationBatchJob().__init__(db, ObjectId(), {}, {}, "hello")
+    # b = BaseDestinationBatchJob()
+    print(type(b))
