@@ -466,13 +466,14 @@ def delete_audience(
 def get_audience_insights(
     database: DatabaseClient,
     audience_id: ObjectId,
+    platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> Union[list, None]:
     """A function to get audience insights.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): The Mongo DB ID of the audience.
-
+        platform (str): Underlying DB of the Mongo DB API.
     Returns:
         Union[list, None]:  A list of engagements with delivery information for
             an audience.
@@ -481,137 +482,170 @@ def get_audience_insights(
     am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[db_c.ENGAGEMENTS_COLLECTION]
 
+    pipeline = [
+        {
+            "$match": {
+                "audiences.id": audience_id,
+                db_c.DELETED: False,
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$audiences",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$audiences.destinations",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        {"$match": {"audiences.id": audience_id}},
+        {
+            "$lookup": {
+                "from": "delivery_platforms",
+                "localField": "audiences.destinations.id",
+                "foreignField": "_id",
+                "as": "delivery_platforms",
+            }
+        },
+        {"$project": {"delivery_platforms.update_time": 0}},
+        {
+            "$unwind": {
+                "path": "$delivery_platforms",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        {
+            "$lookup": {
+                "from": "delivery_jobs",
+                "localField": "audiences.destinations.delivery_job_id",
+                "foreignField": "_id",
+                "as": "deliveries",
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$deliveries",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        {
+            "$addFields": {
+                "deliveries": {
+                    "$ifNull": [
+                        "$deliveries",
+                        "$delivery_platforms",
+                    ]
+                }
+            }
+        },
+        {
+            "$addFields": {
+                "deliveries.delivery_platform_id": "$delivery_platforms._id"
+            }
+        },
+        {"$project": {"audiences": 0, "delivery_platforms": 0}},
+        {
+            "$lookup": {
+                "from": "delivery_platforms",
+                "localField": "deliveries.delivery_platform_id",
+                "foreignField": "_id",
+                "as": "destinations",
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$destinations",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        {
+            "$addFields": {
+                "deliveries.delivery_platform_type"
+                "": "$destinations.delivery_platform_type",
+                "deliveries.name": "$destinations.name",
+                "deliveries.is_ad_platform": "$destinations.is_ad_platform",
+                "deliveries.status": {
+                    "$ifNull": [
+                        "$deliveries.status",
+                        db_c.AUDIENCE_STATUS_NOT_DELIVERED,
+                    ]
+                },
+                "deliveries.id": "$destinations.id",
+            }
+        },
+        {
+            "$group": {
+                "_id": "$_id",
+                "deliveries": {"$push": "$deliveries"},
+                "last_delivered": {"$last": "$deliveries.update_time"},
+            }
+        },
+        {
+            "$lookup": {
+                "from": "engagements",
+                "localField": "_id",
+                "foreignField": "_id",
+                "as": "engagement",
+            }
+        },
+        {
+            "$project": {
+                "engagement.audiences": 0,
+                "engagement.deleted": 0,
+                "deliveries.deleted": 0,
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$engagement",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+    ]
+    if platform == db_c.AZURE_COSMOS_DB:
+        pipeline[10] = {
+            "$addFields": {
+                "deliveries.delivery_platform_id": {
+                    "$ifNull": ["$delivery_platforms._id", None]
+                }
+            }
+        }
+
+        pipeline.append(
+            {
+                "$addFields": {
+                    "first_delivery": {"$arrayElemAt": ["$deliveries", 0]}
+                }
+            }
+        )
+
+        pipeline.append(
+            {
+                "$project": {
+                    "deliveries": {
+                        "$cond": {
+                            "if": {
+                                "$eq": [
+                                    "$first_delivery.delivery_platform_id",
+                                    None,
+                                ]
+                            },
+                            "then": {},
+                            "else": "$deliveries",
+                        }
+                    },
+                    "engagement": 1,
+                    "last_delivered": 1,
+                }
+            }
+        )
+
     # use the audience pipeline to aggregate and join all the insight data
     try:
-        return list(
-            collection.aggregate(
-                [
-                    {
-                        "$match": {
-                            "audiences.id": audience_id,
-                            db_c.DELETED: False,
-                        }
-                    },
-                    {
-                        "$unwind": {
-                            "path": "$audiences",
-                            "preserveNullAndEmptyArrays": True,
-                        }
-                    },
-                    {
-                        "$unwind": {
-                            "path": "$audiences.destinations",
-                            "preserveNullAndEmptyArrays": True,
-                        }
-                    },
-                    {"$match": {"audiences.id": audience_id}},
-                    {
-                        "$lookup": {
-                            "from": "delivery_platforms",
-                            "localField": "audiences.destinations.id",
-                            "foreignField": "_id",
-                            "as": "delivery_platforms",
-                        }
-                    },
-                    {"$project": {"delivery_platforms.update_time": 0}},
-                    {
-                        "$unwind": {
-                            "path": "$delivery_platforms",
-                            "preserveNullAndEmptyArrays": True,
-                        }
-                    },
-                    {
-                        "$lookup": {
-                            "from": "delivery_jobs",
-                            "localField": "audiences.destinations.delivery_job_id",
-                            "foreignField": "_id",
-                            "as": "deliveries",
-                        }
-                    },
-                    {
-                        "$unwind": {
-                            "path": "$deliveries",
-                            "preserveNullAndEmptyArrays": True,
-                        }
-                    },
-                    {
-                        "$addFields": {
-                            "deliveries": {
-                                "$ifNull": [
-                                    "$deliveries",
-                                    "$delivery_platforms",
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "$addFields": {
-                            "deliveries.delivery_platform_id": "$delivery_platforms._id"
-                        }
-                    },
-                    {"$project": {"audiences": 0, "delivery_platforms": 0}},
-                    {
-                        "$lookup": {
-                            "from": "delivery_platforms",
-                            "localField": "deliveries.delivery_platform_id",
-                            "foreignField": "_id",
-                            "as": "destinations",
-                        }
-                    },
-                    {
-                        "$unwind": {
-                            "path": "$destinations",
-                            "preserveNullAndEmptyArrays": True,
-                        }
-                    },
-                    {
-                        "$addFields": {
-                            "deliveries.delivery_platform_type"
-                            "": "$destinations.delivery_platform_type",
-                            "deliveries.name": "$destinations.name",
-                            "deliveries.is_ad_platform": "$destinations.is_ad_platform",
-                            "deliveries.status": {
-                                "$ifNull": [
-                                    "$deliveries.status",
-                                    db_c.AUDIENCE_STATUS_NOT_DELIVERED,
-                                ]
-                            },
-                            "deliveries.id": "$destinations.id",
-                        }
-                    },
-                    {
-                        "$group": {
-                            "_id": "$_id",
-                            "deliveries": {"$push": "$deliveries"},
-                            "last_delivered": {
-                                "$last": "$deliveries.update_time"
-                            },
-                        }
-                    },
-                    {
-                        "$lookup": {
-                            "from": "engagements",
-                            "localField": "_id",
-                            "foreignField": "_id",
-                            "as": "engagement",
-                        }
-                    },
-                    {
-                        "$project": {
-                            "engagement.audiences": 0,
-                            "engagement.deleted": 0,
-                            "deliveries.deleted": 0,
-                        }
-                    },
-                    {
-                        "$unwind": {
-                            "path": "$engagement",
-                            "preserveNullAndEmptyArrays": True,
-                        }
-                    },
-                ]
-            )
-        )
+        return list(collection.aggregate(pipeline))
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
