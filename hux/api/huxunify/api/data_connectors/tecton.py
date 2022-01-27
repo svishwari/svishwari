@@ -1,7 +1,6 @@
 """Purpose of this file is for holding methods to query and pull data
 from Tecton.
 """
-import logging
 import random
 import time
 from math import log10
@@ -444,31 +443,24 @@ class Tecton:
         # start timer
         timer = time.perf_counter()
 
-        try:
-            # send all responses at once and wait until they are all done.
-            responses = asyncio.get_event_loop().run_until_complete(
-                asyncio.gather(
-                    *(
-                        self.get_async_lift_bucket(model_id, bucket)
-                        for bucket in range(10, 101, 10)
-                    )
+        # send all responses at once and wait until they are all done.
+        responses = asyncio.get_event_loop().run_until_complete(
+            asyncio.gather(
+                *(
+                    self.get_async_lift_bucket(model_id, bucket)
+                    for bucket in range(10, 101, 10)
                 )
             )
+        )
 
-            # log execution time summary
-            total_ticks = time.perf_counter() - timer
-            logger.info(
-                "Executed 10 requests to the Tecton API in %0.4f seconds. "
-                "~%0.4f requests per second.",
-                total_ticks,
-                total_ticks / 10,
-            )
-        except Exception as exc:  # pylint: disable=broad-except
-            logging.error(
-                "Failed to connect to Tecton: %s",
-                getattr(exc, "message", repr(exc)),
-            )
-            return []
+        # log execution time summary
+        total_ticks = time.perf_counter() - timer
+        logger.info(
+            "Executed 10 requests to the Tecton API in %0.4f seconds. "
+            "~%0.4f requests per second.",
+            total_ticks,
+            total_ticks / 10,
+        )
 
         result_lift = []
         # iterate each response.
