@@ -88,6 +88,9 @@ export const defineRoutes = (server) => {
   server.get("users/requested_users", () => requestedUser)
   server.get("users/tickets", () => someTickets())
 
+  //client projects
+  server.get("/client-projects")
+
   // data sources
   server.get("/data-sources")
 

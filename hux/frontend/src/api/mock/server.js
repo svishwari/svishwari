@@ -26,6 +26,7 @@ import { destination as destinationFactory } from "./factories/destination"
 import { engagement as engagementFactory } from "./factories/engagement"
 import { idrDataFeed as idrDataFeedFactory } from "./factories/identity"
 import modelFactory from "./factories/model"
+import clientFactory from "./factories/client"
 import audiencePerformanceFactory from "./factories/audiencePerformance"
 import dataExtensionFactory from "./factories/dataExtensions"
 import deliveryFactory from "./factories/delivery"
@@ -73,6 +74,7 @@ export function makeServer({ environment = "development" } = {}) {
     user: Model,
     configuration: Model,
     application: Model,
+    clientProject: Model,
   }
 
   const factories = {
@@ -92,6 +94,7 @@ export function makeServer({ environment = "development" } = {}) {
     geoState: Factory.extend(geoState),
     idrDataFeed: Factory.extend(idrDataFeedFactory),
     model: Factory.extend(modelFactory),
+    clientProject: Factory.extend(clientFactory),
     notification: Factory.extend(notificationFactory),
     user: Factory.extend(userFactory),
     configuration: Factory.extend(configurationFactory),
