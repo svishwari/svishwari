@@ -24,7 +24,9 @@
                 :status="changeStatus(item[column.value])"
                 :show-label="true"
                 class="data-feed-status d-flex"
-                :icon-size="18"
+                :icon-size="
+                  changeStatus(item[column.value]) == 'Failed' ? '15' : '18'
+                "
               />
             </div>
             <tooltip

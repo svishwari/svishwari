@@ -234,13 +234,13 @@
 
   <div v-else-if="Statuses.Error.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <icon size="15" type="failed-error" class="mr-2" />
+      <icon :size="iconSize" type="failed-error" class="mr-2" />
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <icon size="15" type="failed-error" class="mr-2" v-on="on" />
+        <icon :size="iconSize" type="failed-error" class="mr-2" v-on="on" />
       </template>
       <div
         v-if="showLabel"
