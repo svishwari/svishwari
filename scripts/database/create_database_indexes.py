@@ -14,7 +14,7 @@
 import logging
 from typing import List
 
-from pymongo import ASCENDING, MongoClient
+from pymongo import ASCENDING, MongoClient, DESCENDING
 import huxunifylib.database.constants as db_c
 from database.share import get_mongo_client
 
@@ -63,6 +63,11 @@ index_constants = [
             (db_c.AUDIENCE_ID, ASCENDING),
             (db_c.DELIVERY_PLATFORM_ID, ASCENDING),
         ],
+    ),
+    (
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DELIVERY_JOBS_COLLECTION,
+        [(db_c.CREATE_TIME, DESCENDING)],
     ),
     (
         db_c.DATA_MANAGEMENT_DATABASE,
