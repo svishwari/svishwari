@@ -31,6 +31,7 @@ from huxunifylib.database.user_management import (
     manage_user_favorites,
 )
 from huxunifylib.connectors import FacebookConnector
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunify.api.route.utils import get_user_favorites
 from huxunify.api.schema.engagement import DisplayAdsSummary, EmailSummary
 from huxunify.api import constants as api_c
@@ -88,51 +89,17 @@ def validate_schema(schema: Schema, response: dict) -> bool:
 
 
 # pylint: disable=too-many-instance-attributes
-class TestEngagementMetricsDisplayAds(TestCase):
+class TestEngagementMetricsDisplayAds(RouteTestCase):
     """Purpose of this class is to test Engagement Metrics of Display Ads."""
 
     def setUp(self):
         """Sets up Test Client."""
 
-        self.app = create_app().test_client()
-
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
-
-        # mock request for introspect call
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
-        self.request_mocker.start()
-
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
-            return_value=self.database,
-        ).start()
+        super().setUp()
 
         # mock get_db_client() for the engagement.
         mock.patch(
             "huxunify.api.route.engagement.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get_db_client() in decorators
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get db client from utils
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -199,8 +166,6 @@ class TestEngagementMetricsDisplayAds(TestCase):
             end_time=datetime.utcnow(),
             generic_campaigns=[],
         )
-
-        self.addCleanup(mock.patch.stopall)
 
     def test_display_ads_summary(self):
         """Test display ads summary success."""
