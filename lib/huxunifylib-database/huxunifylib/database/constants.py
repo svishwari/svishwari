@@ -20,6 +20,9 @@ OBJECT_ID = "id"
 CONFIGURATION = "configuration"
 SIZE = "size"
 DOCUMENTS = "documents"
+DESCRIPTION = "description"
+ICON = "icon"
+ACCESS_LEVEL = "access_level"
 
 # general fields
 AGE = "age"
@@ -48,6 +51,7 @@ USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
 APPLICATIONS_COLLECTION = "applications"
+CLIENT_PROJECTS_COLLECTION = "client_projects"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 MODELS_COLLECTION = "models"
@@ -445,7 +449,6 @@ NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
 NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 
 # Configuration constants
-
 CONFIGURATION_FIELD_NAME = "name"
 CONFIGURATION_FIELD_ICON = "icon"
 CONFIGURATION_FIELD_TYPE = "type"
@@ -496,7 +499,6 @@ MODEL_TYPE_CLASSIFICATION = "Classification"
 MODEL_TYPE_REGRESSION = "Regression"
 MODEL_TYPE_UNKNOWN = "Unknown"
 
-
 # Custom type definitions
 CUSTOM_TYPE_BOOL = "boolean"
 CUSTOM_TYPE_CAT = "categorical"
@@ -541,6 +543,10 @@ REQUIRED_FIELDS = {
         NAME,
         CATEGORY,
     ],
+    CLIENT_PROJECTS_COLLECTION: [
+        NAME,
+        TYPE,
+    ],
 }
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
@@ -574,6 +580,14 @@ ALLOWED_FIELDS = {
         STATUS,
         ADDED,
     ],
+    CLIENT_PROJECTS_COLLECTION: [
+        NAME,
+        TYPE,
+        DESCRIPTION,
+        URL,
+        ICON,
+        ACCESS_LEVEL,
+    ],
 }
 
 # Allowed collections
@@ -585,6 +599,7 @@ ALLOWED_COLLECTIONS = [
     AUDIENCES_COLLECTION,
     ENGAGEMENTS_COLLECTION,
     APPLICATIONS_COLLECTION,
+    CLIENT_PROJECTS_COLLECTION,
 ]
 
 # 30 minutes.
@@ -593,3 +608,7 @@ DELIVERY_JOB_TIMEOUT = 30
 ZERO_OBJECT_ID = ObjectId("0" * 24)
 
 DATA_ADDED = "data_added"
+
+# MongoDB Platforms
+AWS_DOCUMENT_DB = "aws_document_db"
+AZURE_COSMOS_DB = "azure_cosmos_db"

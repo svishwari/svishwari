@@ -24,6 +24,7 @@ export default function (server) {
 
   server.createList("audience", 10)
   server.createList("engagement", 5)
+  server.createList("clientProject", 3)
   server.createList("audiencePerformance", 10)
   server.createList("customer", 5000)
   server.createList("dataExtension", 25)

@@ -136,21 +136,34 @@
             >
               <template #subtitle-extended>
                 <div class="mt-1">
-                  <router-link
-                    :to="{
-                      name: 'AudienceInsight',
-                      params: { id: audienceData.source_id },
-                    }"
+                  <span v-if="audienceData.source_exists === false">
+                    <router-link
+                      :to="{
+                        name: 'AudienceInsight',
+                        params: { id: audienceData.source_id },
+                      }"
+                      class="
+                        text-body-1
+                        primary--text
+                        text--base
+                        font-weight-semi-bold
+                        text-decoration-none
+                      "
+                    >
+                      {{ audienceData.source_name | Empty("-") }}
+                    </router-link>
+                  </span>
+                  <span
+                    v-else
                     class="
-                      text-body-1
-                      primary--text
-                      text--base
+                      caption
+                      black--text
+                      text--darken-4
                       font-weight-semi-bold
-                      text-decoration-none
                     "
                   >
-                    {{ audienceData.source_name | Empty("-") }}
-                  </router-link>
+                    {{ audienceData.source_name }}
+                  </span>
                 </div>
               </template>
             </metric-card>

@@ -156,7 +156,10 @@ class JiraConnection:
                 execution.
         """
 
-        jql = f"project={self.project_key} AND reporter={self.jira_user_email} AND {jql_suffix}"
+        jql = (
+            f"project={self.project_key} AND "
+            f'reporter="{self.jira_user_email}" AND {jql_suffix}'
+        )
         if order_by_field:
             sort_order = sort_order if sort_order else "ASC"
             jql = f"{jql} ORDER BY {order_by_field} {sort_order}"

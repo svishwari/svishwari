@@ -1,12 +1,9 @@
 """Purpose of this file is to house all tests related to configurations."""
-from unittest import TestCase, mock
+from unittest import mock
 from http import HTTPStatus
 
-import requests_mock
-import mongomock
-
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import (
     collection_management as cmg,
 )
@@ -18,31 +15,15 @@ from huxunify.api.schema.configurations import (
     ConfigurationsSchema,
 )
 from huxunify.api import constants as api_c
-from huxunify.app import create_app
 
 
-class ConfigurationsTests(TestCase):
+class ConfigurationsTests(RouteTestCase):
     """Tests for configurations."""
 
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
-        request_mocker.start()
-
-        self.app = create_app().test_client()
-
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        super().setUp()
 
         # mock get_db_client() in utils
         mock.patch(
@@ -98,6 +79,7 @@ class ConfigurationsTests(TestCase):
                     configuration,
                 )
             )
+
 
         navigation_settings = {
             "name": "Navigation Settings",

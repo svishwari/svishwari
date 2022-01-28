@@ -21,14 +21,12 @@
               class="black--text text--darken-4 text-body-1"
             >
               <status
-                :status="
-                  item[column.value] === 'Pending'
-                    ? 'Requested'
-                    : item[column.value]
-                "
+                :status="changeStatus(item[column.value])"
                 :show-label="true"
                 class="data-feed-status d-flex"
-                :icon-size="15"
+                :icon-size="
+                  changeStatus(item[column.value]) == 'Failed' ? '15' : '18'
+                "
               />
             </div>
             <tooltip
@@ -275,6 +273,18 @@ export default {
       getDataFeeds: "dataSources/getDataFeeds",
       getDataSource: "dataSources/getDataSource",
     }),
+    changeStatus(status) {
+      switch (status) {
+        case "Pending":
+          return "Incomplete"
+
+        case "Active":
+          return "Complete"
+
+        default:
+          return "Failed"
+      }
+    },
   },
 }
 </script>

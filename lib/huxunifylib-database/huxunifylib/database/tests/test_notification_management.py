@@ -53,10 +53,10 @@ class NotificationManagementTest(TestCase):
 
         current_time = datetime.utcnow()
         upper_bound = (
-            current_time + relativedelta(months=1) + relativedelta(minutes=1)
+            current_time + relativedelta(weeks=1) + relativedelta(minutes=1)
         )
         lower_bound = (
-            current_time + relativedelta(months=1) - relativedelta(minutes=1)
+            current_time + relativedelta(weeks=1) - relativedelta(minutes=1)
         )
 
         self.assertIsNotNone(notification)
@@ -88,10 +88,10 @@ class NotificationManagementTest(TestCase):
 
         current_time = datetime.utcnow()
         upper_bound = (
-            current_time + relativedelta(months=6) + relativedelta(minutes=1)
+            current_time + relativedelta(weeks=1) + relativedelta(minutes=1)
         )
         lower_bound = (
-            current_time + relativedelta(months=6) - relativedelta(minutes=1)
+            current_time + relativedelta(weeks=1) - relativedelta(minutes=1)
         )
 
         self.assertIsNotNone(notification)
@@ -123,10 +123,10 @@ class NotificationManagementTest(TestCase):
 
         current_time = datetime.utcnow()
         upper_bound = (
-            current_time + relativedelta(months=6) + relativedelta(minutes=1)
+            current_time + relativedelta(weeks=4) + relativedelta(minutes=1)
         )
         lower_bound = (
-            current_time + relativedelta(months=6) - relativedelta(minutes=1)
+            current_time + relativedelta(weeks=4) - relativedelta(minutes=1)
         )
 
         self.assertIsNotNone(notification)

@@ -1409,6 +1409,11 @@ APPLICATION_ID = "application_id"
 APPLICATIONS_ENDPOINT = "/applications"
 ONLY_ACTIVE = "only_active"
 
+# Client Projects
+CLIENT_PROJECTS_TAG = "client-projects"
+CLIENT_PROJECT_ID = "client_project_id"
+CLIENT_PROJECTS_ENDPOINT = "/client-projects"
+
 # Histogram data stub.
 VALUES = "values"
 # TODO Remove once we have data from CDP

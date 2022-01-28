@@ -400,13 +400,19 @@ class Tecton:
                 if m[api_c.CURRENT_VERSION] == result[api_c.FEATURES][5]
             ]
 
+            drift = 0
+            try:
+                drift = round(float(result[api_c.FEATURES][0]), 3)
+            except ValueError:
+                pass
+
             result_drift.append(
                 {
                     # check if model version matched, otherwise parse the created date.
                     api_c.RUN_DATE: run_dates[0]
                     if run_dates
                     else parser.parse(result[api_c.FEATURES][1]),
-                    api_c.DRIFT: result[api_c.FEATURES][0],
+                    api_c.DRIFT: drift,
                 }
             )
 
@@ -536,13 +542,13 @@ class Tecton:
                 # get score.
                 lift = 0
                 try:
-                    lift = float(feature[4])
+                    lift = float(feature[5])
                 except ValueError:
                     pass
 
-                gain = 0
+                popularity = 0
                 try:
-                    gain = float(feature[5])
+                    popularity = float(feature[4])
                 except ValueError:
                     pass
 
@@ -566,8 +572,8 @@ class Tecton:
                             ["Susan Miller", "Jack Miller"]
                         ),
                         api_c.STATUS: api_c.STATUS_ACTIVE,
-                        api_c.POPULARITY: round(gain, 4),
-                        api_c.SCORE: round(lift, 4),
+                        api_c.POPULARITY: round(popularity, 4),
+                        api_c.SCORE: round(lift, 1),
                     }
                 )
 
