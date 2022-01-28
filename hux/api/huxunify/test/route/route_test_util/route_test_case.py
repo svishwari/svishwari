@@ -1,3 +1,4 @@
+"""Util module for route testcases"""
 from unittest import TestCase, mock
 
 import mongomock
@@ -6,15 +7,20 @@ import requests_mock
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
+from huxunify.test import constants as t_c
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 
-from huxunify.test import constants as t_c
-
-
+# pylint: disable=attribute-defined-outside-init
 class RouteTestCase(TestCase):
+    """Base class for route test case"""
 
     def standard_test_setup(self) -> None:
+        """Performs the proper mocks for all all unit tests
+
+        Returns:
+
+        """
         # init mongo patch initially
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
         mongo_patch.start()
