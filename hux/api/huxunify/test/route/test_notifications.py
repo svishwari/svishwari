@@ -20,7 +20,7 @@ class TestNotificationRoutes(RouteTestCase):
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        self.standard_test_setup()
+        super().setUp()
 
         # mock get db client from notifications
         mock.patch(

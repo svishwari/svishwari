@@ -21,7 +21,7 @@ class ConfigurationsTests(RouteTestCase):
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        self.standard_test_setup()
+        super().setUp()
 
         mock.patch(
             "huxunify.api.route.configurations.get_db_client",

@@ -31,7 +31,7 @@ class DecisioningTests(RouteTestCase):
     def setUp(self) -> None:
         """Setup tests."""
 
-        self.standard_test_setup()
+        super().setUp()
 
         self.tecton = Tecton()
 

@@ -95,7 +95,7 @@ class TestEngagementMetricsDisplayAds(RouteTestCase):
     def setUp(self):
         """Sets up Test Client."""
 
-        self.standard_test_setup()
+        super().setUp()
 
         # mock get_db_client() for the engagement.
         mock.patch(

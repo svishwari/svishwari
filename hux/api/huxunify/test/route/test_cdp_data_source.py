@@ -36,7 +36,7 @@ class CdpDataSourcesTest(RouteTestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
         )
 
-        self.standard_test_setup()
+        super().setUp()
 
         # mock get_db_client() in cdp_data_source
         mock.patch(

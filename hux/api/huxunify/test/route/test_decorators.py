@@ -19,7 +19,7 @@ class TestDecorators(RouteTestCase):
     def setUp(self) -> None:
         """Initialize resources before each test."""
 
-        self.standard_test_setup()
+        super().setUp()
 
         mock.patch(
             "huxunify.api.route.decorators.get_token_from_request",

@@ -15,7 +15,7 @@ from huxunifylib.database.client import DatabaseClient
 class RouteTestCase(TestCase):
     """Base class for route test case"""
 
-    def standard_test_setup(self) -> None:
+    def setUp(self) -> None:
         """Performs the proper mocks for all all unit tests
 
         Returns:

@@ -37,7 +37,7 @@ class TestCustomersOverview(RouteTestCase):
     def setUp(self):  # pylint: disable=arguments-differ
         """Sets up Test Client."""
 
-        self.standard_test_setup()
+        super().setUp()
 
         self.customers = f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
         self.idr = f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}"

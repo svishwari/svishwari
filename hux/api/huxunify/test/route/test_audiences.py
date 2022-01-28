@@ -47,7 +47,7 @@ class AudienceDownloadsTest(RouteTestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
         )
 
-        self.standard_test_setup()
+        super().setUp()
 
         # mock get_db_client() in audiences
         mock.patch(

@@ -39,7 +39,7 @@ class TestDestinationRoutes(RouteTestCase):
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        self.standard_test_setup()
+        super().setUp()
 
         self.new_auth_details = {
             api_c.AUTHENTICATION_DETAILS: {
