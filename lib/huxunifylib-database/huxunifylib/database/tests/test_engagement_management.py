@@ -587,7 +587,9 @@ class TestEngagementManagement(unittest.TestCase):
 
         # find all three.
         audience_insights = om.get_audience_insights(
-            self.database, self.audience[db_c.ID]
+            self.database,
+            self.audience[db_c.ID],
+            platform=db_c.AZURE_COSMOS_DB,
         )
 
         # test list
