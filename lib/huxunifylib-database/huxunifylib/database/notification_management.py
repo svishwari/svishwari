@@ -66,7 +66,7 @@ def create_notification(
     current_time = datetime.utcnow()
     expire_time = current_time + relativedelta(months=3)
 
-    # 3 months for critical, 1 month for informational
+    # 1 week for informational and success, 4 weeks for critical
     if notification_type == db_c.NOTIFICATION_TYPE_INFORMATIONAL:
         expire_time = current_time + relativedelta(weeks=1)
     elif notification_type == db_c.NOTIFICATION_TYPE_SUCCESS:
