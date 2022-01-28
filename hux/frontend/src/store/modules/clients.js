@@ -9,7 +9,7 @@ const state = {
 }
 
 const mutations = {
-  setClientProjects(state, clientProjects) {
+  SET_CLIENT_PROJECTS(state, clientProjects) {
     Vue.set(state, "clientProjects", clientProjects)
   },
 }
@@ -17,7 +17,7 @@ const actions = {
   async getClientProjects({ commit }) {
     try {
       const response = await api.clients.all()
-      commit("setClientProjects", response.data)
+      commit("SET_CLIENT_PROJECTS", response.data)
     } catch (error) {
       handleError(error)
       throw error

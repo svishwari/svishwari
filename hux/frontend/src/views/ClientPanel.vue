@@ -39,7 +39,7 @@
       >
         <template slot="default">
           <v-chip color="yellow" text-color="black" class="height-pill mt-n2">
-            {{ accessLevel(client.access_level) }} access
+            {{ client.access_level | AccessLevel }} access
           </v-chip>
         </template>
       </descriptive-card>
@@ -75,7 +75,7 @@ export default {
     }),
 
     clients() {
-      return this.getClients.length ? this.getClients : []
+      return this.getClients && this.getClients.length ? this.getClients : []
     },
   },
 
@@ -92,18 +92,6 @@ export default {
     ...mapActions({
       getClientProjects: "clients/getClientProjects",
     }),
-    accessLevel(lvl) {
-      switch (lvl) {
-        case "admin":
-          return "Admin"
-
-        case "editor":
-          return "Edit"
-
-        default:
-          return "View-only"
-      }
-    },
   },
 }
 </script>

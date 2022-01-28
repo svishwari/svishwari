@@ -80,7 +80,6 @@
                   position-top
                   data-e2e="issues-summary"
                 >
-                  <span>{{ item[header.value] }}</span>
                   {{ item[header.value] | Empty("-") }}
                 </div>
 
@@ -193,7 +192,9 @@ export default {
       getTickets: "users/getAllTickets",
     }),
     numIssues() {
-      return this.getTickets.length ? this.getTickets.length : 0
+      return this.getTickets && this.getTickets.length
+        ? this.getTickets.length
+        : 0
     },
   },
 

@@ -13,7 +13,6 @@ import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import { dataFeeds } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
-import clientProjects from "./factories/client.js"
 import { requestedUser, someTickets } from "./factories/user.js"
 import audienceCSVData from "./factories/audienceCSVData"
 import liftData from "./factories/liftChartData"
@@ -90,7 +89,7 @@ export const defineRoutes = (server) => {
   server.get("users/tickets", () => someTickets())
 
   //client projects
-  server.get("/client-projects", () => clientProjects)
+  server.get("/client-projects")
 
   // data sources
   server.get("/data-sources")

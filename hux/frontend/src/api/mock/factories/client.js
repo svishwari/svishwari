@@ -1,41 +1,16 @@
-export default [
-  {
-    id: "60b960166021710aa146df25",
-    type: "monamie",
-    name: "Monamie",
-    description: "Monamie Description",
-    icon: "monamie.ico",
-    url: "URL_Link",
-    access_level: "viewer",
-    created_by: "Joe Smith",
-    updated_by: "Joe Smith",
-    create_time: "2022-01-09T01:37:37.083Z",
-    update_time: "2022-01-09T01:37:37.083Z",
-  },
-  {
-    id: "60b960166021710aa146df26",
-    type: "creatiff-inc",
-    name: "Creatiff Inc.",
-    description: "Creatiff Inc. Description",
-    icon: "creatiff-inc.ico",
-    url: "URL_Link",
-    access_level: "editor",
-    created_by: "Joe Smith",
-    updated_by: "Joe Smith",
-    create_time: "2022-01-09T01:37:37.083Z",
-    update_time: "2022-01-09T01:37:37.083Z",
-  },
-  {
-    id: "60b960166021710aa146df27",
-    type: ".am",
-    name: ".am",
-    description: ".am Description",
-    icon: "am.ico",
-    url: "URL_Link",
-    access_level: "admin",
-    created_by: "Joe Smith",
-    updated_by: "Joe Smith",
-    create_time: "2022-01-09T01:37:37.083Z",
-    update_time: "2022-01-09T01:37:37.083Z",
-  },
-]
+import faker from "faker"
+import AllLogos from "../../../stories/logos/Logos.js"
+
+export default {
+  id: (index) => `${index + 1}`,
+  type: () => AllLogos[faker.datatype.number({ min: 0, max: AllLogos.length })],
+  name: (index) => `My client ${index + 1}`,
+  description: (index) => `Client ${index + 1} description`,
+  icon: () => AllLogos[faker.datatype.number({ min: 0, max: 20 })],
+  url: (index) => `URL_Link ${index + 1}`,
+  access_level: () => faker.random.arrayElement(["viewer", "admin", "editor"]),
+  created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
+  updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
+  create_time: () => faker.date.recent(),
+  update_time: () => faker.date.recent(),
+}
