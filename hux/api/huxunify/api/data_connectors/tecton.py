@@ -573,7 +573,7 @@ class Tecton:
                         ),
                         api_c.STATUS: api_c.STATUS_ACTIVE,
                         api_c.POPULARITY: round(popularity, 4),
-                        api_c.SCORE: round(lift, 2),
+                        api_c.SCORE: round(lift, 1),
                     }
                 )
 
