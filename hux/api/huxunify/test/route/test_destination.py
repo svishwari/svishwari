@@ -1,18 +1,16 @@
 # pylint: disable=too-many-lines
 """Purpose of this file is to house all the destination api tests."""
 from datetime import datetime
-from unittest import TestCase, mock
+from unittest import mock
 from unittest.mock import MagicMock, patch
 from http import HTTPStatus
 
-import requests_mock
-import mongomock
 from bson import ObjectId
 
 from huxunifylib.connectors import FacebookConnector
 
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     collection_management,
@@ -32,23 +30,17 @@ from huxunify.api.schema.destinations import (
     DestinationGetSchema,
 )
 from huxunify.api import constants as api_c
-from huxunify.app import create_app
 
 
 # pylint: disable=too-many-public-methods
-class TestDestinationRoutes(TestCase):
+class TestDestinationRoutes(RouteTestCase):
     """Test Destination Routes."""
 
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
-        request_mocker.start()
+        self.standard_test_setup()
 
-        self.app = create_app().test_client()
         self.new_auth_details = {
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.FACEBOOK_ACCESS_TOKEN: "fake_fake",
@@ -58,30 +50,9 @@ class TestDestinationRoutes(TestCase):
             }
         }
 
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
-
         # mock get db client from destinations
         mock.patch(
             "huxunify.api.route.destination.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get_db_client() for the userinfo decorator.
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get_db_client() for the userinfo utils.
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -384,8 +355,6 @@ class TestDestinationRoutes(TestCase):
         self.destinations = destination_management.get_all_delivery_platforms(
             self.database
         )
-
-        self.addCleanup(mock.patch.stopall)
 
     def test_get_all_destinations(self):
         """Test get all destinations."""

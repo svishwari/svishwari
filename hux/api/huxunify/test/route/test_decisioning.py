@@ -1,24 +1,19 @@
 """Purpose of this file is to house all tests related to decisioning."""
 import json
 from http import HTTPStatus
-from unittest import TestCase, mock
+from unittest import mock
 
-import mongomock
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.collection_management import create_document
 from hypothesis import given, settings, strategies as st
 
-import requests_mock
-
-from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
     FeatureSchema,
 )
-from huxunify.app import create_app
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.tecton import Tecton
 
@@ -30,13 +25,14 @@ settings.register_profile(
 )
 
 
-class DecisioningTests(TestCase):
+class DecisioningTests(RouteTestCase):
     """Tests for decisioning."""
 
     def setUp(self) -> None:
         """Setup tests."""
 
-        self.config = get_config(api_c.TEST_MODE)
+        self.standard_test_setup()
+
         self.tecton = Tecton()
 
         # define relative paths used for mocking calls.
@@ -48,43 +44,11 @@ class DecisioningTests(TestCase):
             "tecton.Tecton.get_model_version_history"
         )
 
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
-        self.request_mocker.start()
-
-        # setup the flask test client
-        self.test_client = create_app().test_client()
-
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
-
         # mock get_db_client()
         mock.patch(
             "huxunify.api.route.decisioning.get_db_client",
             return_value=self.database,
         ).start()
-
-        # mock get_db_client() for the userinfo utils.
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        self.addCleanup(mock.patch.stopall)
 
     def test_success_get_models(self):
         """Test get models from Tecton."""
@@ -92,7 +56,7 @@ class DecisioningTests(TestCase):
         get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -113,7 +77,7 @@ class DecisioningTests(TestCase):
         get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?{api_c.STATUS}=success",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -146,7 +110,7 @@ class DecisioningTests(TestCase):
             },
         ]
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             data=json.dumps(status_request),
             headers=t_c.STANDARD_HEADERS,
@@ -169,7 +133,7 @@ class DecisioningTests(TestCase):
             }
         ]
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             data=json.dumps(status_request),
             headers=t_c.STANDARD_HEADERS,
@@ -188,7 +152,7 @@ class DecisioningTests(TestCase):
             }
         ]
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             data=json.dumps(status_request),
             headers=t_c.STANDARD_HEADERS,
@@ -197,7 +161,7 @@ class DecisioningTests(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         status_request[0][api_c.TYPE] = "other"
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             data=json.dumps(status_request),
             headers=t_c.STANDARD_HEADERS,
@@ -225,7 +189,7 @@ class DecisioningTests(TestCase):
         )
 
         # API call to delete the requested model
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             query_string={api_c.MODEL_ID: doc[api_c.ID]},
             headers=t_c.STANDARD_HEADERS,
@@ -239,7 +203,7 @@ class DecisioningTests(TestCase):
     def test_remove_model_failure_invalid_model_id(self):
         """Test removing requested models from Unified DB with invalid model id."""
         # API call to delete the requested model
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             query_string={api_c.MODEL_ID: 96},
             headers=t_c.STANDARD_HEADERS,
@@ -251,7 +215,7 @@ class DecisioningTests(TestCase):
         """Test removing requested models from Unified DB."""
 
         # API call to delete the requested model
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -277,7 +241,7 @@ class DecisioningTests(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
             f"{api_c.MODELS_VERSION_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
@@ -303,7 +267,7 @@ class DecisioningTests(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
             f"{api_c.MODELS_VERSION_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
@@ -335,7 +299,7 @@ class DecisioningTests(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
             f"{api_c.FEATURES}",
             headers=t_c.STANDARD_HEADERS,
@@ -368,7 +332,7 @@ class DecisioningTests(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
             f"{api_c.FEATURES}",
             headers=t_c.STANDARD_HEADERS,
@@ -404,7 +368,7 @@ class DecisioningTests(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
             f"{api_c.FEATURE_IMPORTANCE}",
             headers=t_c.STANDARD_HEADERS,
@@ -439,7 +403,7 @@ class DecisioningTests(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
             f"{api_c.FEATURE_IMPORTANCE}",
             headers=t_c.STANDARD_HEADERS,

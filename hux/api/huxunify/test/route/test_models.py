@@ -1,15 +1,12 @@
 """Purpose of this file is to house all the models API tests."""
-from unittest import TestCase, mock
+from unittest import mock
 from http import HTTPStatus
-import requests_mock
-import mongomock
 
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import collection_management, constants as db_c
-from huxunifylib.database.client import DatabaseClient
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.model import ModelDriftSchema
-from huxunify.app import create_app
 
 MOCK_MODEL_RESPONSE = {
     "results": [
@@ -52,46 +49,17 @@ MOCK_MODEL_RESPONSE = {
 }
 
 
-class TestModelRoutes(TestCase):
+class TestModelRoutes(RouteTestCase):
     """Test Model Endpoints."""
 
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        # mock request for introspect call
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
-        self.request_mocker.start()
-
-        self.app = create_app().test_client()
-
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.standard_test_setup()
 
         # mock get_db_client() in decisioning
         mock.patch(
             "huxunify.api.route.decisioning.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get_db_client() in decorators
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get db client from utils
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -106,7 +74,6 @@ class TestModelRoutes(TestCase):
             },
             username="Test User",
         )
-        self.addCleanup(mock.patch.stopall)
 
     def test_get_all_models(self):
         """Test get all models from Tecton."""

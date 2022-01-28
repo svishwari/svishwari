@@ -1,13 +1,11 @@
 """Purpose of this file is to house all the delivery API tests."""
 
-from unittest import TestCase, mock
+from unittest import mock
 from http import HTTPStatus
-import requests_mock
-import mongomock
 from bson import ObjectId
 
 import huxunifylib.database.constants as db_c
-from huxunifylib.database.client import DatabaseClient
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
     get_delivery_platform,
@@ -23,52 +21,22 @@ from huxunifylib.database.user_management import set_user
 from huxunifylib.connectors import AWSBatchConnector
 import huxunify.test.constants as t_c
 import huxunify.api.constants as api_c
-from huxunify.app import create_app
 from huxunify.api.data_connectors.aws import parameter_store
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
-class TestDeliveryRoutes(TestCase):
+class TestDeliveryRoutes(RouteTestCase):
     """Test Delivery Endpoints."""
 
     # pylint: disable=unused-variable
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        # mock request for introspect call
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
-        self.request_mocker.start()
-
-        self.app = create_app().test_client()
-
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.standard_test_setup()
 
         # mock get db client from delivery
         mock.patch(
             "huxunify.api.route.delivery.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get db client from utils
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get db client from decorators
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
             return_value=self.database,
         ).start()
 

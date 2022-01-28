@@ -11,6 +11,8 @@ from bson import ObjectId
 from hypothesis import given, strategies as st
 
 from huxunifylib.connectors.connector_cdp import ConnectorCDP
+
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.orchestration_management import (
@@ -35,7 +37,7 @@ from huxunify.app import create_app
 from huxunify.test import constants as t_c
 
 
-class AudienceDownloadsTest(TestCase):
+class AudienceDownloadsTest(RouteTestCase):
     """Test audience download."""
 
     def setUp(self) -> None:
@@ -45,28 +47,7 @@ class AudienceDownloadsTest(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
         )
 
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
-
-        self.config = get_config(api_c.TEST_MODE)
-
-        # mock get_db_client() in utils
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get_db_client() in decorators
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
+        self.standard_test_setup()
 
         # mock get_db_client() in audiences
         mock.patch(
@@ -74,31 +55,11 @@ class AudienceDownloadsTest(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock upload_file in audiences
         mock.patch(
             "huxunify.api.route.audiences.upload_file",
             return_value=True,
         ).start()
-
-        # mock request for introspect call
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
-        self.request_mocker.get(
-            t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE
-        )
-        self.request_mocker.start()
-
-        # stop all mocks in cleanup
-        self.addCleanup(mock.patch.stopall)
-
-        # setup the flask test client
-        self.test_client = create_app().test_client()
-
-        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
-
-        self.user_name = "Joe Smithers"
 
         # create audience first
         audience = {
@@ -140,7 +101,7 @@ class AudienceDownloadsTest(TestCase):
             ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
         ).start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
             headers=t_c.STANDARD_HEADERS,
@@ -169,7 +130,7 @@ class AudienceDownloadsTest(TestCase):
             ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
         ).start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.AMAZON_ADS}",
             headers=t_c.STANDARD_HEADERS,
@@ -198,7 +159,7 @@ class AudienceDownloadsTest(TestCase):
             ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
         ).start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.GENERIC_ADS}",
             headers=t_c.STANDARD_HEADERS,
@@ -218,7 +179,7 @@ class AudienceDownloadsTest(TestCase):
             return_value=self.config,
         ).start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
             headers=t_c.STANDARD_HEADERS,
@@ -242,7 +203,7 @@ class AudienceDownloadsTest(TestCase):
             return_value=self.config,
         ).start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.AMAZON_ADS}",
             headers=t_c.STANDARD_HEADERS,
@@ -266,7 +227,7 @@ class AudienceDownloadsTest(TestCase):
             return_value=self.config,
         ).start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.GENERIC_ADS}",
             headers=t_c.STANDARD_HEADERS,
@@ -332,7 +293,7 @@ class AudienceInsightsTest(TestCase):
         self.addCleanup(mock.patch.stopall)
 
         # setup the flask test client
-        self.test_client = create_app().test_client()
+        self.app = create_app().test_client()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -360,7 +321,7 @@ class AudienceInsightsTest(TestCase):
 
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/{api_c.CITIES}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -385,7 +346,7 @@ class AudienceInsightsTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/{api_c.STATES}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -410,7 +371,7 @@ class AudienceInsightsTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.COUNTRIES}",
             headers=t_c.STANDARD_HEADERS,
@@ -437,7 +398,7 @@ class AudienceInsightsTest(TestCase):
             city_substring (str): Substring for which cities need to be
             matched.
         """
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.CITY}/{city_substring}",
             headers=t_c.STANDARD_HEADERS,
@@ -458,7 +419,7 @@ class AudienceInsightsTest(TestCase):
            zip_substring (int): Substring for which zip codes need to be
            matched.
         """
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.ZIP_CODE}/{zip_substring}",
             headers=t_c.STANDARD_HEADERS,
@@ -476,7 +437,7 @@ class AudienceInsightsTest(TestCase):
 
     def test_audience_location_rules_unknown_field(self) -> None:
         """Test get audience location rules with unknown field."""
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.USER}/ri",
             headers=t_c.STANDARD_HEADERS,
@@ -485,7 +446,7 @@ class AudienceInsightsTest(TestCase):
 
     def test_audience_histogram_rules_age(self) -> None:
         """Test get audience location rules histogram for age field."""
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.AGE}/histogram",
             headers=t_c.STANDARD_HEADERS,
@@ -495,7 +456,7 @@ class AudienceInsightsTest(TestCase):
 
     def test_audience_histogram_rules_model(self) -> None:
         """Test get audience rules histogram for model field."""
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.MODEL}/histogram?{api_c.MODEL_NAME}=propensity_to_unsubscribe",
             headers=t_c.STANDARD_HEADERS,
@@ -505,7 +466,7 @@ class AudienceInsightsTest(TestCase):
 
     def test_audience_histogram_rules_model_unknown_name(self) -> None:
         """Test get audience rules histogram for model field unknown name."""
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.MODEL}/histogram?{api_c.MODEL_NAME}=propensity_to_leave",
             headers=t_c.STANDARD_HEADERS,
@@ -514,7 +475,7 @@ class AudienceInsightsTest(TestCase):
 
     def test_audience_histogram_rules_unknown(self) -> None:
         """Test get audience rules histogram for field unknown name."""
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.USER}/histogram",
             headers=t_c.STANDARD_HEADERS,
@@ -531,7 +492,7 @@ class AudienceInsightsTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/{api_c.TOTAL}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -554,7 +515,7 @@ class AudienceInsightsTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.REVENUE}",
             headers=t_c.STANDARD_HEADERS,
@@ -616,7 +577,7 @@ class TestAudienceDestination(TestCase):
         self.addCleanup(mock.patch.stopall)
 
         # setup the flask test client
-        self.test_client = create_app().test_client()
+        self.app = create_app().test_client()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -647,7 +608,7 @@ class TestAudienceDestination(TestCase):
         """Test Adding destination to audience"""
         destination = {"id": str(self.delivery_platform_doc[db_c.ID])}
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/"
             f"destinations",
             json=destination,
@@ -679,7 +640,7 @@ class TestAudienceDestination(TestCase):
         )
 
         # removing destination
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/"
             f"destinations",
