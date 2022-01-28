@@ -15,7 +15,7 @@ steps:
 
   checks:
     stage: "checks"
-    image: 'huxhub.repo.mgnt.in/python:3.7-buster'
+    image: 'huxhub.repo.mgnt.in/tox-ci'
     working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/scripts'
     description: run tests using tox
     commands:
