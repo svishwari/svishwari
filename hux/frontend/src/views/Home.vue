@@ -291,7 +291,7 @@ export default {
       firstName: "users/getFirstname",
       lastName: "users/getLastName",
       totalCustomers: "customers/totalCustomers",
-      notifications: "notifications/list",
+      notifications: "notifications/latest5",
     }),
 
     fullName() {
