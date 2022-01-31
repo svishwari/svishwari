@@ -27,7 +27,7 @@
             :size="32"
             :class="
               addBorder & reduceIcon
-                ? 'addBorder br-50 padding-4'
+                ? 'addBorder br-50 pa-1'
                 : addBorder
                 ? 'addBorder br-50'
                 : reduceIcon
@@ -92,9 +92,6 @@ export default {
   ::v-deep a {
     color: var(--v-primary-base) !important;
   }
-}
-.padding-4 {
-  padding: 4px !important;
 }
 .addBorder {
   border: 1px solid var(--v-black-lighten2);
