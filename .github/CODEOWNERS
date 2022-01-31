@@ -1,15 +1,15 @@
 # UI processes
-hux/frontend/ @Abdullah-Azad @mohitbans @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74
-hux/integration_tests/frontend @Abdullah-Azad @mohitbans @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74
+hux/frontend/ @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74 @snaragana-deloitte
+hux/integration_tests/frontend @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74 @snaragana-deloitte
 
 # api processes
-hux/api/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @mohitbans @rahgoel
-hux/integration_tests/api @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @mohitbans @rahgoel
-hux/api/load_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @mohitbans @rahgoel
+hux/api/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel @snaragana-deloitte
+hux/integration_tests/api @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel @snaragana-deloitte
+hux/api/load_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel @snaragana-deloitte
 
 # CI/CD processes
 *codefresh.yml @pfleetwood1 @JyotiSingh7 @dcl-deloitte
 
 # huxunifylib-database
-scripts/ @dcl-deloitte @amadamsetty-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @skondalraj-deloitte @rahgoel
-lib/ @dcl-deloitte @amadamsetty-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @sairajput-deloitte @rmahato-deloitte @skondalraj-deloitte @shashaagrawal-deloitte @rahgoel
+scripts/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @skondalraj-deloitte @rahgoel @snaragana-deloitte
+lib/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @sairajput-deloitte @rmahato-deloitte @skondalraj-deloitte @shashaagrawal-deloitte @rahgoel @snaragana-deloitte
