@@ -112,7 +112,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      notifications: "notifications/list",
+      notifications: "notifications/latest5",
     }),
     mostRecentNotifications() {
       return orderBy(this.notifications, "created", "desc").slice(
