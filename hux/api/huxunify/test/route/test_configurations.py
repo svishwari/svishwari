@@ -80,7 +80,6 @@ class ConfigurationsTests(RouteTestCase):
                 )
             )
 
-
         navigation_settings = {
             "name": "Navigation Settings",
             "type": "navigation_settings",
