@@ -147,16 +147,21 @@ class ModelUpdatePatchSchema(Schema):
 
 
 class ModelPipelineRunDurationSchema(Schema):
+    """Model Pipeline Run Duration Schema"""
+
     status = Str()
     timestamp = DateTimeWithZ()
     duration = Str()
 
 
 class ModelPipelineRunDataSchema(Schema):
+    """Model Pipeline Run Data Schema"""
+
     frequency = Str()
     last_run = DateTimeWithZ()
     most_recent_run_duration = Str()
     run_duration = List(Nested(ModelPipelineRunDurationSchema))
+    total_runs = Int()
 
 
 class ModelPipelinePerformanceSchema(Schema):
