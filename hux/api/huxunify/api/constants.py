@@ -2,6 +2,7 @@
 """This module contains connector defines."""
 import os
 import random
+import datetime
 from collections import namedtuple
 
 from huxunifylib.database import constants as db_c
@@ -1520,3 +1521,34 @@ STATE_IN_PROGRESS = "In Progress"
 STATE_TO_DO = "To Do"
 STATE_IN_REVIEW = "In Review"
 STATE_DONE = "Done"
+
+MODEL_PIPELINE_PERFORMANCE_STUB = {
+    "training": {
+        "frequency": "Weekly",
+        "last_run": datetime.datetime.now() - datetime.timedelta(days=1),
+        "most_recent_run_duration": "00:22:45",
+        "run_duration": [
+            {
+                "status": random.choice(["Success", "Failed"]),
+                "timestamp": datetime.datetime.now()
+                - datetime.timedelta(days=x),
+                "duration": "12m 41s",
+            }
+            for x in range(0, 10)
+        ],
+    },
+    "scoring": {
+        "frequency": "Weekly",
+        "last_run": datetime.datetime.now() - datetime.timedelta(days=1),
+        "most_recent_run_duration": "00:22:45",
+        "run_duration": [
+            {
+                "status": random.choice(["Success", "Failed"]),
+                "timestamp": datetime.datetime.now()
+                - datetime.timedelta(days=x),
+                "duration": "12m 41s",
+            }
+            for x in range(0, random.randrange(10))
+        ],
+    },
+}
