@@ -7,10 +7,13 @@ const namespaced = true
 const state = {
   items: {},
   users: {},
+  latest5: {},
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
+
+  latest5: (state) => Object.values(state.latest5),
 
   userList: (state) => Object.values(state.users),
 
@@ -43,6 +46,12 @@ const mutations = {
   RESET_ALL(state) {
     Vue.set(state, "items", {})
   },
+
+  SET_LATEST(state, items) {
+    items.notifications.forEach((item) => {
+      Vue.set(state.latest5, item.id, item)
+    })
+  },
 }
 
 const actions = {
@@ -60,8 +69,12 @@ const actions = {
           '"'
         )
       })
-      commit("SET_TOTAL", response.data.total)
-      commit("SET_ALL", response.data)
+      if (batchDetails.batchSize === 5) {
+        commit("SET_LATEST", response.data)
+      } else {
+        commit("SET_TOTAL", response.data.total)
+        commit("SET_ALL", response.data)
+      }
     } catch (error) {
       handleError(error)
       throw error
