@@ -25,7 +25,15 @@
           <logo
             :type="item.logo"
             :size="32"
-            :class="addBoxShadow ? 'logo-box-shadow br-50' : ''"
+            :class="
+              addBorder & reduceIcon
+                ? 'addBorder br-50 padding-4'
+                : addBorder
+                ? 'addBorder br-50'
+                : reduceIcon
+                ? 'padding-4'
+                : ''
+            "
           />
         </div>
         <span
@@ -60,7 +68,12 @@ export default {
       required: true,
       default: () => [],
     },
-    addBoxShadow: {
+    addBorder: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    reduceIcon: {
       type: Boolean,
       required: false,
       default: false,
@@ -79,5 +92,11 @@ export default {
   ::v-deep a {
     color: var(--v-primary-base) !important;
   }
+}
+.padding-4 {
+  padding: 4px !important;
+}
+.addBorder {
+  border: 1px solid var(--v-black-lighten2);
 }
 </style>
