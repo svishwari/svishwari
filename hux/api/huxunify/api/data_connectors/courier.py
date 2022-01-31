@@ -39,7 +39,6 @@ from huxunify.api.data_connectors.aws import (
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedDestinationDependencyError,
 )
-from huxunifylib.database.util.client import db_client_factory
 
 
 def map_destination_credentials_to_dict(destination: dict) -> tuple:
@@ -198,26 +197,47 @@ class BaseDestinationBatchJob:
 
     provider = None
 
-    def __new__(
-        cls, config: Config = get_config()
+    @classmethod
+    def generate_job(
+        cls,
+        database: MongoClient,
+        audience_delivery_job_id: ObjectId,
+        secrets_dict: dict,
+        env_dict: dict,
+        destination_type: str,
+        config: Config = get_config(),
     ) -> TypeVar("T", bound="BaseDestinationBatchJob"):
-        """Instantiate a new Destination batch object.
+        """Generate the correct
 
         Args:
+            database (MongoClient): The mongo database client.
+            audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
+            secrets_dict (dict): The AWS secret dict for a batch job.
+            env_dict (dict): The AWS env dict for a batch job.
+            destination_type (str): The type of destination (i.e. facebook, sfcm)
             config (config): config object.
 
         Returns:
-            None
+            BaseDestinationBatchJob
+
         """
-        cls.config = config
-        subclass = next(
-            filter(
-                lambda clazz: clazz.provider.lower()
-                == config.CLOUD_PROVIDER.lower(),
-                cls.__subclasses__(),
+
+        subclass_map = {x.provider.lower(): x for x in cls.__subclasses__()}
+
+        if config.CLOUD_PROVIDER.lower() not in subclass_map:
+            raise Exception(
+                f"Cloud provider {config.CLOUD_PROVIDER} does not support destination batch jobs!"
             )
+
+        destination_batch_job = subclass_map[config.CLOUD_PROVIDER.lower()]
+
+        return destination_batch_job(
+            database,
+            audience_delivery_job_id,
+            secrets_dict,
+            env_dict,
+            destination_type,
         )
-        return super(BaseDestinationBatchJob, subclass).__new__(subclass)
 
     def __init__(
         self,
@@ -226,6 +246,7 @@ class BaseDestinationBatchJob:
         secrets_dict: dict,
         env_dict: dict,
         destination_type: str,
+        config: Config = get_config(),
     ) -> None:
         """Init the class with the config variables
 
@@ -239,6 +260,7 @@ class BaseDestinationBatchJob:
         Returns:
 
         """
+        self.config = config
         self.database = database
         self.audience_delivery_job_id = audience_delivery_job_id
         self.destination_type = destination_type
@@ -421,8 +443,8 @@ class AzureDestinationBatchJob(BaseDestinationBatchJob):
         Args:
             database (MongoClient): The mongo database client.
             audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
-            secrets_dict (dict): The AWS secret dict for a batch job.
-            env_dict (dict): The AWS env dict for a batch job.
+            secrets_dict (dict): The Azure secret dict for a batch job.
+            env_dict (dict): The Azure env dict for a batch job.
             destination_type (str): The type of destination (i.e. facebook, sfcm)
 
         Returns:
@@ -852,10 +874,3 @@ async def deliver_audience_to_destination(
         api_c.DELIVERY_TAG,
         user_name,
     )
-
-
-if __name__ == "__main__":
-    db = db_client_factory.get_resource(**get_config().MONGO_DB_CONFIG)
-    b = BaseDestinationBatchJob().__init__(db, ObjectId(), {}, {}, "hello")
-    # b = BaseDestinationBatchJob()
-    print(type(b))
