@@ -17,7 +17,6 @@ from huxunify.api.route.decorators import (
     requires_access_levels,
 )
 
-# setup the email_deliverability blueprint
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import get_start_end_dates
 from huxunify.api.schema.email_deliverability import (
