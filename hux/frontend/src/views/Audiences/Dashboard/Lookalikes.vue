@@ -12,13 +12,13 @@
       >
         <v-card class="rounded-sm status-card mr-2 box-shadow-none">
           <v-card-title class="d-flex pa-2">
-            <logo :type="data.type" :size="22"></logo>
+            <logo :type="data.type" :size="26" class="ml-2"></logo>
             <span class="mx-2 float-left"> {{ data.type }} </span>
           </v-card-title>
           <v-list dense class="" :height="52">
             <v-list-item>
               <icon type="lookalike" :size="20" class="mr-2" />
-              <span>{{ data.name }}</span>
+              <span class="text-body-1 primary--text">{{ data.name }}</span>
               <v-spacer> </v-spacer>
               <span>
                 <size :value="data.size" />
