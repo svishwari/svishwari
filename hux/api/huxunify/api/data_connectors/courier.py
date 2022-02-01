@@ -220,6 +220,8 @@ class BaseDestinationBatchJob:
         Returns:
             BaseDestinationBatchJob
 
+        Raises:
+            Exception: Exception thrown if an unknown cloud provider is requested
         """
 
         subclass_map = {x.provider.lower(): x for x in cls.__subclasses__()}
