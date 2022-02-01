@@ -1147,6 +1147,8 @@ CUSTOMER_PROFILE_REDACTED_FIELDS = [
     CITY,
     STATE,
     ZIP,
+    FIRST_NAME,
+    LAST_NAME,
 ]
 
 # Alerts Fields
