@@ -1520,3 +1520,49 @@ STATE_IN_PROGRESS = "In Progress"
 STATE_TO_DO = "To Do"
 STATE_IN_REVIEW = "In Review"
 STATE_DONE = "Done"
+# Deliverability Constants
+EMAIL_DELIVERABILITY_ENDPOINT = "email_deliverability"
+MEASUREMENT_TAG = "measurement"
+OPEN_RATE = "open_rate"
+DELIVERED_COUNT = "delivered_count"
+OVERALL_INBOX_RATE = "overall_inbox_rate"
+SENDING_DOMAINS_OVERVIEW = "sending_domains_overview"
+DELIVERED_OPEN_RATE_OVERVIEW = "delivered_open_rate_overview"
+DOMAIN_NAME = "domain_name"
+SENT = "sent"
+BOUNCE_RATE = "bounce_rate"
+CLICK_RATE = "click_rate"
+DELIVERED_RATE = "delivered_rate"
+UNSUBSCRIBE_RATE = "unsubscribe_rate"
+COMPLAINTS_RATE = "complaints_rate"
+
+# TODO Remove once email deliverability data is available.
+
+DOMAIN_1 = "domain_1"
+DOMAIN_2 = "domain_2"
+DOMAIN_3 = "domain_3"
+
+ALLOWED_EMAIL_DOMAIN_NAMES = [DOMAIN_1, DOMAIN_2, DOMAIN_3]
+SENDING_DOMAINS_OVERVIEW_STUB = [
+    {
+        DOMAIN_NAME: DOMAIN_1,
+        SENT: 554,
+        BOUNCE_RATE: 0.14,
+        OPEN_RATE: 0.91,
+        CLICK_RATE: 0.85,
+    },
+    {
+        DOMAIN_NAME: DOMAIN_2,
+        SENT: 600,
+        BOUNCE_RATE: 0.10,
+        OPEN_RATE: 0.88,
+        CLICK_RATE: 0.81,
+    },
+    {
+        DOMAIN_NAME: DOMAIN_3,
+        SENT: 400,
+        BOUNCE_RATE: 0.09,
+        OPEN_RATE: 0.83,
+        CLICK_RATE: 0.74,
+    },
+]
