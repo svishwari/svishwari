@@ -305,6 +305,16 @@ const routes = [
     },
   },
   {
+    path: "/email-deliverability",
+    name: "EmailDeliverability",
+    component: () => import("@/views/Measurement/EmailDeliverability/Index"),
+    meta: {
+      layout: "app",
+      title: "Email Deliverability",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/application/add",
     name: "AddApplication",
     component: () => import("@/views/Application/AddApplication"),
