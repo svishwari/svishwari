@@ -11,7 +11,7 @@
                   disabled: true,
                   href: '/email-deliverability',
                   icon: 'email_deliverability',
-                  iconSize: 26,
+                  iconSize: 36,
                   iconColor: 'success',
                   iconColorVariant: 'lighten3',
                 },
@@ -90,25 +90,39 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.overview-card {
-  border-radius: 12px !important;
-}
-.overview-table {
-  ::v-deep .v-data-table {
-    .v-data-table-header {
-      tr {
-        height: 32px !important;
-      }
-      th {
-        background: var(--v-primary-lighten2);
-      }
+.idr-wrapper {
+  ::v-deep .v-breadcrumbs {
+    li {
+      font-family: Open Sans Light;
+      font-size: 28px;
+      font-style: normal;
+      font-weight: 400 !important;
+      line-height: 40px;
+      letter-spacing: 0px;
+      text-align: left;
     }
   }
-  ::v-deep .v-data-table .v-data-table-header th:first-child {
-    border-top-left-radius: 12px !important;
+
+  .overview-card {
+    border-radius: 12px !important;
   }
-  ::v-deep .v-data-table .v-data-table-header th:last-child {
-    border-top-right-radius: 12px !important;
+  .overview-table {
+    ::v-deep .v-data-table {
+      .v-data-table-header {
+        tr {
+          height: 32px !important;
+        }
+        th {
+          background: var(--v-primary-lighten2);
+        }
+      }
+    }
+    ::v-deep .v-data-table .v-data-table-header th:first-child {
+      border-top-left-radius: 12px !important;
+    }
+    ::v-deep .v-data-table .v-data-table-header th:last-child {
+      border-top-right-radius: 12px !important;
+    }
   }
 }
 </style>

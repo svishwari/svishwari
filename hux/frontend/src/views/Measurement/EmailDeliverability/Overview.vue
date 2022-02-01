@@ -9,7 +9,7 @@
       <template #subtitle-extended>
         <tooltip>
           <template #label-content>
-            <span class="text-body-1">
+            <span class="text-subtitle-1">
               {{ entity.overAllRate | Percentage }}
             </span>
           </template>
