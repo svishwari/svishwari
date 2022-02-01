@@ -1520,7 +1520,7 @@ STATE_IN_PROGRESS = "In Progress"
 STATE_TO_DO = "To Do"
 STATE_IN_REVIEW = "In Review"
 STATE_DONE = "Done"
-
+# Deliverability Constants
 EMAIL_DELIVERABILITY_ENDPOINT = "email_deliverability"
 MEASUREMENT_TAG = "measurement"
 OPEN_RATE = "open_rate"
