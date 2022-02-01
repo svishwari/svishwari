@@ -19,6 +19,7 @@
             :type="item.icon"
             :size="item.iconSize ? item.iconSize : 32"
             :color="item.iconColor ? item.iconColor : 'black-darken4'"
+            :variant="item.iconColorVariant ? item.iconColorVariant : 'base'"
           />
         </div>
         <div v-if="item.logo" class="d-flex pr-2">
