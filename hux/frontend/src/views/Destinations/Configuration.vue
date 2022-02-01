@@ -194,7 +194,6 @@
             :rules="[rules.required]"
             input-type="text"
             height="40"
-            class="destination-field"
           />
         </v-col>
       </v-row>
@@ -713,9 +712,6 @@ export default {
 }
 .textAreaDiv {
   height: 200px;
-}
-.destination-field ::v-deep .theme--light {
-  font-size: 16px !important;
 }
 ::v-deep .theme--light.v-input {
   color: var(--v-black-lighten4) !important;

@@ -3,7 +3,11 @@
     <template #header>
       <page-header>
         <template #left>
-          <breadcrumb :items="breadcrumbItems" :add-box-shadow="true" />
+          <breadcrumb
+            :items="breadcrumbItems"
+            :add-border="true"
+            :reduce-icon="true"
+          />
         </template>
         <template #right>
           <tooltip>
@@ -600,7 +604,7 @@ export default {
         items.push({
           text: this.model.model_name,
           disabled: true,
-          logo: `model-${this.model.model_type}`,
+          logo: `model-${this.model.model_type.toLowerCase()}`,
         })
       }
       return items

@@ -40,7 +40,7 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading" class="pa-14" data-e2e="models-list">
+    <v-row v-if="!loading" class="padding-30 ma-0" data-e2e="models-list">
       <template v-if="addedModels.length > 0">
         <descriptive-card
           v-for="model in addedModels"
@@ -312,4 +312,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.padding-30 {
+  padding: 30px !important;
+}
+</style>

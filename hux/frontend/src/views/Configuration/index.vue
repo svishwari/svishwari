@@ -108,9 +108,6 @@ export default {
 
 <style lang="scss" scoped>
 .config-wrapper {
-  ::v-deep .container {
-    padding-top: 0px;
-  }
   .config-content {
     .config-activating {
       ::v-deep .text-center {
