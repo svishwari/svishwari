@@ -54,10 +54,10 @@
 </template>
 
 <script>
-import HuxDataTable from '../../../../components/common/dataTable/HuxDataTable.vue'
+import HuxDataTable from "../../../../components/common/dataTable/HuxDataTable.vue"
 export default {
-  components: { HuxDataTable },
   name: "DomainOverview",
+  components: { HuxDataTable },
   props: {
     list: {
       type: Array,
