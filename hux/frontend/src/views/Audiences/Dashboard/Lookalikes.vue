@@ -1,24 +1,24 @@
 <template>
   <div class="lookalike-wrapper">
     <div v-if="isDataExists" class="rounded-sm lookalikes box-shadow-none">
-      <div class="header d-flex mx-6 px-3 py-3">
-        <span class="float-left text-h3 black-base pt-5"> Lookalikes </span>
-        <v-spacer> </v-spacer>
-        <span class="float-right pt-5">
-          <hux-icon type="plus" :size="12" color="primary" class="mr-4 mb-2" />
-          <hux-icon type="lookalike" :size="24" class="mr-2" />
-        </span>
+      <div class="header d-flex mx-6 pr-3 py-5">
+        <hux-icon type="lookalike" :size="24" class="mr-2" />
+        <span class="float-left text-h3 black-base"> Lookalikes </span>
       </div>
-      <div class="lookialike-destination mx-6 my-6" v-for="data in lookalikeData" :key="data.id">
+      <div
+        class="lookialike-destination mx-6 my-6"
+        v-for="data in lookalikeData"
+        :key="data.id"
+      >
         <v-card class="rounded-sm status-card mr-2 box-shadow-none">
           <v-card-title class="d-flex pa-2">
             <logo :type="data.type" :size="22"></logo>
-            <span class="mx-2 float-left"> {{data.type}} </span>
+            <span class="mx-2 float-left"> {{ data.type }} </span>
           </v-card-title>
           <v-list dense class="" :height="52">
             <v-list-item>
               <icon type="lookalike" :size="20" class="mr-2" />
-              <span>{{data.name}}</span>
+              <span>{{ data.name }}</span>
               <v-spacer> </v-spacer>
               <span>
                 <size :value="data.size" />
@@ -80,6 +80,10 @@ export default {
 
 <style lang="scss" scoped>
 .lookalike-wrapper {
+  background-color: var(--v-primary-lighten1) !important;
+  border: 1px solid var(--v-black-lighten2);
+  box-sizing: border-box;
+  border-radius: 5px;
   .lookalikes {
     .header {
       height: 40px;
