@@ -1556,7 +1556,7 @@ def get_all_delivery_jobs(
             cursor = cursor.sort(sort_list)
 
         # apply limit if set.
-        return list(cursor if isinstance(limit, int) else cursor.limit(limit))
+        return list(cursor.limit(limit) if isinstance(limit, int) else cursor)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
