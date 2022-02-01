@@ -6,9 +6,9 @@
         <span class="float-left text-h3 black-base"> Lookalikes </span>
       </div>
       <div
-        class="lookialike-destination mx-6 my-6"
         v-for="data in lookalikeData"
         :key="data.id"
+        class="lookialike-destination mx-6 my-6"
       >
         <v-card class="rounded-sm status-card mr-2 box-shadow-none">
           <v-card-title class="d-flex pa-2">
