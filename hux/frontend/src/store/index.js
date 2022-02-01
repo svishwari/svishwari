@@ -10,6 +10,7 @@ import engagements from "@/store/modules/engagements"
 import identity from "@/store/modules/identity"
 import models from "@/store/modules/models"
 import users from "@/store/modules/users"
+import clients from "@/store/modules/clients"
 import notifications from "@/store/modules/notifications"
 import alerts from "@/store/modules/alerts"
 import configurations from "@/store/modules/configurations"
@@ -33,6 +34,7 @@ export default new Vuex.Store({
     identity,
     models,
     users,
+    clients,
     notifications,
     configurations,
     application,

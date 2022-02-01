@@ -35,7 +35,7 @@
           </template>
         </page-header>
         <v-progress-linear :active="loading" :indeterminate="loading" />
-        <v-row v-if="getTickets.length > 0 && !loading" class="pb-7 pl-3 white">
+        <v-row v-if="numIssues > 0 && !loading" class="pb-7 pl-3 white">
           <hux-data-table
             :columns="columnDefs"
             :data-items="getTickets"
@@ -80,7 +80,6 @@
                   position-top
                   data-e2e="issues-summary"
                 >
-                  <span>{{ item[header.value] }}</span>
                   {{ item[header.value] | Empty("-") }}
                 </div>
 
@@ -95,7 +94,7 @@
           </hux-data-table>
         </v-row>
         <v-row
-          v-if="getTickets.length == 0 && !loading && !handleErrorStateIssues"
+          v-else-if="numIssues == 0 && !loading && !handleErrorStateIssues"
           class="background-empty"
         >
           <empty-page type="no-alerts" :size="50">
@@ -111,7 +110,7 @@
           </empty-page>
         </v-row>
         <v-row
-          v-if="handleErrorStateIssues && !loading"
+          v-else-if="handleErrorStateIssues && !loading"
           class="d-flex justify-center align-center"
         >
           <error
@@ -192,6 +191,11 @@ export default {
     ...mapGetters({
       getTickets: "users/getAllTickets",
     }),
+    numIssues() {
+      return this.getTickets && this.getTickets.length
+        ? this.getTickets.length
+        : 0
+    },
   },
 
   async mounted() {

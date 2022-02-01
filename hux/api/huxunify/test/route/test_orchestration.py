@@ -1,12 +1,11 @@
 # pylint: disable=too-many-lines
 """Purpose of this file is to house all tests related to orchestration."""
 from http import HTTPStatus
-from unittest import TestCase, mock
+from unittest import mock
 from bson import ObjectId
-import mongomock
-import requests_mock
 
 from huxunifylib.connectors import FacebookConnector
+
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
@@ -35,41 +34,23 @@ from huxunifylib.database.user_management import (
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
 )
-from huxunifylib.database.client import DatabaseClient
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api import constants as api_c
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 import huxunify.test.constants as t_c
-from huxunify.app import create_app
 
 
 # pylint: disable=too-many-public-methods
-class OrchestrationRouteTest(TestCase):
+class OrchestrationRouteTest(RouteTestCase):
     """Orchestration Route tests."""
 
     # pylint: disable=too-many-instance-attributes
     def setUp(self) -> None:
         """Setup resources before each test."""
 
+        super().setUp()
+
         self.audience_api_endpoint = f"/api/v1{api_c.AUDIENCE_ENDPOINT}"
-
-        # mock request for introspect call
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
-        self.request_mocker.start()
-
-        self.app = create_app().test_client()
-
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
 
         # mock get_db_client() for the orchestration.
         mock.patch(
@@ -77,24 +58,10 @@ class OrchestrationRouteTest(TestCase):
             return_value=self.database,
         ).start()
 
-        # mock get_db_client() for the userinfo decorator.
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get_db_client() for the utils.
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
-            return_value=self.database,
-        ).start()
-
         # mock get_store_value of parameter store
         mock.patch.object(
             parameter_store, "get_store_value", return_value="secret"
         ).start()
-
-        self.addCleanup(mock.patch.stopall)
 
         destinations = [
             {
@@ -293,9 +260,6 @@ class OrchestrationRouteTest(TestCase):
             component_id=self.lookalike_audience_doc[db_c.ID],
         )
 
-        # setup the flask test client
-        self.test_client = create_app().test_client()
-
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""
 
@@ -303,7 +267,7 @@ class OrchestrationRouteTest(TestCase):
             "huxunify.api.orchestration.read_stub_city_zip_data",
             return_value=t_c.CITY_ZIP_STUB_DATA,
         )
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
         )
 
@@ -340,7 +304,7 @@ class OrchestrationRouteTest(TestCase):
             ],
         }
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.audience_api_endpoint,
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
@@ -394,7 +358,7 @@ class OrchestrationRouteTest(TestCase):
         # simulating userinfo endpoint to give invalid user response
         self.request_mocker.get(t_c.USER_INFO_CALL, json={})
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.audience_api_endpoint,
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
@@ -429,7 +393,7 @@ class OrchestrationRouteTest(TestCase):
             ],
         }
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.audience_api_endpoint,
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
@@ -466,7 +430,7 @@ class OrchestrationRouteTest(TestCase):
             t_c.USER_INFO_CALL, json=t_c.INVALID_USER_RESPONSE
         )
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.audience_api_endpoint,
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
@@ -502,7 +466,7 @@ class OrchestrationRouteTest(TestCase):
             ],
         }
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.audience_api_endpoint,
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
@@ -556,7 +520,7 @@ class OrchestrationRouteTest(TestCase):
             api_c.AUDIENCE_ENGAGEMENTS: self.engagement_ids,
         }
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.audience_api_endpoint,
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
@@ -634,7 +598,7 @@ class OrchestrationRouteTest(TestCase):
             ],
         }
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.audience_api_endpoint,
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
@@ -651,7 +615,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -714,7 +678,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/"
             f"{self.lookalike_audience_doc[db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -799,7 +763,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{lookalike_audience[db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -832,7 +796,7 @@ class OrchestrationRouteTest(TestCase):
         """Test get audience that does not exist."""
 
         audience_id = ObjectId()
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{audience_id}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -843,7 +807,7 @@ class OrchestrationRouteTest(TestCase):
         """Test get audience with invalid ID."""
 
         audience_id = "asdfg13456"
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{audience_id}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -853,7 +817,7 @@ class OrchestrationRouteTest(TestCase):
     def test_get_audiences(self):
         """Test get all audiences."""
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -937,7 +901,7 @@ class OrchestrationRouteTest(TestCase):
 
         new_name = "New Test Audience"
 
-        response = self.test_client.put(
+        response = self.app.put(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
             json={
@@ -985,7 +949,7 @@ class OrchestrationRouteTest(TestCase):
 
         lookalike_audience_name = "FAILED LA AUDIENCE"
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
@@ -1016,7 +980,7 @@ class OrchestrationRouteTest(TestCase):
 
         lookalike_audience_name = "NEW LA AUDIENCE"
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
@@ -1051,7 +1015,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{lookalike_audience_id}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1091,7 +1055,7 @@ class OrchestrationRouteTest(TestCase):
             return_value="LA_ID_12345",
         ).start()
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
@@ -1110,7 +1074,7 @@ class OrchestrationRouteTest(TestCase):
     def test_create_lookalike_audience_invalid_source_audience_id(self):
         """Test create lookalike audience with invalid engagement IDs."""
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
@@ -1129,7 +1093,7 @@ class OrchestrationRouteTest(TestCase):
     def test_create_lookalike_audience_source_audience_not_found(self):
         """Test create lookalike audience with invalid engagement IDs."""
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
@@ -1157,7 +1121,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1196,7 +1160,7 @@ class OrchestrationRouteTest(TestCase):
             return_value="LA_ID_12345",
         ).start()
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
@@ -1213,7 +1177,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{response.json.get(api_c.ID)}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1305,7 +1269,7 @@ class OrchestrationRouteTest(TestCase):
             self.database, audiences[0][db_c.ID], self.user_name
         )
 
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1352,7 +1316,7 @@ class OrchestrationRouteTest(TestCase):
             self.user_name,
         )
 
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{self.audience_api_endpoint}/{lookalike_audience[db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1369,7 +1333,7 @@ class OrchestrationRouteTest(TestCase):
         """Test delete audience API with valid ID but the object does not
         exist."""
 
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{self.audience_api_endpoint}/{str(ObjectId())}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1379,7 +1343,7 @@ class OrchestrationRouteTest(TestCase):
     def test_delete_audience_with_invalid_id(self) -> None:
         """Test delete audience API with invalid ID."""
 
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{self.audience_api_endpoint}/{t_c.INVALID_ID}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1399,7 +1363,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{self.audiences[1][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1420,7 +1384,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{self.audiences[1][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1452,7 +1416,7 @@ class OrchestrationRouteTest(TestCase):
             component_id=self.audiences[0][db_c.ID],
         )
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1462,7 +1426,7 @@ class OrchestrationRouteTest(TestCase):
     def test_get_audiences_with_valid_filters(self):
         """Test get all audiences with valid filters."""
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&"
             f"{api_c.WORKED_BY}=True&{api_c.ATTRIBUTE}={api_c.GENDER}",
             headers=t_c.STANDARD_HEADERS,
@@ -1482,7 +1446,7 @@ class OrchestrationRouteTest(TestCase):
     def test_get_lookalike_audiences_with_valid_filters(self):
         """Test get all audiences with valid filters."""
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1501,7 +1465,7 @@ class OrchestrationRouteTest(TestCase):
     def test_get_worked_by_audiences_with_valid_filters(self):
         """Test get all audiences with valid filters."""
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}?{api_c.WORKED_BY}=True",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -1524,7 +1488,7 @@ class OrchestrationRouteTest(TestCase):
         lookalike_audience_id = str(self.lookalike_audience_doc[db_c.ID])
         new_name = "Lookalike Audience New Name"
 
-        response = self.test_client.put(
+        response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}/{lookalike_audience_id}",
             headers=t_c.STANDARD_HEADERS,
             json={
@@ -1566,13 +1530,13 @@ class OrchestrationRouteTest(TestCase):
             api_c.AUDIENCE_ENGAGEMENTS: self.engagement_ids,
         }
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.audience_api_endpoint,
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
         )
         audience_id = response.json.get(db_c.OBJECT_ID)
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.audience_api_endpoint}/{audience_id}",
             headers=t_c.STANDARD_HEADERS,
         )

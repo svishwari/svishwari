@@ -15,4 +15,5 @@ export default {
   users: "/users",
   configurations: "/configurations",
   applications: "/applications",
+  clients: "/client-projects",
 }

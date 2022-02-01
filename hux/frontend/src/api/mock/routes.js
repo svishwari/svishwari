@@ -88,6 +88,9 @@ export const defineRoutes = (server) => {
   server.get("users/requested_users", () => requestedUser)
   server.get("users/tickets", () => someTickets())
 
+  //client projects
+  server.get("/client-projects")
+
   // data sources
   server.get("/data-sources")
 
@@ -602,8 +605,10 @@ export const defineRoutes = (server) => {
 
   // notifications
   server.get("/notifications", (schema, request) => {
-    let currentBatch = request.queryParams.batch_number
-    let batchSize = request.queryParams.batch_size
+    let currentBatch =
+      request.queryParams.batch_number || request.queryParams.batchNumber
+    let batchSize =
+      request.queryParams.batch_size || request.queryParams.batchSize
     let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
     let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
     let allNotifications = schema.notifications.all()

@@ -1,14 +1,12 @@
 # pylint: disable=too-many-lines,too-many-public-methods
 """Purpose of this file is to house all the engagement API tests."""
-from unittest import TestCase, mock
+from unittest import mock
 from unittest.mock import MagicMock
 from http import HTTPStatus
 
 import requests_mock
-import mongomock
 
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
@@ -16,59 +14,24 @@ from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import set_user, get_user
 
-from huxunify.app import create_app
-
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_user_favorites
 from huxunify.api.schema.user import UserSchema
-
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 import huxunify.test.constants as t_c
 
 
-class TestUserRoutes(TestCase):
+class TestUserRoutes(RouteTestCase):
     """Tests for User APIs."""
 
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
-        request_mocker.start()
-
-        self.app = create_app().test_client()
-
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        super().setUp()
 
         # mock get_db_client() in users
         mock.patch(
             "huxunify.api.route.user.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get_db_client() in decorators
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get db client from utils
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get_db_client() for the userinfo decorator.
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -109,8 +72,6 @@ class TestUserRoutes(TestCase):
             "felix_hernandez@fake.com",
             display_name="Felix Hernandez",
         )
-
-        self.addCleanup(mock.patch.stopall)
 
     def test_adding_engagement_to_favorite(self):
         """Tests adding engagement as a user favorite."""

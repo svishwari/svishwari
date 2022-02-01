@@ -52,9 +52,10 @@ steps:
   publish:
     stage: publish
     when:
-      branch:
-        only:
-          - /^lib.*/i
+      condition:
+        all:
+          whenVarExists: 'includes("${{CF_RELEASE_TAG}}", "{{CF_RELEASE_TAG}}" ) == false'
+          whenReleaseTagMatches: 'includes("${{CF_RELEASE_TAG}}", "lib") == true'
     description: "Publish the package on server tag creation"
     image: "python:3.7-buster"
     working_directory: "/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib-database"
