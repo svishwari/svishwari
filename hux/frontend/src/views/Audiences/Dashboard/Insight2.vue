@@ -22,7 +22,7 @@
     <div v-else v-cloak class="pa-8">
       <v-card class="overview-card pt-5 pb-6 pl-6 pr-6 box-shadow-5">
         <v-card-title class="d-flex justify-space-between pa-0 pr-2">
-          <h3 class="text-h3 mb-2">Audience overview</h3>
+          <h3 class="text-h3 mb-2">Audience overview </h3>
           <div class="d-flex align-center">
             <v-btn
               v-if="audience && !audience.is_lookalike"
@@ -281,7 +281,7 @@
                     <matchrate />
                   </div>
                   <div class="lookalikes mx-2 my-6">
-                    <lookalikes />
+                    <lookalikes :lookalikeData="audienceData.lookalike_audiences"/>
                   </div>
                 </v-card-text>
               </v-card>
@@ -1234,7 +1234,7 @@ export default {
   .tabs-item {
     .delivery-tab {
       .digital-adv {
-        height: 380px !important;
+        height: auto !important;
         .match-rates {
         }
         .lookalikes {
