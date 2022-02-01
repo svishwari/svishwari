@@ -1520,3 +1520,48 @@ STATE_IN_PROGRESS = "In Progress"
 STATE_TO_DO = "To Do"
 STATE_IN_REVIEW = "In Review"
 STATE_DONE = "Done"
+
+
+ALERT_SAMPLE_RESPONSE = {
+    DATA_MANAGEMENT: {
+        DATASOURCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        IDENTITY_RESOLUTION: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    DECISIONING: {
+        MODELS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    ORCHESTRATION_TAG: {
+        DESTINATIONS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCE_ENGAGEMENTS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        DELIVERY_TAG: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+}
