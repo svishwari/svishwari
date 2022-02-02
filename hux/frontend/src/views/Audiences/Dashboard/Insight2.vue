@@ -248,13 +248,20 @@
                 @onAddStandaloneDestination="addStandaloneDestination($event)"
               />
             </v-col>
-            <v-col :cols="advertisingCols" class="">
+            <v-col :cols="advertisingCols">
               <div
                 class="collapsible-bar"
                 :class="{
                   open: showAdvertising,
                   close: !showAdvertising,
                   'float-right': !showAdvertising,
+                }"
+                :style="{
+                  height:
+                    showAdvertising &&
+                    audienceData.lookalike_audiences.length > 0
+                      ? advertisingHeight
+                      : '380px',
                 }"
                 @click="toggleAd()"
               >
@@ -267,21 +274,18 @@
                   class="collapse-icon ml-1 mr-2"
                 />
               </div>
-              <v-card
-                v-if="showAdvertising"
-                class="digital-adv ml-6 mt-4"
-                flat
-                height="100%"
-              >
+              <v-card v-if="showAdvertising" class="digital-adv ml-6 mt-4" flat>
                 <v-card-title v-if="showAdvertising" class="ml-2 text-h3">
                   Digital advertising
                 </v-card-title>
-                <v-card-text v-if="showAdvertising" class="">
+                <v-card-text v-if="showAdvertising">
                   <div class="match-rates mx-2 my-1">
                     <matchrate />
                   </div>
-                  <div class="lookalikes mx-2 my-6">
-                    <lookalikes />
+                  <div ref="advertisingcard" class="lookalikes mx-2 my-6">
+                    <lookalikes
+                      :lookalike-data="audienceData.lookalike_audiences"
+                    />
                   </div>
                 </v-card-text>
               </v-card>
@@ -462,6 +466,7 @@ export default {
   },
   data() {
     return {
+      advertisingHeight: "280",
       engagementList: {},
       showEditConfirmModal: false,
       newAudienceName: "",
@@ -704,6 +709,19 @@ export default {
   async mounted() {
     await this.loadAudienceInsights()
     this.sizeHandler()
+  },
+
+  updated() {
+    if (
+      this.$refs.advertisingcard &&
+      this.$refs.advertisingcard.parentElement &&
+      this.$refs.advertisingcard.parentElement.parentElement
+    ) {
+      this.advertisingHeight =
+        this.$refs.advertisingcard.parentElement.parentElement.clientHeight +
+        21 +
+        "px"
+    }
   },
 
   methods: {
@@ -1234,7 +1252,7 @@ export default {
   .tabs-item {
     .delivery-tab {
       .digital-adv {
-        height: 380px !important;
+        height: auto !important;
         .match-rates {
         }
         .lookalikes {
@@ -1300,7 +1318,6 @@ export default {
 .collapsible-bar {
   margin-top: 16px;
   width: 24px;
-  height: 380px;
 
   cursor: pointer;
   float: left;
