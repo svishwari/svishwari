@@ -150,6 +150,26 @@
     <v-row class="mt-2 mb-4">
       <v-col md="12">
         <v-card class="mt-4 rounded-lg box-shadow-5" height="395">
+          <!-- <v-progress-linear
+            v-if="loadingSpendChart"
+            :active="loadingSpendChart"
+            :indeterminate="loadingSpendChart"
+          /> -->
+          <v-card-title class="pb-2 pl-6 pt-5">
+            <span
+              v-if="!loadingAudienceChart && totalCustomers.length != 0"
+              class="d-flex"
+            >
+              <h3 class="text-h3">Run duration (last 10)</h3>
+            </span>
+          </v-card-title>
+          <run-duration-chart :runDurationData="runDurationData.training.run_duration" />
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row class="mt-2 mb-4">
+      <v-col md="12">
+        <v-card class="mt-4 rounded-lg box-shadow-5" height="395">
           <v-row>
             <v-progress-linear
               v-if="loadingDemographics"
@@ -253,6 +273,8 @@ import TotalCustomerSpendChart from "@/components/common/TotalCustomerSpend/Tota
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import EmptyPage from "@/components/common/EmptyPage"
+import runDurationData from "@/api/mock/fixtures/runDurationData.js"
+import RunDurationChart from "@/components/common/RunDurationChart/RunDurationChart"
 
 export default {
   name: "InsightTab",
@@ -265,9 +287,11 @@ export default {
     EmptyPage,
     TotalCustomerChart,
     TotalCustomerSpendChart,
+    RunDurationChart
   },
   data() {
     return {
+      runDurationData: runDurationData,
       configurationData: configurationData,
       loadingDemographics: true,
       mapStateHeaderList: ["name", "avg_spend", "population_percentage"],
