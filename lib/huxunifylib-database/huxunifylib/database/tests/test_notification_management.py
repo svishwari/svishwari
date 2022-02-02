@@ -49,14 +49,7 @@ class NotificationManagementTest(TestCase):
             notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             description="Some Information",
             username=self.test_username,
-        )
-
-        current_time = datetime.utcnow()
-        upper_bound = (
-            current_time + relativedelta(weeks=1) + relativedelta(minutes=1)
-        )
-        lower_bound = (
-            current_time + relativedelta(weeks=1) - relativedelta(minutes=1)
+            platform=db_c.AZURE_COSMOS_DB,
         )
 
         self.assertIsNotNone(notification)
@@ -73,8 +66,7 @@ class NotificationManagementTest(TestCase):
         self.assertEqual(
             self.test_username, notification[db_c.NOTIFICATION_FIELD_USERNAME]
         )
-        self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
-        self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
+        self.assertIsInstance(notification[db_c.TTL], int)
 
     def test_create_notification_success(self):
         """Test creating a notification."""
