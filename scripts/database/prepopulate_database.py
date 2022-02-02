@@ -1278,7 +1278,7 @@ client_projects_list = [
     },
     {
         db_c.NAME: ".am",
-        db_c.TYPE: ".am",
+        db_c.TYPE: "dot-am",
         db_c.DESCRIPTION: ".am Project",
         db_c.URL: "https://localhost/am",
         db_c.ICON: "default.ico",

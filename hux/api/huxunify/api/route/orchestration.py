@@ -917,9 +917,13 @@ class AudienceGetView(SwaggerView):
                 api_c.AUDIENCE_STANDALONE_DELIVERIES: standalone_deliveries,
                 api_c.FAVORITE: is_component_favorite(
                     user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
+                )
+                or is_component_favorite(
+                    user[db_c.OKTA_ID], api_c.LOOKALIKE, str(audience_id)
                 ),
             }
         )
+
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,
