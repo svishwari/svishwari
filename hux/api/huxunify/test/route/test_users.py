@@ -412,23 +412,43 @@ class TestUserRoutes(RouteTestCase):
                 api_c.DATA_MANAGEMENT: {
                     api_c.DATASOURCES: {
                         db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True,
                     },
                     api_c.IDENTITY_RESOLUTION: {
-                        db_c.NOTIFICATION_TYPE_CRITICAL: True
+                        db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True,
                     },
                 },
                 api_c.DECISIONING: {
                     api_c.MODELS: {
                         db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True,
                     },
                 },
                 api_c.ORCHESTRATION_TAG: {
-                    api_c.DESTINATIONS: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
-                    api_c.AUDIENCE_ENGAGEMENTS: {
-                        db_c.NOTIFICATION_TYPE_SUCCESS: True
+                    api_c.DESTINATIONS: {
+                        db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True,
                     },
-                    api_c.AUDIENCES: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
-                    api_c.DELIVERY_TAG: {db_c.NOTIFICATION_TYPE_SUCCESS: True},
+                    api_c.AUDIENCE_ENGAGEMENTS: {
+                        db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True,
+                    },
+                    api_c.AUDIENCES: {
+                        db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True,
+                    },
+                    api_c.DELIVERY_TAG: {
+                        db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True,
+                    },
                 },
             }
         }
@@ -461,7 +481,11 @@ class TestUserRoutes(RouteTestCase):
         update_body = {
             api_c.ALERTS: {
                 api_c.ORCHESTRATION_TAG: {
-                    api_c.DESTINATIONS: {db_c.NOTIFICATION_TYPE_SUCCESS: True}
+                    api_c.DESTINATIONS: {
+                        db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                        db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                        db_c.NOTIFICATION_TYPE_CRITICAL: True,
+                    }
                 },
             }
         }
