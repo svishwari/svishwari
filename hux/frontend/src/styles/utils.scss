@@ -221,3 +221,9 @@
 .max-width-15ch {
   max-width: 15ch;
 }
+
+.blur-text {
+  color: transparent !important;
+  text-shadow: 0 0 8px #000;
+  user-select: none;
+}

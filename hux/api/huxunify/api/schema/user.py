@@ -94,9 +94,9 @@ class NewUserRequest(Schema):
 class UserAlertSchema(Schema):
     """User alert schema"""
 
-    critical = Bool(default=False)
-    success = Bool(default=False)
-    informational = Bool(default=False)
+    critical = Bool(default=False, load_default=False)
+    success = Bool(default=False, load_default=False)
+    informational = Bool(default=False, load_default=False)
 
 
 class UserAlertDataManagementSchema(Schema):

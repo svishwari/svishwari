@@ -1568,3 +1568,48 @@ SENDING_DOMAINS_OVERVIEW_STUB = [
         CLICK_RATE: 0.74,
     },
 ]
+
+
+ALERT_SAMPLE_RESPONSE = {
+    DATA_MANAGEMENT: {
+        DATASOURCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        IDENTITY_RESOLUTION: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    DECISIONING: {
+        MODELS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    ORCHESTRATION_TAG: {
+        DESTINATIONS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCE_ENGAGEMENTS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        DELIVERY_TAG: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+}

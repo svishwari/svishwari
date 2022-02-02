@@ -12,7 +12,7 @@
             <span class="text-body-2 black--text text--lighten-4 mr-2">
               First
             </span>
-            <tooltip>
+            <tooltip v-if="showPii">
               <template #label-content>
                 <span
                   class="
@@ -29,12 +29,19 @@
                 {{ profile["first_name"] }}
               </template>
             </tooltip>
+            <span
+              v-else
+              class="text-subtitle-1 text-ellipsis black--text d-block max-char"
+              :class="showPii ? '' : 'blur-text'"
+            >
+              {{ profile["first_name"] }}
+            </span>
           </span>
           <span class="d-flex align-baseline">
             <span class="text-body-2 black--text text--lighten-4 mr-2"
               >Last</span
             >
-            <tooltip>
+            <tooltip v-if="showPii">
               <template #label-content>
                 <span
                   class="
@@ -51,6 +58,13 @@
                 {{ profile["last_name"] }}
               </template>
             </tooltip>
+            <span
+              v-else
+              class="text-subtitle-1 text-ellipsis black--text d-block max-char"
+              :class="showPii ? '' : 'blur-text'"
+            >
+              {{ profile["last_name"] }}
+            </span>
           </span>
         </v-card-text>
       </v-card>
@@ -118,6 +132,11 @@ export default {
       type: Object,
       required: true,
       default: () => {},
+    },
+    showPii: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   computed: {
