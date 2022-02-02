@@ -84,6 +84,27 @@ index_constants = [
         db_c.CAMPAIGN_ACTIVITY_COLLECTION,
         [(db_c.DELIVERY_JOB_ID, ASCENDING)],
     ),
+    (
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.NOTIFICATIONS_COLLECTION,
+        [(db_c.NOTIFICATION_FIELD_CREATED, DESCENDING)],
+    ),
+    (
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.NOTIFICATIONS_COLLECTION,
+        [
+            (db_c.NOTIFICATION_FIELD_CREATED, DESCENDING),
+            (db_c.ID, ASCENDING),
+        ],
+    ),
+    (
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.NOTIFICATIONS_COLLECTION,
+        [
+            (db_c.NOTIFICATION_FIELD_CREATED, DESCENDING),
+            (db_c.ID, DESCENDING),
+        ],
+    ),
 ]
 
 
