@@ -718,8 +718,7 @@ export default {
       this.$refs.advertisingcard.parentElement.parentElement
     ) {
       this.advertisingHeight =
-        this.$refs.advertisingcard.parentElement.parentElement.clientHeight +
-        "px"
+        this.$refs.advertisingcard.parentElement.parentElement.clientHeight + 21 + "px"
     }
   },
 
