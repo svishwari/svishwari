@@ -144,7 +144,7 @@ def get_audience_by_filter(
         if sort_list:
             cursor = cursor.sort(sort_list)
 
-        return list(cursor if limit else cursor.limit(limit))
+        return list(cursor.limit(limit) if limit else cursor)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -248,7 +248,7 @@ def get_all_audiences(
             find_filters["$and"] = [
                 {
                     db_c.ATTRIBUTE_FILTER_FIELD: {
-                        "$regex": re.compile(rf"^{attribute}$(?i)")
+                        "$regex": rf"^{attribute}$",  "$options": "i"
                     }
                 }
                 for attribute in filters.get(db_c.ATTRIBUTE)
@@ -754,8 +754,9 @@ def get_all_audiences_and_deliveries(
                         "$and": [
                             {
                                 db_c.ATTRIBUTE_FILTER_FIELD: {
-                                    "$regex": re.compile(rf"^{attribute}$(?i)")
-                                }
+                                        "$regex": rf"^{attribute}$",
+                                        "$options": "i"
+                                } if True else {}
                             }
                             for attribute in filters.get(db_c.ATTRIBUTE)
                         ]
