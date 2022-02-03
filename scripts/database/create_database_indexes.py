@@ -159,7 +159,9 @@ def add_unique_compound_index(database: MongoClient) -> None:
         database (MongoClient): MongoDB Client.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.INGESTED_DATA_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.INGESTED_DATA_COLLECTION
+    ]
 
     field_str = f"{db_c.INGESTED_DATA}.{db_c.S_TYPE_CUSTOMER_ID}"
     collection.create_index(
