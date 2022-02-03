@@ -250,11 +250,13 @@ def get_all_audiences(
             find_filters["$and"] = [
                 {
                     db_c.ATTRIBUTE_FILTER_FIELD: {
+                        "$regex": re.compile(rf"^{attribute}$(?i)")
+                    }
+                    if platform == db_c.AWS_DOCUMENT_DB
+                    else {
                         "$regex": rf"^{attribute}$",
                         "$options": "i",
                     }
-                    if platform == db_c.AZURE_COSMOS_DB
-                    else {"$regex": re.compile(rf"^{attribute}$(?i)")}
                 }
                 for attribute in filters.get(db_c.ATTRIBUTE)
             ]
@@ -761,12 +763,12 @@ def get_all_audiences_and_deliveries(
                         "$and": [
                             {
                                 db_c.ATTRIBUTE_FILTER_FIELD: {
+                                    "$regex": re.compile(rf"^{attribute}$(?i)")
+                                }
+                                if platform == db_c.AWS_DOCUMENT_DB
+                                else {
                                     "$regex": rf"^{attribute}$",
                                     "$options": "i",
-                                }
-                                if platform == db_c.AZURE_COSMOS_DB
-                                else {
-                                    "$regex": re.compile(rf"^{attribute}$(?i)")
                                 }
                             }
                             for attribute in filters.get(db_c.ATTRIBUTE)
