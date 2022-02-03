@@ -1,19 +1,19 @@
 """Purpose of this file is to house all data sources tests."""
 import copy
 import json
+from datetime import datetime
 from http import HTTPStatus
-from unittest import TestCase, mock
+from unittest import mock
 
-import mongomock
-import requests_mock
+from dateutil.relativedelta import relativedelta
 from marshmallow import ValidationError
 
+from huxunify.api.route.utils import fetch_datafeed_details
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database.cdp_data_source_management import (
     create_data_source,
     bulk_write_data_sources,
 )
-from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
@@ -22,8 +22,8 @@ from huxunify.api.schema.cdp_data_source import (
     DataSourceDataFeedsGetSchema,
     CdpDataSourceDataFeedSchema,
     CdpConnectionsDataSourceSchema,
+    DataSourceDataFeedDetailsGetSchema,
 )
-from huxunify.app import create_app
 
 
 class CdpDataSourcesTest(RouteTestCase):
@@ -413,3 +413,47 @@ class CdpDataSourcesTest(RouteTestCase):
                 response.json.get(api_c.DATAFEEDS), many=True
             )
         )
+
+    def test_get_data_source_data_feed_details(self) -> None:
+        """Test get data source data feed details endpoint."""
+        data_source_type = t_c.DATASOURCE_DATA_FEEDS_RESPONSE[api_c.BODY][0][
+            api_c.DATAFEED_DATA_SOURCE_NAME
+        ]
+        datafeed_name = "clicks"
+        start_date = datetime.utcnow() - relativedelta(days=100)
+        end_date = datetime.utcnow()
+
+        expected_response = DataSourceDataFeedDetailsGetSchema(many=True).dump(
+            sorted(
+                fetch_datafeed_details(
+                    datafeed_name, start_date.date(), end_date.date()
+                ),
+                key=lambda x: x[api_c.LAST_PROCESSED],
+            )
+        )
+        response = self.app.get(
+            f"{self.data_sources_api_endpoint}/{data_source_type}/"
+            f"{api_c.DATAFEEDS}/{datafeed_name}",
+            query_string={
+                "start_date": datetime.strftime(
+                    start_date, api_c.DEFAULT_DATE_FORMAT
+                ),
+                "end_date": datetime.strftime(
+                    end_date, api_c.DEFAULT_DATE_FORMAT
+                ),
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(
+            DataSourceDataFeedDetailsGetSchema(many=True).validate(
+                response.json
+            )
+        )
+        self.assertEqual(len(expected_response), len(response.json))
+
+        for df_detail in response.json:
+            self.assertFalse(
+                DataSourceDataFeedDetailsGetSchema().validate(df_detail)
+            )

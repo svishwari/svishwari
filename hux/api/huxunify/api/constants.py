@@ -328,6 +328,12 @@ STATUS_REQUESTED = "Requested"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
+STATUS_SUCCESS = "Success"
+STATUS_COMPLETE = "Complete"
+STATUS_INCOMPLETE = "Incomplete"
+STATUS_RUNNING = "Running"
+STATUS_FAILED = "Failed"
+STATUS_CANCELLED = "Cancelled"
 
 STATUS_MAPPING = {
     db_c.STATUS_IN_PROGRESS: STATUS_DELIVERING,
@@ -1051,6 +1057,8 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 CDP_DATA_SOURCE_TYPE = "datasource_type"
+DATAFEED_NAME = "datafeed_name"
+LAST_PROCESSED = "last_processed"
 
 # Customers
 CUSTOMERS_ENDPOINT = "/customers"
@@ -1234,6 +1242,7 @@ RECORDS_PROCESSED = "records_processed"
 RECORDS_RECEIVED = "records_received"
 THIRTY_DAYS_AVG = "thirty_days_avg"
 RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
+DATA_FILES = "data_files"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
