@@ -222,7 +222,10 @@
       <v-tabs-items v-model="tabOption" class="tabs-item">
         <v-tab-item key="delivery" class="delivery-tab">
           <v-row class="">
-            <v-col :cols="deliveryCols" class="">
+            <div
+              class="mt-3 ml-3"
+              :style="{ transition: '0.5s', width: deliveryCols + '%' }"
+            >
               <delivery
                 :sections="relatedEngagements"
                 section-type="engagement"
@@ -247,8 +250,9 @@
                 :audience="audience"
                 @onAddStandaloneDestination="addStandaloneDestination($event)"
               />
-            </v-col>
-            <v-col :cols="advertisingCols">
+            </div>
+            <div :style="{ width: '1.5%' }"></div>
+            <div class="mt-3" :style="{ width: advertisingCols + '%' }">
               <div
                 class="collapsible-bar"
                 :class="{
@@ -304,7 +308,7 @@
                 >
                 </error>
               </v-card>
-            </v-col>
+            </div>
           </v-row>
         </v-tab-item>
         <v-tab-item key="insights" class="insights-tab">
@@ -471,8 +475,8 @@ export default {
       showEditConfirmModal: false,
       newAudienceName: "",
       showAdvertising: true,
-      deliveryCols: 7,
-      advertisingCols: 5,
+      deliveryCols: "57",
+      advertisingCols: "40",
 
       tabOption: 0,
       showLookAlikeDrawer: false,
@@ -1149,12 +1153,12 @@ export default {
     },
     toggleAd() {
       if (this.showAdvertising) {
-        this.deliveryCols = 11
-        this.advertisingCols = 0
+        this.deliveryCols = "96"
+        this.advertisingCols = "1.5"
         this.showAdvertising = false
       } else {
-        this.deliveryCols = 7
-        this.advertisingCols = 5
+        this.deliveryCols = "57"
+        this.advertisingCols = "40"
         this.showAdvertising = true
       }
     },
@@ -1318,7 +1322,6 @@ export default {
 .collapsible-bar {
   margin-top: 16px;
   width: 24px;
-
   cursor: pointer;
   float: left;
   position: relative;
