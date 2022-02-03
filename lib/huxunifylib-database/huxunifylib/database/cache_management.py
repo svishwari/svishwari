@@ -18,7 +18,7 @@ def create_cache_entry(
     cache_key: str,
     cache_value: str,
     expire_after_seconds: int = 86400,
-    platform: str = db_c.AWS_DOCUMENT_DB
+    platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> None:
     """A function that creates a new cache entry.
 
@@ -49,9 +49,7 @@ def create_cache_entry(
         )
         collection.update_one(
             {db_c.CONSTANT_KEY: cache_key},
-            {
-                "$set": cache_data
-            },
+            {"$set": cache_data},
             upsert=True,
         )
     except pymongo.errors.OperationFailure as exc:

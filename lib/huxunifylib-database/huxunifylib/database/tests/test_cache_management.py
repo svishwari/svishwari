@@ -40,7 +40,10 @@ class TestCacheManagement(unittest.TestCase):
 
         # Ensure works in Azure Setting.
         create_cache_entry(
-            self.database, cache_key, cache_value, platform=db_c.AZURE_COSMOS_DB
+            self.database,
+            cache_key,
+            cache_value,
+            platform=db_c.AZURE_COSMOS_DB,
         )
         get_cache = get_cache_entry(self.database, cache_key)
         self.assertTrue(get_cache)
