@@ -60,12 +60,12 @@ const lookalikeAudience = () => {
     delivery_platform_name: "Facebook",
     delivery_platform_link: "https://business.facebook.com/",
     status: () =>
-    faker.random.arrayElement([
-      "Delivered",
-      "Delivering",
-      "Not Delivered",
-      "Error",
-    ]),
+      faker.random.arrayElement([
+        "Delivered",
+        "Delivering",
+        "Not Delivered",
+        "Error",
+      ]),
     created_by: faker.fake("{{name.firstName}} {{name.lastName}}"),
     updated_by: faker.fake("{{name.firstName}} {{name.lastName}}"),
   }
