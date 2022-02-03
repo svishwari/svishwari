@@ -115,6 +115,16 @@ index_constants = [
         db_c.CAMPAIGN_ACTIVITY_COLLECTION,
         [(f"{db_c.EVENT_DETAILS}.{db_c.EVENT_DATE}", DESCENDING)],
     ),
+    (
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DELIVERABILITY_METRICS_COLLECTION,
+        [(db_c.JOB_END_TIME, DESCENDING)],
+    ),
+    (
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.AUDIENCES_COLLECTION,
+        [(db_c.NAME, DESCENDING)],
+    ),
 ]
 
 
@@ -149,9 +159,7 @@ def add_unique_compound_index(database: MongoClient) -> None:
         database (MongoClient): MongoDB Client.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.INGESTED_DATA_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.INGESTED_DATA_COLLECTION]
 
     field_str = f"{db_c.INGESTED_DATA}.{db_c.S_TYPE_CUSTOMER_ID}"
     collection.create_index(
