@@ -60,16 +60,13 @@
             >
               <huxButton
                 variant="primary base"
-                icon-color="white"
-                icon-variant="base"
-                icon="plus"
                 size="large"
                 is-custom-icon
                 class="ma-2 font-weight-regular no-shadow mr-0 caption"
                 is-tile
                 height="40"
               >
-                Engagement
+                Create engagement
               </huxButton>
             </router-link>
           </template>
