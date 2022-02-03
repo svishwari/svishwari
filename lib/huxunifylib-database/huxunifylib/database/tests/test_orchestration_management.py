@@ -401,7 +401,7 @@ class TestAudienceManagement(unittest.TestCase):
             db_c.WORKED_BY: self.sample_user.get(db_c.USER_DISPLAY_NAME)
         }
         filtered_audiences = am.get_all_audiences(
-            self.database, filters=filters, platform=db_c.AZURE_COSMOS_DB
+            self.database, filters=filters
         )
         self.assertEqual(
             filtered_audiences[0][db_c.CREATED_BY],
@@ -577,7 +577,7 @@ class TestAudienceManagement(unittest.TestCase):
             db_c.ATTRIBUTE: [db_c.AGE, db_c.S_TYPE_CITY],
         }
         audiences_filtered = am.get_all_audiences_and_deliveries(
-            self.database, filters=filters, platform=db_c.AZURE_COSMOS_DB
+            self.database, filters=filters
         )
         self.assertEqual(len(audiences_filtered), 2)
 

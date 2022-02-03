@@ -3,7 +3,6 @@ orchestration(audience/engagement) management.
 """
 
 import logging
-import re
 import datetime
 from typing import Union
 
@@ -219,7 +218,6 @@ def get_all_audiences(
     include_users: bool = False,
     filters: dict = None,
     audience_ids: list = None,
-    platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> Union[list, None]:
     """A function to get all existing audiences.
 
@@ -229,7 +227,6 @@ def get_all_audiences(
         filters (dict, Optional): A dict of filters to be applied on the
         audience.
         audience_ids (list, Optional): A list of audience IDs.
-        platform (str, Optional): Underlying DB on which Mongo DB API is based.
 
     Returns:
         Union[list, None]: A list of all audiences.
@@ -250,10 +247,6 @@ def get_all_audiences(
             find_filters["$and"] = [
                 {
                     db_c.ATTRIBUTE_FILTER_FIELD: {
-                        "$regex": re.compile(rf"^{attribute}$(?i)")
-                    }
-                    if platform == db_c.AWS_DOCUMENT_DB
-                    else {
                         "$regex": rf"^{attribute}$",
                         "$options": "i",
                     }
@@ -668,7 +661,6 @@ def get_all_audiences_and_deliveries(
     database: DatabaseClient,
     filters: dict = None,
     audience_ids: list = None,
-    platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> Union[list, None]:
     """A function to get all audiences and their latest deliveries.
 
@@ -677,7 +669,6 @@ def get_all_audiences_and_deliveries(
         filters (dict, Optional): A dict of filters to be applied on the
         audience.
         audience_ids (list, Optional): A list of audience ids.
-        platform (str, Optional): Underlying DB on which Mongo DB API is based.
 
     Returns:
         Union[list, None]:  A list of engagements with delivery information for
@@ -763,10 +754,6 @@ def get_all_audiences_and_deliveries(
                         "$and": [
                             {
                                 db_c.ATTRIBUTE_FILTER_FIELD: {
-                                    "$regex": re.compile(rf"^{attribute}$(?i)")
-                                }
-                                if platform == db_c.AWS_DOCUMENT_DB
-                                else {
                                     "$regex": rf"^{attribute}$",
                                     "$options": "i",
                                 }
