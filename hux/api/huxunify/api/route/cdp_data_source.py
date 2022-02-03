@@ -393,7 +393,8 @@ class DeleteCdpDataSources(SwaggerView):
 
             if success_flag:
                 logger.info(
-                    "Successfully deleted data sources - %s.",
+                    "User with username %s successfully deleted data sources - %s.",
+                    user[api_c.USER_NAME],
                     data_source_types,
                 )
                 create_notification(

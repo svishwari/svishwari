@@ -540,7 +540,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
     # checking if required keys are present in user_info
     if not required_keys.issubset(user_info.keys()):
-        logger.info("Failure. Required keys not present in user_info dict.")
+        logger.warning("Failure. Required keys not present in user_info dict.")
         return {
             "message": api_c.AUTH401_ERROR_MESSAGE
         }, HTTPStatus.UNAUTHORIZED
@@ -567,7 +567,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
         # return NOT_FOUND if user is still none
         if user is None:
-            logger.info(
+            logger.warning(
                 "User not found in DB even after trying to create one."
             )
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
