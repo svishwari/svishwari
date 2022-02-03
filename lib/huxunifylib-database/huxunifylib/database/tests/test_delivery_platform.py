@@ -23,9 +23,7 @@ class TestDeliveryPlatform(unittest.TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
 
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient(host="localhost", port=27017).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -486,6 +484,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             name="Updated name",
             delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
             authentication_details=new_auth_details,
+            link="fake.com",
         )
 
         self.assertIsNotNone(doc)
@@ -500,6 +499,8 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc[db_c.DELIVERY_PLATFORM_AUTH], new_auth_details)
         self.assertFalse(doc[db_c.ADDED])
         self.assertFalse(db_c.DELETED in doc)
+        self.assertIn(db_c.LINK, doc)
+        self.assertEqual(doc[db_c.LINK], "fake.com")
 
         # update two fields
         doc = dpm.update_delivery_platform(
@@ -521,6 +522,26 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertEqual(doc[db_c.DELIVERY_PLATFORM_AUTH], new_auth_details)
         self.assertTrue(doc[db_c.ADDED])
+
+    def test_update_delivery_platform_no_link(self):
+        """Test delivery platform update function with None link"""
+
+        new_auth_details = {
+            "facebook_access_token": "path10",
+            "facebook_app_secret": "path20",
+            "facebook_app_id": "path30",
+            "facebook_ad_account_id": "path40",
+        }
+
+        doc = dpm.update_delivery_platform(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            name="Updated name",
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
+            authentication_details=new_auth_details,
+            link=None,
+        )
+        self.assertFalse(doc.get(db_c.LINK))
 
     def test_update_sfmc_performance_data_extension(self) -> None:
         """For testing update of Performance Data Extension only for SFMC"""
@@ -1135,6 +1156,75 @@ class TestDeliveryPlatform(unittest.TestCase):
             database=self.database, delivery_job_id=delivery_job_id
         )
         self.assertTrue(metrics_list[0][db_c.STATUS_TRANSFERRED_FOR_FEEDBACK])
+
+    def test_set_get_deliverability_metrics(self):
+        """Deliverability metrics are set and retrieved."""
+
+        end_time = datetime.datetime.utcnow()
+        start_time = end_time - datetime.timedelta(days=7)
+        doc = dpm.set_deliverability_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_platform_type="sparkpost",
+            metrics_dict={"isp_name": "Yahoo", "inbox_percentage": 10},
+            start_time=start_time,
+            end_time=end_time,
+            domain="test.com",
+        )
+
+        self.assertIsNotNone(doc)
+
+        metrics_list = dpm.get_deliverability_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            domain="test.com",
+        )
+
+        self.assertIsNotNone(metrics_list)
+        self.assertEqual(len(metrics_list), 1)
+
+        doc = metrics_list[0]
+
+        self.assertIsNotNone(doc)
+        self.assertIn(db_c.METRICS_DELIVERY_PLATFORM_ID, doc)
+        self.assertIn(db_c.METRICS_DELIVERY_PLATFORM_TYPE, doc)
+        self.assertIn(db_c.CREATE_TIME, doc)
+        self.assertIn(db_c.DELIVERABILITY_METRICS, doc)
+        self.assertIn(db_c.METRICS_START_TIME, doc)
+        self.assertIn(db_c.METRICS_END_TIME, doc)
+        self.assertIn(db_c.DOMAIN, doc)
+
+        # Status is to be set to non-transferred automatically
+        self.assertFalse(doc[db_c.STATUS_TRANSFERRED_FOR_REPORT])
+
+    def test_set_get_deliverability_metrics_status(self):
+        """Deliverability metrics status is set properly."""
+
+        end_time = datetime.datetime.utcnow()
+        start_time = end_time - datetime.timedelta(days=7)
+        metrics_init_doc = dpm.set_deliverability_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_platform_type="sparkpost",
+            metrics_dict={"isp_name": "Yahoo", "inbox_percentage": 10},
+            start_time=start_time,
+            end_time=end_time,
+            domain="test.com",
+        )
+
+        doc = dpm.set_deliverability_metrics_transferred_for_report(
+            database=self.database,
+            performance_metrics_id=metrics_init_doc[db_c.ID],
+        )
+        self.assertTrue(doc[db_c.STATUS_TRANSFERRED_FOR_REPORT])
+
+        # Read metrics separately of setting
+        metrics_list = dpm.get_deliverability_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            domain="test.com",
+        )
+        self.assertTrue(metrics_list[0][db_c.STATUS_TRANSFERRED_FOR_REPORT])
 
     def test_get_metrics_pending_transfer_feedback(self):
         """Performance metrics pending transfer for feedback are retrieved."""
@@ -1976,6 +2066,35 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(
             recent_campaign_activity_doc[db_c.EVENT_DETAILS][db_c.EVENT_DATE],
             datetime.datetime(2021, 6, 28, 0, 0),
+        )
+
+    def test_get_most_recent_deliverability_metrics_by_domain(self):
+        """Get most recent deliverability metrics by domain."""
+
+        end_time = datetime.datetime.utcnow()
+        start_time = end_time - datetime.timedelta(days=7)
+        dpm.set_deliverability_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_platform_type="sparkpost",
+            metrics_dict={"isp_name": "Yahoo", "inbox_percentage": 10},
+            start_time=start_time,
+            end_time=end_time,
+            domain="test.com",
+        )
+        recent_deliverability_metrics_doc = (
+            dpm.get_most_recent_deliverability_metric_by_domain(
+                database=self.database,
+                delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+                domain="test.com",
+            )
+        )
+
+        self.assertIsNotNone(recent_deliverability_metrics_doc)
+
+        self.assertEqual(
+            recent_deliverability_metrics_doc[db_c.DOMAIN],
+            "test.com",
         )
 
     @mongomock.patch(servers=(("localhost", 27017),))

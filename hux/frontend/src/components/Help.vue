@@ -1,13 +1,25 @@
 <template>
   <div>
-    <v-menu :min-width="192" left offset-y close-on-click>
+    <v-menu v-model="menu" :min-width="192" left offset-y close-on-click>
       <template #activator="{ on }">
         <span
           class="d-flex cursor-pointer mr-4"
           data-e2e="help-dropdown"
           v-on="on"
         >
-          <icon class="mx-2 my-2 nav-icon" type="help" :size="24" />
+          <tooltip class="tooltip-help" :z-index="99">
+            <template #label-content>
+              <span :class="{ 'icon-shadow': menu }">
+                <icon
+                  class="mx-2 my-2 nav-icon"
+                  type="help"
+                  :size="24"
+                  :class="{ 'active-icon': menu }"
+                />
+              </span>
+            </template>
+            <template #hover-content> Help </template>
+          </tooltip>
         </span>
       </template>
       <v-list>
@@ -15,6 +27,14 @@
           <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
             Help
           </v-list-item-title>
+        </v-list-item>
+        <v-list-item class="v-list-item--link" data-e2e="myIssues">
+          <a
+            href="/my-issues"
+            class="text-body-1 black--text view-all text-decoration-none"
+          >
+            My issues
+          </a>
         </v-list-item>
         <v-list-item
           class="v-list-item--link"
@@ -53,6 +73,7 @@
 </template>
 
 <script>
+import Tooltip from "./common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import Modal from "@/components/common/Modal"
 import ContactUsOptions from "./ContactUsOptions.vue"
@@ -62,6 +83,7 @@ import { mapActions } from "vuex"
 export default {
   name: "Help",
   components: {
+    Tooltip,
     Icon,
     Modal,
     ContactUsOptions,
@@ -73,6 +95,7 @@ export default {
       dailog: false,
       reportBug: false,
       bugDetails: {},
+      menu: false,
     }
   },
 
@@ -120,7 +143,8 @@ export default {
 
 <style lang="scss" scoped>
 .v-menu__content {
-  top: 64px !important;
+  top: 70px !important;
+  margin-left: 16px !important;
   .v-list {
     .v-list-item {
       min-height: 40px !important;

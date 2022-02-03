@@ -57,6 +57,7 @@ const lookalikeAudience = () => {
     name: faker.fake("{{name.firstName}} {{name.lastName}}"),
     size: faker.datatype.number({ min: 10000000, max: 999999999 }),
     is_lookalike: true,
+    type: "facebook",
   }
 }
 

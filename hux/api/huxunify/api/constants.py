@@ -17,13 +17,13 @@ PORT = "port"
 USER = "user"
 USERNAME = "username"
 PASSWORD = "password"
+CONNECTION_STRING = "connection_string"
 SSL_CERT_PATH = "ssl_cert_path"
-AWS_REGION = "AWS_REGION"
-AWS_S3_BUCKET_CONST = "S3_DATASET_BUCKET"
 MONGO_DB_HOST = "MONGO_DB_HOST"
 MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
 MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
+MONGO_CONNECTION_STRING = "MONGO_CONNECTION_STRING"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
 RETURN_EMPTY_AUDIENCE_FILE = "RETURN_EMPTY_AUDIENCE_FILE"
@@ -33,15 +33,38 @@ CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
 TECTON_API_KEY = "TECTON_API_KEY"
 TECTON_API = "TECTON_API"
 MOCK_TECTON = "MOCK_TECTON"
+CDPR_EVENT_CONST = "CDPR-EVENT"
+FLDR_EVENT_CONST = "FLDR-EVENT"
+DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
+DISABLE_SCHEDULED_DELIVERIES = "DISABLE_SCHEDULED_DELIVERIES"
+DISABLE_DELIVERY_MSG = "Deliveries are disabled."
+SALES_FORECASTING = "Sales forecasting"
+DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
+DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
+DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
+
+# AWS constants
+AWS_REGION = "AWS_REGION"
+AWS_S3_BUCKET_CONST = "S3_DATASET_BUCKET"
+
 AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
 AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
 AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
 AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
-CDPR_EVENT_CONST = "CDPR-EVENT"
-FLDR_EVENT_CONST = "FLDR-EVENT"
-DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
-DISABLE_DELIVERY_MSG = "Deliveries are disabled."
-SALES_FORECASTING = "Sales forecasting"
+AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
+AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
+AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
+
+CLOUD_PROVIDER = "CLOUD_PROVIDER"
+
+# Azure constants
+AZURE_BATCH_ACCOUNT_NAME = "AZURE_BATCH_ACCOUNT_NAME"
+AZURE_BATCH_ACCOUNT_KEY = "AZURE_BATCH_ACCOUNT_KEY"
+AZURE_BATCH_ACCOUNT_URL = "AZURE_BATCH_ACCOUNT_URL"
+AZURE_STORAGE_ACCOUNT_NAME = "AZURE_STORAGE_ACCOUNT_NAME"
+AZURE_STORAGE_ACCOUNT_KEY = "AZURE_STORAGE_ACCOUNT_KEY"
+AZURE_BLOB_CONTAINER_NAME = "AZURE_BLOB_CONTAINER_NAME"
+AZURE_KEY_VAULT_NAME = "AZURE_KEY_VAULT_NAME"
 
 # ORCH ROUTER PARAMS FOR OKTA
 UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
@@ -50,6 +73,7 @@ UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
 
 # JIRA
 JIRA_PROJECT_KEY = "JIRA_PROJECT_KEY"
+JIRA_USER_EMAIL = "JIRA_USER_EMAIL"
 JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
@@ -99,6 +123,9 @@ USE_CASE = "use_case"
 FIELD_TYPE = "field_type"
 INTERVAL = "interval"
 URL = "url"
+CREATED = "created"
+ISSUES = "issues"
+FIELDS = "fields"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -677,6 +704,8 @@ DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
 GENERIC_DESTINATION = "generic_destination"
 DESTINATION_CATEGORIES = "destination_categories"
 DESTINATION_AUDIENCES = "destination_audiences"
+DELIVERY_PLATFORM_LINK = "delivery_platform_link"
+DELIVERY_PLATFORM_NAME = "delivery_platform_name"
 
 # Map db status values to api status values
 DESTINATION_STATUS_MAPPING = {
@@ -852,6 +881,7 @@ ORCHESTRATION_ENDPOINT = "/orchestration"
 AUDIENCE_ENDPOINT = "/audiences"
 AUDIENCES = "audiences"
 ORCHESTRATION_TAG = "orchestration"
+DECISIONING = "decisioning"
 AUDIENCE = "audience"
 AUDIENCE_ID = "audience_id"
 AUDIENCE_IDS = "audience_ids"
@@ -871,9 +901,6 @@ AUDIENCE_LAST_DELIVERY = "last_delivery"
 AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE_PERCENTAGE = "audience_size_percentage"
 AUDIENCE_STANDALONE_DELIVERIES = "standalone_deliveries"
-AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
-AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
-AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 LOOKALIKE_AUDIENCES = "lookalike_audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
@@ -894,6 +921,7 @@ USER_TAG = "user"
 USER_NAME = "user_name"
 DISPLAY_NAME = "display_name"
 USER_PHONE_NUMBER = "phone_number"
+USER_EMAIL_ADDRESS = "email_address"
 USER_ACCESS_LEVEL = "access_level"
 USER_PII_ACCESS = "pii_access"
 USER_DESCRIPTION = "USER API"
@@ -1010,13 +1038,13 @@ PROFILE_SIZE_PERCENT = "profile_size_percent"
 RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
-CLASSIFICATION_MODELS = [
-    UNSUBSCRIBE,
-    PURCHASE,
-    "propensity_positive_click type: binary",
-    "propensity_positive_open type: binary",
-    "propensity_positive_unsub type: binary",
-]
+CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
+# todo: remove in the future when we remove tecton.
+TEMP_MODELS_TYPE_MAPPING = {
+    "propensity_positive_click": UNSUBSCRIBE,
+    "propensity_positive_open": UNSUBSCRIBE,
+    "propensity_positive_unsub": UNSUBSCRIBE,
+}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
@@ -1119,6 +1147,8 @@ CUSTOMER_PROFILE_REDACTED_FIELDS = [
     CITY,
     STATE,
     ZIP,
+    FIRST_NAME,
+    LAST_NAME,
 ]
 
 # Alerts Fields
@@ -1139,11 +1169,13 @@ CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
 CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
     "cdm_connection_service_connection_health"
 )
+JIRA_CONNECTION_HEALTH = "jira_connection_health"
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
 DATASOURCES = "datasources"
+DATA_MANAGEMENT = "data_management"
 DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
@@ -1349,6 +1381,12 @@ CONFIGURATIONS_ENDPOINT = "/configurations"
 APPLICATIONS_TAG = "applications"
 APPLICATION_ID = "application_id"
 APPLICATIONS_ENDPOINT = "/applications"
+ONLY_ACTIVE = "only_active"
+
+# Client Projects
+CLIENT_PROJECTS_TAG = "client-projects"
+CLIENT_PROJECT_ID = "client_project_id"
+CLIENT_PROJECTS_ENDPOINT = "/client-projects"
 
 # Histogram data stub.
 VALUES = "values"
@@ -1469,12 +1507,109 @@ AUDIENCE_RULES_HISTOGRAM_DATA = {
 
 REASON_FOR_REQUEST = "reason_for_request"
 NEW_USER_REQUEST_PREFIX = "[NEW USER REQUEST]"
-DEFAULT_NEW_USER_PROJECT_NAME = "ADV"
-DEFAULT_OKTA_GROUP_NAME = "team-unified--base"
-DEFAULT_OKTA_APP = "HUX Audience Builder"
 REQUEST_NEW_USER = "request_new_user"
 REQUESTED_BY = "requested_by"
+USER_PREFERENCES = "preferences"
+ALERTS = "alerts"
 
 RESOURCE_OWNER = "resource_owner"
 ALLOWED_RESOURCES_FOR_ABAC = [AUDIENCE, ENGAGEMENT]
 ALLOWED_ACCESS_RULES = [RESOURCE_OWNER]
+
+REQUESTED_USERS = "requested_users"
+# Jira States.
+STATE_IN_PROGRESS = "In Progress"
+STATE_TO_DO = "To Do"
+STATE_IN_REVIEW = "In Review"
+STATE_DONE = "Done"
+# Deliverability Constants
+EMAIL_DELIVERABILITY_ENDPOINT = "email_deliverability"
+MEASUREMENT_TAG = "measurement"
+OPEN_RATE = "open_rate"
+DELIVERED_COUNT = "delivered_count"
+OVERALL_INBOX_RATE = "overall_inbox_rate"
+SENDING_DOMAINS_OVERVIEW = "sending_domains_overview"
+DELIVERED_OPEN_RATE_OVERVIEW = "delivered_open_rate_overview"
+DOMAIN_NAME = "domain_name"
+SENT = "sent"
+BOUNCE_RATE = "bounce_rate"
+CLICK_RATE = "click_rate"
+DELIVERED_RATE = "delivered_rate"
+UNSUBSCRIBE_RATE = "unsubscribe_rate"
+COMPLAINTS_RATE = "complaints_rate"
+
+# TODO Remove once email deliverability data is available.
+
+DOMAIN_1 = "domain_1"
+DOMAIN_2 = "domain_2"
+DOMAIN_3 = "domain_3"
+
+ALLOWED_EMAIL_DOMAIN_NAMES = [DOMAIN_1, DOMAIN_2, DOMAIN_3]
+SENDING_DOMAINS_OVERVIEW_STUB = [
+    {
+        DOMAIN_NAME: DOMAIN_1,
+        SENT: 554,
+        BOUNCE_RATE: 0.14,
+        OPEN_RATE: 0.91,
+        CLICK_RATE: 0.85,
+    },
+    {
+        DOMAIN_NAME: DOMAIN_2,
+        SENT: 600,
+        BOUNCE_RATE: 0.10,
+        OPEN_RATE: 0.88,
+        CLICK_RATE: 0.81,
+    },
+    {
+        DOMAIN_NAME: DOMAIN_3,
+        SENT: 400,
+        BOUNCE_RATE: 0.09,
+        OPEN_RATE: 0.83,
+        CLICK_RATE: 0.74,
+    },
+]
+
+
+ALERT_SAMPLE_RESPONSE = {
+    DATA_MANAGEMENT: {
+        DATASOURCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        IDENTITY_RESOLUTION: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    DECISIONING: {
+        MODELS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    ORCHESTRATION_TAG: {
+        DESTINATIONS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCE_ENGAGEMENTS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        DELIVERY_TAG: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+}

@@ -15,23 +15,26 @@ steps:
 
   checks:
     stage: "checks"
-    image: 'huxhub.repo.mgnt.in/python:3.7-buster'
+    image: 'huxhub.repo.mgnt.in/tox-ci'
     working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/scripts'
     description: run tests using tox
     commands:
-      - pip install tox
-      - python -m tox -e ${TOXENV}
+     - tox -e ${TOXENV} -- --skip-model-generate
     scale:
       py37:
+        title: "py37 Unit tests"
         environment:
           - TOXENV=py37
       safety:
+        title: "Safety Checks"
         environment:
           - TOXENV=safety
       style:
+        title: "style Checks"
         environment:
           - TOXENV=style
       checkCoverage:
+        title: "coverage check"
         environment:
           - TOXENV=checkCoverage
     fail_fast: false

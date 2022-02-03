@@ -104,6 +104,8 @@ SOURCE_NAME = "source_name"
 SOURCE_SIZE = "source_size"
 SOURCE_ID = "source_id"
 
+TICKETS = "tickets"
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
@@ -404,75 +406,54 @@ MOCKED_MODEL_VERSION_HISTORY = {
     "results": [
         {
             "features": [
-                "2021-07-28",
-                "2021-07-28",
-                "Propensity of a customer unsubscribing after "
-                "receiving an email.",
-                "2021-07-14",
-                "90",
+                None,
+                "2021-10-13 18:59:30",
+                "Predicts the propensity of a customer to unsubscribe",
+                "2021-10-05",
+                "60",
                 "HUS",
-                "Propensity to Unsubscribe",
+                "Unsubscribe Model",
                 "unsubscribe",
-                "Susan Miller",
-                "smiller@xyz.com",
+                "Decisioning",
+                "decisioning@fake.com",
                 "7",
-                "Stopped",
+                "success",
             ],
-            "joinKeys": ["21.7.28"],
+            "joinKeys": ["21.10.12"],
         },
         {
             "features": [
-                "2021-07-29",
-                "2021-07-29",
-                "Propensity of a customer unsubscribing after "
-                "receiving an email.",
-                "2021-07-15",
-                "90",
+                None,
+                "2021-11-08 14:53:56",
+                "Predicts the propensity of a customer to unsubscribe",
+                "2021-10-28",
+                "60",
                 "HUS",
-                "Propensity to Unsubscribe",
+                "Unsubscribe Model",
                 "unsubscribe",
-                "Susan Miller",
-                "smiller@xyz.com",
+                "Decisioning",
+                "decisioning@fake.com",
                 "7",
-                "Active",
+                "success",
             ],
-            "joinKeys": ["21.7.29"],
+            "joinKeys": ["21.11.04"],
         },
         {
             "features": [
-                "2021-07-30",
-                "2021-07-30",
-                "Propensity of a customer unsubscribing after "
-                "receiving an email.",
-                "2021-07-16",
-                "90",
+                "2021-11-14",
+                "2021-11-15 17:21:06",
+                "Predicts the propensity of a customer to unsubscribe",
+                "2021-11-07",
+                "60",
                 "HUS",
-                "Propensity to Unsubscribe",
+                "Unsubscribe Model",
                 "unsubscribe",
-                "Susan Miller",
-                "smiller@xyz.com",
+                "Decisioning",
+                "decisioning@fake.com",
                 "7",
-                "Active",
+                "success",
             ],
-            "joinKeys": ["21.7.30"],
-        },
-        {
-            "features": [
-                "2021-07-31",
-                "2021-07-31",
-                "Propensity of a customer unsubscribing after "
-                "receiving an email.",
-                "2021-07-17",
-                "90",
-                "HUS",
-                "Propensity to Unsubscribe",
-                "unsubscribe",
-                "Susan Miller",
-                "smiller@xyz.com",
-                "7",
-                "Active",
-            ],
-            "joinKeys": ["21.7.31"],
+            "joinKeys": ["21.11.14"],
         },
     ]
 }
@@ -482,32 +463,35 @@ MOCKED_MODEL_DRIFT = {
         {
             "features": [
                 233.5,
+                None,
                 "2021-07-28",
                 "Lifetime Value",
                 "ltv",
-                "21.7.28",
+                "21.10.12",
             ],
-            "joinKeys": ["21.7.28"],
+            "joinKeys": ["21.10.12"],
         },
         {
             "features": [
                 263.3,
+                None,
                 "2021-07-29",
                 "Lifetime Value",
                 "ltv",
-                "21.7.29",
+                "21.11.04",
             ],
-            "joinKeys": ["21.7.29"],
+            "joinKeys": ["21.11.04"],
         },
         {
             "features": [
                 215.5,
                 "2021-07-30",
+                "2021-07-30",
                 "Lifetime Value",
                 "ltv",
-                "21.7.30",
+                "21.11.14",
             ],
-            "joinKeys": ["21.7.30"],
+            "joinKeys": ["21.11.14"],
         },
     ]
 }
@@ -697,7 +681,7 @@ MOCKED_MODEL_LIFT_CHART = [
 
 MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
     {
-        api_c.ID: 1,
+        api_c.ID: "1",
         api_c.CREATE_TIME: datetime.utcnow(),
         api_c.LAST_TRAINED: datetime.utcnow(),
         api_c.DESCRIPTION: "Predicts the propensity of a customer",
@@ -707,11 +691,11 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
         api_c.TYPE: api_c.PURCHASE,
         api_c.OWNER: "Susan Miller",
         api_c.STATUS: api_c.STATUS_ACTIVE,
-        api_c.CURRENT_VERSION: "21.7.28",
+        api_c.CURRENT_VERSION: "21.10.12",
         api_c.PREDICTION_WINDOW: 90,
     },
     {
-        api_c.ID: 1,
+        api_c.ID: "1",
         api_c.CREATE_TIME: datetime.utcnow(),
         api_c.LAST_TRAINED: datetime.utcnow(),
         api_c.DESCRIPTION: "Predicts the propensity of a customer",
@@ -721,11 +705,11 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
         api_c.TYPE: api_c.PURCHASE,
         api_c.OWNER: "Susan Miller",
         api_c.STATUS: api_c.STATUS_ACTIVE,
-        api_c.CURRENT_VERSION: "21.7.29",
+        api_c.CURRENT_VERSION: "21.11.04",
         api_c.PREDICTION_WINDOW: 90,
     },
     {
-        api_c.ID: 1,
+        api_c.ID: "1",
         api_c.CREATE_TIME: datetime.utcnow(),
         api_c.LAST_TRAINED: datetime.utcnow(),
         api_c.DESCRIPTION: "Predicts the propensity of a customer",
@@ -735,18 +719,23 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
         api_c.TYPE: api_c.PURCHASE,
         api_c.OWNER: "Susan Miller",
         api_c.STATUS: api_c.STATUS_ACTIVE,
-        api_c.CURRENT_VERSION: "21.7.30",
+        api_c.CURRENT_VERSION: "21.11.14",
         api_c.PREDICTION_WINDOW: 90,
     },
 ]
+
 
 MOCKED_MODEL_PROPENSITY_FEATURES = {
     api_c.RESULTS: [
         {
             api_c.FEATURES: [
+                "2022-01-06",
                 "2021-07-28",
                 "1to2y-COGS-sum",
-                1165.89062,
+                "description",
+                0.1745832178355047,
+                100351.13774108887,
+                17519.624540293255,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.28",
@@ -756,7 +745,11 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
         {
             api_c.FEATURES: [
                 "2021-07-29",
+                "2021-07-29",
                 "1to2y-data_source-orders",
+                "description",
+                0.1745832178355047,
+                100351.13774108887,
                 880.273438,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
@@ -767,7 +760,11 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
         {
             api_c.FEATURES: [
                 "2021-07-30",
+                "2021-07-30",
                 "1to2y-ITEMQTY-avg",
+                "description",
+                0.1745832178355047,
+                100351.13774108887,
                 210.867187,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
@@ -778,8 +775,12 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
         {
             api_c.FEATURES: [
                 "2021-07-31",
+                "2021-07-31",
                 "1to2y-COGS-sum",
-                364.695312,
+                "description",
+                0.1745832178355047,
+                100351.13774108887,
+                210.867187,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.31",
@@ -793,8 +794,12 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
     api_c.RESULTS: [
         {
             api_c.FEATURES: [
+                None,
                 "2021-07-28",
                 "1to2y-COGS-sum",
+                "description",
+                -1165.89062,
+                -1165.89062,
                 -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
@@ -804,9 +809,13 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
         },
         {
             api_c.FEATURES: [
+                None,
                 "2021-07-29",
                 "1to2y-data_source-orders",
+                "description",
                 -880.273438,
+                -1165.89062,
+                -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.29",
@@ -815,9 +824,13 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
         },
         {
             api_c.FEATURES: [
+                None,
                 "2021-07-30",
                 "1to2y-ITEMQTY-avg",
+                "description",
                 -210.867187,
+                -1165.89062,
+                -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.30",
@@ -826,9 +839,13 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
         },
         {
             api_c.FEATURES: [
+                None,
                 "2021-07-31",
                 "1to2y-COGS-sum",
+                "description",
                 -364.695312,
+                -1165.89062,
+                -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.31",
@@ -838,8 +855,12 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
         {
             api_c.FEATURES: [
                 "2021-07-31",
+                "2021-07-31",
                 "1to2y-COGS-sum",
+                "description",
                 "not a number",
+                -1165.89062,
+                -1165.89062,
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.31",
@@ -1251,6 +1272,165 @@ REVENUE = "revenue"
 AVG_SPEND = "avg_spend"
 
 DESTINATIONS_CATEGORY = "destinations_category"
+
+SAMPLE_USER_JIRA_TICKETS = {
+    "expand": "names,schema",
+    "startAt": 0,
+    "maxResults": 50,
+    "total": 1,
+    "issues": [
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "id": "1234",
+            "self": "https://jira.hux.deloitte.com/rest/api/2/issue/117518",
+            "key": "HUS-0000",
+            "fields": {
+                "summary": "Test ticket summary",
+                "created": "2021-12-01T15:35:18.000+0000",
+                "status": {
+                    "self": "https://jira.hux.deloitte.com/rest/api/2/status/10000",
+                    "description": "",
+                    "iconUrl": "https://jira.hux.deloitte.com/images/icons/statuses/open.png",
+                    "name": "To Do",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "https://jira.hux.deloitte.com/rest/api/2/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "To Do",
+                    },
+                },
+            },
+        }
+    ],
+}
+
+SAMPLE_USER_REQUEST_JIRA_ISSUES = {
+    "expand": "schema,names",
+    "startAt": 0,
+    "maxResults": 50,
+    "total": 3,
+    "issues": [
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "id": "121524",
+            "self": "https://jira.hux.fake.com/rest/api/2/issue/121524",
+            "key": "HUS-2005",
+            "fields": {
+                "description": "*Project Name:* ADV \n*Required Info:* Please add Risheek New to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* Risheek, New \n*Email:* rn@fake.com \n*Access Level:* admin \n*PII Access:* False \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:* Risheek Chandra",
+                "assignee": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/user?username=rgchandra%40fake.com",
+                    "name": "rgchandra@fake.com",
+                    "key": "JIRAUSER13410",
+                    "emailAddress": "rgchandra@fake.com",
+                    "avatarUrls": {
+                        "48x48": "https://jira.hux.fake.com/secure/useravatar?avatarId=10338",
+                        "24x24": "https://jira.hux.fake.com/secure/useravatar?size=small&avatarId=10338",
+                        "16x16": "https://jira.hux.fake.com/secure/useravatar?size=xsmall&avatarId=10338",
+                        "32x32": "https://jira.hux.fake.com/secure/useravatar?size=medium&avatarId=10338",
+                    },
+                    "displayName": "Risheek Chandra",
+                    "timeZone": "America/New_York",
+                },
+                "updated": "2022-01-12T12:09:24.000+0000",
+                "created": "2022-01-12T12:09:23.000+0000",
+                "status": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/status/10000",
+                    "description": "",
+                    "iconUrl": "https://jira.hux.fake.com/images/icons/statuses/open.png",
+                    "name": "To Do",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "https://jira.hux.fake.com/rest/api/2/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "To Do",
+                    },
+                },
+            },
+        },
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "id": "121619",
+            "self": "https://jira.hux.fake.com/rest/api/2/issue/121619",
+            "key": "HUS-2008",
+            "fields": {
+                "description": "*Project Name:* ADV \n*Required Info:* Please add Sarah Huxley to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* Sarah, Huxley \n*Email:* sh@fake.com \n*Access Level:* admin \n*PII Access:* False \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:* Risheek Chandra",
+                "assignee": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/user?username=rgchandra%40fake.com",
+                    "name": "rgchandra@fake.com",
+                    "key": "JIRAUSER13410",
+                    "emailAddress": "rgchandra@fake.com",
+                    "avatarUrls": {
+                        "48x48": "https://jira.hux.fake.com/secure/useravatar?avatarId=10338",
+                        "24x24": "https://jira.hux.fake.com/secure/useravatar?size=small&avatarId=10338",
+                        "16x16": "https://jira.hux.fake.com/secure/useravatar?size=xsmall&avatarId=10338",
+                        "32x32": "https://jira.hux.fake.com/secure/useravatar?size=medium&avatarId=10338",
+                    },
+                    "displayName": "Risheek Chandra",
+                    "timeZone": "America/New_York",
+                },
+                "updated": "2022-01-12T14:13:50.000+0000",
+                "created": "2022-01-12T14:13:50.000+0000",
+                "status": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/status/10000",
+                    "description": "",
+                    "iconUrl": "https://jira.hux.fake.com/images/icons/statuses/open.png",
+                    "name": "To Do",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "https://jira.hux.fake.com/rest/api/2/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "To Do",
+                    },
+                },
+            },
+        },
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "id": "121621",
+            "self": "https://jira.hux.fake.com/rest/api/2/issue/121621",
+            "key": "HUS-2010",
+            "fields": {
+                "description": "*Project Name:* ADV \n*Required Info:* Please add Sarah Huxley to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* Sarah, Huxley \n*Email:* sh@fake.com \n*Access Level:* admin \n*PII Access:* False \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:* Risheek Chandra",
+                "assignee": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/user?username=rgchandra%40fake.com",
+                    "name": "rgchandra@fake.com",
+                    "key": "JIRAUSER13410",
+                    "emailAddress": "rgchandra@fake.com",
+                    "avatarUrls": {
+                        "48x48": "https://jira.hux.fake.com/secure/useravatar?avatarId=10338",
+                        "24x24": "https://jira.hux.fake.com/secure/useravatar?size=small&avatarId=10338",
+                        "16x16": "https://jira.hux.fake.com/secure/useravatar?size=xsmall&avatarId=10338",
+                        "32x32": "https://jira.hux.fake.com/secure/useravatar?size=medium&avatarId=10338",
+                    },
+                    "displayName": "Risheek Chandra",
+                    "timeZone": "America/New_York",
+                },
+                "updated": "2022-01-12T15:25:55.000+0000",
+                "created": "2022-01-12T15:25:54.000+0000",
+                "status": {
+                    "self": "https://jira.hux.fake.com/rest/api/2/status/10000",
+                    "description": "",
+                    "iconUrl": "https://jira.hux.fake.com/images/icons/statuses/open.png",
+                    "name": "In Progress",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "https://jira.hux.fake.com/rest/api/2/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "In Progress",
+                    },
+                },
+            },
+        },
+    ],
+}
 
 
 def validate_schema(

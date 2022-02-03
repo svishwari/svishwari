@@ -28,6 +28,7 @@
     <data-cards
       bordered
       :items="Object.values(value.audiences)"
+      card-class="pa-4 body-1"
       :fields="[
         {
           key: 'name',
@@ -159,30 +160,7 @@
         >
       </v-row>
     </v-alert>
-    <h5 class="text-h3 mb-2">
-      Setup a delivery schedule
-      <tooltip>
-        <template #label-content>
-          <v-icon color="primary" :size="8" class="ml-1 mb-1">
-            mdi-information-outline
-          </v-icon>
-        </template>
-        <template #hover-content>
-          <v-sheet max-width="240px">
-            <h6 class="text-caption mb-2">Manual delivery</h6>
-            <p class="black--text text--darken-1">
-              Choose this option if you want the engagement delivered
-              immediately or at a future date and time.
-            </p>
-            <h6 class="text-caption mb-2">Recurring delivery</h6>
-            <p class="black--text text--darken-1">
-              Choose this option if you want the engagement delivered on a
-              specific recurring basis you selected.
-            </p>
-          </v-sheet>
-        </template>
-      </tooltip>
-    </h5>
+    <h5 class="text-h3 mb-2">Setup a delivery schedule</h5>
     <div class="d-flex align-items-center">
       <plain-card
         :icon="!isRecurringFlag ? 'manual-light' : 'manual-dark'"
@@ -196,6 +174,7 @@
         title-color="black--text"
         height="175"
         width="200"
+        top-adjustment="mt-3"
         :class="!isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
         @onClick="changeSchedule(false)"
       />
@@ -211,6 +190,7 @@
         title-color="black--text"
         height="175"
         width="200"
+        top-adjustment="mt-3"
         :class="isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
         @onClick="changeSchedule(true)"
       />
@@ -263,13 +243,13 @@
           tile
           variant="white"
           height="40"
-          class="btn-border box-shadow-none"
+          class="btn-border box-shadow-none rounded-0"
           @click.native="
             dontShowModal = true
             $router.go(-1)
           "
         >
-          <span class="primary--text">Cancel</span>
+          <span class="primary--text">Cancel &amp; return</span>
         </hux-button>
       </template>
 
@@ -279,6 +259,7 @@
           tile
           color="primary"
           height="44"
+          class="rounded-0"
           :is-disabled="
             !isValid ||
             (isRecurringFlag &&
@@ -763,9 +744,8 @@ export default {
   width: 80px;
   height: 24px;
   color: transparent;
-  top: 18px;
-  position: absolute;
-  left: 820px;
+  position: relative;
+  top: 2px;
   &:hover {
     cursor: pointer;
   }
@@ -791,5 +771,6 @@ export default {
   background: #f9fafb;
   position: relative;
   bottom: 25px;
+  border-radius: 5px;
 }
 </style>

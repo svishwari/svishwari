@@ -440,10 +440,27 @@ class CustomersListview(SwaggerView):
         )
 
         offset = (batch_number - 1) * batch_size
+
+        if user.get(api_c.USER_PII_ACCESS) is True:
+            redacted_data = get_customer_profiles(
+                token_response[0], batch_size, offset
+            )
+        else:
+
+            redacted_data = {}
+            customer_list = get_customer_profiles(
+                token_response[0], batch_size, offset
+            )
+            redacted_data[api_c.TOTAL_CUSTOMERS] = customer_list.get(
+                api_c.TOTAL_CUSTOMERS
+            )
+            redacted_data[api_c.CUSTOMERS_TAG] = [
+                redact_fields(x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS)
+                for x in customer_list.get(api_c.CUSTOMERS_TAG)
+            ]
+
         return (
-            CustomersSchema().dump(
-                get_customer_profiles(token_response[0], batch_size, offset)
-            ),
+            CustomersSchema().dump(redacted_data),
             HTTPStatus.OK,
         )
 
@@ -975,7 +992,7 @@ class CustomerEvents(SwaggerView):
         Validation.validate_hux_id(hux_id)
         interval = request.args.get(api_c.INTERVAL, api_c.DAY).lower()
 
-        if request.json is not None:
+        if request.json:
             start_date = request.json.get(api_c.START_DATE)
             end_date = min(
                 request.json.get(api_c.END_DATE),

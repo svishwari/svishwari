@@ -7,6 +7,7 @@ from typing import Tuple
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
+from dateutil.parser import parse, ParserError
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
@@ -18,6 +19,9 @@ from huxunifylib.database.user_management import (
     get_all_users,
     update_user,
 )
+from huxunify.api.exceptions.integration_api_exceptions import (
+    FailedAPIDependencyError,
+)
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -25,19 +29,26 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     requires_access_levels,
 )
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
     get_user_from_db,
     create_description_for_user_request,
+    filter_team_member_requests,
 )
 from huxunify.api.schema.user import (
     UserSchema,
     UserPatchSchema,
+    UserPreferencesSchema,
     TicketSchema,
     TicketGetSchema,
     NewUserRequest,
+    RequestedUserSchema,
 )
-from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.schema.utils import (
+    AUTH401_RESPONSE,
+    FAILED_DEPENDENCY_424_RESPONSE,
+)
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
@@ -510,6 +521,7 @@ class CreateTicket(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
@@ -530,6 +542,7 @@ class CreateTicket(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
+
         issue_details = TicketSchema().load(request.get_json())
         # JIRA automated trigger activated when it sees '[REPORTED UI ISSUE]' in the title
         new_issue = JiraConnection().create_jira_issue(
@@ -537,7 +550,9 @@ class CreateTicket(SwaggerView):
             summary=f"HUS: [REPORTED UI ISSUE] {issue_details[api_c.SUMMARY]}",
             description=(
                 f"{issue_details[api_c.DESCRIPTION]}\n\n"
-                f"Reported By: {user[api_c.USER_NAME]}\nEnvironment: {request.url_root}"
+                f"Reported By: {user[api_c.USER_NAME]} "
+                f"({user[api_c.USER_EMAIL_ADDRESS]})\n"
+                f"Environment: {request.url_root}"
             ),
         )
 
@@ -590,6 +605,7 @@ class RequestNewUser(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
@@ -612,7 +628,10 @@ class RequestNewUser(SwaggerView):
         """
         user_request_details = NewUserRequest().load(request.get_json())
         user_request_details.update(
-            {api_c.REQUESTED_BY: user.get(api_c.USER_NAME, "")}
+            {
+                api_c.REQUESTED_BY: f"{user.get(api_c.USER_NAME)} "
+                f"({user[api_c.USER_EMAIL_ADDRESS]})"
+            }
         )
         # JIRA automated trigger activated when it sees '[NEW_USER_REQUEST]'
         # in the title
@@ -636,4 +655,233 @@ class RequestNewUser(SwaggerView):
         return (
             TicketGetSchema().dump(new_issue),
             HTTPStatus.CREATED,
+        )
+
+
+@add_view_to_blueprint(
+    user_bp, f"{api_c.USER_ENDPOINT}/tickets", "UserTickets"
+)
+class UserTickets(SwaggerView):
+    """User Tickets Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Retrieves tickets reported by user",
+            "schema": {"type": "array", "items": TicketGetSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get tickets created by user."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
+        """Retrieves tickets reported by user.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[Response, int]: Response list of user's tickets,
+                HTTP status code.
+
+        Raises:
+            FailedAPIDependencyError: Exception raised due to unexpected return
+                field format in JIRA API response.
+        """
+
+        matching_tickets = (
+            JiraConnection()
+            .search_jira_issues(
+                jql_suffix=f'{api_c.DESCRIPTION}~"{user[api_c.USER_EMAIL_ADDRESS]}"',
+                return_fields=[
+                    api_c.ID,
+                    api_c.KEY,
+                    api_c.SUMMARY,
+                    api_c.STATUS,
+                    api_c.CREATED,
+                ],
+                order_by_field=api_c.KEY,
+                sort_order="DESC",
+            )
+            .get(api_c.ISSUES)
+        )
+
+        if not matching_tickets:
+            return HuxResponse.OK("No matching tickets found for user")
+
+        my_tickets = []
+        # set the dict in ticket by rearranging the needed values as received
+        # in the jira response as per the required response schema
+        try:
+            for ticket in matching_tickets:
+                my_tickets.append(
+                    {
+                        api_c.ID: ticket.get(api_c.ID),
+                        api_c.KEY: ticket.get(api_c.KEY),
+                        api_c.SUMMARY: ticket.get(api_c.FIELDS).get(
+                            api_c.SUMMARY
+                        ),
+                        api_c.CREATED: parse(
+                            ticket.get(api_c.FIELDS).get(api_c.CREATED)
+                        ),
+                        api_c.STATUS: ticket.get(api_c.FIELDS)
+                        .get(api_c.STATUS)
+                        .get(api_c.NAME),
+                    }
+                )
+        except ParserError as error:
+            logger.error("%s: %s.", error.__class__, error)
+            raise FailedAPIDependencyError(
+                "CREATED field not in expected format in JIRA API response",
+                error.__class__,
+            ) from error
+
+        return HuxResponse.OK(data=my_tickets, data_schema=TicketGetSchema())
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/{api_c.USER_PREFERENCES}",
+    "UserPreferencesView",
+)
+class UserPreferencesView(SwaggerView):
+    """User Preferences class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input user preferences body.",
+            "example": {api_c.ALERTS: api_c.ALERT_SAMPLE_RESPONSE},
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "User preferences updated.",
+            "schema": UserSchema,
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Invalid data received.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "User not found.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels([api_c.ADMIN_LEVEL])
+    def put(self, user: dict) -> Tuple[dict, int]:
+        """Updates a user preferences.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
+
+        Returns:
+            Tuple[dict, int]: User doc, HTTP status code.
+        """
+
+        body = UserPreferencesSchema().load(request.get_json())
+
+        if not body:
+            return {
+                api_c.MESSAGE: "No alert body provided."
+            }, HTTPStatus.BAD_REQUEST
+
+        updated_user = update_user(
+            get_db_client(),
+            okta_id=user[db_c.OKTA_ID],
+            update_doc={
+                **body,
+                **{
+                    db_c.UPDATED_BY: user[api_c.USER_NAME],
+                },
+            },
+        )
+
+        # update the document
+        return (
+            UserSchema().dump(updated_user),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/{api_c.REQUESTED_USERS}",
+    "UsersRequested",
+)
+class UsersRequested(SwaggerView):
+    """User Profile Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Retrieve requested users.",
+            "schema": {"type": "array", "items": RequestedUserSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get requested users."
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
+        """Retrieves requested users.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: dict of requested users, HTTP status code.
+        """
+
+        summary = api_c.NEW_USER_REQUEST_PREFIX
+        summary = summary.replace("[", '"').replace("]", '"')
+
+        jira_issues = JiraConnection().get_issues(
+            jql=f"summary~{summary} AND status != {api_c.STATE_DONE} ORDER BY "
+            f"updated DESC",
+            fields=f"{api_c.DESCRIPTION},{api_c.STATUS},{api_c.UPDATED},"
+            f"{api_c.CREATED}",
+        )
+
+        jira_issues = jira_issues.get(api_c.ISSUES)
+        if not jira_issues:
+            return {"message": "No user requests found."}, HTTPStatus.OK
+
+        return (
+            jsonify(
+                RequestedUserSchema().dump(
+                    filter_team_member_requests(jira_issues),
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
         )

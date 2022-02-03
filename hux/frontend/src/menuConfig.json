@@ -113,6 +113,21 @@
         }
       ],
       "display": true
+    },
+    {
+      "label": "Measurement",
+      "menu": [
+        {
+          "icon": "email_deliverability",
+          "title": "Email Deliverability",
+          "link": {
+            "name": "EmailDeliverability"
+          },
+          "size": 28,
+          "display": true
+        }
+      ],
+      "display": true
     }
   ]
 }

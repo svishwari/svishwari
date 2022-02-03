@@ -1,8 +1,8 @@
 <template>
   <div class="pt-2">
     <v-card class="overview-card px-6 py-5 card-style">
-      <v-card-title class="d-flex justify-space-between pa-0 mb-2">
-        <h3 class="text-h3 mb-2">Engagement overview</h3>
+      <v-card-title class="d-flex justify-space-between pa-0 pb-2">
+        <h3 class="text-h3 pb-2">Engagement overview</h3>
         <div class="d-flex align-center">
           <v-btn
             text
@@ -25,7 +25,7 @@
 
       <overview-metric-cards :data="data" />
     </v-card>
-    <v-card class="pa-6 card-style mt-6">
+    <v-card v-if="data.audiences.length > 0" class="pa-6 card-style mt-6">
       <v-card-title class="d-flex justify-space-between pa-0">
         <h3 class="text-h3 mb-2">
           <icon
@@ -47,13 +47,13 @@
             @click="$emit('deliverEngagement', $event)"
           >
             <icon
-              class="mr-2"
+              class="mr-1"
               type="deliver_2"
-              :size="24"
+              :size="37"
               :color="'primary'"
               :variant="'base'"
             />
-            Deliver All
+            <span class="deliverAll"> Deliver all </span>
           </v-btn>
         </div>
       </v-card-title>
@@ -69,18 +69,41 @@
         @onSectionAction="$emit('triggerOverviewAction', $event)"
       />
     </v-card>
+    <div v-else class="eng-dash-no-aud-container">
+      <div class="eng-dash-no-aud">
+        <icon type="lift-table-empty" size="50" />
+        <div class="text-h2 mb-3">No delivery data is available</div>
+        <div class="text-body-2">
+          The engagement has no audiences to be delivered. Please add audiences
+          to this engagement first.
+        </div>
+        <hux-button
+          variant="primary base"
+          icon-color="white"
+          icon-variant="base"
+          size="large"
+          class="mt-4"
+          is-tile
+          height="40"
+          @click="$emit('triggerSelectAudience', '')"
+        >
+          Add an audience
+        </hux-button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Icon from "@/components/common/Icon.vue"
+import HuxButton from "@/components/common/huxButton"
 import OverviewMetricCards from "./Components/OverviewMetricCards.vue"
 import DeliveryTable from "./Components/DeliveryTable.vue"
 import { mapGetters } from "vuex"
 
 export default {
   name: "Overview",
-  components: { OverviewMetricCards, Icon, DeliveryTable },
+  components: { OverviewMetricCards, Icon, DeliveryTable, HuxButton },
   props: {
     data: {
       type: Object,
@@ -205,7 +228,7 @@ export default {
   position: absolute !important;
 }
 .overview-card {
-  height: 150px;
+  height: 156px;
 }
 .audience-table {
   border-radius: 12px;
@@ -219,6 +242,23 @@ export default {
         }
       }
     }
+  }
+}
+.deliverAll {
+  margin-top: 2px;
+}
+.eng-dash-no-aud-container {
+  padding: 32px 55px 24px 55px;
+  background: var(--v-white-base);
+  margin-top: 24px;
+  border-radius: 12px;
+  @extend .box-shadow-5;
+  .eng-dash-no-aud {
+    text-align: center;
+    padding-top: 16px;
+    padding-bottom: 15px;
+    background-image: url("../../../assets/images/no-lift-chart-frame.png");
+    background-size: contain;
   }
 }
 </style>

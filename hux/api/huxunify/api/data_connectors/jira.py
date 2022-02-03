@@ -1,11 +1,17 @@
 """Purpose of this file is for holding methods to query and push data to JIRA
 """
+from typing import Tuple
+
 from jira import JIRA, JIRAError
+
+from huxunifylib.util.general.logging import logger
+
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
+from huxunify.api.prometheus import record_health_status_metric
 
 
 class JiraConnection:
@@ -25,12 +31,66 @@ class JiraConnection:
                 }
             },
         )
+
         self.project_key = config.JIRA_PROJECT_KEY
+
+        self.jira_user_email = config.JIRA_USER_EMAIL
+
+    @staticmethod
+    def check_jira_connection() -> Tuple[bool, str]:
+        """Validates JIRA connection.
+
+        Returns:
+            Tuple[bool, str]: Flag if connection is valid and message.
+        """
+        config = get_config()
+        try:
+            JIRA(
+                server=config.JIRA_SERVER,
+                validate=True,
+                options={
+                    "headers": {
+                        **JIRA.DEFAULT_OPTIONS["headers"],
+                        api_c.AUTHORIZATION: f"Bearer {config.JIRA_API_KEY}",
+                    }
+                },
+            )
+            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, 200)
+            return True, "Jira available"
+
+        except JIRAError as jira_error:
+            logger.error(
+                "Encountered Error: %s while connecting to JIRA and %s Status "
+                "code.",
+                jira_error.text,
+                jira_error.status_code,
+            )
+            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, False)
+            return False, jira_error.text
+
+        except AttributeError as attribute_error:
+            logger.error(
+                "Could not connect to JIRA %s",
+                getattr(attribute_error, "message", repr(attribute_error)),
+            )
+            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, False)
+            return (
+                False,
+                getattr(attribute_error, "message", repr(attribute_error)),
+            )
+
+        except Exception as exception:  # pylint: disable=broad-except
+            logger.error(
+                "Could not connect to JIRA %s",
+                getattr(exception, "message", repr(exception)),
+            )
+            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, False)
+            return False, getattr(exception, "message", repr(exception))
 
     def create_jira_issue(
         self, issue_type: str, summary: str, description: str
-    ):
-        """Create a new issue in JIRA
+    ) -> dict:
+        """Create a new issue in JIRA.
 
         Args:
             issue_type (str): Type of issue
@@ -41,7 +101,8 @@ class JiraConnection:
             dict: Object of new issue created
 
         Raises:
-            FailedAPIDependencyError: Any exception raised during endpoint execution.
+            FailedAPIDependencyError: Any exception raised during endpoint
+                execution.
         """
 
         try:
@@ -68,3 +129,71 @@ class JiraConnection:
             api_c.SUMMARY: summary,
             api_c.DESCRIPTION: description,
         }
+
+    def search_jira_issues(
+        self,
+        jql_suffix: str,
+        return_fields: list,
+        order_by_field: str = None,
+        sort_order: str = None,
+    ) -> list:
+        """Searches for issues in the configured project on Jira that matches
+        jql_suffix in the ticket ordered by order_by_field and returns the
+        return_fields.
+
+        Args:
+            jql_suffix (str): Suffix to append to the pre-cooked jql string.
+            return_fields (list): List of fields that are to be returned.
+            order_by_field (str): field based on which the results are to be
+                ordered.
+            sort_order (str): Order by value (ASC or DESC).
+
+        Returns:
+            list: List of matching issues returned via search api.
+
+        Raises:
+            FailedAPIDependencyError: Any exception raised during endpoint
+                execution.
+        """
+
+        jql = (
+            f"project={self.project_key} AND "
+            f'reporter="{self.jira_user_email}" AND {jql_suffix}'
+        )
+        if order_by_field:
+            sort_order = sort_order if sort_order else "ASC"
+            jql = f"{jql} ORDER BY {order_by_field} {sort_order}"
+
+        try:
+            matched_issues = self.jira_client.search_issues(
+                jql_str=jql,
+                json_result=True,
+                fields=",".join(x for x in return_fields),
+            )
+        except JIRAError as jira_error:
+            raise FailedAPIDependencyError(
+                "Failed to connect to JIRA.",
+                jira_error.status_code,
+            ) from jira_error
+
+        return matched_issues
+
+    def get_issues(self, jql: str, fields: str) -> dict:
+        """Getting issues from Jira.
+
+        Args:
+            jql (str): Jira Query Language string.
+            fields (str): Name of fields to fetch comma separated.
+
+        Returns:
+            dict: Dict of issues found.
+        """
+
+        jql = (
+            f"project={self.project_key} AND component="
+            f"{self.project_key} AND "
+            f"{jql}"
+        )
+        return self.jira_client.search_issues(
+            jql_str=jql, json_result=True, fields=fields
+        )

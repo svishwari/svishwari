@@ -460,6 +460,7 @@ class DestinationAuthenticationPostView(SwaggerView):
                 campaign_de=campaign_de,
                 user_name=user[api_c.USER_NAME],
                 status=db_c.STATUS_SUCCEEDED,
+                link=body.get(db_c.LINK),
             ),
             data_schema=DestinationGetSchema(),
         )
@@ -1162,7 +1163,7 @@ class DestinationsRequestView(SwaggerView):
 
             destination_request.update(
                 {
-                    "Requested By": user[api_c.USER_NAME],
+                    "Requested By": f"{user[api_c.USER_NAME]} ({user[api_c.USER_EMAIL_ADDRESS]})",
                     "Environment": request.url_root,
                 }
             )

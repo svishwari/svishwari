@@ -35,6 +35,7 @@ export default {
     isDisabled: {
       control: { type: "boolean" },
     },
+    "on-date-select": { table: { disable: true } },
   },
   args: {
     selected: "Select date",

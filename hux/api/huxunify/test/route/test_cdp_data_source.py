@@ -8,6 +8,7 @@ import mongomock
 import requests_mock
 from marshmallow import ValidationError
 
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database.cdp_data_source_management import (
     create_data_source,
     bulk_write_data_sources,
@@ -25,7 +26,7 @@ from huxunify.api.schema.cdp_data_source import (
 from huxunify.app import create_app
 
 
-class CdpDataSourcesTest(TestCase):
+class CdpDataSourcesTest(RouteTestCase):
     """Test CDP Data Sources CRUD APIs."""
 
     def setUp(self) -> None:
@@ -35,47 +36,13 @@ class CdpDataSourcesTest(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
         )
 
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        super().setUp()
 
         # mock get_db_client() in cdp_data_source
         mock.patch(
             "huxunify.api.route.cdp_data_source.get_db_client",
             return_value=self.database,
         ).start()
-
-        # mock get_db_client() in decorators
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock request for introspect call
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
-        self.request_mocker.start()
-
-        # stop all mocks in cleanup
-        self.addCleanup(mock.patch.stopall)
-
-        # setup the flask test client
-        self.test_client = create_app().test_client()
-
-        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         # Deep copy data source response object
         data_sources = copy.deepcopy(t_c.DATASOURCES_RESPONSE[api_c.BODY])[:2]
@@ -98,7 +65,7 @@ class CdpDataSourcesTest(TestCase):
 
         valid_response = self.data_sources[0]
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.data_sources_api_endpoint}/{valid_response[api_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -119,7 +86,7 @@ class CdpDataSourcesTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             self.data_sources_api_endpoint,
             query_string={api_c.ONLY_ADDED: False},
             headers=t_c.STANDARD_HEADERS,
@@ -168,7 +135,7 @@ class CdpDataSourcesTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             self.data_sources_api_endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
@@ -217,7 +184,7 @@ class CdpDataSourcesTest(TestCase):
             message=api_c.DELETE_DATASOURCES_SUCCESS.format(data_source_types)
         )
 
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{self.data_sources_api_endpoint}",
             query_string={api_c.DATASOURCES: data_source_types},
             headers=t_c.STANDARD_HEADERS,
@@ -246,7 +213,7 @@ class CdpDataSourcesTest(TestCase):
             },
         ]
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.data_sources_api_endpoint,
             data=json.dumps(data_sources),
             headers=t_c.STANDARD_HEADERS,
@@ -277,7 +244,7 @@ class CdpDataSourcesTest(TestCase):
             "message": f"Invalid CDP data source ID received {ds_id}."
         }
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.data_sources_api_endpoint}/{ds_id}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -288,7 +255,7 @@ class CdpDataSourcesTest(TestCase):
     def test_delete_data_sources_by_type_empty_data(self):
         """Test delete data sources with empty data."""
 
-        response = self.test_client.delete(
+        response = self.app.delete(
             f"{self.data_sources_api_endpoint}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -314,7 +281,7 @@ class CdpDataSourcesTest(TestCase):
             },
         ]
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.data_sources_api_endpoint,
             data=json.dumps(data_sources),
             headers=t_c.STANDARD_HEADERS,
@@ -326,7 +293,7 @@ class CdpDataSourcesTest(TestCase):
     def test_create_data_source_no_inputs(self):
         """Test creating data source without any inputs"""
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.data_sources_api_endpoint,
             data=json.dumps([{}]),
             headers=t_c.STANDARD_HEADERS,
@@ -352,7 +319,7 @@ class CdpDataSourcesTest(TestCase):
             },
         ]
 
-        response = self.test_client.post(
+        response = self.app.post(
             self.data_sources_api_endpoint,
             data=json.dumps(data_sources),
             headers=t_c.STANDARD_HEADERS,
@@ -366,7 +333,7 @@ class CdpDataSourcesTest(TestCase):
 
         valid_data_source = self.data_sources[0]
 
-        response = self.test_client.patch(
+        response = self.app.patch(
             self.data_sources_api_endpoint,
             data=json.dumps(
                 {
@@ -389,7 +356,7 @@ class CdpDataSourcesTest(TestCase):
 
         valid_data_source = self.data_sources[0]
 
-        response = self.test_client.patch(
+        response = self.app.patch(
             self.data_sources_api_endpoint,
             data=json.dumps(
                 {
@@ -427,7 +394,7 @@ class CdpDataSourcesTest(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}/"
             f"{data_source_type}/{api_c.DATAFEEDS}",
             headers=t_c.STANDARD_HEADERS,

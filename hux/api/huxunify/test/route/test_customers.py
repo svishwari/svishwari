@@ -1,15 +1,12 @@
 """Purpose of this file is to house all the customers api tests."""
 import json
 import string
-from unittest import TestCase, mock
+from unittest import mock
 from http import HTTPStatus
 
-import mongomock
-import requests_mock
 from hypothesis import given, strategies as st
 
-from huxunifylib.database.client import DatabaseClient
-import huxunifylib.database.constants as db_c
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.customers import (
@@ -31,32 +28,19 @@ from huxunify.api.schema.customers import (
     CustomerEventsSchema,
     TotalCustomersInsightsSchema,
 )
-from huxunify.app import create_app
 
 
-# pylint: disable=R0904
-class TestCustomersOverview(TestCase):
+# pylint: disable=too-many-public-methods,too-many-lines
+class TestCustomersOverview(RouteTestCase):
     """Purpose of this class is to test Customers overview."""
 
     def setUp(self):  # pylint: disable=arguments-differ
         """Sets up Test Client."""
 
+        super().setUp()
+
         self.customers = f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
         self.idr = f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}"
-
-        # mock request for introspect call
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.start()
-
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
 
         mock.patch(
             "huxunify.api.route.customers.get_db_client",
@@ -67,10 +51,6 @@ class TestCustomersOverview(TestCase):
             "huxunify.api.route.decorators.get_user_from_db",
             return_value=t_c.VALID_DB_USER_RESPONSE,
         ).start()
-
-        # setup the flask test client
-        self.test_client = create_app().test_client()
-        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
     def test_get_customers(self):
         """Test get customers."""
@@ -96,7 +76,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}="
             f"{api_c.CUSTOMERS_DEFAULT_BATCH_SIZE}&"
             f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}="
@@ -106,7 +86,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.customers}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -133,7 +113,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.customers}/{api_c.OVERVIEW}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -162,7 +142,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.idr}/{api_c.OVERVIEW}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -183,7 +163,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.customers}/{t_c.SAMPLE_CUSTOMER_ID}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -222,7 +202,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{self.customers}/{t_c.SAMPLE_CUSTOMER_ID}?{api_c.REDACT_FIELD}=False",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -288,7 +268,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{self.customers}/{api_c.OVERVIEW}",
             data=json.dumps(filter_attributes),
             headers=t_c.STANDARD_HEADERS,
@@ -328,7 +308,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{self.customers}/{api_c.OVERVIEW}",
             data=json.dumps(filter_attributes),
             headers=t_c.STANDARD_HEADERS,
@@ -347,7 +327,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -373,7 +353,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}/"
             f"{datafeed_id}",
             headers=t_c.STANDARD_HEADERS,
@@ -392,7 +372,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.GEOGRAPHICAL}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -423,7 +403,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
             f"{api_c.DEMOGRAPHIC}",
             query_string={
@@ -468,7 +448,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.MATCHING_TRENDS}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -507,10 +487,33 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
             query_string={api_c.INTERVAL: interval},
             data=json.dumps(filter_attributes),
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(CustomerEventsSchema(), response.json, True)
+        )
+
+    def test_customer_events_default_interval_empty_body(self):
+        """Test fetching customer events for default interval for a hux-id
+        with empty body."""
+
+        hux_id = "HUX123456789012345"
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{hux_id}/events",
+            json=t_c.CUSTOMER_EVENT_BY_DAY_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
+            data=json.dumps({}),
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -528,7 +531,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.TOTAL}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -551,7 +554,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.REVENUE}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -574,7 +577,7 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -600,7 +603,7 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.STATES}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -626,7 +629,7 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.COUNTRIES}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -651,7 +654,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.OVERVIEW}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -668,7 +671,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?{api_c.QUERY_PARAMETER_BATCH_SIZE}="
             f"{api_c.CUSTOMERS_DEFAULT_BATCH_SIZE}&"
             f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}="
@@ -690,7 +693,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
             headers=t_c.AUTH_HEADER,
         )
@@ -707,7 +710,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.OVERVIEW}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -740,7 +743,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
             query_string={api_c.INTERVAL: interval},
             data=json.dumps(filter_attributes),
@@ -759,7 +762,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.GEOGRAPHICAL}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -777,7 +780,7 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.COUNTRIES}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -794,7 +797,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.TOTAL}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -812,7 +815,7 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -837,7 +840,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
             f"{api_c.DEMOGRAPHIC}",
             query_string={
@@ -860,7 +863,7 @@ class TestCustomersOverview(TestCase):
         )
         self.request_mocker.start()
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.REVENUE}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -877,7 +880,7 @@ class TestCustomersOverview(TestCase):
         if len(hux_id) == 0:
             return
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -895,7 +898,7 @@ class TestCustomersOverview(TestCase):
         if len(hux_id) == 0:
             return
 
-        response = self.test_client.post(
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -913,7 +916,7 @@ class TestCustomersOverview(TestCase):
         if len(batch_size) == 0:
             return
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?batch_size={batch_size}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -933,7 +936,7 @@ class TestCustomersOverview(TestCase):
         if len(batch_number) == 0:
             return
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?batch_number={batch_number}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -953,7 +956,7 @@ class TestCustomersOverview(TestCase):
         if len(batch_size) == 0:
             return
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.CITIES}?batch_size={batch_size}",
             headers=t_c.STANDARD_HEADERS,
         )
@@ -973,7 +976,7 @@ class TestCustomersOverview(TestCase):
         if len(batch_number) == 0:
             return
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
             f"/{api_c.CITIES}?batch_number={batch_number}",
             headers=t_c.STANDARD_HEADERS,
@@ -992,7 +995,7 @@ class TestCustomersOverview(TestCase):
         if len(datafeed_id) == 0:
             return
 
-        response = self.test_client.get(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}/{datafeed_id}",
             headers=t_c.STANDARD_HEADERS,
         )

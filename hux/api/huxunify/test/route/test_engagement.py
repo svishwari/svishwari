@@ -31,6 +31,8 @@ from huxunifylib.database.user_management import (
     manage_user_favorites,
 )
 from huxunifylib.connectors import FacebookConnector
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
+from huxunify.api.route.utils import get_user_favorites
 from huxunify.api.schema.engagement import DisplayAdsSummary, EmailSummary
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
@@ -87,51 +89,17 @@ def validate_schema(schema: Schema, response: dict) -> bool:
 
 
 # pylint: disable=too-many-instance-attributes
-class TestEngagementMetricsDisplayAds(TestCase):
+class TestEngagementMetricsDisplayAds(RouteTestCase):
     """Purpose of this class is to test Engagement Metrics of Display Ads."""
 
     def setUp(self):
         """Sets up Test Client."""
 
-        self.app = create_app().test_client()
-
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
-
-        # mock request for introspect call
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
-        self.request_mocker.start()
-
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
-            return_value=self.database,
-        ).start()
+        super().setUp()
 
         # mock get_db_client() for the engagement.
         mock.patch(
             "huxunify.api.route.engagement.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get_db_client() in decorators
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        # mock get db client from utils
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -198,8 +166,6 @@ class TestEngagementMetricsDisplayAds(TestCase):
             end_time=datetime.utcnow(),
             generic_campaigns=[],
         )
-
-        self.addCleanup(mock.patch.stopall)
 
     def test_display_ads_summary(self):
         """Test display ads summary success."""
@@ -1491,6 +1457,28 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
         self.assertFalse(return_engagement[api_c.FAVORITE])
 
+    def test_get_engagements_with_no_favorites(self):
+        """Test to get engagements with no favorites"""
+
+        # remove favorite engagement
+        manage_user_favorites(
+            self.database,
+            self.user_doc[db_c.OKTA_ID],
+            db_c.ENGAGEMENTS,
+            ObjectId(self.engagement_ids[0]),
+            True,
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}?"
+            f"{api_c.FAVORITES}=True&{api_c.MY_ENGAGEMENTS}=True",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        fetched_engagements = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(fetched_engagements)
+
     def test_get_engagement_by_id_invalid_id(self):
         """Test get engagements API with invalid ID."""
 
@@ -1532,6 +1520,33 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_delete_engagement_and_favorite(self):
+        """Test delete engagement API with valid ID."""
+
+        engagement_id = self.engagement_ids[0]
+
+        favorites = get_user_favorites(
+            self.database,
+            self.user_name,
+            db_c.ENGAGEMENTS,
+        )
+        self.assertIn(ObjectId(engagement_id), favorites)
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        favorites = get_user_favorites(
+            self.database,
+            self.user_name,
+            db_c.ENGAGEMENTS,
+        )
+
+        # TODO : We need to ensure that API user and test user are the same
+        # Uncomment the assert after this ticket is resolved : HUS-2112
+        # self.assertNotIn(ObjectId(engagement_id), favorites)
 
     def test_delete_engagement_valid_id_delete_failed(self):
         """Test delete engagement API with valid ID

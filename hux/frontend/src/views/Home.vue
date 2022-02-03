@@ -102,15 +102,7 @@
           :height="numNotifications == 0 ? 280 : auto"
         >
           <v-card-title v-if="numNotifications != 0" class="pa-6">
-            <h3 class="text-h3 black--text text--darken-4">
-              Latest alerts
-              <span
-                v-if="numNotifications"
-                class="text-body-1 black--text text--lighten-4"
-              >
-                ({{ numNotifications }})
-              </span>
-            </h3>
+            <h3 class="text-h3 black--text text--darken-4">Latest alerts</h3>
           </v-card-title>
 
           <v-progress-linear
@@ -299,7 +291,7 @@ export default {
       firstName: "users/getFirstname",
       lastName: "users/getLastName",
       totalCustomers: "customers/totalCustomers",
-      notifications: "notifications/list",
+      notifications: "notifications/latest5",
     }),
 
     fullName() {
@@ -310,7 +302,9 @@ export default {
       return this.notifications ? this.notifications.length : 0
     },
   },
-
+  beforeCreate() {
+    this.$store.commit("notifications/RESET_ALL")
+  },
   mounted() {
     this.loadTotalCustomers()
     this.loadNotifications()

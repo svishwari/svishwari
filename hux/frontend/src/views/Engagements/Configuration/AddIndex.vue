@@ -1,5 +1,5 @@
 <template>
-  <page class="white add-eng-wrap">
+  <page class="white add-eng-wrap" max-width="953px">
     <div class="steps-wrap">
       <div
         v-if="currentStep <= 1"
@@ -164,6 +164,9 @@ import Step2 from "@/views/Engagements/Configuration/AddSteps/Step2.vue"
 import Step3 from "@/views/Engagements/Configuration/AddSteps/Step3.vue"
 import EngagementOverview from "./Overview.vue"
 
+//JSON data
+import { deliverySchedule } from "@/utils"
+
 export default {
   name: "Configuration",
 
@@ -184,8 +187,13 @@ export default {
         name: "",
         description: "",
         audiences: {},
-        delivery_schedule: 0,
+        delivery_schedule: {
+          start_date: "",
+          end_date: "",
+          schedule: JSON.parse(JSON.stringify(deliverySchedule())),
+        },
       },
+      errorMessages: [],
       showConfirmModal: false,
       currentStep: 1,
       navigateTo: false,
@@ -203,21 +211,6 @@ export default {
         }
       }
       return true
-    },
-
-    payload() {
-      const requestPayload = {
-        name: this.data.name,
-        description: this.data.description,
-        audiences: Object.values(this.data.audiences).map((audience) => {
-          return {
-            id: audience.id,
-            destinations: audience.destinations,
-          }
-        }),
-      }
-      requestPayload["delivery_schedule"] = null
-      return requestPayload
     },
   },
 
@@ -246,18 +239,67 @@ export default {
       this.currentStep = this.currentStep + 1
     },
 
+    payload() {
+      const requestPayload = {
+        name: this.data.name,
+        description: this.data.description,
+        audiences: Object.values(this.data.audiences).map((audience) => {
+          return {
+            id: audience.id,
+            destinations: audience.destinations,
+          }
+        }),
+      }
+      if (this.data.delivery_schedule.start_date) {
+        let local_schedule = this.data.delivery_schedule.schedule
+        requestPayload.delivery_schedule = {}
+        requestPayload.delivery_schedule.start_date = new Date(
+          this.data.delivery_schedule.start_date
+        ).toISOString()
+
+        if (this.data.delivery_schedule.end_date) {
+          requestPayload.delivery_schedule.end_date = new Date(
+            this.data.delivery_schedule.end_date
+          ).toISOString()
+        } else {
+          requestPayload.delivery_schedule.end_date = null
+        }
+        requestPayload.delivery_schedule.schedule = {
+          periodicity: local_schedule.periodicity,
+          every: local_schedule.every,
+          hour: local_schedule.hour,
+          minute: local_schedule.minute,
+          period: local_schedule.period,
+        }
+        if (local_schedule.periodicity === "Weekly") {
+          requestPayload.delivery_schedule.schedule.day_of_week =
+            local_schedule.day_of_week
+        }
+        if (local_schedule.periodicity === "Monthly") {
+          requestPayload.delivery_schedule.schedule.monthly_period =
+            local_schedule.monthlyPeriod
+          requestPayload.delivery_schedule.schedule.monthly_day =
+            local_schedule.monthlyDay
+          requestPayload.delivery_schedule.schedule.monthly_day_date =
+            local_schedule.monthlyDayDate
+        }
+      } else {
+        requestPayload.delivery_schedule = null
+      }
+      return requestPayload
+    },
+
     async addNewEngagement() {
       try {
         this.flagForModal = true
         this.navigateTo = true
-        const engagement = await this.addEngagement(this.payload)
+        const engagement = await this.addEngagement(this.payload())
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: engagement.id },
         })
       } catch (error) {
-        this.errorMessages.push(error.response.data.message)
-        this.scrollToTop()
+        this.errorMessages.push(error.response?.data?.message)
       }
     },
 
@@ -265,7 +307,7 @@ export default {
       try {
         this.flagForModal = true
         this.navigateTo = true
-        const engagement = await this.addEngagement(this.payload)
+        const engagement = await this.addEngagement(this.payload())
         await this.deliverEngagement(engagement.id)
         this.$router.push({
           name: "EngagementDashboard",

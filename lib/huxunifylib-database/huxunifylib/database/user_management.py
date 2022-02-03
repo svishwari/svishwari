@@ -122,6 +122,7 @@ def set_user(
             db_c.DESTINATIONS: [],
             db_c.CAMPAIGNS: [],
             db_c.ENGAGEMENTS: [],
+            db_c.LOOKALIKE: [],
         },
         db_c.USER_DASHBOARD_CONFIGURATION: {},
         db_c.USER_PII_ACCESS: pii_access,
@@ -267,6 +268,7 @@ def update_user(
         db_c.UPDATE_TIME,
         db_c.UPDATED_BY,
         db_c.USER_PII_ACCESS,
+        db_c.USER_ALERTS,
     ]
 
     # validate allowed fields, any invalid returns, raise error

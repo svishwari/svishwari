@@ -47,7 +47,13 @@
           <logo :type="selectedDestination.type" />
           <span class="pl-2">{{ selectedDestination.name }}</span>
         </template>
-        <a class="pl-4" color="primary" @click="toggleDrawer()"> Change </a>
+        <a
+          class="pl-4 text-body-2 mt-1"
+          color="primary"
+          @click="toggleDrawer()"
+        >
+          Change
+        </a>
       </p>
     </div>
 
@@ -132,6 +138,16 @@
       >
         <s-f-m-c :data-extensions="dataExtensions" @select="setExtension" />
       </div>
+      <v-col cols="6" class="py-0">
+        <text-field
+          v-model="DestinationUrl"
+          label-text="Destination URL"
+          icon="mdi-alert-circle-outline"
+          placeholder-text="URL"
+          help-text="Get directed to a specific destination to open and view your audiences. Input the domain/URL where you want to go."
+          required
+        ></text-field>
+      </v-col>
     </v-form>
 
     <!-- request destination form -->
@@ -178,7 +194,6 @@
             :rules="[rules.required]"
             input-type="text"
             height="40"
-            class="destination-field"
           />
         </v-col>
       </v-row>
@@ -280,7 +295,7 @@
           data-e2e="cancel-destination-request"
           @click="cancel()"
         >
-          Cancel
+          Cancel & return
         </hux-button>
       </template>
       <template #right>
@@ -334,8 +349,9 @@
           >
             <label
               class="d-block text-body-2 black--text text--lighten-4 mb-2 mt-6"
-              >{{ category }}</label
             >
+              {{ category }}
+            </label>
 
             <card-horizontal
               v-for="destination in value"
@@ -466,6 +482,7 @@ export default {
       showConfirmModal: false,
       navigateTo: false,
       flagForModal: false,
+      DestinationUrl: null,
     }
   },
 
@@ -642,6 +659,7 @@ export default {
         let data = {
           id: this.selectedDestination.id,
           authentication_details: this.authenticationDetails,
+          link: this.DestinationUrl,
         }
         if (this.isSFMCSelected) {
           data.configuration = this.selectedDataExtension
@@ -695,7 +713,14 @@ export default {
 .textAreaDiv {
   height: 200px;
 }
-.destination-field ::v-deep .theme--light {
+::v-deep .theme--light.v-input {
+  color: var(--v-black-lighten4) !important;
+}
+::v-deep .theme--light.v-input input {
+  color: var(--v-black-lighten4) !important;
+}
+::v-deep .v-text-field__slot textarea {
   font-size: 16px !important;
+  color: var(--v-black-lighten4) !important;
 }
 </style>

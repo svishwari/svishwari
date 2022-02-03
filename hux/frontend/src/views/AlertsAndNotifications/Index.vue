@@ -5,13 +5,32 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <icon
-          type="filter"
-          :size="22"
-          class="cursor-pointer"
-          color="black-darken4"
-          @click.native="toggleFilterDrawer()"
-        />
+        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+          <icon
+            type="filter"
+            :size="27"
+            :color="numFiltersSelected > 0 ? 'primary' : 'black'"
+            :variant="numFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+          />
+          <v-badge
+            v-if="numFiltersSelected > 0"
+            :content="numFiltersSelected"
+            color="white"
+            offset-x="6"
+            offset-y="4"
+            light
+            bottom
+            overlap
+            bordered
+          />
+        </v-btn>
+        <v-btn
+          icon
+          class="ml-5"
+          @click.native="isAlertsToggled = !isAlertsToggled"
+        >
+          <icon type="setting-gear" :size="27" color="black" />
+        </v-btn>
       </template>
     </page-header>
     <div
@@ -70,12 +89,12 @@
               >
                 <div v-if="header.value == 'id'">
                   <a @click="toggleDrawer(item[header.value])"
-                    >{{ item[header.value] }}
+                    >{{ item[header.value] | Empty("-") }}
                   </a>
                 </div>
 
                 <div v-if="header.value == 'category'">
-                  {{ item[header.value] }}
+                  {{ item[header.value] | Empty("-") }}
                 </div>
 
                 <div v-if="header.value == 'notification_type'" class="d-flex">
@@ -90,7 +109,7 @@
                     :variant="getVariantColor(item['notification_type'])"
                     class="d-block mr-1"
                   />
-                  {{ item["notification_type"] }}
+                  {{ item["notification_type"] | Empty("-") }}
                 </div>
 
                 <tooltip v-if="header.value == 'description'" position-top>
@@ -99,7 +118,7 @@
                   </template>
                   <template #hover-content>
                     <div class="text--body-1 pb-2">Description</div>
-                    {{ item[header.value] }}
+                    {{ item[header.value] | Empty("-") }}
                   </template>
                 </tooltip>
 
@@ -167,6 +186,11 @@
           v-model="isFilterToggled"
           :users="getNotificationUsers"
           @onSectionAction="alertfunction"
+          @selected-filters="totalFiltersSelected"
+        />
+        <alert-configure-drawer
+          v-model="isAlertsToggled"
+          :users="getNotificationUsers"
         />
       </div>
     </div>
@@ -187,6 +211,7 @@ import AlertFilterDrawer from "./AlertFilter"
 import AlertDrawer from "./Drawer/AlertDrawer"
 import EmptyPage from "@/components/common/EmptyPage"
 import Error from "@/components/common/screens/Error"
+import AlertConfigureDrawer from "./Drawer/AlertConfigure.vue"
 
 export default {
   name: "AlertsAndNotifications",
@@ -203,6 +228,7 @@ export default {
     AlertDrawer,
     EmptyPage,
     Error,
+    AlertConfigureDrawer,
   },
   data() {
     return {
@@ -259,7 +285,9 @@ export default {
       lastBatch: 0,
       batchDetails: {},
       isFilterToggled: false,
+      isAlertsToggled: false,
       notificationId: null,
+      numFiltersSelected: 0,
     }
   },
   computed: {
@@ -276,8 +304,8 @@ export default {
     getNotificationUsers() {
       let sortedUsers = this.getUsers
       return sortedUsers.sort(function (a, b) {
-        var textA = a["display_name"].toUpperCase()
-        var textB = b["display_name"].toUpperCase()
+        var textA = a["display_name"]?.toUpperCase()
+        var textB = b["display_name"]?.toUpperCase()
         return textA < textB ? -1 : textA > textB ? 1 : 0
       })
     },
@@ -299,12 +327,11 @@ export default {
     }
   },
 
-  async beforeDestroy() {
+  beforeDestroy() {
     delete this.batchDetails.notification_types
     delete this.batchDetails.category
     delete this.batchDetails.users
     this.setDefaultData()
-    await this.fetchNotificationsByBatch()
     this.calculateLastBatch()
   },
   methods: {
@@ -315,6 +342,9 @@ export default {
     }),
     goBack() {
       this.$router.go(-1)
+    },
+    totalFiltersSelected(value) {
+      this.numFiltersSelected = value
     },
     async toggleDrawer(notificationId) {
       this.notificationId = notificationId
@@ -343,6 +373,9 @@ export default {
     },
     toggleFilterDrawer() {
       this.isFilterToggled = !this.isFilterToggled
+    },
+    toggleAlertDrawer() {
+      this.isAlertsToggled = !this.isAlertsToggled
     },
     getIconColor(value) {
       if (value) {
@@ -383,7 +416,7 @@ export default {
       this.batchDetails.isLazyLoad = false
     },
     async alertfunction(data) {
-      this.isFilterToggled = false
+      this.isFilterToggled = true
       this.loading = true
       try {
         let today_date = new Date()
@@ -426,7 +459,7 @@ export default {
         this.loading = false
         this.batchDetails.isLazyLoad = false
       } finally {
-        this.isFilterToggled = false
+        this.isFilterToggled = true
         this.loading = false
         this.enableLazyLoad = true
         if (this.notifications.length === 0) {

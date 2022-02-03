@@ -1,12 +1,13 @@
 """Purpose of this file is to house the main application code."""
 import logging
+from os import environ
 
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
 from flask_apscheduler import APScheduler
 
-from huxunify.api.config import load_env_vars
+from huxunify.api.config import get_config
 from huxunify.api.prometheus import monitor_app
 from huxunify.api.route import ROUTES
 from huxunify.api.data_connectors.scheduler import (
@@ -17,7 +18,6 @@ from huxunify.api.route.utils import get_db_client
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_health_check
-
 
 # set config variables
 SWAGGER_CONFIG = {
@@ -34,6 +34,8 @@ SWAGGER_CONFIG = {
         "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
     },
 }
+
+environ[api_c.FLASK_ENV] = get_config().FLASK_ENV
 
 
 def configure_flask(flask_app: Flask) -> None:
@@ -73,8 +75,6 @@ def create_app() -> Flask:
         Flask: Returns a flask object.
     """
 
-    load_env_vars()
-
     # setup the flask app
     flask_app = Flask(__name__)
     flask_app.testing = flask_app.env == api_c.TEST_MODE
@@ -111,7 +111,10 @@ def create_app() -> Flask:
 
     # only add job if not test mode.
     # TODO: mock scheduled job in flask test client using AsyncIO.
-    if flask_app.env != api_c.TEST_MODE:
+    if (
+        flask_app.env != api_c.TEST_MODE
+        and not flask_app.config[api_c.DISABLE_SCHEDULED_DELIVERIES]
+    ):
         # add delivery schedule cron
         # lowest possible schedule denomination in unified is 15 minutes.
         scheduler.add_job(

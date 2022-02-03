@@ -176,7 +176,18 @@
     color: var(--v-primary-lighten6);
   }
 }
-
+.active-icon {
+  fill: var(--v-primary-lighten6);
+  color: var(--v-primary-lighten6);
+}
+.icon-shadow {
+  display: block;
+  width: 40px;
+  height: 40px;
+  background: var(--v-primary-lighten1);
+  border-radius: 100px;
+  margin-bottom: 6px;
+}
 .no-background {
   background: none !important;
 }
@@ -209,4 +220,10 @@
 
 .max-width-15ch {
   max-width: 15ch;
+}
+
+.blur-text {
+  color: transparent !important;
+  text-shadow: 0 0 8px #000;
+  user-select: none;
 }

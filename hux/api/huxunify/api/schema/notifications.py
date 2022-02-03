@@ -43,6 +43,9 @@ class NotificationSchema(Schema):
                     api_c.ORCHESTRATION_TAG,
                     api_c.CUSTOMERS_TAG,
                     api_c.CDP_DATA_SOURCES_TAG,
+                    db_c.NOTIFICATION_CATEGORY_FLDR,
+                    db_c.NOTIFICATION_CATEGORY_CPDR,
+                    db_c.NOTIFICATION_CATEGORY_DR,
                 ]
             )
         ],

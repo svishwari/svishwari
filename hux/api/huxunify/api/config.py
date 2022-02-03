@@ -6,12 +6,9 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 """
-from importlib import import_module
-from os import environ
 from pathlib import Path
 from typing import Union
 from decouple import config
-from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 
 
@@ -20,6 +17,26 @@ class Config:
 
     DEBUG = True
     FLASK_ENV = "test"
+
+    # Cloud Provider
+    CLOUD_PROVIDER = config(api_c.CLOUD_PROVIDER, default="")
+
+    # Azure Config
+    AZURE_BATCH_ACCOUNT_NAME = config(
+        api_c.AZURE_BATCH_ACCOUNT_NAME, default=""
+    )
+    AZURE_BATCH_ACCOUNT_KEY = config(api_c.AZURE_BATCH_ACCOUNT_KEY, default="")
+    AZURE_BATCH_ACCOUNT_URL = config(api_c.AZURE_BATCH_ACCOUNT_URL, default="")
+    AZURE_STORAGE_ACCOUNT_NAME = config(
+        api_c.AZURE_STORAGE_ACCOUNT_NAME, default=""
+    )
+    AZURE_STORAGE_ACCOUNT_KEY = config(
+        api_c.AZURE_STORAGE_ACCOUNT_KEY, default=""
+    )
+    AZURE_BLOB_CONTAINER_NAME = config(
+        api_c.AZURE_BLOB_CONTAINER_NAME, default=""
+    )
+    AZURE_KEY_VAULT_NAME = config(api_c.AZURE_KEY_VAULT_NAME, default="")
 
     # AWS_CONFIG
     AWS_REGION = config(api_c.AWS_REGION, default="")
@@ -30,6 +47,9 @@ class Config:
     MOCK_TECTON = config(api_c.MOCK_TECTON, default=True, cast=bool)
 
     # MONGO CONFIG
+    MONGO_CONNECTION_STRING = config(
+        api_c.MONGO_CONNECTION_STRING, default=None
+    )
     MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")
     MONGO_DB_PORT = config(api_c.MONGO_DB_PORT, default=27017, cast=int)
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
@@ -40,6 +60,7 @@ class Config:
     )
 
     MONGO_DB_CONFIG = {
+        api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
         api_c.PORT: MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
@@ -61,6 +82,7 @@ class Config:
 
     # JIRA
     JIRA_PROJECT_KEY = config(api_c.JIRA_PROJECT_KEY, default="")
+    JIRA_USER_EMAIL = config(api_c.JIRA_USER_EMAIL, default="")
     JIRA_API_KEY = config(api_c.JIRA_API_KEY, default="")
     JIRA_SERVER = config(api_c.JIRA_SERVER, default="")
 
@@ -104,6 +126,20 @@ class Config:
         api_c.TEST_AUTH_OVERRIDE, default=False, cast=bool
     )
 
+    DISABLE_SCHEDULED_DELIVERIES = config(
+        api_c.DISABLE_SCHEDULED_DELIVERIES, default=True, cast=bool
+    )
+
+    DEFAULT_NEW_USER_PROJECT_NAME = config(
+        api_c.DEFAULT_NEW_USER_PROJECT_NAME, default="ADV"
+    )
+    DEFAULT_OKTA_GROUP_NAME = config(
+        api_c.DEFAULT_OKTA_GROUP_NAME, default="team-unified--base"
+    )
+    DEFAULT_OKTA_APP = config(
+        api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder"
+    )
+
 
 class ProductionConfig(Config):
     """Production Config Object."""
@@ -118,6 +154,7 @@ class DevelopmentConfig(Config):
     FLASK_ENV = api_c.DEVELOPMENT_MODE
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_CONFIG = {
+        api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
         api_c.HOST: Config.MONGO_DB_HOST,
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
@@ -140,6 +177,7 @@ class PyTestConfig(Config):
     S3_DATASET_BUCKET = "test-bucket"
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_CONFIG = {
+        api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
         api_c.HOST: Config.MONGO_DB_HOST,
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
@@ -154,6 +192,7 @@ class PyTestConfig(Config):
 
     # JIRA
     JIRA_PROJECT_KEY = "fake-jira-project"
+    JIRA_USER_EMAIL = "sh@fake.com"
     JIRA_API_KEY = "fake-jira-key"
     JIRA_SERVER = "https://fake.fake.jira.fake"
 
@@ -173,52 +212,6 @@ class PyTestConfig(Config):
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
     TEST_AUTH_OVERRIDE = False
-
-
-def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
-    """Load variables from secret store into ENV before we load the config.
-
-    Args:
-        flask_env (str): Flask environment value.
-    """
-
-    # import the aws module to prevent app context issues.
-    aws = import_module(api_c.AWS_MODULE_NAME)
-
-    # set flask key based on derived setting
-    environ[api_c.FLASK_ENV] = get_config().FLASK_ENV
-
-    if flask_env in [api_c.DEVELOPMENT_MODE, api_c.PRODUCTION_MODE]:
-        # load in variables before running flask app.
-        for i in range(0, 50):
-            # attempt to grab the SSM from the ini file
-            load_ssm_key = config(f"SSM_{i}", None)
-
-            # if empty, break loop
-            if not load_ssm_key:
-                break
-
-            # ensure the ssm key has the expected delimiter
-            if api_c.SSM_INIT_LOAD_DELIMITER not in load_ssm_key:
-                logger.error(
-                    "SSM Key '%s' missing %s delimiter.",
-                    load_ssm_key,
-                    api_c.SSM_INIT_LOAD_DELIMITER,
-                )
-                break
-
-            # split the ssm env var into key and value.
-            ssm_key, ssm_value = load_ssm_key.split(
-                api_c.SSM_INIT_LOAD_DELIMITER
-            )
-
-            # attempt to pull the ssm from the store and set env key value.
-            try:
-                environ[ssm_key] = aws.parameter_store.get_store_value(
-                    ssm_value
-                )
-            except ValueError:
-                logger.info("Unable to connect to AWS Parameter Store.")
 
 
 def get_config(

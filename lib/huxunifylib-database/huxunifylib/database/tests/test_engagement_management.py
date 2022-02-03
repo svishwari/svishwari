@@ -22,9 +22,7 @@ class TestEngagementManagement(unittest.TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self) -> None:
 
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient(host="localhost", port=27017).connect()
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         # write a user to the database
@@ -589,7 +587,9 @@ class TestEngagementManagement(unittest.TestCase):
 
         # find all three.
         audience_insights = om.get_audience_insights(
-            self.database, self.audience[db_c.ID]
+            self.database,
+            self.audience[db_c.ID],
+            platform=db_c.AZURE_COSMOS_DB,
         )
 
         # test list
@@ -729,7 +729,9 @@ class TestEngagementManagement(unittest.TestCase):
                 self.user_name,
             )
 
-        engagement_docs = em.get_engagements_summary(database=self.database)
+        engagement_docs = em.get_engagements_summary(
+            database=self.database, platform=db_c.AZURE_COSMOS_DB
+        )
 
         # get all engagements for validation
         all_engagements = em.get_engagements(self.database)

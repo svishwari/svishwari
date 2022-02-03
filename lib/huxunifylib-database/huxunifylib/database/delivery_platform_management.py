@@ -584,6 +584,7 @@ def update_delivery_platform(
     campaign_de: dict = None,
     is_ad_platform: bool = None,
     status: str = None,
+    link: str = None,
 ) -> Union[dict, None]:
     """A function to update delivery platform configuration.
 
@@ -603,6 +604,7 @@ def update_delivery_platform(
         campaign_de (dict): Campaign Data Extension for only SFMC.
         is_ad_platform (bool): If the delivery platform is an AD platform.
         status (str): Connection status
+        link (str): Destination URL
 
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
@@ -644,6 +646,9 @@ def update_delivery_platform(
         db_c.DELIVERY_PLATFORM_AUTH: authentication_details,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
+
+    if link:
+        update_doc[db_c.LINK] = link
 
     if (
         cur_doc is not None
@@ -1551,7 +1556,7 @@ def get_all_delivery_jobs(
             cursor = cursor.sort(sort_list)
 
         # apply limit if set.
-        return list(cursor if isinstance(limit, int) else cursor.limit(limit))
+        return list(cursor.limit(limit) if isinstance(limit, int) else cursor)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -2034,6 +2039,69 @@ def _set_performance_metrics(
     return None
 
 
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_deliverability_metrics(
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    delivery_platform_type: str,
+    domain: str,
+    metrics_dict: dict,
+    start_time: datetime.datetime,
+    end_time: datetime.datetime,
+) -> Union[dict, None]:
+    """Store deliverability metrics in the deliverability metrics collection.
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_platform_id (ObjectId): delivery platform ID
+        delivery_platform_type (str): delivery platform type
+        domain (str): Domain name.
+        metrics_dict (dict): A dict containing deliverability metrics.
+        start_time (datetime): Start time of metrics.
+        end_time (datetime): End time of metrics.
+    Returns:
+        Union[dict, None]: MongoDB metrics doc.
+    Raises:
+        InvalidID: If the passed in delivery_platform_id did not fetch a doc from
+            the relevant db collection.
+        OperationFailure: If an exception occurs during mongo operation.
+    """
+
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERABILITY_METRICS_COLLECTION]
+
+    # Check validity of delivery job ID
+    if not get_delivery_platform(database, delivery_platform_id):
+        raise de.InvalidID(delivery_platform_id)
+
+    try:
+        metrics_id = collection.insert_one(
+            {
+                db_c.METRICS_START_TIME: start_time,
+                db_c.METRICS_END_TIME: end_time,
+                db_c.CREATE_TIME: datetime.datetime.utcnow(),
+                db_c.DOMAIN: domain,
+                db_c.DELIVERABILITY_METRICS: metrics_dict,
+                db_c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
+                db_c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+                # By default not transferred for  reporting yet
+                db_c.STATUS_TRANSFERRED_FOR_REPORT: False,
+            }
+        ).inserted_id
+        collection.create_index(
+            [(db_c.DELIVERY_PLATFORM_ID, pymongo.ASCENDING)]
+        )
+        if metrics_id:
+            return collection.find_one({db_c.ID: metrics_id})
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+        raise
+
+    return None
+
+
 set_performance_metrics = partial(
     _set_performance_metrics,
     collection_name=db_c.PERFORMANCE_METRICS_COLLECTION,
@@ -2056,9 +2124,11 @@ set_campaign_activity = partial(
 def _get_performance_metrics(
     database: DatabaseClient,
     collection_name: str,
-    delivery_job_id: ObjectId,
+    delivery_job_id: ObjectId = None,
     min_start_time: datetime.datetime = None,
     max_end_time: datetime.datetime = None,
+    delivery_platform_id: ObjectId = None,
+    domain: str = None,
     pending_transfer_for_feedback: bool = False,
     pending_transfer_for_report: bool = False,
 ) -> Union[list, None]:
@@ -2073,6 +2143,8 @@ def _get_performance_metrics(
             metrics. Defaults to None.
         max_end_time (datetime.datetime, optional): Max start time of metrics.
             Defaults to None.
+        delivery_platform_id (ObjectId): delivery platform ID.
+        domain (str): Domain Name.
         pending_transfer_for_feedback (bool): If True, retrieve only metrics
             that have not been transferred for feedback. Defaults to False.
         pending_transfer_for_report (bool): If True, retrieve only metrics
@@ -2091,8 +2163,22 @@ def _get_performance_metrics(
     collection = platform_db[collection_name]
 
     # Check validity of delivery job ID
-    if not get_delivery_job(database, delivery_job_id):
+    if (
+        not get_delivery_job(database, delivery_job_id)
+        and collection_name != db_c.DELIVERABILITY_METRICS_COLLECTION
+    ):
+        logging.info("Delivery job with ID <%s> not found.", delivery_job_id)
         raise de.InvalidID(delivery_job_id)
+
+    if (
+        delivery_platform_id
+        and not get_delivery_platform(database, delivery_platform_id)
+        and collection_name == db_c.DELIVERABILITY_METRICS_COLLECTION
+    ):
+        logging.info(
+            "Delivery platform with ID <%s> not found.", delivery_platform_id
+        )
+        raise de.InvalidID(delivery_platform_id)
 
     metric_queries = [{db_c.DELIVERY_JOB_ID: delivery_job_id}]
 
@@ -2103,6 +2189,14 @@ def _get_performance_metrics(
 
     if max_end_time:
         metric_queries.append({db_c.METRICS_END_TIME: {"$lte": max_end_time}})
+
+    if collection_name == db_c.DELIVERABILITY_METRICS_COLLECTION:
+        metric_queries.append(
+            {
+                db_c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+                db_c.DOMAIN: domain,
+            }
+        )
 
     if pending_transfer_for_feedback:
         metric_queries.append(
@@ -2122,6 +2216,13 @@ def _get_performance_metrics(
 
     return None
 
+
+get_deliverability_metrics = partial(
+    _get_performance_metrics,
+    collection_name=db_c.DELIVERABILITY_METRICS_COLLECTION,
+    min_start_time=None,
+    max_end_time=None,
+)
 
 get_performance_metrics = partial(
     _get_performance_metrics,
@@ -2255,6 +2356,12 @@ set_campaign_activity_transferred_for_feedback = partial(
 set_campaign_activity_transferred_for_report = partial(
     _set_performance_metrics_status,
     collection_name=db_c.CAMPAIGN_ACTIVITY_COLLECTION,
+    performance_metrics_status=db_c.STATUS_TRANSFERRED_FOR_REPORT,
+)
+
+set_deliverability_metrics_transferred_for_report = partial(
+    _set_performance_metrics_status,
+    collection_name=db_c.DELIVERABILITY_METRICS_COLLECTION,
     performance_metrics_status=db_c.STATUS_TRANSFERRED_FOR_REPORT,
 )
 
@@ -2502,6 +2609,57 @@ def get_most_recent_performance_metric_by_delivery_job(
     try:
         cursor = list(
             collection.find({db_c.DELIVERY_JOB_ID: delivery_job_id})
+            .sort([(db_c.JOB_END_TIME, -1)])
+            .limit(1)
+        )
+        if len(cursor) > 0:
+            return cursor[0]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_most_recent_deliverability_metric_by_domain(
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    domain: str,
+) -> Union[list, None]:
+    """Retrieve the most recent deliverability metrics associated with a
+    given platform ID and domain.
+    Args:
+        database (DatabaseClient): database client.
+        delivery_platform_id (ObjectId): delivery platform ID.
+        domain (str): Domain Name.
+    Returns:
+        Union[list, None]: most recent deliverability metric.
+    Raises:
+        InvalidID: If the passed in platform_id did not fetch a doc from
+            the relevant db collection.
+    """
+
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERABILITY_METRICS_COLLECTION]
+
+    # Check validity of platform ID
+    doc = get_delivery_platform(database, delivery_platform_id)
+    if not doc:
+        raise de.InvalidID(delivery_platform_id)
+
+    try:
+
+        cursor = list(
+            collection.find(
+                {
+                    db_c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+                    db_c.DOMAIN: domain,
+                }
+            )
             .sort([(db_c.JOB_END_TIME, -1)])
             .limit(1)
         )

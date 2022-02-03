@@ -1,7 +1,7 @@
 <template>
   <div class="hux-alert">
     <v-card
-      v-for="item in alerts"
+      v-for="item in getAlerts"
       :key="item.id"
       min-height="56"
       class="alert-card"
@@ -60,6 +60,10 @@ export default {
     ...mapGetters({
       alerts: "alerts/list",
     }),
+
+    getAlerts() {
+      return this.alerts.filter((x) => x.code != 401)
+    },
   },
 
   methods: {

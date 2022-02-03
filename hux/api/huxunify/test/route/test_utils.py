@@ -5,7 +5,7 @@ from unittest import TestCase, mock
 
 import mongomock
 from bson import ObjectId
-from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.client import DatabaseClient
 from hypothesis import given, strategies as st
 
@@ -22,8 +22,9 @@ from huxunify.api.route.utils import (
     get_db_client,
     check_mongo_connection,
     get_health_check,
+    filter_team_member_requests,
 )
-
+import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 
 
@@ -119,7 +120,10 @@ class TestRouteUtils(TestCase):
             "huxunify.api.route.utils.check_aws_batch",
             return_value=(True, "AWS Batch available"),
         ).start()
-
+        mock.patch(
+            "huxunify.api.route.utils.JiraConnection.check_jira_connection",
+            return_value=(True, "Jira available"),
+        ).start()
         health = get_health_check()
         self.assertTrue(health)
 
@@ -299,13 +303,16 @@ class TestRouteUtils(TestCase):
                 self.assertEqual(
                     city, section_filter[api_c.AUDIENCE_FILTER_VALUE]
                 )
-            if section_filter[api_c.AUDIENCE_FILTER_FIELD] == api_c.STATE:
+            if (
+                section_filter[api_c.AUDIENCE_FILTER_FIELD]
+                == api_c.STATE.title()
+            ):
                 self.assertEqual(
                     state, section_filter[api_c.AUDIENCE_FILTER_VALUE]
                 )
 
         self.assertIn(api_c.AUDIENCE_FILTER_CITY, section_filters)
-        self.assertIn(api_c.STATE, section_filters)
+        self.assertIn(api_c.STATE.title(), section_filters)
 
     def test_convert_unique_city_filter_value_error(self):
         """Test conversion of unique city filter for value error."""
@@ -348,3 +355,19 @@ class TestRouteUtils(TestCase):
         response = convert_unique_city_filter(request_filter)
 
         self.assertEqual(request_filter, response)
+
+    def test_filter_team_member_requests(self):
+        """Test filter_team_member_requests method."""
+
+        filtered_requests = filter_team_member_requests(
+            t_c.SAMPLE_USER_REQUEST_JIRA_ISSUES[api_c.ISSUES]
+        )
+
+        # To ensure no repetition of user requests.
+        self.assertEqual(2, len(filtered_requests))
+
+        # To ensure in_progress ticket is present.
+        self.assertIn(
+            api_c.STATE_IN_PROGRESS,
+            [request.get(api_c.STATUS) for request in filtered_requests],
+        )

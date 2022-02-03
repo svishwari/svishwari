@@ -39,6 +39,9 @@ export default {
         control: { type: "text" },
       },
     },
+    top: { table: { disable: true } },
+    "action-menu-options": { table: { disable: true } },
+    default: { table: { disable: true } },
   },
   args: {
     icon: "model",

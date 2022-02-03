@@ -1,11 +1,15 @@
 """Purpose of this file is to house route utilities."""
+from collections import defaultdict
 from datetime import datetime, date
 import re
 from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
-from pandas import DataFrame
+
+from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
+
+from pandas import DataFrame
 
 from healthcheck import HealthCheck
 from decouple import config
@@ -13,7 +17,7 @@ from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.database.util.client import db_client_factory
 
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -44,11 +48,13 @@ from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
+from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.exceptions import (
     unified_exceptions as ue,
 )
 from huxunify.api.prometheus import record_health_status_metric
 from huxunify.api.stubbed_data.stub_shap_data import shap_data
+from huxunify.api.schema.user import RequestedUserSchema
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -127,6 +133,7 @@ def get_health_check() -> HealthCheck:
     # health.add_check(check_aws_events)
     health.add_check(check_cdm_api_connection)
     health.add_check(check_cdp_connections_api_connection)
+    health.add_check(JiraConnection.check_jira_connection)
     return health
 
 
@@ -611,7 +618,7 @@ def convert_unique_city_filter(request_json: dict) -> dict:
 
                     filters[api_c.AUDIENCE_SECTION_FILTERS].append(
                         {
-                            api_c.AUDIENCE_FILTER_FIELD: api_c.STATE,
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.STATE.title(),
                             api_c.AUDIENCE_FILTER_TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
                             api_c.AUDIENCE_FILTER_VALUE: state_value,
                         }
@@ -764,9 +771,9 @@ def create_description_for_user_request(
     pii_access: bool,
     reason_for_request: str,
     requested_by: str,
-    project_name: str = api_c.DEFAULT_NEW_USER_PROJECT_NAME,
-    okta_group_name: str = api_c.DEFAULT_OKTA_GROUP_NAME,
-    okta_app: str = api_c.DEFAULT_OKTA_APP,
+    project_name: str = get_config().DEFAULT_NEW_USER_PROJECT_NAME,
+    okta_group_name: str = get_config().DEFAULT_OKTA_GROUP_NAME,
+    okta_app: str = get_config().DEFAULT_OKTA_APP,
 ) -> str:
     """Create HUS issue description using new user request data.
 
@@ -841,3 +848,93 @@ def validate_if_resource_owner(
             return True
 
     return False
+
+
+def filter_team_member_requests(team_member_request_issues: list) -> list:
+    """Filters Jira team member requests.
+
+    Args:
+        team_member_request_issues (list): List of Jira issues.
+
+    Returns:
+        list: Filtered and reformatted user requests.
+    """
+
+    status_score_mapping = {
+        api_c.STATE_TO_DO: 0,
+        api_c.STATE_IN_PROGRESS: 1,
+        api_c.STATE_IN_REVIEW: 2,
+        api_c.STATE_DONE: 3,
+    }
+    filtered_user_requests = []
+
+    if team_member_request_issues:
+        user_info = defaultdict(list)
+        for issue in team_member_request_issues:
+            request_details = extract_user_request_details_from_issue(issue)
+
+            if RequestedUserSchema().validate(data=request_details):
+                user_info[request_details.get(api_c.EMAIL)].append(
+                    request_details
+                )
+        # pylint: disable=unused-variable
+        for user_email, info in user_info.items():
+            info.sort(
+                key=lambda x: status_score_mapping.get(x.get(api_c.STATUS)),
+                reverse=True,
+            )
+            filtered_user_requests.append(info[0])
+
+    return filtered_user_requests
+
+
+# pylint: disable=anomalous-backslash-in-string
+def extract_user_request_details_from_issue(
+    team_member_request_issue: dict,
+) -> dict:
+    """Extracts user request details from Jira issue.
+
+    Args:
+        team_member_request_issue (dict): Jira issue for team member request.
+
+    Returns:
+        dict: Team member request issue details.
+    """
+
+    description = team_member_request_issue.get(api_c.FIELDS, {}).get(
+        api_c.DESCRIPTION, None
+    )
+
+    if not description:
+        logger.info("No description found while parsing user request")
+        return {}
+
+    email = re.search("Email:\*(.*?)\\n", description)
+    pii_access = re.search("PII Access:\*(.*?)\\n", description)
+    display_name = re.search("User:\*(.*?)\\n", description)
+    access_level = re.search("Access Level:\*(.*?)\\n", description)
+
+    return {
+        api_c.EMAIL: email.groups()[0].strip() if email else None,
+        api_c.USER_PII_ACCESS: Validation.validate_bool(
+            pii_access.groups()[0].strip()
+        )
+        if pii_access
+        else False,
+        api_c.DISPLAY_NAME: display_name.groups()[0].strip()
+        if display_name
+        else None,
+        api_c.USER_ACCESS_LEVEL: access_level.groups()[0].strip()
+        if access_level
+        else None,
+        api_c.STATUS: team_member_request_issue.get(api_c.FIELDS, {})
+        .get(api_c.STATUS, {})
+        .get(api_c.NAME),
+        api_c.UPDATED: parse(
+            team_member_request_issue.get(api_c.FIELDS, {}).get(api_c.UPDATED)
+        ),
+        api_c.CREATED: parse(
+            team_member_request_issue.get(api_c.FIELDS, {}).get(api_c.CREATED)
+        ),
+        api_c.KEY: team_member_request_issue.get(api_c.KEY),
+    }
