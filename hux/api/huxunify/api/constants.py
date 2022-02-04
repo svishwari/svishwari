@@ -1541,10 +1541,8 @@ COMPLAINTS_RATE = "complaints_rate"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"
-DOMAIN_2 = "domain_2"
-DOMAIN_3 = "domain_3"
 
-ALLOWED_EMAIL_DOMAIN_NAMES = [DOMAIN_1, DOMAIN_2, DOMAIN_3]
+ALLOWED_EMAIL_DOMAIN_NAMES = [DOMAIN_1]
 SENDING_DOMAINS_OVERVIEW_STUB = [
     {
         DOMAIN_NAME: DOMAIN_1,
@@ -1552,21 +1550,7 @@ SENDING_DOMAINS_OVERVIEW_STUB = [
         BOUNCE_RATE: 0.14,
         OPEN_RATE: 0.91,
         CLICK_RATE: 0.85,
-    },
-    {
-        DOMAIN_NAME: DOMAIN_2,
-        SENT: 600,
-        BOUNCE_RATE: 0.10,
-        OPEN_RATE: 0.88,
-        CLICK_RATE: 0.81,
-    },
-    {
-        DOMAIN_NAME: DOMAIN_3,
-        SENT: 400,
-        BOUNCE_RATE: 0.09,
-        OPEN_RATE: 0.83,
-        CLICK_RATE: 0.74,
-    },
+    }
 ]
 
 
