@@ -115,6 +115,16 @@ index_constants = [
         db_c.CAMPAIGN_ACTIVITY_COLLECTION,
         [(f"{db_c.EVENT_DETAILS}.{db_c.EVENT_DATE}", DESCENDING)],
     ),
+    (
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DELIVERABILITY_METRICS_COLLECTION,
+        [(db_c.JOB_END_TIME, DESCENDING)],
+    ),
+    (
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.AUDIENCES_COLLECTION,
+        [(db_c.NAME, DESCENDING)],
+    ),
 ]
 
 
