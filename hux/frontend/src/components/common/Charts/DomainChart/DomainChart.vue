@@ -160,7 +160,7 @@ export default {
             .tickSize(0) // vertical line at x-axis
             .ticks(3)
             .tickPadding(15)
-            .tickFormat(d3TimeFormat.timeFormat("%m/%Y"))
+            .tickFormat(function(d, i, n) { return n[i + 1] ? d3TimeFormat.timeFormat("%m/%Y")(d) : "Today" })
         )
         .style("font-size", "14px")
 
