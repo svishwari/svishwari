@@ -947,7 +947,9 @@ def extract_user_request_details_from_issue(
     }
 
 
-def group_and_aggregate_datafeed_details_by_date(datafeed_details: list):
+def group_and_aggregate_datafeed_details_by_date(
+    datafeed_details: list,
+) -> list:
     """Group and aggregate data feed details by date
 
     Args:

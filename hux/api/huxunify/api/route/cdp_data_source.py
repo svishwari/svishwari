@@ -27,6 +27,7 @@ from huxunify.api.data_connectors.cdp_connection import (
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
 
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -736,11 +737,11 @@ class GetConnectionsDatafeedDetails(SwaggerView):
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self, datasource_type: str, datafeed_name: str, user: dict
-    ) -> Tuple[str, int]:
+    ) -> Tuple[Response, int]:
         """Retrieve data feeds for data source.
 
         ---
@@ -753,7 +754,7 @@ class GetConnectionsDatafeedDetails(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[dict, int]: Connections data feeds get object,
+            Tuple[Response, int]: Connections data feed details response object,
                 HTTP status code.
         """
 
@@ -776,11 +777,7 @@ class GetConnectionsDatafeedDetails(SwaggerView):
             key=lambda x: x[api_c.LAST_PROCESSED],
         )
 
-        return (
-            jsonify(
-                DataSourceDataFeedDetailsGetSchema(many=True).dump(
-                    datafeed_details
-                )
-            ),
-            HTTPStatus.OK,
+        return HuxResponse.OK(
+            data=datafeed_details,
+            data_schema=DataSourceDataFeedDetailsGetSchema(),
         )
