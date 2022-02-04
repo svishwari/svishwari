@@ -2,6 +2,7 @@
 API.
 """
 import random
+import statistics
 from typing import Tuple
 from datetime import datetime, timedelta
 
@@ -237,12 +238,69 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
         data_feed[api_c.PROCESSED_AT] = parse(
             data_feed.get(api_c.PROCESSED_AT)
         )
-        data_feed["records_processed_percentage"] = data_feed.get(
-            "records_processed", 0
-        ) / data_feed.get("records_received", 1)
-        data_feed["thirty_days_avg"] = (
-            data_feed.get("thirty_days_avg", 0) / 100
+        data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE] = data_feed.get(
+            api_c.RECORDS_PROCESSED, 0
+        ) / data_feed.get(api_c.RECORDS_RECEIVED, 1)
+        data_feed[api_c.THIRTY_DAYS_AVG] = (
+            data_feed.get(api_c.THIRTY_DAYS_AVG, 0) / 100
         )
+
+    # calculate standard deviation on records_processed_percentage to set
+    # appropriate flag indicator
+    stdev_sample_list = []
+    # sort the data_feeds list from greater to smaller records processed
+    # percentage value
+    data_feeds.sort(
+        key=lambda data_feed: data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE],
+        reverse=True,
+    )
+    for i, data_feed in enumerate(data_feeds):
+        current_value = data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE]
+
+        # build up the sample list of processed percentage to calculate SD
+        stdev_sample_list.append(current_value)
+
+        # need at least 2 elements in the sample list to calculate SD for
+        # current processed_percentage value
+        current_stdev = statistics.stdev(stdev_sample_list) if i > 0 else 0
+
+        # set records_processed_percentage for hte corresponding data feed with
+        # the dict populated with value and flag_indicator if the current
+        # calculated SD is greater than initial SD
+        data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE] = {
+            api_c.VALUE: current_value,
+            api_c.FLAG_INDICATOR: (current_stdev > 0.1),
+        }
+
+    # calculate standard deviation on thirty_days_avg to set appropriate flag
+    # indicator
+    stdev_sample_list = []
+    # sort the data_feeds list from greater to smaller thirty days average
+    # value
+    data_feeds.sort(
+        key=lambda data_feed: data_feed[api_c.THIRTY_DAYS_AVG], reverse=True
+    )
+    for i, data_feed in enumerate(data_feeds):
+        current_value = data_feed[api_c.THIRTY_DAYS_AVG]
+
+        # build up the sample list of thirty days average to calculate SD
+        stdev_sample_list.append(current_value)
+
+        # need at least 2 elements in the sample list to calculate SD for
+        # current thirty_days_avg value
+        current_stdev = statistics.stdev(stdev_sample_list) if i > 0 else 0
+
+        # set thirty_days_avg for the corresponding data feed with the dict
+        # populated with value and flag_indicator if the current calculated SD
+        # is greater than 0.1
+        data_feed[api_c.THIRTY_DAYS_AVG] = {
+            api_c.VALUE: current_value,
+            api_c.FLAG_INDICATOR: (current_stdev > 0.1),
+        }
+
+    # sort the data_feeds list back to order based on processed_at time
+    data_feeds.sort(key=lambda data_feed: data_feed[api_c.PROCESSED_AT])
+
     return data_feeds
 
 

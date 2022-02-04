@@ -2,10 +2,8 @@
 import copy
 import json
 from http import HTTPStatus
-from unittest import TestCase, mock
+from unittest import mock
 
-import mongomock
-import requests_mock
 from marshmallow import ValidationError
 
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
@@ -13,7 +11,6 @@ from huxunifylib.database.cdp_data_source_management import (
     create_data_source,
     bulk_write_data_sources,
 )
-from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
@@ -22,8 +19,8 @@ from huxunify.api.schema.cdp_data_source import (
     DataSourceDataFeedsGetSchema,
     CdpDataSourceDataFeedSchema,
     CdpConnectionsDataSourceSchema,
+    CdpDataSourceDataFeedTypeAverageSchema,
 )
-from huxunify.app import create_app
 
 
 class CdpDataSourcesTest(RouteTestCase):
@@ -413,3 +410,15 @@ class CdpDataSourcesTest(RouteTestCase):
                 response.json.get(api_c.DATAFEEDS), many=True
             )
         )
+
+        for data_feed in response.json.get(api_c.DATAFEEDS):
+            self.assertFalse(
+                CdpDataSourceDataFeedTypeAverageSchema().validate(
+                    data_feed.get(api_c.RECORDS_PROCESSED_PERCENTAGE)
+                )
+            )
+            self.assertFalse(
+                CdpDataSourceDataFeedTypeAverageSchema().validate(
+                    data_feed.get(api_c.THIRTY_DAYS_AVG)
+                )
+            )
