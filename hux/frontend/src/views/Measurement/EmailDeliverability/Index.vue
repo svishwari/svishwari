@@ -119,7 +119,6 @@ import DeliveredChart from "./DeliveredChart.vue"
 import Overview1 from "./Domain/Overview.vue"
 import Overview from "./Overview.vue"
 import domainOverviewData from "../../../api/mock/fixtures/domainLineData"
-import TotalCustomerSpendChart from "../../../components/common/TotalCustomerSpend/TotalCustomerSpendChart.vue"
 import DomainOverviewChart from "../../../components/common/DomainOverviewChart/DomainOverviewChart.vue"
 export default {
   name: "EmailDeliverability",
@@ -130,7 +129,6 @@ export default {
     Overview,
     DeliveredChart,
     Overview1,
-    TotalCustomerSpendChart,
     DomainOverviewChart,
   },
   data() {
