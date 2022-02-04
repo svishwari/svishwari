@@ -1008,14 +1008,14 @@ def group_and_aggregate_datafeed_details_by_date(
 
 
 def fetch_datafeed_details(
-    datafeed_name: str, start_date: date, end_date: date, statuses: list = None
+    datafeed_name: str, start_date: str, end_date: str, statuses: list = None
 ) -> list:
     """Fetch datafeed details
 
     Args:
         datafeed_name (str): Datafeed name
-        start_date (date): Start Date
-        end_date (date): End Date
+        start_date (str): Start Date
+        end_date (str): End Date
         statuses (list): list of statuses
 
     Returns:
@@ -1033,24 +1033,28 @@ def fetch_datafeed_details(
         for i, x in enumerate(datafeed_details)
     ]
 
-    required_datafeeds = []
+    if statuses:
+        datafeed_details = list(
+            filter(lambda x: x[api_c.STATUS] in statuses, datafeed_details)
+        )
 
-    for df_detail in datafeed_details:
-        last_processed_date = parse(
-            datetime.strftime(
-                df_detail[api_c.LAST_PROCESSED], api_c.DEFAULT_DATE_FORMAT
+    if start_date and end_date:
+        start_date = parse(start_date).date()
+        end_date = parse(end_date).date()
+        datafeed_details = list(
+            filter(
+                lambda x: start_date
+                <= parse(
+                    datetime.strftime(
+                        x[api_c.LAST_PROCESSED], api_c.DEFAULT_DATE_FORMAT
+                    )
+                ).date()
+                <= end_date,
+                datafeed_details,
             )
-        ).date()
-        if start_date <= last_processed_date < end_date:
-            if not statuses:
-                required_datafeeds.append(df_detail)
-                continue
+        )
 
-            if df_detail[api_c.STATUS] in statuses:
-                required_datafeeds.append(df_detail)
-                continue
+        if (end_date - start_date).days == 0:
+            return datafeed_details
 
-    if (end_date - start_date).days > 1:
-        return group_and_aggregate_datafeed_details_by_date(required_datafeeds)
-
-    return required_datafeeds
+    return group_and_aggregate_datafeed_details_by_date(datafeed_details)

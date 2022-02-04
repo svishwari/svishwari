@@ -70,7 +70,7 @@ datafeed_detail_stub_data = [
         "records_processed": 694729,
         "records_processed_percentage": 0.801,
         "records_received": 866933,
-        "status": "Disabled",
+        "status": "Success",
         "thirty_days_avg": 0.733,
     },
     {
@@ -94,7 +94,7 @@ datafeed_detail_stub_data = [
         "records_processed": 641502,
         "records_processed_percentage": 0.942,
         "records_received": 681014,
-        "status": "Disabled",
+        "status": "Success",
         "thirty_days_avg": 0.793,
     },
     {
@@ -118,7 +118,7 @@ datafeed_detail_stub_data = [
         "records_processed": 657687,
         "records_processed_percentage": 0.781,
         "records_received": 842112,
-        "status": "Cancelled",
+        "status": "Success",
         "thirty_days_avg": 0.934,
     },
 ]

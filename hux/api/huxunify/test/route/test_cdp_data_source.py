@@ -420,14 +420,17 @@ class CdpDataSourcesTest(RouteTestCase):
             api_c.DATAFEED_DATA_SOURCE_NAME
         ]
         datafeed_name = "clicks"
-        start_date = datetime.utcnow() - relativedelta(days=100)
-        end_date = datetime.utcnow()
+        start_date = datetime.strftime(
+            datetime.utcnow() - relativedelta(days=100),
+            api_c.DEFAULT_DATE_FORMAT,
+        )
+        end_date = datetime.strftime(
+            datetime.utcnow(), api_c.DEFAULT_DATE_FORMAT
+        )
 
         expected_response = DataSourceDataFeedDetailsGetSchema(many=True).dump(
             sorted(
-                fetch_datafeed_details(
-                    datafeed_name, start_date.date(), end_date.date()
-                ),
+                fetch_datafeed_details(datafeed_name, start_date, end_date),
                 key=lambda x: x[api_c.LAST_PROCESSED],
             )
         )
@@ -435,12 +438,8 @@ class CdpDataSourcesTest(RouteTestCase):
             f"{self.data_sources_api_endpoint}/{data_source_type}/"
             f"{api_c.DATAFEEDS}/{datafeed_name}",
             query_string={
-                "start_date": datetime.strftime(
-                    start_date, api_c.DEFAULT_DATE_FORMAT
-                ),
-                "end_date": datetime.strftime(
-                    end_date, api_c.DEFAULT_DATE_FORMAT
-                ),
+                "start_date": start_date,
+                "end_date": end_date,
             },
             headers=t_c.STANDARD_HEADERS,
         )

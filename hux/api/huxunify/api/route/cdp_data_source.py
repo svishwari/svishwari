@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for the CDP data sources API"""
+from datetime import datetime
 from http import HTTPStatus
 from typing import Tuple
 
@@ -737,7 +738,7 @@ class GetConnectionsDatafeedDetails(SwaggerView):
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self, datasource_type: str, datafeed_name: str, user: dict
@@ -762,17 +763,21 @@ class GetConnectionsDatafeedDetails(SwaggerView):
         end_date = request.args.get(api_c.END_DATE, "")
         if start_date and end_date:
             validation.validate_date_range(start_date, end_date)
-            start_date = validation.validate_date(start_date)
-            end_date = validation.validate_date(end_date)
+            start_date = datetime.strftime(
+                validation.validate_date(start_date), api_c.DEFAULT_DATE_FORMAT
+            )
+            end_date = datetime.strftime(
+                validation.validate_date(end_date), api_c.DEFAULT_DATE_FORMAT
+            )
 
         statuses = request.args.get(api_c.STATUS, "")
-        statuses = [x.lower() for x in statuses.split(",")] if statuses else []
+        statuses = [x.title() for x in statuses.split(",")] if statuses else []
 
         # Stubbed datafeed details data
         # TODO: Update to fetch the data from Connections API when available
         datafeed_details = sorted(
             fetch_datafeed_details(
-                datafeed_name, start_date.date(), end_date.date(), statuses
+                datafeed_name, start_date, end_date, statuses
             ),
             key=lambda x: x[api_c.LAST_PROCESSED],
         )
