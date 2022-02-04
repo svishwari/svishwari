@@ -18,7 +18,7 @@
               ]"
             />
           </div>
-          <div class="text-subtitle-1 font-weight-regular col-md-9 pt-0 pl-0">
+          <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
             In-depth review of key delivery metrics, reputation, and inbox
             indicators that mailbox providers pay attention to when evaluating
             an email sender’s digital reputation.
@@ -114,6 +114,7 @@ export default {
         }
         th {
           background: var(--v-primary-lighten2);
+          box-shadow: none;
         }
       }
     }
