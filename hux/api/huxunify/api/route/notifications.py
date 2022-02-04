@@ -444,7 +444,7 @@ class DeleteNotification(SwaggerView):
 
             return {}, HTTPStatus.NO_CONTENT
 
-        logger.info(
+        logger.error(
             "Could not delete notification with ID %s.", notification_id
         )
         return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST

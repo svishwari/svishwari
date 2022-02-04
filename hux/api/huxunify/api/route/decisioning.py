@@ -283,7 +283,9 @@ class SetModelStatus(SwaggerView):
                 user[api_c.USER_NAME],
             )
             logger.info(
-                "Successfully requested model %s.", model.get(db_c.NAME)
+                "User with username %s successfully requested model %s.",
+                user[api_c.USER_NAME],
+                model.get(db_c.NAME),
             )
 
         return (
@@ -372,7 +374,11 @@ class RemoveRequestedModel(SwaggerView):
                 api_c.MODELS,
                 user[api_c.USER_NAME],
             )
-            logger.info("Successfully removed model %s.", model_id)
+            logger.info(
+                "User with username %s successfully removed model %s.",
+                user[api_c.USER_NAME],
+                model_id,
+            )
             return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
         return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.NOT_FOUND
