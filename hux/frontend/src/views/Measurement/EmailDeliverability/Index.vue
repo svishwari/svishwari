@@ -106,4 +106,5 @@ export default {
   .overview-card {
     border-radius: 12px !important;
   }
+}
 </style>
