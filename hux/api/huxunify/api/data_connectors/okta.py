@@ -4,6 +4,7 @@ from typing import Tuple
 
 import requests
 from flask import request
+from huxunifylib.util.general.logging import logger
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
@@ -53,6 +54,8 @@ def introspect_token(access_token: str) -> dict:
         payload (dict): The decoded payload data from the Okta access token.
     """
 
+    logger.info("Attempting to introspect access token.")
+
     # get config
     config = get_config()
 
@@ -68,6 +71,9 @@ def introspect_token(access_token: str) -> dict:
 
     # check if a valid token
     if "active" in payload and not payload["active"]:
+        logger.warning(
+            "Failure during introspection of token, not an active user."
+        )
         return None
 
     # extract user info
@@ -119,12 +125,18 @@ def get_token_from_request(flask_request: request) -> tuple:
     # get the auth token
     auth_header = flask_request.headers.get("Authorization", None)
     if not auth_header:
+        logger.error(
+            "Auth header not obtained while trying to get token from request."
+        )
         # no authorization header, return a generic 401.
         return api_c.INVALID_AUTH_HEADER, 401
 
     # split the header
     parts = auth_header.split()
     if parts[0] != "Bearer" or len(parts) != 2:
+        logger.error(
+            "Invalid auth header while trying to get token from request."
+        )
         # user submitted an invalid authorization header.
         # return a generic 401
         return api_c.INVALID_AUTH_HEADER, 401

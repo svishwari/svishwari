@@ -26,6 +26,7 @@ def create_notification(
     description: str,
     category: str = None,
     username: str = None,
+    platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> Union[dict, None]:
     """A function to create a new notification.
 
@@ -36,7 +37,7 @@ def create_notification(
         category (str): category of notification.
         username (str): username of user performing an action for which the
             notification is created.
-
+        platform (str, Optional): Underlying DB of the Mongo DB API.
     Returns:
         Union[dict, None]: MongoDB document for a notification.
 
@@ -58,10 +59,6 @@ def create_notification(
         db_c.NOTIFICATIONS_COLLECTION
     ]
 
-    collection.create_index(
-        [(db_c.EXPIRE_AT, pymongo.ASCENDING)], expireAfterSeconds=0
-    )
-
     # get current time
     current_time = datetime.utcnow()
     expire_time = current_time + relativedelta(months=3)
@@ -69,19 +66,35 @@ def create_notification(
     # 1 week for informational and success, 4 weeks for critical
     if notification_type == db_c.NOTIFICATION_TYPE_INFORMATIONAL:
         expire_time = current_time + relativedelta(weeks=1)
+        ttl = 1 * (7 * 24 * 60 * 60)  # 1 week in seconds
+
     elif notification_type == db_c.NOTIFICATION_TYPE_SUCCESS:
         expire_time = current_time + relativedelta(weeks=1)
+        ttl = 1 * (7 * 24 * 60 * 60)  # 1 week in seconds
+
     elif notification_type == db_c.NOTIFICATION_TYPE_CRITICAL:
         expire_time = current_time + relativedelta(weeks=4)
+        ttl = 4 * (7 * 24 * 60 * 60)  # 4 week in seconds
 
     doc = {
-        db_c.EXPIRE_AT: expire_time,
         db_c.NOTIFICATION_FIELD_TYPE: notification_type,
         db_c.NOTIFICATION_FIELD_DESCRIPTION: description,
         db_c.NOTIFICATION_FIELD_CREATED: current_time,
         db_c.DELETED: False,
         db_c.NOTIFICATION_FIELD_USERNAME: username,
     }
+
+    if platform == db_c.AZURE_COSMOS_DB:
+        collection.create_index(
+            [(db_c.TS, pymongo.ASCENDING)],
+            expireAfterSeconds=1 * (7 * 24 * 60 * 60),
+        )
+        doc.update({db_c.TTL: ttl})
+    else:
+        collection.create_index(
+            [(db_c.EXPIRE_AT, pymongo.ASCENDING)], expireAfterSeconds=0
+        )
+        doc.update({db_c.EXPIRE_AT: expire_time})
 
     if category:
         doc[db_c.NOTIFICATION_FIELD_CATEGORY] = category

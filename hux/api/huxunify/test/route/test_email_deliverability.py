@@ -56,8 +56,6 @@ class TestDestinationRoutes(RouteTestCase):
 
         # Ensure all domains present in data.
         self.assertIn(api_c.DOMAIN_1, response.json.get(api_c.SENT)[0].keys())
-        self.assertIn(api_c.DOMAIN_2, response.json.get(api_c.SENT)[0].keys())
-        self.assertIn(api_c.DOMAIN_3, response.json.get(api_c.SENT)[0].keys())
 
     def test_email_deliverability_select_domain_data(self):
         """Test email deliverability data for select domains."""
@@ -65,8 +63,7 @@ class TestDestinationRoutes(RouteTestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/"
             f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains?"
-            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}&"
-            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_2}",
+            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -78,14 +75,7 @@ class TestDestinationRoutes(RouteTestCase):
             )
         )
 
-        # Ensure 2 domains present in data.
         self.assertIn(api_c.DOMAIN_1, response.json.get(api_c.SENT)[0].keys())
-        self.assertIn(api_c.DOMAIN_2, response.json.get(api_c.SENT)[0].keys())
-
-        # Ensure 3rd domain not present in data.
-        self.assertNotIn(
-            api_c.DOMAIN_3, response.json.get(api_c.SENT)[0].keys()
-        )
 
     def test_email_deliverability_invalid_domain(self):
         """Test email deliverability data for select domains."""
@@ -93,8 +83,7 @@ class TestDestinationRoutes(RouteTestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/"
             f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains?"
-            f"{api_c.DOMAIN_NAME}={api_c.OPEN_RATE}&"
-            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_2}",
+            f"{api_c.DOMAIN_NAME}={api_c.OPEN_RATE}",
             headers=t_c.STANDARD_HEADERS,
         )
 

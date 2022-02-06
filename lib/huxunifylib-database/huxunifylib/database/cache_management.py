@@ -18,6 +18,7 @@ def create_cache_entry(
     cache_key: str,
     cache_value: str,
     expire_after_seconds: int = 86400,
+    platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> None:
     """A function that creates a new cache entry.
 
@@ -26,22 +27,29 @@ def create_cache_entry(
         cache_key (str): name of the cache key.
         cache_value (str): name of the cache key value.
         expire_after_seconds (int): Time for the document to expire in seconds.
+        platform (str, Optional): Underlying DB on which Mongo DB API is based.
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.CACHE_COLLECTION]
+    index_field = db_c.CREATE_TIME
+
+    cache_data = {
+        db_c.CONSTANT_VALUE: cache_value,
+        db_c.CREATE_TIME: datetime.datetime.utcnow(),
+    }
 
     try:
+        if platform == db_c.AZURE_COSMOS_DB:
+            index_field = db_c.TS
+            del cache_data[db_c.CREATE_TIME]
+            cache_data[db_c.TTL] = expire_after_seconds
+
         collection.ensure_index(
-            db_c.CREATE_TIME, expireAfterSeconds=expire_after_seconds
+            index_field, expireAfterSeconds=expire_after_seconds
         )
         collection.update_one(
             {db_c.CONSTANT_KEY: cache_key},
-            {
-                "$set": {
-                    db_c.CONSTANT_VALUE: cache_value,
-                    db_c.CREATE_TIME: datetime.datetime.utcnow(),
-                }
-            },
+            {"$set": cache_data},
             upsert=True,
         )
     except pymongo.errors.OperationFailure as exc:
