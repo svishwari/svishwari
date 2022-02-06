@@ -29,7 +29,10 @@
         <template #content>
           <div class="text-body-2 black--text text--darken-4 caption">
             <div class="value-container">
-              <span class="dot" :style="{ background: getDynamicNotation(currentData.index) }"></span>
+              <span
+                class="dot"
+                :style="{ background: getDynamicNotation(currentData.index) }"
+              ></span>
               <span class="text-label">Delivered count</span>
             </div>
             <div class="value-section">
@@ -57,18 +60,13 @@ import { timeFormat } from "d3-time-format"
 import { nest } from "d3-collection"
 import LineBarChart from "@/components/common/Charts/LineBarChart/LineBarChart.vue"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
-import Icon from "@/components/common/Icon"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 import emailData from "@/api/mock/fixtures/deliveredCountData.js"
 
 export default {
   name: "DeliveredChart",
-  components: { LineBarChart, ChartTooltip, Icon },
+  components: { LineBarChart, ChartTooltip },
   props: {
-    // emailData: {
-    //   type: Array,
-    //   required: false,
-    // },
     monthsDuration: {
       type: Number,
       required: false,
@@ -268,4 +266,3 @@ export default {
   }
 }
 </style>
-

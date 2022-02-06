@@ -236,7 +236,7 @@ export default {
         .attr("x", 10)
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
-       d3Select.selectAll(".yAxis-mirror .domain").style("stroke", "transparent")
+      d3Select.selectAll(".yAxis-mirror .domain").style("stroke", "transparent")
       if (this.value.monthsDuration == 6) {
         d3Select.selectAll(".xAxis-main .tick text").attr("x", 18)
       } else {
@@ -276,7 +276,7 @@ export default {
 
       groups
         .append("path")
-        .attr("transform", `translate(15,0)`)
+        .attr("transform", "translate(15,0)")
         .attr("class", "line")
         .style("stroke", "#E3E48D")
         .attr("stroke-width", 2)
