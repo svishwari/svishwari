@@ -26,13 +26,20 @@ export default {
  * Data source's single data feed schema
  *
  * @param {string} type data type
+ * @param {string} date data date
  * @returns {object} datafeed
  */
-const dataFeed = (type) => {
+const dataFeed = (type, date = null) => {
   return {
     name: `${type}_data_feed_${faker.name.firstName()}`.toLowerCase(),
 
-    status: faker.random.arrayElement(["Pending", "Active", "Error"]),
+    status: faker.random.arrayElement([
+      "Pending",
+      "Active",
+      "Error",
+      "Disabled",
+      "Canceled",
+    ]),
 
     records_received: faker.datatype.number(),
 
@@ -46,7 +53,7 @@ const dataFeed = (type) => {
 
     thirty_days_avg: faker.datatype.number({ min: 0, max: 1, precision: 0.01 }),
 
-    last_processed: faker.date.recent(),
+    last_processed: date ? date : faker.date.recent(),
   }
 }
 
@@ -70,4 +77,54 @@ export const dataFeeds = ({ name, type }) => {
 
     datafeeds: Array.from({ length: num }, () => dataFeed(type)),
   }
+}
+
+/**
+ * Data source's single data feed schema
+ *
+ * @param {string} type data type
+ * @returns {object} datafeed
+ */
+export const dataFeedDetailsSchema = (type) => {
+  let num = faker.datatype.number(100)
+  let date = faker.date.recent()
+
+  return {
+    name: date,
+
+    status: faker.random.arrayElement([
+      "Pending",
+      "Active",
+      "Error",
+      "Disabled",
+      "Canceled",
+    ]),
+
+    records_received: faker.datatype.number(),
+
+    records_processed: faker.datatype.number(),
+
+    records_processed_percentage: faker.datatype.number({
+      min: 0,
+      max: 1,
+      precision: 0.01,
+    }),
+
+    thirty_days_avg: faker.datatype.number({ min: 0, max: 1, precision: 0.01 }),
+
+    last_processed: date,
+    data_files: Array.from({ length: num }, () => dataFeed(type, date)),
+  }
+}
+
+/**
+ * Data source's data feeds details schema
+ *
+ * @param {string} type data feed type
+ * @returns {Array} data feeds response schema
+ */
+export const dataFeedDetails = (type) => {
+  let num = faker.datatype.number(100)
+
+  return Array.from({ length: num }, () => dataFeedDetailsSchema(type))
 }

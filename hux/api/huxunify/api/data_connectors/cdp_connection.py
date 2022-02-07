@@ -238,11 +238,29 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
         data_feed[api_c.PROCESSED_AT] = parse(
             data_feed.get(api_c.PROCESSED_AT)
         )
-        data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE] = data_feed.get(
-            api_c.RECORDS_PROCESSED, 0
-        ) / data_feed.get(api_c.RECORDS_RECEIVED, 1)
-        data_feed[api_c.THIRTY_DAYS_AVG] = (
-            data_feed.get(api_c.THIRTY_DAYS_AVG, 0) / 100
+
+        # handle nulls and division by zero
+        records_received = data_feed.get(api_c.RECORDS_RECEIVED, 1)
+        if records_received is None or records_received == 0:
+            data_feed[api_c.RECORDS_RECEIVED] = 1
+
+        # handle nulls and division by zero
+        records_processed = data_feed.get(api_c.RECORDS_PROCESSED, 0)
+        if records_processed is None:
+            data_feed[api_c.RECORDS_PROCESSED] = 1
+
+        # handle nulls and division by zero
+        thirty_days_avg = data_feed.get(api_c.THIRTY_DAYS_AVG, 0)
+        if thirty_days_avg is None:
+            data_feed[api_c.THIRTY_DAYS_AVG] = 1
+
+        # clean this up after HUS-2172
+        data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE] = (
+            data_feed[api_c.RECORDS_PROCESSED]
+            / data_feed[api_c.RECORDS_RECEIVED]
+        )
+        data_feed[api_c.THIRTY_DAYS_AVG] = round(
+            data_feed[api_c.THIRTY_DAYS_AVG] / 100, 1
         )
 
     # calculate standard deviation on records_processed_percentage to set
@@ -278,7 +296,8 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
     # sort the data_feeds list from greater to smaller thirty days average
     # value
     data_feeds.sort(
-        key=lambda data_feed: data_feed[api_c.THIRTY_DAYS_AVG], reverse=True
+        key=lambda data_feed: data_feed[api_c.THIRTY_DAYS_AVG],
+        reverse=True,
     )
     for i, data_feed in enumerate(data_feeds):
         current_value = data_feed[api_c.THIRTY_DAYS_AVG]

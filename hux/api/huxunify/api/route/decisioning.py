@@ -810,6 +810,9 @@ class ModelFeaturesView(SwaggerView):
             )
             database = get_db_client()
 
+            if not model_versions:
+                return jsonify([]), HTTPStatus.NOT_FOUND
+
             # loop versions until the latest version is found
             for version in model_versions:
                 current_version = version.get(api_c.CURRENT_VERSION)
@@ -912,6 +915,9 @@ class ModelImportanceFeaturesView(SwaggerView):
             else tecton.get_model_version_history(model_id)
         )
 
+        if not model_versions:
+            return jsonify([]), HTTPStatus.NOT_FOUND
+
         database = get_db_client()
         for version in model_versions:
             current_version = version.get(api_c.CURRENT_VERSION)
@@ -1003,6 +1009,10 @@ class ModelLiftView(SwaggerView):
             ]
         else:
             lift_data = Tecton().get_model_lift_async(model_id)
+
+        if not lift_data:
+            return jsonify([]), HTTPStatus.NOT_FOUND
+
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
 
         return (
