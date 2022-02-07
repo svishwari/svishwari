@@ -74,10 +74,17 @@ def get_trust_id_signal_data(signal_name: str) -> dict:
             agree_customers + disagree_customers + neutral_customers
         )
 
-        attribute_score = int(((
-            agree_customers + (disagree_customers * -1) +
-            (neutral_customers *0.5)
-        ) / total_customers) *100)
+        attribute_score = int(
+            (
+                (
+                    agree_customers
+                    + (disagree_customers * -1)
+                    + (neutral_customers * 0.5)
+                )
+                / total_customers
+            )
+            * 100
+        )
 
         customer_attribute_ratings.append(
             {

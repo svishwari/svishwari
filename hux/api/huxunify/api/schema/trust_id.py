@@ -46,7 +46,7 @@ class TrustIdOverviewSchema(Schema):
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
     signal_scores_overview = Nested(SignalScoreOverviewSchema)
-    attribute_scores_overview = List(Nested(AttributeScoreOverviewSchema))
+    attribute_scores = List(Nested(AttributeScoreOverviewSchema))
 
 
 class RatingSchema(Schema):
