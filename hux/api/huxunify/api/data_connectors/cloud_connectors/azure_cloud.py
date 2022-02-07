@@ -28,6 +28,10 @@ class Azure(Cloud):
         self.vault_url = (
             f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
         )
+        self.blob_connection_url = (
+            f"https:AccountName={self.config.AZURE_STORAGE_ACCOUNT_NAME}"
+            f";AccountKey={self.config.AZURE_STORAGE_ACCOUNT_KEY}"
+        )
 
     def get_secret(self, secret_name: str, **kwargs) -> str:
         """Retrieve secret from cloud.
@@ -139,13 +143,8 @@ class Azure(Cloud):
             Tuple[bool, str]: Returns bool for health status and message
         """
 
-        connection_url = (
-            f"https:AccountName={self.config.AZURE_STORAGE_ACCOUNT_NAME}"
-            f";AccountKey={self.config.AZURE_STORAGE_ACCOUNT_KEY}"
-        )
-
         blob_client = BlobClient(
-            account_url=connection_url,
+            account_url=self.blob_connection_url,
             container_name=self.config.AZURE_STORAGE_CONTAINER_NAME,
             blob_name=self.config.AZURE_STORAGE_BLOB_NAME,
         )
