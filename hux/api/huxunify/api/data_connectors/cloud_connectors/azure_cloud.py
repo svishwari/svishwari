@@ -1,12 +1,21 @@
 """Module for Azure cloud operations"""
 import logging
+from typing import Tuple
 
+from azure.batch import BatchServiceClient
+from azure.batch.batch_auth import SharedKeyCredentials
+from azure.batch.models import BatchErrorException
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
+from azure.storage.blob import BlobClient
 
 from huxunify.api.data_connectors.cloud_connectors.cloud import Cloud
+import huxunify.api.constants as api_c
 
 # pylint: disable=missing-raises-doc
+from huxunify.api.prometheus import record_health_status_metric
+
+
 class Azure(Cloud):
     """Class for Azure cloud operations"""
 
@@ -93,21 +102,62 @@ class Azure(Cloud):
         """
         raise NotImplementedError()
 
-    def health_check_batch_service(self) -> dict:
+    def health_check_batch_service(self) -> Tuple[bool, str]:
         """Checks the health of the cloud batch service.
 
         Returns:
-            dict: Health details of the batch service.
+            Tuple[bool, str]: Returns bool for health status and message
         """
-        raise NotImplementedError()
 
-    def health_check_storage_service(self) -> dict:
+        credentials = SharedKeyCredentials(
+            self.config.AZURE_BATCH_ACCOUNT_NAME,
+            self.config.AZURE_BATCH_ACCOUNT_KEY,
+        )
+        batch_client = BatchServiceClient(
+            credentials, self.config.AZURE_BATCH_ACCOUNT_URL
+        )
+        status = True, f"Azure batch service available."
+
+        try:
+            batch_client.account.list_supported_images()
+        except BatchErrorException as exc:
+            status = False, getattr(exc, "message", repr(exc))
+
+        record_health_status_metric(
+            api_c.AZURE_BATCH_CONNECTION_HEALTH, status[0]
+        )
+        return status
+
+    def health_check_storage_service(self) -> Tuple[bool, str]:
         """Checks the health of the cloud storage service.
 
         Returns:
-            dict: Health details of the storage service.
+            Tuple[bool, str]: Returns bool for health status and message
         """
-        raise NotImplementedError()
+
+        connection_url = (
+            f"https:AccountName={self.config.AZURE_STORAGE_ACCOUNT_NAME}"
+            f";AccountKey={self.config.AZURE_STORAGE_ACCOUNT_KEY}"
+        )
+
+        c = BlobClient(
+            account_url=connection_url,
+            container_name=self.config.AZURE_STORAGE_CONTAINER_NAME,
+            blob_name=self.config.AZURE_STORAGE_BLOB_NAME,
+        )
+        client_status = c.exists()
+
+        status = (
+            client_status,
+            f"Azure Blob service available."
+            if client_status
+            else f"Azure Blob service unavailable.",
+        )
+
+        record_health_status_metric(
+            api_c.AZURE_BLOB_CONNECTION_HEALTH, status[0]
+        )
+        return status
 
 
 if __name__ == "__main__":
