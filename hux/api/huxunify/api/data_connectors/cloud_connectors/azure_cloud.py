@@ -12,7 +12,6 @@ from azure.storage.blob import BlobClient
 from huxunify.api.data_connectors.cloud_connectors.cloud import Cloud
 import huxunify.api.constants as api_c
 
-# pylint: disable=missing-raises-doc
 from huxunify.api.prometheus import record_health_status_metric
 
 
@@ -86,6 +85,8 @@ class Azure(Cloud):
         Returns:
             bool: bool indicator if the upload was successful
 
+        Raises:
+            NotImplementedError: Error if function is not implemented
         """
         raise NotImplementedError()
 
@@ -99,6 +100,9 @@ class Azure(Cloud):
 
         Returns:
             bool: indication that download was successful.
+
+        Raises:
+            NotImplementedError: Error if function is not implemented
         """
         raise NotImplementedError()
 
@@ -116,7 +120,7 @@ class Azure(Cloud):
         batch_client = BatchServiceClient(
             credentials, self.config.AZURE_BATCH_ACCOUNT_URL
         )
-        status = True, f"Azure batch service available."
+        status = True, "Azure batch service available."
 
         try:
             batch_client.account.list_supported_images()
@@ -140,18 +144,18 @@ class Azure(Cloud):
             f";AccountKey={self.config.AZURE_STORAGE_ACCOUNT_KEY}"
         )
 
-        c = BlobClient(
+        blob_client = BlobClient(
             account_url=connection_url,
             container_name=self.config.AZURE_STORAGE_CONTAINER_NAME,
             blob_name=self.config.AZURE_STORAGE_BLOB_NAME,
         )
-        client_status = c.exists()
+        client_status = blob_client.exists()
 
         status = (
             client_status,
-            f"Azure Blob service available."
+            "Azure Blob service available."
             if client_status
-            else f"Azure Blob service unavailable.",
+            else "Azure Blob service unavailable.",
         )
 
         record_health_status_metric(
