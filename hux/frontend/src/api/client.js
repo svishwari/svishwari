@@ -416,6 +416,9 @@ client["models"].remove = (model) => {
 client.dataSources.dataFeeds = (type) => {
   return http.get(`/data-sources/${type}/datafeeds`)
 }
+client.dataSources.dataFeedsDetails = (type, name) => {
+  return http.get(`/data-sources/${type}/datafeeds/${name}`)
+}
 //#endregion
 
 //#region Application

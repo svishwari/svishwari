@@ -14,6 +14,8 @@ const getters = {
   single: (state) => (id) => state.items[id],
 
   dataFeeds: (state) => (id) => state.items[id]["dataFeeds"],
+
+  dataFeedDetails: (state) => state.dataFeedsDetails,
 }
 
 const mutations = {
@@ -29,6 +31,10 @@ const mutations = {
 
   SET_DATA_FEEDS(state, data) {
     Vue.set(state.items[data.id], "dataFeeds", data.items)
+  },
+
+  SET_DATA_FEEDS_DETAILS(state, data) {
+    Vue.set(state, "dataFeedsDetails", data)
   },
 }
 
@@ -72,6 +78,16 @@ const actions = {
         items: response.data["datafeeds"],
         id: data.id,
       })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDataFeedsDetails({ commit }, { type, name }) {
+    try {
+      const response = await api.dataSources.dataFeedsDetails(type, name)
+      commit("SET_DATA_FEEDS_DETAILS", response.data)
     } catch (error) {
       handleError(error)
       throw error
