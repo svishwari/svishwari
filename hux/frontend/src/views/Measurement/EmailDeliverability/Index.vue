@@ -106,24 +106,5 @@ export default {
   .overview-card {
     border-radius: 12px !important;
   }
-  .overview-table {
-    ::v-deep .v-data-table {
-      .v-data-table-header {
-        tr {
-          height: 32px !important;
-        }
-        th {
-          background: var(--v-primary-lighten2);
-          box-shadow: none;
-        }
-      }
-    }
-    ::v-deep .v-data-table .v-data-table-header th:first-child {
-      border-top-left-radius: 12px !important;
-    }
-    ::v-deep .v-data-table .v-data-table-header th:last-child {
-      border-top-right-radius: 12px !important;
-    }
-  }
 }
 </style>
