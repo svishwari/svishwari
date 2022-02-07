@@ -38,6 +38,16 @@ class TestCacheManagement(unittest.TestCase):
         get_cache = get_cache_entry(self.database, cache_key)
         self.assertTrue(get_cache)
 
+        # Ensure works in Azure Setting.
+        create_cache_entry(
+            self.database,
+            cache_key,
+            cache_value,
+            platform=db_c.AZURE_COSMOS_DB,
+        )
+        get_cache = get_cache_entry(self.database, cache_key)
+        self.assertTrue(get_cache)
+
         self.assertRaises(
             pymongo.errors.OperationFailure,
             create_cache_entry(self.database, "asdfb", cache_value),

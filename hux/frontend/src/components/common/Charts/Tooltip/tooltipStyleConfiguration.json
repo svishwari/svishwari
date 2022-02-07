@@ -25,6 +25,12 @@
     "left": "45px",
     "padding": "8px"
   },
+  "emailDeliverabilityChart": {
+    "maxWidth": "200px",
+    "top": "-45px",
+    "left": "28px",
+    "padding": "8px"
+  },
   "identityChart": {
     "maxWidth": "213px",
     "minWidth": "213px",

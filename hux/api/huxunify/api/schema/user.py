@@ -19,33 +19,6 @@ class Favorites(Schema):
     engagements = List(Str(), default=[])
 
 
-class UserSchema(Schema):
-    """User Schema"""
-
-    _id = Str(
-        data_key=api_c.ID,
-        example="5f5f7262997acad4bac4373b",
-        required=True,
-        validate=validate_object_id,
-    )
-    email = Str(required=True, attribute=api_c.USER_EMAIL_ADDRESS)
-    display_name = Str(example="Joe M")
-    first_name = Str()
-    last_name = Str()
-    phone_number = Str()
-    access_level = Str()
-    role = Str(required=True, validate=validate.OneOf(db_c.USER_ROLES))
-    pii_access = Bool(default=False)
-    organization = Str()
-    subscriptions = List(Str())
-    dashboard_configuration = Dict()
-    favorites = Nested(Favorites, required=True)
-    profile_photo = Str()
-    login_count = Int(required=True, default=0, example=10)
-    last_login = DateTimeWithZ(required=True, attribute=db_c.UPDATE_TIME)
-    modified = DateTimeWithZ(required=True)
-
-
 class UserPatchSchema(Schema):
     """User patch schema"""
 
@@ -132,6 +105,34 @@ class UserAlertCategorySchema(Schema):
 class UserPreferencesSchema(Schema):
     """User preferences schema"""
 
+    alerts = Nested(UserAlertCategorySchema)
+
+
+class UserSchema(Schema):
+    """User Schema"""
+
+    _id = Str(
+        data_key=api_c.ID,
+        example="5f5f7262997acad4bac4373b",
+        required=True,
+        validate=validate_object_id,
+    )
+    email = Str(required=True, attribute=api_c.USER_EMAIL_ADDRESS)
+    display_name = Str(example="Joe M")
+    first_name = Str()
+    last_name = Str()
+    phone_number = Str()
+    access_level = Str()
+    role = Str(required=True, validate=validate.OneOf(db_c.USER_ROLES))
+    pii_access = Bool(default=False)
+    organization = Str()
+    subscriptions = List(Str())
+    dashboard_configuration = Dict()
+    favorites = Nested(Favorites, required=True)
+    profile_photo = Str()
+    login_count = Int(required=True, default=0, example=10)
+    last_login = DateTimeWithZ(required=True, attribute=db_c.UPDATE_TIME)
+    modified = DateTimeWithZ(required=True)
     alerts = Nested(UserAlertCategorySchema)
 
 

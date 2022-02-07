@@ -6,10 +6,58 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 """
+from importlib import import_module
+from os import environ
 from pathlib import Path
 from typing import Union
 from decouple import config
+from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
+
+
+def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
+    """Load variables from secret store into ENV before we load the config.
+    Args:
+        flask_env (str): Flask environment value.
+    """
+
+    # import the aws module to prevent app context issues.
+    aws = import_module(api_c.AWS_MODULE_NAME)
+
+    # set flask key based on derived setting
+    environ[api_c.FLASK_ENV] = get_config().FLASK_ENV
+
+    if flask_env in [api_c.DEVELOPMENT_MODE, api_c.PRODUCTION_MODE]:
+        # load in variables before running flask app.
+        for i in range(0, 50):
+            # attempt to grab the SSM from the ini file
+            load_ssm_key = config(f"SSM_{i}", None)
+
+            # if empty, break loop
+            if not load_ssm_key:
+                break
+
+            # ensure the ssm key has the expected delimiter
+            if api_c.SSM_INIT_LOAD_DELIMITER not in load_ssm_key:
+                logger.error(
+                    "SSM Key '%s' missing %s delimiter.",
+                    load_ssm_key,
+                    api_c.SSM_INIT_LOAD_DELIMITER,
+                )
+                break
+
+            # split the ssm env var into key and value.
+            ssm_key, ssm_value = load_ssm_key.split(
+                api_c.SSM_INIT_LOAD_DELIMITER
+            )
+
+            # attempt to pull the ssm from the store and set env key value.
+            try:
+                environ[ssm_key] = aws.parameter_store.get_store_value(
+                    ssm_value
+                )
+            except ValueError:
+                logger.info("Unable to connect to AWS Parameter Store.")
 
 
 class Config:

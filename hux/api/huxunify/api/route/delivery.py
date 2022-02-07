@@ -199,7 +199,8 @@ class EngagementDeliverDestinationView(SwaggerView):
                 str(batch_destination.audience_delivery_job_id)
             )
         logger.info(
-            "Successfully created delivery jobs %s.",
+            "User with username %s successfully created delivery jobs %s.",
+            user[api_c.USER_NAME],
             ",".join(delivery_job_ids),
         )
         # create notification
@@ -311,7 +312,8 @@ class EngagementDeliverAudienceView(SwaggerView):
             )
         # create notification
         logger.info(
-            "Successfully created delivery jobs %s.",
+            "User with username %s successfully created delivery jobs %s.",
+            user[api_c.USER_NAME],
             ",".join(delivery_job_ids),
         )
         create_notification(
@@ -448,7 +450,8 @@ class EngagementDeliverView(SwaggerView):
             username=user[api_c.USER_NAME],
         )
         logger.info(
-            "Successfully created delivery jobs %s.",
+            "User with username %s successfully created delivery jobs %s.",
+            user[api_c.USER_NAME],
             ",".join(delivery_job_ids),
         )
         return {

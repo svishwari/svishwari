@@ -18,27 +18,27 @@
           data-e2e="map-state-list"
         >
           <div v-if="header.value == 'domain'" class="text-body-1">
-            <span class="ml-2 text-ellipsis mb-n1">
+            <span class="text-ellipsis mb-n1">
               {{ item.domain }}
             </span>
           </div>
           <div v-if="header.value == 'sent'" class="text-body-1">
-            <span class="ml-2 text-ellipsis mb-n1">
+            <span class="text-ellipsis mb-n1">
               {{ item.sent | Numeric }}
             </span>
           </div>
           <div v-if="header.value == 'bounce_rate'" class="text-body-1">
-            <span class="ml-2 text-ellipsis mb-n1">
+            <span class="text-ellipsis mb-n1">
               {{ item.bounce_rate | Percentage }}
             </span>
           </div>
           <div v-if="header.value == 'open_rate'" class="text-body-1">
-            <span class="ml-2 text-ellipsis mb-n1">
+            <span class="text-ellipsis mb-n1">
               {{ item.open_rate | Percentage }}
             </span>
           </div>
           <div v-if="header.value == 'click_rate'" class="text-body-1">
-            <span class="ml-2 text-ellipsis mb-n1">
+            <span class="text-ellipsis mb-n1">
               {{ item.click_rate | Percentage }}
             </span>
           </div>

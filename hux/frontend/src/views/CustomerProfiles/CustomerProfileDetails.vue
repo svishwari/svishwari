@@ -8,7 +8,10 @@
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
     <div v-if="!loading && customerProfile" class="pa-7">
-      <profile-overview :profile="customerProfile['overview']" />
+      <profile-overview
+        :profile="customerProfile['overview']"
+        :show-pii="showPIIData"
+      />
       <v-row class="table-card mb-3">
         <v-col cols="6" class="pb-0">
           <profile-identifiable-insights
