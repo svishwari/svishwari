@@ -1627,7 +1627,7 @@ NEUTRAL = "neutral"
 DISAGREE = "disagree"
 SIGNAL_NAME = "signal_name"
 SIGNAL_SCORE = "signal_score"
-CUSTOMER_ATTRIBUTE_RATING = "customer_attribute_rating"
+CUSTOMER_ATTRIBUTE_RATINGS = "customer_attribute_ratings"
 # TODO Remove STUB once data is available
 
 TRUST_ID_ATTRIBUTE_STUB = {

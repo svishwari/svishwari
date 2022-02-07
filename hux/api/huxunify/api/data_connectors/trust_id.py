@@ -74,9 +74,10 @@ def get_trust_id_signal_data(signal_name: str) -> dict:
             agree_customers + disagree_customers + neutral_customers
         )
 
-        attribute_score = (
-            agree_customers + disagree_customers * -1 + neutral_customers * 0.5
-        ) // total_customers
+        attribute_score = int(((
+            agree_customers + (disagree_customers * -1) +
+            (neutral_customers *0.5)
+        ) / total_customers) *100)
 
         customer_attribute_ratings.append(
             {
@@ -118,8 +119,8 @@ def get_trust_id_signal_data(signal_name: str) -> dict:
     approx_total_customers = (
         total_customers_agree
         + total_customers_neutral
-        + total_customers_disagree // total_attributes
-    )
+        + total_customers_disagree
+    ) // total_attributes
 
     return {
         api_c.SIGNAL_NAME: signal_name,
@@ -162,5 +163,5 @@ def get_trust_id_signal_data(signal_name: str) -> dict:
                 },
             },
         },
-        api_c.CUSTOMER_ATTRIBUTE_RATING: customer_attribute_ratings,
+        api_c.CUSTOMER_ATTRIBUTE_RATINGS: customer_attribute_ratings,
     }
