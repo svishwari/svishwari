@@ -1,4 +1,4 @@
-"""Purpose of this class is to get data from TrustID"""
+"""Purpose of this file is to get data from TrustID"""
 import random
 from collections import defaultdict
 from random import randint
