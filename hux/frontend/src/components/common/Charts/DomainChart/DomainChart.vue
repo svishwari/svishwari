@@ -160,7 +160,9 @@ export default {
             .tickSize(0) // vertical line at x-axis
             .ticks(3)
             .tickPadding(15)
-            .tickFormat(function(d, i, n) { return n[i + 1] ? d3TimeFormat.timeFormat("%m/%Y")(d) : "Today" })
+            .tickFormat(function (d, i, n) {
+              return n[i + 1] ? d3TimeFormat.timeFormat("%m/%Y")(d) : "Today"
+            })
         )
         .style("font-size", "14px")
 
@@ -272,11 +274,7 @@ export default {
         let data = this.data.map((d) => dateFormatter(d.date))
         let x0 = dateFormatter(xScale.invert(d3Select.pointer(mouseEvent)[0]))
 
-        let i = bisectDate(data, x0, 1)
-        let d0 = data[i - 1]
-        let d1 = data[i] || {}
-        let d = x0 - d0 > d1 - x0 ? d1 : d0
-        let dateD = dateFormatter(d)
+        let dateD = dateFormatter(x0)
         let finalXCoordinate = xScale(new Date(dateD))
         let yData = {}
         let dataToolTip = this.data.find(
@@ -320,8 +318,12 @@ export default {
               .style("pointer-events", "none")
           }
         })
-        dataToolTip.xPosition = finalXCoordinate
-        dataToolTip.yPosition = yData
+        if (dataToolTip && finalXCoordinate) {
+          dataToolTip.xPosition = finalXCoordinate
+        }
+        if (dataToolTip && yData) {
+          dataToolTip.yPosition = yData
+        }
         this.tooltipDisplay(true, dataToolTip)
       }
     },

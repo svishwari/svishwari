@@ -18,15 +18,16 @@
         <div class="text-body-2 black--text text--darken-4 caption">
           <div class="spend-count mb-1 text-h5">
             <span class="dots"></span>
-            <span>Total customer spend</span>
+            <span>Domain name</span>
           </div>
-          <div class="value-container">
-            {{ currentData }}
-            <!-- ${{ currentData.spend | Numeric(true, false, false) }} -->
+          <div class="value-container" v-if="sourceType == 'sent'">
+            {{ currentData.domain_1 }}
+          </div>
+          <div v-else class="value-container">
+            {{ currentData.domain_1 | Percentage }}
           </div>
           <div class="date-section">
-            {{ currentData }}
-            <!-- {{ currentData.date | Date("MMM DD, YYYY") }} -->
+            {{ currentData.date | Date("MMM DD, YYYY") }}
           </div>
         </div>
       </template>
