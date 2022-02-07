@@ -194,7 +194,6 @@ class TrustIdSignal(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.INSIGHTS]
 
-    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, signal_name: str, user: dict) -> Tuple[dict, int]:
         """Retrieves Trust ID signal data.
@@ -216,7 +215,7 @@ class TrustIdSignal(SwaggerView):
 
         # TODO Remove stub when Trust ID data available.
         if signal_name not in api_c.LIST_OF_SIGNALS:
-            HuxResponse.BAD_REQUEST(
+            return HuxResponse.BAD_REQUEST(
                 f"Signal name {signal_name} not supported."
             )
 

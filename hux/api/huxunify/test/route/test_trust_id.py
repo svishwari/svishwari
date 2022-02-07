@@ -30,6 +30,20 @@ class TestTrustIDRoutes(RouteTestCase):
             t_c.validate_schema(TrustIdOverviewSchema(), response.json)
         )
 
+        self.assertTrue(api_c.ALLOWED_FILTERS)
+        self.assertTrue(api_c.ATTRIBUTE_SCORES)
+
+        self.assertIsInstance(
+            response.json.get(api_c.TRUST_ID_SCORE_OVERVIEW), int
+        )
+
+        self.assertIsInstance(
+            response.json.get(api_c.SIGNAL_SCORES_OVERVIEW, {}).get(
+                api_c.CAPABILITY
+            ),
+            int,
+        )
+
     def test_trust_id_overview_filters(self):
         """Test for trust_id overview endpoint with filters."""
 
@@ -43,6 +57,20 @@ class TestTrustIDRoutes(RouteTestCase):
 
         self.assertTrue(
             t_c.validate_schema(TrustIdOverviewSchema(), response.json)
+        )
+
+        self.assertTrue(api_c.ALLOWED_FILTERS)
+        self.assertTrue(api_c.ATTRIBUTE_SCORES)
+
+        self.assertIsInstance(
+            response.json.get(api_c.TRUST_ID_SCORE_OVERVIEW), int
+        )
+
+        self.assertIsInstance(
+            response.json.get(api_c.SIGNAL_SCORES_OVERVIEW, {}).get(
+                api_c.CAPABILITY
+            ),
+            int,
         )
 
     @given(st.sampled_from(api_c.LIST_OF_SIGNALS))
@@ -62,6 +90,27 @@ class TestTrustIDRoutes(RouteTestCase):
 
         self.assertTrue(
             t_c.validate_schema(SignalOverviewSchema(), response.json)
+        )
+
+        self.assertIsInstance(response.json.get(api_c.SIGNAL_NAME), str)
+        self.assertIsInstance(response.json.get(api_c.SIGNAL_SCORE), int)
+        self.assertIsInstance(
+            response.json.get(api_c.OVERALL_CUSTOMER_RATING, {}).get(
+                api_c.TOTAL_CUSTOMERS
+            ),
+            int,
+        )
+        self.assertIsInstance(
+            response.json.get(api_c.OVERALL_CUSTOMER_RATING, {}).get(
+                api_c.RATING
+            ),
+            dict,
+        )
+        self.assertIsInstance(
+            response.json.get(api_c.CUSTOMER_ATTRIBUTE_RATINGS)[0].get(
+                api_c.ATTRIBUTE_SCORE
+            ),
+            int,
         )
 
     def test_trust_id_invalid_signal(self):
