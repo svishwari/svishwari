@@ -269,7 +269,6 @@ export default {
         svg.selectAll(".child-hover-circle").remove()
         this.tooltipDisplay(false)
 
-        let data = this.data.map((d) => dateFormatter(d.date))
         let x0 = dateFormatter(xScale.invert(d3Select.pointer(mouseEvent)[0]))
 
         let dateD = dateFormatter(x0)
