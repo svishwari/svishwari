@@ -81,6 +81,16 @@ const routes = [
     },
   },
   {
+    path: "/datasources/:id/datafeeds/:name",
+    name: "DataSourceFeedsListing",
+    component: () => import("@/views/DataSources/DataFeedsListing.vue"),
+    meta: {
+      layout: "app",
+      title: "Data source",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/identity-resolution",
     name: "IdentityResolution",
     component: () => import("@/views/IdentityResolution/Index"),

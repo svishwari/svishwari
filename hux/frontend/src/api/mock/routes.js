@@ -10,7 +10,7 @@ import {
   destinationsDataExtensions,
 } from "./factories/destination"
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
-import { dataFeeds } from "./factories/dataSource"
+import { dataFeeds, dataFeedDetails } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import { requestedUser, someTickets } from "./factories/user.js"
@@ -100,6 +100,12 @@ export const defineRoutes = (server) => {
     const dataSourceType = request.params["type"]
     const dataSource = schema.dataSources.findBy({ type: dataSourceType }).attrs
     return dataFeeds(dataSource)
+  })
+
+  server.get("/data-sources/:type/datafeeds/:name", (schema, request) => {
+    const dataSourceType = request.params["type"]
+    const dataSourceFeedName = request.params["name"]
+    return dataFeedDetails(dataSourceType, dataSourceFeedName)
   })
 
   server.patch("/data-sources", (schema, request) => {
