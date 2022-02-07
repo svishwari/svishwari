@@ -20,7 +20,7 @@
             <span class="dots"></span>
             <span>Domain name</span>
           </div>
-          <div class="value-container" v-if="sourceType == 'sent'">
+          <div v-if="sourceType == 'sent'" class="value-container">
             {{ currentData.domain_1 }}
           </div>
           <div v-else class="value-container">
@@ -127,7 +127,7 @@ export default {
       height: 10px;
       width: 10px;
       border-radius: 50%;
-      background-color: var(--v-primary-darken2) !important;
+      background-color: var(--v-primary-darken1) !important;
       display: inline-block;
     }
   }

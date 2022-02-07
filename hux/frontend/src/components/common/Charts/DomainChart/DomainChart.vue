@@ -225,7 +225,7 @@ export default {
         .append("path")
         .datum(this.data)
         .attr("class", "line")
-        .style("stroke", "#0C9DDB")
+        .style("stroke", "#0076A8")
         .style("stroke-width", 3)
         .style("fill", "transparent")
         .attr("d", lineTrace())
