@@ -11,7 +11,9 @@ from huxunifylib.database.user_management import (
     set_user,
 )
 import huxunify.test.constants as t_c
-from huxunify.api.schema.configurations import ConfigurationsSchema
+from huxunify.api.schema.configurations import (
+    ConfigurationsSchema,
+)
 from huxunify.api import constants as api_c
 
 
@@ -22,6 +24,18 @@ class ConfigurationsTests(RouteTestCase):
         """Setup resources before each test."""
 
         super().setUp()
+
+        # mock get_db_client() in utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
 
         mock.patch(
             "huxunify.api.route.configurations.get_db_client",
@@ -66,11 +80,24 @@ class ConfigurationsTests(RouteTestCase):
                 )
             )
 
-    def test_success_get_configurations(self):
+        navigation_settings = {
+            "name": "Navigation Settings",
+            "type": "navigation_settings",
+            "settings": api_c.SAMPLE_NAVIGATION_SETTINGS["settings"],
+        }
+        cmg.create_document(
+            self.database,
+            db_c.CONFIGURATIONS_COLLECTION,
+            navigation_settings,
+        )
+
+        self.addCleanup(mock.patch.stopall)
+
+    def test_success_get_configurations_modules(self):
         """Test get configurations."""
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}",
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/modules",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -89,7 +116,7 @@ class ConfigurationsTests(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}"
-            f"{api_c.CONFIGURATIONS_ENDPOINT}?{api_c.STATUS}=active",
+            f"{api_c.CONFIGURATIONS_ENDPOINT}/modules?{api_c.STATUS}=active",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -100,3 +127,58 @@ class ConfigurationsTests(RouteTestCase):
         self.assertEqual(len(response.json), 1)
         self.assertEqual(response.json[0][api_c.NAME], "Data management")
         self.assertEqual(response.json[0][api_c.TYPE], "module")
+
+    def test_success_get_configurations_navigation(self):
+        """Test get configurations."""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/navigation",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME]
+        )
+        self.assertEqual(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME],
+            "Data Management",
+        )
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.ENABLED]
+        )
+
+    def test_success_put_configurations_navigation(self):
+        """Test get configurations."""
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/navigation",
+            json=t_c.TEST_NAVIGATION_SETTINGS,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME]
+        )
+        self.assertEqual(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME],
+            "Data Management",
+        )
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.ENABLED]
+        )
+        self.assertFalse(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["children"][0][
+                api_c.ENABLED
+            ]
+        )
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["children"][1][
+                api_c.ENABLED
+            ]
+        )
