@@ -374,6 +374,7 @@ USER_ID = "user_id"
 USER_ORGANIZATION = "organization"
 USER_SUBSCRIPTION = "subscription"
 USER_FAVORITES = "favorites"
+USER_APPLICATIONS = "applications"
 USER_ALERTS = "alerts"
 USER_DISPLAY_NAME = "display_name"
 USER_LAST_LOGIN = "last_login"
@@ -581,10 +582,10 @@ ALLOWED_FIELDS = {
     ],
     APPLICATIONS_COLLECTION: [
         NAME,
-        TYPE,
         CATEGORY,
         URL,
-        STATUS,
+        ICON,
+        ENABLED,
         ADDED,
     ],
     CLIENT_PROJECTS_COLLECTION: [
