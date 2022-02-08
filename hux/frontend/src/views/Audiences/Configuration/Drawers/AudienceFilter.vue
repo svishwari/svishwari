@@ -2,7 +2,7 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
-    :enableApply="enableApply"
+    :enable-apply="enableApply"
     content-height="300px"
     :style="{ height: viewHeight }"
     data-e2e="audienceFilters"

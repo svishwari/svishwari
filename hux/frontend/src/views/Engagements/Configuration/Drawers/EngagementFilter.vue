@@ -3,7 +3,7 @@
     :is-toggled="localDrawer"
     :count="filterLength"
     content-height="300px"
-    :enableApply="enableApply"
+    :enable-apply="enableApply"
     :style="{ height: viewHeight }"
     @clear="clear"
     @apply="apply"
