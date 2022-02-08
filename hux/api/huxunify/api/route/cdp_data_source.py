@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for the CDP data sources API"""
+from datetime import datetime
 from http import HTTPStatus
 from typing import Tuple
 
@@ -27,6 +28,7 @@ from huxunify.api.data_connectors.cdp_connection import (
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
 
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -36,6 +38,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     Validation as validation,
+    fetch_datafeed_details,
 )
 
 from huxunify.api.schema.cdp_data_source import (
@@ -43,6 +46,7 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourcePostSchema,
     DataSourceDataFeedsGetSchema,
     CdpConnectionsDataSourceSchema,
+    DataSourceDataFeedDetailsGetSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -604,7 +608,7 @@ class BatchUpdateDataSources(SwaggerView):
     f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<{api_c.CDP_DATA_SOURCE_TYPE}>/{api_c.DATAFEEDS}",
     "GetConnectionsDatafeeds",
 )
-class GetDataSourceDatafeeds(SwaggerView):
+class GetConnectionsDatafeeds(SwaggerView):
     """Get data source data feeds class."""
 
     parameters = [
@@ -667,4 +671,119 @@ class GetDataSourceDatafeeds(SwaggerView):
         return (
             DataSourceDataFeedsGetSchema().dump(response),
             HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    cdp_data_sources_bp,
+    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<{api_c.CDP_DATA_SOURCE_TYPE}>/"
+    f"{api_c.DATAFEEDS}/<{api_c.DATAFEED_NAME}>",
+    "GetConnectionsDatafeedDetails",
+)
+class GetConnectionsDatafeedDetails(SwaggerView):
+    """Get data source data feed details class."""
+
+    parameters = [
+        {
+            "name": api_c.CDP_DATA_SOURCE_TYPE,
+            "in": "path",
+            "type": "string",
+            "description": "Data source type",
+            "example": db_c.DATA_SOURCE_PLATFORM_BLUECORE,
+        },
+        {
+            "name": api_c.DATAFEED_NAME,
+            "in": "path",
+            "type": "string",
+            "description": "Data feed name",
+            "example": api_c.UNSUBSCRIBE,
+        },
+        {
+            "name": api_c.START_DATE,
+            "in": "query",
+            "type": "string",
+            "description": "Start Date",
+            "example": "2021-04-10",
+            "required": False,
+        },
+        {
+            "name": api_c.END_DATE,
+            "in": "query",
+            "type": "string",
+            "description": "End Date",
+            "example": "2021-04-10",
+            "required": False,
+        },
+        {
+            "name": api_c.STATUS,
+            "in": "query",
+            "type": "string",
+            "description": "Status",
+            "example": api_c.STATUS_DISABLED,
+            "required": False,
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "CDP data source data feed details retrieved successfully.",
+            "schema": {
+                "type": "array",
+                "items": DataSourceDataFeedDetailsGetSchema,
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve data source data feed details",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.CDP_DATA_SOURCES_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(
+        self, datasource_type: str, datafeed_name: str, user: dict
+    ) -> Tuple[Response, int]:
+        """Retrieve data feeds for data source.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            datasource_type (str): Data source type.
+            datafeed_name (str): Data feed name.
+            user (dict): User object.
+
+        Returns:
+            Tuple[Response, int]: Connections data feed details response object,
+                HTTP status code.
+        """
+
+        start_date = request.args.get(api_c.START_DATE, "")
+        end_date = request.args.get(api_c.END_DATE, "")
+        if start_date and end_date:
+            validation.validate_date_range(start_date, end_date)
+            start_date = datetime.strftime(
+                validation.validate_date(start_date), api_c.DEFAULT_DATE_FORMAT
+            )
+            end_date = datetime.strftime(
+                validation.validate_date(end_date), api_c.DEFAULT_DATE_FORMAT
+            )
+
+        statuses = request.args.get(api_c.STATUS, "")
+        statuses = [x.title() for x in statuses.split(",")] if statuses else []
+
+        # Stubbed datafeed details data
+        # TODO: Update to fetch the data from Connections API when available
+        datafeed_details = sorted(
+            fetch_datafeed_details(
+                datafeed_name, start_date, end_date, statuses
+            ),
+            key=lambda x: x[api_c.LAST_PROCESSED],
+        )
+
+        return HuxResponse.OK(
+            data=datafeed_details,
+            data_schema=DataSourceDataFeedDetailsGetSchema(),
         )
