@@ -158,6 +158,21 @@ class HuxResponse:
         )
 
     @staticmethod
+    def INTERNAL_SERVER_ERROR(
+        message: str = None, extra_fields: dict = None
+    ) -> Tuple[Response, int]:
+        """Internal Server Error (409)
+        Args:
+            message (str): Message to be returned.
+            extra_fields (dict): dict containing any additional body parameters.
+        Returns:
+            Tuple[Response, int]: Response entity, response code
+        """
+        return HuxResponse.response(
+            HTTPStatus.INTERNAL_SERVER_ERROR, message, None, None, extra_fields
+        )
+
+    @staticmethod
     def response(
         code: int,
         message: str = None,
