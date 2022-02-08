@@ -7,22 +7,35 @@
         :disabled="item.disabled"
         class="font-weight-light"
       >
+        <div v-if="item.status" class="d-flex pr-2">
+          <status
+            :status="item.status"
+            :icon-size="item.statusSize ? item.statusSize : 21"
+            collapsed
+          ></status>
+        </div>
         <div v-if="item.icon" class="d-flex pr-2">
           <icon
             :type="item.icon"
-            :size="32"
+            :size="item.iconSize ? item.iconSize : 32"
             :color="item.iconColor ? item.iconColor : 'black-darken4'"
+            :variant="item.iconColorVariant ? item.iconColorVariant : 'base'"
           />
         </div>
         <div v-if="item.logo" class="d-flex pr-2">
           <logo
             :type="item.logo"
             :size="32"
-            :class="addBoxShadow ? 'logo-box-shadow br-50' : ''"
+            :class="
+              addBorder & reduceIcon
+                ? 'addBorder br-50 pa-1'
+                : addBorder
+                ? 'addBorder br-50'
+                : reduceIcon
+                ? 'padding-4'
+                : ''
+            "
           />
-        </div>
-        <div v-if="item.status">
-          <status :status="item.status" :icon-size="21" collapsed></status>
         </div>
         <span
           :class="{
@@ -56,7 +69,12 @@ export default {
       required: true,
       default: () => [],
     },
-    addBoxShadow: {
+    addBorder: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    reduceIcon: {
       type: Boolean,
       required: false,
       default: false,
@@ -75,5 +93,8 @@ export default {
   ::v-deep a {
     color: var(--v-primary-base) !important;
   }
+}
+.addBorder {
+  border: 1px solid var(--v-black-lighten2);
 }
 </style>

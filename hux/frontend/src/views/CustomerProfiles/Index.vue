@@ -17,8 +17,8 @@
       data-e2e="loader"
     />
     <div v-if="!loading">
-      <div v-if="overviewListItems" class="px-15 mt-6 my-1">
-        <v-card class="rounded pa-5 box-shadow-5">
+      <div v-if="overviewListItems" class="padding-30">
+        <v-card class="card-style pa-5">
           <div class="d-flex justify-space-between">
             <h5 class="text-h3 mb-1">Customer overview</h5>
             <v-btn
@@ -647,5 +647,9 @@ export default {
 
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
   color: var(--v-black-lighten4) !important;
+}
+
+.padding-30 {
+  padding: 30px !important;
 }
 </style>

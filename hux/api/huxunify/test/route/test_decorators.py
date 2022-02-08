@@ -1,52 +1,25 @@
 """Purpose of this file is to house tests for standalone decorators."""
 from http import HTTPStatus
-from unittest import TestCase, mock
-
-import mongomock
-import requests_mock
+from unittest import mock
 
 from huxunify.api.route.decorators import requires_access_policy
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.orchestration_management import create_audience
 
 import huxunify.test.constants as t_c
 
 
-class TestDecorators(TestCase):
+class TestDecorators(RouteTestCase):
     """Purpose of this class is to test Decorators."""
 
     def setUp(self) -> None:
         """Initialize resources before each test."""
 
-        # mock request for introspect call
-        self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
-        self.request_mocker.start()
-
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
-
-        mock.patch(
-            "huxunify.api.route.utils.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        mock.patch(
-            "huxunify.api.route.decorators.get_db_client",
-            return_value=self.database,
-        ).start()
+        super().setUp()
 
         mock.patch(
             "huxunify.api.route.decorators.get_token_from_request",

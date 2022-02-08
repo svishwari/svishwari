@@ -1,4 +1,4 @@
-"""Purpose of this file is for populating the following database documents
+"""Purpose of this file is for populating the following database documents.
  - data sources
  - destinations (delivery platforms)
 """
@@ -1256,6 +1256,96 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
+    {
+        db_c.CONFIGURATION_FIELD_NAME: "Navigation Settings",
+        db_c.CONFIGURATION_FIELD_TYPE: "navigation_settings",
+        db_c.CONFIGURATION_FIELD_SETTINGS: [
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Models",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    }
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Customer Insights",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "All Customers",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Segment Playground",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Orchestration",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Destinations",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Audiences",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Engagements",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+        ],
+    },
+]
+
+# Client Projects List
+client_projects_list = [
+    {
+        db_c.NAME: "Monamie",
+        db_c.TYPE: "monamie",
+        db_c.DESCRIPTION: "Monamie Project",
+        db_c.URL: "https://localhost/monamie",
+        db_c.ICON: "default.ico",
+        db_c.ACCESS_LEVEL: "viewer",
+    },
+    {
+        db_c.NAME: "Creatiff Inc.",
+        db_c.TYPE: "creatiff-inc",
+        db_c.DESCRIPTION: "Creatiff Inc. Project",
+        db_c.URL: "https://localhost/creatiff",
+        db_c.ICON: "default.ico",
+        db_c.ACCESS_LEVEL: "editor",
+    },
+    {
+        db_c.NAME: ".am",
+        db_c.TYPE: "dot-am",
+        db_c.DESCRIPTION: ".am Project",
+        db_c.URL: "https://localhost/am",
+        db_c.ICON: "default.ico",
+        db_c.ACCESS_LEVEL: "admin",
+    },
 ]
 
 
@@ -1373,6 +1463,34 @@ def insert_models(database: MongoClient, models: list) -> None:
     logging.info("Prepopulate models complete.")
 
 
+def insert_client_projects(
+    database: MongoClient, client_projects: list
+) -> None:
+    """Insert data into client_projects collection.
+
+    Args:
+        database (MongoClient): MongoDB Client.
+        client_projects (List): List of client project objects.
+    """
+
+    logging.info("Pre-populate client project.")
+
+    for client_project in client_projects:
+        result_id = create_document(
+            database,
+            db_c.CLIENT_PROJECTS_COLLECTION,
+            client_project,
+        )[db_c.ID]
+
+        logging.info(
+            "Added %s, %s.",
+            client_project[db_c.NAME],
+            result_id,
+        )
+
+    logging.info("Pre-populated client projects.")
+
+
 if __name__ == "__main__":
     # Initiate Data Base client
     db_client = get_mongo_client()
@@ -1381,4 +1499,5 @@ if __name__ == "__main__":
     insert_delivery_platforms(db_client, delivery_platforms_constants)
     insert_configurations(db_client, configurations_constants)
     insert_models(db_client, models_list)
+    insert_client_projects(db_client, client_projects_list)
     logging.info("Prepopulate complete.")

@@ -14,4 +14,6 @@ export default {
   lookalike: "/lookalike-audiences",
   users: "/users",
   configurations: "/configurations",
+  applications: "/applications",
+  clients: "/client-projects",
 }

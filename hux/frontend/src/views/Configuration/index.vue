@@ -95,7 +95,6 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch("users/getUsers")
       await this.$store.dispatch("configurations/getConfigModels")
       this.isConfigActivated = true
     } catch (error) {
@@ -109,9 +108,6 @@ export default {
 
 <style lang="scss" scoped>
 .config-wrapper {
-  ::v-deep .container {
-    padding-top: 0px;
-  }
   .config-content {
     .config-activating {
       ::v-deep .text-center {

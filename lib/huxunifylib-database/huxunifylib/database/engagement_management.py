@@ -109,6 +109,7 @@ def get_engagements_summary(
     database: DatabaseClient,
     engagement_ids: list = None,
     query_filter: Union[dict, None] = None,
+    platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> Union[list, None]:
     """A function to get all engagements summary with all nested lookups.
 
@@ -116,7 +117,7 @@ def get_engagements_summary(
         database (DatabaseClient): A database client.
         engagement_ids (list): Optional engagement id filter list.
         query_filter (Union[dict, None]): Mongo filter Query.
-
+        platform (str, Optional): Underlying DB of the Mongo DB API.
     Returns:
         Union[list, None]: List of all engagement documents.
     """
@@ -407,6 +408,34 @@ def get_engagements_summary(
             }
         },
     ]
+
+    if platform == db_c.AZURE_COSMOS_DB:
+        pipeline[15] = {
+            "$addFields": {
+                "audiences.destinations.is_ad_platform": {
+                    "$ifNull": ["$destination.is_ad_platform", None]
+                },
+                "audiences.destinations.name": {
+                    "$ifNull": ["$destination.name", None]
+                },
+                "audiences.destinations.category": {
+                    "$ifNull": ["$destination.category", None]
+                },
+                "audiences.destinations.link": {
+                    "$ifNull": ["$destination.link", None]
+                },
+                "audiences.destinations.delivery_platform_type": {
+                    "$ifNull": ["$destination.delivery_platform_type", None]
+                },
+            }
+        }
+        pipeline[22]["$group"]["audiences"]["$push"]["destinations"] = {
+            "$filter": {
+                "input": "$destinations",
+                "as": "destination",
+                "cond": {"$ne": ["$$destination.name", None]},
+            }
+        }
 
     try:
         return list(collection.aggregate(pipeline))

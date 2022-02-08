@@ -244,7 +244,7 @@ def requires_access_policy(
             if access_levels:
                 access_level = api_c.AccessLevel(user.get(db_c.USER_ROLE))
                 if access_level not in access_levels:
-                    logger.info(
+                    logger.error(
                         "User has an invalid access level "
                         "to access this resource."
                     )
@@ -261,7 +261,7 @@ def requires_access_policy(
                 return in_function(*args, **kwargs)
 
             # No access to resource
-            logger.info(
+            logger.error(
                 "User has an invalid access level to access this resource."
             )
             return {api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED
@@ -337,7 +337,7 @@ def requires_access_levels(access_levels: list) -> object:
             # check access level
             access_level = api_c.AccessLevel(user.get(db_c.USER_ROLE))
             if access_level not in access_levels:
-                logger.info(
+                logger.error(
                     "User has an invalid access level to access this resource."
                 )
                 return {

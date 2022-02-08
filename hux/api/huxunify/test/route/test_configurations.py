@@ -1,12 +1,9 @@
 """Purpose of this file is to house all tests related to configurations."""
-from unittest import TestCase, mock
+from unittest import mock
 from http import HTTPStatus
 
-import requests_mock
-import mongomock
-
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import (
     collection_management as cmg,
 )
@@ -14,33 +11,31 @@ from huxunifylib.database.user_management import (
     set_user,
 )
 import huxunify.test.constants as t_c
-from huxunify.api.schema.configurations import ConfigurationsSchema
+from huxunify.api.schema.configurations import (
+    ConfigurationsSchema,
+)
 from huxunify.api import constants as api_c
-from huxunify.app import create_app
 
 
-class ConfigurationsTests(TestCase):
+class ConfigurationsTests(RouteTestCase):
     """Tests for configurations."""
 
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
-        request_mocker.start()
+        super().setUp()
 
-        self.app = create_app().test_client()
+        # mock get_db_client() in utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
 
-        # init mongo patch initially
-        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
-        mongo_patch.start()
-
-        # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
 
         mock.patch(
             "huxunify.api.route.configurations.get_db_client",
@@ -85,13 +80,24 @@ class ConfigurationsTests(TestCase):
                 )
             )
 
+        navigation_settings = {
+            "name": "Navigation Settings",
+            "type": "navigation_settings",
+            "settings": api_c.SAMPLE_NAVIGATION_SETTINGS["settings"],
+        }
+        cmg.create_document(
+            self.database,
+            db_c.CONFIGURATIONS_COLLECTION,
+            navigation_settings,
+        )
+
         self.addCleanup(mock.patch.stopall)
 
-    def test_success_get_configurations(self):
+    def test_success_get_configurations_modules(self):
         """Test get configurations."""
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}",
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/modules",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -110,7 +116,7 @@ class ConfigurationsTests(TestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}"
-            f"{api_c.CONFIGURATIONS_ENDPOINT}?{api_c.STATUS}=active",
+            f"{api_c.CONFIGURATIONS_ENDPOINT}/modules?{api_c.STATUS}=active",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -121,3 +127,58 @@ class ConfigurationsTests(TestCase):
         self.assertEqual(len(response.json), 1)
         self.assertEqual(response.json[0][api_c.NAME], "Data management")
         self.assertEqual(response.json[0][api_c.TYPE], "module")
+
+    def test_success_get_configurations_navigation(self):
+        """Test get configurations."""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/navigation",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME]
+        )
+        self.assertEqual(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME],
+            "Data Management",
+        )
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.ENABLED]
+        )
+
+    def test_success_put_configurations_navigation(self):
+        """Test get configurations."""
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/navigation",
+            json=t_c.TEST_NAVIGATION_SETTINGS,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME]
+        )
+        self.assertEqual(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME],
+            "Data Management",
+        )
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.ENABLED]
+        )
+        self.assertFalse(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["children"][0][
+                api_c.ENABLED
+            ]
+        )
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["children"][1][
+                api_c.ENABLED
+            ]
+        )

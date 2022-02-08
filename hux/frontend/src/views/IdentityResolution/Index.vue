@@ -57,7 +57,7 @@
           minh-100
         "
       >
-        <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100 pa-6">
+        <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
           <div v-if="!loadingOverview">
             <v-slide-group ref="wrapper" class="idr-slide-group" show-arrows>
               <v-slide-item v-for="(metric, index) in overview" :key="index">
@@ -121,7 +121,7 @@
             </v-slide-group>
           </div>
 
-          <v-row class="px-2 mt-0 mb-1">
+          <v-row class="mt-0 mb-1">
             <v-col :md="isFilterToggled ? 9 : 12">
               <v-card
                 class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
@@ -221,7 +221,7 @@
                 :data="dataFeeds"
                 :is-loading="loadingDataFeeds"
                 :is-error-state="dataFeedsErrorState"
-                class="mt-3 mx-2"
+                class="mt-3"
                 data-e2e="datafeedtable"
               />
             </v-col>
@@ -468,10 +468,6 @@ $headerOffsetX: 220px + 32px;
 $headerOffsetY: 70px;
 
 .idr-wrapper {
-  ::v-deep .container {
-    padding: 0 !important;
-  }
-
   .idr-slide-group {
     ::v-deep .theme--light.v-icon {
       color: var(--v-primary-base) !important;

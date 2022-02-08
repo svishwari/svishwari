@@ -248,6 +248,25 @@ const DeliverySchedule = (value) => {
   }
 }
 
+/**
+ * Uses to change access_level into a user friendly string
+ *
+ * @param {string} lvl access_level from api
+ * @returns {string} access level matching Figma screens
+ */
+const AccessLevel = (lvl) => {
+  switch (lvl) {
+    case "admin":
+      return "Admin"
+
+    case "editor":
+      return "Edit"
+
+    default:
+      return "View-only"
+  }
+}
+
 export default {
   Date,
   DateRelative,
@@ -260,4 +279,5 @@ export default {
   Currency,
   Percentage,
   DeliverySchedule,
+  AccessLevel,
 }

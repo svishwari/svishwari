@@ -5,6 +5,8 @@ from bson import ObjectId
 
 ID = "_id"
 CONNECT_RETRY_INTERVAL = 1
+DOMAIN = "domain"
+DOMAIN_LIST = "domain_list"
 DUPLICATE_ERR_CODE = 11000
 FAVORITE = "favorite"
 ENABLED = "enabled"
@@ -20,6 +22,9 @@ OBJECT_ID = "id"
 CONFIGURATION = "configuration"
 SIZE = "size"
 DOCUMENTS = "documents"
+DESCRIPTION = "description"
+ICON = "icon"
+ACCESS_LEVEL = "access_level"
 
 # general fields
 AGE = "age"
@@ -41,6 +46,7 @@ AUDIENCE_CUSTOMERS_COLLECTION = "audience_customers"
 AUDIENCE_INSIGHTS_COLLECTION = "audience_insights"
 DELIVERY_JOBS_COLLECTION = "delivery_jobs"
 DELIVERY_PLATFORM_COLLECTION = "delivery_platforms"
+DELIVERABILITY_METRICS_COLLECTION = "deliverability_metrics"
 LOOKALIKE_AUDIENCE_COLLECTION = "lookalike_audiences"
 PERFORMANCE_METRICS_COLLECTION = "performance_metrics"
 CAMPAIGN_ACTIVITY_COLLECTION = "campaign_activity"
@@ -48,6 +54,7 @@ USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
 APPLICATIONS_COLLECTION = "applications"
+CLIENT_PROJECTS_COLLECTION = "client_projects"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 MODELS_COLLECTION = "models"
@@ -150,6 +157,7 @@ CATEGORY_CUSTOMER_SERVICE = "Customer service"
 CATEGORY_DATA_FILE_STORAGE = "Data & file storage"
 CATEGORY_DATABASES = "Databases"
 CATEGORY_DATA_VISUALIZATION = "Data visualization"
+DELIVERABILITY = "Deliverability"
 CATEGORY_ECOMMERCE = "E-commerce"
 CATEGORY_MARKETING = "Marketing"
 CATEGORY_OBJECT_STORAGE = "Object storage"
@@ -170,6 +178,7 @@ STATUS_MESSAGE = "status_message"
 RECENT_INGESTION_JOB_STATUS = "recent_ingestion_job_status"
 EXPIRE_AT = "expireAt"
 TS = "_ts"
+TTL = "ttl"
 CREATE_TIME = "create_time"
 UPDATE_TIME = "update_time"
 CREATED_BY = "created_by"
@@ -310,6 +319,7 @@ DELIVERY_PLATFORM_SFMC = "sfmc"
 DELIVERY_PLATFORM_SENDGRID = "sendgrid"
 DELIVERY_PLATFORM_TWILIO = "twilio"
 DELIVERY_PLATFORM_QUALTRICS = "qualtrics"
+DELIVERY_PLATFORM_SPARKPOST = "sparkpost"
 DELIVERY_PLATFORM_ADOBE = "adobe-experience"
 DELIVERY_PLATFORM_SAP = "sap"
 DELIVERY_PLATFORM_LITMUS = "litmus"
@@ -364,6 +374,7 @@ USER_ID = "user_id"
 USER_ORGANIZATION = "organization"
 USER_SUBSCRIPTION = "subscription"
 USER_FAVORITES = "favorites"
+USER_ALERTS = "alerts"
 USER_DISPLAY_NAME = "display_name"
 USER_LAST_LOGIN = "last_login"
 USER_PROFILE_PHOTO = "profile_photo"
@@ -392,6 +403,7 @@ METRICS_DELIVERY_PLATFORM_TYPE = "delivery_platform_type"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
 PERFORMANCE_METRICS = "performance_metrics"
+DELIVERABILITY_METRICS = "deliverability_metrics"
 EVENT_DETAILS = "event_details"
 EVENT_DATE = "event_date"
 PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
@@ -434,8 +446,9 @@ NOTIFICATION_FIELD_TYPE = "type"
 NOTIFICATION_FIELD_DESCRIPTION = "description"
 NOTIFICATION_FIELD_CREATED = "created"
 NOTIFICATION_FIELD_CATEGORY = "category"
-NOTIFICATION_CATEGORY_FLDR = "FLDR"
-NOTIFICATION_CATEGORY_CPDR = "CPDR"
+NOTIFICATION_CATEGORY_FLDR = "Feedback Loop Data Router"
+NOTIFICATION_CATEGORY_CPDR = "Campaign Performance Data Router"
+NOTIFICATION_CATEGORY_DR = "Deliverability Router"
 NOTIFICATION_FIELD_USERNAME = "username"
 
 NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE = "batch_size"
@@ -443,7 +456,6 @@ NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
 NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 
 # Configuration constants
-
 CONFIGURATION_FIELD_NAME = "name"
 CONFIGURATION_FIELD_ICON = "icon"
 CONFIGURATION_FIELD_TYPE = "type"
@@ -453,6 +465,9 @@ CONFIGURATION_FIELD_ENABLED = "enabled"
 CONFIGURATION_FIELD_ROADMAP = "roadmap"
 CONFIGURATION_TYPE_MODULE = "module"
 CONFIGURATION_TYPE_BUSINESS_SOLUTION = "business_solution"
+CONFIGURATION_TYPE_NAVIGATION_SETTINGS = "navigation_settings"
+CONFIGURATION_FIELD_SETTINGS = "settings"
+CONFIGURATION_FIELD_CHILDREN = "children"
 
 # Audience constants
 AUDIENCE_FILTER_CONSTANTS = "audience_filter_constants"
@@ -490,7 +505,6 @@ MODEL_CATEGORY_UNCATEGORIZED = "Uncategorized"
 MODEL_TYPE_CLASSIFICATION = "Classification"
 MODEL_TYPE_REGRESSION = "Regression"
 MODEL_TYPE_UNKNOWN = "Unknown"
-
 
 # Custom type definitions
 CUSTOM_TYPE_BOOL = "boolean"
@@ -536,6 +550,10 @@ REQUIRED_FIELDS = {
         NAME,
         CATEGORY,
     ],
+    CLIENT_PROJECTS_COLLECTION: [
+        NAME,
+        TYPE,
+    ],
 }
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
@@ -548,6 +566,7 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_STATUS,
         CONFIGURATION_FIELD_ENABLED,
         CONFIGURATION_FIELD_ROADMAP,
+        CONFIGURATION_FIELD_SETTINGS,
     ],
     MODELS_COLLECTION: [
         NAME,
@@ -568,6 +587,14 @@ ALLOWED_FIELDS = {
         STATUS,
         ADDED,
     ],
+    CLIENT_PROJECTS_COLLECTION: [
+        NAME,
+        TYPE,
+        DESCRIPTION,
+        URL,
+        ICON,
+        ACCESS_LEVEL,
+    ],
 }
 
 # Allowed collections
@@ -579,6 +606,7 @@ ALLOWED_COLLECTIONS = [
     AUDIENCES_COLLECTION,
     ENGAGEMENTS_COLLECTION,
     APPLICATIONS_COLLECTION,
+    CLIENT_PROJECTS_COLLECTION,
 ]
 
 # 30 minutes.
@@ -587,3 +615,7 @@ DELIVERY_JOB_TIMEOUT = 30
 ZERO_OBJECT_ID = ObjectId("0" * 24)
 
 DATA_ADDED = "data_added"
+
+# MongoDB Platforms
+AWS_DOCUMENT_DB = "aws_document_db"
+AZURE_COSMOS_DB = "azure_cosmos_db"

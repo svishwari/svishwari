@@ -2,8 +2,11 @@
  - delivery of an audience
 """
 from http import HTTPStatus
+from typing import TypeVar
+
 from bson import ObjectId
 from pymongo import MongoClient
+
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
@@ -188,6 +191,305 @@ def get_okta_test_user_creds(config: Config) -> tuple:
     }
 
 
+# pylint: disable=too-many-arguments,too-many-instance-attributes
+class BaseDestinationBatchJob:
+    """Base class for housing the Destination batch config."""
+
+    provider = None
+
+    @classmethod
+    def generate_job(
+        cls,
+        database: MongoClient,
+        audience_delivery_job_id: ObjectId,
+        secrets_dict: dict,
+        env_dict: dict,
+        destination_type: str,
+        config: Config = get_config(),
+    ) -> TypeVar("T", bound="BaseDestinationBatchJob"):
+        """Generate the correct
+
+        Args:
+            database (MongoClient): The mongo database client.
+            audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
+            secrets_dict (dict): The AWS secret dict for a batch job.
+            env_dict (dict): The AWS env dict for a batch job.
+            destination_type (str): The type of destination (i.e. facebook, sfcm)
+            config (config): config object.
+
+        Returns:
+            BaseDestinationBatchJob
+
+        Raises:
+            Exception: Exception thrown if an unknown cloud provider is requested
+        """
+
+        subclass_map = {x.provider.lower(): x for x in cls.__subclasses__()}
+
+        if config.CLOUD_PROVIDER.lower() not in subclass_map:
+            raise Exception(
+                f"Cloud provider {config.CLOUD_PROVIDER} does not support destination batch jobs!"
+            )
+
+        destination_batch_job = subclass_map[config.CLOUD_PROVIDER.lower()]
+
+        return destination_batch_job(
+            database,
+            audience_delivery_job_id,
+            secrets_dict,
+            env_dict,
+            destination_type,
+        )
+
+    def __init__(
+        self,
+        database: MongoClient,
+        audience_delivery_job_id: ObjectId,
+        secrets_dict: dict,
+        env_dict: dict,
+        destination_type: str,
+        config: Config = get_config(),
+    ) -> None:
+        """Init the class with the config variables
+
+        Args:
+            database (MongoClient): The mongo database client.
+            audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
+            secrets_dict (dict): The AWS secret dict for a batch job.
+            env_dict (dict): The AWS env dict for a batch job.
+            destination_type (str): The type of destination (i.e. facebook, sfcm)
+
+        Returns:
+
+        """
+        self.config = config
+        self.database = database
+        self.audience_delivery_job_id = audience_delivery_job_id
+        self.destination_type = destination_type
+        self.secrets_dict = secrets_dict
+        self.env_dict = env_dict
+        self.batch_connector = None
+        self.result = None
+        self.scheduled = False
+
+    def register(self, job_name: str = "audiencerouter", **kwargs) -> None:
+        """Register a destination job
+
+        Args:
+            job_name (str): The batch job name.
+            **kwargs: extra parameters.
+
+        Returns:
+
+        """
+        raise NotImplementedError()
+
+    def submit(self, **kwargs) -> None:
+        """Submit a destination job to the cloud
+
+        Args:
+            **kwargs: extra parameters.
+
+        Returns:
+
+        Raises:
+            Exception: Exception raised if a job is missing.
+        """
+        raise NotImplementedError()
+
+
+class AWSDestinationBatchJob(BaseDestinationBatchJob):
+    """Class for housing AWS delivery jobs"""
+
+    provider = "AWS"
+
+    def __init__(
+        self,
+        database: MongoClient,
+        audience_delivery_job_id: ObjectId,
+        secrets_dict: dict,
+        env_dict: dict,
+        destination_type: str,
+    ):
+        """Init the class with the config variables
+
+        Args:
+            database (MongoClient): The mongo database client.
+            audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
+            secrets_dict (dict): The AWS secret dict for a batch job.
+            env_dict (dict): The AWS env dict for a batch job.
+            destination_type (str): The type of destination (i.e. facebook, sfcm)
+
+        Returns:
+
+        """
+        super().__init__(
+            database,
+            audience_delivery_job_id,
+            secrets_dict,
+            env_dict,
+            destination_type,
+        )
+
+    def register(self, job_name: str = "audiencerouter", **kwargs) -> None:
+        """Register a destination job
+
+        Args:
+            job_name (str): The batch job name.
+            **kwargs: extra parameters.
+
+        Returns:
+
+        """
+        # Connect to AWS Batch
+        logger.info("Connecting to AWS Batch.")
+        if self.batch_connector is None:
+            self.batch_connector = AWSBatchConnector(
+                job_name,
+                self.audience_delivery_job_id,
+            )
+        logger.info("Connected to AWS Batch.")
+
+        # Register AWS batch job
+        logger.info("Registering AWS Batch job.")
+        response_batch_register = self.batch_connector.register_job(
+            job_role_arn=self.config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
+            exec_role_arn=self.config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
+            exec_image=self.config.AUDIENCE_ROUTER_IMAGE,
+            env_dict=self.env_dict,
+            secret_dict=self.secrets_dict,
+            aws_batch_mem_limit=2048,
+        )
+
+        if (
+            response_batch_register["ResponseMetadata"]["HTTPStatusCode"]
+            != HTTPStatus.OK.value
+        ):
+            logger.error(
+                "Failed to Register AWS Batch job for delivery job ID %s.",
+                self.audience_delivery_job_id,
+            )
+            set_delivery_job_status(
+                self.database,
+                self.audience_delivery_job_id,
+                db_c.AUDIENCE_STATUS_ERROR,
+            )
+            self.result = db_c.AUDIENCE_STATUS_ERROR
+            return
+        logger.info(
+            "Successfully Registered AWS Batch job for %s.",
+            self.audience_delivery_job_id,
+        )
+        self.result = db_c.AUDIENCE_STATUS_DELIVERING
+
+    def submit(self, **kwargs) -> None:
+        """Submit a destination job to the cloud
+
+        Args:
+            **kwargs: extra parameters.
+
+        Returns:
+
+        Raises:
+            Exception: Exception raised if a job is missing.
+        """
+        # don't process if schedule set.
+        if self.scheduled:
+            return
+
+        # Connect to AWS Batch
+        if (
+            self.batch_connector is None
+            and self.batch_connector.job_def_name is not None
+            and not isinstance(self.batch_connector, AWSBatchConnector)
+        ):
+            raise Exception("Must register a job first.")
+
+        # Submit the AWS batch job
+        response_batch_submit = self.batch_connector.submit_job()
+
+        status = api_c.STATUS_DELIVERING
+        if (
+            response_batch_submit["ResponseMetadata"]["HTTPStatusCode"]
+            != HTTPStatus.OK.value
+        ):
+            logger.error(
+                "Failed to Submit AWS Batch job for %s.",
+                self.audience_delivery_job_id,
+            )
+            status = db_c.AUDIENCE_STATUS_ERROR
+
+        set_delivery_job_status(
+            self.database,
+            self.audience_delivery_job_id,
+            status,
+        )
+        self.result = status
+
+
+class AzureDestinationBatchJob(BaseDestinationBatchJob):
+    """Class for housing Azure delivery jobs"""
+
+    provider = "Azure"
+
+    def __init__(
+        self,
+        database: MongoClient,
+        audience_delivery_job_id: ObjectId,
+        secrets_dict: dict,
+        env_dict: dict,
+        destination_type: str,
+    ) -> None:
+        """Init the class with the config variables
+
+        Args:
+            database (MongoClient): The mongo database client.
+            audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
+            secrets_dict (dict): The Azure secret dict for a batch job.
+            env_dict (dict): The Azure env dict for a batch job.
+            destination_type (str): The type of destination (i.e. facebook, sfcm)
+
+        Returns:
+
+        """
+        super().__init__(
+            database,
+            audience_delivery_job_id,
+            secrets_dict,
+            env_dict,
+            destination_type,
+        )
+
+    def register(self, job_name: str = "audiencerouter", **kwargs) -> None:
+        """Register a destination job with Azure.
+
+        Args:
+            job_name (str): The batch job name.
+            **kwargs: extra parameters.
+
+        Returns:
+
+        """
+        # TODO will be implemented when orchestration
+        # TODO creates the Azure batch connector
+        raise NotImplementedError()
+
+    def submit(self, **kwargs) -> None:
+        """Submit a destination job to Azure.
+
+        Args:
+            **kwargs: extra parameters.
+
+        Returns:
+
+        Raises:
+            Exception: Exception raised if a job is missing.
+        """
+        # TODO will be implemented when orchestration
+        # TODO creates the Azure batch connector
+        raise NotImplementedError()
+
+
 # pylint: disable=too-many-instance-attributes,too-many-arguments
 class DestinationBatchJob:
     """Class for housing the Destination batch config."""
@@ -333,7 +635,6 @@ def get_destination_config(
     audience_id: ObjectId,
     destination: dict,
     engagement_id: ObjectId,
-    audience_router_batch_size: int = 5000,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
@@ -342,7 +643,6 @@ def get_destination_config(
         audience_id (ObjectId): The ID of the audience.
         destination (dict): Destination object.
         engagement_id (ObjectId): The ID of the engagement.
-        audience_router_batch_size (int): Audience router AWS batch size.
 
     Returns:
         DestinationBatchJob: Destination batch job object.
@@ -387,9 +687,10 @@ def get_destination_config(
     config = get_config()
 
     # get destination specific env values
-    ds_env_dict, ds_secret_dict = map_destination_credentials_to_dict(
-        delivery_platform
-    )
+    (
+        destination_env_dict,
+        destination_secret_dict,
+    ) = map_destination_credentials_to_dict(delivery_platform)
 
     # get okta constant names used by audience router to communicate to CDM API.
     okta_env_dict, okta_secret_dict = get_okta_test_user_creds(config)
@@ -414,20 +715,19 @@ def get_destination_config(
         AudienceRouterConfig.DELIVERY_JOB_ID.name: str(
             audience_delivery_job[db_c.ID]
         ),
-        AudienceRouterConfig.BATCH_SIZE.name: str(audience_router_batch_size),
         MongoDBCredentials.MONGO_DB_HOST.name: config.MONGO_DB_HOST,
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
         MongoDBCredentials.MONGO_SSL_CERT.name: api_c.AUDIENCE_ROUTER_CERT_PATH,
         api_c.CDP_SERVICE: config.CDP_SERVICE,
-        **ds_env_dict,
+        **destination_env_dict,
         **okta_env_dict,
     }
 
     # setup the secrets dict
     secret_dict = {
         MongoDBCredentials.MONGO_DB_PASSWORD.name: api_c.AUDIENCE_ROUTER_MONGO_PASSWORD_FROM,
-        **ds_secret_dict,
+        **destination_secret_dict,
         **okta_secret_dict,
     }
 
@@ -576,7 +876,3 @@ async def deliver_audience_to_destination(
         api_c.DELIVERY_TAG,
         user_name,
     )
-
-
-if __name__ == "__main__":
-    pass

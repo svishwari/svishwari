@@ -77,7 +77,7 @@ steps:
       ## "Prep and run Whitesource Scan..."
       - cp /wss-scan/wss-runner.sh ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/wss-runner.sh # Copy the file because the script refrences current directory.
       - ./wss-runner.sh $API_KEY $INSTALL_COMMANDS $CONFIG_FILE $PROJECT_DIRECTORY
-      - cp ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/./whitesource/scan_report.json ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/
+      - cp ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/./whitesource/scan_report.json ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/
     environment:
       - INSTALL_COMMANDS=ci/whitesource/wss-install-commands.sh
       - CONFIG_FILE=ci/whitesource/wss-agent.config
@@ -95,7 +95,7 @@ steps:
     type: deloittehux/parse-whitesource-report
     arguments:
       ## Arguments must be explicitly set and can't use variables defined earlier.
-      ADDITIONAL_PATH: audiencerouter
+      ADDITIONAL_PATH: "lib/huxunifylib-database"
       SCRIPT_PATH: "codefresh-pipelines/scripts/whitesource/"
       SCRIPT_NAME: parse-json-report.sh
       REPORT_NAME: scan_report.json

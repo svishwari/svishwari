@@ -40,6 +40,16 @@ const routes = [
     },
   },
   {
+    path: "/clients",
+    name: "ClientPanel",
+    component: () => import("@/views/ClientPanel.vue"),
+    meta: {
+      layout: "app",
+      title: "Client Panel ",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/configuration",
     name: "Configuration",
     component: () => import("@/views/Configuration/index.vue"),
@@ -49,11 +59,31 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/my-issues",
+    name: "MyIssues",
+    component: () => import("@/views/MyIssues.vue"),
+    meta: {
+      layout: "app",
+      title: "My Issues",
+      requiresAuth: true,
+    },
+  },
   //#region Data Management
   {
     path: "/datasources/:id",
     name: "DataSourceListing",
     component: () => import("@/views/DataSources/Listing.vue"),
+    meta: {
+      layout: "app",
+      title: "Data source",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/datasources/:id/datafeeds/:name",
+    name: "DataSourceFeedsListing",
+    component: () => import("@/views/DataSources/DataFeedsListing.vue"),
     meta: {
       layout: "app",
       title: "Data source",
@@ -281,6 +311,26 @@ const routes = [
     meta: {
       layout: "app",
       title: "Alerts and Notifications",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/email-deliverability",
+    name: "EmailDeliverability",
+    component: () => import("@/views/Measurement/EmailDeliverability/Index"),
+    meta: {
+      layout: "app",
+      title: "Email Deliverability",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/application/add",
+    name: "AddApplication",
+    component: () => import("@/views/Application/AddApplication"),
+    meta: {
+      layout: "app",
+      title: "Add an Application",
       requiresAuth: true,
     },
   },

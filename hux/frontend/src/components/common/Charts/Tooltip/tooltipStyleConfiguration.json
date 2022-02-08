@@ -25,6 +25,12 @@
     "left": "45px",
     "padding": "8px"
   },
+  "emailDeliverabilityChart": {
+    "maxWidth": "200px",
+    "top": "-45px",
+    "left": "28px",
+    "padding": "8px"
+  },
   "identityChart": {
     "maxWidth": "213px",
     "minWidth": "213px",
@@ -64,5 +70,11 @@
     "top": "55px",
     "left": "25px",
     "padding": "6px 16px"
+  },
+  "runDurationChart": {
+    "maxWidth": "200px",
+    "top": "-32px",
+    "left": "85px",
+    "padding": "6px 8px 8px 8px"
   }
 }

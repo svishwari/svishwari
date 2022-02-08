@@ -10,9 +10,10 @@ import {
   destinationsDataExtensions,
 } from "./factories/destination"
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
-import { dataFeeds } from "./factories/dataSource"
+import { dataFeeds, dataFeedDetails } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
+import { requestedUser, someTickets } from "./factories/user.js"
 import audienceCSVData from "./factories/audienceCSVData"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
@@ -22,6 +23,7 @@ import totalCustomersData from "./fixtures/totalCustomersData.js"
 import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
+import { applications } from "./factories/application"
 
 export const defineRoutes = (server) => {
   // Users
@@ -63,6 +65,31 @@ export const defineRoutes = (server) => {
     }
     return new Response(code, headers, body)
   })
+  server.post("users/request_new_user", (_, request) => {
+    const code = 201
+    const headers = {}
+    const requestData = JSON.parse(request.requestBody)
+    const body = {
+      description:
+        "*Project Name:* ADV \n*Required Info:* Please add them to the team-unified--base group. \n*Reason for Request:* New member to our team \n*User:* " +
+        requestData.first_name +
+        "\n*Email:*" +
+        requestData.email +
+        "\n*Access Level:* admin \n*PII Access:*" +
+        requestData.pii_access +
+        " \n*Okta Group Name:* team-unified--base \n*Okta App:* HUX Audience Builder \n*Requested by:*" +
+        me.full_name(),
+      key: "HUS-" + `${faker.datatype.number({ min: 1000, max: 3000 })}`,
+      id: faker.datatype.number({ min: 100000, max: 1000000 }),
+      summary: "[NEW USER REQUEST] for " + requestData.email,
+    }
+    return new Response(code, headers, body)
+  })
+  server.get("users/requested_users", () => requestedUser)
+  server.get("users/tickets", () => someTickets())
+
+  //client projects
+  server.get("/client-projects")
 
   // data sources
   server.get("/data-sources")
@@ -73,6 +100,12 @@ export const defineRoutes = (server) => {
     const dataSourceType = request.params["type"]
     const dataSource = schema.dataSources.findBy({ type: dataSourceType }).attrs
     return dataFeeds(dataSource)
+  })
+
+  server.get("/data-sources/:type/datafeeds/:name", (schema, request) => {
+    const dataSourceType = request.params["type"]
+    const dataSourceFeedName = request.params["name"]
+    return dataFeedDetails(dataSourceType, dataSourceFeedName)
   })
 
   server.patch("/data-sources", (schema, request) => {
@@ -578,8 +611,10 @@ export const defineRoutes = (server) => {
 
   // notifications
   server.get("/notifications", (schema, request) => {
-    let currentBatch = request.queryParams.batch_number
-    let batchSize = request.queryParams.batch_size
+    let currentBatch =
+      request.queryParams.batch_number || request.queryParams.batchNumber
+    let batchSize =
+      request.queryParams.batch_size || request.queryParams.batchSize
     let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
     let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
     let allNotifications = schema.notifications.all()
@@ -742,5 +777,23 @@ export const defineRoutes = (server) => {
   //configuration
   server.get("/configurations", (schema) => {
     return schema.configurations.all()
+  })
+
+  //applications
+  server.get("/applications", () => {
+    return applications
+  })
+
+  server.post("/applications", (schema, request) => {
+    return (
+      "Application " +
+      JSON.parse(request.requestBody).name +
+      " is successfully created"
+    )
+  })
+
+  server.patch("/applications/:id", (schema, request) => {
+    let app = applications.find((x) => x.id == JSON.parse(request.params.id))
+    return "Application " + app.name + " is successfully updated"
   })
 }

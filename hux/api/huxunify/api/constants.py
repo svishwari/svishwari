@@ -19,8 +19,6 @@ USERNAME = "username"
 PASSWORD = "password"
 CONNECTION_STRING = "connection_string"
 SSL_CERT_PATH = "ssl_cert_path"
-AWS_REGION = "AWS_REGION"
-AWS_S3_BUCKET_CONST = "S3_DATASET_BUCKET"
 MONGO_DB_HOST = "MONGO_DB_HOST"
 MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
@@ -35,10 +33,6 @@ CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
 TECTON_API_KEY = "TECTON_API_KEY"
 TECTON_API = "TECTON_API"
 MOCK_TECTON = "MOCK_TECTON"
-AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
-AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
-AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
-AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
 DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
@@ -49,6 +43,29 @@ DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
 DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
 DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
 
+# AWS constants
+AWS_REGION = "AWS_REGION"
+AWS_S3_BUCKET_CONST = "S3_DATASET_BUCKET"
+
+AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
+AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
+AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
+AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
+AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
+AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
+AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
+
+CLOUD_PROVIDER = "CLOUD_PROVIDER"
+
+# Azure constants
+AZURE_BATCH_ACCOUNT_NAME = "AZURE_BATCH_ACCOUNT_NAME"
+AZURE_BATCH_ACCOUNT_KEY = "AZURE_BATCH_ACCOUNT_KEY"
+AZURE_BATCH_ACCOUNT_URL = "AZURE_BATCH_ACCOUNT_URL"
+AZURE_STORAGE_ACCOUNT_NAME = "AZURE_STORAGE_ACCOUNT_NAME"
+AZURE_STORAGE_ACCOUNT_KEY = "AZURE_STORAGE_ACCOUNT_KEY"
+AZURE_BLOB_CONTAINER_NAME = "AZURE_BLOB_CONTAINER_NAME"
+AZURE_KEY_VAULT_NAME = "AZURE_KEY_VAULT_NAME"
+
 # ORCH ROUTER PARAMS FOR OKTA
 UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
 UNIFIED_OKTA_TEST_USER_NAME = "unified_okta_test_user_name"
@@ -56,6 +73,7 @@ UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
 
 # JIRA
 JIRA_PROJECT_KEY = "JIRA_PROJECT_KEY"
+JIRA_USER_EMAIL = "JIRA_USER_EMAIL"
 JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
@@ -105,6 +123,9 @@ USE_CASE = "use_case"
 FIELD_TYPE = "field_type"
 INTERVAL = "interval"
 URL = "url"
+CREATED = "created"
+ISSUES = "issues"
+FIELDS = "fields"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -307,6 +328,12 @@ STATUS_REQUESTED = "Requested"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
+STATUS_SUCCESS = "Success"
+STATUS_COMPLETE = "Complete"
+STATUS_INCOMPLETE = "Incomplete"
+STATUS_RUNNING = "Running"
+STATUS_FAILED = "Failed"
+STATUS_CANCELLED = "Cancelled"
 
 STATUS_MAPPING = {
     db_c.STATUS_IN_PROGRESS: STATUS_DELIVERING,
@@ -860,6 +887,7 @@ ORCHESTRATION_ENDPOINT = "/orchestration"
 AUDIENCE_ENDPOINT = "/audiences"
 AUDIENCES = "audiences"
 ORCHESTRATION_TAG = "orchestration"
+DECISIONING = "decisioning"
 AUDIENCE = "audience"
 AUDIENCE_ID = "audience_id"
 AUDIENCE_IDS = "audience_ids"
@@ -879,9 +907,6 @@ AUDIENCE_LAST_DELIVERY = "last_delivery"
 AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE_PERCENTAGE = "audience_size_percentage"
 AUDIENCE_STANDALONE_DELIVERIES = "standalone_deliveries"
-AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
-AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
-AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 LOOKALIKE_AUDIENCES = "lookalike_audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
@@ -902,6 +927,7 @@ USER_TAG = "user"
 USER_NAME = "user_name"
 DISPLAY_NAME = "display_name"
 USER_PHONE_NUMBER = "phone_number"
+USER_EMAIL_ADDRESS = "email_address"
 USER_ACCESS_LEVEL = "access_level"
 USER_PII_ACCESS = "pii_access"
 USER_DESCRIPTION = "USER API"
@@ -1031,6 +1057,8 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 CDP_DATA_SOURCE_TYPE = "datasource_type"
+DATAFEED_NAME = "datafeed_name"
+LAST_PROCESSED = "last_processed"
 
 # Customers
 CUSTOMERS_ENDPOINT = "/customers"
@@ -1127,6 +1155,8 @@ CUSTOMER_PROFILE_REDACTED_FIELDS = [
     CITY,
     STATE,
     ZIP,
+    FIRST_NAME,
+    LAST_NAME,
 ]
 
 # Alerts Fields
@@ -1153,6 +1183,7 @@ JIRA_CONNECTION_HEALTH = "jira_connection_health"
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
 DATASOURCES = "datasources"
+DATA_MANAGEMENT = "data_management"
 DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
@@ -1211,6 +1242,7 @@ RECORDS_PROCESSED = "records_processed"
 RECORDS_RECEIVED = "records_received"
 THIRTY_DAYS_AVG = "thirty_days_avg"
 RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
+DATA_FILES = "data_files"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
@@ -1353,12 +1385,45 @@ MODELS_STUB = [
 CONFIGURATIONS_TAG = "configurations"
 CONFIGURATION_ID = "configuration_id"
 CONFIGURATIONS_ENDPOINT = "/configurations"
+SAMPLE_NAVIGATION_SETTINGS = {
+    db_c.CONFIGURATION_FIELD_SETTINGS: [
+        {
+            db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_CHILDREN: [
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+            ],
+        },
+        {
+            db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_CHILDREN: [
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Models",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                }
+            ],
+        },
+    ]
+}
 
 # Applications
 APPLICATIONS_TAG = "applications"
 APPLICATION_ID = "application_id"
 APPLICATIONS_ENDPOINT = "/applications"
 ONLY_ACTIVE = "only_active"
+
+# Client Projects
+CLIENT_PROJECTS_TAG = "client-projects"
+CLIENT_PROJECT_ID = "client_project_id"
+CLIENT_PROJECTS_ENDPOINT = "/client-projects"
 
 # Histogram data stub.
 VALUES = "values"
@@ -1481,7 +1546,178 @@ REASON_FOR_REQUEST = "reason_for_request"
 NEW_USER_REQUEST_PREFIX = "[NEW USER REQUEST]"
 REQUEST_NEW_USER = "request_new_user"
 REQUESTED_BY = "requested_by"
+USER_PREFERENCES = "preferences"
+ALERTS = "alerts"
 
 RESOURCE_OWNER = "resource_owner"
 ALLOWED_RESOURCES_FOR_ABAC = [AUDIENCE, ENGAGEMENT]
 ALLOWED_ACCESS_RULES = [RESOURCE_OWNER]
+
+REQUESTED_USERS = "requested_users"
+# Jira States.
+STATE_IN_PROGRESS = "In Progress"
+STATE_TO_DO = "To Do"
+STATE_IN_REVIEW = "In Review"
+STATE_DONE = "Done"
+# Deliverability Constants
+EMAIL_DELIVERABILITY_ENDPOINT = "email_deliverability"
+MEASUREMENT_TAG = "measurement"
+OPEN_RATE = "open_rate"
+DELIVERED_COUNT = "delivered_count"
+OVERALL_INBOX_RATE = "overall_inbox_rate"
+SENDING_DOMAINS_OVERVIEW = "sending_domains_overview"
+DELIVERED_OPEN_RATE_OVERVIEW = "delivered_open_rate_overview"
+DOMAIN_NAME = "domain_name"
+SENT = "sent"
+BOUNCE_RATE = "bounce_rate"
+CLICK_RATE = "click_rate"
+DELIVERED_RATE = "delivered_rate"
+UNSUBSCRIBE_RATE = "unsubscribe_rate"
+COMPLAINTS_RATE = "complaints_rate"
+
+# TODO Remove once email deliverability data is available.
+
+DOMAIN_1 = "domain_1"
+
+ALLOWED_EMAIL_DOMAIN_NAMES = [DOMAIN_1]
+SENDING_DOMAINS_OVERVIEW_STUB = [
+    {
+        DOMAIN_NAME: DOMAIN_1,
+        SENT: 554,
+        BOUNCE_RATE: 0.14,
+        OPEN_RATE: 0.91,
+        CLICK_RATE: 0.85,
+    }
+]
+
+
+ALERT_SAMPLE_RESPONSE = {
+    DATA_MANAGEMENT: {
+        DATASOURCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        IDENTITY_RESOLUTION: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    DECISIONING: {
+        MODELS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    ORCHESTRATION_TAG: {
+        DESTINATIONS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCE_ENGAGEMENTS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        DELIVERY_TAG: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+}
+
+# Trust ID
+TRUST_ID_ENDPOINT = "/trust_id"
+
+CAPABILITY = "capability"
+RELIABILITY = "reliability"
+HUMANITY = "humanity"
+TRANSPARENCY = "transparency"
+
+LIST_OF_SIGNALS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+
+ALLOWED_FILTERS = "allowed_filters"
+TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
+SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
+ATTRIBUTE_SCORES = "attribute_scores"
+NAME_OF_SIGNAL = "name_of_signal"
+ATTRIBUTE_SCORE = "attribute_score"
+ATTRIBUTE_DESCRIPTION = "attribute_description"
+OCCUPATION = "occupation"
+CUSTOMER_TYPE = "customer_type"
+OPTIONS = "options"
+MIN = "min"
+MAX = "max"
+OVERALL_CUSTOMER_RATING = "overall_customer_rating"
+RATING = "rating"
+AGREE = "agree"
+NEUTRAL = "neutral"
+DISAGREE = "disagree"
+SIGNAL_NAME = "signal_name"
+SIGNAL_SCORE = "signal_score"
+CUSTOMER_ATTRIBUTE_RATINGS = "customer_attribute_ratings"
+# TODO Remove STUB once data is available
+
+TRUST_ID_ATTRIBUTE_STUB = {
+    CAPABILITY: [
+        "Products and services are good value",
+        "Employs competent individuals that understand my needs",
+        "Products are good quality, accessible and safe to use",
+        "Creates long-term solutions that work for me",
+    ],
+    RELIABILITY: [
+        "Consistently delivers quality",
+        "Digital interactions run smoothly and work when needed",
+        "Improves quality of products and services",
+        "Resolves issues in a timely manner",
+    ],
+    HUMANITY: [
+        "Values and respects everyone",
+        "Customer support is in place to quickly resolve issues",
+        "Values good of society and/or environment",
+        "Takes care of employees",
+    ],
+    TRANSPARENCY: [
+        "Easy to understand how my data is used",
+        "Communications are accurate and honest",
+        "Clearly presents information regarding product and services costs",
+        "Upfront about how money is made and spent",
+    ],
+}
+
+TRUST_ID_SUPPORTED_FILTERS_STUB = [
+    {
+        NAME: AGE,
+        TYPE: "range",
+        MIN: 18,
+        MAX: 79,
+    },
+    {
+        NAME: GENDER,
+        TYPE: "list",
+        OPTIONS: [{"female": "Female"}, {"male": "Male"}, {"other": "Other"}],
+    },
+    {
+        NAME: CUSTOMER_TYPE,
+        TYPE: "list",
+        OPTIONS: [{"new": "New"}, {"repeat": "Repeat"}],
+    },
+    {
+        NAME: OCCUPATION,
+        TYPE: "list",
+        OPTIONS: [
+            {"small_business_owner": "Small Business Owner"},
+            {"medium_buisness_owner": "Medium Business Owner"},
+            {"employee": "Employee"},
+        ],
+    },
+]

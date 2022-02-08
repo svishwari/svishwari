@@ -199,7 +199,8 @@ class EngagementDeliverDestinationView(SwaggerView):
                 str(batch_destination.audience_delivery_job_id)
             )
         logger.info(
-            "Successfully created delivery jobs %s.",
+            "User with username %s successfully created delivery jobs %s.",
+            user[api_c.USER_NAME],
             ",".join(delivery_job_ids),
         )
         # create notification
@@ -311,7 +312,8 @@ class EngagementDeliverAudienceView(SwaggerView):
             )
         # create notification
         logger.info(
-            "Successfully created delivery jobs %s.",
+            "User with username %s successfully created delivery jobs %s.",
+            user[api_c.USER_NAME],
             ",".join(delivery_job_ids),
         )
         create_notification(
@@ -347,7 +349,27 @@ class EngagementDeliverView(SwaggerView):
             "in": "path",
             "required": True,
             "example": "60bfeaa3fa9ba04689906f7a",
-        }
+        },
+        {
+            "name": api_c.DESTINATIONS,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "description": "Destination IDs.",
+            "example": "60bfeaa3fa9ba04689906f7a,90bfeaa3fa9ba04689907f7a",
+            "required": False,
+        },
+        {
+            "name": api_c.AUDIENCES,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "description": "Audience IDs.",
+            "example": "60bfeaa3fa9ba04689906f7a,90bfeaa3fa9ba04689907f7a",
+            "required": False,
+        },
     ]
 
     responses = {
@@ -390,12 +412,24 @@ class EngagementDeliverView(SwaggerView):
 
         database = get_db_client()
         engagement = get_engagement(database, engagement_id)
+        destinations = [
+            destination.lower()
+            for destination in request.args.getlist(api_c.DESTINATIONS)
+        ]
+        audiences = [
+            audience.lower()
+            for audience in request.args.getlist(api_c.AUDIENCES)
+        ]
         # submit jobs for all the audience/destination pairs
         delivery_job_ids = []
 
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
         ):
+            if destinations and pair[1][db_c.OBJECT_ID] not in destinations:
+                continue
+            if audiences and pair[0] in audiences:
+                continue
             batch_destination = get_destination_config(
                 database, *pair, engagement_id
             )
@@ -416,7 +450,8 @@ class EngagementDeliverView(SwaggerView):
             username=user[api_c.USER_NAME],
         )
         logger.info(
-            "Successfully created delivery jobs %s.",
+            "User with username %s successfully created delivery jobs %s.",
+            user[api_c.USER_NAME],
             ",".join(delivery_job_ids),
         )
         return {

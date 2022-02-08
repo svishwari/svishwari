@@ -1,6 +1,6 @@
 <template>
   <div class="tabs-wrapper">
-    <v-tabs v-model="tabOption" class="mt-8">
+    <v-tabs v-model="tabOption">
       <v-tabs-slider color="primary" class="sliderCss"></v-tabs-slider>
       <div class="d-flex">
         <v-tab

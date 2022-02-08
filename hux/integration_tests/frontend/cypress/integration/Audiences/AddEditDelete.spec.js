@@ -78,8 +78,6 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
           expect(loc.pathname.toString()).to.contain("/update")
         })
 
-        //  cy.location("pathname").contains("update")
-
         // Edit audience name
         cy.get(selector.audience.editAudienceName)
           .eq(0)

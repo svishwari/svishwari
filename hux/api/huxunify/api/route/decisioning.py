@@ -283,7 +283,9 @@ class SetModelStatus(SwaggerView):
                 user[api_c.USER_NAME],
             )
             logger.info(
-                "Successfully requested model %s.", model.get(db_c.NAME)
+                "User with username %s successfully requested model %s.",
+                user[api_c.USER_NAME],
+                model.get(db_c.NAME),
             )
 
         return (
@@ -372,7 +374,11 @@ class RemoveRequestedModel(SwaggerView):
                 api_c.MODELS,
                 user[api_c.USER_NAME],
             )
-            logger.info("Successfully removed model %s.", model_id)
+            logger.info(
+                "User with username %s successfully removed model %s.",
+                user[api_c.USER_NAME],
+                model_id,
+            )
             return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
         return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.NOT_FOUND
@@ -804,6 +810,9 @@ class ModelFeaturesView(SwaggerView):
             )
             database = get_db_client()
 
+            if not model_versions:
+                return jsonify([]), HTTPStatus.NOT_FOUND
+
             # loop versions until the latest version is found
             for version in model_versions:
                 current_version = version.get(api_c.CURRENT_VERSION)
@@ -906,6 +915,9 @@ class ModelImportanceFeaturesView(SwaggerView):
             else tecton.get_model_version_history(model_id)
         )
 
+        if not model_versions:
+            return jsonify([]), HTTPStatus.NOT_FOUND
+
         database = get_db_client()
         for version in model_versions:
             current_version = version.get(api_c.CURRENT_VERSION)
@@ -997,6 +1009,10 @@ class ModelLiftView(SwaggerView):
             ]
         else:
             lift_data = Tecton().get_model_lift_async(model_id)
+
+        if not lift_data:
+            return jsonify([]), HTTPStatus.NOT_FOUND
+
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
 
         return (

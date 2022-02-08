@@ -7,9 +7,19 @@
       @removeAudience="(data) => removeAudience(data)"
       @favoriteAudience="(data) => favoriteAudience(data)"
       @openDownloadDrawer="() => openDownloadDrawer()"
+      @openLookalikeEditModal="() => openLookalikeEditModal()"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="pa-8">
+    <div v-if="audience && audience.is_lookalike === true" class="pa-8">
+      <audience-lookalike-dashboard
+        :audience-data="audience"
+        :applied-filters="appliedFilters"
+        :audience-id="audienceId"
+        :related-engagements="relatedEngagements"
+        @onRefresh="refresh()"
+      />
+    </div>
+    <div v-else v-cloak class="pa-8">
       <v-card class="overview-card pt-5 pb-6 pl-6 pr-6 box-shadow-5">
         <v-card-title class="d-flex justify-space-between pa-0 pr-2">
           <h3 class="text-h3 mb-2">Audience overview</h3>
@@ -212,7 +222,10 @@
       <v-tabs-items v-model="tabOption" class="tabs-item">
         <v-tab-item key="delivery" class="delivery-tab">
           <v-row class="">
-            <v-col :cols="deliveryCols" class="">
+            <div
+              class="mt-3 ml-3"
+              :style="{ transition: '0.5s', width: deliveryCols + '%' }"
+            >
               <delivery
                 :sections="relatedEngagements"
                 section-type="engagement"
@@ -244,8 +257,9 @@
                   onOpenStandaloneDestination($event, data)
                 "
               />
-            </v-col>
-            <v-col :cols="advertisingCols" class="">
+            </div>
+            <div :style="{ width: '1.5%' }"></div>
+            <div class="mt-3" :style="{ width: advertisingCols + '%' }">
               <div
                 class="collapsible-bar"
                 :class="{
@@ -253,7 +267,13 @@
                   close: !showAdvertising,
                   'float-right': !showAdvertising,
                 }"
-                :style="{ height: matchrateStyles.height }"
+                :style="{
+                  height:
+                    showAdvertising &&
+                    audienceData.lookalike_audiences.length > 0
+                      ? advertisingHeight
+                      : '380px',
+                }"
                 @click="toggleAd()"
               >
                 <span class="bar-text"> Digital advertising </span>
@@ -265,21 +285,18 @@
                   class="collapse-icon ml-1 mr-2"
                 />
               </div>
-              <v-card
-                v-if="showAdvertising"
-                ref="infoBox"
-                class="digital-adv ml-6 mt-4"
-                flat
-              >
+              <v-card v-if="showAdvertising" class="digital-adv ml-6 mt-4" flat>
                 <v-card-title v-if="showAdvertising" class="ml-2 text-h3">
                   Digital advertising
                 </v-card-title>
-                <v-card-text v-if="showAdvertising" class="">
+                <v-card-text v-if="showAdvertising">
                   <div class="match-rates mx-2 my-1">
                     <matchrate :matchrate="audience.match_rates" />
                   </div>
-                  <div class="lookalikes mx-2 my-6">
-                    <lookalikes />
+                  <div ref="advertisingcard" class="lookalikes mx-2 my-6">
+                    <lookalikes
+                      :lookalike-data="audienceData.lookalike_audiences"
+                    />
                   </div>
                 </v-card-text>
               </v-card>
@@ -298,7 +315,7 @@
                 >
                 </error>
               </v-card>
-            </v-col>
+            </div>
           </v-row>
         </v-tab-item>
         <v-tab-item key="insights" class="insights-tab">
@@ -318,6 +335,32 @@
       @onCancel="showConfirmModal = false"
       @onConfirm="onConfirmAction()"
     />
+
+    <confirm-modal
+      v-model="showEditConfirmModal"
+      right-btn-text="Save"
+      left-btn-text="Cancel"
+      :is-disabled="newAudienceName === ''"
+      @onCancel="showEditConfirmModal = false"
+      @onConfirm="updateLookalike()"
+    >
+      <template #body>
+        <div class="mx-4">
+          <icon type="audiences" color="black" :size="38" />
+          <div class="text-h2 mb-4">Edit lookalike audience name</div>
+          <div class="text-body-1 mb-7">
+            <div>The updated name will be reflected in Hux only;</div>
+            <div>in the lookalike destination.</div>
+          </div>
+          <text-field
+            v-model="newAudienceName"
+            placeholder="Type new name for [Facebook lookalike - Seed audience]"
+            height="40"
+            required
+          />
+        </div>
+      </template>
+    </confirm-modal>
 
     <edit-delivery-schedule
       v-model="editDeliveryDrawer"
@@ -407,6 +450,8 @@ import Matchrate from "@/views/Audiences/Dashboard/Matchrate.vue"
 import Error from "@/components/common/screens/Error"
 import InsightTab from "@/views/Audiences/Dashboard/InsightTab.vue"
 import DownloadAudienceDrawer from "@/views/Shared/Drawers/DownloadAudienceDrawer.vue"
+import AudienceLookalikeDashboard from "@/views/Audiences/Lookalike/Dashboard.vue"
+import TextField from "@/components/common/TextField"
 
 export default {
   name: "AudienceInsight",
@@ -429,13 +474,18 @@ export default {
     Error,
     InsightTab,
     DownloadAudienceDrawer,
+    AudienceLookalikeDashboard,
+    TextField,
   },
   data() {
     return {
+      advertisingHeight: "280",
       engagementList: {},
+      showEditConfirmModal: false,
+      newAudienceName: "",
       showAdvertising: true,
-      deliveryCols: 7,
-      advertisingCols: 5,
+      deliveryCols: "57",
+      advertisingCols: "40",
 
       tabOption: 0,
       showLookAlikeDrawer: false,
@@ -459,6 +509,7 @@ export default {
           disabled: true,
           href: this.$route.path,
           icon: "lookalike",
+          statusSize: 21,
           size: 12,
         },
       ],
@@ -598,7 +649,11 @@ export default {
             text: this.audience.name,
             disabled: true,
             href: this.$route.path,
+            status: this.audience.status,
             icon: "lookalike",
+            iconColor: "white",
+            statusSize: 21,
+            iconSize: 24,
             size: 12,
           })
         } else {
@@ -606,6 +661,8 @@ export default {
             text: this.audience.name,
             disabled: true,
             href: this.$route.path,
+            status: this.audience.status,
+            statusSize: 21,
           })
         }
         return items
@@ -669,6 +726,19 @@ export default {
     this.matchHeight()
   },
 
+  updated() {
+    if (
+      this.$refs.advertisingcard &&
+      this.$refs.advertisingcard.parentElement &&
+      this.$refs.advertisingcard.parentElement.parentElement
+    ) {
+      this.advertisingHeight =
+        this.$refs.advertisingcard.parentElement.parentElement.clientHeight +
+        21 +
+        "px"
+    }
+  },
+
   methods: {
     ...mapActions({
       getAudienceById: "audiences/getAudienceById",
@@ -687,6 +757,7 @@ export default {
       deleteAudience: "audiences/remove",
       markFavorite: "users/markFavorite",
       detachStandaloneDestination: "audiences/removeStandaloneDestination",
+      updateLookalikeAudience: "audiences/updateLookalike",
     }),
     attributeOptions() {
       const options = []
@@ -820,7 +891,11 @@ export default {
         default:
           break
       }
-      await this.loadAudienceInsights()
+      if (this.confirmDialog.actionType === "remove audience") {
+        this.$router.push({ name: "Audiences" })
+      } else {
+        await this.loadAudienceInsights()
+      }
     },
 
     /**
@@ -871,6 +946,21 @@ export default {
           break
       }
     },
+
+    async updateLookalike() {
+      let payload = {
+        name: this.newAudienceName,
+      }
+      try {
+        this.audienceData = await this.updateLookalikeAudience({
+          id: this.audienceId,
+          payload: payload,
+        })
+      } finally {
+        this.showEditConfirmModal = false
+      }
+    },
+
     async triggerOverviewDestinationAction(event) {
       try {
         switch (event.target.title.toLowerCase()) {
@@ -1081,12 +1171,12 @@ export default {
     },
     toggleAd() {
       if (this.showAdvertising) {
-        this.deliveryCols = 11
-        this.advertisingCols = 0
+        this.deliveryCols = "96"
+        this.advertisingCols = "1.5"
         this.showAdvertising = false
       } else {
-        this.deliveryCols = 7
-        this.advertisingCols = 5
+        this.deliveryCols = "57"
+        this.advertisingCols = "40"
         this.showAdvertising = true
       }
     },
@@ -1103,7 +1193,13 @@ export default {
       this.showConfirmModal = true
     },
     favoriteAudience(data) {
-      this.markFavorite({ id: data.id, type: "audiences" })
+      let param
+      if (data.is_lookalike === true) {
+        param = { id: data.id, type: "lookalike" }
+      } else {
+        param = { id: data.id, type: "audiences" }
+      }
+      this.markFavorite(param)
       this.refreshEntity()
     },
     openDownloadDrawer() {
@@ -1132,6 +1228,9 @@ export default {
     matchHeight() {
       var heightString = this.$refs.infoBox.$el.clientHeight + "px"
       Vue.set(this.matchrateStyles, "height", heightString)
+    },
+    openLookalikeEditModal() {
+      this.showEditConfirmModal = true
     },
   },
 }
@@ -1265,8 +1364,6 @@ export default {
 .collapsible-bar {
   margin-top: 16px;
   width: 24px;
-  height: 380px;
-
   cursor: pointer;
   float: left;
   position: relative;
