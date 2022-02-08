@@ -15,12 +15,12 @@
           <icon
             type="filter"
             :size="27"
-            :color="numFiltersSelected > 0 ? 'primary' : 'black'"
-            :variant="numFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+            :color="finalFilterApplied > 0 ? 'primary' : 'black'"
+            :variant="finalFilterApplied > 0 ? 'lighten6' : 'darken4'"
           />
           <v-badge
-            v-if="numFiltersSelected > 0"
-            :content="numFiltersSelected"
+            v-if="finalFilterApplied > 0"
+            :content="finalFilterApplied"
             color="white"
             offset-x="6"
             offset-y="4"
@@ -313,7 +313,7 @@
         </template>
         <template #subtitle>
           <div class="des-no-engagement mt-3">
-            <span v-if="numFiltersSelected <= 0">
+            <span v-if="finalFilterApplied <= 0">
               Your list of audiences will appear here once you create them.
             </span>
             <span v-else>
@@ -325,7 +325,7 @@
           </div>
         </template>
         <template #button>
-          <span v-if="numFiltersSelected <= 0">
+          <span v-if="finalFilterApplied <= 0">
             <router-link
               :to="{ name: 'SegmentPlayground' }"
               class="text-decoration-none"
@@ -439,6 +439,7 @@ export default {
   data() {
     return {
       numFiltersSelected: 0,
+      finalFilterApplied: 0,
       breadcrumbItems: [
         {
           text: "Audiences",
@@ -586,7 +587,7 @@ export default {
       this.numFiltersSelected = value
     },
     clearFilters() {
-      this.$refs.filters.clear()
+      this.$refs.filters.clearAndLoad()
     },
     initiateClone(audienceId) {
       this.$router.push({
@@ -770,6 +771,7 @@ export default {
     },
 
     async applyFilter(params) {
+      this.finalFilterApplied =  this.numFiltersSelected
       this.loading = true
       await this.getAllAudiences({
         favorites: params.selectedFavourite,

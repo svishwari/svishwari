@@ -2,6 +2,7 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
+    :enableApply="enableApply"
     content-height="300px"
     :style="{ height: viewHeight }"
     data-e2e="audienceFilters"
@@ -92,6 +93,7 @@ export default {
       selectedAttributes: [],
       selectedFavourite: false,
       selectedAudienceWorkedWith: false,
+      enableApply: false,
     }
   },
 
@@ -128,6 +130,10 @@ export default {
       this.selectedAudienceWorkedWith = false
     },
     clear() {
+      this.enableApply = true
+      this.clearFilter()
+    },
+    clearAndLoad() {
       this.clearFilter()
       this.apply()
     },
