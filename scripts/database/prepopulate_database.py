@@ -1349,7 +1349,6 @@ client_projects_list = [
 ]
 
 
-
 # Applications List
 applications_constants = [
     {
@@ -1605,9 +1604,7 @@ def insert_client_projects(
     logging.info("Pre-populated client projects.")
 
 
-def insert_applications(
-    database: MongoClient, applications: list
-) -> None:
+def insert_applications(database: MongoClient, applications: list) -> None:
     """Insert data into applications collection.
 
     Args:

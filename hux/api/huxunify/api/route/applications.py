@@ -8,17 +8,13 @@ from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
-
-from huxunify.api.data_connectors.okta import (
-    introspect_token,
-    get_token_from_request,
-)
-from huxunify.api.route.return_util import HuxResponse
 from huxunifylib.database.user_management import update_user
 from huxunifylib.database import (
     constants as db_c,
     collection_management,
 )
+
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.schema.applications import (
     ApplicationsGETSchema,
     ApplicationsPostSchema,
@@ -33,7 +29,6 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     Validation,
-    get_user_from_db,
 )
 from huxunify.api import constants as api_c
 
@@ -108,54 +103,46 @@ class ApplicationGetView(SwaggerView):
         """
         database = get_db_client()
 
-        access_token = get_token_from_request(request)[0]
-        # get the user info and the corresponding user document from db
-        # from the access_token
-        user_info = get_user_from_db(access_token)
-
         user_added = (
             Validation.validate_bool(request.args.get(api_c.USER))
             if request.args.get(api_c.USER)
             else False
         )
 
+        user_application_ids = (
+            [i[api_c.ID] for i in user[db_c.USER_APPLICATIONS]]
+            if db_c.USER_APPLICATIONS in user
+            else []
+        )
+
+        applications = []
         # Return the applications user has already added
         if user_added:
             if (
-                db_c.USER_APPLICATIONS not in user_info
-                or not user_info[db_c.USER_APPLICATIONS]
+                db_c.USER_APPLICATIONS not in user
+                or not user[db_c.USER_APPLICATIONS]
             ):
                 return HuxResponse.OK(api_c.EMPTY_USER_APPLICATION_RESPONSE)
 
-            added_application_ids = [
-                i[api_c.ID] for i in user_info[db_c.USER_APPLICATIONS]
-            ]
-            application_details = collection_management.get_documents(
+            applications = collection_management.get_documents(
                 database,
                 db_c.APPLICATIONS_COLLECTION,
-                {db_c.ID: {"$in": added_application_ids}},
+                {db_c.ID: {"$in": user_application_ids}},
             ).get(db_c.DOCUMENTS)
 
-            for i in application_details:
+            for i in applications:
                 i[api_c.URL] = next(
                     (
                         item
-                        for item in user_info[db_c.USER_APPLICATIONS]
+                        for item in user[db_c.USER_APPLICATIONS]
                         if item[api_c.ID] == i[db_c.ID]
                     )
                 )[api_c.URL]
                 i[api_c.IS_ADDED] = True
-
-            return (
-                jsonify(
-                    ApplicationsGETSchema(many=True).dump(application_details)
-                ),
-                HTTPStatus.OK.value,
-            )
         # Return all the applications user can add.
         # In this case, we do not need to show uncategorized applications
         else:
-            available_applications = collection_management.get_documents(
+            applications = collection_management.get_documents(
                 database,
                 db_c.APPLICATIONS_COLLECTION,
                 {
@@ -166,25 +153,13 @@ class ApplicationGetView(SwaggerView):
                 },
             ).get(db_c.DOCUMENTS)
 
-            added_application_ids = (
-                [i[api_c.ID] for i in user_info[db_c.USER_APPLICATIONS]]
-                if db_c.USER_APPLICATIONS in user_info
-                else []
-            )
+            for i in applications:
+                i[api_c.IS_ADDED] = [db_c.ID] in user_application_ids
 
-            for i in available_applications:
-                i[api_c.IS_ADDED] = (
-                    True if i[db_c.ID] in added_application_ids else False
-                )
-
-            return (
-                jsonify(
-                    ApplicationsGETSchema(many=True).dump(
-                        available_applications
-                    )
-                ),
-                HTTPStatus.OK.value,
-            )
+        return (
+            jsonify(ApplicationsGETSchema(many=True).dump(applications)),
+            HTTPStatus.OK.value,
+        )
 
 
 @add_view_to_blueprint(
@@ -248,12 +223,6 @@ class ApplicationsPostView(SwaggerView):
         )
         database = get_db_client()
 
-        access_token = get_token_from_request(request)[0]
-        okta_id = introspect_token(access_token).get(api_c.OKTA_USER_ID)
-        # get the user info and the corresponding user document from db
-        # from the access_token
-        user_info = get_user_from_db(access_token)
-
         existing_application = collection_management.get_document(
             database,
             db_c.APPLICATIONS_COLLECTION,
@@ -278,9 +247,9 @@ class ApplicationsPostView(SwaggerView):
 
         # add applications to user doc
         updated_user_doc = (
-            user_info[db_c.USER_APPLICATIONS]
-            if db_c.USER_APPLICATIONS in user_info
-            and user_info[db_c.USER_APPLICATIONS] is not None
+            user[db_c.USER_APPLICATIONS]
+            if db_c.USER_APPLICATIONS in user
+            and user[db_c.USER_APPLICATIONS] is not None
             else []
         )
         user_apps = [
@@ -295,7 +264,9 @@ class ApplicationsPostView(SwaggerView):
             }
         )
 
-        update_user(database, okta_id, {db_c.USER_APPLICATIONS: user_apps})
+        update_user(
+            database, user[db_c.OKTA_ID], {db_c.USER_APPLICATIONS: user_apps}
+        )
 
         logger.info(
             "User with username %s successfully created application %s.",
@@ -386,12 +357,6 @@ class ApplicationsPatchView(SwaggerView):
         )
         database = get_db_client()
 
-        access_token = get_token_from_request(request)[0]
-        okta_id = introspect_token(access_token).get(api_c.OKTA_USER_ID)
-        # get the user info and the corresponding user document from db
-        # from the access_token
-        user_info = get_user_from_db(access_token)
-
         existing_application = collection_management.get_document(
             database,
             db_c.APPLICATIONS_COLLECTION,
@@ -404,9 +369,9 @@ class ApplicationsPatchView(SwaggerView):
 
         # add applications to user doc
         updated_user_doc = (
-            user_info[db_c.USER_APPLICATIONS]
-            if db_c.USER_APPLICATIONS in user_info
-            and user_info[db_c.USER_APPLICATIONS] is not None
+            user[db_c.USER_APPLICATIONS]
+            if db_c.USER_APPLICATIONS in user
+            and user[db_c.USER_APPLICATIONS] is not None
             else []
         )
         user_apps = [
@@ -421,7 +386,9 @@ class ApplicationsPatchView(SwaggerView):
             }
         )
 
-        update_user(database, okta_id, {db_c.USER_APPLICATIONS: user_apps})
+        update_user(
+            database, user[db_c.OKTA_ID], {db_c.USER_APPLICATIONS: user_apps}
+        )
 
         logger.info(
             "User with username %s successfully updated application %s.",

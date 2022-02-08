@@ -306,16 +306,6 @@ def requires_access_levels(access_levels: list) -> object:
                Response (object): returns a decorated function object.
             """
 
-            # override if flag set locally
-            if get_config().TEST_AUTH_OVERRIDE:
-                # return a default user name
-                kwargs[api_c.USER] = {
-                    api_c.USER_NAME: getpass.getuser(),
-                    api_c.USER_ACCESS_LEVEL: db_c.USER_ROLE_ADMIN,
-                    api_c.USER_PII_ACCESS: True,
-                }
-                return in_function(*args, **kwargs)
-
             # get the access token
             logger.info("Getting okta access token from request.")
             token_response = get_token_from_request(request)

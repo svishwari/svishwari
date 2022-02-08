@@ -144,15 +144,6 @@ class ApplicationsTests(RouteTestCase):
         self.assertEqual(len(applications), 3)
         self.assertIn(applications_request[api_c.NAME], names)
 
-        # Ensure the application is added to user config
-        user = get_user(self.database, t_c.VALID_RESPONSE.get(api_c.OKTA_UID))
-
-        self.assertIsNotNone(user[db_c.USER_APPLICATIONS])
-        self.assertEqual(
-            user[db_c.USER_APPLICATIONS][0][api_c.URL],
-            applications_request[api_c.URL],
-        )
-
     def test_create_invalid_application(self):
         """Test create invalid application."""
 
@@ -215,16 +206,6 @@ class ApplicationsTests(RouteTestCase):
         self.assertEqual(len(applications), 3)
         self.assertIn(applications_request[api_c.NAME], names)
 
-        # Ensure the application is added to user config only once
-        user = get_user(self.database, t_c.VALID_RESPONSE.get(api_c.OKTA_UID))
-
-        self.assertIsNotNone(user[db_c.USER_APPLICATIONS])
-        self.assertEqual(len(user[db_c.USER_APPLICATIONS]), 1)
-        self.assertEqual(
-            user[db_c.USER_APPLICATIONS][0][api_c.URL],
-            applications_request[api_c.URL],
-        )
-
     def test_success_add_existing_applications(self):
         """Test creating application successfully."""
 
@@ -252,16 +233,6 @@ class ApplicationsTests(RouteTestCase):
             ]
         )
         self.assertEqual(len(applications), 2)
-
-        # Ensure the application is added to user config only once
-        user = get_user(self.database, t_c.VALID_RESPONSE.get(api_c.OKTA_UID))
-
-        self.assertIsNotNone(user[db_c.USER_APPLICATIONS])
-        self.assertEqual(len(user[db_c.USER_APPLICATIONS]), 1)
-        self.assertEqual(
-            user[db_c.USER_APPLICATIONS][0][api_c.URL],
-            patch_request_body[api_c.URL],
-        )
 
     @given(
         value=st.one_of(
