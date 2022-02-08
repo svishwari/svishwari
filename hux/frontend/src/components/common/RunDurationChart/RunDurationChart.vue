@@ -4,10 +4,10 @@
       <!-- <div class="outer-text">
         Time Minutes
       </div> -->
-      <RunDurationLineAreaChart
+      <run-duration-line-area-chart
         v-model="sourceData"
         :chart-dimensions="chartDimensions"
-        :finalStatus="finalStatus"
+        :final-status="finalStatus"
         @tooltipDisplay="toolTipDisplay"
       />
     </div>
@@ -34,7 +34,7 @@
             <span v-else class="redDot mr-2"></span>
             {{ currentData.status }}
           </div>
-          <div class="mb-2"  v-if="currentData.status === 'Success'">
+          <div v-if="currentData.status === 'Success'" class="mb-2">
             {{ currentData.showDuration }}
           </div>
           <div class="date-section black--text text--darken-4">
@@ -77,12 +77,12 @@ export default {
       finalStatus: "Success",
     }
   },
+  computed: {},
   mounted() {
     new ResizeObserver(this.sizeHandler).observe(this.$refs.runDurationChart)
     this.formattedData()
     this.sizeHandler()
   },
-  computed: {},
   methods: {
     formattedData() {
       this.sourceData.map((element) => {

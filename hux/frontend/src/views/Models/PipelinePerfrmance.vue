@@ -146,7 +146,7 @@
             <h3 class="text-h3">Run duration (last 10)</h3>
           </span>
           <run-duration-chart
-            :runDurationData="runDurationData.training.run_duration"
+            :run-duration-data="runDurationData.training.run_duration"
           />
         </div>
       </div>
@@ -291,7 +291,7 @@
             <h3 class="text-h3">Run duration (last 10)</h3>
           </span>
           <run-duration-chart
-            :runDurationData="runDurationData.scoring.run_duration"
+            :run-duration-data="runDurationData.scoring.run_duration"
           />
         </div>
       </div>

@@ -145,7 +145,10 @@ export default {
       svg
         .append("text")
         .classed("appendtext", true)
-        .attr("transform", "translate(-55," + this.height / 3 + ") rotate(-90 )")
+        .attr(
+          "transform",
+          "translate(-55," + this.height / 3 + ") rotate(-90 )"
+        )
         .attr("fill", "#000000")
         .style("text-anchor", "middle")
         .style("color", "#000000")
@@ -158,7 +161,7 @@ export default {
         .attr(
           "transform",
           "translate(" +
-            (this.width / 2 - 80)+
+            (this.width / 2 - 80) +
             "," +
             (this.height - 65) +
             ") rotate(-360)"
