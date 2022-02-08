@@ -67,7 +67,6 @@ class Azure(Cloud):
             **kwargs (dict): function keyword arguments.
 
         Returns:
-            None
 
         Raises:
             Exception: Exception that will be raised if the operation fails
