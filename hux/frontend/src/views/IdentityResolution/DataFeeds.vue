@@ -43,7 +43,7 @@
                   class="my-3"
                 />
                 <template #tooltip>
-                  {{ item[col.value] }}
+                  {{ item[col.value].charAt(0).toUpperCase() + item[col.value].substr(1).toLowerCase() }}
                 </template>
               </tooltip>
 
