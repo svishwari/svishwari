@@ -1274,6 +1274,23 @@ AVG_SPEND = "avg_spend"
 
 DESTINATIONS_CATEGORY = "destinations_category"
 
+TEST_NAVIGATION_SETTINGS = {
+    "settings": [
+        {
+            "enabled": True,
+            "name": "Data Management",
+            "children": [
+                {"name": "Data Sources", "enabled": False},
+                {"name": "Identity Resolution", "enabled": True},
+            ],
+        },
+        {
+            "enabled": True,
+            "name": "Decisioning",
+            "children": [{"name": "Models", "enabled": True}],
+        },
+    ]
+}
 SAMPLE_USER_JIRA_TICKETS = {
     "expand": "names,schema",
     "startAt": 0,

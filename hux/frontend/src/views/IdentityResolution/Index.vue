@@ -121,8 +121,8 @@
             </v-slide-group>
           </div>
 
-          <v-row class="mt-0 mb-1">
-            <v-col :md="isFilterToggled ? 9 : 12">
+          <v-row class="mt-0">
+            <v-col class="mb-n2" :md="isFilterToggled ? 9 : 12">
               <v-card
                 class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
                 :class="
