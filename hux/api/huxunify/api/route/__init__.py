@@ -2,6 +2,7 @@
 
 from huxunify.api.route.destination import dest_bp
 from huxunify.api.route.email_deliverability import email_deliverability_bp
+from huxunify.api.route.trust_id import trust_id_bp
 from huxunify.api.route.user import user_bp
 from huxunify.api.route.decisioning import model_bp
 from huxunify.api.route.orchestration import orchestration_bp
@@ -30,4 +31,5 @@ ROUTES = [
     applications_bp,
     client_projects_bp,
     email_deliverability_bp,
+    trust_id_bp,
 ]
