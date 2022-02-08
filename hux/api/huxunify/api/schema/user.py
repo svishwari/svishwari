@@ -75,7 +75,7 @@ class UserAlertSchema(Schema):
 class UserAlertDataManagementSchema(Schema):
     """User alert data management schema"""
 
-    datasources = Nested(UserAlertSchema, required=False)
+    data_sources = Nested(UserAlertSchema, required=False)
     identity_resolution = Nested(UserAlertSchema, required=False)
 
 
