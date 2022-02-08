@@ -1566,13 +1566,14 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
         "frequency": "Weekly",
         "last_run": datetime.datetime.now() - datetime.timedelta(days=1),
         "most_recent_run_duration": "00:22:45",
-        "total_runs": 10,
+        "total_runs": 15,
         "run_duration": [
             {
                 "status": random.choice(["Success", "Failed"]),
                 "timestamp": datetime.datetime.now()
                 - datetime.timedelta(days=x),
-                "duration": "12m 41s",
+                "duration": "00:12:41",
+                "label": f"{x} run of last 10",
             }
             for x in range(0, 10)
         ],
@@ -1581,13 +1582,14 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
         "frequency": "Weekly",
         "last_run": datetime.datetime.now() - datetime.timedelta(days=1),
         "most_recent_run_duration": "00:22:45",
-        "total_runs": random.randrange(10),
+        "total_runs": 10,
         "run_duration": [
             {
                 "status": random.choice(["Success", "Failed"]),
                 "timestamp": datetime.datetime.now()
                 - datetime.timedelta(days=x),
-                "duration": "12m 41s",
+                "duration": "00:12:41",
+                "label": f"{x} run of last 10",
             }
             for x in range(0, random.randrange(10))
         ],
