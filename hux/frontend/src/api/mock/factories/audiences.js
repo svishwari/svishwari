@@ -87,7 +87,22 @@ export const audience = {
   source_id: () => faker.datatype.number({ min: 1, max: 10 }),
   source_name: (index) => `My audience ${index + 1}`,
   source_size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
-  match_rate: 0.5972,
+  match_rates: [
+    {
+      destination: "Facebook",
+      type: "facebook",
+      last_delivery: "2022-01-18T17:17:27.266Z",
+      match_rate: 0,
+      size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
+    },
+    {
+      destination: "Google Ads",
+      type: "google-ads",
+      last_delivery: "2022-01-18T17:17:27.266Z",
+      match_rate: 0,
+      size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
+    },
+  ],
   status: () =>
     faker.random.arrayElement([
       "Delivered",
@@ -128,6 +143,7 @@ export const audience = {
       delivery_platform_type: "sendgrid",
       delivery_platform_name: "Sendgrid by Twilio",
       size: 0,
+      link: null,
     },
     {
       status: "Delivering",
@@ -136,6 +152,7 @@ export const audience = {
       delivery_platform_type: "facebook",
       delivery_platform_name: "Facebook",
       size: 0,
+      link: "https://business.facebook.com/",
     },
   ],
 }
