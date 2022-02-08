@@ -754,7 +754,6 @@ class TestDestinationRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        print(response.json)
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         # TODO HUS-1909 this check should succeed after schema is corrected
         # self.assertEqual("salesforce_data_ext_name", response.json[api_c.NAME])
