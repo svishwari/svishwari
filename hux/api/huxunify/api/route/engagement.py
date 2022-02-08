@@ -618,7 +618,7 @@ class DeleteEngagement(SwaggerView):
 
             return {}, HTTPStatus.NO_CONTENT
 
-        logger.info("Could not delete engagement with ID %s.", engagement_id)
+        logger.error("Could not delete engagement with ID %s.", engagement_id)
         return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
 
 

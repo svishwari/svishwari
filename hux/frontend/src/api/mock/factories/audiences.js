@@ -53,11 +53,21 @@ const lookalikeAudience = () => {
     }),
     create_time: faker.date.recent(),
     update_time: faker.date.recent(),
-    favorite: faker.datatype.boolean(),
     name: faker.fake("{{name.firstName}} {{name.lastName}}"),
     size: faker.datatype.number({ min: 10000000, max: 999999999 }),
     is_lookalike: true,
-    type: "facebook",
+    delivery_platform_type: "facebook",
+    delivery_platform_name: "Facebook",
+    delivery_platform_link: "https://business.facebook.com/",
+    status: () =>
+      faker.random.arrayElement([
+        "Delivered",
+        "Delivering",
+        "Not Delivered",
+        "Error",
+      ]),
+    created_by: faker.fake("{{name.firstName}} {{name.lastName}}"),
+    updated_by: faker.fake("{{name.firstName}} {{name.lastName}}"),
   }
 }
 

@@ -237,12 +237,30 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
         data_feed[api_c.PROCESSED_AT] = parse(
             data_feed.get(api_c.PROCESSED_AT)
         )
-        data_feed["records_processed_percentage"] = data_feed.get(
-            "records_processed", 0
-        ) / data_feed.get("records_received", 1)
-        data_feed["thirty_days_avg"] = (
-            data_feed.get("thirty_days_avg", 0) / 100
+
+        # handle nulls and division by zero
+        records_received = data_feed.get("records_received", 1)
+        if records_received is None or records_received == 0:
+            data_feed["records_received"] = 1
+
+        # handle nulls and division by zero
+        records_processed = data_feed.get("records_processed", 0)
+        if records_processed is None:
+            data_feed["records_processed"] = 1
+
+        # handle nulls and division by zero
+        thirty_days_avg = data_feed.get("thirty_days_avg", 0)
+        if thirty_days_avg is None:
+            data_feed["thirty_days_avg"] = 1
+
+        # clean this up after HUS-2172
+        data_feed["records_processed_percentage"] = (
+            data_feed["records_processed"] / data_feed["records_received"]
         )
+        data_feed["thirty_days_avg"] = round(
+            data_feed["thirty_days_avg"] / 100, 1
+        )
+
     return data_feeds
 
 

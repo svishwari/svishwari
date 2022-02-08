@@ -13,6 +13,7 @@
         <template #hover-content>Lookalike audience</template>
       </tooltip>
       <router-link
+        v-if="routePath"
         :to="routePath"
         class="text-decoration-none menu-link"
         append
@@ -28,6 +29,16 @@
           </template>
         </tooltip>
       </router-link>
+      <tooltip v-else>
+        <template slot="label-content">
+          <span class="primary--text ellipsis menu-value" :class="labelClass">
+            {{ value }}
+          </span>
+        </template>
+        <template slot="hover-content">
+          {{ value }}
+        </template>
+      </tooltip>
       <v-spacer></v-spacer>
       <div class="d-flex">
         <span class="action-icon font-weight-light menu-activator">
@@ -47,7 +58,13 @@
             <icon v-if="isFavorite" type="fav_filled" :size="18" color="" />
             <icon v-else type="fav_blank" :size="18" color="" />
           </v-btn>
-          <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
+          <v-menu
+            v-if="menuOptions.length > 0"
+            v-model="openMenu"
+            class="menu-wrapper"
+            bottom
+            offset-y
+          >
             <template #activator="{ on, attrs }">
               <v-icon
                 v-bind="attrs"
@@ -146,11 +163,11 @@ export default Vue.extend({
     },
     routeName: {
       type: String,
-      required: true,
+      required: false,
     },
     routeParam: {
       type: String,
-      required: true,
+      required: false,
     },
     data: {
       type: Object,
@@ -186,10 +203,12 @@ export default Vue.extend({
   },
   computed: {
     routePath() {
-      return {
-        name: this.routeName,
-        params: { id: this.routeParam },
-      }
+      return this.routeName && this.routeParam
+        ? {
+            name: this.routeName,
+            params: { id: this.routeParam },
+          }
+        : null
     },
   },
 

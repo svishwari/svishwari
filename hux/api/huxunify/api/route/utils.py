@@ -1,7 +1,11 @@
 """Purpose of this file is to house route utilities."""
+# pylint: disable=too-many-lines
+import copy
+import random
 from collections import defaultdict
 from datetime import datetime, date
 import re
+from itertools import groupby
 from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
@@ -55,6 +59,9 @@ from huxunify.api.exceptions import (
 from huxunify.api.prometheus import record_health_status_metric
 from huxunify.api.stubbed_data.stub_shap_data import shap_data
 from huxunify.api.schema.user import RequestedUserSchema
+from huxunify.api.stubbed_data.datasource_datafeed_stub import (
+    datafeed_detail_stub_data,
+)
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -540,7 +547,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
     # checking if required keys are present in user_info
     if not required_keys.issubset(user_info.keys()):
-        logger.info("Failure. Required keys not present in user_info dict.")
+        logger.warning("Failure. Required keys not present in user_info dict.")
         return {
             "message": api_c.AUTH401_ERROR_MESSAGE
         }, HTTPStatus.UNAUTHORIZED
@@ -567,7 +574,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
         # return NOT_FOUND if user is still none
         if user is None:
-            logger.info(
+            logger.warning(
                 "User not found in DB even after trying to create one."
             )
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
@@ -938,3 +945,116 @@ def extract_user_request_details_from_issue(
         ),
         api_c.KEY: team_member_request_issue.get(api_c.KEY),
     }
+
+
+def group_and_aggregate_datafeed_details_by_date(
+    datafeed_details: list,
+) -> list:
+    """Group and aggregate data feed details by date
+
+    Args:
+        datafeed_details (list): list of data feed details to group
+
+    Returns:
+        list: List of aggregated and grouped data feed details
+    """
+    grouped_datafeed_details = []
+
+    grouped_by_date = groupby(
+        datafeed_details, lambda x: x[api_c.LAST_PROCESSED]
+    )
+
+    for df_date, df_details in grouped_by_date:
+        data_feed_by_date = {
+            api_c.NAME: df_date,
+            api_c.LAST_PROCESSED: df_date,
+            api_c.THIRTY_DAYS_AVG: round(random.uniform(0.5, 1), 3),
+            api_c.DATA_FILES: [],
+        }
+        total_records_received = 0
+        total_records_processed = 0
+
+        status = api_c.STATUS_COMPLETE
+        for df_detail in df_details:
+            total_records_received += df_detail[api_c.RECORDS_RECEIVED]
+            total_records_processed += df_detail[api_c.RECORDS_PROCESSED]
+            data_feed_by_date[api_c.DATA_FILES].append(df_detail)
+
+            if status == api_c.STATUS_COMPLETE and df_detail[api_c.STATUS] in [
+                api_c.STATUS_RUNNING
+            ]:
+                status = api_c.STATUS_INCOMPLETE
+
+            elif (
+                status in [api_c.STATUS_COMPLETE, api_c.STATUS_INCOMPLETE]
+                and df_detail[api_c.STATUS] == api_c.STATUS_FAILED
+            ):
+                status = api_c.STATUS_FAILED
+
+        _ = data_feed_by_date.update(
+            {
+                api_c.RECORDS_PROCESSED: total_records_processed,
+                api_c.RECORDS_RECEIVED: total_records_received,
+                api_c.RECORDS_PROCESSED_PERCENTAGE: round(
+                    total_records_processed / total_records_received, 3
+                ),
+                api_c.STATUS: status,
+            }
+        )
+
+        grouped_datafeed_details.append(data_feed_by_date)
+
+    return grouped_datafeed_details
+
+
+def fetch_datafeed_details(
+    datafeed_name: str, start_date: str, end_date: str, statuses: list = None
+) -> list:
+    """Fetch datafeed details
+
+    Args:
+        datafeed_name (str): Datafeed name
+        start_date (str): Start Date
+        end_date (str): End Date
+        statuses (list): list of statuses
+
+    Returns:
+        list: list of data feed details
+    """
+    datafeed_details = copy.deepcopy(datafeed_detail_stub_data)
+
+    _ = [
+        x.update(
+            {
+                "filename": f"{datafeed_name}_{i}",
+                api_c.LAST_PROCESSED: parse(x[api_c.LAST_PROCESSED]),
+            }
+        )
+        for i, x in enumerate(datafeed_details)
+    ]
+
+    if statuses:
+        datafeed_details = list(
+            filter(lambda x: x[api_c.STATUS] in statuses, datafeed_details)
+        )
+
+    if start_date and end_date:
+        start_date = parse(start_date).date()
+        end_date = parse(end_date).date()
+        datafeed_details = list(
+            filter(
+                lambda x: start_date
+                <= parse(
+                    datetime.strftime(
+                        x[api_c.LAST_PROCESSED], api_c.DEFAULT_DATE_FORMAT
+                    )
+                ).date()
+                <= end_date,
+                datafeed_details,
+            )
+        )
+
+        if (end_date - start_date).days == 0:
+            return datafeed_details
+
+    return group_and_aggregate_datafeed_details_by_date(datafeed_details)

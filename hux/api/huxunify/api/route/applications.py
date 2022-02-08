@@ -186,7 +186,9 @@ class ApplicationsPostView(SwaggerView):
             user[api_c.USER_NAME],
         )
         logger.info(
-            "Successfully created application %s.", application.get(db_c.NAME)
+            "User with username %s successfully created application %s.",
+            user[api_c.USER_NAME],
+            application.get(db_c.NAME),
         )
 
         return (
@@ -285,7 +287,8 @@ class ApplicationsPatchView(SwaggerView):
         )
 
         logger.info(
-            "Successfully updated application %s.",
+            "User with username %s successfully updated application %s.",
+            user[api_c.USER_NAME],
             updated_application.get(db_c.NAME),
         )
 
