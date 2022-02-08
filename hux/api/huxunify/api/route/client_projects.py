@@ -155,7 +155,7 @@ class ClientProjectPatchView(SwaggerView):
         """
 
         if not request.get_json():
-            logger.info("Could not patch client project.")
+            logger.error("Could not patch client project.")
             return {
                 api_c.MESSAGE: "No request body provided."
             }, HTTPStatus.BAD_REQUEST

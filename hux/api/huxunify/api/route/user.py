@@ -109,6 +109,12 @@ class UserProfile(SwaggerView):
         """
 
         try:
+
+            logger.info(
+                "User with username %s has attempted to login.",
+                user[api_c.USER_NAME],
+            )
+
             # get access token from request and set it to a variable for it to
             # be used in subsequent requests
             access_token = get_token_from_request(request)[0]
@@ -120,6 +126,11 @@ class UserProfile(SwaggerView):
             # return unauthorized response if no valid okta_id is fetched by
             # introspecting the access_token
             if okta_id is None:
+                logger.error(
+                    "Unauthorized login since OKTA ID from access token for "
+                    "user %s is not fetched.",
+                    user[api_c.USER_NAME],
+                )
                 return {
                     "message": api_c.AUTH401_ERROR_MESSAGE
                 }, HTTPStatus.UNAUTHORIZED
@@ -484,6 +495,15 @@ class UserPatchView(SwaggerView):
             },
         )
 
+        if db_c.USER_ROLE in body:
+            logger.info(
+                "User with display name %s role changed from %s to %s by user with username %s",
+                updated_user[api_c.DISPLAY_NAME],
+                userinfo[0][db_c.USER_ROLE],
+                updated_user[db_c.USER_ROLE],
+                user[api_c.USER_NAME],
+            )
+
         # update the document
         return (
             UserSchema().dump(updated_user),
@@ -762,37 +782,7 @@ class UserPreferencesView(SwaggerView):
             "in": "body",
             "type": "object",
             "description": "Input user preferences body.",
-            "example": {
-                api_c.ALERTS: {
-                    api_c.DATA_MANAGEMENT: {
-                        api_c.DATASOURCES: {
-                            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-                        },
-                        api_c.IDENTITY_RESOLUTION: {
-                            db_c.NOTIFICATION_TYPE_CRITICAL: True
-                        },
-                    },
-                    api_c.DECISIONING: {
-                        api_c.MODELS: {
-                            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-                        },
-                    },
-                    api_c.ORCHESTRATION_TAG: {
-                        api_c.DESTINATIONS: {
-                            db_c.NOTIFICATION_TYPE_SUCCESS: True
-                        },
-                        api_c.AUDIENCE_ENGAGEMENTS: {
-                            db_c.NOTIFICATION_TYPE_SUCCESS: True
-                        },
-                        api_c.AUDIENCES: {
-                            db_c.NOTIFICATION_TYPE_SUCCESS: True
-                        },
-                        api_c.DELIVERY_TAG: {
-                            db_c.NOTIFICATION_TYPE_SUCCESS: True
-                        },
-                    },
-                }
-            },
+            "example": {api_c.ALERTS: api_c.ALERT_SAMPLE_RESPONSE},
         }
     ]
 

@@ -5,6 +5,8 @@ from bson import ObjectId
 
 ID = "_id"
 CONNECT_RETRY_INTERVAL = 1
+DOMAIN = "domain"
+DOMAIN_LIST = "domain_list"
 DUPLICATE_ERR_CODE = 11000
 FAVORITE = "favorite"
 ENABLED = "enabled"
@@ -44,6 +46,7 @@ AUDIENCE_CUSTOMERS_COLLECTION = "audience_customers"
 AUDIENCE_INSIGHTS_COLLECTION = "audience_insights"
 DELIVERY_JOBS_COLLECTION = "delivery_jobs"
 DELIVERY_PLATFORM_COLLECTION = "delivery_platforms"
+DELIVERABILITY_METRICS_COLLECTION = "deliverability_metrics"
 LOOKALIKE_AUDIENCE_COLLECTION = "lookalike_audiences"
 PERFORMANCE_METRICS_COLLECTION = "performance_metrics"
 CAMPAIGN_ACTIVITY_COLLECTION = "campaign_activity"
@@ -154,6 +157,7 @@ CATEGORY_CUSTOMER_SERVICE = "Customer service"
 CATEGORY_DATA_FILE_STORAGE = "Data & file storage"
 CATEGORY_DATABASES = "Databases"
 CATEGORY_DATA_VISUALIZATION = "Data visualization"
+DELIVERABILITY = "Deliverability"
 CATEGORY_ECOMMERCE = "E-commerce"
 CATEGORY_MARKETING = "Marketing"
 CATEGORY_OBJECT_STORAGE = "Object storage"
@@ -174,6 +178,7 @@ STATUS_MESSAGE = "status_message"
 RECENT_INGESTION_JOB_STATUS = "recent_ingestion_job_status"
 EXPIRE_AT = "expireAt"
 TS = "_ts"
+TTL = "ttl"
 CREATE_TIME = "create_time"
 UPDATE_TIME = "update_time"
 CREATED_BY = "created_by"
@@ -398,6 +403,7 @@ METRICS_DELIVERY_PLATFORM_TYPE = "delivery_platform_type"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
 PERFORMANCE_METRICS = "performance_metrics"
+DELIVERABILITY_METRICS = "deliverability_metrics"
 EVENT_DETAILS = "event_details"
 EVENT_DATE = "event_date"
 PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
@@ -440,8 +446,9 @@ NOTIFICATION_FIELD_TYPE = "type"
 NOTIFICATION_FIELD_DESCRIPTION = "description"
 NOTIFICATION_FIELD_CREATED = "created"
 NOTIFICATION_FIELD_CATEGORY = "category"
-NOTIFICATION_CATEGORY_FLDR = "FLDR"
-NOTIFICATION_CATEGORY_CPDR = "CPDR"
+NOTIFICATION_CATEGORY_FLDR = "Feedback Loop Data Router"
+NOTIFICATION_CATEGORY_CPDR = "Campaign Performance Data Router"
+NOTIFICATION_CATEGORY_DR = "Deliverability Router"
 NOTIFICATION_FIELD_USERNAME = "username"
 
 NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE = "batch_size"
@@ -458,6 +465,9 @@ CONFIGURATION_FIELD_ENABLED = "enabled"
 CONFIGURATION_FIELD_ROADMAP = "roadmap"
 CONFIGURATION_TYPE_MODULE = "module"
 CONFIGURATION_TYPE_BUSINESS_SOLUTION = "business_solution"
+CONFIGURATION_TYPE_NAVIGATION_SETTINGS = "navigation_settings"
+CONFIGURATION_FIELD_SETTINGS = "settings"
+CONFIGURATION_FIELD_CHILDREN = "children"
 
 # Audience constants
 AUDIENCE_FILTER_CONSTANTS = "audience_filter_constants"
@@ -556,6 +566,7 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_STATUS,
         CONFIGURATION_FIELD_ENABLED,
         CONFIGURATION_FIELD_ROADMAP,
+        CONFIGURATION_FIELD_SETTINGS,
     ],
     MODELS_COLLECTION: [
         NAME,
@@ -596,6 +607,7 @@ ALLOWED_COLLECTIONS = [
     ENGAGEMENTS_COLLECTION,
     APPLICATIONS_COLLECTION,
     CLIENT_PROJECTS_COLLECTION,
+    DELIVERABILITY_METRICS_COLLECTION,
 ]
 
 # 30 minutes.

@@ -8,6 +8,7 @@
       <v-card-text v-if="data.length > 0" class="px-6">
         <hux-data-table
           v-if="!isLoading"
+          class="datafeedtable"
           :columns="columns"
           :data-items="data"
           :sort-column="sortColumn"
@@ -34,14 +35,21 @@
                   {{ item[col.value] }}
                 </template>
               </tooltip>
-              <template v-else-if="col.value === 'data_source_type'">
+              <tooltip v-else-if="col.value === 'data_source_type'">
                 <logo
                   :key="item[col.value]"
                   :type="item[col.value]"
                   :size="26"
                   class="my-3"
                 />
-              </template>
+                <template #tooltip>
+                  {{
+                    item[col.value].charAt(0).toUpperCase() +
+                    item[col.value].substr(1).toLowerCase()
+                  }}
+                </template>
+              </tooltip>
+
               <template v-else-if="col.value === 'match_rate'">
                 {{ item[col.value] | Numeric(false, false, false, true) }}
               </template>
@@ -60,7 +68,7 @@
               <tooltip v-else-if="col.value === 'last_run'">
                 <v-btn
                   text
-                  class="pa-1"
+                  class="pa-1 text-body-1"
                   height="auto"
                   color="primary"
                   data-e2e="lastrun"
@@ -211,6 +219,18 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.datafeedtable {
+  ::v-deep .v-data-table .v-data-table-header th:first-child {
+    border-top-left-radius: 12px !important;
+  }
+  ::v-deep .v-data-table .v-data-table-header th:last-child {
+    border-top-right-radius: 12px !important;
+  }
+  ::v-deep .theme--light.v-data-table.v-data-table--fixed-header thead th {
+    box-shadow: none !important;
+  }
+}
+
 .hux-data-table {
   ::v-deep table {
     .v-data-table-header {

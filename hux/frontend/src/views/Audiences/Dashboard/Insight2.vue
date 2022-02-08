@@ -222,7 +222,10 @@
       <v-tabs-items v-model="tabOption" class="tabs-item">
         <v-tab-item key="delivery" class="delivery-tab">
           <v-row class="">
-            <v-col :cols="deliveryCols" class="">
+            <div
+              class="mt-3 ml-3"
+              :style="{ transition: '0.5s', width: deliveryCols + '%' }"
+            >
               <delivery
                 :sections="relatedEngagements"
                 section-type="engagement"
@@ -246,15 +249,30 @@
               <standalone-delivery
                 :audience="audience"
                 @onAddStandaloneDestination="addStandaloneDestination($event)"
+                @onDeliveryStandaloneDestination="refreshEntity()"
+                @onRemoveStandaloneDestination="
+                  onRemoveStandaloneDestination($event, data)
+                "
+                @onOpenStandaloneDestination="
+                  onOpenStandaloneDestination($event, data)
+                "
               />
-            </v-col>
-            <v-col :cols="advertisingCols" class="">
+            </div>
+            <div :style="{ width: '1.5%' }"></div>
+            <div class="mt-3" :style="{ width: advertisingCols + '%' }">
               <div
                 class="collapsible-bar"
                 :class="{
                   open: showAdvertising,
                   close: !showAdvertising,
                   'float-right': !showAdvertising,
+                }"
+                :style="{
+                  height:
+                    showAdvertising &&
+                    audienceData.lookalike_audiences.length > 0
+                      ? advertisingHeight
+                      : '380px',
                 }"
                 @click="toggleAd()"
               >
@@ -267,21 +285,18 @@
                   class="collapse-icon ml-1 mr-2"
                 />
               </div>
-              <v-card
-                v-if="showAdvertising"
-                class="digital-adv ml-6 mt-4"
-                flat
-                height="100%"
-              >
+              <v-card v-if="showAdvertising" class="digital-adv ml-6 mt-4" flat>
                 <v-card-title v-if="showAdvertising" class="ml-2 text-h3">
                   Digital advertising
                 </v-card-title>
-                <v-card-text v-if="showAdvertising" class="">
+                <v-card-text v-if="showAdvertising">
                   <div class="match-rates mx-2 my-1">
-                    <matchrate />
+                    <matchrate :matchrate="audience.match_rates" />
                   </div>
-                  <div class="lookalikes mx-2 my-6">
-                    <lookalikes />
+                  <div ref="advertisingcard" class="lookalikes mx-2 my-6">
+                    <lookalikes
+                      :lookalike-data="audienceData.lookalike_audiences"
+                    />
                   </div>
                 </v-card-text>
               </v-card>
@@ -300,7 +315,7 @@
                 >
                 </error>
               </v-card>
-            </v-col>
+            </div>
           </v-row>
         </v-tab-item>
         <v-tab-item key="insights" class="insights-tab">
@@ -407,6 +422,8 @@
 </template>
 
 <script>
+import Vue from "vue"
+
 // helpers
 import { mapGetters, mapActions } from "vuex"
 import filter from "lodash/filter"
@@ -462,12 +479,13 @@ export default {
   },
   data() {
     return {
+      advertisingHeight: "280",
       engagementList: {},
       showEditConfirmModal: false,
       newAudienceName: "",
       showAdvertising: true,
-      deliveryCols: 7,
-      advertisingCols: 5,
+      deliveryCols: "57",
+      advertisingCols: "40",
 
       tabOption: 0,
       showLookAlikeDrawer: false,
@@ -561,6 +579,7 @@ export default {
         actionType: "remove-audience",
       },
       toggleDownloadAudienceDrawer: false,
+      matchrateStyles: {},
     }
   },
   computed: {
@@ -704,6 +723,20 @@ export default {
   async mounted() {
     await this.loadAudienceInsights()
     this.sizeHandler()
+    this.matchHeight()
+  },
+
+  updated() {
+    if (
+      this.$refs.advertisingcard &&
+      this.$refs.advertisingcard.parentElement &&
+      this.$refs.advertisingcard.parentElement.parentElement
+    ) {
+      this.advertisingHeight =
+        this.$refs.advertisingcard.parentElement.parentElement.clientHeight +
+        21 +
+        "px"
+    }
   },
 
   methods: {
@@ -723,6 +756,7 @@ export default {
       getEngagementById: "engagements/get",
       deleteAudience: "audiences/remove",
       markFavorite: "users/markFavorite",
+      detachStandaloneDestination: "audiences/removeStandaloneDestination",
       updateLookalikeAudience: "audiences/updateLookalike",
     }),
     attributeOptions() {
@@ -847,6 +881,12 @@ export default {
           break
         case "remove audience":
           await this.deleteAudience({ id: this.audience.id })
+          break
+        case "remove-standalone-destination":
+          await this.detachStandaloneDestination({
+            deleteActionData: this.deleteActionData,
+            audienceId: this.audienceId,
+          })
           break
         default:
           break
@@ -1131,12 +1171,12 @@ export default {
     },
     toggleAd() {
       if (this.showAdvertising) {
-        this.deliveryCols = 11
-        this.advertisingCols = 0
+        this.deliveryCols = "96"
+        this.advertisingCols = "1.5"
         this.showAdvertising = false
       } else {
-        this.deliveryCols = 7
-        this.advertisingCols = 5
+        this.deliveryCols = "57"
+        this.advertisingCols = "40"
         this.showAdvertising = true
       }
     },
@@ -1164,6 +1204,30 @@ export default {
     },
     openDownloadDrawer() {
       this.toggleDownloadAudienceDrawer = true
+    },
+    onRemoveStandaloneDestination(data) {
+      this.audienceId = data.delivery_platform_id
+      this.confirmDialog.actionType = "remove-standalone-destination"
+      this.confirmDialog.icon = "sad-face"
+      this.confirmDialog.type = "error"
+      this.confirmDialog.subtitle = ""
+      this.confirmDialog.title = `Remove ${data.delivery_platform_name} destination?`
+      this.confirmDialog.btnText = "Yes, remove it"
+      this.confirmDialog.body =
+        "You will not be deleting this destination; this destination will not be attached to this specific engagement anymore."
+      this.deleteActionData = {
+        destination_id: data.delivery_platform_id,
+      }
+      this.showConfirmModal = true
+    },
+    onOpenStandaloneDestination(data) {
+      if (data && data.link) {
+        window.open(data.link, "_blank")
+      }
+    },
+    matchHeight() {
+      var heightString = this.$refs.infoBox.$el.clientHeight + "px"
+      Vue.set(this.matchrateStyles, "height", heightString)
     },
     openLookalikeEditModal() {
       this.showEditConfirmModal = true
@@ -1234,7 +1298,7 @@ export default {
   .tabs-item {
     .delivery-tab {
       .digital-adv {
-        height: 380px !important;
+        height: auto !important;
         .match-rates {
         }
         .lookalikes {
@@ -1300,8 +1364,6 @@ export default {
 .collapsible-bar {
   margin-top: 16px;
   width: 24px;
-  height: 380px;
-
   cursor: pointer;
   float: left;
   position: relative;

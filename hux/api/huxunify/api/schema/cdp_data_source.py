@@ -128,3 +128,55 @@ class DataSourceDataFeedsGetSchema(Schema):
     name = fields.Str()
     type = fields.Str()
     datafeeds = fields.List(fields.Nested(CdpDataSourceDataFeedSchema))
+
+
+class IndividualDataSourceDataFeedDetailSchema(Schema):
+    """Data source data feed details get schema"""
+
+    filename = fields.Str(example="unsubscribe_1")
+    last_processed = DateTimeWithZ(example="2022-01-01T01:02:03Z")
+    thirty_days_avg = fields.Float(example=0.87)
+    records_processed = fields.Int(example=20000)
+    records_received = fields.Int(example=25000)
+    records_processed_percentage = fields.Float(example=0.8)
+    status = fields.Str(
+        validate=OneOf(
+            [
+                api_c.STATUS_SUCCESS,
+                api_c.STATUS_RUNNING,
+                api_c.STATUS_FAILED,
+                api_c.STATUS_DISABLED,
+                api_c.STATUS_CANCELLED,
+            ]
+        ),
+        example=api_c.STATUS_SUCCESS,
+    )
+
+
+class DataSourceDataFeedDetailsGetSchema(Schema):
+    """Data source data feed details get schema"""
+
+    name = DateTimeWithZ(example="2022-01-01T01:02:03Z")
+    filename = fields.Str(example="unsubscribe_1")
+    last_processed = DateTimeWithZ(example="2022-01-01T01:02:03Z")
+    thirty_days_avg = fields.Float(example=0.89)
+    records_processed = fields.Int(example=40000)
+    records_received = fields.Int(example=50000)
+    records_processed_percentage = fields.Float(example=0.8)
+    status = fields.Str(
+        validate=OneOf(
+            [
+                api_c.STATUS_COMPLETE,
+                api_c.STATUS_INCOMPLETE,
+                api_c.STATUS_FAILED,
+                api_c.STATUS_SUCCESS,
+                api_c.STATUS_RUNNING,
+                api_c.STATUS_DISABLED,
+                api_c.STATUS_CANCELLED,
+            ]
+        ),
+        example=api_c.STATUS_COMPLETE,
+    )
+    data_files = fields.List(
+        fields.Nested(IndividualDataSourceDataFeedDetailSchema)
+    )

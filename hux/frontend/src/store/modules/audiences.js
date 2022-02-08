@@ -84,6 +84,10 @@ const mutations = {
     state.filteredDeliveries = deliveries
   },
 
+  SET_STANDALONE_DELIVERIES(state, { id, deliveries }) {
+    Vue.set(state.audiences.standaloneDeliveries, id, deliveries)
+  },
+
   SET_DEMOGRAPHICS(state, data) {
     state.demographics = data
   },
@@ -106,6 +110,23 @@ const mutations = {
 
   REMOVE_AUDIENCE(state, id) {
     Vue.delete(state.audiences, id)
+  },
+
+  REMOVE_STANDALONE_DESTINATION(state, data) {
+    const destination = Object.values(state.audiences).filter((item) => {
+      return item.id == data.audienceId
+    })[0]
+
+    var removeIndex = destination.standalone_deliveries
+      .map((item) => item.delivery_platform_id)
+      .indexOf(data.deleteActionData.destination_id)
+    ~removeIndex && destination.standalone_deliveries.splice(removeIndex, 1)
+
+    Vue.set(
+      state.audiences[data.audienceId],
+      "standalone_deliveries",
+      destination.standalone_deliveries
+    )
   },
 
   SET_AUDIENCE_LOOKALIKE(state, data) {
@@ -285,6 +306,29 @@ const actions = {
         name: response.data.name,
       })
       return state.audiences[id]
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async deliverStandaloneAudience(_, { id, payload }) {
+    try {
+      const response = await api.audiences.deliver(id, payload)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async removeStandaloneDestination({ commit }, data) {
+    try {
+      const payload = {
+        id: data.deleteActionData.destination_id,
+      }
+      await api.audiences.removeStandaloneDestination(data.audienceId, payload)
+      commit("REMOVE_STANDALONE_DESTINATION", data)
     } catch (error) {
       handleError(error)
       throw error

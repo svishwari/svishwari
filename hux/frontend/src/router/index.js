@@ -81,6 +81,16 @@ const routes = [
     },
   },
   {
+    path: "/datasources/:id/datafeeds/:name",
+    name: "DataSourceFeedsListing",
+    component: () => import("@/views/DataSources/DataFeedsListing.vue"),
+    meta: {
+      layout: "app",
+      title: "Data source",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/identity-resolution",
     name: "IdentityResolution",
     component: () => import("@/views/IdentityResolution/Index"),
@@ -301,6 +311,16 @@ const routes = [
     meta: {
       layout: "app",
       title: "Alerts and Notifications",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/email-deliverability",
+    name: "EmailDeliverability",
+    component: () => import("@/views/Measurement/EmailDeliverability/Index"),
+    meta: {
+      layout: "app",
+      title: "Email Deliverability",
       requiresAuth: true,
     },
   },

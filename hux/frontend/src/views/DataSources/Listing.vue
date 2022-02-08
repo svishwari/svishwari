@@ -71,7 +71,13 @@
             <tooltip v-else-if="column.value === 'name'">
               <template #label-content>
                 <span
-                  class="black--text text--darken-4 text-body-1 data-feed-name"
+                  class="
+                    primary--text
+                    cursor-pointer
+                    text-body-1
+                    data-feed-name
+                  "
+                  @click="getDataFeedDetailsFunc(item)"
                 >
                   {{ item[column.value] }}
                 </span>
@@ -216,6 +222,7 @@ export default {
     ...mapGetters({
       dataSource: "dataSources/single",
       dataFeeds: "dataSources/dataFeeds",
+      dataFeedDetails: "dataSources/dataFeedDetails",
     }),
 
     dataSourceId() {
@@ -272,6 +279,7 @@ export default {
     ...mapActions({
       getDataFeeds: "dataSources/getDataFeeds",
       getDataSource: "dataSources/getDataSource",
+      getDataFeedDetails: "dataSources/getDataFeedsDetails",
     }),
     changeStatus(status) {
       switch (status) {
@@ -284,6 +292,16 @@ export default {
         default:
           return "Failed"
       }
+    },
+    getDataFeedDetailsFunc(item) {
+      this.getDataFeedDetails({
+        name: item.name,
+        type: this.selectedDataSource.type,
+      })
+      this.$router.push({
+        name: "DataSourceFeedsListing",
+        params: { id: this.selectedDataSource.id, name: item.name },
+      })
     },
   },
 }

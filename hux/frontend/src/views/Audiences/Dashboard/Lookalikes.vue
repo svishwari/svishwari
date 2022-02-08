@@ -1,48 +1,47 @@
 <template>
   <div class="lookalike-wrapper">
-    <div v-if="false" class="rounded-sm lookalikes box-shadow-none">
-      <div class="header d-flex mx-6 px-3 py-3">
-        <span class="float-left text-h3 black-base pt-5"> Lookalikes </span>
-        <v-spacer> </v-spacer>
-        <span class="float-right pt-5">
-          <hux-icon type="plus" :size="12" color="primary" class="mr-4 mb-2" />
-          <hux-icon type="lookalike" :size="24" class="mr-2" />
-        </span>
+    <div v-if="isDataExists" class="rounded-sm lookalikes box-shadow-none">
+      <div class="header d-flex mx-6 pr-3 py-5">
+        <hux-icon type="lookalike" :size="24" class="mr-2" />
+        <span class="float-left text-h3 black-base"> Lookalikes </span>
       </div>
-      <div class="lookialike-destination mx-6 my-6">
+      <div
+        v-for="data in lookalikeData"
+        :key="data.id"
+        class="lookialike-destination mx-6 my-6"
+      >
         <v-card class="rounded-sm status-card mr-2 box-shadow-none">
           <v-card-title class="d-flex pa-2">
-            <logo type="facebook" :size="22"></logo>
-            <span class="mx-2 float-left"> Facebook </span>
+            <logo
+              :type="data.delivery_platform_type"
+              :size="26"
+              class="ml-2"
+            ></logo>
+            <span class="mx-2 float-left">
+              {{ data.delivery_platform_name }}
+            </span>
           </v-card-title>
           <v-list dense class="" :height="52">
             <v-list-item>
               <icon type="lookalike" :size="20" class="mr-2" />
-              <span>Facebook LAL - Sum...</span>
+              <router-link
+                :to="`/audiences/${data.id}/insight`"
+                class="text-decoration-none menu-link"
+                append
+                target="_blank"
+              >
+                <span class="text-body-1 primary--text">{{ data.name }}</span>
+              </router-link>
               <v-spacer> </v-spacer>
-              <span>12.6 K </span>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </div>
-      <div class="lookialike-destination mx-6 my-6">
-        <v-card class="rounded-sm status-card mr-2 box-shadow-none">
-          <v-card-title class="d-flex pa-2">
-            <logo type="facebook" :size="22"></logo>
-            <span class="mx-2"> Facebook </span>
-          </v-card-title>
-          <v-list dense class="" :height="52">
-            <v-list-item>
-              <icon type="lookalike" :size="20" class="mr-2" />
-              <span>Facebook LAL - Sum...</span>
-              <v-spacer> </v-spacer>
-              <span>12.6 K </span>
+              <span>
+                <size :value="data.size" />
+              </span>
             </v-list-item>
           </v-list>
         </v-card>
       </div>
     </div>
-    <div v-if="true" class="no-lookalike">
+    <div v-if="!isDataExists" class="no-lookalike">
       <metric-card
         class=""
         title="Lookalikes"
@@ -69,20 +68,35 @@ import HuxIcon from "@/components/common/Icon.vue"
 import Logo from "@/components/common/Logo.vue"
 import Icon from "@/components/common/Icon.vue"
 import MetricCard from "@/components/common/MetricCard"
+import Size from "@/components/common/huxTable/Size.vue"
 
 export default {
   name: "Lookalikes",
-  components: { HuxIcon, Logo, Icon, MetricCard },
-  props: {},
+  components: { HuxIcon, Logo, Icon, MetricCard, Size },
+  props: {
+    lookalikeData: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+  },
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    isDataExists() {
+      return this.lookalikeData.length > 0 ? true : false
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .lookalike-wrapper {
+  background-color: var(--v-primary-lighten1) !important;
+  border: 1px solid var(--v-black-lighten2);
+  box-sizing: border-box;
+  border-radius: 5px;
   .lookalikes {
     .header {
       height: 40px;

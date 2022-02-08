@@ -249,6 +249,7 @@ class AudienceDownload(SwaggerView):
         )
 
         if not audience:
+            logger.error("Audience with ID %s not found.", audience_id)
             return (
                 jsonify({"message": api_c.AUDIENCE_NOT_FOUND}),
                 HTTPStatus.NOT_FOUND,
@@ -418,6 +419,7 @@ class AudienceInsightsStates(SwaggerView):
         )
 
         if not audience:
+            logger.error("Audience with ID %s not found.", audience_id)
             return (
                 jsonify({"message": api_c.AUDIENCE_NOT_FOUND}),
                 HTTPStatus.NOT_FOUND,
@@ -527,6 +529,7 @@ class AudienceInsightsCities(SwaggerView):
         )
 
         if not audience:
+            logger.error("Audience with ID %s not found.", audience_id)
             return (
                 jsonify({"message": api_c.AUDIENCE_NOT_FOUND}),
                 HTTPStatus.NOT_FOUND,

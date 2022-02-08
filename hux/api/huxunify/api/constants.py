@@ -329,6 +329,12 @@ STATUS_REQUESTED = "Requested"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
+STATUS_SUCCESS = "Success"
+STATUS_COMPLETE = "Complete"
+STATUS_INCOMPLETE = "Incomplete"
+STATUS_RUNNING = "Running"
+STATUS_FAILED = "Failed"
+STATUS_CANCELLED = "Cancelled"
 
 STATUS_MAPPING = {
     db_c.STATUS_IN_PROGRESS: STATUS_DELIVERING,
@@ -1052,6 +1058,8 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 CDP_DATA_SOURCE_TYPE = "datasource_type"
+DATAFEED_NAME = "datafeed_name"
+LAST_PROCESSED = "last_processed"
 
 # Customers
 CUSTOMERS_ENDPOINT = "/customers"
@@ -1148,6 +1156,8 @@ CUSTOMER_PROFILE_REDACTED_FIELDS = [
     CITY,
     STATE,
     ZIP,
+    FIRST_NAME,
+    LAST_NAME,
 ]
 
 # Alerts Fields
@@ -1233,6 +1243,7 @@ RECORDS_PROCESSED = "records_processed"
 RECORDS_RECEIVED = "records_received"
 THIRTY_DAYS_AVG = "thirty_days_avg"
 RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
+DATA_FILES = "data_files"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
@@ -1375,6 +1386,34 @@ MODELS_STUB = [
 CONFIGURATIONS_TAG = "configurations"
 CONFIGURATION_ID = "configuration_id"
 CONFIGURATIONS_ENDPOINT = "/configurations"
+SAMPLE_NAVIGATION_SETTINGS = {
+    db_c.CONFIGURATION_FIELD_SETTINGS: [
+        {
+            db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_CHILDREN: [
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+            ],
+        },
+        {
+            db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_CHILDREN: [
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Models",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                }
+            ],
+        },
+    ]
+}
 
 # Applications
 APPLICATIONS_TAG = "applications"
@@ -1522,7 +1561,6 @@ STATE_TO_DO = "To Do"
 STATE_IN_REVIEW = "In Review"
 STATE_DONE = "Done"
 
-
 MODEL_PIPELINE_PERFORMANCE_STUB = {
     "training": {
         "frequency": "Weekly",
@@ -1555,3 +1593,166 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
         ],
     },
 }
+
+# Deliverability Constants
+EMAIL_DELIVERABILITY_ENDPOINT = "email_deliverability"
+MEASUREMENT_TAG = "measurement"
+OPEN_RATE = "open_rate"
+DELIVERED_COUNT = "delivered_count"
+OVERALL_INBOX_RATE = "overall_inbox_rate"
+SENDING_DOMAINS_OVERVIEW = "sending_domains_overview"
+DELIVERED_OPEN_RATE_OVERVIEW = "delivered_open_rate_overview"
+DOMAIN_NAME = "domain_name"
+SENT = "sent"
+BOUNCE_RATE = "bounce_rate"
+CLICK_RATE = "click_rate"
+DELIVERED_RATE = "delivered_rate"
+UNSUBSCRIBE_RATE = "unsubscribe_rate"
+COMPLAINTS_RATE = "complaints_rate"
+
+# TODO Remove once email deliverability data is available.
+
+DOMAIN_1 = "domain_1"
+
+ALLOWED_EMAIL_DOMAIN_NAMES = [DOMAIN_1]
+SENDING_DOMAINS_OVERVIEW_STUB = [
+    {
+        DOMAIN_NAME: DOMAIN_1,
+        SENT: 554,
+        BOUNCE_RATE: 0.14,
+        OPEN_RATE: 0.91,
+        CLICK_RATE: 0.85,
+    }
+]
+
+
+ALERT_SAMPLE_RESPONSE = {
+    DATA_MANAGEMENT: {
+        DATASOURCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        IDENTITY_RESOLUTION: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    DECISIONING: {
+        MODELS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+    ORCHESTRATION_TAG: {
+        DESTINATIONS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCE_ENGAGEMENTS: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        AUDIENCES: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+        DELIVERY_TAG: {
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+            db_c.NOTIFICATION_TYPE_SUCCESS: False,
+            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        },
+    },
+}
+
+# Trust ID
+TRUST_ID_ENDPOINT = "/trust_id"
+
+CAPABILITY = "capability"
+RELIABILITY = "reliability"
+HUMANITY = "humanity"
+TRANSPARENCY = "transparency"
+
+LIST_OF_SIGNALS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+
+ALLOWED_FILTERS = "allowed_filters"
+TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
+SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
+ATTRIBUTE_SCORES = "attribute_scores"
+NAME_OF_SIGNAL = "name_of_signal"
+ATTRIBUTE_SCORE = "attribute_score"
+ATTRIBUTE_DESCRIPTION = "attribute_description"
+OCCUPATION = "occupation"
+CUSTOMER_TYPE = "customer_type"
+OPTIONS = "options"
+MIN = "min"
+MAX = "max"
+OVERALL_CUSTOMER_RATING = "overall_customer_rating"
+RATING = "rating"
+AGREE = "agree"
+NEUTRAL = "neutral"
+DISAGREE = "disagree"
+SIGNAL_NAME = "signal_name"
+SIGNAL_SCORE = "signal_score"
+CUSTOMER_ATTRIBUTE_RATINGS = "customer_attribute_ratings"
+# TODO Remove STUB once data is available
+
+TRUST_ID_ATTRIBUTE_STUB = {
+    CAPABILITY: [
+        "Products and services are good value",
+        "Employs competent individuals that understand my needs",
+        "Products are good quality, accessible and safe to use",
+        "Creates long-term solutions that work for me",
+    ],
+    RELIABILITY: [
+        "Consistently delivers quality",
+        "Digital interactions run smoothly and work when needed",
+        "Improves quality of products and services",
+        "Resolves issues in a timely manner",
+    ],
+    HUMANITY: [
+        "Values and respects everyone",
+        "Customer support is in place to quickly resolve issues",
+        "Values good of society and/or environment",
+        "Takes care of employees",
+    ],
+    TRANSPARENCY: [
+        "Easy to understand how my data is used",
+        "Communications are accurate and honest",
+        "Clearly presents information regarding product and services costs",
+        "Upfront about how money is made and spent",
+    ],
+}
+
+TRUST_ID_SUPPORTED_FILTERS_STUB = [
+    {
+        NAME: AGE,
+        TYPE: "range",
+        MIN: 18,
+        MAX: 79,
+    },
+    {
+        NAME: GENDER,
+        TYPE: "list",
+        OPTIONS: [{"female": "Female"}, {"male": "Male"}, {"other": "Other"}],
+    },
+    {
+        NAME: CUSTOMER_TYPE,
+        TYPE: "list",
+        OPTIONS: [{"new": "New"}, {"repeat": "Repeat"}],
+    },
+    {
+        NAME: OCCUPATION,
+        TYPE: "list",
+        OPTIONS: [
+            {"small_business_owner": "Small Business Owner"},
+            {"medium_buisness_owner": "Medium Business Owner"},
+            {"employee": "Employee"},
+        ],
+    },
+]

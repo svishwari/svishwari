@@ -51,6 +51,7 @@ VALID_DB_USER_RESPONSE = {
     OKTA_ID: "8548bfh8d",
     api_c.EMAIL: "davesmith@fake.com",
     api_c.DISPLAY_NAME: "dave smith",
+    api_c.NAME: "dave smith",
     api_c.USER_PII_ACCESS: True,
     ROLE: "admin",
 }
@@ -1273,6 +1274,23 @@ AVG_SPEND = "avg_spend"
 
 DESTINATIONS_CATEGORY = "destinations_category"
 
+TEST_NAVIGATION_SETTINGS = {
+    "settings": [
+        {
+            "enabled": True,
+            "name": "Data Management",
+            "children": [
+                {"name": "Data Sources", "enabled": False},
+                {"name": "Identity Resolution", "enabled": True},
+            ],
+        },
+        {
+            "enabled": True,
+            "name": "Decisioning",
+            "children": [{"name": "Models", "enabled": True}],
+        },
+    ]
+}
 SAMPLE_USER_JIRA_TICKETS = {
     "expand": "names,schema",
     "startAt": 0,

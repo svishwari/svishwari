@@ -10,7 +10,7 @@ import {
   destinationsDataExtensions,
 } from "./factories/destination"
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
-import { dataFeeds } from "./factories/dataSource"
+import { dataFeeds, dataFeedDetails } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import { requestedUser, someTickets } from "./factories/user.js"
@@ -100,6 +100,12 @@ export const defineRoutes = (server) => {
     const dataSourceType = request.params["type"]
     const dataSource = schema.dataSources.findBy({ type: dataSourceType }).attrs
     return dataFeeds(dataSource)
+  })
+
+  server.get("/data-sources/:type/datafeeds/:name", (schema, request) => {
+    const dataSourceType = request.params["type"]
+    const dataSourceFeedName = request.params["name"]
+    return dataFeedDetails(dataSourceType, dataSourceFeedName)
   })
 
   server.patch("/data-sources", (schema, request) => {
@@ -728,6 +734,18 @@ export const defineRoutes = (server) => {
     const audience_deleted_name = audience_deleted.name
     audience_deleted.destroy()
     return "Audience " + audience_deleted_name + " successfully deleted"
+  })
+
+  server.del("/audiences/:id/destinations", (schema, request) => {
+    let requestData = JSON.parse(request.requestBody)
+    const destination_deleted = schema.audiences.find(requestData.id)
+    const destination_deleted_name = destination_deleted.name
+    destination_deleted.destroy()
+    return (
+      "Standalone destination " +
+      destination_deleted_name +
+      " successfully deleted"
+    )
   })
 
   //lookalike audiences

@@ -25,7 +25,7 @@
         :key="client.id"
         width="255"
         height="225"
-        :icon="client.icon"
+        :icon="client.type"
         :title="client.name"
         description=""
         logo-option="true"

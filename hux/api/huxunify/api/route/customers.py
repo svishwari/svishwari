@@ -6,6 +6,8 @@ from datetime import datetime
 
 from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
+from huxunifylib.util.general.logging import logger
+
 from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
@@ -204,7 +206,8 @@ class CustomerPostOverview(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, user: dict) -> Tuple[dict, int]:
-        """Retrieves the overview of customer data with the requested filters applied.
+        """Retrieves the overview of customer data with the requested filters
+        applied.
 
         ---
         security:
@@ -224,6 +227,9 @@ class CustomerPostOverview(SwaggerView):
             for y in x.get(api_c.AUDIENCE_SECTION_FILTERS, [])
             if y == {api_c.AUDIENCE_FILTER_VALUE: ""}
         ):
+            logger.error(
+                "Invalid filter passed in to retrieve customer data overview."
+            )
             return {
                 api_c.MESSAGE: "Invalid filter passed in."
             }, HTTPStatus.BAD_REQUEST
@@ -440,10 +446,27 @@ class CustomersListview(SwaggerView):
         )
 
         offset = (batch_number - 1) * batch_size
+
+        if user.get(api_c.USER_PII_ACCESS) is True:
+            redacted_data = get_customer_profiles(
+                token_response[0], batch_size, offset
+            )
+        else:
+
+            redacted_data = {}
+            customer_list = get_customer_profiles(
+                token_response[0], batch_size, offset
+            )
+            redacted_data[api_c.TOTAL_CUSTOMERS] = customer_list.get(
+                api_c.TOTAL_CUSTOMERS
+            )
+            redacted_data[api_c.CUSTOMERS_TAG] = [
+                redact_fields(x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS)
+                for x in customer_list.get(api_c.CUSTOMERS_TAG)
+            ]
+
         return (
-            CustomersSchema().dump(
-                get_customer_profiles(token_response[0], batch_size, offset)
-            ),
+            CustomersSchema().dump(redacted_data),
             HTTPStatus.OK,
         )
 

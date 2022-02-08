@@ -344,3 +344,23 @@ export function sortByName(data, key) {
 export function formatText(text) {
   return capitalize(text.replaceAll("_", " "))
 }
+
+/**
+ * Returns grouped month year from GMT time stamp
+ *
+ * @param {string} date - date to be formatted
+ * @returns {string} formatted date
+ */
+export function formatDate(date) {
+  return dayjs(date).format("MMM DD")
+}
+
+/**
+ * Returns local time zone
+ *
+ * @param {string} date - date to be formatted
+ * @returns {string} formatted date
+ */
+export function formatDateToLocal(date) {
+  return dayjs(date).local().format("DD/MM/YYYY hh:mm a zzz")
+}

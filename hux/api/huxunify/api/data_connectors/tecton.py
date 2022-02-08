@@ -234,6 +234,10 @@ class Tecton:
             EmptyAPIResponseError: Response from integrated API call is empty.
         """
 
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return []
+
         # payload
         payload = {
             "params": {
@@ -341,6 +345,9 @@ class Tecton:
             FailedAPIDependencyError: Integrated dependent API failure error.
             EmptyAPIResponseError: Response from integrated API call is empty.
         """
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return []
 
         if model_type in api_c.CLASSIFICATION_MODELS:
             service_name = (
@@ -432,6 +439,10 @@ class Tecton:
              List[ModelLiftSchema]: List of model lift.
         """
 
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return []
+
         # set the event loop
         asyncio.set_event_loop(asyncio.SelectorEventLoop())
 
@@ -451,7 +462,8 @@ class Tecton:
         # log execution time summary
         total_ticks = time.perf_counter() - timer
         logger.info(
-            "Executed 10 requests to the Tecton API in %0.4f seconds. ~%0.4f requests per second.",
+            "Executed 10 requests to the Tecton API in %0.4f seconds. "
+            "~%0.4f requests per second.",
             total_ticks,
             total_ticks / 10,
         )
@@ -502,6 +514,10 @@ class Tecton:
 
         # Tecton forces us to get the feature at the version level, so we have to
         # query the service in succession. We break on the first empty value.
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return []
+
         result_features = []
         for i in range(200):
             payload = {
@@ -520,10 +536,10 @@ class Tecton:
                 headers=self.headers,
             )
 
-            if response.status_code != 200:
-                break
-
-            if api_c.RESULTS not in response.json():
+            if (
+                response.status_code != 200
+                or api_c.RESULTS not in response.json()
+            ):
                 break
 
             # grab the features and match model version.
@@ -597,6 +613,9 @@ class Tecton:
         Raises:
             FailedAPIDependencyError: Integrated dependent API failure error.
         """
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return []
 
         # submit the post request to get the models
         response = requests.post(
@@ -677,6 +696,9 @@ class Tecton:
         Returns:
              dict: Model performance metrics.
         """
+        if not get_config().TECTON_API:
+            logger.error("Tecton API URL undefined.")
+            return {}
 
         # regression models calculate RMSE
         if model_type in api_c.REGRESSION_MODELS:

@@ -1256,6 +1256,68 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
+    {
+        db_c.CONFIGURATION_FIELD_NAME: "Navigation Settings",
+        db_c.CONFIGURATION_FIELD_TYPE: "navigation_settings",
+        db_c.CONFIGURATION_FIELD_SETTINGS: [
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Models",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    }
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Customer Insights",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "All Customers",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Segment Playground",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Orchestration",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Destinations",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Audiences",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Engagements",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+        ],
+    },
 ]
 
 # Client Projects List
@@ -1278,7 +1340,7 @@ client_projects_list = [
     },
     {
         db_c.NAME: ".am",
-        db_c.TYPE: ".am",
+        db_c.TYPE: "dot-am",
         db_c.DESCRIPTION: ".am Project",
         db_c.URL: "https://localhost/am",
         db_c.ICON: "default.ico",
