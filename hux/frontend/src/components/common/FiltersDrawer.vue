@@ -58,7 +58,7 @@
               color="primary"
               class="text-button ml-auto"
               width="157"
-              :is-disabled="!Boolean(count)"
+              :is-disabled="!Boolean(count) && !enableApply"
               @click="$emit('apply')"
             >
               Apply filter
@@ -90,6 +90,12 @@ export default defineComponent({
       type: Number,
       required: false,
       default: 0,
+    },
+
+    enableApply: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
 
     disableClear: {

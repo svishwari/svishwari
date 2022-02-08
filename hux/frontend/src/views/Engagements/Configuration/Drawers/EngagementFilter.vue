@@ -3,6 +3,7 @@
     :is-toggled="localDrawer"
     :count="filterLength"
     content-height="300px"
+    :enable-apply="enableApply"
     :style="{ height: viewHeight }"
     @clear="clear"
     @apply="apply"
@@ -57,6 +58,7 @@ export default {
       localDrawer: this.value,
       selectedFavourite: false,
       selectedEngagementsWorkedWith: false,
+      enableApply: false,
     }
   },
 
@@ -86,6 +88,10 @@ export default {
       this.selectedEngagementsWorkedWith = false
     },
     clear() {
+      this.enableApply = true
+      this.clearFilter()
+    },
+    clearAndLoad() {
       this.clearFilter()
       this.apply()
     },

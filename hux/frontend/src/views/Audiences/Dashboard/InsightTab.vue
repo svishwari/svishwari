@@ -253,7 +253,6 @@ import TotalCustomerSpendChart from "@/components/common/TotalCustomerSpend/Tota
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import EmptyPage from "@/components/common/EmptyPage"
-
 export default {
   name: "InsightTab",
   components: {
@@ -271,7 +270,6 @@ export default {
       configurationData: configurationData,
       loadingDemographics: true,
       mapStateHeaderList: ["name", "avg_spend", "population_percentage"],
-
       timeFrameLabel: "last 6 months",
       loadingSpendChart: false,
       loadingAudienceChart: false,
@@ -314,7 +312,6 @@ export default {
       }
       this.loadingDemographics = false
     },
-
     async fetchTotalCustomers() {
       this.loadingAudienceChart = true
       try {
@@ -324,7 +321,6 @@ export default {
       }
       this.loadingAudienceChart = false
     },
-
     async fetchCustomerSpend() {
       this.loadingSpendChart = true
       try {

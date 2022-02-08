@@ -9,12 +9,12 @@
           <icon
             type="filter"
             :size="27"
-            :color="numFiltersSelected > 0 ? 'primary' : 'black'"
-            :variant="numFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+            :color="finalFilterApplied > 0 ? 'primary' : 'black'"
+            :variant="finalFilterApplied > 0 ? 'lighten6' : 'darken4'"
           />
           <v-badge
-            v-if="numFiltersSelected > 0"
-            :content="numFiltersSelected"
+            v-if="finalFilterApplied > 0"
+            :content="finalFilterApplied"
             color="white"
             offset-x="6"
             offset-y="4"
@@ -151,6 +151,7 @@
                 class="ma-2 font-weight-regular text-button"
                 is-tile
                 :height="'40'"
+                @click="clearFilters()"
               >
                 Clear filters
               </huxButton>
@@ -183,6 +184,7 @@
       </div>
       <div class="ml-auto">
         <alert-filter-drawer
+          ref="filters"
           v-model="isFilterToggled"
           :users="getNotificationUsers"
           @onSectionAction="alertfunction"
@@ -288,6 +290,7 @@ export default {
       isAlertsToggled: false,
       notificationId: null,
       numFiltersSelected: 0,
+      finalFilterApplied: 1,
     }
   },
   computed: {
@@ -416,6 +419,7 @@ export default {
       this.batchDetails.isLazyLoad = false
     },
     async alertfunction(data) {
+      this.finalFilterApplied = this.numFiltersSelected
       this.isFilterToggled = true
       this.loading = true
       try {
@@ -466,6 +470,9 @@ export default {
           this.enableLazyLoad = false
         }
       }
+    },
+    clearFilters() {
+      this.$refs.filters.clear()
     },
   },
 }
