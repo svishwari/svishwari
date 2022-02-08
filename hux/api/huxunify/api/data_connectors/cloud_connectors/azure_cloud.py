@@ -42,6 +42,9 @@ class Azure(Cloud):
 
         Returns:
             str: The value of the secret.
+
+        Raises:
+            Exception: Exception that will be raised if the operation fails
         """
         try:
             credential = DefaultAzureCredential()
@@ -64,6 +67,10 @@ class Azure(Cloud):
             **kwargs (dict): function keyword arguments.
 
         Returns:
+            None
+
+        Raises:
+            Exception: Exception that will be raised if the operation fails
         """
         try:
             credential = DefaultAzureCredential()
