@@ -8,6 +8,15 @@ from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
 from huxunify.test import constants as t_c
+from huxunify.test.route.route_test_util.test_data_loading.data_sources import (
+    load_data_sources,
+)
+from huxunify.test.route.route_test_util.test_data_loading.destinations import (
+    load_destinations,
+)
+from huxunify.test.route.route_test_util.test_data_loading.users import (
+    load_users,
+)
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 
@@ -64,3 +73,17 @@ class RouteTestCase(TestCase):
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         self.user_name = "Joe Smithers"
+
+    def load_test_data(self, database: DatabaseClient):
+        """Load test data into the database.
+
+        Args:
+            database (DatabaseClient): A database client.
+
+        Returns:
+
+        """
+
+        load_destinations(database)
+        load_data_sources(database)
+        load_users(database)
