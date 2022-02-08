@@ -165,10 +165,10 @@ export default {
 
   computed: {
     filterLength() {
-      let alert = this.initializeValue(this.selctedAlertType)
-      let category = this.initializeValue(this.selctedCategory)
+      let alert = this.selctedAlertType.length
+      let category = this.selctedCategory.length
       let time = 1
-      let users = this.initializeValue(this.selctedUsers)
+      let users = this.selctedUsers.length
       let totalFiltersCount =
         this.selctedAlertType.length +
         this.selctedCategory.length +
@@ -194,9 +194,6 @@ export default {
         today_date.getMonth(),
         today_date.getDate() - value
       )
-    },
-    initializeValue(value) {
-      return value.length > 0 ? 1 : 0
     },
     clearFilter() {
       this.selctedAlertType = []
