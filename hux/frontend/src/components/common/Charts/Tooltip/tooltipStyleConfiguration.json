@@ -70,5 +70,11 @@
     "top": "55px",
     "left": "25px",
     "padding": "6px 16px"
+  },
+  "runDurationChart": {
+    "maxWidth": "200px",
+    "top": "-32px",
+    "left": "85px",
+    "padding": "6px 8px 8px 8px"
   }
 }
