@@ -1,7 +1,7 @@
 <template>
   <div class="audience-lookalike-insight">
     <div class="mb-7 text-body-1 black--text text--lighten-4">
-      This is a lookalike audience of 
+      This is a lookalike audience of
       <span v-if="audienceData.source_exists === true">
         <router-link
           :to="{
