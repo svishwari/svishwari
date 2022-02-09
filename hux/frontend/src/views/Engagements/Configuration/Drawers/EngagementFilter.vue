@@ -47,11 +47,6 @@ export default {
       required: false,
       default: "auto",
     },
-    clearFilterData: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   data() {
     return {
@@ -78,9 +73,6 @@ export default {
     localDrawer: function () {
       this.$emit("input", this.localDrawer)
     },
-    clearFilterData: function () {
-      this.clear()
-    },
   },
   methods: {
     clearFilter() {
@@ -91,7 +83,7 @@ export default {
       this.enableApply = true
       this.clearFilter()
     },
-    clearAndLoad() {
+    clearAndReload() {
       this.clearFilter()
       this.apply()
     },
@@ -99,6 +91,7 @@ export default {
       this.$emit("onSectionAction", {
         selectedFavourite: this.selectedFavourite,
         selectedEngagementsWorkedWith: this.selectedEngagementsWorkedWith,
+        filterApplied: this.filterLength,
       })
     },
     cancel() {
