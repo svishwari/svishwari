@@ -638,17 +638,18 @@ export default {
     this.loading = true
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
+    let params = this.$route.params
     try {
-      if (!this.modelDetails(this.$route.params.id)) {
+      if (!this.modelDetails(params.id)) {
         await this.getModels()
       }
-      await this.getOverview(this.$route.params.id)
+      await this.getOverview(params)
     } finally {
-      this.fetchLift()
-      this.fetchDrift()
+      this.fetchLift(params)
+      this.fetchDrift(params)
       this.loading = false
-      this.fetchFeatures()
-      this.fetchModelFeatures() // Fetch data for Model feature table.
+      this.fetchFeatures(params)
+      this.fetchModelFeatures(params) // Fetch data for Model feature table.
     }
   },
 
@@ -675,19 +676,19 @@ export default {
       getModelFeatures: "models/getModelFeatures", // used for Model feature table.
       getDrift: "models/getDrift",
     }),
-    async fetchLift() {
+    async fetchLift(params) {
       this.loadingLift = true
       try {
-        await this.getLift(this.$route.params.id)
+        await this.getLift(params)
       } catch (error) {
         this.liftErrorState = true
       }
       this.loadingLift = false
     },
-    async fetchDrift() {
+    async fetchDrift(params) {
       this.loadingDrift = true
       try {
-        await this.getDrift(this.$route.params.id)
+        await this.getDrift(params)
       } catch (error) {
         this.driftChartErrorState = true
       }
@@ -696,10 +697,10 @@ export default {
     viewVersionHistory() {
       this.versionHistoryDrawer = !this.versionHistoryDrawer
     },
-    async fetchFeatures() {
+    async fetchFeatures(params) {
       this.featuresLoading = true
       try {
-        await this.getFeatures(this.$route.params.id)
+        await this.getFeatures(params)
       } catch (error) {
         this.modelFeaturesErrorState = true
       }
@@ -708,10 +709,10 @@ export default {
     sizeHandler() {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     },
-    async fetchModelFeatures() {
+    async fetchModelFeatures(params) {
       this.loadingModelFeatures = true
       try {
-        await this.getModelFeatures(this.$route.params.id)
+        await this.getModelFeatures(params)
       } catch (error) {
         this.featuresErrorState = true
       }

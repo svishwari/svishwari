@@ -28,8 +28,9 @@
           >
             <tooltip v-if="header.value == 'version'">
               <span
-                class="cell black--text text-body-1 ml-2"
+                class="cell text-body-1 ml-2 primary--text cursor-pointer"
                 :class="[item.current ? 'font-weight-bold' : '']"
+                @click="navigateToVersion(item)"
               >
                 {{ item.version }}
               </span>
@@ -145,6 +146,7 @@ export default {
   },
   data() {
     return {
+      modelId: "",
       loading: true,
       localDrawer: this.value,
       columnDefs: [
@@ -187,6 +189,7 @@ export default {
       this.localDrawer = this.value
       if (this.localDrawer) {
         this.loading = true
+        this.modelId = this.$route.params.id
         this.getHistory(this.$route.params.id)
         this.loading = false
       }
@@ -200,6 +203,19 @@ export default {
     ...mapActions({
       getHistory: "models/getHistory",
     }),
+    navigateToVersion(data) {
+      if (data.current) {
+        this.$router.push({
+          name: "ModelDashboard",
+          params: { id: this.modelId },
+        })
+      } else {
+        this.$router.push({
+          name: "ModelDashboardVersion",
+          params: { id: this.modelId, version: data.version },
+        })
+      }
+    },
   },
 }
 </script>
