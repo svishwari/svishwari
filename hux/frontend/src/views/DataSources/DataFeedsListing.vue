@@ -109,14 +109,10 @@
                     class="black--text text--darken-4 text-body-1"
                   >
                     <status
-                      :status="changeStatus(item[header.value])"
+                      :status="item[header.value]"
                       :show-label="true"
                       class="data-feed-status d-flex"
-                      :icon-size="
-                        changeStatus(item[header.value]) == 'Failed'
-                          ? '15'
-                          : '18'
-                      "
+                      :icon-size="item[header.value] == 'Failed' ? '15' : '18'"
                     />
                   </div>
                   <tooltip
@@ -200,13 +196,11 @@
                         class="black--text text--darken-4 text-body-1"
                       >
                         <status
-                          :status="changeStatus(item[column.value])"
+                          :status="item[column.value]"
                           :show-label="true"
                           class="data-feed-status d-flex"
                           :icon-size="
-                            changeStatus(item[column.value]) == 'Failed'
-                              ? '15'
-                              : '18'
+                            item[column.value] == 'Failed' ? '15' : '18'
                           "
                         />
                       </div>
@@ -493,7 +487,7 @@ export default {
         case "Pending":
           return "Incomplete"
 
-        case "Active":
+        case "Success":
           return "Complete"
 
         default:

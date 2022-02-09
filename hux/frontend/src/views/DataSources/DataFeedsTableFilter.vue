@@ -11,7 +11,11 @@
   >
     <div class="filter-body">
       <hux-filter-panels>
-        <hux-filter-panel title="Time" :count="getTimeCount">
+        <hux-filter-panel
+          title="Time"
+          :count="getTimeCount"
+          :expanded="getTimeCount > 0 ? [0] : []"
+        >
           <v-checkbox
             v-model="selectedToday"
             color="primary lighten-6"
@@ -39,7 +43,11 @@
             ></v-radio>
           </v-radio-group>
         </hux-filter-panel>
-        <hux-filter-panel title="Status" :count="selectedStatus.length">
+        <hux-filter-panel
+          title="Status"
+          :count="selectedStatus.length"
+          :expanded="selectedStatus.length > 0 ? [1] : []"
+        >
           <v-checkbox
             v-for="data in status"
             :key="data.id"
@@ -129,14 +137,10 @@ export default {
         },
         {
           id: 3,
-          title: "Disabled",
-        },
-        {
-          id: 4,
           title: "Failed",
         },
         {
-          id: 5,
+          id: 4,
           title: "Running",
         },
       ],
