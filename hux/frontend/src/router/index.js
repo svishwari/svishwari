@@ -132,7 +132,7 @@ const routes = [
     component: () => import("@/views/CustomerProfiles/Index"),
     meta: {
       layout: "app",
-      title: "Customer Profiles",
+      title: "All Customers",
       requiresAuth: true,
     },
   },

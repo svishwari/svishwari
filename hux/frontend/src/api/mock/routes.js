@@ -523,8 +523,6 @@ export const defineRoutes = (server) => {
       recall: 0.65,
       current_version: "3.1.2",
     }
-    data.attrs.model_name = data.attrs.name
-    data.attrs.model_type = data.attrs.type
 
     return data
   })
