@@ -249,6 +249,13 @@
               <standalone-delivery
                 :audience="audience"
                 @onAddStandaloneDestination="addStandaloneDestination($event)"
+                @onDeliveryStandaloneDestination="refreshEntity()"
+                @onRemoveStandaloneDestination="
+                  onRemoveStandaloneDestination($event, data)
+                "
+                @onOpenStandaloneDestination="
+                  onOpenStandaloneDestination($event, data)
+                "
               />
             </div>
             <div :style="{ width: '1.5%' }"></div>
@@ -284,7 +291,7 @@
                 </v-card-title>
                 <v-card-text v-if="showAdvertising">
                   <div class="match-rates mx-2 my-1">
-                    <matchrate :deliveries="audienceData.digital_advertising && audienceData.digital_advertising.match_rates ? audienceData.digital_advertising.match_rates : []"/>
+                    <matchrate :match-rate="audienceData.digital_advertising && audienceData.digital_advertising.match_rates ? audienceData.digital_advertising.match_rates : []"/>
                   </div>
                   <div ref="advertisingcard" class="lookalikes mx-2 my-6">
                     <lookalikes
@@ -415,6 +422,8 @@
 </template>
 
 <script>
+import Vue from "vue"
+
 // helpers
 import { mapGetters, mapActions } from "vuex"
 import filter from "lodash/filter"
@@ -570,6 +579,7 @@ export default {
         actionType: "remove-audience",
       },
       toggleDownloadAudienceDrawer: false,
+      matchrateStyles: {},
     }
   },
   computed: {
@@ -713,6 +723,7 @@ export default {
   async mounted() {
     await this.loadAudienceInsights()
     this.sizeHandler()
+    this.matchHeight()
   },
 
   updated() {
@@ -745,6 +756,7 @@ export default {
       getEngagementById: "engagements/get",
       deleteAudience: "audiences/remove",
       markFavorite: "users/markFavorite",
+      detachStandaloneDestination: "audiences/removeStandaloneDestination",
       updateLookalikeAudience: "audiences/updateLookalike",
     }),
     attributeOptions() {
@@ -869,6 +881,12 @@ export default {
           break
         case "remove audience":
           await this.deleteAudience({ id: this.audience.id })
+          break
+        case "remove-standalone-destination":
+          await this.detachStandaloneDestination({
+            deleteActionData: this.deleteActionData,
+            audienceId: this.audienceId,
+          })
           break
         default:
           break
@@ -1186,6 +1204,30 @@ export default {
     },
     openDownloadDrawer() {
       this.toggleDownloadAudienceDrawer = true
+    },
+    onRemoveStandaloneDestination(data) {
+      this.audienceId = data.delivery_platform_id
+      this.confirmDialog.actionType = "remove-standalone-destination"
+      this.confirmDialog.icon = "sad-face"
+      this.confirmDialog.type = "error"
+      this.confirmDialog.subtitle = ""
+      this.confirmDialog.title = `Remove ${data.delivery_platform_name} destination?`
+      this.confirmDialog.btnText = "Yes, remove it"
+      this.confirmDialog.body =
+        "You will not be deleting this destination; this destination will not be attached to this specific engagement anymore."
+      this.deleteActionData = {
+        destination_id: data.delivery_platform_id,
+      }
+      this.showConfirmModal = true
+    },
+    onOpenStandaloneDestination(data) {
+      if (data && data.link) {
+        window.open(data.link, "_blank")
+      }
+    },
+    matchHeight() {
+      var heightString = this.$refs.infoBox.$el.clientHeight + "px"
+      Vue.set(this.matchrateStyles, "height", heightString)
     },
     openLookalikeEditModal() {
       this.showEditConfirmModal = true

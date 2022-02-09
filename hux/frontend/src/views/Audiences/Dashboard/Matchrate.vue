@@ -1,6 +1,6 @@
 <template>
   <div class="match-rate-wrapper">
-    <div v-if="numDeliveries !== 0" class="match-rate">
+    <div v-if="numMatchRates !== 0" class="match-rate">
       <div class="text-h3 black-base">Match rates</div>
 
       <v-row class="matchrate-header mt-3 body-2">
@@ -14,7 +14,7 @@
       </v-row>
 
       <v-row
-        v-for="d in deliveries"
+        v-for="d in matchRate"
         :key="d.destination"
         class="matchrate-list body-1"
       >
@@ -62,18 +62,18 @@ export default {
   name: "StandaloneDelivery",
   components: { TimeStamp, Size, Logo, MetricCard },
   props: {
-    deliveries: {
-      type: Object,
-      required: true,
-      default: () => {},
+    matchRate: {
+      type: Array,
+      required: false,
+      default: () => [],
     },
   },
   data() {
     return {}
   },
   computed: {
-    numDeliveries() {
-      return this.deliveries ? this.deliveries.length : 0
+    numMatchRates() {
+      return this.matchRate ? this.matchRate.length : 0
     },
   },
 }

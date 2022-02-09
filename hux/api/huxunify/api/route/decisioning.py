@@ -38,6 +38,7 @@ from huxunify.api.schema.model import (
     FeatureSchema,
     ModelRequestPostSchema,
     ModelUpdatePatchSchema,
+    ModelPipelinePerformanceSchema,
 )
 from huxunify.api.schema.configurations import ConfigurationsSchema
 from huxunify.api.data_connectors.tecton import Tecton
@@ -1017,5 +1018,73 @@ class ModelLiftView(SwaggerView):
 
         return (
             jsonify(ModelLiftSchema(many=True).dump(lift_data)),
+            HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/pipeline-performance",
+    "ModelPipelinePerformance",
+)
+class ModelPipelinePerformance(SwaggerView):
+    """Model Pipeline Performance Class."""
+
+    parameters = [
+        {
+            "name": api_c.MODEL_ID,
+            "description": "Model id",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "1",
+        },
+        {
+            "name": api_c.VERSION,
+            "description": "Version id",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "1.0.0",
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model pipeline performance.",
+            "schema": ModelPipelinePerformanceSchema,
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve model pipeline performance"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, model_id: str, user: dict) -> Tuple[dict, int]:
+        """Retrieves model pipeline performance.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            model_id (str): Model ID.
+            user (dict): User object.
+
+        Returns:
+            Tuple[dict, int]: dict of model pipeline performance, HTTP status code.
+        """
+
+        return (
+            jsonify(
+                ModelPipelinePerformanceSchema().dump(
+                    api_c.MODEL_PIPELINE_PERFORMANCE_STUB
+                )
+            ),
             HTTPStatus.OK.value,
         )

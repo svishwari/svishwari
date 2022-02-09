@@ -58,7 +58,7 @@
               color="primary"
               class="text-button ml-auto"
               width="157"
-              :is-disabled="!Boolean(count)"
+              :is-disabled="!Boolean(count) && !enableApply"
               @click="$emit('apply')"
             >
               Apply filter
@@ -92,6 +92,12 @@ export default defineComponent({
       default: 0,
     },
 
+    enableApply: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
     disableClear: {
       type: Boolean,
       required: false,
@@ -122,9 +128,6 @@ $zIndex: 4;
   border-left: 1px solid var(--v-black-lighten3) !important;
   width: $width;
   height: 100%;
-  z-index: $zIndex;
-  position: absolute;
-  right: 0;
   .wrapper {
     display: flex;
     flex-direction: column;
@@ -154,6 +157,7 @@ $zIndex: 4;
   .footer {
     height: $footerHeight;
     border-top: 1px solid var(--v-black-lighten3) !important;
+    border-left: 1px solid var(--v-black-lighten3) !important;
     position: fixed;
     bottom: 0;
     z-index: $zIndex;

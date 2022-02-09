@@ -410,7 +410,7 @@ class TestUserRoutes(RouteTestCase):
         update_body = {
             api_c.ALERTS: {
                 api_c.DATA_MANAGEMENT: {
-                    api_c.DATASOURCES: {
+                    api_c.DATA_SOURCES: {
                         db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
                         db_c.NOTIFICATION_TYPE_SUCCESS: False,
                         db_c.NOTIFICATION_TYPE_CRITICAL: True,

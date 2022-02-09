@@ -73,7 +73,13 @@ const lookalikeAudience = () => {
 
 const matchRate = () => {
   return {
-    destination: "facebook",
+    destination:
+    faker.random.arrayElement([
+      "facebook",
+      "sendgrid",
+      "google-ads",
+      "aqfer",
+    ]),
     match_rate: `${faker.datatype.number({ min: 0, max: 99 })}`,
     last_delivery: faker.date.recent(),
 
@@ -100,7 +106,6 @@ export const audience = {
   source_id: () => faker.datatype.number({ min: 1, max: 10 }),
   source_name: (index) => `My audience ${index + 1}`,
   source_size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
-  match_rate: 0.5972,
   status: () =>
     faker.random.arrayElement([
       "Delivered",
@@ -144,6 +149,7 @@ export const audience = {
       delivery_platform_type: "sendgrid",
       delivery_platform_name: "Sendgrid by Twilio",
       size: 0,
+      link: null,
     },
     {
       status: "Delivering",
@@ -152,6 +158,7 @@ export const audience = {
       delivery_platform_type: "facebook",
       delivery_platform_name: "Facebook",
       size: 0,
+      link: "https://business.facebook.com/",
     },
   ],
 }

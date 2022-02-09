@@ -15,12 +15,12 @@
           <icon
             type="filter"
             :size="27"
-            :color="isFilterToggled === true ? 'primary' : 'black'"
-            :variant="isFilterToggled === true ? 'lighten6' : 'darken4'"
+            :color="finalFilterApplied > 0 ? 'primary' : 'black'"
+            :variant="finalFilterApplied > 0 ? 'lighten6' : 'darken4'"
           />
           <v-badge
-            v-if="numFiltersSelected > 0"
-            :content="numFiltersSelected"
+            v-if="finalFilterApplied > 0"
+            :content="finalFilterApplied"
             color="white"
             offset-x="6"
             offset-y="4"
@@ -601,7 +601,7 @@
         </template>
         <template #subtitle>
           <div class="des-no-engagement mt-3">
-            <span v-if="numFiltersSelected <= 0">
+            <span v-if="finalFilterApplied <= 0">
               Engagements will appear here once you start creating them.
             </span>
             <span v-else>
@@ -612,7 +612,7 @@
           </div>
         </template>
         <template #button>
-          <span v-if="numFiltersSelected <= 0">
+          <span v-if="finalFilterApplied <= 0">
             <router-link
               :to="{ name: 'EngagementConfiguration' }"
               class="text-decoration-none"
@@ -632,7 +632,7 @@
               </huxButton>
             </router-link>
           </span>
-          <span v-if="numFiltersSelected > 0 && rowData.length <= 0">
+          <span v-if="finalFilterApplied > 0 && rowData.length <= 0">
             <huxButton
               button-text="Clear filters"
               variant="primary base"
@@ -772,6 +772,7 @@ export default {
       loading: true,
       manualDeliverySchedule: "Manual",
       numFiltersSelected: 0,
+      finalFilterApplied: 0,
       columnDefs: [
         {
           text: "Engagement name",
@@ -935,6 +936,7 @@ export default {
     },
 
     async applyFilter(params) {
+      this.finalFilterApplied = this.numFiltersSelected
       await this.getAllFilteredEngagements({
         favorites: params.selectedFavourite,
         my_engagements: params.selectedEngagementsWorkedWith,

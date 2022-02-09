@@ -308,7 +308,7 @@ export default {
               .attr("cx", finalXCoordinate)
               .attr("cy", yPosition)
               .attr("r", 7)
-              .style("stroke", "#0C9DDB")
+              .style("stroke", "#0076A8")
               .style("stroke-opacity", "1")
               .style("stroke-width", 2)
               .style("fill", "white")
