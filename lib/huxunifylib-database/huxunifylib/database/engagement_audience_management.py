@@ -2,7 +2,7 @@
 """
 from datetime import datetime
 import logging
-from typing import Union
+from typing import Union, Dict, Any
 
 import pymongo
 from bson import ObjectId
@@ -386,7 +386,7 @@ def get_all_audience_engagement_latest_deliveries(
 def get_all_engagement_audience_deliveries(
     database: DatabaseClient,
     audience_ids: list = None,
-) -> Union[list, None]:
+) -> Dict[Any, Any]:
     """A function to get delivery jobs for all engagements and corresponding
     audiences nested within. This function is really just a work around
     cause DocumentDB does not support inline pipeline functions.
@@ -396,7 +396,7 @@ def get_all_engagement_audience_deliveries(
         audience_ids (list, Optional): A list of audience ids.
 
     Returns:
-        Union[list, None]:  A dict of audiences and the nested delivery history.
+        Dict[Any, Any]:  A dict of audiences and the nested delivery history.
     """
 
     # get the audience engagement pairs
