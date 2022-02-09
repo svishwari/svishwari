@@ -143,10 +143,22 @@
       <div class="pt-6">
         <div class="card-border pa-6">
           <span class="d-flex mb-2">
-            <h3 class="text-h3">Run duration (last 10)</h3>
+            <h3 class="text-h3">Run duration</h3>
+            <span
+              class="
+                text--body-1
+                black--text
+                text--lighten-4
+                ml-1
+                last-duration
+              "
+            >
+              (last 10)
+            </span>
           </span>
           <run-duration-chart
             :run-duration-data="runDurationData.training.run_duration"
+            :chart-id="1"
           />
         </div>
       </div>
@@ -288,10 +300,22 @@
       <div class="pt-6">
         <div class="card-border pa-6">
           <span class="d-flex mb-2">
-            <h3 class="text-h3">Run duration (last 10)</h3>
+            <h3 class="text-h3">Run duration</h3>
+            <span
+              class="
+                text--body-1
+                black--text
+                text--lighten-4
+                ml-1
+                last-duration
+              "
+            >
+              (last 10)
+            </span>
           </span>
           <run-duration-chart
             :run-duration-data="runDurationData.scoring.run_duration"
+            :chart-id="2"
           />
         </div>
       </div>
@@ -345,5 +369,8 @@ export default {
 .redDot {
   @extend .dots;
   background-color: var(--v-error-base) !important;
+}
+.last-duration {
+  margin-top: 2px !important;
 }
 </style>
