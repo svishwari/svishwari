@@ -855,8 +855,12 @@ class AudienceGetView(SwaggerView):
             # consistent with GET all audiences response
             audience_deliveries = eam.get_all_engagement_audience_deliveries(
                 database, audience_ids=[audience_id]
+            ).get(
+                audience_id,
+                {db_c.DELIVERIES: [], api_c.AUDIENCE_LAST_DELIVERED: None},
             )
-            audience_deliveries = audience_deliveries + standalone_deliveries
+
+            audience_deliveries = [audience_deliveries] + standalone_deliveries
         else:
             audience_deliveries = standalone_deliveries
         if audience_deliveries:
