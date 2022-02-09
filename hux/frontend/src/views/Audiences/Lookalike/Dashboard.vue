@@ -2,7 +2,7 @@
   <div class="audience-lookalike-insight">
     <div class="mb-7 text-body-1 black--text text--lighten-4">
       This is a lookalike audience of
-      <span v-if="audienceData.source_exists === false">
+      <span v-if="audienceData.source_exists === true">
         <router-link
           :to="{
             name: 'AudienceInsight',
@@ -66,7 +66,7 @@
                         font-weight-semi-bold
                       "
                     >
-                      -
+                      {{ audienceData.audience_size_percentage }}%
                     </div>
                   </template>
                 </metric-card>
@@ -136,7 +136,7 @@
             >
               <template #subtitle-extended>
                 <div class="mt-1">
-                  <span v-if="audienceData.source_exists === false">
+                  <span v-if="audienceData.source_exists === true">
                     <router-link
                       :to="{
                         name: 'AudienceInsight',

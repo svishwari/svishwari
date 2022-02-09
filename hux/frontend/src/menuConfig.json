@@ -41,7 +41,7 @@
         },
         {
           "icon": "customer-profiles",
-          "title": "Customer Profiles",
+          "title": "All Customers",
           "link": {
             "name": "CustomerProfiles"
           },

@@ -326,7 +326,7 @@
                     x-axis-format="%m/%d"
                     :enable-grid="[true, true]"
                     data-e2e="drift-chart"
-                    :y-axis-zero-to-one="model.model_type != 'ltv'"
+                    :y-axis-zero-to-one="model.type != 'ltv'"
                   />
                   <v-row
                     v-else-if="!loadingDrift && driftChartData.length == 0"
@@ -501,15 +501,15 @@
               </v-card>
             </v-col>
           </v-row>
-          <version-history
-            v-model="versionHistoryDrawer"
-            data-e2e="version-history"
-          />
         </template>
       </v-tab-item>
       <v-tab-item key="pipeline" class="delivery-tab">
         <pipeline-perfrmance></pipeline-perfrmance>
       </v-tab-item>
+      <version-history
+        v-model="versionHistoryDrawer"
+        data-e2e="version-history"
+      />
     </v-tabs-items>
   </page>
 </template>
@@ -623,11 +623,11 @@ export default {
           icon: "models",
         },
       ]
-      if (this.model.model_name) {
+      if (this.model.name) {
         items.push({
-          text: this.model.model_name,
+          text: this.model.name,
           disabled: true,
-          logo: `model-${this.model.model_type.toLowerCase()}`,
+          logo: `model-${this.model.type.toLowerCase()}`,
         })
       }
       return items

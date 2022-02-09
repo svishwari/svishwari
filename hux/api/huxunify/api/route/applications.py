@@ -8,10 +8,13 @@ from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
+from huxunifylib.database.user_management import update_user
 from huxunifylib.database import (
     constants as db_c,
     collection_management,
 )
+
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.schema.applications import (
     ApplicationsGETSchema,
     ApplicationsPostSchema,
@@ -23,7 +26,10 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     requires_access_levels,
 )
-from huxunify.api.route.utils import get_db_client, Validation
+from huxunify.api.route.utils import (
+    get_db_client,
+    Validation,
+)
 from huxunify.api import constants as api_c
 
 from huxunify.api.schema.utils import (
@@ -52,8 +58,10 @@ class ApplicationGetView(SwaggerView):
 
     parameters = [
         {
-            "name": api_c.ONLY_ACTIVE,
-            "description": "Flag to specify if only active applications are to be fetched.",
+            "name": api_c.USER,
+            "description": "Flag to specify if only user added applications "
+            "are to be fetched. Otherwise, all the available "
+            "applications are returned along with added field",
             "type": "boolean",
             "in": "query",
             "required": False,
@@ -93,20 +101,60 @@ class ApplicationGetView(SwaggerView):
         Returns:
             Tuple[dict, int]: Created application, HTTP status code.
         """
+        database = get_db_client()
 
-        only_active = (
-            Validation.validate_bool(request.args.get(api_c.ONLY_ACTIVE))
-            if request.args.get(api_c.ONLY_ACTIVE)
+        user_added = (
+            Validation.validate_bool(request.args.get(api_c.USER))
+            if request.args.get(api_c.USER)
             else False
         )
 
-        applications = collection_management.get_documents(
-            get_db_client(),
-            db_c.APPLICATIONS_COLLECTION,
-            {api_c.STATUS: api_c.STATUS_ACTIVE} if only_active else None,
-        ).get(db_c.DOCUMENTS)
+        user_application_ids = (
+            [i[api_c.ID] for i in user[db_c.USER_APPLICATIONS]]
+            if db_c.USER_APPLICATIONS in user
+            else []
+        )
 
-        logger.info("Successfully retrieved all applications.")
+        applications = []
+        # Return the applications user has already added
+        if user_added:
+            if (
+                db_c.USER_APPLICATIONS not in user
+                or not user[db_c.USER_APPLICATIONS]
+            ):
+                return HuxResponse.OK(api_c.EMPTY_USER_APPLICATION_RESPONSE)
+
+            applications = collection_management.get_documents(
+                database,
+                db_c.APPLICATIONS_COLLECTION,
+                {db_c.ID: {"$in": user_application_ids}},
+            ).get(db_c.DOCUMENTS)
+
+            for i in applications:
+                i[api_c.URL] = next(
+                    (
+                        item
+                        for item in user[db_c.USER_APPLICATIONS]
+                        if item[api_c.ID] == i[db_c.ID]
+                    )
+                )[api_c.URL]
+                i[api_c.IS_ADDED] = True
+        # Return all the applications user can add.
+        # In this case, we do not need to show uncategorized applications
+        else:
+            applications = collection_management.get_documents(
+                database,
+                db_c.APPLICATIONS_COLLECTION,
+                {
+                    db_c.ENABLED: True,
+                    db_c.CATEGORY: {
+                        "$nin": ["Uncategorized", "uncategorized"]
+                    },
+                },
+            ).get(db_c.DOCUMENTS)
+
+            for i in applications:
+                i[api_c.IS_ADDED] = [db_c.ID] in user_application_ids
 
         return (
             jsonify(ApplicationsGETSchema(many=True).dump(applications)),
@@ -130,7 +178,6 @@ class ApplicationsPostView(SwaggerView):
             "description": "Input Applications body.",
             "example": {
                 api_c.CATEGORY: "uncategorized",
-                api_c.TYPE: "custom-application",
                 api_c.NAME: "Custom Application",
                 api_c.URL: "URL_Link",
             },
@@ -171,28 +218,66 @@ class ApplicationsPostView(SwaggerView):
             Tuple[dict, int]: Created application, HTTP status code.
         """
 
-        application = ApplicationsPostSchema().load(
+        new_application = ApplicationsPostSchema().load(
             request.get_json(),
         )
         database = get_db_client()
 
-        application[api_c.STATUS] = api_c.STATUS_PENDING
-        application[db_c.ADDED] = True
-
-        document = collection_management.create_document(
+        existing_application = collection_management.get_document(
             database,
             db_c.APPLICATIONS_COLLECTION,
-            application,
-            user[api_c.USER_NAME],
+            {
+                db_c.CATEGORY: new_application[api_c.CATEGORY],
+                db_c.NAME: new_application[api_c.NAME],
+                db_c.ENABLED: True,
+            },
         )
+
+        if existing_application is None:
+            existing_application = collection_management.create_document(
+                database,
+                db_c.APPLICATIONS_COLLECTION,
+                {
+                    db_c.CATEGORY: new_application[api_c.CATEGORY],
+                    db_c.NAME: new_application[api_c.NAME],
+                    db_c.ENABLED: True,
+                },
+                user[api_c.USER_NAME],
+            )
+
+        # add applications to user doc
+        updated_user_doc = (
+            user[db_c.USER_APPLICATIONS]
+            if db_c.USER_APPLICATIONS in user
+            and user[db_c.USER_APPLICATIONS] is not None
+            else []
+        )
+        user_apps = [
+            d
+            for d in updated_user_doc
+            if d[api_c.ID] != existing_application[db_c.ID]
+        ]
+        user_apps.append(
+            {
+                api_c.ID: existing_application[db_c.ID],
+                db_c.URL: new_application[api_c.URL],
+            }
+        )
+
+        update_user(
+            database, user[db_c.OKTA_ID], {db_c.USER_APPLICATIONS: user_apps}
+        )
+
         logger.info(
             "User with username %s successfully created application %s.",
             user[api_c.USER_NAME],
-            application.get(db_c.NAME),
+            existing_application.get(db_c.NAME),
         )
 
+        application = existing_application
+        application[api_c.URL] = new_application[api_c.URL]
         return (
-            jsonify(ApplicationsGETSchema().dump(document)),
+            jsonify(ApplicationsGETSchema().dump(application)),
             HTTPStatus.CREATED.value,
         )
 
@@ -267,32 +352,54 @@ class ApplicationsPatchView(SwaggerView):
         ApplicationsPatchSchema().validate(
             request.json,
         )
+        new_application = ApplicationsPatchSchema().load(
+            request.get_json(),
+        )
         database = get_db_client()
 
-        if not collection_management.get_document(
+        existing_application = collection_management.get_document(
             database,
             db_c.APPLICATIONS_COLLECTION,
             {db_c.ID: ObjectId(application_id)},
-        ):
+        )
+        if not existing_application:
             return {
                 "message": f"Application {application_id} not found"
             }, HTTPStatus.NOT_FOUND
 
-        updated_application = collection_management.update_document(
-            database,
-            db_c.APPLICATIONS_COLLECTION,
-            ObjectId(application_id),
-            ApplicationsPatchSchema().load(request.json),
-            user[api_c.USER_NAME],
+        # add applications to user doc
+        updated_user_doc = (
+            user[db_c.USER_APPLICATIONS]
+            if db_c.USER_APPLICATIONS in user
+            and user[db_c.USER_APPLICATIONS] is not None
+            else []
+        )
+        user_apps = [
+            d
+            for d in updated_user_doc
+            if d[api_c.ID] != existing_application[db_c.ID]
+        ]
+        user_apps.append(
+            {
+                api_c.ID: existing_application[db_c.ID],
+                db_c.URL: new_application[api_c.URL],
+            }
+        )
+
+        update_user(
+            database, user[db_c.OKTA_ID], {db_c.USER_APPLICATIONS: user_apps}
         )
 
         logger.info(
             "User with username %s successfully updated application %s.",
             user[api_c.USER_NAME],
-            updated_application.get(db_c.NAME),
+            new_application.get(db_c.NAME),
         )
 
+        application = existing_application
+        application[api_c.URL] = new_application[api_c.URL]
+
         return (
-            jsonify(ApplicationsGETSchema().dump(updated_application)),
+            jsonify(ApplicationsGETSchema().dump(application)),
             HTTPStatus.OK.value,
         )

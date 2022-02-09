@@ -175,6 +175,7 @@ export default {
       }
       th {
         background: var(--v-primary-lighten2);
+        box-shadow: none;
       }
     }
     > .v-data-table__wrapper {

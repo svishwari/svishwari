@@ -587,7 +587,7 @@ export default {
       this.numFiltersSelected = value
     },
     clearFilters() {
-      this.$refs.filters.clearAndLoad()
+      this.$refs.filters.clearAndReload()
     },
     initiateClone(audienceId) {
       this.$router.push({
@@ -771,7 +771,7 @@ export default {
     },
 
     async applyFilter(params) {
-      this.finalFilterApplied = this.numFiltersSelected
+      this.finalFilterApplied = params.filterApplied
       this.loading = true
       await this.getAllAudiences({
         favorites: params.selectedFavourite,

@@ -25,6 +25,7 @@
         @onOverviewSectionAction="triggerOverviewAction($event)"
         @onOverviewDestinationAction="triggerOverviewDestinationAction($event)"
         @deliverEngagement="deliverEngagement()"
+        @refreshEntityDelivery="refreshEntity()"
       />
     </div>
 
@@ -539,7 +540,7 @@ export default {
             "You will not be deleting this destination; this destination will not be attached to this specific audience anymore."
           this.deleteActionData = {
             engagementId: this.engagementId,
-            audienceId: this.selectedAudienceId,
+            audienceId: "000000000000000000000000",
             data: { id: event.data.id },
           }
           this.showConfirmModal = true

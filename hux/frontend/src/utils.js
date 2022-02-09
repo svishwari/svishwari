@@ -362,5 +362,12 @@ export function formatDate(date) {
  * @returns {string} formatted date
  */
 export function formatDateToLocal(date) {
-  return dayjs(date).local().format("DD/MM/YYYY hh:mm a zzz")
+  let res = dayjs(date).local().format("DD/MM/YYYY hh:mm a zzz")
+  let timezone = res.split("m ")[1]
+  timezone = timezone.split(" ")
+  let tz = ""
+  timezone.forEach((x) => {
+    tz += x[0]
+  })
+  return res.split("m ")[0] + "m " + tz
 }

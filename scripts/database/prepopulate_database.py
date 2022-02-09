@@ -1349,6 +1349,119 @@ client_projects_list = [
 ]
 
 
+# Applications List
+applications_constants = [
+    {
+        db_c.NAME: "Apache Airflow",
+        db_c.CATEGORY: "Data Processing",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Docker",
+        db_c.CATEGORY: "Data Processing",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Kubernetes",
+        db_c.CATEGORY: "Data Processing",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Matillion",
+        db_c.CATEGORY: "Data Processing",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "MongoDB",
+        db_c.CATEGORY: "Data Storage",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Snowflake",
+        db_c.CATEGORY: "Data Storage",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Algorithmia",
+        db_c.CATEGORY: "Modelling",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Binderhub",
+        db_c.CATEGORY: "Modelling",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Kubeflow",
+        db_c.CATEGORY: "Modelling",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Jupyterhub",
+        db_c.CATEGORY: "Modelling",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Tecton",
+        db_c.CATEGORY: "Modelling",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Grafana",
+        db_c.CATEGORY: "Monitoring",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Prometheus",
+        db_c.CATEGORY: "Monitoring",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Medallia",
+        db_c.CATEGORY: "Reporting",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Microsoft Power BI",
+        db_c.CATEGORY: "Reporting",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Salesforce Datorama",
+        db_c.CATEGORY: "Reporting",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "SparkPost",
+        db_c.CATEGORY: "Reporting",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+    {
+        db_c.NAME: "Tableau",
+        db_c.CATEGORY: "Reporting",
+        db_c.ICON: "default.ico",
+        db_c.ENABLED: True,
+    },
+]
+
+
 def drop_collections(database: MongoClient) -> None:
     """Drop collections for writing.
 
@@ -1491,6 +1604,32 @@ def insert_client_projects(
     logging.info("Pre-populated client projects.")
 
 
+def insert_applications(database: MongoClient, applications: list) -> None:
+    """Insert data into applications collection.
+
+    Args:
+        database (MongoClient): MongoDB Client.
+        applications (List): List of application objects.
+    """
+
+    logging.info("Pre-populate applications collection.")
+
+    for application in applications:
+        result_id = create_document(
+            database,
+            db_c.APPLICATIONS_COLLECTION,
+            application,
+        )[db_c.ID]
+
+        logging.info(
+            "Added %s, %s.",
+            application[db_c.NAME],
+            result_id,
+        )
+
+    logging.info("Pre-populated applikcations.")
+
+
 if __name__ == "__main__":
     # Initiate Data Base client
     db_client = get_mongo_client()
@@ -1500,4 +1639,5 @@ if __name__ == "__main__":
     insert_configurations(db_client, configurations_constants)
     insert_models(db_client, models_list)
     insert_client_projects(db_client, client_projects_list)
+    insert_applications(db_client, applications_constants)
     logging.info("Prepopulate complete.")
