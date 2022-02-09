@@ -131,6 +131,7 @@ const lookalikeAbleAudience1 = {
   size: 3022188,
   id: "60d4d270d364622dd6cc9a7",
   update_time: "2021-06-24T18:44:00.381000",
+  audience_size_percentage: 1.5,
 }
 
 const lookalikeAbleAudience2 = {
@@ -168,6 +169,7 @@ const lookalikeAbleAudience2 = {
   size: 3022188,
   id: "60d4d270d364622dd6cc9b7",
   update_time: "2021-06-24T18:44:00.381000",
+  audience_size_percentage: 1.5,
 }
 
 export default [
