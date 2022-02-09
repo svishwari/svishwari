@@ -40,7 +40,6 @@ describe("View configuration", () => {
     cy.get(selector.configuration.teamMemberDrawer.requestText)
       .eq(0)
       .type("New team member")
-    cy.get(selector.configuration.teamMemberDrawer.request).click()
 
     // should click on module-solutions tab
     cy.get(selector.configuration.moduleSolution).click()
