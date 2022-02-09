@@ -168,7 +168,7 @@ export default {
     async onUpdate() {
       const requestPayload = {
         id: this.engagementId,
-        audienceId: this.audienceId,
+        audienceId: this.audienceId == null?"000000000000000000000000":this.audienceId,
         destinationId: this.destination.id,
         recurringConfig: this.scheduleConfig,
       }

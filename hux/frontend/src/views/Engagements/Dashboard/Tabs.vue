@@ -74,6 +74,7 @@
             $emit('onOverviewDestinationAction', $event)
           "
           @triggerOverviewAction="$emit('onOverviewSectionAction', $event)"
+      @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
         />
       </v-tab-item>
       <v-tab-item
@@ -87,6 +88,7 @@
       >
         <email-marketing
           :data="data"
+          :engagement-id="engagementId"
           :email-data="emailData"
           :loading-metrics="loadingMetrics"
           @openDeliveryHistoryDrawer="
@@ -98,6 +100,7 @@
             $emit('onOverviewDestinationAction', $event)
           "
           @triggerOverviewAction="$emit('onOverviewSectionAction', $event)"
+      @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
         />
       </v-tab-item>
     </v-tabs-items>

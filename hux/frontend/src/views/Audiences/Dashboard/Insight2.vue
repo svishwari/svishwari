@@ -284,7 +284,7 @@
                 </v-card-title>
                 <v-card-text v-if="showAdvertising">
                   <div class="match-rates mx-2 my-1">
-                    <matchrate />
+                    <matchrate :deliveries="audienceData.digital_advertising && audienceData.digital_advertising.match_rates ? audienceData.digital_advertising.match_rates : []"/>
                   </div>
                   <div ref="advertisingcard" class="lookalikes mx-2 my-6">
                     <lookalikes
