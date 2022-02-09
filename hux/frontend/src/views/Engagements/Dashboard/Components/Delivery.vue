@@ -37,13 +37,14 @@
               :deliveries-key="deliveriesKey"
               :section-type="sectionType"
               :destination-menu-items="destinationActions"
+              :engagement-id="engagementId"
               :headers="headers"
               data-e2e="status-list"
               class="mb-4"
               :audience="audienceData"
               @onAddDestination="$emit('onAddDestination', $event)"
               @engagementDeliverySection="$emit('engagementDeliveries', $event)"
-              @refreshEntityDelivery="$emit('refreshEntityInsight')"
+              @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
               @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
               @onSectionAction="$emit('onOverviewDestinationAction', $event)"
               @triggerOverviewAction="$emit('triggerOverviewAction', $event)"
@@ -70,6 +71,10 @@ export default {
       type: Array,
       required: false,
       default: () => [],
+    },
+    engagementId: {
+      type: String,
+      required: false,
     },
     sectionType: {
       type: String,

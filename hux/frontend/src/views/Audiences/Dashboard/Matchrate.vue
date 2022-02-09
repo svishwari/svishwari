@@ -1,41 +1,43 @@
 <template>
-  <div
-    class="match-rate-wrapper pb-4"
-    :class="{ 'match-rate-exist': matchrate.length > 0 }"
-  >
-    <div v-if="matchrate.length > 0" class="match-rate mx-6">
-      <div class="text-h3 black-base pt-5">Match rates</div>
+  <div class="match-rate-wrapper">
+    <div v-if="numMatchRates !== 0" class="match-rate">
+      <div class="text-h3 black-base">Match rates</div>
 
-      <v-row class="matchrate-header mt-4">
-        <v-col cols="12" md="4">
+      <v-row class="matchrate-header mt-3 body-2">
+        <v-col cols="12" md="4" class="ml-2">
           <v-item> Destination </v-item>
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="4" class="ml-n1">
           <v-item> Match rate </v-item>
         </v-col>
-        <v-col cols="12" md="4"> Last delivery </v-col>
+        <v-col cols="12" md="4" class="ml-n5"> Last delivery </v-col>
       </v-row>
-      <v-row v-for="d in matchrate" :key="d.type" class="matchrate-list">
-        <v-col cols="12" md="4">
+
+      <v-row
+        v-for="d in matchRate"
+        :key="d.destination"
+        class="matchrate-list body-1"
+      >
+        <v-col cols="12" md="4" class="matchrate-col">
           <v-item>
-            <logo :type="d.type" :size="22"></logo>
+            <logo :type="d.destination" :size="24"></logo>
           </v-item>
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="4" class="matchrate-col">
           <v-item>
-            <size :value="d.size" />
+            <size :value="d.match_rate" />
           </v-item>
         </v-col>
-        <v-col cols="12" md="4">
-          <time-stamp :value="d.last_delivery" />
+        <v-col cols="12" md="4" class="matchrate-col">
+          <time-stamp :value="d.last_delivery" date-class="body-1" />
         </v-col>
       </v-row>
     </div>
-    <div v-if="matchrate.length == 0" class="no-match-rate">
+    <div v-else class="no-match-rate">
       <metric-card
         class=""
         title="Match rates"
-        :height="115"
+        :height="76"
         :interactable="false"
         title-class="text-h3"
       >
@@ -60,59 +62,49 @@ export default {
   name: "StandaloneDelivery",
   components: { TimeStamp, Size, Logo, MetricCard },
   props: {
-    matchrate: {
+    matchRate: {
       type: Array,
       required: false,
       default: () => [],
     },
   },
   data() {
-    return {
-      selection: null,
-      deliveries: [
-        {
-          name: "Facebook",
-          type: "facebook",
-          status: "Active",
-          size: 878326,
-          next_delivery: "2021-11-30T00:21:21.857Z",
-        },
-        {
-          name: "Qualtrics",
-          type: "qualtrics",
-          status: "Active",
-          size: 838326,
-          next_delivery: "2021-11-30T01:31:31.957Z",
-        },
-      ],
-    }
+    return {}
   },
-  computed: {},
+  computed: {
+    numMatchRates() {
+      return this.matchRate ? this.matchRate.length : 0
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .match-rate-wrapper {
-  &.match-rate-exist {
-    background-color: var(--v-primary-lighten1) !important;
-    border: 1px solid var(--v-black-lighten2);
-    box-sizing: border-box;
-    border-radius: 5px;
-  }
+  background-color: var(--v-primary-lighten1) !important;
+  padding: 20px 24px !important;
+  border: 1px solid var(--v-black-lighten2);
+  box-sizing: border-box;
+  border-radius: 5px;
   .match-rate {
     background-color: var(--v-primary-lighten1) !important;
     .matchrate-header {
-      background-color: var(--v-primary-lighten1) !important;
       border: none !important;
     }
     .matchrate-list {
       background-color: var(--v-white-base) !important;
       border: 1px solid var(--v-black-lighten2);
       box-sizing: border-box;
+      padding-left: 16px;
+      padding-top: 11px;
       border-radius: 4px;
       display: flex;
-      margin: 4px;
+      margin: 8px;
       height: 45px;
+      .matchrate-col {
+        padding: 0px !important;
+        margin: 0px !important;
+      }
     }
   }
   .no-match-rate {
@@ -123,6 +115,7 @@ export default {
   color: var(--v-black-base) !important;
 }
 ::v-deep .metric-card-wrapper {
-  padding: 20px 24px !important;
+  padding: 0px 0px !important;
+  border: none;
 }
 </style>

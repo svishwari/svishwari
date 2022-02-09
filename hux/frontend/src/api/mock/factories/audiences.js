@@ -71,12 +71,29 @@ const lookalikeAudience = () => {
   }
 }
 
+const matchRate = () => {
+  return {
+    destination: faker.random.arrayElement([
+      "facebook",
+      "sendgrid",
+      "google-ads",
+      "aqfer",
+    ]),
+    match_rate: `${faker.datatype.number({ min: 0, max: 99 })}`,
+    last_delivery: faker.date.recent(),
+  }
+}
+
 const mockEngagements = (num = 3) => {
   return Array.from({ length: num }, engagementData)
 }
 
 const mockLookalikeAudiences = (num = 3) => {
   return Array.from({ length: num }, lookalikeAudience)
+}
+
+const mockMatchRates = (num = 3) => {
+  return Array.from({ length: num }, matchRate)
 }
 /**
  * Audience schema
@@ -87,22 +104,6 @@ export const audience = {
   source_id: () => faker.datatype.number({ min: 1, max: 10 }),
   source_name: (index) => `My audience ${index + 1}`,
   source_size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
-  match_rates: [
-    {
-      destination: "Facebook",
-      type: "facebook",
-      last_delivery: "2022-01-18T17:17:27.266Z",
-      match_rate: 0,
-      size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
-    },
-    {
-      destination: "Google Ads",
-      type: "google-ads",
-      last_delivery: "2022-01-18T17:17:27.266Z",
-      match_rate: 0,
-      size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
-    },
-  ],
   status: () =>
     faker.random.arrayElement([
       "Delivered",
@@ -119,6 +120,10 @@ export const audience = {
   is_lookalike: () => false,
   lookalikeable: () => faker.random.arrayElement(["Active"]),
   lookalike_audiences: () => mockLookalikeAudiences(5),
+  digital_advertising: {
+    match_rates: () =>
+      mockMatchRates(faker.datatype.number({ min: 0, max: 3 })),
+  },
   deliveries: [
     {
       delivery_platform_type: "sendgrid",
