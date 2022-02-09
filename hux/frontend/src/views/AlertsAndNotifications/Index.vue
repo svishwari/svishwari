@@ -193,6 +193,7 @@
         <alert-configure-drawer
           v-model="isAlertsToggled"
           :users="getNotificationUsers"
+          @onDrawerClose="onConfigClose"
         />
       </div>
     </div>
@@ -311,6 +312,8 @@ export default {
         var textB = b["display_name"]?.toUpperCase()
         return textA < textB ? -1 : textA > textB ? 1 : 0
       })
+
+
     },
   },
 
@@ -474,6 +477,8 @@ export default {
     clearFilters() {
       this.$refs.filters.clear()
     },
+    async onConfigClose() {
+    }
   },
 }
 </script>
