@@ -1060,6 +1060,7 @@ CDP_DATA_SOURCE_IDS = "data_source_ids"
 CDP_DATA_SOURCE_TYPE = "datasource_type"
 DATAFEED_NAME = "datafeed_name"
 LAST_PROCESSED = "last_processed"
+DATA_SOURCES = "data_sources"
 
 # Customers
 CUSTOMERS_ENDPOINT = "/customers"
@@ -1626,7 +1627,6 @@ SENDING_DOMAINS_OVERVIEW_STUB = [
         CLICK_RATE: 0.85,
     }
 ]
-
 
 ALERT_SAMPLE_RESPONSE = {
     DATA_MANAGEMENT: {
