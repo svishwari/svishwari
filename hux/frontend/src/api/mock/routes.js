@@ -87,6 +87,14 @@ export const defineRoutes = (server) => {
   })
   server.get("users/requested_users", () => requestedUser)
   server.get("users/tickets", () => someTickets())
+  server.put("/user/preferences", (schema, request) => {
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+
+    return schema.users.find(id).update({
+      alerts: requestData.alerts,
+    })
+  })
 
   //client projects
   server.get("/client-projects")

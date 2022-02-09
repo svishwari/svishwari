@@ -193,6 +193,7 @@
         <alert-configure-drawer
           v-model="isAlertsToggled"
           :users="getNotificationUsers"
+          @onDrawerClose="onConfigClose"
         />
       </div>
     </div>
@@ -473,6 +474,9 @@ export default {
     },
     clearFilters() {
       this.$refs.filters.clearAndReload()
+    },
+    onConfigClose() {
+      // For user configuration load logic
     },
   },
 }
