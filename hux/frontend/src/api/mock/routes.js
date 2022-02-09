@@ -90,7 +90,7 @@ export const defineRoutes = (server) => {
   server.put("/user/preferences", (schema, request) => {
     const id = request.params.id
     const requestData = JSON.parse(request.requestBody)
-    
+
     return schema.users.find(id).update({
       alerts: requestData.alerts,
     })

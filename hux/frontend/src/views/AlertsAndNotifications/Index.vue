@@ -312,8 +312,6 @@ export default {
         var textB = b["display_name"]?.toUpperCase()
         return textA < textB ? -1 : textA > textB ? 1 : 0
       })
-
-
     },
   },
 
@@ -477,8 +475,9 @@ export default {
     clearFilters() {
       this.$refs.filters.clearAndReload()
     },
-    async onConfigClose() {
-    }
+    onConfigClose() {
+      // For user configuration load logic
+    },
   },
 }
 </script>

@@ -85,7 +85,7 @@
                   :width="item.show ? '80px' : '100px'"
                   :switch-labels="switchLabel"
                   :class="item.show ? 'w-75' : 'w-97'"
-                  @change="formatFinalResponse($event, item)"
+                  @change="formatFinalResponse"
                 />
               </template>
               <template v-slot:label="{ item }">
@@ -203,7 +203,249 @@ export default {
         },
       ],
       updatedConfiguration: {},
-      alertsSectionGroup: [],
+      alertsSectionGroup: [
+        {
+          label: "Categories",
+          name: "categories",
+          show: true,
+          children: [
+            {
+              label: "Data management",
+              name: "data_management",
+              parent: null,
+              show: true,
+              children: [
+                {
+                  label: "Data sources",
+                  name: "datasources",
+                  parent: "data_management",
+                  show: true,
+                  isDeepChild: false,
+                  children: [
+                    {
+                      label: "Critical",
+                      name: "critical",
+                      parent: "datasources",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Success",
+                      name: "success",
+                      parent: "datasources",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Informational",
+                      name: "informational",
+                      parent: "datasources",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                  ],
+                },
+                {
+                  label: "Identity resolution",
+                  name: "identity_resolution",
+                  parent: "data_management",
+                  show: true,
+                  isDeepChild: false,
+                  children: [
+                    {
+                      label: "Critical",
+                      name: "critical",
+                      parent: "identity_resolution",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Success",
+                      name: "success",
+                      parent: "identity_resolution",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Informational",
+                      name: "informational",
+                      parent: "identity_resolution",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "Decisioning",
+              name: "decisioning",
+              parent: null,
+              show: true,
+              children: [
+                {
+                  label: "Models",
+                  name: "models",
+                  parent: "decisioning",
+                  show: true,
+                  isDeepChild: false,
+                  children: [
+                    {
+                      label: "Critical",
+                      name: "critical",
+                      parent: "models",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Success",
+                      name: "success",
+                      parent: "models",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Informational",
+                      name: "informational",
+                      parent: "models",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "Orchestration",
+              name: "orchestration",
+              parent: null,
+              show: true,
+              children: [
+                {
+                  label: "Destinations",
+                  name: "destinations",
+                  parent: "orchestration",
+                  isDeepChild: false,
+                  show: true,
+                  children: [
+                    {
+                      label: "Critical",
+                      name: "critical",
+                      parent: "destinations",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Success",
+                      name: "success",
+                      parent: "destinations",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Informational",
+                      name: "informational",
+                      parent: "destinations",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                  ],
+                },
+                {
+                  label: "Delivery",
+                  name: "delivery",
+                  parent: "orchestration",
+                  show: true,
+                  isDeepChild: false,
+                  children: [
+                    {
+                      label: "Critical",
+                      name: "critical",
+                      parent: "delivery",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Success",
+                      name: "success",
+                      parent: "delivery",
+                      isDeepChild: true,
+                      show: true,
+                    },
+                    {
+                      label: "Informational",
+                      name: "informational",
+                      parent: "delivery",
+                      isDeepChild: true,
+                      show: true,
+                    },
+                  ],
+                },
+                {
+                  label: "Audiences",
+                  name: "audiences",
+                  parent: "orchestration",
+                  show: true,
+                  isDeepChild: false,
+                  children: [
+                    {
+                      label: "Critical",
+                      name: "critical",
+                      parent: "audiences",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Success",
+                      name: "success",
+                      parent: "audiences",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Informational",
+                      name: "informational",
+                      parent: "audiences",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                  ],
+                },
+                {
+                  label: "Engagements",
+                  name: "engagements",
+                  parent: "orchestration",
+                  show: true,
+                  isDeepChild: false,
+                  children: [
+                    {
+                      label: "Critical",
+                      name: "critical",
+                      parent: "engagements",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Success",
+                      name: "success",
+                      parent: "engagements",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                    {
+                      label: "Informational",
+                      name: "informational",
+                      parent: "engagements",
+                      show: true,
+                      isDeepChild: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     }
   },
 
@@ -274,7 +516,7 @@ export default {
       }
       return alerts
     },
-    formatFinalResponse(value, item) {
+    formatFinalResponse() {
       this.updatedConfiguration = {}
       this.updatedConfiguration.alerts = this.recursiveBinding(
         this.alertsSectionGroup[0],

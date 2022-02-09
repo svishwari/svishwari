@@ -160,7 +160,7 @@ const actions = {
       throw error
     }
   },
-  async updateUserPreferences(_, payload) {
+  async updateUserPreferences({ commit }, payload) {
     try {
       const response = await api.users.updatePreferences(payload)
       commit("setApplicationUserProfile", response.data)

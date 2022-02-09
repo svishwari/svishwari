@@ -85,7 +85,7 @@ export default {
     },
     valueChanges() {
       this.$emit("change", !this.localValue)
-    }
+    },
   },
 }
 </script>

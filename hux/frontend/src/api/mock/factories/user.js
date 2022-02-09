@@ -33,43 +33,43 @@ export const user = {
       delivery: {
         informational: true,
         success: false,
-        critical: false
+        critical: false,
       },
       audiences: {
         informational: true,
         success: false,
-        critical: false
+        critical: false,
       },
       destinations: {
         informational: true,
         success: false,
-        critical: false
+        critical: false,
       },
       engagements: {
         informational: true,
         success: false,
-        critical: false
-      }
+        critical: false,
+      },
     },
     decisioning: {
       models: {
         informational: true,
         success: false,
-        critical: false
-      }
+        critical: false,
+      },
     },
     data_management: {
       identity_resolution: {
         informational: false,
         success: false,
-        critical: false
+        critical: false,
       },
       datasources: {
         informational: false,
         success: false,
-        critical: false
-      }
-    }
+        critical: false,
+      },
+    },
   },
 }
 
