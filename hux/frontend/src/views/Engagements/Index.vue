@@ -76,7 +76,7 @@
           v-if="!loading && rowData.length > 0"
           :columns="columnDefs"
           :data-items="rowData"
-          view-height="calc(100vh - 210px)"
+          view-height="calc(100vh - 253px)"
           sort-column="update_time"
           sort-desc="false"
           nested
@@ -585,9 +585,9 @@
 
       <div class="ml-auto">
         <engagement-filter
+          ref="filters"
           v-model="isFilterToggled"
           view-height="calc(100vh - 180px)"
-          :clear-filter-data="clearFilterData"
           @selected-filters="totalFiltersSelected"
           @onSectionAction="applyFilter"
         />
@@ -835,7 +835,6 @@ export default {
           class: "sticky-header",
         },
       ],
-      clearFilterData: false,
     }
   },
   computed: {
@@ -928,7 +927,7 @@ export default {
     }),
 
     clearFilter() {
-      this.clearFilterData = true
+      this.$refs.filters.clearAndReload()
     },
 
     totalFiltersSelected(value) {
@@ -936,7 +935,7 @@ export default {
     },
 
     async applyFilter(params) {
-      this.finalFilterApplied = this.numFiltersSelected
+      this.finalFilterApplied = params.filterApplied
       await this.getAllFilteredEngagements({
         favorites: params.selectedFavourite,
         my_engagements: params.selectedEngagementsWorkedWith,
