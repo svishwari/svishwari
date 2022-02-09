@@ -14,7 +14,6 @@ class ApplicationsPostSchema(Schema):
     """Applications post schema class"""
 
     category = Str(required=True)
-    type = Str(required=True)
     name = Str(required=True)
     url = Str(required=True)
 
@@ -24,15 +23,11 @@ class ApplicationsGETSchema(Schema):
 
     id = Str(attribute=db_c.ID, validate=validate_object_id, required=True)
     category = Str()
-    type = Str()
     name = Str()
     url = Str()
-    status = Str()
-    is_added = Boolean(attribute=db_c.ADDED)
+    is_added = Boolean()
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
-    created_by = Str(attribute=db_c.CREATED_BY, allow_none=True)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
-    updated_by = Str(attribute=db_c.UPDATED_BY, allow_none=True)
 
 
 class ApplicationsPatchSchema(Schema):

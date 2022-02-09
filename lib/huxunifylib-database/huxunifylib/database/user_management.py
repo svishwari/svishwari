@@ -263,6 +263,7 @@ def update_user(
         db_c.USER_DISPLAY_NAME,
         db_c.USER_PROFILE_PHOTO,
         db_c.USER_FAVORITES,
+        db_c.USER_APPLICATIONS,
         db_c.USER_DASHBOARD_CONFIGURATION,
         db_c.USER_LOGIN_COUNT,
         db_c.UPDATE_TIME,
