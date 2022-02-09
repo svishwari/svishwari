@@ -94,6 +94,8 @@ class CdpDataSourcesTest(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        # verify number of data sources returned
+        self.assertEqual(69, len(response.json))
         self.assertTrue(
             t_c.validate_schema(
                 CdpDataSourceSchema(), response.json, is_multiple=True
@@ -116,6 +118,8 @@ class CdpDataSourcesTest(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        # verify number of data sources returned
+        self.assertEqual(69, len(response.json))
         self.assertTrue(
             t_c.validate_schema(
                 CdpDataSourceSchema(), response.json, is_multiple=True

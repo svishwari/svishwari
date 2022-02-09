@@ -213,6 +213,7 @@ class TestUserRoutes(RouteTestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(5, len(response.json))
         t_c.validate_schema(UserSchema(), response.json, True)
 
     def test_get_user_profile_bad_request_failure(self):

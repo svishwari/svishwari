@@ -2,6 +2,7 @@
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.data.data_sources import DATA_SOURCES_LIST
 
 
 def load_data_sources(database: DatabaseClient) -> None:
@@ -14,7 +15,7 @@ def load_data_sources(database: DatabaseClient) -> None:
         None
     """
 
-    for data_source in db_c.DATA_SOURCES_LIST:
+    for data_source in DATA_SOURCES_LIST:
         create_data_source(
             database,
             name=data_source[db_c.DATA_SOURCE_NAME],

@@ -6,6 +6,8 @@
 import logging
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.cdp_data_source_management import create_data_source
+from huxunifylib.database.data.data_sources import DATA_SOURCES_LIST
+from huxunifylib.database.data.delivery_platforms import DELIVERY_PLATFORM_LIST
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
@@ -18,7 +20,6 @@ from database.share import get_mongo_client
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
-
 
 # Models List
 models_list = [
@@ -479,6 +480,68 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
+    {
+        db_c.CONFIGURATION_FIELD_NAME: "Navigation Settings",
+        db_c.CONFIGURATION_FIELD_TYPE: "navigation_settings",
+        db_c.CONFIGURATION_FIELD_SETTINGS: [
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Models",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    }
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Customer Insights",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "All Customers",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Segment Playground",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Orchestration",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Destinations",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Audiences",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Engagements",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+        ],
+    },
 ]
 
 # Client Projects List
@@ -501,7 +564,7 @@ client_projects_list = [
     },
     {
         db_c.NAME: ".am",
-        db_c.TYPE: ".am",
+        db_c.TYPE: "dot-am",
         db_c.DESCRIPTION: ".am Project",
         db_c.URL: "https://localhost/am",
         db_c.ICON: "default.ico",
@@ -656,8 +719,8 @@ if __name__ == "__main__":
     # Initiate Data Base client
     db_client = get_mongo_client()
     drop_collections(db_client)
-    insert_data_sources(db_client, db_c.DATA_SOURCES_LIST)
-    insert_delivery_platforms(db_client, db_c.DELIVERY_PLATFORM_LIST)
+    insert_data_sources(db_client, DATA_SOURCES_LIST)
+    insert_delivery_platforms(db_client, DELIVERY_PLATFORM_LIST)
     insert_configurations(db_client, configurations_constants)
     insert_models(db_client, models_list)
     insert_client_projects(db_client, client_projects_list)
