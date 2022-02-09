@@ -1574,7 +1574,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
                 "status": random.choice(["Success", "Failed"]),
                 "timestamp": datetime.datetime.now()
                 - datetime.timedelta(days=x),
-                "duration": "00:12:41",
+                "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
             for x in range(0, 10)
@@ -1590,7 +1590,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
                 "status": random.choice(["Success", "Failed"]),
                 "timestamp": datetime.datetime.now()
                 - datetime.timedelta(days=x),
-                "duration": "00:12:41",
+                "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
             for x in range(0, random.randrange(10))
