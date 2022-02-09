@@ -436,7 +436,7 @@ export default {
             "The value indicates the average % of records processed in the past 30 days",
         },
         {
-          text: "Last processed",
+          text: "Last processed (Today)",
           value: "last_processed",
           width: "170",
         },

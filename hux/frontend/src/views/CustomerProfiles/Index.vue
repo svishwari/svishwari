@@ -148,7 +148,7 @@
         </v-card>
 
         <v-tabs v-model="tabOption" class="mt-8">
-          <v-tabs-slider color="primary"></v-tabs-slider>
+          <v-tabs-slider color="primary" class="sliderCss"></v-tabs-slider>
           <div class="d-flex">
             <v-tab
               key="overview"
@@ -398,7 +398,7 @@ export default {
       ],
       items: [
         {
-          text: "Customer Profiles",
+          text: "All Customers",
           disabled: true,
           href: "/customers",
           icon: "customer-profiles",
@@ -603,6 +603,8 @@ export default {
   }
   .combined-list {
     max-height: 395px;
+    border-radius: 0px 12px 0px 0px;
+    overflow: hidden;
   }
 
   .customer-slide-group {
@@ -651,5 +653,10 @@ export default {
 
 .padding-30 {
   padding: 30px !important;
+}
+
+.sliderCss {
+  position: absolute;
+  top: 2px;
 }
 </style>

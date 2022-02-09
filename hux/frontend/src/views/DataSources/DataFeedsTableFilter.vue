@@ -100,7 +100,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
-      selectedToday: false,
+      selectedToday: true,
       selectedYesterday: false,
       selectedTimeType: null,
       selectedStatus: [],
