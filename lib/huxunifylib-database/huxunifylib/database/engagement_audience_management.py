@@ -10,6 +10,9 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.delivery_platform_management import (
+    get_all_delivery_platforms,
+)
 
 
 @retry(
@@ -191,23 +194,20 @@ def set_engagement_audience_destination_schedule(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_all_engagement_audience_deliveries(
+def get_all_audience_engagement_id_pairs(
     database: DatabaseClient,
     audience_ids: list = None,
 ) -> Union[list, None]:
-    """A function to get delivery jobs for all engagements and corresponding
-    audiences nested within.
+    """A function to get all audience and engagement pairs.
 
     Args:
         database (DatabaseClient): A database client.
         audience_ids (list, Optional): A list of audience ids.
 
     Returns:
-        Union[list, None]:  A list of delivery job ids.
+        Union[list, None]:  A list of audience/engagement ids.
     """
 
-    # pipeline to aggregate and fetch the delivery jobs from delivery_jobs
-    # using engagement_id and audience_id from engagements
     pipeline = [
         {
             "$unwind": {
@@ -225,73 +225,6 @@ def get_all_engagement_audience_deliveries(
             }
         },
         {"$project": {"_id": 0, "engagement_id": 1, "audience_id": 1}},
-        {
-            "$lookup": {
-                "from": "delivery_jobs",
-                "localField": "engagement_id",
-                "foreignField": "engagement_id",
-                "as": "engagement_delivery_jobs",
-            }
-        },
-        {
-            "$addFields": {
-                "delivery_jobs": {
-                    "$filter": {
-                        "input": "$engagement_delivery_jobs",
-                        "cond": {
-                            "$eq": ["$$this.audience_id", "$audience_id"]
-                        },
-                    }
-                }
-            }
-        },
-        {"$project": {"engagement_delivery_jobs": 0}},
-        {
-            "$unwind": {
-                "path": "$delivery_jobs",
-                "preserveNullAndEmptyArrays": False,
-            }
-        },
-        {"$project": {"audience_id": 1, "delivery_jobs": 1}},
-        {
-            "$lookup": {
-                "from": "delivery_platforms",
-                "localField": "delivery_jobs.delivery_platform_id",
-                "foreignField": "_id",
-                "as": "delivery_platform",
-            }
-        },
-        {
-            "$unwind": {
-                "path": "$delivery_platform",
-                "preserveNullAndEmptyArrays": False,
-            }
-        },
-        {
-            "$addFields": {
-                "delivery_jobs.delivery_platform_name": "$delivery_platform.name",
-                "delivery_jobs.delivery_platform_type": "$delivery_platform.delivery_platform_type",
-            }
-        },
-        {"$project": {"delivery_platform": 0}},
-        {"$sort": {"audience_id": 1, "delivery_jobs.update_time": -1}},
-        {
-            "$group": {
-                "_id": "$audience_id",
-                "deliveries": {"$push": "$delivery_jobs"},
-                "last_delivered": {"$first": "$delivery_jobs.update_time"},
-            }
-        },
-        {"$addFields": {"audience_id": "$_id"}},
-        {
-            "$project": {
-                "_id": 0,
-                "audience_id": 1,
-                "deliveries": 1,
-                "last_delivered": 1,
-            }
-        },
-        {"$project": {"deliveries.deleted": 0}},
     ]
 
     if audience_ids is not None:
@@ -302,15 +235,181 @@ def get_all_engagement_audience_deliveries(
     # use the engagement pipeline to aggregate and get all unique delivery jobs
     # per nested audience
     try:
-        engagement_audience_deliveries = list(
+        engagement_audience_pairs = list(
             database[db_c.DATA_MANAGEMENT_DATABASE][
                 db_c.ENGAGEMENTS_COLLECTION
             ].aggregate(pipeline)
         )
 
-        return engagement_audience_deliveries
+        return engagement_audience_pairs
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
     return None
+
+
+def align_audience_engagement_deliveries(
+    database, audience_delivery_jobs: list, audience_ids: list
+) -> dict:
+    """A function to align and match audience deliveries.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_delivery_jobs (list): A list of audience delivery jobs.
+        audience_ids (list): A list of audience ids.
+
+    Returns:
+        dict:  A dict of audiences and the nested delivery history.
+    """
+
+    # get all delivery platforms and convert to dict
+    delivery_platform_dict = {
+        x[db_c.ID]: x for x in get_all_delivery_platforms(database)
+    }
+
+    # process each audience delivery job
+    matched_delivery_jobs = []
+    for delivery_job in audience_delivery_jobs:
+
+        # match the delivery platform, otherwise set to unknown.
+        matched_delivery_platform = delivery_platform_dict.get(
+            delivery_job[db_c.DELIVERY_PLATFORM_ID],
+            {
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.CATEGORY_UNKNOWN,
+                db_c.METRICS_DELIVERY_PLATFORM_NAME: db_c.CATEGORY_UNKNOWN,
+            },
+        )
+
+        # update the delivery job params per the matched platform.
+        matched_delivery_jobs.append(
+            {
+                **delivery_job,
+                db_c.DELIVERY_PLATFORM_TYPE: matched_delivery_platform[
+                    db_c.DELIVERY_PLATFORM_TYPE
+                ],
+                db_c.METRICS_DELIVERY_PLATFORM_NAME: matched_delivery_platform[
+                    db_c.DELIVERY_PLATFORM_NAME
+                ],
+            }
+        )
+
+    # set the stage for grouping each audience
+    # set the nested deliveries list and last delivered.
+    audience_grouped_jobs = {}
+    for audience_id in audience_ids:
+
+        # set the base dict.
+        delivery_dict = {
+            db_c.AUDIENCE_LAST_DELIVERED: None,
+            db_c.DELIVERIES: [],
+        }
+
+        # match each job, use last iterated index due to sort.
+        for delivery_job in matched_delivery_jobs:
+
+            # ensure audience and engagement ID match.
+            if delivery_job.get(db_c.AUDIENCE_ID) != audience_id:
+                continue
+
+            # if first index, assume the most recent time.
+            if not delivery_dict[db_c.DELIVERIES]:
+                delivery_dict[db_c.AUDIENCE_LAST_DELIVERED] = delivery_job[
+                    db_c.UPDATE_TIME
+                ]
+
+            # append the delivery jbo to the list of deliveries for the audience.
+            delivery_dict[db_c.DELIVERIES].append(delivery_job)
+
+        # only append if the audience has any deliveries.
+        if delivery_dict[db_c.DELIVERIES]:
+            audience_grouped_jobs[audience_id] = delivery_dict
+
+    # return the dict of audience grouped jobs.
+    return audience_grouped_jobs
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_audience_engagement_latest_deliveries(
+    database: DatabaseClient,
+    audience_engagement_ids: list = None,
+) -> Union[list, None]:
+    """A function to get all audience and engagement pairs.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_engagement_ids (list, Optional): A list of
+            audience/engagements ids.
+
+    Returns:
+        Union[list, None]:  A list of delivery job ids.
+    """
+
+    # filter on deliver job status
+    # filter on engagement_audience_match
+    # 10 most recent jobs for the combination
+    # get all engagements that match the audiences.
+
+    pipeline = [
+        {
+            "$match": {
+                "$or": [
+                    {
+                        "audience_id": x["audience_id"],
+                        "engagement_id": x["engagement_id"],
+                    }
+                    for x in audience_engagement_ids
+                ],
+            },
+        },
+        {"$sort": {"audience_id": 1, "engagement_id": 1, "update_time": -1}},
+    ]
+
+    # use the engagement pipeline to aggregate and get all unique delivery jobs
+    # per nested audience
+    try:
+        return list(
+            database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.DELIVERY_JOBS_COLLECTION
+            ].aggregate(pipeline)
+        )
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+def get_all_engagement_audience_deliveries(
+    database: DatabaseClient,
+    audience_ids: list = None,
+) -> Union[list, None]:
+    """A function to get delivery jobs for all engagements and corresponding
+    audiences nested within. This function is really just a work around
+    cause DocumentDB does not support inline pipeline functions.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_ids (list, Optional): A list of audience ids.
+
+    Returns:
+        Union[list, None]:  A dict of audiences and the nested delivery history.
+    """
+
+    # get the audience engagement pairs
+    audience_engagement_pairs = get_all_audience_engagement_id_pairs(
+        database, audience_ids
+    )
+
+    # get recent deliveries for each engagement pair.
+    recent_deliveries = get_all_audience_engagement_latest_deliveries(
+        database, audience_engagement_pairs
+    )
+
+    # align the audience engagement deliveries
+    return align_audience_engagement_deliveries(
+        database, recent_deliveries, audience_ids
+    )
