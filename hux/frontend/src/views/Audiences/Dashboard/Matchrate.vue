@@ -29,7 +29,7 @@
           </v-item>
         </v-col>
         <v-col cols="12" md="4" class="matchrate-col">
-          <time-stamp :value="d.last_delivery" date-class="body-1"/>
+          <time-stamp :value="d.last_delivery" date-class="body-1" />
         </v-col>
       </v-row>
     </div>

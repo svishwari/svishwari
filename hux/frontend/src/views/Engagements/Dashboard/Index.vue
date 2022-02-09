@@ -25,7 +25,7 @@
         @onOverviewSectionAction="triggerOverviewAction($event)"
         @onOverviewDestinationAction="triggerOverviewDestinationAction($event)"
         @deliverEngagement="deliverEngagement()"
-      @refreshEntityDelivery="refreshEntity()"
+        @refreshEntityDelivery="refreshEntity()"
       />
     </div>
 

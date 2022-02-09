@@ -74,7 +74,7 @@
             $emit('onOverviewDestinationAction', $event)
           "
           @triggerOverviewAction="$emit('onOverviewSectionAction', $event)"
-      @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
+          @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
         />
       </v-tab-item>
       <v-tab-item
@@ -100,7 +100,7 @@
             $emit('onOverviewDestinationAction', $event)
           "
           @triggerOverviewAction="$emit('onOverviewSectionAction', $event)"
-      @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
+          @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
         />
       </v-tab-item>
     </v-tabs-items>

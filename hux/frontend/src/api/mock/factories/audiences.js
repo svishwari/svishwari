@@ -73,8 +73,7 @@ const lookalikeAudience = () => {
 
 const matchRate = () => {
   return {
-    destination:
-    faker.random.arrayElement([
+    destination: faker.random.arrayElement([
       "facebook",
       "sendgrid",
       "google-ads",
@@ -82,7 +81,6 @@ const matchRate = () => {
     ]),
     match_rate: `${faker.datatype.number({ min: 0, max: 99 })}`,
     last_delivery: faker.date.recent(),
-
   }
 }
 
@@ -123,7 +121,8 @@ export const audience = {
   lookalikeable: () => faker.random.arrayElement(["Active"]),
   lookalike_audiences: () => mockLookalikeAudiences(5),
   digital_advertising: {
-    match_rates: () => mockMatchRates(faker.datatype.number({ min: 0, max: 3 })),
+    match_rates: () =>
+      mockMatchRates(faker.datatype.number({ min: 0, max: 3 })),
   },
   deliveries: [
     {

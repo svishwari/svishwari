@@ -306,22 +306,29 @@ export const defineRoutes = (server) => {
   })
 
   // Detaching a destination from an Engagement
-  server.del("/engagements/:id/audience/:audienceId/destinations/:destinationId", (schema, request) => {
-    const code = 200
-    const headers = {}
-    const id = request.params.id
-    const destinationId = request.params.destinationId
-    const engagement = schema.engagements.find(id)
-    Object.values(engagement.destinations_category).forEach((category) => {
-        for (var index = category.destinations.length - 1; index >= 0; --index) {
+  server.del(
+    "/engagements/:id/audience/:audienceId/destinations/:destinationId",
+    (schema, request) => {
+      const code = 200
+      const headers = {}
+      const id = request.params.id
+      const destinationId = request.params.destinationId
+      const engagement = schema.engagements.find(id)
+      Object.values(engagement.destinations_category).forEach((category) => {
+        for (
+          var index = category.destinations.length - 1;
+          index >= 0;
+          --index
+        ) {
           if (category.destinations[index].id == destinationId) {
-              category.destinations.splice(index,1);
+            category.destinations.splice(index, 1)
           }
-      }
-    })
-    const body = { message: "SUCCESS" }
-    return new Response(code, headers, body)
-  })
+        }
+      })
+      const body = { message: "SUCCESS" }
+      return new Response(code, headers, body)
+    }
+  )
 
   server.post(
     "/engagements/:id/audience/:audienceId/deliver",
