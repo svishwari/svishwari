@@ -13,6 +13,7 @@ const state = {
     idToken: null,
     bugsReported: [],
     pii_access: false,
+    alerts: {},
   },
   users: [],
   requestedUsers: [],
@@ -154,6 +155,15 @@ const actions = {
       const result = await api.users.requestTeamMember(payload)
       //dispatch("getRequestedUsers")
       return result
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async updateUserPreferences(_, payload) {
+    try {
+      const response = await api.users.updatePreferences(payload)
+      commit("setApplicationUserProfile", response.data)
     } catch (error) {
       handleError(error)
       throw error

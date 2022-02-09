@@ -7,6 +7,7 @@
     :disabled="isDisabled"
     :style="cssProps"
     @input="updateValue($event.target.value)"
+    @change="valueChanges()"
   ></v-switch>
 </template>
 
@@ -82,6 +83,9 @@ export default {
     updateValue(value) {
       this.$emit("input", value)
     },
+    valueChanges() {
+      this.$emit("change", !this.localValue)
+    }
   },
 }
 </script>

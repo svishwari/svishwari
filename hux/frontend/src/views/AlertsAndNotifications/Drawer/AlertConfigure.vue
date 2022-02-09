@@ -68,6 +68,7 @@
           </div>
           <div>
             <v-treeview
+            v-if="alertsSectionGroup.length != 0"
               v-model="tree"
               :items="alertsSectionGroup"
               item-key="show"
@@ -77,23 +78,24 @@
             >
               <template v-slot:append="{ item }">
                 <hux-switch
-                  v-if="item.name != 'Categories'"
+                  v-if="item.name != 'categories'"
                   v-model="item.show"
                   false-color="var(--v-black-lighten4)"
                   :width="item.show ? '80px' : '100px'"
                   :switch-labels="switchLabel"
                   :class="item.show ? 'w-75' : 'w-97'"
+                  @change="formatFinalResponse($event, item)"
                 />
               </template>
               <template v-slot:label="{ item }">
                 <span
                   :class="
-                    item.name != 'Categories'
+                    item.name != 'categories'
                       ? 'text-body-1'
                       : 'text-body-2 black--text text--lighten-4'
                   "
                   :data-type="item.type"
-                  >{{ item.name }}</span
+                  >{{ item.label }}</span
                 >
               </template>
             </v-treeview>
@@ -145,7 +147,7 @@ import Drawer from "@/components/common/Drawer"
 import Icon from "@/components/common/Icon"
 import HuxSwitch from "@/components/common/Switch.vue"
 import TextField from "@/components/common/TextField.vue"
-import { mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 import Tooltip from "@/components/common/Tooltip.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 
@@ -175,6 +177,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
+      currentAlertConf: {},
       showAlerts: true,
       tree: null,
       switchLabelFullAlerts: [
@@ -197,222 +200,258 @@ export default {
           label: "OPT OUT",
         },
       ],
-      alertsSectionGroup: [
-        {
-          name: "Categories",
-          type: "header",
-          show: true,
-          id: 1,
-          children: [
-            {
-              name: "Data management",
-              type: "header",
-              show: true,
-              id: 2,
-              children: [
-                {
-                  name: "Data sources",
-                  type: "header",
-                  show: true,
-                  id: 3,
-                  children: [
-                    {
-                      name: "Error",
-                      type: "child",
-                      id: 4,
-                      show: true,
-                    },
-                    {
-                      name: "Success",
-                      type: "child",
-                      id: 5,
-                      show: true,
-                    },
-                    {
-                      name: "Informational",
-                      type: "child",
-                      show: true,
-                      id: 6,
-                    },
-                  ],
-                },
-                {
-                  name: "Identity resolution",
-                  type: "header",
-                  show: true,
-                  id: 7,
-                  children: [
-                    {
-                      name: "Error",
-                      type: "child",
-                      show: true,
-                      id: 8,
-                    },
-                    {
-                      name: "Success",
-                      type: "child",
-                      show: true,
-                      id: 9,
-                    },
-                    {
-                      name: "Informational",
-                      type: "child",
-                      show: true,
-                      id: 10,
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              name: "Decisioning",
-              type: "header",
-              show: true,
-              id: 11,
-              children: [
-                {
-                  name: "Models",
-                  type: "header",
-                  show: true,
-                  id: 12,
-                  children: [
-                    {
-                      name: "Error",
-                      type: "child",
-                      show: true,
-                      id: 13,
-                    },
-                    {
-                      name: "Success",
-                      type: "child",
-                      show: true,
-                      id: 14,
-                    },
-                    {
-                      name: "Informational",
-                      type: "child",
-                      show: true,
-                      id: 15,
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              name: "Orchestration",
-              type: "header",
-              show: true,
-              id: 16,
-              children: [
-                {
-                  name: "Destinations",
-                  type: "header",
-                  show: true,
-                  id: 17,
-                  children: [
-                    {
-                      name: "Error",
-                      type: "child",
-                      show: true,
-                      id: 18,
-                    },
-                    {
-                      name: "Success",
-                      type: "child",
-                      show: true,
-                      id: 19,
-                    },
-                    {
-                      name: "Informational",
-                      type: "child",
-                      show: true,
-                      id: 20,
-                    },
-                  ],
-                },
-                {
-                  name: "Delivery",
-                  type: "header",
-                  show: true,
-                  id: 21,
-                  children: [
-                    {
-                      name: "Error",
-                      type: "child",
-                      show: true,
-                      id: 22,
-                    },
-                    {
-                      name: "Success",
-                      type: "child",
-                      show: true,
-                      id: 23,
-                    },
-                    {
-                      name: "Informational",
-                      type: "child",
-                      show: true,
-                      id: 24,
-                    },
-                  ],
-                },
-                {
-                  name: "Audiences",
-                  type: "header",
-                  show: true,
-                  id: 25,
-                  children: [
-                    {
-                      name: "Error",
-                      type: "child",
-                      show: true,
-                      id: 26,
-                    },
-                    {
-                      name: "Success",
-                      type: "child",
-                      show: true,
-                      id: 27,
-                    },
-                    {
-                      name: "Informational",
-                      type: "child",
-                      show: true,
-                      id: 28,
-                    },
-                  ],
-                },
-                {
-                  name: "Engagements",
-                  type: "header",
-                  show: true,
-                  id: 29,
-                  children: [
-                    {
-                      name: "Error",
-                      type: "child",
-                      show: true,
-                      id: 30,
-                    },
-                    {
-                      name: "Success",
-                      type: "child",
-                      show: true,
-                      id: 31,
-                    },
-                    {
-                      name: "Informational",
-                      type: "child",
-                      show: true,
-                      id: 32,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      updatedConfiguration: {},
+       alertsSectionGroup: [],
+      //   {
+      //     label: "Categories",
+      //     name: "categories",
+      //     show: true,
+      //     children: [
+      //       {
+      //         label: "Data management",
+      //         name: "data_management",
+      //         parent: null,
+      //         show: true,
+      //         children: [
+      //           {
+      //             label: "Data sources",
+      //             name: "datasources",
+      //             parent: "data_management",
+      //             show: true,
+      //             isDeepChild: false,
+      //             children: [
+      //               {
+      //                 label: "Critical",
+      //                 name: "critical",
+      //                 parent: "datasources",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Success",
+      //                 name: "success",
+      //                 parent: "datasources",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Informational",
+      //                 name: "informational",
+      //                 parent: "datasources",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             label: "Identity resolution",
+      //             name: "identity_resolution",
+      //             parent: "data_management",
+      //             show: true,
+      //             isDeepChild: false,
+      //             children: [
+      //               {
+      //                 label: "Critical",
+      //                 name: "critical",
+      //                 parent: "identity_resolution",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Success",
+      //                 name: "success",
+      //                 parent: "identity_resolution",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Informational",
+      //                 name: "informational",
+      //                 parent: "identity_resolution",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //             ],
+      //           },
+      //         ],
+      //       },
+      //       {
+      //         label: "Decisioning",
+      //         name: "decisioning",
+      //         parent: null,
+      //         show: true,
+      //         children: [
+      //           {
+      //             label: "Models",
+      //             name: "models",
+      //             parent: "decisioning",
+      //             show: true,
+      //             isDeepChild: false,
+      //             children: [
+      //               {
+      //                 label: "Critical",
+      //                 name: "critical",
+      //                 parent: "models",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Success",
+      //                 name: "success",
+      //                 parent: "models",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Informational",
+      //                 name: "informational",
+      //                 parent: "models",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //             ],
+      //           },
+      //         ],
+      //       },
+      //       {
+      //         label: "Orchestration",
+      //         name: "orchestration",
+      //         parent: null,
+      //         show: true,
+      //         children: [
+      //           {
+      //             label: "Destinations",
+      //             name: "destinations",
+      //             parent: "orchestration",
+      //             isDeepChild: false,
+      //             show: true,
+      //             children: [
+      //               {
+      //                 label: "Critical",
+      //                 name: "critical",
+      //                 parent: "destinations",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Success",
+      //                 name: "success",
+      //                 parent: "destinations",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Informational",
+      //                 name: "informational",
+      //                 parent: "destinations",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             label: "Delivery",
+      //             name: "delivery",
+      //             parent: "orchestration",
+      //             show: true,
+      //             isDeepChild: false,
+      //             children: [
+      //               {
+      //                 label: "Critical",
+      //                 name: "critical",
+      //                 parent: "delivery",
+      //                 isDeepChild: true,
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Success",
+      //                 name: "success",
+      //                 parent: "delivery",
+      //                 isDeepChild: true,
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Informational",
+      //                 name: "informational",
+      //                 parent: "delivery",
+      //                 isDeepChild: true,
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             label: "Audiences",
+      //             name: "audiences",
+      //             parent: "orchestration",
+      //             show: true,
+      //             isDeepChild: false,
+      //             children: [
+      //               {
+      //                 label: "Critical",
+      //                 name: "critical",
+      //                 parent: "audiences",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Success",
+      //                 name: "success",
+      //                 parent: "audiences",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Informational",
+      //                 name: "informational",
+      //                 parent: "audiences",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             label: "Engagements",
+      //             name: "engagements",
+      //             parent: "orchestration",
+      //             show: true,
+      //             isDeepChild: false,
+      //             children: [
+      //               {
+      //                 label: "Critical",
+      //                 name: "critical",
+      //                 parent: "engagements",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Success",
+      //                 name: "success",
+      //                 parent: "engagements",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //               {
+      //                 label: "Informational",
+      //                 name: "informational",
+      //                 parent: "engagements",
+      //                 show: true,
+      //                 isDeepChild: true,
+      //               },
+      //             ],
+      //           },
+      //         ],
+      //       },
+      //     ],
+      //   },
+      // ],
+      preferencesMapping: {
+        orchestration: ["delivery", "audiences", "destinations", "engagements"],
+        decisioning: ["models"],
+        data_management: ["identity_resolution", "datasources"],
+      },
     }
   },
 
@@ -423,13 +462,21 @@ export default {
 
     getNotificationPreferences() {
       return {
-        data_sources: ["Informational", "Success", "Error"],
-        engagements: ["Informational", "Success", "Error"],
-        audiences: ["Informational", "Success", "Error"],
-        delivery: ["Error"],
-        identity_resolution: ["Informational"],
-        models: ["Informational", "Success", "Error"],
-        destinations: ["Informational", "Success", "Error"],
+        orchestration: ["delivery", "audiences", "destinations", "engagements"],
+        decisioning: ["models"],
+        data_management: ["identity_resolution", "datasources"],
+
+        // data_sources: ["Informational", "Success", "Critical"],
+        // engagements: ["Informational", "Success", "Critical"],
+        // audiences: ["Informational", "Success", "Critical"],
+        // delivery: ["Critical"],
+        // identity_resolution: ["Informational"],
+        // models: ["Informational", "Success", "Critical"],
+        // destinations: ["Informational", "Success", "Critical"],
+
+        // preferencesMapping: [
+
+        // ]
       }
     },
   },
@@ -445,16 +492,133 @@ export default {
       console.log("tree", this.tree)
     },
   },
+  mounted() {
+    console.log("sss")
+  },
+
+  updated() {
+        this.mapAlertSectionGroups()
+    this.$nextTick(function () {
+      document
+        .getElementsByClassName("v-treeview-node")
+        .forEach((element, index) => {
+          if (element.childNodes.length == 2) {
+            let elem = element.childNodes[0]
+            if (index == 0) {
+              elem.style["border-top"] = "none"
+              elem.style["min-height"] = "30px"
+              elem.style["height"] = "30px"
+            }
+            elem.style["background"] = "#F9FAFB"
+          }
+        })
+    })
+
+
+    // let tempObj = {
+    //   amazing: {
+    //     informational: true,
+    //     success: false,
+    //     critical: false,
+    //   },
+    // }
+
+    // for (const [key, value] of Object.entries(tempObj)) {
+    //   console.log(`${key}: ${value}`)
+    // }
+
+    //  this.alertsSectionGroup[0].children.push()
+    //  console.log(this.alertsSectionGroup)
+  },
   methods: {
+    ...mapActions({
+      updateUserPreferences: "users/updateUserPreferences",
+    }),
     toggleAccessFullAlerts(val) {
       this.showAlerts = val
     },
     toggleAccessIndivisualAlerts(e, val) {
       val.show = e
+      // this.formatFinalResponse()
     },
     closeDrawer() {
       this.localDrawer = false
+      this.updateUserPreferences(this.updatedConfiguration)
     },
+    mapAlertSectionGroups() {
+      let currentEmail = "samsingh@deloitte.com"
+      let currentUser = this.users.find((data) => data.email == currentEmail)
+      this.currentAlertConf = currentUser.alerts
+    //  console.log(this.currentAlertConf)
+
+      this.setAlertConfiguration()
+    },
+    recursiveBinding(data, alerts) {
+      let parentData = data.children
+      for (let i = 0; i < parentData.length; i++) {
+        alerts[parentData[i].name] = {}
+        if (parentData[i].show && !parentData[i].isDeepChild) {
+          this.recursiveBinding(parentData[i], alerts[parentData[i].name])
+        } else if (!parentData[i].show && !parentData[i].isDeepChild) {
+          alerts[parentData[i].name] = {}
+        } else {
+       //   console.log(alerts[parentData[i]])
+          alerts[parentData[i].name] = parentData[i].show
+        }
+      }
+      return alerts
+    },
+    formatFinalResponse(value, item) {
+      this.updatedConfiguration = {}
+      this.updatedConfiguration.alerts = this.recursiveBinding(this.alertsSectionGroup[0], {})
+    },
+    checkifDataEmpty() {
+
+    },
+    setAllKeyMapping(basicEntity, parentObj) {
+         //   console.log('a')
+      for (const [key, value] of Object.entries(basicEntity)) {
+        if (typeof value === 'object' ) {
+          let childObj = {
+            label: this.$options.filters.TitleCase(key),
+            name: key,
+            show: this.checkOptStatus(value),
+            isDeepChild: false,
+            children: []
+          }
+        //  console.log(value)
+          parentObj.children.push(childObj)
+          this.setAllKeyMapping(value, childObj)
+        } else {
+            let childObj = {
+            label: this.$options.filters.TitleCase(key),
+            name: key,
+            show: value,
+            isDeepChild: true,
+          }
+          parentObj.children.push(childObj)
+        } 
+      }
+
+      return parentObj
+    },
+    setAlertConfiguration() {
+
+      let parentObj = {
+          label: "Categories",
+          name: "categories",
+          show: true,
+          children: []
+      }
+      this.setAllKeyMapping(this.currentAlertConf, parentObj)
+     this.alertsSectionGroup = [parentObj]
+   //   console.log( this.alertsSectionGroup)
+     // console.log(this.setAllKeyMapping(this.currentAlertConf, parentObj))
+    },
+    checkOptStatus(value) {
+      let convertedValue = JSON.stringify(value)
+      return convertedValue.indexOf('true') != -1 ? true : false
+    }
   },
 }
 </script>
@@ -490,9 +654,6 @@ export default {
   border-top: 1px solid var(--v-black-lighten2);
   height: 45px;
   padding: 0;
-}
-::v-deep .v-treeview-node__root:first {
-  border-top: none;
 }
 ::v-deep .v-treeview-node__toggle {
   display: none;
