@@ -501,15 +501,15 @@
               </v-card>
             </v-col>
           </v-row>
-          <version-history
-            v-model="versionHistoryDrawer"
-            data-e2e="version-history"
-          />
         </template>
       </v-tab-item>
       <v-tab-item key="pipeline" class="delivery-tab">
         <pipeline-perfrmance></pipeline-perfrmance>
       </v-tab-item>
+      <version-history
+        v-model="versionHistoryDrawer"
+        data-e2e="version-history"
+      />
     </v-tabs-items>
   </page>
 </template>
