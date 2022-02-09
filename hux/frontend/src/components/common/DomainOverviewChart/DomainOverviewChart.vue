@@ -74,7 +74,6 @@ export default {
   },
   methods: {
     toolTipDisplay(...arg) {
-      console.log(arg)
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]

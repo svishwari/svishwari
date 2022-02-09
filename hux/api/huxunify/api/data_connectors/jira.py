@@ -55,7 +55,7 @@ class JiraConnection:
                     }
                 },
             )
-            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, 200)
+            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, True)
             return True, "Jira available"
 
         except JIRAError as jira_error:

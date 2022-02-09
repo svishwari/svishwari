@@ -13,6 +13,7 @@ from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
     FeatureSchema,
+    ModelPipelinePerformanceSchema,
 )
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.tecton import Tecton
@@ -415,4 +416,25 @@ class DecisioningTests(RouteTestCase):
         )
         self.assertTrue(
             all((feature[api_c.SCORE] < 0 for feature in response.json))
+        )
+
+    @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
+    def test_get_performance_pipeline(self, model_id: str):
+        """Test get model performance pipeline.
+
+        Args:
+            model_id (str): Model ID.
+        """
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/pipeline-performance",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                ModelPipelinePerformanceSchema(), response.json
+            )
         )

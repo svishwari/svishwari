@@ -97,7 +97,7 @@
                           v-for="option in destinationMenuOptions"
                           :key="option.id"
                           :disabled="!option.active"
-                          @click="standaloneOptions(option)"
+                          @click="standaloneOptions(option, item)"
                         >
                           <v-list-item-title v-if="!option.menu">
                             {{ option.title }}
@@ -193,6 +193,9 @@
 </template>
 
 <script>
+// helpers
+import { mapActions } from "vuex"
+// views
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import Size from "@/components/common/huxTable/Size.vue"
@@ -249,19 +252,60 @@ export default {
         },
       ],
       destinationMenuOptions: [
-        { id: 1, title: "Deliver now", active: false },
-        { id: 3, title: "Open destination", active: false },
-        { id: 4, title: "Remove destination", active: false },
+        { id: 1, title: "Deliver now", active: true },
+        { id: 3, title: "Open destination", active: true },
+        { id: 4, title: "Remove destination", active: true },
       ],
     }
   },
-  computed: {},
-  methods: {
-    standaloneOptions() {
-      // TODO:APIs are not ready
+  computed: {
+    audienceId() {
+      return this.$route.params.id
     },
-    deliverAll() {
-      // TODO:APIs are not ready
+  },
+  methods: {
+    ...mapActions({
+      deliverStandaloneAudience: "audiences/deliverStandaloneAudience",
+      setAlert: "alerts/setAlert",
+    }),
+    async standaloneOptions(option, data) {
+      switch (option.title.toLowerCase()) {
+        case "deliver now":
+          await this.deliverStandaloneAudience({
+            id: this.audienceId,
+            payload: {
+              destinations: [{ id: data.delivery_platform_id }],
+            },
+          })
+          this.$emit("onDeliveryStandaloneDestination")
+          break
+        case "remove destination":
+          this.$emit("onRemoveStandaloneDestination", data)
+          break
+        case "open destination":
+          this.$emit("onOpenStandaloneDestination", data)
+          break
+        default:
+          break
+      }
+    },
+    async deliverAll() {
+      let allIDs = this.audience.standalone_deliveries.map((obj) => ({
+        id: obj.delivery_platform_id,
+      }))
+      await this.deliverStandaloneAudience({
+        id: this.audienceId,
+        payload: allIDs,
+      })
+      this.dataPendingMesssage()
+      this.$emit("onDeliveryStandaloneDestination")
+    },
+    dataPendingMesssage() {
+      this.setAlert({
+        type: "pending",
+        message:
+          "All standalone destination, has started delivering as a standalone deliveries",
+      })
     },
   },
 }
