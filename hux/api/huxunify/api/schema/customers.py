@@ -225,6 +225,11 @@ class DataFeedSchema(Schema):
 class DataFeedPinning(Schema):
     """IDR Data feed pinning schema"""
 
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
     input_records = Integer(required=True, example=2)
     output_records = Integer(required=True, example=2)
     empty_records = Integer(required=True, example=0)
@@ -247,6 +252,11 @@ class DataFeedPinning(Schema):
 
 class DataFeedStitched(Schema):
     """IDR Data feed stitched schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
 
     digital_ids_added = Integer(required=True, example=3)
     digital_ids_merged = Integer(required=True, example=6)
