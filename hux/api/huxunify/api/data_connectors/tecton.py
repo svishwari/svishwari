@@ -210,6 +210,8 @@ class Tecton:
                 model[api_c.TYPE] = api_c.TEMP_MODELS_TYPE_MAPPING[
                     model[api_c.ID].lower()
                 ]
+            else:
+                model[api_c.TYPE] = api_c.UNSUBSCRIBE
 
             models.append(model)
 
