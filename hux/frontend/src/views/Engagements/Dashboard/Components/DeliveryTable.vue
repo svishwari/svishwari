@@ -86,21 +86,63 @@
             />
           </div>
           <div v-if="header.value == 'destinations'">
-            <tooltip
-              v-for="destination_logo in item[header.value]"
-              :key="destination_logo.delivery_platform_type"
-            >
-              <template #label-content>
-                <logo
-                  :type="destination_logo.delivery_platform_type"
-                  size="24"
-                  class="ml-n1"
-                />
-              </template>
-              <template #hover-content>
-                {{ destination_logo.name }}
-              </template>
-            </tooltip>
+            <div class="destinations-wrap">
+              <v-row class="align-center">
+                <div>
+                  <tooltip
+                    v-for="destination in item[header.value]"
+                    :key="destination.id"
+                  >
+                    <template #label-content>
+                      <div class="destination-logo-wrapper">
+                        <div class="logo-wrapper">
+                          <logo
+                            class="added-logo svg-icon"
+                            :type="destination.delivery_platform_type"
+                            :size="24"
+                          />
+                        </div>
+                      </div>
+                    </template>
+                    <template #hover-content>
+                      <div class="d-flex align-center">
+                        {{ destination.delivery_platform_type }}
+                      </div>
+                    </template>
+                  </tooltip>
+                </div>
+                <div v-if="!item.is_lookalike">
+                  <tooltip>
+                    <template #label-content>
+                      <div
+                        class="
+                          resize-destination-button
+                          d-flex
+                          align-items-center
+                          ml-2
+                        "
+                        data-e2e="add-destination"
+                        @click="
+                          $emit('onSectionAction', {
+                            target: { title: 'Add a destination' },
+                            data: item,
+                            parent: section,
+                          })
+                        "
+                      >
+                        <hux-icon
+                          type="plus"
+                          :size="12"
+                          color="primary"
+                          class="mr-1 mt-1"
+                        />
+                      </div>
+                    </template>
+                    <template #hover-content>Add destination(s)</template>
+                  </tooltip>
+                </div>
+              </v-row>
+            </div>
           </div>
           <div v-if="header.value == 'size'" class="text-body-1">
             <size
@@ -343,5 +385,36 @@ export default {
 }
 .audience-block {
   padding: 5px 0px 0px 0px !important;
+}
+.destinations-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+
+  .destination-logo-wrapper {
+    display: inline-flex;
+    .logo-wrapper {
+      position: relative;
+      .added-logo {
+        margin-top: 8px;
+      }
+      &:hover {
+        .delete-icon {
+          display: block;
+        }
+      }
+    }
+  }
+}
+.resize-destination-button {
+  width: 80px;
+  height: 24px;
+  color: transparent;
+  position: relative;
+  top: 2px;
+  &:hover {
+    cursor: pointer;
+  }
 }
 </style>
