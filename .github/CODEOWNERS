@@ -2,8 +2,8 @@
 hux/ @snaragana-deloitte
 
 # UI processes
-hux/frontend/ @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74
-hux/integration_tests/frontend @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74
+hux/frontend/ @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74 @shahlakhani-deloitte @soumya-pb @risheek-deloitte @dcl-deloitte
+hux/integration_tests/frontend @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74 @shahlakhani-deloitte @soumya-pb @risheek-deloitte @dcl-deloitte
 
 # api processes
 hux/api/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel

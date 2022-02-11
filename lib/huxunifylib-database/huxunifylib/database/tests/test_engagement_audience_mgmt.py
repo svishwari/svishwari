@@ -200,38 +200,51 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
             engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0],
         )
 
+    def generate_audience_delivery_jobs(self, index=0) -> dict:
+        """A function to create an audience and delivery job.
+
+        Args:
+            index (DatabaseClient): A database client.
+
+        Returns:
+            dict:  An audience object.
+        """
+
+        audience = om.create_audience(
+            self.database,
+            f"My Test Audience-{index}",
+            [],
+            self.user_name,
+            [{db_c.OBJECT_ID: self.destination[db_c.ID]}],
+            100 + index,
+        )
+
+        audience.update({db_c.OBJECT_ID: audience[db_c.ID]})
+        engagement_id = em.set_engagement(
+            self.database,
+            f"My Test Engagement-{index}",
+            f"My Test Engagement Description-{index}",
+            [audience],
+            self.user_name,
+        )
+
+        # create delivery job
+        dpm.set_delivery_job(
+            self.database,
+            audience[db_c.ID],
+            self.destination[db_c.ID],
+            [],
+            engagement_id,
+        )
+
+        return audience
+
     def test_get_all_engagement_audience_deliveries(self):
         """Test get all deliveries for engagement and audience pairs."""
 
-        audiences = []
-        for i in range(11):
-            audience = om.create_audience(
-                self.database,
-                f"My Test Audience-{i}",
-                [],
-                self.user_name,
-                [{db_c.OBJECT_ID: self.destination[db_c.ID]}],
-                100 + i,
-            )
-            audiences.append(audience)
-
-            audience.update({db_c.OBJECT_ID: audience[db_c.ID]})
-            engagement_id = em.set_engagement(
-                self.database,
-                f"My Test Engagement-{i}",
-                f"My Test Engagement Description-{i}",
-                [audience],
-                self.user_name,
-            )
-
-            # create delivery job
-            dpm.set_delivery_job(
-                self.database,
-                audience[db_c.ID],
-                self.destination[db_c.ID],
-                [],
-                engagement_id,
-            )
+        audiences = [
+            self.generate_audience_delivery_jobs(i) for i in range(11)
+        ]
 
         # get all audiences and deliveries
         audience_deliveries = eam.get_all_engagement_audience_deliveries(
@@ -240,11 +253,10 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         self.assertTrue(audience_deliveries)
         self.assertGreater(len(audience_deliveries), 10)
 
-        for audience_delivery in audience_deliveries:
+        for audience_delivery in audience_deliveries.values():
             # test each audience_delivery
             self.assertIn(db_c.DELIVERIES, audience_delivery)
             self.assertIn(db_c.AUDIENCE_LAST_DELIVERED, audience_delivery)
-            self.assertIn(db_c.AUDIENCE_ID, audience_delivery)
 
             # test there are deliveries
             self.assertTrue(audience_delivery[db_c.DELIVERIES])
@@ -262,3 +274,66 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
                 self.assertEqual(
                     delivery[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING
                 )
+
+    def test_get_all_audience_engagement_id_pairs(self):
+        """Test get all get_all_audience_engagement_id_pairs."""
+
+        audiences = [self.generate_audience_delivery_jobs(i) for i in range(4)]
+
+        # get all audiences and deliveries
+        audience_engagement_pairs = eam.get_all_audience_engagement_id_pairs(
+            self.database, list(x.get(db_c.ID) for x in audiences)
+        )
+
+        self.assertTrue(audience_engagement_pairs)
+        self.assertEqual(4, len(audience_engagement_pairs))
+
+    def test_get_all_audience_engagement_latest_deliveries(self):
+        """Test get all get_all_audience_engagement_latest_deliveries."""
+
+        audiences = [self.generate_audience_delivery_jobs(i) for i in range(4)]
+
+        # get all audiences and deliveries
+        audience_engagement_pairs = eam.get_all_audience_engagement_id_pairs(
+            self.database, list(x.get(db_c.ID) for x in audiences)
+        )
+
+        # get recent deliveries for each engagement pair.
+        recent_deliveries = eam.get_all_audience_engagement_latest_deliveries(
+            self.database, audience_engagement_pairs
+        )
+
+        self.assertTrue(recent_deliveries)
+        self.assertEqual(4, len(recent_deliveries))
+
+        for delivery in recent_deliveries:
+            self.assertEqual(
+                db_c.AUDIENCE_STATUS_DELIVERING, delivery.get(db_c.STATUS)
+            )
+
+    def test_align_audience_engagement_deliveries(self):
+        """Test get all align_audience_engagement_deliveries."""
+
+        audience_ids = [
+            self.generate_audience_delivery_jobs(i)[db_c.ID] for i in range(4)
+        ]
+
+        # get all audiences and deliveries
+        audience_engagement_pairs = eam.get_all_audience_engagement_id_pairs(
+            self.database, audience_ids
+        )
+        self.assertTrue(audience_engagement_pairs)
+
+        # get recent deliveries for each engagement pair.
+        recent_deliveries = eam.get_all_audience_engagement_latest_deliveries(
+            self.database, audience_engagement_pairs
+        )
+        self.assertTrue(audience_engagement_pairs)
+
+        engagement_deliveries = eam.align_audience_engagement_deliveries(
+            self.database, recent_deliveries, audience_ids
+        )
+
+        self.assertTrue(engagement_deliveries)
+        self.assertEqual(4, len(engagement_deliveries))
+        self.assertListEqual(audience_ids, list(engagement_deliveries.keys()))
