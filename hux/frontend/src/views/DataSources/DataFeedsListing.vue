@@ -247,12 +247,12 @@
                       <tooltip v-else-if="column.value === 'name'">
                         <template #label-content>
                           <span class="text-body-1 data-feed-name">
-                            {{ item[column.value] }}
+                            {{ item["filename"] }}
                           </span>
                         </template>
                         <template #hover-content>
                           <span class="black--text text--darken-4 text-body-1">
-                            {{ item[column.value] }}
+                            {{ item["filename"] }}
                           </span>
                         </template>
                       </tooltip>
