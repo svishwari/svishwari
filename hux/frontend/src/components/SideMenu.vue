@@ -184,7 +184,7 @@ export default {
     },
 
     iconSize() {
-      return this.isMini ? 21 : 14
+      return this.isMini ? 21 : 16
     },
 
     displayedMenuItems() {
