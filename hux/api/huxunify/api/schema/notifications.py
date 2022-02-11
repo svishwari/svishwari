@@ -33,22 +33,7 @@ class NotificationSchema(Schema):
     )
     category = Str(
         attribute="category",
-        validate=[
-            OneOf(
-                choices=[
-                    api_c.DESTINATIONS_TAG,
-                    api_c.MODELS_TAG,
-                    api_c.ENGAGEMENT_TAG,
-                    api_c.DELIVERY_TAG,
-                    api_c.ORCHESTRATION_TAG,
-                    api_c.CUSTOMERS_TAG,
-                    api_c.CDP_DATA_SOURCES_TAG,
-                    db_c.NOTIFICATION_CATEGORY_FLDR,
-                    db_c.NOTIFICATION_CATEGORY_CPDR,
-                    db_c.NOTIFICATION_CATEGORY_DR,
-                ]
-            )
-        ],
+        validate=[OneOf(choices=db_c.NOTIFICATION_CATEGORIES)],
         required=True,
         example=api_c.DELIVERY_TAG,
     )
