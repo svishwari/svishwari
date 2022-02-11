@@ -50,7 +50,7 @@
           <hux-switch
             v-model="rule.operand"
             @input="triggerSizingForRule(rule)"
-          /> 
+          />
           of the following:
         </div>
 
