@@ -112,6 +112,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
+
 import Breadcrumb from "../../../components/common/Breadcrumb.vue"
 import Page from "../../../components/Page.vue"
 import PageHeader from "../../../components/PageHeader.vue"
@@ -189,6 +191,19 @@ export default {
         ],
       },
     }
+  },
+  computed: {
+    ...mapGetters({
+      emailDomain: "emailDeliverability/domainlist",
+    }),
+  },
+  async mounted() {
+    this.getEmailDomain()
+  },
+  methods: {
+    ...mapActions({
+      getEmailDomain: "emailDeliverability/getDomain",
+    }),
   },
 }
 </script>
