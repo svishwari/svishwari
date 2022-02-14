@@ -5,7 +5,7 @@
     :content-header-padding="'px-3'"
   >
     <template #header-left>
-      <div v-if="getNotificationPreferences" class="d-flex align-center">
+      <div class="d-flex align-center">
         <icon
           type="setting-gear-border"
           :size="32"
@@ -31,6 +31,7 @@
             width="57px"
             :switch-labels="switchLabelFullAlerts"
             class="w-53"
+            @change="toggleMainSwitch($event)"
           />
         </div>
         <div v-if="showAlerts">
@@ -68,6 +69,7 @@
           </div>
           <div>
             <v-treeview
+              v-if="alertsSectionGroup.length != 0"
               v-model="tree"
               :items="alertsSectionGroup"
               item-key="show"
@@ -77,23 +79,24 @@
             >
               <template v-slot:append="{ item }">
                 <hux-switch
-                  v-if="item.name != 'Categories'"
+                  v-if="item.name != 'categories'"
                   v-model="item.show"
                   false-color="var(--v-black-lighten4)"
                   :width="item.show ? '80px' : '100px'"
                   :switch-labels="switchLabel"
                   :class="item.show ? 'w-75' : 'w-97'"
+                  @change="formatFinalResponse"
                 />
               </template>
               <template v-slot:label="{ item }">
                 <span
                   :class="
-                    item.name != 'Categories'
+                    item.name != 'categories'
                       ? 'text-body-1'
                       : 'text-body-2 black--text text--lighten-4'
                   "
                   :data-type="item.type"
-                  >{{ item.name }}</span
+                  >{{ item.label | TitleCase }}</span
                 >
               </template>
             </v-treeview>
@@ -131,7 +134,7 @@
           size="large"
           :is-tile="true"
           data-e2e="save"
-          @click="closeDrawer"
+          @click="saveChanges"
         >
           Save
         </hux-button>
@@ -145,7 +148,8 @@ import Drawer from "@/components/common/Drawer"
 import Icon from "@/components/common/Icon"
 import HuxSwitch from "@/components/common/Switch.vue"
 import TextField from "@/components/common/TextField.vue"
-import { mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex"
+import { formatText } from "@/utils"
 import Tooltip from "@/components/common/Tooltip.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 
@@ -175,6 +179,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
+      currentAlertConf: {},
       showAlerts: true,
       tree: null,
       switchLabelFullAlerts: [
@@ -197,214 +202,242 @@ export default {
           label: "OPT OUT",
         },
       ],
+      updatedConfiguration: {},
       alertsSectionGroup: [
         {
-          name: "Categories",
-          type: "header",
+          label: "Categories",
+          name: "categories",
           show: true,
-          id: 1,
           children: [
             {
-              name: "Data management",
-              type: "header",
+              label: "Data management",
+              name: "data_management",
+              parent: null,
               show: true,
-              id: 2,
               children: [
                 {
-                  name: "Data sources",
-                  type: "header",
+                  label: "Data sources",
+                  name: "datasources",
+                  parent: "data_management",
                   show: true,
-                  id: 3,
+                  isDeepChild: false,
                   children: [
                     {
-                      name: "Error",
-                      type: "child",
-                      id: 4,
+                      label: "Critical",
+                      name: "critical",
+                      parent: "datasources",
                       show: true,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Success",
-                      type: "child",
-                      id: 5,
+                      label: "Success",
+                      name: "success",
+                      parent: "datasources",
                       show: true,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Informational",
-                      type: "child",
+                      label: "Informational",
+                      name: "informational",
+                      parent: "datasources",
                       show: true,
-                      id: 6,
+                      isDeepChild: true,
                     },
                   ],
                 },
                 {
-                  name: "Identity resolution",
-                  type: "header",
+                  label: "Identity resolution",
+                  name: "identity_resolution",
+                  parent: "data_management",
                   show: true,
-                  id: 7,
+                  isDeepChild: false,
                   children: [
                     {
-                      name: "Error",
-                      type: "child",
+                      label: "Critical",
+                      name: "critical",
+                      parent: "identity_resolution",
                       show: true,
-                      id: 8,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Success",
-                      type: "child",
+                      label: "Success",
+                      name: "success",
+                      parent: "identity_resolution",
                       show: true,
-                      id: 9,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Informational",
-                      type: "child",
+                      label: "Informational",
+                      name: "informational",
+                      parent: "identity_resolution",
                       show: true,
-                      id: 10,
+                      isDeepChild: true,
                     },
                   ],
                 },
               ],
             },
             {
-              name: "Decisioning",
-              type: "header",
+              label: "Decisioning",
+              name: "decisioning",
+              parent: null,
               show: true,
-              id: 11,
               children: [
                 {
-                  name: "Models",
-                  type: "header",
+                  label: "Models",
+                  name: "models",
+                  parent: "decisioning",
                   show: true,
-                  id: 12,
+                  isDeepChild: false,
                   children: [
                     {
-                      name: "Error",
-                      type: "child",
+                      label: "Critical",
+                      name: "critical",
+                      parent: "models",
                       show: true,
-                      id: 13,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Success",
-                      type: "child",
+                      label: "Success",
+                      name: "success",
+                      parent: "models",
                       show: true,
-                      id: 14,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Informational",
-                      type: "child",
+                      label: "Informational",
+                      name: "informational",
+                      parent: "models",
                       show: true,
-                      id: 15,
+                      isDeepChild: true,
                     },
                   ],
                 },
               ],
             },
             {
-              name: "Orchestration",
-              type: "header",
+              label: "Orchestration",
+              name: "orchestration",
+              parent: null,
               show: true,
-              id: 16,
               children: [
                 {
-                  name: "Destinations",
-                  type: "header",
+                  label: "Destinations",
+                  name: "destinations",
+                  parent: "orchestration",
+                  isDeepChild: false,
                   show: true,
-                  id: 17,
                   children: [
                     {
-                      name: "Error",
-                      type: "child",
+                      label: "Critical",
+                      name: "critical",
+                      parent: "destinations",
                       show: true,
-                      id: 18,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Success",
-                      type: "child",
+                      label: "Success",
+                      name: "success",
+                      parent: "destinations",
                       show: true,
-                      id: 19,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Informational",
-                      type: "child",
+                      label: "Informational",
+                      name: "informational",
+                      parent: "destinations",
                       show: true,
-                      id: 20,
+                      isDeepChild: true,
                     },
                   ],
                 },
                 {
-                  name: "Delivery",
-                  type: "header",
+                  label: "Delivery",
+                  name: "delivery",
+                  parent: "orchestration",
                   show: true,
-                  id: 21,
+                  isDeepChild: false,
                   children: [
                     {
-                      name: "Error",
-                      type: "child",
+                      label: "Critical",
+                      name: "critical",
+                      parent: "delivery",
                       show: true,
-                      id: 22,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Success",
-                      type: "child",
+                      label: "Success",
+                      name: "success",
+                      parent: "delivery",
+                      isDeepChild: true,
                       show: true,
-                      id: 23,
                     },
                     {
-                      name: "Informational",
-                      type: "child",
+                      label: "Informational",
+                      name: "informational",
+                      parent: "delivery",
+                      isDeepChild: true,
                       show: true,
-                      id: 24,
                     },
                   ],
                 },
                 {
-                  name: "Audiences",
-                  type: "header",
+                  label: "Audiences",
+                  name: "audiences",
+                  parent: "orchestration",
                   show: true,
-                  id: 25,
+                  isDeepChild: false,
                   children: [
                     {
-                      name: "Error",
-                      type: "child",
+                      label: "Critical",
+                      name: "critical",
+                      parent: "audiences",
                       show: true,
-                      id: 26,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Success",
-                      type: "child",
+                      label: "Success",
+                      name: "success",
+                      parent: "audiences",
                       show: true,
-                      id: 27,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Informational",
-                      type: "child",
+                      label: "Informational",
+                      name: "informational",
+                      parent: "audiences",
                       show: true,
-                      id: 28,
+                      isDeepChild: true,
                     },
                   ],
                 },
                 {
-                  name: "Engagements",
-                  type: "header",
+                  label: "Engagements",
+                  name: "engagements",
+                  parent: "orchestration",
                   show: true,
-                  id: 29,
+                  isDeepChild: false,
                   children: [
                     {
-                      name: "Error",
-                      type: "child",
+                      label: "Critical",
+                      name: "critical",
+                      parent: "engagements",
                       show: true,
-                      id: 30,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Success",
-                      type: "child",
+                      label: "Success",
+                      name: "success",
+                      parent: "engagements",
                       show: true,
-                      id: 31,
+                      isDeepChild: true,
                     },
                     {
-                      name: "Informational",
-                      type: "child",
+                      label: "Informational",
+                      name: "informational",
+                      parent: "engagements",
                       show: true,
-                      id: 32,
+                      isDeepChild: true,
                     },
                   ],
                 },
@@ -419,19 +452,8 @@ export default {
   computed: {
     ...mapGetters({
       getCurrentUserEmail: "users/getEmailAddress",
+      getUsers: "notifications/userList",
     }),
-
-    getNotificationPreferences() {
-      return {
-        data_sources: ["Informational", "Success", "Error"],
-        engagements: ["Informational", "Success", "Error"],
-        audiences: ["Informational", "Success", "Error"],
-        delivery: ["Error"],
-        identity_resolution: ["Informational"],
-        models: ["Informational", "Success", "Error"],
-        destinations: ["Informational", "Success", "Error"],
-      }
-    },
   },
 
   watch: {
@@ -441,19 +463,108 @@ export default {
     localDrawer: function () {
       this.$emit("input", this.localDrawer)
     },
-    tree: function () {
-      console.log("tree", this.tree)
-    },
+  },
+  updated() {
+    this.mapAlertSectionGroups()
+    this.$nextTick(function () {
+      document
+        .getElementsByClassName("v-treeview-node")
+        .forEach((element, index) => {
+          if (element.childNodes.length == 2) {
+            let elem = element.childNodes[0]
+            if (index == 0) {
+              elem.style["border-top"] = "none"
+              elem.style["min-height"] = "30px"
+              elem.style["height"] = "30px"
+            }
+            elem.style["background"] = "#F9FAFB"
+          }
+        })
+    })
   },
   methods: {
-    toggleAccessFullAlerts(val) {
-      this.showAlerts = val
-    },
-    toggleAccessIndivisualAlerts(e, val) {
-      val.show = e
-    },
+    ...mapActions({
+      updateUserPreferences: "users/updateUserPreferences",
+    }),
     closeDrawer() {
       this.localDrawer = false
+    },
+    saveChanges() {
+      this.localDrawer = false
+      this.$emit("onDrawerClose")
+      this.updateUserPreferences(this.updatedConfiguration)
+    },
+    mapAlertSectionGroups() {
+      let currentUser = this.users.find(
+        (data) => data.email == this.getCurrentUserEmail
+      )
+      this.currentAlertConf = currentUser.alerts
+      this.setAlertConfiguration()
+    },
+    // Recursion for setting nested output structure
+    recursiveBinding(data, alerts) {
+      let parentData = data.children
+      for (let i = 0; i < parentData.length; i++) {
+        alerts[parentData[i].name] = {}
+        if (parentData[i].show && !parentData[i].isDeepChild) {
+          this.recursiveBinding(parentData[i], alerts[parentData[i].name])
+        } else if (!parentData[i].show && !parentData[i].isDeepChild) {
+          alerts[parentData[i].name] = {}
+        } else {
+          alerts[parentData[i].name] = parentData[i].show
+        }
+      }
+      return alerts
+    },
+    formatFinalResponse() {
+      this.updatedConfiguration = {}
+      this.updatedConfiguration.alerts = this.recursiveBinding(
+        this.alertsSectionGroup[0],
+        {}
+      )
+      // manual toggle logic will be implemented here
+    },
+    toggleMainSwitch(value) {
+      if (value) {
+        this.setAlertConfiguration()
+      }
+    },
+    // Recursion for getting nested input structure
+    setAllKeyMapping(basicEntity, parentObj) {
+      for (const [key, value] of Object.entries(basicEntity)) {
+        let childObj = {
+          label: formatText(key),
+          name: key,
+          isDeepChild: false,
+          children: [],
+        }
+        if (typeof value === "object") {
+          childObj.show = this.checkOptStatus(value)
+          childObj.isDeepChild = false
+          childObj.children = []
+          parentObj.children.push(childObj)
+          this.setAllKeyMapping(value, childObj)
+        } else {
+          childObj.show = value
+          childObj.isDeepChild = true
+          parentObj.children.push(childObj)
+        }
+      }
+      return parentObj
+    },
+    setAlertConfiguration() {
+      let parentObj = {
+        label: "Categories",
+        name: "categories",
+        show: true,
+        children: [],
+      }
+      this.setAllKeyMapping(this.currentAlertConf, parentObj)
+      this.alertsSectionGroup = [parentObj]
+    },
+    checkOptStatus(value) {
+      let convertedValue = JSON.stringify(value)
+      return convertedValue.indexOf("true") != -1 ? true : false
     },
   },
 }
@@ -490,9 +601,6 @@ export default {
   border-top: 1px solid var(--v-black-lighten2);
   height: 45px;
   padding: 0;
-}
-::v-deep .v-treeview-node__root:first {
-  border-top: none;
 }
 ::v-deep .v-treeview-node__toggle {
   display: none;

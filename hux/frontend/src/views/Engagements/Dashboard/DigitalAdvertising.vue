@@ -7,11 +7,13 @@
           (item) => item.category == 'Advertising'
         ).destinations
       "
+      :engagement-id="engagementId"
       :headers="columnDefs"
       section-type="destinations"
       deliveries-key="destination_audiences"
       class="mb-5"
       @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+      @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
       @onOverviewDestinationAction="
         $emit('onOverviewDestinationAction', $event)
       "

@@ -2,6 +2,7 @@
 """Paths for Orchestration API."""
 import asyncio
 import re
+import time
 from http import HTTPStatus
 from threading import Thread
 from typing import Tuple, Union
@@ -426,20 +427,15 @@ class AudienceView(SwaggerView):
                 database, user[api_c.USER_NAME], api_c.AUDIENCES
             )
 
-        # get list of deliveries and last_delivered for engagement, audience
-        # pair by aggregating from engagements collection because document DB
-        # does not allow for $replaceRoot
-        audience_deliveries_dict = {
-            x[db_c.AUDIENCE_ID]: {
-                api_c.DELIVERIES: x.get(api_c.DELIVERIES, []),
-                api_c.AUDIENCE_LAST_DELIVERED: x.get(
-                    api_c.AUDIENCE_LAST_DELIVERED
-                ),
-            }
-            for x in eam.get_all_engagement_audience_deliveries(
-                database, audience_ids=list(x.get(db_c.ID) for x in audiences)
-            )
-        }
+        audience_delivery_query_time = time.time()
+        audience_deliveries_dict = eam.get_all_engagement_audience_deliveries(
+            database, audience_ids=list(x.get(db_c.ID) for x in audiences)
+        )
+
+        logger.info(
+            "Generated the audience deliveries in %.4f seconds.",
+            time.time() - audience_delivery_query_time,
+        )
 
         # process each audience object
         for audience in audiences:
@@ -859,8 +855,12 @@ class AudienceGetView(SwaggerView):
             # consistent with GET all audiences response
             audience_deliveries = eam.get_all_engagement_audience_deliveries(
                 database, audience_ids=[audience_id]
+            ).get(
+                audience_id,
+                {db_c.DELIVERIES: [], api_c.AUDIENCE_LAST_DELIVERED: None},
             )
-            audience_deliveries = audience_deliveries + standalone_deliveries
+
+            audience_deliveries = [audience_deliveries] + standalone_deliveries
         else:
             audience_deliveries = standalone_deliveries
         if audience_deliveries:

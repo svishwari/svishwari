@@ -1,4 +1,6 @@
 """ Module for base class for cloud operations"""
+from typing import Tuple
+
 from huxunify.api.config import Config, get_config
 
 # pylint: disable=missing-raises-doc
@@ -86,18 +88,18 @@ class Cloud:
         """
         raise NotImplementedError()
 
-    def health_check_batch_service(self) -> dict:
+    def health_check_batch_service(self) -> Tuple[bool, str]:
         """Checks the health of the cloud batch service.
 
         Returns:
-            dict: Health details of the batch service.
+            Tuple[bool, str]: Returns bool for health status and message
         """
         raise NotImplementedError()
 
-    def health_check_storage_service(self) -> dict:
+    def health_check_storage_service(self) -> Tuple[bool, str]:
         """Checks the health of the cloud storage service.
 
         Returns:
-            dict: Health details of the storage service.
+            Tuple[bool, str]: Returns bool for health status and message
         """
         raise NotImplementedError()

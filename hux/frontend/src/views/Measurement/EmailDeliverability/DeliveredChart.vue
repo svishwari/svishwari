@@ -14,7 +14,7 @@
         :months-duration="monthsDuration"
         @tooltipDisplay="toolTipDisplay"
       />
-      <div class="value-container ma-8 mr-4">
+      <div class="value-container ma-8 mr-4 mt-8">
         <span class="line mr-2"></span>
         <span class="text-label">Open rate</span>
       </div>
@@ -246,7 +246,7 @@ export default {
 }
 .container-chart {
   position: relative;
-  height: 285px;
+  height: 290px;
   padding: 0px !important;
   .value-container {
     margin-top: 2px;

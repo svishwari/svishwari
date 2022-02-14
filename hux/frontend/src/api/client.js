@@ -27,6 +27,9 @@ Object.keys(resources).forEach((resource) => {
 client["users"].fetchProfile = () => {
   return http.get("/users/profile")
 }
+client["users"].updatePreferences = (data) => {
+  return http.put("/users/preferences", data)
+}
 client["users"].markFavorite = (resourceId, entityType) => {
   return http.post(`users/${entityType}/${resourceId}/favorite`)
 }

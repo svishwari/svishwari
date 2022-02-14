@@ -4,7 +4,7 @@
     :count="filterLength"
     content-height="262px"
     :disable-clear="filterLength === 1 && selectedTimeType === 'Last week'"
-    @clear="clear"
+    @clear="clearFilter"
     @apply="apply"
     @close="close"
   >
@@ -201,8 +201,9 @@ export default {
       this.selectedTimeType = "Last week"
       this.selctedUsers = []
     },
-    clear() {
+    clearAndReload() {
       this.clearFilter()
+      this.apply()
     },
     apply() {
       let getTime
@@ -232,6 +233,7 @@ export default {
         selctedAlertType: this.selctedAlertType,
         selctedCategory: this.selctedCategory,
         selctedUsers: this.selctedUsers,
+        filterApplied: this.filterLength,
       })
     },
     close() {

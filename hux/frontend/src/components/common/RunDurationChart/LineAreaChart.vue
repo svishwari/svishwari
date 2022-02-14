@@ -14,7 +14,7 @@ import * as d3Array from "d3-array"
 import * as d3Transition from "d3-transition"
 
 export default {
-  name: "RunDurationLineAreaChart",
+  name: "LineAreaChart",
   props: {
     value: {
       type: Array,
@@ -34,11 +34,16 @@ export default {
       type: String,
       required: false,
     },
+    chartId: {
+      type: Number,
+      required: false,
+    },
   },
   data() {
     return {
       data: this.value,
       chartWidth: "",
+      lastBarAnimation: "",
       toolTip: {
         xPosition: 0,
         yPosition: 0,
@@ -52,11 +57,15 @@ export default {
     chartDimensions: {
       handler() {
         d3Select.select(this.$refs.lineAreaChart).selectAll("svg").remove()
+        clearInterval(this.lastBarAnimation)
         this.initiatelineAreaChart()
       },
       immediate: false,
       deep: true,
     },
+  },
+  destroyed() {
+    clearInterval(this.lastBarAnimation)
   },
   methods: {
     initiatelineAreaChart() {
@@ -188,6 +197,9 @@ export default {
 
       d3Transition.transition()
 
+      // pull the axis number left side
+      d3Select.selectAll(".xAxis .tick text").attr("x", 1)
+
       let lineTrace = (value) => {
         return d3Shape
           .line()
@@ -226,7 +238,7 @@ export default {
         .enter()
         .append("circle")
         .attr("class", "dot")
-        .attr("r", 4)
+        .attr("r", 7)
         .attr("cx", (d) => xScale(d.index))
         .attr("cy", (d) => yScale(d.duration))
         .style("fill", "transparent")
@@ -243,9 +255,14 @@ export default {
         .classed("final-circle", true)
         .attr("cx", xScale(this.data[this.data.length - 1].index))
         .attr("cy", yScale(this.data[this.data.length - 1].duration))
-        .attr("r", 5)
+        .attr("r", 6)
+        .attr("class", `active-circle-${this.chartId}`)
+        .style("stroke", this.finalStatus === "Success" ? "#43B02A" : "#DA291C")
+        .style("stroke-opacity", "0.2")
+        .style("stroke-width", 2)
         .style("fill", this.finalStatus === "Success" ? "#43B02A" : "#DA291C")
         .style("pointer-events", "none")
+
       svg
         .append("rect")
         .attr("width", w)
@@ -256,6 +273,17 @@ export default {
         .on("mouseout", () => mouseout())
 
       let bisectDate = d3Array.bisector((d) => d).right
+
+      let blinkLastBar = () => {
+        d3Select
+          .select(`.active-circle-${this.chartId}`)
+          .transition()
+          .duration(500)
+          .style("fill-opacity", "0.2")
+          .transition()
+          .duration(500)
+          .style("fill-opacity", "0.5")
+      }
 
       let mouseout = () => {
         svg.selectAll(".hover-line-y").style("display", "none")
@@ -322,6 +350,7 @@ export default {
         dataToolTip.yPosition = yData
         this.tooltipDisplay(true, dataToolTip)
       }
+      this.lastBarAnimation = setInterval(blinkLastBar, 1000)
     },
     tooltipDisplay(showTip, eventsData) {
       this.$emit("tooltipDisplay", showTip, eventsData)

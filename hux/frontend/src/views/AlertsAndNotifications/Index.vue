@@ -193,6 +193,7 @@
         <alert-configure-drawer
           v-model="isAlertsToggled"
           :users="getNotificationUsers"
+          @onDrawerClose="onConfigClose"
         />
       </div>
     </div>
@@ -419,7 +420,7 @@ export default {
       this.batchDetails.isLazyLoad = false
     },
     async alertfunction(data) {
-      this.finalFilterApplied = this.numFiltersSelected
+      this.finalFilterApplied = data.filterApplied
       this.isFilterToggled = true
       this.loading = true
       try {
@@ -472,7 +473,10 @@ export default {
       }
     },
     clearFilters() {
-      this.$refs.filters.clear()
+      this.$refs.filters.clearAndReload()
+    },
+    onConfigClose() {
+      // For user configuration load logic
     },
   },
 }

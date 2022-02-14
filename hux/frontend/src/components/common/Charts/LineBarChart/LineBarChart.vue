@@ -279,7 +279,7 @@ export default {
         .attr("transform", "translate(15,0)")
         .attr("class", "line")
         .style("stroke", "#E3E48D")
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 3)
         .style("fill", "none")
         .attr("d", (d) => lineStock(d))
 

@@ -1,5 +1,6 @@
 """Module for AWS cloud operations"""
 import logging
+from typing import Tuple
 
 import boto3
 import botocore
@@ -8,6 +9,9 @@ from huxunify.api.data_connectors.cloud_connectors.cloud import Cloud
 import huxunify.api.constants as api_c
 
 # pylint: disable=missing-raises-doc
+from huxunify.api.prometheus import record_health_status_metric
+
+
 class AWS(Cloud):
     """Class for AWS cloud operations"""
 
@@ -113,18 +117,54 @@ class AWS(Cloud):
         """
         raise NotImplementedError()
 
-    def health_check_batch_service(self) -> dict:
+    def __check_aws_health_connection(
+        self, client_method: str, extra_params: dict, client: str = "s3"
+    ):
+        """Validate an AWS service connection.
+
+        Args:
+            client_method (str): Method name for the client
+            extra_params (dict): Extra params required for aws connection
+            client (str): name of the boto3 client to use.
+        Returns:
+            tuple[bool, str]: Returns if the AWS connection is valid,
+                and the message.
+        """
+
+        try:
+            # lookup the health test to run from api constants
+            getattr(self.get_aws_client(client), client_method)(**extra_params)
+            return True, f"{client} available."
+        except Exception as exception:  # pylint: disable=broad-except
+            # report the generic error message
+            return False, getattr(exception, "message", repr(exception))
+
+    def health_check_batch_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS batch service.
 
         Returns:
-            dict: Health details of the batch service.
+            Tuple[bool, str]: Returns bool for health status and message
         """
-        raise NotImplementedError()
+        status = self.__check_aws_health_connection(
+            client_method="cancel_job",
+            client=api_c.AWS_BATCH_NAME,
+            extra_params={"jobId": "test", "reason": "test"},
+        )
+        record_health_status_metric(
+            api_c.AWS_BATCH_CONNECTION_HEALTH, status[0]
+        )
+        return status
 
-    def health_check_storage_service(self) -> dict:
+    def health_check_storage_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS storage service.
 
         Returns:
-            dict: Health details of the storage service.
+            Tuple[bool, str]: Returns bool for health status and message
         """
-        raise NotImplementedError()
+        status = self.__check_aws_health_connection(
+            client_method="get_bucket_location",
+            client=api_c.AWS_S3_NAME,
+            extra_params={api_c.AWS_BUCKET: self.config.S3_DATASET_BUCKET},
+        )
+        record_health_status_metric(api_c.AWS_S3_CONNECTION_HEALTH, status[0])
+        return status

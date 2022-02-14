@@ -87,6 +87,14 @@ export const defineRoutes = (server) => {
   })
   server.get("users/requested_users", () => requestedUser)
   server.get("users/tickets", () => someTickets())
+  server.put("/user/preferences", (schema, request) => {
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+
+    return schema.users.find(id).update({
+      alerts: requestData.alerts,
+    })
+  })
 
   //client projects
   server.get("/client-projects")
@@ -305,6 +313,31 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
+  // Detaching a destination from an Engagement
+  server.del(
+    "/engagements/:id/audience/:audienceId/destinations/:destinationId",
+    (schema, request) => {
+      const code = 200
+      const headers = {}
+      const id = request.params.id
+      const destinationId = request.params.destinationId
+      const engagement = schema.engagements.find(id)
+      Object.values(engagement.destinations_category).forEach((category) => {
+        for (
+          var index = category.destinations.length - 1;
+          index >= 0;
+          --index
+        ) {
+          if (category.destinations[index].id == destinationId) {
+            category.destinations.splice(index, 1)
+          }
+        }
+      })
+      const body = { message: "SUCCESS" }
+      return new Response(code, headers, body)
+    }
+  )
+
   server.post(
     "/engagements/:id/audience/:audienceId/deliver",
     (schema, request) => {
@@ -498,8 +531,6 @@ export const defineRoutes = (server) => {
       recall: 0.65,
       current_version: "3.1.2",
     }
-    data.attrs.model_name = data.attrs.name
-    data.attrs.model_type = data.attrs.type
 
     return data
   })
