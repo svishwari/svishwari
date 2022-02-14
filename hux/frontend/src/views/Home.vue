@@ -223,7 +223,12 @@
     <v-card flat class="d-flex help-section pa-7">
       <span class="d-flex align-center text-body-1">
         <icon type="kx" :size="36" class="mr-2" /> Need some help or guidance?
-        &nbsp;<a href="https://www.deloittedigital.com/us/en/offerings/customer-led-marketing/advertising--marketing-and-commerce/hux.html" target="_blank" class="text-decoration-none">
+        &nbsp;
+        <a
+          href="https://www.deloittedigital.com/us/en/offerings/customer-led-marketing/advertising--marketing-and-commerce/hux.html"
+          target="_blank"
+          class="text-decoration-none"
+        >
           <span class="primary--text cursor-pointer">
             Click here to access demo scripts, videos, FAQs, and more.
             <icon type="new_tab_link" size="10" color="primary" class="mb-2" />
