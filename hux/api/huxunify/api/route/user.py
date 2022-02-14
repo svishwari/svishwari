@@ -579,7 +579,7 @@ class CreateTicket(SwaggerView):
         create_notification(
             database=get_db_client(),
             notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"{user[api_c.USER_NAME]} created a new issue"
+            description=f"{user[api_c.USER_NAME]} created a new issue "
             f"{new_issue.get(api_c.KEY)} in JIRA.",
             category=api_c.TICKET_TYPE_BUG,
             username=user[api_c.USER_NAME],
@@ -667,7 +667,7 @@ class RequestNewUser(SwaggerView):
         create_notification(
             database=get_db_client(),
             notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"{user[api_c.USER_NAME]} created a new issue"
+            description=f"{user[api_c.USER_NAME]} created a new issue "
             f"{new_issue.get(api_c.KEY)} in JIRA.",
             category=api_c.TICKET_TYPE_BUG,
             username=user[api_c.USER_NAME],
