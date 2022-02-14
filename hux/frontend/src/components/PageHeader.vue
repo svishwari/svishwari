@@ -6,6 +6,8 @@
     tile
     :color="bgColor"
     :height="headerHeight"
+    :min-height="headerMinHeight"
+    :max-height="headerMaxHeight"
   >
     <div>
       <div class="d-flex">
@@ -61,6 +63,14 @@ export default {
       type: [Number, String],
       required: false,
       default: 72,
+    },
+    headerMinHeight: {
+      type: String,
+      required: false,
+    },
+    headerMaxHeight: {
+      type: String,
+      required: false,
     },
 
     headerPadding: {
