@@ -123,6 +123,16 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/models/:id/overview/:version",
+    name: "ModelDashboardVersion",
+    component: () => import("@/views/Models/Dashboard"),
+    meta: {
+      layout: "app",
+      title: "Model Dashboard",
+      requiresAuth: true,
+    },
+  },
   //#endregion
 
   //#region Customer Insights
