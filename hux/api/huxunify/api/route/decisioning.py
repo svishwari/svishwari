@@ -957,7 +957,18 @@ class ModelImportanceFeaturesView(SwaggerView):
 class ModelLiftView(SwaggerView):
     """Model Lift Class."""
 
-    parameters = api_c.MODEL_ID_PARAMS
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": api_c.VERSION,
+            "description": "Model version, if not provided, "
+            "it will take the latest.",
+            "type": "str",
+            "in": "path",
+            "required": False,
+            "example": "21.7.31",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model lift chart.",
@@ -977,6 +988,7 @@ class ModelLiftView(SwaggerView):
         self,
         model_id: str,
         user: dict,
+        model_version: str = None,
     ) -> Tuple[List[dict], int]:
         """Retrieves model lift data.
 
@@ -987,6 +999,7 @@ class ModelLiftView(SwaggerView):
         Args:
             model_id (str): Model ID
             user (dict): User object.
+            model_version (str): Model version
 
         Returns:
             Tuple[List[dict], int]: List containing a dict of model lift data,
@@ -1009,7 +1022,27 @@ class ModelLiftView(SwaggerView):
                 for i in range(1, 11)
             ]
         else:
-            lift_data = Tecton().get_model_lift_async(model_id)
+            tecton = Tecton()
+            # get model versions
+            model_versions = (
+                [{api_c.CURRENT_VERSION: model_version}]
+                if model_version
+                else tecton.get_model_version_history(model_id)
+            )
+
+            if not model_versions:
+                return jsonify([]), HTTPStatus.NOT_FOUND
+
+            # loop versions until the latest version is found
+            for version in model_versions:
+                current_version = version.get(api_c.CURRENT_VERSION)
+
+                lift_data = tecton.get_model_lift_async(
+                    model_id, current_version
+                )
+
+                if lift_data:
+                    break
 
         if not lift_data:
             return jsonify([]), HTTPStatus.NOT_FOUND

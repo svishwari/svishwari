@@ -431,11 +431,14 @@ class Tecton:
 
         return result_drift
 
-    def get_model_lift_async(self, model_id: str) -> List[ModelLiftSchema]:
+    def get_model_lift_async(
+        self, model_id: str, model_version: str
+    ) -> List[ModelLiftSchema]:
         """Get model lift based on id.
 
         Args:
             model_id (str): model id.
+            model_version (str): model version.
 
         Returns:
              List[ModelLiftSchema]: List of model lift.
@@ -477,8 +480,15 @@ class Tecton:
             if not response[0]:
                 continue
 
+            # grab the features and match model version.
+            version_lift_data = [
+                x[api_c.RESULTS][-1][api_c.FEATURES]
+                for x in response
+                if x[api_c.RESULTS][-1][api_c.FEATURES][7] == model_version
+            ]
+
             # process lift data
-            latest_lift_data = response[0][api_c.RESULTS][-1][api_c.FEATURES]
+            latest_lift_data = version_lift_data[-1][api_c.FEATURES]
 
             result_lift.append(
                 {
