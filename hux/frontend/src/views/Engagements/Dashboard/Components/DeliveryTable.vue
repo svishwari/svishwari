@@ -86,8 +86,8 @@
             />
           </div>
           <div v-if="header.value == 'destinations'" class="text-body-1">
-            <div>
-              <v-row class="align-center">
+            <div class="align-center">
+              <v-row class="mx-0">
                 <div>
                   <tooltip
                     v-for="destination_logo in item[header.value]"
@@ -123,7 +123,7 @@
                           type="plus"
                           :size="17"
                           color="primary"
-                          class="ml-n1 mb-1"
+                          class="ml-n1 mt-1"
                         />
                       </div>
                     </template>
