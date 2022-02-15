@@ -293,61 +293,69 @@
         />
       </div>
 
-      <div v-if="audienceList.length == 0 && !loading" class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100 background-empty">
-      <empty-page type="no-engagement" size="50">
-        <template #title>
-          <div class="title-no-engagement">No audiences</div>
-        </template>
-        <template #subtitle>
-          <div class="des-no-engagement mt-3">
+      <div
+        v-if="audienceList.length == 0 && !loading"
+        class="
+          flex-grow-1 flex-shrink-1
+          overflow-hidden
+          mw-100
+          background-empty
+        "
+      >
+        <empty-page type="no-engagement" size="50">
+          <template #title>
+            <div class="title-no-engagement">No audiences</div>
+          </template>
+          <template #subtitle>
+            <div class="des-no-engagement mt-3">
+              <span v-if="finalFilterApplied <= 0">
+                Your list of audiences will appear here once you create them.
+              </span>
+              <span v-else>
+                Currently there are no audiences available based on your applied
+                filters.
+                <br />
+                Check back later or change your filters.
+              </span>
+            </div>
+          </template>
+          <template #button>
             <span v-if="finalFilterApplied <= 0">
-              Your list of audiences will appear here once you create them.
+              <router-link
+                :to="{ name: 'SegmentPlayground' }"
+                class="text-decoration-none"
+                append
+                data-e2e="add-audience"
+              >
+                <huxButton
+                  variant="primary base"
+                  icon-color="white"
+                  icon-variant="base"
+                  size="large"
+                  class="ma-2 font-weight-regular no-shadow mr-0 caption"
+                  is-tile
+                  height="40"
+                >
+                  Create an audience
+                </huxButton>
+              </router-link>
             </span>
             <span v-else>
-              Currently there are no audiences available based on your applied
-              filters.
-              <br />
-              Check back later or change your filters.
-            </span>
-          </div>
-        </template>
-        <template #button>
-          <span v-if="finalFilterApplied <= 0">
-            <router-link
-              :to="{ name: 'SegmentPlayground' }"
-              class="text-decoration-none"
-              append
-              data-e2e="add-audience"
-            >
               <huxButton
+                button-text="Clear filters"
                 variant="primary base"
-                icon-color="white"
-                icon-variant="base"
                 size="large"
-                class="ma-2 font-weight-regular no-shadow mr-0 caption"
+                class="ma-2 font-weight-regular text-button"
                 is-tile
-                height="40"
+                :height="'40'"
+                @click="clearFilters()"
               >
-                Create an audience
+                Clear filters
               </huxButton>
-            </router-link>
-          </span>
-          <span v-else>
-            <huxButton
-              button-text="Clear filters"
-              variant="primary base"
-              size="large"
-              class="ma-2 font-weight-regular text-button"
-              is-tile
-              :height="'40'"
-              @click="clearFilters()"
-            >
-              Clear filters
-            </huxButton>
-          </span>
-        </template>
-      </empty-page>
-    </div>
+            </span>
+          </template>
+        </empty-page>
+      </div>
 
       <div class="ml-auto">
         <audience-filter

@@ -948,7 +948,7 @@ export default {
         favorites: params.selectedFavourite,
         my_engagements: params.selectedEngagementsWorkedWith,
       })
-       this.loading = false
+      this.loading = false
     },
 
     openModal(engagement) {
