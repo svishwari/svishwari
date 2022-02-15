@@ -51,7 +51,9 @@ def create_notification(
         raise ValueError("Invalid notification type provided.")
 
     if category not in db_c.NOTIFICATION_CATEGORIES:
-        raise ValueError("Invalid notification category provided.")
+        DeprecationWarning(
+            f"The value {category} will not be allowed as a category in the future."
+        )
 
     if username is None:
         raise MissingValueException("username")
@@ -63,20 +65,20 @@ def create_notification(
 
     # get current time
     current_time = datetime.utcnow()
-    expire_time = current_time + relativedelta(months=3)
+    week_count = 1
 
     # 1 week for informational and success, 4 weeks for critical
     if notification_type == db_c.NOTIFICATION_TYPE_INFORMATIONAL:
-        expire_time = current_time + relativedelta(weeks=1)
-        ttl = int(timedelta(weeks=1).total_seconds())
-
+        week_count = 1
     elif notification_type == db_c.NOTIFICATION_TYPE_SUCCESS:
-        expire_time = current_time + relativedelta(weeks=1)
-        ttl = int(timedelta(weeks=1).total_seconds())
-
+        week_count = 1
     elif notification_type == db_c.NOTIFICATION_TYPE_CRITICAL:
-        expire_time = current_time + relativedelta(weeks=4)
-        ttl = int(timedelta(weeks=4).total_seconds())
+        week_count = 4
+
+    # used for AWS DocumentDB
+    expire_time = current_time + relativedelta(weeks=week_count)
+    # used for Azure CosmosDB
+    ttl = int(timedelta(weeks=week_count).total_seconds())
 
     doc = {
         db_c.NOTIFICATION_FIELD_TYPE: notification_type,

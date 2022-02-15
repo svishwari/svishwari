@@ -51,7 +51,7 @@ class NotificationManagementTest(TestCase):
             notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             description="Some Information",
             username=self.test_username,
-            category=db_c.NOTIFICATION_CATEGORY_DECISIONING,
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             platform=db_c.AZURE_COSMOS_DB,
         )
 
@@ -78,7 +78,7 @@ class NotificationManagementTest(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description="Some Information",
-            category=db_c.NOTIFICATION_CATEGORY_DECISIONING,
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=self.test_username,
         )
 
@@ -114,7 +114,7 @@ class NotificationManagementTest(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
             description="Some Information",
-            category=db_c.NOTIFICATION_CATEGORY_DECISIONING,
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=self.test_username,
         )
 
@@ -143,20 +143,21 @@ class NotificationManagementTest(TestCase):
         self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
         self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
 
-    def test_create_notification_bad_category(self):
-        """Test creating a critical notification."""
-
-        with self.assertRaises(ValueError):
-            nmg.create_notification(
-                database=self.database,
-                notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
-                description="Some Information",
-                category="Invalid category",
-                username=self.test_username,
-            )
+    # TODO just use validation error when deprecation warning is removed
+    # def test_create_notification_bad_category(self):
+    #     """Test creating a notification with an invalid category."""
+    #
+    #     with self.assertRaises(ValueError):
+    #         nmg.create_notification(
+    #             database=self.database,
+    #             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
+    #             description="Some Information",
+    #             category="Invalid category",
+    #             username=self.test_username,
+    #         )
 
     def test_create_notification_bad_type(self):
-        """Test creating a critical notification."""
+        """Test creating a notification with a invalid type."""
 
         with self.assertRaises(ValueError):
             nmg.create_notification(
@@ -240,7 +241,7 @@ class NotificationManagementTest(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
             description="Delivery Failed",
-            category=db_c.NOTIFICATION_CATEGORY_DECISIONING,
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=self.test_username,
         )
 
@@ -263,7 +264,7 @@ class NotificationManagementTest(TestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
             description="Delivery Failed",
-            category=db_c.NOTIFICATION_CATEGORY_DECISIONING,
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=self.test_username,
         )
 
