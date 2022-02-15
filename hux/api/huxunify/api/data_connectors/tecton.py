@@ -485,20 +485,24 @@ class Tecton:
                 x[api_c.FEATURES]
                 for x in response[0][api_c.RESULTS]
                 if x[api_c.JOIN_KEYS][0] == model_version
-            ][0]
+            ]
+
+            # if no lift data found, continue
+            if not version_lift_data:
+                continue
 
             result_lift.append(
                 {
                     api_c.BUCKET: response[1],
-                    api_c.ACTUAL_VALUE: version_lift_data[0],
-                    api_c.ACTUAL_LIFT: version_lift_data[3],
-                    api_c.PREDICTED_LIFT: version_lift_data[4],
-                    api_c.PREDICTED_VALUE: version_lift_data[9],
-                    api_c.PROFILE_COUNT: int(version_lift_data[10]),
-                    api_c.ACTUAL_RATE: version_lift_data[11],
-                    api_c.PREDICTED_RATE: version_lift_data[12],
-                    api_c.PROFILE_SIZE_PERCENT: version_lift_data[14] * 100
-                    if version_lift_data[14]
+                    api_c.ACTUAL_VALUE: version_lift_data[0][0],
+                    api_c.ACTUAL_LIFT: version_lift_data[0][3],
+                    api_c.PREDICTED_LIFT: version_lift_data[0][4],
+                    api_c.PREDICTED_VALUE: version_lift_data[0][9],
+                    api_c.PROFILE_COUNT: int(version_lift_data[0][10]),
+                    api_c.ACTUAL_RATE: version_lift_data[0][11],
+                    api_c.PREDICTED_RATE: version_lift_data[0][12],
+                    api_c.PROFILE_SIZE_PERCENT: version_lift_data[0][14] * 100
+                    if version_lift_data[0][14]
                     else 0,
                 }
             )

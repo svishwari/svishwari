@@ -1021,26 +1021,21 @@ class ModelLiftView(SwaggerView):
             ]
         else:
             tecton = Tecton()
-            # get model versions
-            model_versions = (
-                [{api_c.CURRENT_VERSION: request.args.get(api_c.VERSION)}]
-                if request.args.get(api_c.VERSION)
-                else tecton.get_model_version_history(model_id)
-            )
+
+            # get all model versions
+            model_versions = tecton.get_model_version_history(model_id)
 
             if not model_versions:
                 return jsonify([]), HTTPStatus.NOT_FOUND
 
-            # loop versions until the latest version is found
-            for version in model_versions:
-                current_version = version.get(api_c.CURRENT_VERSION)
+            # set model version to latest version if not specified in the request
+            model_version = (
+                request.args.get(api_c.VERSION)
+                if request.args.get(api_c.VERSION)
+                else model_versions[0].get(api_c.CURRENT_VERSION)
+            )
 
-                lift_data = tecton.get_model_lift_async(
-                    model_id, current_version
-                )
-
-                if lift_data:
-                    break
+            lift_data = tecton.get_model_lift_async(model_id, model_version)
 
         if not lift_data:
             return jsonify([]), HTTPStatus.NOT_FOUND
