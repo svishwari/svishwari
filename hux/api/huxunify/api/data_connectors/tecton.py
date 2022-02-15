@@ -482,26 +482,23 @@ class Tecton:
 
             # grab the features and match model version.
             version_lift_data = [
-                x[api_c.RESULTS][-1][api_c.FEATURES]
-                for x in response
-                if x[api_c.RESULTS][-1][api_c.FEATURES][7] == model_version
-            ]
-
-            # process lift data
-            latest_lift_data = version_lift_data[-1][api_c.FEATURES]
+                x[api_c.FEATURES]
+                for x in response[0][api_c.RESULTS]
+                if x[api_c.JOIN_KEYS][0] == model_version
+            ][0]
 
             result_lift.append(
                 {
                     api_c.BUCKET: response[1],
-                    api_c.ACTUAL_VALUE: latest_lift_data[0],
-                    api_c.ACTUAL_LIFT: latest_lift_data[3],
-                    api_c.PREDICTED_LIFT: latest_lift_data[4],
-                    api_c.PREDICTED_VALUE: latest_lift_data[9],
-                    api_c.PROFILE_COUNT: int(latest_lift_data[10]),
-                    api_c.ACTUAL_RATE: latest_lift_data[11],
-                    api_c.PREDICTED_RATE: latest_lift_data[12],
-                    api_c.PROFILE_SIZE_PERCENT: latest_lift_data[14] * 100
-                    if latest_lift_data[14]
+                    api_c.ACTUAL_VALUE: version_lift_data[0],
+                    api_c.ACTUAL_LIFT: version_lift_data[3],
+                    api_c.PREDICTED_LIFT: version_lift_data[4],
+                    api_c.PREDICTED_VALUE: version_lift_data[9],
+                    api_c.PROFILE_COUNT: int(version_lift_data[10]),
+                    api_c.ACTUAL_RATE: version_lift_data[11],
+                    api_c.PREDICTED_RATE: version_lift_data[12],
+                    api_c.PROFILE_SIZE_PERCENT: version_lift_data[14] * 100
+                    if version_lift_data[14]
                     else 0,
                 }
             )

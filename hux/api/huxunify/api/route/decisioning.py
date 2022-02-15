@@ -964,7 +964,7 @@ class ModelLiftView(SwaggerView):
             "description": "Model version, if not provided, "
             "it will take the latest.",
             "type": "str",
-            "in": "path",
+            "in": "query",
             "required": False,
             "example": "21.7.31",
         },
@@ -988,7 +988,6 @@ class ModelLiftView(SwaggerView):
         self,
         model_id: str,
         user: dict,
-        model_version: str = None,
     ) -> Tuple[List[dict], int]:
         """Retrieves model lift data.
 
@@ -999,7 +998,6 @@ class ModelLiftView(SwaggerView):
         Args:
             model_id (str): Model ID
             user (dict): User object.
-            model_version (str): Model version
 
         Returns:
             Tuple[List[dict], int]: List containing a dict of model lift data,
@@ -1025,8 +1023,8 @@ class ModelLiftView(SwaggerView):
             tecton = Tecton()
             # get model versions
             model_versions = (
-                [{api_c.CURRENT_VERSION: model_version}]
-                if model_version
+                [{api_c.CURRENT_VERSION: request.args.get(api_c.VERSION)}]
+                if request.args.get(api_c.VERSION)
                 else tecton.get_model_version_history(model_id)
             )
 
