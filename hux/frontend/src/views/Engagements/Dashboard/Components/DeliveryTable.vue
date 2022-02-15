@@ -85,29 +85,23 @@
               :icon-size="17"
             />
           </div>
-          <div v-if="header.value == 'destinations'">
-            <div class="destinations-wrap">
+          <div v-if="header.value == 'destinations'" class="text-body-1">
+            <div>
               <v-row class="align-center">
                 <div>
                   <tooltip
-                    v-for="destination in item[header.value]"
-                    :key="destination.id"
+                    v-for="destination_logo in item[header.value]"
+                    :key="destination_logo.delivery_platform_type"
                   >
                     <template #label-content>
-                      <div class="destination-logo-wrapper">
-                        <div class="logo-wrapper">
-                          <logo
-                            class="added-logo svg-icon"
-                            :type="destination.delivery_platform_type"
-                            :size="24"
-                          />
-                        </div>
-                      </div>
+                      <logo
+                        :type="destination_logo.delivery_platform_type"
+                        size="24"
+                        class="ml-n1"
+                      />
                     </template>
                     <template #hover-content>
-                      <div class="d-flex align-center">
-                        {{ destination.delivery_platform_type }}
-                      </div>
+                      {{ destination_logo.name }}
                     </template>
                   </tooltip>
                 </div>
@@ -115,12 +109,7 @@
                   <tooltip>
                     <template #label-content>
                       <div
-                        class="
-                          resize-destination-button
-                          d-flex
-                          align-items-center
-                          ml-2
-                        "
+                        class="d-flex align-items-center ml-2"
                         data-e2e="add-destination"
                         @click="
                           $emit('onSectionAction', {
@@ -132,9 +121,9 @@
                       >
                         <hux-icon
                           type="plus"
-                          :size="12"
+                          :size="17"
                           color="primary"
-                          class="mr-1 mt-1"
+                          class="ml-n1 mb-1"
                         />
                       </div>
                     </template>
@@ -385,36 +374,5 @@ export default {
 }
 .audience-block {
   padding: 5px 0px 0px 0px !important;
-}
-.destinations-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-direction: row-reverse;
-
-  .destination-logo-wrapper {
-    display: inline-flex;
-    .logo-wrapper {
-      position: relative;
-      .added-logo {
-        margin-top: 8px;
-      }
-      &:hover {
-        .delete-icon {
-          display: block;
-        }
-      }
-    }
-  }
-}
-.resize-destination-button {
-  width: 80px;
-  height: 24px;
-  color: transparent;
-  position: relative;
-  top: 2px;
-  &:hover {
-    cursor: pointer;
-  }
 }
 </style>
