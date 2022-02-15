@@ -223,6 +223,7 @@ class TestNotificationRoutes(RouteTestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description="Successfully delivered audience to platform A.",
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=self.test_username,
         )
 
