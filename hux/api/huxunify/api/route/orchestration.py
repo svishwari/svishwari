@@ -269,7 +269,14 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
         ]
     ]
 
-    return standalone_deliveries
+    return list(
+        {
+            value[db_c.DELIVERY_PLATFORM_ID]: value
+            for value in sorted(
+                standalone_deliveries, key=lambda x: x[db_c.UPDATE_TIME]
+            )
+        }.values()
+    )
 
 
 @add_view_to_blueprint(

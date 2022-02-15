@@ -46,7 +46,7 @@ datafeed_detail_stub_data = [
         "records_processed": 804748,
         "records_processed_percentage": 0.899,
         "records_received": 894681,
-        "status": "Cancelled",
+        "status": "Canceled",
         "thirty_days_avg": 0.829,
     },
     {
@@ -62,7 +62,7 @@ datafeed_detail_stub_data = [
         "records_processed": 371294,
         "records_processed_percentage": 0.53,
         "records_received": 701111,
-        "status": "Cancelled",
+        "status": "Canceled",
         "thirty_days_avg": 0.68,
     },
     {
@@ -86,7 +86,7 @@ datafeed_detail_stub_data = [
         "records_processed": 452154,
         "records_processed_percentage": 0.567,
         "records_received": 797350,
-        "status": "Cancelled",
+        "status": "Canceled",
         "thirty_days_avg": 0.787,
     },
     {

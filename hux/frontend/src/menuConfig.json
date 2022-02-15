@@ -38,15 +38,6 @@
           },
           "size": 14,
           "display": true
-        },
-        {
-          "icon": "customer-profiles",
-          "title": "All Customers",
-          "link": {
-            "name": "CustomerProfiles"
-          },
-          "size": 14,
-          "display": true
         }
       ],
       "display": true
@@ -67,8 +58,17 @@
       "display": true
     },
     {
-      "label": "Customer Insights",
+      "label": "Orchestration",
       "menu": [
+        {
+          "icon": "multiple_map_pins",
+          "title": "Destinations",
+          "link": {
+            "name": "Destinations"
+          },
+          "size": 16,
+          "display": true
+        },
         {
           "icon": "playground",
           "title": "Segment Playground",
@@ -76,21 +76,6 @@
             "name": "SegmentPlayground"
           },
           "size": 14,
-          "display": true
-        }
-      ],
-      "display": true
-    },
-    {
-      "label": "Orchestration",
-      "menu": [
-        {
-          "icon": "destinations",
-          "title": "Destinations",
-          "link": {
-            "name": "Destinations"
-          },
-          "size": 16,
           "display": true
         },
         {
@@ -115,8 +100,17 @@
       "display": true
     },
     {
-      "label": "Measurement",
+      "label": "Insights",
       "menu": [
+        {
+          "icon": "customer-profiles",
+          "title": "Customers",
+          "link": {
+            "name": "CustomerProfiles"
+          },
+          "size": 14,
+          "display": true
+        },
         {
           "icon": "email_deliverability",
           "title": "Email Deliverability",
