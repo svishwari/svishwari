@@ -43,7 +43,7 @@ def create_notification(
     Raises:
         InvalidNotificationType: Error if the passed in notification_type value
             is not valid.
-        MissingValueException: Error if the username is not provided.
+        ValueError: Raised if an invalid value is provided.
     """
 
     # validate type
