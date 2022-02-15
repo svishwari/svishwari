@@ -152,7 +152,7 @@
             v-model="newURL"
             label-text="Edit destination URL"
             :is-disabled="newURL === ''"
-            placeholder="Edit destination URL"
+            placeholder="Destination URL"
             class="pt-5"
             height="40"
             required
