@@ -103,10 +103,13 @@ export default {
       let appendElipsis = (text) =>
         text && text.length > 20 ? text.slice(0, 20) + "..." : text
 
+      let applyNumericFilter = (value) =>
+        this.emptyState ? "-" : this.$options.filters.Numeric(value, true, true)
+
       svg
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(d3Axis.axisBottom(x).ticks(5).tickSize(0))
+        .call(d3Axis.axisBottom(x).ticks(5).tickSize(0).tickFormat(applyNumericFilter))
         .call((g) => g.selectAll(".path").attr("stroke", "#d0d0ce"))
         .attr("stroke-width", "0.2")
         .attr("stroke-opacity", "0.3")

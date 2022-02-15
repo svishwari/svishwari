@@ -36,7 +36,7 @@
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <v-progress-linear
-        v-if="audienceList.length == 0"
+        v-if="loading"
         :active="loading"
         :indeterminate="loading"
       />
@@ -69,7 +69,6 @@
             </router-link>
           </template>
         </page-header>
-        <v-progress-linear :active="loading" :indeterminate="loading" />
         <hux-data-table
           v-if="!loading && audienceList.length > 0"
           :columns="columnDefs"
@@ -294,19 +293,7 @@
         />
       </div>
 
-      <div class="ml-auto">
-        <audience-filter
-          ref="filters"
-          v-model="isFilterToggled"
-          view-height="calc(100vh - 180px)"
-          :filter-options="attributeOptions()"
-          @selected-filters="totalFiltersSelected"
-          @onSectionAction="applyFilter"
-        />
-      </div>
-    </div>
-
-    <div v-if="audienceList.length == 0 && !loading" class="background-empty">
+      <div v-if="audienceList.length == 0 && !loading" class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100 background-empty">
       <empty-page type="no-engagement" size="50">
         <template #title>
           <div class="title-no-engagement">No audiences</div>
@@ -361,6 +348,19 @@
         </template>
       </empty-page>
     </div>
+
+      <div class="ml-auto">
+        <audience-filter
+          ref="filters"
+          v-model="isFilterToggled"
+          view-height="calc(100vh - 180px)"
+          :filter-options="attributeOptions()"
+          @selected-filters="totalFiltersSelected"
+          @onSectionAction="applyFilter"
+        />
+      </div>
+    </div>
+
     <confirm-modal
       v-model="confirmModal"
       icon="sad-face"
