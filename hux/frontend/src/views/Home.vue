@@ -1,223 +1,242 @@
 <template>
-  <hux-page max-width="100%">
-    <template #header>
-      <hux-page-header
-        :title="`Welcome back, ${fullName}!`"
-        :header-height="110"
-        data-e2e="welcome-banner"
-      >
-        <template #left>
-          <p class="text-subtitle-1 font-weight-regular mb-0">
-            Hux is here to help you make better, faster decisions to improve
-            your customer experiences.
-            <a
-              class="text-decoration-none"
-              href="https://resources.deloitte.com/sites/consulting/offerings/customer-marketing/advertising-marketing-commerce/Pages/Hux-by-Deloitte-Digital.aspx"
-              target="_blank"
-            >
-              Learn More &gt;
-            </a>
-          </p>
-        </template>
-      </hux-page-header>
-    </template>
-
-    <v-row
-      :class="totalCustomers.length == 0 ? 'margin-2px-top-3px-bottom' : ''"
-    >
-      <v-col>
-        <v-card
-          class="rounded-lg box-shadow-5"
-          :height="totalCustomers.length == 0 ? 280 : 367"
+  <div>
+    <hux-page max-width="100%">
+      <template #header>
+        <hux-page-header
+          :title="`Welcome back, ${fullName}!`"
+          :header-height="110"
+          data-e2e="welcome-banner"
         >
-          <v-card-title v-if="totalCustomers.length != 0" class="pa-6">
-            <h3 class="text-h3 black--text text--darken-4">
-              Total customers
-              <span class="text-body-1 black--text text--lighten-4">
-                (last 9 months)
-              </span>
-            </h3>
-          </v-card-title>
-
-          <v-progress-linear
-            v-if="loadingTotalCustomers"
-            :active="loadingTotalCustomers"
-            :indeterminate="loadingTotalCustomers"
-          />
-
-          <hux-total-customer-chart
-            v-if="!loadingTotalCustomers && totalCustomers.length != 0"
-            :customers-data="totalCustomers"
-            :months-duration="9"
-            data-e2e="total-customers-chart"
-          />
-
-          <v-row
-            v-if="!loadingTotalCustomers && totalCustomers.length == 0"
-            class="total-customers-chart-frame py-14"
-          >
-            <empty-page
-              v-if="!totalCustomersChartErrorState"
-              type="model-features-empty"
-              :size="50"
-            >
-              <template #title>
-                <div class="title-no-notification">No data to show</div>
-              </template>
-              <template #subtitle>
-                <div class="des-no-notification">
-                  Total customer chart will appear here once Customer data is
-                  available.
-                </div>
-              </template>
-            </empty-page>
-            <empty-page
-              v-else
-              class="title-no-notification"
-              type="error-on-screens"
-              :size="50"
-            >
-              <template #title>
-                <div class="title-no-notification">
-                  Total customer chart is currently unavailable
-                </div>
-              </template>
-              <template #subtitle>
-                <div class="des-no-notification">
-                  Our team is working hard to fix it. Please be patient and try
-                  again soon!
-                </div>
-              </template>
-            </empty-page>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col>
-        <v-card
-          class="rounded-lg box-shadow-5"
-          data-e2e="latest-notifications"
-          :height="numNotifications == 0 ? 280 : auto"
-        >
-          <v-card-title v-if="numNotifications != 0" class="pa-6">
-            <h3 class="text-h3 black--text text--darken-4">Latest alerts</h3>
-          </v-card-title>
-
-          <v-progress-linear
-            v-if="loadingNotifications"
-            :active="loadingNotifications"
-            :indeterminate="loadingNotifications"
-          />
-
-          <hux-data-table
-            v-if="!loadingNotifications && numNotifications != 0"
-            :columns="tableColumns"
-            :data-items="notifications"
-            class="notifications-table"
-            sort-column="created"
-            sort-desc
-          >
-            <template #row-item="{ item }">
-              <td
-                v-for="header in tableColumns"
-                :key="header.value"
-                class="text-body-1 py-4 mw-100 text-truncate"
+          <template #left>
+            <p class="text-subtitle-1 font-weight-regular mb-0">
+              Hux is here to help you make better, faster decisions to improve
+              your customer experiences.
+              <a
+                class="text-decoration-none"
+                href="https://resources.deloitte.com/sites/consulting/offerings/customer-marketing/advertising-marketing-commerce/Pages/Hux-by-Deloitte-Digital.aspx"
+                target="_blank"
               >
-                <template v-if="header.value == 'id'">
-                  <a
-                    href="javascript:void(0)"
-                    class="text-body-1 text-decoration-none"
-                    @click="openAlertDrawer(item[header.value])"
-                  >
-                    {{ item[header.value] | Shorten }}
-                  </a>
-                </template>
+                Learn More &gt;
+              </a>
+            </p>
+          </template>
+        </hux-page-header>
+      </template>
 
-                <template v-if="header.value == 'category'">
-                  <hux-tooltip>
-                    {{ item[header.value] }}
-                    <template #tooltip> {{ item[header.value] }} </template>
-                  </hux-tooltip>
-                </template>
-
-                <template v-if="header.value == 'notification_type'">
-                  <!-- TODO: HUS-1305 update icon -->
-                  <hux-status
-                    :status="item['notification_type']"
-                    :show-label="true"
-                    :icon-size="20"
-                  />
-                </template>
-
-                <template v-if="header.value == 'description'">
-                  <hux-tooltip>
-                    {{ item[header.value] }}
-                    <template #tooltip> {{ item[header.value] }} </template>
-                  </hux-tooltip>
-                </template>
-
-                <template v-if="header.value == 'created'">
-                  <hux-time-stamp :value="item['created']" />
-                </template>
-              </td>
-            </template>
-          </hux-data-table>
-
-          <v-row
-            v-if="!loadingNotifications && numNotifications == 0"
-            class="notifications-table-frame py-14"
+      <v-row
+        :class="totalCustomers.length == 0 ? 'margin-2px-top-3px-bottom' : ''"
+      >
+        <v-col>
+          <v-card
+            class="rounded-lg box-shadow-5"
+            :height="totalCustomers.length == 0 ? 280 : 367"
           >
-            <empty-page
-              v-if="!notificationsTableErrorState"
-              type="lift-table-empty"
-              :size="50"
-            >
-              <template #title>
-                <div class="title-no-notification">No data to show</div>
-              </template>
-              <template #subtitle>
-                <div class="des-no-notification">
-                  Latest alerts table will appear here once you start getting
-                  alerts.
-                </div>
-              </template>
-            </empty-page>
-            <empty-page
-              v-else
-              class="title-no-notification"
-              type="error-on-screens"
-              :size="50"
-            >
-              <template #title>
-                <div class="title-no-notification">
-                  Latest alerts table is currently unavailable
-                </div>
-              </template>
-              <template #subtitle>
-                <div class="des-no-notification">
-                  Our team is working hard to fix it. Please be patient and try
-                  again soon!
-                </div>
-              </template>
-            </empty-page>
-          </v-row>
+            <v-card-title v-if="totalCustomers.length != 0" class="pa-6">
+              <h3 class="text-h3 black--text text--darken-4">
+                Total customers
+                <span class="text-body-1 black--text text--lighten-4">
+                  (last 9 months)
+                </span>
+              </h3>
+            </v-card-title>
 
-          <v-card-actions v-if="numNotifications != 0" class="pa-6">
-            <router-link
-              :to="{ name: 'AlertsAndNotifications' }"
-              class="text-body-1 text-decoration-none"
-              data-e2e="all-notifications-link"
+            <v-progress-linear
+              v-if="loadingTotalCustomers"
+              :active="loadingTotalCustomers"
+              :indeterminate="loadingTotalCustomers"
+            />
+
+            <hux-total-customer-chart
+              v-if="!loadingTotalCustomers && totalCustomers.length != 0"
+              :customers-data="totalCustomers"
+              :months-duration="9"
+              data-e2e="total-customers-chart"
+            />
+
+            <v-row
+              v-if="!loadingTotalCustomers && totalCustomers.length == 0"
+              class="total-customers-chart-frame py-14"
             >
-              View all alerts
-            </router-link>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-    <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
-  </hux-page>
+              <empty-page
+                v-if="!totalCustomersChartErrorState"
+                type="model-features-empty"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">No data to show</div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Total customer chart will appear here once Customer data is
+                    available.
+                  </div>
+                </template>
+              </empty-page>
+              <empty-page
+                v-else
+                class="title-no-notification"
+                type="error-on-screens"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">
+                    Total customer chart is currently unavailable
+                  </div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Our team is working hard to fix it. Please be patient and
+                    try again soon!
+                  </div>
+                </template>
+              </empty-page>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col>
+          <v-card
+            class="rounded-lg box-shadow-5"
+            data-e2e="latest-notifications"
+            :height="numNotifications == 0 ? 280 : auto"
+          >
+            <v-card-title v-if="numNotifications != 0" class="pa-6">
+              <h3 class="text-h3 black--text text--darken-4">Latest alerts</h3>
+            </v-card-title>
+
+            <v-progress-linear
+              v-if="loadingNotifications"
+              :active="loadingNotifications"
+              :indeterminate="loadingNotifications"
+            />
+
+            <hux-data-table
+              v-if="!loadingNotifications && numNotifications != 0"
+              :columns="tableColumns"
+              :data-items="notifications"
+              class="notifications-table"
+              sort-column="created"
+              sort-desc
+            >
+              <template #row-item="{ item }">
+                <td
+                  v-for="header in tableColumns"
+                  :key="header.value"
+                  class="text-body-1 py-4 mw-100 text-truncate"
+                >
+                  <template v-if="header.value == 'id'">
+                    <a
+                      href="javascript:void(0)"
+                      class="text-body-1 text-decoration-none"
+                      @click="openAlertDrawer(item[header.value])"
+                    >
+                      {{ item[header.value] | Shorten }}
+                    </a>
+                  </template>
+
+                  <template v-if="header.value == 'category'">
+                    <hux-tooltip>
+                      {{ item[header.value] }}
+                      <template #tooltip> {{ item[header.value] }} </template>
+                    </hux-tooltip>
+                  </template>
+
+                  <template v-if="header.value == 'notification_type'">
+                    <!-- TODO: HUS-1305 update icon -->
+                    <hux-status
+                      :status="item['notification_type']"
+                      :show-label="true"
+                      :icon-size="20"
+                    />
+                  </template>
+
+                  <template v-if="header.value == 'description'">
+                    <hux-tooltip>
+                      {{ item[header.value] }}
+                      <template #tooltip> {{ item[header.value] }} </template>
+                    </hux-tooltip>
+                  </template>
+
+                  <template v-if="header.value == 'created'">
+                    <hux-time-stamp :value="item['created']" />
+                  </template>
+                </td>
+              </template>
+            </hux-data-table>
+
+            <v-row
+              v-if="!loadingNotifications && numNotifications == 0"
+              class="notifications-table-frame py-14"
+            >
+              <empty-page
+                v-if="!notificationsTableErrorState"
+                type="lift-table-empty"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">No data to show</div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Latest alerts table will appear here once you start getting
+                    alerts.
+                  </div>
+                </template>
+              </empty-page>
+              <empty-page
+                v-else
+                class="title-no-notification"
+                type="error-on-screens"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">
+                    Latest alerts table is currently unavailable
+                  </div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Our team is working hard to fix it. Please be patient and
+                    try again soon!
+                  </div>
+                </template>
+              </empty-page>
+            </v-row>
+
+            <v-card-actions v-if="numNotifications != 0" class="pa-6">
+              <router-link
+                :to="{ name: 'AlertsAndNotifications' }"
+                class="text-body-1 text-decoration-none"
+                data-e2e="all-notifications-link"
+              >
+                View all alerts
+              </router-link>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
+    </hux-page>
+    <v-card flat class="d-flex help-section pa-7">
+      <span class="d-flex align-center text-body-1">
+        <icon type="kx" :size="36" class="mr-2" /> Need some help or guidance?
+        &nbsp;
+        <a
+          href="https://www.deloittedigital.com/us/en/offerings/customer-led-marketing/advertising--marketing-and-commerce/hux.html"
+          target="_blank"
+          class="text-decoration-none"
+        >
+          <span class="primary--text cursor-pointer">
+            Click here to access demo scripts, videos, FAQs, and more.
+            <icon type="new_tab_link" size="10" color="primary" class="mb-2" />
+          </span>
+        </a>
+      </span>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -232,6 +251,7 @@ import HuxStatus from "@/components/common/Status.vue"
 import HuxTotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart.vue"
 import AlertDrawer from "./AlertsAndNotifications/Drawer/AlertDrawer.vue"
 import EmptyPage from "@/components/common/EmptyPage"
+import Icon from "../components/common/Icon.vue"
 
 export default {
   name: "Home",
@@ -246,6 +266,7 @@ export default {
     HuxTotalCustomerChart,
     AlertDrawer,
     EmptyPage,
+    Icon,
   },
 
   data() {
@@ -375,5 +396,9 @@ export default {
 .margin-2px-top-3px-bottom {
   margin-top: 2px;
   margin-bottom: 3px;
+}
+.help-section {
+  background: var(--v-primary-lighten2);
+  height: 96px;
 }
 </style>

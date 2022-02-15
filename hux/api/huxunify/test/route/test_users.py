@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 from http import HTTPStatus
 
 import requests_mock
+from bson import ObjectId
 
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
@@ -28,6 +29,7 @@ class TestUserRoutes(RouteTestCase):
         """Setup resources before each test."""
 
         super().setUp()
+        self.load_test_data(self.database)
 
         # mock get_db_client() in users
         mock.patch(
@@ -115,7 +117,7 @@ class TestUserRoutes(RouteTestCase):
         Testing by sending audience_id not in DB, here using engagement ID.
         """
 
-        invalid_audience_id = self.engagement_id
+        invalid_audience_id = ObjectId()
 
         endpoint = (
             f"{t_c.BASE_ENDPOINT}"
@@ -210,17 +212,9 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        t_c.validate_schema(UserSchema(), response.json, True)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(2, len(response.json))
-        self.assertIsNotNone(response.json[0][api_c.DISPLAY_NAME])
-        self.assertIsNotNone(response.json[0][api_c.EMAIL])
-        self.assertIsNotNone(response.json[0][api_c.USER_PHONE_NUMBER])
-        self.assertIsNotNone(response.json[0][api_c.USER_ACCESS_LEVEL])
-        self.assertIn(
-            response.json[0][api_c.USER_ACCESS_LEVEL],
-            ["Edit", "View-only", "Admin"],
-        )
+        self.assertEqual(5, len(response.json))
+        t_c.validate_schema(UserSchema(), response.json, True)
 
     def test_get_user_profile_bad_request_failure(self):
         """Test 400 response of getting user profile using Okta ID."""

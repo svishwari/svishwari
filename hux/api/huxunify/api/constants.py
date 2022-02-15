@@ -64,7 +64,8 @@ AZURE_BATCH_ACCOUNT_KEY = "AZURE_BATCH_ACCOUNT_KEY"
 AZURE_BATCH_ACCOUNT_URL = "AZURE_BATCH_ACCOUNT_URL"
 AZURE_STORAGE_ACCOUNT_NAME = "AZURE_STORAGE_ACCOUNT_NAME"
 AZURE_STORAGE_ACCOUNT_KEY = "AZURE_STORAGE_ACCOUNT_KEY"
-AZURE_BLOB_CONTAINER_NAME = "AZURE_BLOB_CONTAINER_NAME"
+AZURE_STORAGE_CONTAINER_NAME = "AZURE_STORAGE_CONTAINER_NAME"
+AZURE_STORAGE_BLOB_NAME = "AZURE_STORAGE_BLOB_NAME"
 AZURE_KEY_VAULT_NAME = "AZURE_KEY_VAULT_NAME"
 
 # ORCH ROUTER PARAMS FOR OKTA
@@ -334,7 +335,7 @@ STATUS_COMPLETE = "Complete"
 STATUS_INCOMPLETE = "Incomplete"
 STATUS_RUNNING = "Running"
 STATUS_FAILED = "Failed"
-STATUS_CANCELLED = "Cancelled"
+STATUS_CANCELLED = "Canceled"
 
 STATUS_MAPPING = {
     db_c.STATUS_IN_PROGRESS: STATUS_DELIVERING,
@@ -1172,15 +1173,21 @@ NOTIFICATION_TYPE = "notification_type"
 MONGO_CONNECTION_HEALTH = "mongo_connection_health"
 TECTON_CONNECTION_HEALTH = "tecton_connection_health"
 OKTA_CONNECTION_HEALTH = "okta_connection_health"
-AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
-AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
-AWS_S3_CONNECTION_HEALTH = "aws_s3_connection_health"
-AWS_EVENTS_CONNECTION_HEALTH = "aws_events_connection_health"
 CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
 CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
     "cdm_connection_service_connection_health"
 )
 JIRA_CONNECTION_HEALTH = "jira_connection_health"
+
+# AWS health metrics constants
+AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
+AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
+AWS_S3_CONNECTION_HEALTH = "aws_s3_connection_health"
+AWS_EVENTS_CONNECTION_HEALTH = "aws_events_connection_health"
+
+# AZURE health metrics constants
+AZURE_BATCH_CONNECTION_HEALTH = "azure_batch_connection_health"
+AZURE_BLOB_CONNECTION_HEALTH = "azure_blob_connection_health"
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
@@ -1574,7 +1581,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
                 "status": random.choice(["Success", "Failed"]),
                 "timestamp": datetime.datetime.now()
                 - datetime.timedelta(days=x),
-                "duration": "00:12:41",
+                "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
             for x in range(0, 10)
@@ -1590,7 +1597,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
                 "status": random.choice(["Success", "Failed"]),
                 "timestamp": datetime.datetime.now()
                 - datetime.timedelta(days=x),
-                "duration": "00:12:41",
+                "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
             for x in range(0, random.randrange(10))

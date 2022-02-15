@@ -81,8 +81,9 @@ class Config:
     AZURE_STORAGE_ACCOUNT_KEY = config(
         api_c.AZURE_STORAGE_ACCOUNT_KEY, default=""
     )
-    AZURE_BLOB_CONTAINER_NAME = config(
-        api_c.AZURE_BLOB_CONTAINER_NAME, default=""
+    AZURE_STORAGE_BLOB_NAME = config(api_c.AZURE_STORAGE_BLOB_NAME, default="")
+    AZURE_STORAGE_CONTAINER_NAME = config(
+        api_c.AZURE_STORAGE_CONTAINER_NAME, default=""
     )
     AZURE_KEY_VAULT_NAME = config(api_c.AZURE_KEY_VAULT_NAME, default="")
 

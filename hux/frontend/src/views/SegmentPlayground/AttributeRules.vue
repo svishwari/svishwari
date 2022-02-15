@@ -46,12 +46,12 @@
             text--darken-4 text-body-2
           "
         >
-          <span class="mr-2">Match</span>
+          <span class="mr-2">Include customers that match &nbsp;</span>
           <hux-switch
             v-model="rule.operand"
             @input="triggerSizingForRule(rule)"
           />
-          of the following
+          of the following:
         </div>
 
         <v-col
