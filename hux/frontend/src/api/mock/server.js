@@ -101,7 +101,7 @@ export function makeServer({ environment = "development" } = {}) {
     user: Factory.extend(userFactory),
     configuration: Factory.extend(configurationFactory),
     application: Factory.extend(applicationFactory),
-    emailDeliverability:  Factory.extend(emailDeliverability),
+    emailDeliverability: Factory.extend(emailDeliverability),
   }
 
   const server = createServer({
