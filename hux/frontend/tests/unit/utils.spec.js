@@ -196,7 +196,7 @@ describe("Utils", () => {
   describe("Group Date Format", () => {
     it("Should provide date format in month day", () => {
       const data = "2021-12-20T02:28:20.203Z"
-      expect(formatDate(data)).toEqual("Dec 20")
+      expect(formatDate(data)).toEqual("Dec 19")
     })
   })
 })

@@ -25,8 +25,8 @@
         <template #activator="{ on }">
           <div class="pl-4 client py-2 mb-2" v-on="on">
             <span class="d-flex align-center justify-space-between">
-              <span class="d-flex align-center black--text">
-                <logo :type="client.logo" :size="24" class="mr-2" />
+              <span class="d-flex align-center black--text text-h4">
+                <logo :type="client.logo" :size="24" class="mr-2"/>
                 {{ client.name }}
               </span>
               <span class="mr-3">
@@ -212,7 +212,6 @@ export default {
     background-color: rgba(160, 220, 255, 0.25);
     color: var(--v-black-lighten4);
     font-family: Open Sans Light;
-    font-size: 18px;
   }
 
   .v-icon {
