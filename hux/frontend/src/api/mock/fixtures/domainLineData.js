@@ -373,7 +373,7 @@ export default {
       date: "2022-02-03T00:00:00.000Z",
     },
   ],
-  open_Rate: [
+  open_rate: [
     {
       domain_1: 0.7581055325821131,
       date: "2021-11-03T00:00:00.000Z",

@@ -176,7 +176,6 @@ export default {
         .scaleTime()
         .domain(xAxisMinMaxValue)
         .range([this.margin.left, width - this.margin.right])
-        .nice(this.xAxisMaxTicks)
 
       // function to generate coordinates for y-axis
       let yCoordinateFunction = d3Scale

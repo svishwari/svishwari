@@ -3,8 +3,8 @@
     <template #header>
       <page-header
         class="page-header py-5"
-        :header-min-height="110"
-        :header-max-height="120"
+        header-min-height="110"
+        header-max-height="120"
       >
         <template #left>
           <div>
@@ -31,102 +31,110 @@
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
-    <!-- Header Overview section -->
-    <overview :entity="entity" />
-    <!-- Delivered count -->
-    <delivered-chart />
-    <!-- Sending domains overview -->
-    <overview-1 :list="entity.overviewList" />
-    <!-- Domains overview chart -->
-    <v-row v-if="domainChartData.sent && domainChartData.deliveredRate">
-      <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-          <v-card-title class="pb-2 pl-6 pt-5">
-            <h3 class="text-h3">Sent</h3>
-          </v-card-title>
-          <domain-overview-chart
-            :chart-data="domainChartData.sent.data"
-            :chart-type="domainChartData.sent.type"
-          />
-        </v-card>
-      </v-col>
-      <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-          <v-card-title class="pb-2 pl-6 pt-5">
-            <h3 class="text-h3">Delivered rate</h3>
-          </v-card-title>
-          <domain-overview-chart
-            :chart-data="domainChartData.deliveredRate.data"
-            :chart-type="domainChartData.deliveredRate.type"
-          />
-        </v-card>
-      </v-col>
-    </v-row>
+    <div v-if="overviewData && !loading">
+      <!-- Header Overview section -->
+      <overview :entity="entity" />
+      <!-- Delivered count -->
+      <delivered-chart
+        v-if="deliveredCountData.length > 0"
+        :email-data="deliveredCountData"
+      />
+      <!-- Sending domains overview -->
+      <overview-1
+        v-if="overviewData"
+        :list="overviewData.sending_domains_overview"
+      />
+      <!-- Domains overview chart -->
+      <v-row v-if="domainChartData.sent && domainChartData.deliveredRate">
+        <v-col md="6">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+            <v-card-title class="pb-2 pl-6 pt-5">
+              <h3 class="text-h3">Sent</h3>
+            </v-card-title>
+            <domain-overview-chart
+              :chart-data="domainChartData.sent.data"
+              :chart-type="domainChartData.sent.type"
+            />
+          </v-card>
+        </v-col>
+        <v-col md="6">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+            <v-card-title class="pb-2 pl-6 pt-5">
+              <h3 class="text-h3">Delivered rate</h3>
+            </v-card-title>
+            <domain-overview-chart
+              :chart-data="domainChartData.deliveredRate.data"
+              :chart-type="domainChartData.deliveredRate.type"
+            />
+          </v-card>
+        </v-col>
+      </v-row>
 
-    <v-row v-if="domainChartData.openRate && domainChartData.clickRate">
-      <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-          <v-card-title class="pb-2 pl-6 pt-5">
-            <h3 class="text-h3">Open rate</h3>
-          </v-card-title>
-          <domain-overview-chart
-            :chart-data="domainChartData.openRate.data"
-            :chart-type="domainChartData.openRate.type"
-          />
-        </v-card>
-      </v-col>
-      <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-          <v-card-title class="pb-2 pl-6 pt-5">
-            <h3 class="text-h3">Click rate</h3>
-          </v-card-title>
-          <domain-overview-chart
-            :chart-data="domainChartData.clickRate.data"
-            :chart-type="domainChartData.clickRate.type"
-          />
-        </v-card>
-      </v-col>
-    </v-row>
+      <v-row v-if="domainChartData.openRate && domainChartData.clickRate">
+        <v-col md="6">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+            <v-card-title class="pb-2 pl-6 pt-5">
+              <h3 class="text-h3">Open rate</h3>
+            </v-card-title>
+            <domain-overview-chart
+              :chart-data="domainChartData.openRate.data"
+              :chart-type="domainChartData.openRate.type"
+            />
+          </v-card>
+        </v-col>
+        <v-col md="6">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+            <v-card-title class="pb-2 pl-6 pt-5">
+              <h3 class="text-h3">Click rate</h3>
+            </v-card-title>
+            <domain-overview-chart
+              :chart-data="domainChartData.clickRate.data"
+              :chart-type="domainChartData.clickRate.type"
+            />
+          </v-card>
+        </v-col>
+      </v-row>
 
-    <v-row
-      v-if="domainChartData.unsubscribeRate && domainChartData.complaintsRate"
-    >
-      <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-          <v-card-title class="pb-2 pl-6 pt-5">
-            <h3 class="text-h3">Unsubscribe Rate</h3>
-          </v-card-title>
-          <domain-overview-chart
-            :chart-data="domainChartData.unsubscribeRate.data"
-            :chart-type="domainChartData.unsubscribeRate.type"
-          />
-        </v-card>
-      </v-col>
-      <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-          <v-card-title class="pb-2 pl-6 pt-5">
-            <h3 class="text-h3">Complaints rate</h3>
-          </v-card-title>
-          <domain-overview-chart
-            :chart-data="domainChartData.complaintsRate.data"
-            :chart-type="domainChartData.complaintsRate.type"
-          />
-        </v-card>
-      </v-col>
-    </v-row>
+      <v-row
+        v-if="domainChartData.unsubscribeRate && domainChartData.complaintsRate"
+      >
+        <v-col md="6">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+            <v-card-title class="pb-2 pl-6 pt-5">
+              <h3 class="text-h3">Unsubscribe Rate</h3>
+            </v-card-title>
+            <domain-overview-chart
+              :chart-data="domainChartData.unsubscribeRate.data"
+              :chart-type="domainChartData.unsubscribeRate.type"
+            />
+          </v-card>
+        </v-col>
+        <v-col md="6">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+            <v-card-title class="pb-2 pl-6 pt-5">
+              <h3 class="text-h3">Complaints rate</h3>
+            </v-card-title>
+            <domain-overview-chart
+              :chart-data="domainChartData.complaintsRate.data"
+              :chart-type="domainChartData.complaintsRate.type"
+            />
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
   </page>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-
-import Breadcrumb from "../../../components/common/Breadcrumb.vue"
-import Page from "../../../components/Page.vue"
-import PageHeader from "../../../components/PageHeader.vue"
+import Breadcrumb from "@/components/common/Breadcrumb.vue"
+import Page from "@/components/Page.vue"
+import PageHeader from "@/components/PageHeader.vue"
 import DeliveredChart from "./DeliveredChart.vue"
 import Overview1 from "./Domain/Overview.vue"
 import Overview from "./Overview.vue"
-import DomainOverviewChart from "../../../components/common/DomainOverviewChart/DomainOverviewChart.vue"
+import DomainOverviewChart from "@/components/common/DomainOverviewChart/DomainOverviewChart.vue"
+
 export default {
   name: "EmailDeliverability",
   components: {
@@ -145,73 +153,66 @@ export default {
         description:
           "Email engagement is key for successful email deliverability. The displayed charts highlight performance for the last 90 days.",
         overAllRate: 0.95,
-        overviewList: [
-          {
-            domain: "Domain name",
-            sent: 554,
-            bounce_rate: 0.14,
-            open_rate: 0.91,
-            click_rate: 0.85,
-          },
-          {
-            domain: "Domain name",
-            sent: 554,
-            bounce_rate: 0.14,
-            open_rate: 0.91,
-            click_rate: 0.85,
-          },
-          {
-            domain: "Domain name",
-            sent: 554,
-            bounce_rate: 0.14,
-            open_rate: 0.91,
-            click_rate: 0.85,
-          },
-        ],
+        overviewList: [],
       },
       domainChartData: {},
+      deliveredCountData: [],
     }
   },
   computed: {
     ...mapGetters({
       emailDomain: "emailDeliverability/domainlist",
+      overviewData: "emailDeliverability/getOverview",
     }),
   },
-  async mounted() {
-    await this.getEmailDomain()
-    if (this.emailDomain) {
-      this.domainChartData = {
-        sent: {
-          data: this.emailDomain.sent,
-          type: "sent",
-        },
-        openRate: {
-          data: this.emailDomain.open_Rate,
-          type: "open rate",
-        },
-        deliveredRate: {
-          data: this.emailDomain.delivered_rate,
-          type: "Delivered rate",
-        },
-        clickRate: {
-          data: this.emailDomain.click_rate,
-          type: "Click rate",
-        },
-        unsubscribeRate: {
-          data: this.emailDomain.unsubscribe_rate,
-          type: "Unsubscribe rate",
-        },
-        complaintsRate: {
-          data: this.emailDomain.complaints_rate,
-          type: "Complaints rate",
-        },
-      }
-    }
+  mounted() {
+    this.fetchOverview()
+    this.fetchDomainData()
   },
   methods: {
     ...mapActions({
       getEmailDomain: "emailDeliverability/getDomain",
+      getOverviewData: "emailDeliverability/getEmailDeliverabilityOverview",
     }),
+    async fetchOverview() {
+      this.loading = true
+      await this.getOverviewData()
+      this.entity.overAllRate = this.overviewData.overall_inbox_rate
+      this.entity.overviewList = this.overviewData.sending_domains_overview
+      this.deliveredCountData = this.overviewData.delivered_open_rate_overview
+      this.loading = false
+    },
+    async fetchDomainData() {
+      await this.getEmailDomain()
+      if (this.emailDomain) {
+        this.domainChartData = {
+          sent: {
+            data: this.emailDomain.sent,
+            type: "sent",
+          },
+          openRate: {
+            data: this.emailDomain.open_rate,
+            type: "open rate",
+          },
+          deliveredRate: {
+            data: this.emailDomain.delivered_rate,
+            type: "Delivered rate",
+          },
+          clickRate: {
+            data: this.emailDomain.click_rate,
+            type: "Click rate",
+          },
+          unsubscribeRate: {
+            data: this.emailDomain.unsubscribe_rate,
+            type: "Unsubscribe rate",
+          },
+          complaintsRate: {
+            data: this.emailDomain.complaints_rate,
+            type: "Complaints rate",
+          },
+        }
+      }
+    },
   },
 }
 </script>

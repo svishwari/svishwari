@@ -61,12 +61,15 @@ import { nest } from "d3-collection"
 import LineBarChart from "@/components/common/Charts/LineBarChart/LineBarChart.vue"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
-import emailData from "@/api/mock/fixtures/deliveredCountData.js"
 
 export default {
   name: "DeliveredChart",
   components: { LineBarChart, ChartTooltip },
   props: {
+    emailData: {
+      type: Array,
+      required: true,
+    },
     monthsDuration: {
       type: Number,
       required: false,
@@ -93,7 +96,6 @@ export default {
         height: 0,
       },
       toolTipStyle: TooltipConfiguration.emailDeliverabilityChart,
-      emailData: emailData.delivered_open_rate_overivew,
     }
   },
   mounted() {
