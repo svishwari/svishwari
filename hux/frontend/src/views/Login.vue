@@ -48,7 +48,7 @@ export default {
           pkce: true,
           issuer: config.default.oidc.issuer,
           display: "page",
-          scopes: ["openid", "email", "profile"],
+          scopes: ["openid", "email", "profile", "groups"],
         },
       })
 

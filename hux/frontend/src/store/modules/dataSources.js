@@ -84,9 +84,18 @@ const actions = {
     }
   },
 
-  async getDataFeedsDetails({ commit }, { type, name }) {
+  async getDataFeedsDetails(
+    { commit },
+    { type, name, start_date = null, end_date = null, status = null }
+  ) {
     try {
-      const response = await api.dataSources.dataFeedsDetails(type, name)
+      const response = await api.dataSources.dataFeedsDetails(
+        type,
+        name,
+        start_date,
+        end_date,
+        status
+      )
       commit("SET_DATA_FEEDS_DETAILS", response.data)
     } catch (error) {
       handleError(error)
