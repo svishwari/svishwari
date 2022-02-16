@@ -1159,6 +1159,13 @@ def set_delivery_job(
                 (db_c.DELIVERY_PLATFORM_ID, pymongo.ASCENDING),
             ]
         )
+        collection.create_index(
+            [
+                (db_c.AUDIENCE_ID, pymongo.ASCENDING),
+                (db_c.ENGAGEMENT_ID, pymongo.ASCENDING),
+            ],
+            name="audience_engagement_index",
+        )
 
         if delivery_job_id is not None:
             return collection.find_one(
@@ -1677,8 +1684,9 @@ def create_delivery_job_generic_campaigns(
     if get_delivery_job(database, delivery_job_id) is None:
         raise de.InvalidID(delivery_job_id)
 
-    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[db_c.DELIVERY_JOBS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.DELIVERY_JOBS_COLLECTION
+    ]
 
     try:
         return collection.find_one_and_update(
