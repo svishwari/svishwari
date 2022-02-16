@@ -25,6 +25,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     requires_access_levels,
 )
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
     get_required_shap_data,
@@ -1026,7 +1027,7 @@ class ModelLiftView(SwaggerView):
             model_versions = tecton.get_model_version_history(model_id)
 
             if not model_versions:
-                return jsonify([]), HTTPStatus.NOT_FOUND
+                return HuxResponse.NOT_FOUND("No model version found for the model.")
 
             # set model version to latest version if not specified in the request
             model_version = (
@@ -1038,14 +1039,11 @@ class ModelLiftView(SwaggerView):
             lift_data = tecton.get_model_lift_async(model_id, model_version)
 
         if not lift_data:
-            return jsonify([]), HTTPStatus.NOT_FOUND
+            return HuxResponse.NOT_FOUND("No model lift data found for the model.")
 
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
 
-        return (
-            jsonify(ModelLiftSchema(many=True).dump(lift_data)),
-            HTTPStatus.OK.value,
-        )
+        return HuxResponse.OK(data=lift_data, data_schema=ModelLiftSchema())
 
 
 @add_view_to_blueprint(
