@@ -40,7 +40,10 @@
         :email-data="deliveredCountData"
       />
       <!-- Sending domains overview -->
-      <overview-1 v-if="overviewData" :list="entity.overviewList" />
+      <overview-1
+        v-if="overviewData"
+        :list="overviewData.sending_domains_overview"
+      />
       <!-- Domains overview chart -->
       <v-row v-if="domainChartData.sent && domainChartData.deliveredRate">
         <v-col md="6">
@@ -174,8 +177,8 @@ export default {
     async fetchOverview() {
       this.loading = true
       await this.getOverviewData()
-      this.entity.overAllRate = this.overviewData.overall_inbox_rate,
-      this.entity.overviewList = this.overviewData.sending_domains_overview,
+      this.entity.overAllRate = this.overviewData.overall_inbox_rate
+      this.entity.overviewList = this.overviewData.sending_domains_overview
       this.deliveredCountData = this.overviewData.delivered_open_rate_overview
       this.loading = false
     },
