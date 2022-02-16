@@ -5,13 +5,13 @@ from random import uniform
 
 from pymongo import MongoClient
 
-from huxunify.api import constants as api_c
-from huxunify.api.route.utils import clean_domain_name_string
-
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.deliverability_metrics_management import (
     get_domain_wise_inbox_percentage_data,
 )
+
+from huxunify.api import constants as api_c
+from huxunify.api.route.utils import clean_domain_name_string
 
 
 def get_delivered_rate_data(
