@@ -16,4 +16,5 @@ export default {
   configurations: "/configurations",
   applications: "/applications",
   clients: "/client-projects",
+  emailDeliverability: "/email_deliverability",
 }

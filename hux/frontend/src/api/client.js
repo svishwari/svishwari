@@ -416,10 +416,6 @@ client["models"].drift = (id, version) => {
   else return http.get(`/models/${id}/drift`)
 }
 
-client["models"].emailDomain = () => {
-  return http.get("/email_deliverability/domains")
-}
-
 client["models"].modelFeatures = (id, version) => {
   if (version) return http.get(`/models/${id}/features?version=${version}`)
   else return http.get(`/models/${id}/features`)
@@ -449,6 +445,15 @@ client.applications.createApplication = (data) => {
 
 client.applications.updateApplication = (id, data) => {
   return http.patch(`/applications/${id}`, data)
+}
+
+//#region Email Deliverability
+client["emailDeliverability"].emailDomain = () => {
+  return http.get("/email_deliverability/domains")
+}
+
+client["emailDeliverability"].getOverview = () => {
+  return http.get("/email_deliverability/overview")
 }
 
 export default client

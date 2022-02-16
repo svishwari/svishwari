@@ -491,7 +491,17 @@ export default {
       delivered_count: 90,
     },
     {
-      date: "2022-02-07T00:00:00.000Z",
+      date: "2022-02-14T00:00:00.000Z",
+      open_rate: 0.6272,
+      delivered_count: 190,
+    },
+    {
+      date: "2022-02-15T00:00:00.000Z",
+      open_rate: 0.6272,
+      delivered_count: 190,
+    },
+    {
+      date: "2022-02-16T00:00:00.000Z",
       open_rate: 0.6272,
       delivered_count: 190,
     },
