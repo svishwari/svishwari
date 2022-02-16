@@ -168,6 +168,12 @@ export const defineRoutes = (server) => {
     }
   )
 
+  server.put("/destinations/:id", (schema, request) => {
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    return schema.destinations.find(id).update(requestData)
+  })
+
   server.post("/destinations/validate", (_, request) => {
     const code = 200
     const headers = {}
