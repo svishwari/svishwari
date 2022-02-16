@@ -94,12 +94,12 @@
                     <tooltip v-else>
                       <template #label-content>
                         <span class="black--text text-body-1 data-feed-name">
-                          {{ formatDate(item[header.value]) }}
+                          {{ item[header.value] }}
                         </span>
                       </template>
                       <template #hover-content>
                         <span class="black--text text--darken-4 text-body-1">
-                          {{ formatDate(item[header.value]) }}
+                          {{ item[header.value] }}
                         </span>
                       </template>
                     </tooltip>
