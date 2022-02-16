@@ -38,7 +38,6 @@ import {
 import { notification as notificationFactory } from "./factories/notifications"
 import { user as userFactory } from "./factories/user"
 import { applications as applicationFactory } from "./factories/application"
-
 /**
  * Starts up a Mirage server with the given configuration.
  *
@@ -75,6 +74,7 @@ export function makeServer({ environment = "development" } = {}) {
     configuration: Model,
     application: Model,
     clientProject: Model,
+    emailDeliverability: Model,
   }
 
   const factories = {

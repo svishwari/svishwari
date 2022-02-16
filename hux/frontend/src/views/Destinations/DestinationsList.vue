@@ -30,7 +30,14 @@
         </template>
         <template slot="action-menu-options">
           <div
-            class="px-4 py-2 white d-flex flex-column text-h5"
+            class="px-4 py-2 white d-flex flex-column text-body-1"
+            data-e2e="destination-list-remove"
+            @click="openEditModal(destination)"
+          >
+            <span class="d-flex align-center">Edit destination URL </span>
+          </div>
+          <div
+            class="px-4 py-2 white d-flex flex-column text-body-1"
             data-e2e="destination-list-remove"
             @click="openModal(destination)"
           >
@@ -129,6 +136,30 @@
         </div>
       </template>
     </confirm-modal>
+
+    <confirm-modal
+      v-model="editConfirmModal"
+      right-btn-text="Save changes"
+      left-btn-text="Nevermind!"
+      @onCancel="editConfirmModal = false"
+      @onConfirm="updateDestinationURL()"
+    >
+      <template #body>
+        <div class="mx-4">
+          <icon type="edit" :size="38" />
+          <div class="text-h2 mb-4">Editing destination URL</div>
+          <text-field
+            v-model="newURL"
+            label-text="Edit destination URL"
+            :is-disabled="newURL === ''"
+            placeholder="Destination URL"
+            class="pt-5"
+            height="40"
+            required
+          />
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -143,6 +174,7 @@ import TextField from "@/components/common/TextField"
 import HuxEmpty from "@/components/common/screens/Empty"
 import Error from "@/components/common/screens/Error"
 import huxButton from "@/components/common/huxButton"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "DestinationsList",
@@ -155,6 +187,7 @@ export default {
     HuxEmpty,
     Error,
     huxButton,
+    Icon,
   },
 
   props: {
@@ -168,8 +201,11 @@ export default {
     return {
       selectedDestination: {},
       confirmModal: false,
+      editConfirmModal: false,
       enableConfirm: false,
       inputText: null,
+      newURL: "",
+      DestinationMessage: false,
     }
   },
 
@@ -192,11 +228,18 @@ export default {
   methods: {
     ...mapActions({
       removeDestination: "destinations/remove",
+      updateDestination: "destinations/update",
+      setAlert: "alerts/setAlert",
     }),
 
     openModal(destination) {
       this.selectedDestination = destination
       this.confirmModal = true
+    },
+
+    openEditModal(destination) {
+      this.selectedDestination = destination
+      this.editConfirmModal = true
     },
 
     async confirmRemoval() {
@@ -209,6 +252,26 @@ export default {
       })
       this.confirmModal = false
       this.inputText = null
+    },
+
+    async updateDestinationURL() {
+      try {
+        await this.updateDestination({
+          id: this.selectedDestination.id,
+          payload: {
+            link: this.newURL,
+          },
+        })
+        this.editConfirmModal = false
+        this.inputText = null
+        this.setAlert({
+          type: "success",
+          message: "Destination URL has been updated successfully.",
+        })
+      } catch (error) {
+        this.editConfirmModal = false
+        this.inputText = null
+      }
     },
 
     enableConfirmButton(val) {

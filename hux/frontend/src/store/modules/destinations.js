@@ -158,6 +158,17 @@ const actions = {
       throw error
     }
   },
+
+  async update({ commit }, { id, payload }) {
+    try {
+      const response = await api.destinations.update(id, payload)
+      commit("SET_ONE", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 export default {

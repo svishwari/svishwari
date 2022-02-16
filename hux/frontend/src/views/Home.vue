@@ -225,7 +225,7 @@
         <icon type="kx" :size="36" class="mr-2" /> Need some help or guidance?
         &nbsp;
         <a
-          href="https://www.deloittedigital.com/us/en/offerings/customer-led-marketing/advertising--marketing-and-commerce/hux.html"
+          href="https://resources.deloitte.com/:f:/s/GTMMarketingServices/EtcSxrQDnWVBqco8JSGIP5QBvhIO-gKp7OdlHHAEvBscOw?e=to9cdJ"
           target="_blank"
           class="text-decoration-none"
         >

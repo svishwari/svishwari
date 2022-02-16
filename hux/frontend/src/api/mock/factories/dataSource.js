@@ -33,13 +33,7 @@ const dataFeed = (type, date = null) => {
   return {
     name: `${type}_data_feed_${faker.name.firstName()}`.toLowerCase(),
 
-    status: faker.random.arrayElement([
-      "Pending",
-      "Active",
-      "Error",
-      "Disabled",
-      "Canceled",
-    ]),
+    status: faker.random.arrayElement(["Pending", "Active", "Error"]),
 
     records_received: faker.datatype.number(),
 
@@ -93,10 +87,9 @@ export const dataFeedDetailsSchema = (type) => {
     name: date,
 
     status: faker.random.arrayElement([
-      "Pending",
-      "Active",
-      "Error",
-      "Disabled",
+      "Success",
+      "Failed",
+      "Running",
       "Canceled",
     ]),
 
@@ -125,6 +118,5 @@ export const dataFeedDetailsSchema = (type) => {
  */
 export const dataFeedDetails = (type) => {
   let num = faker.datatype.number(100)
-
   return Array.from({ length: num }, () => dataFeedDetailsSchema(type))
 }
