@@ -416,6 +416,10 @@ client["models"].drift = (id, version) => {
   else return http.get(`/models/${id}/drift`)
 }
 
+client["models"].emailDomain = () => {
+  return http.get("/email_deliverability/domains")
+}
+
 client["models"].modelFeatures = (id, version) => {
   if (version) return http.get(`/models/${id}/features?version=${version}`)
   else return http.get(`/models/${id}/features`)

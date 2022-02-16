@@ -24,6 +24,7 @@ import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
 import { applications } from "./factories/application"
+import domainData from "@/api/mock/fixtures/domainLineData.js"
 
 export const defineRoutes = (server) => {
   // Users
@@ -833,4 +834,6 @@ export const defineRoutes = (server) => {
     let app = applications.find((x) => x.id == JSON.parse(request.params.id))
     return "Application " + app.name + " is successfully updated"
   })
+
+  server.get("/email_deliverability/domains", () => domainData)
 }
