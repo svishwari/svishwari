@@ -1,6 +1,6 @@
 <template>
   <div :class="!loading && hasDataFeeds == 0 ? 'blackdarken-4' : 'white'">
-    <page-header v-if="selectedDataSource">
+    <page-header>
       <template #left>
         <breadcrumb :items="breadcrumbItems" />
       </template>
@@ -303,7 +303,7 @@
             >
               <template #title>
                 <div class="h2">
-                  {{ selectedDataSource.name }} data feed table is currently
+                  {{ dataSourceFeedName }} data feed table is currently
                   unavailable
                 </div>
               </template>
@@ -318,7 +318,10 @@
         </v-card>
       </div>
       <div class="ml-auto">
-        <data-feeds-table-filter v-model="isFilterToggled" />
+        <data-feeds-table-filter
+          v-model="isFilterToggled"
+          @onSectionAction="applyFilter"
+        />
       </div>
     </div>
   </div>
@@ -358,7 +361,14 @@ export default {
       loading: false,
       datafeedErrorState: false,
       isFilterToggled: false,
-      numFiltersSelected: 0,
+      numFiltersSelected: 1,
+      api_params: {
+        start_date: new Date(),
+        end_date: new Date(),
+        status: [],
+        type: null,
+        name: null,
+      },
     }
   },
 
@@ -446,10 +456,10 @@ export default {
           icon: "data-source",
         },
         {
-          text: this.selectedDataSource.name,
+          text: this.selectedDataSource?.name,
           disabled: false,
           href: this.$router.resolve({ name: "DataSourceListing" }).href,
-          logo: this.selectedDataSource.type,
+          logo: this.selectedDataSource?.type,
         },
         {
           text: this.dataSourceFeedName,
@@ -462,13 +472,11 @@ export default {
   async mounted() {
     this.loading = true
     try {
+      this.setDefaultData()
       if (!this.selectedDataSource) {
         await this.getDataSource(this.dataSourceId)
       }
-      await this.getDataFeedsDetails({
-        type: this.selectedDataSource.type,
-        name: this.dataSourceFeedName,
-      })
+      await this.getDataFeedDetails(this.api_params)
     } catch (error) {
       this.datafeedErrorState = true
     } finally {
@@ -501,6 +509,130 @@ export default {
     totalFiltersSelected(value) {
       this.numFiltersSelected = value
     },
+
+    async applyFilter(obj) {
+      if (obj.selectedToday && obj.selectedYesterday) {
+        const today = new Date()
+        const yesterday = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() - 1
+        )
+        this.api_params.start_date = this.$options.filters.Date(
+          yesterday,
+          "YYYY-MM-DD"
+        )
+        this.api_params.end_date = this.$options.filters.Date(
+          today,
+          "YYYY-MM-DD"
+        )
+      } else if (obj.selectedToday) {
+        const today = new Date()
+        this.api_params.start_date = this.$options.filters.Date(
+          today,
+          "YYYY-MM-DD"
+        )
+        this.api_params.end_date = this.$options.filters.Date(
+          today,
+          "YYYY-MM-DD"
+        )
+      } else if (obj.selectedYesterday) {
+        const today = new Date()
+        const yesterday = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() - 1
+        )
+        this.api_params.start_date = this.$options.filters.Date(
+          yesterday,
+          "YYYY-MM-DD"
+        )
+        this.api_params.end_date = this.$options.filters.Date(
+          yesterday,
+          "YYYY-MM-DD"
+        )
+      }
+      if (obj.selectedTimeType == "All time") {
+        this.api_params.start_date = null
+        this.api_params.end_date = null
+      } else if (obj.selectedTimeType == "Last month") {
+        let today_date = new Date()
+        let getStartDate = new Date(
+          today_date.getFullYear(),
+          today_date.getMonth() - 2,
+          today_date.getDate()
+        )
+        let getEndDate = new Date(
+          today_date.getFullYear(),
+          today_date.getMonth() - 1,
+          today_date.getDate()
+        )
+        this.api_params.start_date = this.$options.filters.Date(
+          getStartDate,
+          "YYYY-MM-DD"
+        )
+        this.api_params.end_date = this.$options.filters.Date(
+          getEndDate,
+          "YYYY-MM-DD"
+        )
+      } else if (obj.selectedTimeType == "Last week") {
+        let today_date = new Date()
+        let getStartDate = new Date(
+          today_date.getFullYear(),
+          today_date.getMonth(),
+          today_date.getDate() - 14
+        )
+        let getEndDate = new Date(
+          today_date.getFullYear(),
+          today_date.getMonth(),
+          today_date.getDate() - 7
+        )
+        this.api_params.start_date = this.$options.filters.Date(
+          getStartDate,
+          "YYYY-MM-DD"
+        )
+        this.api_params.end_date = this.$options.filters.Date(
+          getEndDate,
+          "YYYY-MM-DD"
+        )
+      }
+
+      if (obj.selectedStatus) {
+        this.api_params.status = obj.selectedStatus
+      }
+
+      this.loading = true
+      await this.getDataFeedDetails(this.api_params)
+      if (obj.filterLength) {
+        this.numFiltersSelected = obj.filterLength
+      }
+      this.loading = false
+    },
+
+    setDefaultData() {
+      let today_date = new Date()
+      let getStartDate = new Date(
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate()
+      )
+      let getEndDate = new Date(
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate()
+      )
+      this.api_params.start_date = this.$options.filters.Date(
+        getStartDate,
+        "YYYY-MM-DD"
+      )
+      this.api_params.end_date = this.$options.filters.Date(
+        getEndDate,
+        "YYYY-MM-DD"
+      )
+      this.api_params.type = this.selectedDataSource?.type
+      this.api_params.name = this.dataSourceFeedName
+    },
+
     formatDateToLocal: formatDateToLocal,
   },
 }

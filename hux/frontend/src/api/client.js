@@ -423,8 +423,20 @@ client["models"].remove = (model) => {
 client.dataSources.dataFeeds = (type) => {
   return http.get(`/data-sources/${type}/datafeeds`)
 }
-client.dataSources.dataFeedsDetails = (type, name) => {
-  return http.get(`/data-sources/${type}/datafeeds/${name}`)
+client.dataSources.dataFeedsDetails = (
+  type,
+  name,
+  start_date,
+  end_date,
+  status
+) => {
+  return http.get(
+    `/data-sources/${type}/datafeeds/${name}${
+      start_date || end_date || status.length > 0 ? "?" : ""
+    }${start_date ? "start_date=" + start_date + "&" : ""}${
+      end_date ? "end_date=" + end_date + "&" : ""
+    }${status.length > 0 ? "status=" + status : ""}`
+  )
 }
 //#endregion
 
