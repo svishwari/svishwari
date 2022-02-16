@@ -1027,7 +1027,9 @@ class ModelLiftView(SwaggerView):
             model_versions = tecton.get_model_version_history(model_id)
 
             if not model_versions:
-                return HuxResponse.NOT_FOUND("No model version found for the model.")
+                return HuxResponse.NOT_FOUND(
+                    "No model version found for the model."
+                )
 
             # set model version to latest version if not specified in the request
             model_version = (
@@ -1039,7 +1041,9 @@ class ModelLiftView(SwaggerView):
             lift_data = tecton.get_model_lift_async(model_id, model_version)
 
         if not lift_data:
-            return HuxResponse.NOT_FOUND("No model lift data found for the model.")
+            return HuxResponse.NOT_FOUND(
+                "No model lift data found for the model."
+            )
 
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
 
