@@ -108,7 +108,7 @@ class EmailDeliverabilityOverview(SwaggerView):
             delivered_open_rate_overview.append(
                 {
                     api_c.DATE: curr_date,
-                    api_c.OPEN_RATE: uniform(0.6, 0.9),
+                    api_c.OPEN_RATE: round(uniform(0.6, 0.9), 2),
                     api_c.DELIVERED_COUNT: randint(600, 900),
                 }
             )
@@ -118,7 +118,7 @@ class EmailDeliverabilityOverview(SwaggerView):
             data={
                 api_c.OVERALL_INBOX_RATE: round(overall_inbox_rate, 2)
                 if overall_inbox_rate
-                else uniform(0.6, 0.9),
+                else round(uniform(0.6, 0.9), 2),
                 api_c.SENDING_DOMAINS_OVERVIEW: api_c.SENDING_DOMAINS_OVERVIEW_STUB,
                 api_c.DELIVERED_OPEN_RATE_OVERVIEW: delivered_open_rate_overview,
             },
@@ -242,7 +242,9 @@ class EmailDeliverabilityDomains(SwaggerView):
 
             for i in range(5):
                 percent_data = {
-                    clean_domain_name_string(domain): uniform(0.4, 0.8)
+                    clean_domain_name_string(domain): round(
+                        uniform(0.6, 0.9), 2
+                    )
                     for domain in domains
                 }
                 percent_data.update({api_c.DATE: curr_date})

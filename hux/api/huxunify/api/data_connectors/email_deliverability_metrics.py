@@ -25,7 +25,8 @@ def get_delivered_rate_data(
         database (MongoClient): A database client.
         domains (list): List of domain names to fetch delivered rate data.
         start_date (datetime): Start date for data to be fetched.
-        end_date (datetime) End time for data to be fetched.
+        end_date (datetime): End time for data to be fetched.
+
     Returns:
         list: Domain_wise list of delivered rate.
     """
@@ -73,8 +74,9 @@ def get_delivered_rate_data(
                 ]
             }
         else:
+            # Fill with stub.
             data = {
-                clean_domain_name_string(domain): uniform(0.4, 0.8)
+                clean_domain_name_string(domain): round(uniform(0.6, 0.9), 2)
                 for domain in domains
             }
 
