@@ -391,28 +391,34 @@ client["notifications"].getAllUsers = () => {
 
 //#endregion
 
-client["models"].overview = (id) => {
-  return http.get(`/models/${id}/overview`)
+client["models"].overview = (id, version) => {
+  if (version) return http.get(`/models/${id}/overview?version=${version}`)
+  else return http.get(`/models/${id}/overview`)
 }
 
-client["models"].features = (id) => {
-  return http.get(`/models/${id}/feature-importance`)
+client["models"].features = (id, version) => {
+  if (version)
+    return http.get(`/models/${id}/feature-importance?version=${version}`)
+  else return http.get(`/models/${id}/feature-importance`)
 }
 
 client["models"].versionHistory = (id) => {
   return http.get(`/models/${id}/version-history`)
 }
 
-client["models"].lift = (id) => {
-  return http.get(`/models/${id}/lift`)
+client["models"].lift = (id, version) => {
+  if (version) return http.get(`/models/${id}/lift?version=${version}`)
+  else return http.get(`/models/${id}/lift`)
 }
 
-client["models"].drift = (id) => {
-  return http.get(`/models/${id}/drift`)
+client["models"].drift = (id, version) => {
+  if (version) return http.get(`/models/${id}/drift?version=${version}`)
+  else return http.get(`/models/${id}/drift`)
 }
 
-client["models"].modelFeatures = (id) => {
-  return http.get(`/models/${id}/features`)
+client["models"].modelFeatures = (id, version) => {
+  if (version) return http.get(`/models/${id}/features?version=${version}`)
+  else return http.get(`/models/${id}/features`)
 }
 
 client["models"].remove = (model) => {

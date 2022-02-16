@@ -1,7 +1,11 @@
 <template>
   <page max-width="100%" class="idr-wrapper">
     <template #header>
-      <page-header class="page-header py-5" :header-height="120">
+      <page-header
+        class="page-header py-5"
+        :header-min-height="110"
+        :header-max-height="120"
+      >
         <template #left>
           <div>
             <breadcrumb

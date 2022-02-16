@@ -295,7 +295,7 @@ export default {
       }))
       await this.deliverStandaloneAudience({
         id: this.audienceId,
-        payload: allIDs,
+        payload: { destinations: allIDs },
       })
       this.dataPendingMesssage()
       this.$emit("onDeliveryStandaloneDestination")

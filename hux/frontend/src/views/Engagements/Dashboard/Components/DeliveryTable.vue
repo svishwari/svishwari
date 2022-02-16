@@ -85,22 +85,53 @@
               :icon-size="17"
             />
           </div>
-          <div v-if="header.value == 'destinations'">
-            <tooltip
-              v-for="destination_logo in item[header.value]"
-              :key="destination_logo.delivery_platform_type"
-            >
-              <template #label-content>
-                <logo
-                  :type="destination_logo.delivery_platform_type"
-                  size="24"
-                  class="ml-n1"
-                />
-              </template>
-              <template #hover-content>
-                {{ destination_logo.name }}
-              </template>
-            </tooltip>
+          <div v-if="header.value == 'destinations'" class="text-body-1">
+            <div class="align-center">
+              <v-row class="mx-0">
+                <div>
+                  <tooltip
+                    v-for="destination_logo in item[header.value]"
+                    :key="destination_logo.delivery_platform_type"
+                  >
+                    <template #label-content>
+                      <logo
+                        :type="destination_logo.delivery_platform_type"
+                        size="24"
+                        class="ml-n1"
+                      />
+                    </template>
+                    <template #hover-content>
+                      {{ destination_logo.name }}
+                    </template>
+                  </tooltip>
+                </div>
+                <div v-if="!item.is_lookalike">
+                  <tooltip>
+                    <template #label-content>
+                      <div
+                        class="d-flex align-items-center ml-2"
+                        data-e2e="add-destination"
+                        @click="
+                          $emit('onSectionAction', {
+                            target: { title: 'Add a destination' },
+                            data: item,
+                            parent: section,
+                          })
+                        "
+                      >
+                        <hux-icon
+                          type="plus"
+                          :size="17"
+                          color="primary"
+                          class="ml-n1 mt-1"
+                        />
+                      </div>
+                    </template>
+                    <template #hover-content>Add destination(s)</template>
+                  </tooltip>
+                </div>
+              </v-row>
+            </div>
           </div>
           <div v-if="header.value == 'size'" class="text-body-1">
             <size
