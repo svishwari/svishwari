@@ -619,7 +619,7 @@ class CDPTest(TestCase):
             lambda date: date.strftime(api_c.DEFAULT_DATE_FORMAT)
         ),
     )
-    @settings(deadline=600)
+    @settings(deadline=None)
     def test_get_spending_by_gender_raise_dependency_error(
         self, start_date: str, end_date: str
     ) -> None:
