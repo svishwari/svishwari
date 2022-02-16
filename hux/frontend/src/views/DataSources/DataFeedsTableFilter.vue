@@ -5,7 +5,7 @@
     content-height="261px"
     :style="{ height: viewHeight }"
     data-e2e="dataFeedsFilters"
-    @clear="clear"
+    @clear="clearFilter"
     @apply="apply"
     @close="close"
   >
@@ -21,14 +21,14 @@
             color="primary lighten-6"
             class="text--base-1 pb-1"
             label="Today"
-            @click="updateTime('today')"
+            @click="updateTime('checkbox')"
           ></v-checkbox>
           <v-checkbox
             v-model="selectedYesterday"
             color="primary lighten-6"
             class="text--base-1 pb-2"
             label="Yesterday"
-            @click="updateTime('yesterday')"
+            @click="updateTime('checkbox')"
           ></v-checkbox>
           <v-divider class="pb-4" />
           <v-radio-group v-model="selectedTimeType">
@@ -172,23 +172,11 @@ export default {
     },
   },
   methods: {
-    getTime(value) {
-      let today_date = new Date()
-      return new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate() - value
-      )
-    },
     clearFilter() {
-      this.selectedToday = false
+      this.selectedToday = true
       this.selectedYesterday = false
       this.selectedTimeType = null
       this.selectedStatus = []
-    },
-    clear() {
-      this.clearFilter()
-      this.apply()
     },
     apply() {
       this.$emit("onSectionAction", {
@@ -196,7 +184,9 @@ export default {
         selectedYesterday: this.selectedYesterday,
         selectedTimeType: this.selectedTimeType,
         selectedStatus: this.selectedStatus,
+        filterLength: this.filterLength,
       })
+      this.localDrawer = false
     },
     cancel() {
       this.clearFilter()
@@ -207,7 +197,8 @@ export default {
     },
     updateTime(val) {
       if (val == "radio") {
-        ;(this.selectedToday = false), (this.selectedYesterday = false)
+        this.selectedToday = false
+        this.selectedYesterday = false
       } else {
         this.selectedTimeType = null
       }

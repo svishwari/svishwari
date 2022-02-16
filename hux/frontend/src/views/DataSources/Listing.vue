@@ -66,7 +66,8 @@
               v-else-if="column.value === 'last_processed'"
               class="black--text text--darken-4 text-body-1"
             >
-              <time-stamp :value="item[column.value]" />
+              <!-- <time-stamp :value="item[column.value]" /> -->
+              {{ formatDateToLocal(item[column.value]) }}
             </div>
             <tooltip v-else-if="column.value === 'name'">
               <template #label-content>
@@ -155,9 +156,9 @@ import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Status from "@/components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import EmptyPage from "@/components/common/EmptyPage.vue"
+import { formatDateToLocal } from "@/utils"
 
 export default {
   name: "DataSourceListing",
@@ -168,7 +169,6 @@ export default {
     HuxDataTable,
     Status,
     Tooltip,
-    TimeStamp,
     EmptyPage,
   },
 
@@ -222,7 +222,6 @@ export default {
     ...mapGetters({
       dataSource: "dataSources/single",
       dataFeeds: "dataSources/dataFeeds",
-      dataFeedDetails: "dataSources/dataFeedDetails",
     }),
 
     dataSourceId() {
@@ -279,7 +278,6 @@ export default {
     ...mapActions({
       getDataFeeds: "dataSources/getDataFeeds",
       getDataSource: "dataSources/getDataSource",
-      getDataFeedDetails: "dataSources/getDataFeedsDetails",
     }),
     changeStatus(status) {
       switch (status) {
@@ -294,15 +292,15 @@ export default {
       }
     },
     getDataFeedDetailsFunc(item) {
-      this.getDataFeedDetails({
-        name: item.name,
-        type: this.selectedDataSource.type,
-      })
       this.$router.push({
         name: "DataSourceFeedsListing",
-        params: { id: this.selectedDataSource.id, name: item.name },
+        params: {
+          id: this.selectedDataSource.id,
+          name: item.name,
+        },
       })
     },
+    formatDateToLocal: formatDateToLocal,
   },
 }
 </script>
