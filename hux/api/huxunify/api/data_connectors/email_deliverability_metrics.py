@@ -74,7 +74,7 @@ def get_delivered_rate_data(
                 ]
             }
         else:
-            # Fill with stub.
+            # TODO - remove after, Fill with stub.
             data = {
                 clean_domain_name_string(domain): round(uniform(0.6, 0.9), 2)
                 for domain in domains
