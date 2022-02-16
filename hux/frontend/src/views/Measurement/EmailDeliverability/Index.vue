@@ -34,7 +34,7 @@
     <!-- Sending domains overview -->
     <overview-1 :list="entity.overviewList" />
     <!-- Domains overview chart -->
-    <v-row>
+    <v-row v-if="domainChartData.sent && domainChartData.deliveredRate">
       <v-col md="6">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
           <v-card-title class="pb-2 pl-6 pt-5">
@@ -59,7 +59,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if="domainChartData.openRate && domainChartData.clickRate">
       <v-col md="6">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
           <v-card-title class="pb-2 pl-6 pt-5">
@@ -84,7 +84,9 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row
+      v-if="domainChartData.unsubscribeRate && domainChartData.complaintsRate"
+    >
       <v-col md="6">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
           <v-card-title class="pb-2 pl-6 pt-5">
@@ -120,7 +122,6 @@ import PageHeader from "../../../components/PageHeader.vue"
 import DeliveredChart from "./DeliveredChart.vue"
 import Overview1 from "./Domain/Overview.vue"
 import Overview from "./Overview.vue"
-import domainOverviewData from "../../../api/mock/fixtures/domainLineData"
 import DomainOverviewChart from "../../../components/common/DomainOverviewChart/DomainOverviewChart.vue"
 export default {
   name: "EmailDeliverability",
@@ -135,32 +136,6 @@ export default {
   },
   data() {
     return {
-      domainChartData: {
-        sent: {
-          data: domainOverviewData.sent,
-          type: "sent",
-        },
-        openRate: {
-          data: domainOverviewData.open_Rate,
-          type: "open rate",
-        },
-        deliveredRate: {
-          data: domainOverviewData.delivered_rate,
-          type: "Delivered rate",
-        },
-        clickRate: {
-          data: domainOverviewData.click_rate,
-          type: "Click rate",
-        },
-        unsubscribeRate: {
-          data: domainOverviewData.unsubscribe_rate,
-          type: "Unsubscribe rate",
-        },
-        complaintsRate: {
-          data: domainOverviewData.complaints_rate,
-          type: "Complaints rate",
-        },
-      },
       loading: false,
       entity: {
         description:
@@ -190,6 +165,7 @@ export default {
           },
         ],
       },
+      domainChartData: {},
     }
   },
   computed: {
@@ -198,7 +174,35 @@ export default {
     }),
   },
   async mounted() {
-    this.getEmailDomain()
+    await this.getEmailDomain()
+    if (this.emailDomain) {
+      this.domainChartData = {
+        sent: {
+          data: this.emailDomain.sent,
+          type: "sent",
+        },
+        openRate: {
+          data: this.emailDomain.open_Rate,
+          type: "open rate",
+        },
+        deliveredRate: {
+          data: this.emailDomain.delivered_rate,
+          type: "Delivered rate",
+        },
+        clickRate: {
+          data: this.emailDomain.click_rate,
+          type: "Click rate",
+        },
+        unsubscribeRate: {
+          data: this.emailDomain.unsubscribe_rate,
+          type: "Unsubscribe rate",
+        },
+        complaintsRate: {
+          data: this.emailDomain.complaints_rate,
+          type: "Complaints rate",
+        },
+      }
+    }
   },
   methods: {
     ...mapActions({
