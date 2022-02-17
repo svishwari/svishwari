@@ -68,9 +68,7 @@ export default {
     }
   },
   mounted() {
-    new ResizeObserver(this.sizeHandler).observe(
-      this.$refs.domainChart
-    )
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.domainChart)
     this.sizeHandler()
   },
   methods: {
@@ -83,8 +81,7 @@ export default {
     },
     sizeHandler() {
       if (this.$refs.domainChart) {
-        this.chartDimensions.width =
-          this.$refs.domainChart.clientWidth
+        this.chartDimensions.width = this.$refs.domainChart.clientWidth
         this.chartDimensions.height = 350
       }
     },
