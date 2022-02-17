@@ -18,13 +18,13 @@
         <div class="text-body-2 black--text text--darken-4 caption">
           <div class="spend-count mb-1 text-h5">
             <span class="dots"></span>
-            <span>Domain name</span>
+            <span>{{ domain_name }}</span>
           </div>
           <div v-if="sourceType == 'sent'" class="value-container">
-            {{ currentData.domain_1 }}
+            {{ currentData[domain_name] }}
           </div>
           <div v-else class="value-container">
-            {{ currentData.domain_1 | Percentage }}
+            {{ currentData[domain_name] | Percentage }}
           </div>
           <div class="date-section">
             {{ currentData.date | Date("MMM DD, YYYY") }}
@@ -59,6 +59,7 @@ export default {
       currentData: {},
       sourceData: this.chartData,
       sourceType: this.chartType,
+      domain_name: null,
       chartDimensions: {
         width: 0,
         height: 0,
@@ -77,6 +78,7 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
+        this.domain_name = arg[1].domain_name
       }
     },
     sizeHandler() {
@@ -98,7 +100,6 @@ export default {
 }
 .container-chart {
   position: relative;
-  height: 650px;
   padding: 0px !important;
   .value-container {
     margin-top: 2px;

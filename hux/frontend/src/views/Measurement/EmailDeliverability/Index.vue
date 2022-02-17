@@ -33,11 +33,12 @@
     </template>
     <div v-if="overviewData && !loading">
       <!-- Header Overview section -->
-      <overview :entity="entity" />
+      <overview data-e2e="deliverability-overview" :entity="entity" />
       <!-- Delivered count -->
       <delivered-chart
         v-if="deliveredCountData.length > 0"
         :email-data="deliveredCountData"
+        data-e2e="delivered-count-open-rate-chart"
       />
       <!-- Sending domains overview -->
       <overview-1
@@ -45,7 +46,10 @@
         :list="overviewData.sending_domains_overview"
       />
       <!-- Domains overview chart -->
-      <v-row v-if="domainChartData.sent && domainChartData.deliveredRate">
+      <v-row
+        v-if="domainChartData.sent && domainChartData.deliveredRate"
+        class="mt-0"
+      >
         <v-col md="6">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
             <v-card-title class="pb-2 pl-6 pt-5">
@@ -54,6 +58,7 @@
             <domain-overview-chart
               :chart-data="domainChartData.sent.data"
               :chart-type="domainChartData.sent.type"
+              data-e2e="sent-domain-chart"
             />
           </v-card>
         </v-col>
@@ -65,6 +70,7 @@
             <domain-overview-chart
               :chart-data="domainChartData.deliveredRate.data"
               :chart-type="domainChartData.deliveredRate.type"
+              data-e2e="delivered-rate-domain-chart"
             />
           </v-card>
         </v-col>
@@ -72,24 +78,26 @@
 
       <v-row v-if="domainChartData.openRate && domainChartData.clickRate">
         <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+          <v-card class="rounded-lg box-shadow-5" height="365">
             <v-card-title class="pb-2 pl-6 pt-5">
               <h3 class="text-h3">Open rate</h3>
             </v-card-title>
             <domain-overview-chart
               :chart-data="domainChartData.openRate.data"
               :chart-type="domainChartData.openRate.type"
+              data-e2e="open-rate-domain-chart"
             />
           </v-card>
         </v-col>
         <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+          <v-card class="rounded-lg box-shadow-5" height="365">
             <v-card-title class="pb-2 pl-6 pt-5">
               <h3 class="text-h3">Click rate</h3>
             </v-card-title>
             <domain-overview-chart
               :chart-data="domainChartData.clickRate.data"
               :chart-type="domainChartData.clickRate.type"
+              data-e2e="click-rate-domain-chart"
             />
           </v-card>
         </v-col>
@@ -99,24 +107,26 @@
         v-if="domainChartData.unsubscribeRate && domainChartData.complaintsRate"
       >
         <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+          <v-card class="rounded-lg box-shadow-5" height="365">
             <v-card-title class="pb-2 pl-6 pt-5">
               <h3 class="text-h3">Unsubscribe Rate</h3>
             </v-card-title>
             <domain-overview-chart
               :chart-data="domainChartData.unsubscribeRate.data"
               :chart-type="domainChartData.unsubscribeRate.type"
+              data-e2e="unsubscribe-rate-domain-chart"
             />
           </v-card>
         </v-col>
         <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+          <v-card class="rounded-lg box-shadow-5" height="365">
             <v-card-title class="pb-2 pl-6 pt-5">
               <h3 class="text-h3">Complaints rate</h3>
             </v-card-title>
             <domain-overview-chart
               :chart-data="domainChartData.complaintsRate.data"
               :chart-type="domainChartData.complaintsRate.type"
+              data-e2e="complaints-rate-domain-chart"
             />
           </v-card>
         </v-col>

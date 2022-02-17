@@ -280,4 +280,21 @@ export default {
     selectOperatorBtn: "[data-e2e='select-operator-btn']",
     autoCompleteBtn: "[data-e2e='auto-complete-btn']",
   },
+
+  // email deliverability
+  emailDeliverability: {
+    overview: "[data-e2e='deliverability-overview']",
+    deliveredChart: "[data-e2e='delivered-count-open-rate-chart']",
+    sendingDomainOverview: {
+      domainOverviewTable: "[data-e2e='sending-domain-overview']",
+      overviewTableHeaders: "table thead tr",
+      overviewTableItems: "table tbody tr",
+    },
+    sentDomain: "[data-e2e='sent-domain-chart']",
+    deliveredRateDomain: "[data-e2e='delivered-rate-domain-chart']",
+    openRateDomain: "[data-e2e='open-rate-domain-chart']",
+    clickRateDomain: "[data-e2e='click-rate-domain-chart']",
+    unsubscribeRateDomain: "[data-e2e='unsubscribe-rate-domain-chart']",
+    complainsRateDomain: "[data-e2e='complaints-rate-domain-chart']",
+  },
 }

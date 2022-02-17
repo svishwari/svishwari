@@ -276,7 +276,7 @@ export default {
 
       groups
         .append("path")
-        .attr("transform", "translate(15,0)")
+        .attr("transform", "translate(20,0)")
         .attr("class", "line")
         .style("stroke", "#E3E48D")
         .attr("stroke-width", 3)
@@ -325,7 +325,7 @@ export default {
 
         addHoverCircle(
           hoverCircles[0],
-          5,
+          9,
           data.barIndex,
           data.delivered_count,
           width,
@@ -335,7 +335,7 @@ export default {
         )
         addHoverCircle(
           hoverCircles[1],
-          4,
+          7,
           data.barIndex,
           data.delivered_count,
           width,
