@@ -20,6 +20,16 @@ class DomainDataPercentageSchema(Schema):
     domain_3 = Float(
         validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1
     )
+    american_express = Float(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0),
+        example=0.1,
+        attribute="e-response-americanexpress-com",
+    )
+    metric_orchestration = Float(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0),
+        example=0.1,
+        data_key="e-metric-orchestration.com",
+    )
     date = DateTimeWithZ(required=True)
 
 
@@ -29,6 +39,12 @@ class DomainDataCountSchema(Schema):
     domain_1 = Integer(example=10)
     domain_2 = Integer(example=10)
     domain_3 = Integer(example=10)
+    american_express = Integer(
+        example=10, attribute="e-response-americanexpress-com"
+    )
+    metric_orchestration = Float(
+        example=10, data_key="e-metric-orchestration-com"
+    )
     date = DateTimeWithZ(required=True)
 
 

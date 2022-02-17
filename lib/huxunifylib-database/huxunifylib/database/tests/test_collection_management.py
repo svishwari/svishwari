@@ -428,3 +428,31 @@ class ModelsCollectionManagementTest(TestCase):
             query_filter={db_c.ID: self.models[1][db_c.ID]},
         )
         self.assertIsNone(model)
+
+    def test_get_distinct_values_for_field(self):
+        """Test to get distinct values for a field."""
+
+        data = dmg.get_distinct_values(
+            database=self.database,
+            collection=db_c.MODELS_COLLECTION,
+            field_name=db_c.STATUS,
+        )
+        self.assertIsInstance(data, list)
+        self.assertEqual([db_c.PENDING], data)
+
+        data = dmg.get_distinct_values(
+            database=self.database,
+            collection=db_c.MODELS_COLLECTION,
+            field_name=db_c.NAME,
+        )
+        # Ensure two different names appear.
+        self.assertEqual(2, len(data))
+
+        data = dmg.get_distinct_values(
+            database=self.database,
+            collection=db_c.MODELS_COLLECTION,
+            query_filter={db_c.STATUS: db_c.PENDING},
+            field_name=db_c.NAME,
+        )
+        # Ensure two different names appear.
+        self.assertEqual(2, len(data))

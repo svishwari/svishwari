@@ -1058,3 +1058,13 @@ def fetch_datafeed_details(
             return datafeed_details
 
     return group_and_aggregate_datafeed_details_by_date(datafeed_details)
+
+
+def clean_domain_name_string(domain_name: str) -> str:
+    """Cleans strings like abc.com for Marshmallow attribute field.
+    Args:
+        domain_name (str): Name of the domain.
+    Returns:
+        str: Cleaned domain name.
+    """
+    return domain_name.replace(".", "-")
