@@ -33,11 +33,12 @@
     </template>
     <div v-if="overviewData && !loading">
       <!-- Header Overview section -->
-      <overview :entity="entity" />
+      <overview data-e2e="deliverability-overview" :entity="entity" />
       <!-- Delivered count -->
       <delivered-chart
         v-if="deliveredCountData.length > 0"
         :email-data="deliveredCountData"
+        data-e2e="delivered-count-open-rate-chart"
       />
       <!-- Sending domains overview -->
       <overview-1
@@ -54,6 +55,7 @@
             <domain-overview-chart
               :chart-data="domainChartData.sent.data"
               :chart-type="domainChartData.sent.type"
+              data-e2e="sent-domain-chart"
             />
           </v-card>
         </v-col>
@@ -65,6 +67,7 @@
             <domain-overview-chart
               :chart-data="domainChartData.deliveredRate.data"
               :chart-type="domainChartData.deliveredRate.type"
+               data-e2e="delivered-rate-domain-chart"
             />
           </v-card>
         </v-col>
@@ -79,6 +82,7 @@
             <domain-overview-chart
               :chart-data="domainChartData.openRate.data"
               :chart-type="domainChartData.openRate.type"
+              data-e2e="open-rate-domain-chart"
             />
           </v-card>
         </v-col>
@@ -90,6 +94,7 @@
             <domain-overview-chart
               :chart-data="domainChartData.clickRate.data"
               :chart-type="domainChartData.clickRate.type"
+              data-e2e="click-rate-domain-chart"
             />
           </v-card>
         </v-col>
@@ -106,6 +111,7 @@
             <domain-overview-chart
               :chart-data="domainChartData.unsubscribeRate.data"
               :chart-type="domainChartData.unsubscribeRate.type"
+              data-e2e="unsubscribe-rate-domain-chart"
             />
           </v-card>
         </v-col>
@@ -117,6 +123,7 @@
             <domain-overview-chart
               :chart-data="domainChartData.complaintsRate.data"
               :chart-type="domainChartData.complaintsRate.type"
+              data-e2e="complaints-rate-domain-chart"
             />
           </v-card>
         </v-col>

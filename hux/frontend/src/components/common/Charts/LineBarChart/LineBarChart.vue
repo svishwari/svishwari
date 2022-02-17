@@ -276,7 +276,7 @@ export default {
 
       groups
         .append("path")
-        .attr("transform", "translate(15,0)")
+        .attr("transform", "translate(20,0)")
         .attr("class", "line")
         .style("stroke", "#E3E48D")
         .attr("stroke-width", 3)

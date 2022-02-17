@@ -39,13 +39,8 @@ export default {
     return {
       data: this.value,
       typeOfChart: this.domainType,
+      domain_name: null,
       chartWidth: "",
-      toolTip: {
-        xPosition: 0,
-        yPosition: 0,
-        date: "",
-        domain_1: 0,
-      },
     }
   },
 
@@ -74,6 +69,11 @@ export default {
     },
     async initiatelineAreaChart() {
       await this.value
+
+      if (this.value) {
+      this.domain_name = Object.keys(this.value[0])[0]
+      }
+
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
@@ -114,7 +114,7 @@ export default {
         yScale = d3Scale
           .scaleLinear()
           .rangeRound([h, 0])
-          .domain([0, d3Array.max(this.data, (d) => d.domain_1)])
+          .domain([0, d3Array.max(this.data, (d) => d[this.domain_name])])
           .nice(5)
       } else {
         yScale = d3Scale
@@ -124,7 +124,7 @@ export default {
           .nice(5)
       }
 
-      let stackArea = d3Shape.stack().keys(["domain_1"])
+      let stackArea = d3Shape.stack().keys([this.domain_name])
 
       let areaData = []
 
@@ -202,7 +202,7 @@ export default {
         return d3Shape
           .line()
           .x(value ? 0 : (d) => xScale(new Date(dateFormatter(d.date))))
-          .y(value ? h : (d) => yScale(d.domain_1))
+          .y(value ? h : (d) => yScale(d[this.domain_name]))
       }
 
       let area = d3Shape
@@ -238,7 +238,7 @@ export default {
         .attr("class", "dot")
         .attr("r", 4)
         .attr("cx", (d) => xScale(new Date(dateFormatter(d.date))))
-        .attr("cy", (d) => yScale(d.domain_1))
+        .attr("cy", (d) => yScale(d[this.domain_name]))
         .style("fill", "transparent")
         .attr("stroke", "transparent")
 
@@ -321,6 +321,7 @@ export default {
         if (dataToolTip && yData) {
           dataToolTip.yPosition = yData
         }
+        dataToolTip.domain_name = this.domain_name
         this.tooltipDisplay(true, dataToolTip)
       }
     },
