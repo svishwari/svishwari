@@ -1,5 +1,5 @@
 <template>
-  <div ref="totalCustomerSpendChart" class="container-chart">
+  <div ref="domainChart" class="container-chart">
     <domain-chart
       v-model="sourceData"
       :chart-dimensions="chartDimensions"
@@ -64,13 +64,11 @@ export default {
         width: 0,
         height: 0,
       },
-      toolTipStyle: TooltipConfiguration.totalCustomerSpendChart,
+      toolTipStyle: TooltipConfiguration.domainChart,
     }
   },
   mounted() {
-    new ResizeObserver(this.sizeHandler).observe(
-      this.$refs.totalCustomerSpendChart
-    )
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.domainChart)
     this.sizeHandler()
   },
   methods: {
@@ -82,9 +80,8 @@ export default {
       }
     },
     sizeHandler() {
-      if (this.$refs.totalCustomerSpendChart) {
-        this.chartDimensions.width =
-          this.$refs.totalCustomerSpendChart.clientWidth
+      if (this.$refs.domainChart) {
+        this.chartDimensions.width = this.$refs.domainChart.clientWidth
         this.chartDimensions.height = 350
       }
     },
