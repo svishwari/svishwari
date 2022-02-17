@@ -29,13 +29,13 @@ VALID_RESPONSE = {
     "username": "davesmith",
     "exp": 1234,
     "iat": 12345,
-    "sub": "davesmith@fake",
+    "sub": "davesmith@fake.com",
     "aud": "sample_aud",
     "iss": "sample_iss",
     "jti": "sample_jti",
     "token_type": "Bearer",
     "client_id": "1234",
-    "uid": "1234567",
+    "uid": "8548bfh8d",
 }
 INVALID_OKTA_RESPONSE = {"active": False}
 VALID_USER_RESPONSE = {

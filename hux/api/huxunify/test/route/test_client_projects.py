@@ -34,6 +34,7 @@ class ClientProjectsTests(RouteTestCase):
             t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
             t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
             display_name=self.user_name,
+            role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
         )
 
         client_projects = [
@@ -115,7 +116,7 @@ class ClientProjectsTests(RouteTestCase):
             {api_c.MESSAGE: "No request body provided."}, response.json
         )
 
-    def test_client_project__patch_endpoint_invalid_id(self):
+    def test_client_project_patch_endpoint_invalid_id(self):
         """Test client project patch with incorrect client_project_id"""
 
         patch_request_body = {

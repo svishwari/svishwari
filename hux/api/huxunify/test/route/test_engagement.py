@@ -657,6 +657,7 @@ class TestEngagementRoutes(TestCase):
             t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
             t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
             display_name=self.user_name,
+            role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
         )
 
         destinations = [

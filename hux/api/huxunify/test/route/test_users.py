@@ -38,7 +38,10 @@ class TestUserRoutes(RouteTestCase):
         ).start()
 
         self.audience_id = create_audience(
-            self.database, "Test Audience", [], "Felix Hernandez"
+            self.database,
+            "Test Audience",
+            [],
+            t_c.VALID_USER_RESPONSE[api_c.NAME],
         )[db_c.ID]
         self.delivery_platform = set_delivery_platform(
             self.database,
@@ -70,9 +73,10 @@ class TestUserRoutes(RouteTestCase):
         # write a user to the database
         self.user_info = set_user(
             self.database,
-            t_c.VALID_RESPONSE["uid"],
-            "felix_hernandez@fake.com",
-            display_name="Felix Hernandez",
+            okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],
+            email_address=t_c.VALID_USER_RESPONSE[api_c.EMAIL],
+            display_name=t_c.VALID_USER_RESPONSE[api_c.NAME],
+            role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
         )
 
     def test_adding_engagement_to_favorite(self):
@@ -213,7 +217,6 @@ class TestUserRoutes(RouteTestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(5, len(response.json))
         t_c.validate_schema(UserSchema(), response.json, True)
 
     def test_get_user_profile_bad_request_failure(self):
@@ -244,11 +247,19 @@ class TestUserRoutes(RouteTestCase):
             "uid": "12345678",
         }
 
+        user_response = {
+            api_c.OKTA_ID_SUB: "12345678",
+            api_c.EMAIL: "johnsmith@fake.com",
+            api_c.NAME: "john smith",
+            api_c.ROLE: "admin",
+            api_c.USER_PII_ACCESS: True,
+        }
+
         # mock incorrect request for introspect call so that the user is not
         # present in mock DB
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=incorrect_okta_response)
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=user_response)
         request_mocker.start()
 
         mock.patch(
@@ -451,7 +462,7 @@ class TestUserRoutes(RouteTestCase):
         user_pre_update = get_user(
             self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB]
         )
-        self.assertIsNone(user_pre_update)
+        self.assertEqual(self.user_info, user_pre_update)
 
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.USER_PREFERENCES}",

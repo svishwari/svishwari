@@ -241,7 +241,8 @@ class OrchestrationRouteTest(RouteTestCase):
             self.database,
             okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
             email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
-            display_name="dave smith",
+            display_name=t_c.VALID_USER_RESPONSE[api_c.NAME],
+            role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
         )
 
         # Set an audience as favorite
@@ -1400,13 +1401,6 @@ class OrchestrationRouteTest(RouteTestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.start()
-
-        set_user(
-            self.database,
-            okta_id=t_c.VALID_USER_RESPONSE.get(api_c.OKTA_ID_SUB),
-            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
-            display_name="doug smith",
-        )
 
         # Set an audience as favorite
         manage_user_favorites(
