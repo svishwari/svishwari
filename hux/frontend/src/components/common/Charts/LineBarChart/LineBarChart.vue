@@ -325,7 +325,7 @@ export default {
 
         addHoverCircle(
           hoverCircles[0],
-          5,
+          9,
           data.barIndex,
           data.delivered_count,
           width,
@@ -335,7 +335,7 @@ export default {
         )
         addHoverCircle(
           hoverCircles[1],
-          4,
+          7,
           data.barIndex,
           data.delivered_count,
           width,
