@@ -46,7 +46,10 @@
         :list="overviewData.sending_domains_overview"
       />
       <!-- Domains overview chart -->
-      <v-row class="mt-0" v-if="domainChartData.sent && domainChartData.deliveredRate">
+      <v-row
+        v-if="domainChartData.sent && domainChartData.deliveredRate"
+        class="mt-0"
+      >
         <v-col md="6">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
             <v-card-title class="pb-2 pl-6 pt-5">
