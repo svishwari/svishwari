@@ -67,7 +67,7 @@
             <domain-overview-chart
               :chart-data="domainChartData.deliveredRate.data"
               :chart-type="domainChartData.deliveredRate.type"
-               data-e2e="delivered-rate-domain-chart"
+              data-e2e="delivered-rate-domain-chart"
             />
           </v-card>
         </v-col>

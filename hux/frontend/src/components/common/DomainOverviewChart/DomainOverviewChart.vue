@@ -18,7 +18,7 @@
         <div class="text-body-2 black--text text--darken-4 caption">
           <div class="spend-count mb-1 text-h5">
             <span class="dots"></span>
-            <span>{{ domain_name}}</span>
+            <span>{{ domain_name }}</span>
           </div>
           <div v-if="sourceType == 'sent'" class="value-container">
             {{ currentData[domain_name] }}
