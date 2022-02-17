@@ -621,3 +621,9 @@ DATA_ADDED = "data_added"
 # MongoDB Platforms
 AWS_DOCUMENT_DB = "aws_document_db"
 AZURE_COSMOS_DB = "azure_cosmos_db"
+
+INBOX_PERCENTAGE_DATA = "inbox_percentage_data"
+INBOX_PERCENTAGE = "inbox_percentage"
+DOMAIN_NAME = "domain_name"
+OVERALL_INBOX_RATE = "overall_inbox_rate"
+DOMAIN_WISE_DATA = "domain_wise_data"

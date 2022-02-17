@@ -316,3 +316,43 @@ def delete_document(
         logging.error(exc)
 
     return False
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_distinct_values(
+    database: DatabaseClient,
+    collection: str,
+    field_name: str,
+    query_filter: dict = None,
+) -> Union[list, None]:
+    """A function to get distinct values of a field from a collection.
+
+    Args:
+        database (DatabaseClient): A database client.
+        collection (str): Collection name.
+        field_name (str): Field name to get distinct values for.
+        query_filter (dict, Optional): MongoDB query filter.
+
+    Returns:
+        Union[list, None]: List of distinct values.
+
+    Raises:
+        InvalidValueException: Error if the passed in value
+            is not valid.
+    """
+
+    if collection not in db_c.ALLOWED_COLLECTIONS:
+        raise de.InvalidValueException("Collection not supported")
+
+    coll = database[db_c.DATA_MANAGEMENT_DATABASE][collection]
+    query_filter = query_filter if query_filter else {}
+
+    try:
+        return list(coll.distinct(field_name, query_filter))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None

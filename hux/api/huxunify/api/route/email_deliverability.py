@@ -8,7 +8,17 @@ from typing import Tuple
 
 from flasgger import SwaggerView
 from flask import Blueprint, request
+
+from huxunifylib.database import constants as db_c
+from huxunifylib.database.collection_management import get_distinct_values
+from huxunifylib.database.deliverability_metrics_management import (
+    get_overall_inbox_rate,
+)
+
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.email_deliverability_metrics import (
+    get_delivered_rate_data,
+)
 
 from huxunify.api.route.decorators import (
     secured,
@@ -18,7 +28,11 @@ from huxunify.api.route.decorators import (
 )
 
 from huxunify.api.route.return_util import HuxResponse
-from huxunify.api.route.utils import get_start_end_dates
+from huxunify.api.route.utils import (
+    get_start_end_dates,
+    get_db_client,
+    clean_domain_name_string,
+)
 from huxunify.api.schema.email_deliverability import (
     EmailDeliverabilityOverviewSchema,
     EmailDeliverabiliyDomainsSchema,
@@ -87,11 +101,14 @@ class EmailDeliverabilityOverview(SwaggerView):
             end_date, api_c.DEFAULT_DATE_FORMAT
         )
 
+        database = get_db_client()
+        overall_inbox_rate = get_overall_inbox_rate(database)
+
         while curr_date <= end_date:
             delivered_open_rate_overview.append(
                 {
                     api_c.DATE: curr_date,
-                    api_c.OPEN_RATE: uniform(0.6, 0.9),
+                    api_c.OPEN_RATE: round(uniform(0.6, 0.9), 2),
                     api_c.DELIVERED_COUNT: randint(600, 900),
                 }
             )
@@ -99,7 +116,9 @@ class EmailDeliverabilityOverview(SwaggerView):
 
         return HuxResponse.OK(
             data={
-                api_c.OVERALL_INBOX_RATE: uniform(0.8, 0.95),
+                api_c.OVERALL_INBOX_RATE: round(overall_inbox_rate, 2)
+                if overall_inbox_rate
+                else round(uniform(0.6, 0.9), 2),
                 api_c.SENDING_DOMAINS_OVERVIEW: api_c.SENDING_DOMAINS_OVERVIEW_STUB,
                 api_c.DELIVERED_OPEN_RATE_OVERVIEW: delivered_open_rate_overview,
             },
@@ -178,11 +197,25 @@ class EmailDeliverabilityDomains(SwaggerView):
         ]
 
         domains = request.args.getlist(api_c.DOMAIN_NAME)
+
+        database = get_db_client()
+        allowed_domains = get_distinct_values(
+            database, db_c.DELIVERABILITY_METRICS_COLLECTION, db_c.DOMAIN
+        )
+        # In case no domains in database.
+        allowed_domains = (
+            allowed_domains
+            if allowed_domains
+            else api_c.ALLOWED_EMAIL_DOMAIN_NAMES
+        )
+
         if not domains:
-            domains = api_c.ALLOWED_EMAIL_DOMAIN_NAMES
+            # TODO remove when UI supports multiple domains.
+            # By default single domain is supported.
+            domains = [allowed_domains[0]]
         else:
             for domain_name in domains:
-                if domain_name not in api_c.ALLOWED_EMAIL_DOMAIN_NAMES:
+                if domain_name not in allowed_domains:
                     return HuxResponse.BAD_REQUEST(
                         message=f"Domain name"
                         f" {domain_name} "
@@ -200,24 +233,36 @@ class EmailDeliverabilityDomains(SwaggerView):
         )
 
         while curr_date <= end_date:
-            count_data = {domain: randint(400, 900) for domain in domains}
+            count_data = {
+                clean_domain_name_string(domain): randint(400, 900)
+                for domain in domains
+            }
             count_data.update({api_c.DATE: curr_date})
 
             sent_data.append(count_data)
 
             for i in range(5):
                 percent_data = {
-                    domain: uniform(0.4, 0.8) for domain in domains
+                    clean_domain_name_string(domain): round(
+                        uniform(0.6, 0.9), 2
+                    )
+                    for domain in domains
                 }
                 percent_data.update({api_c.DATE: curr_date})
                 percent_data_field_list[i].append(percent_data)
-
             curr_date = curr_date + timedelta(days=1)
 
         return HuxResponse.OK(
             data={
                 api_c.SENT: sent_data,
-                api_c.DELIVERED_RATE: delivered_rate_data,
+                api_c.DELIVERED_RATE: get_delivered_rate_data(
+                    database=database,
+                    domains=domains,
+                    start_date=datetime.datetime.strptime(
+                        start_date, api_c.DEFAULT_DATE_FORMAT
+                    ),
+                    end_date=end_date,
+                ),
                 api_c.OPEN_RATE: open_rate_data,
                 api_c.CLICK_RATE: click_rate_data,
                 api_c.UNSUBSCRIBE_RATE: unsubscribe_rate_data,
