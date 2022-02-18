@@ -27,10 +27,7 @@ from huxunifylib.database.orchestration_management import (
     delete_audience,
 )
 
-from huxunifylib.database.user_management import (
-    set_user,
-    manage_user_favorites,
-)
+from huxunifylib.database.user_management import manage_user_favorites
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
 )
@@ -49,6 +46,8 @@ class OrchestrationRouteTest(RouteTestCase):
         """Setup resources before each test."""
 
         super().setUp()
+
+        self.load_test_data(self.database)
 
         self.audience_api_endpoint = f"/api/v1{api_c.AUDIENCE_ENDPOINT}"
 
@@ -95,7 +94,7 @@ class OrchestrationRouteTest(RouteTestCase):
                 },
             },
         ]
-        self.user_name = "dave smith"
+        self.user_name = t_c.VALID_USER_RESPONSE[api_c.NAME]
         self.destinations = []
         for destination in destinations:
             self.destinations.append(
@@ -237,18 +236,10 @@ class OrchestrationRouteTest(RouteTestCase):
                 db_c.AUDIENCE_STATUS_DELIVERING,
             )
 
-        set_user(
-            self.database,
-            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
-            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
-            display_name=t_c.VALID_USER_RESPONSE[api_c.NAME],
-            role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
-        )
-
         # Set an audience as favorite
         manage_user_favorites(
             self.database,
-            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            okta_id=t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
             component_name=api_c.AUDIENCES,
             component_id=self.audiences[0][db_c.ID],
         )
@@ -256,7 +247,7 @@ class OrchestrationRouteTest(RouteTestCase):
         # Set a lookalike audience as favorite
         manage_user_favorites(
             self.database,
-            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            okta_id=t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
             component_name=api_c.LOOKALIKE,
             component_id=self.lookalike_audience_doc[db_c.ID],
         )

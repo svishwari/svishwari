@@ -13,7 +13,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.database.user_management import set_user, get_user
+from huxunifylib.database.user_management import get_user
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_user_favorites
@@ -71,12 +71,9 @@ class TestUserRoutes(RouteTestCase):
         )
 
         # write a user to the database
-        self.user_info = set_user(
+        self.user_info = get_user(
             self.database,
             okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],
-            email_address=t_c.VALID_USER_RESPONSE[api_c.EMAIL],
-            display_name=t_c.VALID_USER_RESPONSE[api_c.NAME],
-            role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
         )
 
     def test_adding_engagement_to_favorite(self):

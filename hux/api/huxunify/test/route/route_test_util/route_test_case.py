@@ -55,7 +55,9 @@ class RouteTestCase(TestCase):
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         self.request_mocker.get(
             t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
         )
@@ -74,6 +76,7 @@ class RouteTestCase(TestCase):
 
         self.user_name = "Joe Smithers"
 
+    # pylint:disable=no-self-use
     def load_test_data(self, database: DatabaseClient):
         """Load test data into the database.
 

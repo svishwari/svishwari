@@ -272,7 +272,9 @@ class TestEngagementMetricsEmail(TestCase):
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         self.request_mocker.get(
             t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
         )
@@ -475,7 +477,9 @@ class TestEngagementPerformanceDownload(TestCase):
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         self.request_mocker.get(
             t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
         )
@@ -611,7 +615,9 @@ class TestEngagementRoutes(TestCase):
 
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         request_mocker.start()
 
@@ -654,7 +660,7 @@ class TestEngagementRoutes(TestCase):
         self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
         self.user_doc = set_user(
             self.database,
-            t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
             t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
             display_name=self.user_name,
             role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
