@@ -37,7 +37,6 @@ from huxunify.test import constants as t_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 
 
-
 class AudienceDownloadsTest(RouteTestCase):
     """Test audience download."""
 

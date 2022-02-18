@@ -34,6 +34,9 @@ from huxunifylib.database.engagement_audience_management import (
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api import constants as api_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
+from huxunify.test.route.route_test_util.test_data_loading.users import (
+    load_users,
+)
 import huxunify.test.constants as t_c
 
 
@@ -47,7 +50,7 @@ class OrchestrationRouteTest(RouteTestCase):
 
         super().setUp()
 
-        self.load_test_data(self.database)
+        load_users(self.database)
 
         self.audience_api_endpoint = f"/api/v1{api_c.AUDIENCE_ENDPOINT}"
 
