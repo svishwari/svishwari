@@ -6,7 +6,7 @@ from collections import defaultdict
 from datetime import datetime, date
 import re
 from itertools import groupby
-from typing import Tuple, Union
+from typing import Tuple, Union, Generator
 from http import HTTPStatus
 from bson import ObjectId
 
@@ -1068,3 +1068,24 @@ def clean_domain_name_string(domain_name: str) -> str:
         str: Cleaned domain name.
     """
     return domain_name.replace(".", "-")
+
+
+def generate_cache_key_string(data: Union[dict, list]) -> Generator:
+    """
+    Generates cache key strings for dicts and lists
+    Args:
+        data (Union[dict,list]): Input data to get cache key
+
+    Returns:
+        Generator: String Generator
+
+    """
+    for item in data:
+        if isinstance(item, list):
+            generate_cache_key_string(item)
+        elif isinstance(item, dict):
+            yield " ".join(
+                [x for key, value in item.items() for x in [key, str(value)]]
+            )
+        else:
+            yield item
