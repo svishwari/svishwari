@@ -104,6 +104,13 @@ class EmailDeliverabilityOverview(SwaggerView):
         database = get_db_client()
         overall_inbox_rate = get_overall_inbox_rate(database)
 
+        # TODO Remove when email deliverability overview data is available.
+        domains = get_distinct_values(
+            database, db_c.DELIVERABILITY_METRICS_COLLECTION, db_c.DOMAIN
+        )
+        domain_name = domains[0] if domains else api_c.DOMAIN_1
+        api_c.SENDING_DOMAINS_OVERVIEW_STUB[0][api_c.DOMAIN_NAME] = domain_name
+
         while curr_date <= end_date:
             delivered_open_rate_overview.append(
                 {
