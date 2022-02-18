@@ -363,10 +363,10 @@
                       />
                     </v-col>
                     <v-divider
-                      vertical
                       v-if="
                         !loadingGeoOverview && customersGeoOverview.length != 0
                       "
+                      vertical
                       class="combined-list"
                     />
                     <v-col
