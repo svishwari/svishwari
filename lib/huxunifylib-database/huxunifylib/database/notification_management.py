@@ -310,3 +310,28 @@ def get_notification(
         logging.error(exc)
 
     return None
+
+
+def get_distinct_notification_users(
+    database: DatabaseClient
+) -> Union[dict, None]:
+    """To get notification users.
+
+    Args:
+        database (DatabaseClient): MongoDB Database Client
+
+    Returns:
+        Tuple[dict,None]:MongoDB Notification document else None
+
+    """
+    # get collection
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
+    ]
+
+    try:
+        return collection.distinct(db_c.NOTIFICATION_FIELD_USERNAME)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None

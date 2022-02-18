@@ -927,6 +927,7 @@ PARAMETER_STORE_ERROR_MSG = (
 
 # users
 USER_TAG = "user"
+USERS = "users"
 USER_NAME = "user_name"
 DISPLAY_NAME = "display_name"
 USER_PHONE_NUMBER = "phone_number"
