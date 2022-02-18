@@ -25,6 +25,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     requires_access_levels,
 )
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
     get_required_shap_data,
@@ -957,7 +958,18 @@ class ModelImportanceFeaturesView(SwaggerView):
 class ModelLiftView(SwaggerView):
     """Model Lift Class."""
 
-    parameters = api_c.MODEL_ID_PARAMS
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": api_c.VERSION,
+            "description": "Model version, if not provided, "
+            "it will take the latest.",
+            "type": "str",
+            "in": "query",
+            "required": False,
+            "example": "21.7.31",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model lift chart.",
@@ -1009,17 +1021,33 @@ class ModelLiftView(SwaggerView):
                 for i in range(1, 11)
             ]
         else:
-            lift_data = Tecton().get_model_lift_async(model_id)
+            tecton = Tecton()
+
+            # get all model versions
+            model_versions = tecton.get_model_version_history(model_id)
+
+            if not model_versions:
+                return HuxResponse.NOT_FOUND(
+                    "No model version found for the model."
+                )
+
+            # set model version to latest version if not specified in the request
+            model_version = (
+                request.args.get(api_c.VERSION)
+                if request.args.get(api_c.VERSION)
+                else model_versions[0].get(api_c.CURRENT_VERSION)
+            )
+
+            lift_data = tecton.get_model_lift_async(model_id, model_version)
 
         if not lift_data:
-            return jsonify([]), HTTPStatus.NOT_FOUND
+            return HuxResponse.NOT_FOUND(
+                "No model lift data found for the model."
+            )
 
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
 
-        return (
-            jsonify(ModelLiftSchema(many=True).dump(lift_data)),
-            HTTPStatus.OK.value,
-        )
+        return HuxResponse.OK(data=lift_data, data_schema=ModelLiftSchema())
 
 
 @add_view_to_blueprint(

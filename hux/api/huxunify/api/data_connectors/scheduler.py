@@ -71,7 +71,15 @@ def generate_cron(schedule: dict) -> str:
             ] = f"{cron_exp['day_of_month']}/{schedule['every']}"
 
     if schedule["periodicity"] == "Monthly":
-        cron_exp["day_of_month"] = ",".join(schedule.get("day_of_month"))
+        day_of_month = schedule.get("day_of_month")
+
+        # Supporting both list and item.
+        cron_exp["day_of_month"] = (
+            ",".join(day_of_month)
+            if isinstance(day_of_month, list)
+            else day_of_month
+        )
+
         if schedule["every"] > 1:
             cron_exp["month"] = f"{cron_exp['month']}/{schedule['every']}"
     return " ".join([str(val) for val in cron_exp.values()])
