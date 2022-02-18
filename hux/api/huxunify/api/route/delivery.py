@@ -213,7 +213,7 @@ class EngagementDeliverDestinationView(SwaggerView):
                 f'"{engagement[db_c.NAME]}" to destination '
                 f'"{target_destination[db_c.NAME]}".'
             ),
-            category=api_c.DELIVERY_TAG,
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=user[api_c.USER_NAME],
         )
         return {
@@ -324,7 +324,7 @@ class EngagementDeliverAudienceView(SwaggerView):
                 f'audience "{audience[db_c.NAME]}" from engagement '
                 f'"{engagement[db_c.NAME]}" across platforms.'
             ),
-            category=api_c.DELIVERY_TAG,
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=user[api_c.USER_NAME],
         )
         return {
@@ -446,7 +446,7 @@ class EngagementDeliverView(SwaggerView):
                 f"Successfully scheduled a delivery of all audiences "
                 f'from engagement "{engagement[db_c.NAME]}".'
             ),
-            category=api_c.DELIVERY_TAG,
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=user[api_c.USER_NAME],
         )
         logger.info(
@@ -1048,7 +1048,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                     f' in engagement "{engagement_id}".'
                     f' for destination "{destination_id}".'
                 ),
-                api_c.DELIVERY_TAG,
+                db_c.NOTIFICATION_CATEGORY_DELIVERY,
                 user[api_c.USER_NAME],
             )
         else:
@@ -1070,7 +1070,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                     f' from audience "{audience_id}"'
                     f' in engagement "{engagement_id}".'
                 ),
-                api_c.DELIVERY_TAG,
+                db_c.NOTIFICATION_CATEGORY_DELIVERY,
                 user[api_c.USER_NAME],
             )
 
@@ -1156,7 +1156,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                     f' in engagement "{engagement_id}".'
                     f' for destination "{destination_id}".'
                 ),
-                api_c.DELIVERY_TAG,
+                db_c.NOTIFICATION_CATEGORY_DELIVERY,
                 user[api_c.USER_NAME],
             )
         else:
@@ -1180,7 +1180,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                     f' from audience "{audience_id}"'
                     f' in engagement "{engagement_id}".'
                 ),
-                api_c.DELIVERY_TAG,
+                db_c.NOTIFICATION_CATEGORY_DELIVERY,
                 user[api_c.USER_NAME],
             )
 

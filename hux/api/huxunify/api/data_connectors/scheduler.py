@@ -101,7 +101,7 @@ async def delivery_destination(
                 f'"{engagement[db_c.NAME]}" to destination ID '
                 f'"{destination_id}" because the audience does not exist.'
             ),
-            api_c.DELIVERY_TAG,
+            db_c.NOTIFICATION_CATEGORY_DELIVERY,
             engagement[db_c.UPDATED_BY],
         )
         return
@@ -118,7 +118,7 @@ async def delivery_destination(
                 f'"{engagement[db_c.NAME]}" to destination ID '
                 f'"{destination_id}" because the destination does not exist.'
             ),
-            api_c.DELIVERY_TAG,
+            db_c.NOTIFICATION_CATEGORY_DELIVERY,
             engagement[db_c.UPDATED_BY],
         )
         return
@@ -153,7 +153,7 @@ async def delivery_destination(
             f'"{engagement[db_c.NAME]}" to destination '
             f'"{destination[db_c.NAME]}".'
         ),
-        api_c.DELIVERY_TAG,
+        db_c.NOTIFICATION_CATEGORY_DELIVERY,
         engagement[db_c.UPDATED_BY],
     )
 
