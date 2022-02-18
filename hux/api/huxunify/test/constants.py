@@ -26,7 +26,7 @@ STANDARD_HEADERS = {
 VALID_INTROSPECTION_RESPONSE = {
     "active": True,
     "scope": "openid email profile",
-    "username": "davesmith",
+    "username": "user1",
     "exp": 1234,
     "iat": 12345,
     "sub": "user1_admin@deloitte.com",
