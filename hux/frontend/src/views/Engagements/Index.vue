@@ -778,7 +778,6 @@
         </div>
       </template>
     </confirm-modal>
-    
   </div>
 </template>
 
