@@ -8,6 +8,7 @@
       @favoriteEngagement="(data) => handleActionFavorite(data, 'engagements')"
       @openDownloadDrawer="() => openDownloadDrawer()"
       @inactiveEngagement="(data) => makeInactiveEngagement(data)"
+      @editEngagement="() => editEngagement()"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
@@ -89,6 +90,7 @@
       v-model="showConfirmModal"
       :title="confirmDialog.title"
       :right-btn-text="confirmDialog.btnText"
+      :left-btn-text="confirmDialog.leftBtnText"
       :body="confirmDialog.body"
       :type="confirmDialog.type"
       :sub-title="confirmDialog.subtitle"
@@ -183,12 +185,14 @@ export default {
         id: null,
       },
       deleteActionData: {},
+      inactiveActionData: {},
       confirmDialog: {
         title: "Remove  audience?",
         icon: "sad-face",
         btnText: "Yes, remove it",
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
         actionType: "remove-audience",
+        leftBtnText: null,
       },
       destinationId: "",
     }
@@ -281,6 +285,16 @@ export default {
         case "remove-engagement":
           this.deleteEngagement(this.deleteActionData)
           this.$router.push({ name: "Engagements" })
+          break
+        case "inactive-engagement":
+          await this.updateEngagement(this.inactiveActionData)
+          this.refreshEntity()
+          break
+        case "edit-engagement":
+          this.$router.push({
+            name: "EngagementUpdate",
+            params: { id: this.getRouteId },
+          })
           break
         default:
           break
@@ -591,10 +605,18 @@ export default {
       })
     },
     editEngagement() {
-      this.$router.push({
-        name: "EngagementUpdate",
-        params: { id: this.getRouteId },
-      })
+      this.showConfirmModal = true
+      this.confirmDialog.actionType = "edit-engagement"
+      this.confirmDialog.title = "Edit"
+      this.confirmDialog.icon = "edit"
+      this.confirmDialog.type = "error"
+      this.confirmDialog.subtitle =
+        "Are you sure you want to edit this engagement?"
+      this.confirmDialog.btnText = "Yes, edit"
+      this.confirmDialog.leftBtnText = "Cancel"
+      this.confirmDialog.body =
+        "Are you sure you want to edit this engagement?\
+By changing the engagement, you may need to reschedule the delivery time and it will impact all associated audiences and destinations."
     },
     async removeEngagement(data) {
       this.showConfirmModal = true
@@ -619,13 +641,22 @@ By deleting this engagement you will not be able to recover it and it may impact
       this.refreshEntity()
     },
 
-    async makeInactiveEngagement(value) {
+    async makeInactiveEngagement(data) {
       const inactiveEngagementPayload = {
         status: "Inactive",
       }
-      const payload = { id: value.id, data: inactiveEngagementPayload }
-      await this.updateEngagement(payload)
-      this.refreshEntity()
+      const payload = { id: data.id, data: inactiveEngagementPayload }
+      this.showConfirmModal = true
+      this.confirmDialog.actionType = "inactive-engagement"
+      this.confirmDialog.title = "Make " + data.name
+      this.confirmDialog.icon = "alert-inactive"
+      this.confirmDialog.type = null
+      this.confirmDialog.subtitle = "inactive?"
+      this.confirmDialog.btnText = "Yes, make engagement inactive"
+      this.confirmDialog.body =
+        "Are you sure you want to make this Engagement inactive?\
+By making it inactive all audiences that are part of this engagement will have their delivery paused."
+      this.inactiveActionData = payload
     },
 
     async deliverEngagement() {

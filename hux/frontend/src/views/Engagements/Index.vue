@@ -717,6 +717,68 @@
         </div>
       </template>
     </confirm-modal>
+
+    <confirm-modal
+      v-model="confirmEditModal"
+      icon="edit"
+      type="error"
+      title="Edit"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, edit"
+      left-btn-text="Cancel"
+      @onCancel="confirmEditModal = !confirmEditModal"
+      @onConfirm="confirmEdit()"
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to edit this engagement&#63;
+        </div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By changing the engagement, you may need to reschedule the delivery
+          time and it will impact all associated audiences and destinations.
+        </div>
+      </template>
+    </confirm-modal>
+
+    <confirm-modal
+      v-model="confirmInactiveModal"
+      icon="alert-inactive"
+      :title="`Make ${confirmSubtitle}`"
+      sub-title="inactive?"
+      right-btn-text="Yes, make engagement inactive"
+      left-btn-text="Nevermind!"
+      @onCancel="confirmInactiveModal = !confirmInactiveModal"
+      @onConfirm="confirmInactive()"
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to make this Engagement inactive&#63;
+        </div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By making it inactive all audiences that are part of this engagement
+          will have their delivery paused.
+        </div>
+      </template>
+    </confirm-modal>
+    
   </div>
 </template>
 
@@ -762,6 +824,8 @@ export default {
     return {
       isFilterToggled: false,
       confirmModal: false,
+      confirmEditModal: false,
+      confirmInactiveModal: false,
       confirmSubtitle: "",
       selectedEngagement: null,
       selectedAudience: null,
@@ -962,6 +1026,44 @@ export default {
       this.confirmModal = false
     },
 
+    openEditModal(engagement) {
+      this.selectedEngagement = engagement
+      this.confirmSubtitle = engagement.name
+      this.confirmEditModal = true
+    },
+
+    async confirmEdit() {
+      await this.editEngagement(this.selectedEngagement.id)
+      this.confirmEditModal = false
+    },
+
+    openInactiveModal(engagement) {
+      this.selectedEngagement = engagement
+      this.confirmSubtitle = engagement.name
+      this.confirmInactiveModal = true
+    },
+
+    async confirmInactive() {
+      const inactiveEngagementPayload = {
+        status: "Inactive",
+      }
+      const payload = {
+        id: this.selectedEngagement.id,
+        data: inactiveEngagementPayload,
+      }
+      await this.updateEngagement(payload)
+      this.loading = true
+      try {
+        await this.getAllEngagements()
+      } finally {
+        this.rowData = this.engagementData.sort((a, b) =>
+          a.name > b.name ? 1 : -1
+        )
+        this.loading = false
+      }
+      this.confirmInactiveModal = false
+    },
+
     isUserFavorite(entity, type) {
       return (
         this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
@@ -1032,22 +1134,6 @@ export default {
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },
-    async makeInactiveEngagement(value) {
-      const inactiveEngagementPayload = {
-        status: "Inactive",
-      }
-      const payload = { id: value.id, data: inactiveEngagementPayload }
-      await this.updateEngagement(payload)
-      this.loading = true
-      try {
-        await this.getAllEngagements()
-      } finally {
-        this.rowData = this.engagementData.sort((a, b) =>
-          a.name > b.name ? 1 : -1
-        )
-        this.loading = false
-      }
-    },
 
     reloadAudienceData() {
       this.showLookAlikeDrawer = false
@@ -1074,7 +1160,7 @@ export default {
           title: "Edit engagement",
           isDisabled: false,
           onClick: () => {
-            this.editEngagement(engagement.id)
+            this.openEditModal(engagement)
           },
         },
         // TODO: enable once features are available
@@ -1083,7 +1169,7 @@ export default {
           title: "Make inactive",
           isDisabled: false,
           onClick: (value) => {
-            this.makeInactiveEngagement(value)
+            this.openInactiveModal(value)
           },
         },
         {
