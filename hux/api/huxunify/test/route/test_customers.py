@@ -55,8 +55,8 @@ class TestCustomersOverview(RouteTestCase):
         ).start()
 
         mock.patch(
-            "huxunify.api.route.decorators.get_user_from_db",
-            return_value=t_c.VALID_DB_USER_RESPONSE,
+            "huxunify.api.route.utils.get_user_info",
+            return_value=t_c.VALID_USER_RESPONSE,
         ).start()
 
     def test_get_customers(self):

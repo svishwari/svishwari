@@ -57,7 +57,7 @@ class TestDeliveryRoutes(RouteTestCase):
 
         # setup test data
         # write a user to the database
-        self.user_name = t_c.VALID_DB_USER_RESPONSE[api_c.DISPLAY_NAME]
+        self.user_name = t_c.VALID_USER_RESPONSE[api_c.NAME]
         set_user(
             self.database,
             okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],

@@ -46,14 +46,6 @@ VALID_USER_RESPONSE = {
     api_c.USER_PII_ACCESS: True,
 }
 OKTA_ID = "okta_id"
-VALID_DB_USER_RESPONSE = {
-    db_c.OKTA_ID: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
-    api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
-    api_c.DISPLAY_NAME: "USER 1",
-    api_c.NAME: "USER 1",
-    api_c.USER_PII_ACCESS: True,
-    api_c.ROLE: db_c.USER_ROLE_ADMIN,
-}
 # response missing some fields
 INVALID_USER_RESPONSE = {
     api_c.EMAIL: "davesmith@fake.com",
