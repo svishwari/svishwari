@@ -131,6 +131,9 @@ client["destinations"].dataExtensions = (resourceId) => {
 client["destinations"].createDataExtension = (resourceId, data) => {
   return http.post(`/destinations/${resourceId}/data-extensions`, data)
 }
+client["destinations"].updateDestination = (id, data) => {
+  return http.patch(`/destinations/${id}`, data)
+}
 //#endregion
 
 //#region Engagement custom endpoints

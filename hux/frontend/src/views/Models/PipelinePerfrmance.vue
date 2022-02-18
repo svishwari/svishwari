@@ -48,7 +48,7 @@
             </p>
           </div>
         </v-col>
-        <v-col md="2" class="card-space">
+        <v-col md="2" class="card-space most-recent">
           <div class="pipeline__card pa-4">
             <label class="text-body-2 black--text text--lighten-4 ma-0">
               Most recent run duration
@@ -145,13 +145,7 @@
           <span class="d-flex mb-2">
             <h3 class="text-h3">Run duration</h3>
             <span
-              class="
-                text--body-1
-                black--text
-                text--lighten-4
-                ml-1
-                last-duration
-              "
+              class="text-body-1 black--text text--lighten-4 ml-1 last-duration"
             >
               (last 10)
             </span>
@@ -163,7 +157,9 @@
         </div>
       </div>
     </v-card>
-    <v-card class="mt-6 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5">
+    <v-card
+      class="mt-6 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5 scoreing-card"
+    >
       <v-card-title class="d-flex justify-space-between pa-0 pr-2">
         <h3 class="text-h3 mb-2 black--text text--darken-4">Scoring</h3>
       </v-card-title>
@@ -211,7 +207,7 @@
             </p>
           </div>
         </v-col>
-        <v-col md="2" class="card-space">
+        <v-col md="2" class="card-space most-recent">
           <div class="pipeline__card pa-4">
             <label class="text-body-2 black--text text--lighten-4 ma-0">
               Most recent run duration
@@ -326,7 +322,6 @@
 import runDurationData from "@/api/mock/fixtures/runDurationData.js"
 import RunDurationChart from "@/components/common/RunDurationChart/RunDurationChart"
 import Tooltip from "@/components/common/Tooltip.vue"
-
 export default {
   name: "PipelinePerfrmance",
   components: {
@@ -372,5 +367,12 @@ export default {
 }
 .last-duration {
   margin-top: 2px !important;
+}
+.most-recent {
+  min-width: 19.5% !important;
+  max-width: 24% !important;
+}
+.scoreing-card {
+  margin-bottom: 9%;
 }
 </style>
