@@ -319,8 +319,8 @@ export default {
 
         svg
           .selectAll(".hover-line-y")
-          .attr("x1", xScale(data.barIndex) + width/2)
-          .attr("x2", xScale(data.barIndex) + width/2)
+          .attr("x1", xScale(data.barIndex) + width / 2)
+          .attr("x2", xScale(data.barIndex) + width / 2)
           .attr("y1", 0)
           .attr("y2", h)
           .style("display", "block")
