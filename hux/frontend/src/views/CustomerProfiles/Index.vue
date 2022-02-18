@@ -212,7 +212,7 @@
                         </div>
                       </template>
                       <template #subtitle>
-                        <div class="des-no-notification mt-2">
+                        <div class="text-body-2 mt-2">
                           Total customer size chart will appear here once
                           customer data is available.
                         </div>
@@ -230,7 +230,7 @@
                         </div>
                       </template>
                       <template #subtitle>
-                        <div class="des-no-notification mt-2">
+                        <div class="text-body-2 black--text text--base mt-2">
                           Our team is working hard to fix it. Please be patient.
                           <br />Thank you!
                         </div>
@@ -298,7 +298,7 @@
                         </div>
                       </template>
                       <template #subtitle>
-                        <div class="des-no-notification mt-2">
+                        <div class="text-body-2 black--text text--base mt-2">
                           Customer spend chart will appear here once customer
                           data is available.
                         </div>
@@ -316,7 +316,7 @@
                         </div>
                       </template>
                       <template #subtitle>
-                        <div class="des-no-notification mt-2">
+                        <div class="text-body-2 black--text text--base mt-2">
                           Our team is working hard to fix it. Please be patient.
                           <br />Thank you!
                         </div>
@@ -405,7 +405,7 @@
                           </div>
                         </template>
                         <template #subtitle>
-                          <div class="des-no-notification mt-2">
+                          <div class="text-body-2 black--text text--base mt-2">
                             Customer list will appear here once customer data is
                             available.
                           </div>
@@ -423,7 +423,7 @@
                           </div>
                         </template>
                         <template #subtitle>
-                          <div class="des-no-notification mt-2">
+                          <div class="text-body-2 black--text text--base mt-2">
                             Our team is working hard to fix it. Please be
                             patient and try again soon!
                           </div>
@@ -455,7 +455,7 @@
             <div class="title-no-notification">No customer data</div>
           </template>
           <template #subtitle>
-            <div class="des-no-notification mt-2">
+            <div class="text-body-2 black--text text--base mt-2">
               Your list of customers will appear here once your customer data is
               available.
             </div>
@@ -840,13 +840,6 @@ export default {
   font-size: 24px !important;
   line-height: 34px !important;
   font-weight: 300 !important;
-  letter-spacing: 0 !important;
-  color: var(--v-black-base);
-}
-.des-no-notification {
-  font-size: 14px !important;
-  line-height: 16px !important;
-  font-weight: 400 !important;
   letter-spacing: 0 !important;
   color: var(--v-black-base);
 }

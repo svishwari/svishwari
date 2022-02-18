@@ -70,7 +70,7 @@
           <div class="title-no-notification">No customer data to show</div>
         </template>
         <template #subtitle>
-          <div class="des-no-notification mt-2">
+          <div class="text-body-2 black--text text--base mt-2">
             Customer list will appear here once customer data is available.
           </div>
         </template>
@@ -87,7 +87,7 @@
           </div>
         </template>
         <template #subtitle>
-          <div class="des-no-notification mt-2">
+          <div class="text-body-2 black--text text--base mt-2">
             Our team is working hard to fix it. Please be patient and try again
             soon!
           </div>
@@ -268,13 +268,6 @@ export default {
   font-size: 24px !important;
   line-height: 34px !important;
   font-weight: 300 !important;
-  letter-spacing: 0 !important;
-  color: var(--v-black-base);
-}
-.des-no-notification {
-  font-size: 14px !important;
-  line-height: 16px !important;
-  font-weight: 400 !important;
   letter-spacing: 0 !important;
   color: var(--v-black-base);
 }
