@@ -670,7 +670,18 @@ class ModelOverview(SwaggerView):
 class ModelDriftView(SwaggerView):
     """Model Drift Class"""
 
-    parameters = api_c.MODEL_ID_PARAMS
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": api_c.VERSION,
+            "description": "Model version, if not provided, "
+            "it will take the latest.",
+            "type": "str",
+            "in": "path",
+            "required": False,
+            "example": "21.7.31",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model drift.",
@@ -688,7 +699,9 @@ class ModelDriftView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
+    def get(
+        self, user: dict, model_id: str, model_version: str = None
+    ) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -696,8 +709,9 @@ class ModelDriftView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (str): Model ID.
             user (dict): User object.
+            model_id (str): Model ID.
+            model_version (str): Model Version.
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model drift,
@@ -716,20 +730,41 @@ class ModelDriftView(SwaggerView):
             ]
         else:
             tecton = Tecton()
-
-            # get model information
-            model_versions = tecton.get_model_version_history(model_id)
+            database = get_db_client()
+            # get model versions
+            model_versions = (
+                [{api_c.CURRENT_VERSION: model_version}]
+                if model_version
+                else tecton.get_model_version_history(model_id)
+            )
 
             # if model versions not found, return not found.
             if not model_versions:
                 return {}, HTTPStatus.NOT_FOUND
 
-            # take the latest model
-            latest_model = model_versions[0]
+            # loop versions until the latest version is found
+            for version in model_versions:
+                current_version = version.get(api_c.CURRENT_VERSION)
 
-            drift_data = tecton.get_model_drift(
-                model_id, latest_model[api_c.TYPE], model_versions
-            )
+                # check cache first
+                drift_data = get_cache_entry(
+                    database, f"drift.{model_id}.{current_version}"
+                )
+                if drift_data:
+                    break
+
+                drift_data = tecton.get_model_drift(
+                    model_id, current_version, model_versions
+                )
+
+                # create cache entry in db only if drift fetched from Tecton is not empty
+                if drift_data:
+                    create_cache_entry(
+                        database,
+                        f"drift.{model_id}.{current_version}",
+                        drift_data,
+                    )
+                    break
 
         return (
             jsonify(ModelDriftSchema(many=True).dump(drift_data)),
