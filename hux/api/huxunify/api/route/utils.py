@@ -1076,7 +1076,7 @@ def generate_cache_key_string(data: Union[dict, list]) -> Generator:
     Args:
         data (Union[dict,list]): Input data to get cache key
 
-    Returns:
+    Yields:
         Generator: String Generator
 
     """
