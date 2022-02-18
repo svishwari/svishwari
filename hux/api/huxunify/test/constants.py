@@ -37,7 +37,7 @@ VALID_INTROSPECTION_RESPONSE = {
     "client_id": "1234",
     "uid": "00u7acrr5pEmJ09lc2p7",
 }
-INVALID_OKTA_RESPONSE = {"active": False}
+INVALID_INTROSPECTION_RESPONSE = {"active": False}
 VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
     api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
@@ -45,7 +45,6 @@ VALID_USER_RESPONSE = {
     api_c.ROLE: db_c.USER_ROLE_ADMIN,
     api_c.USER_PII_ACCESS: True,
 }
-OKTA_ID = "okta_id"
 # response missing some fields
 INVALID_USER_RESPONSE = {
     api_c.EMAIL: "davesmith@fake.com",

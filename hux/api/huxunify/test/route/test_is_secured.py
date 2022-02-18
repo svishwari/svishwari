@@ -43,7 +43,7 @@ class OktaTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_INTROSPECTION_RESPONSE
         )
         mock_header = {"Authorization": "Bearer 1234567"}
 
@@ -70,7 +70,7 @@ class OktaTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_INTROSPECTION_RESPONSE
         )
         mock_header = {"Authorization": "Bearer"}
 
@@ -97,7 +97,7 @@ class OktaTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_INTROSPECTION_RESPONSE
         )
         mock_header = {"Authorization": "Bearer 123456765"}
 

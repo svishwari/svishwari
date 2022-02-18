@@ -222,7 +222,7 @@ class TestUserRoutes(RouteTestCase):
         # mock invalid request for introspect call
         request_mocker = requests_mock.Mocker()
         request_mocker.post(
-            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_INTROSPECTION_RESPONSE
         )
         request_mocker.start()
 
