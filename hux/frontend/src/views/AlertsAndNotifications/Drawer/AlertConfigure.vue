@@ -85,7 +85,7 @@
                   :width="item.show ? '80px' : '100px'"
                   :switch-labels="switchLabel"
                   :class="item.show ? 'w-75' : 'w-97'"
-                  @change="formatFinalResponse"
+                  @change="formatFinalResponse($event, item)"
                 />
               </template>
               <template v-slot:label="{ item }">
@@ -240,36 +240,6 @@ export default {
                       label: "Informational",
                       name: "informational",
                       parent: "datasources",
-                      show: true,
-                      isDeepChild: true,
-                    },
-                  ],
-                },
-                {
-                  label: "Identity resolution",
-                  name: "identity_resolution",
-                  parent: "data_management",
-                  show: true,
-                  isDeepChild: false,
-                  children: [
-                    {
-                      label: "Critical",
-                      name: "critical",
-                      parent: "identity_resolution",
-                      show: true,
-                      isDeepChild: true,
-                    },
-                    {
-                      label: "Success",
-                      name: "success",
-                      parent: "identity_resolution",
-                      show: true,
-                      isDeepChild: true,
-                    },
-                    {
-                      label: "Informational",
-                      name: "informational",
-                      parent: "identity_resolution",
                       show: true,
                       isDeepChild: true,
                     },
@@ -466,21 +436,7 @@ export default {
   },
   updated() {
     this.mapAlertSectionGroups()
-    this.$nextTick(function () {
-      document
-        .getElementsByClassName("v-treeview-node")
-        .forEach((element, index) => {
-          if (element.childNodes.length == 2) {
-            let elem = element.childNodes[0]
-            if (index == 0) {
-              elem.style["border-top"] = "none"
-              elem.style["min-height"] = "30px"
-              elem.style["height"] = "30px"
-            }
-            elem.style["background"] = "#F9FAFB"
-          }
-        })
-    })
+    this.maintainTreeStyles()
   },
   methods: {
     ...mapActions({
@@ -494,12 +450,33 @@ export default {
       this.$emit("onDrawerClose")
       this.updateUserPreferences(this.updatedConfiguration)
     },
+    maintainTreeStyles() {
+      this.$nextTick(function () {
+        document
+          .getElementsByClassName("v-treeview-node")
+          .forEach((element, index) => {
+            if (element.childNodes.length == 2) {
+              let elem = element.childNodes[0]
+              if (index == 0) {
+                elem.style["border-top"] = "none"
+                elem.style["min-height"] = "30px"
+                elem.style["height"] = "30px"
+              }
+              elem.style["background"] = "#F9FAFB"
+            }
+          })
+      })
+    },
     mapAlertSectionGroups() {
       let currentUser = this.users.find(
         (data) => data.email == this.getCurrentUserEmail
       )
       this.currentAlertConf = currentUser.alerts
-      this.setAlertConfiguration()
+      if (this.currentAlertConf) {
+        this.setAlertConfiguration()
+      } else {
+        this.showAlerts = false
+      }
     },
     // Recursion for setting nested output structure
     recursiveBinding(data, alerts) {
@@ -516,19 +493,36 @@ export default {
       }
       return alerts
     },
-    formatFinalResponse() {
+    formatFinalResponse(event, item) {
+      this.manualToggleChanges(event, item)
       this.updatedConfiguration = {}
       this.updatedConfiguration.alerts = this.recursiveBinding(
         this.alertsSectionGroup[0],
         {}
       )
-      // manual toggle logic will be implemented here
+      this.maintainTreeStyles()
     },
+
+    manualToggleChanges(flag, item) {
+      if (item && !item.isDeepChild) {
+        item.children.forEach((data) => {
+          if (data.children) {
+            // Recursion for setting event flag to deepest level
+            this.manualToggleChanges(flag, data)
+          } else {
+            data.show = flag
+          }
+        })
+      }
+    },
+
     toggleMainSwitch(value) {
       if (value) {
         this.setAlertConfiguration()
       }
+      this.maintainTreeStyles()
     },
+
     // Recursion for getting nested input structure
     setAllKeyMapping(basicEntity, parentObj) {
       for (const [key, value] of Object.entries(basicEntity)) {

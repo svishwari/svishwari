@@ -141,6 +141,8 @@ export default {
         this.emailData.filter((bar) => bar.index == 0 && bar.barIndex < 5)
           .length < 3
 
+      let barWidth = xScale.bandwidth() < 40 ? xScale.bandwidth() : 40
+
       let convertCalendarFormat = (value) => {
         let tickDate = this.barGroupChangeIndex.find(
           (bar) => bar.index == value
@@ -264,10 +266,10 @@ export default {
         .style("fill", (d) =>
           this.emptyState ? "transparent" : barColorCodes[d.data.index]
         )
-        .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
+        .on("mouseover", (d) => applyHoverEffects(d, barWidth))
         .on("mouseout", (d) => removeHoverEffects(d))
         .attr("height", (d) => yScale1(d[0]) - yScale1(d[1]))
-        .attr("width", xScale.bandwidth() < 40 ? xScale.bandwidth() : 40)
+        .attr("width", barWidth)
         .attr("x", (d, i) => xScale(i))
         .attr("y", (d) => yScale1(d[1]))
         .attr("rx", 2)
@@ -317,8 +319,8 @@ export default {
 
         svg
           .selectAll(".hover-line-y")
-          .attr("x1", xScale(data.barIndex) + width / 2 - 10)
-          .attr("x2", xScale(data.barIndex) + width / 2 - 10)
+          .attr("x1", xScale(data.barIndex) + width/2)
+          .attr("x2", xScale(data.barIndex) + width/2)
           .attr("y1", 0)
           .attr("y2", h)
           .style("display", "block")
@@ -369,7 +371,7 @@ export default {
         svg
           .append("circle")
           .classed(circleName, true)
-          .attr("cx", xScale(cX) + width / 2 - 10)
+          .attr("cx", xScale(cX) + width / 2)
           .attr("cy", yScale1(cY))
           .attr("r", circleRadius)
           .style("stroke", strokeColor)
