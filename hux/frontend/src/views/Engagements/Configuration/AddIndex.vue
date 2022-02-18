@@ -280,7 +280,7 @@ export default {
             local_schedule.monthlyPeriod
           requestPayload.delivery_schedule.schedule.monthly_day =
             local_schedule.monthlyDay
-          requestPayload.delivery_schedule.schedule.monthly_day_date =
+          requestPayload.delivery_schedule.schedule.day_of_month =
             local_schedule.monthlyDayDate
         }
       } else {
