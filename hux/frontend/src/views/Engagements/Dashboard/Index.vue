@@ -650,9 +650,10 @@ By deleting this engagement you will not be able to recover it and it may impact
       this.confirmDialog.actionType = "inactive-engagement"
       this.confirmDialog.title = "Make " + data.name
       this.confirmDialog.icon = "alert-inactive"
-      this.confirmDialog.type = null
+      this.confirmDialog.type = "primary"
       this.confirmDialog.subtitle = "inactive?"
       this.confirmDialog.btnText = "Yes, make engagement inactive"
+      this.confirmDialog.leftBtnText = "Cancel"
       this.confirmDialog.body =
         "Are you sure you want to make this Engagement inactive?\
 By making it inactive all audiences that are part of this engagement will have their delivery paused."
