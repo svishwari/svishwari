@@ -313,7 +313,7 @@ def get_notification(
 
 
 def get_distinct_notification_users(
-    database: DatabaseClient
+    database: DatabaseClient,
 ) -> Union[dict, None]:
     """To get notification users.
 
