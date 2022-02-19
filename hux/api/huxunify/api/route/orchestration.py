@@ -1478,7 +1478,7 @@ class AudienceRules(SwaggerView):
             "rule_attributes": {
                 "model_scores": {
                     "age_density": {
-                        "name": "Propensity to unsubscribe",
+                        "name": "Age Density",
                         "type": "range",
                         "min": 0,
                         "max": 99,
