@@ -72,7 +72,8 @@ export default {
 
       if (this.value) {
         let responseKeys = Object.keys(this.value[0])
-        this.domain_name = responseKeys[0] !== 'date' ? responseKeys[0] : responseKeys[1]
+        this.domain_name =
+          responseKeys[0] !== "date" ? responseKeys[0] : responseKeys[1]
       }
 
       this.chartWidth = this.chartDimensions.width + "px"
