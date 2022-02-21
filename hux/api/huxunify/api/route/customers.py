@@ -632,14 +632,33 @@ class IDRDataFeeds(SwaggerView):
         start_date, end_date = get_start_end_dates(request, 6)
         Validation.validate_date_range(start_date, end_date)
 
+        database = get_db_client()
+
+        data_feeds = get_cache_entry(
+            database,
+            f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}."
+            f"{api_c.START_DATE}.{api_c.END_DATE}",
+        )
+
+        if not data_feeds:
+            data_feeds = get_idr_data_feeds(
+                token_response[0],
+                start_date,
+                end_date,
+            )
+
+            # cache
+            create_cache_entry(
+                database,
+                f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}."
+                f"{api_c.START_DATE}.{api_c.END_DATE}",
+                data_feeds,
+            )
+
         return (
             jsonify(
                 DataFeedSchema().dump(
-                    get_idr_data_feeds(
-                        token_response[0],
-                        start_date,
-                        end_date,
-                    ),
+                    data_feeds,
                     many=True,
                 )
             ),
@@ -918,14 +937,33 @@ class IDRMatchingTrends(SwaggerView):
         start_date, end_date = get_start_end_dates(request, 6)
         Validation.validate_date_range(start_date, end_date)
 
+        database = get_db_client()
+
+        matching_trends = get_cache_entry(
+            database,
+            f"{api_c.IDR_ENDPOINT}.{api_c.MATCHING_TRENDS}."
+            f"{api_c.START_DATE}.{api_c.END_DATE}",
+        )
+
+        if not matching_trends:
+            matching_trends = get_idr_matching_trends(
+                token_response[0],
+                start_date,
+                end_date,
+            )
+
+            # cache
+            create_cache_entry(
+                database,
+                f"{api_c.IDR_ENDPOINT}.{api_c.MATCHING_TRENDS}."
+                f"{api_c.START_DATE}.{api_c.END_DATE}",
+                matching_trends,
+            )
+
         return (
             jsonify(
                 MatchingTrendsSchema().dump(
-                    get_idr_matching_trends(
-                        token_response[0],
-                        start_date,
-                        end_date,
-                    ),
+                    matching_trends,
                     many=True,
                 )
             ),
