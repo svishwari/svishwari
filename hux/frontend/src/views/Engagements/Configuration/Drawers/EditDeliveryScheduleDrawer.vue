@@ -34,7 +34,82 @@
             Reset delivery to default
           </span>
         </div>
-        <hux-schedule-picker v-model="localSchedule" />
+        <!-- <hux-schedule-picker v-model="localSchedule" /> -->
+        <h5 class="text-h3 mb-2">Delivery schedule</h5>
+    <div class="d-flex align-items-center">
+      <plain-card
+        :icon="!isRecurringFlag ? 'manual-light' : 'manual-dark'"
+        title="Manual"
+        description="Deliver this engagement when you are ready."
+        :style="
+          !isRecurringFlag
+            ? { float: 'left', color: 'var(--v-primary-lighten6)' }
+            : { float: 'left', color: 'var(--v-black-base)' }
+        "
+        title-color="black--text"
+        height="175"
+        width="200"
+        top-adjustment="mt-3"
+        :class="!isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
+        @onClick="changeSchedule(false)"
+      />
+      <plain-card
+        :icon="!isRecurringFlag ? 'recurring-dark' : 'recurring-light'"
+        title="Recurring"
+        description="Deliver this engagement during a chosen timeframe."
+        :style="
+          isRecurringFlag
+            ? { float: 'left', color: 'var(--v-primary-lighten6)' }
+            : { float: 'left', color: 'var(--v-black-base)' }
+        "
+        title-color="black--text"
+        height="175"
+        width="200"
+        top-adjustment="mt-3"
+        :class="isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
+        @onClick="changeSchedule(true)"
+      />
+    </div>
+    <div v-if="isRecurringFlag" class="delivery-background px-4 pt-4 pb-6">
+      <v-row class="delivery-schedule mt-6 ml-n2">
+        <div>
+          <span
+            class="date-picker-label black--text text--darken-4 text-caption"
+          >
+            Start date
+          </span>
+          <hux-start-date
+            class="mt-n4"
+            :label="selectedStartDate"
+            :selected="selectedStartDate"
+            @on-date-select="onStartDateSelect"
+          />
+        </div>
+        <icon class="mx-2" type="arrow" :size="28" color="black-lighten3" />
+        <div>
+          <span
+            class="date-picker-label black--text text--darken-4 text-caption"
+          >
+            End date
+          </span>
+          <hux-end-date
+            class="mt-n4"
+            :label="selectedEndDate"
+            :selected="selectedEndDate"
+            :is-sub-menu="true"
+            :min-date="endMinDate"
+            @on-date-select="onEndDateSelect"
+          />
+        </div>
+      </v-row>
+      <v-row class="delivery-schedule mt-5">
+        <hux-schedule-picker
+          v-model="localSchedule"
+          :start-date="selectedStartDate"
+          :end-date="selectedEndDate"
+        />
+      </v-row>
+    </div>
       </div>
     </template>
 
@@ -111,6 +186,7 @@ export default {
       loading: false,
       localToggle: false,
       localSchedule: JSON.parse(JSON.stringify(deliverySchedule())),
+      initialSchedule: JSON.parse(JSON.stringify(deliverySchedule())),
     }
   },
 
@@ -153,6 +229,10 @@ export default {
       this.localSchedule = JSON.parse(
         JSON.stringify(deliverySchedule(this.schedule))
       )
+      this.initialSchedule = JSON.parse(
+        JSON.stringify(deliverySchedule(this.schedule))
+      )
+      console.log(this.localSchedule)
     },
   },
 
@@ -182,7 +262,7 @@ export default {
     },
 
     resetSchedule() {
-      this.localSchedule = JSON.parse(JSON.stringify(deliverySchedule()))
+      this.localSchedule = JSON.parse(JSON.stringify(deliverySchedule(this.initialSchedule)))
     },
   },
 }

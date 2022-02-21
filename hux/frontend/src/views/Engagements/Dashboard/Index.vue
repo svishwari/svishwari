@@ -527,7 +527,6 @@ export default {
             "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
           this.showConfirmModal = true
           this.scheduleDestination = event.data
-          this.currentSchedule = event.data["delivery_schedule"]
           break
         case "remove destination":
           this.confirmDialog.actionType = "remove-destination"
