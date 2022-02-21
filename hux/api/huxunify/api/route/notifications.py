@@ -12,8 +12,6 @@ from flask import Blueprint, request, Response, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
-
-from huxunify.api.schema.user import UserSchema
 from huxunifylib.database import (
     constants as db_c,
     notification_management,
