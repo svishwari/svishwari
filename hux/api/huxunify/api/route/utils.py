@@ -983,6 +983,14 @@ def group_and_aggregate_datafeed_details_by_date(
                 data_feed_by_date[api_c.LAST_PROCESSED_START] = df_detail[
                     api_c.LAST_PROCESSED_START
                 ]
+            if (
+                not data_feed_by_date.get(api_c.LAST_PROCESSED_END)
+                or data_feed_by_date[api_c.LAST_PROCESSED_END]
+                <= df_detail[api_c.LAST_PROCESSED_END]
+            ):
+                data_feed_by_date[api_c.LAST_PROCESSED_END] = df_detail[
+                    api_c.LAST_PROCESSED_END
+                ]
             total_records_received += df_detail[api_c.RECORDS_RECEIVED]
             total_records_processed += df_detail[api_c.RECORDS_PROCESSED]
             data_feed_by_date[api_c.DATA_FILES].append(df_detail)
