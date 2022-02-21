@@ -961,7 +961,7 @@ def group_and_aggregate_datafeed_details_by_date(
     grouped_datafeed_details = []
 
     grouped_by_date = groupby(
-        datafeed_details, lambda x: x[api_c.LAST_PROCESSED]
+        datafeed_details, lambda x: x[api_c.LAST_PROCESSED_START]
     )
 
     for df_date, df_details in grouped_by_date:
@@ -1023,15 +1023,31 @@ def fetch_datafeed_details(
     """
     datafeed_details = copy.deepcopy(datafeed_detail_stub_data)
 
-    _ = [
-        x.update(
+    for i, df_detail in enumerate(datafeed_details):
+        _ = df_detail.update(
             {
                 "filename": f"{datafeed_name}_{i}",
-                api_c.LAST_PROCESSED: parse(x[api_c.LAST_PROCESSED]),
+                api_c.LAST_PROCESSED_START: parse(
+                    df_detail[api_c.LAST_PROCESSED_START]
+                ),
+                api_c.LAST_PROCESSED_END: parse(
+                    df_detail[api_c.LAST_PROCESSED_END]
+                ),
             }
         )
-        for i, x in enumerate(datafeed_details)
-    ]
+        # compute run duration if success or running
+        if df_detail[api_c.STATUS] in [
+            api_c.STATUS_SUCCESS,
+            api_c.STATUS_RUNNING,
+        ]:
+            df_detail[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
+                int(
+                    (
+                        df_detail[api_c.LAST_PROCESSED_END]
+                        - df_detail[api_c.LAST_PROCESSED_START]
+                    ).total_seconds()
+                )
+            )
 
     if statuses:
         datafeed_details = list(
@@ -1046,7 +1062,8 @@ def fetch_datafeed_details(
                 lambda x: start_date
                 <= parse(
                     datetime.strftime(
-                        x[api_c.LAST_PROCESSED], api_c.DEFAULT_DATE_FORMAT
+                        x[api_c.LAST_PROCESSED_START],
+                        api_c.DEFAULT_DATE_FORMAT,
                     )
                 ).date()
                 <= end_date,
@@ -1068,3 +1085,20 @@ def clean_domain_name_string(domain_name: str) -> str:
         str: Cleaned domain name.
     """
     return domain_name.replace(".", "-")
+
+
+def parse_seconds_to_duration_string(duration: int):
+    """Convert duration timedelta to HH:MM:SS format
+
+    Args:
+        duration (int): Duration in seconds
+
+    Returns:
+        str: duration string
+
+    """
+    seconds = duration % 60
+    minutes = (duration // 60) % 60
+    hours = duration // (60 * 60)
+
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"

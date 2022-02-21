@@ -153,6 +153,7 @@ class IndividualDataSourceDataFeedDetailSchema(Schema):
     records_processed = fields.Int(example=20000)
     records_received = fields.Int(example=25000)
     records_processed_percentage = fields.Float(example=0.8)
+    run_duration = fields.Str(example="01:32:45")
     status = fields.Str(
         validate=OneOf(
             [
@@ -161,6 +162,21 @@ class IndividualDataSourceDataFeedDetailSchema(Schema):
                 api_c.STATUS_FAILED,
                 api_c.STATUS_DISABLED,
                 api_c.STATUS_CANCELLED,
+            ]
+        ),
+        example=api_c.STATUS_SUCCESS,
+    )
+    sub_status = fields.Str(
+        validate=OneOf(
+            [
+                api_c.STATUS_IN_PROGRESS,
+                api_c.STATUS_PARTIAL_SUCCESS_PROGRESS,
+                api_c.STATUS_WAITING,
+                api_c.STATUS_PARTIAL_SUCCESS_WAITING,
+                api_c.STATUS_COMPLETE,
+                api_c.STATUS_FAILED,
+                api_c.STATUS_CANCELLED,
+                api_c.STATUS_PARTIAL_SUCCESS,
             ]
         ),
         example=api_c.STATUS_SUCCESS,
