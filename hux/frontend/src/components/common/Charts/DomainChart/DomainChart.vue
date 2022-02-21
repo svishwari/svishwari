@@ -161,7 +161,7 @@ export default {
             .ticks(3)
             .tickPadding(15)
             .tickFormat(function (d, i, n) {
-              return n[i + 1] ? d3TimeFormat.timeFormat("%m/%Y")(d) : "Today"
+              return n[i + 1] ? d3TimeFormat.timeFormat("%m/%Y")(d) : ""
             })
         )
         .style("font-size", "14px")
@@ -195,6 +195,11 @@ export default {
       d3Select
         .selectAll(".xAlternateAxis .tick line")
         .style("stroke", "#E2EAEC")
+
+            svg
+        .append("text")
+        .attr("transform", `translate(${w - 20}, ${h + 25})`)
+        .text("Today")
 
       d3Transition.transition()
 
