@@ -196,7 +196,7 @@ export default {
         .selectAll(".xAlternateAxis .tick line")
         .style("stroke", "#E2EAEC")
 
-            svg
+      svg
         .append("text")
         .attr("transform", `translate(${w - 20}, ${h + 25})`)
         .text("Today")
