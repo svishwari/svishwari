@@ -188,7 +188,8 @@ class DataSourceDataFeedDetailsGetSchema(Schema):
 
     name = DateTimeWithZ(example="2022-01-01T01:02:03Z")
     filename = fields.Str(example="unsubscribe_1")
-    last_processed = DateTimeWithZ(example="2022-01-01T01:02:03Z")
+    last_processed_start = DateTimeWithZ(example="2022-01-01T01:02:03Z")
+    last_processed_end = DateTimeWithZ(example="2022-01-01T01:02:03Z")
     thirty_days_avg = fields.Float(example=0.89)
     records_processed = fields.Int(example=40000)
     records_received = fields.Int(example=50000)
