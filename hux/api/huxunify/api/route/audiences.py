@@ -979,7 +979,7 @@ class DeleteDestinationAudience(SwaggerView):
     def delete(
         self, audience_id: ObjectId, user: dict
     ) -> Tuple[Response, int]:
-        """Adds Destination to Audience
+        """Remove Destination from Audience
 
         ---
         security:
