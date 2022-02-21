@@ -430,6 +430,7 @@ class CustomersListview(SwaggerView):
 
         # get token
         token_response = get_token_from_request(request)
+        database = get_db_client()
 
         batch_size = Validation.validate_integer(
             request.args.get(
@@ -447,23 +448,34 @@ class CustomersListview(SwaggerView):
 
         offset = (batch_number - 1) * batch_size
 
-        if user.get(api_c.USER_PII_ACCESS) is True:
-            redacted_data = get_customer_profiles(
-                token_response[0], batch_size, offset
-            )
-        else:
+        # check cache and add to cache
+        customer_list = get_cache_entry(
+            database,
+            f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
+        )
 
-            redacted_data = {}
+        if not customer_list:
             customer_list = get_customer_profiles(
                 token_response[0], batch_size, offset
             )
-            redacted_data[api_c.TOTAL_CUSTOMERS] = customer_list.get(
-                api_c.TOTAL_CUSTOMERS
+            create_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
+                customer_list,
             )
-            redacted_data[api_c.CUSTOMERS_TAG] = [
-                redact_fields(x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS)
-                for x in customer_list.get(api_c.CUSTOMERS_TAG)
-            ]
+
+        if user.get(api_c.USER_PII_ACCESS) is True:
+            redacted_data = customer_list
+        else:
+            redacted_data = {
+                api_c.TOTAL_CUSTOMERS: customer_list.get(
+                    api_c.TOTAL_CUSTOMERS
+                ),
+                api_c.CUSTOMERS_TAG: [
+                    redact_fields(x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS)
+                    for x in customer_list.get(api_c.CUSTOMERS_TAG)
+                ],
+            }
 
         return (
             CustomersSchema().dump(redacted_data),
