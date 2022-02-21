@@ -12,6 +12,10 @@ from bson import ObjectId
 
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
+from huxunifylib.database.cache_management import (
+    get_cache_entry,
+    create_cache_entry,
+)
 
 from pandas import DataFrame
 
@@ -48,7 +52,11 @@ from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     get_user_info,
 )
-from huxunify.api.data_connectors.cdp import check_cdm_api_connection
+from huxunify.api.data_connectors.cdp import (
+    check_cdm_api_connection,
+    get_customers_overview,
+    get_demographic_by_state,
+)
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
@@ -164,8 +172,8 @@ def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
                     item[name]
                     for item in perf_metrics
                     if name in item.keys()
-                    and item[name] is not None
-                    and not isinstance(item[name], str)
+                       and item[name] is not None
+                       and not isinstance(item[name], str)
                 ]
             )
     elif metric_type == api_c.EMAIL:
@@ -175,8 +183,8 @@ def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
                     item[name]
                     for item in perf_metrics
                     if name in item.keys()
-                    and item[name] is not None
-                    and not isinstance(item[name], str)
+                       and item[name] is not None
+                       and not isinstance(item[name], str)
                 ]
             )
 
@@ -207,11 +215,11 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
 
 
 def update_metrics(
-    target_id: ObjectId,
-    name: str,
-    jobs: list,
-    perf_metrics: list,
-    metric_type: str,
+        target_id: ObjectId,
+        name: str,
+        jobs: list,
+        perf_metrics: list,
+        metric_type: str,
 ) -> dict:
     """Update performance metrics.
 
@@ -311,7 +319,7 @@ def group_gender_spending(gender_spending: list) -> dict:
 
 
 def do_not_transform_fields(
-    dataframe: DataFrame,
+        dataframe: DataFrame,
 ) -> DataFrame:
     """Returns the csv file data without any transformation.
 
@@ -379,7 +387,7 @@ class Validation:
 
     @staticmethod
     def validate_date(
-        date_string: str, date_format: str = api_c.DEFAULT_DATE_FORMAT
+            date_string: str, date_format: str = api_c.DEFAULT_DATE_FORMAT
     ) -> datetime:
         """Validates is a single date is valid
 
@@ -404,9 +412,9 @@ class Validation:
 
     @staticmethod
     def validate_date_range(
-        start_date: str,
-        end_date: str,
-        date_format: str = api_c.DEFAULT_DATE_FORMAT,
+            start_date: str,
+            end_date: str,
+            date_format: str = api_c.DEFAULT_DATE_FORMAT,
     ) -> None:
         """Validates that a date range is valid
 
@@ -426,7 +434,7 @@ class Validation:
         if start > end:
             raise ue.InputParamsValidationError(
                 message=f"The start date {start_date} cannot "
-                f"be greater than the end date {end_date}."
+                        f"be greater than the end date {end_date}."
             )
 
     # pylint: disable=anomalous-backslash-in-string
@@ -447,7 +455,7 @@ class Validation:
 
 
 def is_component_favorite(
-    okta_user_id: str, component_name: str, component_id: str
+        okta_user_id: str, component_name: str, component_id: str
 ) -> bool:
     """Checks if component is in favorites of a user.
     Args:
@@ -462,7 +470,7 @@ def is_component_favorite(
     )
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
-        ObjectId(component_id) in user_favorites.get(component_name)
+            ObjectId(component_id) in user_favorites.get(component_name)
     ):
         return True
 
@@ -500,7 +508,7 @@ def get_start_end_dates(request: dict, delta: int) -> (str, str):
 
 
 def get_user_favorites(
-    database: DatabaseClient, user_name: str, component_name: str
+        database: DatabaseClient, user_name: str, component_name: str
 ) -> list:
     """Get user favorites for a component
 
@@ -549,8 +557,8 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     if not required_keys.issubset(user_info.keys()):
         logger.warning("Failure. Required keys not present in user_info dict.")
         return {
-            "message": api_c.AUTH401_ERROR_MESSAGE
-        }, HTTPStatus.UNAUTHORIZED
+                   "message": api_c.AUTH401_ERROR_MESSAGE
+               }, HTTPStatus.UNAUTHORIZED
 
     logger.info(
         "Successfully validated required_keys are present in user_info."
@@ -615,8 +623,8 @@ def convert_unique_city_filter(request_json: dict) -> dict:
         for filters in request_json[api_c.AUDIENCE_FILTERS]:
             for item in filters[api_c.AUDIENCE_SECTION_FILTERS]:
                 if (
-                    item[api_c.AUDIENCE_FILTER_FIELD]
-                    == api_c.AUDIENCE_FILTER_CITY
+                        item[api_c.AUDIENCE_FILTER_FIELD]
+                        == api_c.AUDIENCE_FILTER_CITY
                 ):
                     city_value, state_value, _ = item.get(
                         api_c.AUDIENCE_FILTER_VALUE
@@ -723,8 +731,8 @@ def set_destination_category_in_engagement(engagement: dict):
                     # check if the destination category is already present to
                     # update the existing dict data
                     if (
-                        destination_category[api_c.CATEGORY]
-                        == dest[api_c.CATEGORY]
+                            destination_category[api_c.CATEGORY]
+                            == dest[api_c.CATEGORY]
                     ):
                         for destination_type in destination_category[
                             api_c.DESTINATIONS
@@ -732,8 +740,8 @@ def set_destination_category_in_engagement(engagement: dict):
                             # check if the destination_type is already present
                             # to update just the nested audiences object within
                             if (
-                                destination_type[api_c.NAME]
-                                == destination[api_c.NAME]
+                                    destination_type[api_c.NAME]
+                                    == destination[api_c.NAME]
                             ):
                                 destination_type[
                                     api_c.DESTINATION_AUDIENCES
@@ -771,16 +779,16 @@ def set_destination_category_in_engagement(engagement: dict):
 
 
 def create_description_for_user_request(
-    first_name: str,
-    last_name: str,
-    email: str,
-    access_level: str,
-    pii_access: bool,
-    reason_for_request: str,
-    requested_by: str,
-    project_name: str = get_config().DEFAULT_NEW_USER_PROJECT_NAME,
-    okta_group_name: str = get_config().DEFAULT_OKTA_GROUP_NAME,
-    okta_app: str = get_config().DEFAULT_OKTA_APP,
+        first_name: str,
+        last_name: str,
+        email: str,
+        access_level: str,
+        pii_access: bool,
+        reason_for_request: str,
+        requested_by: str,
+        project_name: str = get_config().DEFAULT_NEW_USER_PROJECT_NAME,
+        okta_group_name: str = get_config().DEFAULT_OKTA_GROUP_NAME,
+        okta_app: str = get_config().DEFAULT_OKTA_APP,
 ) -> str:
     """Create HUS issue description using new user request data.
 
@@ -819,7 +827,7 @@ def create_description_for_user_request(
 
 
 def validate_if_resource_owner(
-    resource_name: str, resource_id: str, user_name: str
+        resource_name: str, resource_id: str, user_name: str
 ) -> bool:
     """Validates if the user given is the resource owner.
 
@@ -897,7 +905,7 @@ def filter_team_member_requests(team_member_request_issues: list) -> list:
 
 # pylint: disable=anomalous-backslash-in-string
 def extract_user_request_details_from_issue(
-    team_member_request_issue: dict,
+        team_member_request_issue: dict,
 ) -> dict:
     """Extracts user request details from Jira issue.
 
@@ -935,8 +943,8 @@ def extract_user_request_details_from_issue(
         if access_level
         else None,
         api_c.STATUS: team_member_request_issue.get(api_c.FIELDS, {})
-        .get(api_c.STATUS, {})
-        .get(api_c.NAME),
+            .get(api_c.STATUS, {})
+            .get(api_c.NAME),
         api_c.UPDATED: parse(
             team_member_request_issue.get(api_c.FIELDS, {}).get(api_c.UPDATED)
         ),
@@ -948,7 +956,7 @@ def extract_user_request_details_from_issue(
 
 
 def group_and_aggregate_datafeed_details_by_date(
-    datafeed_details: list,
+        datafeed_details: list,
 ) -> list:
     """Group and aggregate data feed details by date
 
@@ -986,8 +994,8 @@ def group_and_aggregate_datafeed_details_by_date(
                 status = api_c.STATUS_INCOMPLETE
 
             elif (
-                status in [api_c.STATUS_COMPLETE, api_c.STATUS_INCOMPLETE]
-                and df_detail[api_c.STATUS] == api_c.STATUS_FAILED
+                    status in [api_c.STATUS_COMPLETE, api_c.STATUS_INCOMPLETE]
+                    and df_detail[api_c.STATUS] == api_c.STATUS_FAILED
             ):
                 status = api_c.STATUS_FAILED
 
@@ -1008,7 +1016,7 @@ def group_and_aggregate_datafeed_details_by_date(
 
 
 def fetch_datafeed_details(
-    datafeed_name: str, start_date: str, end_date: str, statuses: list = None
+        datafeed_name: str, start_date: str, end_date: str, statuses: list = None
 ) -> list:
     """Fetch datafeed details
 
@@ -1044,12 +1052,12 @@ def fetch_datafeed_details(
         datafeed_details = list(
             filter(
                 lambda x: start_date
-                <= parse(
+                          <= parse(
                     datetime.strftime(
                         x[api_c.LAST_PROCESSED], api_c.DEFAULT_DATE_FORMAT
                     )
                 ).date()
-                <= end_date,
+                          <= end_date,
                 datafeed_details,
             )
         )
@@ -1089,3 +1097,46 @@ def generate_cache_key_string(data: Union[dict, list]) -> Generator:
             )
         else:
             yield item
+
+
+# Cache Constants
+CACHE_MAPS = {
+    api_c.CUSTOMERS_INSIGHTS: get_customers_overview,
+    api_c.GEOGRAPHICAL: get_demographic_by_state,
+}
+
+
+def check_and_return_cache(
+        database: MongoClient,
+        cache_tag: str,
+        key: Union[str, list, dict],
+        token: str = None,
+) -> Union[list, dict]:
+    """
+    Checks for cache to return or creates an entry
+    Args:
+        token(str): JWT token
+        database(MongoClient): Database Client
+        cache_tag(str): Cache Tag which used in prefix of Key
+        key(str): Cache Key
+
+    Returns:
+        Union[list,dict]: Data to be retrieved
+
+    """
+
+    data = get_cache_entry(
+        database,
+        "".join([cache_tag] + [x for x in generate_cache_key_string(key)]),
+    )
+
+    if not data:
+        data = CACHE_MAPS.get(cache_tag)(token, key)
+        create_cache_entry(
+            database,
+            "".join(
+                [cache_tag] + [x for x in generate_cache_key_string(key)], data
+            ),
+        )
+
+    return data

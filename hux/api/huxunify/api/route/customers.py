@@ -61,6 +61,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     convert_unique_city_filter,
     generate_cache_key_string,
+    check_and_return_cache,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -235,79 +236,19 @@ class CustomerPostOverview(SwaggerView):
                 api_c.MESSAGE: "Invalid filter passed in."
             }, HTTPStatus.BAD_REQUEST
 
-        # check if cache entry
         database = get_db_client()
-        customers_overview = get_cache_entry(
-            database,
-            "".join(
-                [
-                    x
-                    for x in generate_cache_key_string(
-                        convert_unique_city_filter(request.json)
-                    )
-                ]
-                + [api_c.CUSTOMERS_INSIGHTS]
-            ),
+        customers_overview = check_and_return_cache(
+            database=database,
+            cache_tag=api_c.CUSTOMERS_INSIGHTS,
+            key=convert_unique_city_filter(request.json),
+            token=get_token_from_request(request)[0],
         )
-        if not customers_overview:
-            token_response = get_token_from_request(request)
-
-            # get customer overview
-            customers_overview = get_customers_overview(
-                token_response[0],
-                convert_unique_city_filter(request.json),
-            )
-
-            # cache
-            create_cache_entry(
-                database,
-                "".join(
-                    [
-                        x
-                        for x in generate_cache_key_string(
-                            convert_unique_city_filter(request.json)
-                        )
-                    ]
-                    + [api_c.CUSTOMERS_INSIGHTS]
-                ),
-                customers_overview,
-            )
-
-        customers_overview[api_c.GEOGRAPHICAL] = get_cache_entry(
-            database,
-            "".join(
-                [
-                    x
-                    for x in generate_cache_key_string(
-                        convert_unique_city_filter(request.json)
-                    )
-                ]
-                + [api_c.GEOGRAPHICAL]
-            ),
+        customers_overview[api_c.GEOGRAPHICAL] = check_and_return_cache(
+            database=database,
+            cache_tag=api_c.GEOGRAPHICAL,
+            key=convert_unique_city_filter(request.json),
+            token=get_token_from_request(request)[0],
         )
-        if not customers_overview[api_c.GEOGRAPHICAL]:
-            token_response = get_token_from_request(request)
-
-            # get customer geographical overview
-            customers_overview[api_c.GEOGRAPHICAL] = get_demographic_by_state(
-                token_response[0],
-                request.json[api_c.AUDIENCE_FILTERS],
-            )
-
-            # cache
-            create_cache_entry(
-                database,
-                "".join(
-                    [
-                        x
-                        for x in generate_cache_key_string(
-                            convert_unique_city_filter(request.json)
-                        )
-                    ]
-                    + [api_c.GEOGRAPHICAL]
-                ),
-                customers_overview[api_c.GEOGRAPHICAL],
-            )
 
         return (
             CustomerOverviewSchema().dump(customers_overview),
