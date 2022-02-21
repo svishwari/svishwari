@@ -71,7 +71,8 @@ export default {
       await this.value
 
       if (this.value) {
-        this.domain_name = Object.keys(this.value[0])[0]
+        let responseKeys = Object.keys(this.value[0])
+        this.domain_name = responseKeys[0] !== 'date' ? responseKeys[0] : responseKeys[1]
       }
 
       this.chartWidth = this.chartDimensions.width + "px"

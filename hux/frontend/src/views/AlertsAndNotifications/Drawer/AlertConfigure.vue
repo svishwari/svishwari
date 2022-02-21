@@ -367,7 +367,7 @@ export default {
               children: [
                 {
                   label: "Data sources",
-                  name: "datasources",
+                  name: "data_sources",
                   parent: "data_management",
                   show: true,
                   isDeepChild: false,
@@ -375,21 +375,21 @@ export default {
                     {
                       label: "Critical",
                       name: "critical",
-                      parent: "datasources",
+                      parent: "data_sources",
                       show: true,
                       isDeepChild: true,
                     },
                     {
                       label: "Success",
                       name: "success",
-                      parent: "datasources",
+                      parent: "data_sources",
                       show: true,
                       isDeepChild: true,
                     },
                     {
                       label: "Informational",
                       name: "informational",
-                      parent: "datasources",
+                      parent: "data_sources",
                       show: true,
                       isDeepChild: true,
                     },
