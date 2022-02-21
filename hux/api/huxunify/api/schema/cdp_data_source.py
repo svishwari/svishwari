@@ -96,6 +96,16 @@ class CdpConnectionsDataSourceSchema(Schema):
     feed_count = fields.Int(required=False, default=None, allow_none=True)
 
 
+class CdpDataSourceDataFeedTypeAverageSchema(Schema):
+    """Data source data feed type average schema with value and flag
+    indicator."""
+
+    value = fields.Float(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.75
+    )
+    flag_indicator = fields.Bool(default=False)
+
+
 class CdpDataSourceDataFeedSchema(Schema):
     """Data source data feed schema"""
 
@@ -103,10 +113,14 @@ class CdpDataSourceDataFeedSchema(Schema):
     datasource_type = fields.Str(example=db_c.DATA_SOURCE_PLATFORM_BLUECORE)
     records_received = fields.Int(example=345612)
     records_processed = fields.Int(example=345612)
-    records_processed_percentage = fields.Float(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.9
+    records_processed_percentage = fields.Nested(
+        CdpDataSourceDataFeedTypeAverageSchema,
+        attribute=api_c.RECORDS_PROCESSED_PERCENTAGE,
     )
-    thirty_days_avg = fields.Float(example=76.45)
+    thirty_days_avg = fields.Nested(
+        CdpDataSourceDataFeedTypeAverageSchema,
+        attribute=api_c.THIRTY_DAYS_AVG,
+    )
     last_processed = DateTimeWithZ(
         attribute=api_c.PROCESSED_AT, example="2021-01-01T17:56:07.290Z"
     )

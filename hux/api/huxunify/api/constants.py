@@ -1252,6 +1252,8 @@ RECORDS_PROCESSED = "records_processed"
 RECORDS_RECEIVED = "records_received"
 THIRTY_DAYS_AVG = "thirty_days_avg"
 RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
+VALUE = "value"
+FLAG_INDICATOR = "flag_indicator"
 DATA_FILES = "data_files"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"

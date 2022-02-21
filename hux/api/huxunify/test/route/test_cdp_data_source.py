@@ -23,6 +23,7 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourceDataFeedSchema,
     CdpConnectionsDataSourceSchema,
     DataSourceDataFeedDetailsGetSchema,
+    CdpDataSourceDataFeedTypeAverageSchema,
 )
 
 
@@ -366,6 +367,18 @@ class CdpDataSourcesTest(RouteTestCase):
                 response.json.get(api_c.DATAFEEDS), many=True
             )
         )
+
+        for data_feed in response.json.get(api_c.DATAFEEDS):
+            self.assertFalse(
+                CdpDataSourceDataFeedTypeAverageSchema().validate(
+                    data_feed.get(api_c.RECORDS_PROCESSED_PERCENTAGE)
+                )
+            )
+            self.assertFalse(
+                CdpDataSourceDataFeedTypeAverageSchema().validate(
+                    data_feed.get(api_c.THIRTY_DAYS_AVG)
+                )
+            )
 
     def test_get_data_source_data_feed_details(self) -> None:
         """Test get data source data feed details endpoint."""
