@@ -19,7 +19,7 @@ def create_model(
     new_doc: dict,
     username: str = "unknown",
 ) -> Union[dict, None]:
-    """A function to create a new document.
+    """A function to create a new model.
 
     Args:
         database (DatabaseClient): A database client.
