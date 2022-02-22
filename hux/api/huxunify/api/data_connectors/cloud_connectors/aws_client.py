@@ -5,7 +5,9 @@ from typing import Tuple
 import boto3
 import botocore
 
-from huxunify.api.data_connectors.cloud_connectors.cloud_client import CloudClient
+from huxunify.api.data_connectors.cloud_connectors.cloud_client import (
+    CloudClient,
+)
 import huxunify.api.constants as api_c
 
 # pylint: disable=missing-raises-doc

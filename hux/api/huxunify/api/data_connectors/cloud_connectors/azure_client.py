@@ -9,7 +9,9 @@ from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import BlobClient
 
-from huxunify.api.data_connectors.cloud_connectors.cloud_client import CloudClient
+from huxunify.api.data_connectors.cloud_connectors.cloud_client import (
+    CloudClient,
+)
 import huxunify.api.constants as api_c
 
 from huxunify.api.prometheus import record_health_status_metric

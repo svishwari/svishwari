@@ -1,12 +1,16 @@
 """Utility module for the cloud connector objects"""
-from huxunify.api.data_connectors.cloud_connectors.cloud_client import CloudClient
-from huxunify.api.data_connectors.cloud_connectors.azure_client import AzureClient
+from huxunify.api.data_connectors.cloud_connectors.cloud_client import (
+    CloudClient,
+)
+from huxunify.api.data_connectors.cloud_connectors.azure_client import (
+    AzureClient,
+)
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cloud_connectors.aws_client import AWSClient
 
 
 def get_cloud_client(config=get_config()) -> CloudClient:
-    """ Gets the proper cloud client
+    """Gets the proper cloud client
 
     Args:
         config (config): config object.
@@ -25,4 +29,6 @@ def get_cloud_client(config=get_config()) -> CloudClient:
         return AzureClient()
 
     else:
-        raise Exception("Cloud provider <%s> is not supported!", config.CLOUD_PROVIDER)
+        raise Exception(
+            "Cloud provider <%s> is not supported!", config.CLOUD_PROVIDER
+        )
