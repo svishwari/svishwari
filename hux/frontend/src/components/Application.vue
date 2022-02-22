@@ -259,6 +259,6 @@ export default {
   margin-top: 2px;
 }
 .app-menu {
-  top: 170px !important;
+  top: 118px !important;
 }
 </style>
