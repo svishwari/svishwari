@@ -35,7 +35,9 @@ class CDPConnectionsTest(TestCase):
 
         self.config = get_config(api_c.TEST_MODE)
         self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         self.request_mocker.start()
 
         self.addCleanup(mock.patch.stopall)

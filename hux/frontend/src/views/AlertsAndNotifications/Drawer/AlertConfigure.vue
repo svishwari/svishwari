@@ -203,7 +203,157 @@ export default {
         },
       ],
       updatedConfiguration: {},
-      alertsSectionGroup: [
+      alertsSectionGroup: [],
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      getCurrentUserEmail: "users/getEmailAddress",
+      getUsers: "notifications/userList",
+    }),
+  },
+
+  watch: {
+    value: function () {
+      this.localDrawer = this.value
+    },
+    localDrawer: function () {
+      this.$emit("input", this.localDrawer)
+    },
+  },
+  mounted() {
+    this.setDefaultConfig()
+  },
+  updated() {
+    this.mapAlertSectionGroups()
+    this.maintainTreeStyles()
+  },
+  methods: {
+    ...mapActions({
+      updateUserPreferences: "users/updateUserPreferences",
+    }),
+    closeDrawer() {
+      this.localDrawer = false
+    },
+    saveChanges() {
+      this.localDrawer = false
+      this.$emit("onDrawerClose")
+      this.updateUserPreferences(this.updatedConfiguration)
+    },
+    maintainTreeStyles() {
+      this.$nextTick(function () {
+        document
+          .getElementsByClassName("v-treeview-node")
+          .forEach((element, index) => {
+            if (element.childNodes.length == 2) {
+              let elem = element.childNodes[0]
+              if (index == 0) {
+                elem.style["border-top"] = "none"
+                elem.style["min-height"] = "30px"
+                elem.style["height"] = "30px"
+              }
+              elem.style["background"] = "#F9FAFB"
+            }
+          })
+      })
+    },
+    mapAlertSectionGroups() {
+      let currentUser = this.users.find(
+        (data) => data.email == this.getCurrentUserEmail
+      )
+      this.currentAlertConf = currentUser.alerts
+      if (this.currentAlertConf) {
+        this.setAlertConfiguration()
+      } else {
+        this.showAlerts = false
+      }
+    },
+    // Recursion for setting nested output structure
+    recursiveBinding(data, alerts) {
+      let parentData = data.children
+      for (let i = 0; i < parentData.length; i++) {
+        alerts[parentData[i].name] = {}
+        if (parentData[i].show && !parentData[i].isDeepChild) {
+          this.recursiveBinding(parentData[i], alerts[parentData[i].name])
+        } else if (!parentData[i].show && !parentData[i].isDeepChild) {
+          alerts[parentData[i].name] = {}
+        } else {
+          alerts[parentData[i].name] = parentData[i].show
+        }
+      }
+      return alerts
+    },
+    formatFinalResponse(event, item) {
+      this.manualToggleChanges(event, item)
+      this.updatedConfiguration = {}
+      this.updatedConfiguration.alerts = this.recursiveBinding(
+        this.alertsSectionGroup[0],
+        {}
+      )
+      this.maintainTreeStyles()
+    },
+
+    manualToggleChanges(flag, item) {
+      if (item && !item.isDeepChild) {
+        item.children.forEach((data) => {
+          if (data.children.length > 0) {
+            // Recursion for setting event flag to deepest level
+            data.show = flag
+            this.manualToggleChanges(flag, data)
+          } else {
+            data.show = flag
+          }
+        })
+      }
+    },
+
+    toggleMainSwitch(value) {
+      if (value) {
+        this.setDefaultConfig()
+      }
+      this.maintainTreeStyles()
+    },
+
+    // Recursion for getting nested input structure
+    setAllKeyMapping(basicEntity, parentObj) {
+      for (const [key, value] of Object.entries(basicEntity)) {
+        let childObj = {
+          label: formatText(key),
+          name: key,
+          isDeepChild: false,
+          children: [],
+        }
+        if (typeof value === "object") {
+          childObj.show = this.checkOptStatus(value)
+          childObj.isDeepChild = false
+          childObj.children = []
+          parentObj.children.push(childObj)
+          this.setAllKeyMapping(value, childObj)
+        } else {
+          childObj.show = value
+          childObj.isDeepChild = true
+          parentObj.children.push(childObj)
+        }
+      }
+      return parentObj
+    },
+    setAlertConfiguration() {
+      let parentObj = {
+        label: "Categories",
+        name: "categories",
+        show: true,
+        children: [],
+      }
+      this.setAllKeyMapping(this.currentAlertConf, parentObj)
+      this.alertsSectionGroup = [parentObj]
+    },
+    checkOptStatus(value) {
+      let convertedValue = JSON.stringify(value)
+      return convertedValue.indexOf("true") != -1 ? true : false
+    },
+    setDefaultConfig() {
+      this.alertsSectionGroup = [
         {
           label: "Categories",
           name: "categories",
@@ -217,7 +367,7 @@ export default {
               children: [
                 {
                   label: "Data sources",
-                  name: "datasources",
+                  name: "data_sources",
                   parent: "data_management",
                   show: true,
                   isDeepChild: false,
@@ -225,21 +375,21 @@ export default {
                     {
                       label: "Critical",
                       name: "critical",
-                      parent: "datasources",
+                      parent: "data_sources",
                       show: true,
                       isDeepChild: true,
                     },
                     {
                       label: "Success",
                       name: "success",
-                      parent: "datasources",
+                      parent: "data_sources",
                       show: true,
                       isDeepChild: true,
                     },
                     {
                       label: "Informational",
                       name: "informational",
-                      parent: "datasources",
+                      parent: "data_sources",
                       show: true,
                       isDeepChild: true,
                     },
@@ -415,150 +565,7 @@ export default {
             },
           ],
         },
-      ],
-    }
-  },
-
-  computed: {
-    ...mapGetters({
-      getCurrentUserEmail: "users/getEmailAddress",
-      getUsers: "notifications/userList",
-    }),
-  },
-
-  watch: {
-    value: function () {
-      this.localDrawer = this.value
-    },
-    localDrawer: function () {
-      this.$emit("input", this.localDrawer)
-    },
-  },
-  updated() {
-    this.mapAlertSectionGroups()
-    this.maintainTreeStyles()
-  },
-  methods: {
-    ...mapActions({
-      updateUserPreferences: "users/updateUserPreferences",
-    }),
-    closeDrawer() {
-      this.localDrawer = false
-    },
-    saveChanges() {
-      this.localDrawer = false
-      this.$emit("onDrawerClose")
-      this.updateUserPreferences(this.updatedConfiguration)
-    },
-    maintainTreeStyles() {
-      this.$nextTick(function () {
-        document
-          .getElementsByClassName("v-treeview-node")
-          .forEach((element, index) => {
-            if (element.childNodes.length == 2) {
-              let elem = element.childNodes[0]
-              if (index == 0) {
-                elem.style["border-top"] = "none"
-                elem.style["min-height"] = "30px"
-                elem.style["height"] = "30px"
-              }
-              elem.style["background"] = "#F9FAFB"
-            }
-          })
-      })
-    },
-    mapAlertSectionGroups() {
-      let currentUser = this.users.find(
-        (data) => data.email == this.getCurrentUserEmail
-      )
-      this.currentAlertConf = currentUser.alerts
-      if (this.currentAlertConf) {
-        this.setAlertConfiguration()
-      } else {
-        this.showAlerts = false
-      }
-    },
-    // Recursion for setting nested output structure
-    recursiveBinding(data, alerts) {
-      let parentData = data.children
-      for (let i = 0; i < parentData.length; i++) {
-        alerts[parentData[i].name] = {}
-        if (parentData[i].show && !parentData[i].isDeepChild) {
-          this.recursiveBinding(parentData[i], alerts[parentData[i].name])
-        } else if (!parentData[i].show && !parentData[i].isDeepChild) {
-          alerts[parentData[i].name] = {}
-        } else {
-          alerts[parentData[i].name] = parentData[i].show
-        }
-      }
-      return alerts
-    },
-    formatFinalResponse(event, item) {
-      this.manualToggleChanges(event, item)
-      this.updatedConfiguration = {}
-      this.updatedConfiguration.alerts = this.recursiveBinding(
-        this.alertsSectionGroup[0],
-        {}
-      )
-      this.maintainTreeStyles()
-    },
-
-    manualToggleChanges(flag, item) {
-      if (item && !item.isDeepChild) {
-        item.children.forEach((data) => {
-          if (data.children) {
-            // Recursion for setting event flag to deepest level
-            this.manualToggleChanges(flag, data)
-          } else {
-            data.show = flag
-          }
-        })
-      }
-    },
-
-    toggleMainSwitch(value) {
-      if (value) {
-        this.setAlertConfiguration()
-      }
-      this.maintainTreeStyles()
-    },
-
-    // Recursion for getting nested input structure
-    setAllKeyMapping(basicEntity, parentObj) {
-      for (const [key, value] of Object.entries(basicEntity)) {
-        let childObj = {
-          label: formatText(key),
-          name: key,
-          isDeepChild: false,
-          children: [],
-        }
-        if (typeof value === "object") {
-          childObj.show = this.checkOptStatus(value)
-          childObj.isDeepChild = false
-          childObj.children = []
-          parentObj.children.push(childObj)
-          this.setAllKeyMapping(value, childObj)
-        } else {
-          childObj.show = value
-          childObj.isDeepChild = true
-          parentObj.children.push(childObj)
-        }
-      }
-      return parentObj
-    },
-    setAlertConfiguration() {
-      let parentObj = {
-        label: "Categories",
-        name: "categories",
-        show: true,
-        children: [],
-      }
-      this.setAllKeyMapping(this.currentAlertConf, parentObj)
-      this.alertsSectionGroup = [parentObj]
-    },
-    checkOptStatus(value) {
-      let convertedValue = JSON.stringify(value)
-      return convertedValue.indexOf("true") != -1 ? true : false
+      ]
     },
   },
 }
