@@ -10,6 +10,10 @@ from flasgger import SwaggerView
 from flask import Blueprint, request, Response
 from marshmallow import ValidationError
 
+from huxunify.api.data_connectors.cloud_connectors.cloud_client import (
+    CloudClient,
+)
+from huxunify.api.data_connectors.cloud_connectors.util import get_cloud_client
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
@@ -49,7 +53,6 @@ from huxunifylib.connectors.util.selector import (
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
-    parameter_store,
 )
 from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.schema.destinations import (
@@ -375,23 +378,22 @@ class DestinationAuthenticationPostView(SwaggerView):
         Returns:
             Tuple[Response, int]: Destination doc, HTTP status code.
         """
-
         # load into the schema object
         body = DestinationPutSchema().load(request.get_json(), partial=True)
-
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
         performance_de = None
         campaign_de = None
         authentication_parameters = None
+        is_added = None
         database = get_db_client()
 
         # check if destination exists
         destination = destination_management.get_delivery_platform(
             database, destination_id
         )
-        platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
-        if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
+        destination_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+        if destination_type == db_c.DELIVERY_PLATFORM_SFMC:
             SFMCAuthCredsSchema().load(auth_details)
             sfmc_config = body.get(db_c.CONFIGURATION)
             if not sfmc_config or not isinstance(sfmc_config, dict):
@@ -422,28 +424,49 @@ class DestinationAuthenticationPostView(SwaggerView):
                 return HuxResponse.BAD_REQUEST(
                     api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR
                 )
-        elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
+        elif destination_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
             FacebookAuthCredsSchema().load(auth_details)
-        elif platform_type in [
+        elif destination_type in [
             db_c.DELIVERY_PLATFORM_SENDGRID,
             db_c.DELIVERY_PLATFORM_TWILIO,
         ]:
             SendgridAuthCredsSchema().load(auth_details)
-        elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
+        elif destination_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             QualtricsAuthCredsSchema().load(auth_details)
-        elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
+        elif destination_type == db_c.DELIVERY_PLATFORM_GOOGLE:
             GoogleAdsAuthCredsSchema().load(auth_details)
 
         if auth_details:
-            # store the secrets for the updated authentication details
-            authentication_parameters = (
-                parameter_store.set_destination_authentication_secrets(
-                    authentication_details=auth_details,
-                    is_updated=True,
-                    destination_id=destination_id,
-                    destination_type=platform_type,
+            cloud_client = get_cloud_client()
+            authentication_parameters = {}
+            if destination_type not in api_c.DESTINATION_SECRETS:
+                raise KeyError(
+                    f"{destination_type} does not have a secret store mapping."
                 )
-            )
+
+            for (
+                secret_name,
+                secret_value,
+            ) in auth_details.items():
+
+                # only store secrets in cloud secret store, otherwise store in object.
+                if (
+                    secret_name
+                    in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]
+                ):
+                    authentication_parameters[secret_name] = secret_value
+                    continue
+
+                param_name = f"{api_c.PARAM_STORE_PREFIX}_{secret_name}"
+                authentication_parameters[secret_name] = param_name
+                try:
+                    cloud_client.set_secret(secret_name, secret_value)
+                except Exception as exc:
+                    logger.error(exc)
+                    return HuxResponse.INTERNAL_SERVER_ERROR(
+                        f"{api_c.PARAMETER_STORE_ERROR_MSG}"
+                        f" destination_id: {destination_id}."
+                    )
             is_added = True
 
         return HuxResponse.OK(
@@ -1277,3 +1300,7 @@ class DestinationDeleteView(SwaggerView):
         )
 
         return HuxResponse.NO_CONTENT()
+
+
+if __name__ == "__main__":
+    c = CloudClient()

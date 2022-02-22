@@ -1,37 +1,20 @@
 """ Module for base class for cloud operations"""
+from abc import ABC
 from typing import Tuple
 
-from huxunify.api.config import Config, get_config
+from huxunify.api.config import get_config
 
-# pylint: disable=missing-raises-doc
-class Cloud:
+
+class CloudClient(ABC):
     """Base class for cloud operations"""
 
-    provider = None
-    config = None
-
-    # pylint: disable=unused-argument, keyword-arg-before-vararg
-    def __new__(cls, config: Config = get_config(), *args, **kwargs) -> None:
-        """Instantiate a new Cloud object.
+    def __init__(self, config=get_config()):
+        """Instantiate the cloud client base class
 
         Args:
             config (config): config object.
-            args (list): function arguments.
-            **kwargs (dict): function keyword arguments.
-
-        Returns:
-            None
         """
-        cls.config = config
-        subclass = next(
-            filter(
-                lambda clazz: clazz.provider.lower()
-                == config.CLOUD_PROVIDER.lower(),
-                cls.__subclasses__(),
-            )
-        )
-
-        return object.__new__(subclass)
+        self.config = config
 
     def get_secret(self, secret_name: str, **kwargs) -> str:
         """Retrieve secret from cloud.
