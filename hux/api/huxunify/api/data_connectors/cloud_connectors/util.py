@@ -9,6 +9,7 @@ from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cloud_connectors.aws_client import AWSClient
 
 
+# pylint: disable=no-else-return
 def get_cloud_client(config=get_config()) -> CloudClient:
     """Gets the proper cloud client
 
@@ -28,7 +29,6 @@ def get_cloud_client(config=get_config()) -> CloudClient:
     elif config.CLOUD_PROVIDER.lower() == "azure":
         return AzureClient()
 
-    else:
-        raise Exception(
-            "Cloud provider <%s> is not supported!", config.CLOUD_PROVIDER
-        )
+    raise Exception(
+        f"Cloud provider {config.CLOUD_PROVIDER} is not supported!"
+    )

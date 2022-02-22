@@ -10,10 +10,6 @@ from flasgger import SwaggerView
 from flask import Blueprint, request, Response
 from marshmallow import ValidationError
 
-from huxunify.api.data_connectors.cloud_connectors.cloud_client import (
-    CloudClient,
-)
-from huxunify.api.data_connectors.cloud_connectors.util import get_cloud_client
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
@@ -50,7 +46,11 @@ from huxunifylib.connectors import connector_sfmc
 from huxunifylib.connectors.util.selector import (
     get_delivery_platform_connector,
 )
-from huxunify.api.route.return_util import HuxResponse
+
+from huxunify.api.data_connectors.cloud_connectors.cloud_client import (
+    CloudClient,
+)
+from huxunify.api.data_connectors.cloud_connectors.util import get_cloud_client
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
 )
@@ -79,6 +79,7 @@ from huxunify.api.route.decorators import (
     validate_destination,
     requires_access_levels,
 )
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
 )
@@ -355,6 +356,7 @@ class DestinationAuthenticationPostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
+    # pylint: disable=too-many-branches,broad-except,too-many-locals
     @api_error_handler(
         custom_message={
             ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
