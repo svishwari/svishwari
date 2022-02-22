@@ -31,6 +31,11 @@ from huxunify.api.schema.customers import (
 
 
 # pylint: disable=too-many-public-methods,too-many-lines
+from huxunify.test.route.route_test_util.test_data_loading.users import (
+    load_users,
+)
+
+
 class TestCustomersOverview(RouteTestCase):
     """Purpose of this class is to test Customers overview."""
 
@@ -38,6 +43,8 @@ class TestCustomersOverview(RouteTestCase):
         """Sets up Test Client."""
 
         super().setUp()
+
+        load_users(self.database)
 
         self.customers = f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
         self.idr = f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}"
@@ -48,8 +55,8 @@ class TestCustomersOverview(RouteTestCase):
         ).start()
 
         mock.patch(
-            "huxunify.api.route.decorators.get_user_from_db",
-            return_value=t_c.VALID_DB_USER_RESPONSE,
+            "huxunify.api.route.utils.get_user_info",
+            return_value=t_c.VALID_USER_RESPONSE,
         ).start()
 
     def test_get_customers(self):
