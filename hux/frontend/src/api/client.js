@@ -50,6 +50,12 @@ client["users"].tickets = () => {
 }
 //#endregion
 
+//#region Configurations
+client["configurations"].getModules = () => {
+  return http.get("/configurations/modules")
+}
+//#endregion
+
 //#region Customers
 // Custom one-off resource endpoints
 
@@ -443,7 +449,7 @@ client.dataSources.dataFeedsDetails = (
 
 //#region Application
 client.applications.getActiveApplications = (flag) => {
-  return http.get(`/applications?only_active=${flag}`)
+  return http.get(`/applications?user=${flag}`)
 }
 
 client.applications.createApplication = (data) => {

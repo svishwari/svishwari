@@ -23,7 +23,7 @@ import totalCustomersData from "./fixtures/totalCustomersData.js"
 import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
-import { applications } from "./factories/application"
+import { addedApplications, applications } from "./factories/application"
 import domainData from "@/api/mock/fixtures/domainLineData.js"
 import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 
@@ -829,13 +829,14 @@ export const defineRoutes = (server) => {
   })
 
   //configuration
-  server.get("/configurations", (schema) => {
+  server.get("/configurations/modules", (schema) => {
     return schema.configurations.all()
   })
 
   //applications
-  server.get("/applications", () => {
-    return applications
+  server.get("/applications", (schema, request) => {
+    let appAdded = request.queryParams["user"] === "true"
+    return appAdded ? addedApplications : applications
   })
 
   server.post("/applications", (schema, request) => {
