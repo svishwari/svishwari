@@ -379,6 +379,9 @@ class DestinationAuthenticationPostView(SwaggerView):
 
         Returns:
             Tuple[Response, int]: Destination doc, HTTP status code.
+
+        Raises:
+            KeyError: Error is one of the keys is not present in the mapping
         """
         # load into the schema object
         body = DestinationPutSchema().load(request.get_json(), partial=True)
