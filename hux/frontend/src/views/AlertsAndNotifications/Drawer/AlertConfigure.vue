@@ -230,8 +230,8 @@ export default {
   },
   updated() {
     if (this.localDrawer) {
-    this.mapAlertSectionGroups()
-    this.maintainTreeStyles()
+      this.mapAlertSectionGroups()
+      this.maintainTreeStyles()
     }
   },
   methods: {
@@ -302,7 +302,7 @@ export default {
     },
 
     formatFinalResponse() {
-    this.updatedConfiguration = {}
+      this.updatedConfiguration = {}
       this.updatedConfiguration.alerts = this.recursiveBinding(
         this.alertsSectionGroup[0],
         {}

@@ -24,11 +24,7 @@
             bordered
           />
         </v-btn>
-        <v-btn
-          icon
-          class="ml-5"
-          @click.native="toggleAlertConfigure()"
-        >
+        <v-btn icon class="ml-5" @click.native="toggleAlertConfigure()">
           <icon type="setting-gear" :size="27" color="black" />
         </v-btn>
       </template>
