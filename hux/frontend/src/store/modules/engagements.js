@@ -334,17 +334,17 @@ const actions = {
       throw error
     }
   },
-  async attachAudienceDestination(_, { engagementId, audienceId, data }) {
+  async attachAudienceDestination(_, { audienceId, data }) {
     try {
-      await api.engagements.attachDestination(engagementId, audienceId, data)
+      await api.engagements.attachDestination(audienceId, data)
     } catch (error) {
       handleError(error)
       throw error
     }
   },
-  async detachAudienceDestination(_, { engagementId, audienceId, data }) {
+  async detachAudienceDestination(_, { audienceId, data }) {
     try {
-      await api.engagements.detachDestination(engagementId, audienceId, data)
+      await api.engagements.detachDestination(audienceId, data)
     } catch (error) {
       handleError(error)
       throw error
