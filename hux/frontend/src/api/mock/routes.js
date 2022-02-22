@@ -271,6 +271,21 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
+  // Attaching an Destination to Audience
+  server.post("/audience/:id/destinations", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    const destination = schema.destinations.find(requestData.id)
+    const audience = schema.audiences.find(id)
+    audience.standalone_deliveries.push(destination)
+    const body = {
+      message: "Successfully added destination to standalone deliveries",
+    }
+    return new Response(code, headers, body)
+  })
+
   // Attaching an Audience to an Engagement
   server.post("/engagements/:id/audiences", (schema, request) => {
     const code = 200
