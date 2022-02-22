@@ -85,7 +85,7 @@
                   :width="item.show ? '80px' : '100px'"
                   :switch-labels="switchLabel"
                   :class="item.show ? 'w-75' : 'w-97'"
-                  @change="formatFinalResponse($event, item)"
+                  @change="toggleIndividualSwitch($event, item)"
                 />
               </template>
               <template v-slot:label="{ item }">
@@ -221,23 +221,33 @@ export default {
     localDrawer: function () {
       this.$emit("input", this.localDrawer)
     },
+    users: function () {
+      this.updateUsers()
+    },
   },
   mounted() {
     this.setDefaultConfig()
   },
   updated() {
-    this.mapAlertSectionGroups()
-    this.maintainTreeStyles()
+    if (this.localDrawer) {
+      this.mapAlertSectionGroups()
+      this.maintainTreeStyles()
+    }
   },
   methods: {
     ...mapActions({
       updateUserPreferences: "users/updateUserPreferences",
+      getUsersNoti: "notifications/getAllUsers",
     }),
+    async updateUsers() {
+      await this.getUsersNoti()
+    },
     closeDrawer() {
       this.localDrawer = false
     },
     saveChanges() {
       this.localDrawer = false
+      this.formatFinalResponse()
       this.$emit("onDrawerClose")
       this.updateUserPreferences(this.updatedConfiguration)
     },
@@ -284,14 +294,19 @@ export default {
       }
       return alerts
     },
-    formatFinalResponse(event, item) {
+
+    toggleIndividualSwitch(event, item) {
       this.manualToggleChanges(event, item)
+      this.formatFinalResponse()
+      this.maintainTreeStyles()
+    },
+
+    formatFinalResponse() {
       this.updatedConfiguration = {}
       this.updatedConfiguration.alerts = this.recursiveBinding(
         this.alertsSectionGroup[0],
         {}
       )
-      this.maintainTreeStyles()
     },
 
     manualToggleChanges(flag, item) {
