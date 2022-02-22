@@ -465,17 +465,36 @@ class CustomersListview(SwaggerView):
             )
 
         if user.get(api_c.USER_PII_ACCESS) is True:
-            redacted_data = customer_list
+            redacted_data = get_customer_profiles(
+                token_response[0], batch_size, offset
+            )
         else:
-            redacted_data = {
-                api_c.TOTAL_CUSTOMERS: customer_list.get(
-                    api_c.TOTAL_CUSTOMERS
-                ),
-                api_c.CUSTOMERS_TAG: [
-                    redact_fields(x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS)
-                    for x in customer_list.get(api_c.CUSTOMERS_TAG)
-                ],
-            }
+            # check cache and add to cache
+            redacted_data = get_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
+            )
+
+            if not redacted_data:
+                customer_list = get_customer_profiles(
+                    token_response[0], batch_size, offset
+                )
+                redacted_data = {
+                    api_c.TOTAL_CUSTOMERS: customer_list.get(
+                        api_c.TOTAL_CUSTOMERS
+                    ),
+                    api_c.CUSTOMERS_TAG: [
+                        redact_fields(
+                            x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS
+                        )
+                        for x in customer_list.get(api_c.CUSTOMERS_TAG)
+                    ],
+                }
+                create_cache_entry(
+                    database,
+                    f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
+                    redacted_data,
+                )
 
         return (
             CustomersSchema().dump(redacted_data),
@@ -637,7 +656,7 @@ class IDRDataFeeds(SwaggerView):
         data_feeds = get_cache_entry(
             database,
             f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}."
-            f"{api_c.START_DATE}.{api_c.END_DATE}",
+            f"{start_date}.{end_date}",
         )
 
         if not data_feeds:
@@ -651,7 +670,7 @@ class IDRDataFeeds(SwaggerView):
             create_cache_entry(
                 database,
                 f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}."
-                f"{api_c.START_DATE}.{api_c.END_DATE}",
+                f"{start_date}.{end_date}",
                 data_feeds,
             )
 
@@ -720,11 +739,25 @@ class IDRDataFeedDetails(SwaggerView):
         token_response = get_token_from_request(request)
 
         datafeed_id = Validation.validate_integer(datafeed_id)
+        database = get_db_client()
+
+        data_feed = get_cache_entry(
+            database,
+            f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}." f"{datafeed_id}",
+        )
+
+        if not data_feed:
+            data_feed = get_idr_data_feed_details(
+                token_response[0], datafeed_id
+            )
+            create_cache_entry(
+                database,
+                f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}." f"{datafeed_id}",
+                data_feed,
+            )
 
         return (
-            DataFeedDetailsSchema().dump(
-                get_idr_data_feed_details(token_response[0], datafeed_id)
-            ),
+            DataFeedDetailsSchema().dump(data_feed),
             HTTPStatus.OK,
         )
 
@@ -942,7 +975,7 @@ class IDRMatchingTrends(SwaggerView):
         matching_trends = get_cache_entry(
             database,
             f"{api_c.IDR_ENDPOINT}.{api_c.MATCHING_TRENDS}."
-            f"{api_c.START_DATE}.{api_c.END_DATE}",
+            f"{start_date}.{end_date}",
         )
 
         if not matching_trends:
@@ -956,7 +989,7 @@ class IDRMatchingTrends(SwaggerView):
             create_cache_entry(
                 database,
                 f"{api_c.IDR_ENDPOINT}.{api_c.MATCHING_TRENDS}."
-                f"{api_c.START_DATE}.{api_c.END_DATE}",
+                f"{start_date}.{end_date}",
                 matching_trends,
             )
 
