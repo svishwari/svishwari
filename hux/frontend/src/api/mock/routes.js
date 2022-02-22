@@ -837,9 +837,7 @@ export const defineRoutes = (server) => {
   })
 
   server.patch("/applications/:id", (schema, request) => {
-    let app = [...applications, ...addedApplications].find(
-      (x) => x.id == JSON.parse(request.params.id)
-    )
+    let app = applications.find((x) => x.id == JSON.parse(request.params.id))
     return "Application " + app.name + " is successfully updated"
   })
   // email deliverability
