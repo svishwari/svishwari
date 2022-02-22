@@ -6,7 +6,7 @@
           class="d-flex cursor-pointer mr-4"
           data-e2e="application-dropdown"
           v-on="on"
-          @click="getApplications()"
+          @click="addedApplications()"
         >
           <tooltip class="tooltip-application" :z-index="99">
             <template #label-content>
@@ -26,9 +26,9 @@
       <v-list>
         <v-list-item>
           <v-list-item-title
-            class="font-weight-semi-bold text-subtitle-1 view-all"
+            class="font-weight-semi-bold text-subtitle-1 view-all mt-2 mb-3"
           >
-            Application
+            Applications
           </v-list-item-title>
         </v-list-item>
         <span v-for="(item, index) in getDropdownOptions" :key="index">
@@ -36,6 +36,7 @@
             v-if="item.isVisible"
             :disabled="item.isDisabled"
             class="view-all"
+            data-e2e="application-options"
           >
             <v-list-item-title
               v-if="!item.menu"
@@ -111,7 +112,7 @@
       type="error"
       title="You are about to remove"
       :sub-title="
-        selectedId && getAddedApplications.find((x) => x.id == selectedId).name
+        selectedId && applicationList.find((x) => x.id == selectedId).name
       "
       right-btn-text="Remove"
       left-btn-text="Cancel"
@@ -151,26 +152,15 @@ export default {
 
   computed: {
     ...mapGetters({
-      applicationList: "application/list",
+      applicationList: "application/addedList",
     }),
-    getAddedApplications() {
-      return this.applicationList.filter((x) => x.is_added)
-    },
     getDropdownOptions() {
       return [
         {
-          title: "Add an application",
-          isDisabled: false,
-          isVisible: true,
-          onClick: () => {
-            this.addApplication()
-          },
-        },
-        {
           title: "Open an application",
           isDisabled: false,
-          isVisible: this.getAddedApplications.length > 0,
-          menu: this.getAddedApplications.map((item) => {
+          isVisible: this.applicationList.length > 0,
+          menu: this.applicationList.map((item) => {
             return {
               id: item.id,
               title: item.name,
@@ -187,9 +177,12 @@ export default {
           }),
         },
         {
-          title: "Remove application",
-          isDisabled: true,
-          isVisible: this.getAddedApplications.length > 0,
+          title: "Add an application",
+          isDisabled: false,
+          isVisible: true,
+          onClick: () => {
+            this.addApplication()
+          },
         },
       ]
     },
@@ -207,8 +200,8 @@ export default {
   },
 
   methods: {
-    getApplications() {
-      this.$store.dispatch("application/getApplications")
+    addedApplications() {
+      this.$store.dispatch("application/getAddedApplications")
     },
 
     addApplication() {

@@ -6,15 +6,20 @@ const namespaced = true
 
 const state = {
   applications: [],
+  addedApplications: [],
 }
 
 const getters = {
   list: (state) => Object.values(state.applications),
+  addedList: (state) => Object.values(state.addedApplications),
 }
 
 const mutations = {
   SET_APPLICATIONS(state, res) {
     Vue.set(state, "applications", res)
+  },
+  SET_ADDED_APPLICATIONS(state, res) {
+    Vue.set(state, "addedApplications", res)
   },
 }
 
@@ -23,6 +28,15 @@ const actions = {
     try {
       let result = await api.applications.getActiveApplications(data.onlyActive)
       commit("SET_APPLICATIONS", result.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async getAddedApplications({ commit }, data = { onlyActive: true }) {
+    try {
+      let result = await api.applications.getActiveApplications(data.onlyActive)
+      commit("SET_ADDED_APPLICATIONS", result.data)
     } catch (error) {
       handleError(error)
       throw error

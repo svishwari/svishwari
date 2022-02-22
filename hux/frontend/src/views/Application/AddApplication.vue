@@ -127,6 +127,7 @@
           pa-6
           rounded
           h-106
+          border-radius-12
         "
       >
         <v-row>
@@ -195,14 +196,14 @@
       <template #footer-left>
         <div class="d-flex align-baseline">
           <span class="text-body-2 black--text text--lighten-4">
-            {{ applications.length }} results
+            {{ allApplications.length }} results
           </span>
         </div>
       </template>
       <template #default>
         <div class="ma-3 font-weight-light px-6">
           <div
-            v-for="(value, category, index) in groupByCategory(applications)"
+            v-for="(value, category, index) in groupByCategory(allApplications)"
             :key="`active-${index}`"
           >
             <label
@@ -238,6 +239,7 @@
               :is-added="false"
               :is-already-added="false"
               class="mb-2"
+              data-e2e="applicationsDrawer"
               @click="onAddApplication(null)"
             />
           </div>
@@ -326,7 +328,17 @@ export default {
   computed: {
     ...mapGetters({
       applications: "application/list",
+      addedApplications: "application/addedList",
     }),
+
+    allApplications() {
+      return this.applications.map((obj) => {
+        const index = this.addedApplications.findIndex(
+          (el) => el["id"] == obj["id"]
+        )
+        return index !== -1 ? this.addedApplications[index] : obj
+      })
+    },
 
     selectedApplication() {
       return this.selectedApplicationId
@@ -359,11 +371,13 @@ export default {
       this.drawer = true
     }
     await this.getApplications()
+    await this.getAddedApplications()
     this.loading = false
   },
 
   methods: {
     ...mapActions({
+      getAddedApplications: "application/getAddedApplications",
       getApplications: "application/getApplications",
       createApplication: "application/createApplication",
       updateApplication: "application/updateApplications",
@@ -393,17 +407,13 @@ export default {
           category: "Uncategorized",
           name: null,
           url: null,
-          type: "custom-application",
         }
         this.customApp = true
       } else {
         let application = this.applications.find((item) => item.id == id)
 
         this.newAppDetails = {
-          category: application.category,
-          name: application.name,
           url: application.url,
-          type: application.type,
         }
         this.customApp = false
       }
@@ -466,5 +476,8 @@ export default {
 }
 .h-106 {
   height: 110px;
+}
+.border-radius-12 {
+  border-radius: 12px !important;
 }
 </style>

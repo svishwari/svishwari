@@ -73,6 +73,18 @@ describe("Navigation", () => {
     // quick add: data source, destination, audience, engagement
     cy.get(selector.topNav.add).click()
 
+    // application features
+    cy.get(selector.topNav.application).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.topNav.applicationOptions).its("length").should("gt", 0)
+    cy.get(selector.topNav.applicationOptions)
+      .contains("Add an application")
+      .click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.location("pathname").should("eq", route.addApplication)
+
     // user profile: my profile, logout
     cy.get(selector.topNav.profiledropdown).click()
     cy.get(selector.topNav.profile)
