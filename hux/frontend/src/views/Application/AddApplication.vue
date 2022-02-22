@@ -59,23 +59,7 @@
 
     <!-- add application form -->
     <v-form v-if="customApp">
-      <v-alert
-        outlined
-        tile
-        class="yellow lighten-1 black--border border--lighten-2 black--text"
-      >
-        <div class="d-flex justify-space-between">
-          <div class="mr-3">
-            <icon type="bulb" :size="36" color="yellow" />
-          </div>
-          <p class="text-body-1 ma-0">
-            The application you have selected is currently not available to
-            connect through the Hux interface. Please configure the tool below.
-          </p>
-        </div>
-      </v-alert>
-
-      <v-row class="h-80">
+      <v-row class="h-80 mt-4">
         <v-col>
           <label class="mb-1">Application category</label>
           <hux-select
@@ -320,7 +304,7 @@ export default {
       navigateTo: false,
       flagForModal: false,
       ApplicationUrl: null,
-      categoryOptions: ["Data tools", "Reporting", "Sandbox", "Uncategorized"],
+      categoryOptions: ["Data processing", "Data storage", "Modeling", "Monitoring", "Reporting", "Uncategorized"],
       customApp: null,
     }
   },

@@ -24,18 +24,18 @@ const mutations = {
 }
 
 const actions = {
-  async getApplications({ commit }, data = { onlyActive: false }) {
+  async getApplications({ commit }) {
     try {
-      let result = await api.applications.getActiveApplications(data.onlyActive)
+      let result = await api.applications.getActiveApplications(false)
       commit("SET_APPLICATIONS", result.data)
     } catch (error) {
       handleError(error)
       throw error
     }
   },
-  async getAddedApplications({ commit }, data = { onlyActive: true }) {
+  async getAddedApplications({ commit }) {
     try {
-      let result = await api.applications.getActiveApplications(data.onlyActive)
+      let result = await api.applications.getActiveApplications(true)
       commit("SET_ADDED_APPLICATIONS", result.data)
     } catch (error) {
       handleError(error)

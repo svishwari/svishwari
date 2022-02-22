@@ -820,12 +820,8 @@ export const defineRoutes = (server) => {
 
   //applications
   server.get("/applications", (schema, request) => {
-    let appAdded = request.queryParams["user"]
-    if (appAdded == "true") {
-      return addedApplications
-    } else {
-      return applications
-    }
+    let appAdded = request.queryParams["user"] === "true"
+    return appAdded ? addedApplications : applications
   })
 
   server.post("/applications", (schema, request) => {

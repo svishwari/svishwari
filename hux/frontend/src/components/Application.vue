@@ -73,9 +73,9 @@
                     "
                     class="white h-32"
                   >
-                    <span class="text-body-1 black--text text--lighten-4">{{
-                      category
-                    }}</span>
+                    <span class="text-body-1 black--text text--lighten-4">
+                      {{ category }}
+                    </span>
                   </v-list-item>
                   <v-list-item
                     v-for="(app, ind) in item.menu.filter(
@@ -111,9 +111,7 @@
       icon="sad-face"
       type="error"
       title="You are about to remove"
-      :sub-title="
-        selectedId && applicationList.find((x) => x.id == selectedId).name
-      "
+      :sub-title="selectedAppName"
       right-btn-text="Remove"
       left-btn-text="Cancel"
       data-e2e="remove-application-confirmation"
@@ -130,7 +128,7 @@ import ConfirmModal from "@/components/common/ConfirmModal"
 import Tooltip from "./common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import Logo from "@/components/common/Logo"
-import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 
 export default {
   name: "Application",
@@ -154,6 +152,12 @@ export default {
     ...mapGetters({
       applicationList: "application/addedList",
     }),
+    selectedAppName() {
+      return (
+        this.selectedId &&
+        this.applicationList.find((x) => x.id == this.selectedId).name
+      )
+    },
     getDropdownOptions() {
       return [
         {
@@ -167,12 +171,8 @@ export default {
               category: item.category,
               icon: item.type,
               isDisabled: false,
-              onClick: () => {
-                window.open("https://" + item.url)
-              },
-              onDelete: () => {
-                this.removeApplication(item.id)
-              },
+              onClick: () => window.open("https://" + item.url),
+              onDelete: () => this.removeApplication(item.id),
             }
           }),
         },
@@ -180,9 +180,7 @@ export default {
           title: "Add an application",
           isDisabled: false,
           isVisible: true,
-          onClick: () => {
-            this.addApplication()
-          },
+          onClick: () => this.addApplication(),
         },
       ]
     },
@@ -200,9 +198,9 @@ export default {
   },
 
   methods: {
-    addedApplications() {
-      this.$store.dispatch("application/getAddedApplications")
-    },
+    ...mapActions({
+      addedApplications: "application/getAddedApplications",
+    }),
 
     addApplication() {
       this.$router.push({

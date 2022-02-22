@@ -2,18 +2,9 @@ import faker from "faker"
 
 export const addedApplications = [
   {
-    category: "uncategorized",
-    create_time: faker.date.recent(),
-    id: "1",
-    is_added: true,
-    name: "Custom Application",
-    type: "custom-application",
-    url: "URL_Link",
-  },
-  {
     category: "data tools",
     create_time: faker.date.recent(),
-    id: "2",
+    id: "1",
     is_added: true,
     name: "Data ingestion workbench",
     type: "data-ingestion-workbench",
@@ -22,7 +13,7 @@ export const addedApplications = [
   {
     category: "data tools",
     create_time: faker.date.recent(),
-    id: "3",
+    id: "2",
     is_added: true,
     name: "Data warehouse workbench",
     type: "data-warehouse-workbench",
@@ -31,7 +22,7 @@ export const addedApplications = [
   {
     category: "data tools",
     create_time: faker.date.recent(),
-    id: "4",
+    id: "3",
     is_added: true,
     name: "Juniper labs",
     type: "juniper-labs",
@@ -40,7 +31,7 @@ export const addedApplications = [
   {
     category: "reporting",
     create_time: faker.date.recent(),
-    id: "8",
+    id: "7",
     is_added: true,
     name: "Datorama",
     type: "salesforce_datorama",
@@ -49,7 +40,7 @@ export const addedApplications = [
   {
     category: "sandbox",
     create_time: faker.date.recent(),
-    id: "9",
+    id: "8",
     is_added: true,
     name: "Jupyterhub",
     type: "jupyter-hub",
@@ -59,17 +50,9 @@ export const addedApplications = [
 
 export const applications = [
   {
-    category: "uncategorized",
-    create_time: faker.date.recent(),
-    id: "1",
-    is_added: false,
-    name: "Custom Application",
-    type: "custom-application",
-  },
-  {
     category: "data tools",
     create_time: faker.date.recent(),
-    id: "2",
+    id: "1",
     is_added: false,
     name: "Data ingestion workbench",
     type: "data-ingestion-workbench",
@@ -77,7 +60,7 @@ export const applications = [
   {
     category: "data tools",
     create_time: faker.date.recent(),
-    id: "3",
+    id: "2",
     is_added: false,
     name: "Data warehouse workbench",
     type: "data-warehouse-workbench",
@@ -85,7 +68,7 @@ export const applications = [
   {
     category: "data tools",
     create_time: faker.date.recent(),
-    id: "4",
+    id: "3",
     is_added: false,
     name: "Juniper labs",
     type: "juniper-labs",
@@ -93,7 +76,7 @@ export const applications = [
   {
     category: "data tools",
     create_time: faker.date.recent(),
-    id: "5",
+    id: "4",
     is_added: false,
     name: "Microservice workbench",
     type: "microservice-workbench",
@@ -101,7 +84,7 @@ export const applications = [
   {
     category: "data tools",
     create_time: faker.date.recent(),
-    id: "6",
+    id: "5",
     is_added: false,
     name: "Tecton",
     type: "tecton",
@@ -109,7 +92,7 @@ export const applications = [
   {
     category: "data tools",
     create_time: faker.date.recent(),
-    id: "7",
+    id: "6",
     is_added: false,
     name: "Tableau",
     type: "tableau",
@@ -117,7 +100,7 @@ export const applications = [
   {
     category: "reporting",
     create_time: faker.date.recent(),
-    id: "8",
+    id: "7",
     is_added: false,
     name: "Datorama",
     type: "salesforce_datorama",
@@ -125,7 +108,7 @@ export const applications = [
   {
     category: "sandbox",
     create_time: faker.date.recent(),
-    id: "9",
+    id: "8",
     is_added: false,
     name: "Jupyterhub",
     type: "jupyter-hub",
