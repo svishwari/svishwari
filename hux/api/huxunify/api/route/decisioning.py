@@ -733,7 +733,12 @@ class ModelDriftView(SwaggerView):
             database = get_db_client()
             # get model versions
             model_versions = (
-                [{api_c.CURRENT_VERSION: model_version}]
+                [
+                    {
+                        api_c.CURRENT_VERSION: model_version,
+                        api_c.TYPE: api_c.DRIFT,
+                    }
+                ]
                 if model_version
                 else tecton.get_model_version_history(model_id)
             )
@@ -742,29 +747,24 @@ class ModelDriftView(SwaggerView):
             if not model_versions:
                 return {}, HTTPStatus.NOT_FOUND
 
-            # loop versions until the latest version is found
-            for version in model_versions:
-                current_version = version.get(api_c.CURRENT_VERSION)
+            # take the latest model
+            latest_model = model_versions[0]
 
-                # check cache first
-                drift_data = get_cache_entry(
-                    database, f"drift.{model_id}.{current_version}"
-                )
-                if drift_data:
-                    break
+            drift_data = get_cache_entry(
+                database,
+                f"drift.{model_id}.{latest_model[api_c.CURRENT_VERSION]}",
+            )
 
+            # create cache entry in db only if drift fetched from Tecton is not empty
+            if not drift_data:
                 drift_data = tecton.get_model_drift(
-                    model_id, current_version, model_versions
+                    model_id, latest_model[api_c.TYPE], model_versions
                 )
-
-                # create cache entry in db only if drift fetched from Tecton is not empty
-                if drift_data:
-                    create_cache_entry(
-                        database,
-                        f"drift.{model_id}.{current_version}",
-                        drift_data,
-                    )
-                    break
+                create_cache_entry(
+                    database,
+                    f"drift.{model_id}.{latest_model[api_c.CURRENT_VERSION]}",
+                    drift_data,
+                )
 
         return (
             jsonify(ModelDriftSchema(many=True).dump(drift_data)),
