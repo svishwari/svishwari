@@ -248,10 +248,7 @@ import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import Drawer from "@/components/common/Drawer"
 import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
-import {
-  default as HuxIcon,
-  default as Icon,
-} from "@/components/common/Icon.vue"
+import HuxIcon from "@/components/common/Icon.vue"
 import Logo from "@/components/common/Logo"
 import TextField from "@/components/common/TextField"
 import Page from "@/components/Page"
@@ -273,7 +270,6 @@ export default {
     Logo,
     ConfirmModal,
     HuxIcon,
-    Icon,
     HuxSelect,
   },
 
@@ -304,7 +300,14 @@ export default {
       navigateTo: false,
       flagForModal: false,
       ApplicationUrl: null,
-      categoryOptions: ["Data processing", "Data storage", "Modeling", "Monitoring", "Reporting", "Uncategorized"],
+      categoryOptions: [
+        "Data processing",
+        "Data storage",
+        "Modeling",
+        "Monitoring",
+        "Reporting",
+        "Uncategorized",
+      ],
       customApp: null,
     }
   },
