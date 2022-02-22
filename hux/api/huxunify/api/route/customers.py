@@ -60,7 +60,6 @@ from huxunify.api.route.utils import (
     get_start_end_dates,
     get_db_client,
     convert_unique_city_filter,
-    generate_cache_key_string,
     check_and_return_cache,
 )
 from huxunify.api.schema.errors import NotFoundError
