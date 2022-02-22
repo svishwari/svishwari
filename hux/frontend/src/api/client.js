@@ -428,6 +428,12 @@ client["models"].remove = (model) => {
   return http.delete(`/models?model_id=${model.id}`)
 }
 
+client["models"].getPipePerfomance = (id, version) => {
+  if (version)
+    return http.get(`/models/${id}/pipeline-performance?version=${version}`)
+  else return http.get(`/models/${id}/pipeline-performance`)
+}
+
 //#region Data sources
 client.dataSources.dataFeeds = (type) => {
   return http.get(`/data-sources/${type}/datafeeds`)

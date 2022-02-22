@@ -26,6 +26,7 @@ import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
 import { applications } from "./factories/application"
 import domainData from "@/api/mock/fixtures/domainLineData.js"
 import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
+import runDurationData from "@/api/mock/fixtures/runDurationData.js"
 
 export const defineRoutes = (server) => {
   // Users
@@ -545,6 +546,10 @@ export const defineRoutes = (server) => {
 
   server.get("/models/:id/feature-importance", () => {
     return featureData.featureList
+  })
+
+  server.get("/models/:id/pipeline-performance", () => {
+    return runDurationData
   })
 
   server.get("/models/:id/version-history", (schema, request) => {
