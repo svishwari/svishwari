@@ -579,14 +579,6 @@ ALLOWED_FIELDS = {
         MODEL_USERNAME,
         ADDED,
         ENABLED,
-
-        VERSION,
-        FULCRUM,
-        LOOKBACK_DAYS,
-        PREDICTION_DAYS,
-        OWNER,
-        OWNER_EMAIL,
-        DATE_TRAINED
     ],
     APPLICATIONS_COLLECTION: [
         NAME,

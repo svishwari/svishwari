@@ -43,7 +43,8 @@ def create_model(
         if document_id is not None:
             return coll.find_one({db_c.ID: document_id})
         logging.error(
-            "Failed to create a document in collection : %s", db_c.MODELS_COLLECTION
+            "Failed to create a document in collection : %s",
+            db_c.MODELS_COLLECTION,
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

@@ -14,13 +14,12 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.collection_management import (
     create_document,
 )
+from huxunifylib.database.model_management import create_model
 from pymongo import MongoClient
 
 from database.share import get_mongo_client
 
 # Setup Logging
-from huxunifylib.database.model_management import create_model
-
 logging.basicConfig(level=logging.INFO)
 
 # Models List
@@ -702,11 +701,11 @@ def drop_collections(database: MongoClient) -> None:
         db_c.MODELS_COLLECTION,
         db_c.CONFIGURATIONS_COLLECTION,
         db_c.CLIENT_PROJECTS_COLLECTION,
-        db_c.APPLICATIONS_COLLECTION
+        db_c.APPLICATIONS_COLLECTION,
     ]
     for collection in collections:
         database[db_c.DATA_MANAGEMENT_DATABASE][collection].drop()
-        logging.info(f"Dropped the {collection} collection")
+        logging.info("Dropped the %s collection", collection)
 
 
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
