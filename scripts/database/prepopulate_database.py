@@ -19,6 +19,8 @@ from pymongo import MongoClient
 from database.share import get_mongo_client
 
 # Setup Logging
+from huxunifylib.database.model_management import create_model
+
 logging.basicConfig(level=logging.INFO)
 
 # Models List
@@ -693,14 +695,18 @@ def drop_collections(database: MongoClient) -> None:
         database (MongoClient): Database Client.
     """
 
+    logging.info("Dropping collections ...")
     collections = [
         db_c.CDP_DATA_SOURCES_COLLECTION,
         db_c.DELIVERY_PLATFORM_COLLECTION,
         db_c.MODELS_COLLECTION,
         db_c.CONFIGURATIONS_COLLECTION,
+        db_c.CLIENT_PROJECTS_COLLECTION,
+        db_c.APPLICATIONS_COLLECTION
     ]
     for collection in collections:
         database[db_c.DATA_MANAGEMENT_DATABASE][collection].drop()
+        logging.info(f"Dropped the {collection} collection")
 
 
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
@@ -711,7 +717,7 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
         data_sources (List): List of Data Sources Object.
     """
 
-    logging.info("Prepopulate data sources.")
+    logging.info("Pre-populating data sources...")
 
     for data_source in data_sources:
         result_id = create_data_source(
@@ -726,7 +732,7 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
         logging.info(
             "Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id
         )
-    logging.info("Prepopulate data sources complete.")
+    logging.info("Pre-populate data sources complete.")
 
 
 def insert_delivery_platforms(
@@ -739,7 +745,7 @@ def insert_delivery_platforms(
         delivery_platforms (List): List of Delivery Platform Objects.
     """
 
-    logging.info("Prepopulate destinations.")
+    logging.info("Pre-populating destinations ...")
 
     for delivery_platform in delivery_platforms:
         if (
@@ -755,7 +761,7 @@ def insert_delivery_platforms(
                 delivery_platform[db_c.DELIVERY_PLATFORM_NAME],
                 result_id,
             )
-    logging.info("Prepopulate destinations complete.")
+    logging.info("Pre-populate destinations complete.")
 
 
 def insert_configurations(database: MongoClient, configurations: list) -> None:
@@ -766,7 +772,7 @@ def insert_configurations(database: MongoClient, configurations: list) -> None:
         configurations (List): List of Configuration Objects.
     """
 
-    logging.info("Prepopulate configurations.")
+    logging.info("Pre-populating configurations ...")
 
     for configuration in configurations:
         result_id = create_document(
@@ -779,7 +785,7 @@ def insert_configurations(database: MongoClient, configurations: list) -> None:
             configuration[db_c.NAME],
             result_id,
         )
-    logging.info("Prepopulated configurations.")
+    logging.info("Pre-populated configurations.")
 
 
 def insert_models(database: MongoClient, models: list) -> None:
@@ -789,15 +795,13 @@ def insert_models(database: MongoClient, models: list) -> None:
         database (MongoClient): MongoDB Client.
         models (List): List of Model Objects.
     """
-    logging.info("Prepopulate models.")
+    logging.info("Pre-populating models ...")
 
     for model in models:
-        model_id = create_document(database, db_c.MODELS_COLLECTION, model)[
-            db_c.ID
-        ]
+        model_id = create_model(database, model)
         logging.info("Added %s, %s.", model[db_c.NAME], model_id)
 
-    logging.info("Prepopulate models complete.")
+    logging.info("Pre-populate models complete.")
 
 
 def insert_client_projects(
@@ -810,7 +814,7 @@ def insert_client_projects(
         client_projects (List): List of client project objects.
     """
 
-    logging.info("Pre-populate client project.")
+    logging.info("Pre-populating client projects ...")
 
     for client_project in client_projects:
         result_id = create_document(
@@ -836,7 +840,7 @@ def insert_applications(database: MongoClient, applications: list) -> None:
         applications (List): List of application objects.
     """
 
-    logging.info("Pre-populate applications collection.")
+    logging.info("Pre-populating applications ...")
 
     for application in applications:
         result_id = create_document(
@@ -851,7 +855,7 @@ def insert_applications(database: MongoClient, applications: list) -> None:
             result_id,
         )
 
-    logging.info("Pre-populated applikcations.")
+    logging.info("Pre-populate applications complete.")
 
 
 if __name__ == "__main__":
@@ -864,4 +868,4 @@ if __name__ == "__main__":
     insert_models(db_client, models_list)
     insert_client_projects(db_client, client_projects_list)
     insert_applications(db_client, applications_constants)
-    logging.info("Prepopulate complete.")
+    logging.info("Pre-populate database procedure complete.")
