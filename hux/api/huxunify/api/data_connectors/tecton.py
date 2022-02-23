@@ -210,6 +210,8 @@ class Tecton:
                 model[api_c.TYPE] = api_c.TEMP_MODELS_TYPE_MAPPING[
                     model[api_c.ID].lower()
                 ]
+            else:
+                model[api_c.TYPE] = api_c.UNSUBSCRIBE
 
             models.append(model)
 
@@ -429,11 +431,14 @@ class Tecton:
 
         return result_drift
 
-    def get_model_lift_async(self, model_id: str) -> List[ModelLiftSchema]:
+    def get_model_lift_async(
+        self, model_id: str, model_version: str
+    ) -> List[ModelLiftSchema]:
         """Get model lift based on id.
 
         Args:
             model_id (str): model id.
+            model_version (str): model version.
 
         Returns:
              List[ModelLiftSchema]: List of model lift.
@@ -475,21 +480,29 @@ class Tecton:
             if not response[0]:
                 continue
 
-            # process lift data
-            latest_lift_data = response[0][api_c.RESULTS][-1][api_c.FEATURES]
+            # grab the features and match model version.
+            version_lift_data = [
+                x[api_c.FEATURES]
+                for x in response[0][api_c.RESULTS]
+                if x[api_c.JOIN_KEYS][0] == model_version
+            ]
+
+            # if no lift data found, continue
+            if not version_lift_data:
+                continue
 
             result_lift.append(
                 {
                     api_c.BUCKET: response[1],
-                    api_c.ACTUAL_VALUE: latest_lift_data[0],
-                    api_c.ACTUAL_LIFT: latest_lift_data[3],
-                    api_c.PREDICTED_LIFT: latest_lift_data[4],
-                    api_c.PREDICTED_VALUE: latest_lift_data[9],
-                    api_c.PROFILE_COUNT: int(latest_lift_data[10]),
-                    api_c.ACTUAL_RATE: latest_lift_data[11],
-                    api_c.PREDICTED_RATE: latest_lift_data[12],
-                    api_c.PROFILE_SIZE_PERCENT: latest_lift_data[14] * 100
-                    if latest_lift_data[14]
+                    api_c.ACTUAL_VALUE: version_lift_data[0][0],
+                    api_c.ACTUAL_LIFT: version_lift_data[0][3],
+                    api_c.PREDICTED_LIFT: version_lift_data[0][4],
+                    api_c.PREDICTED_VALUE: version_lift_data[0][9],
+                    api_c.PROFILE_COUNT: int(version_lift_data[0][10]),
+                    api_c.ACTUAL_RATE: version_lift_data[0][11],
+                    api_c.PREDICTED_RATE: version_lift_data[0][12],
+                    api_c.PROFILE_SIZE_PERCENT: version_lift_data[0][14] * 100
+                    if version_lift_data[0][14]
                     else 0,
                 }
             )

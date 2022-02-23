@@ -1,7 +1,7 @@
 """Schemas for the Model Object"""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, Float, Nested, Dict, Bool
+from marshmallow.fields import Str, Int, Float, Nested, Dict, Bool, List
 from marshmallow.validate import OneOf
 
 from huxunifylib.database import constants as db_c
@@ -144,3 +144,28 @@ class ModelUpdatePatchSchema(Schema):
     )
     description = Str(required=False)
     is_added = Bool(attribute=db_c.ADDED, required=False)
+
+
+class ModelPipelineRunDurationSchema(Schema):
+    """Model Pipeline Run Duration Schema"""
+
+    status = Str()
+    timestamp = DateTimeWithZ()
+    duration = Str()
+
+
+class ModelPipelineRunDataSchema(Schema):
+    """Model Pipeline Run Data Schema"""
+
+    frequency = Str()
+    last_run = DateTimeWithZ()
+    most_recent_run_duration = Str()
+    run_duration = List(Nested(ModelPipelineRunDurationSchema))
+    total_runs = Int()
+
+
+class ModelPipelinePerformanceSchema(Schema):
+    """Model Pipeline Performance Schema"""
+
+    training = Nested(ModelPipelineRunDataSchema)
+    scoring = Nested(ModelPipelineRunDataSchema)

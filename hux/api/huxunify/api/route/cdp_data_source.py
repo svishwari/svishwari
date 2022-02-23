@@ -780,7 +780,8 @@ class GetConnectionsDatafeedDetails(SwaggerView):
             fetch_datafeed_details(
                 datafeed_name, start_date, end_date, statuses
             ),
-            key=lambda x: x[api_c.LAST_PROCESSED],
+            key=lambda x: x[api_c.LAST_PROCESSED_START],
+            reverse=True,
         )
 
         return HuxResponse.OK(

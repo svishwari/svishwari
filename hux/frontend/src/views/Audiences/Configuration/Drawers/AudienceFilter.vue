@@ -133,7 +133,8 @@ export default {
       this.enableApply = true
       this.clearFilter()
     },
-    clearAndLoad() {
+    clearAndReload() {
+      this.enableApply = false
       this.clearFilter()
       this.apply()
     },
@@ -142,6 +143,7 @@ export default {
         selectedAttributes: this.selectedAttributes,
         selectedFavourite: this.selectedFavourite,
         selectedAudienceWorkedWith: this.selectedAudienceWorkedWith,
+        filterApplied: this.filterLength,
       })
     },
     cancel() {

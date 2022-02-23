@@ -374,6 +374,7 @@ USER_ID = "user_id"
 USER_ORGANIZATION = "organization"
 USER_SUBSCRIPTION = "subscription"
 USER_FAVORITES = "favorites"
+USER_APPLICATIONS = "applications"
 USER_ALERTS = "alerts"
 USER_DISPLAY_NAME = "display_name"
 USER_LAST_LOGIN = "last_login"
@@ -599,10 +600,10 @@ ALLOWED_FIELDS = {
     ],
     APPLICATIONS_COLLECTION: [
         NAME,
-        TYPE,
         CATEGORY,
         URL,
-        STATUS,
+        ICON,
+        ENABLED,
         ADDED,
     ],
     CLIENT_PROJECTS_COLLECTION: [
@@ -638,3 +639,9 @@ DATA_ADDED = "data_added"
 # MongoDB Platforms
 AWS_DOCUMENT_DB = "aws_document_db"
 AZURE_COSMOS_DB = "azure_cosmos_db"
+
+INBOX_PERCENTAGE_DATA = "inbox_percentage_data"
+INBOX_PERCENTAGE = "inbox_percentage"
+DOMAIN_NAME = "domain_name"
+OVERALL_INBOX_RATE = "overall_inbox_rate"
+DOMAIN_WISE_DATA = "domain_wise_data"

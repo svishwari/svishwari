@@ -37,7 +37,7 @@ export default {
     segmentPlayground: "[data-e2e='nav-playground']",
 
     // orchestration:
-    destinations: "[data-e2e='nav-destinations']",
+    destinations: "[data-e2e='nav-multiple_map_pins']",
     engagements: "[data-e2e='nav-speaker_up']",
     audiences: "[data-e2e='nav-audiences']",
   },
@@ -52,6 +52,8 @@ export default {
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
     dataSourceButton: "[data-e2e='Data Source']",
+    application: "[data-e2e='application-dropdown']",
+    applicationOptions: "[data-e2e='application-options']",
   },
 
   // home
@@ -279,5 +281,29 @@ export default {
     selectAttrBtn: "[data-e2e='select-attr-btn']",
     selectOperatorBtn: "[data-e2e='select-operator-btn']",
     autoCompleteBtn: "[data-e2e='auto-complete-btn']",
+  },
+
+  //applications
+  application: {
+    addDrawer: "[data-e2e='drawerToggle']",
+    cancel: "[data-e2e='cancel-application-request']",
+    applications: "[data-e2e='applicationsDrawer']",
+  },
+
+  // email deliverability
+  emailDeliverability: {
+    overview: "[data-e2e='deliverability-overview']",
+    deliveredChart: "[data-e2e='delivered-count-open-rate-chart']",
+    sendingDomainOverview: {
+      domainOverviewTable: "[data-e2e='sending-domain-overview']",
+      overviewTableHeaders: "table thead tr",
+      overviewTableItems: "table tbody tr",
+    },
+    sentDomain: "[data-e2e='sent-domain-chart']",
+    deliveredRateDomain: "[data-e2e='delivered-rate-domain-chart']",
+    openRateDomain: "[data-e2e='open-rate-domain-chart']",
+    clickRateDomain: "[data-e2e='click-rate-domain-chart']",
+    unsubscribeRateDomain: "[data-e2e='unsubscribe-rate-domain-chart']",
+    complainsRateDomain: "[data-e2e='complaints-rate-domain-chart']",
   },
 }

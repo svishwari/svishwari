@@ -47,19 +47,17 @@
     </template>
 
     <template>
-      <div
-        class="
-          d-flex
-          flex-nowrap
-          align-stretch
-          flex-grow-1 flex-shrink-0
-          mw-100
-          minh-100
-        "
-      >
-        <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+      <div class="d-flex">
+        <div
+          class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
+        >
           <div v-if="!loadingOverview">
-            <v-slide-group ref="wrapper" class="idr-slide-group" show-arrows>
+            <v-slide-group
+              ref="wrapper"
+              class="idr-slide-group"
+              :class="{ 'mr-4': isFilterToggled }"
+              show-arrows
+            >
               <v-slide-item v-for="(metric, index) in overview" :key="index">
                 <metric-card
                   :title="metric.title"
@@ -121,8 +119,8 @@
             </v-slide-group>
           </div>
 
-          <v-row class="mt-0">
-            <v-col class="mb-n2" :md="isFilterToggled ? 9 : 12">
+          <v-row class="mt-0 mb-1" :class="{ 'mr-4': isFilterToggled }">
+            <v-col>
               <v-card
                 class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
                 :class="
@@ -215,8 +213,8 @@
             </v-col>
           </v-row>
 
-          <v-row>
-            <v-col :md="isFilterToggled ? 9 : 12">
+          <v-row :class="{ 'mr-4': isFilterToggled }">
+            <v-col>
               <data-feeds
                 :data="dataFeeds"
                 :is-loading="loadingDataFeeds"
@@ -228,7 +226,7 @@
           </v-row>
         </div>
 
-        <div class="ml-auto">
+        <div class="ml-auto idr-filter">
           <hux-filters-drawer
             :is-toggled="isFilterToggled"
             :count="totalFiltersSelected"
@@ -485,5 +483,12 @@ $headerOffsetY: 70px;
     background-image: url("../../assets/images/no-matching-trend-chart-frame.png");
     background-position: center;
   }
+}
+.idr-filter {
+  margin-top: -30px;
+  margin-right: -30px;
+}
+.content-section {
+  height: calc(100vh - 200px);
 }
 </style>

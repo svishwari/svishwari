@@ -24,11 +24,7 @@
             bordered
           />
         </v-btn>
-        <v-btn
-          icon
-          class="ml-5"
-          @click.native="isAlertsToggled = !isAlertsToggled"
-        >
+        <v-btn icon class="ml-5" @click.native="toggleAlertConfigure()">
           <icon type="setting-gear" :size="27" color="black" />
         </v-btn>
       </template>
@@ -192,7 +188,8 @@
         />
         <alert-configure-drawer
           v-model="isAlertsToggled"
-          :users="getNotificationUsers"
+          :users="getAllUsers"
+          @onDrawerClose="onConfigClose"
         />
       </div>
     </div>
@@ -291,6 +288,7 @@ export default {
       notificationId: null,
       numFiltersSelected: 0,
       finalFilterApplied: 1,
+      getAllUsers: [],
     }
   },
   computed: {
@@ -419,7 +417,7 @@ export default {
       this.batchDetails.isLazyLoad = false
     },
     async alertfunction(data) {
-      this.finalFilterApplied = this.numFiltersSelected
+      this.finalFilterApplied = data.filterApplied
       this.isFilterToggled = true
       this.loading = true
       try {
@@ -472,7 +470,15 @@ export default {
       }
     },
     clearFilters() {
-      this.$refs.filters.clear()
+      this.$refs.filters.clearAndReload()
+    },
+    toggleAlertConfigure() {
+      this.getAllUsers = this.getUsers
+      this.isAlertsToggled = !this.isAlertsToggled
+    },
+    async onConfigClose() {
+      await this.getUsersNoti()
+      this.getAllUsers = this.getUsers
     },
   },
 }

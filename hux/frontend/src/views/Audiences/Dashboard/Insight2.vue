@@ -291,7 +291,14 @@
                 </v-card-title>
                 <v-card-text v-if="showAdvertising">
                   <div class="match-rates mx-2 my-1">
-                    <matchrate :matchrate="audience.match_rates" />
+                    <matchrate
+                      :match-rate="
+                        audienceData.digital_advertising &&
+                        audienceData.digital_advertising.match_rates
+                          ? audienceData.digital_advertising.match_rates
+                          : []
+                      "
+                    />
                   </div>
                   <div ref="advertisingcard" class="lookalikes mx-2 my-6">
                     <lookalikes
@@ -1086,7 +1093,6 @@ export default {
     async triggerAttachDestination(event) {
       const payload = event.destination
       await this.attachAudienceDestination({
-        engagementId: this.engagementId,
         audienceId: this.audienceId,
         data: payload,
       })
@@ -1094,7 +1100,6 @@ export default {
     },
     async triggerRemoveDestination(event) {
       this.deleteActionData = {
-        engagementId: this.engagementId,
         audienceId: this.audienceId,
         data: { id: event.destination.id },
       }

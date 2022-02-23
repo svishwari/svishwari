@@ -6,11 +6,13 @@
         data.destinations_category.find((item) => item.category == 'Marketing')
           .destinations
       "
+      :engagement-id="engagementId"
       :headers="columnDefs"
       section-type="destinations"
       deliveries-key="destination_audiences"
       class="mb-5"
       @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
+      @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
       @onOverviewDestinationAction="
         $emit('onOverviewDestinationAction', $event)
       "
@@ -74,6 +76,11 @@ export default {
     data: {
       type: Object,
       required: true,
+    },
+    engagementId: {
+      type: String,
+      required: true,
+      default: () => "",
     },
     emailData: {
       type: Object,

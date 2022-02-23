@@ -15,6 +15,7 @@ import notifications from "@/store/modules/notifications"
 import alerts from "@/store/modules/alerts"
 import configurations from "@/store/modules/configurations"
 import application from "@/store/modules/application"
+import emailDeliverability from "@/store/modules/emailDeliverability"
 
 Vue.use(Vuex)
 
@@ -38,6 +39,7 @@ export default new Vuex.Store({
     notifications,
     configurations,
     application,
+    emailDeliverability,
   },
 
   strict: debug,

@@ -27,6 +27,9 @@ Object.keys(resources).forEach((resource) => {
 client["users"].fetchProfile = () => {
   return http.get("/users/profile")
 }
+client["users"].updatePreferences = (data) => {
+  return http.put("/users/preferences", data)
+}
 client["users"].markFavorite = (resourceId, entityType) => {
   return http.post(`users/${entityType}/${resourceId}/favorite`)
 }
@@ -44,6 +47,12 @@ client["users"].getRequestedUsers = () => {
 }
 client["users"].tickets = () => {
   return http.get("users/tickets")
+}
+//#endregion
+
+//#region Configurations
+client["configurations"].getModules = () => {
+  return http.get("/configurations/modules")
 }
 //#endregion
 
@@ -128,6 +137,9 @@ client["destinations"].dataExtensions = (resourceId) => {
 client["destinations"].createDataExtension = (resourceId, data) => {
   return http.post(`/destinations/${resourceId}/data-extensions`, data)
 }
+client["destinations"].updateDestination = (id, data) => {
+  return http.patch(`/destinations/${id}`, data)
+}
 //#endregion
 
 //#region Engagement custom endpoints
@@ -148,25 +160,17 @@ client["engagements"].deliver = (resourceId, data) => {
 client["engagements"].attachAudience = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/audiences`, data)
 }
-client["engagements"].attachDestination = (engagementId, audienceId, data) => {
-  return http.post(
-    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
-    data
-  )
+client["engagements"].attachDestination = (audienceId, data) => {
+  return http.post(`/audience/${audienceId}/destinations`, data)
 }
 
-client["engagements"].detachDestination = (engagementId, audienceId, data) => {
+client["engagements"].detachDestination = (audienceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
-    return http.delete(
-      `/engagements/${engagementId}/audience/${audienceId}/destinations`,
-      { data: data }
-    )
+    return http.delete(`/audience/${audienceId}/destinations`, { data: data })
   } else {
-    return http.delete(
-      `/engagements/${engagementId}/audience/${audienceId}/destinations/${data.id}`
-    )
+    return http.delete(`/audience/${audienceId}/destinations/${data.id}`)
   }
 }
 
@@ -388,46 +392,70 @@ client["notifications"].getAllUsers = () => {
 
 //#endregion
 
-client["models"].overview = (id) => {
-  return http.get(`/models/${id}/overview`)
+client["models"].overview = (id, version) => {
+  if (version) return http.get(`/models/${id}/overview?version=${version}`)
+  else return http.get(`/models/${id}/overview`)
 }
 
-client["models"].features = (id) => {
-  return http.get(`/models/${id}/feature-importance`)
+client["models"].features = (id, version) => {
+  if (version)
+    return http.get(`/models/${id}/feature-importance?version=${version}`)
+  else return http.get(`/models/${id}/feature-importance`)
 }
 
 client["models"].versionHistory = (id) => {
   return http.get(`/models/${id}/version-history`)
 }
 
-client["models"].lift = (id) => {
-  return http.get(`/models/${id}/lift`)
+client["models"].lift = (id, version) => {
+  if (version) return http.get(`/models/${id}/lift?version=${version}`)
+  else return http.get(`/models/${id}/lift`)
 }
 
-client["models"].drift = (id) => {
-  return http.get(`/models/${id}/drift`)
+client["models"].drift = (id, version) => {
+  if (version) return http.get(`/models/${id}/drift?version=${version}`)
+  else return http.get(`/models/${id}/drift`)
 }
 
-client["models"].modelFeatures = (id) => {
-  return http.get(`/models/${id}/features`)
+client["models"].modelFeatures = (id, version) => {
+  if (version) return http.get(`/models/${id}/features?version=${version}`)
+  else return http.get(`/models/${id}/features`)
 }
 
 client["models"].remove = (model) => {
   return http.delete(`/models?model_id=${model.id}`)
 }
 
+client["models"].getPipePerfomance = (id, version) => {
+  if (version)
+    return http.get(`/models/${id}/pipeline-performance?version=${version}`)
+  else return http.get(`/models/${id}/pipeline-performance`)
+}
+
 //#region Data sources
 client.dataSources.dataFeeds = (type) => {
   return http.get(`/data-sources/${type}/datafeeds`)
 }
-client.dataSources.dataFeedsDetails = (type, name) => {
-  return http.get(`/data-sources/${type}/datafeeds/${name}`)
+client.dataSources.dataFeedsDetails = (
+  type,
+  name,
+  start_date,
+  end_date,
+  status
+) => {
+  return http.get(
+    `/data-sources/${type}/datafeeds/${name}${
+      start_date || end_date || status.length > 0 ? "?" : ""
+    }${start_date ? "start_date=" + start_date + "&" : ""}${
+      end_date ? "end_date=" + end_date + "&" : ""
+    }${status.length > 0 ? "status=" + status : ""}`
+  )
 }
 //#endregion
 
 //#region Application
 client.applications.getActiveApplications = (flag) => {
-  return http.get(`/applications?only_active=${flag}`)
+  return http.get(`/applications?user=${flag}`)
 }
 
 client.applications.createApplication = (data) => {
@@ -436,6 +464,15 @@ client.applications.createApplication = (data) => {
 
 client.applications.updateApplication = (id, data) => {
   return http.patch(`/applications/${id}`, data)
+}
+
+//#region Email Deliverability
+client["emailDeliverability"].emailDomain = () => {
+  return http.get("/email_deliverability/domains")
+}
+
+client["emailDeliverability"].getOverview = () => {
+  return http.get("/email_deliverability/overview")
 }
 
 export default client

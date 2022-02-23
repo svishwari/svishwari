@@ -326,7 +326,7 @@
                     x-axis-format="%m/%d"
                     :enable-grid="[true, true]"
                     data-e2e="drift-chart"
-                    :y-axis-zero-to-one="model.model_type != 'ltv'"
+                    :y-axis-zero-to-one="model.type != 'ltv'"
                   />
                   <v-row
                     v-else-if="!loadingDrift && driftChartData.length == 0"
@@ -501,15 +501,15 @@
               </v-card>
             </v-col>
           </v-row>
-          <version-history
-            v-model="versionHistoryDrawer"
-            data-e2e="version-history"
-          />
         </template>
       </v-tab-item>
       <v-tab-item key="pipeline" class="delivery-tab">
         <pipeline-perfrmance></pipeline-perfrmance>
       </v-tab-item>
+      <version-history
+        v-model="versionHistoryDrawer"
+        data-e2e="version-history"
+      />
     </v-tabs-items>
   </page>
 </template>
@@ -528,7 +528,6 @@ import MetricCard from "@/components/common/MetricCard"
 import EmptyPage from "@/components/common/EmptyPage"
 import { mapGetters, mapActions } from "vuex"
 import PipelinePerfrmance from "./PipelinePerfrmance"
-
 export default {
   name: "ModelsDashboard",
   components: {
@@ -564,9 +563,18 @@ export default {
       driftChartErrorState: false,
       liftErrorState: false,
       featuresErrorState: false,
+      modelTypes: [
+        "purchase",
+        "prediction",
+        "ltv",
+        "churn",
+        "propensity",
+        "unsubscribe",
+        "regression",
+        "classification",
+      ],
     }
   },
-
   computed: {
     ...mapGetters({
       model: "models/overview",
@@ -576,11 +584,9 @@ export default {
       modelDashboardFeatures: "models/modelFeatures",
       drift: "models/drift",
     }),
-
     modelMetricDetails() {
       return this.modelDetails(this.$route.params.id) || {}
     },
-
     driftChartData() {
       let data = this.drift.map((each) => {
         let oldRunDate = new Date(each.run_date)
@@ -592,16 +598,13 @@ export default {
           yAxisValue: each.drift,
         }
       })
-
       data.sort((a, b) => {
         let keyA = new Date(a.xAxisValue)
         let keyB = new Date(b.xAxisValue)
-
         if (keyA < keyB) return -1
         if (keyA > keyB) return 1
         return 0
       })
-
       return data
     },
     modelFeatures() {
@@ -623,35 +626,38 @@ export default {
           icon: "models",
         },
       ]
-      if (this.model.model_name) {
-        items.push({
-          text: this.model.model_name,
-          disabled: true,
-          logo: `model-${this.model.model_type.toLowerCase()}`,
-        })
-      }
+      items.push({
+        text: this.$route.params.name,
+        disabled: true,
+        logo: `model-${
+          this.modelTypes.includes(
+            this.$route.params.type ? this.$route.params.type.toLowerCase() : ""
+          )
+            ? this.$route.params.type.toLowerCase()
+            : "unknown"
+        }`,
+      })
       return items
     },
   },
-
   async mounted() {
     this.loading = true
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
+    let params = this.$route.params
     try {
-      if (!this.modelDetails(this.$route.params.id)) {
+      if (!this.modelDetails(params.id)) {
         await this.getModels()
       }
-      await this.getOverview(this.$route.params.id)
+      await this.getOverview(params)
     } finally {
-      this.fetchLift()
-      this.fetchDrift()
+      this.fetchLift(params)
+      this.fetchDrift(params)
       this.loading = false
-      this.fetchFeatures()
-      this.fetchModelFeatures() // Fetch data for Model feature table.
+      this.fetchFeatures(params)
+      this.fetchModelFeatures(params) // Fetch data for Model feature table.
     }
   },
-
   created() {
     window.addEventListener("resize", this.sizeHandler)
   },
@@ -659,13 +665,11 @@ export default {
     this.$store.dispatch("models/clearModelValues")
     window.removeEventListener("resize", this.sizeHandler)
   },
-
   updated() {
     if (this.$refs["decisioning-drift"]) {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     }
   },
-
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
@@ -675,19 +679,19 @@ export default {
       getModelFeatures: "models/getModelFeatures", // used for Model feature table.
       getDrift: "models/getDrift",
     }),
-    async fetchLift() {
+    async fetchLift(params) {
       this.loadingLift = true
       try {
-        await this.getLift(this.$route.params.id)
+        await this.getLift(params)
       } catch (error) {
         this.liftErrorState = true
       }
       this.loadingLift = false
     },
-    async fetchDrift() {
+    async fetchDrift(params) {
       this.loadingDrift = true
       try {
-        await this.getDrift(this.$route.params.id)
+        await this.getDrift(params)
       } catch (error) {
         this.driftChartErrorState = true
       }
@@ -696,10 +700,10 @@ export default {
     viewVersionHistory() {
       this.versionHistoryDrawer = !this.versionHistoryDrawer
     },
-    async fetchFeatures() {
+    async fetchFeatures(params) {
       this.featuresLoading = true
       try {
-        await this.getFeatures(this.$route.params.id)
+        await this.getFeatures(params)
       } catch (error) {
         this.modelFeaturesErrorState = true
       }
@@ -708,10 +712,10 @@ export default {
     sizeHandler() {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     },
-    async fetchModelFeatures() {
+    async fetchModelFeatures(params) {
       this.loadingModelFeatures = true
       try {
-        await this.getModelFeatures(this.$route.params.id)
+        await this.getModelFeatures(params)
       } catch (error) {
         this.featuresErrorState = true
       }
@@ -728,23 +732,19 @@ export default {
     border-radius: 12px;
   }
 }
-
 .model-features-frame {
   background-image: url("../../assets/images/no-barchart-frame.png");
   background-position: center;
 }
-
 .drift-chart-frame {
   background-image: url("../../assets/images/no-drift-chart-frame.png");
   background-position: center;
 }
-
 .lift-chart-frame {
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
 }
 //to overwrite the classes
-
 .title-no-notification {
   font-size: 24px !important;
   line-height: 34px !important;

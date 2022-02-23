@@ -8,6 +8,7 @@
       :columns="columnDefs"
       :sort-desc="true"
       :data-items="list"
+      data-e2e="sending-domain-overview"
     >
       <template #row-item="{ item }">
         <td
@@ -15,11 +16,10 @@
           :key="header.value"
           class="text-body-2"
           :style="{ width: header.width }"
-          data-e2e="map-state-list"
         >
-          <div v-if="header.value == 'domain'" class="text-body-1">
+          <div v-if="header.value == 'domain_name'" class="text-body-1">
             <span class="text-ellipsis mb-n1">
-              {{ item.domain }}
+              {{ item.domain_name }}
             </span>
           </div>
           <div v-if="header.value == 'sent'" class="text-body-1">
@@ -70,7 +70,7 @@ export default {
       columnDefs: [
         {
           text: "Domains",
-          value: "domain",
+          value: "domain_name",
           width: "30%",
         },
         {

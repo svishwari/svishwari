@@ -1,13 +1,11 @@
 <template>
   <div ref="runDurationChart" class="container-chart">
     <div v-if="sourceData">
-      <!-- <div class="outer-text">
-        Time Minutes
-      </div> -->
-      <run-duration-line-area-chart
+      <line-area-chart
         v-model="sourceData"
         :chart-dimensions="chartDimensions"
         :final-status="finalStatus"
+        :chart-id="chartId"
         @tooltipDisplay="toolTipDisplay"
       />
     </div>
@@ -20,7 +18,7 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
-        <div class="text-body-2 black--text text--base caption ma-2">
+        <div class="text-body-2 black--text text--base caption ma-1">
           <div class="spend-count mb-2 text-h5">
             <span
               >{{ currentData.index }} run of last {{ sourceData.length }}</span
@@ -47,17 +45,21 @@
 </template>
 
 <script>
-import RunDurationLineAreaChart from "./RunDurationLineAreaChart.vue"
+import LineAreaChart from "./LineAreaChart.vue"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 
 export default {
   name: "RunDurationChart",
-  components: { RunDurationLineAreaChart, ChartTooltip },
+  components: { LineAreaChart, ChartTooltip },
   props: {
     runDurationData: {
       type: Array,
       required: true,
+    },
+    chartId: {
+      type: Number,
+      required: false,
     },
   },
   data() {
@@ -154,8 +156,5 @@ export default {
     @extend .dots;
     background-color: var(--v-error-base) !important;
   }
-  // .outer-text {
-  //   transform: rotate(-90) !important;
-  // }
 }
 </style>

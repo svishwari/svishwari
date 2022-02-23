@@ -32,4 +32,10 @@ export default {
   audiences: "/audiences",
   engagements: "/engagements",
   addEngagement: "/engagements/add",
+
+  // email deliverability
+  emailDeliverability: "/email-deliverability",
+
+  // add application
+  addApplication: "/application/add",
 }

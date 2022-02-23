@@ -200,11 +200,12 @@ export default {
       setAlert: "alerts/setAlert",
     }),
     async deliverAll(engagement) {
-      await this.deliverAudience({
-        id: engagement.id,
-        audienceId: this.audienceId,
+      await this.deliverAudienceDestination({
+        id: this.engagementId,
+        audienceId: "000000000000000000000000",
+        destinationId: engagement.id,
       })
-      this.dataPendingMesssage(engagement)
+      this.dataPendingMessage(engagement)
       this.$emit("refreshEntityDelivery")
     },
     addDestination() {},
@@ -234,12 +235,11 @@ export default {
         { id: 6, title: "Remove destination", active: true },
       ]
     },
-    dataPendingMesssage(event) {
-      const engagementName = event.name
-      const audienceName = this.audience.name
+    dataPendingMessage(event) {
+      const destinationName = event.name
       this.setAlert({
         type: "pending",
-        message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
+        message: `Your destination '${destinationName}', has started delivering as part of the engagement '${this.engagementId}'.`,
       })
     },
     updateSection() {

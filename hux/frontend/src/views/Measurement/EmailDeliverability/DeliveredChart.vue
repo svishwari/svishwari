@@ -14,9 +14,9 @@
         :months-duration="monthsDuration"
         @tooltipDisplay="toolTipDisplay"
       />
-      <div class="value-container ma-8 mr-4">
+      <div class="value-container ma-8 mr-4 mt-7">
         <span class="line mr-2"></span>
-        <span class="text-label">Open rate</span>
+        <span class="text-h6">Open rate</span>
       </div>
       <chart-tooltip
         v-if="show"
@@ -46,7 +46,7 @@
               {{ currentData.open_rate | Numeric(true, false, false, true) }}
             </div>
             <div class="date-section">
-              {{ currentData.date | Date("MMM DD, YYYY") }}
+              {{ currentData.date | Date("MMMM DD, YYYY") }}
             </div>
           </div>
         </template>
@@ -61,12 +61,15 @@ import { nest } from "d3-collection"
 import LineBarChart from "@/components/common/Charts/LineBarChart/LineBarChart.vue"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
-import emailData from "@/api/mock/fixtures/deliveredCountData.js"
 
 export default {
   name: "DeliveredChart",
   components: { LineBarChart, ChartTooltip },
   props: {
+    emailData: {
+      type: Array,
+      required: true,
+    },
     monthsDuration: {
       type: Number,
       required: false,
@@ -93,7 +96,6 @@ export default {
         height: 0,
       },
       toolTipStyle: TooltipConfiguration.emailDeliverabilityChart,
-      emailData: emailData.delivered_open_rate_overivew,
     }
   },
   mounted() {
@@ -110,8 +112,8 @@ export default {
         this.currentData = arg[1]
         if (this.monthsDuration != 6) {
           this.toolTipStyle.left = this.currentData.isEndingBar
-            ? "-122px"
-            : "28px"
+            ? "-126px"
+            : "32px"
         }
       }
     },
@@ -246,7 +248,7 @@ export default {
 }
 .container-chart {
   position: relative;
-  height: 285px;
+  height: 290px;
   padding: 0px !important;
   .value-container {
     margin-top: 2px;
@@ -254,11 +256,12 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    color: var(--v-black-base) !important;
     @extend .global-heading;
   }
   .value-section {
     @extend .global-heading;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
   }
   .date-section {
     @extend .global-heading;

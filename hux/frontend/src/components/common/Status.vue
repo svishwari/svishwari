@@ -431,6 +431,45 @@
       </div>
     </v-menu>
   </div>
+
+  <div v-else-if="Statuses.Canceled.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="primary lighten-4" class="mr-2" :size="iconSize">
+        mdi-checkbox-blank-circle
+      </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon
+          color="primary lighten-4"
+          class="mr-2"
+          :size="iconSize"
+          v-on="on"
+        >
+          mdi-checkbox-blank-circle
+        </v-icon>
+      </template>
+      <div
+        v-if="showLabel"
+        class="px-4 py-2 white d-flex flex-column text-body-1"
+      >
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span class="d-flex align-center">
+          <v-icon
+            v-if="showIconTooltip"
+            color="primary lighten-4"
+            class="mr-2"
+            :size="iconSize"
+          >
+            mdi-checkbox-blank-circle
+          </v-icon>
+          {{ status | TitleCase }}
+        </span>
+      </div>
+    </v-menu>
+  </div>
 </template>
 
 <script>
@@ -483,18 +522,26 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["Active", "Delivered", "Succeeded", "active", "Complete"],
+        Active: [
+          "Active",
+          "Delivered",
+          "Succeeded",
+          "active",
+          "Complete",
+          "Completed",
+        ],
         Inactive: ["Caution", "Inactive"],
         Activating: ["Activating", "In progress"],
         Draft: ["Draft"],
         Error: ["Error", "Failed", "Critical"],
-        Pending: ["Pending", "Delivering", "pending", "Incomplete"],
+        Pending: ["Pending", "Delivering", "pending", "Incomplete", "Running"],
         Feedback: ["Feedback"],
         Success: ["Success"],
         Informational: ["Informational"],
-        Stopped: ["Stopped"],
+        Stopped: ["Stopped", "Disabled"],
         Requested: ["Requested", "requested"],
         "Not Delivered": ["Not Delivered"],
+        Canceled: ["Canceled"],
       },
     }
   },

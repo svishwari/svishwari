@@ -23,7 +23,10 @@ import totalCustomersData from "./fixtures/totalCustomersData.js"
 import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
-import { applications } from "./factories/application"
+import { addedApplications, applications } from "./factories/application"
+import domainData from "@/api/mock/fixtures/domainLineData.js"
+import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
+import runDurationData from "@/api/mock/fixtures/runDurationData.js"
 
 export const defineRoutes = (server) => {
   // Users
@@ -87,6 +90,14 @@ export const defineRoutes = (server) => {
   })
   server.get("users/requested_users", () => requestedUser)
   server.get("users/tickets", () => someTickets())
+  server.put("/user/preferences", (schema, request) => {
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+
+    return schema.users.find(id).update({
+      alerts: requestData.alerts,
+    })
+  })
 
   //client projects
   server.get("/client-projects")
@@ -158,6 +169,12 @@ export const defineRoutes = (server) => {
       return updatedResponse.attrs
     }
   )
+
+  server.put("/destinations/:id", (schema, request) => {
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    return schema.destinations.find(id).update(requestData)
+  })
 
   server.post("/destinations/validate", (_, request) => {
     const code = 200
@@ -255,6 +272,21 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
+  // Attaching an Destination to Audience
+  server.post("/audience/:id/destinations", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    const destination = schema.destinations.find(requestData.id)
+    const audience = schema.audiences.find(id)
+    audience.standalone_deliveries.push(destination)
+    const body = {
+      message: "Successfully added destination to standalone deliveries",
+    }
+    return new Response(code, headers, body)
+  })
+
   // Attaching an Audience to an Engagement
   server.post("/engagements/:id/audiences", (schema, request) => {
     const code = 200
@@ -304,6 +336,31 @@ export const defineRoutes = (server) => {
     const body = { message: "SUCCESS" }
     return new Response(code, headers, body)
   })
+
+  // Detaching a destination from an Engagement
+  server.del(
+    "/engagements/:id/audience/:audienceId/destinations/:destinationId",
+    (schema, request) => {
+      const code = 200
+      const headers = {}
+      const id = request.params.id
+      const destinationId = request.params.destinationId
+      const engagement = schema.engagements.find(id)
+      Object.values(engagement.destinations_category).forEach((category) => {
+        for (
+          var index = category.destinations.length - 1;
+          index >= 0;
+          --index
+        ) {
+          if (category.destinations[index].id == destinationId) {
+            category.destinations.splice(index, 1)
+          }
+        }
+      })
+      const body = { message: "SUCCESS" }
+      return new Response(code, headers, body)
+    }
+  )
 
   server.post(
     "/engagements/:id/audience/:audienceId/deliver",
@@ -498,14 +555,16 @@ export const defineRoutes = (server) => {
       recall: 0.65,
       current_version: "3.1.2",
     }
-    data.attrs.model_name = data.attrs.name
-    data.attrs.model_type = data.attrs.type
 
     return data
   })
 
   server.get("/models/:id/feature-importance", () => {
     return featureData.featureList
+  })
+
+  server.get("/models/:id/pipeline-performance", () => {
+    return runDurationData
   })
 
   server.get("/models/:id/version-history", (schema, request) => {
@@ -775,13 +834,14 @@ export const defineRoutes = (server) => {
   })
 
   //configuration
-  server.get("/configurations", (schema) => {
+  server.get("/configurations/modules", (schema) => {
     return schema.configurations.all()
   })
 
   //applications
-  server.get("/applications", () => {
-    return applications
+  server.get("/applications", (schema, request) => {
+    let appAdded = request.queryParams["user"] === "true"
+    return appAdded ? addedApplications : applications
   })
 
   server.post("/applications", (schema, request) => {
@@ -796,4 +856,8 @@ export const defineRoutes = (server) => {
     let app = applications.find((x) => x.id == JSON.parse(request.params.id))
     return "Application " + app.name + " is successfully updated"
   })
+  // email deliverability
+  server.get("/email_deliverability/domains", () => domainData)
+
+  server.get("/email_deliverability/overview", () => emailDeliverabilityOveriew)
 }

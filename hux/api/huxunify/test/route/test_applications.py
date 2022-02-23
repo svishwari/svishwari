@@ -1,17 +1,14 @@
 """Purpose of this file is to house all tests related to configurations."""
 import string
 from typing import Any
-from unittest import TestCase, mock
+from unittest import mock
 from http import HTTPStatus
 
-import requests_mock
-import mongomock
 from bson import ObjectId
 from hypothesis import given, strategies as st
 
 from huxunify.api.schema.applications import ApplicationsGETSchema
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.user_management import (
     set_user,
 )
@@ -22,7 +19,6 @@ from huxunifylib.database.collection_management import (
 from huxunifylib.database import constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
-from huxunify.app import create_app
 
 
 class ApplicationsTests(RouteTestCase):
@@ -42,25 +38,24 @@ class ApplicationsTests(RouteTestCase):
         self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
         self.user_doc = set_user(
             self.database,
-            t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
             t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
             display_name=self.user_name,
+            role=t_c.VALID_USER_RESPONSE.get(api_c.ROLE),
         )
 
         applications = [
             {
-                api_c.CATEGORY: "uncategorized",
-                api_c.TYPE: "custom-test-application-1",
-                api_c.NAME: "Custom Test Application 1",
-                api_c.URL: "CTA1_URL_Link",
-                api_c.STATUS: "Active",
+                db_c.NAME: "Tableau",
+                db_c.CATEGORY: "Reporting",
+                db_c.ICON: "default.ico",
+                db_c.ENABLED: True,
             },
             {
-                api_c.CATEGORY: "uncategorized",
-                api_c.TYPE: "custom-test-application-2",
-                api_c.NAME: "Custom Test Application 2",
-                api_c.URL: "CTA2_URL_Link",
-                api_c.STATUS: "Pending",
+                db_c.NAME: "Snowflake",
+                db_c.CATEGORY: "Data Storage",
+                db_c.ICON: "default.ico",
+                db_c.ENABLED: True,
             },
         ]
 
@@ -83,16 +78,24 @@ class ApplicationsTests(RouteTestCase):
             ApplicationsGETSchema(many=True).validate(response.json)
         )
         for application in response.json:
-            self.assertIn(
-                application[api_c.STATUS],
-                [api_c.STATUS_ACTIVE, api_c.STATUS_PENDING],
-            )
+            self.assertFalse(application[api_c.IS_ADDED])
 
-    def test_get_all_applications_success_with_params(self):
-        """Test get all applications successfully with params."""
+    def test_get_all_applications_success_user_only(self):
+        """Test get all applications successfully with no params."""
+
+        patch_request_body = {
+            api_c.URL: "NEW_URL_Link",
+        }
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
+            f"{self.applications[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+            json=patch_request_body,
+        )
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
-            query_string={api_c.ONLY_ACTIVE: False},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -101,28 +104,135 @@ class ApplicationsTests(RouteTestCase):
             ApplicationsGETSchema(many=True).validate(response.json)
         )
         for application in response.json:
-            self.assertIn(
-                application[api_c.STATUS],
-                [api_c.STATUS_ACTIVE, api_c.STATUS_PENDING],
-            )
+            self.assertFalse(application[api_c.IS_ADDED])
 
-    def test_get_active_applications_success(self):
-        """Test get all active applications successfully with params."""
-        response = self.app.get(
+    def test_success_create_applications(self):
+        """Test creating application successfully."""
+
+        applications_request = {
+            api_c.CATEGORY: "uncategorized",
+            api_c.NAME: "Custom Application",
+            api_c.URL: "URL_Link",
+        }
+
+        # Ensure the application is created successfully
+        response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
-            query_string={api_c.ONLY_ACTIVE: True},
             headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
+
+        self.assertEqual(
+            response.json[api_c.CATEGORY], applications_request[api_c.CATEGORY]
+        )
+        self.assertEqual(
+            response.json[api_c.URL], applications_request[api_c.URL]
+        )
+        self.assertEqual(
+            response.json[api_c.NAME], applications_request[api_c.NAME]
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+
+        # Ensure the application is created in applications collection
+        applications = ApplicationsGETSchema(many=True).dump(
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
+                db_c.DOCUMENTS
+            ]
+        )
+        names = [i[api_c.NAME] for i in applications]
+        self.assertEqual(len(applications), 3)
+        self.assertIn(applications_request[api_c.NAME], names)
+
+    def test_create_invalid_application(self):
+        """Test create invalid application."""
+
+        applications_request = {
+            api_c.CATEGORY: "uncategorized",
+            api_c.NAME: "Custom Application",
+        }
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_create_duplicate_application(self):
+        """Test create invalid application."""
+
+        applications_request = {
+            api_c.CATEGORY: "uncategorized",
+            api_c.NAME: "Custom Application",
+            api_c.URL: "URL_Link",
+        }
+
+        self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
+
+        # Ensure the application is created in applications collection
+        applications = ApplicationsGETSchema(many=True).dump(
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
+                db_c.DOCUMENTS
+            ]
+        )
+        names = [i[api_c.NAME] for i in applications]
+        self.assertEqual(len(applications), 3)
+        self.assertIn(applications_request[api_c.NAME], names)
+
+        applications_request = {
+            api_c.CATEGORY: "uncategorized",
+            api_c.NAME: "Custom Application",
+            api_c.URL: "URL_Link",
+        }
+
+        self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
+
+        # Ensure a duplicate application is NOT created in applications collection
+        applications = ApplicationsGETSchema(many=True).dump(
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
+                db_c.DOCUMENTS
+            ]
+        )
+        names = [i[api_c.NAME] for i in applications]
+        self.assertEqual(len(applications), 3)
+        self.assertIn(applications_request[api_c.NAME], names)
+
+    def test_success_add_existing_applications(self):
+        """Test creating application successfully."""
+
+        patch_request_body = {
+            api_c.URL: "NEW_URL_Link",
+        }
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
+            f"{self.applications[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+            json=patch_request_body,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertFalse(
-            ApplicationsGETSchema(many=True).validate(response.json)
+        self.assertFalse(ApplicationsGETSchema().validate(response.json))
+        self.assertEqual(
+            str(self.applications[0][db_c.ID]), response.json.get(api_c.ID)
         )
-        for application in response.json:
-            self.assertEqual(application[api_c.STATUS], api_c.STATUS_ACTIVE)
-            self.assertNotEqual(
-                application[api_c.STATUS], api_c.STATUS_PENDING
-            )
+
+        # Ensure no new application is created in applications collection
+        applications = ApplicationsGETSchema(many=True).dump(
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
+                db_c.DOCUMENTS
+            ]
+        )
+        self.assertEqual(len(applications), 2)
 
     @given(
         value=st.one_of(
@@ -141,7 +251,7 @@ class ApplicationsTests(RouteTestCase):
         """
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
-            query_string={api_c.ONLY_ACTIVE: value},
+            query_string={api_c.USER: value},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -150,83 +260,6 @@ class ApplicationsTests(RouteTestCase):
             {api_c.MESSAGE: f"'{value}' is not a valid boolean value"},
             response.json,
         )
-
-    def test_success_create_applications(self):
-        """Test creating application successfully."""
-
-        applications_request = {
-            api_c.CATEGORY: "uncategorized",
-            api_c.TYPE: "custom-application",
-            api_c.NAME: "Custom Application",
-            api_c.URL: "URL_Link",
-        }
-        response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
-            headers=t_c.STANDARD_HEADERS,
-            json=applications_request,
-        )
-
-        self.assertEqual(
-            response.json[api_c.TYPE],
-            applications_request[api_c.TYPE],
-        )
-        self.assertTrue(response.json[api_c.IS_ADDED])
-
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
-
-        applications = ApplicationsGETSchema(many=True).dump(
-            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
-                db_c.DOCUMENTS
-            ]
-        )
-        self.assertIn(response.json, applications)
-
-    def test_create_invalid_application(self):
-        """Test create invalid application."""
-
-        applications_request = {
-            api_c.CATEGORY: "uncategorized",
-            api_c.TYPE: "custom-application",
-            api_c.NAME: "Custom Application",
-        }
-        response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
-            headers=t_c.STANDARD_HEADERS,
-            json=applications_request,
-        )
-
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-
-    def test_create_duplicate_applications(self):
-        """Test creating duplicate application."""
-
-        applications_request = {
-            api_c.CATEGORY: "uncategorized",
-            api_c.TYPE: "custom-application",
-            api_c.NAME: "Custom Application",
-            api_c.URL: "URL_Link",
-        }
-        response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
-            headers=t_c.STANDARD_HEADERS,
-            json=applications_request,
-        )
-
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
-
-        applications_request = {
-            api_c.CATEGORY: "uncategorized",
-            api_c.TYPE: "custom-application",
-            api_c.NAME: "Custom Application",
-            api_c.URL: "URL_Link_New",
-        }
-        response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
-            headers=t_c.STANDARD_HEADERS,
-            json=applications_request,
-        )
-
-        self.assertEqual(HTTPStatus.FORBIDDEN, response.status_code)
 
     def test_applications_patch_endpoint_valid_request(self):
         """Test patch with correct request body"""

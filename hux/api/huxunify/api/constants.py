@@ -2,6 +2,7 @@
 """This module contains connector defines."""
 import os
 import random
+import datetime
 from collections import namedtuple
 
 from huxunifylib.database import constants as db_c
@@ -63,7 +64,8 @@ AZURE_BATCH_ACCOUNT_KEY = "AZURE_BATCH_ACCOUNT_KEY"
 AZURE_BATCH_ACCOUNT_URL = "AZURE_BATCH_ACCOUNT_URL"
 AZURE_STORAGE_ACCOUNT_NAME = "AZURE_STORAGE_ACCOUNT_NAME"
 AZURE_STORAGE_ACCOUNT_KEY = "AZURE_STORAGE_ACCOUNT_KEY"
-AZURE_BLOB_CONTAINER_NAME = "AZURE_BLOB_CONTAINER_NAME"
+AZURE_STORAGE_CONTAINER_NAME = "AZURE_STORAGE_CONTAINER_NAME"
+AZURE_STORAGE_BLOB_NAME = "AZURE_STORAGE_BLOB_NAME"
 AZURE_KEY_VAULT_NAME = "AZURE_KEY_VAULT_NAME"
 
 # ORCH ROUTER PARAMS FOR OKTA
@@ -87,6 +89,8 @@ NAME = "name"
 LABEL = "label"
 OWNER = "owner"
 STATUS = "status"
+SUB_STATUS = "sub_status"
+RUN_DURATION = "run_duration"
 BODY = "body"
 TYPE = "type"
 ROLE = "role"
@@ -333,7 +337,12 @@ STATUS_COMPLETE = "Complete"
 STATUS_INCOMPLETE = "Incomplete"
 STATUS_RUNNING = "Running"
 STATUS_FAILED = "Failed"
-STATUS_CANCELLED = "Cancelled"
+STATUS_CANCELLED = "Canceled"
+STATUS_IN_PROGRESS = "In Progress"
+STATUS_PARTIAL_SUCCESS_PROGRESS = "Partial Success - In Progress"
+STATUS_WAITING = "Waiting"
+STATUS_PARTIAL_SUCCESS_WAITING = "Partial Success - Waiting"
+STATUS_PARTIAL_SUCCESS = "Partial Success"
 
 STATUS_MAPPING = {
     db_c.STATUS_IN_PROGRESS: STATUS_DELIVERING,
@@ -712,6 +721,7 @@ DESTINATION_CATEGORIES = "destination_categories"
 DESTINATION_AUDIENCES = "destination_audiences"
 DELIVERY_PLATFORM_LINK = "delivery_platform_link"
 DELIVERY_PLATFORM_NAME = "delivery_platform_name"
+EMPTY_USER_APPLICATION_RESPONSE = "No applications found for user."
 
 # Map db status values to api status values
 DESTINATION_STATUS_MAPPING = {
@@ -924,6 +934,7 @@ PARAMETER_STORE_ERROR_MSG = (
 
 # users
 USER_TAG = "user"
+USERS = "users"
 USER_NAME = "user_name"
 DISPLAY_NAME = "display_name"
 USER_PHONE_NUMBER = "phone_number"
@@ -1059,6 +1070,9 @@ CDP_DATA_SOURCE_IDS = "data_source_ids"
 CDP_DATA_SOURCE_TYPE = "datasource_type"
 DATAFEED_NAME = "datafeed_name"
 LAST_PROCESSED = "last_processed"
+LAST_PROCESSED_START = "last_processed_start"
+LAST_PROCESSED_END = "last_processed_end"
+DATA_SOURCES = "data_sources"
 
 # Customers
 CUSTOMERS_ENDPOINT = "/customers"
@@ -1169,15 +1183,21 @@ NOTIFICATION_TYPE = "notification_type"
 MONGO_CONNECTION_HEALTH = "mongo_connection_health"
 TECTON_CONNECTION_HEALTH = "tecton_connection_health"
 OKTA_CONNECTION_HEALTH = "okta_connection_health"
-AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
-AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
-AWS_S3_CONNECTION_HEALTH = "aws_s3_connection_health"
-AWS_EVENTS_CONNECTION_HEALTH = "aws_events_connection_health"
 CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
 CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
     "cdm_connection_service_connection_health"
 )
 JIRA_CONNECTION_HEALTH = "jira_connection_health"
+
+# AWS health metrics constants
+AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
+AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
+AWS_S3_CONNECTION_HEALTH = "aws_s3_connection_health"
+AWS_EVENTS_CONNECTION_HEALTH = "aws_events_connection_health"
+
+# AZURE health metrics constants
+AZURE_BATCH_CONNECTION_HEALTH = "azure_batch_connection_health"
+AZURE_BLOB_CONNECTION_HEALTH = "azure_blob_connection_health"
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
@@ -1242,6 +1262,8 @@ RECORDS_PROCESSED = "records_processed"
 RECORDS_RECEIVED = "records_received"
 THIRTY_DAYS_AVG = "thirty_days_avg"
 RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
+VALUE = "value"
+FLAG_INDICATOR = "flag_indicator"
 DATA_FILES = "data_files"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
@@ -1559,6 +1581,42 @@ STATE_IN_PROGRESS = "In Progress"
 STATE_TO_DO = "To Do"
 STATE_IN_REVIEW = "In Review"
 STATE_DONE = "Done"
+
+MODEL_PIPELINE_PERFORMANCE_STUB = {
+    "training": {
+        "frequency": "Weekly",
+        "last_run": datetime.datetime.now() - datetime.timedelta(days=1),
+        "most_recent_run_duration": "00:22:45",
+        "total_runs": 15,
+        "run_duration": [
+            {
+                "status": random.choice(["Success", "Failed"]),
+                "timestamp": datetime.datetime.now()
+                - datetime.timedelta(days=x),
+                "duration": "12m 41s",
+                "label": f"{x} run of last 10",
+            }
+            for x in range(0, 10)
+        ],
+    },
+    "scoring": {
+        "frequency": "Weekly",
+        "last_run": datetime.datetime.now() - datetime.timedelta(days=1),
+        "most_recent_run_duration": "00:22:45",
+        "total_runs": 10,
+        "run_duration": [
+            {
+                "status": random.choice(["Success", "Failed"]),
+                "timestamp": datetime.datetime.now()
+                - datetime.timedelta(days=x),
+                "duration": "12m 41s",
+                "label": f"{x} run of last 10",
+            }
+            for x in range(0, random.randrange(10))
+        ],
+    },
+}
+
 # Deliverability Constants
 EMAIL_DELIVERABILITY_ENDPOINT = "email_deliverability"
 MEASUREMENT_TAG = "measurement"
@@ -1589,7 +1647,6 @@ SENDING_DOMAINS_OVERVIEW_STUB = [
         CLICK_RATE: 0.85,
     }
 ]
-
 
 ALERT_SAMPLE_RESPONSE = {
     DATA_MANAGEMENT: {

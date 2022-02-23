@@ -1,7 +1,7 @@
 <template>
   <tooltip>
     <template slot="label-content">
-      {{ value | Date("relative") | Empty }}
+      <span class="dateClass">{{ value | Date("relative") | Empty }}</span>
     </template>
     <template slot="hover-content">
       <span class="text-body-2 black--text">
@@ -20,6 +20,11 @@ export default Vue.extend({
   },
   props: {
     value: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    dateClass: {
       type: String,
       required: false,
       default: "",

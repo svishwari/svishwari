@@ -128,9 +128,6 @@ $zIndex: 4;
   border-left: 1px solid var(--v-black-lighten3) !important;
   width: $width;
   height: 100%;
-  z-index: $zIndex;
-  position: absolute;
-  right: 0;
   .wrapper {
     display: flex;
     flex-direction: column;
@@ -160,6 +157,7 @@ $zIndex: 4;
   .footer {
     height: $footerHeight;
     border-top: 1px solid var(--v-black-lighten3) !important;
+    border-left: 1px solid var(--v-black-lighten3) !important;
     position: fixed;
     bottom: 0;
     z-index: $zIndex;

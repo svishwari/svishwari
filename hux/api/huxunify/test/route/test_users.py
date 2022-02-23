@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 from http import HTTPStatus
 
 import requests_mock
+from bson import ObjectId
 
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
@@ -12,7 +13,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.database.user_management import set_user, get_user
+from huxunifylib.database.user_management import get_user
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_user_favorites
@@ -28,6 +29,7 @@ class TestUserRoutes(RouteTestCase):
         """Setup resources before each test."""
 
         super().setUp()
+        self.load_test_data(self.database)
 
         # mock get_db_client() in users
         mock.patch(
@@ -36,7 +38,10 @@ class TestUserRoutes(RouteTestCase):
         ).start()
 
         self.audience_id = create_audience(
-            self.database, "Test Audience", [], "Felix Hernandez"
+            self.database,
+            "Test Audience",
+            [],
+            t_c.VALID_USER_RESPONSE[api_c.NAME],
         )[db_c.ID]
         self.delivery_platform = set_delivery_platform(
             self.database,
@@ -66,11 +71,9 @@ class TestUserRoutes(RouteTestCase):
         )
 
         # write a user to the database
-        self.user_info = set_user(
+        self.user_info = get_user(
             self.database,
-            t_c.VALID_RESPONSE["uid"],
-            "felix_hernandez@fake.com",
-            display_name="Felix Hernandez",
+            okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],
         )
 
     def test_adding_engagement_to_favorite(self):
@@ -115,7 +118,7 @@ class TestUserRoutes(RouteTestCase):
         Testing by sending audience_id not in DB, here using engagement ID.
         """
 
-        invalid_audience_id = self.engagement_id
+        invalid_audience_id = ObjectId()
 
         endpoint = (
             f"{t_c.BASE_ENDPOINT}"
@@ -210,17 +213,8 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        t_c.validate_schema(UserSchema(), response.json, True)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(2, len(response.json))
-        self.assertIsNotNone(response.json[0][api_c.DISPLAY_NAME])
-        self.assertIsNotNone(response.json[0][api_c.EMAIL])
-        self.assertIsNotNone(response.json[0][api_c.USER_PHONE_NUMBER])
-        self.assertIsNotNone(response.json[0][api_c.USER_ACCESS_LEVEL])
-        self.assertIn(
-            response.json[0][api_c.USER_ACCESS_LEVEL],
-            ["Edit", "View-only", "Admin"],
-        )
+        t_c.validate_schema(UserSchema(), response.json, True)
 
     def test_get_user_profile_bad_request_failure(self):
         """Test 400 response of getting user profile using Okta ID."""
@@ -228,7 +222,7 @@ class TestUserRoutes(RouteTestCase):
         # mock invalid request for introspect call
         request_mocker = requests_mock.Mocker()
         request_mocker.post(
-            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_INTROSPECTION_RESPONSE
         )
         request_mocker.start()
 
@@ -250,11 +244,19 @@ class TestUserRoutes(RouteTestCase):
             "uid": "12345678",
         }
 
+        user_response = {
+            api_c.OKTA_ID_SUB: "12345678",
+            api_c.EMAIL: "johnsmith@fake.com",
+            api_c.NAME: "john smith",
+            api_c.ROLE: "admin",
+            api_c.USER_PII_ACCESS: True,
+        }
+
         # mock incorrect request for introspect call so that the user is not
         # present in mock DB
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=incorrect_okta_response)
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=user_response)
         request_mocker.start()
 
         mock.patch(
@@ -410,7 +412,7 @@ class TestUserRoutes(RouteTestCase):
         update_body = {
             api_c.ALERTS: {
                 api_c.DATA_MANAGEMENT: {
-                    api_c.DATASOURCES: {
+                    api_c.DATA_SOURCES: {
                         db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
                         db_c.NOTIFICATION_TYPE_SUCCESS: False,
                         db_c.NOTIFICATION_TYPE_CRITICAL: True,
@@ -457,7 +459,7 @@ class TestUserRoutes(RouteTestCase):
         user_pre_update = get_user(
             self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB]
         )
-        self.assertIsNone(user_pre_update)
+        self.assertEqual(self.user_info, user_pre_update)
 
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.USER_PREFERENCES}",

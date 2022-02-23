@@ -13,6 +13,8 @@ from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
     FeatureSchema,
+    ModelPipelinePerformanceSchema,
+    ModelDriftSchema,
 )
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.tecton import Tecton
@@ -279,6 +281,39 @@ class DecisioningTests(RouteTestCase):
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(settings.load_profile("hypothesis_setting_profile"))
+    def test_get_model_drift_success(self, model_id: int) -> None:
+        """Test get model drift success.
+
+        Args:
+            model_id (int): Model ID.
+        """
+
+        get_model_version_mock = mock.patch(self.versions_rel_path).start()
+        get_model_version_mock.return_value = (
+            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        )
+
+        # mock the features response
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            self.tecton.service,
+            json=t_c.MOCKED_MODEL_DRIFT,
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
+            f"{api_c.DRIFT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(ModelDriftSchema(), response.json, True)
+        )
+
+    @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
+    @settings(settings.load_profile("hypothesis_setting_profile"))
     def test_get_model_features_success(self, model_id: int) -> None:
         """Test get model features success.
 
@@ -415,4 +450,25 @@ class DecisioningTests(RouteTestCase):
         )
         self.assertTrue(
             all((feature[api_c.SCORE] < 0 for feature in response.json))
+        )
+
+    @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
+    def test_get_performance_pipeline(self, model_id: str):
+        """Test get model performance pipeline.
+
+        Args:
+            model_id (str): Model ID.
+        """
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/pipeline-performance",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                ModelPipelinePerformanceSchema(), response.json
+            )
         )
