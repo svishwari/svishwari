@@ -165,7 +165,7 @@ const actions = {
       const response = await api.users.updatePreferences(payload)
       if (response) {
         handleSuccess(
-          `Alerts Configuration Saved Successfully`,
+          "Alerts Configuration Saved Successfully",
           response.status
         )
       }
