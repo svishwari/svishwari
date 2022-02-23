@@ -61,6 +61,9 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
     cy.wait(2000)
   })
 
+  // TODO: In local env. the create, edit and delete are not being able to perform one after another in a single it()
+  // due to cypress unable to find the 'delete audience' option, because of its parent element having 'display: none' set.
+
   // For editing the above added audience
   it("should be able to edit a newly added audience via Segment Playground", () => {
     cy.location("pathname").should("eq", route.audiences)
