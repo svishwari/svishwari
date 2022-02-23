@@ -1,8 +1,8 @@
 """Purpose of this file is to house the main application code."""
-import datetime
 import logging
 from os import environ
 
+import pytz
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
@@ -142,7 +142,7 @@ def create_app() -> Flask:
             func=run_scheduled_tecton_feature_cache,
             trigger="cron",
             hour=0,
-            timezone=datetime.timezone.utc,
+            timezone=pytz.timezone("US/Eastern"),
             args=[get_db_client()],
         )
 
