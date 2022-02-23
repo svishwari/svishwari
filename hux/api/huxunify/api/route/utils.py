@@ -975,6 +975,8 @@ def group_and_aggregate_datafeed_details_by_date(
 
         status = api_c.STATUS_COMPLETE
         for df_detail in df_details:
+            # set last processed start for datafeeds aggregated by date
+            # i.e. Minimum of last processed start for all grouped datafeed details
             if (
                 not data_feed_by_date.get(api_c.LAST_PROCESSED_START)
                 or data_feed_by_date[api_c.LAST_PROCESSED_START]
@@ -983,6 +985,8 @@ def group_and_aggregate_datafeed_details_by_date(
                 data_feed_by_date[api_c.LAST_PROCESSED_START] = df_detail[
                     api_c.LAST_PROCESSED_START
                 ]
+            # set last processed end for datafeeds aggregated by date
+            # i.e. Maximum of last processed end for all grouped datafeed details
             if (
                 not data_feed_by_date.get(api_c.LAST_PROCESSED_END)
                 or data_feed_by_date[api_c.LAST_PROCESSED_END]
