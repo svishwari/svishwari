@@ -163,6 +163,12 @@ const actions = {
   async updateUserPreferences({ commit }, payload) {
     try {
       const response = await api.users.updatePreferences(payload)
+      if (response) {
+        handleSuccess(
+          "Alerts Configuration Saved Successfully",
+          response.status
+        )
+      }
       commit("setApplicationUserProfile", response.data)
     } catch (error) {
       handleError(error)

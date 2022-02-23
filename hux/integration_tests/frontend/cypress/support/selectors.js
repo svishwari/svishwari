@@ -37,7 +37,7 @@ export default {
     segmentPlayground: "[data-e2e='nav-playground']",
 
     // orchestration:
-    destinations: "[data-e2e='nav-destinations']",
+    destinations: "[data-e2e='nav-multiple_map_pins']",
     engagements: "[data-e2e='nav-speaker_up']",
     audiences: "[data-e2e='nav-audiences']",
   },
@@ -52,6 +52,8 @@ export default {
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
     dataSourceButton: "[data-e2e='Data Source']",
+    application: "[data-e2e='application-dropdown']",
+    applicationOptions: "[data-e2e='application-options']",
   },
 
   // home
@@ -280,6 +282,13 @@ export default {
     selectAttrBtn: "[data-e2e='select-attr-btn']",
     selectOperatorBtn: "[data-e2e='select-operator-btn']",
     autoCompleteBtn: "[data-e2e='auto-complete-btn']",
+  },
+
+  //applications
+  application: {
+    addDrawer: "[data-e2e='drawerToggle']",
+    cancel: "[data-e2e='cancel-application-request']",
+    applications: "[data-e2e='applicationsDrawer']",
   },
 
   // email deliverability

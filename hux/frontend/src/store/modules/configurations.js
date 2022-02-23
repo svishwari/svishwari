@@ -23,7 +23,7 @@ const mutations = {
 const actions = {
   async getConfigModels({ commit }) {
     try {
-      const result = await api.configurations.all()
+      const result = await api.configurations.getModules()
       commit("setConfigurationModels", result.data)
     } catch (error) {
       handleError(error)

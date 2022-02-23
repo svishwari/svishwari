@@ -12,6 +12,7 @@ const state = {
   features: [],
   drift: [],
   modelFeatures: [],
+  pipelinePreformance: {},
 }
 
 const getters = {
@@ -34,6 +35,7 @@ const getters = {
       }
     })
   },
+  singlePipeline: (state) => state.pipelinePreformance,
 }
 
 const mutations = {
@@ -77,6 +79,9 @@ const mutations = {
   },
   REMOVE_MODEL(state, id) {
     Vue.delete(state.items, `_${id}`)
+  },
+  SET_ONE_PIPELINE(state, item) {
+    state.pipelinePreformance = item
   },
 }
 
@@ -210,6 +215,16 @@ const actions = {
     try {
       const response = await api.models.remove(model)
       commit("REMOVE_MODEL", model.id)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async getPipelinePreformance({ commit }, modelId) {
+    try {
+      const response = await api.models.getPipePerfomance(modelId)
+      commit("SET_ONE_PIPELINE", response.data)
       return response.data
     } catch (error) {
       handleError(error)
