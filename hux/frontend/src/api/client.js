@@ -50,6 +50,12 @@ client["users"].tickets = () => {
 }
 //#endregion
 
+//#region Configurations
+client["configurations"].getModules = () => {
+  return http.get("/configurations/modules")
+}
+//#endregion
+
 //#region Customers
 // Custom one-off resource endpoints
 
@@ -420,6 +426,12 @@ client["models"].remove = (model) => {
   return http.delete(`/models?model_id=${model.id}`)
 }
 
+client["models"].getPipePerfomance = (id, version) => {
+  if (version)
+    return http.get(`/models/${id}/pipeline-performance?version=${version}`)
+  else return http.get(`/models/${id}/pipeline-performance`)
+}
+
 //#region Data sources
 client.dataSources.dataFeeds = (type) => {
   return http.get(`/data-sources/${type}/datafeeds`)
@@ -443,7 +455,7 @@ client.dataSources.dataFeedsDetails = (
 
 //#region Application
 client.applications.getActiveApplications = (flag) => {
-  return http.get(`/applications?only_active=${flag}`)
+  return http.get(`/applications?user=${flag}`)
 }
 
 client.applications.createApplication = (data) => {
