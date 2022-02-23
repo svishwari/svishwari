@@ -398,6 +398,7 @@ class CdpDataSourcesTest(RouteTestCase):
             sorted(
                 fetch_datafeed_details(datafeed_name, start_date, end_date),
                 key=lambda x: x[api_c.LAST_PROCESSED_START],
+                reverse=True,
             )
         )
         response = self.app.get(
