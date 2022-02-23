@@ -63,12 +63,12 @@
         <v-col>
           <label class="mb-1">Application category</label>
           <hux-dropdown
-              :label="newAppDetails['category']"
-              :selected="newAppDetails['category']"
-              :items="categoryOptions"
-              min-width="240"
-              @on-select="onSelectMenuItem"
-            />
+            :label="newAppDetails['category']"
+            :selected="newAppDetails['category']"
+            :items="categoryOptions"
+            min-width="240"
+            @on-select="onSelectMenuItem"
+          />
         </v-col>
       </v-row>
 
@@ -389,10 +389,10 @@ export default {
       updateApplication: "application/updateApplications",
     }),
     onSelectMenuItem(item) {
-      if (this.newAppDetails['category'] == item.name) {
-        this.newAppDetails['category'] = "Uncategorized"
+      if (this.newAppDetails["category"] == item.name) {
+        this.newAppDetails["category"] = "Uncategorized"
       } else {
-        this.newAppDetails['category'] = item.name
+        this.newAppDetails["category"] = item.name
       }
     },
     navigateAway() {

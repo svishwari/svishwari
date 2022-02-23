@@ -4,12 +4,12 @@
     <dashboard-header
       :breadcrumb-items="breadcrumbItems"
       :engagement-data="engagementList"
+      data-e2e="engagement-breadcrumb"
       @removeEngagement="(data) => removeEngagement(data)"
       @favoriteEngagement="(data) => handleActionFavorite(data, 'engagements')"
       @openDownloadDrawer="() => openDownloadDrawer()"
       @inactiveEngagement="(data) => makeInactiveEngagement(data)"
       @editEngagement="() => editEngagement()"
-      data-e2e="engagement-breadcrumb"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->

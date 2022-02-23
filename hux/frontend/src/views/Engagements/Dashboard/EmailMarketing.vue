@@ -11,13 +11,13 @@
       section-type="destinations"
       deliveries-key="destination_audiences"
       class="mb-5"
+      data-e2e="email-overview"
       @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
       @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
       @onOverviewDestinationAction="
         $emit('onOverviewDestinationAction', $event)
       "
       @triggerOverviewAction="$emit('triggerOverviewAction', $event)"
-      data-e2e="email-overview"
     >
       <template #title-left>
         <div class="d-flex align-center text-h3">

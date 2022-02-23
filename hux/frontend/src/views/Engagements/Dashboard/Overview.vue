@@ -23,9 +23,13 @@
         </div>
       </v-card-title>
 
-      <overview-metric-cards :data="data" data-e2e="overview-metrics"/>
+      <overview-metric-cards :data="data" data-e2e="overview-metrics" />
     </v-card>
-    <v-card v-if="data.audiences.length > 0" class="pa-6 card-style mt-6" data-e2e="overview-audiences">
+    <v-card
+      v-if="data.audiences.length > 0"
+      class="pa-6 card-style mt-6"
+      data-e2e="overview-audiences"
+    >
       <v-card-title class="d-flex justify-space-between pa-0">
         <h3 class="text-h3 mb-2">
           <icon

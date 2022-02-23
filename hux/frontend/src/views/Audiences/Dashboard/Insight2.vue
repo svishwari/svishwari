@@ -3,12 +3,12 @@
     <dashboard-header
       :breadcrumb-items="breadcrumbItems"
       :audience-data="audience"
+      data-e2e="audience-breadcrumb"
       @onRefresh="refresh()"
       @removeAudience="(data) => removeAudience(data)"
       @favoriteAudience="(data) => favoriteAudience(data)"
       @openDownloadDrawer="() => openDownloadDrawer()"
       @openLookalikeEditModal="() => openLookalikeEditModal()"
-      data-e2e="audience-breadcrumb"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="audience && audience.is_lookalike === true" class="pa-8">
@@ -232,6 +232,7 @@
                 section-type="engagement"
                 deliveries-key="deliveries"
                 :audience-data="audience"
+                data-e2e="engagement-delivery-details"
                 @onOverviewSectionAction="triggerOverviewAction($event)"
                 @onOverviewDestinationAction="
                   triggerOverviewDestinationAction($event)
@@ -240,7 +241,6 @@
                 @engagementDeliveries="deliverEngagement($event)"
                 @addEngagement="openAttachEngagementDrawer()"
                 @refreshEntityInsight="refreshEntity()"
-                data-e2e="engagement-delivery-details"
               >
                 <template #title-left>
                   <div class="d-flex align-center">
@@ -250,6 +250,7 @@
               </delivery>
               <standalone-delivery
                 :audience="audience"
+                data-e2e="standalone-delivery"
                 @onAddStandaloneDestination="addStandaloneDestination($event)"
                 @onDeliveryStandaloneDestination="refreshEntity()"
                 @onRemoveStandaloneDestination="
@@ -258,7 +259,6 @@
                 @onOpenStandaloneDestination="
                   onOpenStandaloneDestination($event, data)
                 "
-                data-e2e="standalone-delivery"
               />
             </div>
             <div :style="{ width: '1.5%' }"></div>

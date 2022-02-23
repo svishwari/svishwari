@@ -157,7 +157,11 @@
         <div class="add-wrap">
           <div class="pa-0 pt-2 flex-fill">
             <div class="add-section pa-5 text-body-1 primary--text">
-              <span class="cursor-pointer" @click="addNewCondition(rule.id)" data-e2e="add-another-attr">
+              <span
+                class="cursor-pointer"
+                data-e2e="add-another-attr"
+                @click="addNewCondition(rule.id)"
+              >
                 <icon type="plus" color="primary" :size="12" class="mr-1" />
                 New attribute
               </span>
