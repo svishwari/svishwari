@@ -326,6 +326,8 @@ export default {
     toggleMainSwitch(value) {
       if (value) {
         this.setDefaultConfig()
+      } else {
+        this.updatedConfiguration = {}
       }
       this.maintainTreeStyles()
     },
