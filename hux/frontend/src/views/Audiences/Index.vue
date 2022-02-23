@@ -11,7 +11,7 @@
         </div>
       </template>
       <template #right>
-        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn icon @click.native="isFilterToggled = !isFilterToggled" data-e2e="audienceFilterToggle">
           <icon
             type="filter"
             :size="27"

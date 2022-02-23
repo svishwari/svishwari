@@ -9,6 +9,7 @@
       @openDownloadDrawer="() => openDownloadDrawer()"
       @inactiveEngagement="(data) => makeInactiveEngagement(data)"
       @editEngagement="() => editEngagement()"
+      data-e2e="engagement-breadcrumb"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->

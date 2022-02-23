@@ -8,6 +8,7 @@
       @favoriteAudience="(data) => favoriteAudience(data)"
       @openDownloadDrawer="() => openDownloadDrawer()"
       @openLookalikeEditModal="() => openLookalikeEditModal()"
+      data-e2e="audience-breadcrumb"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="audience && audience.is_lookalike === true" class="pa-8">
@@ -239,6 +240,7 @@
                 @engagementDeliveries="deliverEngagement($event)"
                 @addEngagement="openAttachEngagementDrawer()"
                 @refreshEntityInsight="refreshEntity()"
+                data-e2e="engagement-delivery-details"
               >
                 <template #title-left>
                   <div class="d-flex align-center">
@@ -256,6 +258,7 @@
                 @onOpenStandaloneDestination="
                   onOpenStandaloneDestination($event, data)
                 "
+                data-e2e="standalone-delivery"
               />
             </div>
             <div :style="{ width: '1.5%' }"></div>
@@ -298,11 +301,13 @@
                           ? audienceData.digital_advertising.match_rates
                           : []
                       "
+                      data-e2e="audience-matchrates"
                     />
                   </div>
                   <div ref="advertisingcard" class="lookalikes mx-2 my-6">
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
+                      data-e2e="lookalike-audiences"
                     />
                   </div>
                 </v-card-text>

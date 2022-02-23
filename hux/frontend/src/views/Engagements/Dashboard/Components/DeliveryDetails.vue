@@ -39,7 +39,7 @@
       </div>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" class="top-action" v-on="on">
+          <v-icon v-bind="attrs" class="top-action" v-on="on" data-e2e="access-actions">
             mdi-dots-vertical
           </v-icon>
         </template>
@@ -50,6 +50,7 @@
               :key="item.id"
               :disabled="!item.active"
               @click="$emit('onSectionAction', { target: item, data: section })"
+              data-e2e="actions"
             >
               <v-list-item-title>
                 {{ item.title }}

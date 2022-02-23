@@ -2,7 +2,7 @@
   <div class="tabs-wrapper">
     <v-tabs v-model="tabOption" class="mt-8">
       <v-tabs-slider color="primary" class="sliderCss"></v-tabs-slider>
-      <div class="d-flex">
+      <div class="d-flex" data-e2e="engagement-tabs">
         <v-tab
           key="overview"
           class="pa-2 mr-3 text-h3 black--text text--lighten-4"

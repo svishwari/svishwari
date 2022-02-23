@@ -306,6 +306,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .hux-dropdown {
+  .main-button {
+    border-radius: 4px;
+    .v-btn__content {
+      top: 1px;
+      .v-icon {
+        top: -1px;
+      }
+    }
+  }
+}
 .adjust-label {
   position: relative;
   bottom: -4px !important;

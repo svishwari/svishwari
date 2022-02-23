@@ -18,6 +18,7 @@
         $emit('onOverviewDestinationAction', $event)
       "
       @triggerOverviewAction="$emit('triggerOverviewAction', $event)"
+      data-e2e="advertising-overview"
     >
       <template #title-left>
         <div class="d-flex align-center text-h3">

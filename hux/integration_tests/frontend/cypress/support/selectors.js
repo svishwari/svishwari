@@ -151,6 +151,7 @@ export default {
 
   // engagements
   engagement: {
+    nextStep: "[data-e2e='next-step']",
     addEngagement: "[data-e2e='add-engagement']",
     addEngagements: "a[href='/engagements/add']",
     enagagementName: "[data-e2e='engagement-name']",
@@ -168,7 +169,7 @@ export default {
     deliveryScheduleMetric: "[data-e2e='delivery-schedule-metric']",
     updatedMetric: "[data-e2e='updated-metric']",
     createdMetric: "[data-e2e='created-metric']",
-    deliveryHistory: "[data-e2e='deliver-history']",
+    deliveryHistory: "[data-e2e='delivery-history']",
     deliveryHistoryItems: "[data-e2e='delivery-list-items']",
     adsData: "[data-e2e='ads-data']",
     emailData: "[data-e2e='email-data']",
@@ -184,6 +185,14 @@ export default {
     },
     destinationRows: '[data-e2e="destination-rows"]',
     createEngagement: '[data-e2e="create-engagement"]',
+    allEngagements: '[data-e2e="engagement-breadcrumb"]',
+    engagementTabs: '[data-e2e="engagement-tabs"]',
+    overviewMetrics: '[data-e2e="overview-metrics"]',
+    overviewAudiences: '[data-e2e="overview-audiences"]',
+    advertisingOverview: '[data-e2e="advertising-overview"]',
+    emailOverview: '[data-e2e="email-overview"]',
+    accessActions: '[data-e2e="access-actions"]',
+    actions: '[data-e2e="actions"]',
   },
 
   //Customer Profiles
@@ -248,6 +257,8 @@ export default {
     deliveryhistory: "[data-e2e='delivery-history']",
     deliveryhistorydrawer: "[data-e2e='delivery-history-drawer']",
     overview: "[data-e2e='audience-overview']",
+    audienceChart: "[data-e2e='total-audience-chart']",
+    spendChart: "[data-e2e='audience-spend-chart']",
     mapchart: "[data-e2e='map-chart']",
     mapStateList: "[data-e2e='map-state-list']",
     incomeChart: "[data-e2e='income-chart']",
@@ -273,6 +284,13 @@ export default {
     removeAudience: "[data-e2e='remove-audience-confirmation']",
     addNewAudience: "[data-e2e='add-audience']",
     editAudienceName: "[data-e2e='edit-audience-name']",
+    engagementDeliveryDetails: "[data-e2e='engagement-delivery-details']",
+    standaloneDelivery: "[data-e2e='standalone-delivery']",
+    deliveryTab: "[data-e2e='delivery-tab']",
+    insightsTab: "[data-e2e='insights-tab']",
+    matchRateTable: "[data-e2e='audience-matchrates']",
+    lookalikes: "[data-e2e='lookalike-audiences']",
+    allAudiences: "[data-e2e='audience-breadcrumb']",
   },
 
   segmentPlayground: {

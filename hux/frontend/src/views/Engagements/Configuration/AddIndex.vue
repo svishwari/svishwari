@@ -109,6 +109,7 @@
           height="40"
           :is-disabled="!isValid"
           @click.native="currentStep++"
+          data-e2e="next-step"
         >
           Next
         </hux-button>
@@ -119,6 +120,7 @@
           height="40"
           :is-disabled="!isValid"
           @click="addNewEngagement()"
+          data-e2e="create-engagement"
         >
           Create
         </hux-button>
