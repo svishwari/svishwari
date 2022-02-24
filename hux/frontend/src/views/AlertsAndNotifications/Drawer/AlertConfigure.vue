@@ -248,8 +248,8 @@ export default {
     saveChanges() {
       this.localDrawer = false
       this.formatFinalResponse()
-      this.$emit("onDrawerClose")
       this.updateUserPreferences(this.updatedConfiguration)
+      this.$emit("onDrawerClose")
     },
     maintainTreeStyles() {
       this.$nextTick(function () {
@@ -273,7 +273,7 @@ export default {
         (data) => data.email == this.getCurrentUserEmail
       )
       this.currentAlertConf = currentUser.alerts
-      if (this.currentAlertConf) {
+      if (this.checkIfconfigExited(this.currentAlertConf)) {
         this.setAlertConfiguration()
       } else {
         this.showAlerts = false
@@ -295,6 +295,10 @@ export default {
       return alerts
     },
 
+    checkIfconfigExited(entity) {
+      return entity ? Object.keys(entity).length !== 0 : false
+    },
+
     toggleIndividualSwitch(event, item) {
       this.manualToggleChanges(event, item)
       this.formatFinalResponse()
@@ -303,10 +307,10 @@ export default {
 
     formatFinalResponse() {
       this.updatedConfiguration = {}
-      this.updatedConfiguration.alerts = this.recursiveBinding(
+      this.updatedConfiguration.alerts = this.showAlerts ? this.recursiveBinding(
         this.alertsSectionGroup[0],
         {}
-      )
+      ) : {}
     },
 
     manualToggleChanges(flag, item) {
