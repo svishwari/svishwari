@@ -1,6 +1,6 @@
 """This module enables functionality related to notification management."""
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Union, List, Any, Dict
 
 import pymongo
@@ -11,7 +11,6 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.db_exceptions import (
-    InvalidNotificationType,
     MissingValueException,
 )
 
@@ -24,7 +23,7 @@ def create_notification(
     database: DatabaseClient,
     notification_type: str,
     description: str,
-    category: str = None,
+    category: str,
     username: str = None,
     platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> Union[dict, None]:
@@ -44,12 +43,18 @@ def create_notification(
     Raises:
         InvalidNotificationType: Error if the passed in notification_type value
             is not valid.
-        MissingValueException: Error if the username is not provided.
+        ValueError: Raised if an invalid value is provided.
+        MissingValueException: Raised if the username is missing.
     """
 
     # validate type
     if notification_type.lower() not in db_c.NOTIFICATION_TYPES:
-        raise InvalidNotificationType(notification_type)
+        raise ValueError("Invalid notification type provided.")
+
+    if category not in db_c.NOTIFICATION_CATEGORIES:
+        DeprecationWarning(
+            f"The value {category} will not be allowed as a category in the future."
+        )
 
     if username is None:
         raise MissingValueException("username")
@@ -61,20 +66,20 @@ def create_notification(
 
     # get current time
     current_time = datetime.utcnow()
-    expire_time = current_time + relativedelta(months=3)
+    week_count = 1
 
     # 1 week for informational and success, 4 weeks for critical
     if notification_type == db_c.NOTIFICATION_TYPE_INFORMATIONAL:
-        expire_time = current_time + relativedelta(weeks=1)
-        ttl = 1 * (7 * 24 * 60 * 60)  # 1 week in seconds
-
+        week_count = 1
     elif notification_type == db_c.NOTIFICATION_TYPE_SUCCESS:
-        expire_time = current_time + relativedelta(weeks=1)
-        ttl = 1 * (7 * 24 * 60 * 60)  # 1 week in seconds
-
+        week_count = 1
     elif notification_type == db_c.NOTIFICATION_TYPE_CRITICAL:
-        expire_time = current_time + relativedelta(weeks=4)
-        ttl = 4 * (7 * 24 * 60 * 60)  # 4 week in seconds
+        week_count = 4
+
+    # used for AWS DocumentDB
+    expire_time = current_time + relativedelta(weeks=week_count)
+    # used for Azure CosmosDB
+    ttl = int(timedelta(weeks=week_count).total_seconds())
 
     doc = {
         db_c.NOTIFICATION_FIELD_TYPE: notification_type,
@@ -87,7 +92,7 @@ def create_notification(
     if platform == db_c.AZURE_COSMOS_DB:
         collection.create_index(
             [(db_c.TS, pymongo.ASCENDING)],
-            expireAfterSeconds=1 * (7 * 24 * 60 * 60),
+            expireAfterSeconds=int(timedelta(weeks=1).total_seconds()),
         )
         doc.update({db_c.TTL: ttl})
     else:
