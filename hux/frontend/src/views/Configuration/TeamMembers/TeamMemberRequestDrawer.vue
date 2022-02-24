@@ -83,7 +83,7 @@
               :label="accessLevel"
               :selected="accessLevel"
               :items="listOfLevels"
-              min-width="340"
+              min-width="341"
               data-e2e="accessLevel"
               @on-select="onSelectMenuItem"
             />
@@ -311,17 +311,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .hux-dropdown {
-  .main-button {
-    border-radius: 4px;
-    .v-btn__content {
-      top: 1px;
-      .v-icon {
-        top: -1px;
-      }
-    }
-  }
-}
 .adjust-label {
   position: relative;
   bottom: -4px !important;

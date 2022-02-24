@@ -465,16 +465,9 @@ export default {
 .h-80 {
   height: 80px;
 }
-::v-deep .hux-dropdown {
-  .main-button {
-    border-radius: 4px;
+.hux-dropdown {
+  ::v-deep .main-button {
     margin: 0px !important;
-    .v-btn__content {
-      top: 1px;
-      .v-icon {
-        top: -1px;
-      }
-    }
   }
 }
 .primary-border {
