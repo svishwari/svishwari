@@ -277,7 +277,7 @@ def align_audience_engagement_deliveries(
             delivery_job[db_c.DELIVERY_PLATFORM_ID],
             {
                 db_c.DELIVERY_PLATFORM_TYPE: db_c.CATEGORY_UNKNOWN,
-                db_c.METRICS_DELIVERY_PLATFORM_NAME: db_c.CATEGORY_UNKNOWN,
+                db_c.DELIVERY_PLATFORM_NAME: db_c.CATEGORY_UNKNOWN,
             },
         )
 
