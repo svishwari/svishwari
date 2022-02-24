@@ -207,11 +207,11 @@ export default {
       requestText: "",
       access: {
         hoverTooltip:
-          "Admin access <br /><br />\
+          "<span class='font-weight-bold'>Admin access</span><br /><br />\
             Ability to select who has access to view PII data and have removal/add functionality across Hux.<br /><br />\
-            Edit access <br /><br />\
+            <span class='font-weight-bold'>Edit access</span><br /><br />\
             Have removal/add functionality across Hux.<br /><br />\
-            View-only access <br /><br />\
+            <span class='font-weight-bold'>View-only access</span><br /><br />\
             Unable to edit a client’s team, or remove and add any solutions across Hux.",
         tooltipWidth: "200px",
       },
@@ -306,6 +306,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .hux-dropdown {
+  .main-button {
+    border-radius: 4px;
+    .v-btn__content {
+      top: 1px;
+      .v-icon {
+        top: -1px;
+      }
+    }
+  }
+}
 .adjust-label {
   position: relative;
   bottom: -4px !important;
