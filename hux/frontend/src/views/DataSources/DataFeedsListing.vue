@@ -68,7 +68,7 @@
                         formatDate(item[header.value], item.data_files.length)
                       "
                       :data="item"
-                      class="text-body-1 ml-n6"
+                      class="text-body-1 ml-n6 black--text"
                     >
                       <template #expand-icon>
                         <span
@@ -79,7 +79,7 @@
                           <icon
                             type="expand-arrow"
                             :size="14"
-                            color="primary"
+                            color="black"
                             class="
                               cursor-pointer
                               mdi-chevron-right
@@ -369,6 +369,7 @@ export default {
         type: null,
         name: null,
       },
+      selected_time: "Today",
     }
   },
 
@@ -440,7 +441,7 @@ export default {
             "The value indicates the average % of records processed in the past 30 days",
         },
         {
-          text: "Last processed (Today)",
+          text: `Last processed (${this.selected_time})`,
           value: "last_processed",
           width: "170",
         },
@@ -605,6 +606,15 @@ export default {
       await this.getDataFeedDetails(this.api_params)
       if (obj.filterLength) {
         this.numFiltersSelected = obj.filterLength
+      }
+      if (obj.selectedToday && obj.selectedYesterday) {
+        this.selected_time = "Today , Yesterday"
+      } else if (obj.selectedToday) {
+        this.selected_time = "Today"
+      } else if (obj.selectedYesterday) {
+        this.selected_time = "Yesterday"
+      } else if (obj.selectedTimeType) {
+        this.selected_time = obj.selectedTimeType
       }
       this.loading = false
     },
