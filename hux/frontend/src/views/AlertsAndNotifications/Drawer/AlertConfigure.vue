@@ -307,10 +307,9 @@ export default {
 
     formatFinalResponse() {
       this.updatedConfiguration = {}
-      this.updatedConfiguration.alerts = this.showAlerts ? this.recursiveBinding(
-        this.alertsSectionGroup[0],
-        {}
-      ) : {}
+      this.updatedConfiguration.alerts = this.showAlerts
+        ? this.recursiveBinding(this.alertsSectionGroup[0], {})
+        : {}
     },
 
     manualToggleChanges(flag, item) {
