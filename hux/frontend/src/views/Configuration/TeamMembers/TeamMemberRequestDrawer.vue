@@ -48,7 +48,7 @@
         <v-row>
           <v-col cols="7" class="py-0 adjust-access">
             <span class="body-2 adjust-label">
-              <tooltip :max-width="access.tooltipWidth" position-top>
+              <tooltip max-width="200px" position-top>
                 <template #label-content>
                   <span class="body-2 adjust-label">Access level</span>
                   <icon
@@ -60,7 +60,22 @@
                   />
                 </template>
                 <template #hover-content>
-                  <span class="body-2" v-html="access.hoverTooltip" />
+                  <div class="body-2 pd-6">
+                    <div class="font-weight-bold mb-3">Admin access</div>
+                    <div class="mb-6">
+                      Ability to select who has access to view PII data and have
+                      removal/add functionality across Hux.
+                    </div>
+                    <div class="font-weight-bold mb-3">Edit access</div>
+                    <div class="mb-6">
+                      Have removal/add functionality across Hux.
+                    </div>
+                    <div class="font-weight-bold mb-3">View-only access</div>
+                    <div>
+                      Unable to edit a client’s team, or remove and add any
+                      solutions across Hux.
+                    </div>
+                  </div>
                 </template>
               </tooltip>
             </span>
@@ -205,16 +220,6 @@ export default {
       email: "",
       togglePii: false,
       requestText: "",
-      access: {
-        hoverTooltip:
-          "<span class='font-weight-bold'>Admin access</span><br /><br />\
-            Ability to select who has access to view PII data and have removal/add functionality across Hux.<br /><br />\
-            <span class='font-weight-bold'>Edit access</span><br /><br />\
-            Have removal/add functionality across Hux.<br /><br />\
-            <span class='font-weight-bold'>View-only access</span><br /><br />\
-            Unable to edit a client’s team, or remove and add any solutions across Hux.",
-        tooltipWidth: "200px",
-      },
       pii: {
         hoverTooltip:
           "Sensitive and PII data are only accessible to individuals tha been granted permission by an Admin.",
