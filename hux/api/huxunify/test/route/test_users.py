@@ -417,11 +417,6 @@ class TestUserRoutes(RouteTestCase):
                         db_c.NOTIFICATION_TYPE_SUCCESS: False,
                         db_c.NOTIFICATION_TYPE_CRITICAL: True,
                     },
-                    api_c.IDENTITY_RESOLUTION: {
-                        db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-                        db_c.NOTIFICATION_TYPE_SUCCESS: False,
-                        db_c.NOTIFICATION_TYPE_CRITICAL: True,
-                    },
                 },
                 api_c.DECISIONING: {
                     api_c.MODELS: {
