@@ -304,27 +304,21 @@ export default {
       categoryOptions: [
         {
           name: "Data processing",
-          type: "Data processing",
         },
         {
           name: "Data storage",
-          type: "Data storage",
         },
         {
           name: "Modeling",
-          type: "Modeling",
         },
         {
           name: "Monitoring",
-          type: "Monitoring",
         },
         {
           name: "Reporting",
-          type: "Reporting",
         },
         {
           name: "Uncategorized",
-          type: "Uncategorized",
         },
       ],
       customApp: null,
