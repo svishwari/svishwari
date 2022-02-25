@@ -245,7 +245,9 @@ class CustomerPostOverview(SwaggerView):
         customers_overview[api_c.GEOGRAPHICAL] = check_and_return_cache(
             database=database,
             cache_tag=api_c.GEOGRAPHICAL,
-            key=convert_unique_city_filter(request.json),
+            key=convert_unique_city_filter(request.json).get(
+                api_c.AUDIENCE_FILTERS
+            ),
             token=get_token_from_request(request)[0],
         )
 

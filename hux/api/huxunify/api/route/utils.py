@@ -1,6 +1,7 @@
 """Purpose of this file is to house route utilities."""
 # pylint: disable=too-many-lines
 import copy
+import logging
 import random
 from collections import defaultdict
 from datetime import datetime, date
@@ -1129,6 +1130,7 @@ def check_and_return_cache(
     )
 
     if not data:
+        logger.info("No cache data available retreiving actual data")
         data = CACHE_MAPS.get(cache_tag)(token, key)
         create_cache_entry(
             database=database,
