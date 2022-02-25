@@ -257,6 +257,7 @@ import { formatText, groupBy } from "@/utils"
 import sortBy from "lodash/sortBy"
 import { mapActions, mapGetters } from "vuex"
 import HuxDropdown from "@/components/common/HuxDropdown.vue"
+import categories from "./categories.json"
 
 export default {
   name: "AddApplication",
@@ -301,26 +302,7 @@ export default {
       navigateTo: false,
       flagForModal: false,
       ApplicationUrl: null,
-      categoryOptions: [
-        {
-          name: "Data processing",
-        },
-        {
-          name: "Data storage",
-        },
-        {
-          name: "Modeling",
-        },
-        {
-          name: "Monitoring",
-        },
-        {
-          name: "Reporting",
-        },
-        {
-          name: "Uncategorized",
-        },
-      ],
+      categoryOptions: categories.options,
       customApp: null,
     }
   },
