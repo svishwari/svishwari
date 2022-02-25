@@ -602,7 +602,7 @@ def drop_collections(database: MongoClient) -> None:
         database (MongoClient): Database Client.
     """
 
-    logging.info("Dropping collections ...")
+    logging.info("Dropping collections.")
     collections = [
         db_c.CDP_DATA_SOURCES_COLLECTION,
         db_c.DELIVERY_PLATFORM_COLLECTION,
