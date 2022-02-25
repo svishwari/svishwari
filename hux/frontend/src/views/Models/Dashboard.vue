@@ -499,7 +499,6 @@
                   </empty-page>
                 </v-row>
               </v-card>
-              {{ model }}
             </v-col>
           </v-row>
         </template>
@@ -619,8 +618,6 @@ export default {
       return this.modelDashboardFeatures && this.modelDashboardFeatures.length
     },
     breadcrumbItems() {
-      debugger
-      console.log("modelData", this.model)
       const items = [
         {
           text: "Models",
