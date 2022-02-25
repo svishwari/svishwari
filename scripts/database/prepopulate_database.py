@@ -28,7 +28,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Unsubscribe",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to unsubscribe"
-                                " from an email marketing list.",
+        " from an email marketing list.",
         db_c.MODEL_ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -49,7 +49,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Click",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to click "
-                                "on a link in an email.",
+        "on a link in an email.",
         db_c.MODEL_ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -60,7 +60,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_UNKNOWN,
         db_c.NAME: "Email Content Optimization",
         db_c.MODEL_DESCRIPTION: "Alter email content to optimize "
-                                "email campaign performance.",
+        "email campaign performance.",
         db_c.MODEL_ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -71,7 +71,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
         db_c.NAME: "Customer Lifetime Value",
         db_c.MODEL_DESCRIPTION: "Predicting the lifetime value of a "
-                                "customer over a defined time range.",
+        "customer over a defined time range.",
         db_c.MODEL_ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -82,7 +82,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
         db_c.NAME: "Predicted Sales Per Customer",
         db_c.MODEL_DESCRIPTION: "Predicting sales for a customer over a "
-                                "defined time range.",
+        "defined time range.",
         db_c.MODEL_ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -93,7 +93,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
         db_c.NAME: "Predicted Sales Per Store",
         db_c.MODEL_DESCRIPTION: "Predicting sales for a store over a "
-                                "defined time range.",
+        "defined time range.",
         db_c.MODEL_ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -104,7 +104,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Capability Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-                                " negative, or neutral capability score.",
+        " negative, or neutral capability score.",
         db_c.MODEL_ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -115,7 +115,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Trust Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-                                " negative, or neutral trust score.",
+        " negative, or neutral trust score.",
         db_c.MODEL_ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -126,7 +126,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Humanity Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-                                " negative, or neutral humanity score.",
+        " negative, or neutral humanity score.",
         db_c.MODEL_ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -137,7 +137,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Reliability Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-                                " negative, or neutral reliability score.",
+        " negative, or neutral reliability score.",
         db_c.MODEL_ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -148,7 +148,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Transparency Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-                                " negative, or neutral transparency score.",
+        " negative, or neutral transparency score.",
         db_c.MODEL_ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -159,7 +159,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Churn",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to leave a service "
-                                "over a defined time range.",
+        "over a defined time range.",
         db_c.MODEL_ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -170,7 +170,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Purchase Product Category",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web purchase"
-                                " in a particular product category.",
+        " in a particular product category.",
         db_c.MODEL_ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -181,7 +181,7 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Visit Product Category",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web visit"
-                                " in a particular product category.",
+        " in a particular product category.",
         db_c.MODEL_ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
@@ -212,7 +212,7 @@ models_list = [
         db_c.TYPE: "churn",
         db_c.NAME: "Propensity to churn",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-                                "churn in a future time window.",
+        "churn in a future time window.",
         db_c.MODEL_ID: "4",
         db_c.VERSION: "21.11.22",
         db_c.FULCRUM: "2021-11-22",
@@ -230,7 +230,7 @@ models_list = [
         db_c.TYPE: "churn",
         db_c.NAME: "Propensity to churn",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-                                "churn in a future time window.",
+        "churn in a future time window.",
         db_c.MODEL_ID: "4",
         db_c.VERSION: "21.11.23",
         db_c.FULCRUM: "2021-11-23",
@@ -248,7 +248,7 @@ models_list = [
         db_c.TYPE: "churn",
         db_c.NAME: "Propensity to churn",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-                                "churn in a future time window.",
+        "churn in a future time window.",
         db_c.MODEL_ID: "4",
         db_c.VERSION: "21.11.24",
         db_c.FULCRUM: "2021-11-24",
@@ -266,7 +266,7 @@ models_list = [
         db_c.TYPE: "Purchase",
         db_c.NAME: "Propensity to purchase",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-                                "purchase in a future time window.",
+        "purchase in a future time window.",
         db_c.MODEL_ID: "3",
         db_c.VERSION: "21.10.7",
         db_c.FULCRUM: "2021-10-07",
@@ -284,7 +284,7 @@ models_list = [
         db_c.TYPE: "Purchase",
         db_c.NAME: "Propensity to purchase",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-                                "purchase in a future time window.",
+        "purchase in a future time window.",
         db_c.MODEL_ID: "3",
         db_c.VERSION: "21.10.8",
         db_c.FULCRUM: "2021-10-08",
@@ -302,7 +302,7 @@ models_list = [
         db_c.TYPE: "Purchase",
         db_c.NAME: "Propensity to purchase",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-                                "purchase in a future time window.",
+        "purchase in a future time window.",
         db_c.MODEL_ID: "3",
         db_c.VERSION: "21.10.9",
         db_c.FULCRUM: "2021-10-09",
@@ -324,8 +324,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Monitor data quality "
-                                              "throughout ingestion and create a peristent"
-                                              " identifier and profile for every customer",
+        "throughout ingestion and create a peristent"
+        " identifier and profile for every customer",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -335,8 +335,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Track performance of "
-                                              "decisioning models and reveal actionable"
-                                              " customer insights.",
+        "decisioning models and reveal actionable"
+        " customer insights.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -346,8 +346,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "A 360 degree view of "
-                                              "each customer, understanding not only their needs and "
-                                              "preferences, but also the person behind the data.",
+        "each customer, understanding not only their needs and "
+        "preferences, but also the person behind the data.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -357,8 +357,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Seamlessly route audiences to"
-                                              " an activation channel of choice to deliver a personalized"
-                                              " experience for existing and new customers.",
+        " an activation channel of choice to deliver a personalized"
+        " experience for existing and new customers.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -368,7 +368,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Content allows you to present"
-                                              " visitors with unique experiences tailored to their needs.",
+        " visitors with unique experiences tailored to their needs.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -378,8 +378,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Find out why your audiences"
-                                              " think what they think, behave as they "
-                                              "behave and feel what they feel.",
+        " think what they think, behave as they "
+        "behave and feel what they feel.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -389,7 +389,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "commerce_personal",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
-                                              "consectetur adipiscing elit ut aliquam.",
+        "consectetur adipiscing elit ut aliquam.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -399,7 +399,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "digital_advertising",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
-                                              "consectetur adipiscing elit ut aliquam.",
+        "consectetur adipiscing elit ut aliquam.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -409,8 +409,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "email_deliverability",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Ensure emails land in the right "
-                                              "inbox by providing insights on all aspects of a "
-                                              "successful marketing strategy from beginning to end.",
+        "inbox by providing insights on all aspects of a "
+        "successful marketing strategy from beginning to end.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -420,8 +420,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Brings voice of the customer "
-                                              "to make improvements to your customer "
-                                              "experience at an individual and macro level.",
+        "to make improvements to your customer "
+        "experience at an individual and macro level.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -431,8 +431,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "insight_iq",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your customer profiles"
-                                              " with this collections of data sources at"
-                                              " the individual level enabling an enhanced customer experience.",
+        " with this collections of data sources at"
+        " the individual level enabling an enhanced customer experience.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -442,7 +442,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "intelligent_marketing",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "These capabilities were folded "
-                                              "into the segmentation engine, as was Hux Audience.",
+        "into the segmentation engine, as was Hux Audience.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -452,8 +452,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "trust_id",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain "
-                                              "visibility, monitor and  engage with their customers "
-                                              "based on AI – generated experienced based metrics.",
+        "visibility, monitor and  engage with their customers "
+        "based on AI – generated experienced based metrics.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -463,8 +463,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "search_ai",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to"
-                                              " optimize the creation, placement, and timing of online "
-                                              "content to increase customer acquisition.",
+        " optimize the creation, placement, and timing of online "
+        "content to increase customer acquisition.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -474,8 +474,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "cognitive_spark",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "A modular cloud-based product"
-                                              " designed to enable brands and portfolios "
-                                              "to make AI powered decisions at scale.",
+        " designed to enable brands and portfolios "
+        "to make AI powered decisions at scale.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -715,7 +715,7 @@ def drop_collections(database: MongoClient) -> None:
         db_c.DELIVERY_PLATFORM_COLLECTION,
         db_c.MODELS_COLLECTION,
         db_c.CONFIGURATIONS_COLLECTION,
-        db_c.APPLICATIONS_COLLECTION
+        db_c.APPLICATIONS_COLLECTION,
     ]
     for collection in collections:
         database[db_c.DATA_MANAGEMENT_DATABASE][collection].drop()
@@ -748,7 +748,7 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
 
 
 def insert_delivery_platforms(
-        database: MongoClient, delivery_platforms: list
+    database: MongoClient, delivery_platforms: list
 ) -> None:
     """Insertion of Delivery Platforms Collection.
 
@@ -761,8 +761,8 @@ def insert_delivery_platforms(
 
     for delivery_platform in delivery_platforms:
         if (
-                delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
-                in db_c.SUPPORTED_DELIVERY_PLATFORMS
+            delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
+            in db_c.SUPPORTED_DELIVERY_PLATFORMS
         ):
             result_id = set_delivery_platform(
                 database,
@@ -819,7 +819,7 @@ def insert_models(database: MongoClient, models: list) -> None:
 
 
 def insert_client_projects(
-        database: MongoClient, client_projects: list
+    database: MongoClient, client_projects: list
 ) -> None:
     """Insert data into client_projects collection.
 

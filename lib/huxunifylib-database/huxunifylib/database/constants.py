@@ -598,15 +598,7 @@ ALLOWED_FIELDS = {
         ADDED,
         ENABLED,
     ],
-    APPLICATIONS_COLLECTION: [
-        NAME,
-        CATEGORY,
-        URL,
-        ICON,
-        ENABLED,
-        ADDED,
-        TYPE
-    ],
+    APPLICATIONS_COLLECTION: [NAME, CATEGORY, URL, ICON, ENABLED, ADDED, TYPE],
     CLIENT_PROJECTS_COLLECTION: [
         NAME,
         TYPE,
