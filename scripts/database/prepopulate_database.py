@@ -747,7 +747,7 @@ def insert_applications(database: MongoClient, applications: list) -> None:
         applications (List): List of application objects.
     """
 
-    logging.info("Pre-populating applications ...")
+    logging.info("Pre-populating applications.")
 
     for application in applications:
         result_id = create_document(
