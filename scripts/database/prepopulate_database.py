@@ -702,7 +702,7 @@ def insert_models(database: MongoClient, models: list) -> None:
         database (MongoClient): MongoDB Client.
         models (List): List of Model Objects.
     """
-    logging.info("Pre-populating models ...")
+    logging.info("Pre-populating models.")
 
     for model in models:
         model_id = create_document(database, db_c.MODELS_COLLECTION, model)
