@@ -62,11 +62,12 @@
       <v-row class="h-80 mt-4">
         <v-col>
           <label class="mb-1">Application category</label>
-          <hux-select
-            v-model="newAppDetails['category']"
+          <hux-dropdown
+            :label="newAppDetails['category']"
+            :selected="newAppDetails['category']"
             :items="categoryOptions"
-            label="Category"
-            width="240"
+            min-width="240"
+            @on-select="onSelectMenuItem"
           />
         </v-col>
       </v-row>
@@ -256,7 +257,8 @@ import Page from "@/components/Page"
 import { formatText, groupBy } from "@/utils"
 import sortBy from "lodash/sortBy"
 import { mapActions, mapGetters } from "vuex"
-import HuxSelect from "@/components/common/Select.vue"
+import HuxDropdown from "@/components/common/HuxDropdown.vue"
+import categories from "./categories.json"
 
 export default {
   name: "AddApplication",
@@ -271,7 +273,7 @@ export default {
     Logo,
     ConfirmModal,
     HuxIcon,
-    HuxSelect,
+    HuxDropdown,
   },
 
   data() {
@@ -301,14 +303,7 @@ export default {
       navigateTo: false,
       flagForModal: false,
       ApplicationUrl: null,
-      categoryOptions: [
-        "Data processing",
-        "Data storage",
-        "Modeling",
-        "Monitoring",
-        "Reporting",
-        "Uncategorized",
-      ],
+      categoryOptions: categories.options,
       customApp: null,
     }
   },
@@ -370,6 +365,14 @@ export default {
       createApplication: "application/createApplication",
       updateApplication: "application/updateApplications",
     }),
+
+    onSelectMenuItem(item) {
+      if (this.newAppDetails["category"] == item.name) {
+        this.newAppDetails["category"] = "Uncategorized"
+      } else {
+        this.newAppDetails["category"] = item.name
+      }
+    },
 
     navigateAway() {
       this.showConfirmModal = false
@@ -439,10 +442,11 @@ export default {
 .h-80 {
   height: 80px;
 }
-// }
-// .application-field ::v-deep .theme--light {
-//   font-size: 16px !important;
-// }
+.hux-dropdown {
+  ::v-deep .main-button {
+    margin: 0px !important;
+  }
+}
 .primary-border {
   border-radius: 50%;
   border: 1px solid var(--v-primary-base);
