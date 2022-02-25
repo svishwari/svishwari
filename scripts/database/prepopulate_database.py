@@ -721,7 +721,7 @@ def insert_client_projects(
         client_projects (List): List of client project objects.
     """
 
-    logging.info("Pre-populating client projects ...")
+    logging.info("Pre-populating client projects.")
 
     for client_project in client_projects:
         result_id = create_document(
