@@ -705,7 +705,7 @@ def drop_collections(database: MongoClient) -> None:
     ]
     for collection in collections:
         database[db_c.DATA_MANAGEMENT_DATABASE][collection].drop()
-        logging.info("Dropped the %s collection", collection)
+        logging.info("Dropped the %s collection.", collection)
 
 
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
