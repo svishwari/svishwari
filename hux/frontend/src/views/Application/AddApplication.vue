@@ -218,10 +218,11 @@
             </label>
 
             <card-horizontal
-              title="Custom Application"
+              title="Request an application not on the list"
               icon="custom-application"
               :is-added="false"
               :is-already-added="false"
+              requested-button
               class="mb-2"
               data-e2e="applicationsDrawer"
               @click="onAddApplication(null)"

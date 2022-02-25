@@ -1,0 +1,11 @@
+<svg width="100%" height="100%" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="13" cy="13" r="12.5" fill="white" stroke="#E2EAEC"/>
+<g clip-path="url(#algorithmia)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M16.2932 20.224L17.4523 17.4701L18.8255 20.224H21.605L13.0015 2.89062L4.39844 20.224H7.17854L8.55085 17.4701L9.71002 20.224H12.186L9.96514 14.6773L12.9985 8.51854L16.0402 14.6773L13.8194 20.2294L16.2932 20.224Z" fill="#5000BE"/>
+</g>
+<defs>
+<clipPath id="algorithmia">
+<rect width="17.3333" height="17.3333" fill="white" transform="translate(4.33398 2.89062)"/>
+</clipPath>
+</defs>
+</svg>
