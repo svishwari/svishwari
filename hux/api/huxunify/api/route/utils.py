@@ -1,7 +1,6 @@
 """Purpose of this file is to house route utilities."""
 # pylint: disable=too-many-lines
 import copy
-import logging
 import random
 from collections import defaultdict
 from datetime import datetime, date
