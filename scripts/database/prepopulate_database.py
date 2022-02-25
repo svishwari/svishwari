@@ -29,7 +29,6 @@ models_list = [
         db_c.NAME: "Propensity to Unsubscribe",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to unsubscribe"
         " from an email marketing list.",
-        db_c.MODEL_ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -39,7 +38,6 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Open",
         db_c.MODEL_DESCRIPTION: " Propensity for a customer to open an email.",
-        db_c.MODEL_ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -50,7 +48,6 @@ models_list = [
         db_c.NAME: "Propensity to Click",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to click "
         "on a link in an email.",
-        db_c.MODEL_ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -61,7 +58,6 @@ models_list = [
         db_c.NAME: "Email Content Optimization",
         db_c.MODEL_DESCRIPTION: "Alter email content to optimize "
         "email campaign performance.",
-        db_c.MODEL_ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -72,7 +68,6 @@ models_list = [
         db_c.NAME: "Customer Lifetime Value",
         db_c.MODEL_DESCRIPTION: "Predicting the lifetime value of a "
         "customer over a defined time range.",
-        db_c.MODEL_ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -83,7 +78,6 @@ models_list = [
         db_c.NAME: "Predicted Sales Per Customer",
         db_c.MODEL_DESCRIPTION: "Predicting sales for a customer over a "
         "defined time range.",
-        db_c.MODEL_ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -94,7 +88,6 @@ models_list = [
         db_c.NAME: "Predicted Sales Per Store",
         db_c.MODEL_DESCRIPTION: "Predicting sales for a store over a "
         "defined time range.",
-        db_c.MODEL_ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -105,7 +98,6 @@ models_list = [
         db_c.NAME: "Capability Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral capability score.",
-        db_c.MODEL_ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -116,7 +108,6 @@ models_list = [
         db_c.NAME: "Trust Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral trust score.",
-        db_c.MODEL_ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -127,7 +118,6 @@ models_list = [
         db_c.NAME: "Humanity Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral humanity score.",
-        db_c.MODEL_ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -138,7 +128,6 @@ models_list = [
         db_c.NAME: "Reliability Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral reliability score.",
-        db_c.MODEL_ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -149,7 +138,6 @@ models_list = [
         db_c.NAME: "Transparency Propensity",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
         " negative, or neutral transparency score.",
-        db_c.MODEL_ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -160,7 +148,6 @@ models_list = [
         db_c.NAME: "Churn",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to leave a service "
         "over a defined time range.",
-        db_c.MODEL_ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -171,7 +158,6 @@ models_list = [
         db_c.NAME: "Propensity to Purchase Product Category",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web purchase"
         " in a particular product category.",
-        db_c.MODEL_ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -182,7 +168,6 @@ models_list = [
         db_c.NAME: "Propensity to Visit Product Category",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web visit"
         " in a particular product category.",
-        db_c.MODEL_ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -192,7 +177,6 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Propensity to Visit Website",
         db_c.MODEL_DESCRIPTION: "Propensity for a customer to visit a website.",
-        db_c.MODEL_ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -202,7 +186,6 @@ models_list = [
         db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
         db_c.NAME: "Segmentation",
         db_c.MODEL_DESCRIPTION: "Segment a set of customers.",
-        db_c.MODEL_ID: "d7480a81b3c84fd696e43c18e31a481a",
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
@@ -213,7 +196,6 @@ models_list = [
         db_c.NAME: "Propensity to churn",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
         "churn in a future time window.",
-        db_c.MODEL_ID: "4",
         db_c.VERSION: "21.11.22",
         db_c.FULCRUM: "2021-11-22",
         db_c.LOOKBACK_DAYS: 120,
@@ -221,43 +203,7 @@ models_list = [
         db_c.OWNER: "decisioning",
         db_c.OWNER_EMAIL: "huxdecisiong",
         db_c.DATE_TRAINED: "2021-11-22",
-        db_c.STATUS: db_c.ACTIVE,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-    },
-    {
-        db_c.CATEGORY: "Retention",
-        db_c.TYPE: "churn",
-        db_c.NAME: "Propensity to churn",
-        db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-        "churn in a future time window.",
-        db_c.MODEL_ID: "4",
-        db_c.VERSION: "21.11.23",
-        db_c.FULCRUM: "2021-11-23",
-        db_c.LOOKBACK_DAYS: 120,
-        db_c.PREDICTION_DAYS: 30,
-        db_c.OWNER: "decisioning",
-        db_c.OWNER_EMAIL: "huxdecisiong",
-        db_c.DATE_TRAINED: "2021-11-23",
-        db_c.STATUS: db_c.ACTIVE,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-    },
-    {
-        db_c.CATEGORY: "Retention",
-        db_c.TYPE: "churn",
-        db_c.NAME: "Propensity to churn",
-        db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-        "churn in a future time window.",
-        db_c.MODEL_ID: "4",
-        db_c.VERSION: "21.11.24",
-        db_c.FULCRUM: "2021-11-24",
-        db_c.LOOKBACK_DAYS: 120,
-        db_c.PREDICTION_DAYS: 30,
-        db_c.OWNER: "decisioning",
-        db_c.OWNER_EMAIL: "huxdecisiong",
-        db_c.DATE_TRAINED: "2021-11-24",
-        db_c.STATUS: db_c.ACTIVE,
+        db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
     },
@@ -267,7 +213,6 @@ models_list = [
         db_c.NAME: "Propensity to purchase",
         db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
         "purchase in a future time window.",
-        db_c.MODEL_ID: "3",
         db_c.VERSION: "21.10.7",
         db_c.FULCRUM: "2021-10-07",
         db_c.LOOKBACK_DAYS: 90,
@@ -275,43 +220,7 @@ models_list = [
         db_c.OWNER: "decisioning",
         db_c.OWNER_EMAIL: "huxdecisiong",
         db_c.DATE_TRAINED: "2021-10-07",
-        db_c.STATUS: db_c.ACTIVE,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-    },
-    {
-        db_c.CATEGORY: "Retention",
-        db_c.TYPE: "Purchase",
-        db_c.NAME: "Propensity to purchase",
-        db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-        "purchase in a future time window.",
-        db_c.MODEL_ID: "3",
-        db_c.VERSION: "21.10.8",
-        db_c.FULCRUM: "2021-10-08",
-        db_c.LOOKBACK_DAYS: 90,
-        db_c.PREDICTION_DAYS: 14,
-        db_c.OWNER: "decisioning",
-        db_c.OWNER_EMAIL: "huxdecisiong",
-        db_c.DATE_TRAINED: "2021-10-08",
-        db_c.STATUS: db_c.ACTIVE,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-    },
-    {
-        db_c.CATEGORY: "Retention",
-        db_c.TYPE: "Purchase",
-        db_c.NAME: "Propensity to purchase",
-        db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-        "purchase in a future time window.",
-        db_c.MODEL_ID: "3",
-        db_c.VERSION: "21.10.9",
-        db_c.FULCRUM: "2021-10-09",
-        db_c.LOOKBACK_DAYS: 90,
-        db_c.PREDICTION_DAYS: 14,
-        db_c.OWNER: "decisioning",
-        db_c.OWNER_EMAIL: "huxdecisiong",
-        db_c.DATE_TRAINED: "2021-10-09",
-        db_c.STATUS: db_c.ACTIVE,
+        db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
     },
@@ -693,14 +602,18 @@ def drop_collections(database: MongoClient) -> None:
         database (MongoClient): Database Client.
     """
 
+    logging.info("Dropping collections.")
     collections = [
         db_c.CDP_DATA_SOURCES_COLLECTION,
         db_c.DELIVERY_PLATFORM_COLLECTION,
         db_c.MODELS_COLLECTION,
         db_c.CONFIGURATIONS_COLLECTION,
+        db_c.CLIENT_PROJECTS_COLLECTION,
+        db_c.APPLICATIONS_COLLECTION,
     ]
     for collection in collections:
         database[db_c.DATA_MANAGEMENT_DATABASE][collection].drop()
+        logging.info("Dropped the %s collection.", collection)
 
 
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
@@ -711,7 +624,7 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
         data_sources (List): List of Data Sources Object.
     """
 
-    logging.info("Prepopulate data sources.")
+    logging.info("Pre-populating data sources.")
 
     for data_source in data_sources:
         result_id = create_data_source(
@@ -726,7 +639,7 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
         logging.info(
             "Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id
         )
-    logging.info("Prepopulate data sources complete.")
+    logging.info("Pre-populate data sources complete.")
 
 
 def insert_delivery_platforms(
@@ -739,7 +652,7 @@ def insert_delivery_platforms(
         delivery_platforms (List): List of Delivery Platform Objects.
     """
 
-    logging.info("Prepopulate destinations.")
+    logging.info("Pre-populating destinations.")
 
     for delivery_platform in delivery_platforms:
         if (
@@ -755,7 +668,7 @@ def insert_delivery_platforms(
                 delivery_platform[db_c.DELIVERY_PLATFORM_NAME],
                 result_id,
             )
-    logging.info("Prepopulate destinations complete.")
+    logging.info("Pre-populate destinations complete.")
 
 
 def insert_configurations(database: MongoClient, configurations: list) -> None:
@@ -766,7 +679,7 @@ def insert_configurations(database: MongoClient, configurations: list) -> None:
         configurations (List): List of Configuration Objects.
     """
 
-    logging.info("Prepopulate configurations.")
+    logging.info("Pre-populating configurations.")
 
     for configuration in configurations:
         result_id = create_document(
@@ -779,7 +692,7 @@ def insert_configurations(database: MongoClient, configurations: list) -> None:
             configuration[db_c.NAME],
             result_id,
         )
-    logging.info("Prepopulated configurations.")
+    logging.info("Pre-populated configurations.")
 
 
 def insert_models(database: MongoClient, models: list) -> None:
@@ -789,15 +702,13 @@ def insert_models(database: MongoClient, models: list) -> None:
         database (MongoClient): MongoDB Client.
         models (List): List of Model Objects.
     """
-    logging.info("Prepopulate models.")
+    logging.info("Pre-populating models.")
 
     for model in models:
-        model_id = create_document(database, db_c.MODELS_COLLECTION, model)[
-            db_c.ID
-        ]
+        model_id = create_document(database, db_c.MODELS_COLLECTION, model)
         logging.info("Added %s, %s.", model[db_c.NAME], model_id)
 
-    logging.info("Prepopulate models complete.")
+    logging.info("Pre-populate models complete.")
 
 
 def insert_client_projects(
@@ -810,7 +721,7 @@ def insert_client_projects(
         client_projects (List): List of client project objects.
     """
 
-    logging.info("Pre-populate client project.")
+    logging.info("Pre-populating client projects.")
 
     for client_project in client_projects:
         result_id = create_document(
@@ -836,7 +747,7 @@ def insert_applications(database: MongoClient, applications: list) -> None:
         applications (List): List of application objects.
     """
 
-    logging.info("Pre-populate applications collection.")
+    logging.info("Pre-populating applications.")
 
     for application in applications:
         result_id = create_document(
@@ -851,7 +762,7 @@ def insert_applications(database: MongoClient, applications: list) -> None:
             result_id,
         )
 
-    logging.info("Pre-populated applikcations.")
+    logging.info("Pre-populate applications complete.")
 
 
 if __name__ == "__main__":
@@ -864,4 +775,4 @@ if __name__ == "__main__":
     insert_models(db_client, models_list)
     insert_client_projects(db_client, client_projects_list)
     insert_applications(db_client, applications_constants)
-    logging.info("Prepopulate complete.")
+    logging.info("Pre-populate database procedure complete.")
