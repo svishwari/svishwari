@@ -679,7 +679,7 @@ def insert_configurations(database: MongoClient, configurations: list) -> None:
         configurations (List): List of Configuration Objects.
     """
 
-    logging.info("Pre-populating configurations ...")
+    logging.info("Pre-populating configurations.")
 
     for configuration in configurations:
         result_id = create_document(
