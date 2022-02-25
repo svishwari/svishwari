@@ -353,6 +353,10 @@ def get_all_audience_engagement_latest_deliveries(
     # 10 most recent jobs for the combination
     # get all engagements that match the audiences.
 
+    # Handle case when audience_engagement_ids are not passed
+    if not audience_engagement_ids:
+        return []
+
     pipeline = [
         {
             "$match": {

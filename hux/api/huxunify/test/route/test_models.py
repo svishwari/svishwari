@@ -67,7 +67,6 @@ class TestModelRoutes(RouteTestCase):
             database=self.database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
-                db_c.OBJECT_ID: "956a43d17afa4f0fa0070d1ba40c8901",
                 db_c.NAME: "Test Stub Model",
                 db_c.STATUS: api_c.REQUESTED,
                 db_c.TYPE: api_c.MODELS_TAG,
@@ -97,7 +96,7 @@ class TestModelRoutes(RouteTestCase):
 
         models_data = [
             {
-                api_c.ID: self.stub_models[db_c.OBJECT_ID],
+                api_c.ID: str(self.stub_models[db_c.ID]),
                 api_c.NAME: self.stub_models[db_c.NAME],
                 api_c.STATUS: api_c.STATUS_ACTIVE,
             }
