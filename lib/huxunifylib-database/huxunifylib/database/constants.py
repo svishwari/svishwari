@@ -605,6 +605,7 @@ ALLOWED_FIELDS = {
         ICON,
         ENABLED,
         ADDED,
+        TYPE
     ],
     CLIENT_PROJECTS_COLLECTION: [
         NAME,
