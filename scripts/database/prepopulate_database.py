@@ -624,7 +624,7 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
         data_sources (List): List of Data Sources Object.
     """
 
-    logging.info("Pre-populating data sources...")
+    logging.info("Pre-populating data sources.")
 
     for data_source in data_sources:
         result_id = create_data_source(
