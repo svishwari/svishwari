@@ -71,6 +71,12 @@ from huxunify.api.stubbed_data.datasource_datafeed_stub import (
     datafeed_detail_stub_data,
 )
 
+# Cache Constants
+CACHE_MAPS = {
+    api_c.CUSTOMERS_INSIGHTS: get_customers_overview,
+    api_c.GEOGRAPHICAL: get_demographic_by_state,
+}
+
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
     """Purpose of this function is to handle general api exceptions,
@@ -1149,13 +1155,6 @@ def generate_cache_key_string(data: Union[dict, list]) -> Generator:
             )
         else:
             yield item
-
-
-# Cache Constants
-CACHE_MAPS = {
-    api_c.CUSTOMERS_INSIGHTS: get_customers_overview,
-    api_c.GEOGRAPHICAL: get_demographic_by_state,
-}
 
 
 def check_and_return_cache(
