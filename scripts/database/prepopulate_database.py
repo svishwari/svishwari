@@ -652,7 +652,7 @@ def insert_delivery_platforms(
         delivery_platforms (List): List of Delivery Platform Objects.
     """
 
-    logging.info("Pre-populating destinations ...")
+    logging.info("Pre-populating destinations.")
 
     for delivery_platform in delivery_platforms:
         if (
