@@ -733,9 +733,9 @@ export default {
         },
         {
           title: "Open Facebook",
-          isDisabled: true,
+          isDisabled: false,
           onClick: () => {
-            window.open(audience.link, "_blank")
+            window.open("https://www.facebook.com", "_blank")
           },
         },
         {

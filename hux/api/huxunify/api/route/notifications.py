@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 
 import pymongo
 from bson import ObjectId
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -448,3 +448,42 @@ class DeleteNotification(SwaggerView):
             "Could not delete notification with ID %s.", notification_id
         )
         return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"/{api_c.NOTIFICATIONS_ENDPOINT}/{api_c.USERS}",
+    "NotificationUsers",
+)
+class NotificationUsers(SwaggerView):
+    """Notification distinct Users class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Notification Distinct Users",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    # pylint: disable=unused-argument
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
+        """Retrieves distinct users for notifications.
+        ---
+        security:
+            - Bearer: ["Authorization"]
+        Args:
+            user (dict): user object.
+        Returns:
+            Tuple[dict, int] dict of notifications, HTTP status code.
+        """
+        users = notification_management.get_distinct_notification_users(
+            get_db_client()
+        )
+
+        return (
+            jsonify(users),
+            HTTPStatus.OK.value,
+        )

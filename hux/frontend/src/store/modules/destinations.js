@@ -161,7 +161,7 @@ const actions = {
 
   async update({ commit }, { id, payload }) {
     try {
-      const response = await api.destinations.update(id, payload)
+      const response = await api.destinations.updateDestination(id, payload)
       commit("SET_ONE", response.data)
       return response.data
     } catch (error) {

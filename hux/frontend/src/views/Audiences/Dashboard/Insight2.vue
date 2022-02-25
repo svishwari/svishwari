@@ -1093,7 +1093,6 @@ export default {
     async triggerAttachDestination(event) {
       const payload = event.destination
       await this.attachAudienceDestination({
-        engagementId: this.engagementId,
         audienceId: this.audienceId,
         data: payload,
       })
@@ -1101,7 +1100,6 @@ export default {
     },
     async triggerRemoveDestination(event) {
       this.deleteActionData = {
-        engagementId: this.engagementId,
         audienceId: this.audienceId,
         data: { id: event.destination.id },
       }

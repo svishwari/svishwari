@@ -23,9 +23,10 @@ import totalCustomersData from "./fixtures/totalCustomersData.js"
 import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
-import { applications } from "./factories/application"
+import { addedApplications, applications } from "./factories/application"
 import domainData from "@/api/mock/fixtures/domainLineData.js"
 import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
+import runDurationData from "@/api/mock/fixtures/runDurationData.js"
 
 export const defineRoutes = (server) => {
   // Users
@@ -268,6 +269,21 @@ export const defineRoutes = (server) => {
     const code = 200
     const headers = {}
     const body = { message: "Successfully created delivery jobs" }
+    return new Response(code, headers, body)
+  })
+
+  // Attaching an Destination to Audience
+  server.post("/audience/:id/destinations", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    const destination = schema.destinations.find(requestData.id)
+    const audience = schema.audiences.find(id)
+    audience.standalone_deliveries.push(destination)
+    const body = {
+      message: "Successfully added destination to standalone deliveries",
+    }
     return new Response(code, headers, body)
   })
 
@@ -547,6 +563,10 @@ export const defineRoutes = (server) => {
     return featureData.featureList
   })
 
+  server.get("/models/:id/pipeline-performance", () => {
+    return runDurationData
+  })
+
   server.get("/models/:id/version-history", (schema, request) => {
     const id = request.params.id
     const model = schema.models.find(id)
@@ -814,13 +834,14 @@ export const defineRoutes = (server) => {
   })
 
   //configuration
-  server.get("/configurations", (schema) => {
+  server.get("/configurations/modules", (schema) => {
     return schema.configurations.all()
   })
 
   //applications
-  server.get("/applications", () => {
-    return applications
+  server.get("/applications", (schema, request) => {
+    let appAdded = request.queryParams["user"] === "true"
+    return appAdded ? addedApplications : applications
   })
 
   server.post("/applications", (schema, request) => {

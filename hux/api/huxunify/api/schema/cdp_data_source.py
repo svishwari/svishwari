@@ -96,6 +96,16 @@ class CdpConnectionsDataSourceSchema(Schema):
     feed_count = fields.Int(required=False, default=None, allow_none=True)
 
 
+class CdpDataSourceDataFeedTypeAverageSchema(Schema):
+    """Data source data feed type average schema with value and flag
+    indicator."""
+
+    value = fields.Float(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.75
+    )
+    flag_indicator = fields.Bool(default=False)
+
+
 class CdpDataSourceDataFeedSchema(Schema):
     """Data source data feed schema"""
 
@@ -103,10 +113,14 @@ class CdpDataSourceDataFeedSchema(Schema):
     datasource_type = fields.Str(example=db_c.DATA_SOURCE_PLATFORM_BLUECORE)
     records_received = fields.Int(example=345612)
     records_processed = fields.Int(example=345612)
-    records_processed_percentage = fields.Float(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.9
+    records_processed_percentage = fields.Nested(
+        CdpDataSourceDataFeedTypeAverageSchema,
+        attribute=api_c.RECORDS_PROCESSED_PERCENTAGE,
     )
-    thirty_days_avg = fields.Float(example=76.45)
+    thirty_days_avg = fields.Nested(
+        CdpDataSourceDataFeedTypeAverageSchema,
+        attribute=api_c.THIRTY_DAYS_AVG,
+    )
     last_processed = DateTimeWithZ(
         attribute=api_c.PROCESSED_AT, example="2021-01-01T17:56:07.290Z"
     )
@@ -134,11 +148,13 @@ class IndividualDataSourceDataFeedDetailSchema(Schema):
     """Data source data feed details get schema"""
 
     filename = fields.Str(example="unsubscribe_1")
-    last_processed = DateTimeWithZ(example="2022-01-01T01:02:03Z")
+    last_processed_start = DateTimeWithZ(example="2022-01-01T01:02:03Z")
+    last_processed_end = DateTimeWithZ(example="2022-01-01T01:02:03Z")
     thirty_days_avg = fields.Float(example=0.87)
     records_processed = fields.Int(example=20000)
     records_received = fields.Int(example=25000)
     records_processed_percentage = fields.Float(example=0.8)
+    run_duration = fields.Str(example="01:32:45")
     status = fields.Str(
         validate=OneOf(
             [
@@ -151,6 +167,21 @@ class IndividualDataSourceDataFeedDetailSchema(Schema):
         ),
         example=api_c.STATUS_SUCCESS,
     )
+    sub_status = fields.Str(
+        validate=OneOf(
+            [
+                api_c.STATUS_IN_PROGRESS,
+                api_c.STATUS_PARTIAL_SUCCESS_PROGRESS,
+                api_c.STATUS_WAITING,
+                api_c.STATUS_PARTIAL_SUCCESS_WAITING,
+                api_c.STATUS_COMPLETE,
+                api_c.STATUS_FAILED,
+                api_c.STATUS_CANCELLED,
+                api_c.STATUS_PARTIAL_SUCCESS,
+            ]
+        ),
+        example=api_c.STATUS_SUCCESS,
+    )
 
 
 class DataSourceDataFeedDetailsGetSchema(Schema):
@@ -158,11 +189,13 @@ class DataSourceDataFeedDetailsGetSchema(Schema):
 
     name = DateTimeWithZ(example="2022-01-01T01:02:03Z")
     filename = fields.Str(example="unsubscribe_1")
-    last_processed = DateTimeWithZ(example="2022-01-01T01:02:03Z")
+    last_processed_start = DateTimeWithZ(example="2022-01-01T01:02:03Z")
+    last_processed_end = DateTimeWithZ(example="2022-01-01T01:02:03Z")
     thirty_days_avg = fields.Float(example=0.89)
     records_processed = fields.Int(example=40000)
     records_received = fields.Int(example=50000)
     records_processed_percentage = fields.Float(example=0.8)
+    run_duration = fields.Str(example="01:32:45")
     status = fields.Str(
         validate=OneOf(
             [

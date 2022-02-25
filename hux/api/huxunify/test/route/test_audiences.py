@@ -12,7 +12,6 @@ from hypothesis import given, strategies as st
 
 from huxunifylib.connectors.connector_cdp import ConnectorCDP
 
-from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.orchestration_management import (
@@ -35,6 +34,7 @@ from huxunify.api.schema.customers import (
 )
 from huxunify.app import create_app
 from huxunify.test import constants as t_c
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 
 
 class AudienceDownloadsTest(RouteTestCase):
@@ -280,7 +280,9 @@ class AudienceInsightsTest(TestCase):
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         self.request_mocker.get(
             t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
         )
@@ -564,7 +566,9 @@ class TestAudienceDestination(TestCase):
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         self.request_mocker.get(
             t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
         )

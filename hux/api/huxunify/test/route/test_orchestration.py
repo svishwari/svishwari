@@ -27,16 +27,16 @@ from huxunifylib.database.orchestration_management import (
     delete_audience,
 )
 
-from huxunifylib.database.user_management import (
-    set_user,
-    manage_user_favorites,
-)
+from huxunifylib.database.user_management import manage_user_favorites
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
 )
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api import constants as api_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
+from huxunify.test.route.route_test_util.test_data_loading.users import (
+    load_users,
+)
 import huxunify.test.constants as t_c
 
 
@@ -49,6 +49,8 @@ class OrchestrationRouteTest(RouteTestCase):
         """Setup resources before each test."""
 
         super().setUp()
+
+        load_users(self.database)
 
         self.audience_api_endpoint = f"/api/v1{api_c.AUDIENCE_ENDPOINT}"
 
@@ -95,7 +97,7 @@ class OrchestrationRouteTest(RouteTestCase):
                 },
             },
         ]
-        self.user_name = "dave smith"
+        self.user_name = t_c.VALID_USER_RESPONSE[api_c.NAME]
         self.destinations = []
         for destination in destinations:
             self.destinations.append(
@@ -237,17 +239,10 @@ class OrchestrationRouteTest(RouteTestCase):
                 db_c.AUDIENCE_STATUS_DELIVERING,
             )
 
-        set_user(
-            self.database,
-            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
-            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
-            display_name="dave smith",
-        )
-
         # Set an audience as favorite
         manage_user_favorites(
             self.database,
-            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            okta_id=t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
             component_name=api_c.AUDIENCES,
             component_id=self.audiences[0][db_c.ID],
         )
@@ -255,7 +250,7 @@ class OrchestrationRouteTest(RouteTestCase):
         # Set a lookalike audience as favorite
         manage_user_favorites(
             self.database,
-            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            okta_id=t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
             component_name=api_c.LOOKALIKE,
             component_id=self.lookalike_audience_doc[db_c.ID],
         )
@@ -1400,13 +1395,6 @@ class OrchestrationRouteTest(RouteTestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.start()
-
-        set_user(
-            self.database,
-            okta_id=t_c.VALID_USER_RESPONSE.get(api_c.OKTA_ID_SUB),
-            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
-            display_name="doug smith",
-        )
 
         # Set an audience as favorite
         manage_user_favorites(

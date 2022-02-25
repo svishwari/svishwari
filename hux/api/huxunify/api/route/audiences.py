@@ -341,7 +341,7 @@ class AudienceDownload(SwaggerView):
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             f'{user[api_c.USER_NAME]} downloaded the audience, "{audience[db_c.NAME]}"'
             f" with format {download_type}.",
-            api_c.ORCHESTRATION_TAG,
+            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
             user[api_c.USER_NAME],
         )
 
@@ -923,7 +923,7 @@ class AddDestinationAudience(SwaggerView):
                 f'Destination "{destination_to_attach[db_c.NAME]}" added to '
                 f'audience "{audience[db_c.NAME]}" '
             ),
-            api_c.ORCHESTRATION_TAG,
+            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
             user[api_c.USER_NAME],
         )
 
@@ -979,7 +979,7 @@ class DeleteDestinationAudience(SwaggerView):
     def delete(
         self, audience_id: ObjectId, user: dict
     ) -> Tuple[Response, int]:
-        """Adds Destination to Audience
+        """Remove Destination from Audience
 
         ---
         security:
@@ -1034,7 +1034,7 @@ class DeleteDestinationAudience(SwaggerView):
                     f'Destination "{destination_to_remove[db_c.NAME]}" removed from '
                     f'audience "{audience[db_c.NAME]}" '
                 ),
-                api_c.ORCHESTRATION_TAG,
+                db_c.NOTIFICATION_CATEGORY_AUDIENCES,
                 user[api_c.USER_NAME],
             )
 

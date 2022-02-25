@@ -31,7 +31,7 @@
       </router-link>
       <tooltip v-else>
         <template slot="label-content">
-          <span class="primary--text ellipsis menu-value" :class="labelClass">
+          <span class="ellipsis menu-value" :class="labelClass">
             {{ value }}
           </span>
         </template>

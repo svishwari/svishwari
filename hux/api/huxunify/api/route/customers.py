@@ -1073,6 +1073,7 @@ class TotalCustomersGraphView(SwaggerView):
 
         # get auth token from request
         token_response = get_token_from_request(request)
+        database = get_db_client()
 
         start_date, end_date = get_start_end_dates(request, 9)
         # create a dict for date_filters required by cdp endpoint
@@ -1081,9 +1082,20 @@ class TotalCustomersGraphView(SwaggerView):
             api_c.END_DATE: end_date,
         }
 
-        customers_insight_total = get_customers_insights_count_by_day(
-            token_response[0], date_filters
+        customers_insight_total = get_cache_entry(
+            database,
+            f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.TOTAL}.{start_date}.{end_date}",
         )
+
+        if not customers_insight_total:
+            customers_insight_total = get_customers_insights_count_by_day(
+                token_response[0], date_filters
+            )
+            create_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.TOTAL}.{start_date}.{end_date}",
+                customers_insight_total,
+            )
 
         return (
             jsonify(
@@ -1140,12 +1152,24 @@ class CustomersRevenueInsightsGraphView(SwaggerView):
 
         # get auth token from request
         token_response = get_token_from_request(request)
+        database = get_db_client()
 
         start_date, end_date = get_start_end_dates(request, 6)
 
-        customers_revenue_insight = get_revenue_by_day(
-            token_response[0], start_date, end_date
+        customers_revenue_insight = get_cache_entry(
+            database,
+            f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.REVENUE}.{start_date}.{end_date}",
         )
+
+        if not customers_revenue_insight:
+            customers_revenue_insight = get_revenue_by_day(
+                token_response[0], start_date, end_date
+            )
+            create_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.REVENUE}.{start_date}.{end_date}",
+                customers_revenue_insight,
+            )
 
         return (
             jsonify(
@@ -1202,11 +1226,28 @@ class CustomersInsightsCountries(SwaggerView):
 
         # get auth token from request
         token_response = get_token_from_request(request)
+        database = get_db_client()
+
+        customers_insight_countries = get_cache_entry(
+            database,
+            f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.COUNTRIES}",
+        )
+
+        if not customers_insight_countries:
+            customers_insight_countries = get_demographic_by_country(
+                token_response[0]
+            )
+
+            create_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.COUNTRIES}",
+                customers_insight_countries,
+            )
 
         return (
             jsonify(
                 CustomersInsightsCountriesSchema().dump(
-                    get_demographic_by_country(token_response[0]),
+                    customers_insight_countries,
                     many=True,
                 )
             ),
@@ -1258,11 +1299,28 @@ class CustomersInsightsStates(SwaggerView):
 
         # get auth token from request
         token_response = get_token_from_request(request)
+        database = get_db_client()
+
+        customers_insight_states = get_cache_entry(
+            database,
+            f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.STATES}",
+        )
+
+        if not customers_insight_states:
+            customers_insight_states = get_demographic_by_state(
+                token_response[0]
+            )
+
+            create_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.STATES}",
+                customers_insight_states,
+            )
 
         return (
             jsonify(
                 CustomersInsightsStatesSchema().dump(
-                    get_demographic_by_state(token_response[0]),
+                    customers_insight_states,
                     many=True,
                 )
             ),
@@ -1348,14 +1406,29 @@ class CustomersInsightsCities(SwaggerView):
             )
         )
 
+        database = get_db_client()
+
+        customers_insight_cities = get_cache_entry(
+            database,
+            f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.CITIES}.{batch_number}.{batch_size}",
+        )
+
+        if not customers_insight_cities:
+            customers_insight_cities = get_city_ltvs(
+                token_response[0],
+                offset=batch_size * (batch_number - 1),
+                limit=batch_size,
+            )
+
+            create_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.CITIES}.{batch_number}.{batch_size}",
+                customers_insight_cities,
+            )
         return (
             jsonify(
                 CustomersInsightsCitiesSchema().dump(
-                    get_city_ltvs(
-                        token_response[0],
-                        offset=batch_size * (batch_number - 1),
-                        limit=batch_size,
-                    ),
+                    customers_insight_cities,
                     many=True,
                 )
             ),

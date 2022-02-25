@@ -137,7 +137,6 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getDataSources()
     try {
       await this.getDestinations()
     } catch (error) {

@@ -2,6 +2,7 @@
 import logging
 from os import environ
 
+import pytz
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
@@ -14,6 +15,7 @@ from huxunify.api.route import ROUTES
 from huxunify.api.data_connectors.scheduler import (
     run_scheduled_deliveries,
     run_scheduled_destination_checks,
+    run_scheduled_tecton_feature_cache,
 )
 from huxunify.api.route.utils import get_db_client
 
@@ -132,6 +134,15 @@ def create_app() -> Flask:
             func=run_scheduled_destination_checks,
             trigger="cron",
             minute=api_c.DESTINATION_CHECK_CRON,
+            args=[get_db_client()],
+        )
+        # Schedule caching model features every day at 0000 hours UTC
+        scheduler.add_job(
+            id="cache_tecton_model_features",
+            func=run_scheduled_tecton_feature_cache,
+            trigger="cron",
+            hour=0,
+            timezone=pytz.timezone("US/Eastern"),
             args=[get_db_client()],
         )
 
