@@ -448,33 +448,15 @@ class CustomersListview(SwaggerView):
 
         offset = (batch_number - 1) * batch_size
 
-        # check cache and add to cache
-        customer_list = get_cache_entry(
-            database,
-            f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
-        )
-
-        if not customer_list:
-            customer_list = get_customer_profiles(
-                token_response[0], batch_size, offset
-            )
-            create_cache_entry(
-                database,
-                f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
-                customer_list,
-            )
-
         if user.get(api_c.USER_PII_ACCESS) is True:
             redacted_data = get_customer_profiles(
                 token_response[0], batch_size, offset
             )
         else:
-            # check cache and add to cache
             redacted_data = get_cache_entry(
                 database,
                 f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
             )
-
             if not redacted_data:
                 customer_list = get_customer_profiles(
                     token_response[0], batch_size, offset
