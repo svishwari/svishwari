@@ -604,14 +604,7 @@ ALLOWED_FIELDS = {
         OWNER_EMAIL,
         DATE_TRAINED,
     ],
-    APPLICATIONS_COLLECTION: [
-        NAME,
-        CATEGORY,
-        URL,
-        ICON,
-        ENABLED,
-        ADDED,
-    ],
+    APPLICATIONS_COLLECTION: [NAME, CATEGORY, URL, ICON, ENABLED, ADDED, TYPE],
     CLIENT_PROJECTS_COLLECTION: [
         NAME,
         TYPE,
