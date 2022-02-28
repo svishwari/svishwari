@@ -311,7 +311,7 @@ class CreateCdpDataSources(SwaggerView):
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 f"{user[api_c.USER_NAME]} created the following CDP Data Sources: "
                 f"{'. '.join([data_source[api_c.NAME] for data_source in new_data_sources])}",
-                api_c.CDP_DATA_SOURCES_TAG,
+                db_c.NOTIFICATION_CATEGORY_DATA_SOURCES,
                 user[api_c.USER_NAME],
             )
         else:
@@ -329,7 +329,7 @@ class CreateCdpDataSources(SwaggerView):
                 db_c.NOTIFICATION_TYPE_CRITICAL,
                 f"Failed to create the following CDP Data Sources: "
                 f"{'. '.join([data_source[api_c.NAME] for data_source in new_data_sources])}",
-                api_c.CDP_DATA_SOURCES_TAG,
+                db_c.NOTIFICATION_CATEGORY_DATA_SOURCES,
                 user[api_c.USER_NAME],
             )
 
@@ -406,7 +406,7 @@ class DeleteCdpDataSources(SwaggerView):
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     f"{user[api_c.USER_NAME]} deleted the following CDP Data Sources: "
                     f"{data_source_types}",
-                    api_c.CDP_DATA_SOURCES_TAG,
+                    db_c.NOTIFICATION_CATEGORY_DATA_SOURCES,
                     user[api_c.USER_NAME],
                 )
                 return {
@@ -423,7 +423,7 @@ class DeleteCdpDataSources(SwaggerView):
                 db_c.NOTIFICATION_TYPE_CRITICAL,
                 f"Failed to delete the following CDP Data Sources: "
                 f"{data_source_types}",
-                api_c.CDP_DATA_SOURCES_TAG,
+                db_c.NOTIFICATION_CATEGORY_DATA_SOURCES,
                 user[api_c.USER_NAME],
             )
             return {
@@ -571,7 +571,7 @@ class BatchUpdateDataSources(SwaggerView):
                         f"Data source(s) {updated_data_source_names} "
                         f"{update_action} by {user[api_c.DISPLAY_NAME]}"
                     ),
-                    api_c.CDP_DATA_SOURCES_TAG,
+                    db_c.NOTIFICATION_CATEGORY_DATA_SOURCES,
                     user[api_c.USER_NAME],
                 )
                 return (
@@ -780,7 +780,8 @@ class GetConnectionsDatafeedDetails(SwaggerView):
             fetch_datafeed_details(
                 datafeed_name, start_date, end_date, statuses
             ),
-            key=lambda x: x[api_c.LAST_PROCESSED],
+            key=lambda x: x[api_c.LAST_PROCESSED_START],
+            reverse=True,
         )
 
         return HuxResponse.OK(

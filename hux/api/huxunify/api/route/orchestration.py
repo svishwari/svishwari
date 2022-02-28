@@ -1184,7 +1184,7 @@ class AudiencePostView(SwaggerView):
                 f'New audience named "{audience_doc[db_c.NAME]}" '
                 f"added by {user[api_c.USER_NAME]}."
             ),
-            api_c.ORCHESTRATION_TAG,
+            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
             user[api_c.USER_NAME],
         )
 
@@ -1210,7 +1210,7 @@ class AudiencePostView(SwaggerView):
                     f'added to engagement "{engagement[db_c.NAME]}" '
                     f"by {user[api_c.USER_NAME]}."
                 ),
-                api_c.ORCHESTRATION_TAG,
+                db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
                 user[api_c.USER_NAME],
             )
 
@@ -1420,7 +1420,7 @@ class AudiencePutView(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             f'Audience "{audience_doc[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
-            api_c.ORCHESTRATION_TAG,
+            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
             user[api_c.USER_NAME],
         )
 
@@ -1879,7 +1879,7 @@ class SetLookalikeAudience(SwaggerView):
                 f"New lookalike audience named "
                 f'"{lookalike_audience[db_c.NAME]}" added by {user[api_c.USER_NAME]}.'
             ),
-            api_c.ORCHESTRATION_TAG,
+            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
             user[api_c.USER_NAME],
         )
         return HuxResponse.ACCEPTED(
@@ -1971,7 +1971,7 @@ class PutLookalikeAudience(SwaggerView):
                 f'Lookalike audience "{update_doc[db_c.NAME]}" '
                 f"edited by {user[api_c.USER_NAME]}."
             ),
-            api_c.ORCHESTRATION_TAG,
+            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
             user[api_c.USER_NAME],
         )
 
@@ -2120,7 +2120,7 @@ class DeleteAudienceView(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             f'Audience "{audience[db_c.NAME]}" successfully deleted by {user[api_c.USER_NAME]}.',
-            api_c.ORCHESTRATION_TAG,
+            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
             user[api_c.USER_NAME],
         )
 

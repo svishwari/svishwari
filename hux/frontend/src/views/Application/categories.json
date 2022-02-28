@@ -1,0 +1,22 @@
+{
+  "options": [
+    {
+      "name": "Data processing"
+    },
+    {
+      "name": "Data storage"
+    },
+    {
+      "name": "Modeling"
+    },
+    {
+      "name": "Monitoring"
+    },
+    {
+      "name": "Reporting"
+    },
+    {
+      "name": "Uncategorized"
+    }
+  ]
+}
