@@ -365,6 +365,7 @@ export default {
       createApplication: "application/createApplication",
       updateApplication: "application/updateApplications",
     }),
+
     onSelectMenuItem(item) {
       if (this.newAppDetails["category"] == item.name) {
         this.newAppDetails["category"] = "Uncategorized"
@@ -372,6 +373,7 @@ export default {
         this.newAppDetails["category"] = item.name
       }
     },
+
     navigateAway() {
       this.showConfirmModal = false
       this.flagForModal = true
