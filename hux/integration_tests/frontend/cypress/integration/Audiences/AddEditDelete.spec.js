@@ -25,7 +25,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
 
     // Attribute selection
     cy.get(selector.segmentPlayground.selectAttrBtn).click()
-    cy.get("div[class='dropdown-menuitems']").contains("Email").click()
+    cy.get("div[class='dropdown-menuitems']").contains("Gender").click()
 
     // Operator selection
     cy.get(selector.segmentPlayground.selectOperatorBtn).click()
@@ -35,7 +35,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
 
     // Value selection
     cy.get(selector.segmentPlayground.autoCompleteBtn).click()
-    cy.get(".v-autocomplete__content").contains(".com").click({ force: true })
+    cy.get(".v-autocomplete__content").contains("Male").click({ force: true })
 
     // Waiting for fetch the response
     // eslint-disable-next-line cypress/no-unnecessary-waiting
