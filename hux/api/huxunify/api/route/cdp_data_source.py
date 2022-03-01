@@ -6,6 +6,7 @@ from typing import Tuple
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
+from dateutil.parser import parse
 from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
 
@@ -25,6 +26,7 @@ from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.cdp_connection import (
     get_data_source_data_feeds,
     get_data_sources,
+    get_data_source_data_feed_details,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
 
@@ -38,7 +40,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     Validation as validation,
-    fetch_datafeed_details,
+    clean_and_aggregate_datafeed_details,
 )
 
 from huxunify.api.schema.cdp_data_source import (
@@ -739,7 +741,7 @@ class GetConnectionsDatafeedDetails(SwaggerView):
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self, datasource_type: str, datafeed_name: str, user: dict
@@ -774,13 +776,24 @@ class GetConnectionsDatafeedDetails(SwaggerView):
         statuses = request.args.get(api_c.STATUS, "")
         statuses = [x.title() for x in statuses.split(",")] if statuses else []
 
-        # Stubbed datafeed details data
-        # TODO: Update to fetch the data from Connections API when available
+        query_json = {api_c.START_DATE: start_date, api_c.END_DATE: end_date}
+        if statuses:
+            query_json[api_c.STATUSES] = statuses
+
+        datafeed_details = get_data_source_data_feed_details(
+            get_token_from_request(request)[0],
+            datasource_type,
+            datafeed_name,
+            query_json,
+        )
+
+        do_aggregate = (parse(end_date) - parse(start_date)).days > 1
+
         datafeed_details = sorted(
-            fetch_datafeed_details(
-                datafeed_name, start_date, end_date, statuses
+            clean_and_aggregate_datafeed_details(
+                datafeed_details, do_aggregate
             ),
-            key=lambda x: x[api_c.LAST_PROCESSED_START],
+            key=lambda x: x[api_c.PROCESSED_START_DATE],
             reverse=True,
         )
 
