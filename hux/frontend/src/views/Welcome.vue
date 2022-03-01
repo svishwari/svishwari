@@ -106,8 +106,8 @@ export default {
       font-style: normal;
       font-weight: normal;
       font-style: normal;
-      font-weight: 500;
-      font-size: 24px;
+      font-weight: 400;
+      font-size: 28px;
       line-height: 40px;
       margin-top: 48px;
     }
@@ -115,7 +115,7 @@ export default {
       font-family: Open Sans;
       font-style: normal;
       font-weight: normal;
-      font-size: 14px;
+      font-size: 16px;
       line-height: 22px;
       text-align: center;
       color: var(--v-black-darken1);
