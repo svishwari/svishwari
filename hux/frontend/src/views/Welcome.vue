@@ -2,14 +2,14 @@
   <div v-if="!authenticated" class="welcome-wrap">
     <div class="content">
       <logo />
-      <h1>Welcome to Hux!</h1>
+      <h1>Unleash the power of Hux</h1>
       <span>
-        An all-purpose tool to transform raw data into powerful market insights
-        and deliberate engagements: Aggregated Customer Data • Customized CDP •
-        Deep Dive Insights • Personalized Engagements Targeted Segmentation •
-        Addressable Audiences • Measure &amp; Optimize
+        We’ve built a new framework for connecting capabilities end-to-end and
+        elevating experiences. Hux, paired with our team of Experience
+        Management experts, helps our clients regain ownership of their data,
+        decisioning, and omnichannel orchestration capabilities to manage
+        experiences at scale.
       </span>
-      <h2>All Together, Entirely</h2>
       <v-btn
         :to="{ name: 'Home' }"
         data-e2e="signin"
