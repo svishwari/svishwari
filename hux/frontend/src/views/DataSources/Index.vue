@@ -47,7 +47,7 @@
         </v-col>
       </v-row>
       <hux-empty
-        v-else
+        v-if="!isConnectionStarted && !errorState"
         icon-type="destinations-null"
         :icon-size="50"
         title="No data sources to show"
@@ -66,6 +66,22 @@
           </hux-button>
         </template>
       </hux-empty>
+      <v-row
+        v-if="!isConnectionStarted && errorState"
+        class="ma-0 padding-75 white"
+      >
+        <empty-page type="error-on-screens" :size="50">
+          <template #title>
+            <div>Data sources are currently unavailable</div>
+          </template>
+          <template #subtitle>
+            <div>
+              Our team is working hard to fix it. Please be patient and try
+              again soon!
+            </div>
+          </template>
+        </empty-page>
+      </v-row>
     </div>
     <data-source-configuration v-model="drawer" />
   </page>
@@ -82,6 +98,7 @@ import huxButton from "@/components/common/huxButton"
 import HuxEmpty from "@/components/common/screens/Empty"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 import Icon from "@/components/common/Icon"
+import EmptyPage from "@/components/common/EmptyPage"
 
 export default {
   name: "DataSources",
@@ -95,6 +112,7 @@ export default {
     DataSourceConfiguration,
     HuxEmpty,
     Icon,
+    EmptyPage,
   },
 
   data() {
@@ -107,23 +125,20 @@ export default {
       ],
       drawer: false,
       loading: false,
+      errorState: false,
     }
   },
 
   computed: {
     ...mapGetters({
       dataSources: "dataSources/list",
-      destinations: "destinations/list",
     }),
 
     isConnectionStarted() {
       const availableDataSources = this.dataSources.filter(
         (each) => each.is_added
       )
-      const availableDestinations = this.destinations.filter(
-        (each) => each.is_added
-      )
-      return availableDataSources.length > 0 || availableDestinations.length > 0
+      return availableDataSources.length > 0
     },
   },
 
@@ -141,6 +156,8 @@ export default {
     this.loading = true
     try {
       await this.getDataSources()
+    } catch (error) {
+      this.errorState = true
     } finally {
       this.loading = false
     }
@@ -157,7 +174,6 @@ export default {
   methods: {
     ...mapActions({
       getDataSources: "dataSources/getAll",
-      getDestinations: "destinations/getAll",
     }),
     toggleDrawer() {
       this.drawer = !this.drawer
@@ -165,4 +181,9 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.padding-75 {
+  padding-top: 75px !important;
+  padding-bottom: 75px !important;
+}
+</style>
