@@ -68,7 +68,7 @@
       </hux-empty>
       <v-row
         v-if="!isConnectionStarted && errorState"
-        class="ma-0 padding-75 white"
+        class="ma-0 error-padding white"
       >
         <empty-page type="error-on-screens" :size="50">
           <template #title>
@@ -135,10 +135,7 @@ export default {
     }),
 
     isConnectionStarted() {
-      const availableDataSources = this.dataSources.filter(
-        (each) => each.is_added
-      )
-      return availableDataSources.length > 0
+      return this.dataSources.some((each) => each.is_added)
     },
   },
 
@@ -182,7 +179,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.padding-75 {
+.error-padding {
   padding-top: 75px !important;
   padding-bottom: 75px !important;
 }
