@@ -15,7 +15,7 @@ describe("Orchestration > Destinations", () => {
 
     cy.get(selector.destinations).eq(0).get(".mdi-dots-vertical").eq(0).click()
 
-    cy.get(selector.destination.destinationRemove).eq(0).click()
+    cy.get(selector.destination.destinationRemove).last().eq(0).click()
     cy.get(selector.destination.destinationRemoveConfirmBody).then(
       ($modalBody) => {
         if (
@@ -69,7 +69,7 @@ describe("Orchestration > Destinations", () => {
           cy.get(selector.destination.destinationConfigDetails)
             .get("input")
             .each(($el, index) => {
-              if (index < 5) {
+              if (index < 6) {
                 cy.wrap($el).type("123456")
               }
             })
