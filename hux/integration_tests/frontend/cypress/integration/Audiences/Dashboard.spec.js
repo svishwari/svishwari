@@ -17,6 +17,8 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       .then((href) => {
         cy.visit(href)
       })
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
 
     // Click on delivery history link if possible and open drawer
     cy.get(selector.audience.deliveryhistory).click({ force: true })

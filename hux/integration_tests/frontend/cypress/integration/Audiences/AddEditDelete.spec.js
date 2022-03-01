@@ -76,8 +76,9 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
           .click({ force: true })
 
         cy.contains("Edit audience").click()
+        cy.contains("Yes, edit").click()
         //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(4000)
+        cy.wait(5000)
 
         cy.location().should((loc) => {
           expect(loc.pathname.toString()).to.contain("/update")
