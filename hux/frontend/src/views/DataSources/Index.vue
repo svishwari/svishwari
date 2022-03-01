@@ -141,7 +141,6 @@ export default {
     this.loading = true
     try {
       await this.getDataSources()
-      await this.getDestinations()
     } finally {
       this.loading = false
     }

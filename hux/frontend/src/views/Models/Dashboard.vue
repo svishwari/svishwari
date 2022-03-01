@@ -626,17 +626,27 @@ export default {
           icon: "models",
         },
       ]
-      items.push({
-        text: this.$route.params.name,
-        disabled: true,
-        logo: `model-${
-          this.modelTypes.includes(
-            this.$route.params.type ? this.$route.params.type.toLowerCase() : ""
-          )
-            ? this.$route.params.type.toLowerCase()
-            : "unknown"
-        }`,
-      })
+      if (this.$route.params.name) {
+        items.push({
+          text: this.$route.params.name,
+          disabled: true,
+          logo: `model-${
+            this.modelTypes.includes(
+              this.$route.params.type
+                ? this.$route.params.type.toLowerCase()
+                : ""
+            )
+              ? this.$route.params.type.toLowerCase()
+              : "unknown"
+          }`,
+        })
+      } else if (this.model.name) {
+        items.push({
+          text: this.model.name,
+          disabled: true,
+          logo: `model-${this.model.type.toLowerCase()}`,
+        })
+      }
       return items
     },
   },

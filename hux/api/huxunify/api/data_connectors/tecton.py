@@ -13,6 +13,7 @@ import aiohttp
 import async_timeout
 import requests
 from huxunifylib.util.general.logging import logger
+from huxunifylib.database.constants import ID
 
 from huxunify.api.config import get_config, Config
 from huxunify.api.exceptions import integration_api_exceptions as iae
@@ -147,7 +148,7 @@ class Tecton:
             # get model metadata from tecton
             feature = meta_data[api_c.FEATURES]
             model = {
-                api_c.ID: meta_data[api_c.JOIN_KEYS][0],
+                ID: meta_data[api_c.JOIN_KEYS][0],
                 api_c.LAST_TRAINED: parser.parse(feature[1])
                 if feature[1]
                 else None,

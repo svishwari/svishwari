@@ -430,6 +430,7 @@ class CustomersListview(SwaggerView):
 
         # get token
         token_response = get_token_from_request(request)
+        database = get_db_client()
 
         batch_size = Validation.validate_integer(
             request.args.get(
@@ -452,18 +453,30 @@ class CustomersListview(SwaggerView):
                 token_response[0], batch_size, offset
             )
         else:
-
-            redacted_data = {}
-            customer_list = get_customer_profiles(
-                token_response[0], batch_size, offset
+            redacted_data = get_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
             )
-            redacted_data[api_c.TOTAL_CUSTOMERS] = customer_list.get(
-                api_c.TOTAL_CUSTOMERS
-            )
-            redacted_data[api_c.CUSTOMERS_TAG] = [
-                redact_fields(x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS)
-                for x in customer_list.get(api_c.CUSTOMERS_TAG)
-            ]
+            if not redacted_data:
+                customer_list = get_customer_profiles(
+                    token_response[0], batch_size, offset
+                )
+                redacted_data = {
+                    api_c.TOTAL_CUSTOMERS: customer_list.get(
+                        api_c.TOTAL_CUSTOMERS
+                    ),
+                    api_c.CUSTOMERS_TAG: [
+                        redact_fields(
+                            x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS
+                        )
+                        for x in customer_list.get(api_c.CUSTOMERS_TAG)
+                    ],
+                }
+                create_cache_entry(
+                    database,
+                    f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
+                    redacted_data,
+                )
 
         return (
             CustomersSchema().dump(redacted_data),
@@ -620,14 +633,33 @@ class IDRDataFeeds(SwaggerView):
         start_date, end_date = get_start_end_dates(request, 6)
         Validation.validate_date_range(start_date, end_date)
 
+        database = get_db_client()
+
+        data_feeds = get_cache_entry(
+            database,
+            f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}."
+            f"{start_date}.{end_date}",
+        )
+
+        if not data_feeds:
+            data_feeds = get_idr_data_feeds(
+                token_response[0],
+                start_date,
+                end_date,
+            )
+
+            # cache
+            create_cache_entry(
+                database,
+                f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}."
+                f"{start_date}.{end_date}",
+                data_feeds,
+            )
+
         return (
             jsonify(
                 DataFeedSchema().dump(
-                    get_idr_data_feeds(
-                        token_response[0],
-                        start_date,
-                        end_date,
-                    ),
+                    data_feeds,
                     many=True,
                 )
             ),
@@ -689,11 +721,25 @@ class IDRDataFeedDetails(SwaggerView):
         token_response = get_token_from_request(request)
 
         datafeed_id = Validation.validate_integer(datafeed_id)
+        database = get_db_client()
+
+        data_feed = get_cache_entry(
+            database,
+            f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}." f"{datafeed_id}",
+        )
+
+        if not data_feed:
+            data_feed = get_idr_data_feed_details(
+                token_response[0], datafeed_id
+            )
+            create_cache_entry(
+                database,
+                f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}." f"{datafeed_id}",
+                data_feed,
+            )
 
         return (
-            DataFeedDetailsSchema().dump(
-                get_idr_data_feed_details(token_response[0], datafeed_id)
-            ),
+            DataFeedDetailsSchema().dump(data_feed),
             HTTPStatus.OK,
         )
 
@@ -906,14 +952,33 @@ class IDRMatchingTrends(SwaggerView):
         start_date, end_date = get_start_end_dates(request, 6)
         Validation.validate_date_range(start_date, end_date)
 
+        database = get_db_client()
+
+        matching_trends = get_cache_entry(
+            database,
+            f"{api_c.IDR_ENDPOINT}.{api_c.MATCHING_TRENDS}."
+            f"{start_date}.{end_date}",
+        )
+
+        if not matching_trends:
+            matching_trends = get_idr_matching_trends(
+                token_response[0],
+                start_date,
+                end_date,
+            )
+
+            # cache
+            create_cache_entry(
+                database,
+                f"{api_c.IDR_ENDPOINT}.{api_c.MATCHING_TRENDS}."
+                f"{start_date}.{end_date}",
+                matching_trends,
+            )
+
         return (
             jsonify(
                 MatchingTrendsSchema().dump(
-                    get_idr_matching_trends(
-                        token_response[0],
-                        start_date,
-                        end_date,
-                    ),
+                    matching_trends,
                     many=True,
                 )
             ),

@@ -259,7 +259,7 @@ export default {
         {
           text: "Category",
           value: "category",
-          width: "180px",
+          width: "240px",
         },
         {
           text: "Type",

@@ -461,7 +461,6 @@ class NotificationUsers(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Notification Distinct Users",
-            "schema": str,
         },
     }
     responses.update(AUTH401_RESPONSE)

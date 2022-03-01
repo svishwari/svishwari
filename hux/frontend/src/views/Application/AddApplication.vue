@@ -219,10 +219,11 @@
             </label>
 
             <card-horizontal
-              title="Custom Application"
+              title="Request an application not on the list"
               icon="custom-application"
               :is-added="false"
               :is-already-added="false"
+              requested-button
               class="mb-2"
               data-e2e="applicationsDrawer"
               @click="onAddApplication(null)"
@@ -257,6 +258,7 @@ import { formatText, groupBy } from "@/utils"
 import sortBy from "lodash/sortBy"
 import { mapActions, mapGetters } from "vuex"
 import HuxDropdown from "@/components/common/HuxDropdown.vue"
+import categories from "./categories.json"
 
 export default {
   name: "AddApplication",
@@ -301,32 +303,7 @@ export default {
       navigateTo: false,
       flagForModal: false,
       ApplicationUrl: null,
-      categoryOptions: [
-        {
-          name: "Data processing",
-          type: "Data processing",
-        },
-        {
-          name: "Data storage",
-          type: "Data storage",
-        },
-        {
-          name: "Modeling",
-          type: "Modeling",
-        },
-        {
-          name: "Monitoring",
-          type: "Monitoring",
-        },
-        {
-          name: "Reporting",
-          type: "Reporting",
-        },
-        {
-          name: "Uncategorized",
-          type: "Uncategorized",
-        },
-      ],
+      categoryOptions: categories.options,
       customApp: null,
     }
   },
@@ -463,16 +440,9 @@ export default {
 .h-80 {
   height: 80px;
 }
-::v-deep .hux-dropdown {
-  .main-button {
-    border-radius: 4px;
+.hux-dropdown {
+  ::v-deep .main-button {
     margin: 0px !important;
-    .v-btn__content {
-      top: 1px;
-      .v-icon {
-        top: -1px;
-      }
-    }
   }
 }
 .primary-border {
