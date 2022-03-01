@@ -6,7 +6,7 @@ from collections import defaultdict
 from datetime import datetime, date
 import re
 from itertools import groupby
-from typing import Tuple, Union, Generator
+from typing import Tuple, Union, Generator, Callable
 from http import HTTPStatus
 from bson import ObjectId
 
@@ -54,8 +54,6 @@ from huxunify.api.data_connectors.okta import (
 )
 from huxunify.api.data_connectors.cdp import (
     check_cdm_api_connection,
-    get_customers_overview,
-    get_demographic_by_state,
 )
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
@@ -70,12 +68,6 @@ from huxunify.api.schema.user import RequestedUserSchema
 from huxunify.api.stubbed_data.datasource_datafeed_stub import (
     datafeed_detail_stub_data,
 )
-
-# Cache Constants
-CACHE_MAPS = {
-    api_c.CUSTOMERS_INSIGHTS: get_customers_overview,
-    api_c.GEOGRAPHICAL: get_demographic_by_state,
-}
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -1158,22 +1150,23 @@ def generate_cache_key_string(data: Union[dict, list]) -> Generator:
 
 
 def check_and_return_cache(
-    database: MongoClient,
     cache_tag: str,
     key: Union[str, list, dict],
+    method: Callable,
     token: str = None,
 ) -> Union[list, dict]:
     """Checks for cache to return or creates an entry
     Args:
-        token(str): JWT token
-        database(MongoClient): Database Client
         cache_tag(str): Cache Tag which used in prefix of Key
         key(str): Cache Key
+        method(Callable): Method to retrieve data if there is no cache
+        token(str): JWT token
 
     Returns:
         Union[list,dict]: Data to be retrieved
 
     """
+    database = get_db_client()
 
     data = get_cache_entry(
         database,
@@ -1182,7 +1175,7 @@ def check_and_return_cache(
 
     if not data:
         logger.info("No cache data available retreiving actual data")
-        data = CACHE_MAPS.get(cache_tag)(token, key)
+        data = method(token, key)
         create_cache_entry(
             database=database,
             cache_key="".join(
