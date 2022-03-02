@@ -976,7 +976,7 @@ def group_and_aggregate_datafeed_details_by_date(
         status = api_c.STATUS_COMPLETE
         for df_detail in df_details:
             # set last processed start for datafeeds aggregated by date
-            # i.e. Minimum of last processed start for all grouped datafeed details
+            # i.e. Minimum of last processed start for all grouped datafeed
             if (
                 not data_feed_by_date.get(api_c.PROCESSED_START_DATE)
                 or data_feed_by_date[api_c.PROCESSED_START_DATE]
@@ -986,7 +986,7 @@ def group_and_aggregate_datafeed_details_by_date(
                     api_c.PROCESSED_START_DATE
                 ]
             # set last processed end for datafeeds aggregated by date
-            # i.e. Maximum of last processed end for all grouped datafeed details
+            # i.e. Maximum of last processed end for all grouped datafeeds
             if (
                 not data_feed_by_date.get(api_c.PROCESSED_END_DATE)
                 or data_feed_by_date[api_c.PROCESSED_END_DATE]
@@ -1048,7 +1048,7 @@ def clean_and_aggregate_datafeed_details(
 
     Args:
         datafeed_details (list): List of data feed file details
-        do_aggregate (bool): Flag that specifies if the data needs to be aggregated
+        do_aggregate (bool): Flag specifying if aggregation needed
 
     Returns:
         list: list of data feed details
