@@ -5,10 +5,11 @@ from typing import Tuple
 import boto3
 import botocore
 
-from huxunify.api.data_connectors.cloud_connectors.cloud_client import (
+from huxunify.api.data_connectors.cloud.cloud_client import (
     CloudClient,
 )
 import huxunify.api.constants as api_c
+from huxunify.api.config import get_config, Config
 
 # pylint: disable=missing-raises-doc
 from huxunify.api.prometheus import record_health_status_metric
@@ -17,9 +18,11 @@ from huxunify.api.prometheus import record_health_status_metric
 class AWSClient(CloudClient):
     """Class for AWS cloud operations"""
 
-    def __init__(self):
+    provider = "aws"
+
+    def __init__(self, config: Config = get_config()):
         """Instantiate the AWS client class"""
-        super().__init__()
+        super().__init__(config)
 
     # pylint: disable=no-self-use
     def get_aws_client(

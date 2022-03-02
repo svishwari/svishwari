@@ -1,12 +1,31 @@
 """ Module for base class for cloud operations"""
-from abc import ABC
-from typing import Tuple
+from typing import Tuple, TypeVar
 
-from huxunify.api.config import get_config
+from huxunify.api.config import get_config, Config
 
 
-class CloudClient(ABC):
+class CloudClient:
     """Base class for cloud operations"""
+
+    def __new__(
+        cls, config: Config = get_config()
+    ) -> TypeVar("T", bound="CloudClient"):
+        """override the new class to handle subclass mapping.
+
+        Args:
+            config (Config): configuration object.
+
+        Returns:
+            CloudClient: subclass of CloudClient.
+        """
+        provider = config.CLOUD_PROVIDER
+        subclass_map = {
+            subclass.provider: subclass for subclass in cls.__subclasses__()
+        }
+        subclass = (
+            subclass_map[provider] if provider in subclass_map else CloudClient
+        )
+        return super(CloudClient, subclass).__new__(subclass)
 
     def __init__(self, config=get_config()):
         """Instantiate the cloud client base class

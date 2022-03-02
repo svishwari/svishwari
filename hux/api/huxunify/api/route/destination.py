@@ -47,10 +47,9 @@ from huxunifylib.connectors.util.selector import (
     get_delivery_platform_connector,
 )
 
-from huxunify.api.data_connectors.cloud_connectors.cloud_client import (
+from huxunify.api.data_connectors.cloud.cloud_client import (
     CloudClient,
 )
-from huxunify.api.data_connectors.cloud_connectors.util import get_cloud_client
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
 )
@@ -442,7 +441,6 @@ class DestinationAuthenticationPostView(SwaggerView):
             GoogleAdsAuthCredsSchema().load(auth_details)
 
         if auth_details:
-            cloud_client = get_cloud_client()
             authentication_parameters = {}
             if destination_type not in api_c.DESTINATION_SECRETS:
                 raise KeyError(
@@ -465,7 +463,7 @@ class DestinationAuthenticationPostView(SwaggerView):
                 param_name = f"{api_c.PARAM_STORE_PREFIX}_{secret_name}"
                 authentication_parameters[secret_name] = param_name
                 try:
-                    cloud_client.set_secret(secret_name, secret_value)
+                    CloudClient().set_secret(secret_name, secret_value)
                 except Exception as exc:
                     logger.error(exc)
                     return HuxResponse.INTERNAL_SERVER_ERROR(

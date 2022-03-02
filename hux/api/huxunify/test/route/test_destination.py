@@ -9,8 +9,6 @@ from bson import ObjectId
 
 from huxunifylib.connectors import FacebookConnector
 
-from huxunify.api.data_connectors.cloud_connectors.util import get_cloud_client
-from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -25,6 +23,7 @@ from huxunifylib.database.engagement_management import (
     get_engagement,
 )
 import huxunify.test.constants as t_c
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationDataExtGetSchema,
@@ -52,22 +51,14 @@ class TestDestinationRoutes(RouteTestCase):
             }
         }
 
-        self.cloud_client = get_cloud_client()
-
         # mock get db client from destinations
         mock.patch(
             "huxunify.api.route.destination.get_db_client",
             return_value=self.database,
         ).start()
 
-        mock.patch(
-            "huxunify.api.route.destination.get_cloud_client",
-            return_value=self.cloud_client,
-        ).start()
-
-        mock.patch.object(
-            self.cloud_client, "set_secret", return_value=None
-        ).start()
+        # mock parameter store store secret
+        mock.patch.object(parameter_store, "store_secret").start()
 
         # mock parameter store get store value
         mock.patch.object(
@@ -315,9 +306,7 @@ class TestDestinationRoutes(RouteTestCase):
     def test_update_destination_auth_details(self):
         """Test update destination."""
 
-        destination_id = destination_management.get_delivery_platform_by_type(
-            self.database, db_c.DELIVERY_PLATFORM_FACEBOOK
-        )[db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
 
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
