@@ -7,7 +7,7 @@
       <div class="ta-center text-h3 mt-2">
         Sorry about that. The reason we don’t find this page:
       </div>
-      <span class="ml-17 ta-left">
+      <span class="text-h3 ml-17 ta-left">
         &bull; the page has moved<br />
         &bull; the page no longer exist<br />
         &bull; you got distracted and made the typo in the address<br />
@@ -53,35 +53,12 @@ export default {
     width: 150px;
     height: 150px;
   }
-  h1 {
-    font-family: Open Sans Light;
-    font-style: normal;
-    font-weight: 300;
-    font-size: 56px;
-    line-height: 76px;
-    display: flex;
-    align-items: flex-end;
-    text-align: right;
-  }
-  h2 {
-    font-family: Open Sans Light;
-    font-style: normal;
-    font-weight: 300;
-    font-size: 28px;
-    line-height: 40px;
-    display: flex;
-    align-items: flex-end;
-  }
   .fs-56 {
     font-size: 56px;
     line-height: 76px;
     font-weight: 300;
   }
   span {
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 18px;
     line-height: 31px;
     display: flex;
     align-items: flex-start;
