@@ -31,8 +31,7 @@ steps:
     image: huxhub.repo.mgnt.in/alpine
     commands:
       ## Set application name, which is also directory name in monorepo.
-      ## If not monorepo, APPDIR does not need to be set and can be removed from any paths below.
-      - cf_export APPDIR="hux/frontend"
+      - cf_export APPDIR="hux/api"
 
   CreateWSConfigs:
     stage: create_ws_configs
@@ -46,9 +45,8 @@ steps:
         {
         echo "#!/bin/bash";
         echo "# Run commands to prep for the Whitesource scan";
-        echo "npm install --global yarn";
-        echo "yarn ci";
-        echo "yarn global add @vue/cli";
+        echo "pip install -u pip pipenv";
+        echo "jq -r '.default | to_entries[] | .key + .value.version' Pipfile.lock > requirements.txt";
         } 
         >> $INSTALL_COMMANDS
       - chmod +x $INSTALL_COMMANDS
@@ -58,7 +56,7 @@ steps:
          echo wss.url=https://deloitte.whitesourcesoftware.com/agent;
          echo "printCliErrors=true";
          echo "productName=hux-unified";
-         echo "projectName=unified-ui";
+         echo "projectName=unified-api";
          echo "followSymbolicLinks=true";
          echo "generateScanReport=true";
          echo "userKey=$USER_KEY";
@@ -68,7 +66,10 @@ steps:
          echo "forceCheckAllDependencies=true";
          echo "forceUpdate=true";
          echo "### Programming Language Specific Settings ###";
-         echo "npm.runPreStep=true";
+         echo "python.ignorePipInstallErrors=true";
+         echo "python.resolveSetupPyFiles=true";
+         echo "python.IgnorePipenvInstallErrors=true";
+         echo "python.indexUrl=$ARTIFACTORY_PYTHON_READ";
          } 
          >> $CONFIG_FILE
       - cf_export INSTALL_COMMANDS=$INSTALL_COMMANDS
@@ -81,7 +82,7 @@ steps:
     stage: scan
     title: "Run whiteSource scan"
     type: freestyle
-    image: "ciruntime.repo.mgnt.in/whitesource-node:16.13.1"
+    image: "ciruntime.repo.mgnt.in/whitesource-python:3.8"
     commands:
       - cd ${{CF_REPO_NAME}}/$APPDIR
       - echo "projectVersion=${{CF_BRANCH}}" >> $CONFIG_FILE
@@ -101,7 +102,7 @@ steps:
     stage: create_scan_report
     title: "Generate Whitesource json report"
     type: freestyle
-    image: ciruntime.repo.mgnt.in/whitesource-node:16.13.1
+    image: ciruntime.repo.mgnt.in/whitesource-python:3.8
     commands:
       - cd ${{CF_REPO_NAME}}/$APPDIR
       - echo "projectVersion=branch" >> $CONFIG_FILE
@@ -124,7 +125,7 @@ steps:
     type: deloittehux/parse-whitesource-report
     arguments:
       ## Arguments must be explicitly set and can't use variables defined earlier.
-      ADDITIONAL_PATH: "hux/frontend"
+      ADDITIONAL_PATH: "hux/api"
       SCRIPT_PATH: "codefresh-pipelines/scripts/whitesource/"
       SCRIPT_NAME: parse-json-report.sh
       REPORT_NAME: scan_report.json
