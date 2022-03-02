@@ -66,10 +66,7 @@
           </hux-button>
         </template>
       </hux-empty>
-      <v-row
-        v-if="!isConnectionStarted && errorState"
-        class="ma-0 error-padding white"
-      >
+      <v-row v-if="!isConnectionStarted && errorState" class="ma-0 white">
         <empty-page type="error-on-screens" :size="50">
           <template #title>
             <div>Data sources are currently unavailable</div>
@@ -179,8 +176,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.error-padding {
-  padding-top: 75px !important;
-  padding-bottom: 75px !important;
+::v-deep .container {
+  div:first-child {
+    .row {
+      padding-top: 75px !important;
+      padding-bottom: 75px !important;
+    }
+  }
 }
 </style>
