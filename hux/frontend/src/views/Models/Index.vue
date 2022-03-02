@@ -189,10 +189,8 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "../../components/common/Icon.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import ModelConfiguration from "@/views/Models/Drawers/Configuration"
-
 export default {
   name: "Models",
-
   components: {
     Breadcrumb,
     CardStat,
@@ -206,7 +204,6 @@ export default {
     ConfirmModal,
     ModelConfiguration,
   },
-
   data() {
     return {
       loading: false,
@@ -226,12 +223,10 @@ export default {
       ],
     }
   },
-
   computed: {
     ...mapGetters({
       models: "models/list",
     }),
-
     hasModels() {
       return this.models.length ? Object.entries(this.models[0]).length : false
     },
@@ -246,11 +241,9 @@ export default {
         .sort((a, b) => {
           return a.name < b.name
         })
-
       return [...actives, ...others]
     },
   },
-
   async mounted() {
     this.loading = true
     try {
@@ -260,22 +253,23 @@ export default {
     }
     this.loading = false
   },
-
   methods: {
     ...mapActions({
       getModels: "models/getAll",
       deleteModal: "models/remove",
     }),
-
     goToDashboard(model) {
       if (model.status === "Active") {
         this.$router.push({
           name: "ModelDashboard",
-          params: { id: model.id },
+          params: {
+            id: model.id,
+            name: model.name,
+            type: model.type,
+          },
         })
       }
     },
-
     getModelType(model) {
       return this.modelTypes.includes(
         model.type ? model.type.toLowerCase() : ""

@@ -25,6 +25,7 @@ class ApplicationsGETSchema(Schema):
     category = Str()
     name = Str()
     url = Str()
+    type = Str(default="")
     is_added = Boolean()
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)

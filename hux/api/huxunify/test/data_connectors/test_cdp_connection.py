@@ -35,7 +35,9 @@ class CDPConnectionsTest(TestCase):
 
         self.config = get_config(api_c.TEST_MODE)
         self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         self.request_mocker.start()
 
         self.addCleanup(mock.patch.stopall)
@@ -178,7 +180,18 @@ class CDPConnectionsTest(TestCase):
             self.assertIn(api_c.RECORDS_PROCESSED, data_feed)
             self.assertIn(api_c.RECORDS_RECEIVED, data_feed)
             self.assertIn(api_c.RECORDS_PROCESSED_PERCENTAGE, data_feed)
+            self.assertIn(
+                api_c.VALUE, data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE]
+            )
+            self.assertIn(
+                api_c.FLAG_INDICATOR,
+                data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE],
+            )
             self.assertIn(api_c.THIRTY_DAYS_AVG, data_feed)
+            self.assertIn(api_c.VALUE, data_feed[api_c.THIRTY_DAYS_AVG])
+            self.assertIn(
+                api_c.FLAG_INDICATOR, data_feed[api_c.THIRTY_DAYS_AVG]
+            )
 
     @given(
         start_date=st.dates().map(

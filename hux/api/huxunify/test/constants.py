@@ -23,37 +23,27 @@ STANDARD_HEADERS = {
     "Authorization": TEST_AUTH_TOKEN,
     "Content-Type": "application/json",
 }
-VALID_RESPONSE = {
+VALID_INTROSPECTION_RESPONSE = {
     "active": True,
     "scope": "openid email profile",
-    "username": "davesmith",
+    "username": "user1",
     "exp": 1234,
     "iat": 12345,
-    "sub": "davesmith@fake",
+    "sub": "user1_admin@deloitte.com",
     "aud": "sample_aud",
     "iss": "sample_iss",
     "jti": "sample_jti",
     "token_type": "Bearer",
     "client_id": "1234",
-    "uid": "1234567",
+    "uid": "00u7acrr5pEmJ09lc2p7",
 }
-INVALID_OKTA_RESPONSE = {"active": False}
+INVALID_INTROSPECTION_RESPONSE = {"active": False}
 VALID_USER_RESPONSE = {
-    api_c.OKTA_ID_SUB: "8548bfh8d",
-    api_c.EMAIL: "davesmith@fake.com",
-    api_c.NAME: "dave smith",
-    api_c.ROLE: "admin",
+    api_c.OKTA_ID_SUB: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
+    api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
+    api_c.NAME: "USER 1",
+    api_c.ROLE: db_c.USER_ROLE_ADMIN,
     api_c.USER_PII_ACCESS: True,
-}
-OKTA_ID = "okta_id"
-ROLE = "role"
-VALID_DB_USER_RESPONSE = {
-    OKTA_ID: "8548bfh8d",
-    api_c.EMAIL: "davesmith@fake.com",
-    api_c.DISPLAY_NAME: "dave smith",
-    api_c.NAME: "dave smith",
-    api_c.USER_PII_ACCESS: True,
-    ROLE: "admin",
 }
 # response missing some fields
 INVALID_USER_RESPONSE = {

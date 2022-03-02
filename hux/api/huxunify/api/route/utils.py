@@ -6,7 +6,7 @@ from collections import defaultdict
 from datetime import datetime, date
 import re
 from itertools import groupby
-from typing import Tuple, Union
+from typing import Tuple, Union, Generator, Callable
 from http import HTTPStatus
 from bson import ObjectId
 
@@ -25,6 +25,10 @@ from huxunifylib.database.util.client import db_client_factory
 
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
+)
+from huxunifylib.database.cache_management import (
+    get_cache_entry,
+    create_cache_entry,
 )
 from huxunifylib.database import (
     constants as db_c,
@@ -48,7 +52,9 @@ from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     get_user_info,
 )
-from huxunify.api.data_connectors.cdp import check_cdm_api_connection
+from huxunify.api.data_connectors.cdp import (
+    check_cdm_api_connection,
+)
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
@@ -961,13 +967,12 @@ def group_and_aggregate_datafeed_details_by_date(
     grouped_datafeed_details = []
 
     grouped_by_date = groupby(
-        datafeed_details, lambda x: x[api_c.LAST_PROCESSED]
+        datafeed_details, lambda x: x[api_c.LAST_PROCESSED_START]
     )
 
     for df_date, df_details in grouped_by_date:
         data_feed_by_date = {
             api_c.NAME: df_date,
-            api_c.LAST_PROCESSED: df_date,
             api_c.THIRTY_DAYS_AVG: round(random.uniform(0.5, 1), 3),
             api_c.DATA_FILES: [],
         }
@@ -976,6 +981,26 @@ def group_and_aggregate_datafeed_details_by_date(
 
         status = api_c.STATUS_COMPLETE
         for df_detail in df_details:
+            # set last processed start for datafeeds aggregated by date
+            # i.e. Minimum of last processed start for all grouped datafeed details
+            if (
+                not data_feed_by_date.get(api_c.LAST_PROCESSED_START)
+                or data_feed_by_date[api_c.LAST_PROCESSED_START]
+                >= df_detail[api_c.LAST_PROCESSED_START]
+            ):
+                data_feed_by_date[api_c.LAST_PROCESSED_START] = df_detail[
+                    api_c.LAST_PROCESSED_START
+                ]
+            # set last processed end for datafeeds aggregated by date
+            # i.e. Maximum of last processed end for all grouped datafeed details
+            if (
+                not data_feed_by_date.get(api_c.LAST_PROCESSED_END)
+                or data_feed_by_date[api_c.LAST_PROCESSED_END]
+                <= df_detail[api_c.LAST_PROCESSED_END]
+            ):
+                data_feed_by_date[api_c.LAST_PROCESSED_END] = df_detail[
+                    api_c.LAST_PROCESSED_END
+                ]
             total_records_received += df_detail[api_c.RECORDS_RECEIVED]
             total_records_processed += df_detail[api_c.RECORDS_PROCESSED]
             data_feed_by_date[api_c.DATA_FILES].append(df_detail)
@@ -1023,15 +1048,31 @@ def fetch_datafeed_details(
     """
     datafeed_details = copy.deepcopy(datafeed_detail_stub_data)
 
-    _ = [
-        x.update(
+    for i, df_detail in enumerate(datafeed_details):
+        _ = df_detail.update(
             {
                 "filename": f"{datafeed_name}_{i}",
-                api_c.LAST_PROCESSED: parse(x[api_c.LAST_PROCESSED]),
+                api_c.LAST_PROCESSED_START: parse(
+                    df_detail[api_c.LAST_PROCESSED_START]
+                ),
+                api_c.LAST_PROCESSED_END: parse(
+                    df_detail[api_c.LAST_PROCESSED_END]
+                ),
             }
         )
-        for i, x in enumerate(datafeed_details)
-    ]
+        # compute run duration if success or running
+        if df_detail[api_c.STATUS] in [
+            api_c.STATUS_SUCCESS,
+            api_c.STATUS_RUNNING,
+        ]:
+            df_detail[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
+                int(
+                    (
+                        df_detail[api_c.LAST_PROCESSED_END]
+                        - df_detail[api_c.LAST_PROCESSED_START]
+                    ).total_seconds()
+                )
+            )
 
     if statuses:
         datafeed_details = list(
@@ -1046,7 +1087,8 @@ def fetch_datafeed_details(
                 lambda x: start_date
                 <= parse(
                     datetime.strftime(
-                        x[api_c.LAST_PROCESSED], api_c.DEFAULT_DATE_FORMAT
+                        x[api_c.LAST_PROCESSED_START],
+                        api_c.DEFAULT_DATE_FORMAT,
                     )
                 ).date()
                 <= end_date,
@@ -1068,3 +1110,78 @@ def clean_domain_name_string(domain_name: str) -> str:
         str: Cleaned domain name.
     """
     return domain_name.replace(".", "-")
+
+
+def parse_seconds_to_duration_string(duration: int):
+    """Convert duration timedelta to HH:MM:SS format
+
+    Args:
+        duration (int): Duration in seconds
+
+    Returns:
+        str: duration string
+
+    """
+    seconds = duration % 60
+    minutes = (duration // 60) % 60
+    hours = duration // (60 * 60)
+
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
+def generate_cache_key_string(data: Union[dict, list]) -> Generator:
+    """Generates cache key strings for dicts and lists
+    Args:
+        data (Union[dict,list]): Input data to get cache key
+
+    Yields:
+        Generator: String Generator
+
+    """
+    for item in data:
+        if isinstance(item, list):
+            generate_cache_key_string(item)
+        elif isinstance(item, dict):
+            yield " ".join(
+                [x for key, value in item.items() for x in [key, str(value)]]
+            )
+        else:
+            yield item
+
+
+def check_and_return_cache(
+    cache_tag: str,
+    key: Union[str, list, dict],
+    method: Callable,
+    token: str = None,
+) -> Union[list, dict]:
+    """Checks for cache to return or creates an entry
+    Args:
+        cache_tag(str): Cache Tag which used in prefix of Key
+        key(str): Cache Key
+        method(Callable): Method to retrieve data if there is no cache
+        token(str): JWT token
+
+    Returns:
+        Union[list,dict]: Data to be retrieved
+
+    """
+    database = get_db_client()
+
+    data = get_cache_entry(
+        database,
+        "".join([cache_tag] + list(generate_cache_key_string(key))),
+    )
+
+    if not data:
+        logger.info("No cache data available retreiving actual data")
+        data = method(token, key)
+        create_cache_entry(
+            database=database,
+            cache_key="".join(
+                [cache_tag] + list(generate_cache_key_string(key)),
+            ),
+            cache_value=data,
+        )
+
+    return data

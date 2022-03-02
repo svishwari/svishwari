@@ -35,4 +35,7 @@ export default {
 
   // email deliverability
   emailDeliverability: "/email-deliverability",
+
+  // add application
+  addApplication: "/application/add",
 }

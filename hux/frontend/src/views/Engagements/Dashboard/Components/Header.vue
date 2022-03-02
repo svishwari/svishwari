@@ -20,12 +20,7 @@
               :size="18"
               class="cursor-pointer mr-7"
               color="black-darken4"
-              @click.native="
-                $router.push({
-                  name: 'EngagementUpdate',
-                  params: { id: engagementId },
-                })
-              "
+              @click.native="editEngagement()"
             />
           </template>
           <template #hover-content>
@@ -121,6 +116,9 @@ export default {
     },
     editLookalike() {
       this.$emit("editLookalike")
+    },
+    editEngagement() {
+      this.$emit("editEngagement")
     },
   },
 }

@@ -946,7 +946,7 @@ class DestinationDataExtPostView(SwaggerView):
                         f'destination "{destination[db_c.NAME]}" '
                         f"by {user[api_c.USER_NAME]}."
                     ),
-                    api_c.DESTINATIONS_TAG,
+                    db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
                     user[api_c.USER_NAME],
                 )
             except AudienceAlreadyExists:
@@ -1057,7 +1057,7 @@ class DestinationPatchView(SwaggerView):
                 f"{user[api_c.USER_NAME]} successfully updated"
                 f' "{updated_destination[db_c.NAME]}" destination.'
             ),
-            api_c.DESTINATION,
+            db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
             user[api_c.USER_NAME],
         )
 
@@ -1213,7 +1213,7 @@ class DestinationsRequestView(SwaggerView):
                 f"{user[api_c.USER_NAME]} successfully requested"
                 f' "{destination[db_c.NAME]}" destination.'
             ),
-            api_c.DESTINATION,
+            db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
             user[api_c.USER_NAME],
         )
 
@@ -1280,7 +1280,7 @@ class DestinationDeleteView(SwaggerView):
                     f"{user[api_c.USER_NAME]} requested delete for "
                     f"{destination_id} that does not exist."
                 ),
-                api_c.DESTINATION,
+                db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
                 user[api_c.USER_NAME],
             )
             return HuxResponse.NO_CONTENT()
@@ -1300,7 +1300,7 @@ class DestinationDeleteView(SwaggerView):
                 f"{user[api_c.USER_NAME]} {'deleted' if deleted_flag else 'failed to delete'}"
                 f' "{destination[db_c.NAME]}" destination.'
             ),
-            api_c.DESTINATION,
+            db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
             user[api_c.USER_NAME],
         )
 

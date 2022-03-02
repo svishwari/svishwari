@@ -528,7 +528,6 @@ import MetricCard from "@/components/common/MetricCard"
 import EmptyPage from "@/components/common/EmptyPage"
 import { mapGetters, mapActions } from "vuex"
 import PipelinePerfrmance from "./PipelinePerfrmance"
-
 export default {
   name: "ModelsDashboard",
   components: {
@@ -564,9 +563,18 @@ export default {
       driftChartErrorState: false,
       liftErrorState: false,
       featuresErrorState: false,
+      modelTypes: [
+        "purchase",
+        "prediction",
+        "ltv",
+        "churn",
+        "propensity",
+        "unsubscribe",
+        "regression",
+        "classification",
+      ],
     }
   },
-
   computed: {
     ...mapGetters({
       model: "models/overview",
@@ -576,11 +584,9 @@ export default {
       modelDashboardFeatures: "models/modelFeatures",
       drift: "models/drift",
     }),
-
     modelMetricDetails() {
       return this.modelDetails(this.$route.params.id) || {}
     },
-
     driftChartData() {
       let data = this.drift.map((each) => {
         let oldRunDate = new Date(each.run_date)
@@ -592,16 +598,13 @@ export default {
           yAxisValue: each.drift,
         }
       })
-
       data.sort((a, b) => {
         let keyA = new Date(a.xAxisValue)
         let keyB = new Date(b.xAxisValue)
-
         if (keyA < keyB) return -1
         if (keyA > keyB) return 1
         return 0
       })
-
       return data
     },
     modelFeatures() {
@@ -623,7 +626,21 @@ export default {
           icon: "models",
         },
       ]
-      if (this.model.name) {
+      if (this.$route.params.name) {
+        items.push({
+          text: this.$route.params.name,
+          disabled: true,
+          logo: `model-${
+            this.modelTypes.includes(
+              this.$route.params.type
+                ? this.$route.params.type.toLowerCase()
+                : ""
+            )
+              ? this.$route.params.type.toLowerCase()
+              : "unknown"
+          }`,
+        })
+      } else if (this.model.name) {
         items.push({
           text: this.model.name,
           disabled: true,
@@ -633,7 +650,6 @@ export default {
       return items
     },
   },
-
   async mounted() {
     this.loading = true
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
@@ -652,7 +668,6 @@ export default {
       this.fetchModelFeatures(params) // Fetch data for Model feature table.
     }
   },
-
   created() {
     window.addEventListener("resize", this.sizeHandler)
   },
@@ -660,13 +675,11 @@ export default {
     this.$store.dispatch("models/clearModelValues")
     window.removeEventListener("resize", this.sizeHandler)
   },
-
   updated() {
     if (this.$refs["decisioning-drift"]) {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     }
   },
-
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
@@ -729,23 +742,19 @@ export default {
     border-radius: 12px;
   }
 }
-
 .model-features-frame {
   background-image: url("../../assets/images/no-barchart-frame.png");
   background-position: center;
 }
-
 .drift-chart-frame {
   background-image: url("../../assets/images/no-drift-chart-frame.png");
   background-position: center;
 }
-
 .lift-chart-frame {
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
 }
 //to overwrite the classes
-
 .title-no-notification {
   font-size: 24px !important;
   line-height: 34px !important;

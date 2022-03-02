@@ -397,7 +397,7 @@ class SetEngagement(SwaggerView):
                 f'New engagement named "{engagement[db_c.NAME]}" '
                 f"created by {user[api_c.USER_NAME]}."
             ),
-            api_c.ENGAGEMENT_TAG,
+            db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             user[api_c.USER_NAME],
         )
         return (
@@ -528,7 +528,7 @@ class UpdateEngagement(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             f'Engagement "{engagement[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
-            api_c.ENGAGEMENT_TAG,
+            db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             user[api_c.USER_NAME],
         )
         return (
@@ -599,7 +599,7 @@ class DeleteEngagement(SwaggerView):
                     f'Engagement "{engagement[db_c.NAME]}" '
                     f"deleted by {user[api_c.USER_NAME]}."
                 ),
-                api_c.ENGAGEMENT_TAG,
+                db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
                 user[api_c.USER_NAME],
             )
             logger.info("Successfully deleted engagement %s.", engagement_id)
@@ -748,7 +748,7 @@ class AddAudienceEngagement(SwaggerView):
                     f'Audience "{audience_name}" added to engagement '
                     f'"{engagement[db_c.NAME]}" by {user[api_c.USER_NAME]}.'
                 ),
-                api_c.ENGAGEMENT_TAG,
+                db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
                 user[api_c.USER_NAME],
             )
 
@@ -864,7 +864,7 @@ class DeleteAudienceEngagement(SwaggerView):
                     f'Audience "{audience_name}" removed from engagement '
                     f'"{engagement[db_c.NAME]}" by {user[api_c.USER_NAME]}.'
                 ),
-                api_c.ENGAGEMENT_TAG,
+                db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
                 user[api_c.USER_NAME],
             )
 
@@ -1007,7 +1007,7 @@ class AddDestinationEngagedAudience(SwaggerView):
                 f'audience "{audience[db_c.NAME]}" from engagement '
                 f'"{engagement[db_c.NAME]}" by {user[api_c.USER_NAME]}.'
             ),
-            api_c.ENGAGEMENT_TAG,
+            db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             user[api_c.USER_NAME],
         )
 
@@ -1155,7 +1155,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
                 f'"{audience[db_c.NAME]}" from engagement '
                 f'"{engagement[db_c.NAME]}" by {user[api_c.USER_NAME]}.'
             ),
-            api_c.ENGAGEMENT_TAG,
+            db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             user[api_c.USER_NAME],
         )
 
@@ -1430,7 +1430,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                 engagement[db_c.NAME],
                 audience[db_c.NAME] if audience else audience_id,
             ),
-            api_c.ENGAGEMENT_TAG,
+            db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             user[api_c.USER_NAME],
         )
 

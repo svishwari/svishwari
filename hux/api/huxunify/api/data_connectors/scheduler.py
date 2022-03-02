@@ -3,6 +3,7 @@ import asyncio
 from datetime import datetime
 from pymongo import MongoClient
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.cache_management import create_cache_entry
 from huxunifylib.database.collection_management import get_documents
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
@@ -18,6 +19,7 @@ from huxunifylib.connectors.util.selector import (
 )
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import get_next_schedule
 from huxunify.api.data_connectors.courier import (
     get_destination_config,
@@ -71,7 +73,15 @@ def generate_cron(schedule: dict) -> str:
             ] = f"{cron_exp['day_of_month']}/{schedule['every']}"
 
     if schedule["periodicity"] == "Monthly":
-        cron_exp["day_of_month"] = ",".join(schedule.get("day_of_month"))
+        day_of_month = schedule.get("day_of_month")
+
+        # Supporting both list and item.
+        cron_exp["day_of_month"] = (
+            ",".join(day_of_month)
+            if isinstance(day_of_month, list)
+            else day_of_month
+        )
+
         if schedule["every"] > 1:
             cron_exp["month"] = f"{cron_exp['month']}/{schedule['every']}"
     return " ".join([str(val) for val in cron_exp.values()])
@@ -101,7 +111,7 @@ async def delivery_destination(
                 f'"{engagement[db_c.NAME]}" to destination ID '
                 f'"{destination_id}" because the audience does not exist.'
             ),
-            api_c.DELIVERY_TAG,
+            db_c.NOTIFICATION_CATEGORY_DELIVERY,
             engagement[db_c.UPDATED_BY],
         )
         return
@@ -118,7 +128,7 @@ async def delivery_destination(
                 f'"{engagement[db_c.NAME]}" to destination ID '
                 f'"{destination_id}" because the destination does not exist.'
             ),
-            api_c.DELIVERY_TAG,
+            db_c.NOTIFICATION_CATEGORY_DELIVERY,
             engagement[db_c.UPDATED_BY],
         )
         return
@@ -153,7 +163,7 @@ async def delivery_destination(
             f'"{engagement[db_c.NAME]}" to destination '
             f'"{destination[db_c.NAME]}".'
         ),
-        api_c.DELIVERY_TAG,
+        db_c.NOTIFICATION_CATEGORY_DELIVERY,
         engagement[db_c.UPDATED_BY],
     )
 
@@ -280,3 +290,48 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     enabled=False,
                     deleted=True,
                 )
+
+
+async def cache_model_features(database: MongoClient, model_id: str) -> None:
+    """Fetch and cache model features for given model id
+
+    Args:
+        database (MongoClient): database client
+        model_id (str): model id
+
+    """
+    tecton = Tecton()
+    model_versions = tecton.get_model_version_history(model_id)
+
+    for model_version in model_versions:
+        model_features = tecton.get_model_features(
+            model_id, model_version[api_c.CURRENT_VERSION]
+        )
+        if model_features:
+            create_cache_entry(
+                database,
+                f"features.{model_id}.{model_version}",
+                model_features,
+            )
+
+
+def run_scheduled_tecton_feature_cache(database: MongoClient) -> None:
+    """function to run scheduled tecton feature cache refresh.
+
+    Args:
+        database (MongoClient): The mongo database client.
+
+    """
+
+    # set the event loop
+    asyncio.set_event_loop(asyncio.SelectorEventLoop())
+    loop = asyncio.get_event_loop()
+
+    all_models = Tecton().get_models()
+
+    for model in all_models:
+        # fire and forget task.
+        task = loop.create_task(
+            cache_model_features(database, model[api_c.ID])
+        )
+        loop.run_until_complete(task)

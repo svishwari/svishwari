@@ -16,8 +16,8 @@
                   href: '/email-deliverability',
                   icon: 'email_deliverability',
                   iconSize: 36,
-                  iconColor: 'success',
-                  iconColorVariant: 'lighten3',
+                  iconColor: 'black',
+                  iconColorVariant: 'base',
                 },
               ]"
             />

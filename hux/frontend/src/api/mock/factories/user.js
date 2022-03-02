@@ -59,12 +59,7 @@ export const user = {
       },
     },
     data_management: {
-      identity_resolution: {
-        informational: false,
-        success: false,
-        critical: false,
-      },
-      datasources: {
+      data_sources: {
         informational: false,
         success: false,
         critical: false,

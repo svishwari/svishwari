@@ -67,6 +67,11 @@ class NewUserRequest(Schema):
 class UserAlertSchema(Schema):
     """User alert schema"""
 
+    class Meta:
+        """Meta class to handle ordering of schema"""
+
+        ordered = True
+
     critical = Bool(default=False, load_default=False)
     success = Bool(default=False, load_default=False)
     informational = Bool(default=False, load_default=False)
@@ -75,18 +80,32 @@ class UserAlertSchema(Schema):
 class UserAlertDataManagementSchema(Schema):
     """User alert data management schema"""
 
+    class Meta:
+        """Meta class to handle ordering of schema"""
+
+        ordered = True
+
     data_sources = Nested(UserAlertSchema, required=False)
-    identity_resolution = Nested(UserAlertSchema, required=False)
 
 
 class UserAlertDecisioningSchema(Schema):
     """User alert decisioning schema"""
+
+    class Meta:
+        """Meta class to handle ordering of schema"""
+
+        ordered = True
 
     models = Nested(UserAlertSchema, required=False)
 
 
 class UserAlertOrchestrationSchema(Schema):
     """User alert orchestration schema"""
+
+    class Meta:
+        """Meta class to handle ordering of schema"""
+
+        ordered = True
 
     destinations = Nested(UserAlertSchema, required=False)
     delivery = Nested(UserAlertSchema, required=False)
@@ -96,6 +115,11 @@ class UserAlertOrchestrationSchema(Schema):
 
 class UserAlertCategorySchema(Schema):
     """User alert category schema"""
+
+    class Meta:
+        """Meta class to handle ordering of schema"""
+
+        ordered = True
 
     data_management = Nested(UserAlertDataManagementSchema)
     decisioning = Nested(UserAlertDecisioningSchema)

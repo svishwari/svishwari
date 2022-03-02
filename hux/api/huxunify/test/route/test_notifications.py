@@ -108,6 +108,18 @@ class TestNotificationRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(self.test_username, response.json["username"])
 
+    def test_get_notification_users(self):
+        """Test get notification users."""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{api_c.USERS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(len(response.json), 1)
+        self.assertIn("test_user", response.json)
+
     def test_get_notifications_default_params(self):
         """Test get notifications failure."""
 
@@ -223,6 +235,7 @@ class TestNotificationRoutes(RouteTestCase):
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description="Successfully delivered audience to platform A.",
+            category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=self.test_username,
         )
 

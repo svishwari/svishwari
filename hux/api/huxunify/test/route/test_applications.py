@@ -11,7 +11,6 @@ from huxunify.api.schema.applications import ApplicationsGETSchema
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database.user_management import (
     set_user,
-    get_user,
 )
 from huxunifylib.database.collection_management import (
     get_documents,
@@ -39,9 +38,10 @@ class ApplicationsTests(RouteTestCase):
         self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
         self.user_doc = set_user(
             self.database,
-            t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
             t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
             display_name=self.user_name,
+            role=t_c.VALID_USER_RESPONSE.get(api_c.ROLE),
         )
 
         applications = [
@@ -96,6 +96,7 @@ class ApplicationsTests(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            query_string={api_c.USER: True},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -103,8 +104,11 @@ class ApplicationsTests(RouteTestCase):
         self.assertFalse(
             ApplicationsGETSchema(many=True).validate(response.json)
         )
-        for application in response.json:
-            self.assertFalse(application[api_c.IS_ADDED])
+        self.assertEqual(len(response.json), 1)
+        self.assertEqual(
+            response.json[0][api_c.ID], str(self.applications[0][db_c.ID])
+        )
+        self.assertTrue(response.json[0][api_c.IS_ADDED])
 
     def test_success_create_applications(self):
         """Test creating application successfully."""
@@ -168,7 +172,7 @@ class ApplicationsTests(RouteTestCase):
             api_c.URL: "URL_Link",
         }
 
-        response = self.app.post(
+        self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json=applications_request,
@@ -190,7 +194,7 @@ class ApplicationsTests(RouteTestCase):
             api_c.URL: "URL_Link",
         }
 
-        response = self.app.post(
+        self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json=applications_request,

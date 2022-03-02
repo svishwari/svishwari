@@ -1,7 +1,7 @@
 import route from "../support/routes.js"
 import selector from "../support/selectors.js"
 
-describe("Navigation", () => {
+describe("My issues", () => {
   beforeEach(() => {
     cy.signin()
     cy.visit(route.home)

@@ -15,7 +15,6 @@ from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
 from huxunify.api.schema.customers import CustomerRevenueInsightsSchema
-from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
     clean_cdm_gender_fields,
@@ -34,7 +33,10 @@ from huxunify.api.data_connectors.cdp import (
     get_revenue_by_day,
 )
 from huxunify.app import create_app
-
+from huxunify.test import constants as t_c
+from huxunify.test.route.route_test_util.test_data_loading.users import (
+    load_users,
+)
 
 # pylint: disable=too-many-public-methods
 class CDPTest(TestCase):
@@ -47,7 +49,9 @@ class CDPTest(TestCase):
         self.test_client = create_app().test_client()
 
         self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         self.request_mocker.start()
 
         # setup the mock DB client
@@ -59,14 +63,21 @@ class CDPTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
+        load_users(self.database)
+
         mock.patch(
             "huxunify.api.route.customers.get_db_client",
             return_value=self.database,
         ).start()
 
         mock.patch(
-            "huxunify.api.route.decorators.get_user_from_db",
-            return_value=t_c.VALID_DB_USER_RESPONSE,
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.route.utils.get_user_info",
+            return_value=t_c.VALID_USER_RESPONSE,
         ).start()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)

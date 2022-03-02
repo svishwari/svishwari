@@ -198,7 +198,7 @@ export default {
       d3Transition.transition()
 
       // pull the axis number left side
-      d3Select.selectAll(".xAxis .tick text").attr("x", 1)
+      d3Select.selectAll(".xAxis .tick text").attr("x", 0)
 
       let lineTrace = (value) => {
         return d3Shape

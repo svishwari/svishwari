@@ -152,7 +152,7 @@ export default {
     border-style: solid !important;
     border-width: 1px;
     border-color: var(--v-black-lighten3) !important;
-    border-radius: 0;
+    border-radius: 4px;
     box-shadow: none !important;
     background-color: var(--v-white-base) !important;
     background: var(--v-white-base) !important;
@@ -163,12 +163,14 @@ export default {
     min-width: 200px;
     color: var(--v-black-darken4);
     ::v-deep .v-btn__content {
+      top: 1px;
       .spacer {
         &:nth-child(2) {
           display: none;
         }
       }
       .v-icon {
+        top: -1px;
         color: var(--v-primary-base);
       }
     }
