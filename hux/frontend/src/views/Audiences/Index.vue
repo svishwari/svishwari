@@ -661,8 +661,22 @@ export default {
     },
     getActionItems(audience) {
       // This assumes we cannot create a lookalike audience from a lookalike audience
-      let isLookalikeableActive =
-        audience.lookalikeable === "Active" && !audience.is_lookalike
+      let destinationMenu = []
+      if (audience.destinations.length !== 0) {
+        audience.destinations.forEach((element) => {
+          destinationMenu.push({
+            title: element.name,
+            isDisabled: false,
+            onClick: () => {
+              window.open("https://" + element.link)
+            },
+            icon: element.type,
+          })
+        })
+      }
+      //In Future
+      // let isLookalikeableActive =
+      //   audience.lookalikeable === "Active" && !audience.is_lookalike
       let isFavorite = this.isUserFavorite(audience, "audiences")
       let actionItems = [
         {
@@ -687,28 +701,9 @@ export default {
           },
         },
         {
-          title: "Create a lookalike",
-          isDisabled: !isLookalikeableActive,
-          menu: {
-            title: "Facebook",
-            isDisabled: true,
-            onClick: () => {
-              this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
-              this.openLookAlikeDrawer(audience)
-            },
-            icon: "facebook",
-          },
-        },
-        {
           title: "Open destination",
-          menu: {
-            title: "Facebook",
-            isDisabled: true,
-            onClick: () => {
-              window.open(audience.link, "_blank")
-            },
-            icon: "facebook",
-          },
+          isDisabled: audience.destinations.length !== 0 ? false : true,
+          menu: destinationMenu,
         },
         {
           title: "Delete audience",
