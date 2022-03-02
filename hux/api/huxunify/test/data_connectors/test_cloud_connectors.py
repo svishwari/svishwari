@@ -22,7 +22,7 @@ class CloudClientTests(TestCase):
             self.assertIsInstance(CloudClient(), AWSClient)
 
     def test_azure_provider_mapping(self) -> None:
-        """Test when aws provider is set."""
+        """Test when azure provider is set."""
         config = get_config()
         config.CLOUD_PROVIDER = "azure"
 
