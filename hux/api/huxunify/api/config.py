@@ -67,7 +67,7 @@ class Config:
     FLASK_ENV = "test"
 
     # Cloud Provider
-    CLOUD_PROVIDER = config(api_c.CLOUD_PROVIDER, default="aws")
+    CLOUD_PROVIDER = config(api_c.CLOUD_PROVIDER, default="")
 
     # Azure Config
     AZURE_BATCH_ACCOUNT_NAME = config(
