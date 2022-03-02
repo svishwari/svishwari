@@ -46,12 +46,10 @@ from huxunifylib.connectors import connector_sfmc
 from huxunifylib.connectors.util.selector import (
     get_delivery_platform_connector,
 )
-
-from huxunify.api.data_connectors.cloud.cloud_client import (
-    CloudClient,
-)
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
+    parameter_store,
 )
 from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.schema.destinations import (
@@ -78,7 +76,6 @@ from huxunify.api.route.decorators import (
     validate_destination,
     requires_access_levels,
 )
-from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
 )
@@ -355,7 +352,6 @@ class DestinationAuthenticationPostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    # pylint: disable=too-many-branches,broad-except,too-many-locals
     @api_error_handler(
         custom_message={
             ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
@@ -378,26 +374,24 @@ class DestinationAuthenticationPostView(SwaggerView):
 
         Returns:
             Tuple[Response, int]: Destination doc, HTTP status code.
-
-        Raises:
-            KeyError: Error is one of the keys is not present in the mapping
         """
+
         # load into the schema object
         body = DestinationPutSchema().load(request.get_json(), partial=True)
+
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
         performance_de = None
         campaign_de = None
         authentication_parameters = None
-        is_added = None
         database = get_db_client()
 
         # check if destination exists
         destination = destination_management.get_delivery_platform(
             database, destination_id
         )
-        destination_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
-        if destination_type == db_c.DELIVERY_PLATFORM_SFMC:
+        platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+        if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             SFMCAuthCredsSchema().load(auth_details)
             sfmc_config = body.get(db_c.CONFIGURATION)
             if not sfmc_config or not isinstance(sfmc_config, dict):
@@ -428,48 +422,28 @@ class DestinationAuthenticationPostView(SwaggerView):
                 return HuxResponse.BAD_REQUEST(
                     api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR
                 )
-        elif destination_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
+        elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
             FacebookAuthCredsSchema().load(auth_details)
-        elif destination_type in [
+        elif platform_type in [
             db_c.DELIVERY_PLATFORM_SENDGRID,
             db_c.DELIVERY_PLATFORM_TWILIO,
         ]:
             SendgridAuthCredsSchema().load(auth_details)
-        elif destination_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
+        elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             QualtricsAuthCredsSchema().load(auth_details)
-        elif destination_type == db_c.DELIVERY_PLATFORM_GOOGLE:
+        elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
             GoogleAdsAuthCredsSchema().load(auth_details)
 
         if auth_details:
-            authentication_parameters = {}
-            if destination_type not in api_c.DESTINATION_SECRETS:
-                raise KeyError(
-                    f"{destination_type} does not have a secret store mapping."
+            # store the secrets for the updated authentication details
+            authentication_parameters = (
+                parameter_store.set_destination_authentication_secrets(
+                    authentication_details=auth_details,
+                    is_updated=True,
+                    destination_id=destination_id,
+                    destination_type=platform_type,
                 )
-
-            for (
-                secret_name,
-                secret_value,
-            ) in auth_details.items():
-
-                # only store secrets in cloud secret store, otherwise store in object.
-                if (
-                    secret_name
-                    in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]
-                ):
-                    authentication_parameters[secret_name] = secret_value
-                    continue
-
-                param_name = f"{api_c.PARAM_STORE_PREFIX}_{secret_name}"
-                authentication_parameters[secret_name] = param_name
-                try:
-                    CloudClient().set_secret(secret_name, secret_value)
-                except Exception as exc:
-                    logger.error(exc)
-                    return HuxResponse.INTERNAL_SERVER_ERROR(
-                        f"{api_c.PARAMETER_STORE_ERROR_MSG}"
-                        f" destination_id: {destination_id}."
-                    )
+            )
             is_added = True
 
         return HuxResponse.OK(
@@ -1303,7 +1277,3 @@ class DestinationDeleteView(SwaggerView):
         )
 
         return HuxResponse.NO_CONTENT()
-
-
-if __name__ == "__main__":
-    c = CloudClient()
