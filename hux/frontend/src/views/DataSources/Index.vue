@@ -38,7 +38,7 @@
 
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
-    <div v-if="!loading">
+    <div v-if="!loading" class="datasource-loaded">
       <v-row v-if="isConnectionStarted" class="ma-0">
         <v-col>
           <data-sources-list
@@ -66,7 +66,10 @@
           </hux-button>
         </template>
       </hux-empty>
-      <v-row v-if="!isConnectionStarted && errorState" class="ma-0 white">
+      <v-row
+        v-if="!isConnectionStarted && errorState"
+        class="ma-0 white error-row"
+      >
         <empty-page type="error-on-screens" :size="50">
           <template #title>
             <div>Data sources are currently unavailable</div>
@@ -176,9 +179,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-::v-deep .container {
-  div:first-child {
-    .row {
+.datasource-loaded {
+  ::v-deep {
+    .error-row {
       padding-top: 75px !important;
       padding-bottom: 75px !important;
     }
