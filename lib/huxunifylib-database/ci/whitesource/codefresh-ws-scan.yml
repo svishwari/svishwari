@@ -46,7 +46,8 @@ steps:
         {
         echo "#!/bin/bash";
         echo "# Run commands to prep for the Whitesource scan";
-        echo "pip install -u pip pipenv";
+        echo "pip install pip --upgrade";
+        echo "pip install pipenv --upgrade";
         echo "jq -r '.default | to_entries[] | .key + .value.version' Pipfile.lock > requirements.txt";
         } 
         >> $INSTALL_COMMANDS
