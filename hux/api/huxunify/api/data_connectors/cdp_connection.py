@@ -434,6 +434,4 @@ def get_data_source_data_feed_details(
         data_source_type,
     )
 
-    data_feed_file_details = response.json()[api_c.BODY]
-
-    return data_feed_file_details
+    return response.json()[api_c.BODY]

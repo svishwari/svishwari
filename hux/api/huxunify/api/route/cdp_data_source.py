@@ -741,7 +741,7 @@ class GetConnectionsDatafeedDetails(SwaggerView):
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self, datasource_type: str, datafeed_name: str, user: dict
