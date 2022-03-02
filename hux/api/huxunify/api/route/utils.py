@@ -999,9 +999,10 @@ def group_and_aggregate_datafeed_details_by_date(
             total_records_processed += df_detail[api_c.RECORDS_PROCESSED]
             data_feed_by_date[api_c.DATA_FILES].append(df_detail)
 
-            if status == api_c.STATUS_COMPLETE and df_detail[api_c.STATUS] in [
-                api_c.STATUS_RUNNING
-            ]:
+            if (
+                status == api_c.STATUS_COMPLETE
+                and df_detail[api_c.STATUS] == api_c.STATUS_RUNNING
+            ):
                 status = api_c.STATUS_INCOMPLETE
 
             elif (
