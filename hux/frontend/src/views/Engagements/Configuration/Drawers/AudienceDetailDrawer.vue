@@ -15,8 +15,8 @@
         <overview :insights="audienceData" />
         <v-divider class="my-4 mb-6 mr-4"></v-divider>
         <attribute-rules
-          class="rules"
           ref="filters"
+          class="rules"
           :rules="audience.attributeRules"
           @loadingOverAllSize="(data) => updateLoad(data)"
         />
@@ -119,6 +119,8 @@ export default {
     },
     /**
      * Method to fecth audience details by ID.
+     *
+     * @param {string} id audience id
      */
     async fetchAudienceDetails(id) {
       try {

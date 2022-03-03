@@ -91,14 +91,12 @@
 import { mapGetters, mapActions } from "vuex"
 
 // common components
-import Icon from "@/components/common/Icon.vue"
 import MetricCard from "@/components/common/MetricCard.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "Overview",
   components: {
-    Icon,
     MetricCard,
     Tooltip,
   },
@@ -136,13 +134,13 @@ export default {
         cities: { title: "Cities", subtitle: "", icon: "birth" },
         age: { title: "Age range", subtitle: "", icon: "birth" },
       }
-      const sizeValue  = this.insights && this.insights.size
+      const sizeValue = this.insights && this.insights.size
       const insights = this.audienceInsights
       let result = Object.keys(metrics).map((metric) => {
         let metricCardSubtitle
         if (metric === "total_customers") {
           metricCardSubtitle = sizeValue
-        }else if (metric === "countries") {
+        } else if (metric === "countries") {
           metricCardSubtitle = insights.total_countries
         } else if (metric === "states") {
           metricCardSubtitle = insights.total_us_states

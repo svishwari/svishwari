@@ -26,7 +26,10 @@
       ]"
     >
       <template #field:name="row">
-        <div  class="text-decoration-none menu-link" @click="openAudieneDetailDrawer(row)">
+        <div
+          class="text-decoration-none menu-link"
+          @click="openAudieneDetailDrawer(row)"
+        >
           {{ row.value }}
         </div>
       </template>
