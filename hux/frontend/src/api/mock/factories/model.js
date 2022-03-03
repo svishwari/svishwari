@@ -45,7 +45,7 @@ export default {
   last_trained: () => faker.date.recent(),
   latest_version: "0.0.2",
   lookback_window: 365,
-  name: "Propensity to Unsubscribe",
+  model_name: "Propensity to Unsubscribe",
   owner: () => `${faker.name.firstName()} ${faker.name.lastName()}`,
   past_version_count: 0,
   prediction_window: 60,
@@ -57,7 +57,7 @@ export default {
       "Inactive",
       "Informational",
     ]),
-  type: () =>
+  model_type: () =>
     faker.random.arrayElement(["Classification", "Unknown", "Regression"]),
   version_history: () => mockVersionHistory(5),
   model_feature: (index) => mockModelFeature(index + 1),
