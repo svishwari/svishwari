@@ -9,7 +9,6 @@ from bson import ObjectId
 
 from huxunifylib.connectors import FacebookConnector
 
-from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -24,6 +23,7 @@ from huxunifylib.database.engagement_management import (
     get_engagement,
 )
 import huxunify.test.constants as t_c
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationDataExtGetSchema,
