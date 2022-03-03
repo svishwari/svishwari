@@ -26,16 +26,9 @@
       ]"
     >
       <template #field:name="row">
-        <router-link
-          :to="{
-            name: 'AudienceInsight',
-            params: { id: row.item.id },
-          }"
-          class="text-decoration-none menu-link"
-          append
-        >
+        <div  class="text-decoration-none menu-link" @click="openAudieneDetailDrawer(row)">
           {{ row.value }}
-        </router-link>
+        </div>
       </template>
       <template #field:size="row">
         <tooltip>
@@ -150,6 +143,14 @@
       @onToggle="(val) => (showDataExtensionDrawer = val)"
       @onBack="openSelectDestinationsDrawer"
     />
+
+    <audience-detail-drawer
+      ref="audienceDetailDrawer"
+      v-model="value.audiences"
+      :toggle="showAddAudienceDetailDrawer"
+      @onToggle="(val) => (showAddAudienceDetailDrawer = val)"
+      @onCancelAndBack="openAudienceDetailDrawer()"
+    />
   </div>
 </template>
 
@@ -168,6 +169,7 @@ import AddAudienceDrawer from "@/views/Engagements/Configuration/Drawers/AddAudi
 import SelectAudiencesDrawer from "@/views/Engagements/Configuration/Drawers/SelectAudiencesDrawer.vue"
 import SelectDestinationsDrawer from "@/views/Engagements/Configuration/Drawers/SelectDestinationsDrawer.vue"
 import DestinationDataExtensionDrawer from "@/views/Engagements/Configuration/Drawers/DestinationDataExtensionDrawer.vue"
+import AudienceDetailDrawer from "@/views/Engagements/Configuration/Drawers/AudienceDetailDrawer.vue"
 
 export default {
   name: "Step2",
@@ -183,6 +185,7 @@ export default {
     SelectAudiencesDrawer,
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
+    AudienceDetailDrawer,
   },
 
   props: {
@@ -201,6 +204,7 @@ export default {
       selectedAudienceId: null,
       selectedDestination: null,
       dontShowModal: false,
+      showAddAudienceDetailDrawer: false,
     }
   },
 
@@ -219,6 +223,7 @@ export default {
       this.showAddAudiencesDrawer = false
       this.showSelectDestinationsDrawer = false
       this.showDataExtensionDrawer = false
+      this.showAddAudienceDetailDrawer = false
     },
     destinationType(id) {
       return this.destination(id) && this.destination(id).type
@@ -253,6 +258,11 @@ export default {
         deleteAudience.item.id
       ].destinations.findIndex((destination) => destination.id === id)
       this.value.audiences[deleteAudience.item.id].destinations.splice(index, 1)
+    },
+    openAudieneDetailDrawer(item) {
+      this.closeAllDrawers()
+      this.$refs.audienceDetailDrawer.fetchAudienceDetails(item.item.id)
+      this.showAddAudienceDetailDrawer = true
     },
   },
 }
@@ -298,6 +308,10 @@ export default {
     background-color: var(--v-primary-lighten1) !important;
     border-radius: 5px;
     @extend .cursor-pointer;
+  }
+  .menu-link {
+    color: var(--v-anchor-base);
+    cursor: pointer;
   }
 }
 </style>

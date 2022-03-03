@@ -155,7 +155,7 @@
           </div>
         </v-col>
         <div class="add-wrap">
-          <div class="pa-0 pt-2 flex-fill">
+          <div class="pa-0 pt-2 flex-fill new-attribute">
             <div class="add-section pa-5 text-body-1 primary--text">
               <span class="cursor-pointer" @click="addNewCondition(rule.id)">
                 <icon type="plus" color="primary" :size="12" class="mr-1" />
