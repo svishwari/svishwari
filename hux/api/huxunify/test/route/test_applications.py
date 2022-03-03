@@ -96,6 +96,7 @@ class ApplicationsTests(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            query_string={api_c.USER: True},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -103,8 +104,11 @@ class ApplicationsTests(RouteTestCase):
         self.assertFalse(
             ApplicationsGETSchema(many=True).validate(response.json)
         )
-        for application in response.json:
-            self.assertFalse(application[api_c.IS_ADDED])
+        self.assertEqual(len(response.json), 1)
+        self.assertEqual(
+            response.json[0][api_c.ID], str(self.applications[0][db_c.ID])
+        )
+        self.assertTrue(response.json[0][api_c.IS_ADDED])
 
     def test_success_create_applications(self):
         """Test creating application successfully."""

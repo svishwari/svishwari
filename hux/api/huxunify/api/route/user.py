@@ -13,7 +13,6 @@ from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
@@ -576,14 +575,6 @@ class CreateTicket(SwaggerView):
             ),
         )
 
-        create_notification(
-            database=get_db_client(),
-            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"{user[api_c.USER_NAME]} created a new issue "
-            f"{new_issue.get(api_c.KEY)} in JIRA.",
-            category=api_c.TICKET_TYPE_BUG,
-            username=user[api_c.USER_NAME],
-        )
         return (
             TicketGetSchema().dump(new_issue),
             HTTPStatus.CREATED,
@@ -664,14 +655,6 @@ class RequestNewUser(SwaggerView):
             ),
         )
 
-        create_notification(
-            database=get_db_client(),
-            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"{user[api_c.USER_NAME]} created a new issue "
-            f"{new_issue.get(api_c.KEY)} in JIRA.",
-            category=api_c.TICKET_TYPE_BUG,
-            username=user[api_c.USER_NAME],
-        )
         return (
             TicketGetSchema().dump(new_issue),
             HTTPStatus.CREATED,

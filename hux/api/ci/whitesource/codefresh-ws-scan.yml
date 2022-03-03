@@ -1,0 +1,138 @@
+version: "1.0"
+stages:
+  - "git_clone"
+  - "set_app"
+  - "create_ws_configs"
+  - "scan"
+  - "create_scan_report"
+
+steps:
+  Prepare_Build_Details:
+    stage: git_clone
+    title: Prepare Build Details
+    type: parallel
+    steps:
+      Clone_Application_Repo:
+         stage: git_clone
+         title: Cloning application repository...
+         type: git-clone
+         repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+         revision: '${{CF_BRANCH}}'
+      Clone_Script_Repo:
+         stage: git_clone
+         title: Cloning scripts respository...
+         type: git-clone
+         repo: '${{CF_REPO_OWNER}}/codefresh-pipelines'
+         revision: master
+
+  SetAppName:
+    stage: set_app
+    title: Set Application Name
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      ## Set application name, which is also directory name in monorepo.
+      - cf_export APPDIR="hux/api"
+
+  CreateWSConfigs:
+    stage: create_ws_configs
+    title: "Create Whitesource configs"
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cd ${{CF_REPO_NAME}}/$APPDIR
+      # Create wss-install-commands.sh script which the runner expect to see and execute.
+      - >-
+        {
+        echo "#!/bin/bash";
+        echo "# Run commands to prep for the Whitesource scan";
+        echo "pip install pip --upgrade";
+        echo "pip install pipenv --upgrade";
+        echo "jq -r '.default | to_entries[] | .key + .value.version' Pipfile.lock > requirements.txt";
+        } 
+        >> $INSTALL_COMMANDS
+      - chmod +x $INSTALL_COMMANDS
+      # Create the wss-agent.config.
+      - >-
+         {
+         echo wss.url=https://deloitte.whitesourcesoftware.com/agent;
+         echo "printCliErrors=true";
+         echo "productName=hux-unified";
+         echo "projectName=unified-api";
+         echo "followSymbolicLinks=true";
+         echo "generateScanReport=true";
+         echo "userKey=$USER_KEY";
+         echo "updateInventory=true";
+         echo "scanReportFilenameFormat=static";
+         echo "checkPolicies=true";
+         echo "forceCheckAllDependencies=true";
+         echo "forceUpdate=true";
+         echo "### Programming Language Specific Settings ###";
+         echo "python.ignorePipInstallErrors=true";
+         echo "python.resolveSetupPyFiles=true";
+         echo "python.IgnorePipenvInstallErrors=true";
+         echo "python.indexUrl=$ARTIFACTORY_PYTHON_READ";
+         } 
+         >> $CONFIG_FILE
+      - cf_export INSTALL_COMMANDS=$INSTALL_COMMANDS
+      - cf_export CONFIG_FILE=$CONFIG_FILE
+    environment:
+      - INSTALL_COMMANDS=wss-install-commands.sh
+      - CONFIG_FILE=wss-agent.config
+
+  WhitesourceScanMerge:
+    stage: scan
+    title: "Run whiteSource scan"
+    type: freestyle
+    image: "ciruntime.repo.mgnt.in/whitesource-python:3.8"
+    commands:
+      - cd ${{CF_REPO_NAME}}/$APPDIR
+      - echo "projectVersion=${{CF_BRANCH}}" >> $CONFIG_FILE
+      ## "Prep and run Whitesource Scan..."
+      - cp /wss-scan/wss-runner.sh ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/wss-runner.sh # Copy the file because the script refrences current directory.
+      - ./wss-runner.sh $INSTALL_COMMANDS $CONFIG_FILE $PROJECT_DIRECTORY
+    environment:
+      - PROJECT_DIRECTORY=.
+      - WS_APIKEY=${{API_KEY}}
+    when:
+      condition:
+        all:
+          # Conditional to check if CF_PULL_REQUEST_TARGET exists, if it does then a PR so skip.
+          whenVarExists: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == true'
+
+  WhitesourceScanReport:
+    stage: create_scan_report
+    title: "Generate Whitesource json report"
+    type: freestyle
+    image: ciruntime.repo.mgnt.in/whitesource-python:3.8
+    commands:
+      - cd ${{CF_REPO_NAME}}/$APPDIR
+      - echo "projectVersion=branch" >> $CONFIG_FILE
+      ## "Prep and run Whitesource Scan..."
+      - cp /wss-scan/wss-runner.sh ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/wss-runner.sh # Copy the file because the script refrences current directory.
+      - ./wss-runner.sh $INSTALL_COMMANDS $CONFIG_FILE $PROJECT_DIRECTORY
+      - cp ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/./whitesource/scan_report.json ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/
+    environment:
+      - PROJECT_DIRECTORY=.
+      - WS_APIKEY=${{API_KEY}}
+    when:
+      condition:
+        all:
+          # Conditional to check if CF_PULL_REQUEST_TARGET exists, if it does then a PR so run this.
+          whenVarExists: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == false'
+
+  ParseWhitesourceReport:
+    stage: parse_whitesource_report
+    title: "Parse JSON Report"
+    type: deloittehux/parse-whitesource-report
+    arguments:
+      ## Arguments must be explicitly set and can't use variables defined earlier.
+      ADDITIONAL_PATH: "hux/api"
+      SCRIPT_PATH: "codefresh-pipelines/scripts/whitesource/"
+      SCRIPT_NAME: parse-json-report.sh
+      REPORT_NAME: scan_report.json
+      COMMENT_FILE: pr-comment.md
+    when:
+      condition:
+        all:
+          # Conditional to check if CF_PULL_REQUEST_TARGET exists, if it does then a PR so run this.
+          whenVarExists: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == false'
