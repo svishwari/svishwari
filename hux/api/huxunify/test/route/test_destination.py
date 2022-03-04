@@ -24,7 +24,7 @@ from huxunifylib.database.engagement_management import (
 )
 import huxunify.test.constants as t_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
-from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.schema.destinations import (
     DestinationDataExtGetSchema,
     DestinationGetSchema,
@@ -57,17 +57,20 @@ class TestDestinationRoutes(RouteTestCase):
             return_value=self.database,
         ).start()
 
-        # mock parameter store store secret
-        mock.patch.object(parameter_store, "store_secret").start()
+        for subclass in CloudClient.__subclasses__():
+            # mock parameter store store secret
+            mock.patch.object(subclass, "set_secret").start()
 
-        # mock parameter store get store value
-        mock.patch.object(
-            parameter_store, "get_store_value", return_value="secret"
-        ).start()
+            # mock parameter store get store value
+            mock.patch.object(
+                subclass, "get_secret", return_value="secret"
+            ).start()
 
         self.destinations = destination_management.get_all_delivery_platforms(
             self.database
         )
+
+        self.addCleanup(mock.patch.stopall)
 
     def test_get_all_destinations(self):
         """Test get all destinations."""
