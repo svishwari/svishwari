@@ -2,12 +2,13 @@
 
 from typing import Union, Callable
 
-from huxunify.api.route.utils import get_db_client
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database.cache_management import (
     get_cache_entry,
     create_cache_entry,
 )
+
+from huxunify.api.route.utils import get_db_client
 
 
 class Caching:
