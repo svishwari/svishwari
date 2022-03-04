@@ -9,10 +9,10 @@ from bson import ObjectId
 
 from huxunifylib.connectors import FacebookConnector
 
-from huxunifylib.database import constants as db_c
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     collection_management,
+    constants as db_c,
 )
 from huxunifylib.database.orchestration_management import (
     create_audience,
@@ -312,6 +312,22 @@ class TestDestinationRoutes(RouteTestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
             f"/{destination_id}/{api_c.AUTHENTICATION}",
             json=self.new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_update_destination_with_no_destination_link(self):
+        """Test update destination with no destination link."""
+
+        destination_id = self.destinations[0][db_c.ID]
+        input_json = self.new_auth_details
+        input_json[db_c.LINK] = None
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
+            f"/{destination_id}/{api_c.AUTHENTICATION}",
+            json=input_json,
             headers=t_c.STANDARD_HEADERS,
         )
 
