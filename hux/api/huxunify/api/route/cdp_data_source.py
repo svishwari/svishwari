@@ -773,7 +773,10 @@ class GetConnectionsDatafeedDetails(SwaggerView):
             end_date = datetime.strftime(
                 validation.validate_date(end_date), api_c.DEFAULT_DATE_FORMAT
             )
-            query_json = {api_c.START_DATE: start_date, api_c.END_DATE: end_date}
+            query_json = {
+                api_c.START_DATE: start_date,
+                api_c.END_DATE: end_date,
+            }
 
         statuses = request.args.get(api_c.STATUS, "")
         statuses = [x.title() for x in statuses.split(",")] if statuses else []
