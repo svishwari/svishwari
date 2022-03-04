@@ -76,7 +76,8 @@ from huxunify.api.route.decorators import (
     requires_access_levels,
 )
 from huxunify.api.route.utils import (
-    get_db_client, set_destination_authentication_secrets,
+    get_db_client,
+    set_destination_authentication_secrets,
 )
 import huxunify.api.constants as api_c
 
@@ -435,12 +436,10 @@ class DestinationAuthenticationPostView(SwaggerView):
 
         if auth_details:
             # store the secrets for the updated authentication details
-            authentication_parameters = (
-                set_destination_authentication_secrets(
-                    authentication_details=auth_details,
-                    destination_id=str(destination_id),
-                    destination_type=platform_type,
-                )
+            authentication_parameters = set_destination_authentication_secrets(
+                authentication_details=auth_details,
+                destination_id=str(destination_id),
+                destination_type=platform_type,
             )
             is_added = True
 

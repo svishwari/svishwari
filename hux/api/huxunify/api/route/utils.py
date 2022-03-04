@@ -22,9 +22,7 @@ from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
 
-from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunifylib.database.util.client import db_client_factory
-
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -43,6 +41,7 @@ from huxunifylib.database.user_management import (
 )
 from huxunifylib.database.client import DatabaseClient
 
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.tecton import Tecton
@@ -1188,6 +1187,7 @@ def check_and_return_cache(
 
     return data
 
+
 def set_destination_authentication_secrets(
     authentication_details: dict,
     destination_id: str,
@@ -1232,11 +1232,12 @@ def set_destination_authentication_secrets(
             CloudClient().set_secret(secret_name=param_name, value=secret)
         except Exception as exc:
             logger.error("Failed to connect to secret store.")
+            logger.error(exc)
             raise ProblemException(
                 status=HTTPStatus.BAD_REQUEST.value,
                 title=HTTPStatus.BAD_REQUEST.description,
                 detail=f"{api_c.SECRET_STORAGE_ERROR_MSG}"
-                       f" destination_id: {destination_id}.",
+                f" destination_id: {destination_id}.",
             )
 
     return ssm_params
