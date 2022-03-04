@@ -48,8 +48,8 @@
         >
           <span class="mr-2">Include customers that match &nbsp;</span>
           <hux-switch
-            :isDisabled="readMode ? true : false"
             v-model="rule.operand"
+            :is-disabled="readMode ? true : false"
             @input="triggerSizingForRule(rule)"
           />
           of the following:
@@ -60,7 +60,9 @@
           class="rule-section pa-0 mb-2 d-flex"
         >
           <div class="pa-0 pr-2 flex-fill">
-            <div :class="readMode ? 'readmode-condition-card' : 'condition-card'">
+            <div
+              :class="readMode ? 'readmode-condition-card' : 'condition-card'"
+            >
               <div class="condition-container pl-2 d-fles pr-6">
                 <div class="condition-items pr-5">
                   <hux-dropdown
@@ -129,12 +131,13 @@
                         condition.attribute.values ? 'density-slider' : ''
                       "
                       is-range-slider
-                      @onFinalValue="triggerSizing(condition)"
                       :read-mode="readMode"
+                      @onFinalValue="triggerSizing(condition)"
                     />
                   </div>
                 </div>
-                <div v-if="!readMode"
+                <div
+                  v-if="!readMode"
                   class="condition-actions pa-0 cursor-pointer"
                   data-e2e="remove-attr"
                   @click="removeCondition(rule, ixcondition)"
@@ -183,7 +186,7 @@
             small
             class="mx-2 my-1 text-body-2"
             :text-color="readMode ? 'white' : 'primary'"
-            :color="readMode ? 'black lighten-3' : 'primary lighten-3' "
+            :color="readMode ? 'black lighten-3' : 'primary lighten-3'"
             :ripple="false"
           >
             OR
