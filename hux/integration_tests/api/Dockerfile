@@ -1,6 +1,6 @@
 # build the test environment
-FROM python:3.7-slim-buster AS hux-unified
-FROM locustio/locust AS locust
+FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
+FROM huxhub.repo.mgnt.in/locustio/locust AS locust
 
 # set the work dir on the docker image
 WORKDIR /app/hux-unified/integration_tests/api

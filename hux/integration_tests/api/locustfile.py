@@ -64,7 +64,7 @@ class APIUser(HttpUser):
         ) as response:
             if response.status_code != 200:
                 response.failure("Got wrong response")
-            elif response.elapsed.total_seconds() > 0.5:
+            elif response.elapsed.total_seconds() > 2.0:
                 response.failure("Audience GET all request took too long")
 
     @task
@@ -77,5 +77,5 @@ class APIUser(HttpUser):
         ) as response:
             if response.status_code != 200:
                 response.failure("Got wrong response")
-            elif response.elapsed.total_seconds() > 0.5:
+            elif response.elapsed.total_seconds() > 2.0:
                 response.failure("Destinations GET all request took too long")
