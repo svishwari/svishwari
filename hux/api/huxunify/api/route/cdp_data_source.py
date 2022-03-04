@@ -791,7 +791,13 @@ class GetConnectionsDatafeedDetails(SwaggerView):
             query_json,
         )
 
-        do_aggregate = (parse(end_date) - parse(start_date)).days > 1
+        # If start_date and _end_date specified, compute
+        # else set do_aggregate to True
+        do_aggregate = (
+            (parse(end_date) - parse(start_date)).days > 1
+            if start_date and end_date
+            else True
+        )
 
         datafeed_details = sorted(
             clean_and_aggregate_datafeed_details(
