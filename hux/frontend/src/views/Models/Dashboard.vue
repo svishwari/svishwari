@@ -640,11 +640,11 @@ export default {
               : "unknown"
           }`,
         })
-      } else if (this.model.name) {
+      } else if (this.model.model_name) {
         items.push({
-          text: this.model.name,
+          text: this.model.model_name,
           disabled: true,
-          logo: `model-${this.model.type.toLowerCase()}`,
+          logo: `model-${this.model.model_type.toLowerCase()}`,
         })
       }
       return items
