@@ -4,14 +4,14 @@
       <icon :type="404" :size="150" color="black" />
       <div class="fs-56">404</div>
       <div class="text-h1 mt-4">Uh oh we’ve lost this page.</div>
-      <div class="ta-center text-h3 mt-2">
-        Sorry about that. The reason we don’t find this page:
+      <div class="ta-center text-h3 mt-2 mr-23">
+        Sorry about that. This error occurred because:
       </div>
-      <div class="text-h3 ml-17 ta-left mt-1 gap">
-        &bull; the page has moved<br />
-        &bull; the page no longer exist<br />
-        &bull; you got distracted and made the typo in the address<br />
-        &bull; you like visiting 404 pages and actually wanted to be here<br />
+      <div class="text-h3 ml-4 ta-left mt-1 gap">
+        &bull;&nbsp; the page has moved<br />
+        &bull;&nbsp; the page no longer exists<br />
+        &bull;&nbsp; you got distracted and made the typo in the address<br />
+        &bull;&nbsp; you like visiting 404 pages and actually want to be here
       </div>
       <huxButton
         variant="primary base"
@@ -65,6 +65,9 @@ export default {
     line-height: 31px;
     display: flex;
     align-items: flex-start;
+  }
+  .mr-23 {
+    margin-right: 92px;
   }
 }
 </style>

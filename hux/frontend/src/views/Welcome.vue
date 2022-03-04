@@ -102,7 +102,7 @@ export default {
       height: 150px;
     }
     h1 {
-      font-family: Open Sans;
+      font-family: Open Sans Light;
       font-style: normal;
       font-weight: normal;
       font-style: normal;
@@ -121,6 +121,7 @@ export default {
       color: var(--v-black-darken1);
       margin-top: 8px;
       max-width: 80%;
+      color: #4f4f4f;
     }
     h2 {
       font-style: normal;
