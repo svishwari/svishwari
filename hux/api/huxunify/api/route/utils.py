@@ -6,7 +6,7 @@ from collections import defaultdict
 from datetime import datetime, date
 import re
 from itertools import groupby
-from typing import Tuple, Union, Generator, Callable
+from typing import Tuple, Union, Generator
 from http import HTTPStatus
 from bson import ObjectId
 
@@ -25,10 +25,6 @@ from huxunifylib.database.util.client import db_client_factory
 
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
-)
-from huxunifylib.database.cache_management import (
-    get_cache_entry,
-    create_cache_entry,
 )
 from huxunifylib.database import (
     constants as db_c,
@@ -1133,10 +1129,8 @@ def generate_cache_key_string(data: Union[dict, list]) -> Generator:
     """Generates cache key strings for dicts and lists
     Args:
         data (Union[dict,list]): Input data to get cache key
-
     Yields:
         Generator: String Generator
-
     """
     for item in data:
         if isinstance(item, list):
@@ -1147,41 +1141,3 @@ def generate_cache_key_string(data: Union[dict, list]) -> Generator:
             )
         else:
             yield item
-
-
-def check_and_return_cache(
-    cache_tag: str,
-    key: Union[str, list, dict],
-    method: Callable,
-    token: str = None,
-) -> Union[list, dict]:
-    """Checks for cache to return or creates an entry
-    Args:
-        cache_tag(str): Cache Tag which used in prefix of Key
-        key(str): Cache Key
-        method(Callable): Method to retrieve data if there is no cache
-        token(str): JWT token
-
-    Returns:
-        Union[list,dict]: Data to be retrieved
-
-    """
-    database = get_db_client()
-
-    data = get_cache_entry(
-        database,
-        "".join([cache_tag] + list(generate_cache_key_string(key))),
-    )
-
-    if not data:
-        logger.info("No cache data available retreiving actual data")
-        data = method(token, key)
-        create_cache_entry(
-            database=database,
-            cache_key="".join(
-                [cache_tag] + list(generate_cache_key_string(key)),
-            ),
-            cache_value=data,
-        )
-
-    return data
