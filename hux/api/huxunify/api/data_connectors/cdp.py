@@ -594,7 +594,12 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
     """
 
     return [
-        {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
+        {
+            api_c.NAME: x[api_c.CITY],
+            api_c.LTV: round(x["avg_ltv"], 4)
+            if x["avg_ltv"] is not None
+            else None,
+        }
         for x in get_city_ltvs(token, filters=filters)
     ]
 
@@ -700,7 +705,7 @@ def get_demographic_by_country(
         avg_ltv = (
             sum(map(lambda x: x["avg_ltv"] * x["size"], country_items))
             / total_customer_count
-            if country_items
+            if None not in list(map(lambda x: x["avg_ltv"], country_items))
             else None
         )
         customer_insights_by_country.append(
@@ -924,9 +929,15 @@ def get_geographic_customers_data(customer_count_by_state: list) -> list:
             api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
             if x[api_c.SIZE] != 0
             else 0,
-            api_c.AVG_LTV: round(x.get(api_c.AVG_LTV, 0), 4),
-            api_c.MIN_LTV: round(x.get(api_c.MIN_LTV, 0), 4),
-            api_c.MAX_LTV: round(x.get(api_c.MAX_LTV, 0), 4),
+            api_c.AVG_LTV: round(x.get(api_c.AVG_LTV, 0), 4)
+            if x.get(api_c.AVG_LTV) is not None
+            else None,
+            api_c.MIN_LTV: round(x.get(api_c.MIN_LTV, 0), 4)
+            if x.get(api_c.MIN_LTV) is not None
+            else None,
+            api_c.MAX_LTV: round(x.get(api_c.MAX_LTV, 0), 4)
+            if x.get(api_c.MAX_LTV) is not None
+            else None,
             api_c.MIN_AGE: x.get(api_c.MIN_AGE, 0),
             api_c.MAX_AGE: x.get(api_c.MAX_AGE, 0),
         }
