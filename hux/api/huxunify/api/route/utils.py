@@ -1238,6 +1238,6 @@ def set_destination_authentication_secrets(
                 title=HTTPStatus.BAD_REQUEST.description,
                 detail=f"{api_c.SECRET_STORAGE_ERROR_MSG}"
                 f" destination_id: {destination_id}.",
-            )
+            ) from exc
 
     return ssm_params
