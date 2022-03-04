@@ -379,3 +379,59 @@ def get_idr_matching_trends(
         [clean_cdm_fields(data) for data in response.json()[api_c.BODY]],
         key=lambda data: data.get(api_c.DAY, DEFAULT_DATETIME),
     )
+
+
+def get_data_source_data_feed_details(
+    token: str, data_source_type: str, datafeed_name: str, query_json: dict
+) -> list:
+    """Retrieve data source data feed details.
+
+    Args:
+        token (str): OKTA JWT Token.
+        data_source_type (str): type of data source.
+        datafeed_name (str): data feed name.
+        query_json (dict): Filter dict
+
+    Returns:
+        list: list of connection data-feed details.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    config = get_config()
+
+    logger.info(
+        "Retrieving data-feed file details for data source with type %s and data feed name %s.",
+        data_source_type,
+        datafeed_name,
+    )
+
+    response = requests.post(
+        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+        f"{api_c.DATASOURCES}/{data_source_type}/feeds/{datafeed_name}/files",
+        json=query_json,
+        headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve file details of data feed %s for data source %s, %s %s.",
+            datafeed_name,
+            data_source_type,
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+            f"{api_c.DATASOURCES}/{data_source_type}/feeds/{datafeed_name}/files",
+            response.status_code,
+        )
+
+    logger.info(
+        "Successfully retrieved file details for data feed %s and data source %s.",
+        datafeed_name,
+        data_source_type,
+    )
+
+    return response.json()[api_c.BODY]
