@@ -8,6 +8,7 @@
       @favoriteAudience="(data) => favoriteAudience(data)"
       @openDownloadDrawer="() => openDownloadDrawer()"
       @openLookalikeEditModal="() => openLookalikeEditModal()"
+      @editAudience="(data) => editAudience(data)"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="audience && audience.is_lookalike === true" class="pa-8">
@@ -895,6 +896,12 @@ export default {
             audienceId: this.audienceId,
           })
           break
+        case "edit audience":
+          this.$router.push({
+            name: "AudienceUpdate",
+            params: { id: this.audienceId },
+          })
+          break
         default:
           break
       }
@@ -1190,12 +1197,22 @@ export default {
       ;(this.confirmDialog.title = "You are about to delete"),
         (this.confirmDialog.btnText = "Yes, remove it")
       this.confirmDialog.icon = "sad-face"
-      ;(this.confirmDialog.subtitle = data.name),
-        (this.confirmDialog.type = "error")
+      this.confirmDialog.subtitle = data.name
+      this.confirmDialog.type = "error"
       this.confirmDialog.body =
         "By deleting this audience you will not be able to recover it and it may impact any associated engagements."
       this.confirmDialog.actionType = "remove audience"
       this.showConfirmModal = true
+    },
+    editAudience(data) {
+      this.showConfirmModal = true
+      this.confirmDialog.title = "Edit"
+      this.confirmDialog.btnText = "Yes, edit"
+      this.confirmDialog.icon = "edit"
+      this.confirmDialog.subtitle = data.name
+      this.confirmDialog.type = "error"
+      this.confirmDialog.body = "Are you sure you want to edit this audience?"
+      this.confirmDialog.actionType = "edit audience"
     },
     favoriteAudience(data) {
       let param
