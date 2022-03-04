@@ -42,6 +42,11 @@ export default {
         }
       },
     },
+    readMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   data() {
@@ -114,29 +119,61 @@ export default {
         .append("linearGradient")
         .attr("id", `hux-density-chart-${this.id}`)
 
-      linearGradient
-        .append("stop")
-        .attr("offset", Number(this.range[0] / this.max))
-        .style("stop-color", "#E6F4F3")
-        .style("stop-opacity", "1.0")
+      if (this.readMode) {
+        linearGradient
+          .append("stop")
+          .attr("offset", Number(this.range[0] / this.max))
+          .style("stop-color", "#ECECEC")
+          .style("stop-opacity", "1.0")
+      } else {
+        linearGradient
+          .append("stop")
+          .attr("offset", Number(this.range[0] / this.max))
+          .style("stop-color", "#E6F4F3")
+          .style("stop-opacity", "1.0")
+      }
 
-      linearGradient
-        .append("stop")
-        .attr("offset", Number(this.range[0] / this.max))
-        .style("stop-color", "#9DD4CF")
-        .style("stop-opacity", "1.0")
+      if (this.readMode) {
+        linearGradient
+          .append("stop")
+          .attr("offset", Number(this.range[0] / this.max))
+          .style("stop-color", "#D0D0CE")
+          .style("stop-opacity", "1.0")
+      } else {
+        linearGradient
+          .append("stop")
+          .attr("offset", Number(this.range[0] / this.max))
+          .style("stop-color", "#9DD4CF")
+          .style("stop-opacity", "1.0")
+      }
 
-      linearGradient
-        .append("stop")
-        .attr("offset", Number(this.range[1] / this.max))
-        .style("stop-color", "#9DD4CF")
-        .style("stop-opacity", "1.0")
+      if (this.readMode) {
+        linearGradient
+          .append("stop")
+          .attr("offset", Number(this.range[1] / this.max))
+          .style("stop-color", "#D0D0CE")
+          .style("stop-opacity", "1.0")
+      } else {
+        linearGradient
+          .append("stop")
+          .attr("offset", Number(this.range[1] / this.max))
+          .style("stop-color", "#9DD4CF")
+          .style("stop-opacity", "1.0")
+      }
 
-      linearGradient
-        .append("stop")
-        .attr("offset", Number(this.range[1] / this.max))
-        .style("stop-color", "#E6F4F3")
-        .style("stop-opacity", "1.0")
+      if (this.readMode) {
+        linearGradient
+          .append("stop")
+          .attr("offset", Number(this.range[1] / this.max))
+          .style("stop-color", "#ECECEC")
+          .style("stop-opacity", "1.0")
+      } else {
+        linearGradient
+          .append("stop")
+          .attr("offset", Number(this.range[1] / this.max))
+          .style("stop-color", "#E6F4F3")
+          .style("stop-opacity", "1.0")
+      }
 
       // Add the area
       svg

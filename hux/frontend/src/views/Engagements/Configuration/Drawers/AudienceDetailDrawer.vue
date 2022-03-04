@@ -18,6 +18,7 @@
           ref="filters"
           class="rules"
           :rules="audience.attributeRules"
+          :read-mode="true"
           @loadingOverAllSize="(data) => updateLoad(data)"
         />
       </div>

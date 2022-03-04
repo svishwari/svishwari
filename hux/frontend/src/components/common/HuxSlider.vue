@@ -86,6 +86,11 @@ export default {
       required: false,
       default: false,
     },
+    readMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {

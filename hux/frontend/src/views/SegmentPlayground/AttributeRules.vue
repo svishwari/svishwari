@@ -48,19 +48,19 @@
         >
           <span class="mr-2">Include customers that match &nbsp;</span>
           <hux-switch
+            :isDisabled="readMode ? true : false"
             v-model="rule.operand"
             @input="triggerSizingForRule(rule)"
           />
           of the following:
         </div>
-
         <v-col
           v-for="(condition, ixcondition) in rule.conditions"
           :key="condition.id"
           class="rule-section pa-0 mb-2 d-flex"
         >
           <div class="pa-0 pr-2 flex-fill">
-            <div class="condition-card">
+            <div :class="readMode ? 'readmode-condition-card' : 'condition-card'">
               <div class="condition-container pl-2 d-fles pr-6">
                 <div class="condition-items pr-5">
                   <hux-dropdown
@@ -113,6 +113,7 @@
                       :min="condition.attribute.min"
                       :max="condition.attribute.max"
                       :range="condition.range"
+                      :read-mode="readMode"
                       class="ml-2 mr-0"
                     />
                     <hux-slider
@@ -129,10 +130,11 @@
                       "
                       is-range-slider
                       @onFinalValue="triggerSizing(condition)"
+                      :read-mode="readMode"
                     />
                   </div>
                 </div>
-                <div
+                <div v-if="!readMode"
                   class="condition-actions pa-0 cursor-pointer"
                   data-e2e="remove-attr"
                   @click="removeCondition(rule, ixcondition)"
@@ -180,8 +182,8 @@
           <v-chip
             small
             class="mx-2 my-1 text-body-2"
-            text-color="primary"
-            color="primary lighten-3"
+            :text-color="readMode ? 'white' : 'primary'"
+            :color="readMode ? 'black lighten-3' : 'primary lighten-3' "
             :ripple="false"
           >
             OR
@@ -261,6 +263,11 @@ export default {
       default: false,
     },
     enableTitle: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    readMode: {
       type: Boolean,
       required: false,
       default: false,
@@ -652,6 +659,98 @@ export default {
       border: 1px solid var(--v-primary-lighten1);
       box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.1);
       border-left: solid 10px var(--v-primary-lighten6);
+      display: flex;
+      align-items: center;
+      height: 60px;
+      .condition-container {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 26px;
+        .condition-items {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          flex: 1 0;
+          .range-attribute-container {
+            width: 100%;
+            .density-slider {
+              position: relative;
+              top: -20px;
+            }
+          }
+          .hux-dropdown {
+            .v-btn__content {
+              color: var(--v-black-darken1);
+            }
+            button {
+              margin: 0 8px 0 0 !important;
+              min-width: 170px !important;
+            }
+          }
+          .avatar-menu {
+            margin-right: 20px;
+            max-width: 200px;
+            border: solid 1px var(--v-black-lighten3);
+            flex-grow: 1;
+            button {
+              width: 100%;
+              justify-content: left;
+              min-width: unset;
+              box-shadow: none !important;
+              height: 30px;
+              .v-btn__content {
+                justify-content: space-between;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+          .item-text-field {
+            flex-grow: 1;
+            label {
+              margin-bottom: 0 !important;
+            }
+          }
+          .v-text-field {
+            .v-input__slot {
+              min-height: inherit;
+              height: 40px;
+              border: solid 1px var(--v-black-lighten3) !important;
+              border-radius: 0;
+              margin-bottom: 0;
+              box-shadow: inherit;
+              fieldset {
+                border: 0;
+              }
+            }
+            .v-text-field__details {
+              display: none;
+            }
+          }
+          .hux-range-slider {
+            .v-messages {
+              display: none;
+            }
+            .v-slider--horizontal {
+              margin-right: 0px !important;
+              .v-slider__track-container {
+                width: 101%;
+              }
+            }
+          }
+        }
+        .condition-actions {
+          flex: 0 1;
+        }
+      }
+    }
+    .readmode-condition-card {
+      pointer-events: none;
+      background: var(--v-white-base);
+      border: 1px solid var(--v-primary-lighten1);
+      box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.1);
+      border-left: solid 10px var(--v-black-lighten3);
       display: flex;
       align-items: center;
       height: 60px;
