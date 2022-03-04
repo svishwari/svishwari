@@ -9,22 +9,22 @@ from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import BlobClient
 
-from huxunify.api.data_connectors.cloud_connectors.cloud import Cloud
+from huxunify.api.data_connectors.cloud.cloud_client import (
+    CloudClient,
+)
 import huxunify.api.constants as api_c
-
+from huxunify.api.config import get_config, Config
 from huxunify.api.prometheus import record_health_status_metric
 
 
-class Azure(Cloud):
+class AzureClient(CloudClient):
     """Class for Azure cloud operations"""
 
-    provider = "AZURE"
+    provider = "azure"
 
-    def __init__(self):
-        """Initialize Azure Cloud object
-
-        Args:
-        """
+    def __init__(self, config: Config = get_config()):
+        """Instantiate the Azure client class"""
+        super().__init__(config)
         self.vault_url = (
             f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
         )
@@ -167,7 +167,3 @@ class Azure(Cloud):
             api_c.AZURE_BLOB_CONNECTION_HEALTH, status[0]
         )
         return status
-
-
-if __name__ == "__main__":
-    pass

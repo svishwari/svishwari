@@ -60,6 +60,7 @@ from huxunify.api.route.utils import (
     get_start_end_dates,
     get_db_client,
     convert_unique_city_filter,
+    check_and_return_cache,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -234,20 +235,24 @@ class CustomerPostOverview(SwaggerView):
                 api_c.MESSAGE: "Invalid filter passed in."
             }, HTTPStatus.BAD_REQUEST
 
-        # TODO - cdm to return single field
         token_response = get_token_from_request(request)
-        customers = get_customers_overview(
-            token_response[0],
-            convert_unique_city_filter(request.json),
+        customers_overview = check_and_return_cache(
+            cache_tag=api_c.CUSTOMERS_INSIGHTS,
+            key=convert_unique_city_filter(request.json),
+            method=get_customers_overview,
+            token=token_response[0],
         )
-
-        customers[api_c.GEOGRAPHICAL] = get_demographic_by_state(
-            token_response[0],
-            request.json[api_c.AUDIENCE_FILTERS],
+        customers_overview[api_c.GEOGRAPHICAL] = check_and_return_cache(
+            cache_tag=api_c.GEOGRAPHICAL,
+            key=convert_unique_city_filter(request.json).get(
+                api_c.AUDIENCE_FILTERS
+            ),
+            method=get_demographic_by_state,
+            token=token_response[0],
         )
 
         return (
-            CustomerOverviewSchema().dump(customers),
+            CustomerOverviewSchema().dump(customers_overview),
             HTTPStatus.OK,
         )
 
@@ -448,33 +453,15 @@ class CustomersListview(SwaggerView):
 
         offset = (batch_number - 1) * batch_size
 
-        # check cache and add to cache
-        customer_list = get_cache_entry(
-            database,
-            f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
-        )
-
-        if not customer_list:
-            customer_list = get_customer_profiles(
-                token_response[0], batch_size, offset
-            )
-            create_cache_entry(
-                database,
-                f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
-                customer_list,
-            )
-
         if user.get(api_c.USER_PII_ACCESS) is True:
             redacted_data = get_customer_profiles(
                 token_response[0], batch_size, offset
             )
         else:
-            # check cache and add to cache
             redacted_data = get_cache_entry(
                 database,
                 f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
             )
-
             if not redacted_data:
                 customer_list = get_customer_profiles(
                     token_response[0], batch_size, offset

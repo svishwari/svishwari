@@ -22,8 +22,8 @@ from huxunifylib.database.engagement_management import (
     set_engagement,
     get_engagement,
 )
-from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 import huxunify.test.constants as t_c
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationDataExtGetSchema,
