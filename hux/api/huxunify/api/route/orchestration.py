@@ -1800,22 +1800,24 @@ class SetLookalikeAudience(SwaggerView):
             )
 
         recent_jobs_filter = {
-                db_c.DELIVERY_PLATFORM_ID: destination[db_c.ID],
-                db_c.AUDIENCE_ID: ObjectId(source_audience_id),
-                db_c.STATUS: {
-                    "$in": [
-                        db_c.STATUS_SUCCEEDED,
-                        db_c.AUDIENCE_STATUS_DELIVERED,
-                    ]
-                },
-            }
+            db_c.DELIVERY_PLATFORM_ID: destination[db_c.ID],
+            db_c.AUDIENCE_ID: ObjectId(source_audience_id),
+            db_c.STATUS: {
+                "$in": [
+                    db_c.STATUS_SUCCEEDED,
+                    db_c.AUDIENCE_STATUS_DELIVERED,
+                ]
+            },
+        }
 
         if engagement_ids:
-            recent_jobs_filter.update({
-                db_c.ENGAGEMENT_ID: {
-                    "$in": [ObjectId(x) for x in engagement_ids]
-                },
-            })
+            recent_jobs_filter.update(
+                {
+                    db_c.ENGAGEMENT_ID: {
+                        "$in": [ObjectId(x) for x in engagement_ids]
+                    },
+                }
+            )
 
         most_recent_job = destination_management.get_all_delivery_jobs(
             database,
