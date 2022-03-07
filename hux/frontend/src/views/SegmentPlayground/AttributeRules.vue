@@ -778,6 +778,9 @@ export default {
           .hux-dropdown {
             .v-btn__content {
               color: var(--v-black-darken1);
+              .v-icon {
+                color: var(--v-black-lighten3) !important;
+              }
             }
             button {
               margin: 0 8px 0 0 !important;

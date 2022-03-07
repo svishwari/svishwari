@@ -4,6 +4,7 @@
       v-if="isRangeSlider"
       v-model="localValue"
       class="hux-range-slider"
+      :class="readMode ? 'readmode-hux-range-slider' : 'hux-range-slider' "
       :max="max"
       :min="min"
       :step="step"
@@ -226,4 +227,43 @@ export default {
     }
   }
 }
+
+.readmode-hux-range-slider {
+  ::v-deep .v-input__control {
+    .v-input__slot {
+      .v-slider__track-container {
+        height: 4px;
+      }
+      .lighten-3 {
+        background-color: var(--v-black-lighten3) !important;
+      }
+      .theme--light {
+        .v-slider__track-fill {
+          background-color: var(--v-black-lighten3) !important;
+        }
+      }
+      .v-slider__thumb {
+        width: 16px;
+        height: 16px;
+        background-color: var(--v-white-base) !important;
+        border: 1px solid var(--v-secondary-lighten1) !important;
+        box-sizing: border-box;
+        box-shadow: 0px 1px 5px rgb(0 0 0 / 15%);
+        border-radius: 100px;
+        border-color: var(--v-secondary-lighten1) !important;
+        &:before {
+          content: none;
+        }
+      }
+      .v-slider__thumb-label {
+        transform: translateY(35px) translateX(-50%) rotate(45deg) !important;
+        background-color: inherit !important;
+        color: var(--v-black-darken1);
+        border: none !important;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
 </style>
