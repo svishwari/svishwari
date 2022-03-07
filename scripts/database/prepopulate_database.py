@@ -620,15 +620,13 @@ def drop_collections(database: MongoClient) -> None:
     """
 
     logging.info("Dropping collections.")
-    collections = [
-        db_c.CDP_DATA_SOURCES_COLLECTION,
-        db_c.DELIVERY_PLATFORM_COLLECTION,
-        db_c.MODELS_COLLECTION,
-        db_c.CONFIGURATIONS_COLLECTION,
-        db_c.CLIENT_PROJECTS_COLLECTION,
-        db_c.APPLICATIONS_COLLECTION,
-    ]
-    for collection in collections:
+    all_collections = database[
+        db_c.DATA_MANAGEMENT_DATABASE
+    ].list_collection_names()
+
+    for collection in [
+        x for x in all_collections if x not in db_c.RESTRICTED_COLLECTIONS
+    ]:
         database[db_c.DATA_MANAGEMENT_DATABASE][collection].drop()
         logging.info("Dropped the %s collection.", collection)
 

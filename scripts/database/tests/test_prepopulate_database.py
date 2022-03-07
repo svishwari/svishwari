@@ -29,10 +29,10 @@ class TestPrepopulateDatabase(TestCase):
         """Unit Test for set Indexes."""
 
         pd.drop_collections(self.database)
-        collection_names = self.database[
+        for collection_name in self.database[
             db_c.DATA_MANAGEMENT_DATABASE
-        ].list_collection_names()
-        self.assertNotIn(db_c.DELIVERY_PLATFORM_COLLECTION, collection_names)
+        ].list_collection_names():
+            self.assertIn(collection_name, db_c.RESTRICTED_COLLECTIONS)
 
     def test_insert_data_sources(self):
         """Unit Test for set Indexes."""
