@@ -400,6 +400,37 @@
         </div>
       </template>
     </confirm-modal>
+
+    <confirm-modal
+      v-model="confirmEditModal"
+      icon="edit"
+      type="error"
+      title="Edit"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, edit"
+      left-btn-text="Cancel"
+      @onCancel="confirmEditModal = !confirmEditModal"
+      @onConfirm="confirmEdit()"
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to edit this audience&#63;
+        </div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By changing this audience, all related engagements must be
+          re-delivered.
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -446,6 +477,7 @@ export default {
   },
   data() {
     return {
+      confirmEditModal: false,
       numFiltersSelected: 0,
       finalFilterApplied: 0,
       breadcrumbItems: [
@@ -591,6 +623,14 @@ export default {
       getAudiencesRules: "audiences/fetchConstants",
     }),
 
+    async confirmEdit() {
+      this.confirmEditModal = false
+      this.$router.push({
+        name: "AudienceUpdate",
+        params: { id: this.selectedAudience.id },
+      })
+    },
+
     totalFiltersSelected(value) {
       this.numFiltersSelected = value
     },
@@ -661,8 +701,22 @@ export default {
     },
     getActionItems(audience) {
       // This assumes we cannot create a lookalike audience from a lookalike audience
-      let isLookalikeableActive =
-        audience.lookalikeable === "Active" && !audience.is_lookalike
+      let destinationMenu = []
+      if (audience.destinations.length !== 0) {
+        audience.destinations.forEach((element) => {
+          destinationMenu.push({
+            title: element.name,
+            isDisabled: false,
+            onClick: () => {
+              window.open("https://" + element.link)
+            },
+            icon: element.type,
+          })
+        })
+      }
+      //In Future
+      // let isLookalikeableActive =
+      //   audience.lookalikeable === "Active" && !audience.is_lookalike
       let isFavorite = this.isUserFavorite(audience, "audiences")
       let actionItems = [
         {
@@ -676,7 +730,7 @@ export default {
           title: "Edit audience",
           isDisabled: false,
           onClick: () => {
-            this.editAudience(audience.id)
+            this.openEditModal(audience)
           },
         },
         {
@@ -687,28 +741,9 @@ export default {
           },
         },
         {
-          title: "Create a lookalike",
-          isDisabled: !isLookalikeableActive,
-          menu: {
-            title: "Facebook",
-            isDisabled: true,
-            onClick: () => {
-              this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
-              this.openLookAlikeDrawer(audience)
-            },
-            icon: "facebook",
-          },
-        },
-        {
           title: "Open destination",
-          menu: {
-            title: "Facebook",
-            isDisabled: true,
-            onClick: () => {
-              window.open(audience.link, "_blank")
-            },
-            icon: "facebook",
-          },
+          isDisabled: audience.destinations.length !== 0 ? false : true,
+          menu: destinationMenu,
         },
         {
           title: "Delete audience",
@@ -772,7 +807,11 @@ export default {
         params: { id: id },
       })
     },
-
+    openEditModal(audience) {
+      this.selectedAudience = audience
+      this.confirmSubtitle = audience.name
+      this.confirmEditModal = true
+    },
     openLookAlikeDrawer(audience) {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true

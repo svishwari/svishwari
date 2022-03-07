@@ -321,7 +321,7 @@
               <h3 class="text-h3">Run duration</h3>
               <span
                 class="
-                  text--body-1
+                  text-body-1
                   black--text
                   text--lighten-4
                   ml-1

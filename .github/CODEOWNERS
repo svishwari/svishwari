@@ -6,13 +6,13 @@ hux/frontend/ @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @sh
 hux/integration_tests/frontend @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74 @shahlakhani-deloitte @soumya-pb @risheek-deloitte @dcl-deloitte
 
 # api processes
-hux/api/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel
-hux/integration_tests/api @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel
-hux/api/load_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel
+hux/api/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel @svishwari
+hux/integration_tests/api @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel @svishwari
+hux/api/load_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel @svishwari
 
 # CI/CD processes
 *codefresh.yml @pfleetwood1 @JyotiSingh7 @dcl-deloitte
 
 # huxunifylib-database
-scripts/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @skondalraj-deloitte @rahgoel
-lib/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @sairajput-deloitte @rmahato-deloitte @skondalraj-deloitte @shashaagrawal-deloitte @rahgoel
+scripts/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @skondalraj-deloitte @rahgoel @svishwari
+lib/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @sairajput-deloitte @rmahato-deloitte @skondalraj-deloitte @shashaagrawal-deloitte @rahgoel @svishwari

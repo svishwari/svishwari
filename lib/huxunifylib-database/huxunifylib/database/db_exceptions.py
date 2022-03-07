@@ -105,12 +105,6 @@ class DuplicateFieldType(HuxAdvException):
     exception_message = "Invalid Input Field(s) <{}>!"
 
 
-class InvalidNotificationType(HuxAdvException):
-    """Exception for invalid notification type."""
-
-    exception_message = "Invalid Notification type <{}>!"
-
-
 class InvalidValueException(HuxAdvException):
     """Exception for invalid value provided."""
 

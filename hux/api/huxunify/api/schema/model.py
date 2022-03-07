@@ -12,7 +12,7 @@ from huxunify.api import constants as api_c
 class ModelSchema(Schema):
     """Model Schema"""
 
-    id = Str()
+    id = Str(attribute=db_c.ID)
     name = Str(required=True)
     description = Str()
     status = Str()

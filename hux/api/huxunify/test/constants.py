@@ -1440,6 +1440,35 @@ SAMPLE_USER_REQUEST_JIRA_ISSUES = {
     ],
 }
 
+DATAFEED_FILE_DETAILS_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    api_c.BODY: [
+        {
+            api_c.INPUT_FILE: "file_1.csv",
+            api_c.UNIQUE_ID: 1,
+            api_c.PROCESSED_END_DATE: "2022-02-13T17:21:04.000Z",
+            api_c.PROCESSED_START_DATE: "2022-02-13T16:06:40.000Z",
+            api_c.RECORDS_PROCESSED: 392271,
+            api_c.RECORDS_RECEIVED: 507907,
+            api_c.STATUS: api_c.STATUS_RUNNING,
+            api_c.SUB_STATUS: api_c.STATUS_IN_PROGRESS,
+            api_c.THIRTY_DAYS_AVG: 0.94,
+        },
+        {
+            api_c.INPUT_FILE: "file_2.csv",
+            api_c.UNIQUE_ID: 2,
+            api_c.PROCESSED_END_DATE: "2022-02-12T16:14:48.000Z",
+            api_c.PROCESSED_START_DATE: "2022-02-12T16:06:40.000Z",
+            api_c.RECORDS_PROCESSED: 424684,
+            api_c.RECORDS_RECEIVED: 669920,
+            api_c.STATUS: api_c.STATUS_SUCCESS,
+            api_c.SUB_STATUS: api_c.STATUS_COMPLETE,
+            api_c.THIRTY_DAYS_AVG: 0.94,
+        },
+    ],
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
