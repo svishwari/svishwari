@@ -1,4 +1,5 @@
-"""File for email deliverability metrics functions"""
+"""File for email deliverability metrics functions."""
+
 from datetime import datetime, timedelta
 from collections import defaultdict
 from random import uniform
@@ -103,7 +104,7 @@ def get_performance_metrics_deliverability_data(
     start_date: datetime,
     end_date: datetime,
 ) -> dict:
-    """
+    """Get performance metrics email deliverability metrics.
     Args:
         database (MongoClient): A database client.
         domains (list): List of domain names to fetch delivered rate data.
@@ -126,7 +127,7 @@ def get_performance_metrics_deliverability_data(
         domains=domains,
         start_date=start_date,
         end_date=end_date,
-        mock=True if get_config().FLASK_ENV == api_c.TEST_MODE else False,
+        mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
     )
     for domain_data in deliverability_data:
         # For domain name from performance metrics we get complete address.
