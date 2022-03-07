@@ -596,8 +596,8 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
     return [
         {
             api_c.NAME: x[api_c.CITY],
-            api_c.LTV: round(x["avg_ltv"], 4)
-            if x["avg_ltv"] is not None
+            api_c.LTV: round(x[api_c.AVG_LTV], 4)
+            if x[api_c.AVG_LTV] is not None
             else None,
         }
         for x in get_city_ltvs(token, filters=filters)
