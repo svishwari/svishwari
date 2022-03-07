@@ -5,10 +5,10 @@ from datetime import datetime
 from typing import Union
 
 import pymongo
-from huxunifylib.database.utils import match_start_end_date_stmt
 from pymongo import MongoClient
 
 import huxunifylib.database.constants as db_c
+from huxunifylib.database.utils import match_start_end_date_stmt
 
 
 def get_domain_wise_inbox_percentage_data(
