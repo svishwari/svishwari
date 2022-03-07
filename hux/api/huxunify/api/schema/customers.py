@@ -151,19 +151,19 @@ class CustomerOverviewSchema(Schema):
     total_countries = Integer(required=True, default=0)
     total_us_states = Integer(required=True, default=0)
     total_cities = Integer(required=True, default=0)
-    min_age = Integer(required=True, default=0)
-    max_age = Integer(required=True, default=0)
-    avg_age = Integer(required=True, default=0)
+    min_age = Integer(required=True, default=0, allow_none=True)
+    max_age = Integer(required=True, default=0, allow_none=True)
+    avg_age = Integer(required=True, default=0, allow_none=True)
     gender_women = Float(required=True, default=0.0)
     gender_men = Float(required=True, default=0.0)
     gender_other = Float(required=True, default=0.0)
     gender_men_count = Integer(required=True, default=0)
     gender_women_count = Integer(required=True, default=0)
     gender_other_count = Integer(required=True, default=0)
-    min_ltv_predicted = Float(required=True, default=0.0)
-    max_ltv_predicted = Float(required=True, default=0.0)
-    min_ltv_actual = Float(required=True, default=0.0)
-    max_ltv_actual = Float(required=True, default=0.0)
+    min_ltv_predicted = Float(required=True, default=0.0, allow_none=True)
+    max_ltv_predicted = Float(required=True, default=0.0, allow_none=True)
+    min_ltv_actual = Float(required=True, default=0.0, allow_none=True)
+    max_ltv_actual = Float(required=True, default=0.0, allow_none=True)
     geo = List(Nested(CustomerStateSchema), default=[])
 
 
@@ -289,11 +289,26 @@ class CustomerGeoVisualSchema(Schema):
     gender_women = Float(required=True, example=0.50)
     gender_men = Float(required=True, example=0.49)
     gender_other = Float(required=True, example=0.01)
-    avg_spend = Float(required=True, example=3848.50, attribute=api_c.AVG_LTV)
-    min_spend = Float(required=True, example=3848.50, attribute=api_c.MIN_LTV)
-    max_spend = Float(required=True, example=3848.50, attribute=api_c.MAX_LTV)
-    min_age = Integer(required=True, example=18)
-    max_age = Integer(required=True, example=45)
+    avg_spend = Float(
+        required=True,
+        example=3848.50,
+        attribute=api_c.AVG_LTV,
+        allow_none=True,
+    )
+    min_spend = Float(
+        required=True,
+        example=3848.50,
+        attribute=api_c.MIN_LTV,
+        allow_none=True,
+    )
+    max_spend = Float(
+        required=True,
+        example=3848.50,
+        attribute=api_c.MAX_LTV,
+        allow_none=True,
+    )
+    min_age = Integer(required=True, example=18, allow_none=True)
+    max_age = Integer(required=True, example=45, allow_none=True)
 
 
 class GenderMetrics(Schema):
@@ -472,6 +487,10 @@ class CustomersInsightsCountriesSchema(Schema):
     country = Str(attribute=api_c.NAME, required=True, example="US")
     size = Integer(required=True, default=0, example=1234)
     avg_spend = Float(
-        attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.2345
+        attribute=api_c.AVG_LTV,
+        required=True,
+        default=0.0,
+        example=123.2345,
+        allow_none=None,
     )
     country_label = Str(example="United States")
