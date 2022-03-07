@@ -119,61 +119,29 @@ export default {
         .append("linearGradient")
         .attr("id", `hux-density-chart-${this.id}`)
 
-      if (this.readMode) {
-        linearGradient
+      linearGradient
           .append("stop")
           .attr("offset", Number(this.range[0] / this.max))
-          .style("stop-color", "#ECECEC")
+          .style("stop-color", this.readMode ? "#ECECEC" : "#E6F4F3")
           .style("stop-opacity", "1.0")
-      } else {
-        linearGradient
-          .append("stop")
-          .attr("offset", Number(this.range[0] / this.max))
-          .style("stop-color", "#E6F4F3")
-          .style("stop-opacity", "1.0")
-      }
 
-      if (this.readMode) {
-        linearGradient
+      linearGradient
           .append("stop")
           .attr("offset", Number(this.range[0] / this.max))
-          .style("stop-color", "#D0D0CE")
+          .style("stop-color", this.readMode ? "#D0D0CE" : "#9DD4CF")
           .style("stop-opacity", "1.0")
-      } else {
-        linearGradient
-          .append("stop")
-          .attr("offset", Number(this.range[0] / this.max))
-          .style("stop-color", "#9DD4CF")
-          .style("stop-opacity", "1.0")
-      }
 
-      if (this.readMode) {
-        linearGradient
+      linearGradient
           .append("stop")
           .attr("offset", Number(this.range[1] / this.max))
-          .style("stop-color", "#D0D0CE")
+          .style("stop-color", this.readMode ? "#D0D0CE" : "#9DD4CF")
           .style("stop-opacity", "1.0")
-      } else {
-        linearGradient
-          .append("stop")
-          .attr("offset", Number(this.range[1] / this.max))
-          .style("stop-color", "#9DD4CF")
-          .style("stop-opacity", "1.0")
-      }
 
-      if (this.readMode) {
-        linearGradient
+      linearGradient
           .append("stop")
           .attr("offset", Number(this.range[1] / this.max))
-          .style("stop-color", "#ECECEC")
+          .style("stop-color", this.readMode ? "#ECECEC" : "#E6F4F3" )
           .style("stop-opacity", "1.0")
-      } else {
-        linearGradient
-          .append("stop")
-          .attr("offset", Number(this.range[1] / this.max))
-          .style("stop-color", "#E6F4F3")
-          .style("stop-opacity", "1.0")
-      }
 
       // Add the area
       svg
