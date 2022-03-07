@@ -957,8 +957,8 @@ class OrchestrationRouteTest(RouteTestCase):
 
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
-    def test_create_lookalike_audience(self):
-        """Test create lookalike audience."""
+    def test_create_lookalike_audience_with_engagement_ids(self):
+        """Test create lookalike audience with engagement ids."""
 
         # setup facebook connector mock address
         mock.patch.object(
@@ -1001,6 +1001,70 @@ class OrchestrationRouteTest(RouteTestCase):
                 engaged_lookalike_audience = audience
 
         self.assertIsNotNone(engaged_lookalike_audience)
+
+        # test getting the audience and lookalikes response
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{self.audience_api_endpoint}/{lookalike_audience_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        lookalike_audience = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            lookalike_audience[api_c.ID], str(lookalike_audience_id)
+        )
+        self.assertEqual(lookalike_audience[api_c.SIZE], 3329)
+        self.assertEqual(
+            lookalike_audience[t_c.SOURCE_SIZE], self.audiences[0][db_c.SIZE]
+        )
+        self.assertEqual(
+            lookalike_audience[t_c.SOURCE_NAME], self.audiences[0][db_c.NAME]
+        )
+        self.assertGreaterEqual(lookalike_audience[api_c.MATCH_RATE], 0)
+        self.assertEqual(
+            lookalike_audience[t_c.SOURCE_ID],
+            str(self.audiences[0][db_c.ID]),
+        )
+        self.assertTrue(lookalike_audience[api_c.IS_LOOKALIKE])
+
+    def test_create_lookalike_audience_wo_engagement_ids(self):
+        """Test create lookalike audience without engagement ids."""
+
+        # setup facebook connector mock address
+        mock.patch.object(
+            FacebookConnector,
+            "check_connection",
+            return_value=True,
+        ).start()
+
+        mock.patch.object(
+            FacebookConnector,
+            "get_new_lookalike_audience",
+            return_value="LA_ID_12345",
+        ).start()
+
+        lookalike_audience_name = "NEW LA AUDIENCE"
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.NAME: lookalike_audience_name,
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+            },
+        )
+
+        self.assertEqual(HTTPStatus.ACCEPTED, response.status_code)
+        self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
+        lookalike_audience_id = ObjectId(response.json[api_c.ID])
 
         # test getting the audience and lookalikes response
         self.request_mocker.stop()
