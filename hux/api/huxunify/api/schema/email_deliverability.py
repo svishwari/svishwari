@@ -1,7 +1,7 @@
 """Schemas for email deliverability  API"""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Integer, Float, Str, List, Nested
+from marshmallow.fields import Integer, Str, List, Nested, Decimal
 from marshmallow.validate import Range, OneOf
 
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
@@ -11,24 +11,29 @@ from huxunify.api import constants as api_c
 class DomainDataPercentageSchema(Schema):
     """Schema for percentage data representation for all domains."""
 
-    domain_1 = Float(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1
+    domain_1 = Decimal(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
+        places=2
     )
-    domain_2 = Float(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1
+    domain_2 = Decimal(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
+        places=2
     )
-    domain_3 = Float(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1
+    domain_3 = Decimal(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
+        places=2
     )
-    american_express = Float(
+    american_express = Decimal(
         validate=Range(min_inclusive=0.0, max_inclusive=1.0),
         example=0.1,
         attribute="e-response-americanexpress-com",
+        places=2
     )
-    metric_orchestration = Float(
+    metric_orchestration = Decimal(
         validate=Range(min_inclusive=0.0, max_inclusive=1.0),
         example=0.1,
         data_key="e-metric-orchestration.com",
+        places=2
     )
     date = DateTimeWithZ(required=True)
 
@@ -42,7 +47,7 @@ class DomainDataCountSchema(Schema):
     american_express = Integer(
         example=10, attribute="e-response-americanexpress-com"
     )
-    metric_orchestration = Float(
+    metric_orchestration = Integer(
         example=10, data_key="e-metric-orchestration-com"
     )
     date = DateTimeWithZ(required=True)
@@ -69,14 +74,17 @@ class SendingDomainsOverviewSchema(Schema):
 
     domain_name = Str(example="domain1", required=True)
     sent = Integer(example=1, required=True)
-    bounce_rate = Float(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1
+    bounce_rate = Decimal(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
+        places=2
     )
-    open_rate = Float(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1
+    open_rate = Decimal(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
+        places=2
     )
-    click_rate = Float(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1
+    click_rate = Decimal(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
+        places=2
     )
 
 
@@ -84,8 +92,9 @@ class DeliveredOpenRateOverviewSchema(Schema):
     """Schema for Delivered count and Open rate data."""
 
     date = DateTimeWithZ(required=True)
-    open_rate = Float(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1
+    open_rate = Decimal(
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
+        places=2
     )
     delivered_count = Integer(example=2)
 
@@ -93,7 +102,7 @@ class DeliveredOpenRateOverviewSchema(Schema):
 class EmailDeliverabilityOverviewSchema(Schema):
     """Schema for email deliverability overview."""
 
-    overall_inbox_rate = Float(example=0.8, required=True)
+    overall_inbox_rate = Decimal(example=0.8, required=True, places=2)
     interval = Str(
         default=api_c.DAILY,
         validate=OneOf([api_c.DAILY, api_c.WEEKLY, api_c.MONTHLY]),
