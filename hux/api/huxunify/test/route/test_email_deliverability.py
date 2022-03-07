@@ -104,7 +104,7 @@ class TestDestinationRoutes(RouteTestCase):
                 "unique_opens": 91,
                 "clicks": 71,
                 "unique_clicks": 67,
-                "bounces": 0,
+                "bounces": 1,
                 "hard_bounces": 0,
                 "unsubscribes": 27,
                 "complaints": 11,
