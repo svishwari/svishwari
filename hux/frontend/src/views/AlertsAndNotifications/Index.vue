@@ -321,10 +321,6 @@ export default {
       this.calculateLastBatch()
     } finally {
       this.loading = false
-      this.enableLazyLoad = true
-      if (this.notifications.length === 0) {
-        this.enableLazyLoad = false
-      }
     }
   },
 
@@ -355,6 +351,7 @@ export default {
     intersected() {
       if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
+        this.enableLazyLoad = true
         this.fetchNotificationsByBatch()
       } else {
         this.enableLazyLoad = false
@@ -460,13 +457,9 @@ export default {
         this.calculateLastBatch()
         this.loading = false
         this.batchDetails.isLazyLoad = false
-      } finally {
+      }  finally {
         this.isFilterToggled = true
         this.loading = false
-        this.enableLazyLoad = true
-        if (this.notifications.length === 0) {
-          this.enableLazyLoad = false
-        }
       }
     },
     clearFilters() {
@@ -541,7 +534,7 @@ export default {
   > table
   > tbody
   > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
-  background: white !important;
+  background: var(--v-white-base) !important;
 }
 ::v-deep
   .theme--light.v-data-table
