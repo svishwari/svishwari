@@ -4,7 +4,7 @@
       v-if="isRangeSlider"
       v-model="localValue"
       class="hux-range-slider"
-      :class="readMode ? 'readmode-hux-range-slider' : 'hux-range-slider' "
+      :class="readMode ? 'readmode-hux-range-slider' : 'hux-range-slider'"
       :max="max"
       :min="min"
       :step="step"
@@ -265,5 +265,4 @@ export default {
     }
   }
 }
-
 </style>
