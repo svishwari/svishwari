@@ -31,18 +31,26 @@ describe("Decisioning > models", () => {
 
     // should be able to view and validate Drift and Feature chart
     cy.get(selector.models.driftchart).its("length").should("be.gt", 0)
-    cy.get(selector.models.featurechart).its("length").should("be.gt", 0)
+    cy.get(selector.models).then((elem) => {
+      if (elem.find(".feature-chart").length > 0) {
+        cy.get(selector.models.featurechart).its("length").should("be.gt", 0)
+        // scroll down
+        cy.scrollTo("bottom", { duration: 1000 })
 
-    // scroll down
-    cy.scrollTo("bottom", { duration: 1000 })
-
-    // should be able to hover over Feature chart"
-    cy.get(".bar")
-      .first()
-      .trigger("mouseover", { eventConstructor: "MouseEvent" })
+        // should be able to hover over Feature chart"
+        cy.get(".bar")
+          .first()
+          .trigger("mouseover", { eventConstructor: "MouseEvent" })
+      }
+    })
 
     // validate feature and lift table
-    cy.get(selector.models.lifttable).its("length").should("be.gt", 0)
+    cy.get(selector.models).then((elem) => {
+      if (elem.find(".table-lift").length > 0) {
+        cy.get(selector.models.lifttable).its("length").should("be.gt", 0)
+      }
+    })
+
     cy.get(selector.models.featuretable).its("length").should("be.gt", 0)
 
     // should be able to view version history list

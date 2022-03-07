@@ -69,7 +69,7 @@ describe("Orchestration > Destinations", () => {
           cy.get(selector.destination.destinationConfigDetails)
             .get("input")
             .each(($el, index) => {
-              if (index < 6) {
+              if (index < 5) {
                 cy.wrap($el).type("123456")
               }
             })
