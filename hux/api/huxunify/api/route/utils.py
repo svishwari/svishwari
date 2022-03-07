@@ -463,7 +463,7 @@ def is_component_favorite(
     )
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
-        ObjectId(component_id) in user_favorites.get(component_name)
+        ObjectId(component_id) in user_favorites.get(component_name, [])
     ):
         return True
 
@@ -1063,6 +1063,7 @@ def clean_and_aggregate_datafeed_details(
                 api_c.PROCESSED_END_DATE: parse(
                     df_detail[api_c.PROCESSED_END_DATE]
                 ),
+                api_c.STATUS: df_detail[api_c.STATUS].title(),
                 api_c.SUB_STATUS: df_detail[api_c.SUB_STATUS].title(),
                 api_c.RECORDS_PROCESSED_PERCENTAGE: df_detail[
                     api_c.RECORDS_PROCESSED

@@ -3,6 +3,8 @@
     :is-toggled="localDrawer"
     :count="filterLength"
     content-height="262px"
+    :enable-apply="enableApply"
+    :custom-validation="true"
     :disable-clear="filterLength === 1 && selectedTimeType === 'Last week'"
     @clear="clearFilter"
     @apply="apply"
@@ -174,8 +176,12 @@ export default {
         this.selctedCategory.length +
         this.selctedUsers.length +
         time
+      this.setApplyStatus(totalFiltersCount)
       this.$emit("selected-filters", totalFiltersCount)
       return alert + category + time + users
+    },
+    enableApply() {
+      return this.filterLength > 1
     },
   },
   watch: {
@@ -239,6 +245,7 @@ export default {
     close() {
       this.localDrawer = false
     },
+    setApplyStatus() {},
   },
 }
 </script>
