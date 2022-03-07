@@ -120,28 +120,28 @@ export default {
         .attr("id", `hux-density-chart-${this.id}`)
 
       linearGradient
-          .append("stop")
-          .attr("offset", Number(this.range[0] / this.max))
-          .style("stop-color", this.readMode ? "#ECECEC" : "#E6F4F3")
-          .style("stop-opacity", "1.0")
+        .append("stop")
+        .attr("offset", Number(this.range[0] / this.max))
+        .style("stop-color", this.readMode ? "#ECECEC" : "#E6F4F3")
+        .style("stop-opacity", "1.0")
 
       linearGradient
-          .append("stop")
-          .attr("offset", Number(this.range[0] / this.max))
-          .style("stop-color", this.readMode ? "#D0D0CE" : "#9DD4CF")
-          .style("stop-opacity", "1.0")
+        .append("stop")
+        .attr("offset", Number(this.range[0] / this.max))
+        .style("stop-color", this.readMode ? "#D0D0CE" : "#9DD4CF")
+        .style("stop-opacity", "1.0")
 
       linearGradient
-          .append("stop")
-          .attr("offset", Number(this.range[1] / this.max))
-          .style("stop-color", this.readMode ? "#D0D0CE" : "#9DD4CF")
-          .style("stop-opacity", "1.0")
+        .append("stop")
+        .attr("offset", Number(this.range[1] / this.max))
+        .style("stop-color", this.readMode ? "#D0D0CE" : "#9DD4CF")
+        .style("stop-opacity", "1.0")
 
       linearGradient
-          .append("stop")
-          .attr("offset", Number(this.range[1] / this.max))
-          .style("stop-color", this.readMode ? "#ECECEC" : "#E6F4F3" )
-          .style("stop-opacity", "1.0")
+        .append("stop")
+        .attr("offset", Number(this.range[1] / this.max))
+        .style("stop-color", this.readMode ? "#ECECEC" : "#E6F4F3")
+        .style("stop-opacity", "1.0")
 
       // Add the area
       svg
