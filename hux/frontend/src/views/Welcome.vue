@@ -118,10 +118,9 @@ export default {
       font-size: 16px;
       line-height: 22px;
       text-align: center;
-      color: var(--v-black-darken1);
+      color: var(--v-black-lighten4);
       margin-top: 8px;
       max-width: 80%;
-      color: #4f4f4f;
     }
     h2 {
       font-style: normal;
