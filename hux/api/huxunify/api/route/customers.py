@@ -1064,7 +1064,6 @@ class CustomerEvents(SwaggerView):
         """
         token_response = get_token_from_request(request)
 
-        Validation.validate_hux_id(hux_id)
         interval = request.args.get(api_c.INTERVAL, api_c.DAY).lower()
 
         if request.json:
