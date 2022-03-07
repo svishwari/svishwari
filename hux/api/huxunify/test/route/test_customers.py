@@ -725,7 +725,7 @@ class TestCustomersOverview(RouteTestCase):
 
     @given(interval=st.sampled_from(["", api_c.DAY, api_c.WEEK, api_c.MONTH]))
     def test_get_customer_events_dependency_failure(
-            self, interval: str
+        self, interval: str
     ) -> None:
         """Test get customer events 424 dependency failure.
 
@@ -874,6 +874,7 @@ class TestCustomersOverview(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
+
     # TODO Implement test once logic for HUXID is set again
 
     # @given(hux_id=st.text(alphabet=string.ascii_letters))
@@ -932,7 +933,7 @@ class TestCustomersOverview(RouteTestCase):
 
     @given(batch_number=st.text(alphabet=string.ascii_letters))
     def test_get_customer_overview_invalid_batch_number(
-            self, batch_number: str
+        self, batch_number: str
     ):
         """Test get customer list and provide an invalid batch number.
 
@@ -952,7 +953,7 @@ class TestCustomersOverview(RouteTestCase):
 
     @given(batch_size=st.text(alphabet=string.ascii_letters))
     def test_get_customer_insights_by_city_invalid_batch_size(
-            self, batch_size: str
+        self, batch_size: str
     ):
         """Test get customer insights by city and provide an invalid batch size.
 
@@ -973,7 +974,7 @@ class TestCustomersOverview(RouteTestCase):
 
     @given(batch_number=st.text(alphabet=string.ascii_letters))
     def test_get_customer_insights_by_city_invalid_batch_number(
-            self, batch_number: str
+        self, batch_number: str
     ):
         """Test get customer insights by city and provide an invalid batch size.
 

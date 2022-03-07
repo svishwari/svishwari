@@ -289,11 +289,26 @@ class CustomerGeoVisualSchema(Schema):
     gender_women = Float(required=True, example=0.50)
     gender_men = Float(required=True, example=0.49)
     gender_other = Float(required=True, example=0.01)
-    avg_spend = Float(required=True, example=3848.50, attribute=api_c.AVG_LTV)
-    min_spend = Float(required=True, example=3848.50, attribute=api_c.MIN_LTV)
-    max_spend = Float(required=True, example=3848.50, attribute=api_c.MAX_LTV)
-    min_age = Integer(required=True, example=18)
-    max_age = Integer(required=True, example=45)
+    avg_spend = Float(
+        required=True,
+        example=3848.50,
+        attribute=api_c.AVG_LTV,
+        allow_none=True,
+    )
+    min_spend = Float(
+        required=True,
+        example=3848.50,
+        attribute=api_c.MIN_LTV,
+        allow_none=True,
+    )
+    max_spend = Float(
+        required=True,
+        example=3848.50,
+        attribute=api_c.MAX_LTV,
+        allow_none=True,
+    )
+    min_age = Integer(required=True, example=18, allow_none=True)
+    max_age = Integer(required=True, example=45, allow_none=True)
 
 
 class GenderMetrics(Schema):
