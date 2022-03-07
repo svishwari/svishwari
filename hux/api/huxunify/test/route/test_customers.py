@@ -895,23 +895,23 @@ class TestCustomersOverview(RouteTestCase):
     #
     #     self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    @given(hux_id=st.text(alphabet=string.ascii_letters))
-    def test_get_events_for_a_customer_invalid_hux_id(self, hux_id: str):
-        """Test retrieving customer events with an invalid hux ID.
-
-        Args:
-            hux_id (str): HUX ID.
-        """
-
-        if len(hux_id) == 0:
-            return
-
-        response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+    # @given(hux_id=st.text(alphabet=string.ascii_letters))
+    # def test_get_events_for_a_customer_invalid_hux_id(self, hux_id: str):
+    #     """Test retrieving customer events with an invalid hux ID.
+    #
+    #     Args:
+    #         hux_id (str): HUX ID.
+    #     """
+    #
+    #     if len(hux_id) == 0:
+    #         return
+    #
+    #     response = self.app.post(
+    #         f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
+    #         headers=t_c.STANDARD_HEADERS,
+    #     )
+    #
+    #     self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     @given(batch_size=st.text(alphabet=string.ascii_letters))
     def test_get_customer_overview_invalid_batch_size(self, batch_size: str):
