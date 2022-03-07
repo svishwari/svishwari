@@ -162,7 +162,6 @@ export default {
       selectedTimeType: "Last week",
       selctedUsers: [],
       selectedTimeCount: 1,
-      enableApply: true,
     }
   },
 
@@ -177,9 +176,12 @@ export default {
         this.selctedCategory.length +
         this.selctedUsers.length +
         time
-      this.enableApply =  totalFiltersCount > 1
+      this.setApplyStatus(totalFiltersCount)
       this.$emit("selected-filters", totalFiltersCount)
       return alert + category + time + users
+    },
+    enableApply() {
+      return this.filterLength > 1
     },
   },
   watch: {
@@ -243,6 +245,7 @@ export default {
     close() {
       this.localDrawer = false
     },
+    setApplyStatus() {},
   },
 }
 </script>

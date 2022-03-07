@@ -457,7 +457,7 @@ export default {
         this.calculateLastBatch()
         this.loading = false
         this.batchDetails.isLazyLoad = false
-      }  finally {
+      } finally {
         this.isFilterToggled = true
         this.loading = false
       }

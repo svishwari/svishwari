@@ -58,7 +58,11 @@
               color="primary"
               class="text-button ml-auto"
               width="157"
-              :is-disabled="!customValidation ? !Boolean(count) && !enableApply : !enableApply"
+              :is-disabled="
+                !customValidation
+                  ? !Boolean(count) && !enableApply
+                  : !enableApply
+              "
               @click="$emit('apply')"
             >
               Apply filter
