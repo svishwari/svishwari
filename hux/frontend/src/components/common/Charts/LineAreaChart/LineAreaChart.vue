@@ -299,9 +299,9 @@ export default {
         })
 
         if (dataToolTip) {
-        dataToolTip.xPosition = finalXCoordinate
-        dataToolTip.yPosition = yData
-        this.tooltipDisplay(true, dataToolTip)
+          dataToolTip.xPosition = finalXCoordinate
+          dataToolTip.yPosition = yData
+          this.tooltipDisplay(true, dataToolTip)
         }
       }
     },
