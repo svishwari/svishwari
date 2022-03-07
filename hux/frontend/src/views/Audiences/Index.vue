@@ -14,13 +14,19 @@
         <v-btn
           icon
           data-e2e="audienceFilterToggle"
-          @click.native="isFilterToggled = !isFilterToggled"
+          @click.native="filterToggle()"
         >
           <icon
             type="filter"
             :size="27"
             :color="finalFilterApplied > 0 ? 'primary' : 'black'"
-            :variant="finalFilterApplied > 0 ? 'lighten6' : 'darken4'"
+            :variant="
+              showError
+                ? 'lighten3'
+                : finalFilterApplied > 0
+                ? 'lighten6'
+                : 'darken4'
+            "
           />
           <v-badge
             v-if="finalFilterApplied > 0"
@@ -298,7 +304,7 @@
       </div>
 
       <div
-        v-if="audienceList.length == 0 && !loading"
+        v-if="!showError && audienceList.length == 0 && !loading"
         class="
           flex-grow-1 flex-shrink-1
           overflow-hidden
@@ -359,6 +365,15 @@
             </span>
           </template>
         </empty-page>
+      </div>
+      <div v-if="showError" class="error-wrap">
+        <error
+          icon-type="error-on-screens"
+          :icon-size="50"
+          title="Audiences are currently unavailable"
+          subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+        >
+        </error>
       </div>
 
       <div class="ml-auto">
@@ -457,6 +472,7 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import Logo from "../../components/common/Logo.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import AudienceFilter from "./Configuration/Drawers/AudienceFilter"
+import Error from "@/components/common/screens/Error"
 import { formatText } from "@/utils.js"
 
 export default {
@@ -478,9 +494,11 @@ export default {
     Logo,
     ConfirmModal,
     AudienceFilter,
+    Error,
   },
   data() {
     return {
+      showError: false,
       confirmEditModal: false,
       numFiltersSelected: 0,
       finalFilterApplied: 0,
@@ -614,6 +632,8 @@ export default {
     try {
       await this.getAllAudiences({})
       await this.getAudiencesRules()
+    } catch (error) {
+      this.showError = true
     } finally {
       this.loading = false
     }
@@ -705,8 +725,22 @@ export default {
     },
     getActionItems(audience) {
       // This assumes we cannot create a lookalike audience from a lookalike audience
-      let isLookalikeableActive =
-        audience.lookalikeable === "Active" && !audience.is_lookalike
+      let destinationMenu = []
+      if (audience.destinations.length !== 0) {
+        audience.destinations.forEach((element) => {
+          destinationMenu.push({
+            title: element.name,
+            isDisabled: false,
+            onClick: () => {
+              window.open("https://" + element.link)
+            },
+            icon: element.type,
+          })
+        })
+      }
+      //In Future
+      // let isLookalikeableActive =
+      //   audience.lookalikeable === "Active" && !audience.is_lookalike
       let isFavorite = this.isUserFavorite(audience, "audiences")
       let actionItems = [
         {
@@ -731,28 +765,9 @@ export default {
           },
         },
         {
-          title: "Create a lookalike",
-          isDisabled: !isLookalikeableActive,
-          menu: {
-            title: "Facebook",
-            isDisabled: true,
-            onClick: () => {
-              this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
-              this.openLookAlikeDrawer(audience)
-            },
-            icon: "facebook",
-          },
-        },
-        {
           title: "Open destination",
-          menu: {
-            title: "Facebook",
-            isDisabled: true,
-            onClick: () => {
-              window.open(audience.link, "_blank")
-            },
-            icon: "facebook",
-          },
+          isDisabled: audience.destinations.length !== 0 ? false : true,
+          menu: destinationMenu,
         },
         {
           title: "Delete audience",
@@ -824,6 +839,12 @@ export default {
     openLookAlikeDrawer(audience) {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true
+    },
+
+    filterToggle() {
+      if (!this.showError) {
+        this.isFilterToggled = !this.isFilterToggled
+      }
     },
 
     async applyFilter(params) {
@@ -959,6 +980,11 @@ export default {
   height: 60vh !important;
   background-image: url("../../assets/images/no-alert-frame.png");
   background-position: center;
+}
+
+.error-wrap {
+  margin-top: 40px;
+  width: 100%;
 }
 
 //to overwrite the classes
