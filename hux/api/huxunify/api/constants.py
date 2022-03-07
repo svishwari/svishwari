@@ -1632,6 +1632,7 @@ CLICK_RATE = "click_rate"
 DELIVERED_RATE = "delivered_rate"
 UNSUBSCRIBE_RATE = "unsubscribe_rate"
 COMPLAINTS_RATE = "complaints_rate"
+DELIVERABILITY_METRICS = "deliverability_metrics"
 
 # TODO Remove once email deliverability data is available.
 
