@@ -12,28 +12,31 @@ class DomainDataPercentageSchema(Schema):
     """Schema for percentage data representation for all domains."""
 
     domain_1 = Decimal(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
-        places=2
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0),
+        example=0.1,
+        places=2,
     )
     domain_2 = Decimal(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
-        places=2
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0),
+        example=0.1,
+        places=2,
     )
     domain_3 = Decimal(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
-        places=2
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0),
+        example=0.1,
+        places=2,
     )
     american_express = Decimal(
         validate=Range(min_inclusive=0.0, max_inclusive=1.0),
         example=0.1,
         attribute="e-response-americanexpress-com",
-        places=2
+        places=2,
     )
     metric_orchestration = Decimal(
         validate=Range(min_inclusive=0.0, max_inclusive=1.0),
         example=0.1,
         data_key="e-metric-orchestration.com",
-        places=2
+        places=2,
     )
     date = DateTimeWithZ(required=True)
 
@@ -75,16 +78,19 @@ class SendingDomainsOverviewSchema(Schema):
     domain_name = Str(example="domain1", required=True)
     sent = Integer(example=1, required=True)
     bounce_rate = Decimal(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
-        places=2
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0),
+        example=0.1,
+        places=2,
     )
     open_rate = Decimal(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
-        places=2
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0),
+        example=0.1,
+        places=2,
     )
     click_rate = Decimal(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
-        places=2
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0),
+        example=0.1,
+        places=2,
     )
 
 
@@ -93,8 +99,9 @@ class DeliveredOpenRateOverviewSchema(Schema):
 
     date = DateTimeWithZ(required=True)
     open_rate = Decimal(
-        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.1,
-        places=2
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0),
+        example=0.1,
+        places=2,
     )
     delivered_count = Integer(example=2)
 
