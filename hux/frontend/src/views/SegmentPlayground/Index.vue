@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <div
+    class="playground-outermost-wrap"
+    :class="!loading && hasOverview == 0 ? 'white' : ''"
+  >
     <page-header :header-height="isEdit ? '70' : '110'" help-icon>
       <template slot="left">
         <div>
@@ -12,6 +15,7 @@
       </template>
       <template #right>
         <tips-menu
+          v-if="hasOverview"
           :panel-list-items="panelListItems"
           header="Segment Playground user guide"
           :right-position="!isEdit ? '0rem' : '5rem'"
@@ -50,6 +54,7 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <page
+      v-if="!loading && hasOverview && !errorState"
       max-width="100%"
       padding="0 24px"
       class="white segmentation playground-wrap"
@@ -133,6 +138,31 @@
         </template>
       </hux-footer>
     </page>
+    <v-row v-else-if="!loading && !errorState" class="ma-0 empty-row">
+      <empty-page type="no-customer-data" :size="50">
+        <template #title>
+          <div class="h2">No customer data to show</div>
+        </template>
+        <template #subtitle>
+          <div class="body-2 mt-3">
+            Please be patient while our team connects your data.
+          </div>
+        </template>
+      </empty-page>
+    </v-row>
+    <v-row v-else-if="!loading && errorState" class="ma-0 error-row">
+      <empty-page type="error-on-screens" :size="50">
+        <template #title>
+          <div class="h2">Segment playground is currently unavailable</div>
+        </template>
+        <template #subtitle>
+          <div class="body-2 mt-3">
+            Our team is working hard to fix it. Please be patient and try again
+            soon!
+          </div>
+        </template>
+      </empty-page>
+    </v-row>
     <confirm-modal
       v-model="confirmModal"
       :icon="confirmData.icon"
@@ -205,6 +235,7 @@ import TipsMenu from "@/components/common/TipsMenu.vue"
 import Geography from "./Geography.vue"
 import Overview from "./Overview.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
+import EmptyPage from "@/components/common/EmptyPage.vue"
 
 export default {
   name: "SegmentPlayground",
@@ -220,6 +251,7 @@ export default {
     TipsMenu,
     TextField,
     ConfirmModal,
+    EmptyPage,
   },
   data() {
     return {
@@ -292,6 +324,7 @@ export default {
         leftButtonText: "Cancel",
       },
       confirmModal: false,
+      errorState: false,
     }
   },
   computed: {
@@ -299,6 +332,9 @@ export default {
       overview: "customers/overview",
       getAudience: "audiences/audience",
     }),
+    hasOverview() {
+      return this.overview ? Object.keys(this.overview).length : 0
+    },
     breadcrumbItems() {
       const items = !this.isEdit ? this.breadcrumbs : this.editBreadcrumbs
       if (this.isEdit && this.audience && this.audience.name) {
@@ -330,29 +366,46 @@ export default {
   async mounted() {
     this.loading = true
     this.loadingOverview = true
-    try {
-      if (this.$route.name === "AudienceUpdate") {
+    if (this.$route.name === "AudienceUpdate") {
+      try {
         this.isEdit = true
         this.isClone = false
         await this.getOverview()
+        console.log(this.hasOverview)
         this.audienceId = this.$route.params.id
         await this.getAudienceById(this.audienceId)
-        const data = this.getAudience(this.audienceId)
-        this.mapAudienceData(data)
-      } else if (this.$route.name === "CloneAudience") {
+      } catch (error) {
+        this.errorState = true
+      } finally {
+        this.loadingOverview = false
+        this.loading = false
+      }
+      const data = this.getAudience(this.audienceId)
+      this.mapAudienceData(data)
+    } else if (this.$route.name === "CloneAudience") {
+      try {
         this.isEdit = false
         this.isClone = true
         await this.getOverview()
         this.audienceId = this.$route.params.id
         await this.getAudienceById(this.audienceId)
-        const data = this.getAudience(this.audienceId)
-        this.mapAudienceData(data)
-      } else {
-        await this.getOverview()
+      } catch (error) {
+        this.errorState = true
+      } finally {
+        this.loadingOverview = false
+        this.loading = false
       }
-    } finally {
-      this.loadingOverview = false
-      this.loading = false
+      const data = this.getAudience(this.audienceId)
+      this.mapAudienceData(data)
+    } else {
+      try {
+        await this.getOverview()
+      } catch (error) {
+        this.errorState = true
+      } finally {
+        this.loadingOverview = false
+        this.loading = false
+      }
     }
   },
   methods: {
@@ -516,37 +569,47 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.playground-wrap {
-  .segment-wrap {
-    .attributes {
-      flex: 0 0 66.63934426%;
-      width: 66.63934426%;
-    }
-    .overviews {
-      flex: 0 0 33.360655737704918%;
-      width: 33.360655737704918%;
-      @extend .border-start;
-      border-color: var(--v-black-lighten3);
+.playground-outermost-wrap {
+  .playground-wrap {
+    .segment-wrap {
+      .attributes {
+        flex: 0 0 66.63934426%;
+        width: 66.63934426%;
+      }
+      .overviews {
+        flex: 0 0 33.360655737704918%;
+        width: 33.360655737704918%;
+        @extend .border-start;
+        border-color: var(--v-black-lighten3);
+      }
     }
   }
-}
+  ::v-deep {
+    .error-row {
+      padding-top: 105px !important;
+    }
+    .empty-row {
+      padding-top: 150px !important;
+    }
+  }
 
-.h-86 {
-  height: 86px;
-  width: 360px;
-}
+  .h-86 {
+    height: 86px;
+    width: 360px;
+  }
 
-.delete-tooltip {
-  width: 191px;
-  height: 32px;
-  margin: -5px 0px -5px 0px;
-}
+  .delete-tooltip {
+    width: 191px;
+    height: 32px;
+    margin: -5px 0px -5px 0px;
+  }
 
-.cancel-color {
-  color: var(--v-primary-base);
-}
+  .cancel-color {
+    color: var(--v-primary-base);
+  }
 
-.menuable__content__active {
-  z-index: 100 !important;
+  .menuable__content__active {
+    z-index: 100 !important;
+  }
 }
 </style>
