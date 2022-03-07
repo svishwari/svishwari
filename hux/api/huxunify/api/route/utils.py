@@ -1,5 +1,6 @@
 """Purpose of this file is to house route utilities."""
 # pylint: disable=too-many-lines
+import statistics
 from collections import defaultdict
 from datetime import datetime, date
 import re
@@ -965,6 +966,7 @@ def group_and_aggregate_datafeed_details_by_date(
         datafeed_details, lambda x: x[api_c.PROCESSED_START_DATE]
     )
 
+    stdev_sample_list = []
     for df_date, df_details in grouped_by_date:
         data_feed_by_date = {
             api_c.NAME: df_date,
@@ -1025,13 +1027,23 @@ def group_and_aggregate_datafeed_details_by_date(
                 )
             )
 
+        records_processed_percentage = round(
+            total_records_processed / total_records_received, 3
+        )
+
         _ = data_feed_by_date.update(
             {
                 api_c.RECORDS_PROCESSED: total_records_processed,
                 api_c.RECORDS_RECEIVED: total_records_received,
-                api_c.RECORDS_PROCESSED_PERCENTAGE: round(
-                    total_records_processed / total_records_received, 3
-                ),
+                api_c.RECORDS_PROCESSED_PERCENTAGE: {
+                    api_c.VALUE: records_processed_percentage,
+                    api_c.FLAG_INDICATOR: (
+                        statistics.stdev(stdev_sample_list)
+                        if len(stdev_sample_list) > 1
+                        else 0
+                    )
+                    > 0.1,
+                },
                 api_c.STATUS: status,
             }
         )
@@ -1054,7 +1066,14 @@ def clean_and_aggregate_datafeed_details(
         list: list of data feed details
     """
 
+    stdev_sample_list = []
     for df_detail in datafeed_details:
+        records_processed_percentage = (
+            df_detail[api_c.RECORDS_PROCESSED]
+            / df_detail[api_c.RECORDS_RECEIVED]
+        )
+        # TODO: Refactor computing standard deviation once we have clarity
+        stdev_sample_list.append(records_processed_percentage)
         _ = df_detail.update(
             {
                 api_c.PROCESSED_START_DATE: parse(
@@ -1065,10 +1084,15 @@ def clean_and_aggregate_datafeed_details(
                 ),
                 api_c.STATUS: df_detail[api_c.STATUS].title(),
                 api_c.SUB_STATUS: df_detail[api_c.SUB_STATUS].title(),
-                api_c.RECORDS_PROCESSED_PERCENTAGE: df_detail[
-                    api_c.RECORDS_PROCESSED
-                ]
-                / df_detail[api_c.RECORDS_RECEIVED],
+                api_c.RECORDS_PROCESSED_PERCENTAGE: {
+                    api_c.VALUE: records_processed_percentage,
+                    api_c.FLAG_INDICATOR: (
+                        statistics.stdev(stdev_sample_list)
+                        if len(stdev_sample_list) > 1
+                        else 0
+                    )
+                    > 0.1,
+                },
             }
         )
         # compute run duration if success or running and end_dt available
