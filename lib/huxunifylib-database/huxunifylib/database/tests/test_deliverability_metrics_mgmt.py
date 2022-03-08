@@ -134,11 +134,11 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             end_time=datetime.datetime.utcnow(),
             domain="test2.com",
         )
-        self.generic_campaigns = [
+        generic_campaigns = [
             {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
         ]
 
-        self.audience = create_audience(
+        audience = create_audience(
             database=self.database,
             name="all",
             audience_filters=[],
@@ -146,23 +146,27 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
         )
 
         # Create a delivery job.
-        self.delivery_job_doc = set_delivery_job(
+        delivery_job_doc = set_delivery_job(
             self.database,
-            self.audience[db_c.ID],
+            audience[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
-            self.generic_campaigns,
+            generic_campaigns,
         )
 
-        set_performance_metrics(
+        start_date = end_date = datetime.datetime.strptime(
+            str(datetime.datetime.utcnow().date()), "%Y-%m-%d"
+        )
+
+        metrics_1 = set_performance_metrics(
             database=self.database,
             delivery_platform_id=self.delivery_platform_doc[db_c.ID],
-            delivery_job_id=self.delivery_job_doc[db_c.ID],
+            delivery_job_id=delivery_job_doc[db_c.ID],
             delivery_platform_type=db_c.DELIVERY_PLATFORM_SFMC,
-            generic_campaigns=self.generic_campaigns[0]["campaign_id"],
+            generic_campaigns=generic_campaigns[0]["campaign_id"],
             metrics_dict={
                 "journey_name": "SFMCJourney_2",
                 "journey_id": "43925808-c52e-11eb-826e-bae5bebfd7a3",
-                "from_addr": "dev-sfmc@e-response.americanexpress.com",
+                "from_addr": "dev-sfmc@domain1.com",
                 "journey_creation_date": "2021-09-01T12:14:46Z",
                 "hux_engagement_id": "60c2fd6515eb844f53cdc669",
                 "hux_audience_id": "60a7a15cc1e230dbd54ef428",
@@ -177,20 +181,20 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
                 "unsubscribes": 27,
                 "complaints": 11,
             },
-            start_time=datetime.datetime.utcnow(),
-            end_time=datetime.datetime.utcnow(),
+            start_time=start_date,
+            end_time=end_date,
         )
 
-        set_performance_metrics(
+        metrics_2 = set_performance_metrics(
             database=self.database,
             delivery_platform_id=self.delivery_platform_doc[db_c.ID],
-            delivery_job_id=self.delivery_job_doc[db_c.ID],
+            delivery_job_id=delivery_job_doc[db_c.ID],
             delivery_platform_type=db_c.DELIVERY_PLATFORM_SFMC,
-            generic_campaigns=self.generic_campaigns[0]["campaign_id"],
+            generic_campaigns=generic_campaigns[0]["campaign_id"],
             metrics_dict={
                 "journey_name": "SFMCJourney_2",
                 "journey_id": "43925808-c52e-11eb-826e-bae5bebfd7a3",
-                "from_addr": "dev-sfmc@e-response.americanexpress.com",
+                "from_addr": "dev-sfmc@domain1.com",
                 "journey_creation_date": "2021-09-01T12:14:46Z",
                 "hux_engagement_id": "60c2fd6515eb844f53cdc669",
                 "hux_audience_id": "60a7a15cc1e230dbd54ef428",
@@ -205,9 +209,23 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
                 "unsubscribes": 27,
                 "complaints": 11,
             },
-            start_time=datetime.datetime.utcnow(),
-            end_time=datetime.datetime.utcnow(),
+            start_time=start_date,
+            end_time=end_date,
         )
+
+        self.aggregated_sent = metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+            "sent"
+        ) + metrics_2.get(db_c.PERFORMANCE_METRICS).get("sent")
+
+        self.aggregated_open_rate = (
+            metrics_1.get(db_c.PERFORMANCE_METRICS).get("opens")
+            + metrics_2.get(db_c.PERFORMANCE_METRICS).get("opens")
+        ) / self.aggregated_sent
+
+        self.aggregated_click_rate = (
+            metrics_1.get(db_c.PERFORMANCE_METRICS).get("clicks")
+            + metrics_2.get(db_c.PERFORMANCE_METRICS).get("clicks")
+        ) / self.aggregated_sent
 
     def test_domain_wise_inbox_percentage_data(self):
         """Test for domain wise inbox percentage data."""
@@ -259,7 +277,7 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
 
         performance_metrics = get_deliverability_data_performance_metrics(
             database=self.database,
-            domains=["e-response.americanexpress.com"],
+            domains=["domain1.com"],
             start_date=datetime.datetime.utcnow() - datetime.timedelta(days=1),
             end_date=datetime.datetime.utcnow(),
             mock=True,
@@ -279,17 +297,38 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             .get("sent"),
             int,
         )
+
+        self.assertEqual(
+            self.aggregated_sent,
+            performance_metrics[0]
+            .get(db_c.DELIVERABILITY_METRICS)[0]
+            .get("sent"),
+        )
+
         self.assertIsInstance(
             performance_metrics[0]
             .get(db_c.DELIVERABILITY_METRICS)[0]
             .get("open_rate"),
             float,
         )
+        self.assertEqual(
+            self.aggregated_open_rate,
+            performance_metrics[0]
+            .get(db_c.DELIVERABILITY_METRICS)[0]
+            .get("open_rate"),
+        )
+
         self.assertIsInstance(
             performance_metrics[0]
             .get(db_c.DELIVERABILITY_METRICS)[0]
             .get("click_rate"),
             float,
+        )
+        self.assertEqual(
+            self.aggregated_click_rate,
+            performance_metrics[0]
+            .get(db_c.DELIVERABILITY_METRICS)[0]
+            .get("click_rate"),
         )
 
     def test_get_deliverability_data_aggregate(self):
@@ -297,7 +336,7 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
 
         performance_metrics = get_deliverability_data_performance_metrics(
             database=self.database,
-            domains=["e-response.americanexpress.com"],
+            domains=["domain1.com"],
             start_date=datetime.datetime.utcnow() - datetime.timedelta(days=1),
             end_date=datetime.datetime.utcnow(),
             aggregate=True,
@@ -310,5 +349,15 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
         )
 
         self.assertIsInstance(performance_metrics[0].get("sent"), int)
+        self.assertEqual(
+            self.aggregated_sent, performance_metrics[0].get("sent")
+        )
         self.assertIsInstance(performance_metrics[0].get("open_rate"), float)
+        self.assertEqual(
+            self.aggregated_open_rate, performance_metrics[0].get("open_rate")
+        )
         self.assertIsInstance(performance_metrics[0].get("click_rate"), float)
+        self.assertEqual(
+            self.aggregated_click_rate,
+            performance_metrics[0].get("click_rate"),
+        )
