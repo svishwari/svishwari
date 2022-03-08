@@ -355,6 +355,16 @@ const routes = [
     },
   },
   {
+    path: "/no-access",
+    name: "NoAccess",
+    component: () => import("@/views/NoAccess"),
+    meta: {
+      layout: "default",
+      title: "No Access",
+      requiresAuth: false,
+    },
+  },
+  {
     path: "/login/callback",
     component: Auth.handleCallback(),
   },

@@ -20,26 +20,32 @@
             required
           ></text-field>
         </v-col>
-        <huxButton
-          variant="primary base"
-          size="small"
-          is-tile
-          class="mt-5 px-6 mx-2 box-shadow-adjusted"
-          data-e2e="request-access"
-        >
-          Request access
-        </huxButton>
-        <huxButton
-          variant="white"
-          icon-color="primary"
-          size="small"
-          is-tile
-          class="mt-5 px-6 primary--text box-shadow-adjusted"
-          data-e2e="back-to-login"
-          @click="backToLogin"
-        >
-          Return to login
-        </huxButton>
+        <router-link to="/" class="text-decoration-none">
+          <huxButton
+            variant="primary base"
+            size="small"
+            :box-shadow="false"
+            is-tile
+            class="mt-5 px-6 mx-2 box-shadow-25-light"
+            data-e2e="request-access"
+          >
+            Request access
+          </huxButton>
+        </router-link>
+        <router-link to="/login" class="text-decoration-none">
+          <huxButton
+            variant="white"
+            icon-color="primary"
+            size="small"
+            :box-shadow="false"
+            is-tile
+            class="mt-5 px-6 primary--text box-shadow-25-light"
+            data-e2e="back-to-login"
+            @click="backToLogin()"
+          >
+            Return to login
+          </huxButton>
+        </router-link>
       </v-row>
     </div>
   </div>
@@ -66,7 +72,7 @@ export default {
   },
 
   methods: {
-    backToLogin: function () {
+    backToLogin() {
       this.$router.push({
         name: "Login",
       })
@@ -88,9 +94,6 @@ export default {
       min-height: 140px;
       width: 140px;
       height: 140px;
-    }
-    ::v-deep .box-shadow-adjusted {
-      box-shadow: 0px 1px 5px rgba(206, 206, 206, 0.25) !important;
     }
     ::v-deep .text-field-hux {
       margin-top: 2px !important;
