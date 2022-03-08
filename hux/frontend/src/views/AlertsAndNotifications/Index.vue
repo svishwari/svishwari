@@ -416,6 +416,7 @@ export default {
     async alertfunction(data) {
       this.finalFilterApplied = data.filterApplied
       this.isFilterToggled = true
+      this.enableLazyLoad = false
       this.loading = true
       try {
         let today_date = new Date()
