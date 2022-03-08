@@ -15,7 +15,7 @@
           size="small"
           is-tile
           class="mt-14 px-6"
-          data-e2e="launch"
+          data-e2e="go-home"
         >
           Go to Hux
         </huxButton>
