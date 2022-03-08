@@ -32,7 +32,10 @@
     <div
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
-      <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+      <div
+        class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100"
+        data-e2e="data-files-wrapper"
+      >
         <v-row
           v-if="!loading && hasDataFeeds"
           class="datasource-datafeeds-details-table"
