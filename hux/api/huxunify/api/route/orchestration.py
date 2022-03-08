@@ -656,7 +656,7 @@ class AudienceGetView(SwaggerView):
 
     # pylint: disable=no-self-use, too-many-locals, too-many-branches
     # pylint: disable=too-many-statements
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves an audience.
