@@ -349,12 +349,10 @@ export default {
       this.alertDrawer = !this.alertDrawer
     },
     intersected() {
-      
       if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
         this.enableLazyLoad = true
         this.fetchNotificationsByBatch()
-        
       } else {
         this.enableLazyLoad = false
       }
