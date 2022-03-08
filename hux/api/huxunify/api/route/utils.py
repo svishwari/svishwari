@@ -20,8 +20,8 @@ from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.database.util.client import db_client_factory
 
+from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -40,6 +40,7 @@ from huxunifylib.database.user_management import (
 )
 from huxunifylib.database.client import DatabaseClient
 
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.tecton import Tecton
@@ -1207,3 +1208,58 @@ def check_and_return_cache(
         )
 
     return data
+
+
+def set_destination_authentication_secrets(
+    authentication_details: dict,
+    destination_id: str,
+    destination_type: str,
+) -> dict:
+    """Save authentication details in cloud provider secret storage
+
+    Args:
+        authentication_details (dict): The key/secret pair to store away.
+        destination_id (str): destinations ID.
+        destination_type (str): destination type (i.e. facebook, sfmc)
+
+    Returns:
+        ssm_params (dict): The key to where the parameters are stored.
+    Raises:
+        KeyError: Exception when the key is missing in the object.
+        ProblemException: Any exception raised during endpoint execution.
+    """
+    ssm_params = {}
+
+    if destination_type not in api_c.DESTINATION_SECRETS:
+        raise KeyError(
+            f"{destination_type} does not have a secret store mapping."
+        )
+
+    for (
+        parameter_name,
+        secret,
+    ) in authentication_details.items():
+
+        # only store secrets in ssm, otherwise store in object.
+        if (
+            parameter_name
+            in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]
+        ):
+            ssm_params[parameter_name] = secret
+            continue
+
+        param_name = f"{api_c.PARAM_STORE_PREFIX}_{parameter_name}"
+        ssm_params[parameter_name] = param_name
+        try:
+            CloudClient().set_secret(secret_name=param_name, value=secret)
+        except Exception as exc:
+            logger.error("Failed to connect to secret store.")
+            logger.error(exc)
+            raise ProblemException(
+                status=HTTPStatus.BAD_REQUEST.value,
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=f"{api_c.SECRET_STORAGE_ERROR_MSG}"
+                f" destination_id: {destination_id}.",
+            ) from exc
+
+    return ssm_params

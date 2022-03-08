@@ -31,7 +31,7 @@ from huxunifylib.database.user_management import manage_user_favorites
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
 )
-from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api import constants as api_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunify.test.route.route_test_util.test_data_loading.users import (
@@ -60,10 +60,11 @@ class OrchestrationRouteTest(RouteTestCase):
             return_value=self.database,
         ).start()
 
-        # mock get_store_value of parameter store
-        mock.patch.object(
-            parameter_store, "get_store_value", return_value="secret"
-        ).start()
+        for subclass in CloudClient.__subclasses__():
+            # mock get_store_value of cloud secret store
+            mock.patch.object(
+                subclass, "get_secret", return_value="secret"
+            ).start()
 
         destinations = [
             {
@@ -254,6 +255,8 @@ class OrchestrationRouteTest(RouteTestCase):
             component_name=api_c.LOOKALIKE,
             component_id=self.lookalike_audience_doc[db_c.ID],
         )
+
+        self.addCleanup(mock.patch.stopall)
 
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""

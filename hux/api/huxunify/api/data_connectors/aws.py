@@ -5,7 +5,6 @@ from typing import Tuple
 from enum import Enum
 from http import HTTPStatus
 
-from connexion import ProblemException
 import boto3
 import botocore
 from bson import ObjectId
@@ -20,121 +19,8 @@ from huxunifylib.util.general.const import (
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.prometheus import record_health_status_metric
-
-
-class ParameterStore:
-    """Interact with AWS Parameter Store."""
-
-    @staticmethod
-    def store_secret(name: str, secret: str, overwrite: bool) -> dict:
-        """Store secrets.
-
-        Args:
-            name (str): Name of the parameter.
-            secret (str): The parameter value that you want to add to the store.
-            overwrite (bool): Overwrite an existing parameter.
-        Returns:
-            dict: boto3 response.
-        Raises:
-            ClientError: Boto client request error.
-        """
-        try:
-            return get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
-                Name=name,
-                Value=secret,
-                Type="SecureString",
-                Overwrite=overwrite,
-            )
-        except botocore.exceptions.ClientError as error:
-            raise error
-
-    @staticmethod
-    def get_store_value(name: str, value: str = "Value") -> str:
-        """Retrieve a parameter/value from the param store.
-
-        Args:
-            name (str): Name of the parameter.
-            value (str): Name of the value to get (i.e. Name or Value)
-        Returns:
-            str: Parameter Value.
-        Raises:
-            ClientError: Boto client request error.
-        """
-        try:
-            return (
-                get_aws_client(api_c.AWS_SSM_NAME)
-                .get_parameter(
-                    Name=name,
-                    WithDecryption=True,
-                )
-                .get("Parameter")
-                .get(value)
-            )
-        except botocore.exceptions.ClientError as error:
-            raise error
-
-    @staticmethod
-    def set_destination_authentication_secrets(
-        authentication_details: dict,
-        is_updated: bool,
-        destination_id: str,
-        destination_type: str,
-    ) -> dict:
-        """Save authentication details in AWS Parameter Store.
-
-        Args:
-            authentication_details (dict): The key/secret pair to store away.
-            is_updated (bool): Flag to update the secrets in the AWS Parameter Store.
-            destination_id (str): destinations ID.
-            destination_type (str): destination type (i.e. facebook, sfmc)
-
-        Returns:
-            ssm_params (dict): The key to where the parameters are stored.
-        Raises:
-            KeyError: Exception when the key is missing in the object.
-            ProblemException: Any exception raised during endpoint execution.
-        """
-        ssm_params = {}
-
-        if destination_type not in api_c.DESTINATION_SECRETS:
-            raise KeyError(
-                f"{destination_type} does not have a secret store mapping."
-            )
-
-        for (
-            parameter_name,
-            secret,
-        ) in authentication_details.items():
-
-            # only store secrets in ssm, otherwise store in object.
-            if (
-                parameter_name
-                in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]
-            ):
-                ssm_params[parameter_name] = secret
-                continue
-
-            param_name = f"{api_c.PARAM_STORE_PREFIX}_{parameter_name}"
-            ssm_params[parameter_name] = param_name
-            try:
-                parameter_store.store_secret(
-                    name=param_name,
-                    secret=secret,
-                    overwrite=is_updated,
-                )
-            except botocore.exceptions.ClientError as exc:
-                raise ProblemException(
-                    status=int(HTTPStatus.BAD_REQUEST.value),
-                    title=HTTPStatus.BAD_REQUEST.description,
-                    detail=f"{api_c.PARAMETER_STORE_ERROR_MSG}"
-                    f" destination_id: {destination_id}.",
-                ) from exc
-
-        return ssm_params
-
-
-parameter_store = ParameterStore()
 
 
 def get_aws_client(
@@ -275,7 +161,7 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
     for secret in api_c.DESTINATION_SECRETS[destination_type][
         api_c.AWS_SSM_NAME
     ]:
-        auth[secret] = parameter_store.get_store_value(auth[secret])
+        auth[secret] = CloudClient().get_secret(auth[secret])
 
     if destination_type == db_c.DELIVERY_PLATFORM_SFMC:
         return {
