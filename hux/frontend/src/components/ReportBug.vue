@@ -68,9 +68,15 @@ export default {
 </script>
 <style lang="scss" scoped>
 .bug-summary {
-  .v-textarea {
-    input {
-      margin-top: -162px !important;
+  ::v-deep .v-input__control {
+    .v-input__slot {
+      border: 1px solid var(--v-black-lighten3) !important;
+      @extend .no-shadow;
+      .v-text-field__slot {
+        textarea {
+          resize: none;
+        }
+      }
     }
   }
 }
