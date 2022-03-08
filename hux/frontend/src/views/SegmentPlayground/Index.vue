@@ -87,7 +87,7 @@
                 text--darken-4
                 input-placeholder
                 pt-3
-                h-86
+                audience-form
               "
               data-e2e="edit-audience-name"
             />
@@ -590,7 +590,7 @@ export default {
     }
   }
 
-  .h-86 {
+  .audience-form {
     height: 86px;
     width: 360px;
   }
