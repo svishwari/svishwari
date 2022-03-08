@@ -22,7 +22,6 @@ jobs:
       - name: Unzip the Pipeline Scanner
         run: unzip pipeline-scan-LATEST.zip
       - name: Create Baseline
-#        What is the target to call here in this case? (example.jar)
 #        For baseline should we download a specific commit to create a consistent baseline here?
         run: java -Dpipeline.debug=true -jar pipeline-scan.jar --veracode_api_id "${{secrets.VERACODE_API_ID}}" --veracode_api_key "${{secrets.VERACODE_API_KEY}}" --file "example.jar" --json_output_file="baseline.json" || true
       - name: Upload Baseline
