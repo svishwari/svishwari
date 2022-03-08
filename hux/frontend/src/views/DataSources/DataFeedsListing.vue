@@ -44,7 +44,7 @@
             :columns="getCols"
             :data-items="dataSourceDataFeedsDetails"
             view-height="calc(100vh - 150px)"
-            sort-column="last_processed"
+            sort-column="last_processed_start"
             sort-desc="true"
             nested
             data-e2e="data-feed-details-table"
@@ -118,23 +118,28 @@
                       :icon-size="item[header.value] == 'Failed' ? '15' : '18'"
                     />
                   </div>
-                  <tooltip
+                  <div
                     v-else-if="
-                      header.value === 'records_processed_percentage' ||
-                      header.value === 'thirty_days_avg'
+                      ['run_duration', 'sub_status'].includes(header.value)
                     "
+                    class="black--text text--darken-4 text-body-1"
+                  >
+                    {{ item[header.value] ? item[header.value] : "-" }}
+                  </div>
+                  <tooltip
+                    v-else-if="header.value === 'records_processed_percentage'"
                   >
                     <template #label-content>
                       <span
                         class="text-body-1"
                         :class="
                           header.value === 'records_processed_percentage' &&
-                          item[header.value] < 0.5
+                          item[header.value]['flag_indicator']
                             ? 'error--text'
                             : 'black--text text--darken-4'
                         "
                       >
-                        {{ item[header.value] | Percentage }}
+                        {{ item[header.value]["value"] | Percentage }}
                       </span>
                     </template>
                     <template #hover-content>
@@ -142,22 +147,53 @@
                         class="text-body-1"
                         :class="
                           header.value === 'records_processed_percentage' &&
-                          item[header.value] < 0.5
+                          item[header.value]['flag_indicator']
                             ? 'error--text'
                             : 'black--text text--darken-4'
                         "
                       >
-                        {{ item[header.value] | Percentage }}
+                        {{ item[header.value]["value"] | Percentage }}
                       </span>
                     </template>
                   </tooltip>
-                  <div
-                    v-else-if="header.value === 'last_processed'"
+                  <tooltip
+                    v-else-if="header.value === 'last_processed_start'"
                     class="black--text text--darken-4 text-body-1"
                   >
-                    <!-- <time-stamp :value="item[header.value]" /> -->
-                    {{ formatDateToLocal(item[header.value]) }}
-                  </div>
+                    <template #label-content>
+                      <span class="text-body-1 data-feed-name">
+                        {{ formatDateToLocal(item[header.value]) }}
+                      </span>
+                    </template>
+
+                    <template slot="hover-content">
+                      <div>
+                        <div class="neroBlack--text text-body-2 mb-2">
+                          Last Processed:
+                        </div>
+                        <div class="d-flex align-center mb-1">
+                          <span class="neroBlack--text text-body-2">
+                            Started:
+                          </span>
+                        </div>
+                        <div class="neroBlack--text text-body-2 mb-2">
+                          {{ formatDateToLocal(item["last_processed_start"]) }}
+                        </div>
+                        <div class="d-flex align-center mb-1">
+                          <span class="neroBlack--text text-body-2">
+                            Ended:
+                          </span>
+                        </div>
+                        <div class="neroBlack--text text-body-2">
+                          {{
+                            item["last_processed_end"]
+                              ? formatDateToLocal(item["last_processed_end"])
+                              : "Running"
+                          }}
+                        </div>
+                      </div>
+                    </template>
+                  </tooltip>
                   <tooltip v-else>
                     <template #label-content>
                       <span class="black--text text--darken-4 text-body-1">
@@ -194,23 +230,40 @@
                       class="text-body-1"
                       :style="{ width: column.width + 'px' }"
                     >
-                      <div
-                        v-if="column.value === 'status'"
-                        class="black--text text--darken-4 text-body-1"
-                      >
-                        <status
-                          :status="item[column.value]"
-                          :show-label="true"
-                          class="data-feed-status d-flex"
-                          :icon-size="
-                            item[column.value] == 'Failed' ? '15' : '18'
-                          "
-                        />
-                      </div>
+                      <tooltip v-if="column.value === 'status'">
+                        <template #label-content>
+                          <span class="black--text text--darken-4 text-body-1">
+                            <status
+                              :status="item[column.value]"
+                              :show-label="true"
+                              class="data-feed-status d-flex"
+                              :icon-size="
+                                item[column.value] == 'Failed' ? '15' : '18'
+                              "
+                            />
+                          </span>
+                        </template>
+                        <template #hover-content>
+                          <span class="text-body-1 black--text text--darken-4">
+                            {{ getTooltip(item.status, item.sub_status) }}
+                          </span>
+                        </template>
+                      </tooltip>
+                      <tooltip v-else-if="column.value === 'sub_status'">
+                        <template #label-content>
+                          <span class="black--text text--darken-4 text-body-1">
+                            {{ item[column.value] ? item[column.value] : "-" }}
+                          </span>
+                        </template>
+                        <template #hover-content>
+                          <span class="text-body-1 black--text text--darken-4">
+                            {{ getTooltip(item.status, item.sub_status) }}
+                          </span>
+                        </template>
+                      </tooltip>
                       <tooltip
                         v-else-if="
-                          column.value === 'records_processed_percentage' ||
-                          column.value === 'thirty_days_avg'
+                          column.value === 'records_processed_percentage'
                         "
                       >
                         <template #label-content>
@@ -218,12 +271,12 @@
                             class="text-body-1"
                             :class="
                               column.value === 'records_processed_percentage' &&
-                              item[column.value] < 0.5
+                              item[column.value]['flag_indicator']
                                 ? 'error--text'
                                 : 'black--text text--darken-4'
                             "
                           >
-                            {{ item[column.value] | Percentage }}
+                            {{ item[column.value]["value"] | Percentage }}
                           </span>
                         </template>
                         <template #hover-content>
@@ -231,22 +284,69 @@
                             class="text-body-1"
                             :class="
                               column.value === 'records_processed_percentage' &&
-                              item[column.value] < 0.5
+                              item[column.value]['flag_indicator']
                                 ? 'error--text'
                                 : 'black--text text--darken-4'
                             "
                           >
-                            {{ item[column.value] | Percentage }}
+                            {{ item[column.value]["value"] | Percentage }}
                           </span>
                         </template>
                       </tooltip>
-                      <div
-                        v-else-if="column.value === 'last_processed'"
+                      <tooltip
+                        v-else-if="column.value === 'last_processed_start'"
                         class="black--text text--darken-4 text-body-1"
                       >
-                        <!-- <time-stamp :value="item[column.value]" /> -->
-                        {{ formatDateToLocal(item[column.value]) }}
-                      </div>
+                        <template #label-content>
+                          <span class="text-body-1 data-feed-name">
+                            {{ formatDateToLocal(item[column.value]) }}
+                          </span>
+                        </template>
+
+                        <template slot="hover-content">
+                          <div>
+                            <div class="neroBlack--text text-body-2 mb-2">
+                              Last Processed:
+                            </div>
+                            <div class="d-flex align-center mb-1">
+                              <span class="neroBlack--text text-body-2">
+                                Started:
+                              </span>
+                            </div>
+                            <div class="neroBlack--text text-body-2 mb-2">
+                              {{
+                                formatDateToLocal(item["last_processed_start"])
+                              }}
+                            </div>
+                            <div class="d-flex align-center mb-1">
+                              <span class="neroBlack--text text-body-2">
+                                Ended:
+                              </span>
+                            </div>
+                            <div class="neroBlack--text text-body-2">
+                              {{
+                                item["last_processed_end"]
+                                  ? formatDateToLocal(
+                                      item["last_processed_end"]
+                                    )
+                                  : "Running"
+                              }}
+                            </div>
+                          </div>
+                        </template>
+                      </tooltip>
+                      <tooltip v-else-if="column.value === 'run_duration'">
+                        <template #label-content>
+                          <span class="black--text text--darken-4 text-body-1">
+                            {{ item[column.value] ? item[column.value] : "-" }}
+                          </span>
+                        </template>
+                        <template #hover-content>
+                          <span class="text-body-1 black--text text--darken-4">
+                            {{ "HH:MM:SS" }}
+                          </span>
+                        </template>
+                      </tooltip>
                       <tooltip v-else-if="column.value === 'name'">
                         <template #label-content>
                           <span class="text-body-1 data-feed-name">
@@ -256,6 +356,8 @@
                         <template #hover-content>
                           <span class="black--text text--darken-4 text-body-1">
                             {{ item["filename"] }}
+                            <br />
+                            {{ item["unique_id"] }}
                           </span>
                         </template>
                       </tooltip>
@@ -414,41 +516,80 @@ export default {
               : `(${this.hasDataFeeds})`
           }`,
           value: "name",
-          width: "170",
+          width: "200",
         },
         {
           text: "Status",
           value: "status",
-          width: "84",
+          width: "121",
+        },
+        {
+          text: "Sub-status",
+          value: "sub_status",
+          width: "125",
         },
         {
           text: "Records received",
           value: "records_received",
-          width: "125",
+          width: "146",
         },
         {
           text: "Records processed",
           value: "records_processed",
-          width: "132",
+          width: "162",
         },
         {
           text: "% of records processed",
           value: "records_processed_percentage",
-          width: "100",
+          width: "200",
         },
         {
-          text: "30 day avg",
-          value: "thirty_days_avg",
-          width: "100",
-          hoverTooltip:
-            "The value indicates the average % of records processed in the past 30 days",
+          text: "Run duration",
+          value: "run_duration",
+          width: "135",
         },
         {
-          text: `Last processed (${this.selected_time})`,
-          value: "last_processed",
-          width: "170",
+          text: `Last processed start time (${this.selected_time})`,
+          value: "last_processed_start",
+          width: "216",
         },
       ]
+    },
+
+    tooltipText() {
+      return {
+        Success: {
+          Complete: "File processing complete and all jobs are success",
+        },
+        Canceled: {
+          Canceled: "Ingestion job is canceled",
+          ["Waiting / All chunks failed"]:
+            "File processing complete / waiting and at least one job is canceled",
+          ["Partial success"]:
+            "File processing complete / waiting and at least one job is canceled with at least one record in LTD",
+          ["Partial success - in progress"]:
+            "File processing / job is in progress and at least one job is canceled with at least one record in LTD",
+        },
+        Failed: {
+          ["In progress"]:
+            "File processing / job is in progress and at least one job is failed",
+          ["Partial success - in progress"]:
+            "File processing / job is in progress and at least one job is failed with at least one record in LTD",
+          ["Partial success"]:
+            "File processing complete / waiting and at least one job is failed with at least one record in LTD",
+          ["Waiting / All chunks failed"]:
+            "File processing complete / waiting and at least one job is failed",
+          Failed: "File processing failed at ingestion job",
+        },
+        Running: {
+          ["In progress"]: "File processing / job is in progress",
+          ["Partial success - in progress"]:
+            "File processing started, at least one record in LTD and file processing / job is in progress",
+          Waiting: "File processing startedand no active job running",
+          ["Partial success - waiting"]:
+            "File processing started, at least one record in LTD and no active job running",
+        },
+      }
     },
 
     breadcrumbItems() {
@@ -478,7 +619,8 @@ export default {
     try {
       this.setDefaultData()
       if (!this.selectedDataSource) {
-        await this.getDataSource(this.dataSourceId)
+        this.selectedDataSource = await this.getDataSource(this.dataSourceId)
+        this.api_params.type = this.selectedDataSource.type
       }
       await this.getDataFeedDetails(this.api_params)
     } catch (error) {
@@ -494,17 +636,10 @@ export default {
       getDataSource: "dataSources/getDataSource",
       getDataFeedDetails: "dataSources/getDataFeedsDetails",
     }),
-    changeStatus(status) {
-      switch (status) {
-        case "Pending":
-          return "Incomplete"
-
-        case "Success":
-          return "Complete"
-
-        default:
-          return "Failed"
-      }
+    getTooltip(status, sub_status) {
+      return this.tooltipText[status] && this.tooltipText[status][sub_status]
+        ? this.tooltipText[status][sub_status]
+        : "No hover data found for current status and sub-status"
     },
     formatDate(name, len) {
       return len ? `${formatDate(name)} (${len})` : `${formatDate(name)}`
