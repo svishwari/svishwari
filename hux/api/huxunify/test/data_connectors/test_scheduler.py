@@ -84,5 +84,9 @@ class SchedulerTest(unittest.TestCase):
         )
 
         self.assertEqual(
+            "15 23 * * L1,1#1 *", generate_cron(monthly_schedule_list[2])
+        )
+
+        self.assertEqual(
             "15 23 1,L,3 * ? *", generate_cron(monthly_schedule_list[3])
         )
