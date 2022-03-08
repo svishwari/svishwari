@@ -21,7 +21,8 @@
         required
         @change="setBugSubject($event)"
       />
-      <text-field
+      <v-textarea
+        solo
         label-text="Bug summary"
         placeholder="Enter a short description"
         class="px-13 bug-summary"
@@ -67,11 +68,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .bug-summary {
-  ::v-deep .v-text-field {
-    .v-text-field__slot {
-      input {
-        margin-top: -162px !important;
-      }
+  .v-textarea {
+    input {
+      margin-top: -162px !important;
     }
   }
 }
