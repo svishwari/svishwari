@@ -337,7 +337,7 @@ export default {
       getAudience: "audiences/audience",
     }),
     hasOverview() {
-      return this.overview ? Object.keys(this.overview).length > 0 : false
+      return this.overview && Object.keys(this.overview).length > 0
     },
     breadcrumbItems() {
       const items = !this.isEdit ? this.breadcrumbs : this.editBreadcrumbs
@@ -373,19 +373,11 @@ export default {
     try {
       switch (this.$route.name) {
         case "AudienceUpdate":
-          this.isEdit = true
-          this.isClone = false
-          await this.getOverview()
-          this.audienceId = this.$route.params.id
-          await this.getAudienceById(this.audienceId)
+          await this.getAudienceData(true, this.$route.params.id)
           break
 
         case "CloneAudience":
-          this.isEdit = false
-          this.isClone = true
-          await this.getOverview()
-          this.audienceId = this.$route.params.id
-          await this.getAudienceById(this.audienceId)
+          await this.getAudienceData(false, this.$route.params.id)
           break
 
         default:
@@ -410,6 +402,13 @@ export default {
       getAudienceById: "audiences/getAudienceById",
       deleteAudience: "audiences/remove",
     }),
+    async getAudienceData(isEdit, audienceId) {
+      this.isEdit = isEdit
+      this.isClone = !isEdit
+      this.audienceId = audienceId
+      await this.getOverview()
+      await this.getAudienceById(audienceId)
+    },
     updateLoad(data) {
       this.overviewLoading = data
       if (!data) this.overviewLoadingStamp = new Date()
