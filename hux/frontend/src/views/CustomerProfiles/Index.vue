@@ -173,7 +173,10 @@
           <v-tab-item key="overview" class="tab-item">
             <v-row>
               <v-col md="6">
-                <v-card class="mt-3 rounded-lg box-shadow-5 tab-card-1" height="365">
+                <v-card
+                  class="mt-3 rounded-lg box-shadow-5 tab-card-1"
+                  height="365"
+                >
                   <v-progress-linear
                     v-if="loadingCustomerChart"
                     :active="loadingCustomerChart"
@@ -240,7 +243,10 @@
                 </v-card>
               </v-col>
               <v-col md="6">
-                <v-card class="mt-3 rounded-lg box-shadow-5 tab-card-2" height="365">
+                <v-card
+                  class="mt-3 rounded-lg box-shadow-5 tab-card-2"
+                  height="365"
+                >
                   <v-progress-linear
                     v-if="loadingSpendChart"
                     :active="loadingSpendChart"
@@ -328,7 +334,10 @@
             </v-row>
             <v-row class="mt-2 mb-4">
               <v-col md="12">
-                <v-card class="mt-3 rounded-lg box-shadow-5 tab-card-3" height="395">
+                <v-card
+                  class="mt-3 rounded-lg box-shadow-5 tab-card-3"
+                  height="395"
+                >
                   <v-row>
                     <v-progress-linear
                       v-if="loadingGeoOverview"
@@ -773,9 +782,9 @@ export default {
   ::v-deep .metric-card-wrapper .v-icon::before {
     font-size: 30px;
   }
-  .tabs-item{
+  .tabs-item {
     .tab-item {
-      .tab-card-3{
+      .tab-card-3 {
         background: transparent;
       }
     }
