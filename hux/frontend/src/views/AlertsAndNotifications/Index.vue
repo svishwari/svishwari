@@ -427,6 +427,7 @@ export default {
         )
         this.batchDetails.batch_size = 25
         this.batchDetails.batch_number = 1
+        this.batchDetails.isLazyLoad = false
         if (data.selctedAlertType.length !== 0) {
           this.batchDetails.notification_types =
             data.selctedAlertType.toString()
@@ -457,7 +458,6 @@ export default {
         await this.fetchNotificationsByBatch()
         this.calculateLastBatch()
         this.loading = false
-        this.batchDetails.isLazyLoad = false
       } finally {
         this.isFilterToggled = true
         this.loading = false

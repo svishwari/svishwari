@@ -195,10 +195,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .audience-detail-drawer-wrapper {
-  .rules {
-    .condition-card {
-    }
-  }
   ::v-deep .add-wrap {
     .new-attribute {
       visibility: hidden !important;
