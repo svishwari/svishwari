@@ -21,12 +21,10 @@
               class="black--text text--darken-4 text-body-1"
             >
               <status
-                :status="changeStatus(item[column.value])"
+                :status="item[column.value]"
                 :show-label="true"
                 class="data-feed-status d-flex"
-                :icon-size="
-                  changeStatus(item[column.value]) == 'Failed' ? '15' : '18'
-                "
+                :icon-size="item[column.value] == 'Failed' ? '15' : '18'"
               />
             </div>
             <tooltip
@@ -40,12 +38,12 @@
                   class="text-body-1"
                   :class="
                     column.value === 'records_processed_percentage' &&
-                    item[column.value] < 0.5
+                    item[column.value]['flag_indicator']
                       ? 'error--text'
                       : 'black--text text--darken-4'
                   "
                 >
-                  {{ item[column.value] | Percentage }}
+                  {{ item[column.value]["value"] | Percentage }}
                 </span>
               </template>
               <template #hover-content>
@@ -53,12 +51,12 @@
                   class="text-body-1"
                   :class="
                     column.value === 'records_processed_percentage' &&
-                    item[column.value] < 0.5
+                    item[column.value]['flag_indicator']
                       ? 'error--text'
                       : 'black--text text--darken-4'
                   "
                 >
-                  {{ item[column.value] | Percentage }}
+                  {{ item[column.value]["value"] | Percentage }}
                 </span>
               </template>
             </tooltip>
