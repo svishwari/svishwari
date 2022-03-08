@@ -997,8 +997,10 @@ def group_and_aggregate_datafeed_details_by_date(
                 data_feed_by_date[api_c.PROCESSED_END_DATE] = df_detail[
                     api_c.PROCESSED_END_DATE
                 ]
-            total_records_received += df_detail[api_c.RECORDS_RECEIVED]
-            total_records_processed += df_detail[api_c.RECORDS_PROCESSED]
+            total_records_received += df_detail.get(api_c.RECORDS_RECEIVED, 0)
+            total_records_processed += df_detail.get(
+                api_c.RECORDS_PROCESSED, 0
+            )
             data_feed_by_date[api_c.DATA_FILES].append(df_detail)
 
             if (
@@ -1027,8 +1029,10 @@ def group_and_aggregate_datafeed_details_by_date(
                 )
             )
 
-        records_processed_percentage = round(
-            total_records_processed / total_records_received, 3
+        records_processed_percentage = (
+            round(total_records_processed / total_records_received, 3)
+            if total_records_received
+            else 0
         )
 
         _ = data_feed_by_date.update(
@@ -1069,8 +1073,12 @@ def clean_and_aggregate_datafeed_details(
     stdev_sample_list = []
     for df_detail in datafeed_details:
         records_processed_percentage = (
-            df_detail[api_c.RECORDS_PROCESSED]
-            / df_detail[api_c.RECORDS_RECEIVED]
+            (
+                df_detail[api_c.RECORDS_PROCESSED]
+                / df_detail[api_c.RECORDS_RECEIVED]
+            )
+            if df_detail.get(api_c.RECORDS_RECEIVED)
+            else 0
         )
         # TODO: Refactor computing standard deviation once we have clarity
         stdev_sample_list.append(records_processed_percentage)
