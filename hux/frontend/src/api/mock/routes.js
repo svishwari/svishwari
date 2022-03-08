@@ -273,7 +273,7 @@ export const defineRoutes = (server) => {
   })
 
   // Attaching an Destination to Audience
-  server.post("/audience/:id/destinations", (schema, request) => {
+  server.post("/audiences/:id/destinations", (schema, request) => {
     const code = 200
     const headers = {}
     const id = request.params.id
