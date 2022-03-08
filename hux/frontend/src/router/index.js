@@ -364,7 +364,7 @@ const routes = [
       requiresAuth: false,
     },
   },
-  {    
+  {
     path: "/no-access",
     name: "NoAccess",
     component: () => import("@/views/NoAccess"),
