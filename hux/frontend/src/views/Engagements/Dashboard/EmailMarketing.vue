@@ -11,6 +11,7 @@
       section-type="destinations"
       deliveries-key="destination_audiences"
       class="mb-5"
+      data-e2e="email-overview"
       @triggerSelectAudience="$emit('triggerSelectAudience', $event)"
       @refreshEntityDelivery="$emit('refreshEntityDelivery', $event)"
       @onOverviewDestinationAction="

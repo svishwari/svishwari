@@ -1,5 +1,8 @@
 import route from "../../support/routes"
 import selector from "../../support/selectors"
+import { randomName } from "../../support/utils"
+
+let audienceName = randomName()
 
 describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
   beforeEach(() => {
@@ -22,7 +25,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
 
     // Attribute selection
     cy.get(selector.segmentPlayground.selectAttrBtn).click()
-    cy.get("div[class='dropdown-menuitems']").contains("Email").click()
+    cy.get("div[class='dropdown-menuitems']").contains("Gender").click()
 
     // Operator selection
     cy.get(selector.segmentPlayground.selectOperatorBtn).click()
@@ -32,7 +35,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
 
     // Value selection
     cy.get(selector.segmentPlayground.autoCompleteBtn).click()
-    cy.get(".v-autocomplete__content").contains(".com").click({ force: true })
+    cy.get(".v-autocomplete__content").contains("Male").click({ force: true })
 
     // Waiting for fetch the response
     // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -43,7 +46,9 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
 
     // should fill new audience name and description
     // add new audience name
-    cy.get(selector.audience.audienceName).eq(0).type(`E2E test audience`)
+    cy.get(selector.audience.audienceName)
+      .eq(0)
+      .type(`Test audience ${audienceName}`)
 
     // Click on save audience icon
     cy.get(".confirm-modal-wrapper")
@@ -56,14 +61,14 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
     cy.wait(2000)
   })
 
+  // TODO: HUS-2597, In local env. the create, edit and delete are not being able to perform one after another in a single it()
+  // due to cypress unable to find the 'delete audience' option, because of its parent element having 'display: none' set.
+
   // For editing the above added audience
   it("should be able to edit a newly added audience via Segment Playground", () => {
-    cy.visit(route.audiences)
-    //eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
-
+    cy.location("pathname").should("eq", route.audiences)
     cy.get(".menu-cell-wrapper").each(($el) => {
-      if ($el.text().includes(`E2E test audience`)) {
+      if ($el.text().includes(`Test audience ${audienceName}`)) {
         // Make the vertical dots visible
         cy.wrap($el)
           .find(".mdi-dots-vertical")
@@ -71,34 +76,16 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
           .click({ force: true })
 
         cy.contains("Edit audience").click()
+        cy.contains("Yes, edit").click()
         //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(4000)
+        cy.wait(5000)
 
         cy.location().should((loc) => {
           expect(loc.pathname.toString()).to.contain("/update")
         })
 
         // Edit audience name
-        cy.get(selector.audience.editAudienceName)
-          .eq(0)
-          .type(`E2E test audience edited`)
-
-        // Add a new attribute to existing audience
-        // Attribute selection
-        cy.get(selector.segmentPlayground.selectAttrBtn).click()
-        cy.get("div[class='dropdown-menuitems']").contains("Gender").click()
-
-        // Operator selection
-        cy.get(selector.segmentPlayground.selectOperatorBtn).click()
-        cy.get("div[class='dropdown-menuitems']")
-          .contains("Equals")
-          .click({ force: true })
-
-        // Value selection
-        cy.get(selector.segmentPlayground.autoCompleteBtn).click()
-        cy.get(".v-autocomplete__content")
-          .contains("Male")
-          .click({ force: true })
+        cy.get(selector.audience.editAudienceName).eq(0).type(` edited`)
 
         // Waiting for fetch the response
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -116,12 +103,9 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
 
   // For deleting the above added audience
   it("should be able to delete a newly added audience", () => {
-    cy.visit(route.audiences)
-    //eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
-
+    cy.location("pathname").should("eq", route.audiences)
     cy.get(".menu-cell-wrapper").each(($el) => {
-      if ($el.text().includes(`E2E test audience edited`)) {
+      if ($el.text().includes(`Test audience ${audienceName} edited`)) {
         // Make the vertical dots visible
         cy.wrap($el)
           .find(".mdi-dots-vertical")
