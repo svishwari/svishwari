@@ -27,6 +27,127 @@ from huxunify.api.data_connectors.courier import (
 )
 from huxunify.api.data_connectors.jira import JiraConnection
 
+monthly_period_items_dict = {
+    "first": "1",
+    "second": "2",
+    "third": "3",
+    "fourth": "4",
+    "last": "L",
+}
+
+day_of_week_name_dict = {
+    "Monday": "1",
+    "Tuesday": "2",
+    "Wednesday": "3",
+    "Thursday": "4",
+    "Friday": "5",
+    "Saturday": "6",
+    "Sunday": "7",
+}
+
+
+# pylint: disable=too-many-branches
+def _add_cron_for_monthly(schedule: dict, cron_exp: dict) -> str:
+    """Adds monthly cron to existing cron expression.
+
+    Args:
+         schedule: Dictionary object of schedule.
+         cron_exp: Cron exp dict to append monthly schedule.
+     Returns:
+         dict: Updated cron expression.
+    """
+
+    day_of_month_cron_str = ""
+    day_of_week_cron_str = ""
+
+    day_of_month_list = (
+        schedule.get("day_of_month")
+        if isinstance(schedule.get("day_of_month"), list)
+        else [schedule.get("day_of_month")]
+    )
+
+    day_of_month_list = [str(item) for item in day_of_month_list]
+    period_items = [
+        item.lower() for item in schedule.get("monthly_period_items", [])
+    ]
+
+    if len(period_items) == 1:
+        period_item_val = monthly_period_items_dict.get(period_items[0])
+
+        if period_items[0] == "day":
+            day_of_month_cron_str = ",".join(day_of_month_list) + ","
+
+        elif period_items[0] == "last":
+
+            for d_month in day_of_month_list:
+                day_of_week_digit = day_of_week_name_dict.get(d_month)
+                if day_of_week_digit:
+                    day_of_week_cron_str = (
+                        day_of_week_cron_str
+                        + period_item_val
+                        + day_of_week_digit
+                        + ","
+                    )
+                elif d_month == "Day":
+                    day_of_month_cron_str = (
+                        day_of_month_cron_str + period_item_val + ","
+                    )
+
+        elif period_item_val:
+            for d_month in day_of_month_list:
+                day_of_week_digit = day_of_week_name_dict.get(d_month)
+                if day_of_week_digit:
+                    day_of_week_cron_str = (
+                        day_of_week_cron_str
+                        + day_of_week_digit
+                        + "#"
+                        + period_item_val
+                        + ","
+                    )
+                elif d_month == "Day":
+                    day_of_month_cron_str = (
+                        day_of_month_cron_str + period_item_val + ","
+                    )
+
+    elif len(day_of_month_list) == 1:
+        if day_of_month_list[0] == "Day":
+            for period_item in period_items:
+                period_item_val = monthly_period_items_dict.get(period_item)
+                if period_item_val:
+                    day_of_month_cron_str = (
+                        day_of_month_cron_str + period_item_val + ","
+                    )
+        day_of_week_digit = day_of_week_name_dict.get(day_of_month_list[0])
+        if day_of_week_digit:
+            for period_item in period_items:
+                period_item_val = monthly_period_items_dict.get(period_item)
+                if period_item == "last":
+                    day_of_week_cron_str = (
+                        day_of_week_cron_str
+                        + period_item_val
+                        + day_of_week_digit
+                        + ","
+                    )
+                elif period_item_val:
+                    day_of_week_cron_str = (
+                        day_of_week_cron_str
+                        + day_of_week_digit
+                        + "#"
+                        + period_item_val
+                        + ","
+                    )
+
+    if day_of_month_cron_str:
+        cron_exp["day_of_month"] = day_of_month_cron_str[:-1]
+
+    if day_of_week_cron_str:
+        cron_exp["day_of_week"] = day_of_week_cron_str[:-1]
+
+    if schedule["every"] > 1:
+        cron_exp["month"] = f"{cron_exp['month']}/{schedule['every']}"
+
+    return cron_exp
+
 
 def generate_cron(schedule: dict) -> str:
     """To generate cron expression based on the schedule object
@@ -73,17 +194,8 @@ def generate_cron(schedule: dict) -> str:
             ] = f"{cron_exp['day_of_month']}/{schedule['every']}"
 
     if schedule["periodicity"] == "Monthly":
-        day_of_month = schedule.get("day_of_month")
+        cron_exp = _add_cron_for_monthly(schedule, cron_exp)
 
-        # Supporting both list and item.
-        cron_exp["day_of_month"] = (
-            ",".join(day_of_month)
-            if isinstance(day_of_month, list)
-            else day_of_month
-        )
-
-        if schedule["every"] > 1:
-            cron_exp["month"] = f"{cron_exp['month']}/{schedule['every']}"
     return " ".join([str(val) for val in cron_exp.values()])
 
 
