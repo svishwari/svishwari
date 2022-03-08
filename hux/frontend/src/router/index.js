@@ -355,6 +355,16 @@ const routes = [
     },
   },
   {
+    path: "/503",
+    name: "503",
+    component: () => import("@/views/ServiceError"),
+    meta: {
+      layout: "default",
+      title: "503",
+      requiresAuth: false,
+    },
+  },
+  {
     path: "/login/callback",
     component: Auth.handleCallback(),
   },

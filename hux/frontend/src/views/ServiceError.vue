@@ -58,10 +58,5 @@ export default {
   .align-top {
     margin-bottom: 79px !important;
   }
-  .status-title {
-    font-size: 56px;
-    line-height: 76px;
-    font-weight: 300;
-  }
 }
 </style>
