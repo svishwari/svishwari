@@ -5,7 +5,7 @@
       <div class="font-weight-light text-h1 welcome-header">
         Unleash the power of Hux
       </div>
-      <span>
+      <span class="text-body-1 welcome-body">
         We’ve built a new framework for connecting capabilities end-to-end and
         elevating experiences. Hux, paired with our team of Experience
         Management experts, helps our clients regain ownership of their data,
@@ -107,26 +107,11 @@ export default {
       font-weight: 400;
       margin-top: 48px;
     }
-    span {
-      font-family: Open Sans;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 22px;
+    .welcome-body {
       text-align: center;
       color: var(--v-black-lighten4);
       margin-top: 8px;
       max-width: 80%;
-    }
-    h2 {
-      font-style: normal;
-      font-weight: 500;
-      font-size: 21px;
-      line-height: 40px;
-      text-align: center;
-      letter-spacing: 0.1px;
-      color: var(--v-greenLight-base);
-      margin-top: 8px;
     }
     .btn-signin {
       min-height: 40px;
