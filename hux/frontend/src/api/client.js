@@ -160,6 +160,7 @@ client["engagements"].deliver = (resourceId, data) => {
 client["engagements"].attachAudience = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/audiences`, data)
 }
+
 client["engagements"].attachDestination = (audienceId, data) => {
   return http.post(`/audiences/${audienceId}/destinations`, data)
 }
