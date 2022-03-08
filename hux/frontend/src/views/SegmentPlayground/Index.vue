@@ -1,7 +1,11 @@
 <template>
   <div
     class="playground-outermost-wrap"
-    :class="!loading && hasOverview == 0 ? 'white' : ''"
+    :class="
+      !loading && !hasOverview
+        ? 'playground-outermost-wrap white'
+        : 'playground-outermost-wrap'
+    "
   >
     <page-header :header-height="isEdit ? '70' : '110'" help-icon>
       <template slot="left">
@@ -56,7 +60,6 @@
     <page
       v-if="!loading && hasOverview && !errorState"
       max-width="100%"
-      padding="0 24px"
       class="white segmentation playground-wrap"
     >
       <v-row class="ma-0 segment-wrap">
@@ -325,6 +328,7 @@ export default {
       },
       confirmModal: false,
       errorState: false,
+      audienceId: "",
     }
   },
   computed: {
@@ -333,7 +337,7 @@ export default {
       getAudience: "audiences/audience",
     }),
     hasOverview() {
-      return this.overview ? Object.keys(this.overview).length : 0
+      return this.overview ? Object.keys(this.overview).length > 0 : false
     },
     breadcrumbItems() {
       const items = !this.isEdit ? this.breadcrumbs : this.editBreadcrumbs
@@ -366,46 +370,36 @@ export default {
   async mounted() {
     this.loading = true
     this.loadingOverview = true
-    if (this.$route.name === "AudienceUpdate") {
-      try {
-        this.isEdit = true
-        this.isClone = false
-        await this.getOverview()
-        console.log(this.hasOverview)
-        this.audienceId = this.$route.params.id
-        await this.getAudienceById(this.audienceId)
-      } catch (error) {
-        this.errorState = true
-      } finally {
-        this.loadingOverview = false
-        this.loading = false
+    try {
+      switch (this.$route.name) {
+        case "AudienceUpdate":
+          this.isEdit = true
+          this.isClone = false
+          await this.getOverview()
+          this.audienceId = this.$route.params.id
+          await this.getAudienceById(this.audienceId)
+          break
+
+        case "CloneAudience":
+          this.isEdit = false
+          this.isClone = true
+          await this.getOverview()
+          this.audienceId = this.$route.params.id
+          await this.getAudienceById(this.audienceId)
+          break
+
+        default:
+          await this.getOverview()
       }
+    } catch (error) {
+      this.errorState = true
+    } finally {
+      this.loadingOverview = false
+      this.loading = false
+    }
+    if (this.audienceId !== "") {
       const data = this.getAudience(this.audienceId)
       this.mapAudienceData(data)
-    } else if (this.$route.name === "CloneAudience") {
-      try {
-        this.isEdit = false
-        this.isClone = true
-        await this.getOverview()
-        this.audienceId = this.$route.params.id
-        await this.getAudienceById(this.audienceId)
-      } catch (error) {
-        this.errorState = true
-      } finally {
-        this.loadingOverview = false
-        this.loading = false
-      }
-      const data = this.getAudience(this.audienceId)
-      this.mapAudienceData(data)
-    } else {
-      try {
-        await this.getOverview()
-      } catch (error) {
-        this.errorState = true
-      } finally {
-        this.loadingOverview = false
-        this.loading = false
-      }
     }
   },
   methods: {
@@ -571,6 +565,9 @@ export default {
 <style lang="scss" scoped>
 .playground-outermost-wrap {
   .playground-wrap {
+    ::v-deep .container {
+      padding: 0px 24px !important;
+    }
     .segment-wrap {
       .attributes {
         flex: 0 0 66.63934426%;
