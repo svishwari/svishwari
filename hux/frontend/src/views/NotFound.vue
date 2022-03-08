@@ -2,9 +2,9 @@
   <div class="error-wrap">
     <div class="ta-center">
       <icon :type="404" :size="150" color="black" />
-      <div class="fs-56">404</div>
+      <div class="size-404">404</div>
       <div class="text-h1 mt-4">Uh oh we’ve lost this page.</div>
-      <div class="ta-center text-h3 mt-2 mr-23">
+      <div class="ta-center text-h3 mt-2 tab-404">
         Sorry about that. This error occurred because:
       </div>
       <div class="text-h3 ml-4 ta-left mt-1 gap">
@@ -56,7 +56,7 @@ export default {
   background: var(--v-white-base);
   justify-content: center;
   align-items: center;
-  .fs-56 {
+  .size-404 {
     font-size: 56px;
     line-height: 76px;
     font-weight: 300;
@@ -66,7 +66,7 @@ export default {
     display: flex;
     align-items: flex-start;
   }
-  .mr-23 {
+  .tab-404 {
     margin-right: 92px;
   }
 }
