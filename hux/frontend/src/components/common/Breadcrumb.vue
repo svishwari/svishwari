@@ -28,7 +28,7 @@
             :size="32"
             :class="
               addBorder & reduceIcon
-                ? 'addBorder br-50 pa-2'
+                ? 'addBorder br-50 pa-1'
                 : addBorder
                 ? 'addBorder br-50'
                 : reduceIcon
