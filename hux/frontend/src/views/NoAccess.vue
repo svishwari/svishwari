@@ -41,7 +41,6 @@
             is-tile
             class="mt-5 px-6 primary--text box-shadow-25-light"
             data-e2e="back-to-login"
-            @click="backToLogin()"
           >
             Return to login
           </huxButton>
@@ -69,14 +68,6 @@ export default {
     return {
       email: "",
     }
-  },
-
-  methods: {
-    backToLogin() {
-      this.$router.push({
-        name: "Login",
-      })
-    },
   },
 }
 </script>
