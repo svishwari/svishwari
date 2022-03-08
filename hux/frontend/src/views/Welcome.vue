@@ -2,7 +2,9 @@
   <div v-if="!authenticated" class="welcome-wrap">
     <div class="content">
       <logo />
-      <h1>Unleash the power of Hux</h1>
+      <div class="font-weight-light text-h1 welcome-header">
+        Unleash the power of Hux
+      </div>
       <span>
         We’ve built a new framework for connecting capabilities end-to-end and
         elevating experiences. Hux, paired with our team of Experience
@@ -101,14 +103,8 @@ export default {
       width: 150px;
       height: 150px;
     }
-    h1 {
-      font-family: Open Sans Light;
-      font-style: normal;
-      font-weight: normal;
-      font-style: normal;
+    .welcome-header {
       font-weight: 400;
-      font-size: 28px;
-      line-height: 40px;
       margin-top: 48px;
     }
     span {
