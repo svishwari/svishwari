@@ -1,6 +1,5 @@
 <template>
   <div
-    class="playground-outermost-wrap"
     :class="
       !loading && !hasOverview
         ? 'playground-outermost-wrap white'
