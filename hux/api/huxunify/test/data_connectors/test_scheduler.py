@@ -1,6 +1,11 @@
 """Purpose of this file is to park all tests for scheduler."""
 import unittest
-from huxunify.api.data_connectors.scheduler import generate_cron
+
+from huxunify.api.data_connectors.scheduler import (
+    generate_cron,
+    _add_cron_for_monthly,
+)
+
 
 weekly_schedule = {
     "periodicity": "Weekly",
@@ -89,4 +94,99 @@ class SchedulerTest(unittest.TestCase):
 
         self.assertEqual(
             "15 23 1,L,3 * ? *", generate_cron(monthly_schedule_list[3])
+        )
+
+    def test_monthly_cron(self):
+        """Test generating monthly cron function"""
+
+        # Test for day of month.
+        self.assertDictEqual(
+            {
+                "minute": "*",
+                "hour": "*",
+                "day_of_month": "1,2",
+                "month": "*/2",
+                "day_of_week": "?",
+                "year": "*",
+            },
+            _add_cron_for_monthly(
+                monthly_schedule_list[0],
+                cron_exp={
+                    "minute": "*",
+                    "hour": "*",
+                    "day_of_month": "*",
+                    "month": "*",
+                    "day_of_week": "?",
+                    "year": "*",
+                },
+            ),
+        )
+
+        # Test for first Monday, Tuesday.
+        self.assertDictEqual(
+            {
+                "minute": "*",
+                "hour": "*",
+                "day_of_month": "*",
+                "month": "*",
+                "day_of_week": "2#1,1#1",
+                "year": "*",
+            },
+            _add_cron_for_monthly(
+                monthly_schedule_list[1],
+                cron_exp={
+                    "minute": "*",
+                    "hour": "*",
+                    "day_of_month": "*",
+                    "month": "*",
+                    "day_of_week": "?",
+                    "year": "*",
+                },
+            ),
+        )
+
+        # Test for first, last Monday.
+        self.assertDictEqual(
+            {
+                "minute": "*",
+                "hour": "*",
+                "day_of_month": "*",
+                "month": "*",
+                "day_of_week": "L1,1#1",
+                "year": "*",
+            },
+            _add_cron_for_monthly(
+                monthly_schedule_list[2],
+                cron_exp={
+                    "minute": "*",
+                    "hour": "*",
+                    "day_of_month": "*",
+                    "month": "*",
+                    "day_of_week": "?",
+                    "year": "*",
+                },
+            ),
+        )
+
+        # Test for first, last, third Day.
+        self.assertDictEqual(
+            {
+                "minute": "*",
+                "hour": "*",
+                "day_of_month": "1,L,3",
+                "month": "*",
+                "day_of_week": "?",
+                "year": "*",
+            },
+            _add_cron_for_monthly(
+                monthly_schedule_list[3],
+                cron_exp={
+                    "minute": "*",
+                    "hour": "*",
+                    "day_of_month": "*",
+                    "month": "*",
+                    "day_of_week": "?",
+                    "year": "*",
+                },
+            ),
         )
