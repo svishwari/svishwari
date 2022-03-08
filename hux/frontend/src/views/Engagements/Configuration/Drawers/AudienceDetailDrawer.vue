@@ -32,7 +32,6 @@
 import { mapGetters, mapActions } from "vuex"
 import Drawer from "@/components/common/Drawer.vue"
 import Overview from "@/views/Engagements/Configuration/Overview/Overview.vue"
-// import AttributeDetails from "@/views/Engagements/Configuration/Overview/AttributeDetails.vue"
 import AttributeRules from "@/views/SegmentPlayground/AttributeRules.vue"
 
 export default {
@@ -43,7 +42,6 @@ export default {
   components: {
     Drawer,
     Overview,
-    // AttributeDetails,
     AttributeRules,
   },
 
