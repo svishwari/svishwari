@@ -42,6 +42,11 @@ export default {
         }
       },
     },
+    readMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   data() {
@@ -117,25 +122,25 @@ export default {
       linearGradient
         .append("stop")
         .attr("offset", Number(this.range[0] / this.max))
-        .style("stop-color", "#E6F4F3")
+        .style("stop-color", this.readMode ? "#ECECEC" : "#E6F4F3")
         .style("stop-opacity", "1.0")
 
       linearGradient
         .append("stop")
         .attr("offset", Number(this.range[0] / this.max))
-        .style("stop-color", "#9DD4CF")
+        .style("stop-color", this.readMode ? "#D0D0CE" : "#9DD4CF")
         .style("stop-opacity", "1.0")
 
       linearGradient
         .append("stop")
         .attr("offset", Number(this.range[1] / this.max))
-        .style("stop-color", "#9DD4CF")
+        .style("stop-color", this.readMode ? "#D0D0CE" : "#9DD4CF")
         .style("stop-opacity", "1.0")
 
       linearGradient
         .append("stop")
         .attr("offset", Number(this.range[1] / this.max))
-        .style("stop-color", "#E6F4F3")
+        .style("stop-color", this.readMode ? "#ECECEC" : "#E6F4F3")
         .style("stop-opacity", "1.0")
 
       // Add the area
