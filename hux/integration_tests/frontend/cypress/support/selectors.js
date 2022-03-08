@@ -116,6 +116,7 @@ export default {
   removeDataSourceConfirmation: "[data-e2e='remove-data-source-confirmation']",
   pendingStatus: "[data-e2e='model-status-Pending']",
   dataFeedDetailsTable: "[data-e2e='data-feed-details-table']",
+  dataFilesWrapper: "[data-e2e='data-files-wrapper']",
 
   //destinations
   destination: {
