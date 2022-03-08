@@ -239,8 +239,6 @@ export default {
         .on("mousemove", (mouseEvent) => mousemove(mouseEvent))
         .on("mouseout", () => mouseout())
 
-      let bisectDate = d3Array.bisector((d) => d).right
-
       let mouseout = () => {
         svg.selectAll(".hover-line-y").style("display", "none")
         svg.selectAll(".parent-hover-circle").remove()
@@ -253,14 +251,9 @@ export default {
         svg.selectAll(".child-hover-circle").remove()
         this.tooltipDisplay(false)
 
-        let data = this.data.map((d) => dateFormatter(d.date))
         let x0 = dateFormatter(xScale.invert(d3Select.pointer(mouseEvent)[0]))
 
-        let i = bisectDate(data, x0, 1)
-        let d0 = data[i - 1]
-        let d1 = data[i] || {}
-        let d = x0 - d0 > d1 - x0 ? d1 : d0
-        let dateD = dateFormatter(d)
+        let dateD = dateFormatter(x0)
         let finalXCoordinate = xScale(new Date(dateD))
         let yData = {}
         let dataToolTip = this.data.find(
@@ -304,9 +297,12 @@ export default {
               .style("pointer-events", "none")
           }
         })
-        dataToolTip.xPosition = finalXCoordinate
-        dataToolTip.yPosition = yData
-        this.tooltipDisplay(true, dataToolTip)
+
+        if (dataToolTip) {
+          dataToolTip.xPosition = finalXCoordinate
+          dataToolTip.yPosition = yData
+          this.tooltipDisplay(true, dataToolTip)
+        }
       }
     },
     tooltipDisplay(showTip, eventsData) {

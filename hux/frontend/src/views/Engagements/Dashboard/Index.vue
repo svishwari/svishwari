@@ -4,6 +4,7 @@
     <dashboard-header
       :breadcrumb-items="breadcrumbItems"
       :engagement-data="engagementList"
+      data-e2e="engagement-breadcrumb"
       @removeEngagement="(data) => removeEngagement(data)"
       @favoriteEngagement="(data) => handleActionFavorite(data, 'engagements')"
       @openDownloadDrawer="() => openDownloadDrawer()"

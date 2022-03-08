@@ -4,12 +4,12 @@ import { randomName } from "../../support/utils"
 
 let engagementName = randomName()
 
-describe("Orchestration > Engagement > Create Engagement", () => {
+describe("Orchestration > Engagement > Create and delete Engagement", () => {
   beforeEach(() => {
     cy.signin()
   })
 
-  it("should be able to configure a new engagement", () => {
+  it("should be able to configure a new engagement and delete it", () => {
     cy.visit(route.addEngagement)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000)
@@ -22,6 +22,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     cy.get(selector.engagement.enagagementDescription)
       .eq(0)
       .type("Engagement for E2E testing")
+    cy.get(selector.engagement.nextStep).click()
 
     // should add audience to the engagement
     // Click on add audience icon
@@ -55,18 +56,23 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     cy.wait(1000)
     // Close the add destination drawer
     cy.get(selector.engagement.exitDrawer).click()
+    cy.get(selector.engagement.nextStep).click()
 
     // create engagement
     cy.get(selector.engagement.createEngagement).click()
-  })
 
-  // This test case is written to delete an engagement created above
-  it("should be able to delete a newly added engagement", () => {
-    cy.visit(route.engagements)
+    //eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(5000)
+    // go back to all engagements dashboard
+    cy.get(selector.engagement.allEngagements)
+      .contains("Engagements")
+      .eq(0)
+      .click()
 
     //eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000)
 
+    // find the newly created engagement and delete it
     cy.get(".menu-cell-wrapper").each(($el) => {
       if ($el.text().includes(`Test Engagement ${engagementName}`)) {
         // Make the vertical dots visible
