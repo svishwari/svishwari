@@ -233,7 +233,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                     ).get(api_c.DELIVERY_PLATFORM_TYPE),
                     api_c.STATUS: job.get(api_c.STATUS),
                     api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE, 0),
-                    db_c.UPDATE_TIME: job.get(db_c.UPDATE_TIME),
+                    db_c.UPDATE_TIME: job.get(
+                        db_c.UPDATE_TIME, job[db_c.CREATE_TIME]
+                    ),
                     db_c.DELIVERY_PLATFORM_ID: job.get(
                         db_c.DELIVERY_PLATFORM_ID
                     ),
@@ -257,7 +259,6 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 ),
                 api_c.STATUS: api_c.STATUS_NOT_DELIVERED,
                 api_c.SIZE: 0,
-                db_c.UPDATE_TIME: None,
                 db_c.DELIVERY_PLATFORM_ID: x,
                 db_c.LINK: destination_dict.get(x).get(db_c.LINK),
             }
@@ -273,7 +274,8 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
         {
             value[db_c.DELIVERY_PLATFORM_ID]: value
             for value in sorted(
-                standalone_deliveries, key=lambda x: x[db_c.UPDATE_TIME]
+                standalone_deliveries,
+                key=lambda x: x.get(db_c.UPDATE_TIME, datetime.utcnow()),
             )
         }.values()
     )
@@ -654,7 +656,7 @@ class AudienceGetView(SwaggerView):
 
     # pylint: disable=no-self-use, too-many-locals, too-many-branches
     # pylint: disable=too-many-statements
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves an audience.
