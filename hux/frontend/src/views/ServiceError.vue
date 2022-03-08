@@ -9,16 +9,17 @@
         This service is temporarily unavailable. Apologies for the<br />
         inconveniences this might mean to you. Thank you for your patience!
       </div>
-      <huxButton
-        variant="primary base"
-        size="small"
-        is-tile
-        class="mt-14 px-6"
-        data-e2e="launch"
-        @click="launch()"
-      >
-        Go to Hux
-      </huxButton>
+      <router-link to="/home">
+        <huxButton
+          variant="primary base"
+          size="small"
+          is-tile
+          class="mt-14 px-6"
+          data-e2e="launch"
+        >
+          Go to Hux
+        </huxButton>
+      </router-link>
     </div>
   </div>
 </template>
@@ -33,14 +34,6 @@ export default {
   components: {
     Icon,
     huxButton,
-  },
-
-  methods: {
-    launch() {
-      this.$router.push({
-        name: "Home",
-      })
-    },
   },
 }
 </script>
