@@ -3,7 +3,7 @@
     <div class="ta-center">
       <icon type="503-part1" size="120" color="black" class="align-left" />
       <icon type="503-part2" size="80" color="black" class="align-top" />
-      <div class="status-title my-3">503</div>
+      <div class="error-code-font my-3">503</div>
       <div class="text-h1 mt-1">Unexpected service error occured.</div>
       <div class="ta-center text-h3 mt-2">
         This service is temporarily unavailable. Apologies for the<br />
