@@ -82,60 +82,46 @@ def _add_cron_for_monthly(schedule: dict, cron_exp: dict) -> str:
             for d_month in day_of_month_list:
                 day_of_week_digit = day_of_week_name_dict.get(d_month)
                 if day_of_week_digit:
-                    day_of_week_cron_str = (
-                        day_of_week_cron_str
-                        + period_item_val
-                        + day_of_week_digit
-                        + ","
-                    )
+                    day_of_week_cron_str = f"{day_of_week_cron_str}{period_item_val}{day_of_week_digit},"
+
                 elif d_month == "Day":
-                    day_of_month_cron_str = (
-                        day_of_month_cron_str + period_item_val + ","
-                    )
+                    day_of_month_cron_str = f"{day_of_month_cron_str}" \
+                                            f"{period_item_val},"
+
 
         elif period_item_val:
             for d_month in day_of_month_list:
                 day_of_week_digit = day_of_week_name_dict.get(d_month)
                 if day_of_week_digit:
-                    day_of_week_cron_str = (
-                        day_of_week_cron_str
-                        + day_of_week_digit
-                        + "#"
-                        + period_item_val
-                        + ","
-                    )
+                    day_of_week_cron_str = f"{day_of_week_cron_str}" \
+                                           f"{day_of_week_digit}#" \
+                                           f"{period_item_val},"
+
                 elif d_month == "Day":
-                    day_of_month_cron_str = (
-                        day_of_month_cron_str + period_item_val + ","
-                    )
+                    day_of_month_cron_str = f"{day_of_month_cron_str}" \
+                                            f"{period_item_val},"
+
 
     elif len(day_of_month_list) == 1:
         if day_of_month_list[0] == "Day":
             for period_item in period_items:
                 period_item_val = monthly_period_items_dict.get(period_item)
                 if period_item_val:
-                    day_of_month_cron_str = (
-                        day_of_month_cron_str + period_item_val + ","
-                    )
+                    day_of_month_cron_str = f"{day_of_month_cron_str}" \
+                                            f"{period_item_val},"
         day_of_week_digit = day_of_week_name_dict.get(day_of_month_list[0])
         if day_of_week_digit:
             for period_item in period_items:
                 period_item_val = monthly_period_items_dict.get(period_item)
                 if period_item == "last":
-                    day_of_week_cron_str = (
-                        day_of_week_cron_str
-                        + period_item_val
-                        + day_of_week_digit
-                        + ","
-                    )
+                    day_of_week_cron_str = f"{day_of_week_cron_str}" \
+                                           f"{period_item_val}" \
+                                           f"{day_of_week_digit},"
+
                 elif period_item_val:
-                    day_of_week_cron_str = (
-                        day_of_week_cron_str
-                        + day_of_week_digit
-                        + "#"
-                        + period_item_val
-                        + ","
-                    )
+                    day_of_week_cron_str = f"{day_of_week_cron_str}" \
+                                           f"{day_of_week_digit}#" \
+                                           f"{period_item_val},"
 
     if day_of_month_cron_str:
         cron_exp["day_of_month"] = day_of_month_cron_str[:-1]
