@@ -32,14 +32,14 @@
             <div
               v-if="header.value == 'last_name'"
               class="cell text-ellipsis text-body-1 mt-1"
-              :class="item.last_name == '++REDACTED++' ? 'blur-text' : ''"
+              :class="item.last_name.trim() == '++REDACTED++' ? 'blur-text' : ''"
             >
               <span v-if="item.last_name">{{ item.last_name }} </span>
             </div>
             <div
               v-if="header.value == 'first_name'"
               class="cell text-ellipsis text-body-1 mt-1"
-              :class="item.first_name == '++REDACTED++' ? 'blur-text' : ''"
+              :class="item.first_name.trim() == '++REDACTED++' ? 'blur-text' : ''"
             >
               <span v-if="item.first_name"> {{ item.first_name }}</span>
             </div>
