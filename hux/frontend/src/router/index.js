@@ -355,12 +355,12 @@ const routes = [
     },
   },
   {
-    path: "/503",
-    name: "503",
+    path: "/service-error",
+    name: "ServiceError",
     component: () => import("@/views/ServiceError"),
     meta: {
       layout: "default",
-      title: "503",
+      title: "Service Error",
       requiresAuth: false,
     },
   },
