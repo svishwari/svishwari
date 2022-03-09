@@ -115,6 +115,7 @@ class EmailDeliverabilityOverview(SwaggerView):
             database=database,
             start_date=start_date,
             end_date=end_date,
+            domains=[domain_name],
             mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
         )
 
@@ -127,6 +128,10 @@ class EmailDeliverabilityOverview(SwaggerView):
                         api_c.DELIVERED_COUNT: metrics.get(api_c.DELIVERED),
                     }
                 )
+
+        delivered_open_rate_overview.sort(
+            key=lambda data: data.get(api_c.DATE)
+        )
 
         aggregated_data = get_deliverability_data_performance_metrics(
             database=database,
