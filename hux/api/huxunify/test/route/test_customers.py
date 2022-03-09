@@ -54,6 +54,11 @@ class TestCustomersOverview(RouteTestCase):
         ).start()
 
         mock.patch(
+            "huxunify.api.data_connectors.cache.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        mock.patch(
             "huxunify.api.route.utils.get_user_info",
             return_value=t_c.VALID_USER_RESPONSE,
         ).start()
