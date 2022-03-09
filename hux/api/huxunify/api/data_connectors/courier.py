@@ -843,7 +843,7 @@ async def deliver_audience_to_destination(
             db_c.NOTIFICATION_TYPE_CRITICAL,
             (
                 f'Failed to delivered audience ID "{audience_id}" '
-                f'to destination ID "{destination_id}"'
+                f'to destination ID "{destination_id}" '
                 f"because the destination does not exist."
             ),
             db_c.NOTIFICATION_CATEGORY_DELIVERY,

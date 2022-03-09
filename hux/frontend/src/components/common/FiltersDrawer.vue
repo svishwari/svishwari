@@ -58,7 +58,11 @@
               color="primary"
               class="text-button ml-auto"
               width="157"
-              :is-disabled="!Boolean(count) && !enableApply"
+              :is-disabled="
+                !customValidation
+                  ? !Boolean(count) && !enableApply
+                  : !enableApply
+              "
               @click="$emit('apply')"
             >
               Apply filter
@@ -107,6 +111,11 @@ export default defineComponent({
       type: String,
       required: false,
       default: "260px",
+    },
+    customValidation: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 

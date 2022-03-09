@@ -29,7 +29,6 @@ from huxunify.api.schema.customers import (
     TotalCustomersInsightsSchema,
 )
 
-
 # pylint: disable=too-many-public-methods,too-many-lines
 from huxunify.test.route.route_test_util.test_data_loading.users import (
     load_users,
@@ -881,41 +880,43 @@ class TestCustomersOverview(RouteTestCase):
         )
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
-    @given(hux_id=st.text(alphabet=string.ascii_letters))
-    def test_get_customer_profile_invalid_hux_id(self, hux_id: str):
-        """Test retrieving customer profile with an invalid hux ID.
+    # TODO Implement test once logic for HUXID is set again
 
-        Args:
-            hux_id (str): HUX ID.
-        """
+    # @given(hux_id=st.text(alphabet=string.ascii_letters))
+    # def test_get_customer_profile_invalid_hux_id(self, hux_id: str):
+    #     """Test retrieving customer profile with an invalid hux ID.
+    #
+    #     Args:
+    #         hux_id (str): HUX ID.
+    #     """
+    #
+    #     if len(hux_id) == 0:
+    #         return
+    #
+    #     response = self.app.get(
+    #         f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
+    #         headers=t_c.STANDARD_HEADERS,
+    #     )
+    #
+    #     self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-        if len(hux_id) == 0:
-            return
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-
-    @given(hux_id=st.text(alphabet=string.ascii_letters))
-    def test_get_events_for_a_customer_invalid_hux_id(self, hux_id: str):
-        """Test retrieving customer events with an invalid hux ID.
-
-        Args:
-            hux_id (str): HUX ID.
-        """
-
-        if len(hux_id) == 0:
-            return
-
-        response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+    # @given(hux_id=st.text(alphabet=string.ascii_letters))
+    # def test_get_events_for_a_customer_invalid_hux_id(self, hux_id: str):
+    #     """Test retrieving customer events with an invalid hux ID.
+    #
+    #     Args:
+    #         hux_id (str): HUX ID.
+    #     """
+    #
+    #     if len(hux_id) == 0:
+    #         return
+    #
+    #     response = self.app.post(
+    #         f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
+    #         headers=t_c.STANDARD_HEADERS,
+    #     )
+    #
+    #     self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     @given(batch_size=st.text(alphabet=string.ascii_letters))
     def test_get_customer_overview_invalid_batch_size(self, batch_size: str):
@@ -969,7 +970,8 @@ class TestCustomersOverview(RouteTestCase):
             return
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.CITIES}?batch_size={batch_size}",
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
+            query_string={"batch_size": batch_size},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -989,8 +991,8 @@ class TestCustomersOverview(RouteTestCase):
             return
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
-            f"/{api_c.CITIES}?batch_number={batch_number}",
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
+            query_string={"batch_number": batch_number},
             headers=t_c.STANDARD_HEADERS,
         )
 

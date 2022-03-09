@@ -49,7 +49,6 @@ from huxunifylib.connectors.util.selector import (
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
-    parameter_store,
 )
 from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.schema.destinations import (
@@ -78,6 +77,7 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
+    set_destination_authentication_secrets,
 )
 import huxunify.api.constants as api_c
 
@@ -436,13 +436,10 @@ class DestinationAuthenticationPostView(SwaggerView):
 
         if auth_details:
             # store the secrets for the updated authentication details
-            authentication_parameters = (
-                parameter_store.set_destination_authentication_secrets(
-                    authentication_details=auth_details,
-                    is_updated=True,
-                    destination_id=destination_id,
-                    destination_type=platform_type,
-                )
+            authentication_parameters = set_destination_authentication_secrets(
+                authentication_details=auth_details,
+                destination_id=str(destination_id),
+                destination_type=platform_type,
             )
             is_added = True
 
