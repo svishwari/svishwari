@@ -1132,6 +1132,10 @@ def clean_domain_name_string(domain_name: str) -> str:
     Returns:
         str: Cleaned domain name.
     """
+    # This is to handle @ present in sfmc data.
+    if "@" in domain_name:
+        domain_name = domain_name.split("@")[1]
+
     return domain_name.replace(".", "-")
 
 

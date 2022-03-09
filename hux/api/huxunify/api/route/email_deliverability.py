@@ -13,11 +13,14 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.collection_management import get_distinct_values
 from huxunifylib.database.deliverability_metrics_management import (
     get_overall_inbox_rate,
+    get_deliverability_data_performance_metrics,
 )
 
 from huxunify.api import constants as api_c
+from huxunify.api.config import get_config
 from huxunify.api.data_connectors.email_deliverability_metrics import (
     get_delivered_rate_data,
+    get_performance_metrics_deliverability_data,
 )
 
 from huxunify.api.route.decorators import (
@@ -94,9 +97,6 @@ class EmailDeliverabilityOverview(SwaggerView):
         # Default 3 months.
         start_date, end_date = get_start_end_dates(request, delta=3)
 
-        curr_date = datetime.datetime.strptime(
-            start_date, api_c.DEFAULT_DATE_FORMAT
-        )
         end_date = datetime.datetime.strptime(
             end_date, api_c.DEFAULT_DATE_FORMAT
         )
@@ -111,22 +111,36 @@ class EmailDeliverabilityOverview(SwaggerView):
         domain_name = domains[0] if domains else api_c.DOMAIN_1
         api_c.SENDING_DOMAINS_OVERVIEW_STUB[0][api_c.DOMAIN_NAME] = domain_name
 
-        while curr_date <= end_date:
-            delivered_open_rate_overview.append(
-                {
-                    api_c.DATE: curr_date,
-                    api_c.OPEN_RATE: round(uniform(0.6, 0.9), 2),
-                    api_c.DELIVERED_COUNT: randint(600, 900),
-                }
-            )
-            curr_date = curr_date + timedelta(days=1)
+        performance_metrics_data = get_deliverability_data_performance_metrics(
+            database=database,
+            start_date=start_date,
+            end_date=end_date,
+            mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
+        )
+
+        for domain_data in performance_metrics_data:
+            for metrics in domain_data.get(db_c.DELIVERABILITY_METRICS):
+                delivered_open_rate_overview.append(
+                    {
+                        api_c.DATE: metrics.get(api_c.DATE),
+                        api_c.OPEN_RATE: metrics.get(api_c.OPEN_RATE),
+                        api_c.DELIVERED_COUNT: metrics.get(api_c.DELIVERED),
+                    }
+                )
+
+        aggregated_data = get_deliverability_data_performance_metrics(
+            database=database,
+            domains=[domain_name],
+            start_date=start_date,
+            end_date=end_date,
+            aggregate=True,
+            mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
+        )
 
         return HuxResponse.OK(
             data={
-                api_c.OVERALL_INBOX_RATE: round(overall_inbox_rate, 2)
-                if overall_inbox_rate
-                else round(uniform(0.6, 0.9), 2),
-                api_c.SENDING_DOMAINS_OVERVIEW: api_c.SENDING_DOMAINS_OVERVIEW_STUB,
+                api_c.OVERALL_INBOX_RATE: round(overall_inbox_rate, 2),
+                api_c.SENDING_DOMAINS_OVERVIEW: aggregated_data,
                 api_c.DELIVERED_OPEN_RATE_OVERVIEW: delivered_open_rate_overview,
             },
             data_schema=EmailDeliverabilityOverviewSchema(),
@@ -259,21 +273,28 @@ class EmailDeliverabilityDomains(SwaggerView):
                 percent_data_field_list[i].append(percent_data)
             curr_date = curr_date + timedelta(days=1)
 
-        return HuxResponse.OK(
-            data={
-                api_c.SENT: sent_data,
-                api_c.DELIVERED_RATE: get_delivered_rate_data(
-                    database=database,
-                    domains=domains,
-                    start_date=datetime.datetime.strptime(
-                        start_date, api_c.DEFAULT_DATE_FORMAT
-                    ),
-                    end_date=end_date,
+        data = {
+            api_c.DELIVERED_RATE: get_delivered_rate_data(
+                database=database,
+                domains=domains,
+                start_date=datetime.datetime.strptime(
+                    start_date, api_c.DEFAULT_DATE_FORMAT
                 ),
-                api_c.OPEN_RATE: open_rate_data,
-                api_c.CLICK_RATE: click_rate_data,
-                api_c.UNSUBSCRIBE_RATE: unsubscribe_rate_data,
-                api_c.COMPLAINTS_RATE: complaints_rate_data,
-            },
+                end_date=end_date,
+            )
+        }
+
+        performance_metrics = get_performance_metrics_deliverability_data(
+            database=database,
+            domains=domains,
+            start_date=datetime.datetime.strptime(
+                start_date, api_c.DEFAULT_DATE_FORMAT
+            ),
+            end_date=end_date,
+        )
+        data.update(performance_metrics)
+
+        return HuxResponse.OK(
+            data=data,
             data_schema=EmailDeliverabiliyDomainsSchema(),
         )
