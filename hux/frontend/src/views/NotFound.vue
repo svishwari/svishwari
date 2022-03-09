@@ -41,9 +41,7 @@ export default {
 
   methods: {
     launch: function () {
-      this.$router.push({
-        name: "Home",
-      })
+      this.$router.back()
     },
   },
 }
