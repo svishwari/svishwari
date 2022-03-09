@@ -167,6 +167,16 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/trust-id",
+    name: "TrustID",
+    component: () => import("@/views/TrustID/Index"),
+    meta: {
+      layout: "app",
+      title: "Trust ID",
+      requiresAuth: true,
+    },
+  },
   //#endregion
 
   //#region Orchestration
