@@ -17,7 +17,10 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_deliverability_metrics,
     set_delivery_platform,
+    set_delivery_job,
+    set_performance_metrics,
 )
+from huxunifylib.database.orchestration_management import create_audience
 
 
 class TestDestinationRoutes(RouteTestCase):
@@ -35,9 +38,10 @@ class TestDestinationRoutes(RouteTestCase):
         ).start()
 
         self.delivery_platform_doc = set_delivery_platform(
-            self.database,
-            db_c.DELIVERY_PLATFORM_SPARKPOST,
-            "My delivery platform for Sparkpost",
+            database=self.database,
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_SPARKPOST,
+            name="My delivery platform for Sparkpost",
+            status=db_c.STATUS_SUCCEEDED,
         )
 
         set_deliverability_metrics(
@@ -62,6 +66,53 @@ class TestDestinationRoutes(RouteTestCase):
             domain="domain_1",
         )
 
+        self.generic_campaigns = [
+            {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
+        ]
+
+        self.audience = create_audience(
+            database=self.database,
+            name="all",
+            audience_filters=[],
+            user_name="test_user",
+        )
+
+        # Create a delivery job.
+        self.delivery_job_doc = set_delivery_job(
+            self.database,
+            self.audience[db_c.ID],
+            self.delivery_platform_doc[db_c.ID],
+            self.generic_campaigns,
+        )
+
+        set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_job_id=self.delivery_job_doc[db_c.ID],
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_SFMC,
+            generic_campaigns=self.generic_campaigns[0]["campaign_id"],
+            metrics_dict={
+                "journey_name": "SFMCJourney_2",
+                "journey_id": "43925808-c52e-11eb-826e-bae5bebfd7a3",
+                "from_addr": "dev-sfmc@domain_1",
+                "journey_creation_date": "2021-09-01T12:14:46Z",
+                "hux_engagement_id": "60c2fd6515eb844f53cdc669",
+                "hux_audience_id": "60a7a15cc1e230dbd54ef428",
+                "sent": 200,
+                "delivered": 0,
+                "opens": 107,
+                "unique_opens": 91,
+                "clicks": 71,
+                "unique_clicks": 67,
+                "bounces": 1,
+                "hard_bounces": 0,
+                "unsubscribes": 27,
+                "complaints": 11,
+            },
+            start_time=datetime.datetime.utcnow(),
+            end_time=datetime.datetime.utcnow() + datetime.timedelta(days=-1),
+        )
+
     def test_email_deliverability_overview(self):
         """Test for email_deliverability overview endpoint."""
 
@@ -78,9 +129,33 @@ class TestDestinationRoutes(RouteTestCase):
                 EmailDeliverabilityOverviewSchema(), response.json
             )
         )
-        self.assertEqual(
-            api_c.SENDING_DOMAINS_OVERVIEW_STUB,
-            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW),
+        self.assertIsInstance(
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW), list
+        )
+
+        self.assertIsInstance(
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                db_c.DOMAIN_NAME
+            ),
+            str,
+        )
+        self.assertIsInstance(
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.SENT
+            ),
+            int,
+        )
+        self.assertIsInstance(
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.OPEN_RATE
+            ),
+            float,
+        )
+        self.assertIsInstance(
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.CLICK_RATE
+            ),
+            float,
         )
 
     def test_email_deliverability_all_domain_data(self):

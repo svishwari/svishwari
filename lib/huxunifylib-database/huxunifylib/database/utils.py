@@ -1,6 +1,8 @@
 """This module is for the external database utilities."""
 
 import logging
+from datetime import datetime
+
 import pymongo
 import pandas as pd
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -105,3 +107,29 @@ def get_collection_count(
         logging.error(exc)
 
     return 0
+
+
+def match_start_end_date_stmt(
+    start_date: datetime, end_date: datetime, date_field: str
+) -> dict:
+    """Match statement for aggregation pipeline between two dates.
+    Args:
+        start_date (datetime): start date for match.
+        end_date (datetime): end date for match.
+        date_field (str): date field for match.
+    Returns:
+        dict: Match statement for the given dates.
+    """
+    match_statement = {}
+    if isinstance(start_date, datetime) and isinstance(end_date, datetime):
+        match_statement = {
+            "$match": {date_field: {"$gte": start_date, "$lte": end_date}}
+        }
+
+    elif isinstance(start_date, datetime):
+        match_statement = {"$match": {date_field: {"$gte": start_date}}}
+
+    elif isinstance(end_date, datetime):
+        match_statement = {"$match": {date_field: {"$lte": end_date}}}
+
+    return match_statement

@@ -3,6 +3,7 @@
     <dashboard-header
       :breadcrumb-items="breadcrumbItems"
       :audience-data="audience"
+      data-e2e="audience-breadcrumb"
       @onRefresh="refresh()"
       @removeAudience="(data) => removeAudience(data)"
       @favoriteAudience="(data) => favoriteAudience(data)"
@@ -232,6 +233,7 @@
                 section-type="engagement"
                 deliveries-key="deliveries"
                 :audience-data="audience"
+                data-e2e="engagement-delivery-details"
                 @onOverviewSectionAction="triggerOverviewAction($event)"
                 @onOverviewDestinationAction="
                   triggerOverviewDestinationAction($event)
@@ -249,6 +251,7 @@
               </delivery>
               <standalone-delivery
                 :audience="audience"
+                data-e2e="standalone-delivery"
                 @onAddStandaloneDestination="addStandaloneDestination($event)"
                 @onDeliveryStandaloneDestination="refreshEntity()"
                 @onRemoveStandaloneDestination="
@@ -299,11 +302,13 @@
                           ? audienceData.digital_advertising.match_rates
                           : []
                       "
+                      data-e2e="audience-matchrates"
                     />
                   </div>
                   <div ref="advertisingcard" class="lookalikes mx-2 my-6">
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
+                      data-e2e="lookalike-audiences"
                     />
                   </div>
                 </v-card-text>

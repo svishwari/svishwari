@@ -22,7 +22,7 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourceDataFeedSchema,
     CdpConnectionsDataSourceSchema,
     DataSourceDataFeedDetailsGetSchema,
-    CdpDataSourceDataFeedTypeAverageSchema,
+    FloatValueStandardDeviationSchema,
     IndividualDataSourceDataFeedDetailSchema,
 )
 
@@ -370,12 +370,12 @@ class CdpDataSourcesTest(RouteTestCase):
 
         for data_feed in response.json.get(api_c.DATAFEEDS):
             self.assertFalse(
-                CdpDataSourceDataFeedTypeAverageSchema().validate(
+                FloatValueStandardDeviationSchema().validate(
                     data_feed.get(api_c.RECORDS_PROCESSED_PERCENTAGE)
                 )
             )
             self.assertFalse(
-                CdpDataSourceDataFeedTypeAverageSchema().validate(
+                FloatValueStandardDeviationSchema().validate(
                     data_feed.get(api_c.THIRTY_DAYS_AVG)
                 )
             )
