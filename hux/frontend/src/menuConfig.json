@@ -112,6 +112,15 @@
           "display": true
         },
         {
+          "icon": "trust-id",
+          "title": "HX TrustID",
+          "link": {
+            "name": ""
+          },
+          "size": 14,
+          "display": true
+        },
+        {
           "icon": "email_deliverability",
           "title": "Email Deliverability",
           "link": {
