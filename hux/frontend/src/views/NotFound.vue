@@ -2,7 +2,7 @@
   <div class="error-wrap">
     <div class="ta-center">
       <icon :type="404" :size="150" color="black" />
-      <div class="size-404">404</div>
+      <div class="error-code-font">404</div>
       <div class="text-h1 mt-4">Uh oh we’ve lost this page.</div>
       <div class="ta-center text-h3 mt-2 tab-404">
         Sorry about that. This error occurred because:
@@ -56,11 +56,6 @@ export default {
   background: var(--v-white-base);
   justify-content: center;
   align-items: center;
-  .size-404 {
-    font-size: 56px;
-    line-height: 76px;
-    font-weight: 300;
-  }
   .gap {
     line-height: 31px;
     display: flex;
