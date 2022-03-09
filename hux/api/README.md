@@ -387,6 +387,7 @@ Steps to pre-populate use local MongoDB
   set MONGO_DB_USERNAME=''
   set MONGO_DB_PASSWORD=''
   set MONGO_DB_USE_SSL=False
+  set DROP_ALL_COLLECTIONS=False
   ```
   ```
   # MACOS/Linux Terminal Command
@@ -395,10 +396,12 @@ Steps to pre-populate use local MongoDB
   export MONGO_DB_USERNAME=''
   export MONGO_DB_PASSWORD=''
   export MONGO_DB_USE_SSL=False
+  export DROP_ALL_COLLECTIONS=False
   ```
 
 
 * Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to populate the data in your local database
+* The set `DROP_ALL_COLLECTIONS` flag is set as `False` by default. If you need to drop all the collections in the database, set this flag as `True`.
 
 To use local database for development, set the following in `../../hux/api/settings.ini`.
    ```
