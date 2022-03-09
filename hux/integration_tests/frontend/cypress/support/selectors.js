@@ -82,6 +82,7 @@ export default {
     summary: "[data-e2e='issues-summary']",
     time: "[data-e2e='issues-time']",
     return: "[data-e2e='issues-return']",
+    wrapper: "[data-e2e='issue-table-wrapper']",
   },
 
   // configuration
