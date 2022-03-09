@@ -355,6 +355,16 @@ const routes = [
     },
   },
   {
+    path: "/service-error",
+    name: "ServiceError",
+    component: () => import("@/views/ServiceError"),
+    meta: {
+      layout: "default",
+      title: "Service Error",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/no-access",
     name: "NoAccess",
     component: () => import("@/views/NoAccess"),

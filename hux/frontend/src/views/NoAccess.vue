@@ -3,7 +3,7 @@
     <div class="ta-center">
       <logo />
       <div class="text-h1 mt-12">
-        It looks like that you do not have access to Hux
+        It looks like you do not have access to Hux
       </div>
       <div class="ta-center text-h3 mt-2">
         It’s an easy fix, though. Leave your email address below and we will get
