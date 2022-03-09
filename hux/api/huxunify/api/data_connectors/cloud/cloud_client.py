@@ -18,9 +18,10 @@ class CloudClient:
         Returns:
             CloudClient: subclass of CloudClient.
         """
-        provider = config.CLOUD_PROVIDER
+        provider = config.CLOUD_PROVIDER.lower()
         subclass_map = {
-            subclass.provider: subclass for subclass in cls.__subclasses__()
+            subclass.provider.lower(): subclass
+            for subclass in cls.__subclasses__()
         }
         subclass = (
             subclass_map[provider] if provider in subclass_map else CloudClient

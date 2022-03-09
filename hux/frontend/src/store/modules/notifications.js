@@ -8,6 +8,7 @@ const state = {
   items: {},
   users: {},
   latest5: {},
+  total: 0,
 }
 
 const getters = {
@@ -40,7 +41,7 @@ const mutations = {
   },
 
   SET_TOTAL(state, item) {
-    state.total = item
+    Vue.set(state, "total", item)
   },
 
   RESET_ALL(state) {

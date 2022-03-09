@@ -215,8 +215,6 @@ MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
 DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
 DAY_OF_MONTH_NAME_LIST = [
     "Day",
-    "Weekend",
-    "Weekend day",
     "Sunday",
     "Monday",
     "Tuesday",
@@ -930,9 +928,9 @@ WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
 
 PARAM_STORE_PREFIX = "unified"
-PARAMETER_STORE_ERROR_MSG = (
+SECRET_STORAGE_ERROR_MSG = (
     "An error occurred while attempting to"
-    " store secrets in the parameter store."
+    " store secrets in the cloud secret storage."
 )
 
 # users
@@ -1635,6 +1633,7 @@ CLICK_RATE = "click_rate"
 DELIVERED_RATE = "delivered_rate"
 UNSUBSCRIBE_RATE = "unsubscribe_rate"
 COMPLAINTS_RATE = "complaints_rate"
+DELIVERABILITY_METRICS = "deliverability_metrics"
 
 # TODO Remove once email deliverability data is available.
 

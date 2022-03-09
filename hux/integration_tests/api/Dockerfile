@@ -1,5 +1,6 @@
 # build the test environment
 FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
+FROM huxhub.repo.mgnt.in/locustio/locust AS locust
 
 # set the work dir on the docker image
 WORKDIR /app/hux-unified/integration_tests/api
@@ -15,8 +16,15 @@ RUN pip install pytest
 RUN pip install pyperclip
 RUN pip install tavern
 RUN pip install python-box
+RUN pip install python-dotenv
+RUN pip install locust
 
 # run the pytests application
 # append hux-unified integration_tests api path to python path
 ENV PYTHONPATH "${PYTHONPATH}:/app/hux-unified/integration_tests/api"
 CMD ["py.test", "test_api_spec.tavern.yaml", "test_core.tavern.yaml", "test_data_sources.tavern.yaml", "test_engagements.tavern.yaml", "test_models.tavern.yaml", "test_notifications.tavern.yaml", "test_orchestration.tavern.yaml", "test_user.tavern.yaml", "test_customers.tavern.yaml", "-v"]
+CMD ["--locustfile", "locustfile.py", \
+        "--headless", \
+        "--users", "2", \
+        "--spawn-rate", "20", \
+        "--run-time", "200"]
