@@ -361,7 +361,7 @@ const routes = [
     meta: {
       layout: "default",
       title: "Service Error",
-      requiresAuth: false,
+      requiresAuth: true,
     },
   },
   {
