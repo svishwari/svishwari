@@ -170,11 +170,6 @@ export default {
       required: true,
       default: false,
     },
-    users: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
   },
   data() {
     return {
@@ -210,7 +205,7 @@ export default {
   computed: {
     ...mapGetters({
       getCurrentUserEmail: "users/getEmailAddress",
-      getUsers: "notifications/userList",
+      getAlerts: "users/getUserAlerts",
     }),
   },
 
@@ -269,10 +264,7 @@ export default {
       })
     },
     mapAlertSectionGroups() {
-      let currentUser = this.users.find(
-        (data) => data.email == this.getCurrentUserEmail
-      )
-      this.currentAlertConf = currentUser.alerts
+      this.currentAlertConf = this.getAlerts
       if (this.checkIfconfigExited(this.currentAlertConf)) {
         this.setAlertConfiguration()
       } else {
