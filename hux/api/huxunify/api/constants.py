@@ -215,8 +215,6 @@ MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
 DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
 DAY_OF_MONTH_NAME_LIST = [
     "Day",
-    "Weekend",
-    "Weekend day",
     "Sunday",
     "Monday",
     "Tuesday",
