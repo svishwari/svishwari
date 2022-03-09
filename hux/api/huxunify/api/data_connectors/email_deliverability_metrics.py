@@ -180,9 +180,17 @@ def get_performance_metrics_deliverability_data(
             )
 
     return {
-        api_c.SENT: sent_data,
-        api_c.OPEN_RATE: open_rate_data,
-        api_c.CLICK_RATE: click_rate_data,
-        api_c.UNSUBSCRIBE_RATE: unsubscribe_rate_data,
-        api_c.COMPLAINTS_RATE: complaints_rate_data,
+        api_c.SENT: sorted(sent_data, key=lambda data: data.get(api_c.DATE)),
+        api_c.OPEN_RATE: sorted(
+            open_rate_data, key=lambda data: data.get(api_c.DATE)
+        ),
+        api_c.CLICK_RATE: sorted(
+            click_rate_data, key=lambda data: data.get(api_c.DATE)
+        ),
+        api_c.UNSUBSCRIBE_RATE: sorted(
+            unsubscribe_rate_data, key=lambda data: data.get(api_c.DATE)
+        ),
+        api_c.COMPLAINTS_RATE: sorted(
+            complaints_rate_data, key=lambda data: data.get(api_c.DATE)
+        ),
     }
