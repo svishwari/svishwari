@@ -19,7 +19,7 @@
         is-tile
         class="btn-launch text-button mt-12"
         data-e2e="launch"
-        @click="launch"
+        @click="launch()"
       >
         Launch Hux
       </huxButton>
@@ -40,7 +40,7 @@ export default {
   },
 
   methods: {
-    launch: function () {
+    launch() {
       this.$router.back()
     },
   },
