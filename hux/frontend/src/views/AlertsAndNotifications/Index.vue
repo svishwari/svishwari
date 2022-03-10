@@ -188,7 +188,6 @@
         />
         <alert-configure-drawer
           v-model="isAlertsToggled"
-          :users="getAllUsers"
           @onDrawerClose="onConfigClose"
         />
       </div>
@@ -295,6 +294,8 @@ export default {
     ...mapGetters({
       notifications: "notifications/list",
       totalNotifications: "notifications/total",
+      getUserEmail: "users/getEmailAddress",
+      getUserAlerts: "users/getUserAlerts",
       getUsers: "notifications/userList",
     }),
 
@@ -305,8 +306,8 @@ export default {
     getNotificationUsers() {
       let sortedUsers = this.getUsers
       return sortedUsers.sort(function (a, b) {
-        var textA = a["display_name"]?.toUpperCase()
-        var textB = b["display_name"]?.toUpperCase()
+        var textA = a?.toUpperCase()
+        var textB = b?.toUpperCase()
         return textA < textB ? -1 : textA > textB ? 1 : 0
       })
     },
@@ -321,10 +322,6 @@ export default {
       this.calculateLastBatch()
     } finally {
       this.loading = false
-      this.enableLazyLoad = true
-      if (this.notifications.length === 0) {
-        this.enableLazyLoad = false
-      }
     }
   },
 
@@ -355,6 +352,7 @@ export default {
     intersected() {
       if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
+        this.enableLazyLoad = true
         this.fetchNotificationsByBatch()
       } else {
         this.enableLazyLoad = false
@@ -419,6 +417,7 @@ export default {
     async alertfunction(data) {
       this.finalFilterApplied = data.filterApplied
       this.isFilterToggled = true
+      this.enableLazyLoad = false
       this.loading = true
       try {
         let today_date = new Date()
@@ -429,6 +428,7 @@ export default {
         )
         this.batchDetails.batch_size = 25
         this.batchDetails.batch_number = 1
+        this.batchDetails.isLazyLoad = false
         if (data.selctedAlertType.length !== 0) {
           this.batchDetails.notification_types =
             data.selctedAlertType.toString()
@@ -459,14 +459,9 @@ export default {
         await this.fetchNotificationsByBatch()
         this.calculateLastBatch()
         this.loading = false
-        this.batchDetails.isLazyLoad = false
       } finally {
         this.isFilterToggled = true
         this.loading = false
-        this.enableLazyLoad = true
-        if (this.notifications.length === 0) {
-          this.enableLazyLoad = false
-        }
       }
     },
     clearFilters() {
@@ -541,7 +536,7 @@ export default {
   > table
   > tbody
   > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
-  background: white !important;
+  background: var(--v-white-base) !important;
 }
 ::v-deep
   .theme--light.v-data-table

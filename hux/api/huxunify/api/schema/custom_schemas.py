@@ -4,7 +4,7 @@ import logging
 from typing import Any
 
 import pytz
-from marshmallow.fields import DateTime
+from marshmallow.fields import DateTime, Float
 
 
 class DateTimeWithZ(DateTime):
@@ -47,3 +47,27 @@ class DateTimeWithZ(DateTime):
                 exc,
             )
             return None
+
+
+class RoundedFloat(Float):
+    """This class is to round float values"""
+
+    def _serialize(self, value: float, attr: str, obj: Any, **kwargs) -> float:
+        """Serializes Float Object with places.
+
+        Args:
+            value (float): The value to be serialized.
+            attr (str): The attribute or key on the object to be serialized.
+            obj (obj): The object the value was pulled from.
+            **kwargs (dict): Field-specific keyword arguments.
+
+        Returns:
+            float: Rounded float.
+
+        """
+        if not value:
+            return None
+
+        return round(
+            value, kwargs.get("places") if kwargs.get("places") else 2
+        )

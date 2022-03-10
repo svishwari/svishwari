@@ -47,12 +47,12 @@
         <hux-filter-panel title="User" :count="selctedUsers.length">
           <v-checkbox
             v-for="data in users"
-            :key="data.id"
+            :key="data"
             v-model="selctedUsers"
             multiple
             color="primary lighten-6"
-            :label="data.display_name"
-            :value="data.display_name"
+            :label="data"
+            :value="data"
           ></v-checkbox>
         </hux-filter-panel>
       </hux-filter-panels>

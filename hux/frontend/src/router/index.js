@@ -365,6 +365,26 @@ const routes = [
     },
   },
   {
+    path: "/service-error",
+    name: "ServiceError",
+    component: () => import("@/views/ServiceError"),
+    meta: {
+      layout: "default",
+      title: "Service Error",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/no-access",
+    name: "NoAccess",
+    component: () => import("@/views/NoAccess"),
+    meta: {
+      layout: "default",
+      title: "No Access",
+      requiresAuth: false,
+    },
+  },
+  {
     path: "/login/callback",
     component: Auth.handleCallback(),
   },

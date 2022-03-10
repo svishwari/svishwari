@@ -33,18 +33,12 @@
                 color="black-darken4"
               />
             </span>
-            <span v-else>
+            <span v-else @click="initiateEdit()">
               <icon
                 type="pencil"
                 :size="18"
                 class="cursor-pointer mr-7"
                 color="black-darken4"
-                @click.native="
-                  $router.push({
-                    name: 'AudienceUpdate',
-                    params: { id: audienceId },
-                  })
-                "
               />
             </span>
           </template>
@@ -132,6 +126,9 @@ export default {
     },
     openLookalikeEditModal() {
       this.$emit("openLookalikeEditModal")
+    },
+    initiateEdit() {
+      this.$emit("editAudience", this.audienceData)
     },
   },
 }

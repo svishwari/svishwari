@@ -21,7 +21,6 @@ from huxunifylib.database.user_management import set_user
 from huxunifylib.connectors import AWSBatchConnector
 import huxunify.test.constants as t_c
 import huxunify.api.constants as api_c
-from huxunify.api.data_connectors.aws import parameter_store
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
@@ -39,9 +38,6 @@ class TestDeliveryRoutes(RouteTestCase):
             "huxunify.api.route.delivery.get_db_client",
             return_value=self.database,
         ).start()
-
-        # mock parameter store
-        mock.patch.object(parameter_store, "get_store_value").start()
 
         # mock AWS batch connector register job function
         mock.patch.object(

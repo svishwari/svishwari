@@ -233,7 +233,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                     ).get(api_c.DELIVERY_PLATFORM_TYPE),
                     api_c.STATUS: job.get(api_c.STATUS),
                     api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE, 0),
-                    db_c.UPDATE_TIME: job.get(db_c.UPDATE_TIME),
+                    db_c.UPDATE_TIME: job.get(
+                        db_c.UPDATE_TIME, job[db_c.CREATE_TIME]
+                    ),
                     db_c.DELIVERY_PLATFORM_ID: job.get(
                         db_c.DELIVERY_PLATFORM_ID
                     ),
@@ -257,7 +259,6 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 ),
                 api_c.STATUS: api_c.STATUS_NOT_DELIVERED,
                 api_c.SIZE: 0,
-                db_c.UPDATE_TIME: None,
                 db_c.DELIVERY_PLATFORM_ID: x,
                 db_c.LINK: destination_dict.get(x).get(db_c.LINK),
             }
@@ -273,7 +274,8 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
         {
             value[db_c.DELIVERY_PLATFORM_ID]: value
             for value in sorted(
-                standalone_deliveries, key=lambda x: x[db_c.UPDATE_TIME]
+                standalone_deliveries,
+                key=lambda x: x.get(db_c.UPDATE_TIME, datetime.utcnow()),
             )
         }.values()
     )
@@ -1721,6 +1723,11 @@ class SetLookalikeAudience(SwaggerView):
                     str(ObjectId()),
                     str(ObjectId()),
                 ],
+                api_c.DESTINATION_ID: [
+                    str(ObjectId()),
+                    str(ObjectId()),
+                    str(ObjectId()),
+                ],
             },
         }
     ]
@@ -1764,7 +1771,7 @@ class SetLookalikeAudience(SwaggerView):
             request.get_json(), partial=True
         )
         source_audience_id = body[api_c.AUDIENCE_ID]
-        engagement_ids = body[api_c.ENGAGEMENT_IDS]
+        engagement_ids = body.get(api_c.ENGAGEMENT_IDS, [])
 
         database = get_db_client()
         source_audience = orchestration_management.get_audience(
@@ -1775,6 +1782,8 @@ class SetLookalikeAudience(SwaggerView):
             logger.error("Audience %s not found.", body[api_c.AUDIENCE_ID])
             return HuxResponse.NOT_FOUND(api_c.AUDIENCE_NOT_FOUND)
 
+        # TODO: Update desination handling when more lookalikable
+        #  destinations are available and param accepted from request
         destination = destination_management.get_delivery_platform_by_type(
             database, db_c.DELIVERY_PLATFORM_FACEBOOK
         )
@@ -1792,21 +1801,29 @@ class SetLookalikeAudience(SwaggerView):
                 destination[api_c.NAME], HTTPStatus.FAILED_DEPENDENCY
             )
 
+        recent_jobs_filter = {
+            db_c.DELIVERY_PLATFORM_ID: destination[db_c.ID],
+            db_c.AUDIENCE_ID: ObjectId(source_audience_id),
+            db_c.STATUS: {
+                "$in": [
+                    db_c.STATUS_SUCCEEDED,
+                    db_c.AUDIENCE_STATUS_DELIVERED,
+                ]
+            },
+        }
+
+        if engagement_ids:
+            recent_jobs_filter.update(
+                {
+                    db_c.ENGAGEMENT_ID: {
+                        "$in": [ObjectId(x) for x in engagement_ids]
+                    },
+                }
+            )
+
         most_recent_job = destination_management.get_all_delivery_jobs(
             database,
-            {
-                db_c.DELIVERY_PLATFORM_ID: destination[db_c.ID],
-                db_c.AUDIENCE_ID: ObjectId(source_audience_id),
-                db_c.ENGAGEMENT_ID: {
-                    "$in": [ObjectId(x) for x in engagement_ids]
-                },
-                db_c.STATUS: {
-                    "$in": [
-                        db_c.STATUS_SUCCEEDED,
-                        db_c.AUDIENCE_STATUS_DELIVERED,
-                    ]
-                },
-            },
+            recent_jobs_filter,
             limit=1,
         )
 
@@ -1854,7 +1871,7 @@ class SetLookalikeAudience(SwaggerView):
                 f"to create a lookalike from is inactive or unusable."
             )
 
-        for engagement_id in body[api_c.ENGAGEMENT_IDS]:
+        for engagement_id in engagement_ids:
             engagement_management.append_audiences_to_engagement(
                 database,
                 ObjectId(engagement_id),
