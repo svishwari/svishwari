@@ -9,17 +9,16 @@
         This service is temporarily unavailable. Apologies for the<br />
         inconveniences this might mean to you. Thank you for your patience!
       </div>
-      <router-link to="/home">
-        <huxButton
-          variant="primary base"
-          size="small"
-          is-tile
-          class="mt-14 px-6"
-          data-e2e="go-home"
-        >
-          Go to Hux
-        </huxButton>
-      </router-link>
+      <huxButton
+        variant="primary base"
+        size="small"
+        is-tile
+        class="mt-14 px-6"
+        data-e2e="go-prev-page"
+        @click="goBack()"
+      >
+        Return to previous page
+      </huxButton>
     </div>
   </div>
 </template>
@@ -34,6 +33,12 @@ export default {
   components: {
     Icon,
     huxButton,
+  },
+
+  methods: {
+    goBack() {
+      this.$router.go(-1)
+    },
   },
 }
 </script>
