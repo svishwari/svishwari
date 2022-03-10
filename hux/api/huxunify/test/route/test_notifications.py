@@ -164,7 +164,9 @@ class TestNotificationRoutes(RouteTestCase):
     def test_get_notifications_custom_params(self):
         """Test get notifications with filters."""
 
-        expected_notification_types = ",".join([x.title() for x in db_c.NOTIFICATION_TYPES[:-1]])
+        expected_notification_types = ",".join(
+            [x.title() for x in db_c.NOTIFICATION_TYPES[:-1]]
+        )
         expected_notification_categories = ",".join(
             [x.title() for x in db_c.NOTIFICATION_CATEGORIES[:-1]]
         )
