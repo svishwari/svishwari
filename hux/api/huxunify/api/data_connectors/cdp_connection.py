@@ -79,7 +79,8 @@ def get_identity_overview(
     config = get_config()
     logger.info("Getting Identity Insights from CDP API.")
     response = requests.post(
-        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
+        f"{api_c.INSIGHTS}",
         json=filters if filters else {},
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
@@ -93,7 +94,8 @@ def get_identity_overview(
             response.text,
         )
         raise iae.FailedAPIDependencyError(
-            f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
+            f"{api_c.INSIGHTS}",
             response.status_code,
         )
 
