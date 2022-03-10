@@ -137,7 +137,7 @@ class CustomerOverview(SwaggerView):
             {"token": token_response[0]},
         )
         customer_overview[api_c.GEOGRAPHICAL] = Caching.check_and_return_cache(
-            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.GEOGRAPHICAL}",
             get_demographic_by_state,
             {
                 "token": token_response[0],
@@ -238,7 +238,7 @@ class CustomerPostOverview(SwaggerView):
         filters = convert_unique_city_filter(request.json)
         customers_overview = Caching.check_and_return_cache(
             "".join(
-                [f"{api_c.CUSTOMERS_INSIGHTS}.{api_c.OVERVIEW}"]
+                [f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}"]
                 + list(generate_cache_key_string(filters)),
             ),
             get_customers_overview,
@@ -249,7 +249,7 @@ class CustomerPostOverview(SwaggerView):
             api_c.GEOGRAPHICAL
         ] = Caching.check_and_return_cache(
             "".join(
-                [f"{api_c.GEOGRAPHICAL}"]
+                [f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.GEOGRAPHICAL}"]
                 + list(
                     generate_cache_key_string(
                         request.json[api_c.AUDIENCE_FILTERS]

@@ -167,17 +167,20 @@ const routes = [
       requiresAuth: true,
     },
   },
+  //#endregion
+
+  // #region HX Trust ID
   {
-    path: "/trust-id",
-    name: "TrustID",
-    component: () => import("@/views/TrustID/Index"),
+    path: "/hx-trustid",
+    name: "HXTrustID",
+    component: () => import("@/views/HXTrustId/Index"),
     meta: {
       layout: "app",
-      title: "Trust ID",
+      title: "HX TrustID",
       requiresAuth: true,
     },
   },
-  //#endregion
+  // #endregion
 
   //#region Orchestration
   {

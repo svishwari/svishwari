@@ -112,10 +112,10 @@
           "display": true
         },
         {
-          "icon": "trust-id",
+          "icon": "hx-trustid",
           "title": "HX TrustID",
           "link": {
-            "name": "TrustID"
+            "name": "HXTrustID"
           },
           "size": 14,
           "display": true

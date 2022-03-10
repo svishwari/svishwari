@@ -388,7 +388,7 @@ client["notifications"].find = (notification_id) => {
 }
 
 client["notifications"].getAllUsers = () => {
-  return http.get("/users")
+  return http.get("/notifications/users")
 }
 
 //#endregion
