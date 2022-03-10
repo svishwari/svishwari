@@ -34,19 +34,19 @@ class TestNotificationRoutes(RouteTestCase):
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_SUCCESS,
                 "description": "description 1",
-                "category": api_c.DELIVERY_TAG,
+                "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
                 "username": self.test_username,
             },
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_INFORMATIONAL,
                 "description": "description 2",
-                "category": api_c.MODELS_TAG,
+                "category": db_c.NOTIFICATION_CATEGORY_MODELS,
                 "username": self.test_username,
             },
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_CRITICAL,
                 "description": "description 3",
-                "category": api_c.ORCHESTRATION_TAG,
+                "category": db_c.NOTIFICATION_CATEGORY_AUDIENCES,
                 "username": self.test_username,
             },
         ]
@@ -164,16 +164,16 @@ class TestNotificationRoutes(RouteTestCase):
     def test_get_notifications_custom_params(self):
         """Test get notifications with filters."""
 
-        expected_notification_types = ",".join(db_c.NOTIFICATION_TYPES[:-1])
+        expected_notification_types = ",".join([x.title() for x in db_c.NOTIFICATION_TYPES[:-1]])
         expected_notification_categories = ",".join(
-            api_c.NOTIFICATION_CATEGORIES[:-1]
+            [x.title() for x in db_c.NOTIFICATION_CATEGORIES[:-1]]
         )
         expected_notifications = [
             x
             for x in self.notifications
-            if x[api_c.NOTIFICATION_TYPE].lower()
-            in expected_notification_types
-            and x[db_c.CATEGORY].lower() in expected_notification_categories
+            if x[api_c.NOTIFICATION_TYPE]
+            in expected_notification_types.split(",")
+            and x[db_c.CATEGORY] in expected_notification_categories.split(",")
         ]
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
@@ -203,11 +203,11 @@ class TestNotificationRoutes(RouteTestCase):
         )
         for notification in response.json[api_c.NOTIFICATIONS_TAG]:
             self.assertIn(
-                notification[api_c.NOTIFICATION_TYPE].lower(),
+                notification[api_c.NOTIFICATION_TYPE],
                 expected_notification_types,
             )
             self.assertIn(
-                notification[db_c.CATEGORY].lower(),
+                notification[db_c.CATEGORY],
                 expected_notification_categories,
             )
 
