@@ -303,6 +303,7 @@
                   <div ref="advertisingcard" class="lookalikes mx-2 my-6">
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
+                      @openCreateLookalike="lookalikePageRedirect()"
                     />
                   </div>
                 </v-card-text>
@@ -1236,6 +1237,12 @@ export default {
     },
     openLookalikeEditModal() {
       this.showEditConfirmModal = true
+    },
+    lookalikePageRedirect() {
+      this.$router.push({
+        name: "LookalikeAudiences",
+        params: { id: this.audience.source_id },
+      })
     },
   },
 }
