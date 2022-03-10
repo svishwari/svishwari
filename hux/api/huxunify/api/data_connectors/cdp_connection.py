@@ -3,7 +3,7 @@ API.
 """
 import random
 import statistics
-from typing import Tuple
+from typing import Tuple, Optional
 from datetime import datetime, timedelta
 
 import requests
@@ -56,6 +56,52 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
         return getattr(exception, "code", repr(exception)), getattr(
             exception, "message", repr(exception)
         )
+
+
+def get_identity_overview(
+    token: str,
+    filters: Optional[dict] = None,
+):
+    """Get identity overview data
+
+    Args:
+        token (str): OKTA JWT token
+        filters (dict): filters to pass into identity overview
+            endpoint, default None.
+    Returns:
+        dict: dictionary of overview data.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    # get config
+    config = get_config()
+    logger.info("Getting Identity Insights from CDP API.")
+    response = requests.post(
+        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+        json=filters if filters else {},
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to retrieve identity insights, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            response.status_code,
+        )
+
+    logger.info(
+        "Successfully retrieved Identity Insights from Connections API."
+    )
+
+    return response.json()[api_c.BODY]
 
 
 def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:

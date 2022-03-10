@@ -126,7 +126,6 @@ CUSTOMER_INSIGHT_RESPONSE = {
         "total_known_ids": 13620,
         "total_individual_ids": 313,
         "total_household_ids": 9927,
-        "updated": "2021-05-24",
         "total_customers": 3329,
         "total_countries": 2,
         "total_us_states": 44,
@@ -136,6 +135,20 @@ CUSTOMER_INSIGHT_RESPONSE = {
         "gender_women": 42345,
         "gender_men": 52567,
         "gender_other": 6953,
+    },
+    "message": "ok",
+}
+
+IDENTITY_INSIGHT_RESPONSE = {
+    "code": 200,
+    "body": {
+        "total_records": 18238,
+        "match_rate": 0.5,
+        "total_unique_ids": 13238,
+        "total_unknown_ids": 3515,
+        "total_known_ids": 11620,
+        "total_individual_ids": 513,
+        "total_household_ids": 9827,
     },
     "message": "ok",
 }
