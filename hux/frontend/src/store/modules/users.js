@@ -201,6 +201,8 @@ const getters = {
   getRequestedUsers: (state) => state.requestedUsers,
 
   getAllTickets: (state) => state.tickets,
+
+  getUserAlerts: (state) => state.userProfile.alerts,
 }
 export default {
   namespaced,
