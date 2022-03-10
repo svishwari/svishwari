@@ -1,0 +1,23 @@
+name: Veracode Scan
+on: [pull_request]
+jobs:
+  veracodescan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Zip up code
+        run: zip -r package.zip $GITHUB_WORKSPACE
+      - name: Downloading scanner
+        run: curl -O -L https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
+      - name: Unzipping scanner
+        run: unzip -o pipeline-scan-LATEST.zip
+      - name: Run scanner
+        run: >
+          java -jar pipeline-scan.jar --veracode_api_id \"${{ VERACODE_ID }}\"
+          --veracode_api_key \"${{ VERACODE_SECRET_KEY }}\" --issue_details true
+          --file package.zip --fail_on_severity=\"Very High, High\"

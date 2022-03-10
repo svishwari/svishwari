@@ -192,7 +192,7 @@ class NotificationsSearch(SwaggerView):
 
         if notification_categories and not set(
             notification_categories
-        ).issubset(set(api_c.NOTIFICATION_CATEGORIES)):
+        ).issubset(set(db_c.NOTIFICATION_CATEGORIES)):
             logger.error("Invalid Notification Category")
             return {
                 "message": "Invalid or incomplete arguments received"
