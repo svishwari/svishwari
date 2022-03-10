@@ -40,7 +40,7 @@ import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 
 export default {
-  name: "EmailDeliverability",
+  name: "HXTrustID",
   components: {
     Page,
     PageHeader,
