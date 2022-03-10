@@ -10,7 +10,7 @@
       <div class="text-h3 ml-4 ta-left mt-1 gap">
         &bull;&nbsp; the page has moved<br />
         &bull;&nbsp; the page no longer exists<br />
-        &bull;&nbsp; you got distracted and made the typo in the address<br />
+        &bull;&nbsp; you got distracted and made a typo in the address<br />
         &bull;&nbsp; you like visiting 404 pages and actually want to be here
       </div>
       <huxButton
