@@ -61,7 +61,7 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
 def get_identity_overview(
     token: str,
     filters: Optional[dict] = None,
-):
+) -> dict:
     """Get identity overview data
 
     Args:
