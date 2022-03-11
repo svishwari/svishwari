@@ -1,6 +1,7 @@
 <template>
   <page max-width="100%">
     <div slot="header">
+      <span class="header-section">
       <page-header header-height="110" is-sticky>
         <template slot="left">
           <div>
@@ -37,8 +38,9 @@
       </page-header>
 
       <v-progress-linear :active="loading" :indeterminate="loading" />
+      </span >
     </div>
-    <div v-if="!loading" class="datasource-loaded">
+    <div v-if="!loading" class="datasource-loaded content-section">
       <v-row v-if="isConnectionStarted" class="ma-0">
         <v-col>
           <data-sources-list
@@ -186,5 +188,27 @@ export default {
       padding-bottom: 75px !important;
     }
   }
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
+.header-section {
+  position: fixed;
+  width: 89%;
+  z-index: 999999 !important;
+}
+.content-section {
+  margin-top: 180px;
 }
 </style>

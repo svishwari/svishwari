@@ -16,7 +16,7 @@
       :indeterminate="loading"
       data-e2e="loader"
     />
-    <div v-if="!loading">
+    <div v-if="!loading" class="flex-grow-1 flex-shrink-1 mw-100 content-section">
       <div v-if="overviewListItems != 0" class="padding-30">
         <v-card class="card-style pa-5">
           <div class="d-flex justify-space-between">
@@ -858,5 +858,10 @@ export default {
   font-weight: 300 !important;
   letter-spacing: 0 !important;
   color: var(--v-black-base);
+}
+.content-section {
+  height: calc(100vh - 180px);
+   overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 </style>

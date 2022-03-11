@@ -488,7 +488,23 @@ $headerOffsetY: 70px;
   margin-top: -30px;
   margin-right: -30px;
 }
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
 .content-section {
   height: calc(100vh - 200px);
+   overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 </style>

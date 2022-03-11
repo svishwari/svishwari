@@ -19,10 +19,13 @@
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
-    <div v-if="!loading" class="config-content">
+    <div
+      v-if="!loading"
+      class="config-content flex-grow-1 flex-shrink-1 mw-100 content-section"
+    >
       <v-row v-if="isConfigActivated">
         <v-col>
-          <!-- UI to show when configuration is activated -->
+        
           <config-tabs />
         </v-col>
       </v-row>
@@ -118,5 +121,24 @@ export default {
       }
     }
   }
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
+.content-section {
+  height: calc(100vh - 210px);
+ overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 </style>
