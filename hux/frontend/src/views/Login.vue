@@ -97,7 +97,7 @@ export default {
       margin-top: 30px;
       color: #333333;
       .altcolor {
-        color: #ff007f;
+        color: var(--v-pink-base);
       }
     }
     p {
@@ -232,8 +232,6 @@ export default {
             .o-form-button-bar {
               width: 107px;
               input {
-                padding-left: 27px !important;
-                padding-right: 27px !important;
                 font-family: "Open Sans" !important;
                 height: 40px;
                 box-sizing: border-box;
