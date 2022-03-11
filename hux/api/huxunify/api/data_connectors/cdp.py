@@ -162,54 +162,6 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 
-# pylint: disable=unused-argument
-def get_idr_overview(
-    token: str, start_date: str = None, end_date: str = None
-) -> dict:
-    """Fetch IDR overview data.
-
-    Args:
-        token (str): OKTA JWT Token.
-        start_date (str): Start date.
-        end_date (str): End date.
-
-    Returns:
-        dict: dictionary of overview data.
-
-    Raises:
-        FailedAPIDependencyError: Integrated dependent API failure error.
-    """
-
-    # TODO : Update to use idr insights api, with start/end date as query params.
-    # get config
-    config = get_config()
-    logger.info("Getting IDR Insights from CDP API.")
-    response = requests.post(
-        f"{config.CDP_SERVICE}/customer-profiles/insights",
-        json=api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
-        headers={
-            api_c.CUSTOMERS_API_HEADER_KEY: token,
-        },
-    )
-
-    if response.status_code != 200 or api_c.BODY not in response.json():
-        logger.error(
-            "Unable to retrieve customer profile insights, %s %s.",
-            response.status_code,
-            response.text,
-        )
-        raise iae.FailedAPIDependencyError(
-            f"{config.CDP_SERVICE}/customer-profiles/insights",
-            response.status_code,
-        )
-
-    logger.info(
-        "Successfully retrieved Customer Profile Insights from CDP API."
-    )
-
-    return clean_cdm_fields(response.json()[api_c.BODY])
-
-
 def get_customers_overview(
     token: str,
     filters: Optional[dict] = None,

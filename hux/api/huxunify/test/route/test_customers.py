@@ -195,8 +195,9 @@ class TestCustomersOverview(RouteTestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
-            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json=t_c.IDENTITY_INSIGHT_RESPONSE,
         )
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by"
@@ -213,8 +214,8 @@ class TestCustomersOverview(RouteTestCase):
         data = response.json
         self.assertTrue(data[api_c.OVERVIEW])
         self.assertTrue(data[api_c.DATE_RANGE])
-        self.assertTrue(data[api_c.OVERVIEW][api_c.TOTAL_CUSTOMERS])
-        self.assertTrue(data[api_c.OVERVIEW][api_c.TOTAL_KNOWN_IDS])
+        for key, value in data[api_c.OVERVIEW].items():
+            self.assertEqual(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY][key], value)
 
     def test_get_customer_by_id(self):
         """Test get customer by ID."""
@@ -778,7 +779,8 @@ class TestCustomersOverview(RouteTestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
             json={},
         )
         self.request_mocker.start()
