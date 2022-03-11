@@ -14,7 +14,7 @@
                   text: 'HX TrustID',
                   disabled: true,
                   href: '/hx-trustid',
-                  icon: 'hx-trustid-colored',
+                  icon: 'hx-trustid-header',
                   iconSize: 36,
                   iconColor: 'black',
                   iconColorVariant: 'base',
