@@ -14,7 +14,7 @@
                   text: 'HX TrustID',
                   disabled: true,
                   href: '/hx-trustid',
-                  icon: 'hx-trustid-header',
+                  icon: 'hx-trustid-colored',
                   iconSize: 36,
                   iconColor: 'black',
                   iconColorVariant: 'base',
@@ -31,6 +31,9 @@
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
+    <div>
+      <score-card :width="150" :height="90" />
+    </div>
   </page>
 </template>
 
@@ -38,13 +41,14 @@
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
-
+import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
 export default {
   name: "HXTrustID",
   components: {
     Page,
     PageHeader,
     Breadcrumb,
+    scoreCard,
   },
   data() {
     return {

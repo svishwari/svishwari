@@ -6,8 +6,9 @@
       <div class="error-code-font my-3">503</div>
       <div class="text-h1 mt-1">Unexpected service error occured.</div>
       <div class="ta-center text-h3 mt-2">
-        This service is temporarily unavailable. Apologies for the<br />
-        inconveniences this might mean to you. Thank you for your patience!
+        This page is currently unavailable. We apologize for the
+        inconvenience.<br />
+        Thank you for your patience!
       </div>
       <huxButton
         variant="primary base"

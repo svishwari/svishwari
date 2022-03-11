@@ -45,4 +45,7 @@ export default {
     base: colors.white,
   },
   error: colors.error,
+  pink: {
+    base: colors.pink,
+  },
 }
