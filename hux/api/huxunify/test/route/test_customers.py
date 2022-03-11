@@ -215,7 +215,9 @@ class TestCustomersOverview(RouteTestCase):
         self.assertTrue(data[api_c.OVERVIEW])
         self.assertTrue(data[api_c.DATE_RANGE])
         for key, value in data[api_c.OVERVIEW].items():
-            self.assertEqual(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY][key], value)
+            self.assertEqual(
+                t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY][key], value
+            )
 
     def test_get_customer_by_id(self):
         """Test get customer by ID."""
