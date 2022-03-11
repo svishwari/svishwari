@@ -44,6 +44,9 @@
           }"
         >
           {{ item.text }}
+          <sup class="superscript">
+            {{ item.superscript }}
+          </sup>
         </span>
       </v-breadcrumbs-item>
     </template>
@@ -96,5 +99,12 @@ export default {
 }
 .addBorder {
   border: 1px solid var(--v-black-lighten2);
+}
+.superscript {
+  font-size: 8px;
+  font-weight: bold;
+  position: relative;
+  left: -8px;
+  top: -18px;
 }
 </style>

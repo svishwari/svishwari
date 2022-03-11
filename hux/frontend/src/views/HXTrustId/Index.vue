@@ -12,6 +12,7 @@
               :items="[
                 {
                   text: 'HX TrustID',
+                  superscript: 'TM',
                   disabled: true,
                   href: '/hx-trustid',
                   icon: 'hx-trustid-header',
