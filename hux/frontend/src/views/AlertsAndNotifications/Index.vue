@@ -188,7 +188,6 @@
         />
         <alert-configure-drawer
           v-model="isAlertsToggled"
-          :users="getAllUsers"
           @onDrawerClose="onConfigClose"
         />
       </div>
@@ -295,6 +294,8 @@ export default {
     ...mapGetters({
       notifications: "notifications/list",
       totalNotifications: "notifications/total",
+      getUserEmail: "users/getEmailAddress",
+      getUserAlerts: "users/getUserAlerts",
       getUsers: "notifications/userList",
     }),
 
@@ -305,8 +306,8 @@ export default {
     getNotificationUsers() {
       let sortedUsers = this.getUsers
       return sortedUsers.sort(function (a, b) {
-        var textA = a["display_name"]?.toUpperCase()
-        var textB = b["display_name"]?.toUpperCase()
+        var textA = a?.toUpperCase()
+        var textB = b?.toUpperCase()
         return textA < textB ? -1 : textA > textB ? 1 : 0
       })
     },

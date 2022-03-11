@@ -35,92 +35,94 @@
           </template>
         </page-header>
         <v-progress-linear :active="loading" :indeterminate="loading" />
-        <v-row v-if="numIssues > 0 && !loading" class="pb-7 pl-3 white">
-          <hux-data-table
-            :columns="columnDefs"
-            :data-items="getTickets"
-            sort-column="create_time"
-            sort-desc
-            class="big-table"
-            data-e2e="issues-table"
-          >
-            <template #row-item="{ item }">
-              <td
-                v-for="header in columnDefs"
-                :key="header.value"
-                :class="{
-                  'fixed-column': header.fixed,
-                  'v-data-table__divider': header.fixed,
-                  'primary--text': header.fixed,
-                }"
-                class="col-overflow text-body-1"
-                :style="{ width: header.width, left: 0 }"
-              >
-                <div v-if="header.value == 'key'" data-e2e="issues-key">
-                  {{ item[header.value] | Empty("-") }}
-                </div>
-
-                <div
-                  v-if="header.value == 'status'"
-                  class="d-flex align-center"
-                  data-e2e="issues-status"
-                >
-                  <span
-                    class="circle"
-                    :style="{ background: getColorStatus(item['status']) }"
-                  >
-                  </span>
-                  <span>
-                    {{ item["status"] | Empty("-") }}
-                  </span>
-                </div>
-
-                <div
-                  v-if="header.value == 'summary'"
-                  position-top
-                  data-e2e="issues-summary"
-                >
-                  {{ item[header.value] | Empty("-") }}
-                </div>
-
-                <div
-                  v-if="header.value == 'create_time'"
-                  data-e2e="issues-time"
-                >
-                  {{ item["create_time"] | Date("MM/DD/YYYY h:mm A") }}
-                </div>
-              </td>
-            </template>
-          </hux-data-table>
-        </v-row>
-        <v-row
-          v-else-if="numIssues == 0 && !loading && !handleErrorStateIssues"
-          class="background-empty"
-        >
-          <empty-page type="no-alerts" :size="50">
-            <template #title>
-              <div class="text-h2 black-text">No issues yet</div></template
+        <div data-e2e="issue-table-wrapper">
+          <v-row v-if="numIssues > 0 && !loading" class="pb-7 pl-3 white">
+            <hux-data-table
+              :columns="columnDefs"
+              :data-items="getTickets"
+              sort-column="create_time"
+              sort-desc
+              class="big-table"
+              data-e2e="issues-table"
             >
-            <template #subtitle>
-              <div class="body-2 black-text">
-                Currently there are no issues available.<br />
-                Check back later.
-              </div>
-            </template>
-          </empty-page>
-        </v-row>
-        <v-row
-          v-else-if="handleErrorStateIssues && !loading"
-          class="d-flex justify-center align-center"
-        >
-          <error
-            icon-type="error-on-screens"
-            :icon-size="50"
-            title="Issues are currently unavailable"
-            subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+              <template #row-item="{ item }">
+                <td
+                  v-for="header in columnDefs"
+                  :key="header.value"
+                  :class="{
+                    'fixed-column': header.fixed,
+                    'v-data-table__divider': header.fixed,
+                    'primary--text': header.fixed,
+                  }"
+                  class="col-overflow text-body-1"
+                  :style="{ width: header.width, left: 0 }"
+                >
+                  <div v-if="header.value == 'key'" data-e2e="issues-key">
+                    {{ item[header.value] | Empty("-") }}
+                  </div>
+
+                  <div
+                    v-if="header.value == 'status'"
+                    class="d-flex align-center"
+                    data-e2e="issues-status"
+                  >
+                    <span
+                      class="circle"
+                      :style="{ background: getColorStatus(item['status']) }"
+                    >
+                    </span>
+                    <span>
+                      {{ item["status"] | Empty("-") }}
+                    </span>
+                  </div>
+
+                  <div
+                    v-if="header.value == 'summary'"
+                    position-top
+                    data-e2e="issues-summary"
+                  >
+                    {{ item[header.value] | Empty("-") }}
+                  </div>
+
+                  <div
+                    v-if="header.value == 'create_time'"
+                    data-e2e="issues-time"
+                  >
+                    {{ item["create_time"] | Date("MM/DD/YYYY h:mm A") }}
+                  </div>
+                </td>
+              </template>
+            </hux-data-table>
+          </v-row>
+          <v-row
+            v-else-if="numIssues == 0 && !loading && !handleErrorStateIssues"
+            class="background-empty"
           >
-          </error>
-        </v-row>
+            <empty-page type="no-alerts" :size="50">
+              <template #title>
+                <div class="text-h2 black-text">No issues yet</div></template
+              >
+              <template #subtitle>
+                <div class="body-2 black-text">
+                  Currently there are no issues available.<br />
+                  Check back later.
+                </div>
+              </template>
+            </empty-page>
+          </v-row>
+          <v-row
+            v-else-if="handleErrorStateIssues && !loading"
+            class="d-flex justify-center align-center error-screen"
+          >
+            <error
+              icon-type="error-on-screens"
+              :icon-size="50"
+              title="Issues are currently unavailable"
+              subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+            >
+            </error>
+          </v-row>
+        </div>
       </div>
     </div>
   </div>

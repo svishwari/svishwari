@@ -811,6 +811,11 @@ export default {
         &:hover {
           background: var(--v-primary-lighten2) !important;
           box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+
+          .mdi-checkbox-marked-circle,
+          .mdi-checkbox-blank-circle {
+            background: var(--v-primary-lighten2) !important;
+          }
         }
         height: 60px;
         td {

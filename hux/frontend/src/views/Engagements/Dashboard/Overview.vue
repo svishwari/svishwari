@@ -73,7 +73,7 @@
         @onSectionAction="$emit('triggerOverviewAction', $event)"
       />
     </v-card>
-    <div v-else class="eng-dash-no-aud-container">
+    <div v-else class="eng-dash-no-aud-container" data-e2e="overview-audiences">
       <div class="eng-dash-no-aud">
         <icon type="lift-table-empty" size="50" />
         <div class="text-h2 mb-3">No delivery data is available</div>
