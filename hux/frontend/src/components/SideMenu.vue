@@ -131,6 +131,9 @@
           </v-list-item-icon>
           <v-list-item-title class="black--text text-h6">
             {{ menu.title }}
+            <span v-if="menu.superscript" class="superscript">
+              {{ menu.superscript }}
+            </span>
           </v-list-item-title>
         </v-list-item>
       </div>
@@ -309,5 +312,12 @@ export default {
 }
 .height-fix {
   min-height: 32px;
+}
+.superscript {
+  font-size: 6px;
+  font-weight: normal;
+  position: relative;
+  left: -4px;
+  top: -8px;
 }
 </style>

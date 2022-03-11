@@ -114,6 +114,7 @@
         {
           "icon": "hx-trustid-colored",
           "title": "HX TrustID",
+          "superscript": "TM",
           "link": {
             "name": "HXTrustID"
           },

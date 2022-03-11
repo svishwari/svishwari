@@ -102,7 +102,7 @@ export default {
 }
 .superscript {
   font-size: 8px;
-  font-weight: bold;
+  font-weight: normal;
   position: relative;
   left: -8px;
   top: -18px;
