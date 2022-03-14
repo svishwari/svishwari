@@ -45,36 +45,39 @@ export default {
     this.stackedBar(".chart", sampleData)
   },
   methods: {
-    rightRoundedRect(x, y, width, height, radius) {
-      return (
-        "M" +
-        x +
-        "," +
-        y +
-        "h" +
-        (width - radius) +
-        "a" +
-        radius +
-        "," +
-        radius +
-        " 0 0 1 " +
-        radius +
-        "," +
-        radius +
-        "v" +
-        (height - 2 * radius) +
-        "a" +
-        radius +
-        "," +
-        radius +
-        " 0 0 1 " +
-        -radius +
-        "," +
-        radius +
-        "h" +
-        (radius - width) +
-        "z"
-      )
+    rounded_rect(x, y, w, h, r, tl, tr, bl, br) {
+      var retval
+      retval = "M" + (x + r) + "," + y
+      retval += "h" + (w - 2 * r)
+      if (tr) {
+        retval += "a" + r + "," + r + " 0 0 1 " + r + "," + r
+      } else {
+        retval += "h" + r
+        retval += "v" + r
+      }
+      retval += "v" + (h - 2 * r)
+      if (br) {
+        retval += "a" + r + "," + r + " 0 0 1 " + -r + "," + r
+      } else {
+        retval += "v" + r
+        retval += "h" + -r
+      }
+      retval += "h" + (2 * r - w)
+      if (bl) {
+        retval += "a" + r + "," + r + " 0 0 1 " + -r + "," + -r
+      } else {
+        retval += "h" + -r
+        retval += "v" + -r
+      }
+      retval += "v" + (2 * r - h)
+      if (tl) {
+        retval += "a" + r + "," + r + " 0 0 1 " + r + "," + -r
+      } else {
+        retval += "v" + -r
+        retval += "h" + r
+      }
+      retval += "z"
+      return retval
     },
     async stackedBar(bind, data, config) {
       config = {
@@ -110,14 +113,49 @@ export default {
         .selectAll("rect")
         .data(_data)
         .enter()
-        .append("rect")
+        .append("path")
         .attr("class", "rect-stacked")
         .attr("x", (d) => xScale(d.cumulative))
         .attr("y", h / 2 - halfBarHeight)
         .attr("height", barHeight)
         .attr("width", (d) => xScale(d.value))
-        // .attr("d", (d) => this.rightRoundedRect(xScale(d.cumulative), (h / 2 - halfBarHeight), xScale(d.value), barHeight, 12))
-        .attr("d", this.rightRoundedRect(-240, -120, 480, 240, 20))
+        .attr("d", (d, i) =>
+          i == 0
+            ? this.rounded_rect(
+                xScale(d.cumulative),
+                h / 2 - halfBarHeight,
+                xScale(d.value),
+                barHeight,
+                3,
+                true,
+                false,
+                true,
+                false
+              )
+            : i == 2
+            ? this.rounded_rect(
+                xScale(d.cumulative),
+                h / 2 - halfBarHeight,
+                xScale(d.value),
+                barHeight,
+                3,
+                false,
+                true,
+                false,
+                true
+              )
+            : this.rounded_rect(
+                xScale(d.cumulative),
+                h / 2 - halfBarHeight,
+                xScale(d.value),
+                barHeight,
+                3,
+                false,
+                false,
+                false,
+                false
+              )
+        )
         .style("fill", (d, i) => colors[i])
 
       // add the labels
