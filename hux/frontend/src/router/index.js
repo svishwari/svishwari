@@ -169,6 +169,19 @@ const routes = [
   },
   //#endregion
 
+  // #region HX Trust ID
+  {
+    path: "/hx-trustid",
+    name: "HXTrustID",
+    component: () => import("@/views/HXTrustId/Index"),
+    meta: {
+      layout: "app",
+      title: "HX TrustID",
+      requiresAuth: true,
+    },
+  },
+  // #endregion
+
   //#region Orchestration
   {
     path: "/audiences",

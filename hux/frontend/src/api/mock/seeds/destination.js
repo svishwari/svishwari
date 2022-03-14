@@ -23,6 +23,7 @@ export default [
     name: "SendGrid by Twilio",
     create_time: "2021-06-03T23:04:59.828Z",
     update_time: "2021-11-01T12:18:05.758Z",
+    link: "",
     is_added: false,
   },
   {
@@ -36,6 +37,7 @@ export default [
     name: "Qualtrics",
     create_time: "2021-06-03T23:05:00.305Z",
     update_time: "2021-11-01T12:21:06.092Z",
+    link: "Qualtrics.com",
     is_added: true,
   },
   {
@@ -49,6 +51,7 @@ export default [
     name: "Facebook",
     create_time: "2021-06-03T23:04:58.882Z",
     update_time: "2021-11-03T11:09:05.018Z",
+    link: "facebook.com",
     is_added: true,
   },
   {
@@ -61,6 +64,7 @@ export default [
     name: "SAP",
     create_time: "2021-06-03T23:05:00.068Z",
     update_time: "2021-06-03T23:05:00.068Z",
+    link: "",
     is_added: false,
   },
   {
@@ -73,6 +77,7 @@ export default [
     name: "Salesforce Commerce Cloud",
     create_time: "2021-06-03T23:05:00.068Z",
     update_time: "2021-06-03T23:05:00.068Z",
+    link: "",
     is_added: false,
   },
   {
@@ -85,6 +90,7 @@ export default [
     name: "Fullstory",
     create_time: "2021-06-03T23:05:00.779Z",
     update_time: "2021-06-03T23:05:00.779Z",
+    link: "",
     is_added: false,
   },
   {
@@ -97,6 +103,7 @@ export default [
     name: "QuantumMetric",
     create_time: "2021-06-03T23:05:01.018Z",
     update_time: "2021-06-03T23:05:01.018Z",
+    link: "",
     is_added: false,
   },
   {
@@ -109,6 +116,7 @@ export default [
     name: "Medallia",
     create_time: "2021-06-03T23:05:01.253Z",
     update_time: "2021-06-03T23:05:01.253Z",
+    link: "",
     is_added: false,
   },
   {
@@ -122,6 +130,7 @@ export default [
     name: "Adobe Experience",
     create_time: "2021-06-03T23:04:59.592Z",
     update_time: "2021-10-08T15:47:57.730Z",
+    link: "",
     is_added: true,
   },
   {
@@ -135,6 +144,7 @@ export default [
     name: "Amazon Advertising",
     create_time: "2021-06-03T23:04:59.356Z",
     update_time: "2021-11-02T10:49:52.389Z",
+    link: "",
     is_added: false,
   },
   {
@@ -158,6 +168,7 @@ export default [
     name: "Salesforce Marketing Cloud",
     create_time: "2021-06-03T23:04:58.633Z",
     update_time: "2021-11-02T10:50:20.326Z",
+    link: "",
     is_added: true,
   },
   {
@@ -171,6 +182,7 @@ export default [
     name: "Pinterest",
     create_time: "2021-06-03T23:04:59.356Z",
     update_time: "2021-11-02T10:49:52.389Z",
+    link: "",
     is_added: false,
   },
   {
@@ -184,6 +196,7 @@ export default [
     name: "TheTradeDesk",
     create_time: "2021-06-03T23:04:59.356Z",
     update_time: "2021-11-02T10:49:52.389Z",
+    link: "",
     is_added: false,
   },
   {
@@ -197,6 +210,7 @@ export default [
     name: "Liveramp",
     create_time: "2021-06-03T23:04:59.356Z",
     update_time: "2021-11-02T10:49:52.389Z",
+    link: "",
     is_added: false,
   },
   {
@@ -210,6 +224,7 @@ export default [
     name: "Twitter",
     create_time: "2021-06-03T23:04:59.356Z",
     update_time: "2021-11-02T10:49:52.389Z",
+    link: "",
     is_added: false,
   },
   {
@@ -223,6 +238,7 @@ export default [
     name: "Adobe Campaign",
     create_time: "2021-06-03T23:04:59.356Z",
     update_time: "2021-11-02T10:49:52.389Z",
+    link: "",
     is_added: false,
   },
   {
@@ -236,6 +252,7 @@ export default [
     name: "Salesforce CDP",
     create_time: "2021-06-03T23:04:59.356Z",
     update_time: "2021-11-02T10:49:52.389Z",
+    link: "",
     is_added: false,
   },
   {
@@ -249,6 +266,7 @@ export default [
     name: "Google DV360",
     create_time: "2021-06-03T23:04:59.119Z",
     update_time: "2021-10-26T08:07:54.290Z",
+    link: "",
     is_added: false,
   },
 ]

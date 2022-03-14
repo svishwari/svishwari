@@ -31,7 +31,7 @@
           <template #activator="{ on, attrs }">
             <v-icon
               v-bind="attrs"
-              class="cursor-pointer mr-7"
+              class="cursor-pointer mr-7 dots-icon"
               color="black-darken4"
               :class="{ 'd-inline-block': openMenu }"
               v-on="on"
@@ -124,4 +124,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.dots-icon {
+  width: 30px !important;
+  height: 30px !important;
+}
+</style>
