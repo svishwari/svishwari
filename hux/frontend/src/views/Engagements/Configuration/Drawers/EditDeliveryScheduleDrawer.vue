@@ -138,6 +138,9 @@
 import Drawer from "@/components/common/Drawer.vue"
 import CardHorizontal from "@/components/common/CardHorizontal.vue"
 import HuxButton from "@/components/common/huxButton.vue"
+import PlainCard from "@/components/common/Cards/PlainCard.vue"
+import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
+import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
 import { deliverySchedule } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
@@ -150,6 +153,9 @@ export default {
     Drawer,
     CardHorizontal,
     HuxButton,
+    PlainCard,
+    HuxStartDate,
+    HuxEndDate,
     HuxSchedulePicker,
     Icon,
   },
@@ -187,6 +193,13 @@ export default {
       localToggle: false,
       localSchedule: JSON.parse(JSON.stringify(deliverySchedule())),
       initialSchedule: JSON.parse(JSON.stringify(deliverySchedule())),
+      isRecurringFlag: false,
+      selectedStartDate: "Select date",
+      selectedEndDate: "Select date",
+      disableEndDate: true,
+      endMinDate: new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString(),
     }
   },
 
@@ -232,7 +245,6 @@ export default {
       this.initialSchedule = JSON.parse(
         JSON.stringify(deliverySchedule(this.schedule))
       )
-      console.log(this.localSchedule)
     },
   },
 
@@ -240,6 +252,21 @@ export default {
     ...mapActions({
       scheduleDelivery: "engagements/deliverySchedule",
     }),
+
+    changeSchedule(val) {
+      this.isRecurringFlag = val
+      if (this.value.delivery_schedule) {
+        this.selectedStartDate = "Select date"
+        this.selectedEndDate = "Select date"
+        this.disableEndDate = true
+        this.endMinDate = new Date(
+          new Date().getTime() - new Date().getTimezoneOffset() * 60000
+        ).toISOString()
+        this.$set(this.value, "recurring", null)
+        this.resetSchedule()
+      }
+    },
+
     reset() {
       this.localToggle = false
       this.resetSchedule()
