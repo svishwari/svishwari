@@ -337,6 +337,7 @@ export default {
     ...mapActions({
       getTotalCustomers: "customers/getTotalCustomers",
       getAllNotifications: "notifications/getAll",
+      getNotificationByID: "notifications/getById",
     }),
 
     async loadTotalCustomers() {
@@ -361,10 +362,11 @@ export default {
       }
       this.loadingNotifications = false
     },
-
-    openAlertDrawer(id) {
-      this.alertDrawer = true
-      this.notificationId = id
+    
+    async openAlertDrawer(notificationId) {
+      this.notificationId = notificationId
+      await this.getNotificationByID(notificationId)
+      this.alertDrawer = !this.alertDrawer
     },
   },
 }

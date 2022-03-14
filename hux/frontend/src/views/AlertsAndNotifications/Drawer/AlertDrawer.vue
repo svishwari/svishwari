@@ -4,7 +4,6 @@
     :content-padding="'pa-0'"
     :content-header-padding="'px-3'"
   >
-   {{notificationData}}
     <template #header-left>
       <div
         v-if="
@@ -84,7 +83,6 @@ export default {
     }),
 
     notificationData() {
-      console.log("this.notificationId", this.notificationId)
       return this.getSingleNotification(this.notificationId)
     },
 
