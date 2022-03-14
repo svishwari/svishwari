@@ -16,6 +16,7 @@ export default {
   info: "#E3E48D",
   error: "#DA291C",
   warning: "#ED8B00",
+  pink: "#F03BC8",
   gradientSliderColors: [
     "#ec5b54",
     "#f76d48",
