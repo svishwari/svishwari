@@ -31,8 +31,26 @@
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
+    <div class="ma-1">
+      <score-card :width="150" :height="90" title="Transparency" :value="73" />
+    </div>
+    <div class="ma-1">
+      <score-card :width="150" :height="90" title="Humanity" :value="71">
+        <template #stack-bar-chart>
+          <single-horizontal-stack-bar-chart
+            :width="81"
+            :height="6"
+            :showPercentage="false"
+          />
+        </template>
+      </score-card>
+    </div>
     <div>
-      <score-card :width="150" :height="90" />
+      <single-horizontal-stack-bar-chart
+        :width="180"
+        :height="6"
+        :showPercentage="true"
+      />
     </div>
   </page>
 </template>
@@ -42,6 +60,8 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
+import SingleHorizontalStackBarChart from "@/components/common/Charts/SingleHorizontalStackBarChart/SingleHorizontalStackBarChart.vue"
+
 export default {
   name: "HXTrustID",
   components: {
@@ -49,6 +69,7 @@ export default {
     PageHeader,
     Breadcrumb,
     scoreCard,
+    SingleHorizontalStackBarChart,
   },
   data() {
     return {
