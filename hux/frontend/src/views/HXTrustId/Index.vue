@@ -25,7 +25,7 @@
           </div>
           <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
             Measure the signals of trust, predict how trust sentiment will
-            impact customer & employee behaviors, and identify actions to
+            impact customer &amp; employee behaviors, and identify actions to
             (re)build trust.
           </div>
         </template>

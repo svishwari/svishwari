@@ -44,7 +44,7 @@
           }"
         >
           {{ item.text }}
-          <sup class="superscript">
+          <sup class="title-superscript">
             {{ item.superscript }}
           </sup>
         </span>
@@ -103,10 +103,9 @@ export default {
     overflow: clip;
   }
 }
-.superscript {
+.title-superscript {
+  @extend .superscript;
   font-size: 8px;
-  font-weight: normal;
-  position: relative;
   left: -8px;
   top: -18px;
 }
