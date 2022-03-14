@@ -25,20 +25,15 @@
           <div class="text-body-2 black--text text--base mb-1 ml-1">
             Destination for this lookalike audience
           </div>
-          <v-select
-            v-model="selectAudience"
+          <hux-dropdown
+            :label="lookalikeAudience['selectDestination']"
+            :selected="lookalikeAudience['selectDestination']"
             :items="destinationDropDownList"
-            dense
-            outlined
-            class="delivered-audience-selection pb-4"
+            min-width="852"
+            class="delivered-audience-selection pb-6 ml-n2 mt-n2"
             background-color="white"
-            append-icon="mdi-chevron-down"
-            multiple
-            required
-            
-          >
-          </v-select>
-
+            @on-select="onSelectMenuItem"
+          />
           <div class="text-body-1 black--text text--base pb-1">
             Set the reach for this lookalike audience
           </div>
@@ -76,7 +71,7 @@
           color="primary"
           height="40"
           :is-disabled="!isFormValid"
-          @click="addNewEngagement()"
+          @click="createLookalike()"
         >
           Create
         </hux-button>
@@ -99,6 +94,7 @@ import Icon from "@/components/common/Icon.vue"
 import HuxButton from "@/components/common/huxButton"
 import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 import HuxFooter from "@/components/common/HuxFooter.vue"
+import HuxDropdown from "@/components/common/HuxDropdown.vue"
 
 export default {
   name: "CreateLookalike",
@@ -115,6 +111,7 @@ export default {
     HuxButton,
     HuxDropDownSearch,
     HuxFooter,
+    HuxDropdown,
   },
   props: {},
   data() {
@@ -125,7 +122,7 @@ export default {
       lookalikeAudience: {
         name: null,
         value: 5,
-        audience: this.selectedAudience,
+        selectDestination: "",
         engagements: [],
       },
       isFormValid: false,
@@ -135,28 +132,18 @@ export default {
   computed: {
     ...mapGetters({
       getAudience: "audiences/audience",
-      engagements: "engagements/list",
-      audiences: "audiences/list",
     }),
+    destinationDropDownList() {
+      return [
+        {
+          name: "Facebook",
+          value: "facebook",
+          type: "facebook",
+        },
+      ]
+    },
     audience() {
       return this.audienceData
-    },
-    selectAudience: {
-      get() {
-        const aud = this.audiences.filter(
-          (aud) => aud.id === this.selectedAudience?.id
-        )
-        return aud.length > 0 ? aud[0] : {}
-      },
-      set(value) {
-        this.lookalikeAudience.audience = value
-      },
-    },
-    destinationDropDownList() {
-      return {
-        text: "Facebook",
-        value: "facebook",
-      }
     },
   },
 
@@ -166,8 +153,6 @@ export default {
   methods: {
     ...mapActions({
       getAudienceById: "audiences/getAudienceById",
-      getAllEngagements: "engagements/getAll",
-      getAllAudiences: "audiences/getAll",
       createLookalikeAudience: "audiences/addLookalike",
     }),
 
@@ -179,37 +164,29 @@ export default {
       }
     },
 
+    onSelectMenuItem(item) {
+      this.lookalikeAudience["selectDestination"] = item.name
+    },
+
     async createLookalike() {
       let payload = {
-        audience_id: this.lookalikeAudience.audience.id,
+        audience_id: this.audienceData.id,
         name: this.lookalikeAudience.name,
         audience_size_percentage: this.lookalikeAudience.value,
-        engagement_ids: [],
       }
-      await this.createLookalikeAudience(payload)
-      this.$emit("onCreate")
-      this.onBack()
+      let response = await this.createLookalikeAudience(payload)
+      this.$router.push({
+          name: "AudienceInsight",
+          params: { id: response.id },
+        })
     },
 
     reset() {
+      this.lookalikeAudience.name = ""
       this.lookalikeAudience.value = 5
-      this.lookalikeAudience.engagements = []
-      this.$refs.lookalikeForm.$children[0].$children[0].reset()
     },
-
-    detachEngagement(index) {
-      this.lookalikeAudience.engagements.splice(index, 1)
-    },
-
     onBack() {
       this.reset()
-      this.$emit("onBack")
-    },
-    async prefetchLookalikeDependencies() {
-      this.loading = true
-      await this.getAllEngagements()
-      await this.getAllAudiences()
-      this.loading = false
     },
   },
 }

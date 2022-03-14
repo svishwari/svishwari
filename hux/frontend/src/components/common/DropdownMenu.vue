@@ -22,6 +22,7 @@
             :key="index"
             @click="clicked(item)"
           >
+            <logo v-if="item.type" :type="item.type"></logo>
             <v-list-item-title>{{ item.value }}</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
@@ -31,8 +32,12 @@
 </template>
 
 <script>
+import Logo from "@/components/common/Logo"
 export default {
   name: "DropdownMenu",
+  components: {
+    Logo,
+  },
   props: {
     labelText: {
       type: String,
