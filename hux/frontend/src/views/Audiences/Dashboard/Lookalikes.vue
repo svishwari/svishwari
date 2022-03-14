@@ -49,9 +49,9 @@
             height="2rem"
             class="primary--text text-body-1"
             data-e2e="drawerToggle"
-               @click="$emit('openCreateLookalike')"
+            @click="$emit('openCreateLookalike')"
           >
-           A lookalike
+            A lookalike
           </v-btn>
         </v-list-item>
       </v-list>

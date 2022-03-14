@@ -162,7 +162,7 @@
                       font-weight-semi-bold
                     "
                   >
-                    {{ audienceData.source_name  | Empty("-") }}
+                    {{ audienceData.source_name | Empty("-") }}
                   </span>
                 </div>
               </template>

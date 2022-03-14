@@ -333,7 +333,7 @@ client["audiences"].deliver = (resourceId, data) => {
 }
 
 client["audiences"].create = (resourceId, data) => {
-  return http.post(`/lookalike-audiences`, data)
+  return http.post("/lookalike-audiences", data)
 }
 
 client["audiences"].deliveries = (resourceId, query) => {

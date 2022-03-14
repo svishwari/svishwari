@@ -83,16 +83,10 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import Page from "@/components/Page.vue"
-import MetricCard from "@/components/common/MetricCard.vue"
-import Logo from "@/components/common/Logo"
-import Tooltip from "@/components/common/Tooltip.vue"
-import LookalikeEngagement from "@/views/Audiences/Lookalike/LookalikeEngagement.vue"
-import AttachEngagement from "@/views/Audiences/AttachEngagement.vue"
 import LookAlikeSlider from "@/components/common/LookAlikeSlider"
 import TextField from "@/components/common/TextField"
 import Icon from "@/components/common/Icon.vue"
 import HuxButton from "@/components/common/huxButton"
-import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 import HuxFooter from "@/components/common/HuxFooter.vue"
 import HuxDropdown from "@/components/common/HuxDropdown.vue"
 
@@ -100,16 +94,10 @@ export default {
   name: "CreateLookalike",
   components: {
     Page,
-    MetricCard,
-    Logo,
-    Tooltip,
-    LookalikeEngagement,
-    AttachEngagement,
     Icon,
     TextField,
     LookAlikeSlider,
     HuxButton,
-    HuxDropDownSearch,
     HuxFooter,
     HuxDropdown,
   },
@@ -176,9 +164,9 @@ export default {
       }
       let response = await this.createLookalikeAudience(payload)
       this.$router.push({
-          name: "AudienceInsight",
-          params: { id: response.id },
-        })
+        name: "AudienceInsight",
+        params: { id: response.id },
+      })
     },
 
     reset() {
