@@ -18,6 +18,7 @@ from huxunify.api.schema.customers import (
     CustomerRevenueInsightsSchema,
     CustomerProfileContactPreferencesSchema,
 )
+from huxunify.api.data_connectors.cdp import get_geographic_customers_data
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
@@ -122,6 +123,11 @@ class TestCustomersOverview(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
             json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json=t_c.IDENTITY_INSIGHT_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.app.get(
@@ -130,13 +136,59 @@ class TestCustomersOverview(RouteTestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+        expected_response = t_c.CUSTOMER_INSIGHT_RESPONSE[api_c.BODY].copy()
+        expected_response.update(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY])
+        expected_response[api_c.GEOGRAPHICAL] = get_geographic_customers_data(
+            t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE[api_c.BODY]
+        )
+        expected_response.update(
+            {
+                api_c.GENDER_WOMEN_COUNT: expected_response[
+                    api_c.GENDER_WOMEN
+                ],
+                api_c.GENDER_MEN_COUNT: expected_response[api_c.GENDER_MEN],
+                api_c.GENDER_OTHER_COUNT: expected_response[
+                    api_c.GENDER_OTHER
+                ],
+                api_c.GENDER_WOMEN: round(
+                    expected_response[api_c.GENDER_WOMEN]
+                    / (
+                        expected_response[api_c.GENDER_WOMEN]
+                        + expected_response[api_c.GENDER_MEN]
+                        + expected_response[api_c.GENDER_OTHER]
+                    ),
+                    4,
+                ),
+                api_c.GENDER_MEN: round(
+                    expected_response[api_c.GENDER_MEN]
+                    / (
+                        expected_response[api_c.GENDER_WOMEN]
+                        + expected_response[api_c.GENDER_MEN]
+                        + expected_response[api_c.GENDER_OTHER]
+                    ),
+                    4,
+                ),
+                api_c.GENDER_OTHER: round(
+                    expected_response[api_c.GENDER_OTHER]
+                    / (
+                        expected_response[api_c.GENDER_WOMEN]
+                        + expected_response[api_c.GENDER_MEN]
+                        + expected_response[api_c.GENDER_OTHER]
+                    ),
+                    4,
+                ),
+            }
+        )
+
         data = response.json
-        self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
+        for key, value in data.items():
+            if isinstance(value, list):
+                self.assertEqual(
+                    len(value), len(expected_response[api_c.GEOGRAPHICAL])
+                )
+                continue
+            if value:
+                self.assertEqual(value, expected_response[key])
 
     def test_get_idr_overview(self):
         """Test get customers idr overview."""
@@ -277,6 +329,11 @@ class TestCustomersOverview(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
             json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json=t_c.IDENTITY_INSIGHT_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.app.post(
@@ -316,6 +373,11 @@ class TestCustomersOverview(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
             json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json=t_c.IDENTITY_INSIGHT_RESPONSE,
         )
         self.request_mocker.start()
 

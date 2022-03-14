@@ -4,12 +4,16 @@
 """
 # pylint: disable=too-many-lines
 import logging
+import os
+from distutils.util import strtobool
+
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.data.data_sources import DATA_SOURCES_LIST
 from huxunifylib.database.data.delivery_platforms import DELIVERY_PLATFORM_LIST
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
+    get_delivery_platform_by_type,
 )
 from huxunifylib.database.collection_management import (
     create_document,
@@ -620,15 +624,24 @@ def drop_collections(database: MongoClient) -> None:
     """
 
     logging.info("Dropping collections.")
-    collections = [
-        db_c.CDP_DATA_SOURCES_COLLECTION,
-        db_c.DELIVERY_PLATFORM_COLLECTION,
-        db_c.MODELS_COLLECTION,
-        db_c.CONFIGURATIONS_COLLECTION,
-        db_c.CLIENT_PROJECTS_COLLECTION,
-        db_c.APPLICATIONS_COLLECTION,
-    ]
-    for collection in collections:
+
+    collections_to_drop = database[
+        db_c.DATA_MANAGEMENT_DATABASE
+    ].list_collection_names()
+
+    # do not drop user collection if it exists
+    if db_c.USER_COLLECTION in collections_to_drop:
+        collections_to_drop.remove(db_c.USER_COLLECTION)
+
+    # if drop all collections is false, do not drop the restricted collections
+    if not strtobool(os.environ.get("DROP_ALL_COLLECTIONS", default="False")):
+        collections_to_drop = [
+            x
+            for x in collections_to_drop
+            if x not in db_c.RESTRICTED_COLLECTIONS
+        ]
+
+    for collection in collections_to_drop:
         database[db_c.DATA_MANAGEMENT_DATABASE][collection].drop()
         logging.info("Dropped the %s collection.", collection)
 
@@ -676,15 +689,26 @@ def insert_delivery_platforms(
             delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
             in db_c.SUPPORTED_DELIVERY_PLATFORMS
         ):
-            result_id = set_delivery_platform(
-                database,
-                **delivery_platform,
-            )[db_c.ID]
-            logging.info(
-                "Added %s, %s.",
-                delivery_platform[db_c.DELIVERY_PLATFORM_NAME],
-                result_id,
+            existing_delivery_platform = get_delivery_platform_by_type(
+                database, delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
             )
+            # add delivery platform only if it does not exist
+            if not existing_delivery_platform:
+                result_id = set_delivery_platform(
+                    database,
+                    **delivery_platform,
+                )[db_c.ID]
+                logging.info(
+                    "Added %s, %s.",
+                    delivery_platform[db_c.DELIVERY_PLATFORM_NAME],
+                    result_id,
+                )
+            else:
+                logging.info(
+                    "%s with id %s already exists.",
+                    delivery_platform[db_c.DELIVERY_PLATFORM_NAME],
+                    existing_delivery_platform[db_c.ID],
+                )
     logging.info("Pre-populate destinations complete.")
 
 
