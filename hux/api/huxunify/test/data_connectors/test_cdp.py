@@ -76,6 +76,11 @@ class CDPTest(TestCase):
         ).start()
 
         mock.patch(
+            "huxunify.api.data_connectors.cache.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        mock.patch(
             "huxunify.api.route.utils.get_user_info",
             return_value=t_c.VALID_USER_RESPONSE,
         ).start()
@@ -416,35 +421,6 @@ class CDPTest(TestCase):
             self.assertEqual(record[api_c.STATE], test_record[api_c.STATE])
             self.assertEqual(record[api_c.COUNTRY], test_record[api_c.COUNTRY])
             self.assertEqual(record[api_c.AVG_LTV], test_record[api_c.AVG_LTV])
-
-    def test_get_customers_overview(self) -> None:
-        """Test get customers overview."""
-
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
-            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
-        )
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
-        )
-        self.request_mocker.start()
-
-        response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.OVERVIEW}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-
-        data = response.json
-        self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
 
     def test_get_customers_overview_raise_dependency_error(self) -> None:
         """Test get customers overview raise dependency error."""
