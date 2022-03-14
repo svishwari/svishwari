@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <div ref="singleStackBarChart" class="chart"></div>
+    <div ref="progressStackBarChart" class="chart"></div>
   </div>
 </template>
 
@@ -12,7 +12,7 @@ import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 
 export default {
-  name: "SingleHorizontalStackBarChart",
+  name: "ProgressStackBar",
   props: {
     width: {
       type: [Number, String],
@@ -32,7 +32,7 @@ export default {
     chartDimensions: {
       handler() {
         d3Select
-          .select(this.$refs.singleStackBarChart)
+          .select(this.$refs.progressStackBarChart)
           .selectAll("svg")
           .remove()
         this.stackedBar(".chart", sampleData)
