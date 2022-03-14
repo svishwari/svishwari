@@ -22,9 +22,6 @@ from huxunifylib.connectors import (
 
 from huxunifylib.database.user_management import manage_user_favorites
 from huxunifylib.database.delete_util import delete_lookalike_audience
-from huxunifylib.database.delivery_platform_management import (
-    update_pending_delivery_jobs,
-)
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -391,15 +388,6 @@ class AudienceView(SwaggerView):
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
 
-        # Update delivery status.
-        logger.info("Updating delivery jobs")
-        Thread(
-            target=update_pending_delivery_jobs,
-            args=[
-                database,
-            ],
-        ).start()
-
         # get all audiences
         audiences = orchestration_management.get_all_audiences(
             database=database,
@@ -676,15 +664,6 @@ class AudienceGetView(SwaggerView):
         token_response = get_token_from_request(request)
 
         database = get_db_client()
-
-        # Update delivery status.
-        logger.info("Updating delivery jobs")
-        Thread(
-            target=update_pending_delivery_jobs,
-            args=[
-                database,
-            ],
-        ).start()
 
         # get the audience
         audience_id = ObjectId(audience_id)
