@@ -11,12 +11,24 @@
         </div>
       </template>
       <template #right>
-        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn icon @click.native="filterToggle()">
           <icon
             type="filter"
             :size="27"
-            :color="finalFilterApplied > 0 ? 'primary' : 'black'"
-            :variant="finalFilterApplied > 0 ? 'lighten6' : 'darken4'"
+            :color="
+              isEmptyError
+                ? 'black'
+                : finalFilterApplied > 0
+                ? 'primary'
+                : 'black'
+            "
+            :variant="
+              isEmptyError
+                ? 'lighten3'
+                : finalFilterApplied > 0
+                ? 'lighten6'
+                : 'darken4'
+            "
           />
           <v-badge
             v-if="finalFilterApplied > 0"
@@ -53,6 +65,8 @@
 
           <template #right>
             <router-link
+              :disabled="isEmptyError"
+              :event="!isEmptyError ? 'click' : ''"
               :to="{ name: 'EngagementConfiguration' }"
               class="text-decoration-none"
               append
@@ -63,7 +77,8 @@
                 size="large"
                 is-custom-icon
                 class="ma-2 font-weight-regular no-shadow mr-0 caption"
-                is-tile
+                is-tilehux
+                :is-disabled="isEmptyError"
                 height="40"
               >
                 Create engagement
@@ -583,7 +598,7 @@
       </div>
 
       <div
-        v-if="!loading && rowData.length == 0"
+        v-if="!loading && rowData.length == 0 && !isEmptyError"
         class="
           flex-grow-1 flex-shrink-1
           overflow-hidden
@@ -644,6 +659,25 @@
           </template>
         </empty-page>
       </div>
+
+      <empty-page
+        v-if="!loading && rowData.length == 0 && isEmptyError"
+        class="unavailable-engagement"
+        type="error-on-screens"
+        :size="50"
+      >
+        <template #title>
+          <div class="title-no-notification">
+            Engagements are currently unavailable
+          </div>
+        </template>
+        <template #subtitle>
+          <div class="des-no-notification">
+            Our team is working hard to fix it. Please be patient and try again
+            soon!
+          </div>
+        </template>
+      </empty-page>
 
       <div class="ml-auto">
         <engagement-filter
@@ -717,6 +751,67 @@
         </div>
       </template>
     </confirm-modal>
+
+    <confirm-modal
+      v-model="confirmEditModal"
+      icon="edit"
+      type="error"
+      title="Edit"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, edit"
+      left-btn-text="Cancel"
+      @onCancel="confirmEditModal = !confirmEditModal"
+      @onConfirm="confirmEdit()"
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to edit this engagement&#63;
+        </div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By changing the engagement, you may need to reschedule the delivery
+          time and it will impact all associated audiences and destinations.
+        </div>
+      </template>
+    </confirm-modal>
+
+    <confirm-modal
+      v-model="confirmInactiveModal"
+      icon="alert-inactive"
+      :title="`Make ${confirmSubtitle}`"
+      sub-title="inactive?"
+      right-btn-text="Yes, make engagement inactive"
+      left-btn-text="Nevermind!"
+      @onCancel="confirmInactiveModal = !confirmInactiveModal"
+      @onConfirm="confirmInactive()"
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to make this Engagement inactive&#63;
+        </div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By making it inactive all audiences that are part of this engagement
+          will have their delivery paused.
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -738,6 +833,7 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
 import EngagementFilter from "./Configuration/Drawers/EngagementFilter.vue"
+
 export default {
   name: "Engagements",
   components: {
@@ -762,6 +858,8 @@ export default {
     return {
       isFilterToggled: false,
       confirmModal: false,
+      confirmEditModal: false,
+      confirmInactiveModal: false,
       confirmSubtitle: "",
       selectedEngagement: null,
       selectedAudience: null,
@@ -769,6 +867,7 @@ export default {
       showAudienceRemoveConfirmation: false,
       selectedEngagementId: "",
       selectedAudienceId: "",
+      isEmptyError: false,
       breadcrumbItems: [
         {
           text: "Engagements",
@@ -915,6 +1014,8 @@ export default {
     this.loading = true
     try {
       await this.getAllEngagements()
+    } catch (error) {
+      this.isEmptyError = true
     } finally {
       this.loading = false
     }
@@ -944,11 +1045,17 @@ export default {
     async applyFilter(params) {
       this.loading = true
       this.finalFilterApplied = params.filterApplied
-      await this.getAllFilteredEngagements({
-        favorites: params.selectedFavourite,
-        my_engagements: params.selectedEngagementsWorkedWith,
-      })
-      this.loading = false
+      try {
+        await this.getAllFilteredEngagements({
+          favorites: params.selectedFavourite,
+          my_engagements: params.selectedEngagementsWorkedWith,
+        })
+      } catch (error) {
+        this.isEmptyError = true
+        this.clearFilter()
+      } finally {
+        this.loading = false
+      }
     },
 
     openModal(engagement) {
@@ -960,6 +1067,52 @@ export default {
     async confirmRemoval() {
       await this.deleteEngagement({ id: this.selectedEngagement.id })
       this.confirmModal = false
+    },
+
+    openEditModal(engagement) {
+      this.selectedEngagement = engagement
+      this.confirmSubtitle = engagement.name
+      this.confirmEditModal = true
+    },
+
+    async confirmEdit() {
+      await this.editEngagement(this.selectedEngagement.id)
+      this.confirmEditModal = false
+    },
+
+    filterToggle() {
+      if (!this.isEmptyError) {
+        this.isFilterToggled = !this.isFilterToggled
+      }
+    },
+
+    openInactiveModal(engagement) {
+      this.selectedEngagement = engagement
+      this.confirmSubtitle = engagement.name
+      this.confirmInactiveModal = true
+    },
+
+    async confirmInactive() {
+      const inactiveEngagementPayload = {
+        status: "Inactive",
+      }
+      const payload = {
+        id: this.selectedEngagement.id,
+        data: inactiveEngagementPayload,
+      }
+      await this.updateEngagement(payload)
+      this.loading = true
+      try {
+        await this.getAllEngagements()
+      } catch (error) {
+        this.isEmptyError = true
+      } finally {
+        this.rowData = this.engagementData.sort((a, b) =>
+          a.name > b.name ? 1 : -1
+        )
+        this.loading = false
+      }
+      this.confirmInactiveModal = false
     },
 
     isUserFavorite(entity, type) {
@@ -989,6 +1142,8 @@ export default {
           data: removePayload,
         })
         await this.getAllEngagements()
+      } catch (error) {
+        this.isEmptyError = true
       } finally {
         this.loading = false
       }
@@ -1032,22 +1187,6 @@ export default {
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },
-    async makeInactiveEngagement(value) {
-      const inactiveEngagementPayload = {
-        status: "Inactive",
-      }
-      const payload = { id: value.id, data: inactiveEngagementPayload }
-      await this.updateEngagement(payload)
-      this.loading = true
-      try {
-        await this.getAllEngagements()
-      } finally {
-        this.rowData = this.engagementData.sort((a, b) =>
-          a.name > b.name ? 1 : -1
-        )
-        this.loading = false
-      }
-    },
 
     reloadAudienceData() {
       this.showLookAlikeDrawer = false
@@ -1074,7 +1213,7 @@ export default {
           title: "Edit engagement",
           isDisabled: false,
           onClick: () => {
-            this.editEngagement(engagement.id)
+            this.openEditModal(engagement)
           },
         },
         // TODO: enable once features are available
@@ -1083,7 +1222,7 @@ export default {
           title: "Make inactive",
           isDisabled: false,
           onClick: (value) => {
-            this.makeInactiveEngagement(value)
+            this.openInactiveModal(value)
           },
         },
         {
@@ -1332,6 +1471,10 @@ export default {
   }
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
+  }
+
+  .unavailable-engagement {
+    margin-top: 180px !important;
   }
 }
 .icon-border {

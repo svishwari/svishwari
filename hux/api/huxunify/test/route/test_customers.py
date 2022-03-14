@@ -18,6 +18,7 @@ from huxunify.api.schema.customers import (
     CustomerRevenueInsightsSchema,
     CustomerProfileContactPreferencesSchema,
 )
+from huxunify.api.data_connectors.cdp import get_geographic_customers_data
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
@@ -29,8 +30,12 @@ from huxunify.api.schema.customers import (
     TotalCustomersInsightsSchema,
 )
 
-
 # pylint: disable=too-many-public-methods,too-many-lines
+from huxunify.test.route.route_test_util.test_data_loading.users import (
+    load_users,
+)
+
+
 class TestCustomersOverview(RouteTestCase):
     """Purpose of this class is to test Customers overview."""
 
@@ -38,6 +43,8 @@ class TestCustomersOverview(RouteTestCase):
         """Sets up Test Client."""
 
         super().setUp()
+
+        load_users(self.database)
 
         self.customers = f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
         self.idr = f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}"
@@ -48,8 +55,13 @@ class TestCustomersOverview(RouteTestCase):
         ).start()
 
         mock.patch(
-            "huxunify.api.route.decorators.get_user_from_db",
-            return_value=t_c.VALID_DB_USER_RESPONSE,
+            "huxunify.api.data_connectors.cache.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.route.utils.get_user_info",
+            return_value=t_c.VALID_USER_RESPONSE,
         ).start()
 
     def test_get_customers(self):
@@ -111,6 +123,11 @@ class TestCustomersOverview(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
             json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json=t_c.IDENTITY_INSIGHT_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.app.get(
@@ -119,13 +136,59 @@ class TestCustomersOverview(RouteTestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+        expected_response = t_c.CUSTOMER_INSIGHT_RESPONSE[api_c.BODY].copy()
+        expected_response.update(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY])
+        expected_response[api_c.GEOGRAPHICAL] = get_geographic_customers_data(
+            t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE[api_c.BODY]
+        )
+        expected_response.update(
+            {
+                api_c.GENDER_WOMEN_COUNT: expected_response[
+                    api_c.GENDER_WOMEN
+                ],
+                api_c.GENDER_MEN_COUNT: expected_response[api_c.GENDER_MEN],
+                api_c.GENDER_OTHER_COUNT: expected_response[
+                    api_c.GENDER_OTHER
+                ],
+                api_c.GENDER_WOMEN: round(
+                    expected_response[api_c.GENDER_WOMEN]
+                    / (
+                        expected_response[api_c.GENDER_WOMEN]
+                        + expected_response[api_c.GENDER_MEN]
+                        + expected_response[api_c.GENDER_OTHER]
+                    ),
+                    4,
+                ),
+                api_c.GENDER_MEN: round(
+                    expected_response[api_c.GENDER_MEN]
+                    / (
+                        expected_response[api_c.GENDER_WOMEN]
+                        + expected_response[api_c.GENDER_MEN]
+                        + expected_response[api_c.GENDER_OTHER]
+                    ),
+                    4,
+                ),
+                api_c.GENDER_OTHER: round(
+                    expected_response[api_c.GENDER_OTHER]
+                    / (
+                        expected_response[api_c.GENDER_WOMEN]
+                        + expected_response[api_c.GENDER_MEN]
+                        + expected_response[api_c.GENDER_OTHER]
+                    ),
+                    4,
+                ),
+            }
+        )
+
         data = response.json
-        self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
-        self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
+        for key, value in data.items():
+            if isinstance(value, list):
+                self.assertEqual(
+                    len(value), len(expected_response[api_c.GEOGRAPHICAL])
+                )
+                continue
+            if value:
+                self.assertEqual(value, expected_response[key])
 
     def test_get_idr_overview(self):
         """Test get customers idr overview."""
@@ -266,6 +329,11 @@ class TestCustomersOverview(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
             json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json=t_c.IDENTITY_INSIGHT_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.app.post(
@@ -305,6 +373,11 @@ class TestCustomersOverview(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
             json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json=t_c.IDENTITY_INSIGHT_RESPONSE,
         )
         self.request_mocker.start()
 
@@ -869,41 +942,43 @@ class TestCustomersOverview(RouteTestCase):
         )
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
-    @given(hux_id=st.text(alphabet=string.ascii_letters))
-    def test_get_customer_profile_invalid_hux_id(self, hux_id: str):
-        """Test retrieving customer profile with an invalid hux ID.
+    # TODO Implement test once logic for HUXID is set again
 
-        Args:
-            hux_id (str): HUX ID.
-        """
+    # @given(hux_id=st.text(alphabet=string.ascii_letters))
+    # def test_get_customer_profile_invalid_hux_id(self, hux_id: str):
+    #     """Test retrieving customer profile with an invalid hux ID.
+    #
+    #     Args:
+    #         hux_id (str): HUX ID.
+    #     """
+    #
+    #     if len(hux_id) == 0:
+    #         return
+    #
+    #     response = self.app.get(
+    #         f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
+    #         headers=t_c.STANDARD_HEADERS,
+    #     )
+    #
+    #     self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-        if len(hux_id) == 0:
-            return
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-
-    @given(hux_id=st.text(alphabet=string.ascii_letters))
-    def test_get_events_for_a_customer_invalid_hux_id(self, hux_id: str):
-        """Test retrieving customer events with an invalid hux ID.
-
-        Args:
-            hux_id (str): HUX ID.
-        """
-
-        if len(hux_id) == 0:
-            return
-
-        response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+    # @given(hux_id=st.text(alphabet=string.ascii_letters))
+    # def test_get_events_for_a_customer_invalid_hux_id(self, hux_id: str):
+    #     """Test retrieving customer events with an invalid hux ID.
+    #
+    #     Args:
+    #         hux_id (str): HUX ID.
+    #     """
+    #
+    #     if len(hux_id) == 0:
+    #         return
+    #
+    #     response = self.app.post(
+    #         f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
+    #         headers=t_c.STANDARD_HEADERS,
+    #     )
+    #
+    #     self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     @given(batch_size=st.text(alphabet=string.ascii_letters))
     def test_get_customer_overview_invalid_batch_size(self, batch_size: str):
@@ -957,7 +1032,8 @@ class TestCustomersOverview(RouteTestCase):
             return
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.CITIES}?batch_size={batch_size}",
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
+            query_string={"batch_size": batch_size},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -977,8 +1053,8 @@ class TestCustomersOverview(RouteTestCase):
             return
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
-            f"/{api_c.CITIES}?batch_number={batch_number}",
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
+            query_string={"batch_number": batch_number},
             headers=t_c.STANDARD_HEADERS,
         )
 

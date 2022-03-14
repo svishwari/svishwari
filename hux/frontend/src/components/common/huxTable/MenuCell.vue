@@ -31,7 +31,7 @@
       </router-link>
       <tooltip v-else>
         <template slot="label-content">
-          <span class="primary--text ellipsis menu-value" :class="labelClass">
+          <span class="ellipsis menu-value" :class="labelClass">
             {{ value }}
           </span>
         </template>
@@ -106,6 +106,7 @@
                     </template>
                     <template #default>
                       <v-list-item
+                        v-if="typeof item.menu === Object"
                         :disabled="item.menu.isDisabled"
                         class="white"
                       >
@@ -119,6 +120,25 @@
                             :type="item.menu.icon"
                           />
                           <span class="ml-1">{{ item.menu.title }}</span>
+                        </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item
+                        v-for="(dataMenu, ind) in item.menu"
+                        v-else
+                        :key="ind"
+                        :disabled="dataMenu.isDisabled"
+                        class="white"
+                      >
+                        <v-list-item-title
+                          class="sub-menu-class"
+                          @click="dataMenu.onClick(data)"
+                        >
+                          <logo
+                            v-if="dataMenu.icon"
+                            :size="18"
+                            :type="dataMenu.icon"
+                          />
+                          <span class="ml-1">{{ dataMenu.title }}</span>
                         </v-list-item-title>
                       </v-list-item>
                     </template>

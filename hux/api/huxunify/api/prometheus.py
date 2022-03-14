@@ -8,7 +8,7 @@ from huxunifylib.util.general.logging import logger
 
 prometheus_metrics = PrometheusMetrics.for_app_factory()
 health_check_metrics = Gauge(
-    name="health_check_metrics",
+    name="hux_unified_health_check_metrics",
     documentation="health check metrics",
     registry=prometheus_metrics.registry,
     labelnames=["name"],
@@ -38,15 +38,23 @@ def monitor_app(flask_app: Flask) -> None:
 
     metrics.register_default(
         metrics.counter(
-            name="by_path_counter",
+            name="hux_unified_by_path_counter",
             description="Request count by request paths",
             labels={"path": lambda: render_path(request, routes)},
         )
     )
 
     metrics.register_default(
+        metrics.counter(
+            name="hux_unified_by_status_counter",
+            description="Request count by response codes",
+            labels={"status": lambda r: r.status_code},
+        )
+    )
+
+    metrics.register_default(
         metrics.histogram(
-            name="requests_by_status_and_path",
+            name="hux_unified_requests_by_status_and_path",
             description="Response time by status code, path, and method",
             labels={
                 "status": lambda r: r.status_code,
@@ -102,7 +110,7 @@ def get_routes(app: Flask) -> list:
         routes.append(
             {
                 "url": rule.rule,
-                "filter": f"^{re.sub('<(.*?)>', '[A-Za-z0-9]+', rule.rule)}$",
+                "filter": f"^{re.sub('<(.*?)>', '[a-zA-Z0-9_]+', rule.rule)}$",
                 "methods": rule.methods,
             }
         )

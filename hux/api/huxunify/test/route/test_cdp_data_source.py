@@ -5,10 +5,9 @@ from datetime import datetime
 from http import HTTPStatus
 from unittest import mock
 
-from dateutil.relativedelta import relativedelta
 from marshmallow import ValidationError
 
-from huxunify.api.route.utils import fetch_datafeed_details
+from huxunify.api.route.utils import clean_and_aggregate_datafeed_details
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database.cdp_data_source_management import (
     create_data_source,
@@ -23,6 +22,8 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourceDataFeedSchema,
     CdpConnectionsDataSourceSchema,
     DataSourceDataFeedDetailsGetSchema,
+    FloatValueStandardDeviationSchema,
+    IndividualDataSourceDataFeedDetailSchema,
 )
 
 
@@ -367,24 +368,48 @@ class CdpDataSourcesTest(RouteTestCase):
             )
         )
 
-    def test_get_data_source_data_feed_details(self) -> None:
-        """Test get data source data feed details endpoint."""
+        for data_feed in response.json.get(api_c.DATAFEEDS):
+            self.assertFalse(
+                FloatValueStandardDeviationSchema().validate(
+                    data_feed.get(api_c.RECORDS_PROCESSED_PERCENTAGE)
+                )
+            )
+            self.assertFalse(
+                FloatValueStandardDeviationSchema().validate(
+                    data_feed.get(api_c.THIRTY_DAYS_AVG)
+                )
+            )
+
+    def test_get_data_source_data_feed_details_no_status_filter(self) -> None:
+        """Test get data source data feed details endpoint with no status_filter."""
         data_source_type = t_c.DATASOURCE_DATA_FEEDS_RESPONSE[api_c.BODY][0][
-            api_c.DATAFEED_DATA_SOURCE_NAME
+            api_c.DATAFEED_DATA_SOURCE_TYPE
         ]
         datafeed_name = "clicks"
-        start_date = datetime.strftime(
-            datetime.utcnow() - relativedelta(days=100),
-            api_c.DEFAULT_DATE_FORMAT,
-        )
+        start_date = "2021-01-01"
         end_date = datetime.strftime(
             datetime.utcnow(), api_c.DEFAULT_DATE_FORMAT
         )
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_CONNECTIONS_ENDPOINT}/{api_c.DATASOURCES}/{data_source_type}/"
+            f"feeds/{datafeed_name}/files",
+            json=t_c.DATAFEED_FILE_DETAILS_RESPONSE,
+        )
+        self.request_mocker.start()
 
         expected_response = DataSourceDataFeedDetailsGetSchema(many=True).dump(
             sorted(
-                fetch_datafeed_details(datafeed_name, start_date, end_date),
-                key=lambda x: x[api_c.LAST_PROCESSED],
+                clean_and_aggregate_datafeed_details(
+                    [
+                        x.copy()
+                        for x in t_c.DATAFEED_FILE_DETAILS_RESPONSE[api_c.BODY]
+                    ],
+                    do_aggregate=True,
+                ),
+                key=lambda x: x[api_c.PROCESSED_START_DATE],
+                reverse=True,
             )
         )
         response = self.app.get(
@@ -408,4 +433,10 @@ class CdpDataSourcesTest(RouteTestCase):
         for df_detail in response.json:
             self.assertFalse(
                 DataSourceDataFeedDetailsGetSchema().validate(df_detail)
+            )
+            self.assertIn(api_c.DATA_FILES, df_detail.keys())
+            self.assertFalse(
+                IndividualDataSourceDataFeedDetailSchema(many=True).validate(
+                    df_detail[api_c.DATA_FILES]
+                )
             )

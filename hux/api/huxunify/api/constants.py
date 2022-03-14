@@ -89,6 +89,8 @@ NAME = "name"
 LABEL = "label"
 OWNER = "owner"
 STATUS = "status"
+SUB_STATUS = "sub_status"
+RUN_DURATION = "run_duration"
 BODY = "body"
 TYPE = "type"
 ROLE = "role"
@@ -128,6 +130,9 @@ URL = "url"
 CREATED = "created"
 ISSUES = "issues"
 FIELDS = "fields"
+STATUSES = "statuses"
+INPUT_FILE = "input_file"
+UNIQUE_ID = "unique_id"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -210,8 +215,6 @@ MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
 DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
 DAY_OF_MONTH_NAME_LIST = [
     "Day",
-    "Weekend",
-    "Weekend day",
     "Sunday",
     "Monday",
     "Tuesday",
@@ -336,6 +339,11 @@ STATUS_INCOMPLETE = "Incomplete"
 STATUS_RUNNING = "Running"
 STATUS_FAILED = "Failed"
 STATUS_CANCELLED = "Canceled"
+STATUS_IN_PROGRESS = "In Progress"
+STATUS_PARTIAL_SUCCESS_PROGRESS = "Partial Success - In Progress"
+STATUS_WAITING = "Waiting"
+STATUS_PARTIAL_SUCCESS_WAITING = "Partial Success - Waiting"
+STATUS_PARTIAL_SUCCESS = "Partial Success"
 
 STATUS_MAPPING = {
     db_c.STATUS_IN_PROGRESS: STATUS_DELIVERING,
@@ -920,13 +928,14 @@ WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
 
 PARAM_STORE_PREFIX = "unified"
-PARAMETER_STORE_ERROR_MSG = (
+SECRET_STORAGE_ERROR_MSG = (
     "An error occurred while attempting to"
-    " store secrets in the parameter store."
+    " store secrets in the cloud secret storage."
 )
 
 # users
 USER_TAG = "user"
+USERS = "users"
 USER_NAME = "user_name"
 DISPLAY_NAME = "display_name"
 USER_PHONE_NUMBER = "phone_number"
@@ -1062,6 +1071,8 @@ CDP_DATA_SOURCE_IDS = "data_source_ids"
 CDP_DATA_SOURCE_TYPE = "datasource_type"
 DATAFEED_NAME = "datafeed_name"
 LAST_PROCESSED = "last_processed"
+PROCESSED_START_DATE = "processed_start_dt"
+PROCESSED_END_DATE = "processed_end_dt"
 DATA_SOURCES = "data_sources"
 
 # Customers
@@ -1252,6 +1263,8 @@ RECORDS_PROCESSED = "records_processed"
 RECORDS_RECEIVED = "records_received"
 THIRTY_DAYS_AVG = "thirty_days_avg"
 RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
+VALUE = "value"
+FLAG_INDICATOR = "flag_indicator"
 DATA_FILES = "data_files"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
@@ -1620,6 +1633,7 @@ CLICK_RATE = "click_rate"
 DELIVERED_RATE = "delivered_rate"
 UNSUBSCRIBE_RATE = "unsubscribe_rate"
 COMPLAINTS_RATE = "complaints_rate"
+DELIVERABILITY_METRICS = "deliverability_metrics"
 
 # TODO Remove once email deliverability data is available.
 

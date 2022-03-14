@@ -27,16 +27,16 @@ from huxunifylib.database.orchestration_management import (
     delete_audience,
 )
 
-from huxunifylib.database.user_management import (
-    set_user,
-    manage_user_favorites,
-)
+from huxunifylib.database.user_management import manage_user_favorites
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
 )
-from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api import constants as api_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
+from huxunify.test.route.route_test_util.test_data_loading.users import (
+    load_users,
+)
 import huxunify.test.constants as t_c
 
 
@@ -50,6 +50,8 @@ class OrchestrationRouteTest(RouteTestCase):
 
         super().setUp()
 
+        load_users(self.database)
+
         self.audience_api_endpoint = f"/api/v1{api_c.AUDIENCE_ENDPOINT}"
 
         # mock get_db_client() for the orchestration.
@@ -58,10 +60,11 @@ class OrchestrationRouteTest(RouteTestCase):
             return_value=self.database,
         ).start()
 
-        # mock get_store_value of parameter store
-        mock.patch.object(
-            parameter_store, "get_store_value", return_value="secret"
-        ).start()
+        for subclass in CloudClient.__subclasses__():
+            # mock get_store_value of cloud secret store
+            mock.patch.object(
+                subclass, "get_secret", return_value="secret"
+            ).start()
 
         destinations = [
             {
@@ -95,7 +98,7 @@ class OrchestrationRouteTest(RouteTestCase):
                 },
             },
         ]
-        self.user_name = "dave smith"
+        self.user_name = t_c.VALID_USER_RESPONSE[api_c.NAME]
         self.destinations = []
         for destination in destinations:
             self.destinations.append(
@@ -237,17 +240,10 @@ class OrchestrationRouteTest(RouteTestCase):
                 db_c.AUDIENCE_STATUS_DELIVERING,
             )
 
-        set_user(
-            self.database,
-            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
-            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
-            display_name="dave smith",
-        )
-
         # Set an audience as favorite
         manage_user_favorites(
             self.database,
-            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            okta_id=t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
             component_name=api_c.AUDIENCES,
             component_id=self.audiences[0][db_c.ID],
         )
@@ -255,10 +251,12 @@ class OrchestrationRouteTest(RouteTestCase):
         # Set a lookalike audience as favorite
         manage_user_favorites(
             self.database,
-            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            okta_id=t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
             component_name=api_c.LOOKALIKE,
             component_id=self.lookalike_audience_doc[db_c.ID],
         )
+
+        self.addCleanup(mock.patch.stopall)
 
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""
@@ -962,8 +960,8 @@ class OrchestrationRouteTest(RouteTestCase):
 
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
-    def test_create_lookalike_audience(self):
-        """Test create lookalike audience."""
+    def test_create_lookalike_audience_with_engagement_ids(self):
+        """Test create lookalike audience with engagement ids."""
 
         # setup facebook connector mock address
         mock.patch.object(
@@ -1006,6 +1004,70 @@ class OrchestrationRouteTest(RouteTestCase):
                 engaged_lookalike_audience = audience
 
         self.assertIsNotNone(engaged_lookalike_audience)
+
+        # test getting the audience and lookalikes response
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{self.audience_api_endpoint}/{lookalike_audience_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        lookalike_audience = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            lookalike_audience[api_c.ID], str(lookalike_audience_id)
+        )
+        self.assertEqual(lookalike_audience[api_c.SIZE], 3329)
+        self.assertEqual(
+            lookalike_audience[t_c.SOURCE_SIZE], self.audiences[0][db_c.SIZE]
+        )
+        self.assertEqual(
+            lookalike_audience[t_c.SOURCE_NAME], self.audiences[0][db_c.NAME]
+        )
+        self.assertGreaterEqual(lookalike_audience[api_c.MATCH_RATE], 0)
+        self.assertEqual(
+            lookalike_audience[t_c.SOURCE_ID],
+            str(self.audiences[0][db_c.ID]),
+        )
+        self.assertTrue(lookalike_audience[api_c.IS_LOOKALIKE])
+
+    def test_create_lookalike_audience_wo_engagement_ids(self):
+        """Test create lookalike audience without engagement ids."""
+
+        # setup facebook connector mock address
+        mock.patch.object(
+            FacebookConnector,
+            "check_connection",
+            return_value=True,
+        ).start()
+
+        mock.patch.object(
+            FacebookConnector,
+            "get_new_lookalike_audience",
+            return_value="LA_ID_12345",
+        ).start()
+
+        lookalike_audience_name = "NEW LA AUDIENCE"
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.NAME: lookalike_audience_name,
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+            },
+        )
+
+        self.assertEqual(HTTPStatus.ACCEPTED, response.status_code)
+        self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
+        lookalike_audience_id = ObjectId(response.json[api_c.ID])
 
         # test getting the audience and lookalikes response
         self.request_mocker.stop()
@@ -1400,13 +1462,6 @@ class OrchestrationRouteTest(RouteTestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.start()
-
-        set_user(
-            self.database,
-            okta_id=t_c.VALID_USER_RESPONSE.get(api_c.OKTA_ID_SUB),
-            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
-            display_name="doug smith",
-        )
 
         # Set an audience as favorite
         manage_user_favorites(

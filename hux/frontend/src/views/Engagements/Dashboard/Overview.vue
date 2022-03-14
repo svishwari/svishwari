@@ -23,9 +23,13 @@
         </div>
       </v-card-title>
 
-      <overview-metric-cards :data="data" />
+      <overview-metric-cards :data="data" data-e2e="overview-metrics" />
     </v-card>
-    <v-card v-if="data.audiences.length > 0" class="pa-6 card-style mt-6">
+    <v-card
+      v-if="data.audiences.length > 0"
+      class="pa-6 card-style mt-6"
+      data-e2e="overview-audiences"
+    >
       <v-card-title class="d-flex justify-space-between pa-0">
         <h3 class="text-h3 mb-2">
           <icon
@@ -69,7 +73,7 @@
         @onSectionAction="$emit('triggerOverviewAction', $event)"
       />
     </v-card>
-    <div v-else class="eng-dash-no-aud-container">
+    <div v-else class="eng-dash-no-aud-container" data-e2e="overview-audiences">
       <div class="eng-dash-no-aud">
         <icon type="lift-table-empty" size="50" />
         <div class="text-h2 mb-3">No delivery data is available</div>

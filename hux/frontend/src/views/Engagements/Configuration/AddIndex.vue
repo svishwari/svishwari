@@ -108,6 +108,7 @@
           color="primary"
           height="40"
           :is-disabled="!isValid"
+          data-e2e="next-step"
           @click.native="currentStep++"
         >
           Next
@@ -118,6 +119,7 @@
           color="primary"
           height="40"
           :is-disabled="!isValid"
+          data-e2e="create-engagement"
           @click="addNewEngagement()"
         >
           Create
@@ -275,13 +277,21 @@ export default {
           requestPayload.delivery_schedule.schedule.day_of_week =
             local_schedule.day_of_week
         }
+        // TODO: Remove converting to array when we have multi option support.
         if (local_schedule.periodicity === "Monthly") {
-          requestPayload.delivery_schedule.schedule.monthly_period =
-            local_schedule.monthlyPeriod
-          requestPayload.delivery_schedule.schedule.monthly_day =
-            local_schedule.monthlyDay
-          requestPayload.delivery_schedule.schedule.day_of_month =
-            local_schedule.monthlyDayDate
+          requestPayload.delivery_schedule.schedule.monthly_period_items = [
+            local_schedule.monthlyPeriod,
+          ]
+
+          if (local_schedule.monthlyPeriod === "Day") {
+            requestPayload.delivery_schedule.schedule.day_of_month = [
+              local_schedule.monthlyDayDate,
+            ]
+          } else {
+            requestPayload.delivery_schedule.schedule.day_of_month = [
+              local_schedule.monthlyDay,
+            ]
+          }
         }
       } else {
         requestPayload.delivery_schedule = null

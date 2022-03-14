@@ -17,15 +17,11 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       .then((href) => {
         cy.visit(href)
       })
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
 
-    // should be able to validate Audiences History
-    cy.get(selector.audience.audiencehistory)
-      .its("length")
-      .as("overviewListCount")
-
-    cy.get("@overviewListCount").then(() => {
-      cy.get(selector.audience.audiencehistory).its("length").should("be.gt", 0)
-    })
+    // Click on delivery history link if possible and open drawer
+    cy.get(selector.audience.deliveryhistory).click({ force: true })
 
     // should be able to validate Audiences Overview
     cy.get(selector.audience.overview).its("length").as("overviewListCount")
@@ -37,12 +33,29 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000)
 
-    // should be able to view Map chart
-    // validate top location & income chart
-    cy.get(selector.audience.mapchart).should("exist")
+    // verify items in delivery tab
+    cy.get(selector.audience.engagementDeliveryDetails).should("exist")
+    cy.get(selector.audience.standaloneDelivery).should("exist")
+    cy.get(selector.audience.matchRateTable).should("exist")
+    cy.get(selector.audience.lookalikes).should("exist")
 
+    //verify items in insights tab
+    cy.get(selector.audience.insightsTab).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
+
+    // should be able to view Audience chart
+    cy.get(selector.audience.audienceChart).should("exist")
+    cy.get(".active-bar")
+      .first()
+      .trigger("mouseover", { eventConstructor: "MouseEvent" })
+
+    // should be able to view Spend chart
+    cy.get(selector.audience.spendChart).should("exist")
+
+    // should be able to view Map chart
+    cy.get(selector.audience.mapchart).should("exist")
     // should be able to hover over bar of map chart
-    // mouse hover on income chart
     cy.get(".geochart")
       .first()
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
@@ -50,35 +63,5 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
     // map state list should have 1 or more states
     // validate no of state in list
     cy.get(selector.audience.mapStateList).its("length").should("be.gt", 0)
-
-    // should be able to view top location & income chart
-    // validate top location & income chart
-    cy.get(selector.audience.incomeChart).should("exist")
-
-    // should be able to hover over bar of top location & income chart
-    // mouse hover on income chart
-    cy.get(".bar")
-      .first()
-      .trigger("mouseover", { eventConstructor: "MouseEvent" })
-
-    // should be able to view Gender / monthly spending chart
-    //validate Gender / monthly spending chart
-    cy.get(selector.audience.genderSpendChart).should("exist")
-
-    // should be able to hover over bar of Gender / monthly spending chart
-    // mouse hover on income chart
-    cy.get(".dot")
-      .last()
-      .trigger("mouseover", { eventConstructor: "MouseEvent" })
-
-    // should be able to view Gender chart
-    //validate Gender chart
-    cy.get(selector.audience.genderChart).should("exist")
-
-    // should be able to hover over arc of gender chart
-    // mouse hover on income chart
-    cy.get(".arc")
-      .last()
-      .trigger("mouseover", { force: true, eventConstructor: "MouseEvent" })
   })
 })

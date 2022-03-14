@@ -23,37 +23,27 @@ STANDARD_HEADERS = {
     "Authorization": TEST_AUTH_TOKEN,
     "Content-Type": "application/json",
 }
-VALID_RESPONSE = {
+VALID_INTROSPECTION_RESPONSE = {
     "active": True,
     "scope": "openid email profile",
-    "username": "davesmith",
+    "username": "user1",
     "exp": 1234,
     "iat": 12345,
-    "sub": "davesmith@fake",
+    "sub": "user1_admin@deloitte.com",
     "aud": "sample_aud",
     "iss": "sample_iss",
     "jti": "sample_jti",
     "token_type": "Bearer",
     "client_id": "1234",
-    "uid": "1234567",
+    "uid": "00u7acrr5pEmJ09lc2p7",
 }
-INVALID_OKTA_RESPONSE = {"active": False}
+INVALID_INTROSPECTION_RESPONSE = {"active": False}
 VALID_USER_RESPONSE = {
-    api_c.OKTA_ID_SUB: "8548bfh8d",
-    api_c.EMAIL: "davesmith@fake.com",
-    api_c.NAME: "dave smith",
-    api_c.ROLE: "admin",
+    api_c.OKTA_ID_SUB: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
+    api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
+    api_c.NAME: "USER 1",
+    api_c.ROLE: db_c.USER_ROLE_ADMIN,
     api_c.USER_PII_ACCESS: True,
-}
-OKTA_ID = "okta_id"
-ROLE = "role"
-VALID_DB_USER_RESPONSE = {
-    OKTA_ID: "8548bfh8d",
-    api_c.EMAIL: "davesmith@fake.com",
-    api_c.DISPLAY_NAME: "dave smith",
-    api_c.NAME: "dave smith",
-    api_c.USER_PII_ACCESS: True,
-    ROLE: "admin",
 }
 # response missing some fields
 INVALID_USER_RESPONSE = {
@@ -136,7 +126,6 @@ CUSTOMER_INSIGHT_RESPONSE = {
         "total_known_ids": 13620,
         "total_individual_ids": 313,
         "total_household_ids": 9927,
-        "updated": "2021-05-24",
         "total_customers": 3329,
         "total_countries": 2,
         "total_us_states": 44,
@@ -146,6 +135,20 @@ CUSTOMER_INSIGHT_RESPONSE = {
         "gender_women": 42345,
         "gender_men": 52567,
         "gender_other": 6953,
+    },
+    "message": "ok",
+}
+
+IDENTITY_INSIGHT_RESPONSE = {
+    "code": 200,
+    "body": {
+        "total_records": 18238,
+        "match_rate": 0.5,
+        "total_unique_ids": 13238,
+        "total_unknown_ids": 3515,
+        "total_known_ids": 11620,
+        "total_individual_ids": 513,
+        "total_household_ids": 9827,
     },
     "message": "ok",
 }
@@ -1446,6 +1449,35 @@ SAMPLE_USER_REQUEST_JIRA_ISSUES = {
                     },
                 },
             },
+        },
+    ],
+}
+
+DATAFEED_FILE_DETAILS_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    api_c.BODY: [
+        {
+            api_c.INPUT_FILE: "file_1.csv",
+            api_c.UNIQUE_ID: 1,
+            api_c.PROCESSED_END_DATE: "2022-02-13T17:21:04.000Z",
+            api_c.PROCESSED_START_DATE: "2022-02-13T16:06:40.000Z",
+            api_c.RECORDS_PROCESSED: 392271,
+            api_c.RECORDS_RECEIVED: 507907,
+            api_c.STATUS: api_c.STATUS_RUNNING,
+            api_c.SUB_STATUS: api_c.STATUS_IN_PROGRESS,
+            api_c.THIRTY_DAYS_AVG: 0.94,
+        },
+        {
+            api_c.INPUT_FILE: "file_2.csv",
+            api_c.UNIQUE_ID: 2,
+            api_c.PROCESSED_END_DATE: "2022-02-12T16:14:48.000Z",
+            api_c.PROCESSED_START_DATE: "2022-02-12T16:06:40.000Z",
+            api_c.RECORDS_PROCESSED: 424684,
+            api_c.RECORDS_RECEIVED: 669920,
+            api_c.STATUS: api_c.STATUS_SUCCESS,
+            api_c.SUB_STATUS: api_c.STATUS_COMPLETE,
+            api_c.THIRTY_DAYS_AVG: 0.94,
         },
     ],
 }

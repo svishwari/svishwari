@@ -47,6 +47,10 @@
   border-color: #d0d0ce;
 }
 
+.box-shadow-25-light {
+  box-shadow: 0px 1px 5px rgba(206, 206, 206, 0.25) !important;
+}
+
 .box-shadow-25 {
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25) !important;
 }
@@ -226,4 +230,16 @@
   color: transparent !important;
   text-shadow: 0 0 8px #000;
   user-select: none;
+}
+
+.ml-17 {
+  margin-left: 68px !important;
+}
+
+.ta-left {
+  text-align: left !important;
+}
+
+.ta-center {
+  text-align: center !important;
 }

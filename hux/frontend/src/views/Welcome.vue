@@ -2,14 +2,16 @@
   <div v-if="!authenticated" class="welcome-wrap">
     <div class="content">
       <logo />
-      <h1>Welcome to Hux!</h1>
-      <span>
-        An all-purpose tool to transform raw data into powerful market insights
-        and deliberate engagements: Aggregated Customer Data • Customized CDP •
-        Deep Dive Insights • Personalized Engagements Targeted Segmentation •
-        Addressable Audiences • Measure &amp; Optimize
+      <div class="font-weight-light text-h1 welcome-header">
+        Unleash the power of Hux
+      </div>
+      <span class="text-body-1 welcome-body">
+        We’ve built a new framework for connecting capabilities end-to-end and
+        elevating experiences. Hux, paired with our team of Experience
+        Management experts, helps our clients regain ownership of their data,
+        decisioning, and omnichannel orchestration capabilities to manage
+        experiences at scale.
       </span>
-      <h2>All Together, Entirely</h2>
       <v-btn
         :to="{ name: 'Home' }"
         data-e2e="signin"
@@ -101,36 +103,15 @@ export default {
       width: 150px;
       height: 150px;
     }
-    h1 {
-      font-family: Open Sans;
-      font-style: normal;
-      font-weight: normal;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 24px;
-      line-height: 40px;
+    .welcome-header {
+      font-weight: 400;
       margin-top: 48px;
     }
-    span {
-      font-family: Open Sans;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 22px;
+    .welcome-body {
       text-align: center;
-      color: var(--v-black-darken1);
+      color: var(--v-black-lighten4);
       margin-top: 8px;
       max-width: 80%;
-    }
-    h2 {
-      font-style: normal;
-      font-weight: 500;
-      font-size: 21px;
-      line-height: 40px;
-      text-align: center;
-      letter-spacing: 0.1px;
-      color: var(--v-greenLight-base);
-      margin-top: 8px;
     }
     .btn-signin {
       min-height: 40px;

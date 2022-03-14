@@ -49,7 +49,6 @@ from huxunifylib.connectors.util.selector import (
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
-    parameter_store,
 )
 from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.schema.destinations import (
@@ -78,6 +77,7 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
+    set_destination_authentication_secrets,
 )
 import huxunify.api.constants as api_c
 
@@ -436,13 +436,10 @@ class DestinationAuthenticationPostView(SwaggerView):
 
         if auth_details:
             # store the secrets for the updated authentication details
-            authentication_parameters = (
-                parameter_store.set_destination_authentication_secrets(
-                    authentication_details=auth_details,
-                    is_updated=True,
-                    destination_id=destination_id,
-                    destination_type=platform_type,
-                )
+            authentication_parameters = set_destination_authentication_secrets(
+                authentication_details=auth_details,
+                destination_id=str(destination_id),
+                destination_type=platform_type,
             )
             is_added = True
 
@@ -918,7 +915,7 @@ class DestinationDataExtPostView(SwaggerView):
                         f'destination "{destination[db_c.NAME]}" '
                         f"by {user[api_c.USER_NAME]}."
                     ),
-                    api_c.DESTINATIONS_TAG,
+                    db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
                     user[api_c.USER_NAME],
                 )
             except AudienceAlreadyExists:
@@ -1029,7 +1026,7 @@ class DestinationPatchView(SwaggerView):
                 f"{user[api_c.USER_NAME]} successfully updated"
                 f' "{updated_destination[db_c.NAME]}" destination.'
             ),
-            api_c.DESTINATION,
+            db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
             user[api_c.USER_NAME],
         )
 
@@ -1185,7 +1182,7 @@ class DestinationsRequestView(SwaggerView):
                 f"{user[api_c.USER_NAME]} successfully requested"
                 f' "{destination[db_c.NAME]}" destination.'
             ),
-            api_c.DESTINATION,
+            db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
             user[api_c.USER_NAME],
         )
 
@@ -1252,7 +1249,7 @@ class DestinationDeleteView(SwaggerView):
                     f"{user[api_c.USER_NAME]} requested delete for "
                     f"{destination_id} that does not exist."
                 ),
-                api_c.DESTINATION,
+                db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
                 user[api_c.USER_NAME],
             )
             return HuxResponse.NO_CONTENT()
@@ -1272,7 +1269,7 @@ class DestinationDeleteView(SwaggerView):
                 f"{user[api_c.USER_NAME]} {'deleted' if deleted_flag else 'failed to delete'}"
                 f' "{destination[db_c.NAME]}" destination.'
             ),
-            api_c.DESTINATION,
+            db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
             user[api_c.USER_NAME],
         )
 

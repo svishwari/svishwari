@@ -254,7 +254,7 @@ class DestinationPutSchema(Schema):
     """Destination put schema class"""
 
     authentication_details = fields.Field()
-    link = fields.String(default=None)
+    link = fields.String(default=None, missing=None)
     configuration = fields.Nested(
         DestinationDataExtConfigSchema, required=False
     )

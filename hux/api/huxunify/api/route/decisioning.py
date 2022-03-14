@@ -281,7 +281,7 @@ class SetModelStatus(SwaggerView):
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 f'Model requested "{model[db_c.NAME]}" '
                 f"by {user[api_c.USER_NAME]}.",
-                api_c.MODELS,
+                db_c.NOTIFICATION_CATEGORY_MODELS,
                 user[api_c.USER_NAME],
             )
             logger.info(
@@ -373,7 +373,7 @@ class RemoveRequestedModel(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 f'Requested model "{model[db_c.NAME]}" removed by {user[api_c.USER_NAME]}.',
-                api_c.MODELS,
+                db_c.NOTIFICATION_CATEGORY_MODELS,
                 user[api_c.USER_NAME],
             )
             logger.info(
@@ -671,7 +671,18 @@ class ModelOverview(SwaggerView):
 class ModelDriftView(SwaggerView):
     """Model Drift Class"""
 
-    parameters = api_c.MODEL_ID_PARAMS
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": api_c.VERSION,
+            "description": "Model version, if not provided, "
+            "it will take the latest.",
+            "type": "str",
+            "in": "path",
+            "required": False,
+            "example": "21.7.31",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model drift.",
@@ -689,7 +700,9 @@ class ModelDriftView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
+    def get(
+        self, user: dict, model_id: str, model_version: str = None
+    ) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -697,8 +710,9 @@ class ModelDriftView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (str): Model ID.
             user (dict): User object.
+            model_id (str): Model ID.
+            model_version (str): Model Version.
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model drift,
@@ -717,9 +731,18 @@ class ModelDriftView(SwaggerView):
             ]
         else:
             tecton = Tecton()
-
-            # get model information
-            model_versions = tecton.get_model_version_history(model_id)
+            database = get_db_client()
+            # get model versions
+            model_versions = (
+                [
+                    {
+                        api_c.CURRENT_VERSION: model_version,
+                        api_c.TYPE: api_c.DRIFT,
+                    }
+                ]
+                if model_version
+                else tecton.get_model_version_history(model_id)
+            )
 
             # if model versions not found, return not found.
             if not model_versions:
@@ -728,9 +751,21 @@ class ModelDriftView(SwaggerView):
             # take the latest model
             latest_model = model_versions[0]
 
-            drift_data = tecton.get_model_drift(
-                model_id, latest_model[api_c.TYPE], model_versions
+            drift_data = get_cache_entry(
+                database,
+                f"drift.{model_id}.{latest_model[api_c.CURRENT_VERSION]}",
             )
+
+            # create cache entry in db only if drift fetched from Tecton is not empty
+            if not drift_data:
+                drift_data = tecton.get_model_drift(
+                    model_id, latest_model[api_c.TYPE], model_versions
+                )
+                create_cache_entry(
+                    database,
+                    f"drift.{model_id}.{latest_model[api_c.CURRENT_VERSION]}",
+                    drift_data,
+                )
 
         return (
             jsonify(ModelDriftSchema(many=True).dump(drift_data)),

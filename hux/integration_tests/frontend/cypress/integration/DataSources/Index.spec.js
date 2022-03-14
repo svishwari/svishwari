@@ -65,4 +65,28 @@ describe("Data Management > Data Sources", () => {
 
     cy.get(selector.engagement.exitDrawer).click()
   })
+
+  it("should be able to open data feeds table", () => {
+    cy.get(selector.nav.dataSources).eq(0).click()
+    cy.location("pathname").should("eq", route.dataSources)
+
+    // click on add button on nav bar header
+    cy.get(selector.datasources).should("exist")
+    cy.get(selector.datasources).eq(0).click()
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.get(".datasource-datafeeds-table").should("exist")
+
+    cy.get(".data-feed-name").eq(0).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.get(selector.dataFilesWrapper).then((elem) => {
+      if (elem.find(".datasource-datafeeds-details-table").length > 0) {
+        cy.get(selector.dataFeedDetailsTable).should("exist")
+      } else {
+        cy.wrap(elem.find(".empty-error-card")).should("exist")
+      }
+    })
+  })
 })

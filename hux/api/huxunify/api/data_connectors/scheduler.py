@@ -3,6 +3,7 @@ import asyncio
 from datetime import datetime
 from pymongo import MongoClient
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.cache_management import create_cache_entry
 from huxunifylib.database.collection_management import get_documents
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
@@ -18,12 +19,131 @@ from huxunifylib.connectors.util.selector import (
 )
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import get_next_schedule
 from huxunify.api.data_connectors.courier import (
     get_destination_config,
     get_audience_destination_pairs,
 )
 from huxunify.api.data_connectors.jira import JiraConnection
+
+monthly_period_items_dict = {
+    "first": "1",
+    "second": "2",
+    "third": "3",
+    "fourth": "4",
+    "last": "L",
+}
+
+day_of_week_name_dict = {
+    "Monday": "1",
+    "Tuesday": "2",
+    "Wednesday": "3",
+    "Thursday": "4",
+    "Friday": "5",
+    "Saturday": "6",
+    "Sunday": "7",
+}
+
+
+# pylint: disable=too-many-branches
+def _add_cron_for_monthly(schedule: dict, cron_exp: dict) -> str:
+    """Adds monthly cron to existing cron expression.
+
+    Args:
+         schedule: Dictionary object of schedule.
+         cron_exp: Cron exp dict to append monthly schedule.
+     Returns:
+         dict: Updated cron expression.
+    """
+
+    day_of_month_cron_str = ""
+    day_of_week_cron_str = ""
+
+    day_of_month_list = (
+        schedule.get("day_of_month")
+        if isinstance(schedule.get("day_of_month"), list)
+        else [schedule.get("day_of_month")]
+    )
+
+    day_of_month_list = [str(item) for item in day_of_month_list]
+    period_items = [
+        item.lower() for item in schedule.get("monthly_period_items", [])
+    ]
+
+    if len(period_items) == 1:
+        period_item_val = monthly_period_items_dict.get(period_items[0])
+
+        if period_items[0] == "day":
+            day_of_month_cron_str = ",".join(day_of_month_list) + ","
+
+        elif period_items[0] == "last":
+
+            for d_month in day_of_month_list:
+                day_of_week_digit = day_of_week_name_dict.get(d_month)
+                if day_of_week_digit:
+                    day_of_week_cron_str = (
+                        f"{day_of_week_cron_str}"
+                        f"{period_item_val}"
+                        f"{day_of_week_digit},"
+                    )
+
+                elif d_month == "Day":
+                    day_of_month_cron_str = (
+                        f"{day_of_month_cron_str}" f"{period_item_val},"
+                    )
+
+        elif period_item_val:
+            for d_month in day_of_month_list:
+                day_of_week_digit = day_of_week_name_dict.get(d_month)
+                if day_of_week_digit:
+                    day_of_week_cron_str = (
+                        f"{day_of_week_cron_str}"
+                        f"{day_of_week_digit}#"
+                        f"{period_item_val},"
+                    )
+
+                elif d_month == "Day":
+                    day_of_month_cron_str = (
+                        f"{day_of_month_cron_str}" f"{period_item_val},"
+                    )
+
+    elif len(day_of_month_list) == 1:
+        if day_of_month_list[0] == "Day":
+            for period_item in period_items:
+                period_item_val = monthly_period_items_dict.get(period_item)
+                if period_item_val:
+                    day_of_month_cron_str = (
+                        f"{day_of_month_cron_str}" f"{period_item_val},"
+                    )
+        day_of_week_digit = day_of_week_name_dict.get(day_of_month_list[0])
+        if day_of_week_digit:
+            for period_item in period_items:
+                period_item_val = monthly_period_items_dict.get(period_item)
+                if period_item == "last":
+                    day_of_week_cron_str = (
+                        f"{day_of_week_cron_str}"
+                        f"{period_item_val}"
+                        f"{day_of_week_digit},"
+                    )
+
+                elif period_item_val:
+                    day_of_week_cron_str = (
+                        f"{day_of_week_cron_str}"
+                        f"{day_of_week_digit}#"
+                        f"{period_item_val},"
+                    )
+
+    if day_of_month_cron_str:
+        cron_exp["day_of_month"] = day_of_month_cron_str[:-1]
+
+    if day_of_week_cron_str:
+        cron_exp["day_of_week"] = day_of_week_cron_str[:-1]
+
+    if schedule["every"] > 1:
+        cron_exp["month"] = f"{cron_exp['month']}/{schedule['every']}"
+
+    return cron_exp
 
 
 def generate_cron(schedule: dict) -> str:
@@ -71,17 +191,8 @@ def generate_cron(schedule: dict) -> str:
             ] = f"{cron_exp['day_of_month']}/{schedule['every']}"
 
     if schedule["periodicity"] == "Monthly":
-        day_of_month = schedule.get("day_of_month")
+        cron_exp = _add_cron_for_monthly(schedule, cron_exp)
 
-        # Supporting both list and item.
-        cron_exp["day_of_month"] = (
-            ",".join(day_of_month)
-            if isinstance(day_of_month, list)
-            else day_of_month
-        )
-
-        if schedule["every"] > 1:
-            cron_exp["month"] = f"{cron_exp['month']}/{schedule['every']}"
     return " ".join([str(val) for val in cron_exp.values()])
 
 
@@ -109,7 +220,7 @@ async def delivery_destination(
                 f'"{engagement[db_c.NAME]}" to destination ID '
                 f'"{destination_id}" because the audience does not exist.'
             ),
-            api_c.DELIVERY_TAG,
+            db_c.NOTIFICATION_CATEGORY_DELIVERY,
             engagement[db_c.UPDATED_BY],
         )
         return
@@ -126,7 +237,7 @@ async def delivery_destination(
                 f'"{engagement[db_c.NAME]}" to destination ID '
                 f'"{destination_id}" because the destination does not exist.'
             ),
-            api_c.DELIVERY_TAG,
+            db_c.NOTIFICATION_CATEGORY_DELIVERY,
             engagement[db_c.UPDATED_BY],
         )
         return
@@ -161,7 +272,7 @@ async def delivery_destination(
             f'"{engagement[db_c.NAME]}" to destination '
             f'"{destination[db_c.NAME]}".'
         ),
-        api_c.DELIVERY_TAG,
+        db_c.NOTIFICATION_CATEGORY_DELIVERY,
         engagement[db_c.UPDATED_BY],
     )
 
@@ -288,3 +399,48 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     enabled=False,
                     deleted=True,
                 )
+
+
+async def cache_model_features(database: MongoClient, model_id: str) -> None:
+    """Fetch and cache model features for given model id
+
+    Args:
+        database (MongoClient): database client
+        model_id (str): model id
+
+    """
+    tecton = Tecton()
+    model_versions = tecton.get_model_version_history(model_id)
+
+    for model_version in model_versions:
+        model_features = tecton.get_model_features(
+            model_id, model_version[api_c.CURRENT_VERSION]
+        )
+        if model_features:
+            create_cache_entry(
+                database,
+                f"features.{model_id}.{model_version}",
+                model_features,
+            )
+
+
+def run_scheduled_tecton_feature_cache(database: MongoClient) -> None:
+    """function to run scheduled tecton feature cache refresh.
+
+    Args:
+        database (MongoClient): The mongo database client.
+
+    """
+
+    # set the event loop
+    asyncio.set_event_loop(asyncio.SelectorEventLoop())
+    loop = asyncio.get_event_loop()
+
+    all_models = Tecton().get_models()
+
+    for model in all_models:
+        # fire and forget task.
+        task = loop.create_task(
+            cache_model_features(database, model[api_c.ID])
+        )
+        loop.run_until_complete(task)

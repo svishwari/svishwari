@@ -130,15 +130,15 @@ class ApplicationGetView(SwaggerView):
                 {db_c.ID: {"$in": user_application_ids}},
             ).get(db_c.DOCUMENTS)
 
-            for i in applications:
-                i[api_c.URL] = next(
+            for app in applications:
+                app[api_c.URL] = next(
                     (
                         item
                         for item in user[db_c.USER_APPLICATIONS]
-                        if item[api_c.ID] == i[db_c.ID]
+                        if item[api_c.ID] == app[db_c.ID]
                     )
                 )[api_c.URL]
-                i[api_c.IS_ADDED] = True
+                app[api_c.IS_ADDED] = True
         # Return all the applications user can add.
         # In this case, we do not need to show uncategorized applications
         else:
@@ -153,8 +153,8 @@ class ApplicationGetView(SwaggerView):
                 },
             ).get(db_c.DOCUMENTS)
 
-            for i in applications:
-                i[api_c.IS_ADDED] = [db_c.ID] in user_application_ids
+            for app in applications:
+                app[api_c.IS_ADDED] = app[db_c.ID] in user_application_ids
 
         return (
             jsonify(ApplicationsGETSchema(many=True).dump(applications)),

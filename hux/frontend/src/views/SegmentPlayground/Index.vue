@@ -1,5 +1,11 @@
 <template>
-  <div>
+  <div
+    :class="
+      !loading && !hasOverview
+        ? 'playground-outermost-wrap white'
+        : 'playground-outermost-wrap'
+    "
+  >
     <page-header :header-height="isEdit ? '70' : '110'" help-icon>
       <template slot="left">
         <div>
@@ -12,6 +18,7 @@
       </template>
       <template #right>
         <tips-menu
+          v-if="hasOverview"
           :panel-list-items="panelListItems"
           header="Segment Playground user guide"
           :right-position="!isEdit ? '0rem' : '5rem'"
@@ -50,9 +57,16 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <page
+      v-if="!loading && hasOverview && !errorState"
       max-width="100%"
-      padding="0 24px"
-      class="white segmentation playground-wrap"
+      class="
+        white
+        segmentation
+        playground-wrap
+        flex-grow-1 flex-shrink-1
+        mw-100
+        content-section
+      "
     >
       <v-row class="ma-0 segment-wrap">
         <v-col
@@ -79,7 +93,7 @@
                 text--darken-4
                 input-placeholder
                 pt-3
-                h-86
+                audience-form
               "
               data-e2e="edit-audience-name"
             />
@@ -133,6 +147,31 @@
         </template>
       </hux-footer>
     </page>
+    <v-row v-else-if="!loading && !errorState" class="ma-0 empty-row">
+      <empty-page type="no-customer-data" :size="50">
+        <template #title>
+          <div class="h2">No customer data to show</div>
+        </template>
+        <template #subtitle>
+          <div class="body-2 mt-3">
+            Please be patient while our team connects your data.
+          </div>
+        </template>
+      </empty-page>
+    </v-row>
+    <v-row v-else-if="!loading && errorState" class="ma-0 error-row">
+      <empty-page type="error-on-screens" :size="50">
+        <template #title>
+          <div class="h2">Segment playground is currently unavailable</div>
+        </template>
+        <template #subtitle>
+          <div class="body-2 mt-3">
+            Our team is working hard to fix it. Please be patient and try again
+            soon!
+          </div>
+        </template>
+      </empty-page>
+    </v-row>
     <confirm-modal
       v-model="confirmModal"
       :icon="confirmData.icon"
@@ -205,6 +244,7 @@ import TipsMenu from "@/components/common/TipsMenu.vue"
 import Geography from "./Geography.vue"
 import Overview from "./Overview.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
+import EmptyPage from "@/components/common/EmptyPage.vue"
 
 export default {
   name: "SegmentPlayground",
@@ -220,6 +260,7 @@ export default {
     TipsMenu,
     TextField,
     ConfirmModal,
+    EmptyPage,
   },
   data() {
     return {
@@ -292,6 +333,8 @@ export default {
         leftButtonText: "Cancel",
       },
       confirmModal: false,
+      errorState: false,
+      audienceId: "",
     }
   },
   computed: {
@@ -299,6 +342,9 @@ export default {
       overview: "customers/overview",
       getAudience: "audiences/audience",
     }),
+    hasOverview() {
+      return this.overview && Object.keys(this.overview).length > 0
+    },
     breadcrumbItems() {
       const items = !this.isEdit ? this.breadcrumbs : this.editBreadcrumbs
       if (this.isEdit && this.audience && this.audience.name) {
@@ -331,28 +377,27 @@ export default {
     this.loading = true
     this.loadingOverview = true
     try {
-      if (this.$route.name === "AudienceUpdate") {
-        this.isEdit = true
-        this.isClone = false
-        await this.getOverview()
-        this.audienceId = this.$route.params.id
-        await this.getAudienceById(this.audienceId)
-        const data = this.getAudience(this.audienceId)
-        this.mapAudienceData(data)
-      } else if (this.$route.name === "CloneAudience") {
-        this.isEdit = false
-        this.isClone = true
-        await this.getOverview()
-        this.audienceId = this.$route.params.id
-        await this.getAudienceById(this.audienceId)
-        const data = this.getAudience(this.audienceId)
-        this.mapAudienceData(data)
-      } else {
-        await this.getOverview()
+      switch (this.$route.name) {
+        case "AudienceUpdate":
+          await this.getAudienceData(true, this.$route.params.id)
+          break
+
+        case "CloneAudience":
+          await this.getAudienceData(false, this.$route.params.id)
+          break
+
+        default:
+          await this.getOverview()
       }
+    } catch (error) {
+      this.errorState = true
     } finally {
       this.loadingOverview = false
       this.loading = false
+    }
+    if (this.audienceId !== "") {
+      const data = this.getAudience(this.audienceId)
+      this.mapAudienceData(data)
     }
   },
   methods: {
@@ -363,6 +408,13 @@ export default {
       getAudienceById: "audiences/getAudienceById",
       deleteAudience: "audiences/remove",
     }),
+    async getAudienceData(isEdit, audienceId) {
+      this.isEdit = isEdit
+      this.isClone = !isEdit
+      this.audienceId = audienceId
+      await this.getOverview()
+      await this.getAudienceById(audienceId)
+    },
     updateLoad(data) {
       this.overviewLoading = data
       if (!data) this.overviewLoadingStamp = new Date()
@@ -516,37 +568,69 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.playground-wrap {
-  .segment-wrap {
-    .attributes {
-      flex: 0 0 66.63934426%;
-      width: 66.63934426%;
+.playground-outermost-wrap {
+  .playground-wrap {
+    ::v-deep .container {
+      padding: 0px 24px !important;
     }
-    .overviews {
-      flex: 0 0 33.360655737704918%;
-      width: 33.360655737704918%;
-      @extend .border-start;
-      border-color: var(--v-black-lighten3);
+    .segment-wrap {
+      .attributes {
+        flex: 0 0 66.63934426%;
+        width: 66.63934426%;
+      }
+      .overviews {
+        flex: 0 0 33.360655737704918%;
+        width: 33.360655737704918%;
+        @extend .border-start;
+        border-color: var(--v-black-lighten3);
+      }
     }
   }
-}
+  ::v-deep {
+    .error-row {
+      padding-top: 105px !important;
+    }
+    .empty-row {
+      padding-top: 150px !important;
+    }
+  }
 
-.h-86 {
-  height: 86px;
-  width: 360px;
-}
+  .audience-form {
+    height: 86px;
+    width: 360px;
+  }
 
-.delete-tooltip {
-  width: 191px;
-  height: 32px;
-  margin: -5px 0px -5px 0px;
-}
+  .delete-tooltip {
+    width: 191px;
+    height: 32px;
+    margin: -5px 0px -5px 0px;
+  }
 
-.cancel-color {
-  color: var(--v-primary-base);
-}
+  .cancel-color {
+    color: var(--v-primary-base);
+  }
 
-.menuable__content__active {
-  z-index: 100 !important;
+  .menuable__content__active {
+    z-index: 100 !important;
+  }
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
+.content-section {
+  height: calc(100vh - 200px);
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 </style>

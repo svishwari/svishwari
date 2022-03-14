@@ -16,7 +16,10 @@
       :indeterminate="loading"
       data-e2e="loader"
     />
-    <div v-if="!loading">
+    <div
+      v-if="!loading"
+      class="flex-grow-1 flex-shrink-1 mw-100 content-section"
+    >
       <div v-if="overviewListItems != 0" class="padding-30">
         <v-card class="card-style pa-5">
           <div class="d-flex justify-space-between">
@@ -169,11 +172,14 @@
             </v-tab>
           </div>
         </v-tabs>
-        <v-tabs-items v-model="tabOption" class="mt-2">
-          <v-tab-item key="overview">
+        <v-tabs-items v-model="tabOption" class="mt-2 tabs-item">
+          <v-tab-item key="overview" class="tab-item">
             <v-row>
               <v-col md="6">
-                <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+                <v-card
+                  class="mt-3 rounded-lg box-shadow-5 tab-card-1"
+                  height="365"
+                >
                   <v-progress-linear
                     v-if="loadingCustomerChart"
                     :active="loadingCustomerChart"
@@ -240,7 +246,10 @@
                 </v-card>
               </v-col>
               <v-col md="6">
-                <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+                <v-card
+                  class="mt-3 rounded-lg box-shadow-5 tab-card-2"
+                  height="365"
+                >
                   <v-progress-linear
                     v-if="loadingSpendChart"
                     :active="loadingSpendChart"
@@ -328,7 +337,10 @@
             </v-row>
             <v-row class="mt-2 mb-4">
               <v-col md="12">
-                <v-card class="mt-3 rounded-lg box-shadow-5" height="395">
+                <v-card
+                  class="mt-3 rounded-lg box-shadow-5 tab-card-3"
+                  height="395"
+                >
                   <v-row>
                     <v-progress-linear
                       v-if="loadingGeoOverview"
@@ -773,6 +785,13 @@ export default {
   ::v-deep .metric-card-wrapper .v-icon::before {
     font-size: 30px;
   }
+  .tabs-item {
+    .tab-item {
+      .tab-card-3 {
+        background: transparent;
+      }
+    }
+  }
   .combined-list {
     max-height: 395px;
     border-radius: 0px 12px 0px 0px;
@@ -842,5 +861,10 @@ export default {
   font-weight: 300 !important;
   letter-spacing: 0 !important;
   color: var(--v-black-base);
+}
+.content-section {
+  height: calc(100vh - 180px);
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 </style>

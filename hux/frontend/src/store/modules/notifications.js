@@ -8,6 +8,7 @@ const state = {
   items: {},
   users: {},
   latest5: {},
+  total: 0,
 }
 
 const getters = {
@@ -29,10 +30,7 @@ const mutations = {
     })
   },
   SET_ALL_USERS(state, items) {
-    state.users = {}
-    items.forEach((item) => {
-      Vue.set(state.users, item.id, item)
-    })
+    Vue.set(state, "users", items)
   },
 
   SET_ONE(state, item) {
@@ -40,7 +38,7 @@ const mutations = {
   },
 
   SET_TOTAL(state, item) {
-    state.total = item
+    Vue.set(state, "total", item)
   },
 
   RESET_ALL(state) {
@@ -92,7 +90,7 @@ const actions = {
   },
   async getAllUsers({ commit }) {
     try {
-      const response = await api.users.all()
+      const response = await api.notifications.getAllUsers()
       commit("SET_ALL_USERS", response.data)
     } catch (error) {
       handleError(error)

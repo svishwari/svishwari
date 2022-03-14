@@ -19,6 +19,7 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_matching_trends,
     get_data_sources,
     check_cdp_connections_api_connection,
+    get_identity_overview,
 )
 from huxunify.test import constants as t_c
 from huxunify.app import create_app
@@ -35,7 +36,9 @@ class CDPConnectionsTest(TestCase):
 
         self.config = get_config(api_c.TEST_MODE)
         self.request_mocker = requests_mock.Mocker()
-        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         self.request_mocker.start()
 
         self.addCleanup(mock.patch.stopall)
@@ -178,7 +181,18 @@ class CDPConnectionsTest(TestCase):
             self.assertIn(api_c.RECORDS_PROCESSED, data_feed)
             self.assertIn(api_c.RECORDS_RECEIVED, data_feed)
             self.assertIn(api_c.RECORDS_PROCESSED_PERCENTAGE, data_feed)
+            self.assertIn(
+                api_c.VALUE, data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE]
+            )
+            self.assertIn(
+                api_c.FLAG_INDICATOR,
+                data_feed[api_c.RECORDS_PROCESSED_PERCENTAGE],
+            )
             self.assertIn(api_c.THIRTY_DAYS_AVG, data_feed)
+            self.assertIn(api_c.VALUE, data_feed[api_c.THIRTY_DAYS_AVG])
+            self.assertIn(
+                api_c.FLAG_INDICATOR, data_feed[api_c.THIRTY_DAYS_AVG]
+            )
 
     @given(
         start_date=st.dates().map(
@@ -294,3 +308,32 @@ class CDPConnectionsTest(TestCase):
                 start_date=start_date,
                 end_date=end_date,
             )
+
+    def test_get_identity_overview(self):
+        """Test fetching identity overview"""
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json=t_c.IDENTITY_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        identity_insights = get_identity_overview(token="")
+
+        self.assertEqual(
+            t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY], identity_insights
+        )
+
+    def test_get_identity_overview_raise_dependency_error(self):
+        """Test fetching identity overview with default filter"""
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_identity_overview(token="")

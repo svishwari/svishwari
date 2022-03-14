@@ -50,6 +50,12 @@ client["users"].tickets = () => {
 }
 //#endregion
 
+//#region Configurations
+client["configurations"].getModules = () => {
+  return http.get("/configurations/modules")
+}
+//#endregion
+
 //#region Customers
 // Custom one-off resource endpoints
 
@@ -154,25 +160,18 @@ client["engagements"].deliver = (resourceId, data) => {
 client["engagements"].attachAudience = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/audiences`, data)
 }
-client["engagements"].attachDestination = (engagementId, audienceId, data) => {
-  return http.post(
-    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
-    data
-  )
+
+client["engagements"].attachDestination = (audienceId, data) => {
+  return http.post(`/audiences/${audienceId}/destinations`, data)
 }
 
-client["engagements"].detachDestination = (engagementId, audienceId, data) => {
+client["engagements"].detachDestination = (audienceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
-    return http.delete(
-      `/engagements/${engagementId}/audience/${audienceId}/destinations`,
-      { data: data }
-    )
+    return http.delete(`/audience/${audienceId}/destinations`, { data: data })
   } else {
-    return http.delete(
-      `/engagements/${engagementId}/audience/${audienceId}/destinations/${data.id}`
-    )
+    return http.delete(`/audience/${audienceId}/destinations/${data.id}`)
   }
 }
 
@@ -389,7 +388,7 @@ client["notifications"].find = (notification_id) => {
 }
 
 client["notifications"].getAllUsers = () => {
-  return http.get("/users")
+  return http.get("/notifications/users")
 }
 
 //#endregion
@@ -428,6 +427,12 @@ client["models"].remove = (model) => {
   return http.delete(`/models?model_id=${model.id}`)
 }
 
+client["models"].getPipePerfomance = (id, version) => {
+  if (version)
+    return http.get(`/models/${id}/pipeline-performance?version=${version}`)
+  else return http.get(`/models/${id}/pipeline-performance`)
+}
+
 //#region Data sources
 client.dataSources.dataFeeds = (type) => {
   return http.get(`/data-sources/${type}/datafeeds`)
@@ -451,7 +456,7 @@ client.dataSources.dataFeedsDetails = (
 
 //#region Application
 client.applications.getActiveApplications = (flag) => {
-  return http.get(`/applications?only_active=${flag}`)
+  return http.get(`/applications?user=${flag}`)
 }
 
 client.applications.createApplication = (data) => {

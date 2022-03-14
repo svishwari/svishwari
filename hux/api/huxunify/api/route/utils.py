@@ -1,12 +1,11 @@
 """Purpose of this file is to house route utilities."""
 # pylint: disable=too-many-lines
-import copy
-import random
+import statistics
 from collections import defaultdict
 from datetime import datetime, date
 import re
 from itertools import groupby
-from typing import Tuple, Union
+from typing import Tuple, Union, Generator
 from http import HTTPStatus
 from bson import ObjectId
 
@@ -21,8 +20,8 @@ from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.database.util.client import db_client_factory
 
+from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -37,6 +36,7 @@ from huxunifylib.database.user_management import (
 )
 from huxunifylib.database.client import DatabaseClient
 
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.tecton import Tecton
@@ -48,7 +48,9 @@ from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     get_user_info,
 )
-from huxunify.api.data_connectors.cdp import check_cdm_api_connection
+from huxunify.api.data_connectors.cdp import (
+    check_cdm_api_connection,
+)
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
@@ -59,9 +61,6 @@ from huxunify.api.exceptions import (
 from huxunify.api.prometheus import record_health_status_metric
 from huxunify.api.stubbed_data.stub_shap_data import shap_data
 from huxunify.api.schema.user import RequestedUserSchema
-from huxunify.api.stubbed_data.datasource_datafeed_stub import (
-    datafeed_detail_stub_data,
-)
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -462,7 +461,7 @@ def is_component_favorite(
     )
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
-        ObjectId(component_id) in user_favorites.get(component_name)
+        ObjectId(component_id) in user_favorites.get(component_name, [])
     ):
         return True
 
@@ -961,14 +960,13 @@ def group_and_aggregate_datafeed_details_by_date(
     grouped_datafeed_details = []
 
     grouped_by_date = groupby(
-        datafeed_details, lambda x: x[api_c.LAST_PROCESSED]
+        datafeed_details, lambda x: x[api_c.PROCESSED_START_DATE]
     )
 
+    stdev_sample_list = []
     for df_date, df_details in grouped_by_date:
         data_feed_by_date = {
             api_c.NAME: df_date,
-            api_c.LAST_PROCESSED: df_date,
-            api_c.THIRTY_DAYS_AVG: round(random.uniform(0.5, 1), 3),
             api_c.DATA_FILES: [],
         }
         total_records_received = 0
@@ -976,13 +974,36 @@ def group_and_aggregate_datafeed_details_by_date(
 
         status = api_c.STATUS_COMPLETE
         for df_detail in df_details:
-            total_records_received += df_detail[api_c.RECORDS_RECEIVED]
-            total_records_processed += df_detail[api_c.RECORDS_PROCESSED]
+            # set last processed start for datafeeds aggregated by date
+            # i.e. Minimum of last processed start for all grouped datafeeds
+            if (
+                not data_feed_by_date.get(api_c.PROCESSED_START_DATE)
+                or data_feed_by_date[api_c.PROCESSED_START_DATE]
+                >= df_detail[api_c.PROCESSED_START_DATE]
+            ):
+                data_feed_by_date[api_c.PROCESSED_START_DATE] = df_detail[
+                    api_c.PROCESSED_START_DATE
+                ]
+            # set last processed end for datafeeds aggregated by date
+            # i.e. Maximum of last processed end for all grouped datafeeds
+            if (
+                not data_feed_by_date.get(api_c.PROCESSED_END_DATE)
+                or data_feed_by_date[api_c.PROCESSED_END_DATE]
+                <= df_detail[api_c.PROCESSED_END_DATE]
+            ):
+                data_feed_by_date[api_c.PROCESSED_END_DATE] = df_detail[
+                    api_c.PROCESSED_END_DATE
+                ]
+            total_records_received += df_detail.get(api_c.RECORDS_RECEIVED, 0)
+            total_records_processed += df_detail.get(
+                api_c.RECORDS_PROCESSED, 0
+            )
             data_feed_by_date[api_c.DATA_FILES].append(df_detail)
 
-            if status == api_c.STATUS_COMPLETE and df_detail[api_c.STATUS] in [
-                api_c.STATUS_RUNNING
-            ]:
+            if (
+                status == api_c.STATUS_COMPLETE
+                and df_detail[api_c.STATUS] == api_c.STATUS_RUNNING
+            ):
                 status = api_c.STATUS_INCOMPLETE
 
             elif (
@@ -991,13 +1012,39 @@ def group_and_aggregate_datafeed_details_by_date(
             ):
                 status = api_c.STATUS_FAILED
 
+        if status in [api_c.STATUS_COMPLETE] and data_feed_by_date.get(
+            api_c.PROCESSED_END_DATE
+        ):
+            data_feed_by_date[
+                api_c.RUN_DURATION
+            ] = parse_seconds_to_duration_string(
+                int(
+                    (
+                        data_feed_by_date[api_c.PROCESSED_END_DATE]
+                        - data_feed_by_date[api_c.PROCESSED_START_DATE]
+                    ).total_seconds()
+                )
+            )
+
+        records_processed_percentage = (
+            round(total_records_processed / total_records_received, 3)
+            if total_records_received
+            else 0
+        )
+
         _ = data_feed_by_date.update(
             {
                 api_c.RECORDS_PROCESSED: total_records_processed,
                 api_c.RECORDS_RECEIVED: total_records_received,
-                api_c.RECORDS_PROCESSED_PERCENTAGE: round(
-                    total_records_processed / total_records_received, 3
-                ),
+                api_c.RECORDS_PROCESSED_PERCENTAGE: {
+                    api_c.VALUE: records_processed_percentage,
+                    api_c.FLAG_INDICATOR: (
+                        statistics.stdev(stdev_sample_list)
+                        if len(stdev_sample_list) > 1
+                        else 0
+                    )
+                    > 0.1,
+                },
                 api_c.STATUS: status,
             }
         )
@@ -1007,57 +1054,71 @@ def group_and_aggregate_datafeed_details_by_date(
     return grouped_datafeed_details
 
 
-def fetch_datafeed_details(
-    datafeed_name: str, start_date: str, end_date: str, statuses: list = None
+def clean_and_aggregate_datafeed_details(
+    datafeed_details: list, do_aggregate: bool = False
 ) -> list:
-    """Fetch datafeed details
+    """Clean and aggregate datafeed details
 
     Args:
-        datafeed_name (str): Datafeed name
-        start_date (str): Start Date
-        end_date (str): End Date
-        statuses (list): list of statuses
+        datafeed_details (list): List of data feed file details
+        do_aggregate (bool): Flag specifying if aggregation needed
 
     Returns:
         list: list of data feed details
     """
-    datafeed_details = copy.deepcopy(datafeed_detail_stub_data)
 
-    _ = [
-        x.update(
+    stdev_sample_list = []
+    for df_detail in datafeed_details:
+        records_processed_percentage = (
+            (
+                df_detail[api_c.RECORDS_PROCESSED]
+                / df_detail[api_c.RECORDS_RECEIVED]
+            )
+            if df_detail.get(api_c.RECORDS_RECEIVED)
+            else 0
+        )
+        # TODO: Refactor computing standard deviation once we have clarity
+        stdev_sample_list.append(records_processed_percentage)
+        _ = df_detail.update(
             {
-                "filename": f"{datafeed_name}_{i}",
-                api_c.LAST_PROCESSED: parse(x[api_c.LAST_PROCESSED]),
+                api_c.PROCESSED_START_DATE: parse(
+                    df_detail[api_c.PROCESSED_START_DATE]
+                ),
+                api_c.PROCESSED_END_DATE: parse(
+                    df_detail[api_c.PROCESSED_END_DATE]
+                ),
+                api_c.STATUS: df_detail[api_c.STATUS].title(),
+                api_c.SUB_STATUS: df_detail[api_c.SUB_STATUS].title(),
+                api_c.RECORDS_PROCESSED_PERCENTAGE: {
+                    api_c.VALUE: records_processed_percentage,
+                    api_c.FLAG_INDICATOR: (
+                        statistics.stdev(stdev_sample_list)
+                        if len(stdev_sample_list) > 1
+                        else 0
+                    )
+                    > 0.1,
+                },
             }
         )
-        for i, x in enumerate(datafeed_details)
-    ]
-
-    if statuses:
-        datafeed_details = list(
-            filter(lambda x: x[api_c.STATUS] in statuses, datafeed_details)
-        )
-
-    if start_date and end_date:
-        start_date = parse(start_date).date()
-        end_date = parse(end_date).date()
-        datafeed_details = list(
-            filter(
-                lambda x: start_date
-                <= parse(
-                    datetime.strftime(
-                        x[api_c.LAST_PROCESSED], api_c.DEFAULT_DATE_FORMAT
-                    )
-                ).date()
-                <= end_date,
-                datafeed_details,
+        # compute run duration if success or running and end_dt available
+        if df_detail[api_c.STATUS] in [
+            api_c.STATUS_SUCCESS,
+            api_c.STATUS_RUNNING,
+        ] and df_detail.get(api_c.PROCESSED_END_DATE):
+            df_detail[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
+                int(
+                    (
+                        df_detail[api_c.PROCESSED_END_DATE]
+                        - df_detail[api_c.PROCESSED_START_DATE]
+                    ).total_seconds()
+                )
             )
-        )
 
-        if (end_date - start_date).days == 0:
-            return datafeed_details
-
-    return group_and_aggregate_datafeed_details_by_date(datafeed_details)
+    return (
+        group_and_aggregate_datafeed_details_by_date(datafeed_details)
+        if do_aggregate
+        else datafeed_details
+    )
 
 
 def clean_domain_name_string(domain_name: str) -> str:
@@ -1067,4 +1128,98 @@ def clean_domain_name_string(domain_name: str) -> str:
     Returns:
         str: Cleaned domain name.
     """
+    # This is to handle @ present in sfmc data.
+    if "@" in domain_name:
+        domain_name = domain_name.split("@")[1]
+
     return domain_name.replace(".", "-")
+
+
+def parse_seconds_to_duration_string(duration: int):
+    """Convert duration timedelta to HH:MM:SS format
+
+    Args:
+        duration (int): Duration in seconds
+
+    Returns:
+        str: duration string
+
+    """
+    seconds = duration % 60
+    minutes = (duration // 60) % 60
+    hours = duration // (60 * 60)
+
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
+def generate_cache_key_string(data: Union[dict, list]) -> Generator:
+    """Generates cache key strings for dicts and lists
+    Args:
+        data (Union[dict,list]): Input data to get cache key
+    Yields:
+        Generator: String Generator
+    """
+    for item in data:
+        if isinstance(item, list):
+            generate_cache_key_string(item)
+        elif isinstance(item, dict):
+            yield " ".join(
+                [x for key, value in item.items() for x in [key, str(value)]]
+            )
+        else:
+            yield item
+
+
+def set_destination_authentication_secrets(
+    authentication_details: dict,
+    destination_id: str,
+    destination_type: str,
+) -> dict:
+    """Save authentication details in cloud provider secret storage
+
+    Args:
+        authentication_details (dict): The key/secret pair to store away.
+        destination_id (str): destinations ID.
+        destination_type (str): destination type (i.e. facebook, sfmc)
+
+    Returns:
+        ssm_params (dict): The key to where the parameters are stored.
+    Raises:
+        KeyError: Exception when the key is missing in the object.
+        ProblemException: Any exception raised during endpoint execution.
+    """
+    ssm_params = {}
+
+    if destination_type not in api_c.DESTINATION_SECRETS:
+        raise KeyError(
+            f"{destination_type} does not have a secret store mapping."
+        )
+
+    for (
+        parameter_name,
+        secret,
+    ) in authentication_details.items():
+
+        # only store secrets in ssm, otherwise store in object.
+        if (
+            parameter_name
+            in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]
+        ):
+            ssm_params[parameter_name] = secret
+            continue
+
+        param_name = f"{api_c.PARAM_STORE_PREFIX}_{parameter_name}"
+        ssm_params[parameter_name] = param_name
+        try:
+            CloudClient().set_secret(secret_name=param_name, value=secret)
+        except Exception as exc:
+            logger.error("Failed to connect to secret store.")
+            logger.error(exc)
+            raise ProblemException(
+                status=HTTPStatus.BAD_REQUEST.value,
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=f"{api_c.SECRET_STORAGE_ERROR_MSG}"
+                f" destination_id: {destination_id}.",
+            ) from exc
+
+    return ssm_params

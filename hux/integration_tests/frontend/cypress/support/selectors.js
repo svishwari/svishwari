@@ -37,7 +37,7 @@ export default {
     segmentPlayground: "[data-e2e='nav-playground']",
 
     // orchestration:
-    destinations: "[data-e2e='nav-destinations']",
+    destinations: "[data-e2e='nav-multiple_map_pins']",
     engagements: "[data-e2e='nav-speaker_up']",
     audiences: "[data-e2e='nav-audiences']",
   },
@@ -52,6 +52,8 @@ export default {
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
     dataSourceButton: "[data-e2e='Data Source']",
+    application: "[data-e2e='application-dropdown']",
+    applicationOptions: "[data-e2e='application-options']",
   },
 
   // home
@@ -80,6 +82,7 @@ export default {
     summary: "[data-e2e='issues-summary']",
     time: "[data-e2e='issues-time']",
     return: "[data-e2e='issues-return']",
+    wrapper: "[data-e2e='issue-table-wrapper']",
   },
 
   // configuration
@@ -113,6 +116,8 @@ export default {
   pendingDataSourceRemove: "[data-e2e='data-source-list-Pending-remove']",
   removeDataSourceConfirmation: "[data-e2e='remove-data-source-confirmation']",
   pendingStatus: "[data-e2e='model-status-Pending']",
+  dataFeedDetailsTable: "[data-e2e='data-feed-details-table']",
+  dataFilesWrapper: "[data-e2e='data-files-wrapper']",
 
   //destinations
   destination: {
@@ -149,6 +154,7 @@ export default {
 
   // engagements
   engagement: {
+    nextStep: "[data-e2e='next-step']",
     addEngagement: "[data-e2e='add-engagement']",
     addEngagements: "a[href='/engagements/add']",
     enagagementName: "[data-e2e='engagement-name']",
@@ -166,7 +172,7 @@ export default {
     deliveryScheduleMetric: "[data-e2e='delivery-schedule-metric']",
     updatedMetric: "[data-e2e='updated-metric']",
     createdMetric: "[data-e2e='created-metric']",
-    deliveryHistory: "[data-e2e='deliver-history']",
+    deliveryHistory: "[data-e2e='delivery-history']",
     deliveryHistoryItems: "[data-e2e='delivery-list-items']",
     adsData: "[data-e2e='ads-data']",
     emailData: "[data-e2e='email-data']",
@@ -182,6 +188,14 @@ export default {
     },
     destinationRows: '[data-e2e="destination-rows"]',
     createEngagement: '[data-e2e="create-engagement"]',
+    allEngagements: '[data-e2e="engagement-breadcrumb"]',
+    engagementTabs: '[data-e2e="engagement-tabs"]',
+    overviewMetrics: '[data-e2e="overview-metrics"]',
+    overviewAudiences: '[data-e2e="overview-audiences"]',
+    advertisingOverview: '[data-e2e="advertising-overview"]',
+    emailOverview: '[data-e2e="email-overview"]',
+    accessActions: '[data-e2e="access-actions"]',
+    actions: '[data-e2e="actions"]',
   },
 
   //Customer Profiles
@@ -246,6 +260,8 @@ export default {
     deliveryhistory: "[data-e2e='delivery-history']",
     deliveryhistorydrawer: "[data-e2e='delivery-history-drawer']",
     overview: "[data-e2e='audience-overview']",
+    audienceChart: "[data-e2e='total-audience-chart']",
+    spendChart: "[data-e2e='audience-spend-chart']",
     mapchart: "[data-e2e='map-chart']",
     mapStateList: "[data-e2e='map-state-list']",
     incomeChart: "[data-e2e='income-chart']",
@@ -271,6 +287,13 @@ export default {
     removeAudience: "[data-e2e='remove-audience-confirmation']",
     addNewAudience: "[data-e2e='add-audience']",
     editAudienceName: "[data-e2e='edit-audience-name']",
+    engagementDeliveryDetails: "[data-e2e='engagement-delivery-details']",
+    standaloneDelivery: "[data-e2e='standalone-delivery']",
+    deliveryTab: "[data-e2e='delivery-tab']",
+    insightsTab: "[data-e2e='insights-tab']",
+    matchRateTable: "[data-e2e='audience-matchrates']",
+    lookalikes: "[data-e2e='lookalike-audiences']",
+    allAudiences: "[data-e2e='audience-breadcrumb']",
   },
 
   segmentPlayground: {
@@ -279,6 +302,13 @@ export default {
     selectAttrBtn: "[data-e2e='select-attr-btn']",
     selectOperatorBtn: "[data-e2e='select-operator-btn']",
     autoCompleteBtn: "[data-e2e='auto-complete-btn']",
+  },
+
+  //applications
+  application: {
+    addDrawer: "[data-e2e='drawerToggle']",
+    cancel: "[data-e2e='cancel-application-request']",
+    applications: "[data-e2e='applicationsDrawer']",
   },
 
   // email deliverability

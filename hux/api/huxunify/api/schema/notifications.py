@@ -33,24 +33,9 @@ class NotificationSchema(Schema):
     )
     category = Str(
         attribute="category",
-        validate=[
-            OneOf(
-                choices=[
-                    api_c.DESTINATIONS_TAG,
-                    api_c.MODELS_TAG,
-                    api_c.ENGAGEMENT_TAG,
-                    api_c.DELIVERY_TAG,
-                    api_c.ORCHESTRATION_TAG,
-                    api_c.CUSTOMERS_TAG,
-                    api_c.CDP_DATA_SOURCES_TAG,
-                    db_c.NOTIFICATION_CATEGORY_FLDR,
-                    db_c.NOTIFICATION_CATEGORY_CPDR,
-                    db_c.NOTIFICATION_CATEGORY_DR,
-                ]
-            )
-        ],
+        validate=[OneOf(choices=db_c.NOTIFICATION_CATEGORIES)],
         required=True,
-        example=api_c.DELIVERY_TAG,
+        example=db_c.NOTIFICATION_CATEGORY_DELIVERY.title(),
     )
     username = Str(
         attribute="username",
@@ -97,7 +82,7 @@ class NotificationsSchema(Schema):
                 api_c.ID: "60e5c7be3b080a75959d6282",
                 api_c.NOTIFICATION_TYPE: db_c.NOTIFICATION_TYPE_CRITICAL.title(),
                 api_c.DESCRIPTION: "Facebook Delivery Stopped",
-                db_c.NOTIFICATION_FIELD_CATEGORY: api_c.DELIVERY_TAG.title(),
+                db_c.NOTIFICATION_FIELD_CATEGORY: db_c.NOTIFICATION_CATEGORY_DELIVERY.title(),
                 db_c.NOTIFICATION_FIELD_CREATED: "2021-08-09T12:35:24.915Z",
             },
         ],
