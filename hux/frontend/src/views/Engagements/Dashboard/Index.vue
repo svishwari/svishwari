@@ -517,7 +517,6 @@ export default {
             name: "LookalikeAudiences",
             params: { id: event.data.id },
           })
-          // this.openLookAlikeDrawer(event)
           break
         default:
           break

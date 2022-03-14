@@ -78,8 +78,8 @@
                   size="16"
                   >mdi-check</v-icon
                 >
-                <logo v-if="item.type" :type="item.type" :size="20"></logo
-                >&nbsp;
+                <logo v-if="item.type" :type="item.type" :size="20"></logo>
+                &nbsp;
                 <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
                 <icon v-if="item.modelIcon" type="model" :size="21" />
                 {{ item.name }}
