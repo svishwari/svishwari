@@ -630,7 +630,7 @@ export default {
 }
 .content-section {
   height: calc(100vh - 200px);
-   overflow-y: auto !important;
+  overflow-y: auto !important;
   overflow-x: hidden !important;
 }
 </style>

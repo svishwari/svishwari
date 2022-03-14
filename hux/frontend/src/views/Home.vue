@@ -362,7 +362,7 @@ export default {
       }
       this.loadingNotifications = false
     },
-    
+
     async openAlertDrawer(notificationId) {
       this.notificationId = notificationId
       await this.getNotificationByID(notificationId)

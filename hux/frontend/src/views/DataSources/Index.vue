@@ -2,43 +2,43 @@
   <page max-width="100%">
     <div slot="header">
       <span class="header-section">
-      <page-header header-height="110" is-sticky>
-        <template slot="left">
-          <div>
-            <breadcrumb :items="breadcrumbs" />
-          </div>
-          <div class="text-subtitle-1 font-weight-regular mt-1">
-            Gain visibility into the customer data that is collected from
-            online, offline, and 3rd party channels.
-          </div>
-        </template>
-      </page-header>
+        <page-header header-height="110" is-sticky>
+          <template slot="left">
+            <div>
+              <breadcrumb :items="breadcrumbs" />
+            </div>
+            <div class="text-subtitle-1 font-weight-regular mt-1">
+              Gain visibility into the customer data that is collected from
+              online, offline, and 3rd party channels.
+            </div>
+          </template>
+        </page-header>
 
-      <page-header v-if="isConnectionStarted" header-height="71" is-sticky>
-        <template #left>
-          <v-btn disabled icon color="black">
-            <icon type="search" :size="20" color="black" variant="lighten3" />
-          </v-btn>
-        </template>
+        <page-header v-if="isConnectionStarted" header-height="71" is-sticky>
+          <template #left>
+            <v-btn disabled icon color="black">
+              <icon type="search" :size="20" color="black" variant="lighten3" />
+            </v-btn>
+          </template>
 
-        <template #right>
-          <huxButton
-            button-text="Request a data source"
-            variant="primary"
-            size="large"
-            is-tile
-            height="40"
-            class="ma-2 font-weight-regular no-shadow mr-0 caption"
-            data-e2e="addDataSource"
-            @click="toggleDrawer()"
-          >
-            Request a data source
-          </huxButton>
-        </template>
-      </page-header>
+          <template #right>
+            <huxButton
+              button-text="Request a data source"
+              variant="primary"
+              size="large"
+              is-tile
+              height="40"
+              class="ma-2 font-weight-regular no-shadow mr-0 caption"
+              data-e2e="addDataSource"
+              @click="toggleDrawer()"
+            >
+              Request a data source
+            </huxButton>
+          </template>
+        </page-header>
 
-      <v-progress-linear :active="loading" :indeterminate="loading" />
-      </span >
+        <v-progress-linear :active="loading" :indeterminate="loading" />
+      </span>
     </div>
     <div v-if="!loading" class="datasource-loaded content-section">
       <v-row v-if="isConnectionStarted" class="ma-0">

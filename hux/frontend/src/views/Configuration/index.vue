@@ -25,7 +25,6 @@
     >
       <v-row v-if="isConfigActivated">
         <v-col>
-        
           <config-tabs />
         </v-col>
       </v-row>
@@ -138,7 +137,7 @@ export default {
 }
 .content-section {
   height: calc(100vh - 210px);
- overflow-y: auto !important;
+  overflow-y: auto !important;
   overflow-x: hidden !important;
 }
 </style>

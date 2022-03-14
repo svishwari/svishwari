@@ -40,7 +40,11 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading" class="padding-30 ma-0 flex-grow-1 flex-shrink-1 mw-100 content-section" data-e2e="models-list">
+    <v-row
+      v-if="!loading"
+      class="padding-30 ma-0 flex-grow-1 flex-shrink-1 mw-100 content-section"
+      data-e2e="models-list"
+    >
       <template v-if="addedModels.length > 0">
         <descriptive-card
           v-for="model in addedModels"
@@ -326,7 +330,7 @@ export default {
 }
 .content-section {
   height: calc(100vh - 210px);
- overflow-y: auto !important;
+  overflow-y: auto !important;
   overflow-x: hidden !important;
 }
 </style>
