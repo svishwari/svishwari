@@ -98,6 +98,13 @@ export default {
     .model-value {
       float: left;
     }
+    ::v-deep .chart-container {
+      .chart {
+        svg {
+          margin-left: -16px !important;
+        }
+      }
+    }
   }
 }
 </style>
