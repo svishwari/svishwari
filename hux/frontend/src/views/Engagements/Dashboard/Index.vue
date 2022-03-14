@@ -512,7 +512,6 @@ export default {
           this.deleteActionData = event.data
           break
         case "create lookalike":
-          console.log("event", event)
           this.$router.push({
             name: "LookalikeAudiences",
             params: { id: event.data.id },
