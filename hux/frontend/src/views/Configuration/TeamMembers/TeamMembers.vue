@@ -203,11 +203,11 @@ export default {
           value: "access_level",
           width: "163px",
           hoverTooltip:
-            "Admin access <br /><br />\
+            "<b>Admin access</b> <br /><br />\
             Ability to select who has access to view PII data and have removal/add functionality across Hux.<br /><br />\
-            Edit access <br /><br />\
+            <b>Edit access</b> <br /><br />\
             Have removal/add functionality across Hux.<br /><br />\
-            View-only access <br /><br />\
+            <b>View-only access</b> <br /><br />\
             Unable to edit a client’s team, or remove and add any solutions across Hux.",
           tooltipWidth: "200px",
         },

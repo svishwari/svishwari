@@ -59,7 +59,14 @@
     <page
       v-if="!loading && hasOverview && !errorState"
       max-width="100%"
-      class="white segmentation playground-wrap"
+      class="
+        white
+        segmentation
+        playground-wrap
+        flex-grow-1 flex-shrink-1
+        mw-100
+        content-section
+      "
     >
       <v-row class="ma-0 segment-wrap">
         <v-col
@@ -606,5 +613,24 @@ export default {
   .menuable__content__active {
     z-index: 100 !important;
   }
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
+.content-section {
+  height: calc(100vh - 200px);
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 </style>

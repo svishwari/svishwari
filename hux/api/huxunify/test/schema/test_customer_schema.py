@@ -122,7 +122,6 @@ class CustomerSchemaTest(TestCase):
             api_c.TOTAL_KNOWN_IDS: 8,
             api_c.TOTAL_INDIVIDUAL_IDS: 5,
             api_c.TOTAL_HOUSEHOLD_IDS: 5,
-            api_c.UPDATED: "2021-04-01T00:00:00.000Z",
             api_c.TOTAL_CUSTOMERS: 105080,
             api_c.TOTAL_COUNTRIES: 1,
             api_c.TOTAL_STATES: 42,
@@ -136,10 +135,6 @@ class CustomerSchemaTest(TestCase):
             api_c.GENDER_MEN_COUNT: 53001,
             api_c.GENDER_WOMEN_COUNT: 65845,
             api_c.GENDER_OTHER_COUNT: 2453,
-            api_c.MIN_LTV_PREDICTED: 0.34,
-            api_c.MAX_LTV_PREDICTED: 0.45,
-            api_c.MIN_LTV_ACTUAL: 0.36,
-            api_c.MAX_LTV_ACTUAL: 0.42,
             api_c.TOTAL_ADDRESS_IDS: 1245,
             api_c.TOTAL_ANONYMOUS_IDS: 0,
         }
