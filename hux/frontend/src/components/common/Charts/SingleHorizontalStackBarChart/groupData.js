@@ -1,6 +1,10 @@
 // group data for chart and filter out zero values
 import * as d3Scale from "d3-scale"
 
+/**
+ * @param data
+ * @param total
+ */
 export default function (data, total) {
   // use scale to get percent values
   const percent = d3Scale.scaleLinear().domain([0, total]).range([0, 100])

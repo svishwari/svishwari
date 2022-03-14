@@ -23,14 +23,6 @@ import Icon from "@/components/common/Icon"
 export default {
   name: "ScoreCard",
   components: { Icon },
-  computed: {
-    hasSlot() {
-      return (
-        !!this.$slots["stack-bar-chart"] ||
-        !!this.$scopedSlots["stack-bar-chart"]
-      )
-    },
-  },
   props: {
     width: {
       type: [String, Number],
@@ -61,6 +53,14 @@ export default {
       type: [String, Number],
       required: true,
       default: 75,
+    },
+  },
+  computed: {
+    hasSlot() {
+      return (
+        !!this.$slots["stack-bar-chart"] ||
+        !!this.$scopedSlots["stack-bar-chart"]
+      )
     },
   },
 }

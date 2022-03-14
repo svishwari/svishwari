@@ -40,7 +40,7 @@
           <single-horizontal-stack-bar-chart
             :width="81"
             :height="6"
-            :showPercentage="false"
+            :show-percentage="false"
           />
         </template>
       </score-card>
@@ -49,7 +49,7 @@
       <single-horizontal-stack-bar-chart
         :width="180"
         :height="6"
-        :showPercentage="true"
+        :show-percentage="true"
       />
     </div>
   </page>
