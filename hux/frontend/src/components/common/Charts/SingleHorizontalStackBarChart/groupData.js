@@ -1,9 +1,9 @@
 // group data for chart and filter out zero values
 import * as d3Scale from "d3-scale"
-
 /**
- * @param data
- * @param total
+ * @param {Array[]} data data in array format
+ * @param {number} total total for camculating rage
+ * @returns {number} returned data will cumulative & percentage value
  */
 export default function (data, total) {
   // use scale to get percent values

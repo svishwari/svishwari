@@ -7,7 +7,6 @@
 <script>
 import groupData from "./groupData"
 import sampleData from "./sampleData"
-0
 import * as d3Format from "d3-format"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
