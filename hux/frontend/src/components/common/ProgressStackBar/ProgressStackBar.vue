@@ -89,7 +89,7 @@ export default {
         colors: ["#DA291C", "#FFCD00", "#86BC25"],
         ...config,
       }
-      const { f, margin, width, height, barHeight, colors } = config
+      const { margin, width, height, barHeight, colors } = config
       const w = width - margin.left - margin.right
       const h = height - margin.top - margin.bottom
       const halfBarHeight = barHeight / 2
