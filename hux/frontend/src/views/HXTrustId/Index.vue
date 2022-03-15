@@ -36,7 +36,7 @@
     </div>
     <div class="ma-1">
       <score-card :width="150" :height="90" title="Humanity" :value="71">
-        <template #stack-bar-chart>
+        <template #progress-bar>
           <progress-stack-bar
             :width="81"
             :height="6"

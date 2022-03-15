@@ -12,7 +12,7 @@
       <span class="text-subtitle-1" :class="{ 'model-value ': hasSlot }">
         {{ value }}
       </span>
-      <slot name="stack-bar-chart"></slot>
+      <slot name="progress-bar"></slot>
     </div>
   </v-card>
 </template>
@@ -58,8 +58,8 @@ export default {
   computed: {
     hasSlot() {
       return (
-        !!this.$slots["stack-bar-chart"] ||
-        !!this.$scopedSlots["stack-bar-chart"]
+        !!this.$slots["progress-bar"] ||
+        !!this.$scopedSlots["progress-bar"]
       )
     },
   },
