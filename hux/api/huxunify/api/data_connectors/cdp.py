@@ -739,6 +739,8 @@ def get_customers_insights_count_by_day(
 
     # return response_body as such for staging environment for now since CDP in
     # staging env now sends out real data
+    # TODO: HUS-2708, remove ENV_NAME check in future when CDP returns real
+    #  data for all environments
     return (
         response_body
         if get_config().ENV_NAME == api_c.STAGING_ENV
@@ -1088,6 +1090,8 @@ def add_missing_revenue_data_by_day(
     # set sample values to 0 for staging environment for now in order to fill
     # out the missing days with 0 for UI since CDP in staging env now sends out
     # real data
+    # TODO: HUS-2708 ,remove ENV_NAME check in future when CDP returns real
+    # data for all environments
     sample_ltv = sample_revenue = (
         0 if get_config().ENV_NAME == api_c.STAGING_ENV else 27
     )
