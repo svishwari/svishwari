@@ -41,7 +41,6 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
     get_customers_overview,
-    get_idr_overview,
     get_customer_events_data,
     get_demographic_by_state,
     get_spending_by_cities,
@@ -365,8 +364,9 @@ class IDROverview(SwaggerView):
             # TODO - when the CDP endpoint for getting the max and min date range
             #  is available, we will call that instead of iterating all events to get them.
             # get IDR overview
-            idr_overview = get_idr_overview(
-                token_response[0], start_date, end_date
+            idr_overview = get_identity_overview(
+                token_response[0],
+                {api_c.START_DATE: start_date, api_c.END_DATE: end_date},
             )
 
             # get date range from IDR matching trends.
