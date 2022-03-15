@@ -25,6 +25,18 @@ Tecton|[http://decisioning-client.tecton.ai/](http://decisioning-client.tecton.a
 Grafana|[https://grafana.hux-unified-dev1.in/](https://grafana.hux-unified-dev1.in/)|[https://grafana.hux-unified-stg1.in/](https://grafana.hux-unified-stg1.in/)|[https://grafana.hux-unified-rc1.in/](https://grafana.hux-unified-rc1.in/)|[https://grafana.hux-unified-prd1.in/](https://grafana.hux-unified-prd1.in/)|
 Prometheus|[https://prometheus.i.hux-unified-dev1.in/](https://prometheus.i.hux-unified-dev1.in/)|[https://prometheus.int.hux-unified-stg1.in/](https://prometheus.int.hux-unified-stg1.in/)|[https://prometheus.i.huxui-main-use1-unified-rc1.hux-unified-rc1.in/](https://prometheus.i.huxui-main-use1-unified-rc1.hux-unified-rc1.in/)| - |
 
+## Azure Environments
+Component|Dev URL| Stage URL | RC1 URL | Prod URL |
+---------|------|----------|---------|----------|
+Hux Unified UI|[https://unified-ui-dev.main.use2.hux-husdev2.in/](https://unified-ui-dev.main.use2.hux-husdev2.in/)| - | - | - |
+Hux Unified API| - | - | - | - |
+Argo CD|[https://argocd.hux-husdev2.in/](https://argocd.hux-husdev2.in/)| - | - | - |
+Customer API|[https://customer-profile-api.main.use2.hux-husdev2.in/docs](https://customer-profile-api.main.use2.hux-husdev2.in/docs)| - | - | - |
+Connections API|[https://connections-api.main.use2.hux-husdev2.in/docs](https://connections-api.main.use2.hux-husdev2.in/docs)| - | - | - |
+Tecton| - | - | - | - |
+Grafana|[https://grafana.hux-husdev2.in/login](https://grafana.hux-husdev2.in/login)| - | - | - |
+Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.hux-husdev2.in/graph)| - | - | - |
+
 ## Introduction (Project Justice League)
 Create a unified project platform.
 ![image](https://user-images.githubusercontent.com/20735170/114725970-303d1a80-9cfa-11eb-870f-e36d0588b8a3.png)
