@@ -200,6 +200,16 @@ export default {
         }
       })
     },
+
+    trustidRoute() {
+      // if true - change to colored
+      // else black
+      // change items
+    },
+
+    trustidHover() {
+      // similar logic
+    },
   },
 }
 </script>
