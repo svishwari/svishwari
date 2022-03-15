@@ -1,18 +1,22 @@
 """Module for AWS cloud operations"""
 import logging
 from typing import Tuple
+from enum import Enum
 
 import boto3
-import botocore
+from botocore.exceptions import ClientError
 
 from huxunify.api.data_connectors.cloud.cloud_client import (
     CloudClient,
 )
-import huxunify.api.constants as api_c
 from huxunify.api.config import get_config, Config
 
-# pylint: disable=missing-raises-doc
-from huxunify.api.prometheus import record_health_status_metric
+
+class ClientType(Enum):
+    """Holds client types for the boto3 clients"""
+    SSM = "ssm"
+    S3 = "s3"
+    BATCH = "batch"
 
 
 class AWSClient(CloudClient):
@@ -27,23 +31,21 @@ class AWSClient(CloudClient):
     # pylint: disable=no-self-use
     def get_aws_client(
         self,
-        client: str = "s3",
-        region_name: str = "",
+        client_type: ClientType
     ) -> boto3.client:
         """Retrieves AWS client.
         (Most of them)
 
         Args:
-            client (str): client string
-            region_name (str): Region Name
+            client_type (ClientType): client type.
 
         Returns:
             Response: boto3 client
 
         """
         return boto3.client(
-            client,
-            region_name=region_name,
+            client_type.value,
+            region_name=self.config.AWS_REGION,
         )
 
     def get_secret(self, secret_name: str, **kwargs) -> str:
@@ -58,7 +60,7 @@ class AWSClient(CloudClient):
         """
         try:
             return (
-                self.get_aws_client(api_c.AWS_SSM_NAME, self.config.AWS_REGION)
+                self.get_aws_client(ClientType.SSM)
                 .get_parameter(
                     Name=secret_name,
                     WithDecryption=True,
@@ -66,7 +68,7 @@ class AWSClient(CloudClient):
                 .get("Parameter")
                 .get("Value")
             )
-        except botocore.exceptions.ClientError as error:
+        except ClientError as error:
             logging.error(
                 "Failed to get %s from AWS parameter store.", secret_name
             )
@@ -83,17 +85,17 @@ class AWSClient(CloudClient):
         Returns:
         """
         try:
-            self.get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
+            self.get_aws_client(ClientType.SSM).put_parameter(
                 Name=secret_name,
                 Value=value,
                 Type="SecureString",
                 Overwrite=False,
             )
-        except Exception as exc:
+        except ClientError as error:
             logging.error(
                 "Failed to set %s in AWS parameter store.", secret_name
             )
-            raise exc
+            raise error
 
     def upload_file(
         self, file_name: str, file_type: str, user_name: str, **kwargs
@@ -124,43 +126,21 @@ class AWSClient(CloudClient):
         """
         raise NotImplementedError()
 
-    def __check_aws_health_connection(
-        self, client_method: str, extra_params: dict, client: str = "s3"
-    ):
-        """Validate an AWS service connection.
-
-        Args:
-            client_method (str): Method name for the client
-            extra_params (dict): Extra params required for aws connection
-            client (str): name of the boto3 client to use.
-        Returns:
-            tuple[bool, str]: Returns if the AWS connection is valid,
-                and the message.
-        """
-
-        try:
-            # lookup the health test to run from api constants
-            getattr(self.get_aws_client(client), client_method)(**extra_params)
-            return True, f"{client} available."
-        except Exception as exception:  # pylint: disable=broad-except
-            # report the generic error message
-            return False, getattr(exception, "message", repr(exception))
-
     def health_check_batch_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS batch service.
 
         Returns:
             Tuple[bool, str]: Returns bool for health status and message
         """
-        status = self.__check_aws_health_connection(
-            client_method="cancel_job",
-            client=api_c.AWS_BATCH_NAME,
-            extra_params={"jobId": "test", "reason": "test"},
-        )
-        record_health_status_metric(
-            api_c.AWS_BATCH_CONNECTION_HEALTH, status[0]
-        )
-        return status
+        try:
+            resp = self.get_aws_client(ClientType.BATCH).list_scheduling_policies()
+            valid_session = resp["ResponseMetadata"]["HTTPStatusCode"] == 200
+            if valid_session:
+                return True, "AWS Batch service available."
+        except ClientError as error:
+            logging.error("Failed to connect to AWS Batch service.")
+
+        return False, "AWS Batch service unavailable."
 
     def health_check_storage_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS storage service.
@@ -168,10 +148,29 @@ class AWSClient(CloudClient):
         Returns:
             Tuple[bool, str]: Returns bool for health status and message
         """
-        status = self.__check_aws_health_connection(
-            client_method="get_bucket_location",
-            client=api_c.AWS_S3_NAME,
-            extra_params={api_c.AWS_BUCKET: self.config.S3_DATASET_BUCKET},
-        )
-        record_health_status_metric(api_c.AWS_S3_CONNECTION_HEALTH, status[0])
-        return status
+        try:
+            resp = self.get_aws_client(ClientType.S3).list_buckets()
+            valid_session = resp["ResponseMetadata"]["HTTPStatusCode"] == 200
+            if valid_session:
+                return True, "AWS S3 storage available."
+        except ClientError as error:
+            logging.error("Failed to connect to AWS S3.")
+
+        return False, "AWS S3 storage unavailable."
+
+    def health_check_secret_storage(self) -> Tuple[bool, str]:
+        """Checks the health of the Azure key vault.
+
+        Returns:
+            Tuple[bool, str]: Returns bool for health status and message
+        """
+        try:
+            resp = self.get_aws_client(ClientType.SSM).describe_sessions(State="Active")
+            valid_session = resp["ResponseMetadata"]["HTTPStatusCode"] == 200
+            if valid_session:
+                return True, "AWS SSM available."
+        except ClientError as error:
+            logging.error(
+                "Failed to validate connection to AWS parameter store."
+            )
+        return False, "AWS SSM unavailable."
