@@ -185,7 +185,8 @@ class AzureClient(CloudClient):
             return True, "Azure key vault available."
         except Exception as exc:
             logging.error(
-                "Failed to get %s from Azure key vault. Azure key vault is unavailable", secret_name
+                "Failed to get %s from Azure key vault. Azure key vault is unavailable",
+                secret_name,
             )
             logging.error(exc)
             return False, "Azure key vault unavailable."

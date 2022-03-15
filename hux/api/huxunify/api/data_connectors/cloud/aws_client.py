@@ -14,6 +14,7 @@ from huxunify.api.config import get_config, Config
 
 class ClientType(Enum):
     """Holds client types for the boto3 clients"""
+
     SSM = "ssm"
     S3 = "s3"
     BATCH = "batch"
@@ -29,10 +30,7 @@ class AWSClient(CloudClient):
         super().__init__(config)
 
     # pylint: disable=no-self-use
-    def get_aws_client(
-        self,
-        client_type: ClientType
-    ) -> boto3.client:
+    def get_aws_client(self, client_type: ClientType) -> boto3.client:
         """Retrieves AWS client.
         (Most of them)
 
@@ -133,7 +131,9 @@ class AWSClient(CloudClient):
             Tuple[bool, str]: Returns bool for health status and message
         """
         try:
-            resp = self.get_aws_client(ClientType.BATCH).list_scheduling_policies()
+            resp = self.get_aws_client(
+                ClientType.BATCH
+            ).list_scheduling_policies()
             valid_session = resp["ResponseMetadata"]["HTTPStatusCode"] == 200
             if valid_session:
                 return True, "AWS Batch service available."
@@ -165,7 +165,9 @@ class AWSClient(CloudClient):
             Tuple[bool, str]: Returns bool for health status and message
         """
         try:
-            resp = self.get_aws_client(ClientType.SSM).describe_sessions(State="Active")
+            resp = self.get_aws_client(ClientType.SSM).describe_sessions(
+                State="Active"
+            )
             valid_session = resp["ResponseMetadata"]["HTTPStatusCode"] == 200
             if valid_session:
                 return True, "AWS SSM available."
