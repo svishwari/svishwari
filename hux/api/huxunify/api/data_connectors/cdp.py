@@ -737,7 +737,13 @@ def get_customers_insights_count_by_day(
         except (ParserError, TypeError):
             record[api_c.RECORDED] = None
 
-    return add_missing_customer_count_by_day(response_body, date_filters)
+    # return response_body as such for staging environment for now since CDP in
+    # staging env now sends out real data
+    return (
+        response_body
+        if get_config().ENV_NAME == api_c.STAGING_ENV
+        else add_missing_customer_count_by_day(response_body, date_filters)
+    )
 
 
 def get_city_ltvs(
@@ -1079,7 +1085,12 @@ def add_missing_revenue_data_by_day(
         tzinfo=timezone.utc
     )
     # TODO remove stub when data is returned from CDP.
-    sample_ltv = sample_revenue = 27
+    # set sample values to 0 for staging environment for now in order to fill
+    # out the missing days with 0 for UI since CDP in staging env now sends out
+    # real data
+    sample_ltv = sample_revenue = (
+        0 if get_config().ENV_NAME == api_c.STAGING_ENV else 27
+    )
 
     for num_day in range(int((end_date - start_date).days) + 1):
         current_date = start_date + relativedelta(days=num_day)
