@@ -10,6 +10,7 @@ from huxunifylib.database import constants as db_c
 TEST_MODE = "pytest"
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
+API_SPEC = "apispec_1.json"
 FLASK_ENV = "FLASK_ENV"
 TEST_AUTH_OVERRIDE = "TEST_AUTH_OVERRIDE"
 SSM_INIT_LOAD_DELIMITER = "||"
