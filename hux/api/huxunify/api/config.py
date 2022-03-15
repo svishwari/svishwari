@@ -141,7 +141,7 @@ class Config:
         api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder"
     )
 
-    ENV_NAME = config(api_c.ENVIRONMENT_NAME, default="STG1")
+    ENV_NAME = config(api_c.ENVIRONMENT_NAME, default="")
 
 
 class ProductionConfig(Config):
@@ -170,8 +170,6 @@ class DevelopmentConfig(Config):
     )
 
     TEST_AUTH_OVERRIDE = False
-
-    ENV_NAME = config(api_c.ENVIRONMENT_NAME, default="DEVELOPMENT")
 
 
 class PyTestConfig(Config):
