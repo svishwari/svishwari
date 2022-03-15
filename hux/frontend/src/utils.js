@@ -371,3 +371,12 @@ export function formatDateToLocal(date) {
   })
   return res.split("m ")[0] + "m " + tz
 }
+/**
+ * Returns innerHTML
+ *
+ * @param {string} text - string to be formatted to HTML
+ * @returns {string} formatted HTML
+ */
+export function formatInnerHTML(text) {
+  return { innerHTML: text }
+}
