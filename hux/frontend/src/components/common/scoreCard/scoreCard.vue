@@ -58,8 +58,7 @@ export default {
   computed: {
     hasSlot() {
       return (
-        !!this.$slots["progress-bar"] ||
-        !!this.$scopedSlots["progress-bar"]
+        !!this.$slots["progress-bar"] || !!this.$scopedSlots["progress-bar"]
       )
     },
   },
