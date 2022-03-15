@@ -40,6 +40,21 @@
           </v-list>
         </v-card>
       </div>
+      <v-list dense class="add-engagement mx-6 mb-6" :height="22">
+        <v-list-item>
+          <hux-icon type="plus" :size="16" color="primary" class="mr-2" />
+          <v-btn
+            text
+            min-width="7rem"
+            height="2rem"
+            class="primary--text text-body-1"
+            data-e2e="drawerToggle"
+            @click="$emit('openCreateLookalike')"
+          >
+            A lookalike
+          </v-btn>
+        </v-list-item>
+      </v-list>
     </div>
     <div v-if="!isDataExists" class="no-lookalike">
       <metric-card
@@ -120,5 +135,13 @@ export default {
 }
 ::v-deep .metric-card-wrapper {
   padding: 20px 24px !important;
+}
+.add-engagement {
+  height: 60px !important;
+  display: inline-table;
+  width: 90%;
+  background: var(--v-white-base);
+  border: 1px solid var(--v-black-lighten2);
+  border-radius: 5px;
 }
 </style>
