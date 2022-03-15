@@ -56,7 +56,7 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
-import ProgressStackBar from "@/components/common/Charts/ProgressStackBarChart/ProgressStackBarChart.vue"
+import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
 
 export default {
   name: "HXTrustID",

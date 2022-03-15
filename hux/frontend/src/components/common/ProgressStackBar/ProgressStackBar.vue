@@ -169,7 +169,7 @@ export default {
           .attr("text-anchor", "middle")
           .attr("x", (d) => xScale(d.cumulative) + xScale(d.value) / 2)
           .attr("y", h / 2 + halfBarHeight * 1.1 + 20)
-          .text((d) => f(d.percent) + "%")
+          .text((d) => d.value + "%")
           .style("font-size", "12px")
           .style("font-weight", "600")
           .style("line-height", "16.34px")
