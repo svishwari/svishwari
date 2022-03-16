@@ -122,6 +122,15 @@ const sideMenuOptions = {
           defaultState: defaultState.customerprofiles,
         },
         {
+          icon: "hx-trustid-colored",
+          title: "HX TrustID",
+          link: {
+            name: "HXTrustID",
+          },
+          size: 14,
+          display: true,
+        },
+        {
           icon: "email_deliverability",
           title: "Email Deliverability",
           link: {
