@@ -56,6 +56,9 @@ class AWSClient(CloudClient):
 
         Returns:
             str: The value of the secret.
+
+        Raises:
+            ClientError: Error if the operation fails in AWS.
         """
         try:
             return (
@@ -82,6 +85,9 @@ class AWSClient(CloudClient):
             **kwargs (dict): function keyword arguments.
 
         Returns:
+
+        Raises:
+            ClientError: Error if the operation fails in AWS.
         """
         try:
             self.get_aws_client(ClientType.SSM).put_parameter(
@@ -127,7 +133,7 @@ class AWSClient(CloudClient):
 
     def __check_aws_health_connection(
         self, client: ClientType, client_method: str, method_args: dict
-    ):
+    ) -> Tuple[bool, str]:
         """Validate an AWS service connection.
 
         Args:
@@ -135,6 +141,8 @@ class AWSClient(CloudClient):
             client_method (str): name of the method to call.
             method_args (dict): arguments for the method.
 
+        Returns:
+            Tuple[bool, str]: Returns bool for health status and message
         """
         try:
             # lookup the health test to run from api constants
