@@ -21,7 +21,7 @@
     </span>
     starting at
     <span>
-      {{ schedule.hour }}:{{ schedule.minute === "0" ? "00" : schedule.minute
+      {{ schedule.hour }}:{{ schedule.minute === 0 ? "00" : schedule.minute
       }}{{ schedule.period }}
     </span>
     <span v-if="deliveryType && startDate && startDate !== 'Select date'">
