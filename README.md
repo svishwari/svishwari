@@ -34,7 +34,7 @@ Hux Unified API| - | - | - | - |
 Argo CD|[https://argocd.hux-husdev2.in/](https://argocd.hux-husdev2.in/)| - | - | - |
 Customer API|[https://customer-profile-api.main.use2.hux-husdev2.in/docs](https://customer-profile-api.main.use2.hux-husdev2.in/docs)| - | - | - |
 Connections API|[https://connections-api.main.use2.hux-husdev2.in/docs](https://connections-api.main.use2.hux-husdev2.in/docs)| - | - | - |
-Tecton| - | - | - | - |
+Metrics API |[https://identity-metrics-api.main.use2.hux-husdev2.in/](https://identity-metrics-api.main.use2.hux-husdev2.in/)| - | - | - |
 Grafana|[https://grafana.hux-husdev2.in/login](https://grafana.hux-husdev2.in/login)| - | - | - |
 Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.hux-husdev2.in/graph)| - | - | - |
 
