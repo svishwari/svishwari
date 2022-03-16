@@ -467,6 +467,8 @@ class CourierTest(TestCase):
 
     def test_get_auth_from_parameter_store(self):
         """Test function get_auth_from_parameter_store."""
+        config = get_config()
+        config.CLOUD_PROVIDER = "aws"
 
         # use audience once
         for destination_id in self.audience_one[db_c.DESTINATIONS]:
