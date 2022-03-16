@@ -197,8 +197,8 @@ class BaseDestinationBatchJob:
 
     provider = None
 
-    @classmethod
-    def generate_job(
+    # pylint: disable=unused-argument
+    def __new__(
         cls,
         database: MongoClient,
         audience_delivery_job_id: ObjectId,
@@ -207,39 +207,32 @@ class BaseDestinationBatchJob:
         destination_type: str,
         config: Config = get_config(),
     ) -> TypeVar("T", bound="BaseDestinationBatchJob"):
-        """Generate the correct
+        """Override the new class to handle subclass mapping.
 
         Args:
             database (MongoClient): The mongo database client.
-            audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
+            audience_delivery_job_id (ObjectId): Audience delivery job ID.
             secrets_dict (dict): The AWS secret dict for a batch job.
             env_dict (dict): The AWS env dict for a batch job.
-            destination_type (str): The type of destination (i.e. facebook, sfcm)
-            config (config): config object.
+            destination_type (str): Type of destination (i.e. facebook, sfmc).
+            config (Config): configuration object.
 
         Returns:
-            BaseDestinationBatchJob
-
-        Raises:
-            Exception: Exception thrown if an unknown cloud provider is requested
+            BaseDestinationBatchJob: subclass of BaseDestinationBatchJob.
         """
 
-        subclass_map = {x.provider.lower(): x for x in cls.__subclasses__()}
+        provider = config.CLOUD_PROVIDER.lower()
+        subclass_map = {
+            subclass.provider.lower(): subclass
+            for subclass in cls.__subclasses__()
+        }
 
-        if config.CLOUD_PROVIDER.lower() not in subclass_map:
-            raise Exception(
-                f"Cloud provider {config.CLOUD_PROVIDER} does not support destination batch jobs!"
-            )
-
-        destination_batch_job = subclass_map[config.CLOUD_PROVIDER.lower()]
-
-        return destination_batch_job(
-            database,
-            audience_delivery_job_id,
-            secrets_dict,
-            env_dict,
-            destination_type,
+        subclass = (
+            subclass_map[provider]
+            if provider in subclass_map
+            else BaseDestinationBatchJob
         )
+        return super(BaseDestinationBatchJob, subclass).__new__(subclass)
 
     def __init__(
         self,
@@ -301,7 +294,7 @@ class BaseDestinationBatchJob:
 class AWSDestinationBatchJob(BaseDestinationBatchJob):
     """Class for housing AWS delivery jobs"""
 
-    provider = "AWS"
+    provider = "aws"
 
     def __init__(
         self,
@@ -430,7 +423,7 @@ class AWSDestinationBatchJob(BaseDestinationBatchJob):
 class AzureDestinationBatchJob(BaseDestinationBatchJob):
     """Class for housing Azure delivery jobs"""
 
-    provider = "Azure"
+    provider = "azure"
 
     def __init__(
         self,
