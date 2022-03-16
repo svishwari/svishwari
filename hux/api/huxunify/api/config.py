@@ -141,6 +141,8 @@ class Config:
         api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder"
     )
 
+    ENV_NAME = config(api_c.ENVIRONMENT_NAME, default="")
+
 
 class ProductionConfig(Config):
     """Production Config Object."""
@@ -166,6 +168,7 @@ class DevelopmentConfig(Config):
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
+
     TEST_AUTH_OVERRIDE = False
 
 
@@ -212,7 +215,10 @@ class PyTestConfig(Config):
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
+
     TEST_AUTH_OVERRIDE = False
+
+    ENV_NAME = config(api_c.ENVIRONMENT_NAME, default="TEST")
 
 
 def get_config(

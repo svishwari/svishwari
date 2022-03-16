@@ -41,7 +41,6 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
     get_customers_overview,
-    get_idr_overview,
     get_customer_events_data,
     get_demographic_by_state,
     get_spending_by_cities,
@@ -55,6 +54,7 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
     get_idr_matching_trends,
+    get_identity_overview,
 )
 from huxunify.api.route.utils import (
     add_chart_legend,
@@ -131,12 +131,23 @@ class CustomerOverview(SwaggerView):
 
         # check if cache entry
         token_response = get_token_from_request(request)
-        customer_overview = Caching.check_and_return_cache(
+        customers_overview = Caching.check_and_return_cache(
             f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
             get_customers_overview,
             {"token": token_response[0]},
         )
-        customer_overview[api_c.GEOGRAPHICAL] = Caching.check_and_return_cache(
+
+        identity_overview = Caching.check_and_return_cache(
+            f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}",
+            get_identity_overview,
+            {"token": token_response[0]},
+        )
+
+        customers_overview.update(identity_overview)
+
+        customers_overview[
+            api_c.GEOGRAPHICAL
+        ] = Caching.check_and_return_cache(
             f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.GEOGRAPHICAL}",
             get_demographic_by_state,
             {
@@ -148,7 +159,7 @@ class CustomerOverview(SwaggerView):
         )
 
         return (
-            CustomerOverviewSchema().dump(customer_overview),
+            CustomerOverviewSchema().dump(customers_overview),
             HTTPStatus.OK,
         )
 
@@ -244,6 +255,17 @@ class CustomerPostOverview(SwaggerView):
             get_customers_overview,
             {"token": token_response[0]},
         )
+
+        identity_overview = Caching.check_and_return_cache(
+            "".join(
+                [f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}"]
+                + list(generate_cache_key_string(filters)),
+            ),
+            get_identity_overview,
+            {"token": token_response[0]},
+        )
+
+        customers_overview.update(identity_overview)
 
         customers_overview[
             api_c.GEOGRAPHICAL
@@ -342,8 +364,9 @@ class IDROverview(SwaggerView):
             # TODO - when the CDP endpoint for getting the max and min date range
             #  is available, we will call that instead of iterating all events to get them.
             # get IDR overview
-            idr_overview = get_idr_overview(
-                token_response[0], start_date, end_date
+            idr_overview = get_identity_overview(
+                token_response[0],
+                {api_c.START_DATE: start_date, api_c.END_DATE: end_date},
             )
 
             # get date range from IDR matching trends.

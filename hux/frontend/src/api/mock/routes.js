@@ -810,9 +810,10 @@ export const defineRoutes = (server) => {
   //lookalike audiences
   server.post("/lookalike-audiences", (schema, request) => {
     let requestData = JSON.parse(request.requestBody)
-    requestData.engagements = requestData.engagement_ids.map((id) => {
-      return schema.engagements.find(id)
-    })
+    //TODO: May be in future
+    // requestData.engagements = requestData.engagement_ids.map((id) => {
+    //   return schema.engagements.find(id)
+    // })
     requestData.is_lookalike = true
     const now = dayjs().toJSON()
     const attrs = {
@@ -823,7 +824,7 @@ export const defineRoutes = (server) => {
       updated_by: me.full_name(),
       size: 0,
     }
-    delete attrs["engagement_ids"]
+    // delete attrs["engagement_ids"]
 
     return schema.audiences.create(attrs)
   })

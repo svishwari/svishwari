@@ -146,7 +146,6 @@ class CustomerOverviewSchema(Schema):
     total_known_ids = Integer(required=True, default=0)
     total_individual_ids = Integer(required=True, default=0)
     total_household_ids = Integer(required=True, default=0)
-    updated = DateTimeWithZ(required=True, default=0)
     total_customers = Integer(required=True, default=0)
     total_countries = Integer(required=True, default=0)
     total_us_states = Integer(required=True, default=0)
@@ -160,10 +159,6 @@ class CustomerOverviewSchema(Schema):
     gender_men_count = Integer(required=True, default=0)
     gender_women_count = Integer(required=True, default=0)
     gender_other_count = Integer(required=True, default=0)
-    min_ltv_predicted = Float(required=True, default=0.0, allow_none=True)
-    max_ltv_predicted = Float(required=True, default=0.0, allow_none=True)
-    min_ltv_actual = Float(required=True, default=0.0, allow_none=True)
-    max_ltv_actual = Float(required=True, default=0.0, allow_none=True)
     geo = List(Nested(CustomerStateSchema), default=[])
 
 
@@ -173,11 +168,8 @@ class IDROverviewSchema(Schema):
     total_records = Integer(required=True)
     match_rate = Float(required=True)
     total_unique_ids = Integer(required=True)
-    total_unknown_ids = Integer(required=True)
-    total_known_ids = Integer(required=True)
     total_individual_ids = Integer(required=True)
     total_household_ids = Integer(required=True)
-    total_customers = Integer(required=True)
     total_address_ids = Integer(required=True)
     total_anonymous_ids = Integer(required=True)
 

@@ -169,6 +169,19 @@ const routes = [
   },
   //#endregion
 
+  // #region HX Trust ID
+  {
+    path: "/hx-trustid",
+    name: "HXTrustID",
+    component: () => import("@/views/HXTrustId/Index"),
+    meta: {
+      layout: "app",
+      title: "HX TrustID",
+      requiresAuth: true,
+    },
+  },
+  // #endregion
+
   //#region Orchestration
   {
     path: "/audiences",
@@ -227,6 +240,16 @@ const routes = [
     meta: {
       layout: "app",
       title: "Audience Insight",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/lookalike-audiences/:id/add",
+    name: "LookalikeAudiences",
+    component: () => import("@/views/Audiences/Lookalike/CreateLookalike.vue"),
+    meta: {
+      layout: "app",
+      title: "Add an lookalike Audience",
       requiresAuth: true,
     },
   },
