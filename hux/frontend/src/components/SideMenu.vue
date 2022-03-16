@@ -71,8 +71,9 @@
       <v-list-item
         v-if="!item.menu"
         class="pl-6 mr-2"
-        :to="item.link"
         :data-e2e="`nav-${item.icon}`"
+        :to="item.link"
+        @click="navigate(item)"
       >
         <v-list-item-icon
           v-if="item.icon"
@@ -104,9 +105,10 @@
         <v-list-item
           v-for="menu in item.menu"
           :key="menu.title"
-          :to="menu.link"
           class="pl-6 mr-2"
           :data-e2e="`nav-${menu.icon}`"
+          :to="menu.link"
+          @click="navigate(menu)"
         >
           <v-list-item-icon
             v-if="menu.icon"
@@ -154,7 +156,7 @@
 </template>
 
 <script>
-import menuConfig from "@/menuConfig.json"
+import menuConfig from "@/menuConfig.js"
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
@@ -176,6 +178,7 @@ export default {
     },
     menu: false,
     items: menuConfig.menu,
+    prevLink: null,
   }),
 
   computed: {
@@ -196,6 +199,18 @@ export default {
           return x.display
         }
       })
+    },
+  },
+
+  methods: {
+    navigate(item) {
+      if (item.defaultState && this.prevLink) {
+        this.$store.replaceState({
+          ...this.$store.state,
+          [this.prevLink.toLowerCase()]: item.defaultState,
+        })
+      }
+      this.prevLink = item.link.name
     },
   },
 }
