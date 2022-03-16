@@ -168,6 +168,7 @@ class AzureClient(CloudClient):
         )
         return status
 
+    # pylint: disable=broad-except
     def health_check_secret_storage(self) -> Tuple[bool, str]:
         """Checks the health of the Azure key vault.
 
