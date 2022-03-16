@@ -5,7 +5,7 @@
     content-height="300px"
     :enable-apply="enableApply"
     :style="{ height: viewHeight }"
-    @clear="clear"
+    @clear="clearAndReload"
     @apply="apply"
     @close="close"
   >
@@ -78,10 +78,6 @@ export default {
     clearFilter() {
       this.selectedFavourite = false
       this.selectedEngagementsWorkedWith = false
-    },
-    clear() {
-      this.enableApply = true
-      this.clearFilter()
     },
     clearAndReload() {
       this.clearFilter()

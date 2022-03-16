@@ -130,11 +130,6 @@ export default {
       this.selectedAudienceWorkedWith = false
     },
     clear() {
-      this.enableApply = true
-      this.clearFilter()
-    },
-    clearAndReload() {
-      this.enableApply = false
       this.clearFilter()
       this.apply()
     },

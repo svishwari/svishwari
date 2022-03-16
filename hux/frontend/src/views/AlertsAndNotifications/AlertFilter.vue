@@ -4,7 +4,7 @@
     :count="filterLength"
     content-height="262px"
     :disable-clear="filterLength === 1 && selectedTimeType === 'Last week'"
-    @clear="clearFilter"
+    @clear="clearAndReload"
     @apply="apply"
     @close="close"
   >
