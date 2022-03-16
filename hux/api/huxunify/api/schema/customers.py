@@ -168,11 +168,8 @@ class IDROverviewSchema(Schema):
     total_records = Integer(required=True)
     match_rate = Float(required=True)
     total_unique_ids = Integer(required=True)
-    total_unknown_ids = Integer(required=True)
-    total_known_ids = Integer(required=True)
     total_individual_ids = Integer(required=True)
     total_household_ids = Integer(required=True)
-    total_customers = Integer(required=True)
     total_address_ids = Integer(required=True)
     total_anonymous_ids = Integer(required=True)
 

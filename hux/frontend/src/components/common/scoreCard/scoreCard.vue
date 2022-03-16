@@ -9,7 +9,10 @@
     <div class="score-card-info">
       <icon class="model-icon" :type="icon" size="24" color="primary" />
       <span class="model-name text-body-2">{{ title }}</span>
-      <span class="model-value text-subtitle-1">{{ value }}</span>
+      <span class="text-subtitle-1" :class="{ 'model-value ': hasSlot }">
+        {{ value }}
+      </span>
+      <slot name="progress-bar"></slot>
     </div>
   </v-card>
 </template>
@@ -20,7 +23,6 @@ import Icon from "@/components/common/Icon"
 export default {
   name: "ScoreCard",
   components: { Icon },
-
   props: {
     width: {
       type: [String, Number],
@@ -44,13 +46,20 @@ export default {
     },
     title: {
       type: [String, Number],
-      required: false,
+      required: true,
       default: "Transparency",
     },
     value: {
       type: [String, Number],
-      required: false,
+      required: true,
       default: 75,
+    },
+  },
+  computed: {
+    hasSlot() {
+      return (
+        !!this.$slots["progress-bar"] || !!this.$scopedSlots["progress-bar"]
+      )
     },
   },
 }
@@ -83,9 +92,17 @@ export default {
       padding: 2px;
     }
     .model-name {
+      display: block;
     }
     .model-value {
-      display: block;
+      float: left;
+    }
+    ::v-deep .chart-container {
+      .chart {
+        svg {
+          margin-left: -16px !important;
+        }
+      }
     }
   }
 }
