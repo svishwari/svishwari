@@ -4,6 +4,7 @@
       <template #header>
         <hux-page-header
           :title="`Welcome back, ${fullName}!`"
+          class="header-section"
           :header-height="110"
           data-e2e="welcome-banner"
         >
@@ -24,6 +25,7 @@
       </template>
 
       <v-row
+        class="chart-card"
         :class="totalCustomers.length == 0 ? 'margin-2px-top-3px-bottom' : ''"
       >
         <v-col>
@@ -335,6 +337,7 @@ export default {
     ...mapActions({
       getTotalCustomers: "customers/getTotalCustomers",
       getAllNotifications: "notifications/getAll",
+      getNotificationByID: "notifications/getById",
     }),
 
     async loadTotalCustomers() {
@@ -360,9 +363,10 @@ export default {
       this.loadingNotifications = false
     },
 
-    openAlertDrawer(id) {
-      this.alertDrawer = true
-      this.notificationId = id
+    async openAlertDrawer(notificationId) {
+      this.notificationId = notificationId
+      await this.getNotificationByID(notificationId)
+      this.alertDrawer = !this.alertDrawer
     },
   },
 }
@@ -400,5 +404,28 @@ export default {
 .help-section {
   background: var(--v-primary-lighten2);
   height: 96px;
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
+.header-section {
+  height: 110px;
+  position: fixed;
+  width: 100%;
+  z-index: 6 !important;
+}
+.chart-card {
+  margin-top: 94px;
 }
 </style>

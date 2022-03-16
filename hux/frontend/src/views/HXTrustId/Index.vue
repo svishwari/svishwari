@@ -31,6 +31,20 @@
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
+    <div class="ma-1">
+      <score-card :width="150" :height="90" title="Transparency" :value="73" />
+    </div>
+    <div class="ma-1">
+      <score-card :width="150" :height="90" title="Humanity" :value="71">
+        <template #progress-bar>
+          <progress-stack-bar
+            :width="81"
+            :height="6"
+            :show-percentage="false"
+          />
+        </template>
+      </score-card>
+    </div>
     <div>
       <score-card :width="150" :height="90" />
       <v-tabs v-model="tabOption" class="mt-8">
@@ -77,6 +91,7 @@
         </v-tab-item>
         <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
       </v-tabs-items>
+      <progress-stack-bar :width="180" :height="6" :show-percentage="true" />
     </div>
   </page>
 </template>
@@ -88,6 +103,7 @@ import PageHeader from "@/components/PageHeader.vue"
 import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 import segmentScores from "@/api/mock/fixtures/segmentScores.js"
+import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
 
 export default {
   name: "HXTrustID",
@@ -97,6 +113,7 @@ export default {
     Breadcrumb,
     scoreCard,
     TrustComparisonChart,
+    ProgressStackBar,
   },
   data() {
     return {

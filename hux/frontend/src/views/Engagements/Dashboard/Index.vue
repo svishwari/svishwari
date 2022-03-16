@@ -512,7 +512,10 @@ export default {
           this.deleteActionData = event.data
           break
         case "create lookalike":
-          this.openLookAlikeDrawer(event)
+          this.$router.push({
+            name: "LookalikeAudiences",
+            params: { id: event.data.id },
+          })
           break
         default:
           break

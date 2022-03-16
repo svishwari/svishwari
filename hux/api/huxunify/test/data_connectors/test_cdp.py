@@ -24,7 +24,6 @@ from huxunify.api.data_connectors.cdp import (
     get_customers_overview,
     get_customer_profiles,
     get_customer_profile,
-    get_idr_overview,
     get_customer_events_data,
     get_customer_count_by_state,
     get_demographic_by_country,
@@ -32,6 +31,7 @@ from huxunify.api.data_connectors.cdp import (
     get_spending_by_gender,
     get_revenue_by_day,
 )
+from huxunify.api.data_connectors.cdp_connection import get_identity_overview
 from huxunify.app import create_app
 from huxunify.test import constants as t_c
 from huxunify.test.route.route_test_util.test_data_loading.users import (
@@ -475,13 +475,14 @@ class CDPTest(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
             json={},
         )
         self.request_mocker.start()
 
         with self.assertRaises(FailedAPIDependencyError):
-            get_idr_overview(token=t_c.TEST_AUTH_TOKEN)
+            get_identity_overview(token=t_c.TEST_AUTH_TOKEN)
 
     @given(customer_id=st.text(alphabet=string.ascii_letters))
     def test_get_customer_events_raise_dependency_error(
