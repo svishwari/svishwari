@@ -218,7 +218,7 @@ class BaseDestinationBatchJob:
             config (Config): configuration object.
 
         Returns:
-            BaseDestinationBatchJob: subclass of BaseDestinationBatchJob.
+            BaseDestinationBatchJob: Subclass of BaseDestinationBatchJob.
         """
 
         provider = config.CLOUD_PROVIDER.lower()
