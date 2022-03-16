@@ -8,14 +8,19 @@
       class="hux-filters-drawer"
     >
       <div class="wrapper">
-        <div class="header">
+        <div class="header header-height-fix">
           <slot name="header">
-            <h2 class="text-h2">
+            <h2 class="text-h2" v-if="headerName">
+              {{ headerName }}
+            </h2>
+
+            <h2 class="text-h2" v-else>
               Filter
               <span v-if="count">({{ count }})</span>
             </h2>
 
             <v-btn
+              v-if="!headerName"
               text
               min-width="50"
               height="24"
@@ -45,6 +50,7 @@
                 ml-auto
                 primary--text
                 mr-3
+                submit-button
                 btn-border
                 box-shadow-none
               "
@@ -57,7 +63,7 @@
               is-tile
               color="primary"
               class="text-button ml-auto"
-              width="157"
+              :width="submitButtonWidth"
               :is-disabled="
                 !customValidation
                   ? !Boolean(count) && !enableApply
@@ -65,7 +71,7 @@
               "
               @click="$emit('apply')"
             >
-              Apply filter
+              {{ submitButton }}
             </hux-button>
           </slot>
         </div>
@@ -117,6 +123,21 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    headerName: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    submitButton: {
+      type: String,
+      required: false,
+      default: "Apply filter",
+    },
+    submitButtonWidth: {
+      type: String,
+      required: false,
+      default: "157",
+    }
   },
 
   computed: {
