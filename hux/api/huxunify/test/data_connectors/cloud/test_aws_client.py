@@ -29,7 +29,7 @@ class AWSClientTests(TestCase):
         """Test get secret."""
         secret_key = "some_secret"
         secret_val = "MY SECRET"
-        ssm_client = boto3.client("ssm")
+        ssm_client = boto3.client("ssm", region_name=self.config.AWS_REGION)
         ssm_client.put_parameter(
             Name=secret_key,
             Value=secret_val,
@@ -50,7 +50,7 @@ class AWSClientTests(TestCase):
     def test_health_check_storage_service(self):
         """Test health check for storage service."""
         # create a mock bucket
-        s3_client = boto3.client("s3")
+        s3_client = boto3.client("s3", region_name=self.config.AWS_REGION)
         s3_client.create_bucket(
             ACL="public-read-write", Bucket=self.config.S3_DATASET_BUCKET
         )
@@ -64,7 +64,7 @@ class AWSClientTests(TestCase):
     def test_health_check_secret_storage(self):
         """Test health check for secret storage service."""
         # create a mock parameter
-        ssm_client = boto3.client("ssm")
+        ssm_client = boto3.client("ssm", region_name=self.config.AWS_REGION)
         ssm_client.put_parameter(
             Name="unifieddb_host_alias",
             Value="host alias",

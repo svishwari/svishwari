@@ -174,7 +174,7 @@ class PyTestConfig(Config):
 
     DEBUG = True
     FLASK_ENV = api_c.TEST_MODE
-    AWS_REGION = "us-east-1"
+    AWS_REGION = "fake-fake-1"
     S3_DATASET_BUCKET = "test-bucket"
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_CONFIG = {
