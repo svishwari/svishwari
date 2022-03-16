@@ -311,6 +311,7 @@
                   <div ref="advertisingcard" class="lookalikes mx-2 my-6">
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
+                      :standalone-data="audience.standalone_deliveries"
                       @openCreateLookalike="lookalikePageRedirect()"
                     />
                   </div>
@@ -922,7 +923,7 @@ export default {
       }
     },
 
-    /**
+     /**
      * Formatting the values to the desired format using predefined application filters.
      *
      * @param {object} item item
@@ -1267,7 +1268,7 @@ export default {
     lookalikePageRedirect() {
       this.$router.push({
         name: "LookalikeAudiences",
-        params: { id: this.audience.source_id },
+        params: { id: this.audienceId },
       })
     },
   },

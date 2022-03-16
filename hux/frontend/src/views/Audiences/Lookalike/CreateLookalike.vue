@@ -110,7 +110,7 @@ export default {
       lookalikeAudience: {
         name: null,
         value: 5,
-        selectDestination: "",
+        selectDestination: "Facebook",
         engagements: [],
       },
       isFormValid: false,

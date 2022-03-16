@@ -40,7 +40,7 @@
           </v-list>
         </v-card>
       </div>
-      <v-list dense class="add-engagement mx-6 mb-6" :height="22">
+      <v-list dense class="add-lookalike add-lookalike-width mx-6 mb-6" :height="22">
         <v-list-item>
           <hux-icon type="plus" :size="16" color="primary" class="mr-2" />
           <v-btn
@@ -56,7 +56,7 @@
         </v-list-item>
       </v-list>
     </div>
-    <div v-if="!isDataExists" class="no-lookalike">
+    <div v-if="!isDataExists && !addLookalike" class="no-lookalike">
       <metric-card
         class=""
         title="Lookalikes"
@@ -72,6 +72,42 @@
             been delivered to an advertising destination, you can configure a
             lookalike audience in that destination.
           </div>
+        </template>
+      </metric-card>
+    </div>
+
+    <div class="no-lookalike mx-6 my-6" v-if="!isDataExists && addLookalike">
+      <metric-card
+        title="Lookalikes"
+        :height="230"
+        :interactable="false"
+        title-class="text-h3"
+        icon-type="Lookalikes"
+        title-icon="lookalike"
+      >
+        <template #extra-item>
+          <div class="black--text text--lighten-4 mt-4 mb-3 text-body-2">
+            This seed audience has no lookalike audiences.
+            <br />
+            <br />
+            Create a lookalike audience in an advertising platform by clicking
+            “+ A lookalike” below.
+          </div>
+          <v-list class="add-lookalike no-data-width" :height="22">
+            <v-list-item>
+              <hux-icon type="plus" :size="16" color="primary" class="mr-4 ml-2" />
+              <v-btn
+                text
+                min-width="7rem"
+                height="2rem"
+                class="primary--text text-body-1"
+                data-e2e="drawerToggle"
+                @click="$emit('openCreateLookalike')"
+              >
+                A lookalike
+              </v-btn>
+            </v-list-item>
+          </v-list>
         </template>
       </metric-card>
     </div>
@@ -94,13 +130,28 @@ export default {
       required: false,
       default: () => [],
     },
+    standaloneData: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
   data() {
-    return {}
+    return {
+      addLookalike: false,
+    }
   },
   computed: {
     isDataExists() {
+      this.filterStandalone
       return this.lookalikeData.length > 0 ? true : false
+    },
+    filterStandalone() {
+      this.standaloneData.forEach((element) => {
+        if (element.status === "Delivered") {
+          return this.addLookalike = true
+        }
+      })
     },
   },
 }
@@ -136,12 +187,18 @@ export default {
 ::v-deep .metric-card-wrapper {
   padding: 20px 24px !important;
 }
-.add-engagement {
+.add-lookalike {
   height: 60px !important;
   display: inline-table;
-  width: 90%;
   background: var(--v-white-base);
   border: 1px solid var(--v-black-lighten2);
   border-radius: 5px;
 }
+.add-lookalike-width {
+  width: 90%;
+}
+.no-data-width {
+ width: 100%;
+}
+
 </style>
