@@ -31,12 +31,15 @@ class AWSClient(CloudClient):
         super().__init__(config)
 
     # pylint: disable=no-self-use
-    def get_aws_client(self, client_type: ClientType) -> boto3.client:
+    def get_aws_client(
+        self, client_type: ClientType, region_name: str = None
+    ) -> boto3.client:
         """Retrieves AWS client.
         (Most of them)
 
         Args:
             client_type (ClientType): client type.
+            region_name (str): name of the AWS region.
 
         Returns:
             Response: boto3 client
@@ -44,7 +47,7 @@ class AWSClient(CloudClient):
         """
         return boto3.client(
             client_type.value,
-            region_name=self.config.AWS_REGION,
+            region_name=region_name if region_name else self.config.AWS_REGION,
         )
 
     def get_secret(self, secret_name: str, **kwargs) -> str:
