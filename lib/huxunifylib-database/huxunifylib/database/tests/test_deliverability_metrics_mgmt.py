@@ -12,6 +12,7 @@ from huxunifylib.database.deliverability_metrics_management import (
     get_domain_wise_inbox_percentage_data,
     get_overall_inbox_rate,
     get_deliverability_data_performance_metrics,
+    get_campaign_aggregated_sent_count,
 )
 from huxunifylib.database.delivery_platform_management import (
     set_deliverability_metrics,
@@ -361,3 +362,16 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             self.aggregated_click_rate,
             performance_metrics[0].get("click_rate"),
         )
+
+    def test_get_campaign_aggregated_sent_count(self):
+
+        campaign_aggregated_sent_count = get_campaign_aggregated_sent_count(
+            database=self.database,
+            domains=["domain1.com"],
+            start_date=datetime.datetime.utcnow() - datetime.timedelta(days=1),
+            end_date=datetime.datetime.utcnow(),
+        )
+
+        self.assertEqual(len(campaign_aggregated_sent_count), 1)
+        self.assertEqual(self.aggregated_sent,
+                         campaign_aggregated_sent_count[0].get("sent"))

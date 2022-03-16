@@ -10,6 +10,7 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.deliverability_metrics_management import (
     get_domain_wise_inbox_percentage_data,
     get_deliverability_data_performance_metrics,
+    get_campaign_aggregated_sent_count,
 )
 
 from huxunify.api import constants as api_c
@@ -121,6 +122,16 @@ def get_performance_metrics_deliverability_data(
     click_rate_data = []
     unsubscribe_rate_data = []
     complaints_rate_data = []
+
+    aggregated_sent_data = get_campaign_aggregated_sent_count(
+        database=database,
+        domains=domains,
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+
+
 
     deliverability_data = get_deliverability_data_performance_metrics(
         database=database,
