@@ -10,6 +10,7 @@ from huxunify.api.data_connectors.cloud.cloud_client import (
     CloudClient,
 )
 from huxunify.api.config import get_config, Config
+import huxunify.api.constants as api_c
 
 
 class ClientType(Enum):
@@ -124,23 +125,48 @@ class AWSClient(CloudClient):
         """
         raise NotImplementedError()
 
+    def __check_aws_health_connection(
+        self, client: ClientType, client_method: str, method_args: dict
+    ):
+        """Validate an AWS service connection.
+
+        Args:
+            client (ClientType): type of AWS client to use.
+            client_method (str): name of the method to call.
+            method_args (dict): arguments for the method.
+
+        """
+        try:
+            # lookup the health test to run from api constants
+            resp = getattr(self.get_aws_client(client), client_method)(
+                **method_args
+            )
+            if resp["ResponseMetadata"]["HTTPStatusCode"] == 200:
+                return True, f"{client.value} available."
+            return (
+                False,
+                f"{client.value} unavailable. Received: "
+                f"{resp['ResponseMetadata']['HTTPStatusCode']}",
+            )
+        except Exception as exception:  # pylint: disable=broad-except
+            # report the generic error message
+            return (
+                False,
+                f"{client.value} unavailable. An error occured: "
+                f"{getattr(exception, 'message', repr(exception))}",
+            )
+
     def health_check_batch_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS batch service.
 
         Returns:
             Tuple[bool, str]: Returns bool for health status and message
         """
-        try:
-            resp = self.get_aws_client(
-                ClientType.BATCH
-            ).list_scheduling_policies()
-            valid_session = resp["ResponseMetadata"]["HTTPStatusCode"] == 200
-            if valid_session:
-                return True, "AWS Batch service available."
-        except ClientError as error:
-            logging.error("Failed to connect to AWS Batch service.")
-
-        return False, "AWS Batch service unavailable."
+        return self.__check_aws_health_connection(
+            client=ClientType.BATCH,
+            client_method="cancel_job",
+            method_args={"jobId": "test", "reason": "test"},
+        )
 
     def health_check_storage_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS storage service.
@@ -148,15 +174,11 @@ class AWSClient(CloudClient):
         Returns:
             Tuple[bool, str]: Returns bool for health status and message
         """
-        try:
-            resp = self.get_aws_client(ClientType.S3).list_buckets()
-            valid_session = resp["ResponseMetadata"]["HTTPStatusCode"] == 200
-            if valid_session:
-                return True, "AWS S3 storage available."
-        except ClientError as error:
-            logging.error("Failed to connect to AWS S3.")
-
-        return False, "AWS S3 storage unavailable."
+        return self.__check_aws_health_connection(
+            client=ClientType.S3,
+            client_method="get_bucket_location",
+            method_args={api_c.AWS_BUCKET: self.config.S3_DATASET_BUCKET},
+        )
 
     def health_check_secret_storage(self) -> Tuple[bool, str]:
         """Checks the health of the Azure key vault.
@@ -164,15 +186,8 @@ class AWSClient(CloudClient):
         Returns:
             Tuple[bool, str]: Returns bool for health status and message
         """
-        try:
-            resp = self.get_aws_client(ClientType.SSM).describe_sessions(
-                State="Active"
-            )
-            valid_session = resp["ResponseMetadata"]["HTTPStatusCode"] == 200
-            if valid_session:
-                return True, "AWS SSM available."
-        except ClientError as error:
-            logging.error(
-                "Failed to validate connection to AWS parameter store."
-            )
-        return False, "AWS SSM unavailable."
+        return self.__check_aws_health_connection(
+            client=ClientType.SSM,
+            client_method="get_parameter",
+            method_args={"Name": "unifieddb_host_alias"},
+        )
