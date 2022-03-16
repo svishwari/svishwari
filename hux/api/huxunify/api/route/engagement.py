@@ -4,7 +4,6 @@ import datetime
 from pathlib import Path
 import zipfile
 from http import HTTPStatus
-from threading import Thread
 from typing import Tuple
 from itertools import groupby
 from operator import itemgetter

@@ -4,7 +4,6 @@ import asyncio
 import re
 import time
 from http import HTTPStatus
-from threading import Thread
 from typing import Tuple, Union
 from datetime import datetime, timedelta
 import aiohttp
