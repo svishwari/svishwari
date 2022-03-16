@@ -95,10 +95,34 @@ class AzureClient(CloudClient):
         Returns:
             bool: bool indicator if the upload was successful
 
-        Raises:
-            NotImplementedError: Error if function is not implemented
         """
-        raise NotImplementedError()
+        container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
+        blob_name = self.config.AZURE_STORAGE_BLOB_NAME
+
+        try:
+            logging.info(
+                "Uploading %s to Azure blob container: %s",
+                file_name,
+                container_name,
+            )
+            client = BlobClient.from_connection_string(
+                conn_str=self.blob_connection_url,
+                container_name=container_name,
+                blob_name=blob_name,
+            )
+
+            metadata = {
+                api_c.CREATED_BY: user_name if user_name else "",
+                api_c.TYPE: file_type if file_type else "",
+            }
+            with open(file_name, "rb") as data:
+                client.upload_blob(data=data, metadata=metadata)
+        except Exception as exc:
+            logging.error("Failed to upload %s to blob container.", file_name)
+            logging.error(exc)
+            return False
+
+        return True
 
     def download_file(self, file_name: str, user_name: str, **kwargs) -> bool:
         """Download a file from the cloud.
@@ -114,7 +138,29 @@ class AzureClient(CloudClient):
         Raises:
             NotImplementedError: Error if function is not implemented
         """
-        raise NotImplementedError()
+        container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
+        blob_name = self.config.AZURE_STORAGE_BLOB_NAME
+
+        try:
+            logging.info(
+                "Downloading %s from Azure blob container: %s",
+                file_name,
+                container_name,
+            )
+            client = BlobClient.from_connection_string(
+                conn_str=self.blob_connection_url,
+                container_name=container_name,
+                blob_name=blob_name,
+            )
+
+            with open(file_name, "rb") as data:
+                client.upload_blob(data=data, metadata=metadata)
+        except Exception as exc:
+            logging.error("Failed to upload %s to blob container.", file_name)
+            logging.error(exc)
+            return False
+
+        return True
 
     def health_check_batch_service(self) -> Tuple[bool, str]:
         """Checks the health of the cloud batch service.
