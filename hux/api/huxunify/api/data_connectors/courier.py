@@ -294,7 +294,7 @@ class BaseDestinationBatchJob:
 class AWSDestinationBatchJob(BaseDestinationBatchJob):
     """Class for housing AWS delivery jobs"""
 
-    provider = "aws"
+    provider = "AWS"
 
     def __init__(
         self,
@@ -423,7 +423,7 @@ class AWSDestinationBatchJob(BaseDestinationBatchJob):
 class AzureDestinationBatchJob(BaseDestinationBatchJob):
     """Class for housing Azure delivery jobs"""
 
-    provider = "azure"
+    provider = "Azure"
 
     def __init__(
         self,
