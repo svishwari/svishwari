@@ -271,6 +271,8 @@ class OrchestrationRouteTest(RouteTestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIn("rule_attributes", response.json)
+        self.assertIn("general", response.json["rule_attributes"])
+        self.assertIn("events", response.json["rule_attributes"]["events"])
         self.assertIn("text_operators", response.json)
 
     def test_create_audience_with_destination(self):

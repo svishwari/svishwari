@@ -133,6 +133,8 @@ FIELDS = "fields"
 STATUSES = "statuses"
 INPUT_FILE = "input_file"
 UNIQUE_ID = "unique_id"
+INPUT = "input"
+EVENTS = "events"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
