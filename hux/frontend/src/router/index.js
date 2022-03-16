@@ -244,6 +244,16 @@ const routes = [
     },
   },
   {
+    path: "/lookalike-audiences/:id/add",
+    name: "LookalikeAudiences",
+    component: () => import("@/views/Audiences/Lookalike/CreateLookalike.vue"),
+    meta: {
+      layout: "app",
+      title: "Add an lookalike Audience",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/engagements",
     name: "Engagements",
     component: () => import("@/views/Engagements/Index"),
