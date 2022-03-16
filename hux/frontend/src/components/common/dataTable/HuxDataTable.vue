@@ -26,8 +26,10 @@
             </template>
             <template #hover-content>
               <span
-                v-html="
-                  column.tooltipValue.replace(/(?:\r\n|\r|\n)/g, '<br />')
+                v-bind.prop="
+                  formatInnerHTML(
+                    column.tooltipValue.replace(/(?:\r\n|\r|\n)/g, '<br />')
+                  )
                 "
               ></span>
             </template>
@@ -37,7 +39,7 @@
             <span
               :key="column.value"
               :class="{ 'ml-5': column.id == 1 }"
-              v-html="column.text"
+              v-bind.prop="formatInnerHTML(column.text)"
             />
           </template>
           <tooltip
@@ -58,7 +60,7 @@
               />
             </template>
             <template #hover-content>
-              <span v-html="column.hoverTooltip" />
+              <span v-bind.prop="formatInnerHTML(column.hoverTooltip)" />
             </template>
           </tooltip>
         </template>
@@ -108,6 +110,7 @@
 <script>
 import Tooltip from "../Tooltip.vue"
 import Icon from "@/components/common/Icon"
+import { formatInnerHTML } from "@/utils"
 
 const ALL = -1
 export default {
@@ -195,6 +198,7 @@ export default {
     clickRow(_, event) {
       event.expand(!event.isExpanded)
     },
+    formatInnerHTML: formatInnerHTML,
   },
 }
 </script>

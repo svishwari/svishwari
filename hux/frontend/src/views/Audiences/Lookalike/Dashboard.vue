@@ -259,9 +259,12 @@
                         <template #hover-content>
                           <span
                             class="text-body-2 black--text text--darken-4"
-                            v-html="appliedFilters[filterKey][filter].hover"
-                          >
-                          </span>
+                            v-bind.prop="
+                              formatInnerHTML(
+                                appliedFilters[filterKey][filter].hover
+                              )
+                            "
+                          />
                         </template>
                       </tooltip>
                     </li>
@@ -286,6 +289,7 @@
 </template>
 
 <script>
+import { formatInnerHTML } from "@/utils"
 import { mapActions } from "vuex"
 import MetricCard from "@/components/common/MetricCard.vue"
 import Logo from "@/components/common/Logo"
@@ -347,6 +351,7 @@ export default {
     ...mapActions({
       attachAudience: "engagements/attachAudience",
     }),
+    formatInnerHTML: formatInnerHTML,
     // Drawer Section Starts
     setSelectedEngagements(engagementsList) {
       this.selectedEngagements = engagementsList
