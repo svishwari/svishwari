@@ -82,9 +82,9 @@
                   </span>
                 </v-card-title>
                 <trust-comparison-chart
-                    :segment-scores="segmentScores"
-                    data-e2e="trust-comparison-chart"
-                  />
+                  :segment-scores="segmentScores"
+                  data-e2e="trust-comparison-chart"
+                />
               </v-card>
             </v-col>
           </v-row>
@@ -119,7 +119,7 @@ export default {
     return {
       loading: false,
       tabOption: 0,
-      segmentScores: segmentScores.scores
+      segmentScores: segmentScores.scores,
     }
   },
 }

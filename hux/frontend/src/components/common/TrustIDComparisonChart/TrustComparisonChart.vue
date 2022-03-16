@@ -14,17 +14,20 @@
       }"
       :tooltip-style="toolTipStyle"
     >
-    <template #content>
+      <template #content>
         <div class="text-body-2 black--text text--darken-4 caption">
           <div class="spend-count mb-1 text-h5">
-            <span class="dots" :style="{ backgroundColor: currentData.color }"></span>
-            <span> {{currentData.segmentName}}</span>
+            <span
+              class="dots"
+              :style="{ backgroundColor: currentData.color }"
+            ></span>
+            <span> {{ currentData.segmentName }}</span>
           </div>
           <div class="value-container">
-           {{currentData.attributeName}}
+            {{ currentData.attributeName }}
           </div>
           <div class="date-section">
-           {{currentData.score}}
+            {{ currentData.score }}
           </div>
         </div>
       </template>
@@ -35,13 +38,11 @@
 <script>
 import GroupedBarChart from "@/components/common/Charts/GroupedBarChart/GroupedBarChart.vue"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
-import Icon from "@/components/common/Icon"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
-
 
 export default {
   name: "TrustComparisonChart",
-  components: { GroupedBarChart, ChartTooltip, Icon },
+  components: { GroupedBarChart, ChartTooltip },
   props: {
     segmentScores: {
       type: Array,
@@ -72,7 +73,9 @@ export default {
   },
   mounted() {
     this.sizeHandler()
-    new ResizeObserver(this.sizeHandler).observe(this.$refs.trustIdComparisonChart)
+    new ResizeObserver(this.sizeHandler).observe(
+      this.$refs.trustIdComparisonChart
+    )
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -83,7 +86,8 @@ export default {
     },
     sizeHandler() {
       if (this.$refs.trustIdComparisonChart) {
-        this.chartDimensions.width = this.$refs.trustIdComparisonChart.clientWidth
+        this.chartDimensions.width =
+          this.$refs.trustIdComparisonChart.clientWidth
         this.chartDimensions.height = 350
       }
     },

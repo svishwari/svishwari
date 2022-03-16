@@ -6,12 +6,9 @@
 
 <script>
 import * as d3Axis from "d3-axis"
-import * as d3Shape from "d3-shape"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
-import * as d3Transition from "d3-transition"
-import colors from "../../../../plugins/theme"
 import { formatText } from "@/utils"
 import { addIcon } from "@/components/common/Charts/GroupedBarChart/dynamicIcon.js"
 
@@ -152,14 +149,6 @@ export default {
         )
       }
 
-      let attrNames = [
-        "trust_id",
-        "humanity",
-        "transperancy",
-        "capability",
-        "reliability",
-      ]
-
       let xScale = d3Scale
         .scaleBand()
         .domain(this.chartData.map((d) => d.id))
@@ -224,7 +213,7 @@ export default {
       d3Select.selectAll(".tick line").style("stroke", "#E2EAEC")
       d3Select.selectAll(".xAxis-main .tick text").style("color", "#4F4F4F")
 
-      d3Select.selectAll(".xAxis-main .tick").each(function (d) {
+      d3Select.selectAll(".xAxis-main .tick").each(function () {
         d3Select
           .select(this)
           .append("svg")
@@ -263,17 +252,16 @@ export default {
 
             let xPosition = xScale(label.id) + x + 120
 
-
-                    let shareData = {}
-        shareData.name = "Segment 1"
-        shareData.attributeName = label.label
-        shareData.score =  78
-        shareData.xPosition = xPosition
-        shareData.cx = x
-        shareData.cy = y
-        shareData.yPosition = height
-        shareData.width = 40
-        shareData.color =  colors[i]
+            let shareData = {}
+            shareData.name = "Segment 1"
+            shareData.attributeName = label.label
+            shareData.score = 78
+            shareData.xPosition = xPosition
+            shareData.cx = x
+            shareData.cy = y
+            shareData.yPosition = height
+            shareData.width = 40
+            shareData.color = colors[i]
 
             city
               .append("rect")
@@ -287,10 +275,8 @@ export default {
               .attr("height", height)
               .style("fill", colors[i])
               .style("fill-opacity", 1)
-              .on("mouseover", (d) =>
-                applyHoverEffects(d, shareData)
-              )
-              .on("mouseout", (d) => removeHoverEffects(d))
+              .on("mouseover", (d) => applyHoverEffects(d, shareData))
+              .on("mouseout", () => removeHoverEffects())
           }
         })
 
@@ -337,7 +323,7 @@ export default {
         barHoverIn(data)
       }
 
-      let removeHoverEffects = (d) => {
+      let removeHoverEffects = () => {
         svg.selectAll(".hover-line-y").style("display", "none")
         hoverCircles.forEach((circleName) => removeHoverCircle(circleName))
         this.tooltipDisplay(false)
