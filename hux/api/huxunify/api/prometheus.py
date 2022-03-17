@@ -96,6 +96,8 @@ def record_health_status_metric(
 
 
 class Connections(Enum):
+    """Connection health enum"""
+
     STORAGE_SERVICE = "cloud_storage_service_connection_health"
     BATCH_SERVICE = "cloud_batch_service_connection_health"
     SECRET_STORAGE_SERVICE = "cloud_secret_service_connection_health"
@@ -107,21 +109,24 @@ class Connections(Enum):
     TECTON = "tecton_connection_health"
 
 
-def record_health_status(connection: Connections):
+def record_health_status(connection: Connections) -> object:
     """Purpose of this decorator is for recording the health status
     metrics for the various services
 
     Example: @record_health_status(ConnectionHealth.CONNECTION_NAME)
 
     Args:
-        connection (Connections): Connection enum.
+        connection (Connections): Connection enum.t
+
+    Returns:
+        wrapper: returns the wrapped decorator function.
     """
 
-    def wrapper(in_function) -> object:
+    def wrapper(in_function: object) -> object:
         """Decorator for wrapping a function.
 
         Args:
-            in_function: function object.
+            in_function (object): function object.
 
         Returns:
             Response (object): returns a wrapped decorated function object.
