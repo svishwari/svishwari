@@ -261,7 +261,9 @@
                         text-over-2
                         filter-title
                       "
-                      v-html="appliedFilters[filterKey][filter].name"
+                      v-bind.prop="
+                        formatInnerHTML(appliedFilters[filterKey][filter].name)
+                      "
                     />
                   </template>
                   <template #hover-content>
@@ -269,7 +271,13 @@
                       <div class="mb-2">
                         {{ appliedFilters[filterKey][filter].name }}
                       </div>
-                      <span v-html="appliedFilters[filterKey][filter].hover" />
+                      <span
+                        v-bind.prop="
+                          formatInnerHTML(
+                            appliedFilters[filterKey][filter].hover
+                          )
+                        "
+                      />
                     </span>
                   </template>
                 </tooltip>
@@ -653,7 +661,7 @@
 
 <script>
 // helpers
-import { generateColor, saveFile } from "@/utils"
+import { generateColor, saveFile, formatInnerHTML } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
 import filter from "lodash/filter"
 
@@ -1040,6 +1048,7 @@ export default {
       getAudiencesRules: "audiences/fetchConstants",
       updateLookalikeAudience: "audiences/updateLookalike",
     }),
+    formatInnerHTML: formatInnerHTML,
     toggleMenuDrawer() {
       this.menuDrawer = !this.menuDrawer
     },

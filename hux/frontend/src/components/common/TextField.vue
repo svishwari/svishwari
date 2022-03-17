@@ -4,7 +4,7 @@
       class="d-flex align-items-center"
       :class="!required ? 'mb-0' : 'mb-1'"
     >
-      <span class="black--text text--darken-4 text-h5">
+      <span class="black--text text--darken-4 text-h5 text-label">
         {{ labelText }}
         <em v-if="!required" class="text-h6 gray--text"> - optional</em>
       </span>

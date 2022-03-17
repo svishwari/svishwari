@@ -103,7 +103,7 @@
                     />
                   </template>
                   <template #hover-content>
-                    <span v-html="pii.hoverTooltip" />
+                    <span v-bind.prop="formatInnerHTML(pii.hoverTooltip)" />
                   </template>
                 </tooltip>
               </span>
@@ -166,6 +166,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import { formatInnerHTML } from "@/utils"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -266,6 +267,7 @@ export default {
       reqTeamMember: "users/requestTeamMember",
       getreqMembers: "users/getRequestedUsers",
     }),
+    formatInnerHTML: formatInnerHTML,
     closeDrawer() {
       this.localToggle = false
     },
