@@ -4,6 +4,7 @@
     <dashboard-header
       :breadcrumb-items="breadcrumbItems"
       :engagement-data="engagementList"
+      data-e2e="engagement-breadcrumb"
       @removeEngagement="(data) => removeEngagement(data)"
       @favoriteEngagement="(data) => handleActionFavorite(data, 'engagements')"
       @openDownloadDrawer="() => openDownloadDrawer()"
@@ -511,7 +512,10 @@ export default {
           this.deleteActionData = event.data
           break
         case "create lookalike":
-          this.openLookAlikeDrawer(event)
+          this.$router.push({
+            name: "LookalikeAudiences",
+            params: { id: event.data.id },
+          })
           break
         default:
           break
@@ -537,6 +541,7 @@ export default {
           this.confirmDialog.actionType = "edit-schedule"
           this.confirmDialog.title = "You are about to edit delivery schedule."
           this.confirmDialog.btnText = "Yes, edit delivery schedule"
+          this.confirmDialog.leftBtnText = "Cancel"
           this.confirmDialog.body =
             "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
           this.showConfirmModal = true
@@ -547,6 +552,7 @@ export default {
           this.confirmDialog.actionType = "remove-destination"
           this.confirmDialog.title = `Remove ${event.data.name} destination?`
           this.confirmDialog.btnText = "Yes, remove it"
+          this.confirmDialog.leftBtnText = "Cancel"
           this.confirmDialog.icon = "sad-face"
           this.confirmDialog.subtitle = ""
           this.confirmDialog.type = "error"

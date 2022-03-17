@@ -9,10 +9,10 @@ from bson import ObjectId
 
 from huxunifylib.connectors import FacebookConnector
 
-from huxunifylib.database import constants as db_c
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     collection_management,
+    constants as db_c,
 )
 from huxunifylib.database.orchestration_management import (
     create_audience,
@@ -24,7 +24,7 @@ from huxunifylib.database.engagement_management import (
 )
 import huxunify.test.constants as t_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
-from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.schema.destinations import (
     DestinationDataExtGetSchema,
     DestinationGetSchema,
@@ -57,17 +57,20 @@ class TestDestinationRoutes(RouteTestCase):
             return_value=self.database,
         ).start()
 
-        # mock parameter store store secret
-        mock.patch.object(parameter_store, "store_secret").start()
+        for subclass in CloudClient.__subclasses__():
+            # mock parameter store store secret
+            mock.patch.object(subclass, "set_secret").start()
 
-        # mock parameter store get store value
-        mock.patch.object(
-            parameter_store, "get_store_value", return_value="secret"
-        ).start()
+            # mock parameter store get store value
+            mock.patch.object(
+                subclass, "get_secret", return_value="secret"
+            ).start()
 
         self.destinations = destination_management.get_all_delivery_platforms(
             self.database
         )
+
+        self.addCleanup(mock.patch.stopall)
 
     def test_get_all_destinations(self):
         """Test get all destinations."""
@@ -312,6 +315,22 @@ class TestDestinationRoutes(RouteTestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
             f"/{destination_id}/{api_c.AUTHENTICATION}",
             json=self.new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_update_destination_with_no_destination_link(self):
+        """Test update destination with no destination link."""
+
+        destination_id = self.destinations[0][db_c.ID]
+        input_json = self.new_auth_details
+        input_json[db_c.LINK] = None
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
+            f"/{destination_id}/{api_c.AUTHENTICATION}",
+            json=input_json,
             headers=t_c.STANDARD_HEADERS,
         )
 

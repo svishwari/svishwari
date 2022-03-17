@@ -304,10 +304,6 @@ export default {
 
       svg.select(".xAxis").selectAll("line").style("stroke", "transparent")
 
-      let bisectDate = d3Array.bisector(function (d) {
-        return d.xAxisValue
-      }).left
-
       svg
         .append("line")
         .attr("class", "hover-line-x")
@@ -363,38 +359,48 @@ export default {
         })
         .on("mousemove", (mouseEvent) => mousemove(mouseEvent, this.value))
 
+      let dateFormatter = (value) =>
+        this.$options.filters.Date(value, "MM/DD/YYYY")
+
       let mousemove = (mouseEvent, data) => {
-        let x0 = xCoordinateFunction.invert(d3Select.pointer(mouseEvent)[0])
-        let i = bisectDate(data, x0, 1)
-        let d0 = data[i - 1]
-        let d1 = data[i] || {}
-        let d = x0 - d0.xAxisValue > d1.xAxisValue - x0 ? d1 : d0
-
-        this.finalXCoordinate = xCoordinateFunction(d.xAxisValue)
-        this.finalYCoordinate = yCoordinateFunction(d.yAxisValue)
-
-        svg
-          .selectAll(".hover-line-x")
-          .attr("x1", this.margin.left)
-          .attr("x2", width - this.margin.right)
-          .attr("y1", this.finalYCoordinate)
-          .attr("y2", this.finalYCoordinate)
-
-        svg
-          .selectAll(".hover-line-y")
-          .attr("x1", this.finalXCoordinate)
-          .attr("x2", this.finalXCoordinate)
-          .attr("y1", this.margin.top)
-          .attr("y2", height - this.margin.bottom)
-
-        tooltip.attr(
-          "transform",
-          `translate(${this.finalXCoordinate},${this.finalYCoordinate})`
+        let x0 = dateFormatter(
+          xCoordinateFunction.invert(d3Select.pointer(mouseEvent)[0])
         )
 
-        this.showTooltip = true
-        this.tooltipValue = d.yAxisValue
-        this.tooltipValueDate = d.xAxisValue
+        let currentDate = new Date(x0)
+        currentDate.setDate(currentDate.getDate() + 3)
+
+        let currentData = data.find(
+          (em) => dateFormatter(em.xAxisValue) == dateFormatter(currentDate)
+        )
+
+        if (currentData) {
+          this.finalXCoordinate = xCoordinateFunction(currentData.xAxisValue)
+          this.finalYCoordinate = yCoordinateFunction(currentData.yAxisValue)
+
+          svg
+            .selectAll(".hover-line-x")
+            .attr("x1", this.margin.left)
+            .attr("x2", width - this.margin.right)
+            .attr("y1", this.finalYCoordinate)
+            .attr("y2", this.finalYCoordinate)
+
+          svg
+            .selectAll(".hover-line-y")
+            .attr("x1", this.finalXCoordinate)
+            .attr("x2", this.finalXCoordinate)
+            .attr("y1", this.margin.top)
+            .attr("y2", height - this.margin.bottom)
+
+          tooltip.attr(
+            "transform",
+            `translate(${this.finalXCoordinate},${this.finalYCoordinate})`
+          )
+
+          this.showTooltip = true
+          this.tooltipValue = currentData.yAxisValue
+          this.tooltipValueDate = currentData.xAxisValue
+        }
       }
     },
   },

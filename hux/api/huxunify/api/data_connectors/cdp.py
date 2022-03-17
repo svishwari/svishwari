@@ -162,54 +162,6 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 
-# pylint: disable=unused-argument
-def get_idr_overview(
-    token: str, start_date: str = None, end_date: str = None
-) -> dict:
-    """Fetch IDR overview data.
-
-    Args:
-        token (str): OKTA JWT Token.
-        start_date (str): Start date.
-        end_date (str): End date.
-
-    Returns:
-        dict: dictionary of overview data.
-
-    Raises:
-        FailedAPIDependencyError: Integrated dependent API failure error.
-    """
-
-    # TODO : Update to use idr insights api, with start/end date as query params.
-    # get config
-    config = get_config()
-    logger.info("Getting IDR Insights from CDP API.")
-    response = requests.post(
-        f"{config.CDP_SERVICE}/customer-profiles/insights",
-        json=api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
-        headers={
-            api_c.CUSTOMERS_API_HEADER_KEY: token,
-        },
-    )
-
-    if response.status_code != 200 or api_c.BODY not in response.json():
-        logger.error(
-            "Unable to retrieve customer profile insights, %s %s.",
-            response.status_code,
-            response.text,
-        )
-        raise iae.FailedAPIDependencyError(
-            f"{config.CDP_SERVICE}/customer-profiles/insights",
-            response.status_code,
-        )
-
-    logger.info(
-        "Successfully retrieved Customer Profile Insights from CDP API."
-    )
-
-    return clean_cdm_fields(response.json()[api_c.BODY])
-
-
 def get_customers_overview(
     token: str,
     filters: Optional[dict] = None,
@@ -594,7 +546,12 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
     """
 
     return [
-        {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
+        {
+            api_c.NAME: x[api_c.CITY],
+            api_c.LTV: round(x[api_c.AVG_LTV], 4)
+            if x[api_c.AVG_LTV] is not None
+            else None,
+        }
         for x in get_city_ltvs(token, filters=filters)
     ]
 
@@ -700,7 +657,7 @@ def get_demographic_by_country(
         avg_ltv = (
             sum(map(lambda x: x["avg_ltv"] * x["size"], country_items))
             / total_customer_count
-            if country_items
+            if None not in list(map(lambda x: x["avg_ltv"], country_items))
             else None
         )
         customer_insights_by_country.append(
@@ -780,7 +737,15 @@ def get_customers_insights_count_by_day(
         except (ParserError, TypeError):
             record[api_c.RECORDED] = None
 
-    return add_missing_customer_count_by_day(response_body, date_filters)
+    # return response_body as such for staging environment for now since CDP in
+    # staging env now sends out real data
+    # TODO: HUS-2708, remove ENV_NAME check in future when CDP returns real
+    #  data for all environments
+    return (
+        response_body
+        if get_config().ENV_NAME == api_c.STAGING_ENV
+        else add_missing_customer_count_by_day(response_body, date_filters)
+    )
 
 
 def get_city_ltvs(
@@ -924,9 +889,15 @@ def get_geographic_customers_data(customer_count_by_state: list) -> list:
             api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
             if x[api_c.SIZE] != 0
             else 0,
-            api_c.AVG_LTV: round(x.get(api_c.AVG_LTV, 0), 4),
-            api_c.MIN_LTV: round(x.get(api_c.MIN_LTV, 0), 4),
-            api_c.MAX_LTV: round(x.get(api_c.MAX_LTV, 0), 4),
+            api_c.AVG_LTV: round(x.get(api_c.AVG_LTV, 0), 4)
+            if x.get(api_c.AVG_LTV) is not None
+            else None,
+            api_c.MIN_LTV: round(x.get(api_c.MIN_LTV, 0), 4)
+            if x.get(api_c.MIN_LTV) is not None
+            else None,
+            api_c.MAX_LTV: round(x.get(api_c.MAX_LTV, 0), 4)
+            if x.get(api_c.MAX_LTV) is not None
+            else None,
             api_c.MIN_AGE: x.get(api_c.MIN_AGE, 0),
             api_c.MAX_AGE: x.get(api_c.MAX_AGE, 0),
         }
@@ -1116,7 +1087,14 @@ def add_missing_revenue_data_by_day(
         tzinfo=timezone.utc
     )
     # TODO remove stub when data is returned from CDP.
-    sample_ltv = sample_revenue = 27
+    # set sample values to 0 for staging environment for now in order to fill
+    # out the missing days with 0 for UI since CDP in staging env now sends out
+    # real data
+    # TODO: HUS-2708 ,remove ENV_NAME check in future when CDP returns real
+    #  data for all environments
+    sample_ltv = sample_revenue = (
+        0 if get_config().ENV_NAME == api_c.STAGING_ENV else 27
+    )
 
     for num_day in range(int((end_date - start_date).days) + 1):
         current_date = start_date + relativedelta(days=num_day)

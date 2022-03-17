@@ -28,7 +28,7 @@
             :size="32"
             :class="
               addBorder & reduceIcon
-                ? 'addBorder br-50 pa-1'
+                ? 'addBorder br-50 pa-1 allow-overflow'
                 : addBorder
                 ? 'addBorder br-50'
                 : reduceIcon
@@ -93,8 +93,11 @@ export default {
   ::v-deep a {
     color: var(--v-primary-base) !important;
   }
-}
-.addBorder {
-  border: 1px solid var(--v-black-lighten2);
+  .addBorder {
+    border: 1px solid var(--v-black-lighten2);
+  }
+  .allow-overflow {
+    overflow: clip;
+  }
 }
 </style>

@@ -160,8 +160,9 @@ client["engagements"].deliver = (resourceId, data) => {
 client["engagements"].attachAudience = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/audiences`, data)
 }
+
 client["engagements"].attachDestination = (audienceId, data) => {
-  return http.post(`/audience/${audienceId}/destinations`, data)
+  return http.post(`/audiences/${audienceId}/destinations`, data)
 }
 
 client["engagements"].detachDestination = (audienceId, data) => {
@@ -331,6 +332,10 @@ client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
+client["audiences"].create = (resourceId, data) => {
+  return http.post("/lookalike-audiences", data)
+}
+
 client["audiences"].deliveries = (resourceId, query) => {
   return http.get(`/audiences/${resourceId}/delivery-history?${query}`)
 }
@@ -387,7 +392,7 @@ client["notifications"].find = (notification_id) => {
 }
 
 client["notifications"].getAllUsers = () => {
-  return http.get("/users")
+  return http.get("/notifications/users")
 }
 
 //#endregion

@@ -229,15 +229,13 @@
                 />
                 <v-card-title
                   v-if="modelFeatures.length != 0"
-                  class="chart-style pb-2 pl-5 pt-5"
+                  class="chart-style pb-6 pl-5 pt-5"
                 >
-                  <div class="mt-2">
-                    <span class="black--text text--darken-4 text-h3">
-                      Top
-                      {{ modelFeatures.length }}
-                      feature importance
-                    </span>
-                  </div>
+                  <span class="black--text text--darken-4 text-h3">
+                    Top
+                    {{ modelFeatures.length }}
+                    feature importance
+                  </span>
                 </v-card-title>
                 <feature-chart
                   v-if="!featuresLoading && modelFeatures.length != 0"

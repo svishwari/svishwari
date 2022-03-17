@@ -286,7 +286,8 @@ class LookalikeAudiencePostSchema(Schema):
     audience_id = fields.String(validate=must_not_be_blank, required=True)
     name = fields.String(required=True)
     audience_size_percentage = fields.Float(required=True)
-    engagement_ids = fields.List(fields.String(), required=True)
+    engagement_ids = fields.List(fields.String(), required=False)
+    destination_ids = fields.List(fields.String(), required=False)
 
 
 class LookalikeAudiencePutSchema(Schema):

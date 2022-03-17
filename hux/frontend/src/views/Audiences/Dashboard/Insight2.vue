@@ -3,11 +3,13 @@
     <dashboard-header
       :breadcrumb-items="breadcrumbItems"
       :audience-data="audience"
+      data-e2e="audience-breadcrumb"
       @onRefresh="refresh()"
       @removeAudience="(data) => removeAudience(data)"
       @favoriteAudience="(data) => favoriteAudience(data)"
       @openDownloadDrawer="() => openDownloadDrawer()"
       @openLookalikeEditModal="() => openLookalikeEditModal()"
+      @editAudience="(data) => editAudience(data)"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="audience && audience.is_lookalike === true" class="pa-8">
@@ -185,9 +187,12 @@
                       <template #hover-content>
                         <span
                           class="text-body-2 black--text text--darken-4"
-                          v-html="appliedFilters[filterKey][filter].hover"
-                        >
-                        </span>
+                          v-bind.prop="
+                            formatInnerHTML(
+                              appliedFilters[filterKey][filter].hover
+                            )
+                          "
+                        />
                       </template>
                     </tooltip>
                   </li>
@@ -231,6 +236,7 @@
                 section-type="engagement"
                 deliveries-key="deliveries"
                 :audience-data="audience"
+                data-e2e="engagement-delivery-details"
                 @onOverviewSectionAction="triggerOverviewAction($event)"
                 @onOverviewDestinationAction="
                   triggerOverviewDestinationAction($event)
@@ -248,6 +254,7 @@
               </delivery>
               <standalone-delivery
                 :audience="audience"
+                data-e2e="standalone-delivery"
                 @onAddStandaloneDestination="addStandaloneDestination($event)"
                 @onDeliveryStandaloneDestination="refreshEntity()"
                 @onRemoveStandaloneDestination="
@@ -298,11 +305,13 @@
                           ? audienceData.digital_advertising.match_rates
                           : []
                       "
+                      data-e2e="audience-matchrates"
                     />
                   </div>
                   <div ref="advertisingcard" class="lookalikes mx-2 my-6">
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
+                      @openCreateLookalike="lookalikePageRedirect()"
                     />
                   </div>
                 </v-card-text>
@@ -434,6 +443,7 @@ import Vue from "vue"
 // helpers
 import { mapGetters, mapActions } from "vuex"
 import filter from "lodash/filter"
+import { formatInnerHTML } from "@/utils"
 
 // common components
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
@@ -766,6 +776,7 @@ export default {
       detachStandaloneDestination: "audiences/removeStandaloneDestination",
       updateLookalikeAudience: "audiences/updateLookalike",
     }),
+    formatInnerHTML: formatInnerHTML,
     attributeOptions() {
       const options = []
       if (this.ruleAttributes && this.ruleAttributes.rule_attributes) {
@@ -893,6 +904,12 @@ export default {
           await this.detachStandaloneDestination({
             deleteActionData: this.deleteActionData,
             audienceId: this.audienceId,
+          })
+          break
+        case "edit audience":
+          this.$router.push({
+            name: "AudienceUpdate",
+            params: { id: this.audienceId },
           })
           break
         default:
@@ -1190,12 +1207,22 @@ export default {
       ;(this.confirmDialog.title = "You are about to delete"),
         (this.confirmDialog.btnText = "Yes, remove it")
       this.confirmDialog.icon = "sad-face"
-      ;(this.confirmDialog.subtitle = data.name),
-        (this.confirmDialog.type = "error")
+      this.confirmDialog.subtitle = data.name
+      this.confirmDialog.type = "error"
       this.confirmDialog.body =
         "By deleting this audience you will not be able to recover it and it may impact any associated engagements."
       this.confirmDialog.actionType = "remove audience"
       this.showConfirmModal = true
+    },
+    editAudience(data) {
+      this.showConfirmModal = true
+      this.confirmDialog.title = "Edit"
+      this.confirmDialog.btnText = "Yes, edit"
+      this.confirmDialog.icon = "edit"
+      this.confirmDialog.subtitle = data.name
+      this.confirmDialog.type = "error"
+      this.confirmDialog.body = "Are you sure you want to edit this audience?"
+      this.confirmDialog.actionType = "edit audience"
     },
     favoriteAudience(data) {
       let param
@@ -1236,6 +1263,12 @@ export default {
     },
     openLookalikeEditModal() {
       this.showEditConfirmModal = true
+    },
+    lookalikePageRedirect() {
+      this.$router.push({
+        name: "LookalikeAudiences",
+        params: { id: this.audience.source_id },
+      })
     },
   },
 }

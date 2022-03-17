@@ -30,9 +30,9 @@ from huxunifylib.util.general.const import (
     SFMCCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.aws import (
-    parameter_store,
     get_auth_from_parameter_store,
     set_cloud_watch_rule,
     put_rule_targets_aws_batch,
@@ -46,6 +46,9 @@ from huxunify.api.data_connectors.courier import (
     get_audience_destination_pairs,
     toggle_event_driven_routers,
     deliver_audience_to_destination,
+    BaseDestinationBatchJob,
+    AWSDestinationBatchJob,
+    AzureDestinationBatchJob,
 )
 from huxunify.api.data_connectors.scheduler import run_scheduled_deliveries
 from huxunify.api.config import get_config
@@ -160,6 +163,8 @@ class CourierTest(TestCase):
         self.engagement = get_engagement(self.database, engagement_id)
         self.assertTrue(self.engagement)
 
+        self.addCleanup(mock.patch.stopall)
+
     def test_map_destination_credentials_facebook(self):
         """Test mapping of destination credentials for submitting to AWS Batch."""
 
@@ -177,14 +182,9 @@ class CourierTest(TestCase):
             },
         }
 
-        with mock.patch.object(
-            parameter_store,
-            "get_store_value",
-            return_value="sample_auth",
-        ):
-            env_dict, secret_dict = map_destination_credentials_to_dict(
-                destination
-            )
+        env_dict, secret_dict = map_destination_credentials_to_dict(
+            destination
+        )
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
@@ -230,14 +230,9 @@ class CourierTest(TestCase):
             },
         }
 
-        with mock.patch.object(
-            parameter_store,
-            "get_store_value",
-            return_value="sample_auth",
-        ):
-            env_dict, secret_dict = map_destination_credentials_to_dict(
-                destination
-            )
+        env_dict, secret_dict = map_destination_credentials_to_dict(
+            destination
+        )
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
@@ -352,14 +347,10 @@ class CourierTest(TestCase):
         request_mocker.start()
 
         for pair in delivery_route:
-            with mock.patch.object(
-                parameter_store,
-                "get_store_value",
-                return_value="demo_store_value",
-            ):
-                batch_destination = get_destination_config(
-                    self.database, *pair, self.engagement[db_c.ID]
-                )
+            batch_destination = get_destination_config(
+                self.database, *pair, self.engagement[db_c.ID]
+            )
+
             self.assertIsNotNone(batch_destination.aws_envs)
             self.assertIsNotNone(batch_destination.aws_secrets)
             self.assertIsNotNone(batch_destination.audience_delivery_job_id)
@@ -383,14 +374,10 @@ class CourierTest(TestCase):
 
         # walk the delivery route
         for pair in delivery_route:
-            with mock.patch.object(
-                parameter_store,
-                "get_store_value",
-                return_value="demo_store_value",
-            ):
-                batch_destination = get_destination_config(
-                    self.database, *pair, self.engagement[db_c.ID]
-                )
+            batch_destination = get_destination_config(
+                self.database, *pair, self.engagement[db_c.ID]
+            )
+
             batch_destination.aws_envs[
                 AudienceRouterConfig.BATCH_SIZE.name
             ] = 1000
@@ -422,14 +409,9 @@ class CourierTest(TestCase):
 
         # walk the delivery route
         for pair in delivery_route:
-            with mock.patch.object(
-                parameter_store,
-                "get_store_value",
-                return_value="demo_store_value",
-            ):
-                batch_destination = get_destination_config(
-                    self.database, *pair, self.engagement[db_c.ID]
-                )
+            batch_destination = get_destination_config(
+                self.database, *pair, self.engagement[db_c.ID]
+            )
 
             # Register job
             return_value = {
@@ -501,11 +483,12 @@ class CourierTest(TestCase):
             for _ in api_c.DESTINATION_SECRETS[
                 destination[db_c.DELIVERY_PLATFORM_TYPE]
             ]:
-                mock.patch.object(
-                    parameter_store,
-                    "get_store_value",
-                    return_value=simulated_secret,
-                ).start()
+                for subclass in CloudClient.__subclasses__():
+                    mock.patch.object(
+                        subclass,
+                        "get_secret",
+                        return_value=simulated_secret,
+                    ).start()
 
             # run the function
             auth = get_auth_from_parameter_store(
@@ -886,9 +869,6 @@ class CourierTest(TestCase):
             engagement_doc[db_c.CREATED_BY],
         )
 
-        # mock parameter store
-        mock.patch.object(parameter_store, "get_store_value").start()
-
         # mock AWS batch connector register job function
         mock.patch.object(
             AWSBatchConnector, "register_job", return_value=t_c.BATCH_RESPONSE
@@ -926,9 +906,6 @@ class CourierTest(TestCase):
     def test_deliver_audience_to_destination(self):
         """Test delivering an audience to a destination without any
         engagement."""
-
-        # mock parameter store
-        mock.patch.object(parameter_store, "get_store_value").start()
 
         # mock AWS batch connector register job function
         mock.patch.object(
@@ -968,3 +945,56 @@ class CourierTest(TestCase):
             {db_c.NOTIFICATION_FIELD_USERNAME: "Delivery Test User"},
         )
         self.assertEqual(1, notifications["total_records"])
+
+    def test_aws_destination_batch_job(self):
+        """Test destination batch job inheritance when provider is aws."""
+        config = get_config(api_c.TEST_MODE)
+
+        config.CLOUD_PROVIDER = "aws"
+
+        mock.patch(
+            "huxunify.api.config.get_config",
+            return_value=config,
+        ).start()
+
+        audience_delivery_job_id = ObjectId()
+        destination_batch_job = BaseDestinationBatchJob(
+            database=self.database,
+            audience_delivery_job_id=audience_delivery_job_id,
+            secrets_dict={},
+            env_dict={},
+            destination_type="test",
+        )
+
+        self.assertIsInstance(destination_batch_job, AWSDestinationBatchJob)
+        self.assertEqual(
+            audience_delivery_job_id,
+            destination_batch_job.audience_delivery_job_id,
+        )
+
+    def test_azure_destination_batch_job(self):
+        """Test destination batch job inheritance when provider is azure."""
+
+        config = get_config(api_c.TEST_MODE)
+
+        config.CLOUD_PROVIDER = "azure"
+
+        mock.patch(
+            "huxunify.api.config.get_config",
+            return_value=config,
+        ).start()
+
+        audience_delivery_job_id = ObjectId()
+        destination_batch_job = BaseDestinationBatchJob(
+            database=self.database,
+            audience_delivery_job_id=audience_delivery_job_id,
+            secrets_dict={},
+            env_dict={},
+            destination_type="test",
+        )
+
+        self.assertIsInstance(destination_batch_job, AzureDestinationBatchJob)
+        self.assertEqual(
+            audience_delivery_job_id,
+            destination_batch_job.audience_delivery_job_id,
+        )

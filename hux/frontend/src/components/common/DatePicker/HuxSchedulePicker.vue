@@ -204,8 +204,6 @@ export default {
       monthlyPeriodItems: ["Day", "First", "Second", "Third", "Fourth", "Last"],
       monthlyDayItems: [
         "Day",
-        "Weekend",
-        "Weekend day",
         "Sunday",
         "Monday",
         "Tuesday",

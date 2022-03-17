@@ -131,6 +131,11 @@ export default {
       td {
         height: 60px !important;
       }
+      &:last-child {
+        td {
+          border-bottom: none;
+        }
+      }
     }
     .ellipsis {
       overflow: hidden;

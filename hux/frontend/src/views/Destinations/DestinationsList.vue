@@ -238,6 +238,7 @@ export default {
     },
 
     openEditModal(destination) {
+      this.newURL = destination.link
       this.selectedDestination = destination
       this.editConfirmModal = true
     },

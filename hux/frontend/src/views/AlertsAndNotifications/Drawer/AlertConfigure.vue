@@ -49,8 +49,10 @@
               </template>
               <template #hover-content>
                 <span
-                  v-html="
-                    'Email address is pre-populated from your profile and can’t be modified.'
+                  v-bind.prop="
+                    formatInnerHTML(
+                      'Email address is pre-populated from your profile and can’t be modified.'
+                    )
                   "
                 />
               </template>
@@ -152,6 +154,7 @@ import { mapActions, mapGetters } from "vuex"
 import { formatText } from "@/utils"
 import Tooltip from "@/components/common/Tooltip.vue"
 import HuxButton from "@/components/common/huxButton.vue"
+import { formatInnerHTML } from "@/utils"
 
 export default {
   name: "AlertConfigureDrawer",
@@ -169,11 +172,6 @@ export default {
       type: Boolean,
       required: true,
       default: false,
-    },
-    users: {
-      type: Array,
-      required: false,
-      default: () => [],
     },
   },
   data() {
@@ -210,7 +208,7 @@ export default {
   computed: {
     ...mapGetters({
       getCurrentUserEmail: "users/getEmailAddress",
-      getUsers: "notifications/userList",
+      getAlerts: "users/getUserAlerts",
     }),
   },
 
@@ -239,6 +237,7 @@ export default {
       updateUserPreferences: "users/updateUserPreferences",
       getUsersNoti: "notifications/getAllUsers",
     }),
+    formatInnerHTML: formatInnerHTML,
     async updateUsers() {
       await this.getUsersNoti()
     },
@@ -269,10 +268,7 @@ export default {
       })
     },
     mapAlertSectionGroups() {
-      let currentUser = this.users.find(
-        (data) => data.email == this.getCurrentUserEmail
-      )
-      this.currentAlertConf = currentUser.alerts
+      this.currentAlertConf = this.getAlerts
       if (this.checkIfconfigExited(this.currentAlertConf)) {
         this.setAlertConfiguration()
       } else {

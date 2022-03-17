@@ -8,6 +8,7 @@ import pymongo
 from pymongo import MongoClient
 
 import huxunifylib.database.constants as db_c
+from huxunifylib.database.utils import match_start_end_date_stmt
 
 
 def get_domain_wise_inbox_percentage_data(
@@ -64,21 +65,11 @@ def get_domain_wise_inbox_percentage_data(
         pipeline[0]["$match"][db_c.DOMAIN] = {"$in": domain_name}
 
     # Optionally filter by date.
-    if isinstance(start_date, datetime) and isinstance(end_date, datetime):
-        pipeline.insert(
-            1,
-            {
-                "$match": {
-                    "create_time": {"$gte": start_date, "$lte": end_date}
-                }
-            },
-        )
-
-    elif isinstance(start_date, datetime):
-        pipeline.insert(1, {"$match": {"create_time": {"$gte": start_date}}})
-
-    elif isinstance(end_date, datetime):
-        pipeline.insert(1, {"$match": {"create_time": {"$lte": end_date}}})
+    start_end_filter = match_start_end_date_stmt(
+        start_date=start_date, end_date=end_date, date_field=db_c.CREATE_TIME
+    )
+    if start_end_filter:
+        pipeline.insert(1, start_end_filter)
 
     try:
         inbox_percentage_data_no_repeat = []
@@ -145,6 +136,229 @@ def get_overall_inbox_rate(database: MongoClient) -> Union[float, None]:
                 db_c.DELIVERABILITY_METRICS_COLLECTION
             ].aggregate(pipeline)
         )[0].get(db_c.OVERALL_INBOX_RATE)
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+def get_deliverability_data_performance_metrics(
+    database: MongoClient,
+    domains: list = None,
+    delivery_platforms=None,
+    start_date: datetime = None,
+    end_date: datetime = None,
+    aggregate: bool = False,
+    mock: bool = False,
+) -> Union[list, None]:
+    """Retrieves deliverability metrics data from performance metrics
+    collection.
+
+    Args:
+        database (MongoClient): A database client.
+        domains (list, Optional): List of domain names to be filtered.
+        delivery_platforms (list, Optional): List of delivery platform names
+            to filter on.
+        start_date (datetime, Optional): Start date to get email deliverability
+            metrics.
+        end_date (datetime, Optional): End date to get email deliverability
+            metrics.
+        aggregate (bool, Optional): Aggreagate values if set to true.
+        mock (bool, Optional): Flag set to true when using mongomock.
+    Returns:
+        Union[list, None]: Deliverability metrics aggregated daily.
+    """
+
+    if delivery_platforms is None:
+        deliver_platforms = [db_c.DELIVERY_PLATFORM_SFMC]
+
+    pipeline = [
+        {"$match": {"delivery_platform_type": {"$in": deliver_platforms}}},
+        # Need to do this since Document DB does not support dateTrunc
+        {
+            "$project": {
+                "_id": 0,
+                "end_date": {
+                    "$dateFromString": {
+                        "dateString": {
+                            "$dateToString": {
+                                "format": "%Y-%m-%d",
+                                "date": "$end_time",
+                            }
+                        }
+                    }
+                },
+                "domain_name": "$performance_metrics.from_addr",
+                "sent": "$performance_metrics.sent",
+                "delivered": "$performance_metrics.delivered",
+                "opens": "$performance_metrics.opens",
+                "clicks": "$performance_metrics.clicks",
+                "bounces": "$performance_metrics.bounces",
+                "unsubscribes": "$performance_metrics.unsubscribes",
+                "complaints": "$performance_metrics.complaints",
+            }
+        },
+        {
+            "$addFields": {
+                "date_domain": {
+                    "end_date": "$end_date",
+                    "domain_name": "$domain_name",
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$date_domain",
+                "sent": {"$sum": "$sent"},
+                "delivered": {"$sum": "$delivered"},
+                "opens": {"$sum": "$opens"},
+                "clicks": {"$sum": "$clicks"},
+                "bounces": {"$sum": "$bounces"},
+                "unsubscribes": {"$sum": "$unsubscribes"},
+                "complaints": {"$sum": "$complaints"},
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "domain_name": "$_id.domain_name",
+                "end_date": "$_id.end_date",
+                "sent": "$sent",
+                "delivered": "$delivered",
+                "opens": "$opens",
+                "clicks": "$clicks",
+                "bounces": "$bounces",
+                "unsubscribes": "$unsubscribes",
+                "complaints": "$complaints",
+            }
+        },
+        {
+            "$group": {
+                "_id": "$domain_name",
+                "deliverability_metrics": {
+                    "$addToSet": {
+                        "date": "$end_date",
+                        "sent": "$sent",
+                        "delivered": "$delivered",
+                        "delivered_rate": {
+                            "$cond": {
+                                "if": {"$eq": ["$sent", 0]},
+                                "then": 0,
+                                "else": {"$divide": ["$delivered", "$sent"]},
+                            }
+                        },
+                        "open_rate": {
+                            "$cond": {
+                                "if": {"$eq": ["$sent", 0]},
+                                "then": 0,
+                                "else": {"$divide": ["$opens", "$sent"]},
+                            }
+                        },
+                        "click_rate": {
+                            "$cond": {
+                                "if": {"$eq": ["$sent", 0]},
+                                "then": 0,
+                                "else": {"$divide": ["$clicks", "$sent"]},
+                            }
+                        },
+                        "unsubscribe_rate": {
+                            "$cond": {
+                                "if": {"$eq": ["$sent", 0]},
+                                "then": 0,
+                                "else": {
+                                    "$divide": ["$unsubscribes", "$sent"]
+                                },
+                            }
+                        },
+                        "complaints_rate": {
+                            "$cond": {
+                                "if": {"$eq": ["$sent", 0]},
+                                "then": 0,
+                                "else": {"$divide": ["$complaints", "$sent"]},
+                            }
+                        },
+                        "bounce_rate": {
+                            "$cond": {
+                                "if": {"$eq": ["$sent", 0]},
+                                "then": 0,
+                                "else": {"$divide": ["$bounces", "$sent"]},
+                            }
+                        },
+                    }
+                },
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "domain_name": "$_id",
+                "deliverability_metrics": "$deliverability_metrics",
+            }
+        },
+    ]
+
+    if mock:
+        # mongomock does not support $dateToString
+        pipeline[1]["$project"]["end_date"] = "$end_time"
+
+    if domains:
+        pipeline.insert(
+            1,
+            {
+                "$match": {
+                    "$or": [
+                        {
+                            "performance_metrics.from_addr": {
+                                "$regex": f".*@{domain}$"
+                            }
+                        }
+                        for domain in domains
+                    ]
+                }
+            },
+        )
+
+    start_end_filter = match_start_end_date_stmt(
+        start_date=start_date, end_date=end_date, date_field=db_c.JOB_END_TIME
+    )
+    if start_end_filter:
+        pipeline.insert(1, start_end_filter)
+
+    if aggregate:
+        pipeline = pipeline + [
+            {"$unwind": {"path": "$deliverability_metrics"}},
+            {
+                "$group": {
+                    "_id": "$domain_name",
+                    "sent": {"$sum": "$deliverability_metrics.sent"},
+                    "open_rate": {"$avg": "$deliverability_metrics.open_rate"},
+                    "click_rate": {
+                        "$avg": "$deliverability_metrics.click_rate"
+                    },
+                    "bounce_rate": {
+                        "$avg": "$deliverability_metrics.bounce_rate"
+                    },
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "domain_name": "$_id",
+                    "sent": "$sent",
+                    "bounce_rate": "$bounce_rate",
+                    "open_rate": "$open_rate",
+                    "click_rate": "$click_rate",
+                }
+            },
+        ]
+
+    try:
+        return list(
+            database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.PERFORMANCE_METRICS_COLLECTION
+            ].aggregate(pipeline)
+        )
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

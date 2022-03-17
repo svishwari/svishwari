@@ -108,6 +108,7 @@
           color="primary"
           height="40"
           :is-disabled="!isValid"
+          data-e2e="next-step"
           @click.native="currentStep++"
         >
           Next
@@ -118,6 +119,7 @@
           color="primary"
           height="40"
           :is-disabled="!isValid"
+          data-e2e="create-engagement"
           @click="addNewEngagement()"
         >
           Create

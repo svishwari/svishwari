@@ -143,10 +143,20 @@ class DataSourceSearch(SwaggerView):
             ] = api_c.CDP_DATA_SOURCE_CATEGORY_MAP.get(
                 data_source[api_c.TYPE], db_c.CATEGORY_UNKNOWN
             )
+
             for connection_ds in connections_data_sources:
                 if connection_ds.get(api_c.TYPE) == data_source.get(
                     api_c.TYPE
                 ):
+                    if (
+                        not only_added
+                        and connection_ds.get(db_c.STATUS) != db_c.PENDING
+                    ):
+                        # Setting to active, any state other than pending.
+                        data_source[db_c.STATUS] = connection_ds.get(
+                            db_c.STATUS
+                        )
+
                     data_source[
                         db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT
                     ] = connection_ds.get(
@@ -791,7 +801,13 @@ class GetConnectionsDatafeedDetails(SwaggerView):
             query_json,
         )
 
-        do_aggregate = (parse(end_date) - parse(start_date)).days > 1
+        # If start_date and _end_date specified, compute
+        # else set do_aggregate to True
+        do_aggregate = (
+            (parse(end_date) - parse(start_date)).days > 1
+            if start_date and end_date
+            else True
+        )
 
         datafeed_details = sorted(
             clean_and_aggregate_datafeed_details(
