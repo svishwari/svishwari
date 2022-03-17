@@ -1,5 +1,8 @@
 """File to manage prometheus utilities and metrics"""
 import re
+from enum import Enum
+from functools import wraps
+
 from flask import Flask, request, Request
 from prometheus_client import Gauge
 from prometheus_flask_exporter import PrometheusMetrics
@@ -90,6 +93,57 @@ def record_health_status_metric(
     """
 
     health_check_metrics.labels(name=connection_name).set(connection_health)
+
+
+class Connections(Enum):
+    STORAGE_SERVICE = "cloud_storage_service_connection_health"
+    BATCH_SERVICE = "cloud_batch_service_connection_health"
+    SECRET_STORAGE_SERVICE = "cloud_secret_service_connection_health"
+    JIRA = "jira_connection_health"
+    CDM_API = "cdm_api_connection_health"
+    CDM_CONNECTION_SERVICE = "cdm_connection_service_connection_health"
+    OKTA = "okta_connection_health"
+    DB = "hux_unified_db_connection_health"
+    TECTON = "tecton_connection_health"
+
+
+def record_health_status(connection: Connections):
+    """Purpose of this decorator is for recording the health status
+    metrics for the various services
+
+    Example: @record_health_status(ConnectionHealth.CONNECTION_NAME)
+
+    Args:
+        connection (Connections): Connection enum.
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function: function object.
+
+        Returns:
+            Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for recording health status metrics.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+            status = in_function(*args, **kwargs)
+            health_check_metrics.labels(name=connection.value).set(status[0])
+            return status
+
+        return decorator
+
+    return wrapper
 
 
 def get_routes(app: Flask) -> list:
