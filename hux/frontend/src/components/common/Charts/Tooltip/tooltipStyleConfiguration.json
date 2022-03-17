@@ -82,5 +82,11 @@
     "top": "-28px",
     "left": "85px",
     "padding": "6px 8px 8px 8px"
+  },
+  "trustIdComparisonChart": {
+    "maxWidth": "200px",
+    "top": "-28px",
+    "left": "38px",
+    "padding": "8px"
   }
 }
