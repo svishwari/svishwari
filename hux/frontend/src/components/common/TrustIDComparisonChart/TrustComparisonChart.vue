@@ -111,13 +111,22 @@ export default {
         for (let attr of attr_order) {
           let segmentAttrScore = []
           let currentAttribute = ""
-          this.sourceData.forEach(
-            (data, index) => {
-               let attr_data = data.attributes.find((el) => el.attribute_type == attr)
-               currentAttribute = attr_data.attribute_name
-               segmentAttrScore.push({value: attr_data.attribute_score, color: colors[index], segmentName: data.segment_name})
+          this.sourceData.forEach((data, index) => {
+            let attr_data = data.attributes.find(
+              (el) => el.attribute_type == attr
+            )
+            currentAttribute = attr_data.attribute_name
+            segmentAttrScore.push({
+              value: attr_data.attribute_score,
+              color: colors[index],
+              segmentName: data.segment_name,
             })
-          this.chartSourceData.push({ id: attr, label: currentAttribute, values: segmentAttrScore })
+          })
+          this.chartSourceData.push({
+            id: attr,
+            label: currentAttribute,
+            values: segmentAttrScore,
+          })
         }
       }
     },
@@ -133,7 +142,7 @@ export default {
 }
 .container-chart {
   position: relative;
- height: 650px;
+  height: 650px;
   padding: 0px !important;
   .value-container {
     margin-top: 2px;

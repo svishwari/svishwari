@@ -1230,21 +1230,15 @@
 
     <v-divider class="mt-10" />
 
-
     <v-subheader>Score Card</v-subheader>
     <score-card :width="150" :height="90" title="Transparency" :value="73" />
     <score-card :width="150" :height="90" title="Humanity" :value="71">
-        <template #progress-bar>
-          <progress-stack-bar
-            :width="81"
-            :height="6"
-            :show-percentage="false"
-          />
-        </template>
-      </score-card>
+      <template #progress-bar>
+        <progress-stack-bar :width="81" :height="6" :show-percentage="false" />
+      </template>
+    </score-card>
 
     <v-divider class="mt-10" />
-
 
     <v-subheader>Progress Stack Bar</v-subheader>
     <progress-stack-bar :width="180" :height="6" :show-percentage="true" />

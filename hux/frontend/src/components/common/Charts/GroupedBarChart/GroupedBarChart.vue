@@ -1,7 +1,11 @@
 <template>
   <div class="chart-container" :style="{ maxWidth: chartWidth }">
     <div ref="groupedBarChart" class="chart-section"></div>
-    <chart-legends v-if="showLegends" :legends-data="legendsData" class="legend-style pl-7" />
+    <chart-legends
+      v-if="showLegends"
+      :legends-data="legendsData"
+      class="legend-style pl-7"
+    />
   </div>
 </template>
 
@@ -96,13 +100,7 @@ export default {
         .paddingInner(0.22)
         .paddingOuter(0.11)
 
-      let yScale = d3Scale
-        .scaleLinear()
-        .domain([
-          0,100
-        ])
-        .range([h, 0])
-        .nice(4)
+      let yScale = d3Scale.scaleLinear().domain([0, 100]).range([h, 0]).nice(4)
 
       let formatAxisLabel = (text) => formatText(text)
 
@@ -177,19 +175,19 @@ export default {
         let barWidth = 0
         switch (totalAttributes) {
           case 1:
-            barWidth =  56
+            barWidth = 56
             break
           case 2:
-            barWidth =  46
+            barWidth = 46
             break
           case 3:
-            barWidth =  40
+            barWidth = 40
             break
           case 4:
-            barWidth =  32
+            barWidth = 32
             break
           case 5:
-            barWidth =  24
+            barWidth = 24
             break
         }
         return xScale.bandwidth() < barWidth ? xScale.bandwidth() : barWidth
@@ -218,7 +216,7 @@ export default {
 
             let label = d
 
-            let xPosition = xScale(label.id) + x + (d.values.length*barWidth)
+            let xPosition = xScale(label.id) + x + d.values.length * barWidth
 
             let shareData = {}
             shareData.name = "Segment 1"
