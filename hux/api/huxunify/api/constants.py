@@ -1638,6 +1638,14 @@ UNSUBSCRIBE_RATE = "unsubscribe_rate"
 COMPLAINTS_RATE = "complaints_rate"
 DELIVERABILITY_METRICS = "deliverability_metrics"
 
+CAMPAIGN_ID = "campaign_id"
+UNSUBSCRIBES = "unsubscribes"
+COMPLAINTS = "complaints"
+SOFT_BOUNCES = "soft_bounces"
+BOUNCES = "bounces"
+HARD_BOUNCES = "hard_bounces"
+OPENS = "opens"
+CLICKS = "clicks"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"
