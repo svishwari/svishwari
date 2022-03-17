@@ -12,10 +12,10 @@ from huxunifylib.database.utils import match_start_end_date_stmt
 
 
 def get_domain_wise_inbox_percentage_data(
-        database: MongoClient,
-        domain_name: list = None,
-        start_date: datetime = None,
-        end_date: datetime = None,
+    database: MongoClient,
+    domain_name: list = None,
+    start_date: datetime = None,
+    end_date: datetime = None,
 ) -> Union[list, None]:
     """Fetch Domain wise inbox percentage data from DB.
 
@@ -94,8 +94,7 @@ def get_domain_wise_inbox_percentage_data(
                             db_c.CREATE_TIME: create_time,
                             db_c.INBOX_PERCENTAGE: inbox_percentage,
                         }
-                        for create_time, inbox_percentage in
-                        daily_unique_data.items()
+                        for create_time, inbox_percentage in daily_unique_data.items()
                     ],
                 }
             )
@@ -145,13 +144,13 @@ def get_overall_inbox_rate(database: MongoClient) -> Union[float, None]:
 
 
 def get_deliverability_data_performance_metrics(
-        database: MongoClient,
-        domains: list = None,
-        delivery_platforms=None,
-        start_date: datetime = None,
-        end_date: datetime = None,
-        aggregate: bool = False,
-        mock: bool = False,
+    database: MongoClient,
+    domains: list = None,
+    delivery_platforms=None,
+    start_date: datetime = None,
+    end_date: datetime = None,
+    aggregate: bool = False,
+    mock: bool = False,
 ) -> Union[list, None]:
     """Retrieves deliverability metrics data from performance metrics
     collection.
@@ -199,19 +198,23 @@ def get_deliverability_data_performance_metrics(
                 "hard_bounces": "$performance_metrics.hard_bounces",
                 "unsubscribes": "$performance_metrics.unsubscribes",
                 "complaints": "$performance_metrics.complaints",
+                # TODO change to list of campaign_id indicators when not using
+                # sfmc.
+                "campaign_id": "$performance_metrics.journey_id",
             }
         },
         {
             "$addFields": {
-                "date_domain": {
+                "date_domain_campaign_id": {
                     "end_date": "$end_date",
                     "domain_name": "$domain_name",
+                    "campaign_id": "$campaign_id",
                 }
             }
         },
         {
             "$group": {
-                "_id": "$date_domain",
+                "_id": "$date_domain_campaign_id",
                 "sent": {"$sum": "$sent"},
                 "delivered": {"$sum": "$delivered"},
                 "opens": {"$sum": "$opens"},
@@ -227,11 +230,13 @@ def get_deliverability_data_performance_metrics(
                 "_id": 0,
                 "domain_name": "$_id.domain_name",
                 "end_date": "$_id.end_date",
+                "campaign_id": "$_id.campaign_id",
                 "sent": "$sent",
                 "delivered": "$delivered",
                 "opens": "$opens",
                 "clicks": "$clicks",
                 "bounces": "$bounces",
+                "soft_bounces": {"$subtract": ["$bounces", "$hard_bounces"]},
                 "hard_bounces": "$hard_bounces",
                 "unsubscribes": "$unsubscribes",
                 "complaints": "$complaints",
@@ -243,10 +248,12 @@ def get_deliverability_data_performance_metrics(
                 "deliverability_metrics": {
                     "$addToSet": {
                         "date": "$end_date",
+                        "campaign_id": "$campaign_id",
                         "sent": "$sent",
                         "delivered": "$delivered",
-                        "soft_bounces": {"$subtract": ["$bounces", "$hard_bounces"]},
+                        "soft_bounces": "$soft_bounces",
                         "hard_bounces": "$hard_bounces",
+                        "bounces": "$bounces",
                         "opens": "$opens",
                         "clicks": "$clicks",
                         "complaints": "$complaints",
@@ -298,12 +305,21 @@ def get_deliverability_data_performance_metrics(
                 "$group": {
                     "_id": "$domain_name",
                     "sent": {"$sum": "$deliverability_metrics.sent"},
-                    "soft_bounces": {"$sum": "$deliverability_metrics.soft_bounces"},
-                    "hard_bounces": {"$sum": "$deliverability_metrics.hard_bounces"},
-                    "opens": "$opens",
-                    "clicks": "$clicks",
-                    "complaints": "$complaints",
-                    "unsubscribes": "$unsubscribes",
+                    "soft_bounces": {
+                        "$sum": "$deliverability_metrics.soft_bounces"
+                    },
+                    "hard_bounces": {
+                        "$sum": "$deliverability_metrics.hard_bounces"
+                    },
+                    "bounces": {"$sum": "$deliverability_metrics.bounces"},
+                    "opens": {"$sum": "$deliverability_metrics.opens"},
+                    "clicks": {"$sum": "$deliverability_metrics.clicks"},
+                    "complaints": {
+                        "$sum": "$deliverability_metrics.complaints"
+                    },
+                    "unsubscribes": {
+                        "$sum": "$deliverability_metrics.unsubscribes"
+                    },
                 }
             },
             {
@@ -311,9 +327,13 @@ def get_deliverability_data_performance_metrics(
                     "_id": 0,
                     "domain_name": "$_id",
                     "sent": "$sent",
-                    "bounce_rate": "$bounce_rate",
-                    "open_rate": "$open_rate",
-                    "click_rate": "$click_rate",
+                    "bounces": "$bounces",
+                    "hard_bounces": "$hard_bounces",
+                    "soft_bounces": "$soft_bounces",
+                    "opens": "$opens",
+                    "clicks": "$clicks",
+                    "complaints": "$complaints",
+                    "unsubscribes": "$unsubscribes",
                 }
             },
         ]
@@ -332,11 +352,11 @@ def get_deliverability_data_performance_metrics(
 
 
 def get_campaign_aggregated_sent_count(
-        database: MongoClient,
-        domains: list = None,
-        delivery_platforms=None,
-        start_date: datetime = None,
-        end_date: datetime = None,
+    database: MongoClient,
+    domains: list = None,
+    delivery_platforms=None,
+    start_date: datetime = None,
+    end_date: datetime = None,
 ) -> Union[list, None]:
     """Retrieves aggregated sent data based on campaigns at domain level.
 
@@ -356,34 +376,29 @@ def get_campaign_aggregated_sent_count(
         delivery_platforms = [db_c.DELIVERY_PLATFORM_SFMC]
 
     pipeline = [
+        {"$match": {"delivery_platform_type": {"$in": delivery_platforms}}},
         {
-            '$match': {
-                'delivery_platform_type': {
-                    '$in': delivery_platforms
+            "$addFields": {
+                "domain_journey_id": {
+                    "domain_name": "$performance_metrics.from_addr",
+                    "campaign_id": "$performance_metrics.journey_id",
                 }
             }
-        }, {
-            '$addFields': {
-                'domain_journey_id': {
-                    'domain_name': '$performance_metrics.from_addr',
-                    'campaign_id': '$performance_metrics.journey_id'
-                }
+        },
+        {
+            "$group": {
+                "_id": "$domain_journey_id",
+                "sent": {"$sum": "$performance_metrics.sent"},
             }
-        }, {
-            '$group': {
-                '_id': '$domain_journey_id',
-                'sent': {
-                    '$sum': '$performance_metrics.sent'
-                }
+        },
+        {
+            "$project": {
+                "domain_name": "$_id.domain_name",
+                "campaign_id": "$_id.campaign_id",
+                "sent": "$sent",
+                "_id": 0,
             }
-        }, {
-            '$project': {
-                'domain_name': '$_id.domain_name',
-                'campaign_id': '$_id.campaign_id',
-                'sent': '$sent',
-                '_id': 0
-            }
-        }
+        },
     ]
     if domains:
         pipeline.insert(
