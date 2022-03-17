@@ -106,3 +106,11 @@ class CloudClient:
             Tuple[bool, str]: Returns bool for health status and message
         """
         raise NotImplementedError()
+
+    def health_check_secret_storage(self) -> Tuple[bool, str]:
+        """Checks the health of the cloud secret storage.
+
+        Returns:
+            Tuple[bool, str]: Returns bool for health status and message
+        """
+        raise NotImplementedError()
