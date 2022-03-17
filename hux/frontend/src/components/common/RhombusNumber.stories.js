@@ -1,7 +1,7 @@
-import RhombusNumber from './RhombusNumber'
+import RhombusNumber from "./RhombusNumber"
 export default {
-    component: RhombusNumber,
-    title: "Components",
+  component: RhombusNumber,
+  title: "Components",
 }
 
 const Template = () => ({
