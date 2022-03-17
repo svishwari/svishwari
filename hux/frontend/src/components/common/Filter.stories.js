@@ -6,15 +6,31 @@ export default {
   component: FilterDrawer,
   FilterPanels,
   FilterPanel,
+  argTypes: {
+    isToggled: {
+      control: { type: "boolean" },
+    },
+    count: {
+      control: { type: "number" },
+    }
+  },
+  args: {
+    isToggled: true,
+    count: 0,
+  },
 }
 
-const Template = ({ ...args }) => ({
+const Template = (args, { argTypes }) => ({
   components: { FilterDrawer, FilterPanels, FilterPanel },
+  props: Object.keys(argTypes),
+  data() {
+    return {}
+  },
   template: `
     <div style="margin-left:1200px">
-      <filter-drawer isToggled="true">
+      <filter-drawer v-bind="$props" v-on="$props">
         <filter-panels>
-          <v-checkbox label="My favorites only"></v-checkbox>
+          <v-checkbox label="My favorites only" @click="$props.count++"></v-checkbox>
           <v-checkbox label="Audiences I've worked on"></v-checkbox>
           <filter-panel title="Attributes">
             <div class="text-body-1 black--text text--lighten-4 pb-2">MODELS</div>
