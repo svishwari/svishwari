@@ -7,7 +7,7 @@ export default {
 const Template = () => ({
   components: { RhombusNumber },
   template: `
-    <RhombusNumber value="10" color="blue"/>
+    <RhombusNumber value="71" color="blue"/>
   `,
 })
 export const Rhombus = Template.bind({})
