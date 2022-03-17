@@ -1,5 +1,5 @@
 <template>
-  <v-card class="card-style" shaped outlined>
+  <v-card class="card-style" :style="style" shaped outlined>
     <v-card-text class="text-style">
       {{ value }}
     </v-card-text>
@@ -14,7 +14,17 @@ export default {
       type: Number,
       required: true,
     },
+    color: {
+      type: String,
+      required: false,
+      default: "green",
+    },
   },
+  computed: {
+    style() {
+      return 'border-color: ' + this.color;
+    }
+  }
 }
 </script>
 
@@ -23,7 +33,6 @@ export default {
   transform: rotate(45deg);
   width: 40px;
   height: 40px;
-  border-color: blue;
   border-radius: 0 !important;
   border-width: thick;
 }
