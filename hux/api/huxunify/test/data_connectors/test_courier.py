@@ -46,6 +46,9 @@ from huxunify.api.data_connectors.courier import (
     get_audience_destination_pairs,
     toggle_event_driven_routers,
     deliver_audience_to_destination,
+    BaseDestinationBatchJob,
+    AWSDestinationBatchJob,
+    AzureDestinationBatchJob,
 )
 from huxunify.api.data_connectors.scheduler import run_scheduled_deliveries
 from huxunify.api.config import get_config
@@ -942,3 +945,56 @@ class CourierTest(TestCase):
             {db_c.NOTIFICATION_FIELD_USERNAME: "Delivery Test User"},
         )
         self.assertEqual(1, notifications["total_records"])
+
+    def test_aws_destination_batch_job(self):
+        """Test destination batch job inheritance when provider is aws."""
+        config = get_config(api_c.TEST_MODE)
+
+        config.CLOUD_PROVIDER = "aws"
+
+        mock.patch(
+            "huxunify.api.config.get_config",
+            return_value=config,
+        ).start()
+
+        audience_delivery_job_id = ObjectId()
+        destination_batch_job = BaseDestinationBatchJob(
+            database=self.database,
+            audience_delivery_job_id=audience_delivery_job_id,
+            secrets_dict={},
+            env_dict={},
+            destination_type="test",
+        )
+
+        self.assertIsInstance(destination_batch_job, AWSDestinationBatchJob)
+        self.assertEqual(
+            audience_delivery_job_id,
+            destination_batch_job.audience_delivery_job_id,
+        )
+
+    def test_azure_destination_batch_job(self):
+        """Test destination batch job inheritance when provider is azure."""
+
+        config = get_config(api_c.TEST_MODE)
+
+        config.CLOUD_PROVIDER = "azure"
+
+        mock.patch(
+            "huxunify.api.config.get_config",
+            return_value=config,
+        ).start()
+
+        audience_delivery_job_id = ObjectId()
+        destination_batch_job = BaseDestinationBatchJob(
+            database=self.database,
+            audience_delivery_job_id=audience_delivery_job_id,
+            secrets_dict={},
+            env_dict={},
+            destination_type="test",
+        )
+
+        self.assertIsInstance(destination_batch_job, AzureDestinationBatchJob)
+        self.assertEqual(
+            audience_delivery_job_id,
+            destination_batch_job.audience_delivery_job_id,
+        )
