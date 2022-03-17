@@ -1,7 +1,7 @@
 <template>
   <div ref="trustIdComparisonChart" class="container-chart">
     <grouped-bar-chart
-      v-model="segmentScores"
+      v-model="chartSourceData"
       :chart-dimensions="chartDimensions"
       :empty-state="isEmptyState"
       @tooltipDisplay="toolTipDisplay"
@@ -61,9 +61,8 @@ export default {
         { base: "success", variant: "base" },
       ],
       currentData: {},
-      chartSourceData: {},
+      chartSourceData: [],
       sourceData: [],
-      barGroupChangeIndex: [],
       chartDimensions: {
         width: 0,
         height: 0,
@@ -73,6 +72,7 @@ export default {
   },
   mounted() {
     this.sizeHandler()
+    this.processData()
     new ResizeObserver(this.sizeHandler).observe(
       this.$refs.trustIdComparisonChart
     )
@@ -91,6 +91,36 @@ export default {
         this.chartDimensions.height = 350
       }
     },
+    processData() {
+      this.chartSourceData = []
+      if (this.segmentScores) {
+        this.sourceData = this.segmentScores.find(
+          (data) => data.segment_filter == "composite & signal scores"
+        ).segments
+
+        let attr_order = [
+          "trust_id",
+          "humanity",
+          "transparency",
+          "capability",
+          "reliability",
+        ]
+
+        let colors = ["#0076A8", "#A0DCFF", "#00A3E0", "#E3E48D", "#007680"]
+
+        for (let attr of attr_order) {
+          let segmentAttrScore = []
+          let currentAttribute = ""
+          this.sourceData.forEach(
+            (data, index) => {
+               let attr_data = data.attributes.find((el) => el.attribute_type == attr)
+               currentAttribute = attr_data.attribute_name
+               segmentAttrScore.push({value: attr_data.attribute_score, color: colors[index], segmentName: data.segment_name})
+            })
+          this.chartSourceData.push({ id: attr, label: currentAttribute, values: segmentAttrScore })
+        }
+      }
+    },
   },
 }
 </script>
@@ -103,7 +133,7 @@ export default {
 }
 .container-chart {
   position: relative;
-  height: 650px;
+ height: 650px;
   padding: 0px !important;
   .value-container {
     margin-top: 2px;

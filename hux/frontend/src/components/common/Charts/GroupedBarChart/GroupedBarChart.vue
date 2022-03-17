@@ -1,6 +1,7 @@
 <template>
   <div class="chart-container" :style="{ maxWidth: chartWidth }">
     <div ref="groupedBarChart" class="chart-section"></div>
+    <chart-legends v-if="showLegends" :legends-data="legendsData" class="legend-style pl-7" />
   </div>
 </template>
 
@@ -8,12 +9,13 @@
 import * as d3Axis from "d3-axis"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
-import * as d3Array from "d3-array"
 import { formatText } from "@/utils"
-import { addIcon } from "@/components/common/Charts/GroupedBarChart/dynamicIcon.js"
+import { dynamicIcons } from "@/components/common/Charts/GroupedBarChart/dynamicIcon.js"
+import ChartLegends from "@/components/common/Charts/Legends/ChartLegends.vue"
 
 export default {
   name: "GroupedBarChart",
+  components: { ChartLegends },
   props: {
     value: {
       type: Array,
@@ -48,69 +50,14 @@ export default {
         color: "",
         score: 0,
       },
-      chartData: [
-        {
-          id: "trust_id",
-          label: "HX TrustID",
-          values: [
-            { value: 50 },
-            { value: 40 },
-            { value: 30 },
-            { value: 40 },
-            { value: 30 },
-          ],
-        },
-        {
-          id: "humanity",
-          label: "Humanity",
-          values: [
-            { value: 20 },
-            { value: 30 },
-            { value: 45 },
-            { value: 30 },
-            { value: 45 },
-          ],
-        },
-        {
-          id: "transperancy",
-          label: "Transperancy",
-          values: [
-            { value: 20 },
-            { value: 30 },
-            { value: 45 },
-            { value: 30 },
-            { value: 45 },
-          ],
-        },
-        {
-          id: "capability",
-          label: "Capability",
-          values: [
-            { value: 47 },
-            { value: 29 },
-            { value: 38 },
-            { value: 29 },
-            { value: 38 },
-          ],
-        },
-        {
-          id: "reliability",
-          label: "Reliability",
-          values: [
-            { value: 29 },
-            { value: 35 },
-            { value: 45 },
-            { value: 29 },
-            { value: 38 },
-          ],
-        },
-      ],
-      chartHeight: 150,
       itemWidth: 100,
-      barWidth: 20,
-      barMargin: 2,
       xMargin: 50,
-      yMargin: 20,
+      legendsData: [
+        { color: "rgba(0, 85, 135, 1)", text: "Segment 1" },
+        { color: "rgba(12, 157, 219, 1)", text: "Segment 2" },
+        { color: "rgba(66, 239, 253, 1)", text: "Segment 3" },
+      ],
+      showLegends: false,
     }
   },
   watch: {
@@ -133,7 +80,6 @@ export default {
       let margin = { top: 15, right: 30, bottom: 100, left: 68 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
-      //   let barColorCodes = []
 
       let svg = d3Select
         .select(this.$refs.groupedBarChart)
@@ -143,15 +89,9 @@ export default {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`)
 
-      let maxScoreValue = (paramObj) => {
-        return Object.keys(paramObj).reduce((a, b) =>
-          paramObj[a] > paramObj[b] ? paramObj[a] : paramObj[b]
-        )
-      }
-
       let xScale = d3Scale
         .scaleBand()
-        .domain(this.chartData.map((d) => d.id))
+        .domain(this.segmentScores.map((d) => d.id))
         .range([0, w])
         .paddingInner(0.22)
         .paddingOuter(0.11)
@@ -159,18 +99,10 @@ export default {
       let yScale = d3Scale
         .scaleLinear()
         .domain([
-          0,
-          this.emptyState
-            ? 100
-            : d3Array.max(this.segmentScores, (d) =>
-                maxScoreValue(d.scores_overview)
-              ),
+          0,100
         ])
         .range([h, 0])
         .nice(4)
-
-      let applyNumericFilter = (value) =>
-        this.emptyState ? "-" : this.$options.filters.Numeric(value, true, true)
 
       let formatAxisLabel = (text) => formatText(text)
 
@@ -191,7 +123,7 @@ export default {
         .append("g")
         .classed("yAxis-main", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).ticks(4).tickFormat(applyNumericFilter))
+        .call(d3Axis.axisLeft(yScale).ticks(4))
         .attr("stroke-width", "1")
         .attr("stroke-opacity", "1")
         .style("font-size", "14px")
@@ -213,26 +145,59 @@ export default {
       d3Select.selectAll(".tick line").style("stroke", "#E2EAEC")
       d3Select.selectAll(".xAxis-main .tick text").style("color", "#4F4F4F")
 
-      d3Select.selectAll(".xAxis-main .tick").each(function () {
+      d3Select.selectAll(".xAxis-main .tick").each(function (d) {
         d3Select
           .select(this)
           .append("svg")
           .attr("x", "-50")
           .attr("class", "image-icon")
-          .attr("y", "10")
-          .attr("height", "20")
-          .attr("width", "20")
-          .attr("viewBox", "0 0 40 40")
-          .html(addIcon)
+          .attr("y", "14")
+          .attr("height", "14")
+          .attr("width", "14")
+          .attr("viewBox", "0 0 14 14")
+          .html(dynamicIcons[d.toLowerCase()])
       })
+
+      svg
+        .append("text")
+        .classed("appendtext", true)
+        .attr(
+          "transform",
+          "translate(-40," + this.height / 3 + ") rotate(-90 )"
+        )
+        .attr("fill", "#000000")
+        .style("text-anchor", "middle")
+        .style("color", "#000000")
+        .style("font-size", "14px")
+        .text("Score")
 
       d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
 
-      let colors = ["#0076A8", "#A0DCFF", "#00A3E0", "#E3E48D", "#007680"]
+      let barSize = (totalAttributes) => {
+        let barWidth = 0
+        switch (totalAttributes) {
+          case 1:
+            barWidth =  56
+            break
+          case 2:
+            barWidth =  46
+            break
+          case 3:
+            barWidth =  40
+            break
+          case 4:
+            barWidth =  32
+            break
+          case 5:
+            barWidth =  24
+            break
+        }
+        return xScale.bandwidth() < barWidth ? xScale.bandwidth() : barWidth
+      }
 
       svg
         .selectAll("myRect")
-        .data(this.chartData, (d) => d.id)
+        .data(this.segmentScores, (d) => d.id)
         .enter()
         .append("g")
         .classed("attributes", true)
@@ -244,13 +209,16 @@ export default {
         .each(function (d) {
           const city = d3Select.select(this)
           for (let i = 0; i < d.values.length; i++) {
-            const y = yScale(d.values[i].value)
-            const height = yScale(0) - y
-            const x = (i - d.values.length / 2) * 42
+            let y = yScale(d.values[i].value)
+            let height = yScale(0) - y
+
+            let barWidth = barSize(d.values.length)
+
+            const x = (i - d.values.length / 2) * (barWidth + 2)
 
             let label = d
 
-            let xPosition = xScale(label.id) + x + 120
+            let xPosition = xScale(label.id) + x + (d.values.length*barWidth)
 
             let shareData = {}
             shareData.name = "Segment 1"
@@ -260,8 +228,8 @@ export default {
             shareData.cx = x
             shareData.cy = y
             shareData.yPosition = height
-            shareData.width = 40
-            shareData.color = colors[i]
+            shareData.width = barWidth
+            shareData.color = d.values[i].color
 
             city
               .append("rect")
@@ -271,9 +239,9 @@ export default {
               .attr("y", y)
               .attr("rx", 2)
               .attr("ry", 2)
-              .attr("width", 40)
+              .attr("width", barWidth)
               .attr("height", height)
-              .style("fill", colors[i])
+              .style("fill", d.values[i].color)
               .style("fill-opacity", 1)
               .on("mouseover", (d) => applyHoverEffects(d, shareData))
               .on("mouseout", () => removeHoverEffects())
