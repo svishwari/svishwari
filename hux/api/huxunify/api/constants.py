@@ -83,6 +83,7 @@ JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
 KEY = "key"
+COMPONENT = "component"
 TASK = "Task"
 TICKET_TYPE_BUG = "Bug"
 
