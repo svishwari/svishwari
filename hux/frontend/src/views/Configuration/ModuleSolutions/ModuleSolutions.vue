@@ -131,7 +131,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getConfigurations: "configurations/configurationModels",
+      getConfigurations: "configuration/configurationModels",
     }),
 
     moduleCards() {

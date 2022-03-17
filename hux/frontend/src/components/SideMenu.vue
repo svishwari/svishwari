@@ -160,6 +160,7 @@ import menuConfig from "@/menuConfig.js"
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
+import * as _ from "lodash"
 
 export default {
   name: "SideMenu",
@@ -178,7 +179,7 @@ export default {
     },
     menu: false,
     items: menuConfig.menu,
-    prevLink: null,
+    prevItem: null,
   }),
 
   computed: {
@@ -204,13 +205,16 @@ export default {
 
   methods: {
     navigate(item) {
-      if (item.defaultState && this.prevLink) {
+      if (this.prevItem && this.prevItem.defaultState) {
         this.$store.replaceState({
           ...this.$store.state,
-          [this.prevLink.toLowerCase()]: item.defaultState,
+          [this.prevItem.link.name.charAt(0).toLowerCase() +
+          this.prevItem.link.name.slice(1)]: _.cloneDeep(
+            this.prevItem.defaultState
+          ),
         })
       }
-      this.prevLink = item.link.name
+      this.prevItem = item
     },
   },
 }

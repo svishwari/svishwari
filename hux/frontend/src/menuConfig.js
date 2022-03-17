@@ -38,7 +38,7 @@ const sideMenuOptions = {
           icon: "identity-resolution",
           title: "Identity Resolution",
           link: {
-            name: "IdentityResolution",
+            name: "Identity",
           },
           size: 14,
           display: true,
@@ -115,7 +115,7 @@ const sideMenuOptions = {
           icon: "customer-profiles",
           title: "Customers",
           link: {
-            name: "CustomerProfiles",
+            name: "Customers",
           },
           size: 14,
           display: true,
@@ -138,10 +138,10 @@ const sideMenuOptions = {
           },
           size: 28,
           display: true,
+          defaultState: defaultState.emaildeliverability,
         },
       ],
       display: true,
-      defaultState: defaultState.emaildeliverability,
     },
   ],
 }
