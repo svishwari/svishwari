@@ -118,7 +118,7 @@ class AWSClient(CloudClient):
             **kwargs (dict): function keyword arguments.
 
         Returns:
-
+            bool: indication that upload was successful.
         """
         bucket = self.config.S3_DATASET_BUCKET
         object_name = os.path.basename(file_name)
