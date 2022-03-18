@@ -13,16 +13,13 @@ RUN pip install pip --upgrade
 
 # install pipenv
 RUN pip install pytest
-RUN pip install pyperclip
-RUN pip install tavern
-RUN pip install python-box
-RUN pip install python-dotenv
+RUN pip install pymongo
 RUN pip install locust
 
 # run the pytests application
 # append hux-unified integration_tests api path to python path
 ENV PYTHONPATH "${PYTHONPATH}:/app/hux-unified/integration_tests/api"
-CMD ["py.test", "test_api_spec.tavern.yaml", "test_core.tavern.yaml", "test_data_sources.tavern.yaml", "test_engagements.tavern.yaml", "test_models.tavern.yaml", "test_notifications.tavern.yaml", "test_orchestration.tavern.yaml", "test_user.tavern.yaml", "test_customers.tavern.yaml", "-v"]
+CMD ["py.test", "-v"]
 CMD ["--locustfile", "locustfile.py", \
         "--headless", \
         "--users", "2", \
