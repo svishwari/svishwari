@@ -212,7 +212,8 @@ class EngagementDeliverDestinationView(SwaggerView):
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description=(
                 f"Successfully scheduled a delivery of audience "
-                f'"{target_audience[db_c.NAME] if target_audience else ""}" from engagement '
+                f'"{target_audience[db_c.NAME] if target_audience else ""}"'
+                f" from engagement "
                 f'"{engagement[db_c.NAME]}" to destination '
                 f'"{target_destination[db_c.NAME]}".'
             ),
