@@ -116,7 +116,7 @@ def record_health_status(connection: Connections) -> object:
     Example: @record_health_status(ConnectionHealth.CONNECTION_NAME)
 
     Args:
-        connection (Connections): Connection enum.t
+        connection (Connections): Connection enum.
 
     Returns:
         wrapper: returns the wrapped decorator function.
