@@ -14,6 +14,7 @@ RUN pip install pip --upgrade
 # install pipenv
 RUN pip install pytest
 RUN pip install pymongo
+RUN pip install requests
 RUN pip install locust
 
 # run the pytests application
