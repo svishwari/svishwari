@@ -2,7 +2,7 @@
 from unittest import TestCase
 import pytest
 import requests
-from conftest import Crud
+from hux.integration_tests.api.test.conftest import Crud
 
 
 class TestDataSources(TestCase):
