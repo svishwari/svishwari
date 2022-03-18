@@ -292,6 +292,32 @@ class TestDeliveryRoutes(RouteTestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    def test_deliver_all_destination_for_engagement_audience_valid_ids(self):
+        """Test delivery of a destination for all audiences in an engagement
+        with valid IDs."""
+
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{db_c.ZERO_OBJECT_ID}/"
+                f"{api_c.DESTINATION}/{destination_id}/"
+                f"{api_c.DELIVER}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
     def test_delivery_destination_with_a_bad_connection(self):
         """Test delivery of a destination with a bad connection."""
 
