@@ -13,6 +13,7 @@ from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     get_delivery_platforms_by_id,
@@ -36,7 +37,6 @@ from huxunifylib.database.transform.transform_dataframe import (
 
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors.aws import upload_file
 from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_demographic_by_state,
@@ -314,12 +314,10 @@ class AudienceDownload(SwaggerView):
             audience_file_name,
             config.S3_DATASET_BUCKET,
         )
-        if upload_file(
+        if CloudClient().upload_file(
             file_name=audience_file_name,
-            bucket=config.S3_DATASET_BUCKET,
-            object_name=audience_file_name,
-            user_name=user[api_c.USER_NAME],
             file_type=api_c.AUDIENCE,
+            user_name=user[api_c.USER_NAME],
         ):
             create_audience_audit(
                 database=database,
