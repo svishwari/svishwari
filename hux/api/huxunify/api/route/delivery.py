@@ -127,7 +127,7 @@ class EngagementDeliverDestinationView(SwaggerView):
     # pylint: disable=too-many-return-statements
     # If using validate delivery_params and get_user_name,
     # ensure validate_delivery_params is called first
-    # @api_error_handler()
+    @api_error_handler()
     @validate_destination()
     @validate_delivery_params
     @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
