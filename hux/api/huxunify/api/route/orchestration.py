@@ -443,6 +443,10 @@ class AudienceView(SwaggerView):
             batch_number=batch_number,
         )
 
+        # query and fetch the lookalike audiences only if the batch size in the
+        # request payload is greater than the audiences fetched, in which case
+        # we can query the lookalike_audiences collection as well and append it
+        # to the list of audiences to be returned in response
         fetch_lookalike_audiences = batch_size == 0 or (
             batch_size > 0 and len(audiences) < batch_size
         )
