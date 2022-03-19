@@ -336,14 +336,13 @@ class Validation:
         Args:
             value (str): String value from the caller.
             validate_zero_or_greater(bool): Boolean value to validate if value
-                is equal to or greater than zero.
+            is equal to or greater than zero.
 
         Returns:
             int: Result of the integer conversion.
 
         Raises:
-            InputParamsValidationError: Error that is raised if input is
-                invalid.
+            InputParamsValidationError: Error that is raised if input is invalid.
         """
 
         # max_value added to protect snowflake/and other apps that
