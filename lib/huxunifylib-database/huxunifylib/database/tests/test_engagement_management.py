@@ -173,9 +173,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
         self.assertEqual(engagement_doc[db_c.ENGAGEMENT_NAME], new_name)
-        self.assertEqual(
-            engagement_doc[db_c.ENGAGEMENT_DESCRIPTION], new_description
-        )
+        self.assertEqual(engagement_doc[db_c.ENGAGEMENT_DESCRIPTION], new_description)
         self.assertNotIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, engagement_doc)
         self.assertEqual(self.user_name, engagement_doc[db_c.CREATED_BY])
         self.assertEqual(self.user_name, engagement_doc[db_c.UPDATED_BY])
@@ -290,9 +288,7 @@ class TestEngagementManagement(unittest.TestCase):
         # test audiences
         self.assertIn(db_c.AUDIENCES, engagement)
         self.assertEqual(len(engagement[db_c.AUDIENCES]), 2)
-        self.assertListEqual(
-            engagement[db_c.AUDIENCES], new_engagement[db_c.AUDIENCES]
-        )
+        self.assertListEqual(engagement[db_c.AUDIENCES], new_engagement[db_c.AUDIENCES])
 
     def test_set_engagement_remove_audience_after(self) -> None:
         """Test creating an engagement and remove an audience after"""
@@ -671,9 +667,7 @@ class TestEngagementManagement(unittest.TestCase):
 
             # validate the delivery job was set correctly
             self.assertEqual(
-                doc[db_c.AUDIENCES][0][db_c.DESTINATIONS][0][
-                    db_c.DELIVERY_JOB_ID
-                ],
+                doc[db_c.AUDIENCES][0][db_c.DESTINATIONS][0][db_c.DELIVERY_JOB_ID],
                 audience_delivery_job[db_c.ID],
             )
 
@@ -822,9 +816,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        engagement_docs = em.get_engagements_summary(
-            self.database, [engagement_id]
-        )
+        engagement_docs = em.get_engagements_summary(self.database, [engagement_id])
 
         # ensure length of grouped engagements is equal to one
         self.assertEqual(len(engagement_docs), 1)
@@ -958,6 +950,69 @@ class TestEngagementManagement(unittest.TestCase):
                 self.assertIn(db_c.OBJECT_ID, destination)
                 self.assertIn(db_c.CATEGORY, destination)
 
+    def test_get_engagements_summary_batch_offset(self) -> None:
+        """Test get_engagements_summary function with batch offset to limit
+        number of records returned."""
+
+        # create another audience
+        audience = om.create_audience(
+            self.database, "audience_group", [], self.user_name, [], 1560
+        )
+
+        for i in range(17):
+            new_engagement = {
+                db_c.ENGAGEMENT_NAME: f"Spring 2202{i}",
+                db_c.ENGAGEMENT_DESCRIPTION: f"high ltv for spring 202{i}",
+                db_c.AUDIENCES: [
+                    {
+                        db_c.OBJECT_ID: audience[db_c.ID],
+                        db_c.DESTINATIONS: [
+                            {
+                                db_c.OBJECT_ID: self.destinations[0][db_c.ID],
+                                db_c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
+                                db_c.STATUS: db_c.STATUS_PENDING,
+                            },
+                            {
+                                db_c.OBJECT_ID: self.destinations[1][db_c.ID],
+                                db_c.STATUS: db_c.AUDIENCE_STATUS_ERROR
+                                if i % 5 == 0
+                                else db_c.STATUS_SUCCEEDED,
+                            },
+                        ],
+                    },
+                    {
+                        db_c.OBJECT_ID: self.audience[db_c.ID],
+                        db_c.DESTINATIONS: [
+                            {
+                                db_c.OBJECT_ID: self.destinations[1][db_c.ID],
+                                db_c.STATUS: db_c.STATUS_FAILED
+                                if i % 5 == 0
+                                else db_c.STATUS_SUCCEEDED,
+                            }
+                        ],
+                    },
+                ],
+            }
+
+            em.set_engagement(
+                self.database,
+                new_engagement[db_c.ENGAGEMENT_NAME],
+                new_engagement[db_c.ENGAGEMENT_DESCRIPTION],
+                new_engagement[db_c.AUDIENCES],
+                self.user_name,
+            )
+
+        for i in range(1, 4):
+            engagement_docs = em.get_engagements_summary(
+                database=self.database, batch_size=5, batch_number=i
+            )
+
+            self.assertTrue(engagement_docs)
+            if i < 4:
+                self.assertEqual(len(engagement_docs), 5)
+            else:
+                self.assertEqual(len(engagement_docs), 2)
+
     def test_append_destination_to_engagement_audience(self):
         """Test appending a destination to an engagement audience"""
 
@@ -1016,9 +1071,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         audience_one_dict = {
             db_c.OBJECT_ID: audience_one[db_c.ID],
-            db_c.DESTINATIONS: [
-                {db_c.OBJECT_ID: self.destinations[0][db_c.ID]}
-            ],
+            db_c.DESTINATIONS: [{db_c.OBJECT_ID: self.destinations[0][db_c.ID]}],
         }
         audience_two_dict = {
             db_c.OBJECT_ID: audience_two[db_c.ID],
@@ -1054,9 +1107,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         audience_one_dict = {
             db_c.OBJECT_ID: audience_one[db_c.ID],
-            db_c.DESTINATIONS: [
-                {db_c.OBJECT_ID: self.destinations[0][db_c.ID]}
-            ],
+            db_c.DESTINATIONS: [{db_c.OBJECT_ID: self.destinations[0][db_c.ID]}],
         }
 
         for i in range(5):
@@ -1118,9 +1169,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # simulate setting a delivery job directly
         delivery_job_id = (
-            self.database[db_c.DATA_MANAGEMENT_DATABASE][
-                db_c.DELIVERY_JOBS_COLLECTION
-            ]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.DELIVERY_JOBS_COLLECTION]
             .insert_one(
                 {
                     db_c.AUDIENCE_ID: self.audience[db_c.ID],
@@ -1144,9 +1193,7 @@ class TestEngagementManagement(unittest.TestCase):
             db_c.ENGAGEMENTS_COLLECTION
         ].find_one_and_update({db_c.ID: engagement_id}, {"$set": engagement})
 
-        active_deliveries = em.check_active_engagement_deliveries(
-            self.database
-        )
+        active_deliveries = em.check_active_engagement_deliveries(self.database)
 
         self.assertTrue(active_deliveries)
         self.assertIn(db_c.DELIVERY_JOB_ID, active_deliveries[0])
@@ -1181,9 +1228,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
         self.assertIsNotNone(engagement_id)
 
-        active_deliveries = em.check_active_engagement_deliveries(
-            self.database
-        )
+        active_deliveries = em.check_active_engagement_deliveries(self.database)
 
         self.assertFalse(active_deliveries)
 
@@ -1240,9 +1285,7 @@ class TestEngagementManagement(unittest.TestCase):
         for destination in audience_destination[db_c.DESTINATIONS]:
             # find the matching destination and ensure it is identical.
             matched_destinations = [
-                x
-                for x in self.destinations
-                if x[db_c.ID] == destination[db_c.ID]
+                x for x in self.destinations if x[db_c.ID] == destination[db_c.ID]
             ]
             self.assertTrue(matched_destinations)
             self.assertEqual(destination, matched_destinations[0])

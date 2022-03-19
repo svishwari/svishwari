@@ -118,9 +118,7 @@ def get_audience_by_filter(
         InvalidValueException: If passed in limit value is invalid.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -218,6 +216,8 @@ def get_all_audiences(
     include_users: bool = False,
     filters: dict = None,
     audience_ids: list = None,
+    batch_size: int = 0,
+    batch_number: int = 1,
 ) -> Union[list, None]:
     """A function to get all existing audiences.
 
@@ -227,10 +227,13 @@ def get_all_audiences(
         filters (dict, Optional): A dict of filters to be applied on the
         audience.
         audience_ids (list, Optional): A list of audience IDs.
+        batch_size (int): Number of audiences per batch.
+        batch_number (int): Number of audiences batch to be returned.
 
     Returns:
         Union[list, None]: A list of all audiences.
     """
+
     am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[db_c.AUDIENCES_COLLECTION]
 
@@ -257,18 +260,31 @@ def get_all_audiences(
     if audience_ids is not None:
         find_filters[db_c.ID] = {"$in": audience_ids}
 
+    skips = batch_size * (batch_number - 1)
+
     # Get audience configurations and add to list
     try:
         if include_users:
+            batch_offset_pipeline = []
+            if skips > 0:
+                batch_offset_pipeline.append({"$skip": skips})
+            if batch_size > 0:
+                batch_offset_pipeline.append({"$limit": batch_size})
+
             # lookup to users
             return list(
                 collection.aggregate(
-                    [{"$match": {db_c.DELETED: False}}, {db_c.DELETED: 0}]
+                    [{"$match": {db_c.DELETED: False}}]
                     + USER_LOOKUP_PIPELINE
+                    + batch_offset_pipeline
                 )
             )
 
-        return list(collection.find(find_filters, {db_c.DELETED: 0}))
+        return list(
+            collection.find(find_filters, {db_c.DELETED: 0})
+            .skip(skips)
+            .limit(batch_size)
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -447,9 +463,7 @@ def delete_audience(
         bool: A flag to indicate successful deletion.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     try:
         return collection.delete_one({db_c.ID: audience_id}).deleted_count > 0
@@ -541,11 +555,7 @@ def get_audience_insights(
                 }
             }
         },
-        {
-            "$addFields": {
-                "deliveries.delivery_platform_id": "$delivery_platforms._id"
-            }
-        },
+        {"$addFields": {"deliveries.delivery_platform_id": "$delivery_platforms._id"}},
         {"$project": {"audiences": 0, "delivery_platforms": 0}},
         {
             "$lookup": {
@@ -615,11 +625,7 @@ def get_audience_insights(
         }
 
         pipeline.append(
-            {
-                "$addFields": {
-                    "first_delivery": {"$arrayElemAt": ["$deliveries", 0]}
-                }
-            }
+            {"$addFields": {"first_delivery": {"$arrayElemAt": ["$deliveries", 0]}}}
         )
 
         pipeline.append(
@@ -795,18 +801,14 @@ def remove_destination_from_all_audiences(
             all audiences.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     try:
         collection.update_many(
             filter={f"{db_c.DESTINATIONS}.{db_c.OBJECT_ID}": destination_id},
             update={
                 "$pull": {
-                    f"{db_c.DESTINATIONS}": {
-                        db_c.OBJECT_ID: {"$in": [destination_id]}
-                    }
+                    f"{db_c.DESTINATIONS}": {db_c.OBJECT_ID: {"$in": [destination_id]}}
                 },
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
@@ -849,9 +851,7 @@ def append_destination_to_standalone_audience(
     if not isinstance(user_name, str):
         raise TypeError("user_name must be a string")
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     try:
         audience = collection.find_one_and_update(
@@ -902,9 +902,7 @@ def remove_destination_from_audience(
     if not isinstance(user_name, str):
         raise TypeError("user_name must be a string")
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
     try:
         audience = collection.find_one_and_update(
             {

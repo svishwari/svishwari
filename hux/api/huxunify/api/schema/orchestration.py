@@ -3,6 +3,8 @@ import datetime
 
 from flask_marshmallow import Schema
 from marshmallow import fields, validate
+from marshmallow.fields import List, Nested, Int
+
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
@@ -30,9 +32,7 @@ class LookalikeAudienceGetSchema(Schema):
         required=True,
         validate=validate_object_id,
     )
-    delivery_platform_id = fields.String(
-        required=True, validate=validate_object_id
-    )
+    delivery_platform_id = fields.String(required=True, validate=validate_object_id)
     audience_id = fields.String(required=True, validate=validate_object_id)
     name = fields.String(required=True)
     country = fields.String()
@@ -58,9 +58,7 @@ class AudienceDeliverySchema(Schema):
     last_delivered = DateTimeWithZ(attribute=db_c.UPDATE_TIME)
     status = fields.String()
     size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
-    delivery_platform_id = fields.String(
-        required=True, validate=validate_object_id
-    )
+    delivery_platform_id = fields.String(required=True, validate=validate_object_id)
     link = fields.String()
 
 
@@ -184,6 +182,16 @@ class AudienceGetSchema(Schema):
     digital_advertising = fields.Nested(DigitAdvertising, allow_none=True)
 
 
+class AudiencesBatchGetSchema(Schema):
+    """Audiences batch schema to get audiences in batches."""
+
+    total_audiences = Int(
+        attribute=api_c.TOTAL_RECORDS,
+        example=1,
+    )
+    audiences = List(Nested(AudienceGetSchema))
+
+
 class CityIncomeInsightsSchema(Schema):
     """Customer Income Insights Schema"""
 
@@ -214,9 +222,7 @@ class AudiencePutSchema(Schema):
     """Audience put schema class"""
 
     name = fields.String()
-    destinations = fields.List(
-        fields.Nested(AudienceDestinationSchema), required=False
-    )
+    destinations = fields.List(fields.Nested(AudienceDestinationSchema), required=False)
     engagement_ids = fields.List(fields.String())
     filters = fields.List(fields.Dict())
 
@@ -225,9 +231,7 @@ class AudiencePostSchema(AudiencePutSchema):
     """Audience post schema class"""
 
     name = fields.String(validate=must_not_be_blank)
-    destinations = fields.List(
-        fields.Nested(AudienceDestinationSchema), required=False
-    )
+    destinations = fields.List(fields.Nested(AudienceDestinationSchema), required=False)
     engagements = fields.List(fields.String(), required=True)
     filters = fields.List(fields.Dict())
 
@@ -328,10 +332,7 @@ def is_audience_lookalikeable(audience: dict) -> str:
     status = api_c.STATUS_DISABLED
     for delivery in deliveries:
         # check if delivered to facebook.
-        if (
-            delivery.get(db_c.DELIVERY_PLATFORM_TYPE)
-            == db_c.DELIVERY_PLATFORM_FACEBOOK
-        ):
+        if delivery.get(db_c.DELIVERY_PLATFORM_TYPE) == db_c.DELIVERY_PLATFORM_FACEBOOK:
             status = api_c.STATUS_INACTIVE
 
             # add 30 min wait time before making it lookalikable

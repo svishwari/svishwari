@@ -649,12 +649,8 @@ BSON_INVALID_ID = (
     f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
-FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE = (
-    "Failed connecting to dependent API."
-)
-FAILED_DEPENDENCY_ERROR_MESSAGE = (
-    "Failed to obtain data from dependent API endpoint."
-)
+FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE = "Failed connecting to dependent API."
+FAILED_DEPENDENCY_ERROR_MESSAGE = "Failed to obtain data from dependent API endpoint."
 EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE = (
     "Returned empty object from dependent API endpoint."
 )
@@ -662,12 +658,8 @@ EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE = (
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 DUPLICATE_NAME = "Name already exists."
 SFMC_CONFIGURATION_MISSING = "SFMC data extension config object missing."
-PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
-    "Performance metrics data extension not assigned."
-)
-CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED = (
-    "Campaign activity data extension not assigned."
-)
+PERFORMANCE_METRIC_DE_NOT_ASSIGNED = "Performance metrics data extension not assigned."
+CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED = "Campaign activity data extension not assigned."
 SAME_PERFORMANCE_CAMPAIGN_ERROR = (
     "Performance metric and Campaign activity cannot be same"
 )
@@ -685,9 +677,7 @@ DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 ZERO_AUDIENCE_SIZE = "Sum of Audience(s) is zero"
 ENGAGEMENT_NO_AUDIENCES = "Engagement has no audiences."
-AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = (
-    "Audience not attached to the engagement."
-)
+AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = "Audience not attached to the engagement."
 DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
@@ -753,6 +743,7 @@ AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
 MY_ENGAGEMENTS = "my_engagements"
+ENGAGEMENTS_DEFAULT_BATCH_SIZE = 0
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -929,6 +920,7 @@ LOOKALIKE = "lookalike"
 LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
+AUDIENCES_DEFAULT_BATCH_SIZE = 0
 
 PARAM_STORE_PREFIX = "unified"
 SECRET_STORAGE_ERROR_MSG = (
@@ -1121,9 +1113,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     "filters": [
         {
             "section_aggregator": "ALL",
-            "section_filters": [
-                {"field": "country", "type": "equals", "value": "US"}
-            ],
+            "section_filters": [{"field": "country", "type": "equals", "value": "US"}],
         }
     ]
 }
@@ -1188,9 +1178,7 @@ MONGO_CONNECTION_HEALTH = "mongo_connection_health"
 TECTON_CONNECTION_HEALTH = "tecton_connection_health"
 OKTA_CONNECTION_HEALTH = "okta_connection_health"
 CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
-CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
-    "cdm_connection_service_connection_health"
-)
+CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = "cdm_connection_service_connection_health"
 JIRA_CONNECTION_HEALTH = "jira_connection_health"
 
 # AWS health metrics constants
@@ -1285,8 +1273,7 @@ MODELS_STUB = [
         CATEGORY: "Email",
         TYPE: "Classification",
         NAME: "Propensity to Click",
-        DESCRIPTION: "Propensity for a customer to click "
-        "on a link in an email.",
+        DESCRIPTION: "Propensity for a customer to click " "on a link in an email.",
         ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1294,8 +1281,7 @@ MODELS_STUB = [
         CATEGORY: "Email",
         TYPE: "Unknown",
         NAME: "Email Content Optimization",
-        DESCRIPTION: "Alter email content to optimize "
-        "email campaign performance.",
+        DESCRIPTION: "Alter email content to optimize " "email campaign performance.",
         ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1357,8 +1343,7 @@ MODELS_STUB = [
         CATEGORY: "Sales forecasting",
         TYPE: "Regression",
         NAME: "Predicted Sales Per Customer",
-        DESCRIPTION: "Predicting sales for a customer over a "
-        "defined time range.",
+        DESCRIPTION: "Predicting sales for a customer over a " "defined time range.",
         ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1366,8 +1351,7 @@ MODELS_STUB = [
         CATEGORY: "Sales forecasting",
         TYPE: "Regression",
         NAME: "Predicted Sales Per Store",
-        DESCRIPTION: "Predicting sales for a store over a "
-        "defined time range.",
+        DESCRIPTION: "Predicting sales for a store over a " "defined time range.",
         ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1595,8 +1579,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
         "run_duration": [
             {
                 "status": random.choice(["Success", "Failed"]),
-                "timestamp": datetime.datetime.now()
-                - datetime.timedelta(days=x),
+                "timestamp": datetime.datetime.now() - datetime.timedelta(days=x),
                 "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
@@ -1611,8 +1594,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
         "run_duration": [
             {
                 "status": random.choice(["Success", "Failed"]),
-                "timestamp": datetime.datetime.now()
-                - datetime.timedelta(days=x),
+                "timestamp": datetime.datetime.now() - datetime.timedelta(days=x),
                 "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
