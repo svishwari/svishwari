@@ -1,5 +1,5 @@
 #This tests the following endpoints:
-#GET      /audiences                      Retrieves all audiences 
+#GET      /audiences                      Retrieves all audiences
 #POST     /engagements/{engagement_id}    Create an engagement
 #GET      /engagements/{engagement_id}    Retrieve an engagement
 #PUT      /engagements/{engagement_id}    Update an engagement
@@ -52,7 +52,7 @@ stages:
       save:
         $ext:
           function: tavern_test_utils:get_timestamp
-    
+
   - name: create a new engagement
 
     # Define the request to be made...
@@ -86,9 +86,9 @@ stages:
               - id: "{engagement_destination_id}"
         status: !anystr
         delivery_schedule: !anything
-        create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z" 
+        create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
         created_by: !anystr
-        update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z" 
+        update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
         updated_by: !anystr
       save:
         json:
@@ -127,7 +127,7 @@ stages:
             id: "{engagement_destination_id}"
           status: !anystr
 
-  - name: test update the engagement 
+  - name: test update the engagement
 
     # Define the request to be made...
     request:
