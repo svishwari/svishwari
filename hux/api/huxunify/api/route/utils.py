@@ -1,4 +1,4 @@
-"""Purpose of this file is to house route utilities."""
+"""Purpose of this file is to house route utilities"""
 # pylint: disable=too-many-lines
 import statistics
 from collections import defaultdict
@@ -275,7 +275,9 @@ def group_gender_spending(gender_spending: list) -> dict:
         response(dict): Gender spending grouped by gender / month.
     """
 
-    date_parser = lambda x, y: datetime.strptime(f"1-{str(x)}-{str(y)}", "%d-%m-%Y")
+    date_parser = lambda x, y: datetime.strptime(
+        f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
+    )
     return {
         api_c.GENDER_WOMEN: [
             {
@@ -326,7 +328,9 @@ class Validation:
     """Validation class for input parameters"""
 
     @staticmethod
-    def validate_integer(value: str, validate_zero_or_greater: bool = False) -> int:
+    def validate_integer(
+        value: str, validate_zero_or_greater: bool = False
+    ) -> int:
         """Validates that an integer is valid
 
         Args:
@@ -348,7 +352,9 @@ class Validation:
 
         if value.isdigit():
             if validate_zero_or_greater and int(value) < 0:
-                raise ue.InputParamsValidationError(value, "zero or positive integer")
+                raise ue.InputParamsValidationError(
+                    value, "zero or positive integer"
+                )
             if not validate_zero_or_greater and int(value) <= 0:
                 raise ue.InputParamsValidationError(value, "positive integer")
             if int(value) > max_value:
@@ -459,7 +465,9 @@ def is_component_favorite(
     Returns:
         bool: If component is favorite or not.
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(api_c.FAVORITES)
+    user_favorites = get_user(get_db_client(), okta_user_id).get(
+        api_c.FAVORITES
+    )
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name, [])
@@ -548,9 +556,13 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     # checking if required keys are present in user_info
     if not required_keys.issubset(user_info.keys()):
         logger.warning("Failure. Required keys not present in user_info dict.")
-        return {"message": api_c.AUTH401_ERROR_MESSAGE}, HTTPStatus.UNAUTHORIZED
+        return {
+            "message": api_c.AUTH401_ERROR_MESSAGE
+        }, HTTPStatus.UNAUTHORIZED
 
-    logger.info("Successfully validated required_keys are present in user_info.")
+    logger.info(
+        "Successfully validated required_keys are present in user_info."
+    )
 
     # check if the user is in the database
     database = get_db_client()
@@ -570,7 +582,9 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
         # return NOT_FOUND if user is still none
         if user is None:
-            logger.warning("User not found in DB even after trying to create one.")
+            logger.warning(
+                "User not found in DB even after trying to create one."
+            )
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
     return user
@@ -589,7 +603,11 @@ def get_required_shap_data(features: list = None) -> dict:
     """
 
     # return required shap feature data
-    return {feature: data for feature, data in shap_data.items() if feature in features}
+    return {
+        feature: data
+        for feature, data in shap_data.items()
+        if feature in features
+    }
 
 
 def convert_unique_city_filter(request_json: dict) -> dict:
@@ -604,7 +622,10 @@ def convert_unique_city_filter(request_json: dict) -> dict:
     try:
         for filters in request_json[api_c.AUDIENCE_FILTERS]:
             for item in filters[api_c.AUDIENCE_SECTION_FILTERS]:
-                if item[api_c.AUDIENCE_FILTER_FIELD] == api_c.AUDIENCE_FILTER_CITY:
+                if (
+                    item[api_c.AUDIENCE_FILTER_FIELD]
+                    == api_c.AUDIENCE_FILTER_CITY
+                ):
                     city_value, state_value, _ = item.get(
                         api_c.AUDIENCE_FILTER_VALUE
                     ).split("|")
@@ -648,7 +669,9 @@ def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
                 delivery.get(api_c.DELIVERY_PLATFORM_TYPE)
             ].get(api_c.AUDIENCE_LAST_DELIVERY, date.min):
                 match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
-                    api_c.AUDIENCE_LAST_DELIVERY: delivery.get(db_c.UPDATE_TIME),
+                    api_c.AUDIENCE_LAST_DELIVERY: delivery.get(
+                        db_c.UPDATE_TIME
+                    ),
                     api_c.MATCH_RATE: 0,
                 }
         else:
@@ -707,14 +730,22 @@ def set_destination_category_in_engagement(engagement: dict):
                 for destination_category in destinations_categories:
                     # check if the destination category is already present to
                     # update the existing dict data
-                    if destination_category[api_c.CATEGORY] == dest[api_c.CATEGORY]:
+                    if (
+                        destination_category[api_c.CATEGORY]
+                        == dest[api_c.CATEGORY]
+                    ):
                         for destination_type in destination_category[
                             api_c.DESTINATIONS
                         ]:
                             # check if the destination_type is already present
                             # to update just the nested audiences object within
-                            if destination_type[api_c.NAME] == destination[api_c.NAME]:
-                                destination_type[api_c.DESTINATION_AUDIENCES].extend(
+                            if (
+                                destination_type[api_c.NAME]
+                                == destination[api_c.NAME]
+                            ):
+                                destination_type[
+                                    api_c.DESTINATION_AUDIENCES
+                                ].extend(
                                     destination[api_c.DESTINATION_AUDIENCES]
                                 )
                                 break
@@ -858,7 +889,9 @@ def filter_team_member_requests(team_member_request_issues: list) -> list:
             request_details = extract_user_request_details_from_issue(issue)
 
             if RequestedUserSchema().validate(data=request_details):
-                user_info[request_details.get(api_c.EMAIL)].append(request_details)
+                user_info[request_details.get(api_c.EMAIL)].append(
+                    request_details
+                )
         # pylint: disable=unused-variable
         for user_email, info in user_info.items():
             info.sort(
@@ -898,10 +931,14 @@ def extract_user_request_details_from_issue(
 
     return {
         api_c.EMAIL: email.groups()[0].strip() if email else None,
-        api_c.USER_PII_ACCESS: Validation.validate_bool(pii_access.groups()[0].strip())
+        api_c.USER_PII_ACCESS: Validation.validate_bool(
+            pii_access.groups()[0].strip()
+        )
         if pii_access
         else False,
-        api_c.DISPLAY_NAME: display_name.groups()[0].strip() if display_name else None,
+        api_c.DISPLAY_NAME: display_name.groups()[0].strip()
+        if display_name
+        else None,
         api_c.USER_ACCESS_LEVEL: access_level.groups()[0].strip()
         if access_level
         else None,
@@ -931,7 +968,9 @@ def group_and_aggregate_datafeed_details_by_date(
     """
     grouped_datafeed_details = []
 
-    grouped_by_date = groupby(datafeed_details, lambda x: x[api_c.PROCESSED_START_DATE])
+    grouped_by_date = groupby(
+        datafeed_details, lambda x: x[api_c.PROCESSED_START_DATE]
+    )
 
     stdev_sample_list = []
     for df_date, df_details in grouped_by_date:
@@ -965,7 +1004,9 @@ def group_and_aggregate_datafeed_details_by_date(
                     api_c.PROCESSED_END_DATE
                 ]
             total_records_received += df_detail.get(api_c.RECORDS_RECEIVED, 0)
-            total_records_processed += df_detail.get(api_c.RECORDS_PROCESSED, 0)
+            total_records_processed += df_detail.get(
+                api_c.RECORDS_PROCESSED, 0
+            )
             data_feed_by_date[api_c.DATA_FILES].append(df_detail)
 
             if (
@@ -983,7 +1024,9 @@ def group_and_aggregate_datafeed_details_by_date(
         if status in [api_c.STATUS_COMPLETE] and data_feed_by_date.get(
             api_c.PROCESSED_END_DATE
         ):
-            data_feed_by_date[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
+            data_feed_by_date[
+                api_c.RUN_DURATION
+            ] = parse_seconds_to_duration_string(
                 int(
                     (
                         data_feed_by_date[api_c.PROCESSED_END_DATE]
@@ -1036,7 +1079,10 @@ def clean_and_aggregate_datafeed_details(
     stdev_sample_list = []
     for df_detail in datafeed_details:
         records_processed_percentage = (
-            (df_detail[api_c.RECORDS_PROCESSED] / df_detail[api_c.RECORDS_RECEIVED])
+            (
+                df_detail[api_c.RECORDS_PROCESSED]
+                / df_detail[api_c.RECORDS_RECEIVED]
+            )
             if df_detail.get(api_c.RECORDS_RECEIVED)
             else 0
         )
@@ -1047,7 +1093,9 @@ def clean_and_aggregate_datafeed_details(
                 api_c.PROCESSED_START_DATE: parse(
                     df_detail[api_c.PROCESSED_START_DATE]
                 ),
-                api_c.PROCESSED_END_DATE: parse(df_detail[api_c.PROCESSED_END_DATE]),
+                api_c.PROCESSED_END_DATE: parse(
+                    df_detail[api_c.PROCESSED_END_DATE]
+                ),
                 api_c.STATUS: df_detail[api_c.STATUS].title(),
                 api_c.SUB_STATUS: df_detail[api_c.SUB_STATUS].title(),
                 api_c.RECORDS_PROCESSED_PERCENTAGE: {
@@ -1156,7 +1204,9 @@ def set_destination_authentication_secrets(
     ssm_params = {}
 
     if destination_type not in api_c.DESTINATION_SECRETS:
-        raise KeyError(f"{destination_type} does not have a secret store mapping.")
+        raise KeyError(
+            f"{destination_type} does not have a secret store mapping."
+        )
 
     for (
         parameter_name,
@@ -1164,7 +1214,10 @@ def set_destination_authentication_secrets(
     ) in authentication_details.items():
 
         # only store secrets in ssm, otherwise store in object.
-        if parameter_name in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]:
+        if (
+            parameter_name
+            in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]
+        ):
             ssm_params[parameter_name] = secret
             continue
 
