@@ -1,4 +1,4 @@
-"""Purpose of this file is to house route utilities"""
+"""Purpose of this file is to house route utilities."""
 # pylint: disable=too-many-lines
 import statistics
 from collections import defaultdict

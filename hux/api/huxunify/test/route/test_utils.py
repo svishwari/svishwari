@@ -1,4 +1,4 @@
-"""Purpose of this file is to house all the route/utils tests"""
+"""Purpose of this file is to house all the route/utils tests."""
 from datetime import datetime, timedelta
 from http import HTTPStatus
 from unittest import TestCase, mock

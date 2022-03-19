@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use,unused-argument,too-many-lines
-"""Paths for engagement API"""
+"""Paths for engagement API."""
 import datetime
 from pathlib import Path
 import zipfile
