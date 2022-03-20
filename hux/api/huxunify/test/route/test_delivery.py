@@ -1,5 +1,4 @@
 """Purpose of this file is to house all the delivery API tests."""
-
 from unittest import mock
 from http import HTTPStatus
 from bson import ObjectId
@@ -130,9 +129,7 @@ class TestDeliveryRoutes(RouteTestCase):
             },
         ]
 
-        self.audiences = [
-            create_audience(self.database, **x) for x in audiences
-        ]
+        self.audiences = [create_audience(self.database, **x) for x in audiences]
 
         engagements = [
             {
@@ -393,9 +390,7 @@ class TestDeliveryRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {
-            "message": "Audience is not attached to the engagement."
-        }
+        valid_response = {"message": "Audience is not attached to the engagement."}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -613,9 +608,7 @@ class TestDeliveryRoutes(RouteTestCase):
         """Test setting a delivery schedule for an engaged audience destination"""
 
         self.request_mocker.stop()
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         delivery_schedule = {
@@ -642,9 +635,7 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         # validate the schedule was actually set.
-        engagement = get_engagement(
-            self.database, ObjectId(self.engagement_ids[0])
-        )
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
         self.assertIn(db_c.AUDIENCES, engagement)
 
         # take the first audience
@@ -663,9 +654,7 @@ class TestDeliveryRoutes(RouteTestCase):
         destination."""
 
         self.request_mocker.stop()
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         response = self.app.delete(
@@ -685,9 +674,7 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         # validate the schedule was actually unset.
-        engagement = get_engagement(
-            self.database, ObjectId(self.engagement_ids[0])
-        )
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
         self.assertIn(db_c.AUDIENCES, engagement)
         self.assertTrue(
             not any(
@@ -736,9 +723,7 @@ class TestDeliveryRoutes(RouteTestCase):
         """Test setting a delivery schedule for all engaged destination(s)"""
 
         self.request_mocker.stop()
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         delivery_schedule = {
@@ -765,9 +750,7 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         # validate the schedule was actually set.
-        engagement = get_engagement(
-            self.database, ObjectId(self.engagement_ids[0])
-        )
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
         self.assertIn(db_c.AUDIENCES, engagement)
 
         destinations = [
@@ -790,9 +773,7 @@ class TestDeliveryRoutes(RouteTestCase):
         destinations."""
 
         self.request_mocker.stop()
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         response = self.app.delete(
@@ -812,14 +793,96 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         # validate the schedule was actually unset.
-        engagement = get_engagement(
-            self.database, ObjectId(self.engagement_ids[0])
-        )
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
         self.assertIn(db_c.AUDIENCES, engagement)
         self.assertTrue(
             not any(
                 d.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)
                 for x in engagement[db_c.AUDIENCES]
                 for d in x[db_c.DESTINATIONS]
+            )
+        )
+
+    def test_set_delivery_schedule_for_an_engagement_audience(self):
+        """Test setting delivery schedule for an engagement audience."""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        self.request_mocker.start()
+
+        delivery_schedule = {
+            api_c.SCHEDULE: {
+                api_c.PERIODICIY: api_c.DAILY,
+                api_c.EVERY: 1,
+                api_c.HOUR: 12,
+                api_c.MINUTE: 15,
+                api_c.PERIOD: api_c.AM,
+            },
+            api_c.START_DATE: "2022-03-02T00:00:00.000Z",
+            api_c.END_DATE: "2022-03-04T00:00:00.000Z",
+        }
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                f"{api_c.SCHEDULE}"
+            ),
+            json=delivery_schedule,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(
+            HTTPStatus.OK,
+            response.status_code,
+        )
+
+        # validate the schedule was actually set.
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
+        self.assertIn(db_c.AUDIENCES, engagement)
+
+        audiences = list(engagement[db_c.AUDIENCES])
+        # check that there are two audiences in the engagement
+        self.assertEqual(2, len(audiences))
+
+        # validate that the delivery_schedule is only set for the audience that
+        # is passed in the request
+        for audience in audiences:
+            if audience[api_c.ID] == self.audiences[0][db_c.ID]:
+                self.assertIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, audience)
+            else:
+                self.assertNotIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, audience)
+
+    def test_remove_delivery_schedule_for_an_engagement_audience(self):
+        """Test removing delivery schedule for an engagement audience."""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        self.request_mocker.start()
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                f"{api_c.SCHEDULE}?{api_c.UNSET}=True"
+            ),
+            json={},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(
+            HTTPStatus.OK,
+            response.status_code,
+        )
+
+        # validate the schedule was actually unset.
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
+        self.assertIn(db_c.AUDIENCES, engagement)
+        self.assertTrue(
+            not any(
+                aud.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)
+                for aud in engagement[db_c.AUDIENCES]
             )
         )
