@@ -8,8 +8,8 @@
     />
     <checkbox-chart-legends
       :legends-data="legendsData"
-      @onCheckboxChange="filterSegmentData"
       class="ml-16 mt-8"
+      @onCheckboxChange="filterSegmentData"
     />
     <chart-tooltip
       v-if="show"
@@ -45,8 +45,6 @@ import GroupedBarChart from "@/components/common/Charts/GroupedBarChart/GroupedB
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 import CheckboxChartLegends from "@/components/common/Charts/Legends/CheckBoxChartLegends.vue"
-
-
 
 export default {
   name: "TrustComparisonChart",
@@ -129,7 +127,7 @@ export default {
         this.isEmptyState = true
       }
     },
-    // data manupulation and grouping for chart input 
+    // data manipulation and grouping for chart input
     processData() {
       this.chartSourceData = []
       if (this.segmentScores) {

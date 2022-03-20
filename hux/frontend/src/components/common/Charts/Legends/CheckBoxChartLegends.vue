@@ -1,6 +1,10 @@
 <template>
   <div>
-    <span v-for="item in legendsData" :key="item.text" class="chart-legends mr-6">
+    <span
+      v-for="item in legendsData"
+      :key="item.text"
+      class="chart-legends mr-6"
+    >
       <span class="legend-items">
         <v-checkbox
           v-if="showCheckBox"
