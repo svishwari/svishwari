@@ -201,7 +201,8 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         )
 
     def test_set_engagement_audience_delivery_schedule(self):
-        """Test setting the delivery schedule of an audience in an engagement."""
+        """Test setting the delivery schedule of an audience in an
+        engagement."""
 
         # manually create the engagement
         audience_id = ObjectId()
@@ -291,7 +292,8 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         )
 
     def test_remove_engagement_audience_delivery_schedule(self):
-        """Test removing the delivery schedule of an audience in an engagement."""
+        """Test removing the delivery schedule of an audience in an
+        engagement."""
 
         # manually create the engagement
         audience_id = ObjectId()
