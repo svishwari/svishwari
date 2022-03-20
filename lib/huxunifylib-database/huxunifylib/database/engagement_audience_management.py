@@ -62,7 +62,11 @@ def get_all_engagement_audience_destinations(
             }
         },
         {"$unwind": {"path": "$delivery_platform"}},
-        {"$addFields": {"delivery_platform.data_added": "$destinations.data_added"}},
+        {
+            "$addFields": {
+                "delivery_platform.data_added": "$destinations.data_added"
+            }
+        },
         {
             "$group": {
                 "_id": "$_id",
@@ -89,7 +93,9 @@ def get_all_engagement_audience_destinations(
         for audience in audience_delivery_platforms:
             encountered_destinations = {}
             for i, destination in enumerate(audience[db_c.DESTINATIONS]):
-                if encountered_destinations.get(str(destination.get(db_c.ID, ""))):
+                if encountered_destinations.get(
+                    str(destination.get(db_c.ID, ""))
+                ):
                     audience[db_c.DESTINATIONS].pop(i)
                 encountered_destinations[str(destination.get(db_c.ID))] = True
 
@@ -129,7 +135,9 @@ def set_engagement_audience_destination_schedule(
         list: updated engagement objects
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
 
     # get the engagement doc
     engagement_doc = collection.find_one(
@@ -156,7 +164,9 @@ def set_engagement_audience_destination_schedule(
                 destination.pop(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, None)
             else:
                 # set the cron expression
-                destination[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = cron_expression
+                destination[
+                    db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                ] = cron_expression
 
             engagement_doc[db_c.UPDATE_TIME] = datetime.utcnow()
             engagement_doc[db_c.UPDATED_BY] = user_name
@@ -207,7 +217,9 @@ def set_engagement_audience_schedule(
         dict: Updated engagement object.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
 
     # get the engagement doc
     engagement_doc = collection.find_one(
