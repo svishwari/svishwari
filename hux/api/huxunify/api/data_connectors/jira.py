@@ -177,23 +177,3 @@ class JiraConnection:
             ) from jira_error
 
         return matched_issues
-
-    def get_issues(self, jql: str, fields: str) -> dict:
-        """Getting issues from Jira.
-
-        Args:
-            jql (str): Jira Query Language string.
-            fields (str): Name of fields to fetch comma separated.
-
-        Returns:
-            dict: Dict of issues found.
-        """
-
-        jql = (
-            f"project={self.project_key} AND component="
-            f"{self.project_key} AND "
-            f"{jql}"
-        )
-        return self.jira_client.search_issues(
-            jql_str=jql, json_result=True, fields=fields
-        )
