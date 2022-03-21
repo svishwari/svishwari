@@ -78,17 +78,17 @@
       </v-tabs-items>
     </div>
     <div>
-      <hux-select
+      <link-dropdown
         :data-list="getSegment"
         @onselect="getSelectedData"
-      ></hux-select>
+      ></link-dropdown>
     </div>
   </page>
 </template>
 
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
-import HuxSelect from "@/components/common/HuxSelect.vue"
+import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
@@ -98,7 +98,7 @@ export default {
   name: "HXTrustID",
   components: {
     Breadcrumb,
-    HuxSelect,
+    LinkDropdown,
     Page,
     PageHeader,
     TrustComparisonChart,

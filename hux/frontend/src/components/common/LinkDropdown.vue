@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: "HuxSelect",
+  name: "LinkDropdown",
   props: {
     dataList: {
       type: Array,
