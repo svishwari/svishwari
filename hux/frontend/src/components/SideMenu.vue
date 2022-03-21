@@ -200,14 +200,12 @@ export default {
         }
       })
     },
-
-    trustidRoute() {
+    trustidHover() {
       // if true - change to colored
       // else black
       // change items
     },
-
-    trustidHover() {
+    trustidRoute() {
       // similar logic
     },
   },
