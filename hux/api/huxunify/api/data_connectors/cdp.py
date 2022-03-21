@@ -1456,10 +1456,4 @@ def get_customer_event_types(token: str) -> list:
             response.status_code,
         )
 
-    event_types = response.json().get(api_c.BODY)
-
-    # no customer event types
-    if not event_types:
-        return []
-
-    return event_types
+    return response.json().get(api_c.BODY)

@@ -31,12 +31,14 @@ from huxunify.api.data_connectors.cdp import (
     get_customers_insights_count_by_day,
     get_spending_by_gender,
     get_revenue_by_day,
+    get_customer_event_types,
 )
 from huxunify.app import create_app
 from huxunify.test import constants as t_c
 from huxunify.test.route.route_test_util.test_data_loading.users import (
     load_users,
 )
+
 
 # pylint: disable=too-many-public-methods
 class CDPTest(TestCase):
@@ -661,6 +663,19 @@ class CDPTest(TestCase):
                 CustomerRevenueInsightsSchema(), revenue_by_day, True
             )
         )
+
+    def test_get_customer_event_types(self) -> None:
+        """Test get customer event types."""
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
+            json=t_c.MOCKED_CUSTOMER_EVENT_TYPES,
+        )
+        self.request_mocker.start()
+
+        event_types = get_customer_event_types(token=t_c.TEST_AUTH_TOKEN)
+        self.assertIsNotNone(event_types)
+        self.assertEqual(len(event_types), 3)
 
 
 class CdpFieldTests(TestCase):
