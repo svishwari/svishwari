@@ -83,6 +83,7 @@ JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
 KEY = "key"
+COMPONENT = "component"
 TASK = "Task"
 TICKET_TYPE_BUG = "Bug"
 
@@ -229,6 +230,7 @@ DAY_OF_MONTH_NAME_LIST = [
 DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
 DESTINATION_CHECK_CRON = "*/15"
+DELIVERY_JOB_CRON = "0 * * * *"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
@@ -1638,6 +1640,14 @@ UNSUBSCRIBE_RATE = "unsubscribe_rate"
 COMPLAINTS_RATE = "complaints_rate"
 DELIVERABILITY_METRICS = "deliverability_metrics"
 
+CAMPAIGN_ID = "campaign_id"
+UNSUBSCRIBES = "unsubscribes"
+COMPLAINTS = "complaints"
+SOFT_BOUNCES = "soft_bounces"
+BOUNCES = "bounces"
+HARD_BOUNCES = "hard_bounces"
+OPENS = "opens"
+CLICKS = "clicks"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"

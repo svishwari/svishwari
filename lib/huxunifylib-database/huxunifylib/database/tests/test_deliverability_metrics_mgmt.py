@@ -12,6 +12,7 @@ from huxunifylib.database.deliverability_metrics_management import (
     get_domain_wise_inbox_percentage_data,
     get_overall_inbox_rate,
     get_deliverability_data_performance_metrics,
+    get_campaign_aggregated_sent_count,
 )
 from huxunifylib.database.delivery_platform_management import (
     set_deliverability_metrics,
@@ -217,15 +218,13 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             "sent"
         ) + metrics_2.get(db_c.PERFORMANCE_METRICS).get("sent")
 
-        self.aggregated_open_rate = (
-            metrics_1.get(db_c.PERFORMANCE_METRICS).get("opens")
-            + metrics_2.get(db_c.PERFORMANCE_METRICS).get("opens")
-        ) / self.aggregated_sent
+        self.aggregated_opens = metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+            "opens"
+        ) + metrics_2.get(db_c.PERFORMANCE_METRICS).get("opens")
 
-        self.aggregated_click_rate = (
-            metrics_1.get(db_c.PERFORMANCE_METRICS).get("clicks")
-            + metrics_2.get(db_c.PERFORMANCE_METRICS).get("clicks")
-        ) / self.aggregated_sent
+        self.aggregated_clicks = metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+            "clicks"
+        ) + metrics_2.get(db_c.PERFORMANCE_METRICS).get("clicks")
 
     def test_domain_wise_inbox_percentage_data(self):
         """Test for domain wise inbox percentage data."""
@@ -308,27 +307,27 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
         self.assertIsInstance(
             performance_metrics[0]
             .get(db_c.DELIVERABILITY_METRICS)[0]
-            .get("open_rate"),
-            float,
+            .get("opens"),
+            int,
         )
         self.assertEqual(
-            self.aggregated_open_rate,
+            self.aggregated_opens,
             performance_metrics[0]
             .get(db_c.DELIVERABILITY_METRICS)[0]
-            .get("open_rate"),
+            .get("opens"),
         )
 
         self.assertIsInstance(
             performance_metrics[0]
             .get(db_c.DELIVERABILITY_METRICS)[0]
-            .get("click_rate"),
-            float,
+            .get("clicks"),
+            int,
         )
         self.assertEqual(
-            self.aggregated_click_rate,
+            self.aggregated_clicks,
             performance_metrics[0]
             .get(db_c.DELIVERABILITY_METRICS)[0]
-            .get("click_rate"),
+            .get("clicks"),
         )
 
     def test_get_deliverability_data_aggregate(self):
@@ -352,12 +351,26 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
         self.assertEqual(
             self.aggregated_sent, performance_metrics[0].get("sent")
         )
-        self.assertIsInstance(performance_metrics[0].get("open_rate"), float)
+        self.assertIsInstance(performance_metrics[0].get("opens"), int)
         self.assertEqual(
-            self.aggregated_open_rate, performance_metrics[0].get("open_rate")
+            self.aggregated_opens, performance_metrics[0].get("opens")
         )
-        self.assertIsInstance(performance_metrics[0].get("click_rate"), float)
+        self.assertIsInstance(performance_metrics[0].get("clicks"), int)
         self.assertEqual(
-            self.aggregated_click_rate,
-            performance_metrics[0].get("click_rate"),
+            self.aggregated_clicks,
+            performance_metrics[0].get("clicks"),
+        )
+
+    def test_get_campaign_aggregated_sent_count(self):
+        """Test for aggregated sent count."""
+        campaign_aggregated_sent_count = get_campaign_aggregated_sent_count(
+            database=self.database,
+            domains=["domain1.com"],
+            start_date=datetime.datetime.utcnow() - datetime.timedelta(days=1),
+            end_date=datetime.datetime.utcnow(),
+        )
+
+        self.assertEqual(len(campaign_aggregated_sent_count), 1)
+        self.assertEqual(
+            self.aggregated_sent, campaign_aggregated_sent_count[0].get("sent")
         )
