@@ -12,6 +12,8 @@ from flask import Blueprint, request, Response, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
+
+from huxunify.api.route.return_util import HuxResponse
 from huxunifylib.database import (
     constants as db_c,
     notification_management,
@@ -19,6 +21,7 @@ from huxunifylib.database import (
 from huxunify.api.schema.notifications import (
     NotificationsSchema,
     NotificationSchema,
+    NotificationPostSchema,
 )
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -43,6 +46,62 @@ def before_request():
     """Protect all of the notifications endpoints."""
 
     pass  # pylint: disable=unnecessary-pass
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"{api_c.NOTIFICATIONS_ENDPOINT}",
+    "CreateNotification",
+)
+class CreateNotification(SwaggerView):
+    """Notification Delete Class."""
+
+    parameters = [
+        {
+            "type": db_c.NOTIFICATION_TYPE_SUCCESS,
+            "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
+            "description": "Audience has been successfully delivered.",
+        }
+    ]
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "description": "Create Notification.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create the notification.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @api_error_handler()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, user: dict) -> Tuple[Response, int]:
+        """Create a notification.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: message, HTTP status code.
+        """
+        body = NotificationPostSchema().load(request.get_json(), partial=True)
+
+        notification = notification_management.create_notification(
+            database=get_db_client(),
+            notification_type=body["type"],
+            category=body["category"],
+            description=body["description"],
+            username=user[db_c.USER_DISPLAY_NAME],
+        )
+
+        return HuxResponse.CREATED(
+            data=notification, data_schema=NotificationSchema()
+        )
 
 
 @add_view_to_blueprint(
