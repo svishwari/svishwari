@@ -6,7 +6,7 @@ from os import getenv
 from dotenv import load_dotenv
 from locust import HttpUser, task, between
 from locust.log import setup_logging
-from get_okta_token import OktaOIDC
+from hux.integration_tests.api.test.get_okta_token import OktaOIDC
 
 load_dotenv()
 setup_logging("INFO", None)
