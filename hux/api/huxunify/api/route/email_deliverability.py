@@ -93,7 +93,6 @@ class EmailDeliverabilityOverview(SwaggerView):
 
         # TODO Remove stub when email deliverability data available.
 
-        delivered_open_rate_overview = []
         # Default 3 months.
         start_date, end_date = get_start_end_dates(request, delta=3)
 
@@ -111,36 +110,52 @@ class EmailDeliverabilityOverview(SwaggerView):
         domain_name = domains[0] if domains else api_c.DOMAIN_1
         api_c.SENDING_DOMAINS_OVERVIEW_STUB[0][api_c.DOMAIN_NAME] = domain_name
 
-        performance_metrics_data = get_deliverability_data_performance_metrics(
-            database=database,
-            start_date=start_date,
-            end_date=end_date,
-            domains=[domain_name],
-            mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
+        delivered_open_rate_overview = (
+            get_performance_metrics_deliverability_data(
+                database=database,
+                domains=[domains[0]],
+                start_date=datetime.datetime.strptime(
+                    start_date, api_c.DEFAULT_DATE_FORMAT
+                ),
+                end_date=end_date,
+            ).get(f"{api_c.DELIVERED}_{api_c.OPEN_RATE}")
         )
 
-        for domain_data in performance_metrics_data:
-            for metrics in domain_data.get(db_c.DELIVERABILITY_METRICS):
-                delivered_open_rate_overview.append(
-                    {
-                        api_c.DATE: metrics.get(api_c.DATE),
-                        api_c.OPEN_RATE: metrics.get(api_c.OPEN_RATE),
-                        api_c.DELIVERED_COUNT: metrics.get(api_c.DELIVERED),
-                    }
-                )
-
-        delivered_open_rate_overview.sort(
-            key=lambda data: data.get(api_c.DATE)
+        aggregated_data_domain_wise = (
+            get_deliverability_data_performance_metrics(
+                database=database,
+                domains=[domain_name],
+                start_date=start_date,
+                end_date=end_date,
+                aggregate=True,
+                mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
+            )
         )
 
-        aggregated_data = get_deliverability_data_performance_metrics(
-            database=database,
-            domains=[domain_name],
-            start_date=start_date,
-            end_date=end_date,
-            aggregate=True,
-            mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
-        )
+        aggregated_data = []
+
+        for domain_data in aggregated_data_domain_wise:
+            sent = (
+                domain_data.get(api_c.SENT)
+                - domain_data.get(api_c.HARD_BOUNCES)
+                - domain_data.get(api_c.UNSUBSCRIBES)
+                - domain_data.get(api_c.COMPLAINTS)
+            )
+
+            # Delivery is sent - soft bounces.
+            delivered = sent - domain_data.get(api_c.SOFT_BOUNCES)
+
+            aggregated_data.append(
+                {
+                    api_c.DOMAIN_NAME: domain_data.get(api_c.DOMAIN_NAME),
+                    api_c.SENT: sent,
+                    api_c.BOUNCE_RATE: domain_data.get(api_c.BOUNCES)
+                    / delivered,
+                    api_c.OPEN_RATE: domain_data.get(api_c.OPENS) / delivered,
+                    api_c.CLICK_RATE: domain_data.get(api_c.CLICKS)
+                    / delivered,
+                }
+            )
 
         return HuxResponse.OK(
             data={

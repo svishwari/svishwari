@@ -3,7 +3,10 @@ from unittest import TestCase
 
 import requests_mock
 
-from get_okta_token import PasswordType, OktaOIDC
+from hux.integration_tests.api.test.get_okta_token import (
+    PasswordType,
+    OktaOIDC,
+)
 
 
 class TestOktaTokenGet(TestCase):

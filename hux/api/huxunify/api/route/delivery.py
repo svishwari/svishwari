@@ -180,12 +180,14 @@ class EngagementDeliverDestinationView(SwaggerView):
                 "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
-        database = get_db_client()
         delivery_job_ids = []
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
         ):
-            if [pair[0], pair[1][db_c.OBJECT_ID]] != [
+            if not (
+                audience_id == db_c.ZERO_OBJECT_ID
+                and destination_id == pair[1][db_c.OBJECT_ID]
+            ) and [pair[0], pair[1][db_c.OBJECT_ID]] != [
                 audience_id,
                 destination_id,
             ]:
@@ -203,13 +205,15 @@ class EngagementDeliverDestinationView(SwaggerView):
             user[api_c.USER_NAME],
             ",".join(delivery_job_ids),
         )
+
         # create notification
         create_notification(
             database=database,
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description=(
                 f"Successfully scheduled a delivery of audience "
-                f'"{target_audience[db_c.NAME]}" from engagement '
+                f'"{target_audience[db_c.NAME] if target_audience else ""}"'
+                f" from engagement "
                 f'"{engagement[db_c.NAME]}" to destination '
                 f'"{target_destination[db_c.NAME]}".'
             ),

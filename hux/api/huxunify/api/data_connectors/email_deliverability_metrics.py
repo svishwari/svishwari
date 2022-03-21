@@ -10,6 +10,7 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.deliverability_metrics_management import (
     get_domain_wise_inbox_percentage_data,
     get_deliverability_data_performance_metrics,
+    get_campaign_aggregated_sent_count,
 )
 
 from huxunify.api import constants as api_c
@@ -98,6 +99,7 @@ def get_delivered_rate_data(
     return delivered_data_with_stub
 
 
+# pylint: disable=too-many-locals
 def get_performance_metrics_deliverability_data(
     database: MongoClient,
     domains: list,
@@ -115,12 +117,27 @@ def get_performance_metrics_deliverability_data(
         dict: Deliverability data dict.
     """
 
-    sent_data = []
+    sent_count_data = []
     delivered_data = []
     open_rate_data = []
     click_rate_data = []
     unsubscribe_rate_data = []
     complaints_rate_data = []
+
+    # Combination of both delivered and open rate data.
+    delivered_open_rate_data = []
+
+    domain_campaign_sent = defaultdict(dict)
+    aggregated_sent_data = get_campaign_aggregated_sent_count(
+        database=database,
+        domains=domains,
+        start_date=start_date,
+        end_date=end_date,
+    )
+    for sent_data in aggregated_sent_data:
+        domain_campaign_sent[sent_data.get(api_c.DOMAIN_NAME)][
+            sent_data.get(api_c.CAMPAIGN_ID)
+        ] = sent_data.get(api_c.SENT)
 
     deliverability_data = get_deliverability_data_performance_metrics(
         database=database,
@@ -129,58 +146,113 @@ def get_performance_metrics_deliverability_data(
         end_date=end_date,
         mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
     )
+    prev_delivery = {}
+    prev_sent = {}
+
+    curr_delivery = {}
+    curr_sent = {}
+
     for domain_data in deliverability_data:
         # For domain name from performance metrics we get complete address.
         domain_name = clean_domain_name_string(
             domain_data.get(api_c.DOMAIN_NAME)
         )
+        domain_aggregated_sent = domain_campaign_sent.get(
+            domain_data.get(api_c.DOMAIN_NAME), {}
+        )
 
         for metrics in domain_data.get(api_c.DELIVERABILITY_METRICS, []):
+            campaign_aggregated_sent = domain_aggregated_sent.get(
+                metrics.get(api_c.CAMPAIGN_ID)
+            )
+            if not prev_sent.get(
+                metrics.get(api_c.CAMPAIGN_ID)
+            ) and not prev_delivery.get(metrics.get(api_c.CAMPAIGN_ID)):
+                prev_delivery[
+                    metrics.get(api_c.CAMPAIGN_ID)
+                ] = campaign_aggregated_sent
+                prev_sent[
+                    metrics.get(api_c.CAMPAIGN_ID)
+                ] = campaign_aggregated_sent
+            # Sent is sent - hard bounces, unsubs, complaints.
+            curr_sent[metrics.get(api_c.CAMPAIGN_ID)] = (
+                prev_sent[metrics.get(api_c.CAMPAIGN_ID)]
+                - metrics.get(api_c.HARD_BOUNCES)
+                - metrics.get(api_c.UNSUBSCRIBES)
+                - metrics.get(api_c.COMPLAINTS)
+            )
+            # Delivery is sent - soft bounces.
+            curr_delivery[metrics.get(api_c.CAMPAIGN_ID)] = curr_sent[
+                metrics.get(api_c.CAMPAIGN_ID)
+            ] - metrics.get(api_c.SOFT_BOUNCES)
 
-            sent_data.append(
+            sent_count_data.append(
                 {
                     api_c.DATE: metrics.get(api_c.DATE),
-                    domain_name: metrics.get(api_c.SENT),
+                    domain_name: prev_sent[metrics.get(api_c.CAMPAIGN_ID)],
                 }
             )
 
             delivered_data.append(
                 {
                     api_c.DATE: metrics.get(api_c.DATE),
-                    domain_name: metrics.get(api_c.DELIVERED),
+                    domain_name: prev_delivery[metrics.get(api_c.CAMPAIGN_ID)],
                 }
             )
 
             open_rate_data.append(
                 {
                     api_c.DATE: metrics.get(api_c.DATE),
-                    domain_name: metrics.get(api_c.OPEN_RATE),
+                    domain_name: metrics.get(api_c.OPENS)
+                    / prev_delivery[metrics.get(api_c.CAMPAIGN_ID)],
                 }
             )
 
             click_rate_data.append(
                 {
                     api_c.DATE: metrics.get(api_c.DATE),
-                    domain_name: metrics.get(api_c.CLICK_RATE),
+                    domain_name: metrics.get(api_c.CLICKS)
+                    / prev_delivery[metrics.get(api_c.CAMPAIGN_ID)],
                 }
             )
 
             unsubscribe_rate_data.append(
                 {
                     api_c.DATE: metrics.get(api_c.DATE),
-                    domain_name: metrics.get(api_c.UNSUBSCRIBE_RATE),
+                    domain_name: metrics.get(api_c.UNSUBSCRIBES)
+                    / prev_delivery[metrics.get(api_c.CAMPAIGN_ID)],
                 }
             )
 
             complaints_rate_data.append(
                 {
                     api_c.DATE: metrics.get(api_c.DATE),
-                    domain_name: metrics.get(api_c.COMPLAINTS_RATE),
+                    domain_name: metrics.get(api_c.COMPLAINTS)
+                    / prev_delivery[metrics.get(api_c.CAMPAIGN_ID)],
                 }
             )
 
+            delivered_open_rate_data.append(
+                {
+                    api_c.DATE: metrics.get(api_c.DATE),
+                    api_c.DOMAIN_NAME: domain_name,
+                    api_c.OPEN_RATE: metrics.get(api_c.OPENS)
+                    / prev_delivery[metrics.get(api_c.CAMPAIGN_ID)],
+                    api_c.DELIVERED_COUNT: prev_delivery[
+                        metrics.get(api_c.CAMPAIGN_ID)
+                    ],
+                }
+            )
+            prev_sent[metrics.get(api_c.CAMPAIGN_ID)] = curr_sent[
+                metrics.get(api_c.CAMPAIGN_ID)
+            ]
+            prev_delivery[metrics.get(api_c.CAMPAIGN_ID)] = curr_delivery[
+                metrics.get(api_c.CAMPAIGN_ID)
+            ]
     return {
-        api_c.SENT: sorted(sent_data, key=lambda data: data.get(api_c.DATE)),
+        api_c.SENT: sorted(
+            sent_count_data, key=lambda data: data.get(api_c.DATE)
+        ),
         api_c.OPEN_RATE: sorted(
             open_rate_data, key=lambda data: data.get(api_c.DATE)
         ),
@@ -192,5 +264,8 @@ def get_performance_metrics_deliverability_data(
         ),
         api_c.COMPLAINTS_RATE: sorted(
             complaints_rate_data, key=lambda data: data.get(api_c.DATE)
+        ),
+        f"{api_c.DELIVERED}_{api_c.OPEN_RATE}": sorted(
+            delivered_open_rate_data, key=lambda data: data.get(api_c.DATE)
         ),
     }

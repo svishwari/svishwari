@@ -12,16 +12,17 @@ from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
+
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
     update_user,
 )
+from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
-from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -35,6 +36,7 @@ from huxunify.api.route.utils import (
     create_description_for_user_request,
     filter_team_member_requests,
 )
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.user import (
     UserSchema,
     UserPatchSchema,
@@ -719,6 +721,10 @@ class UserTickets(SwaggerView):
         )
 
         if not matching_tickets:
+            logger.info(
+                "No matching tickets found for user with user name %s.",
+                user[api_c.USER_NAME],
+            )
             return HuxResponse.OK("No matching tickets found for user")
 
         my_tickets = []
@@ -868,15 +874,29 @@ class UsersRequested(SwaggerView):
         summary = api_c.NEW_USER_REQUEST_PREFIX
         summary = summary.replace("[", '"').replace("]", '"')
 
-        jira_issues = JiraConnection().get_issues(
-            jql=f"summary~{summary} AND status != {api_c.STATE_DONE} ORDER BY "
-            f"updated DESC",
-            fields=f"{api_c.DESCRIPTION},{api_c.STATUS},{api_c.UPDATED},"
-            f"{api_c.CREATED}",
+        jira_issues = (
+            JiraConnection()
+            .search_jira_issues(
+                jql_suffix=f"{api_c.COMPONENT}={get_config().JIRA_PROJECT_KEY}"
+                f" AND {api_c.SUMMARY}~{summary} "
+                f"AND {api_c.STATUS}!={api_c.STATE_DONE}",
+                return_fields=[
+                    api_c.DESCRIPTION,
+                    api_c.STATUS,
+                    api_c.CREATED,
+                    api_c.UPDATED,
+                ],
+                order_by_field=api_c.UPDATED,
+                sort_order="DESC",
+            )
+            .get(api_c.ISSUES)
         )
 
-        jira_issues = jira_issues.get(api_c.ISSUES)
         if not jira_issues:
+            logger.info(
+                "No user requests found for user with user name %s.",
+                user[api_c.USER_NAME],
+            )
             return {"message": "No user requests found."}, HTTPStatus.OK
 
         return (

@@ -16,7 +16,7 @@ export default [
           {
             attribute_type: "humanity",
             attribute_name: "Humanity",
-            attribute_score: 71,
+            attribute_score: -20,
             attribute_description:
               "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
           },
@@ -57,7 +57,7 @@ export default [
           {
             attribute_type: "humanity",
             attribute_name: "Humanity",
-            attribute_score: 49,
+            attribute_score: -49,
             attribute_description:
               "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
           },
@@ -71,7 +71,7 @@ export default [
           {
             attribute_type: "capability",
             attribute_name: "Capability",
-            attribute_score: 28,
+            attribute_score: -28,
             attribute_description:
               "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
           },

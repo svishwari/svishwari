@@ -71,8 +71,9 @@
       <v-list-item
         v-if="!item.menu"
         class="pl-6 mr-2"
-        :to="item.link"
         :data-e2e="`nav-${item.icon}`"
+        :to="item.link"
+        @click="navigate(item)"
       >
         <v-list-item-icon
           v-if="item.icon"
@@ -104,9 +105,10 @@
         <v-list-item
           v-for="menu in item.menu"
           :key="menu.title"
-          :to="menu.link"
           class="pl-6 mr-2"
           :data-e2e="`nav-${menu.icon}`"
+          :to="menu.link"
+          @click="navigate(menu)"
         >
           <v-list-item-icon
             v-if="menu.icon"
@@ -154,10 +156,11 @@
 </template>
 
 <script>
-import menuConfig from "@/menuConfig.json"
+import menuConfig from "@/menuConfig.js"
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
+import * as _ from "lodash"
 
 export default {
   name: "SideMenu",
@@ -176,6 +179,7 @@ export default {
     },
     menu: false,
     items: menuConfig.menu,
+    prevItem: null,
   }),
 
   computed: {
@@ -196,6 +200,21 @@ export default {
           return x.display
         }
       })
+    },
+  },
+
+  methods: {
+    navigate(item) {
+      if (this.prevItem && this.prevItem.defaultState) {
+        this.$store.replaceState({
+          ...this.$store.state,
+          [this.prevItem.link.name.charAt(0).toLowerCase() +
+          this.prevItem.link.name.slice(1)]: _.cloneDeep(
+            this.prevItem.defaultState
+          ),
+        })
+      }
+      this.prevItem = item
     },
   },
 }

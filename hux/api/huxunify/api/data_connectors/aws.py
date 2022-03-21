@@ -367,53 +367,6 @@ class CloudWatchState(Enum):
     ENABLE = "enable_rule"
 
 
-def toggle_cloud_watch_rule(
-    rule_name: str, state: CloudWatchState, ignore_existence: bool = True
-) -> None:
-    """Enable or Disable Cloud watch rule.
-
-    Args:
-        rule_name (str): Name of the rule you are creating or updating.
-        state (CloudWatchState): Toggle state of the cloud watch rule.
-        ignore_existence (bool): Cloud watch fails if the rules does not exist.
-            Toggle regardless of checking existence.
-
-    Returns:
-        bool: exception was handled, return false.
-
-    Raises:
-        ClientError: Boto client request error.
-
-    """
-
-    try:
-        aws_events = get_aws_client(api_c.AWS_EVENTS_NAME)
-        response = getattr(aws_events, state.value)(Name=rule_name)
-
-        # validate successful creation
-        success = (
-            response["ResponseMetadata"]["HTTPStatusCode"]
-            == HTTPStatus.OK.value
-        )
-        if not success:
-            logging.error("Failed to create toggle %s.", rule_name)
-        return success
-
-    except botocore.exceptions.ClientError as error:
-        if error.response["Error"]["Code"] == "ResourceNotFoundException":
-            logging.error("Resource not found %s.", rule_name)
-            if not ignore_existence:
-                raise error
-        else:
-            logging.error("Unexpected client error %s.", rule_name)
-
-    except Exception as exception:  # pylint:disable=broad-except
-        logging.error("Failed to create event %s: %s", rule_name, exception)
-
-    # exception was handled, return false.
-    return False
-
-
 def upload_file(
     file_name: str,
     bucket: str,
