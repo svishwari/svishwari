@@ -1,6 +1,6 @@
 <template>
   <v-card class="card-style" :style="style" shaped outlined>
-    <v-card-text class="text-style">
+    <v-card-text class="text-subtitle-1 text-style">
       {{ value }}
     </v-card-text>
   </v-card>
@@ -38,12 +38,8 @@ export default {
 }
 .text-style {
   // num style
-  font-family: Open Sans SemiBold;
-  font-weight: 600;
   color: black !important;
-  font-style: normal;
-  font-size: 16px;
-  word-wrap: normal;
+  line-height: 16px;
   transform: translate(0%, 25%) rotate(-45deg);
   padding: 0px;
   display: block;
