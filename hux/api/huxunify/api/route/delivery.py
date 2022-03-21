@@ -71,7 +71,9 @@ def before_request() -> Tuple[dict, int]:
 
     # check if deliveries are enabled.
     if get_config().DISABLE_DELIVERIES:
-        return {"message": api_c.DISABLE_DELIVERY_MSG}, HTTPStatus.PARTIAL_CONTENT
+        return {
+            "message": api_c.DISABLE_DELIVERY_MSG
+        }, HTTPStatus.PARTIAL_CONTENT
 
 
 @add_view_to_blueprint(
@@ -166,9 +168,9 @@ class EngagementDeliverDestinationView(SwaggerView):
         valid_destination = False
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
-                if isinstance(destination, dict) and destination_id == destination.get(
-                    db_c.OBJECT_ID
-                ):
+                if isinstance(
+                    destination, dict
+                ) and destination_id == destination.get(db_c.OBJECT_ID):
                     valid_destination = True
 
         if not valid_destination:
@@ -178,11 +180,14 @@ class EngagementDeliverDestinationView(SwaggerView):
                 audience_id,
             )
             return {
-                "message": "Destination is not attached to the " "engagement audience."
+                "message": "Destination is not attached to the "
+                "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
         delivery_job_ids = []
-        for pair in get_audience_destination_pairs(engagement[api_c.AUDIENCES]):
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
             if not (
                 audience_id == db_c.ZERO_OBJECT_ID
                 and destination_id == pair[1][db_c.OBJECT_ID]
@@ -191,10 +196,14 @@ class EngagementDeliverDestinationView(SwaggerView):
                 destination_id,
             ]:
                 continue
-            batch_destination = get_destination_config(database, *pair, engagement_id)
+            batch_destination = get_destination_config(
+                database, *pair, engagement_id
+            )
             batch_destination.register()
             batch_destination.submit()
-            delivery_job_ids.append(str(batch_destination.audience_delivery_job_id))
+            delivery_job_ids.append(
+                str(batch_destination.audience_delivery_job_id)
+            )
         logger.info(
             "User with username %s successfully created delivery jobs %s.",
             user[api_c.USER_NAME],
@@ -258,7 +267,9 @@ class EngagementDeliverAudienceView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to deliver engagement.",
         },
-        HTTPStatus.NOT_FOUND.value: {"description": api_c.ENGAGEMENT_NOT_FOUND},
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -294,13 +305,19 @@ class EngagementDeliverAudienceView(SwaggerView):
 
         # submit jobs for the audience/destination pairs
         delivery_job_ids = []
-        for pair in get_audience_destination_pairs(engagement[api_c.AUDIENCES]):
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
             if pair[0] != audience_id:
                 continue
-            batch_destination = get_destination_config(database, *pair, engagement_id)
+            batch_destination = get_destination_config(
+                database, *pair, engagement_id
+            )
             batch_destination.register()
             batch_destination.submit()
-            delivery_job_ids.append(str(batch_destination.audience_delivery_job_id))
+            delivery_job_ids.append(
+                str(batch_destination.audience_delivery_job_id)
+            )
         # create notification
         logger.info(
             "User with username %s successfully created delivery jobs %s.",
@@ -373,7 +390,9 @@ class EngagementDeliverView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to deliver engagement.",
         },
-        HTTPStatus.NOT_FOUND.value: {"description": api_c.ENGAGEMENT_NOT_FOUND},
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -406,20 +425,27 @@ class EngagementDeliverView(SwaggerView):
             for destination in request.args.getlist(api_c.DESTINATIONS)
         ]
         audiences = [
-            audience.lower() for audience in request.args.getlist(api_c.AUDIENCES)
+            audience.lower()
+            for audience in request.args.getlist(api_c.AUDIENCES)
         ]
         # submit jobs for all the audience/destination pairs
         delivery_job_ids = []
 
-        for pair in get_audience_destination_pairs(engagement[api_c.AUDIENCES]):
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
             if destinations and pair[1][db_c.OBJECT_ID] not in destinations:
                 continue
             if audiences and pair[0] in audiences:
                 continue
-            batch_destination = get_destination_config(database, *pair, engagement_id)
+            batch_destination = get_destination_config(
+                database, *pair, engagement_id
+            )
             batch_destination.register()
             batch_destination.submit()
-            delivery_job_ids.append(str(batch_destination.audience_delivery_job_id))
+            delivery_job_ids.append(
+                str(batch_destination.audience_delivery_job_id)
+            )
         # create notification
         create_notification(
             database=database,
@@ -607,7 +633,9 @@ class EngagementDeliverHistoryView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to show deliver history.",
         },
-        HTTPStatus.NOT_FOUND.value: {"description": api_c.ENGAGEMENT_NOT_FOUND},
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -639,21 +667,27 @@ class EngagementDeliverHistoryView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             logger.error("Engagement with ID %s not found.", engagement_id)
-            return {"message": api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         destination_ids = request.args.getlist(api_c.DESTINATION)
         audience_ids = request.args.getlist(api_c.AUDIENCE)
 
         if destination_ids:
-            destination_ids = [ObjectId(destination) for destination in destination_ids]
+            destination_ids = [
+                ObjectId(destination) for destination in destination_ids
+            ]
 
         if audience_ids:
             audience_ids = [ObjectId(audience) for audience in audience_ids]
-        delivery_jobs = delivery_platform_management.get_delivery_jobs_using_metadata(
-            database,
-            engagement_id=engagement_id,
-            delivery_platform_ids=destination_ids,
-            audience_ids=audience_ids,
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database,
+                engagement_id=engagement_id,
+                delivery_platform_ids=destination_ids,
+                audience_ids=audience_ids,
+            )
         )
 
         # extract delivery platform ids from the engaged audiences
@@ -683,22 +717,29 @@ class EngagementDeliverHistoryView(SwaggerView):
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
                 # Ignore deliveries to destinations no longer attached to engagement audiences
-                if job.get(db_c.DELIVERY_PLATFORM_ID) not in destination_dict.keys():
+                if (
+                    job.get(db_c.DELIVERY_PLATFORM_ID)
+                    not in destination_dict.keys()
+                ):
                     continue
 
                 # append the necessary schema to the response list.
                 delivery_history.append(
                     {
-                        api_c.AUDIENCE: audience_dict.get(job.get(db_c.AUDIENCE_ID)),
+                        api_c.AUDIENCE: audience_dict.get(
+                            job.get(db_c.AUDIENCE_ID)
+                        ),
                         api_c.DESTINATION: destination_dict.get(
                             job.get(db_c.DELIVERY_PLATFORM_ID)
                         ),
-                        api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE, 0),
+                        api_c.SIZE: job.get(
+                            db_c.DELIVERY_PLATFORM_AUD_SIZE, 0
+                        ),
                         # TODO: HUS-837 Change once match_rate data can be fetched from CDM
                         api_c.MATCH_RATE: 0
-                        if destination_dict.get(job.get(db_c.DELIVERY_PLATFORM_ID)).get(
-                            db_c.IS_AD_PLATFORM
-                        )
+                        if destination_dict.get(
+                            job.get(db_c.DELIVERY_PLATFORM_ID)
+                        ).get(db_c.IS_AD_PLATFORM)
                         else None,
                         api_c.DELIVERED: job.get(db_c.UPDATE_TIME),
                     }
@@ -706,7 +747,9 @@ class EngagementDeliverHistoryView(SwaggerView):
 
         return (
             jsonify(
-                EngagementDeliveryHistorySchema().dump(delivery_history, many=True)
+                EngagementDeliveryHistorySchema().dump(
+                    delivery_history, many=True
+                )
             ),
             HTTPStatus.OK,
         )
@@ -800,27 +843,37 @@ class AudienceDeliverHistoryView(SwaggerView):
         engagement_ids = request.args.getlist(api_c.ENGAGEMENT)
 
         if destination_ids:
-            destination_ids = [ObjectId(destination) for destination in destination_ids]
+            destination_ids = [
+                ObjectId(destination) for destination in destination_ids
+            ]
 
         if engagement_ids:
-            engagement_ids = [ObjectId(engagement) for engagement in engagement_ids]
+            engagement_ids = [
+                ObjectId(engagement) for engagement in engagement_ids
+            ]
 
-        delivery_jobs = delivery_platform_management.get_delivery_jobs_using_metadata(
-            database,
-            audience_id=audience_id,
-            delivery_platform_ids=destination_ids,
-            engagement_ids=engagement_ids,
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database,
+                audience_id=audience_id,
+                delivery_platform_ids=destination_ids,
+                engagement_ids=engagement_ids,
+            )
         )
 
         # get destinations at once to lookup name for each delivery job
         destination_dict = {
             x[db_c.ID]: x
-            for x in delivery_platform_management.get_all_delivery_platforms(database)
+            for x in delivery_platform_management.get_all_delivery_platforms(
+                database
+            )
         }
 
         delivery_history = []
         for job in delivery_jobs:
-            delivery_engagement = get_engagement(database, job.get(db_c.ENGAGEMENT_ID))
+            delivery_engagement = get_engagement(
+                database, job.get(db_c.ENGAGEMENT_ID)
+            )
             if (
                 job.get(db_c.STATUS) == db_c.AUDIENCE_STATUS_DELIVERED
                 and job.get(api_c.ENGAGEMENT_ID)
@@ -834,19 +887,25 @@ class AudienceDeliverHistoryView(SwaggerView):
                         api_c.DESTINATION: destination_dict.get(
                             job.get(db_c.DELIVERY_PLATFORM_ID)
                         ),
-                        api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE, 0),
+                        api_c.SIZE: job.get(
+                            db_c.DELIVERY_PLATFORM_AUD_SIZE, 0
+                        ),
                         # TODO: HUS-837 Change once match_rate data can be fetched from CDM
                         api_c.MATCH_RATE: 0
-                        if destination_dict.get(job.get(db_c.DELIVERY_PLATFORM_ID)).get(
-                            db_c.IS_AD_PLATFORM
-                        )
+                        if destination_dict.get(
+                            job.get(db_c.DELIVERY_PLATFORM_ID)
+                        ).get(db_c.IS_AD_PLATFORM)
                         else None,
                         api_c.DELIVERED: job.get(db_c.UPDATE_TIME),
                     }
                 )
 
         return (
-            jsonify(AudienceDeliveryHistorySchema().dump(delivery_history, many=True)),
+            jsonify(
+                AudienceDeliveryHistorySchema().dump(
+                    delivery_history, many=True
+                )
+            ),
             HTTPStatus.OK,
         )
 
@@ -960,9 +1019,9 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
         valid_audience_ids = []
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
-                if isinstance(destination, dict) and destination_id == destination.get(
-                    db_c.OBJECT_ID
-                ):
+                if isinstance(
+                    destination, dict
+                ) and destination_id == destination.get(db_c.OBJECT_ID):
                     valid_destination = True
                     valid_audience_ids.append(audience.get(db_c.OBJECT_ID))
 
@@ -973,7 +1032,8 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                 audience_id,
             )
             return {
-                "message": "Destination is not attached to the " "engagement audience."
+                "message": "Destination is not attached to the "
+                "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
         # if zero object ID was provided, we set the delivery schedule
@@ -1024,7 +1084,9 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
 
         # TODO schedule the actual JOB, in another PR for HUS-1148
 
-        return {"message": "Successfully updated the delivery schedule."}, HTTPStatus.OK
+        return {
+            "message": "Successfully updated the delivery schedule."
+        }, HTTPStatus.OK
 
     # pylint: disable=no-self-use
     @api_error_handler()
@@ -1063,9 +1125,9 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
         valid_audience_ids = []
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
-                if isinstance(destination, dict) and destination_id == destination.get(
-                    db_c.OBJECT_ID
-                ):
+                if isinstance(
+                    destination, dict
+                ) and destination_id == destination.get(db_c.OBJECT_ID):
                     valid_destination = True
                     valid_audience_ids.append(audience.get(db_c.OBJECT_ID))
 
@@ -1076,7 +1138,8 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                 audience_id,
             )
             return {
-                "message": "Destination is not attached to the " "engagement audience."
+                "message": "Destination is not attached to the "
+                "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
         # if zero object ID was provided, we unset the delivery schedule
@@ -1129,7 +1192,9 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                 user[api_c.USER_NAME],
             )
 
-        return {"message": "Successfully removed the delivery schedule."}, HTTPStatus.OK
+        return {
+            "message": "Successfully removed the delivery schedule."
+        }, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -1181,7 +1246,9 @@ class EngagementAudienceDeliveryScheduleView(SwaggerView):
         HTTPStatus.OK.value: {
             "description": "Result.",
             "schema": {
-                "example": {"message": "Successfully updated delivery schedule."},
+                "example": {
+                    "message": "Successfully updated delivery schedule."
+                },
             },
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -1224,7 +1291,9 @@ class EngagementAudienceDeliveryScheduleView(SwaggerView):
 
         database = get_db_client()
 
-        delivery_schedule = DeliverySchedule().load(request.get_json(), partial=True)
+        delivery_schedule = DeliverySchedule().load(
+            request.get_json(), partial=True
+        )
 
         # delivery_schedule in the nested audience object of engagement needs
         # to be unset if the request body is empty
@@ -1245,11 +1314,14 @@ class EngagementAudienceDeliveryScheduleView(SwaggerView):
                 "Engagement not found in DB for engagement_id %s.",
                 engagement_id,
             )
-            return {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return {
+                api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         operation_done = "removed" if unset else "updated"
         logger.info(
-            "Successfully %s delivery schedule for audience %s in " "engagement %s",
+            "Successfully %s delivery schedule for audience %s in "
+            "engagement %s",
             operation_done,
             audience_id,
             engagement_id,
