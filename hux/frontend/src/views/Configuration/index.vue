@@ -97,7 +97,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch("configurations/getConfigModels")
+      await this.$store.dispatch("configuration/getConfigModels")
       this.isConfigActivated = true
     } catch (error) {
       this.isConfigActivated = false
