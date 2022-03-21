@@ -77,22 +77,30 @@
         <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
       </v-tabs-items>
     </div>
+    <div>
+      <link-dropdown
+        :data-list="getSegment"
+        @onselect="getSelectedData"
+      ></link-dropdown>
+    </div>
   </page>
 </template>
 
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
+import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
-import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
+import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 
 export default {
   name: "HXTrustID",
   components: {
+    Breadcrumb,
+    LinkDropdown,
     Page,
     PageHeader,
-    Breadcrumb,
     TrustComparisonChart,
   },
   data() {
@@ -100,7 +108,20 @@ export default {
       loading: false,
       tabOption: 0,
       segmentScores: segmentScores,
+      selectedSegment: null,
     }
+  },
+  computed: {
+    getSegment() {
+      return this.segmentScores.map((item) => {
+        return item.segment_filter
+      })
+    },
+  },
+  methods: {
+    getSelectedData(value) {
+      this.selectedSegment = value
+    },
   },
 }
 </script>
