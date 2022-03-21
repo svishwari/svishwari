@@ -48,6 +48,9 @@
     <div>
       <progress-stack-bar :width="180" :height="6" :show-percentage="true" />
     </div>
+    <div>
+      <hux-select></hux-select>
+    </div>
   </page>
 </template>
 
@@ -57,6 +60,7 @@ import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
 import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
+import HuxSelect from "@/components/common/HuxSelect.vue"
 
 export default {
   name: "HXTrustID",
@@ -66,6 +70,7 @@ export default {
     Breadcrumb,
     scoreCard,
     ProgressStackBar,
+    HuxSelect,
   },
   data() {
     return {
