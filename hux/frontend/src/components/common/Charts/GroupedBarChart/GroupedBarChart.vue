@@ -166,7 +166,7 @@ export default {
         .style("color", "#4F4F4F")
         .style("font-family", "Open Sans")
 
-      // Adding dynamic icon to xis ticks
+      // Adding dynamic icon to xAxis ticks
       d3Select
         .selectAll(".xAxis-main .tick")
         .each(function (d) {
