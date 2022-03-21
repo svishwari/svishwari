@@ -36,11 +36,6 @@ export default {
       },
     },
   },
-  methods: {
-    onSelect(selectedValue) {
-      this.$emit("onselect", selectedValue)
-    },
-  },
   mounted() {
     if (this.dataList) {
       this.dataList.forEach((item) => {
@@ -50,6 +45,11 @@ export default {
         })
       })
     }
+  },
+  methods: {
+    onSelect(selectedValue) {
+      this.$emit("onselect", selectedValue)
+    },
   },
 }
 </script>

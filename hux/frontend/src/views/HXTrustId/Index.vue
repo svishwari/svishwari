@@ -78,7 +78,10 @@
       </v-tabs-items>
     </div>
     <div>
-      <hux-select :dataList="getSegment" @onselect="getSelectedData"></hux-select>
+      <hux-select
+        :data-list="getSegment"
+        @onselect="getSelectedData"
+      ></hux-select>
     </div>
   </page>
 </template>
@@ -105,7 +108,7 @@ export default {
       loading: false,
       tabOption: 0,
       segmentScores: segmentScores,
-      selectedSegment: null
+      selectedSegment: null,
     }
   },
   computed: {
