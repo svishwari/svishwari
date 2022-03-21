@@ -2,10 +2,10 @@
   <div class="hux-select-wrapper">
     <label class="hux-select-label mt-6 mr-3"> Segments by </label>
     <v-select
+      v-model="getDefaultSelected"
       class="hux-select"
       item-text="name"
       item-value="last"
-      v-model="defaultSelected"
       :items="dataItems"
       @change="onSelect"
     >
@@ -16,39 +16,40 @@
 <script>
 export default {
   name: "HuxSelect",
-  props: {},
+  props: {
+    dataList: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+  },
   data: () => ({
-    defaultSelected: {
-      name: "Composite & signal scores",
-      last: "Composite & signal scores",
-    },
-    dataItems: [
-      {
-        name: "Composite & signal scores",
-        last: "Composite & signal scores",
-      },
-      {
-        name: "Humanity attributes",
-        last: "Humanity attributes",
-      },
-      {
-        name: "Transparency attributes",
-        last: "Transparency attributes",
-      },
-      {
-        name: "Capability attributes",
-        last: "Capability attributes",
-      },
-      {
-        name: "Reliability attributes",
-        last: "Reliability attributes",
-      },
-    ],
+    dataItems: [],
   }),
-  methods: {
-    onSelect(newValue) {
-      console.log(newValue)
+  computed: {
+    getDefaultSelected: {
+      get() {
+        return this.dataItems && this.dataItems[0]
+      },
+      set(newName) {
+        return newName
+      },
     },
+  },
+  methods: {
+    onSelect(selectedValue) {
+      this.$emit("onselect", selectedValue)
+    },
+  },
+  mounted() {
+    if (this.dataList) {
+      this.dataList.forEach((item) => {
+        this.dataItems.push({
+          name: item,
+          last: item,
+        })
+      })
+    }
   },
 }
 </script>

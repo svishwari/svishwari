@@ -78,30 +78,26 @@
       </v-tabs-items>
     </div>
     <div>
-      <hux-select></hux-select>
+      <hux-select :dataList="getSegment" @onselect="getSelectedData"></hux-select>
     </div>
   </page>
 </template>
 
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
+import HuxSelect from "@/components/common/HuxSelect.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
-import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
-import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
-import HuxSelect from "@/components/common/HuxSelect.vue"
-import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
+import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 
 export default {
   name: "HXTrustID",
   components: {
+    Breadcrumb,
+    HuxSelect,
     Page,
     PageHeader,
-    Breadcrumb,
-    scoreCard,
-    ProgressStackBar,
-    HuxSelect,
     TrustComparisonChart,
   },
   data() {
@@ -109,7 +105,20 @@ export default {
       loading: false,
       tabOption: 0,
       segmentScores: segmentScores,
+      selectedSegment: null
     }
+  },
+  computed: {
+    getSegment() {
+      return this.segmentScores.map((item) => {
+        return item.segment_filter
+      })
+    },
+  },
+  methods: {
+    getSelectedData(value) {
+      this.selectedSegment = value
+    },
   },
 }
 </script>
