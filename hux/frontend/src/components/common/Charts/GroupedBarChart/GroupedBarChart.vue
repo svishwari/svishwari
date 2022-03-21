@@ -40,8 +40,8 @@ export default {
     return {
       chartWidth: "",
       segmentScores: [],
-      itemWidth: 100,
-      xMargin: 50,
+      itemWidth: 120,
+      xMargin: 60,
     }
   },
   mounted() {
@@ -107,14 +107,16 @@ export default {
         .nice(5)
 
       // Formatting X-Axis ticks
-      let formatAxisLabel = (text) => formatText(text)
+      let formatAxisLabel = (text) => {
+        return text == "trust_id" ? "HX TrustID" : formatText(text)
+      }
 
       // Custom Icon positioning fix
       let tickIconPosition = (text) => {
         if (text == "transparency") {
           return -60
         } else if (text == "trust_id") {
-          return -44
+          return -55
         } else {
           return -50
         }
@@ -159,21 +161,30 @@ export default {
 
       d3Select.selectAll(".domain").style("stroke", "#E2EAEC")
       d3Select.selectAll(".tick line").style("stroke", "#E2EAEC")
-      d3Select.selectAll(".xAxis-main .tick text").style("color", "#4F4F4F")
+      d3Select
+        .selectAll(".xAxis-main .tick text")
+        .style("color", "#4F4F4F")
+        .style("font-family", "Open Sans")
 
       // Adding dynamic icon to xis ticks
-      d3Select.selectAll(".xAxis-main .tick").each(function (d) {
-        d3Select
-          .select(this)
-          .append("svg")
-          .attr("x", () => tickIconPosition(d))
-          .attr("class", "image-icon")
-          .attr("y", "14")
-          .attr("height", "14")
-          .attr("width", "14")
-          .attr("viewBox", "0 0 14 14")
-          .html(dynamicIcons[d.toLowerCase()])
-      })
+      d3Select
+        .selectAll(".xAxis-main .tick")
+        .each(function (d) {
+          d3Select
+            .select(this)
+            .append("svg")
+            .attr("x", () => tickIconPosition(d))
+            .attr("class", "image-icon")
+            .attr("y", "14")
+            .attr("height", "14")
+            .attr("width", "14")
+            .attr("viewBox", "0 0 14 14")
+            .html(dynamicIcons[d.toLowerCase()])
+        })
+        .attr(
+          "transform",
+          (d) => `translate(${this.xMargin + xScale(d) + this.itemWidth / 2},0)`
+        )
 
       // Adding vertical Label
       svg

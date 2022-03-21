@@ -8,7 +8,7 @@
     />
     <checkbox-chart-legends
       :legends-data="legendsData"
-      class="ml-16 mt-8"
+      class="ml-16 mt-7"
       @onCheckboxChange="filterSegmentData"
     />
     <chart-tooltip
