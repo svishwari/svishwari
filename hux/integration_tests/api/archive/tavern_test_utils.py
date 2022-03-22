@@ -153,12 +153,14 @@ def get_destination_by_name(
 
 
 # pylint: disable=unused-argument
-def get_timestamp(response: object) -> Union[Box, None]:
-    """ Purpose of this function is to get a timestamp string
+def get_timestamp(response: object) -> Box:
+    """Purpose of this function is to get a timestamp string
+
+    Args:
+        response (object): response object.
 
     Returns:
         Box: timestamp in the format: DD-MMM-YYYY (HH:MM::SS.MICROS)
-
     """
 
     timestamp = datetime.now().strftime("%d-%b-%Y-%H:%M:%S.%f")

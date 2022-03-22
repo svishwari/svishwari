@@ -34,6 +34,12 @@
         >
           <tooltip>
             <template #label-content>
+              <logo
+                v-if="dropIcon"
+                :type="dropIcon"
+                class="mr-2 mt-1"
+                :size="20"
+              ></logo>
               <span class="text-ellipsis text-width">{{
                 isSubMenu ? item.name : optionSelected["name"] || label
               }}</span>
@@ -78,6 +84,8 @@
                   size="16"
                   >mdi-check</v-icon
                 >
+                <logo v-if="item.type" :type="item.type" :size="20"></logo>
+                &nbsp;
                 <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
                 <icon v-if="item.modelIcon" type="model" :size="21" />
                 {{ item.name }}
@@ -93,6 +101,7 @@
 import huxButton from "@/components/common/huxButton"
 import Icon from "./Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import Logo from "@/components/common/Logo"
 
 export default {
   name: "HuxDropdown",
@@ -100,6 +109,7 @@ export default {
     huxButton,
     Icon,
     Tooltip,
+    Logo,
   },
   props: {
     selected: {
@@ -122,6 +132,11 @@ export default {
       type: String,
       required: false,
       default: "200",
+    },
+    dropIcon: {
+      type: String,
+      required: false,
+      default: "",
     },
   },
   data: function () {

@@ -92,7 +92,7 @@ const routes = [
   },
   {
     path: "/identity-resolution",
-    name: "IdentityResolution",
+    name: "Identity",
     component: () => import("@/views/IdentityResolution/Index"),
     meta: {
       layout: "app",
@@ -138,7 +138,7 @@ const routes = [
   //#region Customer Insights
   {
     path: "/customers",
-    name: "CustomerProfiles",
+    name: "Customers",
     component: () => import("@/views/CustomerProfiles/Index"),
     meta: {
       layout: "app",
@@ -240,6 +240,16 @@ const routes = [
     meta: {
       layout: "app",
       title: "Audience Insight",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/lookalike-audiences/:id/add",
+    name: "LookalikeAudiences",
+    component: () => import("@/views/Audiences/Lookalike/CreateLookalike.vue"),
+    meta: {
+      layout: "app",
+      title: "Add an lookalike Audience",
       requiresAuth: true,
     },
   },

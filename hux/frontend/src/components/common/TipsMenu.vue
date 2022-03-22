@@ -42,12 +42,15 @@
                 </span>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <div class="text-body-1" v-html="data.text"></div>
+                <div
+                  class="text-body-1"
+                  v-bind.prop="formatInnerHTML(data.text)"
+                ></div>
                 <br />
                 <div
                   v-if="data.textPart"
                   class="text-body-1"
-                  v-html="data.textPart"
+                  v-bind.prop="formatInnerHTML(data.textPart)"
                 ></div>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -61,6 +64,7 @@
 <script>
 import Icon from "@/components/common/Icon"
 import DropMenu from "@/components/common/DropMenu"
+import { formatInnerHTML } from "@/utils"
 
 export default {
   name: "TipsMenu",
@@ -88,6 +92,9 @@ export default {
       panelIndex: false,
       panel: [],
     }
+  },
+  methods: {
+    formatInnerHTML: formatInnerHTML,
   },
 }
 </script>

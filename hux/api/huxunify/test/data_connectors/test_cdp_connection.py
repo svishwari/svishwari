@@ -252,7 +252,7 @@ class CDPConnectionsTest(TestCase):
             )
 
     @given(data_source_type=st.text(alphabet=string.ascii_letters))
-    @settings(deadline=100)
+    @settings(deadline=500)
     def test_get_data_source_data_feeds_raise_dependency_error(
         self, data_source_type: str
     ) -> None:

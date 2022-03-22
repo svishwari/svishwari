@@ -49,8 +49,10 @@
               </template>
               <template #hover-content>
                 <span
-                  v-html="
-                    'Email address is pre-populated from your profile and can’t be modified.'
+                  v-bind.prop="
+                    formatInnerHTML(
+                      'Email address is pre-populated from your profile and can’t be modified.'
+                    )
                   "
                 />
               </template>
@@ -152,6 +154,7 @@ import { mapActions, mapGetters } from "vuex"
 import { formatText } from "@/utils"
 import Tooltip from "@/components/common/Tooltip.vue"
 import HuxButton from "@/components/common/huxButton.vue"
+import { formatInnerHTML } from "@/utils"
 
 export default {
   name: "AlertConfigureDrawer",
@@ -234,6 +237,7 @@ export default {
       updateUserPreferences: "users/updateUserPreferences",
       getUsersNoti: "notifications/getAllUsers",
     }),
+    formatInnerHTML: formatInnerHTML,
     async updateUsers() {
       await this.getUsersNoti()
     },
