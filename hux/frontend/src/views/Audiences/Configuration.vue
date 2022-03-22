@@ -308,6 +308,7 @@ import Logo from "@/components/common/Logo"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import { v4 as uuidv4 } from "uuid"
 
 export default {
   name: "Configuration",
@@ -628,10 +629,10 @@ export default {
       const attributeOptions = this.$refs.filters.attributeOptions()
       _audienceObject.attributeRules = _audienceObject.filters.map(
         (filter) => ({
-          id: Math.floor(Math.random() * 1024).toString(16),
+          id: uuidv4(),
           operand: filter.section_aggregator === "ALL",
           conditions: filter.section_filters.map((cond) => ({
-            id: Math.floor(Math.random() * 1024).toString(16),
+            id: uuidv4(),
             attribute: cond.field,
             operator: cond.type === "range" ? "" : cond.type,
             text: cond.type !== "range" ? cond.value : "",
