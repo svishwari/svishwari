@@ -30,7 +30,7 @@ const Template = (args, { argTypes }) => ({
     <div style="margin-left:1200px">
       <filter-drawer v-bind="$props" v-on="$props">
         <filter-panels>
-          <v-checkbox label="My favorites only" @click="$props.count++"></v-checkbox>
+          <v-checkbox label="My favorites only"></v-checkbox>
           <v-checkbox label="Audiences I've worked on"></v-checkbox>
           <filter-panel title="Attributes">
             <div class="text-body-1 black--text text--lighten-4 pb-2">MODELS</div>
