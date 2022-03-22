@@ -604,7 +604,7 @@ class TestUserRoutes(RouteTestCase):
 
         mock_jira_instance = mock_jira.return_value
         mock_jira_instance.check_jira_connection.return_value = True
-        mock_jira_instance.get_issues.return_value = (
+        mock_jira_instance.search_jira_issues.return_value = (
             t_c.SAMPLE_USER_REQUEST_JIRA_ISSUES
         )
 
@@ -632,7 +632,9 @@ class TestUserRoutes(RouteTestCase):
 
         mock_jira_instance = mock_jira.return_value
         mock_jira_instance.check_jira_connection.return_value = True
-        mock_jira_instance.get_issues.return_value = empty_issue_jira_response
+        mock_jira_instance.search_jira_issues.return_value = (
+            empty_issue_jira_response
+        )
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.REQUESTED_USERS}",

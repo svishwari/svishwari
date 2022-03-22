@@ -1,5 +1,5 @@
 #This tests the following endpoints:
-#GET   /models                                  Retrieves all models 
+#GET   /models                                  Retrieves all models
 #GET   /models/{model_id}/feature-importance    Retrieves feature-importance of a model
 #GET   /models/{model_id}/version-history       Retrieves version-history of a model
 #GET   /models/{model_id}/overview              Retrieves overview of a model
@@ -44,9 +44,9 @@ stages:
           latest_version: !re_fullmatch "(\\d{2})\\.(\\d{1})\\.(\\d{2})"
           description: !anystr
           fulcrum_date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-          name: !anystr 
+          name: !anystr
 ---
-test_name: Test model APIs for model #id 
+test_name: Test model APIs for model #id
 
 strict:
   - json:list_any_order
@@ -57,7 +57,7 @@ includes:
 marks:
   - parametrize:
       key: model_id
-      vals: 
+      vals:
         - 1
         - 2
 
