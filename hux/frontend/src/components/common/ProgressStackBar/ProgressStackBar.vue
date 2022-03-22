@@ -45,14 +45,14 @@ export default {
           .select(this.$refs.progressStackBarChart)
           .selectAll("svg")
           .remove()
-         this.stackedBar(`.${this.dynamicChartId}`, sampleData)
+        this.stackedBar(`.${this.dynamicChartId}`, sampleData)
       },
       immediate: false,
       deep: true,
     },
   },
   mounted() {
-   this.dynamicChartId = `bar-${this.barId}`
+    this.dynamicChartId = `bar-${this.barId}`
     this.stackedBar(`.${this.dynamicChartId}`, sampleData)
   },
   methods: {
