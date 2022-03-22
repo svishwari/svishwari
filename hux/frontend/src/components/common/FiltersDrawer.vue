@@ -20,7 +20,6 @@
             </h2>
 
             <v-btn
-              v-if="!headerName"
               text
               min-width="50"
               height="24"
