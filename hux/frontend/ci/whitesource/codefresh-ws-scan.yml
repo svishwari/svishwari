@@ -54,7 +54,9 @@ steps:
         {
         echo "#!/bin/bash";
         echo "# Run commands to prep for the Whitesource scan";
-        echo "pip install pip --upgrade";
+        echo "npm install --global yarn";
+        echo "yarn ci";
+        echo "yarn global add @vue/cli";
         } 
         >> $INSTALL_COMMANDS
       - chmod +x $INSTALL_COMMANDS
@@ -66,10 +68,7 @@ steps:
          echo "projectName=$PROJECTNAME";
          echo "projectVersion=$PROJECTVERSION";
          echo "### Programming Language Specific Settings ###";
-         echo "python.ignorePipInstallErrors=false";
-         echo "python.resolveSetupPyFiles=true";
-         echo "python.IgnorePipenvInstallErrors=true";
-         echo "python.indexUrl=$ARTIFACTORY_PYTHON_READ";
+         echo "npm.runPreStep=true";
          } 
          >> $CONFIG_FILE
       - cf_export INSTALL_COMMANDS=$INSTALL_COMMANDS
@@ -83,7 +82,7 @@ steps:
     stage: create_scan_report
     title: "Generate Whitesource json report"
     type: freestyle
-    image: ciruntime.repo.mgnt.in/whitesource-python:3.8
+    image: ciruntime.repo.mgnt.in/whitesource-node:16.13.1
     commands:
       - cd ${{CF_REPO_NAME}}/$APPDIR
       ## "Prep and run Whitesource Scan..."
