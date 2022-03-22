@@ -181,6 +181,13 @@ export default {
     items: menuConfig.menu,
   }),
 
+  mounted: {
+    trustidRoute() {
+      // similar logic
+      // if trustid route, change menuconfig.json
+    },
+  },
+
   computed: {
     isMini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
