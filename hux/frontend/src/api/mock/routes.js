@@ -27,6 +27,7 @@ import { addedApplications, applications } from "./factories/application"
 import domainData from "@/api/mock/fixtures/domainLineData.js"
 import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 import runDurationData from "@/api/mock/fixtures/runDurationData.js"
+import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
 
 export const defineRoutes = (server) => {
   // Users
@@ -98,6 +99,7 @@ export const defineRoutes = (server) => {
       alerts: requestData.alerts,
     })
   })
+  server.get("/trust_id/overview", () => trustIdOverview)
 
   //client projects
   server.get("/client-projects")

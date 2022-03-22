@@ -27,6 +27,11 @@ export default {
       default: false,
       required: false,
     },
+    value: {
+      type: Object,
+      default: sampleData,
+      required: false,
+    }
   },
   watch: {
     chartDimensions: {
@@ -35,14 +40,14 @@ export default {
           .select(this.$refs.progressStackBarChart)
           .selectAll("svg")
           .remove()
-        this.stackedBar(".chart", sampleData)
+        this.stackedBar(".chart", this.value)
       },
       immediate: false,
       deep: true,
     },
   },
   mounted() {
-    this.stackedBar(".chart", sampleData)
+    this.stackedBar(".chart", this.value)
   },
   methods: {
     rounded_rect(x, y, w, h, r, tl, tr, bl, br) {
