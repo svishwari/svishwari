@@ -1,11 +1,6 @@
 <template>
   <div class="chart-container" :style="{ maxWidth: chartWidth }">
     <div ref="groupedBarChart" class="chart-section"></div>
-    <chart-legends
-      v-if="showLegends"
-      :legends-data="legendsData"
-      class="legend-style pl-7"
-    />
   </div>
 </template>
 
@@ -13,13 +8,13 @@
 import * as d3Axis from "d3-axis"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
+import * as d3Array from "d3-array"
+import * as d3Transition from "d3-transition"
 import { formatText } from "@/utils"
 import { dynamicIcons } from "@/components/common/Charts/GroupedBarChart/dynamicIcon.js"
-import ChartLegends from "@/components/common/Charts/Legends/ChartLegends.vue"
 
 export default {
   name: "GroupedBarChart",
-  components: { ChartLegends },
   props: {
     value: {
       type: Array,
@@ -45,34 +40,23 @@ export default {
     return {
       chartWidth: "",
       segmentScores: [],
-      colors: ["brown", "red", "orange", "green", "blue"],
-      toolTip: {
-        xPosition: 0,
-        yPosition: 0,
-        segmentName: "",
-        attributeName: "",
-        color: "",
-        score: 0,
-      },
-      itemWidth: 100,
-      xMargin: 50,
-      legendsData: [
-        { color: "rgba(0, 85, 135, 1)", text: "Segment 1" },
-        { color: "rgba(12, 157, 219, 1)", text: "Segment 2" },
-        { color: "rgba(66, 239, 253, 1)", text: "Segment 3" },
-      ],
-      showLegends: false,
+      itemWidth: 120,
+      xMargin: 60,
     }
   },
-  watch: {
-    chartDimensions: {
-      handler() {
+  mounted() {
+    // single handler for multiple props watch
+    this.$watch(
+      (prop) => [prop.chartDimensions, prop.value],
+      () => {
         d3Select.select(this.$refs.groupedBarChart).selectAll("svg").remove()
         this.initiateGroupedBarChart()
       },
-      immediate: false,
-      deep: true,
-    },
+      {
+        immediate: true,
+        deep: true,
+      }
+    )
   },
   methods: {
     async initiateGroupedBarChart() {
@@ -81,7 +65,7 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let margin = { top: 15, right: 30, bottom: 100, left: 68 }
+      let margin = { top: 15, right: 30, bottom: 130, left: 68 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
 
@@ -100,9 +84,43 @@ export default {
         .paddingInner(0.22)
         .paddingOuter(0.11)
 
-      let yScale = d3Scale.scaleLinear().domain([0, 100]).range([h, 0]).nice(4)
+      // Adding dynamic domain values
+      let getdomainValues = () => {
+        if (this.emptyState) {
+          return [0, 100]
+        } else {
+          return [
+            d3Array.min(this.segmentScores, (d) =>
+              Math.min(...d.values.map((em) => em.value))
+            ),
+            d3Array.max(this.segmentScores, (d) =>
+              Math.max(...d.values.map((em) => em.value))
+            ),
+          ]
+        }
+      }
 
-      let formatAxisLabel = (text) => formatText(text)
+      let yScale = d3Scale
+        .scaleLinear()
+        .domain(getdomainValues())
+        .range([h, 0])
+        .nice(5)
+
+      // Formatting X-Axis ticks
+      let formatAxisLabel = (text) => {
+        return text == "trust_id" ? "HX TrustID" : formatText(text)
+      }
+
+      // Custom Icon positioning fix
+      let tickIconPosition = (text) => {
+        if (text == "transparency") {
+          return -60
+        } else if (text == "trust_id") {
+          return -55
+        } else {
+          return -50
+        }
+      }
 
       svg
         .append("g")
@@ -121,41 +139,54 @@ export default {
         .append("g")
         .classed("yAxis-main", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).ticks(4))
+        .call(d3Axis.axisLeft(yScale).ticks(5))
         .attr("stroke-width", "1")
         .attr("stroke-opacity", "1")
         .style("font-size", "14px")
 
+      // adding grid lines to Y-Axis
       svg
         .append("g")
         .classed("yAxis-alternate", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(4).tickFormat(""))
+        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(5).tickFormat(""))
         .attr("stroke-width", "0.5")
         .attr("stroke-opacity", "1")
         .style("font-size", "12px")
 
+      // setting grid lines stroke color
       d3Select
         .selectAll(".yAxis-alternate .tick line")
         .style("stroke", "#E2EAEC")
 
       d3Select.selectAll(".domain").style("stroke", "#E2EAEC")
       d3Select.selectAll(".tick line").style("stroke", "#E2EAEC")
-      d3Select.selectAll(".xAxis-main .tick text").style("color", "#4F4F4F")
+      d3Select
+        .selectAll(".xAxis-main .tick text")
+        .style("color", "#4F4F4F")
+        .style("font-family", "Open Sans")
 
-      d3Select.selectAll(".xAxis-main .tick").each(function (d) {
-        d3Select
-          .select(this)
-          .append("svg")
-          .attr("x", "-50")
-          .attr("class", "image-icon")
-          .attr("y", "14")
-          .attr("height", "14")
-          .attr("width", "14")
-          .attr("viewBox", "0 0 14 14")
-          .html(dynamicIcons[d.toLowerCase()])
-      })
+      // Adding dynamic icon to xAxis ticks
+      d3Select
+        .selectAll(".xAxis-main .tick")
+        .each(function (d) {
+          d3Select
+            .select(this)
+            .append("svg")
+            .attr("x", () => tickIconPosition(d))
+            .attr("class", "image-icon")
+            .attr("y", "14")
+            .attr("height", "14")
+            .attr("width", "14")
+            .attr("viewBox", "0 0 14 14")
+            .html(dynamicIcons[d.toLowerCase()])
+        })
+        .attr(
+          "transform",
+          (d) => `translate(${this.xMargin + xScale(d) + this.itemWidth / 2},0)`
+        )
 
+      // Adding vertical Label
       svg
         .append("text")
         .classed("appendtext", true)
@@ -163,14 +194,14 @@ export default {
           "transform",
           "translate(-40," + this.height / 3 + ") rotate(-90 )"
         )
-        .attr("fill", "#000000")
+        .attr("fill", "#1E1E1E")
         .style("text-anchor", "middle")
-        .style("color", "#000000")
-        .style("font-size", "14px")
+        .style("font-size", "16px")
         .text("Score")
 
       d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
 
+      // Setting bar width as per their number
       let barSize = (totalAttributes) => {
         let barWidth = 0
         switch (totalAttributes) {
@@ -192,7 +223,9 @@ export default {
         }
         return xScale.bandwidth() < barWidth ? xScale.bandwidth() : barWidth
       }
+      d3Transition.transition()
 
+      // Adding bar group domain
       svg
         .selectAll("myRect")
         .data(this.segmentScores, (d) => d.id)
@@ -205,57 +238,48 @@ export default {
             `translate(${this.xMargin + xScale(d.id) + this.itemWidth / 2},0)`
         )
         .each(function (d) {
-          const city = d3Select.select(this)
-          for (let i = 0; i < d.values.length; i++) {
-            let y = yScale(d.values[i].value)
-            let height = yScale(0) - y
+          // Adding bars to the specific attribute group
+          const barDomain = d3Select.select(this)
+          let barProp = d.values
+          for (let i = 0; i < barProp.length; i++) {
+            const currentBar = d.values[i]
+            const y = yScale(currentBar.value)
+            const height = currentBar.value < 0 ? y - yScale(0) : yScale(0) - y
+            const barWidth = barSize(barProp.length)
+            const x = (i - barProp.length / 2) * (barWidth + 2)
 
-            let barWidth = barSize(d.values.length)
+            let currentData = {
+              segmentName: currentBar.segmentName,
+              attributeName: d.label,
+              score: currentBar.value,
+              xPosition: x + barWidth / 2,
+              yPosition: y,
+              width: barWidth,
+              color: currentBar.color,
+            }
 
-            const x = (i - d.values.length / 2) * (barWidth + 2)
-
-            let label = d
-
-            let xPosition = xScale(label.id) + x + d.values.length * barWidth
-
-            let shareData = {}
-            shareData.name = "Segment 1"
-            shareData.attributeName = label.label
-            shareData.score = 78
-            shareData.xPosition = xPosition
-            shareData.cx = x
-            shareData.cy = y
-            shareData.yPosition = height
-            shareData.width = barWidth
-            shareData.color = d.values[i].color
-
-            city
+            barDomain
               .append("rect")
-              .classed("foreGroundBars", true)
-              .attr("data", label)
               .attr("x", x)
-              .attr("y", y)
+              .attr("y", currentBar.value > 0 ? y : yScale(0))
               .attr("rx", 2)
               .attr("ry", 2)
-              .attr("width", barWidth)
-              .attr("height", height)
-              .style("fill", d.values[i].color)
-              .style("fill-opacity", 1)
-              .on("mouseover", (d) => applyHoverEffects(d, shareData))
+              .on("mouseover", () => applyHoverEffects(currentData, barDomain))
               .on("mouseout", () => removeHoverEffects())
+              .attr("width", barWidth)
+              .attr("height", 0)
+              .transition()
+              .duration(1000)
+              .attr("height", height)
+              .style("fill", currentBar.color)
+              .style("fill-opacity", 1)
           }
         })
-
-      svg
-        .append("line")
-        .attr("class", "hover-line-y")
-        .style("stroke", "#1E1E1E")
-        .style("stroke-width", 1)
-        .style("pointer-events", "none")
 
       let hoverCircles = ["foreGroundParentCircle", "foreGroundChildCircle"]
 
       let addHoverCircle = (
+        element,
         circleName,
         circleRadius,
         cX,
@@ -264,7 +288,7 @@ export default {
         strokeWidth,
         strokeOpacity
       ) => {
-        svg
+        element
           .append("circle")
           .classed(circleName, true)
           .attr("cx", cX)
@@ -284,56 +308,63 @@ export default {
           .remove()
       }
 
-      let applyHoverEffects = (d, data) => {
-        d3Select.select(d.srcElement).attr("fill-opacity", 1)
-        barHoverIn(data)
-      }
-
-      let removeHoverEffects = () => {
-        svg.selectAll(".hover-line-y").style("display", "none")
-        hoverCircles.forEach((circleName) => removeHoverCircle(circleName))
-        this.tooltipDisplay(false)
-      }
-
-      let barHoverIn = (data) => {
-        this.toolTip.xPosition = data.xPosition + 40
-        this.toolTip.yPosition = data.cy
-        this.toolTip.segmentName = data.name
-        this.toolTip.attributeName = data.attributeName
-        this.toolTip.score = data.score
-        this.toolTip.color = data.color
-        this.tooltipDisplay(true, this.toolTip)
-
-        svg
-          .selectAll(".hover-line-y")
+      let applyHoverEffects = (data, element) => {
+        // Adding hover vertical line to targetted bar
+        element
+          .append("line")
+          .attr("class", "hover-line-y")
+          .style("stroke", "#1E1E1E")
+          .style("stroke-width", 1)
+          .style("pointer-events", "none")
           .attr("x1", data.xPosition)
           .attr("x2", data.xPosition)
-          .attr("y1", 0)
-          .attr("y2", h)
-          .style("display", "block")
+          .attr("y1", yScale(0))
+          .attr("y2", data.score > 0 ? 0 : h) // It will be 0 to max for positive bar and 0 to min for negative bar
 
+        // Adding hover circle to target grouping element (Bar)
         addHoverCircle(
+          element,
           hoverCircles[0],
           9,
           data.xPosition,
-          data.cy,
+          data.yPosition,
           "white",
           2,
           1
         )
         addHoverCircle(
+          element,
           hoverCircles[1],
           7,
           data.xPosition,
-          data.cy,
+          data.yPosition,
           data.color,
           2,
           1
         )
+
+        // Setting tooltip data
+        let tooltipData = JSON.parse(JSON.stringify(data))
+
+        // Setting dynamic positioning for external tooltips
+        tooltipData.xPosition =
+          window.scrollX +
+          document
+            .querySelector(".foreGroundParentCircle")
+            .getBoundingClientRect().left
+        this.tooltipDisplay(true, tooltipData)
+      }
+
+      // Eliminating hover effects
+      let removeHoverEffects = () => {
+        svg.selectAll(".hover-line-y").style("display", "none")
+        hoverCircles.forEach((circleName) => removeHoverCircle(circleName))
+        this.tooltipDisplay(false)
       }
     },
-    tooltipDisplay(showTip, customersData) {
-      this.$emit("tooltipDisplay", showTip, customersData)
+    // Emitting tooltip data
+    tooltipDisplay(showTip, segmentData) {
+      this.$emit("tooltipDisplay", showTip, segmentData)
     },
   },
 }
@@ -341,7 +372,7 @@ export default {
 
 <style lang="scss" scoped>
 .chart-container {
-  height: 252px;
+  height: 220px;
   position: relative;
   .chart-section {
     margin-bottom: -20px;
