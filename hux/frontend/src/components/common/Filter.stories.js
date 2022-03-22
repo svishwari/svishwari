@@ -12,7 +12,7 @@ export default {
     },
     count: {
       control: { type: "number" },
-    }
+    },
   },
   args: {
     isToggled: true,
@@ -57,7 +57,7 @@ const Template = (args, { argTypes }) => ({
         </filter-panels>
       </filters-drawer>
     </div>
-  `
+  `,
 })
 
 export const HuxFilter = Template.bind({})
