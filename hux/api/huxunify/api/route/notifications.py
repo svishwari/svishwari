@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 
 import pymongo
 from bson import ObjectId
-from flask import Blueprint, request, Response, jsonify
+from flask import Blueprint, request, Response
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
