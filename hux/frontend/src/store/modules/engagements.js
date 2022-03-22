@@ -1,6 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
-import { handleError } from "@/utils"
+import { handleError, handleSuccess } from "@/utils"
 import dayjs from "dayjs"
 
 const namespaced = true
@@ -250,7 +250,10 @@ const actions = {
 
   async deliver(_, id) {
     try {
-      await api.engagements.deliver(id)
+      let res = await api.engagements.deliver(id)
+      if (res.status == 200 || res.status == 206) {
+        handleSuccess("Audiences Successfully Delivered", res.status)
+      }
     } catch (error) {
       handleError(error)
       throw error
