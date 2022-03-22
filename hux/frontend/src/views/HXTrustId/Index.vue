@@ -37,9 +37,10 @@
           <div class="text-h3">HX TrustID scores for all customers</div>
           <div class="d-flex justify-start">
             <div class="mr-4">
-              <tooltip>
+              <tooltip max-width="256px">
                 <template #label-content>
                   <score-card
+                    title="HX TrustID"
                     :value="overview.trust_id_score"
                     :width="150"
                     :height="90"
@@ -57,13 +58,16 @@
               :key="index"
               class="mr-4"
             >
-              <tooltip>
+              <tooltip max-width="288px">
                 <template #label-content>
                   <score-card
-                    :title="scorecard.attribute_name"
+                    :title="capitalizeAttributeName(scorecard.attribute_name)"
+                    icon="hx-trustid-attribute"
                     :value="scorecard.attribute_score"
                     :width="150"
                     :height="90"
+                    stroke="trustId"
+                    :variant="mapColorByAttribute(scorecard.attribute_name)"
                   >
                     <template #progress-bar>
                       <progress-stack-bar
@@ -75,22 +79,64 @@
                             scorecard.overall_customer_rating.rating
                           )
                         "
+                        :bar-id="index"
                       />
                     </template>
                   </score-card>
                 </template>
                 <template #hover-content>
-                  <div
-                    class="body-2"
-                  >
-                    <span v-html="scorecard.attribute_description"/>
-                    <div>
-                      <span>Disagree</span>
-                      <span>{{scorecard.overall_customer_rating.rating.disagree.percentage | Numeric(false,false,false,true)}} | {{scorecard.overall_customer_rating.rating.disagree.count}}</span>
-                      <span>Neutral</span>
-                      <span>{{scorecard.overall_customer_rating.rating.neutral.percentage | Numeric(false,false,false,true)}} | {{scorecard.overall_customer_rating.rating.neutral.count}}</span>
-                      <span>Agree</span>
-                      <span>{{scorecard.overall_customer_rating.rating.agree.percentage | Numeric(false,false,false,true)}} | {{scorecard.overall_customer_rating.rating.agree.count}}</span>
+                  <div class="body-2">
+                    <div class="mb-1">
+                      {{ scorecard.attribute_description }}
+                    </div>
+                    <div class="d-flex flex-column">
+                      <span class="trust-tooltip-rating disagree-color my-2"
+                        >Disagree</span
+                      >
+                      <span
+                        >{{
+                          scorecard.overall_customer_rating.rating.disagree
+                            .percentage | Numeric(false, false, false, true)
+                        }}
+                        |
+                        {{
+                          formatCustomerCount(
+                            scorecard.overall_customer_rating.rating.disagree
+                              .count
+                          )
+                        }}</span
+                      >
+                      <span class="trust-tooltip-rating neutral-color my-2"
+                        >Neutral</span
+                      >
+                      <span
+                        >{{
+                          scorecard.overall_customer_rating.rating.neutral
+                            .percentage | Numeric(false, false, false, true)
+                        }}
+                        |
+                        {{
+                          formatCustomerCount(
+                            scorecard.overall_customer_rating.rating.neutral
+                              .count
+                          )
+                        }}</span
+                      >
+                      <span class="trust-tooltip-rating agree-color my-2">
+                        Agree</span
+                      >
+                      <span
+                        >{{
+                          scorecard.overall_customer_rating.rating.agree
+                            .percentage | Numeric(false, false, false, true)
+                        }}
+                        |
+                        {{
+                          formatCustomerCount(
+                            scorecard.overall_customer_rating.rating.agree.count
+                          )
+                        }}</span
+                      >
                     </div>
                   </div>
                 </template>
@@ -99,28 +145,9 @@
           </div>
         </div>
       </div>
-      <div class="ma-1">
-        <score-card
-          :width="150"
-          :height="90"
-          title="Transparency"
-          :value="73"
-        />
-      </div>
-      <div class="ma-1">
-        <score-card :width="150" :height="90" title="Humanity" :value="71">
-          <template #progress-bar>
-            <progress-stack-bar
-              :width="81"
-              :height="6"
-              :show-percentage="false"
-            />
-          </template>
-        </score-card>
-      </div>
       <div>
-        <v-tabs v-model="tabOption" class="mt-8">
-          <v-tabs-slider color="primary" class="sliderCss"></v-tabs-slider>
+        <v-tabs v-model="tabOption" class="mt-6">
+          <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
           <div class="d-flex">
             <v-tab
               key="comparison"
@@ -164,6 +191,12 @@
           <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
         </v-tabs-items>
       </div>
+      <div>
+        <link-dropdown
+          :data-list="getSegment"
+          @onselect="getSelectedData"
+        ></link-dropdown>
+      </div>
     </template>
   </page>
 </template>
@@ -171,6 +204,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
+import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
@@ -178,13 +212,15 @@ import Tooltip from "@/components/common/Tooltip.vue"
 import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
+import { formatText, numberWithCommas } from "@/utils"
 
 export default {
   name: "HXTrustID",
   components: {
+    Breadcrumb,
+    LinkDropdown,
     Page,
     PageHeader,
-    Breadcrumb,
     scoreCard,
     Tooltip,
     ProgressStackBar,
@@ -195,12 +231,18 @@ export default {
       loading: false,
       tabOption: 0,
       segmentScores: segmentScores,
+      selectedSegment: null,
     }
   },
   computed: {
     ...mapGetters({
       overview: "users/getTrustOverview",
     }),
+    getSegment() {
+      return this.segmentScores.map((item) => {
+        return item.segment_filter
+      })
+    },
   },
   async mounted() {
     try {
@@ -212,10 +254,44 @@ export default {
     ...mapActions({
       getOverview: "users/getTrustIdOverview",
     }),
+    capitalizeAttributeName(name) {
+      return formatText(name)
+    },
+    formatCustomerCount(value) {
+      return numberWithCommas(value)
+    },
+    getSelectedData(value) {
+      this.selectedSegment = value
+    },
+    mapColorByAttribute(name) {
+      switch (name) {
+        case "humanity":
+          return "base"
+        case "transparency":
+          return "lighten1"
+        case "capability":
+          return "lighten2"
+        case "reliability":
+          return "lighten3"
+        default:
+          return "base"
+      }
+    },
     progressBarData(data) {
       let dataFormatted = []
       for (const [key, value] of Object.entries(data)) {
-        dataFormatted.push({label:key,value:value.percentage*100})
+        switch (key) {
+          case "disagree":
+            dataFormatted[0] = { label: key, value: value.percentage * 100 }
+            break
+
+          case "neutral":
+            dataFormatted[1] = { label: key, value: value.percentage * 100 }
+            break
+
+          default:
+            dataFormatted[2] = { label: key, value: value.percentage * 100 }
+        }
       }
       return dataFormatted
     },
@@ -248,6 +324,31 @@ export default {
         }
       }
     }
+    ::v-deep .theme--light.v-tabs {
+      .v-tabs-bar .v-tab:not(.v-tab--active) {
+        color: var(--v-black-lighten4) !important;
+      }
+    }
+    .tab-slider {
+      position: absolute;
+      top: 2px;
+    }
+  }
+  .v-menu__content {
+    display: none;
+    &.menuable__content__active {
+      div {
+      }
+    }
+  }
+  .disagree-color {
+    color: var(--v-error-base);
+  }
+  .neutral-color {
+    color: var(--v-yellow-base);
+  }
+  .agree-color {
+    color: var(--v-success-lighten3);
   }
 }
 </style>

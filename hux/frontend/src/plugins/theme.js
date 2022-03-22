@@ -48,4 +48,10 @@ export default {
   pink: {
     base: colors.pink,
   },
+  trustId: {
+    base: colors.humanity,
+    lighten1: colors.transparency,
+    lighten2: colors.capability,
+    lighten3: colors.reliability,
+  },
 }

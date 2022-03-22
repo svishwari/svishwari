@@ -2,6 +2,7 @@ import blue from "./colors/blue"
 import teal from "./colors/teal"
 import yellow from "./colors/yellow"
 import white from "./colors/white"
+import trustId from "./colors/trustId"
 
 export default {
   ...blue,
@@ -31,4 +32,5 @@ export default {
     "#9cc01a",
     "#86bc25",
   ],
+  ...trustId,
 }

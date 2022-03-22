@@ -8,7 +8,7 @@
     />
     <checkbox-chart-legends
       :legends-data="legendsData"
-      class="ml-16 mt-8"
+      class="ml-16 mt-7"
       @onCheckboxChange="filterSegmentData"
     />
     <chart-tooltip
@@ -177,7 +177,7 @@ export default {
 }
 .container-chart {
   position: relative;
-  height: 650px;
+  height: 400px;
   padding: 0px !important;
   .value-container {
     margin-top: 2px;
