@@ -177,7 +177,7 @@ export default {
 }
 .container-chart {
   position: relative;
-  height: 650px;
+  height: 400px;
   padding: 0px !important;
   .value-container {
     margin-top: 2px;
