@@ -187,9 +187,12 @@
                       <template #hover-content>
                         <span
                           class="text-body-2 black--text text--darken-4"
-                          v-html="appliedFilters[filterKey][filter].hover"
-                        >
-                        </span>
+                          v-bind.prop="
+                            formatInnerHTML(
+                              appliedFilters[filterKey][filter].hover
+                            )
+                          "
+                        />
                       </template>
                     </tooltip>
                   </li>
@@ -308,7 +311,8 @@
                   <div ref="advertisingcard" class="lookalikes mx-2 my-6">
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
-                      data-e2e="lookalike-audiences"
+                      :standalone-data="audience.standalone_deliveries"
+                      @openCreateLookalike="lookalikePageRedirect()"
                     />
                   </div>
                 </v-card-text>
@@ -440,6 +444,7 @@ import Vue from "vue"
 // helpers
 import { mapGetters, mapActions } from "vuex"
 import filter from "lodash/filter"
+import { formatInnerHTML } from "@/utils"
 
 // common components
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
@@ -772,6 +777,7 @@ export default {
       detachStandaloneDestination: "audiences/removeStandaloneDestination",
       updateLookalikeAudience: "audiences/updateLookalike",
     }),
+    formatInnerHTML: formatInnerHTML,
     attributeOptions() {
       const options = []
       if (this.ruleAttributes && this.ruleAttributes.rule_attributes) {
@@ -1258,6 +1264,12 @@ export default {
     },
     openLookalikeEditModal() {
       this.showEditConfirmModal = true
+    },
+    lookalikePageRedirect() {
+      this.$router.push({
+        name: "LookalikeAudiences",
+        params: { id: this.audienceId },
+      })
     },
   },
 }

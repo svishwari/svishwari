@@ -6,6 +6,7 @@ const namespaced = true
 
 const state = {
   items: {},
+  dataFeedsDetails: [],
 }
 
 const getters = {
