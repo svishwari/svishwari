@@ -34,7 +34,12 @@
         >
           <tooltip>
             <template #label-content>
-              <logo v-if="dropIcon"  :type="dropIcon" class="mr-2 mt-1" :size="20"></logo>
+              <logo
+                v-if="dropIcon"
+                :type="dropIcon"
+                class="mr-2 mt-1"
+                :size="20"
+              ></logo>
               <span class="text-ellipsis text-width">{{
                 isSubMenu ? item.name : optionSelected["name"] || label
               }}</span>
@@ -129,10 +134,10 @@ export default {
       default: "200",
     },
     dropIcon: {
-       type: String,
+      type: String,
       required: false,
       default: "",
-    }
+    },
   },
   data: function () {
     return {

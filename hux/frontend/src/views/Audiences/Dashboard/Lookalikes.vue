@@ -40,7 +40,11 @@
           </v-list>
         </v-card>
       </div>
-      <v-list dense class="add-lookalike add-lookalike-width mx-6 mb-6" :height="22">
+      <v-list
+        dense
+        class="add-lookalike add-lookalike-width mx-6 mb-6"
+        :height="22"
+      >
         <v-list-item>
           <hux-icon type="plus" :size="16" color="primary" class="mr-2" />
           <v-btn
@@ -76,7 +80,7 @@
       </metric-card>
     </div>
 
-    <div class="no-lookalike mx-6 my-6" v-if="!isDataExists && addLookalike">
+    <div v-if="!isDataExists && addLookalike" class="no-lookalike mx-6 my-6">
       <metric-card
         title="Lookalikes"
         :height="230"
@@ -95,7 +99,12 @@
           </div>
           <v-list class="add-lookalike no-data-width" :height="22">
             <v-list-item>
-              <hux-icon type="plus" :size="16" color="primary" class="mr-4 ml-2" />
+              <hux-icon
+                type="plus"
+                :size="16"
+                color="primary"
+                class="mr-4 ml-2"
+              />
               <v-btn
                 text
                 min-width="7rem"
@@ -149,9 +158,10 @@ export default {
     filterStandalone() {
       this.standaloneData.forEach((element) => {
         if (element.status === "Delivered") {
-          return this.addLookalike = true
+          this.addLookalike = true
         }
       })
+      return this.addLookalike
     },
   },
 }
@@ -198,7 +208,6 @@ export default {
   width: 90%;
 }
 .no-data-width {
- width: 100%;
+  width: 100%;
 }
-
 </style>

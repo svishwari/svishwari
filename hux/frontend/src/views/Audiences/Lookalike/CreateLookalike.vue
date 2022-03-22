@@ -5,7 +5,7 @@
         <div class="lookalike-form px-4 py-3">
           <div class="d-flex align-center">
             <h3 class="text-h1 black--text text--base">
-             Create a lookalike audience
+              Create a lookalike audience
             </h3>
           </div>
           <div class="text-body-1 black--text text--base pb-8">
@@ -225,7 +225,11 @@ export default {
 ::v-deep .text-label {
   margin-left: 4px !important;
 }
-::v-deep .v-text-field > .v-input__control > .v-input__slot > .v-text-field__slot {
+::v-deep
+  .v-text-field
+  > .v-input__control
+  > .v-input__slot
+  > .v-text-field__slot {
   padding: 0px 4px !important;
 }
 ::v-deep .v-slider__thumb:before {
