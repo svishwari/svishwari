@@ -39,7 +39,7 @@ export default {
         rating: {
           agree: { percentage: 0.88, count: 168000 },
           neutral: { percentage: 0.02, count: 3818 },
-          disagree: { percentage: 0.10, count: 19091 },
+          disagree: { percentage: 0.1, count: 19091 },
         },
       },
     },

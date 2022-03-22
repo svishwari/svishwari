@@ -59,7 +59,7 @@ const mutations = {
   },
 
   setTrustIdOverview(state, trustIdOverview) {
-    Vue.set(state,"trustIdOverview",trustIdOverview)
+    Vue.set(state, "trustIdOverview", trustIdOverview)
   },
 }
 
@@ -180,11 +180,11 @@ const actions = {
       throw error
     }
   },
-  async getTrustIdOverview({commit},) {
+  async getTrustIdOverview({ commit }) {
     try {
-      const response = await api.users.trustIdOverview() 
-      commit("setTrustIdOverview", response.data) 
-    }catch (error) {
+      const response = await api.users.trustIdOverview()
+      commit("setTrustIdOverview", response.data)
+    } catch (error) {
       handleError(error)
       throw error
     }

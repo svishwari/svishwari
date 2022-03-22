@@ -7,7 +7,13 @@
     elevation="0"
   >
     <div class="score-card-info">
-      <icon class="model-icon" :type="icon" size="24" :stroke="stroke" :variant="variant"/>
+      <icon
+        class="model-icon"
+        :type="icon"
+        size="24"
+        :stroke="stroke"
+        :variant="variant"
+      />
       <span class="model-name text-body-2">{{ title }}</span>
       <span class="text-subtitle-1" :class="{ 'model-value ': hasSlot }">
         {{ value }}

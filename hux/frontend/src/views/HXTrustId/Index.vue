@@ -245,10 +245,7 @@ export default {
     },
   },
   async mounted() {
-    try {
-      await this.getOverview()
-    } finally {
-    }
+    await this.getOverview()
   },
   methods: {
     ...mapActions({
@@ -332,13 +329,6 @@ export default {
     .tab-slider {
       position: absolute;
       top: 2px;
-    }
-  }
-  .v-menu__content {
-    display: none;
-    &.menuable__content__active {
-      div {
-      }
     }
   }
   .disagree-color {
