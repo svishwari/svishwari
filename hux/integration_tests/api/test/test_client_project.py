@@ -1,4 +1,5 @@
 """Purpose of this file is to test data sources."""
+from http import HTTPStatus
 from unittest import TestCase
 import pytest
 import requests
@@ -6,12 +7,12 @@ from hux.integration_tests.api.test.conftest import Crud
 
 
 class TestClientProjects(TestCase):
-    """Test ClientProjects."""
+    """Testing Client Projects."""
 
     CLIENT_PROJECTS = "client-projects"
 
-    def test_get_client_project(self):
-        """Testing get client Project endpoint."""
+    def test_get_client_projects(self):
+        """Testing GET Client Projects endpoint."""
 
         response = requests.get(
             f"{pytest.API_URL}/{self.CLIENT_PROJECTS}",
@@ -19,11 +20,10 @@ class TestClientProjects(TestCase):
         )
 
         # test success
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
-    def test_patch_client_project(self):
-        """Testing patch client Project endpoint."""
-
+    def test_patch_client_projects(self):
+        """Testing PATCH Client Projects endpoint."""
 
         get_response = requests.get(
             f"{pytest.API_URL}/{self.CLIENT_PROJECTS}",
@@ -36,13 +36,12 @@ class TestClientProjects(TestCase):
         response = requests.patch(
             f"{pytest.API_URL}/{self.CLIENT_PROJECTS}/{id}",
             json=
-                {
-                    "url": url,
-                }
+            {
+                "url": url,
+            }
             ,
             headers=pytest.HEADERS
         )
 
         # test success
-        self.assertEqual(200, response.status_code)
-
+        self.assertEqual(HTTPStatus.OK, response.status_code)
