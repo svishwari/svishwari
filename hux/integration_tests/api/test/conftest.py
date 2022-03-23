@@ -27,7 +27,7 @@ MONGO_DB_CONFIG = {
     "username": getenv("MONGO_DB_USERNAME"),
     "password": getenv("MONGO_DB_PASSWORD"),
     "ssl": True,
-    "ssl_ca_certs": str(
+    "tlsCAFile": str(
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
     ),
 }

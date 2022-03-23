@@ -230,6 +230,7 @@ import Icon from "@/components/common/Icon"
 import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import { formatText } from "../../utils"
+import { v4 as uuidv4 } from "uuid"
 
 const NEW_RULE_SECTION = {
   id: "",
@@ -584,7 +585,7 @@ export default {
     },
     addNewCondition(id) {
       const newCondition = JSON.parse(JSON.stringify(NEW_CONDITION))
-      newCondition.id = Math.floor(Math.random() * 1024).toString(16)
+      newCondition.id = uuidv4()
       const sectionFound = this.rules.filter((rule) => rule.id === id)
       if (sectionFound.length > 0) sectionFound[0].conditions.push(newCondition)
     },
@@ -613,7 +614,7 @@ export default {
     },
     addNewSection() {
       const newSection = JSON.parse(JSON.stringify(NEW_RULE_SECTION))
-      newSection.id = Math.floor(Math.random() * 1024).toString(16)
+      newSection.id = uuidv4()
       this.rules.push(newSection)
       this.addNewCondition(newSection.id)
     },

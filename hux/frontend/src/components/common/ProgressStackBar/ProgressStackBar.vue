@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <div ref="progressStackBarChart" class="chart"></div>
+    <div ref="progressStackBarChart" :class="dynamicChartID"></div>
   </div>
 </template>
 
@@ -27,6 +27,16 @@ export default {
       default: false,
       required: false,
     },
+    barId: {
+      type: Number,
+      default: 1,
+      required: false,
+    },
+  },
+  data() {
+    return {
+      dynamicChartID: `bar-${this.barId}`,
+    }
   },
   watch: {
     chartDimensions: {
@@ -35,14 +45,15 @@ export default {
           .select(this.$refs.progressStackBarChart)
           .selectAll("svg")
           .remove()
-        this.stackedBar(".chart", sampleData)
+        this.stackedBar(`.${this.dynamicChartId}`, sampleData)
       },
       immediate: false,
       deep: true,
     },
   },
   mounted() {
-    this.stackedBar(".chart", sampleData)
+    this.dynamicChartId = `bar-${this.barId}`
+    this.stackedBar(`.${this.dynamicChartId}`, sampleData)
   },
   methods: {
     rounded_rect(x, y, w, h, r, tl, tr, bl, br) {

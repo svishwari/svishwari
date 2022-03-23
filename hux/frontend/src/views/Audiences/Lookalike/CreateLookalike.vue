@@ -5,7 +5,7 @@
         <div class="lookalike-form px-4 py-3">
           <div class="d-flex align-center">
             <h3 class="text-h1 black--text text--base">
-              Create a lookalike audience in Facebook
+              Create a lookalike audience
             </h3>
           </div>
           <div class="text-body-1 black--text text--base pb-8">
@@ -15,7 +15,7 @@
           </div>
           <text-field
             v-model="lookalikeAudience.name"
-            class=""
+            class="input-audi"
             label-text="Lookalike audience name"
             placeholder="Facebook Lookalike - <Seedaudiencename>"
             :rules="lookalikeNameRules"
@@ -29,8 +29,9 @@
             :label="lookalikeAudience['selectDestination']"
             :selected="lookalikeAudience['selectDestination']"
             :items="destinationDropDownList"
-            min-width="852"
-            class="delivered-audience-selection pb-6 ml-n2 mt-n2"
+            min-width="665"
+            drop-icon="facebook"
+            class="delivered-audience-selection pb-6 ml-n2 mr-n3 mt-n2"
             background-color="white"
             @on-select="onSelectMenuItem"
           />
@@ -110,7 +111,7 @@ export default {
       lookalikeAudience: {
         name: null,
         value: 5,
-        selectDestination: "",
+        selectDestination: "Facebook",
         engagements: [],
       },
       isFormValid: false,
@@ -223,5 +224,18 @@ export default {
 }
 ::v-deep .text-label {
   margin-left: 4px !important;
+}
+::v-deep
+  .v-text-field
+  > .v-input__control
+  > .v-input__slot
+  > .v-text-field__slot {
+  padding: 0px 4px !important;
+}
+::v-deep .v-slider__thumb:before {
+  opacity: 0 !important;
+}
+.input-audi {
+  width: 77% !important;
 }
 </style>
