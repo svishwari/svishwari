@@ -33,6 +33,7 @@ import { mapGetters, mapActions } from "vuex"
 import Drawer from "@/components/common/Drawer.vue"
 import Overview from "@/views/Engagements/Configuration/Overview/Overview.vue"
 import AttributeRules from "@/views/SegmentPlayground/AttributeRules.vue"
+import { v4 as uuidv4 } from "uuid"
 
 export default {
   name: "AudienceDetailDrawer",
@@ -160,7 +161,7 @@ export default {
           ),
           operand: filter.section_aggregator === "ALL",
           conditions: filter.section_filters.map((cond) => ({
-            id: Math.floor(Math.random() * 1024).toString(16),
+            id: uuidv4(),
             attribute: cond.field,
             operator: cond.type === "range" ? "" : cond.type,
             text: cond.type !== "range" ? cond.value : "",
