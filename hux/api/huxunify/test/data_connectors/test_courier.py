@@ -18,6 +18,9 @@ from huxunifylib.database.delivery_platform_management import (
     set_connection_status,
     get_delivery_jobs_using_metadata,
 )
+from huxunifylib.database.engagement_audience_management import (
+    set_engagement_audience_schedule,
+)
 from huxunifylib.database.notification_management import get_notifications
 from huxunifylib.database.engagement_management import (
     get_engagement,
@@ -667,6 +670,25 @@ class CourierTest(TestCase):
             engagement_doc[db_c.NOTIFICATION_FIELD_DESCRIPTION],
             engagement_doc[db_c.AUDIENCES],
             engagement_doc[db_c.CREATED_BY],
+        )
+
+        delivery_schedule = {
+            api_c.SCHEDULE: {
+                api_c.PERIODICIY: api_c.DAILY,
+                api_c.EVERY: 0,
+                api_c.HOUR: 0,
+                api_c.MINUTE: 0,
+                api_c.PERIOD: api_c.PM,
+            },
+            api_c.START_DATE: "2022-03-02T00:00:00.000Z",
+        }
+
+        set_engagement_audience_schedule(
+            self.database,
+            engagement_id,
+            self.audience_two[db_c.ID],
+            delivery_schedule,
+            t_c.TEST_USER_NAME,
         )
 
         # mock AWS batch connector register job function
