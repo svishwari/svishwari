@@ -12,7 +12,6 @@ from azure.storage.blob import BlobClient
 from huxunify.api.data_connectors.cloud.cloud_client import (
     CloudClient,
 )
-import huxunify.api.constants as api_c
 from huxunify.api.config import get_config, Config
 from huxunify.api.prometheus import record_health_status, Connections
 

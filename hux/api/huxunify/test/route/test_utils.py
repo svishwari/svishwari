@@ -5,10 +5,12 @@ from unittest import TestCase, mock
 
 import mongomock
 from bson import ObjectId
+
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.client import DatabaseClient
 from hypothesis import given, strategies as st
 
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.exceptions.unified_exceptions import (
     InputParamsValidationError,
@@ -91,6 +93,27 @@ class TestRouteUtils(TestCase):
 
     def test_health_check(self):
         """Test health check."""
+
+        for subclass in CloudClient.__subclasses__():
+            # mock get_store_value of cloud secret store
+            mock.patch.object(
+                subclass,
+                "health_check_batch_service",
+                return_value=(True, "Batch service available"),
+            ).start()
+
+            mock.patch.object(
+                subclass,
+                "health_check_storage_service",
+                return_value=(True, "Storage service available"),
+            ).start()
+
+            mock.patch.object(
+                subclass,
+                "health_check_secret_storage",
+                return_value=(True, "Secret storage available"),
+            ).start()
+
         mock.patch(
             "huxunify.api.route.utils.check_mongo_connection",
             return_value=(True, "Mongo available"),
@@ -111,14 +134,6 @@ class TestRouteUtils(TestCase):
         mock.patch(
             "huxunify.api.route.utils.check_cdp_connections_api_connection",
             return_value=(True, "CDP connections available."),
-        ).start()
-        mock.patch(
-            "huxunify.api.route.utils.check_aws_ssm",
-            return_value=(True, "AWS SSM available"),
-        ).start()
-        mock.patch(
-            "huxunify.api.route.utils.check_aws_batch",
-            return_value=(True, "AWS Batch available"),
         ).start()
         mock.patch(
             "huxunify.api.route.utils.JiraConnection.check_jira_connection",
