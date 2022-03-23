@@ -10,11 +10,11 @@
   >
     <div class="filter-body">
       <hux-filter-panels>
-        <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
+        <hux-filter-panel title="Alert type" :count="selectedAlertType.length">
           <v-checkbox
             v-for="data in alertType"
             :key="data.id"
-            v-model="selctedAlertType"
+            v-model="selectedAlertType"
             multiple
             color="primary lighten-6"
             class="text--base-1"
@@ -22,11 +22,11 @@
             :value="data.title"
           ></v-checkbox>
         </hux-filter-panel>
-        <hux-filter-panel title="Category" :count="selctedCategory.length">
+        <hux-filter-panel title="Category" :count="selectedCategory.length">
           <v-checkbox
             v-for="data in category"
             :key="data.id"
-            v-model="selctedCategory"
+            v-model="selectedCategory"
             multiple
             color="primary lighten-6"
             :label="data.title"
@@ -44,11 +44,11 @@
             ></v-radio>
           </v-radio-group>
         </hux-filter-panel>
-        <hux-filter-panel title="User" :count="selctedUsers.length">
+        <hux-filter-panel title="User" :count="selectedUsers.length">
           <v-checkbox
             v-for="data in users"
             :key="data"
-            v-model="selctedUsers"
+            v-model="selectedUsers"
             multiple
             color="primary lighten-6"
             :label="data"
@@ -155,24 +155,28 @@ export default {
           title: "Last 6 months",
         },
       ],
-      selctedAlertType: [],
-      selctedCategory: [],
+      selectedAlertType: [],
+      selectedCategory: [],
       selectedTimeType: "Last week",
-      selctedUsers: [],
+      selectedUsers: [],
       selectedTimeCount: 1,
+      pendingAlertType: [],
+      pendingCategory: [],
+      pendingTimeType: "Last week",
+      pendingUsers: [],
     }
   },
 
   computed: {
     filterLength() {
-      let alert = this.selctedAlertType.length
-      let category = this.selctedCategory.length
+      let alert = this.selectedAlertType.length
+      let category = this.selectedCategory.length
       let time = 1
-      let users = this.selctedUsers.length
+      let users = this.selectedUsers.length
       let totalFiltersCount =
-        this.selctedAlertType.length +
-        this.selctedCategory.length +
-        this.selctedUsers.length +
+        this.selectedAlertType.length +
+        this.selectedCategory.length +
+        this.selectedUsers.length +
         time
       this.$emit("selected-filters", totalFiltersCount)
       return alert + category + time + users
@@ -196,16 +200,25 @@ export default {
       )
     },
     clearFilter() {
-      this.selctedAlertType = []
-      this.selctedCategory = []
+      this.selectedAlertType = []
+      this.selectedCategory = []
       this.selectedTimeType = "Last week"
-      this.selctedUsers = []
+      this.selectedUsers = []
     },
     clearAndReload() {
       this.clearFilter()
+      this.pendingAlertType = []
+      this.pendingCategory = []
+      this.pendingTimeType = "Last week"
+      this.pendingUsers = []
       this.apply()
     },
     apply() {
+      this.pendingAlertType = [...this.selectedAlertType]
+      this.pendingCategory = [...this.selectedCategory]
+      this.pendingTimeType = this.selectedTimeType
+      this.pendingUsers = [...this.selectedUsers]
+
       let getTime
       switch (this.selectedTimeType) {
         case "Today":
@@ -230,13 +243,17 @@ export default {
 
       this.$emit("onSectionAction", {
         getTime: this.$options.filters.Date(getTime, "YYYY-MM-DD"),
-        selctedAlertType: this.selctedAlertType,
-        selctedCategory: this.selctedCategory,
-        selctedUsers: this.selctedUsers,
+        selectedAlertType: this.selectedAlertType,
+        selectedCategory: this.selectedCategory,
+        selectedUsers: this.selectedUsers,
         filterApplied: this.filterLength,
       })
     },
     close() {
+      this.selectedAlertType = [...this.pendingAlertType]
+      this.selectedCategory = [...this.pendingCategory]
+      this.selectedTimeType = this.pendingTimeType
+      this.selectedUsers = [...this.pendingUsers]
       this.localDrawer = false
     },
   },

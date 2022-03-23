@@ -54,6 +54,8 @@ export default {
       selectedFavourite: false,
       selectedEngagementsWorkedWith: false,
       enableApply: false,
+      pendingFavorites: false,
+      pendingWorkedWith: false,
     }
   },
 
@@ -84,6 +86,8 @@ export default {
       this.apply()
     },
     apply() {
+      this.pendingFavorites = this.selectedFavourite
+      this.pendingWorkedWith = this.selectedEngagementsWorkedWith
       this.$emit("onSectionAction", {
         selectedFavourite: this.selectedFavourite,
         selectedEngagementsWorkedWith: this.selectedEngagementsWorkedWith,
@@ -95,6 +99,8 @@ export default {
       this.localDrawer = false
     },
     close() {
+      this.selectedFavourite = this.pendingFavorites
+      this.selectedEngagementsWorkedWith = this.pendingWorkedWith
       this.localDrawer = false
     },
   },
