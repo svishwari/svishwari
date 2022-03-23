@@ -30,7 +30,7 @@ export default {
     barId: {
       type: Number,
       default: 1,
-      required: true,
+      required: false,
     },
   },
   data() {

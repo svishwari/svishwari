@@ -45,7 +45,7 @@ export default {
     }
   },
   mounted() {
-    // single handler for multiple props watch
+   // single handler for multiple props watch
     this.$watch(
       (prop) => [prop.chartDimensions, prop.value],
       () => {
@@ -53,7 +53,7 @@ export default {
         this.initiateGroupedBarChart()
       },
       {
-        immediate: true,
+        immediate: false,
         deep: true,
       }
     )
