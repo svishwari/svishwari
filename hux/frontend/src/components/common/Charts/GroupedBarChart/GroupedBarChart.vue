@@ -53,7 +53,7 @@ export default {
         this.initiateGroupedBarChart()
       },
       {
-        immediate: true,
+        immediate: false,
         deep: true,
       }
     )

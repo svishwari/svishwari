@@ -87,3 +87,11 @@ class NotificationsSchema(Schema):
             },
         ],
     )
+
+
+class NotificationPostSchema(Schema):
+    """Notification POST schema"""
+
+    type = Str(validate=OneOf(db_c.NOTIFICATION_TYPES))
+    category = Str(validate=OneOf(db_c.NOTIFICATION_CATEGORIES))
+    description = Str()

@@ -80,6 +80,7 @@
     <div>
       <link-dropdown
         :data-list="getSegment"
+        :width="245"
         @onselect="getSelectedData"
       ></link-dropdown>
     </div>
