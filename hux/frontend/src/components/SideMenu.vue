@@ -181,13 +181,6 @@ export default {
     items: menuConfig.menu,
   }),
 
-  mounted: {
-    trustidRoute() {
-      // similar logic
-      // if trustid route, change menuconfig.json
-    },
-  },
-
   computed: {
     isMini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
@@ -207,13 +200,20 @@ export default {
         }
       })
     },
-    trustidHover() {
-      // if true - change to colored
-      // else black
-      // change items
-    },
+  },
+
+  mounted() {
+    this.trustidRoute()
+  },
+
+  methods: {
     trustidRoute() {
-      // similar logic
+      console.log("hahahha")
+      if (this.$route.name == "HXTrustID") {
+        this.items[5].menu[1].icon = "hx-trustid-colored"
+      } else {
+        this.items[5].menu[1].icon = "hx-trustid"
+      }
     },
   },
 }
