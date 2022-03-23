@@ -40,10 +40,6 @@ from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.tecton import Tecton
-from huxunify.api.data_connectors.aws import (
-    check_aws_ssm,
-    check_aws_batch,
-)
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     get_user_info,
@@ -58,7 +54,7 @@ from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.exceptions import (
     unified_exceptions as ue,
 )
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import record_health_status, Connections
 from huxunify.api.stubbed_data.stub_shap_data import shap_data
 from huxunify.api.schema.user import RequestedUserSchema
 
@@ -98,6 +94,7 @@ def get_db_client() -> MongoClient:
     return db_client_factory.get_resource(**get_config().MONGO_DB_CONFIG)
 
 
+@record_health_status(Connections.DB)
 def check_mongo_connection() -> Tuple[bool, str]:
     """Validate mongo DB connection.
 
@@ -108,11 +105,9 @@ def check_mongo_connection() -> Tuple[bool, str]:
     try:
         # test finding documents
         get_all_data_sources(get_db_client())
-        record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, True)
         return True, "Mongo available."
     # pylint: disable=broad-except
     except Exception:
-        record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, False)
         return False, "Mongo not available."
 
 
@@ -132,11 +127,9 @@ def get_health_check() -> HealthCheck:
     health.add_check(check_mongo_connection)
     health.add_check(Tecton().check_tecton_connection)
     health.add_check(check_okta_connection)
-    health.add_check(check_aws_ssm)
-    health.add_check(check_aws_batch)
-    # TODO HUS-1200
-    # health.add_check(check_aws_s3)
-    # health.add_check(check_aws_events)
+    health.add_check(CloudClient().health_check_secret_storage)
+    health.add_check(CloudClient().health_check_batch_service)
+    health.add_check(CloudClient().health_check_storage_service)
     health.add_check(check_cdm_api_connection)
     health.add_check(check_cdp_connections_api_connection)
     health.add_check(JiraConnection.check_jira_connection)
@@ -1101,10 +1094,14 @@ def clean_and_aggregate_datafeed_details(
             }
         )
         # compute run duration if success or running and end_dt available
-        if df_detail[api_c.STATUS] in [
-            api_c.STATUS_SUCCESS,
-            api_c.STATUS_RUNNING,
-        ] and df_detail.get(api_c.PROCESSED_END_DATE):
+        if (
+            df_detail[api_c.STATUS]
+            in [
+                api_c.STATUS_SUCCESS,
+                api_c.STATUS_RUNNING,
+            ]
+            and df_detail.get(api_c.PROCESSED_END_DATE)
+        ):
             df_detail[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
                 int(
                     (
