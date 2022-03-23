@@ -179,24 +179,25 @@
                     <span class="d-flex">
                       <h3 class="text-h3">HX TrustID scores across segments</h3>
                     </span>
-                  </v-card-title>
-                  <trust-comparison-chart
-                    :segment-scores="segmentScores"
-                    data-e2e="trust-comparison-chart"
-                  />
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-tab-item>
-          <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
-        </v-tabs-items>
-      </div>
-      <div>
-        <link-dropdown
-          :data-list="getSegment"
-          @onselect="getSelectedData"
-        ></link-dropdown>
-      </div>
+                </v-card-title>
+                <trust-comparison-chart
+                  :segment-scores="segmentScores"
+                  data-e2e="trust-comparison-chart"
+                />
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-tab-item>
+        <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
+      </v-tabs-items>
+    </div>
+    <div>
+      <link-dropdown
+        :data-list="getSegment"
+        :width="245"
+        @onselect="getSelectedData"
+      ></link-dropdown>
+    </div>
     </template>
   </page>
 </template>
