@@ -13,36 +13,45 @@
   >
     <div class="filter-body">
       <hux-filter-panels :expanded="selectedAttributes.length > 0 ? [0] : []">
-          <div class="checkboxFavorite">
-        <text-field
-          class="mt-4 ml-5 mb-n3 input-box-Field"
-          label-text="Segment name"
-          placeholder="Segment"
-          :rules="lookalikeNameRules"
-          required
-        />
-          </div>
+        <div class="checkboxFavorite">
+          <text-field
+            class="mt-4 ml-5 mb-n3 input-box-Field"
+            label-text="Segment name"
+            placeholder="Segment"
+            :rules="lookalikeNameRules"
+            required
+          />
+        </div>
         <v-checkbox
           v-model="selectedFavourite"
           color="primary lighten-6"
           class="text--base-1 px-5 withoutExpansion checkboxFavorite"
-          label="Households with children under 18"
+          :label="'Households with children under 18'"
         ></v-checkbox>
         <v-checkbox
           v-model="selectedAudienceWorkedWith"
           color="primary lighten-6"
-          class="text--base-1 px-5 withoutExpansion"
-          label="Households with seniors over 65"
+          class="text--base-1 px-5 withoutExpansion checkboxFavorite"
+          :label="'Households with seniors over 65'"
         ></v-checkbox>
-        <hux-filter-panel title="Age" :count="selectedAttributes.length" class="withoutExpansion">
-          <div class="text-body-1 black--text text--lighten-4 pb-2">MODELS</div>
-
-          <br />
-          <div class="text-body-1 black--text text--lighten-4 pb-2">
-            GENERAL
-          </div>
-        </hux-filter-panel>
-
+        <hux-filter-panels>
+          <hux-filter-panel
+            v-for="(data, ind) in filterData"
+            :key="ind"
+            :title="data.description"
+          >
+            <v-checkbox
+              v-for="(dataVal, indx) in data.values"
+              :key="indx"
+              v-model="segementDataObj[data.type]"
+              multiple
+              color="primary lighten-6"
+              class="text--base-1"
+              :label="dataVal"
+              :value="dataVal"
+            ></v-checkbox>
+          </hux-filter-panel>
+        </hux-filter-panels>
       </hux-filter-panels>
     </div>
   </hux-filters-drawer>
@@ -74,39 +83,32 @@ export default {
       required: false,
       default: "auto",
     },
+    segmentData: {
+      type: Array,
+      required: true,
+      default: false,
+    },
   },
   data() {
     return {
       localDrawer: this.value,
       selectedAttributes: [],
+      lookalikeNameRules: "",
       selectedFavourite: false,
       selectedAudienceWorkedWith: false,
       enableApply: false,
-      segementData: {
-          age: [],
-          childrenCount: [],
-          employmentStatus: [],
-          gender: [],
-          highestLevelOfEducation: [],
-          lGBTQIndentified: [],
-          livingSituation: [],
-          physicalMentalCondition: [],
-          politicalOutlook: [],
-          raceEthnicity: [],
-          residentialArea: [],
-      }
+      segementDataObj: {},
     }
   },
 
   computed: {
-    // filterLength() {
-    //   let count = 0
-    //   count = this.selectedAttributes.length
-    //   if (this.selectedFavourite) count++
-    //   if (this.selectedAudienceWorkedWith) count++
-    //   this.$emit("selected-filters", count)
-    //   return count
-    // },
+    filterData() {
+      return this.segmentData.filter(
+        (element) =>
+          element.type != "households_with_children_under_18" &&
+          element.type != "households_with_children_above_18"
+      )
+    },
   },
   watch: {
     value: function () {
@@ -208,6 +210,6 @@ export default {
   justify-content: initial !important;
 }
 .input-box-Field {
-    width: 280px !important;
+  width: 280px !important;
 }
 </style>
