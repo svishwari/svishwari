@@ -12,19 +12,6 @@ class TestModels(TestCase):
     MODELS = "models"
     COLLECTION = "models"
 
-    def setUp(self) -> None:
-        """Setup resources before each test."""
-
-        self.audience_id = requests.get(
-            f"{pytest.API_URL}/audiences",
-            headers=pytest.HEADERS,
-        ).json()[0]["id"]
-
-        self.destination_id = requests.get(
-            f"{pytest.API_URL}/destinations",
-            headers=pytest.HEADERS,
-        ).json()[0]["id"]
-
     def test_create_model(self):
         """Test creating an model."""
 
