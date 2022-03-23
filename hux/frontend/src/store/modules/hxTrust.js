@@ -1,6 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
-import { handleError, handleSuccess } from "@/utils"
+import { handleError } from "@/utils"
 
 const namespaced = true
 

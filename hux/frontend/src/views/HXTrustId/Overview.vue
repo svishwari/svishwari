@@ -27,13 +27,11 @@
         <tooltip max-width="288px">
           <template #label-content>
             <score-card
-              :title="capitalizeAttributeName(scorecard.attribute_name)"
-              icon="hx-trustid-attribute"
+              :title="formatText(scorecard.attribute_name)"
+              :icon="`hx-trustId-${scorecard.attribute_name}`"
               :value="scorecard.attribute_score"
               :width="150"
               :height="90"
-              stroke="trustId"
-              :variant="mapColorByAttribute(scorecard.attribute_name)"
             >
               <template #progress-bar>
                 <progress-stack-bar
@@ -64,7 +62,7 @@
                   }}
                   |
                   {{
-                    formatCustomerCount(
+                    numberWithCommas(
                       scorecard.overall_customer_rating.rating.disagree.count
                     )
                   }}</span
@@ -79,7 +77,7 @@
                   }}
                   |
                   {{
-                    formatCustomerCount(
+                    numberWithCommas(
                       scorecard.overall_customer_rating.rating.neutral.count
                     )
                   }}</span
@@ -92,7 +90,7 @@
                   }}
                   |
                   {{
-                    formatCustomerCount(
+                    numberWithCommas(
                       scorecard.overall_customer_rating.rating.agree.count
                     )
                   }}</span
@@ -105,3 +103,72 @@
     </div>
   </div>
 </template>
+
+<script>
+import { mapGetters } from "vuex"
+import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
+import { formatText, numberWithCommas } from "@/utils"
+
+export default {
+  name: "HXTrustIDOverview",
+  components: {
+    scoreCard,
+    Tooltip,
+    ProgressStackBar,
+  },
+  computed: {
+    ...mapGetters({
+      overview: "hxTrust/getTrustOverview",
+    }),
+  },
+  methods: {
+    formatText: formatText,
+    numberWithCommas: numberWithCommas,
+    progressBarData(data) {
+      if (Object.keys(data).length == 0) return []
+      let dataFormatted = []
+      for (const [key, value] of Object.entries(data)) {
+        switch (key) {
+          case "disagree":
+            dataFormatted[0] = { label: key, value: value.percentage * 100 }
+            break
+
+          case "neutral":
+            dataFormatted[1] = { label: key, value: value.percentage * 100 }
+            break
+
+          default:
+            dataFormatted[2] = { label: key, value: value.percentage * 100 }
+        }
+      }
+      return dataFormatted
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.v-application {
+  .overview-card {
+    width: 100%;
+    border-radius: 12px !important;
+    ::v-deep {
+      .text-h3 {
+        margin-top: 2px !important ;
+        margin-bottom: 18px !important;
+      }
+    }
+  }
+  .disagree-color {
+    color: var(--v-error-base);
+  }
+  .neutral-color {
+    color: var(--v-yellow-base);
+  }
+  .agree-color {
+    color: var(--v-success-lighten3);
+  }
+}
+</style>

@@ -28,11 +28,13 @@ export default {
     },
     value: {
       type: Array,
-      default: [
-        { label: "Group-1", value: 20 },
-        { label: "Group-2", value: 28 },
-        { label: "Group-3", value: 52 },
-      ],
+      default() {
+        return [
+          { label: "Group-1", value: 20 },
+          { label: "Group-2", value: 28 },
+          { label: "Group-3", value: 52 },
+        ]
+      },
       required: false,
     },
     barId: {
