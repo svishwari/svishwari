@@ -41,7 +41,7 @@
                 <template #label-content>
                   <score-card
                     title="HX TrustID"
-                    :value="overview.trust_id_score"
+                    :value="overview && overview.trust_id_score"
                     :width="150"
                     :height="90"
                   />
@@ -54,16 +54,16 @@
               </tooltip>
             </div>
             <div
-              v-for="(scorecard, index) in overview.attributes"
+              v-for="(scorecard, index) in overview && overview.attributes"
               :key="index"
               class="mr-4"
             >
               <tooltip max-width="288px">
                 <template #label-content>
                   <score-card
-                    :title="capitalizeAttributeName(scorecard.attribute_name)"
+                    :title="formatText(scorecard.attribute_name)"
                     icon="hx-trustid-attribute"
-                    :value="scorecard.attribute_score"
+                    :value="scorecard && scorecard.attribute_score"
                     :width="150"
                     :height="90"
                     stroke="trustId"
@@ -90,7 +90,7 @@
                       {{ scorecard.attribute_description }}
                     </div>
                     <div class="d-flex flex-column">
-                      <span class="trust-tooltip-rating disagree-color my-2"
+                      <span class="tooltip-subheading disagree-color my-2"
                         >Disagree</span
                       >
                       <span
@@ -106,7 +106,7 @@
                           )
                         }}</span
                       >
-                      <span class="trust-tooltip-rating neutral-color my-2"
+                      <span class="tooltip-subheading neutral-color my-2"
                         >Neutral</span
                       >
                       <span
@@ -122,7 +122,7 @@
                           )
                         }}</span
                       >
-                      <span class="trust-tooltip-rating agree-color my-2">
+                      <span class="tooltip-subheading agree-color my-2">
                         Agree</span
                       >
                       <span
@@ -237,7 +237,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      overview: "users/getTrustOverview",
+      overview: "hxTrust/getTrustOverview",
     }),
     getSegment() {
       return this.segmentScores.map((item) => {
@@ -250,11 +250,9 @@ export default {
   },
   methods: {
     ...mapActions({
-      getOverview: "users/getTrustIdOverview",
+      getOverview: "hxTrust/getTrustIdOverview",
     }),
-    capitalizeAttributeName(name) {
-      return formatText(name)
-    },
+    formatText: formatText,
     formatCustomerCount(value) {
       return numberWithCommas(value)
     },

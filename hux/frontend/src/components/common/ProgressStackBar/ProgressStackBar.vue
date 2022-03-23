@@ -6,7 +6,6 @@
 
 <script>
 import groupData from "./groupData"
-import sampleData from "./sampleData"
 import * as d3Format from "d3-format"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
@@ -29,7 +28,11 @@ export default {
     },
     value: {
       type: Array,
-      default: sampleData,
+      default: [
+        { label: "Group-1", value: 20 },
+        { label: "Group-2", value: 28 },
+        { label: "Group-3", value: 52 },
+      ],
       required: false,
     },
     barId: {
