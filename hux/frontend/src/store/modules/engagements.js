@@ -194,6 +194,15 @@ const actions = {
     }
   },
 
+  async deliveryScheduleAudience(_, { engagementId, audienceId, data }) {
+    try {
+      await api.engagements.editDeliveryAudience(engagementId, audienceId, data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async add({ commit }, engagement) {
     try {
       const payload = {

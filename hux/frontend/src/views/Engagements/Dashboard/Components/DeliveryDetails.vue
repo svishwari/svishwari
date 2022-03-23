@@ -157,8 +157,7 @@ export default {
       ],
       destinationMenuOptions: [
         { id: 1, title: "Open destination", active: true },
-        { id: 2, title: "Edit delivery schedule", active: true },
-        { id: 3, title: "Remove destination", active: true },
+        { id: 2, title: "Remove destination", active: true },
       ],
 
       stateListData: [],

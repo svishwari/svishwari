@@ -209,6 +209,11 @@ client["engagements"].deliverAudienceDestination = (
   return http.post(endpoint, data)
 }
 
+client["engagements"].editDeliveryAudience = (resourceId, audienceId, data) => {
+  const endpoint = `/engagements/${resourceId}/audience/${audienceId}/schedule`
+  return http.post(endpoint, data)
+}
+
 client["engagements"].deliveries = (resourceId, query) => {
   return http.get(`/engagements/${resourceId}/delivery-history?${query}`)
 }

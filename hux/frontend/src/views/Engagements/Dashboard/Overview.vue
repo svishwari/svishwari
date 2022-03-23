@@ -160,7 +160,8 @@ export default {
         { id: 1, title: "Deliver now", active: true },
         { id: 2, title: "Create lookalike", active: true },
         { id: 3, title: "Add a destination", active: true },
-        { id: 4, title: "Remove audience", active: true },
+        { id: 4, title: "Edit delivery schedule", active: true },
+        { id: 5, title: "Remove audience", active: true },
       ],
     }
   },
