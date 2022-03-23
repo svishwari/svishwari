@@ -792,7 +792,7 @@ class UserPreferencesView(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @requires_access_levels([api_c.ADMIN_LEVEL])
+    @requires_access_levels([api_c.USER_ROLE_ALL])
     def put(self, user: dict) -> Tuple[dict, int]:
         """Updates a user preferences.
 
