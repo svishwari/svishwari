@@ -18,7 +18,6 @@ const state = {
   users: [],
   requestedUsers: [],
   tickets: [],
-  trustIdOverview: null,
 }
 
 const mutations = {
@@ -56,10 +55,6 @@ const mutations = {
 
   setAllRequestedUsers(state, requestedUsers) {
     Vue.set(state, "requestedUsers", requestedUsers)
-  },
-
-  setTrustIdOverview(state, trustIdOverview) {
-    Vue.set(state, "trustIdOverview", trustIdOverview)
   },
 }
 
@@ -180,15 +175,6 @@ const actions = {
       throw error
     }
   },
-  async getTrustIdOverview({ commit }) {
-    try {
-      const response = await api.users.trustIdOverview()
-      commit("setTrustIdOverview", response.data)
-    } catch (error) {
-      handleError(error)
-      throw error
-    }
-  },
 }
 
 const getters = {
@@ -217,8 +203,6 @@ const getters = {
   getAllTickets: (state) => state.tickets,
 
   getUserAlerts: (state) => state.userProfile.alerts,
-
-  getTrustOverview: (state) => state.trustIdOverview,
 }
 export default {
   namespaced,
