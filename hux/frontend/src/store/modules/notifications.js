@@ -90,8 +90,24 @@ const actions = {
   },
   async getAllUsers({ commit }) {
     try {
-      const response = await api.notifications.getAllUsers()
-      commit("SET_ALL_USERS", response.data)
+     // const response = await api.notifications.getAllUsers()
+      commit("SET_ALL_USERS", [
+        "Shaharyar Lakhani", 
+        "Sameer Kumar Singh", 
+        "Vipin Gupta", 
+        "douglaslong", 
+        "Shubham Kumar", 
+        "unknown", 
+        "Unified-Dev Test-User", 
+        "Sreeraam Kondalraj", 
+        "Clara Miller", 
+        "P Mukesh", 
+        "Saumya Vishwari", 
+        "Risheek Chandra", 
+        "Mohit Bansal", 
+        "Soumya Behera", 
+        "Douglas Long"
+      ])
     } catch (error) {
       handleError(error)
       throw error
