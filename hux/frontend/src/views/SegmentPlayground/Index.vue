@@ -245,6 +245,7 @@ import Geography from "./Geography.vue"
 import Overview from "./Overview.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import EmptyPage from "@/components/common/EmptyPage.vue"
+import { v4 as uuidv4 } from "uuid"
 
 export default {
   name: "SegmentPlayground",
@@ -533,7 +534,7 @@ export default {
           ),
           operand: filter.section_aggregator === "ALL",
           conditions: filter.section_filters.map((cond) => ({
-            id: Math.floor(Math.random() * 1024).toString(16),
+            id: uuidv4(),
             attribute: cond.field,
             operator: cond.type === "range" ? "" : cond.type,
             text: cond.type !== "range" ? cond.value : "",

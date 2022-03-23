@@ -20,6 +20,9 @@ from huxunify.api.route.utils import get_db_client
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_health_check
+from huxunifylib.database.delivery_platform_management import (
+    update_pending_delivery_jobs,
+)
 
 # set config variables
 SWAGGER_CONFIG = {
@@ -139,6 +142,13 @@ def create_app() -> Flask:
             trigger="cron",
             hour=0,
             timezone=pytz.timezone("US/Eastern"),
+            args=[get_db_client()],
+        )
+        scheduler.add_job(
+            id="process_pending_delivery_jobs",
+            func=update_pending_delivery_jobs,
+            trigger="cron",
+            minute=api_c.DELIVERY_JOB_CRON,
             args=[get_db_client()],
         )
 

@@ -195,26 +195,32 @@ def get_deliverability_data_performance_metrics(
                 "opens": "$performance_metrics.opens",
                 "clicks": "$performance_metrics.clicks",
                 "bounces": "$performance_metrics.bounces",
+                "hard_bounces": "$performance_metrics.hard_bounces",
                 "unsubscribes": "$performance_metrics.unsubscribes",
                 "complaints": "$performance_metrics.complaints",
+                # TODO change to list of campaign_id indicators when not using
+                # sfmc.
+                "campaign_id": "$performance_metrics.journey_id",
             }
         },
         {
             "$addFields": {
-                "date_domain": {
+                "date_domain_campaign_id": {
                     "end_date": "$end_date",
                     "domain_name": "$domain_name",
+                    "campaign_id": "$campaign_id",
                 }
             }
         },
         {
             "$group": {
-                "_id": "$date_domain",
+                "_id": "$date_domain_campaign_id",
                 "sent": {"$sum": "$sent"},
                 "delivered": {"$sum": "$delivered"},
                 "opens": {"$sum": "$opens"},
                 "clicks": {"$sum": "$clicks"},
                 "bounces": {"$sum": "$bounces"},
+                "hard_bounces": {"$sum": "$hard_bounces"},
                 "unsubscribes": {"$sum": "$unsubscribes"},
                 "complaints": {"$sum": "$complaints"},
             }
@@ -224,11 +230,14 @@ def get_deliverability_data_performance_metrics(
                 "_id": 0,
                 "domain_name": "$_id.domain_name",
                 "end_date": "$_id.end_date",
+                "campaign_id": "$_id.campaign_id",
                 "sent": "$sent",
                 "delivered": "$delivered",
                 "opens": "$opens",
                 "clicks": "$clicks",
                 "bounces": "$bounces",
+                "soft_bounces": {"$subtract": ["$bounces", "$hard_bounces"]},
+                "hard_bounces": "$hard_bounces",
                 "unsubscribes": "$unsubscribes",
                 "complaints": "$complaints",
             }
@@ -239,52 +248,16 @@ def get_deliverability_data_performance_metrics(
                 "deliverability_metrics": {
                     "$addToSet": {
                         "date": "$end_date",
+                        "campaign_id": "$campaign_id",
                         "sent": "$sent",
                         "delivered": "$delivered",
-                        "delivered_rate": {
-                            "$cond": {
-                                "if": {"$eq": ["$sent", 0]},
-                                "then": 0,
-                                "else": {"$divide": ["$delivered", "$sent"]},
-                            }
-                        },
-                        "open_rate": {
-                            "$cond": {
-                                "if": {"$eq": ["$sent", 0]},
-                                "then": 0,
-                                "else": {"$divide": ["$opens", "$sent"]},
-                            }
-                        },
-                        "click_rate": {
-                            "$cond": {
-                                "if": {"$eq": ["$sent", 0]},
-                                "then": 0,
-                                "else": {"$divide": ["$clicks", "$sent"]},
-                            }
-                        },
-                        "unsubscribe_rate": {
-                            "$cond": {
-                                "if": {"$eq": ["$sent", 0]},
-                                "then": 0,
-                                "else": {
-                                    "$divide": ["$unsubscribes", "$sent"]
-                                },
-                            }
-                        },
-                        "complaints_rate": {
-                            "$cond": {
-                                "if": {"$eq": ["$sent", 0]},
-                                "then": 0,
-                                "else": {"$divide": ["$complaints", "$sent"]},
-                            }
-                        },
-                        "bounce_rate": {
-                            "$cond": {
-                                "if": {"$eq": ["$sent", 0]},
-                                "then": 0,
-                                "else": {"$divide": ["$bounces", "$sent"]},
-                            }
-                        },
+                        "soft_bounces": "$soft_bounces",
+                        "hard_bounces": "$hard_bounces",
+                        "bounces": "$bounces",
+                        "opens": "$opens",
+                        "clicks": "$clicks",
+                        "complaints": "$complaints",
+                        "unsubscribes": "$unsubscribes",
                     }
                 },
             }
@@ -332,12 +305,20 @@ def get_deliverability_data_performance_metrics(
                 "$group": {
                     "_id": "$domain_name",
                     "sent": {"$sum": "$deliverability_metrics.sent"},
-                    "open_rate": {"$avg": "$deliverability_metrics.open_rate"},
-                    "click_rate": {
-                        "$avg": "$deliverability_metrics.click_rate"
+                    "soft_bounces": {
+                        "$sum": "$deliverability_metrics.soft_bounces"
                     },
-                    "bounce_rate": {
-                        "$avg": "$deliverability_metrics.bounce_rate"
+                    "hard_bounces": {
+                        "$sum": "$deliverability_metrics.hard_bounces"
+                    },
+                    "bounces": {"$sum": "$deliverability_metrics.bounces"},
+                    "opens": {"$sum": "$deliverability_metrics.opens"},
+                    "clicks": {"$sum": "$deliverability_metrics.clicks"},
+                    "complaints": {
+                        "$sum": "$deliverability_metrics.complaints"
+                    },
+                    "unsubscribes": {
+                        "$sum": "$deliverability_metrics.unsubscribes"
                     },
                 }
             },
@@ -346,12 +327,101 @@ def get_deliverability_data_performance_metrics(
                     "_id": 0,
                     "domain_name": "$_id",
                     "sent": "$sent",
-                    "bounce_rate": "$bounce_rate",
-                    "open_rate": "$open_rate",
-                    "click_rate": "$click_rate",
+                    "bounces": "$bounces",
+                    "hard_bounces": "$hard_bounces",
+                    "soft_bounces": "$soft_bounces",
+                    "opens": "$opens",
+                    "clicks": "$clicks",
+                    "complaints": "$complaints",
+                    "unsubscribes": "$unsubscribes",
                 }
             },
         ]
+
+    try:
+        return list(
+            database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.PERFORMANCE_METRICS_COLLECTION
+            ].aggregate(pipeline)
+        )
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+def get_campaign_aggregated_sent_count(
+    database: MongoClient,
+    domains: list = None,
+    delivery_platforms=None,
+    start_date: datetime = None,
+    end_date: datetime = None,
+) -> Union[list, None]:
+    """Retrieves aggregated sent data based on campaigns at domain level.
+
+    Args:
+        database (MongoClient): A database client.
+        domains (list, Optional): List of domain names to be filtered.
+        delivery_platforms (list, Optional): List of delivery platform names
+            to filter on.
+        start_date (datetime, Optional): Start date to get email deliverability
+            metrics.
+        end_date (datetime, Optional): End date to get email deliverability
+            metrics.
+    Returns:
+        Union[list, None]: Aggregated data for sent.
+    """
+    if delivery_platforms is None:
+        delivery_platforms = [db_c.DELIVERY_PLATFORM_SFMC]
+
+    pipeline = [
+        {"$match": {"delivery_platform_type": {"$in": delivery_platforms}}},
+        {
+            "$addFields": {
+                "domain_journey_id": {
+                    "domain_name": "$performance_metrics.from_addr",
+                    "campaign_id": "$performance_metrics.journey_id",
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$domain_journey_id",
+                "sent": {"$sum": "$performance_metrics.sent"},
+            }
+        },
+        {
+            "$project": {
+                "domain_name": "$_id.domain_name",
+                "campaign_id": "$_id.campaign_id",
+                "sent": "$sent",
+                "_id": 0,
+            }
+        },
+    ]
+    if domains:
+        pipeline.insert(
+            1,
+            {
+                "$match": {
+                    "$or": [
+                        {
+                            "performance_metrics.from_addr": {
+                                "$regex": f".*@{domain}$"
+                            }
+                        }
+                        for domain in domains
+                    ]
+                }
+            },
+        )
+
+    start_end_filter = match_start_end_date_stmt(
+        start_date=start_date, end_date=end_date, date_field=db_c.JOB_END_TIME
+    )
+    if start_end_filter:
+        pipeline.insert(1, start_end_filter)
 
     try:
         return list(

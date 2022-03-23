@@ -92,7 +92,7 @@ const routes = [
   },
   {
     path: "/identity-resolution",
-    name: "IdentityResolution",
+    name: "Identity",
     component: () => import("@/views/IdentityResolution/Index"),
     meta: {
       layout: "app",
@@ -138,7 +138,7 @@ const routes = [
   //#region Customer Insights
   {
     path: "/customers",
-    name: "CustomerProfiles",
+    name: "Customers",
     component: () => import("@/views/CustomerProfiles/Index"),
     meta: {
       layout: "app",
