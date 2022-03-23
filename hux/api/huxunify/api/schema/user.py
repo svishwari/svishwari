@@ -8,7 +8,6 @@ from huxunifylib.database import constants as db_c
 from huxunify.api.schema.utils import validate_object_id
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api import constants as api_c
-import json
 
 
 class Favorites(Schema):
@@ -182,9 +181,3 @@ class RequestedUserSchema(Schema):
     created = DateTimeWithZ(required=True)
     updated = DateTimeWithZ(required=True)
     key = Str(example="ABC-123", required=True)
-
-
-if __name__ == "__main__":
-    print(json.dumps(api_c.ALERT_SAMPLE_RESPONSE))
-    body = UserPreferencesSchema().load(api_c.ALERT_SAMPLE_RESPONSE)
-    print(body)

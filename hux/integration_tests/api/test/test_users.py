@@ -4,8 +4,7 @@ from unittest import TestCase
 import pytest
 import requests
 import huxunifylib.database.constants as db_c
-import logging
-import time
+
 
 class TestUsers(TestCase):
     """User endpoints test class"""
@@ -90,23 +89,21 @@ class TestUsers(TestCase):
 
         user = response.json()
 
-        t = time.time()
-        for id in user["favorites"]["engagements"]:
+        for engagement_id in user["favorites"]["engagements"]:
             requests.delete(
-                f"{pytest.API_URL}/{self.USERS}/{db_c.ENGAGEMENTS}/{id}/favorite",
+                f"{pytest.API_URL}/{self.USERS}/{db_c.ENGAGEMENTS}/{engagement_id}/favorite",
                 headers=pytest.HEADERS,
             )
 
-        for id in user["favorites"]["audiences"]:
+        for audience_id in user["favorites"]["audiences"]:
             requests.delete(
-                f"{pytest.API_URL}/{self.USERS}/{db_c.AUDIENCES}/{id}/favorite",
+                f"{pytest.API_URL}/{self.USERS}/{db_c.AUDIENCES}/{audience_id}/favorite",
                 headers=pytest.HEADERS,
             )
 
-        for id in user["favorites"]["destinations"]:
-            logging.info(f"Removing favorite destination: {id}")
+        for destination_id in user["favorites"]["destinations"]:
             requests.delete(
-                f"{pytest.API_URL}/{self.USERS}/{db_c.DESTINATIONS}/{id}/favorite",
+                f"{pytest.API_URL}/{self.USERS}/{db_c.DESTINATIONS}/{destination_id}/favorite",
                 headers=pytest.HEADERS,
             )
 
