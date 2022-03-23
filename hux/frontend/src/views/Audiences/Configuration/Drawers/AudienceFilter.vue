@@ -94,6 +94,9 @@ export default {
       selectedFavourite: false,
       selectedAudienceWorkedWith: false,
       enableApply: false,
+      pendingFavorite: false,
+      pendingWorkedWith: false,
+      pendingAttributes: [],
     }
   },
 
@@ -131,9 +134,15 @@ export default {
     },
     clear() {
       this.clearFilter()
+      this.pendingFavorite = false
+      this.pendingWorkedWith = false
+      this.pendingAttributes = []
       this.apply()
     },
     apply() {
+      this.pendingFavorite = this.selectedFavourite
+      this.pendingWorkedWith = this.selectedAudienceWorkedWith
+      this.pendingAttributes = [...this.selectedAttributes]
       this.$emit("onSectionAction", {
         selectedAttributes: this.selectedAttributes,
         selectedFavourite: this.selectedFavourite,
@@ -146,6 +155,9 @@ export default {
       this.localDrawer = false
     },
     close() {
+      this.selectedFavourite = this.pendingFavorite
+      this.selectedAudienceWorkedWith = this.pendingWorkedWith
+      this.selectedAttributes = [...this.pendingAttributes]
       this.localDrawer = false
     },
     formatText: formatText,
