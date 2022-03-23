@@ -1,6 +1,7 @@
 """Module for AWS cloud operations"""
 import logging
 import os
+from pathlib import PurePath
 from typing import Tuple
 from enum import Enum
 
@@ -121,7 +122,7 @@ class AWSClient(CloudClient):
             bool: indication that upload was successful.
         """
         bucket = self.config.S3_DATASET_BUCKET
-        object_name = os.path.basename(file_name)
+        object_name = PurePath(file_name).name
 
         # If S3 object_name was not specified, use file_name
 
@@ -163,7 +164,7 @@ class AWSClient(CloudClient):
         """
         bucket = self.config.S3_DATASET_BUCKET
 
-        logging.info("Downloading %s file to %s", file_name, bucket)
+        logging.info("Downloading %s file from %s", file_name, bucket)
         try:
             s3_client = self.get_aws_client(ClientType.S3)
             with open(file_name, "wb") as output_file:
