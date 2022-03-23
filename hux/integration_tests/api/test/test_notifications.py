@@ -11,16 +11,14 @@ from hux.integration_tests.api.test.conftest import Crud
 class TestNotifications(TestCase):
     """Notifications tests class"""
 
+    NOTIFICATIONS = "notifications"
     COLLECTION = db_c.NOTIFICATIONS_COLLECTION
-
-    def setUp(self) -> None:
-        pass
 
     def test_distinct_users(self) -> None:
         """Test GET /notifications/users"""
 
         response = requests.get(
-            f"{pytest.API_URL}/notifications/users",
+            f"{pytest.API_URL}/{self.NOTIFICATIONS}/users",
             headers=pytest.HEADERS,
         )
 
@@ -30,7 +28,7 @@ class TestNotifications(TestCase):
         """Test create a notification"""
 
         response = requests.post(
-            f"{pytest.API_URL}/notifications",
+            f"{pytest.API_URL}/{self.NOTIFICATIONS}",
             json={
                 "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
                 "type": db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -47,7 +45,7 @@ class TestNotifications(TestCase):
         """Test get a notification"""
 
         response = requests.post(
-            f"{pytest.API_URL}/notifications",
+            f"{pytest.API_URL}/{self.NOTIFICATIONS}",
             json={
                 "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
                 "type": db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -61,7 +59,7 @@ class TestNotifications(TestCase):
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
         response = requests.get(
-            f"{pytest.API_URL}/notifications/{notification_id}",
+            f"{pytest.API_URL}/{self.NOTIFICATIONS}/{notification_id}",
             headers=pytest.HEADERS,
         )
 
@@ -72,7 +70,7 @@ class TestNotifications(TestCase):
 
         # create a notification that will be deleted
         response = requests.post(
-            f"{pytest.API_URL}/notifications",
+            f"{pytest.API_URL}/{self.NOTIFICATIONS}",
             json={
                 "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
                 "type": db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -86,7 +84,7 @@ class TestNotifications(TestCase):
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
         response = requests.delete(
-            f"{pytest.API_URL}/notifications/{notification_id}",
+            f"{pytest.API_URL}/{self.NOTIFICATIONS}/{notification_id}",
             headers=pytest.HEADERS,
         )
 
