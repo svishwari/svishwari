@@ -132,45 +132,26 @@ export default {
       for (const [key, value] of Object.entries(data)) {
         switch (key) {
           case "disagree":
-            dataFormatted[0] = {
-              label: key,
-              value: this.$options.filters.Numeric(
-                value.percentage,
-                true,
-                false,
-                false,
-                true
-              ),
-            }
+            dataFormatted[0] = this.progressKeyValue(key, value.percentage)
             break
 
           case "neutral":
-            dataFormatted[1] = {
-              label: key,
-              value: this.$options.filters.Numeric(
-                value.percentage,
-                true,
-                false,
-                false,
-                true
-              ),
-            }
+            dataFormatted[1] = this.progressKeyValue(key, value.percentage)
             break
 
           default:
-            dataFormatted[2] = {
-              label: key,
-              value: this.$options.filters.Numeric(
-                value.percentage,
-                true,
-                false,
-                false,
-                true
-              ),
-            }
+            dataFormatted[2] = this.progressKeyValue(key, value.percentage)
         }
       }
       return dataFormatted
+    },
+    progressKeyValue(key, value) {
+      return {
+        label: key,
+        value: parseInt(
+          this.$options.filters.Numeric(value, true, false, false, true)
+        ),
+      }
     },
   },
 }
