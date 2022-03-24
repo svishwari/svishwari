@@ -225,7 +225,6 @@ export default {
     },
 
     trustidRoute() {
-      console.log("hahahha")
       if (this.$route.name == "HXTrustID") {
         this.items[5].menu[1].icon = "hx-trustid-colored"
       } else {
