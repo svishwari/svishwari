@@ -113,7 +113,6 @@
                     <span>{{ item[header.value] }}</span>
                   </template>
                   <template #hover-content>
-                    <div class="text--body-1 pb-2">Description</div>
                     {{ item[header.value] | Empty("-") }}
                   </template>
                 </tooltip>

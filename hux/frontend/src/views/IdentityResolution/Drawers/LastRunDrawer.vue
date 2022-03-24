@@ -25,7 +25,7 @@
           </v-tab>
         </div>
       </v-tabs>
-      <v-tabs-items v-model="tabOption" class="mt-2">
+      <v-tabs-items v-model="tabOption">
         <v-tab-item v-for="(reportKey, i) in Object.keys(reports)" :key="i">
           <hux-data-table :columns="columns" :data-items="reports[reportKey]">
             <template #row-item="{ item }">
