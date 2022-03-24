@@ -33,7 +33,7 @@
                 <span class="text-body-1 primary--text">{{ data.name }}</span>
               </router-link>
               <v-spacer> </v-spacer>
-              <span>
+              <span class="text-body-1">
                 <size :value="data.size" />
               </span>
             </v-list-item>
