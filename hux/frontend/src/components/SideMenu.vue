@@ -231,7 +231,7 @@ export default {
       } else {
         this.items[5].menu[1].icon = "hx-trustid"
       }
-    }
+    },
   },
 }
 </script>
