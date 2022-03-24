@@ -47,7 +47,7 @@
               <span v-if="audienceData.is_lookalike === true">
                 Edit {{ audienceData.name }}
               </span>
-              <span v-else> Click to edit this audience</span>
+              <span v-else>Edit Audience</span>
             </div>
           </template>
         </tooltip>
