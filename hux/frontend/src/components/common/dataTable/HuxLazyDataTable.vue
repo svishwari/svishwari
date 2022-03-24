@@ -102,7 +102,14 @@
             </v-row>
           </v-alert>
         </template>
+
       </v-data-table>
+          <observer
+          v-if="dataItems.length"
+          @intersect="intersected"
+        ></observer>
+                <v-divider v-if="enableLazyLoad" class="hr-divider"></v-divider>
+        <v-progress-linear v-if="enableLazyLoad" active indeterminate />
     </div>
 
   </div>
@@ -112,10 +119,11 @@
 import Tooltip from "../Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import { formatInnerHTML } from "@/utils"
+import Observer from "@/components/common/Observer"
 
 const ALL = -1
 export default {
-  name: "HuxDataTable",
+  name: "HuxLazyDataTable",
   components: { Tooltip, Icon, Observer },
   props: {
     dataItems: {
@@ -167,6 +175,11 @@ export default {
       required: false,
       default: "Nothing to show here yet.",
     },
+    enableLazyLoad: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -198,6 +211,9 @@ export default {
   methods: {
     clickRow(_, event) {
       event.expand(!event.isExpanded)
+    },
+    intersected() {
+      this.$emit("bottomScrollEvent")
     },
     formatInnerHTML: formatInnerHTML,
   },

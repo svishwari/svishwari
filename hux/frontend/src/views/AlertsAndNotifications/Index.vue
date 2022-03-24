@@ -70,7 +70,7 @@
             sort-column="created"
             sort-desc
             class="big-table"
-            @scrollEvent="intersected"
+            @bottomScrollEvent="intersected"
             :enableLazyLoad="enableLazyLoad"
             view-height="calc(100vh - 230px)"
           >
