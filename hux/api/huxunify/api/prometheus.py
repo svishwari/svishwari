@@ -82,31 +82,22 @@ def monitor_app(flask_app: Flask) -> None:
     )
 
 
-def record_health_status_metric(
-    connection_name: str, connection_health: int
-) -> None:
-    """Updates connection health metric for a connection.
-
-    Args:
-        connection_name (str): name of the connection metric.
-        connection_health (int): value for the health of the connection metric.
-    """
-
-    health_check_metrics.labels(name=connection_name).set(connection_health)
-
-
 class Connections(Enum):
     """Connection health enum"""
 
-    STORAGE_SERVICE = "cloud_storage_service_connection_health"
-    BATCH_SERVICE = "cloud_batch_service_connection_health"
-    SECRET_STORAGE_SERVICE = "cloud_secret_service_connection_health"
-    JIRA = "jira_connection_health"
-    CDM_API = "cdm_api_connection_health"
-    CDM_CONNECTION_SERVICE = "cdm_connection_service_connection_health"
-    OKTA = "okta_connection_health"
+    STORAGE_SERVICE = "hux_unified_cloud_storage_service_connection_health"
+    BATCH_SERVICE = "hux_unified_cloud_batch_service_connection_health"
+    SECRET_STORAGE_SERVICE = (
+        "hux_unified_cloud_secret_service_connection_health"
+    )
+    JIRA = "hux_unified_jira_connection_health"
+    CDM_API = "hux_unified_cdm_api_connection_health"
+    CDM_CONNECTION_SERVICE = (
+        "hux_unified_cdm_connection_service_connection_health"
+    )
+    OKTA = "hux_unified_okta_connection_health"
     DB = "hux_unified_db_connection_health"
-    TECTON = "tecton_connection_health"
+    TECTON = "hux_unified_tecton_connection_health"
 
 
 def record_health_status(connection: Connections) -> object:

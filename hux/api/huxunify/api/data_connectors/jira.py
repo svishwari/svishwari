@@ -11,7 +11,7 @@ from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import record_health_status, Connections
 
 
 class JiraConnection:
@@ -37,6 +37,7 @@ class JiraConnection:
         self.jira_user_email = config.JIRA_USER_EMAIL
 
     @staticmethod
+    @record_health_status(Connections.JIRA)
     def check_jira_connection() -> Tuple[bool, str]:
         """Validates JIRA connection.
 
@@ -55,7 +56,6 @@ class JiraConnection:
                     }
                 },
             )
-            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, True)
             return True, "Jira available"
 
         except JIRAError as jira_error:
@@ -65,7 +65,6 @@ class JiraConnection:
                 jira_error.text,
                 jira_error.status_code,
             )
-            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, False)
             return False, jira_error.text
 
         except AttributeError as attribute_error:
@@ -73,7 +72,6 @@ class JiraConnection:
                 "Could not connect to JIRA %s",
                 getattr(attribute_error, "message", repr(attribute_error)),
             )
-            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, False)
             return (
                 False,
                 getattr(attribute_error, "message", repr(attribute_error)),
@@ -84,7 +82,6 @@ class JiraConnection:
                 "Could not connect to JIRA %s",
                 getattr(exception, "message", repr(exception)),
             )
-            record_health_status_metric(api_c.JIRA_CONNECTION_HEALTH, False)
             return False, getattr(exception, "message", repr(exception))
 
     def create_jira_issue(
