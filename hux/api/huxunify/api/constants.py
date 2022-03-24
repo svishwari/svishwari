@@ -83,6 +83,7 @@ JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
 KEY = "key"
+COMPONENT = "component"
 TASK = "Task"
 TICKET_TYPE_BUG = "Bug"
 
@@ -229,9 +230,11 @@ DAY_OF_MONTH_NAME_LIST = [
 DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
 DESTINATION_CHECK_CRON = "*/15"
+DELIVERY_JOB_CRON = "0 * * * *"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
+UNSET = "unset"
 DIGITAL_ADVERTISING = "digital_advertising"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
@@ -750,6 +753,7 @@ AD_SET_NAME = "ad_set_name"
 DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
+AUDIENCE_DELIVERY_SCHEDULE = "audience_delivery_schedule"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
 MY_ENGAGEMENTS = "my_engagements"
@@ -1638,6 +1642,14 @@ UNSUBSCRIBE_RATE = "unsubscribe_rate"
 COMPLAINTS_RATE = "complaints_rate"
 DELIVERABILITY_METRICS = "deliverability_metrics"
 
+CAMPAIGN_ID = "campaign_id"
+UNSUBSCRIBES = "unsubscribes"
+COMPLAINTS = "complaints"
+SOFT_BOUNCES = "soft_bounces"
+BOUNCES = "bounces"
+HARD_BOUNCES = "hard_bounces"
+OPENS = "opens"
+CLICKS = "clicks"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"

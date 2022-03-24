@@ -63,6 +63,48 @@ class TestNotificationRoutes(RouteTestCase):
             reverse=True,
         )
 
+    def test_create_notification(self):
+        """Test create notification"""
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
+            json={
+                "type": db_c.NOTIFICATION_TYPE_SUCCESS,
+                "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
+                "description": "Successful delivery",
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+
+    def test_create_notification_invalid_category(self):
+        """Test create notification"""
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
+            json={
+                "type": db_c.NOTIFICATION_TYPE_SUCCESS,
+                "category": "invalid_category",
+                "description": "Successful delivery",
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_create_notification_invalid_type(self):
+        """Test create notification"""
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
+            json={
+                "type": "invalid_type",
+                "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
+                "description": "Successful delivery",
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
     def test_get_notifications(self):
         """Test get notifications."""
 

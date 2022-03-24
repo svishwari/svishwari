@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use,too-many-lines,unused-argument
-"""Paths for delivery API"""
+"""Paths for delivery API."""
 import asyncio
 from http import HTTPStatus
 from typing import Tuple
@@ -8,6 +8,7 @@ from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
+
 from huxunifylib.database import (
     constants as db_c,
     delivery_platform_management,
@@ -20,6 +21,7 @@ from huxunifylib.database.engagement_management import (
 )
 from huxunifylib.database.engagement_audience_management import (
     set_engagement_audience_destination_schedule,
+    set_engagement_audience_schedule,
 )
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.orchestration_management import (
@@ -43,6 +45,8 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.destinations import (
     DeliveryScheduleSchema,
 )
+from huxunify.api.schema.engagement import DeliverySchedule
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.courier import (
@@ -180,12 +184,14 @@ class EngagementDeliverDestinationView(SwaggerView):
                 "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
-        database = get_db_client()
         delivery_job_ids = []
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
         ):
-            if [pair[0], pair[1][db_c.OBJECT_ID]] != [
+            if not (
+                audience_id == db_c.ZERO_OBJECT_ID
+                and destination_id == pair[1][db_c.OBJECT_ID]
+            ) and [pair[0], pair[1][db_c.OBJECT_ID]] != [
                 audience_id,
                 destination_id,
             ]:
@@ -203,13 +209,15 @@ class EngagementDeliverDestinationView(SwaggerView):
             user[api_c.USER_NAME],
             ",".join(delivery_job_ids),
         )
+
         # create notification
         create_notification(
             database=database,
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description=(
                 f"Successfully scheduled a delivery of audience "
-                f'"{target_audience[db_c.NAME]}" from engagement '
+                f'"{target_audience[db_c.NAME] if target_audience else ""}"'
+                f" from engagement "
                 f'"{engagement[db_c.NAME]}" to destination '
                 f'"{target_destination[db_c.NAME]}".'
             ),
@@ -1186,4 +1194,150 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
 
         return {
             "message": "Successfully removed the delivery schedule."
+        }, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    delivery_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE}/<audience_id>/{api_c.SCHEDULE}",
+    "EngagementAudienceDeliveryScheduleView",
+)
+class EngagementAudienceDeliveryScheduleView(SwaggerView):
+    """Engagement audience delivery schedule class."""
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input delivery schedule body.",
+            "example": {
+                api_c.SCHEDULE: {
+                    api_c.PERIODICIY: api_c.DAILY,
+                    api_c.EVERY: 1,
+                    api_c.HOUR: 12,
+                    api_c.MINUTE: 15,
+                    api_c.PERIOD: api_c.AM,
+                },
+                api_c.START_DATE: "2022-03-02T00:00:00.000Z",
+                api_c.END_DATE: "2022-04-02T00:00:00.000Z",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Result.",
+            "schema": {
+                "example": {
+                    "message": "Successfully updated delivery schedule."
+                },
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update delivery schedule.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DELIVERY_TAG]
+
+    # pylint: disable=no-self-use
+    # pylint: disable=too-many-return-statements
+    @api_error_handler()
+    @validate_delivery_params
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
+    def post(
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        user: dict,
+    ) -> Tuple[dict, int]:
+        """Sets the delivery schedule for one audience in an engagement.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            user (dict): User object.
+
+        Returns:
+            Tuple[dict, int]: Message indicating delivery schedule updated,
+                HTTP status code.
+        """
+
+        database = get_db_client()
+
+        delivery_schedule = DeliverySchedule().load(
+            request.get_json(), partial=True
+        )
+
+        # delivery_schedule in the nested audience object of engagement needs
+        # to be unset if the request body is empty
+        unset = bool(not delivery_schedule)
+
+        updated_engagement = set_engagement_audience_schedule(
+            database,
+            engagement_id,
+            audience_id,
+            delivery_schedule,
+            user[api_c.USER_NAME],
+            unset,
+        )
+
+        # return NOT_FOUND if no engagement document was updated
+        if updated_engagement is None:
+            logger.warning(
+                "Engagement not found in DB for engagement_id %s.",
+                engagement_id,
+            )
+            return {
+                api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        operation_done = "removed" if unset else "updated"
+        logger.info(
+            "Successfully %s delivery schedule for audience %s in "
+            "engagement %s",
+            operation_done,
+            audience_id,
+            engagement_id,
+        )
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Successfully "{operation_done}" the delivery schedule'
+                f' for audience "{audience_id}"'
+                f' in engagement "{engagement_id}".'
+            ),
+            db_c.NOTIFICATION_CATEGORY_DELIVERY,
+            user[api_c.USER_NAME],
+        )
+
+        return {
+            api_c.MESSAGE: f"Successfully {operation_done} delivery schedule."
         }, HTTPStatus.OK

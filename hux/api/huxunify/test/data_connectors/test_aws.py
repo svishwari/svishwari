@@ -6,9 +6,8 @@ import tempfile
 
 import boto3
 from botocore.exceptions import ClientError
-from bson import ObjectId
 from hypothesis import given, strategies as st, settings
-from moto import mock_s3, mock_ssm, mock_events
+from moto import mock_s3, mock_ssm
 
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.aws import (
@@ -20,10 +19,7 @@ from huxunify.api.data_connectors.aws import (
     check_aws_events,
     get_auth_from_parameter_store,
     set_cloud_watch_rule,
-    put_rule_targets_aws_batch,
     check_aws_connection,
-    CloudWatchState,
-    toggle_cloud_watch_rule,
 )
 from huxunify.api import constants as api_c
 
@@ -187,22 +183,6 @@ class AWSTest(TestCase):
         )
         self.assertIsNone(set_cloud_watch_rule(**rule))
 
-    def test_put_rule_targets_aws_batch(self) -> None:
-        """Test put rule targets aws batch raises exception."""
-        rule = {
-            "rule_name": "TestRule",
-            "batch_params": {},
-            "delivery_job_id": ObjectId(),
-            "role_arn": "dummy_arn",
-            "job_queue": "TestQueue",
-        }
-
-        mock.patch(
-            "huxunify.api.data_connectors.aws.get_aws_client",
-            side_effect=Exception(),
-        )
-        self.assertIsNone(put_rule_targets_aws_batch(**rule))
-
     @mock_s3
     @given(
         user_name=st.text(alphabet=string.ascii_letters),
@@ -342,98 +322,3 @@ class AWSTest(TestCase):
             self.assertFalse(
                 download_file(self.config.S3_DATASET_BUCKET, temp_file.name)
             )
-
-    @mock_events()
-    def test_toggle_cloud_watch_rule_success(self):
-        """Test toggling cloudwatch rule."""
-        input_dict = {
-            "rule_name": "test_rule",
-            "state": CloudWatchState.DISABLE,
-            "ignore_existence": True,
-        }
-
-        events_client = boto3.client(
-            api_c.AWS_EVENTS_NAME,
-            region_name="us-east-1",
-            aws_access_key_id="fake_access_key",
-            aws_secret_access_key="fake_secret_key",
-        )
-
-        events_client.put_rule(
-            Name=input_dict["rule_name"],
-            ScheduleExpression="cron(15 0 * * ? *)",
-            State="ENABLE",
-            Description="testing cloudwatch rules",
-            RoleArn="fake_arn",
-        )
-
-        mock.patch(
-            "huxunify.api.data_connectors.aws.get_aws_client",
-            return_value=events_client,
-        ).start()
-
-        self.assertTrue(toggle_cloud_watch_rule(**input_dict))
-
-    @mock_events()
-    def test_toggle_cloud_watch_rule_resource_not_found(self):
-        """Test toggling cloudwatch rule resulting in resource not found error."""
-        input_dict = {
-            "rule_name": "test_rule",
-            "state": CloudWatchState.DISABLE,
-            "ignore_existence": True,
-        }
-
-        events_client = boto3.client(
-            api_c.AWS_EVENTS_NAME,
-            region_name="us-east-1",
-            aws_access_key_id="fake_access_key",
-            aws_secret_access_key="fake_secret_key",
-        )
-
-        mock.patch(
-            "huxunify.api.data_connectors.aws.get_aws_client",
-            return_value=events_client,
-        ).start()
-
-        self.assertFalse(toggle_cloud_watch_rule(**input_dict))
-
-    @mock_events()
-    def test_toggle_cloud_watch_rule_resource_not_found_raise_error(self):
-        """Test toggling cloudwatch rule resulting in resource not found
-        error which raises error."""
-        input_dict = {
-            "rule_name": "test_rule",
-            "state": CloudWatchState.DISABLE,
-            "ignore_existence": False,
-        }
-
-        events_client = boto3.client(
-            api_c.AWS_EVENTS_NAME,
-            region_name="us-east-1",
-            aws_access_key_id="fake_access_key",
-            aws_secret_access_key="fake_secret_key",
-        )
-
-        mock.patch(
-            "huxunify.api.data_connectors.aws.get_aws_client",
-            return_value=events_client,
-        ).start()
-
-        with self.assertRaises(ClientError):
-            toggle_cloud_watch_rule(**input_dict)
-
-    @mock_events()
-    def test_toggle_cloud_watch_rule_exception(self):
-        """Test toggling cloudwatch rule exception."""
-        input_dict = {
-            "rule_name": "test_rule",
-            "state": CloudWatchState.DISABLE,
-            "ignore_existence": False,
-        }
-
-        mock.patch(
-            "huxunify.api.data_connectors.aws.get_aws_client",
-            side_effect=Exception(),
-        ).start()
-
-        self.assertFalse(toggle_cloud_watch_rule(**input_dict))

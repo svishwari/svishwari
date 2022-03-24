@@ -8,17 +8,21 @@ from datetime import datetime, timedelta, timezone
 
 import pymongo
 from bson import ObjectId
-from flask import Blueprint, request, Response, jsonify
+from flask import Blueprint, request, Response
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
+
+
 from huxunifylib.database import (
     constants as db_c,
     notification_management,
 )
+
 from huxunify.api.schema.notifications import (
     NotificationsSchema,
     NotificationSchema,
+    NotificationPostSchema,
 )
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -26,6 +30,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     requires_access_levels,
 )
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api import constants as api_c
 from huxunify.api.schema.errors import NotFoundError
@@ -43,6 +48,68 @@ def before_request():
     """Protect all of the notifications endpoints."""
 
     pass  # pylint: disable=unnecessary-pass
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"{api_c.NOTIFICATIONS_ENDPOINT}",
+    "CreateNotification",
+)
+class CreateNotification(SwaggerView):
+    """Create Notification Class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Notification body.",
+            "example": {
+                "type": db_c.NOTIFICATION_TYPE_SUCCESS,
+                "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
+                "description": "Audience has been successfully delivered.",
+            },
+        }
+    ]
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "description": "Create Notification.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create the notification.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @api_error_handler()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, user: dict) -> Tuple[Response, int]:
+        """Create a notification.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: message, HTTP status code.
+        """
+        body = NotificationPostSchema().load(request.get_json(), partial=True)
+
+        notification = notification_management.create_notification(
+            database=get_db_client(),
+            notification_type=body["type"],
+            category=body["category"],
+            description=body["description"],
+            username=user[db_c.USER_DISPLAY_NAME],
+        )
+
+        return HuxResponse.CREATED(
+            data=notification, data_schema=NotificationSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -134,7 +201,7 @@ class NotificationsSearch(SwaggerView):
         custom_message={ValueError: {"message": api_c.INVALID_BATCH_PARAMS}}
     )
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[dict, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves notifications.
 
         ---
@@ -145,7 +212,7 @@ class NotificationsSearch(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int] dict of notifications, HTTP status code.
+            Tuple[Response, int] dict of notifications, HTTP status code.
         """
         batch_size = Validation.validate_integer(
             request.args.get(
@@ -177,9 +244,9 @@ class NotificationsSearch(SwaggerView):
             set(db_c.NOTIFICATION_TYPES)
         ):
             logger.error("Invalid Notification Type")
-            return {
-                "message": "Invalid or incomplete arguments received"
-            }, HTTPStatus.BAD_REQUEST
+            return HuxResponse.BAD_REQUEST(
+                "Invalid or incomplete arguments received"
+            )
 
         notification_categories = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
@@ -194,9 +261,9 @@ class NotificationsSearch(SwaggerView):
             notification_categories
         ).issubset(set(db_c.NOTIFICATION_CATEGORIES)):
             logger.error("Invalid Notification Category")
-            return {
-                "message": "Invalid or incomplete arguments received"
-            }, HTTPStatus.BAD_REQUEST
+            return HuxResponse.BAD_REQUEST(
+                "Invalid or incomplete arguments received"
+            )
 
         users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
         if users:
@@ -217,9 +284,9 @@ class NotificationsSearch(SwaggerView):
             )
         ):
             logger.error("Invalid or incomplete arguments received.")
-            return {
-                "message": "Invalid or incomplete arguments received"
-            }, HTTPStatus.BAD_REQUEST
+            return HuxResponse.BAD_REQUEST(
+                "Invalid or incomplete arguments received"
+            )
 
         sort_order = (
             pymongo.ASCENDING
@@ -227,21 +294,19 @@ class NotificationsSearch(SwaggerView):
             else pymongo.DESCENDING
         )
 
-        return (
-            NotificationsSchema().dump(
-                notification_management.get_notifications_batch(
-                    get_db_client(),
-                    batch_size=batch_size,
-                    sort_order=sort_order,
-                    batch_number=batch_number,
-                    notification_types=notification_types,
-                    notification_categories=notification_categories,
-                    users=users,
-                    start_date=start_date,
-                    end_date=end_date,
-                )
+        return HuxResponse.OK(
+            data=notification_management.get_notifications_batch(
+                get_db_client(),
+                batch_size=batch_size,
+                sort_order=sort_order,
+                batch_number=batch_number,
+                notification_types=notification_types,
+                notification_categories=notification_categories,
+                users=users,
+                start_date=start_date,
+                end_date=end_date,
             ),
-            HTTPStatus.OK,
+            data_schema=NotificationsSchema(),
         )
 
 
@@ -351,7 +416,7 @@ class NotificationSearch(SwaggerView):
     # pylint: disable=unused-argument
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, notification_id: str, user: dict) -> Tuple[dict, int]:
+    def get(self, notification_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves notification.
         ---
         security:
@@ -360,7 +425,7 @@ class NotificationSearch(SwaggerView):
             notification_id (str): Notification Id
             user (dict): user object.
         Returns:
-            Tuple[dict, int] dict of notifications, HTTP status code.
+            Tuple[Response, int] dict of notifications, HTTP status code.
         """
         notification_id = ObjectId(notification_id)
         notification = notification_management.get_notification(
@@ -372,13 +437,10 @@ class NotificationSearch(SwaggerView):
                 "Could not find notification with id %s.",
                 notification_id,
             )
-            return {
-                "message": api_c.NOTIFICATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            return HuxResponse.NOT_FOUND(api_c.NOTIFICATION_NOT_FOUND)
 
-        return (
-            NotificationSchema().dump(notification),
-            HTTPStatus.OK,
+        return HuxResponse.OK(
+            data=notification, data_schema=NotificationSchema()
         )
 
 
@@ -418,7 +480,7 @@ class DeleteNotification(SwaggerView):
     @requires_access_levels([api_c.ADMIN_LEVEL])
     def delete(
         self, notification_id: ObjectId, user: dict
-    ) -> Tuple[dict, int]:
+    ) -> Tuple[Response, int]:
         """Deletes a notification by ID.
 
         ---
@@ -430,7 +492,7 @@ class DeleteNotification(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: message, HTTP status code.
+            Tuple[Response, int]: message, HTTP status code.
         """
 
         if notification_management.delete_notification(
@@ -442,12 +504,12 @@ class DeleteNotification(SwaggerView):
                 user[api_c.USER_NAME],
             )
 
-            return {}, HTTPStatus.NO_CONTENT
+            return HuxResponse.NO_CONTENT()
 
         logger.error(
             "Could not delete notification with ID %s.", notification_id
         )
-        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
+        return HuxResponse.BAD_REQUEST(api_c.OPERATION_FAILED)
 
 
 @add_view_to_blueprint(
@@ -469,7 +531,7 @@ class NotificationUsers(SwaggerView):
     # pylint: disable=unused-argument
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[dict, int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves distinct users for notifications.
         ---
         security:
@@ -477,13 +539,10 @@ class NotificationUsers(SwaggerView):
         Args:
             user (dict): user object.
         Returns:
-            Tuple[dict, int] dict of notifications, HTTP status code.
+            Tuple[Response, int] dict of notifications, HTTP status code.
         """
         users = notification_management.get_distinct_notification_users(
             get_db_client()
         )
 
-        return (
-            jsonify(users),
-            HTTPStatus.OK.value,
-        )
+        return HuxResponse.OK(data=users)

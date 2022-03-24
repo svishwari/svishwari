@@ -126,7 +126,7 @@ export default {
         {
           text: "All Customers",
           disabled: false,
-          href: this.$router.resolve({ name: "CustomerProfiles" }).href,
+          href: this.$router.resolve({ name: "Customers" }).href,
           icon: "customer-profiles",
         },
         {
