@@ -148,12 +148,12 @@ export default {
         {
           text: "Attributes",
           value: "filters",
-          width: "25%",
+          width: "20%",
         },
         {
           text: "Last delivery",
           value: "update_time",
-          width: "10%",
+          width: "15%",
         },
       ],
       audienceMenuOptions: [
