@@ -70,9 +70,9 @@
             sort-column="created"
             sort-desc
             class="big-table"
-            @bottomScrollEvent="intersected"
-            :enableLazyLoad="enableLazyLoad"
+            :enable-lazy-load="enableLazyLoad"
             view-height="calc(100vh - 230px)"
+            @bottomScrollEvent="intersected"
           >
             <template #row-item="{ item }">
               <td

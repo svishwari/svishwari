@@ -102,16 +102,11 @@
             </v-row>
           </v-alert>
         </template>
-
       </v-data-table>
-          <observer
-          v-if="dataItems.length"
-          @intersect="intersected"
-        ></observer>
-                <v-divider v-if="enableLazyLoad" class="hr-divider"></v-divider>
-        <v-progress-linear v-if="enableLazyLoad" active indeterminate />
+      <observer v-if="dataItems.length" @intersect="intersected"></observer>
+      <v-divider v-if="enableLazyLoad" class="hr-divider"></v-divider>
+      <v-progress-linear v-if="enableLazyLoad" active indeterminate />
     </div>
-
   </div>
 </template>
 

@@ -17,5 +17,5 @@ export default {
   applications: "/applications",
   clients: "/client-projects",
   emailDeliverability: "/email_deliverability",
-  trustId: "/trust_id"
+  trustId: "/trust_id",
 }

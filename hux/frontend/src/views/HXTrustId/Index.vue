@@ -95,7 +95,7 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
-// import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
+import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 
 export default {
@@ -113,11 +113,13 @@ export default {
       segmentComparisonLoading: false,
       tabOption: 0,
       selectedSegment: null,
+      segmentScores: segmentScores,
     }
   },
   computed: {
     ...mapGetters({
-      segmentScores: "trustId/getSegmentsComparison",
+      // TODO: enable this once API endpoint available
+      // segmentScores: "trustId/getSegmentsComparison",
     }),
     getSegment() {
       return this.segmentScores.map((item) => {

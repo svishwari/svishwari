@@ -864,5 +864,5 @@ export const defineRoutes = (server) => {
   server.get("/email_deliverability/overview", () => emailDeliverabilityOveriew)
 
   // trust id
-    server.get("/trust_id/comparison", () => trustIdComparisonData)
+  server.get("/trust_id/comparison", () => trustIdComparisonData)
 }

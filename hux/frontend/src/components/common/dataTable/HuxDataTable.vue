@@ -104,7 +104,6 @@
         </template>
       </v-data-table>
     </div>
-
   </div>
 </template>
 
@@ -116,7 +115,7 @@ import { formatInnerHTML } from "@/utils"
 const ALL = -1
 export default {
   name: "HuxDataTable",
-  components: { Tooltip, Icon, Observer },
+  components: { Tooltip, Icon },
   props: {
     dataItems: {
       type: Array,
