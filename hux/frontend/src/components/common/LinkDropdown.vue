@@ -1,12 +1,20 @@
 <template>
   <div class="hux-select-wrapper">
-    <label class="hux-select-label mt-6 mr-3"> Segments by </label>
+    <label class="hux-select-label mt-6 mr-3 text-body-1 black--text">
+      Segments by
+    </label>
     <v-select
       v-model="getDefaultSelected"
       class="hux-select"
       item-text="name"
       item-value="last"
       :items="dataItems"
+      :style="`max-width: ${width}px`"
+      :menu-props="{
+        offsetY: true,
+        nudgeBottom: '5px',
+      }"
+      append-icon="mdi-chevron-down"
       @change="onSelect"
     >
     </v-select>
@@ -21,6 +29,11 @@ export default {
       type: Array,
       required: true,
       default: () => [],
+    },
+    width: {
+      type: [String, Number],
+      required: false,
+      default: 141,
     },
   },
   data: () => ({
@@ -59,7 +72,6 @@ export default {
     float: left;
   }
   .hux-select {
-    width: 195px;
     ::v-deep .v-input__control {
       .v-input__slot {
         .v-select__slot {
@@ -79,10 +91,8 @@ export default {
         }
       }
       .v-input__slot:before {
-        border-width: unset !important;
-        border-style: none !important;
+        border-style: dotted !important;
         border-color: var(--v-primary-base) !important;
-        border-bottom-style: dotted !important;
       }
     }
   }

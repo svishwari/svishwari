@@ -86,7 +86,7 @@
                     "
                     v-model="condition.text"
                     class="item-text-field"
-                    :placeholder="getPlaceHolderText(condition)"
+                    placeholder="Enter value"
                     required
                     @blur="triggerSizing(condition)"
                   />
@@ -229,6 +229,7 @@ import TextField from "../../components/common/TextField.vue"
 import Icon from "@/components/common/Icon"
 import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
+import { formatText } from "../../utils"
 import { v4 as uuidv4 } from "uuid"
 
 const NEW_RULE_SECTION = {
@@ -305,12 +306,22 @@ export default {
     lastIndex() {
       return this.rules.length - 1
     },
+
+    updateHistoArr() {
+      return this.notHistogramKeys.concat(
+        Object.keys(this.ruleAttributes.rule_attributes.general.events).map(
+          (x) => x != "name" && formatText(x)
+        )
+      )
+    },
   },
   async mounted() {
     this.sizeHandler()
     this.chartDimensions.height = 26
     await this.getAudiencesRules()
     this.updateSizes()
+
+    this.notHistogramKeys = this.updateHistoArr
   },
 
   created() {
@@ -348,8 +359,7 @@ export default {
 
     isTextORSelect(condition) {
       return condition.attribute
-        ? condition.attribute.type === "text" ||
-            condition.attribute.type === "list"
+        ? ["text", "list"].includes(condition.attribute.type)
         : false
     },
     /**
@@ -418,6 +428,17 @@ export default {
         return Object.keys(this.ruleAttributes.text_operators)
           .map((key) => {
             if (key.includes("equal")) {
+              return {
+                key: key,
+                name: this.ruleAttributes.text_operators[key],
+              }
+            }
+          })
+          .filter(Boolean)
+      } else if (condition.attribute.type === "text") {
+        return Object.keys(this.ruleAttributes.text_operators)
+          .map((key) => {
+            if (key.includes("within_the_last")) {
               return {
                 key: key,
                 name: this.ruleAttributes.text_operators[key],

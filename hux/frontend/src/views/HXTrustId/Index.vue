@@ -82,6 +82,7 @@
       <link-dropdown
         v-if="!segmentComparisonLoading"
         :data-list="getSegment"
+        :width="245"
         @onselect="getSelectedData"
       ></link-dropdown>
     </div>

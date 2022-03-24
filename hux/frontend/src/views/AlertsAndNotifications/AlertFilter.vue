@@ -96,6 +96,10 @@ export default {
         },
         {
           id: 3,
+          title: "Feedback",
+        },
+        {
+          id: 4,
           title: "Informational",
         },
       ],
@@ -106,11 +110,11 @@ export default {
         },
         {
           id: 2,
-          title: "Destinations",
+          title: "Models",
         },
         {
           id: 3,
-          title: "Engagements",
+          title: "Destinations",
         },
         {
           id: 4,
@@ -118,15 +122,11 @@ export default {
         },
         {
           id: 5,
-          title: "Orchestration",
+          title: "Audiences",
         },
         {
           id: 6,
-          title: "Customers",
-        },
-        {
-          id: 7,
-          title: "Models",
+          title: "Engagements",
         },
       ],
       time: [
