@@ -267,7 +267,7 @@ class OrchestrationRouteTest(RouteTestCase):
         """Test the get audience rules route success."""
 
         self.request_mocker.stop()
-        self.request_mocker.post(
+        self.request_mocker.get(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
             json=t_c.MOCKED_CUSTOMER_EVENT_TYPES,
         )
@@ -284,7 +284,7 @@ class OrchestrationRouteTest(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIn("rule_attributes", response.json)
         self.assertIn("general", response.json["rule_attributes"])
-        self.assertIn("events", response.json["rule_attributes"]["events"])
+        self.assertIn("events", response.json["rule_attributes"]["general"])
         self.assertIn("text_operators", response.json)
 
     def test_create_audience_with_destination(self):
