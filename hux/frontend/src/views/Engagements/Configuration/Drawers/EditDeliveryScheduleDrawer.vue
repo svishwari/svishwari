@@ -279,26 +279,17 @@ export default {
     },
 
     cardStyle(schedule, isRecurringFlag) {
-      if (
-        (schedule == "Manual" && !isRecurringFlag) ||
+      return (schedule == "Manual" && !isRecurringFlag) ||
         (schedule == "Recurring" && isRecurringFlag)
-      ) {
-        return (styleIcon = {
-          float: "left",
-          color: "var(--v-primary-lighten6)",
-        })
-      }
-      return { float: "left", color: "var(--v-black-base)" }
+        ? { float: "left", color: "var(--v-primary-lighten6)" }
+        : { float: "left", color: "var(--v-black-base)" }
     },
 
     cardClass(schedule, isRecurringFlag) {
-      if (
-        (schedule == "Manual" && !isRecurringFlag) ||
+      return (schedule == "Manual" && !isRecurringFlag) ||
         (schedule == "Recurring" && isRecurringFlag)
-      ) {
-        return "border-card mb-11"
-      }
-      return "model-desc-card mr-0 mb-11"
+        ? "border-card mb-11"
+        : "model-desc-card mr-0 mb-11"
     },
 
     changeSchedule(val) {
