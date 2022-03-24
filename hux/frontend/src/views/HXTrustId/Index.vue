@@ -190,7 +190,7 @@ export default {
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
     },
-    addSegment(param) {
+    addSegment() {
       this.isFilterToggled = !this.isFilterToggled
     },
   },
