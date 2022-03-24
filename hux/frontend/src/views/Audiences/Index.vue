@@ -204,7 +204,6 @@
                           :key="destination.id"
                           class="mr-1"
                           :type="destination.type"
-                          :size="18"
                         />
                       </template>
                       <template #hover-content>
@@ -234,7 +233,6 @@
                               :key="extraDestination.id"
                               class="mr-4"
                               :type="extraDestination.type"
-                              :size="18"
                             />
                             <span>{{ extraDestination.name }}</span>
                           </div>
