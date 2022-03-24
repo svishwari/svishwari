@@ -495,7 +495,7 @@ class CustomersListview(SwaggerView):
         else:
             Caching.check_and_return_cache(
                 f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
-                get_demographic_by_state,
+                get_customer_profiles,
                 {
                     "token": token_response[0],
                     "batch_size": batch_size,
