@@ -64,7 +64,7 @@
           v-if="notificationData.length > 0 && !loading"
           class="pb-7 pl-3 white"
         >
-          <hux-data-table
+          <hux-lazy-data-table
             :columns="columnDefs"
             :data-items="notificationData"
             sort-column="created"
@@ -126,7 +126,7 @@
                 </div>
               </td>
             </template>
-          </hux-data-table>
+          </hux-lazy-data-table>
         </v-row>
         <v-row
           v-if="notificationData.length == 0 && !loading"
@@ -197,7 +197,7 @@ import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
+import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
@@ -213,7 +213,7 @@ export default {
     PageHeader,
     Breadcrumb,
     huxButton,
-    HuxDataTable,
+    HuxLazyDataTable,
     TimeStamp,
     Tooltip,
     Icon,
