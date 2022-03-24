@@ -33,7 +33,7 @@
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
-        <page-header class="top-bar mb-3" :header-height="71">
+        <page-header class="top-bar mb-3" :header-height="70">
           <template #left>
             <v-btn disabled icon color="black">
               <icon type="search" :size="20" color="black" variant="lighten3" />
@@ -64,12 +64,15 @@
           v-if="notificationData.length > 0 && !loading"
           class="pb-7 pl-3 white"
         >
-          <hux-data-table
+          <hux-lazy-data-table
             :columns="columnDefs"
             :data-items="notificationData"
             sort-column="created"
             sort-desc
             class="big-table"
+            :enable-lazy-load="enableLazyLoad"
+            view-height="calc(100vh - 230px)"
+            @bottomScrollEvent="intersected"
           >
             <template #row-item="{ item }">
               <td
@@ -122,7 +125,7 @@
                 </div>
               </td>
             </template>
-          </hux-data-table>
+          </hux-lazy-data-table>
         </v-row>
         <v-row
           v-if="notificationData.length == 0 && !loading"
@@ -170,12 +173,6 @@
           </error>
         </v-row>
         <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
-        <v-divider v-if="enableLazyLoad" class="hr-divider"></v-divider>
-        <v-progress-linear v-if="enableLazyLoad" active indeterminate />
-        <observer
-          v-if="notifications.length"
-          @intersect="intersected"
-        ></observer>
       </div>
       <div class="ml-auto">
         <alert-filter-drawer
@@ -199,10 +196,9 @@ import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
+import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import Observer from "@/components/common/Observer"
 import Icon from "@/components/common/Icon"
 import AlertFilterDrawer from "./AlertFilter"
 import AlertDrawer from "./Drawer/AlertDrawer"
@@ -216,10 +212,9 @@ export default {
     PageHeader,
     Breadcrumb,
     huxButton,
-    HuxDataTable,
+    HuxLazyDataTable,
     TimeStamp,
     Tooltip,
-    Observer,
     Icon,
     AlertFilterDrawer,
     AlertDrawer,
