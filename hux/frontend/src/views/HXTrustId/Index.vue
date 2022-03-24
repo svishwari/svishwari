@@ -31,8 +31,8 @@
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
+    <overview v-if="!loading" :data="overviewData" />
     <div>
-      <overview />
       <v-tabs v-model="tabOption" class="mt-8">
         <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
         <div class="d-flex">
@@ -123,6 +123,7 @@ export default {
     ...mapGetters({
       // TODO: enable this once API endpoint available
       // segmentScores: "trustId/getSegmentsComparison",
+      overviewData: "trustId/getTrustOverview",
     }),
     getSegment() {
       return this.segmentScores.map((item) => {

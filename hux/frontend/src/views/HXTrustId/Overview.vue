@@ -7,7 +7,7 @@
           <template #label-content>
             <score-card
               title="HX TrustID"
-              :value="overview && overview.trust_id_score"
+              :value="data && data.trust_id_score"
               :width="150"
               :height="90"
             />
@@ -20,7 +20,7 @@
         </tooltip>
       </div>
       <div
-        v-for="(scorecard, index) in overview && overview.attributes"
+        v-for="(scorecard, index) in data && data.attributes"
         :key="index"
         class="mr-4"
       >
@@ -107,7 +107,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
 import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
@@ -120,10 +119,13 @@ export default {
     Tooltip,
     ProgressStackBar,
   },
+  props: {
+    data: {
+      type: Object,
+      required: true,
+    },
+  },
   computed: {
-    ...mapGetters({
-      overview: "trustId/getTrustOverview",
-    }),
     colorCodes() {
       return {
         humanity: { stroke: "primary", variant: "darken6" },
