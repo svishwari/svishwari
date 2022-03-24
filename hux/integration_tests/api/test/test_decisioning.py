@@ -36,7 +36,7 @@ class TestModels(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        self.assertTrue(isinstance(response.json(), dict))
+        self.assertIsInstance(response.json(), dict)
 
         # add the crud object to pytest for cleaning after
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
@@ -51,8 +51,8 @@ class TestModels(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(isinstance(response.json(), list))
-        self.assertTrue(len(response.json()) >= 1)
+        self.assertIsInstance(response.json(), list)
+        self.assertGreaterEqual(len(response.json()), 1)
 
     def test_update_model(self):
         """Test updating an model."""
@@ -75,7 +75,7 @@ class TestModels(TestCase):
 
         # test model created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
+        self.assertIsInstance(create_response.json(), dict)
 
         model_id = create_response.json()["id"]
 
@@ -102,7 +102,7 @@ class TestModels(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, update_response.status_code)
-        self.assertTrue(isinstance(update_response.json(), dict))
+        self.assertIsInstance(update_response.json(), dict)
         self.assertEqual(model_id, update_response.json()["id"])
         self.assertEqual(
             "Propensity to Purchase - Updated", update_response.json()["name"]
@@ -131,7 +131,7 @@ class TestModels(TestCase):
 
         # test model created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
+        self.assertIsInstance(create_response.json(), dict)
 
         model_id = create_response.json()["id"]
 
@@ -165,7 +165,7 @@ class TestModels(TestCase):
 
         # test model created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
+        self.assertIsInstance(create_response.json(), dict)
 
         model_id = create_response.json()["id"]
 
@@ -177,7 +177,7 @@ class TestModels(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
-        self.assertTrue(isinstance(fetch_response.json(), dict))
+        self.assertIsInstance(fetch_response.json(), dict)
         self.assertEqual(model_id, fetch_response.json()["id"])
         self.assertIsNone(fetch_response.json()["training"])
         self.assertIsNone(fetch_response.json()["scoring"])
