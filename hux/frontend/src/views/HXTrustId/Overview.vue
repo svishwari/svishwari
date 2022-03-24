@@ -7,7 +7,7 @@
           <template #label-content>
             <score-card
               title="HX TrustID"
-              :value="overview.trust_id_score"
+              :value="overview && overview.trust_id_score"
               :width="150"
               :height="90"
             />
@@ -20,7 +20,7 @@
         </tooltip>
       </div>
       <div
-        v-for="(scorecard, index) in overview.attributes"
+        v-for="(scorecard, index) in overview && overview.attributes"
         :key="index"
         class="mr-4"
       >
@@ -28,10 +28,12 @@
           <template #label-content>
             <score-card
               :title="formatText(scorecard.attribute_name)"
-              :icon="`hx-trustId-${scorecard.attribute_name}`"
+              icon="hx-trustId-attribute"
               :value="scorecard.attribute_score"
               :width="150"
               :height="90"
+              :stroke="colorCodes[scorecard.attribute_name].stroke"
+              :variant="colorCodes[scorecard.attribute_name].variant"
             >
               <template #progress-bar>
                 <progress-stack-bar
@@ -122,6 +124,14 @@ export default {
     ...mapGetters({
       overview: "hxTrust/getTrustOverview",
     }),
+    colorCodes() {
+      return {
+        humanity: { stroke: "primary", variant: "darken6" },
+        transparency: { stroke: "yellow", variant: "darken1" },
+        capability: { stroke: "primary", variant: "darken5" },
+        reliability: { stroke: "secondary", variant: "lighten2" },
+      }
+    },
   },
   methods: {
     formatText: formatText,

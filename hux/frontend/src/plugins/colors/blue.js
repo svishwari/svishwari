@@ -20,4 +20,7 @@ export default {
   royalBlue: "#0C9DDB",
   pantoneBlue: "#0076A8",
   tealBlue: "#396286",
+  lagoonBlue: "#037E8E",
+  curiousBlue: "#3C89B7",
+  adriaticHaze: "#92C7CD",
 }
