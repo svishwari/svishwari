@@ -372,6 +372,17 @@ export function formatDate(date) {
 }
 
 /**
+ * Returns minimum date for enddate time picker converted to ISO format string
+ *
+ * @returns {string} formatted HTML
+ */
+export function endMinDateGenerator() {
+  return new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60000
+  ).toISOString()
+}
+
+/**
  * Returns local time zone
  *
  * @param {string} date - date to be formatted

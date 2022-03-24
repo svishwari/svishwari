@@ -196,7 +196,14 @@ const actions = {
 
   async deliveryScheduleAudience(_, { engagementId, audienceId, data }) {
     try {
-      await api.engagements.editDeliveryAudience(engagementId, audienceId, data)
+      let response = await api.engagements.editDeliveryAudience(
+        engagementId,
+        audienceId,
+        data
+      )
+      if (response.status == 201) {
+        handleSuccess("Audience was successfuly delivered", response.status)
+      }
     } catch (error) {
       handleError(error)
       throw error

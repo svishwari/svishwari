@@ -32,40 +32,21 @@
             Reset delivery to default
           </span>
         </div>
-        <!-- <hux-schedule-picker v-model="localSchedule" /> -->
         <h5 class="body-1 mb-2">Delivery schedule</h5>
         <div class="d-flex align-items-center">
           <plain-card
-            :icon="!isRecurringFlag ? 'manual-light' : 'manual-dark'"
-            title="Manual"
-            description="Deliver this engagement when you are ready."
-            :style="
-              !isRecurringFlag
-                ? { float: 'left', color: 'var(--v-primary-lighten6)' }
-                : { float: 'left', color: 'var(--v-black-base)' }
-            "
+            v-for="(schedule, index) in ['Manual', 'Recurring']"
+            :key="index"
+            :icon="cardIcon(schedule, isRecurringFlag)"
+            :title="schedule"
+            :description="cardDescription[index]"
+            :style="cardStyle(schedule, isRecurringFlag)"
             title-color="black--text"
             height="175"
             width="276"
             top-adjustment="mt-3"
-            :class="!isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
-            @onClick="changeSchedule(false)"
-          />
-          <plain-card
-            :icon="!isRecurringFlag ? 'recurring-dark' : 'recurring-light'"
-            title="Recurring"
-            description="Deliver this engagement during a chosen timeframe."
-            :style="
-              isRecurringFlag
-                ? { float: 'left', color: 'var(--v-primary-lighten6)' }
-                : { float: 'left', color: 'var(--v-black-base)' }
-            "
-            title-color="black--text"
-            height="175"
-            width="276"
-            top-adjustment="mt-3"
-            :class="isRecurringFlag ? 'border-card' : 'model-desc-card mr-0'"
-            @onClick="changeSchedule(true)"
+            :class="cardClass(schedule, isRecurringFlag)"
+            @onClick="changeSchedule(schedule)"
           />
         </div>
         <div
@@ -165,7 +146,7 @@ import PlainCard from "@/components/common/Cards/PlainCard.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
-import { deliverySchedule } from "@/utils"
+import { deliverySchedule, endMinDateGenerator } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
 import { mapActions } from "vuex"
 
@@ -216,13 +197,18 @@ export default {
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
       disableEndDate: true,
-      endMinDate: new Date(
-        new Date().getTime() - new Date().getTimezoneOffset() * 60000
-      ).toISOString(),
+      endMinDate: endMinDateGenerator(),
     }
   },
 
   computed: {
+    cardDescription() {
+      return [
+        "Deliver this engagement when you are ready.",
+        "Deliver this engagement during a chosen timeframe.",
+      ]
+    },
+
     scheduleConfig() {
       const recurringConfig = {}
       recurringConfig["every"] = this.localSchedule.every
@@ -279,16 +265,49 @@ export default {
     ...mapActions({
       deliveryScheduleAudience: "engagements/deliveryScheduleAudience",
     }),
+    cardIcon(schedule, isRecurringFlag) {
+      let colorIcon = ""
+      if (
+        (schedule == "Manual" && !isRecurringFlag) ||
+        (schedule == "Recurring" && isRecurringFlag)
+      ) {
+        colorIcon = "-light"
+      } else {
+        colorIcon = "-dark"
+      }
+      return schedule.charAt(0).toLowerCase() + schedule.slice(1) + colorIcon
+    },
+
+    cardStyle(schedule, isRecurringFlag) {
+      if (
+        (schedule == "Manual" && !isRecurringFlag) ||
+        (schedule == "Recurring" && isRecurringFlag)
+      ) {
+        return (styleIcon = {
+          float: "left",
+          color: "var(--v-primary-lighten6)",
+        })
+      }
+      return { float: "left", color: "var(--v-black-base)" }
+    },
+
+    cardClass(schedule, isRecurringFlag) {
+      if (
+        (schedule == "Manual" && !isRecurringFlag) ||
+        (schedule == "Recurring" && isRecurringFlag)
+      ) {
+        return "border-card mb-11"
+      }
+      return "model-desc-card mr-0 mb-11"
+    },
 
     changeSchedule(val) {
-      this.isRecurringFlag = val
+      this.isRecurringFlag = val == "Recurring"
       if (this.value.delivery_schedule) {
         this.selectedStartDate = "Select date"
         this.selectedEndDate = "Select date"
         this.disableEndDate = true
-        this.endMinDate = new Date(
-          new Date().getTime() - new Date().getTimezoneOffset() * 60000
-        ).toISOString()
+        this.endMinDate = endMinDateGenerator()
       }
     },
 
@@ -359,13 +378,6 @@ export default {
   }
   .delivery-schedule {
     margin-left: auto;
-    .icon-right {
-      transform: scale(1.5);
-      margin-left: 12px;
-      margin-right: 12px;
-      margin-top: -30px;
-      color: var(--v-black-lighten3) !important;
-    }
     ::v-deep .edit-schedule-wrapper {
       .d-flex:nth-child(1) {
         .pr-2:nth-child(1) {
@@ -396,7 +408,7 @@ export default {
           }
         }
         .pr-2:nth-child(2) {
-          margin-right: 2px !important;
+          margin-right: 10px !important;
         }
       }
     }

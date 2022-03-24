@@ -400,7 +400,12 @@ export const defineRoutes = (server) => {
   )
 
   server.post("/engagements/:id/audience/:audienceId/schedule", () => {
-    return { message: "Successfully updated delivery schedule" }
+    const code = 201
+    const headers = {}
+    const body = {
+      message: "Successfully updated delivery schedule",
+    }
+    return new Response(code, headers, body)
   })
 
   server.post(
