@@ -28,6 +28,7 @@ import domainData from "@/api/mock/fixtures/domainLineData.js"
 import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 import runDurationData from "@/api/mock/fixtures/runDurationData.js"
 import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
+import trustIdComparisonData from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export const defineRoutes = (server) => {
   // Users
@@ -863,4 +864,7 @@ export const defineRoutes = (server) => {
   server.get("/email_deliverability/domains", () => domainData)
 
   server.get("/email_deliverability/overview", () => emailDeliverabilityOveriew)
+
+  // trust id
+  server.get("/trust_id/comparison", () => trustIdComparisonData)
 }

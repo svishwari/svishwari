@@ -122,7 +122,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      overview: "hxTrust/getTrustOverview",
+      overview: "trustId/getTrustOverview",
     }),
     colorCodes() {
       return {

@@ -483,4 +483,9 @@ client["emailDeliverability"].getOverview = () => {
   return http.get("/email_deliverability/overview")
 }
 
+//#region trustId
+client["trustId"].getComparison = () => {
+  return http.get("/trust_id/comparison")
+}
+
 export default client

@@ -31,67 +31,67 @@
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
-    <template>
+    <div>
       <overview />
-      <div>
-        <v-tabs v-model="tabOption" class="mt-6">
-          <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
-          <div class="d-flex">
-            <v-tab
-              key="comparison"
-              class="pa-2 mr-3 text-h3"
-              color
-              data-e2e="comparison-tab"
-            >
-              Comparison
-            </v-tab>
-            <v-tab key="attributes" class="text-h3" data-e2e="attributes-tab">
-              Attributes
-            </v-tab>
-          </div>
-        </v-tabs>
-        <v-tabs-items v-model="tabOption" class="mt-2 tabs-item">
-          <v-tab-item key="comparison" class="tab-item">
-            <v-row>
-              <v-col md="12">
-                <v-card
-                  class="mt-3 rounded-lg box-shadow-5 tab-card-1"
-                  height="365"
-                >
-                  <v-progress-linear
-                    v-if="loading"
-                    :active="loading"
-                    :indeterminate="loading"
-                  />
-                  <v-card-title class="pb-2 pl-6 pt-5">
-                    <span class="d-flex">
-                      <h3 class="text-h3">HX TrustID scores across segments</h3>
-                    </span>
-                  </v-card-title>
-                  <trust-comparison-chart
-                    :segment-scores="segmentScores"
-                    data-e2e="trust-comparison-chart"
-                  />
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-tab-item>
-          <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
-        </v-tabs-items>
-      </div>
-      <div>
-        <link-dropdown
-          :data-list="getSegment"
-          :width="245"
-          @onselect="getSelectedData"
-        ></link-dropdown>
-      </div>
-    </template>
+      <v-tabs v-model="tabOption" class="mt-8">
+        <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
+        <div class="d-flex">
+          <v-tab
+            key="comparison"
+            class="pa-2 mr-3 text-h3"
+            color
+            data-e2e="comparison-tab"
+          >
+            Comparison
+          </v-tab>
+          <v-tab key="attributes" class="text-h3" data-e2e="attributes-tab">
+            Attributes
+          </v-tab>
+        </div>
+      </v-tabs>
+      <v-tabs-items v-model="tabOption" class="mt-2 tabs-item">
+        <v-tab-item key="comparison" class="tab-item">
+          <v-row>
+            <v-col md="12">
+              <v-card
+                class="mt-3 rounded-lg box-shadow-5 tab-card-1"
+                height="365"
+              >
+                <v-progress-linear
+                  v-if="segmentComparisonLoading"
+                  :active="segmentComparisonLoading"
+                  :indeterminate="segmentComparisonLoading"
+                />
+                <v-card-title class="pb-2 pl-6 pt-5">
+                  <span class="d-flex">
+                    <h3 class="text-h3">HX TrustID scores across segments</h3>
+                  </span>
+                </v-card-title>
+                <trust-comparison-chart
+                  v-if="!segmentComparisonLoading"
+                  :segment-scores="segmentScores"
+                  data-e2e="trust-comparison-chart"
+                />
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-tab-item>
+        <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
+      </v-tabs-items>
+    </div>
+    <div>
+      <link-dropdown
+        v-if="!segmentComparisonLoading"
+        :data-list="getSegment"
+        :width="245"
+        @onselect="getSelectedData"
+      ></link-dropdown>
+    </div>
   </page>
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 import Overview from "./Overview.vue"
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import LinkDropdown from "@/components/common/LinkDropdown.vue"
@@ -113,12 +113,17 @@ export default {
   data() {
     return {
       loading: false,
+      segmentComparisonLoading: false,
       tabOption: 0,
-      segmentScores: segmentScores,
       selectedSegment: null,
+      segmentScores: segmentScores,
     }
   },
   computed: {
+    ...mapGetters({
+      // TODO: enable this once API endpoint available
+      // segmentScores: "trustId/getSegmentsComparison",
+    }),
     getSegment() {
       return this.segmentScores.map((item) => {
         return item.segment_filter
@@ -127,15 +132,19 @@ export default {
   },
   async mounted() {
     this.loading = true
+    this.segmentComparisonLoading = true
     try {
       await this.getOverview()
+      await this.getTrustIdComparison()
     } finally {
       this.loading = false
+      this.segmentComparisonLoading = false
     }
   },
   methods: {
     ...mapActions({
-      getOverview: "hxTrust/getTrustIdOverview",
+      getOverview: "trustId/getTrustIdOverview",
+      getTrustIdComparison: "trustId/getTrustIdComparison",
     }),
     getSelectedData(value) {
       this.selectedSegment = value

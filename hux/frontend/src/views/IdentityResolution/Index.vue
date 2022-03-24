@@ -119,7 +119,7 @@
             </v-slide-group>
           </div>
 
-          <v-row class="mt-0 mb-1" :class="{ 'mr-4': isFilterToggled }">
+          <v-row class="mt-0" :class="{ 'mr-4': isFilterToggled }">
             <v-col>
               <v-card
                 class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
@@ -213,7 +213,7 @@
             </v-col>
           </v-row>
 
-          <v-row :class="{ 'mr-4': isFilterToggled }">
+          <v-row class="mt-0" :class="{ 'mr-4': isFilterToggled }">
             <v-col>
               <data-feeds
                 :data="dataFeeds"
