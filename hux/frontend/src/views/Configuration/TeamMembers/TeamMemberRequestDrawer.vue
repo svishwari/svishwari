@@ -208,12 +208,12 @@ export default {
           type: "admin",
         },
         {
-          name: "View-only",
-          type: "viewer",
-        },
-        {
           name: "Edit",
           type: "editor",
+        },
+        {
+          name: "View-only",
+          type: "viewer",
         },
       ],
       firstName: "",
