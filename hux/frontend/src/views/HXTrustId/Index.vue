@@ -191,7 +191,6 @@ export default {
       this.isFilterToggled = !this.isFilterToggled
     },
     addSegment(param) {
-      console.log("param", param)
       this.isFilterToggled = !this.isFilterToggled
     },
   },
