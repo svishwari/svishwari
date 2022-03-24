@@ -113,7 +113,9 @@
             ref="filters"
             v-model="isFilterToggled"
             view-height="calc(100vh - 180px)"
-            :segment-data="segmentData"
+            :segment-data="addSegmentData"
+            :segment-length="segmentLength"
+            @onSectionAction="addSegment"
           />
         </div>
       </div>
@@ -142,7 +144,6 @@ export default {
     TrustComparisonChart,
     HuxIcon,
     AddSegmentDrawer,
-    addSegmentData
   },
   data() {
     return {
@@ -151,7 +152,8 @@ export default {
       segmentScores: segmentScores,
       selectedSegment: null,
       isFilterToggled: false,
-      segmentData: addSegmentData
+      segmentLength: 1,
+      addSegmentData: addSegmentData,
     }
   },
   computed: {
@@ -166,6 +168,10 @@ export default {
       this.selectedSegment = value
     },
     filterToggle() {
+      this.isFilterToggled = !this.isFilterToggled
+    },
+    addSegment(param) {
+      console.log("param", param)
       this.isFilterToggled = !this.isFilterToggled
     },
   },

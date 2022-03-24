@@ -10,11 +10,11 @@
       <div class="wrapper">
         <div class="header header-height-fix">
           <slot name="header">
-            <h2 class="text-h2" v-if="headerName">
+            <h2 v-if="headerName" class="text-h2">
               {{ headerName }}
             </h2>
 
-            <h2 class="text-h2" v-else>
+            <h2 v-else class="text-h2">
               Filter
               <span v-if="count">({{ count }})</span>
             </h2>
@@ -136,7 +136,7 @@ export default defineComponent({
       type: String,
       required: false,
       default: "157",
-    }
+    },
   },
 
   computed: {

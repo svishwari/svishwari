@@ -1,12 +1,13 @@
 <template>
   <hux-filters-drawer
     :is-toggled="localDrawer"
-    headerName="Add segment"
+    header-name="Add segment"
+    transition="scale-transition"
     :count="1"
     content-height="300px"
-    submitButtonWidth="79"
-    submitButton="Add"
-    :style="{ height: viewHeight }"
+    submit-button-width="79"
+    submit-button="Add"
+    :style="{ transition: '0.5s', height: viewHeight }"
     @clear="clear"
     @apply="apply"
     @close="close"
@@ -15,25 +16,25 @@
       <hux-filter-panels :expanded="selectedAttributes.length > 0 ? [0] : []">
         <div class="checkboxFavorite">
           <text-field
+            v-model="segmentName"
             class="mt-4 ml-5 mb-n3 input-box-Field"
             label-text="Segment name"
             placeholder="Segment"
-            :rules="lookalikeNameRules"
             required
           />
         </div>
-        <v-checkbox
-          v-model="selectedFavourite"
-          color="primary lighten-6"
-          class="text--base-1 px-5 withoutExpansion checkboxFavorite"
-          :label="'Households with children under 18'"
-        ></v-checkbox>
-        <v-checkbox
-          v-model="selectedAudienceWorkedWith"
-          color="primary lighten-6"
-          class="text--base-1 px-5 withoutExpansion checkboxFavorite"
-          :label="'Households with seniors over 65'"
-        ></v-checkbox>
+        <span v-for="(list, index) in segmentData" :key="index">
+          <v-checkbox
+            v-if="
+              list.type === 'households_with_children_under_18' ||
+              list.type === 'households_with_seniors_over_65'
+            "
+            v-model="segmentDataObj[list.type + '#' + list.description]"
+            color="primary lighten-6"
+            class="text--base-1 px-5 withoutExpansion checkboxFavorite"
+            :label="list.description"
+          ></v-checkbox>
+        </span>
         <hux-filter-panels>
           <hux-filter-panel
             v-for="(data, ind) in filterData"
@@ -43,7 +44,7 @@
             <v-checkbox
               v-for="(dataVal, indx) in data.values"
               :key="indx"
-              v-model="segementDataObj[data.type]"
+              v-model="segmentDataObj[data.type + '#' + data.description]"
               multiple
               color="primary lighten-6"
               class="text--base-1"
@@ -61,7 +62,6 @@
 import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
 import HuxFilterPanels from "@/components/common/FilterPanels"
 import HuxFilterPanel from "@/components/common/FilterPanel"
-import { formatText } from "@/utils.js"
 import TextField from "@/components/common/TextField"
 
 export default {
@@ -85,19 +85,22 @@ export default {
     },
     segmentData: {
       type: Array,
-      required: true,
-      default: false,
+      required: false,
+      default: () => [],
+    },
+    segmentLength: {
+      type: Number,
+      required: false,
+      default: 1,
     },
   },
   data() {
     return {
       localDrawer: this.value,
       selectedAttributes: [],
-      lookalikeNameRules: "",
-      selectedFavourite: false,
-      selectedAudienceWorkedWith: false,
       enableApply: false,
-      segementDataObj: {},
+      segmentName: "Segment" + " " + (this.segmentLength + 1),
+      segmentDataObj: {},
     }
   },
 
@@ -106,7 +109,7 @@ export default {
       return this.segmentData.filter(
         (element) =>
           element.type != "households_with_children_under_18" &&
-          element.type != "households_with_children_above_18"
+          element.type != "households_with_seniors_over_65"
       )
     },
   },
@@ -119,44 +122,19 @@ export default {
     },
   },
   methods: {
-    // getTime(value) {
-    //   let today_date = new Date()
-    //   return new Date(
-    //     today_date.getFullYear(),
-    //     today_date.getMonth(),
-    //     today_date.getDate() - value
-    //   )
-    // },
-    clearFilter() {
-      this.selectedAttributes = []
-      this.selectedFavourite = false
-      this.selectedAudienceWorkedWith = false
-    },
     clear() {
-      this.enableApply = true
-      this.clearFilter()
-    },
-    clearAndReload() {
-      this.enableApply = false
-      this.clearFilter()
-      this.apply()
+      this.segmentDataObj = {}
     },
     apply() {
       this.$emit("onSectionAction", {
-        selectedAttributes: this.selectedAttributes,
-        selectedFavourite: this.selectedFavourite,
-        selectedAudienceWorkedWith: this.selectedAudienceWorkedWith,
-        filterApplied: this.filterLength,
+        segmentName: this.segmentName,
+        segmentDataObj: this.segmentDataObj,
       })
     },
-    cancel() {
-      this.clearFilter()
-      this.localDrawer = false
-    },
     close() {
+      this.segmentDataObj = {}
       this.localDrawer = false
     },
-    formatText: formatText,
   },
 }
 </script>
