@@ -58,9 +58,9 @@
                 height="365"
               >
                 <v-progress-linear
-                  v-if="loading"
-                  :active="loading"
-                  :indeterminate="loading"
+                  v-if="segmentComparisonLoading"
+                  :active="segmentComparisonLoading"
+                  :indeterminate="segmentComparisonLoading"
                 />
                 <v-card-title class="pb-2 pl-6 pt-5">
                   <span class="d-flex">
@@ -68,6 +68,7 @@
                   </span>
                 </v-card-title>
                 <trust-comparison-chart
+                  v-if="!segmentComparisonLoading"
                   :segment-scores="segmentScores"
                   data-e2e="trust-comparison-chart"
                 />
@@ -80,6 +81,7 @@
     </div>
     <div>
       <link-dropdown
+        v-if="!segmentComparisonLoading"
         :data-list="getSegment"
         :width="245"
         @onselect="getSelectedData"
@@ -89,6 +91,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
@@ -108,19 +111,35 @@ export default {
   data() {
     return {
       loading: false,
+      segmentComparisonLoading: false,
       tabOption: 0,
-      segmentScores: segmentScores,
       selectedSegment: null,
+      segmentScores: segmentScores,
     }
   },
   computed: {
+    ...mapGetters({
+      // TODO: enable this once API endpoint available
+      // segmentScores: "trustId/getSegmentsComparison",
+    }),
     getSegment() {
       return this.segmentScores.map((item) => {
         return item.segment_filter
       })
     },
   },
+  async mounted() {
+    this.segmentComparisonLoading = true
+    try {
+      await this.getTrustIdComparison()
+    } finally {
+      this.segmentComparisonLoading = false
+    }
+  },
   methods: {
+    ...mapActions({
+      getTrustIdComparison: "trustId/getTrustIdComparison",
+    }),
     getSelectedData(value) {
       this.selectedSegment = value
     },

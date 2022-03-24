@@ -77,7 +77,7 @@
                 size="large"
                 is-custom-icon
                 class="ma-2 font-weight-regular no-shadow mr-0 caption"
-                is-tilehux
+                is-tile
                 :is-disabled="isEmptyError"
                 height="40"
               >

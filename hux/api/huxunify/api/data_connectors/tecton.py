@@ -25,9 +25,7 @@ from huxunify.api.schema.model import (
     ModelDriftSchema,
     ModelLiftSchema,
 )
-from huxunify.api.prometheus import (
-    record_health_status_metric,
-)
+from huxunify.api.prometheus import record_health_status, Connections
 
 
 class TectonService:
@@ -93,6 +91,7 @@ class Tecton:
         self.headers: str = config.TECTON_API_HEADERS
         self.feature_service: TectonService = TectonService
 
+    @record_health_status(Connections.TECTON)
     def check_tecton_connection(self) -> Tuple[bool, str]:
         """Validate the tecton connection in the health check.
 
@@ -116,10 +115,6 @@ class Tecton:
                 ),
                 headers=self.headers,
             )
-
-            record_health_status_metric(
-                api_c.TECTON_CONNECTION_HEALTH, response.status_code == 200
-            )
             if response.status_code == 200:
                 return True, "Tecton available."
             return (
@@ -129,7 +124,6 @@ class Tecton:
 
         except Exception as exception:  # pylint: disable=broad-except
             # report the generic error message
-            record_health_status_metric(api_c.TECTON_CONNECTION_HEALTH, False)
             return False, getattr(exception, "message", repr(exception))
 
     @staticmethod

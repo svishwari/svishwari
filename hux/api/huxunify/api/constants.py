@@ -1187,26 +1187,6 @@ DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
 
-# health check prometheus metric constants
-MONGO_CONNECTION_HEALTH = "mongo_connection_health"
-TECTON_CONNECTION_HEALTH = "tecton_connection_health"
-OKTA_CONNECTION_HEALTH = "okta_connection_health"
-CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
-CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
-    "cdm_connection_service_connection_health"
-)
-JIRA_CONNECTION_HEALTH = "jira_connection_health"
-
-# AWS health metrics constants
-AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
-AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
-AWS_S3_CONNECTION_HEALTH = "aws_s3_connection_health"
-AWS_EVENTS_CONNECTION_HEALTH = "aws_events_connection_health"
-
-# AZURE health metrics constants
-AZURE_BATCH_CONNECTION_HEALTH = "azure_batch_connection_health"
-AZURE_BLOB_CONNECTION_HEALTH = "azure_blob_connection_health"
-
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
