@@ -652,7 +652,7 @@ INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 BSON_INVALID_ID = (
     lambda invalid_id: f"'{invalid_id}' is not a valid ObjectId, it must be a "
-                       f"12-byte input or a 24-character hex string"
+    f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
 FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE = (
@@ -1243,7 +1243,7 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
         CURRENT_VERSION: "22.8.32",
     },
     DESCRIPTION: "Predicts the propensity of a customer to make a purchase "
-                 "after receiving an email.",
+    "after receiving an email.",
     MODEL_TYPE: "purchase",
 }
 
@@ -1273,7 +1273,7 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Propensity to Click",
         DESCRIPTION: "Propensity for a customer to click "
-                     "on a link in an email.",
+        "on a link in an email.",
         ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1282,7 +1282,7 @@ MODELS_STUB = [
         TYPE: "Unknown",
         NAME: "Email Content Optimization",
         DESCRIPTION: "Alter email content to optimize "
-                     "email campaign performance.",
+        "email campaign performance.",
         ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1291,7 +1291,7 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Capability Propensity",
         DESCRIPTION: "Propensity for a customer to have positive,"
-                     " negative, or neutral capability score.",
+        " negative, or neutral capability score.",
         ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1300,7 +1300,7 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Trust Propensity",
         DESCRIPTION: "Propensity for a customer to have positive,"
-                     " negative, or neutral trust score.",
+        " negative, or neutral trust score.",
         ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1309,7 +1309,7 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Humanity Propensity",
         DESCRIPTION: "Propensity for a customer to have positive,"
-                     " negative, or neutral humanity score.",
+        " negative, or neutral humanity score.",
         ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1318,7 +1318,7 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Reliability Propensity",
         DESCRIPTION: "Propensity for a customer to have positive,"
-                     " negative, or neutral reliability score.",
+        " negative, or neutral reliability score.",
         ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1327,7 +1327,7 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Transparency Propensity",
         DESCRIPTION: "Propensity for a customer to have positive,"
-                     " negative, or neutral transparency score.",
+        " negative, or neutral transparency score.",
         ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1336,7 +1336,7 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Churn",
         DESCRIPTION: "Propensity for a customer to leave a service "
-                     "over a defined time range.",
+        "over a defined time range.",
         ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1345,7 +1345,7 @@ MODELS_STUB = [
         TYPE: "Regression",
         NAME: "Predicted Sales Per Customer",
         DESCRIPTION: "Predicting sales for a customer over a "
-                     "defined time range.",
+        "defined time range.",
         ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1354,7 +1354,7 @@ MODELS_STUB = [
         TYPE: "Regression",
         NAME: "Predicted Sales Per Store",
         DESCRIPTION: "Predicting sales for a store over a "
-                     "defined time range.",
+        "defined time range.",
         ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1363,7 +1363,7 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Propensity to Purchase Product Category",
         DESCRIPTION: "Propensity for a customer to make a web purchase"
-                     " in a particular product category.",
+        " in a particular product category.",
         ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1372,7 +1372,7 @@ MODELS_STUB = [
         TYPE: "Classification",
         NAME: "Propensity to Visit Product Category",
         DESCRIPTION: "Propensity for a customer to make a web visit"
-                     " in a particular product category.",
+        " in a particular product category.",
         ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1583,7 +1583,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
             {
                 "status": random.choice(["Success", "Failed"]),
                 "timestamp": datetime.datetime.now()
-                             - datetime.timedelta(days=x),
+                - datetime.timedelta(days=x),
                 "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
@@ -1599,7 +1599,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
             {
                 "status": random.choice(["Success", "Failed"]),
                 "timestamp": datetime.datetime.now()
-                             - datetime.timedelta(days=x),
+                - datetime.timedelta(days=x),
                 "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
