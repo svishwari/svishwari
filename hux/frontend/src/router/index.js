@@ -71,7 +71,7 @@ const routes = [
   },
   //#region Data Management
   {
-    path: "/datasources/:id",
+    path: "/data-sources/:id",
     name: "DataSourceListing",
     component: () => import("@/views/DataSources/Listing.vue"),
     meta: {
@@ -81,7 +81,7 @@ const routes = [
     },
   },
   {
-    path: "/datasources/:id/datafeeds/:name",
+    path: "/data-sources/:id/datafeeds/:name",
     name: "DataSourceFeedsListing",
     component: () => import("@/views/DataSources/DataFeedsListing.vue"),
     meta: {

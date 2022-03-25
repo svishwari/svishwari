@@ -205,7 +205,11 @@ export default {
 
   methods: {
     navigate(item) {
-      if (this.prevItem && this.prevItem.defaultState) {
+      if (
+        this.prevItem &&
+        this.prevItem.defaultState &&
+        this.prevItem.link.name != item.link.name
+      ) {
         this.$store.replaceState({
           ...this.$store.state,
           [this.prevItem.link.name.charAt(0).toLowerCase() +

@@ -574,6 +574,16 @@ MOCKED_GENDER_SPENDING_BY_DAY = {
     ],
 }
 
+
+MOCKED_CUSTOMER_EVENT_TYPES = {
+    "code": 200,
+    "body": [
+        {"type": "viewed_checkout", "label": "Viewed checkout"},
+        {"type": "traits_analysed", "label": "Trait"},
+        {"type": "sales_made", "label": "Sale"},
+    ],
+}
+
 MOCKED_MODEL_PERFORMANCE_LTV = {
     "results": [
         {
