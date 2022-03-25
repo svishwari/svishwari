@@ -31,6 +31,7 @@
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
+    <overview v-if="!loading" :data="overviewData" />
     <div>
       <v-tabs v-model="tabOption" class="mt-8">
         <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
@@ -91,16 +92,18 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import Overview from "./Overview.vue"
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
-import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
+import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export default {
   name: "HXTrustID",
   components: {
+    Overview,
     Breadcrumb,
     LinkDropdown,
     Page,
@@ -120,6 +123,7 @@ export default {
     ...mapGetters({
       // TODO: enable this once API endpoint available
       // segmentScores: "trustId/getSegmentsComparison",
+      overviewData: "trustId/getTrustOverview",
     }),
     getSegment() {
       return this.segmentScores.map((item) => {
@@ -128,15 +132,19 @@ export default {
     },
   },
   async mounted() {
+    this.loading = true
     this.segmentComparisonLoading = true
     try {
+      await this.getOverview()
       await this.getTrustIdComparison()
     } finally {
+      this.loading = false
       this.segmentComparisonLoading = false
     }
   },
   methods: {
     ...mapActions({
+      getOverview: "trustId/getTrustIdOverview",
       getTrustIdComparison: "trustId/getTrustIdComparison",
     }),
     getSelectedData(value) {
@@ -147,32 +155,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.hx-trust-id-wrapper {
-  ::v-deep .v-breadcrumbs {
-    li {
-      font-family: Open Sans Light;
-      font-size: 28px;
-      font-style: normal;
-      font-weight: 400 !important;
-      line-height: 40px;
-      letter-spacing: 0px;
-      text-align: left;
+.v-application {
+  .hx-trust-id-wrapper {
+    ::v-deep .v-breadcrumbs {
+      li {
+        font-family: Open Sans Light;
+        font-size: 28px;
+        font-style: normal;
+        font-weight: 400 !important;
+        line-height: 40px;
+        letter-spacing: 0px;
+        text-align: left;
+      }
     }
-  }
-
-  ::v-deep .theme--light.v-tabs {
-    .v-tabs-bar .v-tab:not(.v-tab--active) {
-      color: var(--v-black-lighten4) !important;
+    ::v-deep .theme--light.v-tabs {
+      .v-tabs-bar .v-tab:not(.v-tab--active) {
+        color: var(--v-black-lighten4) !important;
+      }
     }
-  }
-
-  .tab-slider {
-    position: absolute;
-    top: 2px;
-  }
-
-  .overview-card {
-    border-radius: 12px !important;
+    .tab-slider {
+      position: absolute;
+      top: 2px;
+    }
   }
 }
 </style>
