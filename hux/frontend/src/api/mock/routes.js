@@ -27,6 +27,7 @@ import { addedApplications, applications } from "./factories/application"
 import domainData from "@/api/mock/fixtures/domainLineData.js"
 import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 import runDurationData from "@/api/mock/fixtures/runDurationData.js"
+import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
 import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
 import trustIdComparisonData from "@/api/mock/fixtures/segmentComparisonScores.js"
 
@@ -867,4 +868,6 @@ export const defineRoutes = (server) => {
 
   // trust id
   server.get("/trust_id/comparison", () => trustIdComparisonData)
+
+  server.get("/trust_id/user_filters", () => addSegmentData)
 }
