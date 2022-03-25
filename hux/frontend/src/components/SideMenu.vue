@@ -110,7 +110,7 @@
           :to="menu.link"
           @click="navigate(menu)"
           @mouseover="onMouseOver(menu)"
-          @mouseleave="onMouseLeave(menu)"
+          @mouseleave="onMouseLeave()"
         >
           <v-list-item-icon
             v-if="menu.icon"
@@ -208,9 +208,15 @@ export default {
     },
   },
 
+  mounted() {
+    if (this.$route.name == "HXTrustID") {
+      this.items[5].menu[1].icon = "hx-trustid-colored"
+    }
+  },
+
   methods: {
     navigate(item) {
-      this.trustidRoute(item)
+      this.trustidRoute(item.title)
       if (
         this.prevItem &&
         this.prevItem.defaultState &&
@@ -227,8 +233,8 @@ export default {
       this.prevItem = item
     },
 
-    trustidRoute(item) {
-      if (item.title == "HX TrustID") {
+    trustidRoute(title) {
+      if (title == "HX TrustID") {
         this.items[5].menu[1].icon = "hx-trustid-colored"
       } else {
         this.items[5].menu[1].icon = "hx-trustid"
@@ -237,12 +243,12 @@ export default {
 
     onMouseOver(item) {
       if (item && item.title == "HX TrustID") {
-        item.icon = "hx-trustid-colored"
+        this.items[5].menu[1].icon = "hx-trustid-colored"
       }
     },
-    onMouseLeave(item) {
-      if (item && item.title == "HX TrustID") {
-        item.icon = "hx-trustid"
+    onMouseLeave() {
+      if (this.$route.name != "HXTrustID") {
+        this.items[5].menu[1].icon = "hx-trustid"
       }
     },
   },
