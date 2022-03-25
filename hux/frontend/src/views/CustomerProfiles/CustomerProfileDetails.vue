@@ -87,7 +87,7 @@
             >
               <template #title>
                 <div class="title-no-notification">
-                  Customer events chart is currently unavailable
+                  Events chart is currently unavailable
                 </div>
               </template>
               <template #subtitle>
@@ -185,7 +185,24 @@ export default {
     },
 
     customerProfile() {
-      return this.customer(this.$route.params.id)
+      var res
+      try {
+        res = this.customer(this.$route.params.id)
+      } catch (error) {
+        res = {
+        overview: {
+          first_name: "-",
+          last_name: "-",
+          since: "-",
+          match_confidence: "-",
+          conversion_time: "-",
+          last_click: "-",
+          last_purchase: "-",
+          last_email_opened: "-",
+        }}
+      }
+      console.log("res: ", res)
+      return res
     },
 
     eventsForTable() {

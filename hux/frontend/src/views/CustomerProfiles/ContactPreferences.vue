@@ -24,20 +24,24 @@
         </v-simple-table>
       </v-card-text>
     </v-card>
-    <v-card v-else class="pt-4 rounded-lg box-shadow-5" height="200px">
+    <v-card 
+      v-else 
+      class="no-data-chart-frame pt-4 rounded-lg box-shadow-5" 
+      height="280px"
+    >
       <empty-page
-        class="title-no-notification"
+        class="title-no-notification pa-8"
         type="error-on-screens"
         :size="50"
       >
         <template #title>
           <div class="title-no-notification">
-            Contact preferences are currently unavailable
+            Unavailable
           </div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">
-            Our team is working hard to fix it. Please be patient and try again
+            Our team is working hard to fix this data table. Please be patient and try again
             soon!
           </div>
         </template>
@@ -100,5 +104,9 @@ export default {
   td {
     height: 40px !important;
   }
+}
+.no-data-chart-frame {
+  background-image: url("../../assets/images/empty-1-chart.png");
+  background-position: center;
 }
 </style>

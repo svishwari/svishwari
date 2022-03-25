@@ -25,15 +25,19 @@
       </v-card-title>
       <identity-chart :chart-data="insights"></identity-chart>
     </v-card>
-    <v-card v-else class="pt-4 rounded-lg box-shadow-5" height="200px">
+    <v-card 
+      v-else 
+      class="no-data-chart-frame pt-4 rounded-lg box-shadow-5" 
+      height="280px"
+    >
       <empty-page
-        class="title-no-notification"
+        class="title-no-notification pa-8"
         type="error-on-screens"
         :size="50"
       >
         <template #title>
           <div class="title-no-notification">
-            Individual identity is currently unavailable
+            Individual ID unavailable
           </div>
         </template>
         <template #subtitle>
@@ -65,3 +69,9 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.no-data-chart-frame {
+  background-image: url("../../assets/images/empty-1-chart.png");
+  background-position: center;
+}
+</style>

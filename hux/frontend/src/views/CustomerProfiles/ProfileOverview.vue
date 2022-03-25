@@ -38,9 +38,9 @@
             </span>
           </span>
           <span class="d-flex align-baseline">
-            <span class="text-body-2 black--text text--lighten-4 mr-2"
-              >Last</span
-            >
+            <span class="text-body-2 black--text text--lighten-4 mr-2">
+              Last
+            </span>
             <tooltip v-if="showPii">
               <template #label-content>
                 <span
