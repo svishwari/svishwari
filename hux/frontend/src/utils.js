@@ -372,6 +372,17 @@ export function formatDate(date) {
 }
 
 /**
+ * Returns minimum date for enddate time picker converted to ISO format string
+ *
+ * @returns {string} formatted HTML
+ */
+export function endMinDateGenerator() {
+  return new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60000
+  ).toISOString()
+}
+
+/**
  * Returns local time zone
  *
  * @param {string} date - date to be formatted
@@ -395,4 +406,14 @@ export function formatDateToLocal(date) {
  */
 export function formatInnerHTML(text) {
   return { innerHTML: text }
+}
+
+/**
+ * Returns number converted to string with commas
+ *
+ * @param {string} num - number to be formatted to string
+ * @returns {string} formatted number
+ */
+export function numberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
