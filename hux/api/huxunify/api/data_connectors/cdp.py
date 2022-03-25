@@ -1384,3 +1384,40 @@ async def get_customers_overview_async(
         return clean_cdm_gender_fields(
             clean_cdm_fields(response_body[api_c.BODY])
         )
+
+
+def get_customer_event_types(token: str) -> list:
+    """Get customer profile event types.
+
+    Args:
+        token (str): OKTA JWT Token.
+
+    Returns:
+        list: Customer profile event types.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    config = get_config()
+
+    logger.info("Getting customer events info from CDP API.")
+    response = requests.get(
+        f"{config.CDP_SERVICE}/customer-profiles/event-types",
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to retrieve Customer Profiles event types, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/event-types",
+            response.status_code,
+        )
+
+    return response.json().get(api_c.BODY)

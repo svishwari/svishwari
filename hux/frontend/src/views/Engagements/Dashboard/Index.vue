@@ -102,10 +102,11 @@
 
     <edit-delivery-schedule
       v-model="editDeliveryDrawer"
-      :schedule="currentSchedule"
       :audience-id="selectedAudienceId"
-      :destination="scheduleDestination"
+      :audience-name="selectedAudienceName"
+      :current-schedule="scheduleAudience"
       :engagement-id="engagementId"
+      @onToggle="(val) => (editDeliveryDrawer = val)"
       @onUpdate="refreshEntity()"
     />
 
@@ -170,6 +171,7 @@ export default {
       ],
       // Drawer Data Props
       selectedAudiences: {},
+      selectedAudienceName: null,
       showSelectAudiencesDrawer: false,
       showAddAudiencesDrawer: false,
       showSelectDestinationsDrawer: false,
@@ -180,7 +182,7 @@ export default {
       // Edit Schedule data props
       showConfirmModal: false,
       editDeliveryDrawer: false,
-      scheduleDestination: {
+      scheduleAudience: {
         name: null,
         delivery_platform_type: null,
         id: null,
@@ -499,6 +501,25 @@ export default {
           this.refreshEntity()
           break
 
+        case "edit delivery schedule":
+          this.confirmDialog.icon = "edit"
+          this.confirmDialog.type = "primary"
+          this.confirmDialog.subtitle = ""
+          this.confirmDialog.actionType = "edit-schedule"
+          this.confirmDialog.title = "You are about to edit delivery schedule."
+          this.confirmDialog.btnText = "Yes, edit delivery schedule"
+          this.confirmDialog.leftBtnText = "Cancel"
+          this.confirmDialog.body =
+            "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+          this.showConfirmModal = true
+          this.selectedAudienceId = event.data.id
+          this.selectedAudienceName = event.data.name
+          this.scheduleAudience =
+            "delivery_schedule" in event.data
+              ? event.data.delivery_schedule
+              : {}
+          break
+
         case "remove audience":
           this.showConfirmModal = true
           this.confirmDialog.actionType = "remove-audience"
@@ -533,20 +554,6 @@ export default {
               message: "Destination link is not available",
             })
           }
-          break
-        case "edit delivery schedule":
-          this.confirmDialog.icon = "edit"
-          this.confirmDialog.type = "primary"
-          this.confirmDialog.subtitle = ""
-          this.confirmDialog.actionType = "edit-schedule"
-          this.confirmDialog.title = "You are about to edit delivery schedule."
-          this.confirmDialog.btnText = "Yes, edit delivery schedule"
-          this.confirmDialog.leftBtnText = "Cancel"
-          this.confirmDialog.body =
-            "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
-          this.showConfirmModal = true
-          this.scheduleDestination = event.data
-          this.currentSchedule = event.data["delivery_schedule"]
           break
         case "remove destination":
           this.confirmDialog.actionType = "remove-destination"
