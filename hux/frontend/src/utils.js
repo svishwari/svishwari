@@ -407,3 +407,13 @@ export function formatDateToLocal(date) {
 export function formatInnerHTML(text) {
   return { innerHTML: text }
 }
+
+/**
+ * Returns number converted to string with commas
+ *
+ * @param {string} num - number to be formatted to string
+ * @returns {string} formatted number
+ */
+export function numberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}

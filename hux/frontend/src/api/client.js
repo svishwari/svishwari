@@ -48,6 +48,9 @@ client["users"].getRequestedUsers = () => {
 client["users"].tickets = () => {
   return http.get("users/tickets")
 }
+client["users"].trustIdOverview = () => {
+  return http.get("trust_id/overview")
+}
 //#endregion
 
 //#region Configurations

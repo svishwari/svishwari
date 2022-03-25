@@ -60,6 +60,11 @@ class OrchestrationRouteTest(RouteTestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch(
+            "huxunify.api.data_connectors.cache.get_db_client",
+            return_value=self.database,
+        ).start()
+
         for subclass in CloudClient.__subclasses__():
             # mock get_store_value of cloud secret store
             mock.patch.object(
@@ -261,6 +266,13 @@ class OrchestrationRouteTest(RouteTestCase):
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""
 
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
+            json=t_c.MOCKED_CUSTOMER_EVENT_TYPES,
+        )
+        self.request_mocker.start()
+
         mock.patch(
             "huxunify.api.orchestration.read_stub_city_zip_data",
             return_value=t_c.CITY_ZIP_STUB_DATA,
@@ -271,6 +283,8 @@ class OrchestrationRouteTest(RouteTestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIn("rule_attributes", response.json)
+        self.assertIn("general", response.json["rule_attributes"])
+        self.assertIn("events", response.json["rule_attributes"]["general"])
         self.assertIn("text_operators", response.json)
 
     def test_create_audience_with_destination(self):
