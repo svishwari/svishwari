@@ -53,7 +53,6 @@ describe("Orchestration > Engagement > Engagement Dashboard", () => {
           cy.get(selector.engagement.adsData).its("length").should("exist")
           cy.get(selector.engagement.accessActions).eq(0).click()
           cy.get(selector.engagement.actions).contains("Open destination")
-          cy.get(selector.engagement.actions).contains("Edit delivery schedule")
           cy.get(selector.engagement.actions).contains("Remove destination")
         }
 

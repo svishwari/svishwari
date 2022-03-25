@@ -403,6 +403,15 @@ export const defineRoutes = (server) => {
     }
   )
 
+  server.post("/engagements/:id/audience/:audienceId/schedule", () => {
+    const code = 201
+    const headers = {}
+    const body = {
+      message: "Successfully updated delivery schedule",
+    }
+    return new Response(code, headers, body)
+  })
+
   server.post(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/deliver",
     () => {
