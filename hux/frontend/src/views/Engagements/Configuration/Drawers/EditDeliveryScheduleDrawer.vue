@@ -15,8 +15,8 @@
     <template #default>
       <div class="pt-5 pl-6">
         <div class="body-1 black--text mr-6">
-          Override the default delivery schedule for this engagement and setup a
-          scheduling pattern for this specific destination.
+          By editing this audience’s delivery schedule, the default delivery
+          schedule will be replaced by your newly created schedule.
         </div>
         <div class="body-2 black--text text--lighten-4 pl-6 mt-6 mb-1">
           Audience
