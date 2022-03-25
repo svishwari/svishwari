@@ -232,16 +232,16 @@ export default {
       }
     },
 
-    onMouseOver(item){
-      if(item && item.title == 'HX TrustID'){
+    onMouseOver(item) {
+      if (item && item.title == "HX TrustID") {
         item.icon = "hx-trustid-colored"
       }
     },
-    onMouseLeave(item){
-      if(item && item.title == 'HX TrustID'){
-        item.icon =  "hx-trustid"
+    onMouseLeave(item) {
+      if (item && item.title == "HX TrustID") {
+        item.icon = "hx-trustid"
       }
-    }
+    },
   },
 }
 </script>
