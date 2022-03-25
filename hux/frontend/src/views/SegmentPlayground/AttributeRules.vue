@@ -90,6 +90,13 @@
                     required
                     @blur="triggerSizing(condition)"
                   />
+                  <span
+                    v-if="
+                      condition.operator && condition.attribute.type === 'text'
+                    "
+                    class="ml-2 text-body-1"
+                    >Days</span
+                  >
                   <hux-autocomplete
                     v-if="
                       condition.operator && condition.attribute.type === 'list'
