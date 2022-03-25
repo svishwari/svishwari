@@ -206,12 +206,9 @@ export default {
     },
   },
 
-  mounted() {
-    this.trustidRoute()
-  },
-
   methods: {
     navigate(item) {
+      this.trustidRoute(item)
       if (this.prevItem && this.prevItem.defaultState) {
         this.$store.replaceState({
           ...this.$store.state,
@@ -224,8 +221,9 @@ export default {
       this.prevItem = item
     },
 
-    trustidRoute() {
-      if (this.$route.name == "HXTrustID") {
+    trustidRoute(item) {
+      // debugger
+      if (item.title == "HX TrustID") {
         this.items[5].menu[1].icon = "hx-trustid-colored"
       } else {
         this.items[5].menu[1].icon = "hx-trustid"
