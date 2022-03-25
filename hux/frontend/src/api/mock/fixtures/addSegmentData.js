@@ -31,7 +31,7 @@ export default [
   {
     type: "children_count",
     description: "Children count",
-    values: [1, 2, 3, 4, 5],
+    values: ["1", "2", "3", "4", "5+"],
   },
   {
     type: "employment_status",
@@ -83,7 +83,7 @@ export default [
   },
   {
     type: "physical_mental_condition",
-    description: "Physical & mental condition",
+    description: "Physical & mental conditions",
     values: [
       "Blindness / partial sight",
       "Deafness / partial hearing",
