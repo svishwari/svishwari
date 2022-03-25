@@ -103,6 +103,7 @@
     <edit-delivery-schedule
       v-model="editDeliveryDrawer"
       :audience-id="selectedAudienceId"
+      :audience-name="selectedAudienceName"
       :current-schedule="scheduleAudience"
       :engagement-id="engagementId"
       @onToggle="(val) => (editDeliveryDrawer = val)"
@@ -170,6 +171,7 @@ export default {
       ],
       // Drawer Data Props
       selectedAudiences: {},
+      selectedAudienceName: null,
       showSelectAudiencesDrawer: false,
       showAddAudiencesDrawer: false,
       showSelectDestinationsDrawer: false,
@@ -511,6 +513,7 @@ export default {
             "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
           this.showConfirmModal = true
           this.selectedAudienceId = event.data.id
+          this.selectedAudienceName = event.data.name
           this.scheduleAudience =
             "delivery_schedule" in event.data
               ? event.data.delivery_schedule

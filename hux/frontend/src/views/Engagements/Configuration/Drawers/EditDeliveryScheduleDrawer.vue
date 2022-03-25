@@ -6,7 +6,7 @@
     @onClose="cancel()"
   >
     <template #header-left>
-      <div class="d-flex alin-center">
+      <div class="d-flex align-center">
         <icon type="clock" :size="32" class="mr-2" />
         <h3 class="pl-1 text-h2 black--text">Edit delivery schedule</h3>
       </div>
@@ -19,12 +19,11 @@
           scheduling pattern for this specific destination.
         </div>
         <div class="body-2 black--text text--lighten-4 pl-6 mt-6 mb-1">
-          Destination
+          Audience
         </div>
         <card-horizontal
-          title="Facebook"
-          icon="facebook"
-          class="cursor-default mr-6"
+          :title="audienceName"
+          class="cursor-default body-1 mr-6 pl-4"
           hide-button
         />
         <div class="d-flex justify-end pt-4 pb-6 mr-6 primary--text">
@@ -168,6 +167,11 @@ export default {
     value: {
       type: Boolean,
       required: true,
+    },
+
+    audienceName: {
+      type: String,
+      required: false,
     },
 
     audienceId: {
