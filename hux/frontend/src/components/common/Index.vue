@@ -1241,7 +1241,7 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Progress Stack Bar</v-subheader>
-    <progress-stack-bar :width="180" :height="6" :show-percentage="true" />
+    <progress-stack-bar :width="180" :height="6" :show-percentage="true" :data="progressStackBarData" :bar-id="1"/>
 
     <v-divider class="mt-10" />
 
@@ -1485,6 +1485,11 @@ export default {
   },
   data() {
     return {
+      progressStackBarData: [
+        { label: "Group-1", value: 20 },
+        { label: "Group-2", value: 28 },
+        { label: "Group-3", value: 52 },
+      ],
       genderChartDimensions: {
         width: 269,
         height: 200,

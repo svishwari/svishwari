@@ -78,8 +78,8 @@
 
         <template v-if="hasData && !nested" #body="{ nestedHeaders, items }">
           <tbody>
-            <tr v-for="item in items" :key="item.id">
-              <slot name="row-item" :item="item" :headers="nestedHeaders" />
+            <tr v-for="(item, index) in items" :key="item.id">
+              <slot name="row-item" :item="item" :index="index" :headers="nestedHeaders" />
             </tr>
           </tbody>
         </template>

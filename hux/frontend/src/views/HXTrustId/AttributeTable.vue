@@ -1,0 +1,166 @@
+<template>
+  <v-card flat class="attribute-table-wrapper">
+    <v-progress-linear :active="isLoading" :indeterminate="isLoading" />
+    <template v-if="!isLoading">
+      <v-card-title v-if="data.length > 0" class="py-5 px-6">
+        <span class="text-h3 black--text">HX TrustID attributes</span>
+      </v-card-title>
+      <v-card-text v-if="data.length > 0" class="px-6">
+        <hux-data-table
+          v-if="!isLoading"
+          class="attribute-table"
+          :columns="columns"
+          :data-items="data"
+          :sort-column="sortColumn"
+          :sort-desc="sortDesc"
+          empty="Be patient! The data feeds are currently not available, check back tomorrow to see if the magic is ready."
+        >
+          <template #row-item="{ item, index }">
+            <td
+              v-for="col in columns"
+              :key="col.value"
+              class="black--text text--darken-4 text-body-1"
+            >
+              <template v-if="col.value === 'attribute_name'">
+                {{ item[col.value] }}
+              </template>
+              <template v-else-if="col.value === 'attribute_score'">
+                {{ item[col.value] }}
+              </template>
+              <template v-else-if="col.value === 'attribute_description'">
+                <tooltip>
+                  <template slot="label-content">
+                    <span class="text-ellipsis text-width">
+                      {{ item[col.value] }}
+                    </span>
+                  </template>
+                  <template slot="hover-content">
+                    {{ item[col.value] }}
+                  </template>
+                </tooltip>
+              </template>
+              <template v-else-if="col.value === 'overall_customer_rating'">
+                <progress-stack-bar
+                  :width="180"
+                  :height="6"
+                  :show-percentage="true"
+                  :data="getRating(item[col.value].rating)"
+                  :bar-id="index"
+                />
+              </template>
+            </td>
+          </template>
+        </hux-data-table>
+      </v-card-text>
+    </template>
+  </v-card>
+</template>
+
+<script>
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+
+export default {
+  name: "TrustIDAttributes",
+  components: {
+    HuxDataTable,
+    ProgressStackBar,
+    Tooltip,
+  },
+  props: {
+    data: {
+      type: Array,
+      required: false,
+    },
+    isLoading: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isErrorState: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      sortColumn: "attribute_name",
+      sortDesc: true,
+      columns: [
+        {
+          text: "Name of signal",
+          value: "attribute_name",
+          width: "170px",
+        },
+        {
+          text: "Attribute score",
+          value: "attribute_score",
+          width: "134px",
+        },
+        {
+          text: "Attributes",
+          value: "attribute_description",
+          width: "605px",
+        },
+        {
+          text: "Customer rating",
+          value: "overall_customer_rating",
+          width: "196px",
+        },
+      ],
+    }
+  },
+  computed: {},
+  methods: {
+    getRating(rating) {
+      let results = []
+      Object.entries(rating).map((item, index) => {
+        let obj = {
+          label: item[0],
+          value: parseFloat((item[1].percentage * 100).toFixed(2)),
+        }
+        results.push(obj)
+      })
+      console.log(results)
+      return results
+    },
+  },
+}
+</script>
+<style lang="scss" scoped>
+.attribute-table-wrapper {
+  .attribute-table {
+    ::v-deep .v-data-table .v-data-table-header th:first-child {
+      border-top-left-radius: 12px !important;
+    }
+    ::v-deep .v-data-table .v-data-table-header th:last-child {
+      border-top-right-radius: 12px !important;
+    }
+    ::v-deep .theme--light.v-data-table.v-data-table--fixed-header thead th {
+      box-shadow: none !important;
+    }
+    ::v-deep .v-data-table__wrapper {
+      tbody {
+        .text-width {
+          width: 580px;
+          text-align: left;
+        }
+      }
+    }
+  }
+  .hux-data-table {
+    ::v-deep table {
+      .v-data-table-header {
+        tr {
+          th {
+            background: var(--v-primary-lighten2);
+            height: 40px !important;
+          }
+        }
+      }
+    }
+  }
+}
+</style>

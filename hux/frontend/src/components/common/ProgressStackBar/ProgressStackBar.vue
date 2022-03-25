@@ -32,6 +32,11 @@ export default {
       default: 1,
       required: false,
     },
+    data: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -45,7 +50,7 @@ export default {
           .select(this.$refs.progressStackBarChart)
           .selectAll("svg")
           .remove()
-        this.stackedBar(`.${this.dynamicChartId}`, sampleData)
+        this.stackedBar(`.${this.dynamicChartId}`, this.data)
       },
       immediate: false,
       deep: true,
@@ -53,7 +58,7 @@ export default {
   },
   mounted() {
     this.dynamicChartId = `bar-${this.barId}`
-    this.stackedBar(`.${this.dynamicChartId}`, sampleData)
+    this.stackedBar(`.${this.dynamicChartId}`, this.data)
   },
   methods: {
     rounded_rect(x, y, w, h, r, tl, tr, bl, br) {
@@ -95,7 +100,7 @@ export default {
         f: d3Format.format(".1f"),
         margin: { top: 20, right: 10, bottom: 20, left: 10 },
         width: this.width,
-        height: this.showPercentage ? 200 : this.height,
+        height: this.showPercentage ? 50 : this.height,
         barHeight: this.height,
         colors: ["#DA291C", "#FFCD00", "#86BC25"],
         ...config,
