@@ -109,6 +109,8 @@
           :data-e2e="`nav-${menu.icon}`"
           :to="menu.link"
           @click="navigate(menu)"
+          @mouseover="onMouseOver(menu)"
+          @mouseleave="onMouseLeave(menu)"
         >
           <v-list-item-icon
             v-if="menu.icon"
@@ -226,11 +228,21 @@ export default {
     },
 
     trustidRoute(item) {
-      // debugger
       if (item.title == "HX TrustID") {
         this.items[5].menu[1].icon = "hx-trustid-colored"
       } else {
         this.items[5].menu[1].icon = "hx-trustid"
+      }
+    },
+
+    onMouseOver(item) {
+      if (item && item.title == "HX TrustID") {
+        item.icon = "hx-trustid-colored"
+      }
+    },
+    onMouseLeave(item) {
+      if (item && item.title == "HX TrustID") {
+        item.icon = "hx-trustid"
       }
     },
   },
