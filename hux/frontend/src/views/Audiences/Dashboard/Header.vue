@@ -63,7 +63,7 @@
               mdi-dots-vertical
             </v-icon>
           </template>
-          <v-list class="list-wrapper">
+          <v-list class="text-body-1">
             <v-list-item-group>
               <v-list-item @click="favoriteAudience()"> Favorite </v-list-item>
               <v-list-item @click="initiateDelete()">
