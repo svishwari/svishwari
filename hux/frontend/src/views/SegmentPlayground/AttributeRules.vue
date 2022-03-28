@@ -236,7 +236,6 @@ import TextField from "../../components/common/TextField.vue"
 import Icon from "@/components/common/Icon"
 import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
-import { formatText } from "../../utils"
 import { v4 as uuidv4 } from "uuid"
 
 const NEW_RULE_SECTION = {
@@ -317,7 +316,9 @@ export default {
     updateHistoArr() {
       return this.notHistogramKeys.concat(
         Object.keys(this.ruleAttributes.rule_attributes.general.events).map(
-          (x) => x != "name" && formatText(x)
+          (x) =>
+            x != "name" &&
+            this.ruleAttributes.rule_attributes.general.events[x].name
         )
       )
     },

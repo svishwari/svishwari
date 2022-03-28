@@ -71,20 +71,83 @@
                   :segment-scores="segmentScores"
                   data-e2e="trust-comparison-chart"
                 />
+                <link-dropdown
+                  v-if="!segmentComparisonLoading"
+                  :data-list="getSegment"
+                  :width="245"
+                  @onselect="getSelectedData"
+                ></link-dropdown>
+                <data-cards
+                  bordered
+                  class="mr-4"
+                  card-class="py-5 pa-4"
+                  :items="getSegmentTableData"
+                  :fields="getSegmentTableHeaders"
+                >
+                  <template
+                    v-for="header in getSegmentTableHeaders"
+                    #[`field:${header.key}`]="row"
+                  >
+                    <rhombus-number
+                      v-if="
+                        !['segment_name', 'attribute_filters'].includes(
+                          header.key
+                        )
+                      "
+                      :key="header.key"
+                      :value="row.value"
+                      :text-color="
+                        row.value < 0 ? 'error--text' : 'black--text'
+                      "
+                    ></rhombus-number>
+
+                    <span
+                      v-else-if="header.key == 'attribute_filters'"
+                      :key="header.key"
+                    >
+                      <span v-if="row.value.length != 0">
+                        <v-chip
+                          v-for="(filter, filterIndex) in row.value"
+                          :key="filterIndex"
+                          small
+                          class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                          text-color="primary"
+                          color="var(--v-primary-lighten3)"
+                        >
+                          {{ formatText(filter) }}
+                        </v-chip>
+                      </span>
+                      <span v-else>
+                        <v-chip
+                          small
+                          class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                          text-color="primary"
+                          color="var(--v-primary-lighten3)"
+                        >
+                          All customers
+                        </v-chip>
+                      </span>
+                    </span>
+                  </template>
+
+                  <template #field:delete="row">
+                    <div class="d-flex align-center justify-end mr-2">
+                      <icon
+                        type="trash"
+                        class="cursor-pointer"
+                        :size="18"
+                        color="black"
+                        @click.native="removeAudience(row.item)"
+                      />
+                    </div>
+                  </template>
+                </data-cards>
               </v-card>
             </v-col>
           </v-row>
         </v-tab-item>
         <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
       </v-tabs-items>
-    </div>
-    <div>
-      <link-dropdown
-        v-if="!segmentComparisonLoading"
-        :data-list="getSegment"
-        :width="245"
-        @onselect="getSelectedData"
-      ></link-dropdown>
     </div>
   </page>
 </template>
@@ -97,6 +160,10 @@ import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
+import DataCards from "@/components/common/DataCards.vue"
+import { formatText } from "@/utils"
+import RhombusNumber from "@/components/common/RhombusNumber.vue"
+import Icon from "@/components/common/Icon.vue"
 
 export default {
   name: "HXTrustID",
@@ -106,6 +173,9 @@ export default {
     Page,
     PageHeader,
     TrustComparisonChart,
+    DataCards,
+    RhombusNumber,
+    Icon,
   },
   data() {
     return {
@@ -126,6 +196,33 @@ export default {
         return item.segment_filter
       })
     },
+    getSegmentTableData() {
+      return this.segmentScores[0].segments.map((x) => {
+        let segment = {
+          segment_name: x.segment_name,
+          attribute_filters: x.attribute_filters,
+        }
+
+        x.attributes.forEach((item) => {
+          segment[item.attribute_type] = item.attribute_score
+        })
+        return segment
+      })
+    },
+    getSegmentTableHeaders() {
+      let headers = Object.keys(this.getSegmentTableData[0]).map((item) => {
+        return {
+          key: item,
+          label: formatText(item),
+        }
+      })
+
+      headers.push({
+        key: "delete",
+      })
+
+      return headers
+    },
   },
   async mounted() {
     this.segmentComparisonLoading = true
@@ -142,6 +239,7 @@ export default {
     getSelectedData(value) {
       this.selectedSegment = value
     },
+    formatText: formatText,
   },
 }
 </script>
