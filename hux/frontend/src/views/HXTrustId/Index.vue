@@ -90,7 +90,8 @@
               <data-cards
                 bordered
                 class="mr-4"
-                card-class="py-5 pa-4"
+                card-class="py-5 pa-4 d-flex justify-center"
+                header-class="d-flex justify-center"
                 :items="getSegmentTableData"
                 :fields="getSegmentTableHeaders"
               >
@@ -100,7 +101,7 @@
                 >
                   <rhombus-number
                     v-if="
-                      !['segment_name', 'attribute_filters'].includes(
+                      !['segment_name', 'attribute_filters', 'colors'].includes(
                         header.key
                       )
                     "
@@ -150,7 +151,7 @@
                   </div>
                 </template>
               </data-cards>
-              <div>
+              <div v-if="segmentScores.length < 5">
                 <v-list class="add-segment no-data-width" :height="22">
                   <v-list-item @click="filterToggle()">
                     <hux-icon
@@ -169,6 +170,26 @@
                     </v-btn>
                   </v-list-item>
                 </v-list>
+              </div>
+              <div v-else>
+                <v-card class="empty-text">
+                  <hux-icon
+                    type="critical"
+                    :size="21"
+                    stroke="error"
+                    color="white"
+                    class="mr-4 ml-6"
+                  />
+                  <span
+                    class="error--text text-subtitle-1 mr-4"
+                    :style="{ fontWeight: 800 }"
+                    >OH NO!</span
+                  >
+                  <span class="text-body-2 error--text"
+                    >You’ve reached the limit for the number of comparisons.
+                    Remove a comparison to add a new one.
+                  </span>
+                </v-card>
               </div>
             </v-tab-item>
             <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
@@ -231,6 +252,28 @@ export default {
       addSegmentData: addSegmentData,
       segmentScores: segmentScores,
       overviewData: overviewData,
+      colorArr: [
+        {
+          color: "primary",
+          variant: "darken1",
+        },
+        {
+          color: "primary",
+          variant: "lighten4",
+        },
+        {
+          color: "primary",
+          variant: "lighten6",
+        },
+        {
+          color: "info",
+          variant: "base",
+        },
+        {
+          color: "secondary",
+          variant: "darken1",
+        },
+      ],
     }
   },
   computed: {
@@ -245,7 +288,7 @@ export default {
       })
     },
     getSegmentTableData() {
-      return this.segmentScores[0].segments.map((x) => {
+      return this.segmentScores[0].segments.map((x, index) => {
         let segment = {
           segment_name: x.segment_name,
           attribute_filters: x.attribute_filters,
@@ -254,19 +297,28 @@ export default {
         x.attributes.forEach((item) => {
           segment[item.attribute_type] = item.attribute_score
         })
+
+        segment.colors = this.colorArr[index]
+
         return segment
       })
     },
     getSegmentTableHeaders() {
-      let headers = Object.keys(this.getSegmentTableData[0]).map((item) => {
-        return {
-          key: item,
-          label: formatText(item),
+      let headers = []
+      Object.keys(this.getSegmentTableData[0]).forEach((item) => {
+        if (item != "colors") {
+          headers.push({
+            key: item,
+            label: formatText(item),
+            col:
+              item == "segment_name" ? 1 : item == "attribute_filters" ? 5 : 1,
+          })
         }
       })
 
       headers.push({
         key: "delete",
+        col: 1,
       })
 
       return headers
@@ -368,5 +420,11 @@ export default {
 }
 ::v-deep .wrapper {
   width: 320px !important;
+}
+
+.empty-text.empty-text {
+  height: 60px;
+  align-items: center;
+  display: flex;
 }
 </style>

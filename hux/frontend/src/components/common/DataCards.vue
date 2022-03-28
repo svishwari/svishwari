@@ -14,7 +14,12 @@
           no-gutters
           :class="{ 'pl-2': bordered, 'data-card-headers': true }"
         >
-          <v-col v-for="field in fields" :key="field.label" :cols="field.col">
+          <v-col
+            v-for="field in fields"
+            :key="field.label"
+            :cols="field.col"
+            :class="headerClass"
+          >
             <div class="px-4 py-2">
               <span class="text-body-2 black--text text--lighten-4">
                 {{ field.label }}
@@ -48,6 +53,7 @@
             'mt-0': index == 0,
           }"
           class="data-card my-3"
+          :style="bordered ? style(item.colors.color, item.colors.variant) : ''"
         >
           <v-row align="center" no-gutters>
             <v-col v-for="field in fields" :key="field.key" :cols="field.col">
@@ -121,6 +127,12 @@ export default {
       required: false,
       default: "pa-4",
     },
+
+    headerClass: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
 
   data() {
@@ -145,6 +157,12 @@ export default {
   },
 
   methods: {
+    style(color, variant) {
+      return `border-left: 10px solid var(--v-${color ? color : "primary"}-${
+        variant ? variant : "lighten6"
+      })`
+    },
+
     setSortBy(key) {
       if (this.isSortedBy(key)) {
         this.sortDesc = !this.sortDesc
