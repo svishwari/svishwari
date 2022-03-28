@@ -246,6 +246,112 @@ def get_performance_metrics(
     return final_metric
 
 
+def get_performance_metrics_stub(
+    database: MongoClient,
+    engagement: object,
+    engagement_id: str,
+    ad_type: str,
+) -> dict:
+    """Gets stub performance metrics for engagement
+
+    Args:
+        database (MongoClient): Mongoclient instance
+        engagement (object): Engagement object
+        engagement_id (str): Id of engagement
+        ad_type (str): Advertisement type
+
+    Returns:
+        dict: Email Performance metrics of an engagement
+    """
+
+    if ad_type == api_c.DISPLAY_ADS:
+        destination_type = db_c.DELIVERY_PLATFORM_FACEBOOK
+        stub_data = api_c.PERFORMANCE_METRIC_DISPLAY_STUB
+    else:
+        destination_type = db_c.DELIVERY_PLATFORM_SFMC
+        stub_data = api_c.PERFORMANCE_METRIC_EMAIL_STUB
+
+    # Get all destinations that are related to Email metrics
+    destination = delivery_platform_management.get_delivery_platform_by_type(
+        database, destination_type
+    )
+
+    # Group all the performance metrics for the engagement
+    final_metric = stub_data
+    final_metric.update(
+        {api_c.ID: str(engagement_id), api_c.NAME: engagement.get(api_c.NAME)}
+    )
+
+    audience_metrics_list = []
+    # For each audience in engagement.audience
+    for eng_audience in engagement.get(api_c.AUDIENCES):
+        audience = orchestration_management.get_audience(
+            database, eng_audience.get(api_c.ID)
+        )
+        if audience is None:
+            logger.warning(
+                "Audience not found, ignoring performance metrics for it. "
+                "audience_id=%s, engagement_id=%s",
+                eng_audience.get(api_c.ID),
+                engagement.get(db_c.ID),
+            )
+            continue
+
+        #  Group performance metrics for the audience
+        audience_metrics = stub_data
+        audience_metrics.update(
+            {
+                api_c.ID: str(audience.get(db_c.ID)),
+                api_c.NAME: audience.get(db_c.NAME),
+            }
+        )
+
+        # Get metrics grouped by audience.destination
+        audience_destination_metrics_list = []
+        for audience_destination in eng_audience.get(api_c.DESTINATIONS):
+            destination_id = audience_destination.get(api_c.ID)
+            if destination_id is None or destination_id not in [
+                destination.get(db_c.ID)
+            ]:
+                logger.warning(
+                    "Invalid destination encountered, ignoring performance metrics for it. "
+                    "destination_id=%s, audience_id=%s, engagement_id=%s",
+                    destination_id,
+                    eng_audience.get(api_c.ID),
+                    engagement.get(db_c.ID),
+                )
+                continue
+
+            # get delivery platform
+            delivery_platform = (
+                delivery_platform_management.get_delivery_platform(
+                    database, destination_id
+                )
+            )
+
+            #  Group performance metrics for the destination
+            destination_metrics = stub_data
+            destination_metrics[
+                api_c.DELIVERY_PLATFORM_TYPE
+            ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
+            destination_metrics.update(
+                {
+                    api_c.ID: str(delivery_platform.get(db_c.ID)),
+                    api_c.NAME: delivery_platform.get(db_c.NAME),
+                }
+            )
+
+            audience_destination_metrics_list.append(destination_metrics)
+        audience_metrics[
+            api_c.DESTINATIONS
+        ] = audience_destination_metrics_list
+        audience_metrics_list.append(audience_metrics)
+
+    final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
+
+    return final_metric
+
+
 def generate_metrics_file(
     engagement_id: str, final_metric: dict, metrics_type: str
 ) -> None:
