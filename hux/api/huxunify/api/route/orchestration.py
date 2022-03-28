@@ -1463,11 +1463,11 @@ class AudienceRules(SwaggerView):
             {"token": token_response[0]},
         )
 
-        event_types_rules = {api_c.NAME: api_c.EVENTS}
+        event_types_rules = {api_c.NAME: api_c.EVENTS.capitalize()}
         for event_type in event_types:
             event_types_rules[event_type[api_c.TYPE]] = {
                 api_c.NAME: event_type[api_c.LABEL],
-                api_c.TYPE: api_c.INPUT,
+                api_c.TYPE: api_c.TEXT,
             }
 
         # TODO HUS-356. Stubbed, this will come from CDM

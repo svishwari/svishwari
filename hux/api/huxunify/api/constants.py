@@ -138,6 +138,7 @@ STATUSES = "statuses"
 INPUT_FILE = "input_file"
 UNIQUE_ID = "unique_id"
 INPUT = "input"
+TEXT = "text"
 EVENTS = "events"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
