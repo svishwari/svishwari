@@ -25,7 +25,7 @@
                 {{ item[col.value] }}
               </template>
               <template v-else-if="col.value === 'attribute_score'">
-                {{ item[col.value] }}
+                <rhombus-number :value="item[col.value]" color="blue"/>
               </template>
               <template v-else-if="col.value === 'attribute_description'">
                 <tooltip>
@@ -60,6 +60,7 @@
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import RhombusNumber from '../../components/common/RhombusNumber.vue'
 
 export default {
   name: "TrustIDAttributes",
@@ -67,6 +68,7 @@ export default {
     HuxDataTable,
     ProgressStackBar,
     Tooltip,
+    RhombusNumber,
   },
   props: {
     data: {

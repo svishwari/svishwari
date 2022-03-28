@@ -1,5 +1,5 @@
 <template>
-  <v-card class="card-style" :style="style" shaped outlined>
+  <v-card class="rhombus-card-wrapper" :style="style" shaped outlined>
     <v-card-text class="text-subtitle-1 text-style">
       {{ value }}
     </v-card-text>
@@ -29,7 +29,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card-style {
+.rhombus-card-wrapper {
   transform: rotate(45deg);
   width: 30px;
   height: 30px;
