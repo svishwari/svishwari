@@ -24,9 +24,9 @@
         </v-simple-table>
       </v-card-text>
     </v-card>
-    <v-card 
-      v-else 
-      class="no-data-chart-frame pt-4 rounded-lg box-shadow-5" 
+    <v-card
+      v-else
+      class="no-data-chart-frame pt-4 rounded-lg box-shadow-5"
       height="280px"
     >
       <empty-page
@@ -35,14 +35,12 @@
         :size="50"
       >
         <template #title>
-          <div class="title-no-notification">
-            Unavailable
-          </div>
+          <div class="title-no-notification">Unavailable</div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">
-            Our team is working hard to fix this data table. Please be patient and try again
-            soon!
+            Our team is working hard to fix this data table. Please be patient
+            and try again soon!
           </div>
         </template>
       </empty-page>

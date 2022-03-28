@@ -266,7 +266,6 @@ export default {
     text-align: -webkit-center;
   }
   .description {
-    min-height: 36px;
     -webkit-box-orient: vertical !important;
     -webkit-line-clamp: 2 !important;
     overflow: hidden !important;

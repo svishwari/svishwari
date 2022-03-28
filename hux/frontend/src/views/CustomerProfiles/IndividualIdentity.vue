@@ -25,9 +25,9 @@
       </v-card-title>
       <identity-chart :chart-data="insights"></identity-chart>
     </v-card>
-    <v-card 
-      v-else 
-      class="no-data-chart-frame pt-4 rounded-lg box-shadow-5" 
+    <v-card
+      v-else
+      class="no-data-chart-frame pt-4 rounded-lg box-shadow-5"
       height="280px"
     >
       <empty-page
@@ -36,9 +36,7 @@
         :size="50"
       >
         <template #title>
-          <div class="title-no-notification">
-            Individual ID unavailable
-          </div>
+          <div class="title-no-notification">Individual ID unavailable</div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">

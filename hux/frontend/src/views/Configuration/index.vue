@@ -137,7 +137,6 @@ export default {
 }
 .content-section {
   height: calc(100vh - 210px);
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow-x: visible !important;
 }
 </style>
