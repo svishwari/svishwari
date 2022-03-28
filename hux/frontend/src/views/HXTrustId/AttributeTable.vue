@@ -22,7 +22,13 @@
               class="black--text text--darken-4 text-body-1"
             >
               <template v-if="col.value === 'attribute_name'">
-                {{ item[col.value] }}
+                <div class="attribute-name">
+                  <rhombus-number
+                    class="rhombus-icon"
+                    :color="getRhombusColour(item)"
+                  />
+                  {{ item[col.value] }}
+                </div>
               </template>
               <template v-else-if="col.value === 'attribute_score'">
                 <rhombus-number
@@ -44,13 +50,66 @@
                 </tooltip>
               </template>
               <template v-else-if="col.value === 'overall_customer_rating'">
-                <progress-stack-bar
-                  :width="180"
-                  :height="6"
-                  :show-percentage="true"
-                  :data="getRating(item[col.value].rating)"
-                  :bar-id="index + 'table'"
-                />
+                <tooltip max-width="288px">
+                  <template #label-content>
+                    <progress-stack-bar
+                      :width="180"
+                      :height="6"
+                      :show-percentage="true"
+                      :data="getRating(item[col.value].rating)"
+                      :bar-id="index + 'table'"
+                    />
+                  </template>
+                  <template #hover-content>
+                    <div class="body-2">
+                      <div class="d-flex flex-column">
+                        <span class="tooltip-subheading disagree-color my-2">
+                          Disagree
+                        </span>
+                        <span>
+                          {{
+                            item[col.value].rating.agree.percentage
+                              | Numeric(false, false, false, true)
+                          }}
+                          |
+                          {{
+                            numberWithCommas(item[col.value].rating.agree.count)
+                          }}
+                        </span>
+                        <span class="tooltip-subheading neutral-color my-2">
+                          Neutral
+                        </span>
+                        <span>
+                          {{
+                            item[col.value].rating.neutral.percentage
+                              | Numeric(false, false, false, true)
+                          }}
+                          |
+                          {{
+                            numberWithCommas(
+                              item[col.value].rating.neutral.count
+                            )
+                          }}
+                        </span>
+                        <span class="tooltip-subheading agree-color my-2">
+                          Agree
+                        </span>
+                        <span>
+                          {{
+                            item[col.value].rating.disagree.percentage
+                              | Numeric(false, false, false, true)
+                          }}
+                          |
+                          {{
+                            numberWithCommas(
+                              item[col.value].rating.disagree.count
+                            )
+                          }}
+                        </span>
+                      </div>
+                    </div>
+                  </template>
+                </tooltip>
               </template>
             </td>
           </template>
@@ -65,6 +124,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import RhombusNumber from "../../components/common/RhombusNumber.vue"
+import { numberWithCommas } from "@/utils"
 
 export default {
   name: "TrustIdAttributes",
@@ -138,6 +198,7 @@ export default {
   },
   computed: {},
   methods: {
+    numberWithCommas: numberWithCommas,
     getRating(rating) {
       let results = []
       Object.entries(rating).map((item) => {
@@ -173,6 +234,15 @@ export default {
           width: 580px;
           text-align: left;
         }
+        .attribute-name {
+          line-height: 8px;
+          .rhombus-icon {
+            width: 11px;
+            height: 11px;
+            float: left;
+            margin-right: 8px;
+          }
+        }
       }
     }
   }
@@ -187,6 +257,18 @@ export default {
         }
       }
     }
+  }
+}
+
+.v-application {
+  .disagree-color {
+    color: var(--v-error-base);
+  }
+  .neutral-color {
+    color: var(--v-yellow-base);
+  }
+  .agree-color {
+    color: var(--v-success-lighten3);
   }
 }
 </style>
