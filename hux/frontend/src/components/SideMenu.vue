@@ -209,9 +209,7 @@ export default {
   },
 
   mounted() {
-    if (this.$route.name == "HXTrustID") {
-      this.items[5].menu[1].icon = "hx-trustid-colored"
-    }
+    this.trustidRoute(this.$route.name)
   },
 
   methods: {
@@ -233,23 +231,27 @@ export default {
       this.prevItem = item
     },
 
-    trustidRoute(title) {
-      if (title == "HX TrustID") {
+    checkColored(title) {
+      if (title == "HX TrustID" || title == "HXTrustID") {
         this.items[5].menu[1].icon = "hx-trustid-colored"
-      } else {
+        return true
+      }
+      return false
+    },
+
+    trustidRoute(title) {
+      if (!this.checkColored(title)) {
         this.items[5].menu[1].icon = "hx-trustid"
       }
     },
 
     onMouseOver(item) {
-      if (item && item.title == "HX TrustID") {
-        this.items[5].menu[1].icon = "hx-trustid-colored"
+      if (item) {
+        this.checkColored(item.title)
       }
     },
     onMouseLeave() {
-      if (this.$route.name != "HXTrustID") {
-        this.items[5].menu[1].icon = "hx-trustid"
-      }
+      this.trustidRoute(this.$route.name)
     },
   },
 }
