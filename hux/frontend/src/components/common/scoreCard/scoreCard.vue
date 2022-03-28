@@ -14,9 +14,7 @@
         :stroke="stroke"
         :variant="variant"
       />
-      <span class="model-name text-body-2 black--text text--lighten-4">{{
-        title
-      }}</span>
+      <span class="model-name text-body-2">{{ title }}</span>
       <span class="text-subtitle-1" :class="{ 'model-value ': hasSlot }">
         {{ value }}
       </span>
@@ -111,6 +109,7 @@ export default {
     }
     .model-name {
       display: block;
+      color: var(--v-black-lighten4) !important;
     }
     .model-value {
       float: left;
