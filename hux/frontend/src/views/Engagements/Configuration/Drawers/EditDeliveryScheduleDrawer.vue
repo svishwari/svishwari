@@ -307,7 +307,7 @@ export default {
     },
 
     cancel() {
-      this.$emit("onToggle")
+      this.$emit("onToggle", false)
       this.localToggle = false
     },
 
@@ -329,7 +329,7 @@ export default {
         audienceId: this.audienceId,
         data: requestPayload,
       })
-      this.$emit("onToggle")
+      this.$emit("onToggle", false)
       this.localToggle = false
     },
 
@@ -339,7 +339,7 @@ export default {
         audienceId: this.audienceId,
         data: {},
       })
-      this.$emit("onToggle")
+      this.$emit("onToggle", false)
       this.localToggle = false
     },
 
