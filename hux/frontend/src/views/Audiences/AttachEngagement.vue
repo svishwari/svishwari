@@ -476,6 +476,11 @@ export default {
         this.selectedEndDate = val
       }
     },
+    initializeDate(date, defaultDate) {
+      return date == "Select date" || date == "No end date"
+        ? defaultDate
+        : new Date(date).toISOString()
+    },
     resetSchedule() {
       this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
       this.endMinDate = new Date(
@@ -513,15 +518,11 @@ export default {
         delivery_schedule: this.isRecurring
           ? {
               schedule: this.scheduleConfig,
-              start_date:
-                this.selectedStartDate == "Select date"
-                  ? new Date().toISOString()
-                  : new Date(this.selectedStartDate).toISOString(),
-              end_date:
-                this.selectedEndDate == "Select date" ||
-                this.selectedEndDate == "No end date"
-                  ? null
-                  : new Date(this.selectedEndDate).toISOString(),
+              start_date: this.initializeDate(
+                this.selectedStartDate,
+                new Date().toISOString()
+              ),
+              end_date: this.initializeDate(this.selectedEndDate, null),
             }
           : null,
       }
