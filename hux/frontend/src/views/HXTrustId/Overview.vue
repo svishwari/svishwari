@@ -7,9 +7,12 @@
           <template #label-content>
             <score-card
               title="HX TrustID"
+              icon="hx-trustid-colored"
               :value="data && data.trust_id_score"
               :width="150"
               :height="90"
+              stroke=""
+              variant=""
             />
           </template>
           <template #hover-content>

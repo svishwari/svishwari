@@ -14,7 +14,9 @@
         :stroke="stroke"
         :variant="variant"
       />
-      <span class="model-name text-body-2">{{ title }}</span>
+      <span class="model-name text-body-2 black--text text--lighten-4">{{
+        title
+      }}</span>
       <span class="text-subtitle-1" :class="{ 'model-value ': hasSlot }">
         {{ value }}
       </span>
