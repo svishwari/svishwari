@@ -63,12 +63,10 @@ export default {
     stroke: {
       type: String,
       required: false,
-      default: "primary",
     },
     variant: {
       type: String,
       required: false,
-      default: "base",
     },
   },
   computed: {
