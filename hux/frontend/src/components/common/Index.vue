@@ -1241,7 +1241,13 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Progress Stack Bar</v-subheader>
-    <progress-stack-bar :width="180" :height="6" :show-percentage="true" :data="progressStackBarData" :bar-id="1"/>
+    <progress-stack-bar
+      :width="180"
+      :height="6"
+      :show-percentage="true"
+      :data="progressStackBarData"
+      :bar-id="1"
+    />
 
     <v-divider class="mt-10" />
 

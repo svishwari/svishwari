@@ -25,7 +25,11 @@
                 {{ item[col.value] }}
               </template>
               <template v-else-if="col.value === 'attribute_score'">
-                <rhombus-number :value="item[col.value]" color="blue"/>
+                <rhombus-number
+                  class="ml-10"
+                  :value="item[col.value]"
+                  :color="getRhombusColour(item)"
+                />
               </template>
               <template v-else-if="col.value === 'attribute_description'">
                 <tooltip>
@@ -45,7 +49,7 @@
                   :height="6"
                   :show-percentage="true"
                   :data="getRating(item[col.value].rating)"
-                  :bar-id="index"
+                  :bar-id="index + 'table'"
                 />
               </template>
             </td>
@@ -60,10 +64,10 @@
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import RhombusNumber from '../../components/common/RhombusNumber.vue'
+import RhombusNumber from "../../components/common/RhombusNumber.vue"
 
 export default {
-  name: "TrustIDAttributes",
+  name: "TrustIdAttributes",
   components: {
     HuxDataTable,
     ProgressStackBar,
@@ -90,26 +94,44 @@ export default {
     return {
       sortColumn: "attribute_name",
       sortDesc: true,
+      trustColor: {
+        humanity: "#037E8E",
+        transparency: "#D0C539",
+        capability: "#3C89B7",
+        reliability: "#92C7CD",
+      },
       columns: [
         {
           text: "Name of signal",
           value: "attribute_name",
           width: "170px",
+          tooltipWidth: "300px",
+          hoverTooltip:
+            "The trustwortiness of a brand is measured with key elements such as Capability, Humanity, Reliability and Transparency.  ",
         },
         {
           text: "Attribute score",
           value: "attribute_score",
           width: "134px",
+          tooltipWidth: "300px",
+          hoverTooltip:
+            "Attribute scores are additional data points that can be used to diagnose what is driving a particular signal score.",
         },
         {
           text: "Attributes",
           value: "attribute_description",
           width: "605px",
+          tooltipWidth: "300px",
+          hoverTooltip:
+            "Attributes are the trust-building actions that have the greatest impact on your 4 HX TrustID signal scores.",
         },
         {
           text: "Customer rating",
           value: "overall_customer_rating",
           width: "196px",
+          tooltipWidth: "300px",
+          hoverTooltip:
+            "Percentage of customers who disagree with the attributes (red), are neutral (yellow), or agree (green).",
         },
       ],
     }
@@ -118,15 +140,17 @@ export default {
   methods: {
     getRating(rating) {
       let results = []
-      Object.entries(rating).map((item, index) => {
+      Object.entries(rating).map((item) => {
         let obj = {
           label: item[0],
           value: parseFloat((item[1].percentage * 100).toFixed(2)),
         }
         results.push(obj)
       })
-      console.log(results)
       return results
+    },
+    getRhombusColour(val) {
+      return this.trustColor[val.attribute_name]
     },
   },
 }

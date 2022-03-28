@@ -83,7 +83,7 @@
               </v-row>
             </v-tab-item>
             <v-tab-item key="attributes" class="tab-item">
-              <trustID-attributes :data="attributeData"> </trustID-attributes>
+              <trust-id-attributes :data="attributeData"> </trust-id-attributes>
             </v-tab-item>
           </v-tabs-items>
         </div>
@@ -135,7 +135,7 @@ import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
-import TrustIDAttributes from "./AttributeTable.vue"
+import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
@@ -151,7 +151,7 @@ export default {
     Page,
     PageHeader,
     TrustComparisonChart,
-    TrustIDAttributes,
+    TrustIdAttributes,
     HuxIcon,
     AddSegmentDrawer,
   },
