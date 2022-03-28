@@ -229,7 +229,7 @@
                 />
                 <v-card-title
                   v-if="modelFeatures.length != 0"
-                  class="chart-style pb-6 pl-5 pt-5"
+                  class="chart-style pb-6 px-6 pt-5"
                 >
                   <span class="black--text text--darken-4 text-h3">
                     Top
