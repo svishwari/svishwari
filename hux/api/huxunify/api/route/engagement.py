@@ -4,7 +4,6 @@ import datetime
 from pathlib import Path
 import zipfile
 from http import HTTPStatus
-from threading import Thread
 from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
@@ -37,7 +36,6 @@ from huxunifylib.database import (
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     get_delivery_platform_lookalike_audience,
-    update_pending_delivery_jobs,
 )
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
@@ -159,15 +157,6 @@ class EngagementSearch(SwaggerView):
         ):
             query_filter[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
-        # Update delivery status.
-        logger.info("Updating delivery jobs")
-        Thread(
-            target=update_pending_delivery_jobs,
-            args=[
-                database,
-            ],
-        ).start()
-
         # get the engagement summary
         engagements = get_engagements_summary(
             database=database,
@@ -244,15 +233,6 @@ class IndividualEngagementSearch(SwaggerView):
 
         # get the engagement summary
         database = get_db_client()
-
-        # Update delivery status.
-        logger.info("Updating delivery jobs")
-        Thread(
-            target=update_pending_delivery_jobs,
-            args=[
-                database,
-            ],
-        ).start()
 
         engagements = get_engagements_summary(database, [engagement_id])
 

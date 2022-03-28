@@ -13,9 +13,10 @@ import users from "@/store/modules/users"
 import clients from "@/store/modules/clients"
 import notifications from "@/store/modules/notifications"
 import alerts from "@/store/modules/alerts"
-import configurations from "@/store/modules/configurations"
+import configuration from "@/store/modules/configurations"
 import application from "@/store/modules/application"
 import emailDeliverability from "@/store/modules/emailDeliverability"
+import trustId from "@/store/modules/trustId"
 
 Vue.use(Vuex)
 
@@ -37,9 +38,10 @@ export default new Vuex.Store({
     users,
     clients,
     notifications,
-    configurations,
+    configuration,
     application,
     emailDeliverability,
+    trustId,
   },
 
   strict: debug,

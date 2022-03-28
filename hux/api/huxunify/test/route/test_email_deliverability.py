@@ -85,7 +85,7 @@ class TestDestinationRoutes(RouteTestCase):
             self.generic_campaigns,
         )
 
-        set_performance_metrics(
+        self.metrics_1 = set_performance_metrics(
             database=self.database,
             delivery_platform_id=self.delivery_platform_doc[db_c.ID],
             delivery_job_id=self.delivery_job_doc[db_c.ID],
@@ -110,7 +110,7 @@ class TestDestinationRoutes(RouteTestCase):
                 "complaints": 11,
             },
             start_time=datetime.datetime.utcnow(),
-            end_time=datetime.datetime.utcnow() + datetime.timedelta(days=-1),
+            end_time=datetime.datetime.utcnow() + datetime.timedelta(days=-2),
         )
 
     def test_email_deliverability_overview(self):
@@ -139,23 +139,67 @@ class TestDestinationRoutes(RouteTestCase):
             ),
             str,
         )
+
+        sent = (
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT)
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.HARD_BOUNCES
+            )
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.UNSUBSCRIBES
+            )
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.COMPLAINTS
+            )
+        )
+        delivered = sent - (
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.BOUNCES)
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.HARD_BOUNCES
+            )
+        )
+
         self.assertIsInstance(
             response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
                 api_c.SENT
             ),
             int,
         )
+        self.assertEqual(
+            sent,
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.SENT
+            ),
+        )
+
         self.assertIsInstance(
             response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
                 api_c.OPEN_RATE
             ),
             float,
         )
+        self.assertAlmostEqual(
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS)
+            / delivered,
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.OPEN_RATE
+            ),
+            places=2,
+        )
+
         self.assertIsInstance(
             response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
                 api_c.CLICK_RATE
             ),
             float,
+        )
+        self.assertAlmostEqual(
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS)
+            / delivered,
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.CLICK_RATE
+            ),
+            places=2,
         )
 
     def test_email_deliverability_all_domain_data(self):
@@ -209,3 +253,203 @@ class TestDestinationRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_email_deliverability_multiple_campaigns(self):
+        """Test email deliverability data for multiple campaigns."""
+
+        metrics_2 = set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_job_id=self.delivery_job_doc[db_c.ID],
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_SFMC,
+            generic_campaigns=self.generic_campaigns[0]["campaign_id"],
+            metrics_dict={
+                "journey_name": "SFMCJourney_2",
+                "journey_id": "43925808-c52e-11eb-826e-bae5bebfd7a4",
+                "from_addr": "dev-sfmc@domain_1",
+                "journey_creation_date": "2021-09-01T12:14:46Z",
+                "hux_engagement_id": "60c2fd6515eb844f53cdc669",
+                "hux_audience_id": "60a7a15cc1e230dbd54ef428",
+                "sent": 199,
+                "delivered": 0,
+                "opens": 107,
+                "unique_opens": 91,
+                "clicks": 71,
+                "unique_clicks": 67,
+                "bounces": 1,
+                "hard_bounces": 0,
+                "unsubscribes": 27,
+                "complaints": 11,
+            },
+            start_time=datetime.datetime.utcnow(),
+            end_time=datetime.datetime.utcnow() + datetime.timedelta(days=-1),
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}/"
+            f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains?"
+            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        response_data = response.json
+        self.assertTrue(
+            t_c.validate_schema(
+                EmailDeliverabiliyDomainsSchema(), response_data
+            )
+        )
+
+        # Ensure different campaigns data are not aggregated.
+        self.assertEqual(
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT),
+            response.json.get(api_c.SENT)[0].get(api_c.DOMAIN_1),
+        )
+
+        self.assertEqual(
+            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT),
+            response.json.get(api_c.SENT)[1].get(api_c.DOMAIN_1),
+        )
+
+        # Ensure rates are calculated properly.
+        self.assertAlmostEqual(
+            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS)
+            / metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT),
+            response.json.get(api_c.OPEN_RATE)[1].get(api_c.DOMAIN_1),
+            places=2,
+        )
+
+        self.assertAlmostEqual(
+            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS)
+            / metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT),
+            response.json.get(api_c.CLICK_RATE)[1].get(api_c.DOMAIN_1),
+            places=2,
+        )
+
+        self.assertAlmostEqual(
+            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.UNSUBSCRIBES)
+            / metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT),
+            response.json.get(api_c.UNSUBSCRIBE_RATE)[1].get(api_c.DOMAIN_1),
+            places=2,
+        )
+
+    def test_email_deliverability_single_campaign(self):
+        """Test email deliverability data for single campaign."""
+
+        metrics_2 = set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_job_id=self.delivery_job_doc[db_c.ID],
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_SFMC,
+            generic_campaigns=self.generic_campaigns[0]["campaign_id"],
+            metrics_dict={
+                "journey_name": "SFMCJourney_2",
+                "journey_id": "43925808-c52e-11eb-826e-bae5bebfd7a3",
+                "from_addr": "dev-sfmc@domain_1",
+                "journey_creation_date": "2021-09-01T12:14:46Z",
+                "hux_engagement_id": "60c2fd6515eb844f53cdc669",
+                "hux_audience_id": "60a7a15cc1e230dbd54ef428",
+                "sent": 200,
+                "delivered": 0,
+                "opens": 107,
+                "unique_opens": 91,
+                "clicks": 71,
+                "unique_clicks": 67,
+                "bounces": 1,
+                "hard_bounces": 0,
+                "unsubscribes": 27,
+                "complaints": 11,
+            },
+            start_time=datetime.datetime.utcnow(),
+            end_time=datetime.datetime.utcnow() + datetime.timedelta(days=-1),
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}/"
+            f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains?"
+            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        response_data = response.json
+        self.assertTrue(
+            t_c.validate_schema(
+                EmailDeliverabiliyDomainsSchema(), response_data
+            )
+        )
+
+        sent_day_1 = self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+            api_c.SENT
+        ) + metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT)
+        # Ensure different campaigns data are aggregated.
+        self.assertEqual(
+            sent_day_1, response.json.get(api_c.SENT)[0].get(api_c.DOMAIN_1)
+        )
+
+        # Ensure sent on second day is calculated as
+        # sent - (hard bounces, unsubscribes, complaints)
+        sent_day_2 = (
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT)
+            + metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT)
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.HARD_BOUNCES
+            )
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.UNSUBSCRIBES
+            )
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.COMPLAINTS
+            )
+        )
+        delivered_day_2 = sent_day_2 - (
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.BOUNCES)
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.HARD_BOUNCES
+            )
+        )
+
+        self.assertEqual(
+            sent_day_2, response.json.get(api_c.SENT)[1].get(api_c.DOMAIN_1)
+        )
+
+        # Ensure rates are calculated properly.
+        self.assertAlmostEqual(
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS)
+            / sent_day_1,
+            response.json.get(api_c.OPEN_RATE)[0].get(api_c.DOMAIN_1),
+            places=2,
+        )
+        self.assertAlmostEqual(
+            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS)
+            / delivered_day_2,
+            response.json.get(api_c.OPEN_RATE)[1].get(api_c.DOMAIN_1),
+            places=2,
+        )
+
+        self.assertAlmostEqual(
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS)
+            / sent_day_1,
+            response.json.get(api_c.CLICK_RATE)[0].get(api_c.DOMAIN_1),
+            places=2,
+        )
+        self.assertAlmostEqual(
+            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS)
+            / delivered_day_2,
+            response.json.get(api_c.CLICK_RATE)[1].get(api_c.DOMAIN_1),
+            places=2,
+        )
+        self.assertAlmostEqual(
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.UNSUBSCRIBES
+            )
+            / sent_day_1,
+            response.json.get(api_c.UNSUBSCRIBE_RATE)[0].get(api_c.DOMAIN_1),
+            places=2,
+        )
+        self.assertAlmostEqual(
+            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.UNSUBSCRIBES)
+            / delivered_day_2,
+            response.json.get(api_c.UNSUBSCRIBE_RATE)[1].get(api_c.DOMAIN_1),
+            places=2,
+        )

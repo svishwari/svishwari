@@ -83,6 +83,7 @@ JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
 KEY = "key"
+COMPONENT = "component"
 TASK = "Task"
 TICKET_TYPE_BUG = "Bug"
 
@@ -136,6 +137,9 @@ FIELDS = "fields"
 STATUSES = "statuses"
 INPUT_FILE = "input_file"
 UNIQUE_ID = "unique_id"
+INPUT = "input"
+TEXT = "text"
+EVENTS = "events"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -229,9 +233,11 @@ DAY_OF_MONTH_NAME_LIST = [
 DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
 DESTINATION_CHECK_CRON = "*/15"
+DELIVERY_JOB_CRON = "0 * * * *"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
+UNSET = "unset"
 DIGITAL_ADVERTISING = "digital_advertising"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
@@ -750,6 +756,7 @@ AD_SET_NAME = "ad_set_name"
 DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
+AUDIENCE_DELIVERY_SCHEDULE = "audience_delivery_schedule"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
 MY_ENGAGEMENTS = "my_engagements"
@@ -1182,26 +1189,6 @@ DEFAULT_BATCH_SIZE = 5
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
-
-# health check prometheus metric constants
-MONGO_CONNECTION_HEALTH = "mongo_connection_health"
-TECTON_CONNECTION_HEALTH = "tecton_connection_health"
-OKTA_CONNECTION_HEALTH = "okta_connection_health"
-CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
-CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
-    "cdm_connection_service_connection_health"
-)
-JIRA_CONNECTION_HEALTH = "jira_connection_health"
-
-# AWS health metrics constants
-AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
-AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
-AWS_S3_CONNECTION_HEALTH = "aws_s3_connection_health"
-AWS_EVENTS_CONNECTION_HEALTH = "aws_events_connection_health"
-
-# AZURE health metrics constants
-AZURE_BATCH_CONNECTION_HEALTH = "azure_batch_connection_health"
-AZURE_BLOB_CONNECTION_HEALTH = "azure_blob_connection_health"
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
@@ -1638,6 +1625,14 @@ UNSUBSCRIBE_RATE = "unsubscribe_rate"
 COMPLAINTS_RATE = "complaints_rate"
 DELIVERABILITY_METRICS = "deliverability_metrics"
 
+CAMPAIGN_ID = "campaign_id"
+UNSUBSCRIBES = "unsubscribes"
+COMPLAINTS = "complaints"
+SOFT_BOUNCES = "soft_bounces"
+BOUNCES = "bounces"
+HARD_BOUNCES = "hard_bounces"
+OPENS = "opens"
+CLICKS = "clicks"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"
@@ -1654,47 +1649,44 @@ SENDING_DOMAINS_OVERVIEW_STUB = [
 ]
 
 ALERT_SAMPLE_RESPONSE = {
-    DATA_MANAGEMENT: {
-        DATASOURCES: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+    ALERTS: {
+        DATA_MANAGEMENT: {
+            DATA_SOURCES: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
         },
-        IDENTITY_RESOLUTION: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        DECISIONING: {
+            MODELS: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
         },
-    },
-    DECISIONING: {
-        MODELS: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        ORCHESTRATION_TAG: {
+            DESTINATIONS: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
+            AUDIENCE_ENGAGEMENTS: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
+            AUDIENCES: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
+            DELIVERY_TAG: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
         },
-    },
-    ORCHESTRATION_TAG: {
-        DESTINATIONS: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-        AUDIENCE_ENGAGEMENTS: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-        AUDIENCES: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-        DELIVERY_TAG: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-    },
+    }
 }
 
 # Trust ID

@@ -3,10 +3,12 @@ https://developer.okta.com/docs/reference/api/authn/
 """
 import re
 import json
+import ssl
 import urllib
 from argparse import ArgumentParser
 from getpass import getpass
 
+import certifi
 import requests
 import pyperclip
 
@@ -119,8 +121,12 @@ class OktaOIDC:
         # grab the authorize url via get.
         req = urllib.request.Request(authorize_url)
 
+        # build a context with certificate to pass in as context argument for
+        # urlopen request function below
+        context = ssl.create_default_context(cafile=certifi.where())
+
         # open the url, and force the redirect.
-        with urllib.request.urlopen(req) as redirect:
+        with urllib.request.urlopen(req, context=context) as redirect:
             # grab the token using a regex
             matches = re.findall(self.TOKEN_REGEX, str(redirect.geturl()))
             token = matches[0] if matches else 0

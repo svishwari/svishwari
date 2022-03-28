@@ -313,6 +313,7 @@ export default {
           background: var(--v-primary-lighten2);
           height: 32px !important;
           box-shadow: none !important;
+          z-index: 0;
         }
       }
     }

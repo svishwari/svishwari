@@ -12,9 +12,8 @@ from azure.storage.blob import BlobClient
 from huxunify.api.data_connectors.cloud.cloud_client import (
     CloudClient,
 )
-import huxunify.api.constants as api_c
 from huxunify.api.config import get_config, Config
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import record_health_status, Connections
 
 
 class AzureClient(CloudClient):
@@ -116,6 +115,7 @@ class AzureClient(CloudClient):
         """
         raise NotImplementedError()
 
+    @record_health_status(Connections.BATCH_SERVICE)
     def health_check_batch_service(self) -> Tuple[bool, str]:
         """Checks the health of the Azure batch service.
 
@@ -137,11 +137,9 @@ class AzureClient(CloudClient):
         except BatchErrorException as exc:
             status = False, getattr(exc, "message", repr(exc))
 
-        record_health_status_metric(
-            api_c.AZURE_BATCH_CONNECTION_HEALTH, status[0]
-        )
         return status
 
+    @record_health_status(Connections.STORAGE_SERVICE)
     def health_check_storage_service(self) -> Tuple[bool, str]:
         """Checks the health of the azure blob storage.
 
@@ -163,12 +161,10 @@ class AzureClient(CloudClient):
             else "Azure Blob service unavailable.",
         )
 
-        record_health_status_metric(
-            api_c.AZURE_BLOB_CONNECTION_HEALTH, status[0]
-        )
         return status
 
     # pylint: disable=broad-except
+    @record_health_status(Connections.SECRET_STORAGE_SERVICE)
     def health_check_secret_storage(self) -> Tuple[bool, str]:
         """Checks the health of the Azure key vault.
 

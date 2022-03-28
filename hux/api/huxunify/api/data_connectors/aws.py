@@ -1,7 +1,5 @@
 """Purpose of this file is for interacting with aws"""
-from typing import Tuple
 from enum import Enum
-
 import boto3
 from huxunifylib.util.general.const import (
     FacebookCredentials,
@@ -15,7 +13,6 @@ import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
-from huxunify.api.prometheus import record_health_status_metric
 
 
 def get_aws_client(
@@ -36,100 +33,6 @@ def get_aws_client(
         client,
         region_name=region_name,
     )
-
-
-def check_aws_connection(
-    client_method: str, extra_params: dict, client: str = "s3"
-) -> Tuple[bool, str]:
-    """Validate an AWS connection.
-
-    Args:
-        client_method (str): Method name for the client
-        extra_params (dict): Extra params required for aws connection
-        client (str): name of the boto3 client to use.
-    Returns:
-        tuple[bool, str]: Returns if the AWS connection is valid,
-            and the message.
-    """
-
-    try:
-        # lookup the health test to run from api constants
-        getattr(get_aws_client(client), client_method)(**extra_params)
-        return True, f"{client} available."
-    except Exception as exception:  # pylint: disable=broad-except
-        # report the generic error message
-        return False, getattr(exception, "message", repr(exception))
-
-
-def check_aws_ssm() -> Tuple[bool, str]:
-    """Validate AWS ssm Function
-
-    Returns:
-        tuple[bool, str]: Returns if the AWS connection is valid,
-            and the message.
-    """
-    status = check_aws_connection(
-        client_method="get_parameter",
-        client=api_c.AWS_SSM_NAME,
-        extra_params={"Name": "unifieddb_host_alias"},
-    )
-    record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, status[0])
-    return status
-
-
-def check_aws_batch() -> Tuple[bool, str]:
-    """Validate AWS batch Function
-
-    Returns:
-        tuple[bool, str]: Returns if the AWS connection is valid,
-            and the message.
-    """
-    status = check_aws_connection(
-        client_method="cancel_job",
-        client=api_c.AWS_BATCH_NAME,
-        extra_params={"jobId": "test", "reason": "test"},
-    )
-    record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, status[0])
-    return status
-
-
-def check_aws_s3() -> Tuple[bool, str]:
-    """Validate AWS S3 Function
-
-    Returns:
-        tuple[bool, str]: Returns if the AWS connection is valid,
-            and the message.
-
-    """
-    status = check_aws_connection(
-        client_method="get_bucket_location",
-        client=api_c.AWS_S3_NAME,
-        extra_params={api_c.AWS_BUCKET: config.get_config().S3_DATASET_BUCKET},
-    )
-    record_health_status_metric(api_c.AWS_S3_CONNECTION_HEALTH, status[0])
-    return status
-
-
-def check_aws_events() -> Tuple[bool, str]:
-    """Validates AWS events function
-
-    Returns:
-        tuple[bool, str]: Returns if the AWS connection is valid,
-            and the message.
-    """
-    status = check_aws_connection(
-        client_method="put_rule",
-        client=api_c.AWS_EVENTS_NAME,
-        extra_params={
-            "Name": "unified_health_check",
-            "State": "DISABLED",
-            "Description": "test health check",
-            "RoleArn": config.get_config().AUDIENCE_ROUTER_JOB_ROLE_ARN,
-            "ScheduleExpression": "cron(15 0 * * ? *)",
-        },
-    )
-    record_health_status_metric(api_c.AWS_EVENTS_CONNECTION_HEALTH, status[0])
-    return status
 
 
 def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:

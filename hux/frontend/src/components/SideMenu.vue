@@ -71,8 +71,9 @@
       <v-list-item
         v-if="!item.menu"
         class="pl-6 mr-2"
-        :to="item.link"
         :data-e2e="`nav-${item.icon}`"
+        :to="item.link"
+        @click="navigate(item)"
       >
         <v-list-item-icon
           v-if="item.icon"
@@ -104,9 +105,12 @@
         <v-list-item
           v-for="menu in item.menu"
           :key="menu.title"
-          :to="menu.link"
           class="pl-6 mr-2"
           :data-e2e="`nav-${menu.icon}`"
+          :to="menu.link"
+          @click="navigate(menu)"
+          @mouseover="onMouseOver(menu)"
+          @mouseleave="onMouseLeave()"
         >
           <v-list-item-icon
             v-if="menu.icon"
@@ -131,6 +135,9 @@
           </v-list-item-icon>
           <v-list-item-title class="black--text text-h6">
             {{ menu.title }}
+            <span v-if="menu.superscript" class="title-superscript">
+              {{ menu.superscript }}
+            </span>
           </v-list-item-title>
         </v-list-item>
       </div>
@@ -154,10 +161,11 @@
 </template>
 
 <script>
-import menuConfig from "@/menuConfig.json"
+import menuConfig from "@/menuConfig.js"
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
+import * as _ from "lodash"
 
 export default {
   name: "SideMenu",
@@ -176,6 +184,7 @@ export default {
     },
     menu: false,
     items: menuConfig.menu,
+    prevItem: null,
   }),
 
   computed: {
@@ -196,6 +205,53 @@ export default {
           return x.display
         }
       })
+    },
+  },
+
+  mounted() {
+    this.trustidRoute(this.$route.name)
+  },
+
+  methods: {
+    navigate(item) {
+      this.trustidRoute(item.title)
+      if (
+        this.prevItem &&
+        this.prevItem.defaultState &&
+        this.prevItem.link.name != item.link.name
+      ) {
+        this.$store.replaceState({
+          ...this.$store.state,
+          [this.prevItem.link.name.charAt(0).toLowerCase() +
+          this.prevItem.link.name.slice(1)]: _.cloneDeep(
+            this.prevItem.defaultState
+          ),
+        })
+      }
+      this.prevItem = item
+    },
+
+    checkColored(title) {
+      if (title == "HX TrustID" || title == "HXTrustID") {
+        this.items[5].menu[1].icon = "hx-trustid-colored"
+        return true
+      }
+      return false
+    },
+
+    trustidRoute(title) {
+      if (!this.checkColored(title)) {
+        this.items[5].menu[1].icon = "hx-trustid"
+      }
+    },
+
+    onMouseOver(item) {
+      if (item) {
+        this.checkColored(item.title)
+      }
+    },
+    onMouseLeave() {
+      this.trustidRoute(this.$route.name)
     },
   },
 }
@@ -309,5 +365,11 @@ export default {
 }
 .height-fix {
   min-height: 32px;
+}
+.title-superscript {
+  @extend .superscript;
+  font-size: 6px;
+  left: -4px;
+  top: -8px;
 }
 </style>

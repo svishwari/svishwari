@@ -75,10 +75,28 @@
               :indeterminate="loadingCustomerEvents"
             />
             <customer-event-chart
-              v-if="!loadingCustomerEvents"
+              v-if="!loadingCustomerEvents && !customerEventsError"
               :customers-data="events"
               data-e2e="customer-event-chart"
             />
+            <empty-page
+              v-else-if="customerEventsError"
+              class="title-no-notification"
+              type="error-on-screens"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">
+                  Customer events chart is currently unavailable
+                </div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Our team is working hard to fix it. Please be patient and try
+                  again soon!
+                </div>
+              </template>
+            </empty-page>
           </v-card>
         </v-col>
       </v-row>
@@ -104,6 +122,7 @@ import IndividualIdentity from "./IndividualIdentity.vue"
 import CustomerEventsDrawer from "./Drawers/CustomerEventsDrawer"
 import Icon from "@/components/common/Icon"
 import { sortBy } from "lodash"
+import EmptyPage from "@/components/common/EmptyPage.vue"
 
 export default {
   name: "CustomerProfileDetails",
@@ -117,6 +136,7 @@ export default {
     IndividualIdentity,
     CustomerEventsDrawer,
     Icon,
+    EmptyPage,
   },
   data() {
     return {
@@ -126,7 +146,7 @@ export default {
         {
           text: "All Customers",
           disabled: false,
-          href: this.$router.resolve({ name: "CustomerProfiles" }).href,
+          href: this.$router.resolve({ name: "Customers" }).href,
           icon: "customer-profiles",
         },
         {
@@ -151,6 +171,7 @@ export default {
       loadingCustomerEvents: true,
       customerEventsDrawer: false,
       showPIIData: false,
+      customerEventsError: false,
     }
   },
   computed: {
@@ -202,7 +223,10 @@ export default {
     async getCustomerEvent() {
       this.loadingCustomerEvents = true
       try {
-        await this.getEvents(this.id)
+        var res = this.getEvents(this.id)
+        if (!res) {
+          this.customerEventsError = true
+        }
       } finally {
         this.loadingCustomerEvents = false
       }

@@ -12,6 +12,7 @@ from huxunify.api.data_connectors.cloud.cloud_client import (
 )
 from huxunify.api.config import get_config, Config
 import huxunify.api.constants as api_c
+from huxunify.api.prometheus import record_health_status, Connections
 
 
 class ClientType(Enum):
@@ -212,6 +213,7 @@ class AWSClient(CloudClient):
                 f"{getattr(exception, 'message', repr(exception))}",
             )
 
+    @record_health_status(Connections.BATCH_SERVICE)
     def health_check_batch_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS batch service.
 
@@ -224,6 +226,7 @@ class AWSClient(CloudClient):
             method_args={"jobId": "test", "reason": "test"},
         )
 
+    @record_health_status(Connections.STORAGE_SERVICE)
     def health_check_storage_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS storage service.
 
@@ -236,6 +239,7 @@ class AWSClient(CloudClient):
             method_args={api_c.AWS_BUCKET: self.config.S3_DATASET_BUCKET},
         )
 
+    @record_health_status(Connections.SECRET_STORAGE_SERVICE)
     def health_check_secret_storage(self) -> Tuple[bool, str]:
         """Checks the health of the Azure key vault.
 
