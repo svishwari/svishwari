@@ -48,6 +48,9 @@ client["users"].getRequestedUsers = () => {
 client["users"].tickets = () => {
   return http.get("users/tickets")
 }
+client["users"].trustIdOverview = () => {
+  return http.get("trust_id/overview")
+}
 //#endregion
 
 //#region Configurations
@@ -206,6 +209,11 @@ client["engagements"].deliverAudienceDestination = (
   data
 ) => {
   const endpoint = `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}/deliver`
+  return http.post(endpoint, data)
+}
+
+client["engagements"].editDeliveryAudience = (resourceId, audienceId, data) => {
+  const endpoint = `/engagements/${resourceId}/audience/${audienceId}/schedule`
   return http.post(endpoint, data)
 }
 

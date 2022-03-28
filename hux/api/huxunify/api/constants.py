@@ -137,6 +137,9 @@ FIELDS = "fields"
 STATUSES = "statuses"
 INPUT_FILE = "input_file"
 UNIQUE_ID = "unique_id"
+INPUT = "input"
+TEXT = "text"
+EVENTS = "events"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -1646,47 +1649,44 @@ SENDING_DOMAINS_OVERVIEW_STUB = [
 ]
 
 ALERT_SAMPLE_RESPONSE = {
-    DATA_MANAGEMENT: {
-        DATASOURCES: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+    ALERTS: {
+        DATA_MANAGEMENT: {
+            DATA_SOURCES: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
         },
-        IDENTITY_RESOLUTION: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        DECISIONING: {
+            MODELS: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
         },
-    },
-    DECISIONING: {
-        MODELS: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        ORCHESTRATION_TAG: {
+            DESTINATIONS: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
+            AUDIENCE_ENGAGEMENTS: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
+            AUDIENCES: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
+            DELIVERY_TAG: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
         },
-    },
-    ORCHESTRATION_TAG: {
-        DESTINATIONS: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-        AUDIENCE_ENGAGEMENTS: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-        AUDIENCES: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-        DELIVERY_TAG: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-    },
+    }
 }
 
 # Trust ID

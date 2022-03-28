@@ -14,6 +14,8 @@ export default {
     darken2: colors.chart2,
     darken3: colors.blue,
     darken4: colors.oceanBlue,
+    darken5: colors.curiousBlue,
+    darken6: colors.lagoonBlue,
   },
   black: {
     lighten1: colors.inactiveButton,
@@ -28,6 +30,7 @@ export default {
     base: colors.greenD,
   },
   secondary: {
+    lighten2: colors.adriaticHaze,
     lighten1: colors.lightTealD,
     base: colors.tealD,
     darken1: colors.teal6D,
@@ -37,6 +40,7 @@ export default {
   yellow: {
     lighten1: colors.yellow5,
     base: colors.yellow,
+    darken1: colors.earlsGreen,
   },
   info: colors.info,
 

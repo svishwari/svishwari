@@ -27,6 +27,8 @@ import { addedApplications, applications } from "./factories/application"
 import domainData from "@/api/mock/fixtures/domainLineData.js"
 import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 import runDurationData from "@/api/mock/fixtures/runDurationData.js"
+import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
+import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
 import trustIdComparisonData from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export const defineRoutes = (server) => {
@@ -99,6 +101,7 @@ export const defineRoutes = (server) => {
       alerts: requestData.alerts,
     })
   })
+  server.get("/trust_id/overview", () => trustIdOverview)
 
   //client projects
   server.get("/client-projects")
@@ -399,6 +402,15 @@ export const defineRoutes = (server) => {
       return { message: "Successfully updated delivery schedule" }
     }
   )
+
+  server.post("/engagements/:id/audience/:audienceId/schedule", () => {
+    const code = 201
+    const headers = {}
+    const body = {
+      message: "Successfully updated delivery schedule",
+    }
+    return new Response(code, headers, body)
+  })
 
   server.post(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/deliver",
@@ -865,4 +877,6 @@ export const defineRoutes = (server) => {
 
   // trust id
   server.get("/trust_id/comparison", () => trustIdComparisonData)
+
+  server.get("/trust_id/user_filters", () => addSegmentData)
 }
