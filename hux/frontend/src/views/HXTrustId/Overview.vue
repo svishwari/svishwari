@@ -33,8 +33,8 @@
               :value="scorecard.attribute_score"
               :width="150"
               :height="90"
-              :stroke="colorCodes[scorecard.attribute_name].stroke"
-              :variant="colorCodes[scorecard.attribute_name].variant"
+              :stroke="cardColors(scorecard.attribute_name).stroke"
+              :variant="cardColors(scorecard.attribute_name).variant"
             >
               <template #progress-bar>
                 <progress-stack-bar
@@ -139,6 +139,11 @@ export default {
   methods: {
     formatText: formatText,
     numberWithCommas: numberWithCommas,
+    cardColors(attributeName) {
+      return attributeName in this.colorCodes
+        ? this.colorCodes[attributeName]
+        : { stroke: "primary", variant: "base" }
+    },
     progressBarData(data) {
       if (Object.keys(data).length == 0) return []
       let dataFormatted = []
