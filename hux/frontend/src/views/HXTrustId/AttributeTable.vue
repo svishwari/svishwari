@@ -25,7 +25,8 @@
                 <div class="attribute-name">
                   <rhombus-number
                     class="rhombus-icon"
-                    :color="getRhombusColour(item)"
+                    :color="getRhombusColour(item).stroke"
+                    :variant="getRhombusColour(item).variant"
                   />
                   {{ item[col.value] }}
                 </div>
@@ -34,7 +35,8 @@
                 <rhombus-number
                   class="ml-10"
                   :value="item[col.value]"
-                  :color="getRhombusColour(item)"
+                  :color="getRhombusColour(item).stroke"
+                  :variant="getRhombusColour(item).variant"
                 />
               </template>
               <template v-else-if="col.value === 'attribute_description'">
@@ -155,10 +157,10 @@ export default {
       sortColumn: "attribute_name",
       sortDesc: true,
       trustColor: {
-        humanity: "#037E8E",
-        transparency: "#D0C539",
-        capability: "#3C89B7",
-        reliability: "#92C7CD",
+        humanity: { stroke: "primary", variant: "darken6" },
+        transparency: { stroke: "yellow", variant: "darken1" },
+        capability: { stroke: "primary", variant: "darken5" },
+        reliability: { stroke: "secondary", variant: "lighten2" },
       },
       columns: [
         {

@@ -3,7 +3,7 @@
     :class="{
       'border-image': borderImage,
     }"
-    class="card-style"
+    class="rhombus-card-wrapper"
     :style="style"
     shaped
     outlined

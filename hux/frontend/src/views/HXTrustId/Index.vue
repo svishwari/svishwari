@@ -219,31 +219,6 @@
           />
         </div>
       </div>
-      <link-dropdown
-        :data-list="getSegment"
-        :width="245"
-        @onselect="getSelectedData"
-      ></link-dropdown>
-      <div>
-        <v-list class="add-segment no-data-width" :height="22">
-          <v-list-item @click="filterToggle()">
-            <hux-icon
-              type="plus"
-              :size="16"
-              color="primary"
-              class="mr-4 ml-2"
-            />
-            <v-btn
-              text
-              min-width="7rem"
-              height="2rem"
-              class="primary--text text-body-1"
-            >
-              New segment to compare
-            </v-btn>
-          </v-list-item>
-        </v-list>
-      </div>
     </template>
   </page>
 </template>
