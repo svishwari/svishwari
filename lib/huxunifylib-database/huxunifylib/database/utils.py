@@ -2,6 +2,7 @@
 
 import logging
 from datetime import datetime
+from typing import Union
 
 import pymongo
 import pandas as pd
@@ -82,7 +83,10 @@ def detect_non_breakdown_fields(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_collection_count(
-    database: DatabaseClient, database_name: str, collection_name: str
+    database: DatabaseClient,
+    database_name: str,
+    collection_name: str,
+    query_filter: Union[dict, None] = None,
 ) -> int:
     """Returns collection count.
 
@@ -90,6 +94,7 @@ def get_collection_count(
         database (DatabaseClient): database client.
         database_name (str): database name.
         collection_name (str): collection name.
+        query_filter (Union[dict[Tuple], None]): Mongo filter query.
 
     Returns:
         int: collection count.
@@ -97,12 +102,12 @@ def get_collection_count(
 
     collection = database[database_name][collection_name]
 
+    query_filter = query_filter if query_filter else {}
+    if db_c.DELETED not in query_filter:
+        query_filter[db_c.DELETED] = False
+
     try:
-        return collection.count_documents(
-            {
-                db_c.DELETED: False,
-            }
-        )
+        return collection.count_documents(query_filter)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

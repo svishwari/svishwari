@@ -28,6 +28,7 @@ from huxunifylib.database.engagement_management import (
     append_audiences_to_engagement,
     append_destination_to_engagement_audience,
     remove_destination_from_engagement_audience,
+    get_engagements_count,
 )
 from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.database import (
@@ -163,15 +164,10 @@ class EngagementSearch(SwaggerView):
         """
 
         database = get_db_client()
-        # get user favorite engagements
-        favorite_engagements = get_user_favorites(
-            database, user[api_c.USER_NAME], db_c.ENGAGEMENTS
-        )
 
         # read the optional request args and set the required query_filter to
         # query the DB.
         query_filter = {}
-
         if request.args.get(api_c.MY_ENGAGEMENTS) and validation.validate_bool(
             request.args.get(api_c.MY_ENGAGEMENTS)
         ):
@@ -192,16 +188,28 @@ class EngagementSearch(SwaggerView):
             )
         )
 
+        # get user favorite engagements
+        favorite_engagements = None
+        if request.args.get(api_c.FAVORITES) and validation.validate_bool(
+            request.args.get(api_c.FAVORITES)
+        ):
+            favorite_engagements = get_user_favorites(
+                database, user[api_c.USER_NAME], db_c.ENGAGEMENTS
+            )
+
         # get the engagement summary
         engagements = get_engagements_summary(
             database=database,
-            engagement_ids=favorite_engagements
-            if request.args.get(api_c.FAVORITES)
-            and validation.validate_bool(request.args.get(api_c.FAVORITES))
-            else None,
+            engagement_ids=favorite_engagements,
             query_filter=query_filter,
             batch_size=batch_size,
             batch_number=batch_number,
+        )
+
+        # get total engagements count to add it to response for pagination
+        # request
+        engagements_count = get_engagements_count(
+            database=database, filters=query_filter, engagement_ids=favorite_engagements
         )
 
         # weight the engagement status
@@ -215,7 +223,7 @@ class EngagementSearch(SwaggerView):
             ]
 
         engagements_batch = {
-            api_c.TOTAL_RECORDS: len(engagements),
+            api_c.TOTAL_RECORDS: engagements_count,
             api_c.ENGAGEMENT_TAG: engagements,
         }
 
@@ -298,8 +306,7 @@ class IndividualEngagementSearch(SwaggerView):
         )
 
         engagement[api_c.FAVORITE] = (
-            favorite_engagements
-            and engagement.get(db_c.ID) in favorite_engagements
+            favorite_engagements and engagement.get(db_c.ID) in favorite_engagements
         )
 
         # set destination_category object in engagement dict
@@ -311,9 +318,7 @@ class IndividualEngagementSearch(SwaggerView):
         )
 
 
-@add_view_to_blueprint(
-    engagement_bp, f"{api_c.ENGAGEMENT_ENDPOINT}", "SetEngagement"
-)
+@add_view_to_blueprint(engagement_bp, f"{api_c.ENGAGEMENT_ENDPOINT}", "SetEngagement")
 class SetEngagement(SwaggerView):
     """Class to create a new engagement."""
 
@@ -381,9 +386,7 @@ class SetEngagement(SwaggerView):
 
         # Check if delivery schedule exists, if exists generate cron string.
         if body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
-            schedule = body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE).get(
-                api_c.SCHEDULE
-            )
+            schedule = body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE).get(api_c.SCHEDULE)
             if schedule:
                 cron_schedule = generate_cron(schedule)
                 body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)[
@@ -407,9 +410,7 @@ class SetEngagement(SwaggerView):
             user_name=user[api_c.USER_NAME],
         )
         engagement = get_engagement(database, engagement_id=engagement_id)
-        logger.info(
-            "Successfully created engagement %s.", engagement.get(db_c.NAME)
-        )
+        logger.info("Successfully created engagement %s.", engagement.get(db_c.NAME))
 
         create_notification(
             database,
@@ -504,9 +505,7 @@ class UpdateEngagement(SwaggerView):
             Tuple[dict, int]: Engagement updated, HTTP status code.
         """
 
-        body = EngagementPutSchema(unknown=api_c.EXCLUDE).load(
-            request.get_json()
-        )
+        body = EngagementPutSchema(unknown=api_c.EXCLUDE).load(request.get_json())
 
         # Check if delivery schedule exists, if exists generate cron string.
         if body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, None):
@@ -538,9 +537,7 @@ class UpdateEngagement(SwaggerView):
             else {},
             status=body.get(db_c.STATUS),
         )
-        logger.info(
-            "Successfully updated engagement with ID %s.", engagement_id
-        )
+        logger.info("Successfully updated engagement with ID %s.", engagement_id)
 
         # toggle routers since the engagement was updated.
         toggle_event_driven_routers(database)
@@ -720,9 +717,7 @@ class AddAudienceEngagement(SwaggerView):
 
         engagement = get_engagement(database, engagement_id)
 
-        body = AudienceEngagementSchema().load(
-            request.get_json(), partial=True
-        )
+        body = AudienceEngagementSchema().load(request.get_json(), partial=True)
 
         # validate audiences exist
         audience_names = []
@@ -847,9 +842,7 @@ class DeleteAudienceEngagement(SwaggerView):
         engagement = get_engagement(database, engagement_id)
 
         audience_ids = []
-        body = AudienceEngagementDeleteSchema().load(
-            request.get_json(), partial=True
-        )
+        body = AudienceEngagementDeleteSchema().load(request.get_json(), partial=True)
         audience_names = []
         for audience_id in body[api_c.AUDIENCE_IDS]:
             audience_ids.append(ObjectId(audience_id))
@@ -861,9 +854,7 @@ class DeleteAudienceEngagement(SwaggerView):
                     database, ObjectId(audience_id)
                 )
 
-            audience_names.append(
-                audience[db_c.NAME] if audience else f"{audience_id}"
-            )
+            audience_names.append(audience[db_c.NAME] if audience else f"{audience_id}")
 
         remove_audiences_from_engagement(
             database,
@@ -975,12 +966,8 @@ class AddDestinationEngagedAudience(SwaggerView):
         audience = get_audience(database, ObjectId(audience_id))
 
         if not engagement:
-            logger.error(
-                "Engagements not found for engagement ID %s.", engagement_id
-            )
-            return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            logger.error("Engagements not found for engagement ID %s.", engagement_id)
+            return {"message": api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         if not audience:
             logger.error("Audience not found for audience ID %s.", audience_id)
@@ -1001,9 +988,7 @@ class AddDestinationEngagedAudience(SwaggerView):
             logger.error(
                 "Could not find destination with id %s.", destination[api_c.ID]
             )
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            return {"message": api_c.DESTINATION_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         append_destination_to_engagement_audience(
             database,
@@ -1120,12 +1105,8 @@ class RemoveDestinationEngagedAudience(SwaggerView):
         audience = get_audience(database, ObjectId(audience_id))
 
         if not engagement:
-            logger.error(
-                "Engagements not found for engagement ID %s.", engagement_id
-            )
-            return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            logger.error("Engagements not found for engagement ID %s.", engagement_id)
+            return {"message": api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         if not audience:
             logger.error("Audience not found for audience ID %s.", audience_id)
@@ -1133,9 +1114,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
 
         if not request.get_json():
             logger.error("Destination not provided.")
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.DESTINATION_NOT_FOUND}, HTTPStatus.BAD_REQUEST
 
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
@@ -1145,9 +1124,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
         # get destination
         destination_to_remove = get_delivery_platform(database, destination_id)
         if not destination_to_remove:
-            logger.error(
-                "Could not find destination with id %s.", destination_id
-            )
+            logger.error("Could not find destination with id %s.", destination_id)
             # set the destination name to remove as unknown, still allow for the destination
             # to be removed from the engagement audience.
             destination_to_remove = {api_c.NAME: "Unknown"}
@@ -1301,9 +1278,7 @@ class UpdateCampaignsForAudience(SwaggerView):
 
         # validate that the engagement has audiences
         if not engagement[db_c.AUDIENCES]:
-            logger.error(
-                "Engagement %s does not have audiences.", engagement_id
-            )
+            logger.error("Engagement %s does not have audiences.", engagement_id)
             return (
                 {api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES},
                 HTTPStatus.BAD_REQUEST,
@@ -1337,18 +1312,14 @@ class UpdateCampaignsForAudience(SwaggerView):
                 audience_id,
             )
             return (
-                {
-                    api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE
-                },
+                {api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE},
                 HTTPStatus.BAD_REQUEST,
             )
 
         body = CampaignPutSchema().load(request.get_json())
 
-        delivery_jobs = (
-            delivery_platform_management.get_delivery_jobs_using_metadata(
-                database, engagement_id, audience_id, destination_id
-            )
+        delivery_jobs = delivery_platform_management.get_delivery_jobs_using_metadata(
+            database, engagement_id, audience_id, destination_id
         )
 
         if not delivery_jobs:
@@ -1370,9 +1341,7 @@ class UpdateCampaignsForAudience(SwaggerView):
         )
 
         # Group campaigns by Delivery job and update the list of campaigns for the delivery job
-        campaigns = sorted(
-            body[api_c.CAMPAIGNS], key=itemgetter(api_c.DELIVERY_JOB_ID)
-        )
+        campaigns = sorted(body[api_c.CAMPAIGNS], key=itemgetter(api_c.DELIVERY_JOB_ID))
 
         delivery_jobs = []
 
@@ -1392,11 +1361,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                     audience_id,
                 )
                 return (
-                    jsonify(
-                        {
-                            api_c.MESSAGE: "Invalid data, cannot attach campaign."
-                        }
-                    ),
+                    jsonify({api_c.MESSAGE: "Invalid data, cannot attach campaign."}),
                     HTTPStatus.BAD_REQUEST,
                 )
 
@@ -1553,9 +1518,7 @@ class AudienceCampaignsGetView(SwaggerView):
 
         # validate that the engagement has audiences
         if not engagement[db_c.AUDIENCES]:
-            logger.error(
-                "Engagement with ID %s has no audiences.", engagement_id
-            )
+            logger.error("Engagement with ID %s has no audiences.", engagement_id)
             return (
                 jsonify({api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES}),
                 HTTPStatus.BAD_REQUEST,
@@ -1570,9 +1533,7 @@ class AudienceCampaignsGetView(SwaggerView):
                 engagement_id,
             )
             return (
-                jsonify(
-                    {api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT}
-                ),
+                jsonify({api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT}),
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -1592,17 +1553,13 @@ class AudienceCampaignsGetView(SwaggerView):
             )
             return (
                 jsonify(
-                    {
-                        api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE
-                    }
+                    {api_c.MESSAGE: api_c.DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE}
                 ),
                 HTTPStatus.BAD_REQUEST,
             )
 
-        delivery_jobs = (
-            delivery_platform_management.get_delivery_jobs_using_metadata(
-                database, engagement_id, audience_id, destination_id
-            )
+        delivery_jobs = delivery_platform_management.get_delivery_jobs_using_metadata(
+            database, engagement_id, audience_id, destination_id
         )
 
         if not delivery_jobs:
@@ -1724,9 +1681,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         # validate that the engagement has audiences
         if not engagement[db_c.AUDIENCES]:
-            logger.error(
-                "Engagement with ID %s has no audiences.", engagement_id
-            )
+            logger.error("Engagement with ID %s has no audiences.", engagement_id)
             return {
                 api_c.MESSAGE: api_c.ENGAGEMENT_NO_AUDIENCES
             }, HTTPStatus.BAD_REQUEST
@@ -1769,10 +1724,8 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         )
 
         # Get existing delivery jobs
-        delivery_jobs = (
-            delivery_platform_management.get_delivery_jobs_using_metadata(
-                database, engagement_id, audience_id, destination_id
-            )
+        delivery_jobs = delivery_platform_management.get_delivery_jobs_using_metadata(
+            database, engagement_id, audience_id, destination_id
         )
 
         if not delivery_jobs:
@@ -1808,9 +1761,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         campaign_mappings = []
         for campaign in campaigns:
-            ad_sets = facebook_connector.get_campaign_ad_sets(
-                campaign.get(api_c.ID)
-            )
+            ad_sets = facebook_connector.get_campaign_ad_sets(campaign.get(api_c.ID))
             for ad_set in ad_sets:
                 campaign_mappings.append(
                     {
@@ -1846,9 +1797,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
         HTTPStatus.OK.value: {
             "description": "Display Ads Performance Metrics",
             "schema": {
-                "example": {
-                    "display_ads_summary": "Audience Metrics Display Ad"
-                },
+                "example": {"display_ads_summary": "Audience Metrics Display Ad"},
             },
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -1884,12 +1833,8 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         engagement = get_engagement(database, ObjectId(engagement_id))
         if not engagement:
-            logger.error(
-                "Engagement with engagement ID %s not found", engagement_id
-            )
-            return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            logger.error("Engagement with engagement ID %s not found", engagement_id)
+            return {"message": api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         final_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.DISPLAY_ADS
@@ -1950,12 +1895,8 @@ class EngagementMetricsEmail(SwaggerView):
 
         engagement = get_engagement(database, ObjectId(engagement_id))
         if not engagement:
-            logger.error(
-                "Engagement with engagement ID %s not found.", engagement_id
-            )
-            return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            logger.error("Engagement with engagement ID %s not found.", engagement_id)
+            return {"message": api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         final_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.EMAIL
