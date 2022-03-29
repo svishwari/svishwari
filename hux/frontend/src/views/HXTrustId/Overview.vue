@@ -7,6 +7,7 @@
           <template #label-content>
             <score-card
               title="HX TrustID"
+              icon="hx-trustid-colored"
               :value="data && data.trust_id_score"
               :width="150"
               :height="90"
@@ -32,8 +33,8 @@
               :value="scorecard.attribute_score"
               :width="150"
               :height="90"
-              :stroke="colorCodes[scorecard.attribute_name].stroke"
-              :variant="colorCodes[scorecard.attribute_name].variant"
+              :stroke="cardColors(scorecard.attribute_name).stroke"
+              :variant="cardColors(scorecard.attribute_name).variant"
             >
               <template #progress-bar>
                 <progress-stack-bar
@@ -125,19 +126,27 @@ export default {
       required: true,
     },
   },
-  computed: {
-    colorCodes() {
-      return {
-        humanity: { stroke: "primary", variant: "darken6" },
-        transparency: { stroke: "yellow", variant: "darken1" },
-        capability: { stroke: "primary", variant: "darken5" },
-        reliability: { stroke: "secondary", variant: "lighten2" },
-      }
-    },
-  },
   methods: {
     formatText: formatText,
     numberWithCommas: numberWithCommas,
+    cardColors(attributeName) {
+      switch (attributeName) {
+        case "humanity":
+          return { stroke: "primary", variant: "darken6" }
+
+        case "transparency":
+          return { stroke: "yellow", variant: "darken1" }
+
+        case "capability":
+          return { stroke: "primary", variant: "darken5" }
+
+        case "reliability":
+          return { stroke: "secondary", variant: "lighten2" }
+
+        default:
+          return { stroke: "primary", variant: "base" }
+      }
+    },
     progressBarData(data) {
       if (Object.keys(data).length == 0) return []
       let dataFormatted = []
