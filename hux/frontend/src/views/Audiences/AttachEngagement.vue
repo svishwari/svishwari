@@ -412,12 +412,13 @@ export default {
       return this.newEngagement.delivery_schedule == 1
     },
     scheduleConfig() {
-      const recurringConfig = {}
-      recurringConfig["every"] = this.schedule.every
-      recurringConfig["periodicity"] = this.schedule.periodicity
-      recurringConfig["hour"] = this.schedule.hour
-      recurringConfig["minute"] = this.schedule.minute
-      recurringConfig["period"] = this.schedule.period
+      const recurringConfig = {
+        every: this.schedule.every,
+        periodicity: this.schedule.periodicity,
+        hour: this.schedule.hour,
+        minute: this.schedule.minute,
+        period: this.schedule.period,
+      }
       if (this.schedule) {
         switch (this.schedule.periodicity) {
           case "Weekly":
