@@ -82,33 +82,10 @@
                   </v-card>
                 </v-col>
               </v-row>
-              <link-dropdown
-                :data-list="getSegment"
-                :width="245"
-                @onselect="getSelectedData"
-              ></link-dropdown>
-              <div>
-                <v-list class="add-segment no-data-width" :height="22">
-                  <v-list-item @click="filterToggle()">
-                    <hux-icon
-                      type="plus"
-                      :size="16"
-                      color="primary"
-                      class="mr-4 ml-2"
-                    />
-                    <v-btn
-                      text
-                      min-width="7rem"
-                      height="2rem"
-                      class="primary--text text-body-1"
-                    >
-                      New segment to compare
-                    </v-btn>
-                  </v-list-item>
-                </v-list>
-              </div>
             </v-tab-item>
-            <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
+            <v-tab-item key="attributes" class="tab-item">
+              <trust-id-attributes :data="overviewData.attributes" />
+            </v-tab-item>
           </v-tabs-items>
         </div>
         <div class="ml-auto segment-drawer">
@@ -122,6 +99,31 @@
           />
         </div>
       </div>
+      <link-dropdown
+        :data-list="getSegment"
+        :width="245"
+        @onselect="getSelectedData"
+      ></link-dropdown>
+      <div>
+        <v-list class="add-segment no-data-width" :height="22">
+          <v-list-item @click="filterToggle()">
+            <hux-icon
+              type="plus"
+              :size="16"
+              color="primary"
+              class="mr-4 ml-2"
+            />
+            <v-btn
+              text
+              min-width="7rem"
+              height="2rem"
+              class="primary--text text-body-1"
+            >
+              New segment to compare
+            </v-btn>
+          </v-list-item>
+        </v-list>
+      </div>
     </template>
   </page>
 </template>
@@ -134,6 +136,7 @@ import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
+import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
@@ -149,6 +152,7 @@ export default {
     Page,
     PageHeader,
     TrustComparisonChart,
+    TrustIdAttributes,
     HuxIcon,
     AddSegmentDrawer,
   },

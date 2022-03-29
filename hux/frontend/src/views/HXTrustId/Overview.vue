@@ -41,7 +41,7 @@
                   :width="81"
                   :height="6"
                   :show-percentage="false"
-                  :value="
+                  :data="
                     progressBarData(scorecard.overall_customer_rating.rating)
                   "
                   :bar-id="index"
