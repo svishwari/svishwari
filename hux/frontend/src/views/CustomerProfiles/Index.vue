@@ -337,10 +337,7 @@
             </v-row>
             <v-row class="mt-2 mb-4">
               <v-col md="12">
-                <v-card
-                  class="mt-3 rounded-lg box-shadow-5"
-                  height="395"
-                >
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="395">
                   <v-row>
                     <v-progress-linear
                       v-if="loadingGeoOverview"

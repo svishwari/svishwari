@@ -157,10 +157,7 @@
           </empty-page>
         </v-row>
         <v-row
-          v-if="
-            notificationData.length == 0 && isEmptyError &&
-            !loading
-          "
+          v-if="notificationData.length == 0 && isEmptyError && !loading"
           class="d-flex justify-center align-center"
         >
           <error
