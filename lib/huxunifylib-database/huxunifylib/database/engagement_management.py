@@ -222,6 +222,9 @@ def get_engagements_summary(
                         "$audiences.source_audience_filters",
                     ]
                 },
+                "audiences.audience_delivery_schedule": {
+                    "$ifNull": ["$audiences.delivery_schedule", ""]
+                },
                 "audiences.destinations": {
                     "$cond": [
                         {"$eq": ["$lookalike_id", None]},
@@ -311,6 +314,7 @@ def get_engagements_summary(
                     "audience_id": "$audiences.id",
                     "audience_size": "$audiences.size",
                     "filters": "$audiences.filters",
+                    "audience_delivery_schedule": "$audiences.audience_delivery_schedule",
                     "audience_created_by": "$audiences.created_by",
                     "audience_updated_by": "$audiences.updated_by",
                     "audience_update_time": "$audiences.update_time",
@@ -378,6 +382,7 @@ def get_engagements_summary(
                         "name": "$_id.audience_name",
                         "size": "$_id.audience_size",
                         "filters": "$_id.filters",
+                        "audience_delivery_schedule": "$_id.audience_delivery_schedule",
                         "created_by": "$_id.audience_created_by",
                         "updated_by": "$_id.audience_updated_by",
                         "update_time": "$_id.audience_update_time",

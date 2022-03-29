@@ -503,6 +503,9 @@ class EngagementAudienceSchema(Schema):
             }
         ],
     )
+    delivery_schedule = fields.Dict(
+        attribute=api_c.AUDIENCE_DELIVERY_SCHEDULE, required=False
+    )
     destinations = fields.Nested(
         EngagementAudienceDestinationSchema, many=True
     )

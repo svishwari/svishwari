@@ -4,6 +4,8 @@ const attributeRules = {
     not_contains: "Does not contain",
     equals: "Equals",
     not_equals: "Does not equal",
+    within_the_last: "Within the last",
+    not_within_the_last: "Not within the last",
   },
   rule_attributes: {
     model_scores: {
@@ -110,6 +112,37 @@ const attributeRules = {
             "fake.com": "fake.com",
           },
         ],
+      },
+      events: {
+        name: "Events",
+        abandoned_cart: {
+          name: "Abandoned cart",
+          type: "text",
+        },
+        content_viewed: {
+          name: "Content viewed",
+          type: "text",
+        },
+        products_searched: {
+          name: "Products searched",
+          type: "text",
+        },
+        purchases_made: {
+          name: "Purchases made",
+          type: "text",
+        },
+        sales_made: {
+          name: "Sales made",
+          type: "text",
+        },
+        traits_analyzed: {
+          name: "Traits analyzed",
+          type: "text",
+        },
+        viewed_checkout: {
+          name: "Viewed checkout",
+          type: "text",
+        },
       },
       gender: {
         name: "Gender",

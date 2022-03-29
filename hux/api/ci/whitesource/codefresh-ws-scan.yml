@@ -1,10 +1,11 @@
 version: "1.0"
+
 stages:
   - "git_clone"
   - "set_app"
   - "create_ws_configs"
-  - "scan"
   - "create_scan_report"
+  - "parse_whitesource_report"
 
 steps:
   Prepare_Build_Details:
@@ -28,10 +29,18 @@ steps:
   SetAppName:
     stage: set_app
     title: Set Application Name
-    image: huxhub.repo.mgnt.in/alpine
+    image: ciruntime.repo.mgnt.in/jq-ci
     commands:
       ## Set application name, which is also directory name in monorepo.
+      ## If not monorepo, APPDIR does not need to be set and can be removed from any paths below.
       - cf_export APPDIR="hux/api"
+      ## Run script to set Product and Project names and versions.
+      - chmod +x ${{CF_VOLUME_PATH}}/codefresh-pipelines/scripts/whitesource/set-ws-product-name.sh
+      - ${{CF_VOLUME_PATH}}/codefresh-pipelines/scripts/whitesource/set-ws-product-name.sh
+    environment:
+      - DEV_PRODUCT=hux-unified-dev
+      - PROD_PRODUCT=hux-unified
+      - PROJECTNAME=unified-api
 
   CreateWSConfigs:
     stage: create_ws_configs
@@ -52,22 +61,14 @@ steps:
         >> $INSTALL_COMMANDS
       - chmod +x $INSTALL_COMMANDS
       # Create the wss-agent.config.
+      - cp ${{CF_VOLUME_PATH}}/codefresh-pipelines/scripts/whitesource/wss-agent.config-base $CONFIG_FILE
       - >-
          {
-         echo wss.url=https://deloitte.whitesourcesoftware.com/agent;
-         echo "printCliErrors=true";
-         echo "productName=hux-unified";
-         echo "projectName=unified-api";
-         echo "followSymbolicLinks=true";
-         echo "generateScanReport=true";
-         echo "userKey=$USER_KEY";
-         echo "updateInventory=true";
-         echo "scanReportFilenameFormat=static";
-         echo "checkPolicies=true";
-         echo "forceCheckAllDependencies=true";
-         echo "forceUpdate=true";
+         echo "productName=$PRODUCTNAME";
+         echo "projectName=$PROJECTNAME";
+         echo "projectVersion=$PROJECTVERSION";
          echo "### Programming Language Specific Settings ###";
-         echo "python.ignorePipInstallErrors=true";
+         echo "python.ignorePipInstallErrors=false";
          echo "python.resolveSetupPyFiles=true";
          echo "python.IgnorePipenvInstallErrors=true";
          echo "python.indexUrl=$ARTIFACTORY_PYTHON_READ";
@@ -75,29 +76,10 @@ steps:
          >> $CONFIG_FILE
       - cf_export INSTALL_COMMANDS=$INSTALL_COMMANDS
       - cf_export CONFIG_FILE=$CONFIG_FILE
+      - cat $CONFIG_FILE
     environment:
       - INSTALL_COMMANDS=wss-install-commands.sh
       - CONFIG_FILE=wss-agent.config
-
-  WhitesourceScanMerge:
-    stage: scan
-    title: "Run whiteSource scan"
-    type: freestyle
-    image: "ciruntime.repo.mgnt.in/whitesource-python:3.8"
-    commands:
-      - cd ${{CF_REPO_NAME}}/$APPDIR
-      - echo "projectVersion=${{CF_BRANCH}}" >> $CONFIG_FILE
-      ## "Prep and run Whitesource Scan..."
-      - cp /wss-scan/wss-runner.sh ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/wss-runner.sh # Copy the file because the script refrences current directory.
-      - ./wss-runner.sh $INSTALL_COMMANDS $CONFIG_FILE $PROJECT_DIRECTORY
-    environment:
-      - PROJECT_DIRECTORY=.
-      - WS_APIKEY=${{API_KEY}}
-    when:
-      condition:
-        all:
-          # Conditional to check if CF_PULL_REQUEST_TARGET exists, if it does then a PR so skip.
-          whenVarExists: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == true'
 
   WhitesourceScanReport:
     stage: create_scan_report
@@ -106,7 +88,6 @@ steps:
     image: ciruntime.repo.mgnt.in/whitesource-python:3.8
     commands:
       - cd ${{CF_REPO_NAME}}/$APPDIR
-      - echo "projectVersion=branch" >> $CONFIG_FILE
       ## "Prep and run Whitesource Scan..."
       - cp /wss-scan/wss-runner.sh ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/$APPDIR/wss-runner.sh # Copy the file because the script refrences current directory.
       - ./wss-runner.sh $INSTALL_COMMANDS $CONFIG_FILE $PROJECT_DIRECTORY
@@ -114,12 +95,8 @@ steps:
     environment:
       - PROJECT_DIRECTORY=.
       - WS_APIKEY=${{API_KEY}}
-    when:
-      condition:
-        all:
-          # Conditional to check if CF_PULL_REQUEST_TARGET exists, if it does then a PR so run this.
-          whenVarExists: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == false'
-
+      - WS_USERKEY=${{USER_KEY}}
+  
   ParseWhitesourceReport:
     stage: parse_whitesource_report
     title: "Parse JSON Report"
@@ -136,3 +113,4 @@ steps:
         all:
           # Conditional to check if CF_PULL_REQUEST_TARGET exists, if it does then a PR so run this.
           whenVarExists: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == false'
+

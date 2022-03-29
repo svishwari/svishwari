@@ -22,7 +22,7 @@ from huxunifylib.util.general.logging import logger
 from huxunify.api.config import get_config
 from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api import constants as api_c
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import record_health_status, Connections
 
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime(1, 1, 1, 1, 00)
@@ -40,6 +40,7 @@ DATETIME_FIELDS = [
 ]
 
 
+@record_health_status(Connections.CDM_API)
 def check_cdm_api_connection() -> Tuple[bool, str]:
     """Validate the cdm api connection.
 
@@ -56,9 +57,6 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
             f"{config.CDP_SERVICE}/healthcheck",
             timeout=5,
         )
-        record_health_status_metric(
-            api_c.CDM_API_CONNECTION_HEALTH, response.status_code == 200
-        )
 
         if response.status_code == 200:
             return True, "CDM available."
@@ -70,7 +68,6 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
         logger.error("CDM Health Check failed with %s.", repr(exception))
-        record_health_status_metric(api_c.CDM_API_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -1387,3 +1384,40 @@ async def get_customers_overview_async(
         return clean_cdm_gender_fields(
             clean_cdm_fields(response_body[api_c.BODY])
         )
+
+
+def get_customer_event_types(token: str) -> list:
+    """Get customer profile event types.
+
+    Args:
+        token (str): OKTA JWT Token.
+
+    Returns:
+        list: Customer profile event types.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    config = get_config()
+
+    logger.info("Getting customer events info from CDP API.")
+    response = requests.get(
+        f"{config.CDP_SERVICE}/customer-profiles/event-types",
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to retrieve Customer Profiles event types, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/event-types",
+            response.status_code,
+        )
+
+    return response.json().get(api_c.BODY)

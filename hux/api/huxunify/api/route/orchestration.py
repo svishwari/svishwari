@@ -53,8 +53,10 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs_async,
     get_spending_by_gender_async,
     get_customers_overview_async,
+    get_customer_event_types,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
+from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
 )
@@ -1512,14 +1514,32 @@ class AudienceRules(SwaggerView):
             Tuple[Response, int]: dict of audience rules, HTTP status code.
         """
 
+        token_response = get_token_from_request(request)
+
         rules_constants = {
             "text_operators": {
                 "contains": "Contains",
                 "not_contains": "Does not contain",
                 "equals": "Equals",
                 "not_equals": "Does not equal",
+                "within_the_last": "Within the last",
+                "not_within_the_last": "Not within the last",
             }
         }
+
+        # Fetch events from CDM. Check cache first.
+        event_types = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.EVENTS}",
+            get_customer_event_types,
+            {"token": token_response[0]},
+        )
+
+        event_types_rules = {api_c.NAME: api_c.EVENTS.capitalize()}
+        for event_type in event_types:
+            event_types_rules[event_type[api_c.TYPE]] = {
+                api_c.NAME: event_type[api_c.LABEL],
+                api_c.TYPE: api_c.TEXT,
+            }
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
@@ -1740,6 +1760,7 @@ class AudienceRules(SwaggerView):
                             "options": [],
                         },
                     },
+                    "events": event_types_rules,
                 },
             }
         }

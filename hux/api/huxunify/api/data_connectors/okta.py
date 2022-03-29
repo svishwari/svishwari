@@ -8,9 +8,10 @@ from huxunifylib.util.general.logging import logger
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import record_health_status, Connections
 
 
+@record_health_status(Connections.OKTA)
 def check_okta_connection() -> Tuple[bool, str]:
     """Validate the OKTA connection.
     Args:
@@ -29,9 +30,6 @@ def check_okta_connection() -> Tuple[bool, str]:
             f"{config.OKTA_CLIENT_ID}"
         )
 
-        record_health_status_metric(
-            api_c.OKTA_CONNECTION_HEALTH, response.status_code == 200
-        )
         if response.status_code == 200:
             return True, "OKTA available."
         return (
@@ -41,7 +39,6 @@ def check_okta_connection() -> Tuple[bool, str]:
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        record_health_status_metric(api_c.OKTA_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 

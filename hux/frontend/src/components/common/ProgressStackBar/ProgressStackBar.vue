@@ -6,7 +6,6 @@
 
 <script>
 import groupData from "./groupData"
-import sampleData from "./sampleData"
 import * as d3Format from "d3-format"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
@@ -27,10 +26,21 @@ export default {
       default: false,
       required: false,
     },
+    value: {
+      type: Array,
+      default() {
+        return [
+          { label: "Group-1", value: 20 },
+          { label: "Group-2", value: 28 },
+          { label: "Group-3", value: 52 },
+        ]
+      },
+      required: false,
+    },
     barId: {
       type: Number,
       default: 1,
-      required: true,
+      required: false,
     },
   },
   data() {
@@ -45,7 +55,7 @@ export default {
           .select(this.$refs.progressStackBarChart)
           .selectAll("svg")
           .remove()
-        this.stackedBar(`.${this.dynamicChartId}`, sampleData)
+        this.stackedBar(`.${this.dynamicChartId}`, this.value)
       },
       immediate: false,
       deep: true,
@@ -53,7 +63,7 @@ export default {
   },
   mounted() {
     this.dynamicChartId = `bar-${this.barId}`
-    this.stackedBar(`.${this.dynamicChartId}`, sampleData)
+    this.stackedBar(`.${this.dynamicChartId}`, this.value)
   },
   methods: {
     rounded_rect(x, y, w, h, r, tl, tr, bl, br) {
