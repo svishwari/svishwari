@@ -165,8 +165,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-       segmentScores: "trustId/getSegmentsComparison",
-       // TODO: enable this once API endpoint available
+      segmentScores: "trustId/getSegmentsComparison",
+      // TODO: enable this once API endpoint available
       // overviewData: "trustId/getTrustOverview",
     }),
     getSegment() {

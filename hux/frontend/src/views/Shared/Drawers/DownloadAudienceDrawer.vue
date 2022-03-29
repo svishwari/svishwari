@@ -11,9 +11,9 @@
             <span>Download a generic .csv file of this audience.</span>
           </div>
           <v-checkbox
+            v-model="selectedGeneral"
             color="primary lighten-6"
             class="text--base-1 decrease-margin"
-            v-model="selectedGeneral"
             @change="checkboxChange(checkboxData[0].type)"
           >
             <template v-slot:label>
@@ -35,8 +35,8 @@
         </div>
         <v-checkbox
           v-for="data in checkboxData[1]"
-          v-model="selectedGeneral"
           :key="data.id"
+          v-model="selectedGeneral"
           multiple
           color="primary lighten-6"
           class="text--base-1 decrease-margin"
@@ -92,7 +92,7 @@
         size="large"
         :is-tile="true"
         :is-disabled="selectedTypes.length == 0"
-         @click="download"
+        @click="download"
       >
         Download
       </hux-button>
@@ -124,8 +124,8 @@ export default {
     audienceData: {
       type: Object,
       required: true,
-      default: {},
-    }
+      default: () => {},
+    },
   },
 
   data() {
@@ -136,7 +136,7 @@ export default {
       checkboxData: [
         {
           title: ".csv",
-          type: "generic_ads"
+          type: "generic_ads",
         },
         [
           {
@@ -182,14 +182,14 @@ export default {
     async download() {
       this.closeDrawer()
       if (this.selectedTypes.length > 0) {
-      this.setAlert({
-        type: "pending",
-        message: `Download for the '${this.audienceData.name}' has started in background, stay tuned.`,
-      })
-      await this.downloadAudienceData({
-        id: this.audienceData.id,
-        type: this.selectedTypes,
-      })
+        this.setAlert({
+          type: "pending",
+          message: `Download for the '${this.audienceData.name}' has started in background, stay tuned.`,
+        })
+        await this.downloadAudienceData({
+          id: this.audienceData.id,
+          type: this.selectedTypes,
+        })
       }
       this.selectedTypes = []
       this.selectedGeneral = false
@@ -199,12 +199,12 @@ export default {
     },
     checkboxChange(ads_type) {
       this.selectedGeneral = true
-     if (this.selectedTypes.indexOf(ads_type) == -1) {
-       this.selectedTypes.push(ads_type)
-     } else {
-       this.selectedTypes = this.selectedTypes.filter(em => em !== ads_type)
-     }
-    }
+      if (this.selectedTypes.indexOf(ads_type) == -1) {
+        this.selectedTypes.push(ads_type)
+      } else {
+        this.selectedTypes = this.selectedTypes.filter((em) => em !== ads_type)
+      }
+    },
   },
 }
 </script>

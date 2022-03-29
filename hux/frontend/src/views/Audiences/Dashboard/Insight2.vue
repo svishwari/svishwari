@@ -431,7 +431,7 @@
     />
 
     <download-audience-drawer
-    :audience-data="audience"
+      :audience-data="audience"
       :toggle="toggleDownloadAudienceDrawer"
       @onToggle="(isToggled) => (toggleDownloadAudienceDrawer = isToggled)"
     />

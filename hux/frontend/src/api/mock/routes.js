@@ -714,13 +714,13 @@ export const defineRoutes = (server) => {
     return demographicsData
   })
   server.get("/audiences/:id/:type", async () => {
-      // Introduced a delay of 5 seconds to
-      await new Promise((r) => setTimeout(r, 5000))
-      const code = 200
-      const headers = {}
-      const body = {
-        message: "Successfully data downloaded",
-      }
+    // Introduced a delay of 5 seconds to
+    await new Promise((r) => setTimeout(r, 5000))
+    const code = 200
+    const headers = {}
+    const body = {
+      message: "Successfully data downloaded",
+    }
     return new Response(code, headers, body)
   })
 

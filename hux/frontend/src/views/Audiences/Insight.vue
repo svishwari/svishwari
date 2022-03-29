@@ -626,7 +626,7 @@
     />
 
     <download-audience-drawer
-    :audience-data="audience"
+      :audience-data="audience"
       :toggle="menuDrawer"
       @onToggle="(isToggled) => (menuDrawer = isToggled)"
     />
@@ -661,7 +661,7 @@
 
 <script>
 // helpers
-import { generateColor, saveFile, formatInnerHTML } from "@/utils"
+import { generateColor, formatInnerHTML } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
 import filter from "lodash/filter"
 
