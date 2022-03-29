@@ -52,7 +52,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card-style.card-style {
+.rhombus-card-wrapper {
   transform: rotate(45deg);
   width: 30px;
   height: 30px;

@@ -203,7 +203,9 @@
                 </v-card>
               </div>
             </v-tab-item>
-            <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
+            <v-tab-item key="attributes" class="tab-item">
+              <trust-id-attributes :data="overviewData.attributes" />
+            </v-tab-item>
           </v-tabs-items>
         </div>
         <div class="ml-auto segment-drawer">
@@ -216,6 +218,31 @@
             @onSectionAction="addSegment"
           />
         </div>
+      </div>
+      <link-dropdown
+        :data-list="getSegment"
+        :width="245"
+        @onselect="getSelectedData"
+      ></link-dropdown>
+      <div>
+        <v-list class="add-segment no-data-width" :height="22">
+          <v-list-item @click="filterToggle()">
+            <hux-icon
+              type="plus"
+              :size="16"
+              color="primary"
+              class="mr-4 ml-2"
+            />
+            <v-btn
+              text
+              min-width="7rem"
+              height="2rem"
+              class="primary--text text-body-1"
+            >
+              New segment to compare
+            </v-btn>
+          </v-list-item>
+        </v-list>
       </div>
     </template>
   </page>
@@ -232,6 +259,7 @@ import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/Tru
 import DataCards from "@/components/common/DataCards.vue"
 import { formatText } from "@/utils"
 import RhombusNumber from "@/components/common/RhombusNumber.vue"
+import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
@@ -249,6 +277,7 @@ export default {
     TrustComparisonChart,
     DataCards,
     RhombusNumber,
+    TrustIdAttributes,
     HuxIcon,
     AddSegmentDrawer,
   },
