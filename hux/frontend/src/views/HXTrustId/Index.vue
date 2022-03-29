@@ -336,6 +336,37 @@ export default {
           "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
         capability:
           "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
+        product_quality:
+          "Products are good quality, accessible and safe to use",
+        good_value:
+          "Prices of products, services, and experiences are good value for money",
+        competent_leaders_employess:
+          "Employees and leadership are competent and understand how to respond to needs",
+        long_term_solutions_improvements:
+          "Creates long-term solutions and improvements that work well for me",
+        quickly_resolves_issues:
+          "Quickly resolves issues with safety, security and satisfaction top of mind",
+        values_respects_everyone:
+          "Values and respects everyone, regardless of background, identity or beliefs",
+        values_society_environment:
+          "Values the good of society and the environment, not just profit",
+        takes_care_of_employees: "Takes care of employees",
+        honesty_marketing_comms:
+          "Marketing and communications are accurate and honest",
+        upfront_on_how_they_make_money:
+          "Upfront about how they make and spend money from interactions",
+        plain_language_data_policy:
+          "How and why my data is used is communicated in plain and easy to understand language",
+        clear_fees_costs:
+          "Clear and upfront about fees and costs of products, services and experiences",
+        continuous_product_improvement:
+          "Can be counted on to improve the quality of products and services",
+        consistent_quality:
+          "Consistently delivers products, services and experiences with quality",
+        smooth_digital_interactions:
+          "Facilitates digital interactions that run smoothly and work when needed",
+        timely_issue_resolution:
+          "Resolves issues in an adequate and timely manner",
       },
     }
   },
@@ -363,7 +394,6 @@ export default {
         })
 
         segment.colors = this.borderColorArr[index]
-        console.log(segment)
 
         return segment
       })

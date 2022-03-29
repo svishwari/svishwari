@@ -83,7 +83,13 @@
             'mt-0': index == 0,
           }"
           class="data-card my-3"
-          :style="bordered ? style(item.colors.color, item.colors.variant) : ''"
+          :style="
+            bordered
+              ? item.colors
+                ? style(item.colors.color, item.colors.variant)
+                : style()
+              : ''
+          "
         >
           <v-row align="center" no-gutters>
             <v-col v-for="field in fields" :key="field.key" :cols="field.col">
