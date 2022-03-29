@@ -64,17 +64,12 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     # get auth
     auth = destination[db_c.DELIVERY_PLATFORM_AUTH]
 
-    if (
-        destination[db_c.DELIVERY_PLATFORM_TYPE]
-        == db_c.DELIVERY_PLATFORM_FACEBOOK
-    ):
+    if destination[db_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_FACEBOOK:
         env_dict = {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                 api_c.FACEBOOK_AD_ACCOUNT_ID
             ],
-            FacebookCredentials.FACEBOOK_APP_ID.name: auth[
-                api_c.FACEBOOK_APP_ID
-            ],
+            FacebookCredentials.FACEBOOK_APP_ID.name: auth[api_c.FACEBOOK_APP_ID],
         }
         secret_dict = {
             FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
@@ -85,23 +80,17 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             ],
         }
 
-    elif (
-        destination[db_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC
-    ):
+    elif destination[db_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC:
         env_dict = {
             SFMCCredentials.SFMC_CLIENT_ID.name: auth[api_c.SFMC_CLIENT_ID],
             SFMCCredentials.SFMC_AUTH_URL.name: auth[api_c.SFMC_AUTH_BASE_URI],
             SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[api_c.SFMC_ACCOUNT_ID],
-            SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[
-                api_c.SFMC_SOAP_BASE_URI
-            ],
+            SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[api_c.SFMC_SOAP_BASE_URI],
             SFMCCredentials.SFMC_URL.name: auth[api_c.SFMC_REST_BASE_URI],
         }
 
         secret_dict = {
-            SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
-                api_c.SFMC_CLIENT_SECRET
-            ]
+            SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[api_c.SFMC_CLIENT_SECRET]
         }
     elif destination[db_c.DELIVERY_PLATFORM_TYPE] in [
         db_c.DELIVERY_PLATFORM_SENDGRID,
@@ -114,10 +103,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             ]
         }
 
-    elif (
-        destination[db_c.DELIVERY_PLATFORM_TYPE]
-        == db_c.DELIVERY_PLATFORM_QUALTRICS
-    ):
+    elif destination[db_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_QUALTRICS:
         env_dict = {
             QualtricsCredentials.QUALTRICS_DATA_CENTER.name: auth[
                 api_c.QUALTRICS_DATA_CENTER
@@ -136,10 +122,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             ]
         }
 
-    elif (
-        destination[db_c.DELIVERY_PLATFORM_TYPE]
-        == db_c.DELIVERY_PLATFORM_GOOGLE
-    ):
+    elif destination[db_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_GOOGLE:
         env_dict = {
             GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.name: auth[
                 api_c.GOOGLE_CLIENT_CUSTOMER_ID
@@ -150,9 +133,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.name: auth[
                 api_c.GOOGLE_DEVELOPER_TOKEN
             ],
-            GoogleCredentials.GOOGLE_CLIENT_ID.name: auth[
-                api_c.GOOGLE_CLIENT_ID
-            ],
+            GoogleCredentials.GOOGLE_CLIENT_ID.name: auth[api_c.GOOGLE_CLIENT_ID],
             GoogleCredentials.GOOGLE_REFRESH_TOKEN.name: auth[
                 api_c.GOOGLE_REFRESH_TOKEN
             ],
@@ -223,8 +204,7 @@ class BaseDestinationBatchJob:
 
         provider = config.CLOUD_PROVIDER.lower()
         subclass_map = {
-            subclass.provider.lower(): subclass
-            for subclass in cls.__subclasses__()
+            subclass.provider.lower(): subclass for subclass in cls.__subclasses__()
         }
 
         subclass = (
@@ -628,6 +608,7 @@ def get_destination_config(
     audience_id: ObjectId,
     destination: dict,
     engagement_id: ObjectId,
+    username: str,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
@@ -636,6 +617,8 @@ def get_destination_config(
         audience_id (ObjectId): The ID of the audience.
         destination (dict): Destination object.
         engagement_id (ObjectId): The ID of the engagement.
+        username (str): Username of user requesting to get the destination
+            config.
 
     Returns:
         DestinationBatchJob: Destination batch job object.
@@ -656,13 +639,8 @@ def get_destination_config(
     )
 
     # validate destination status first.
-    if (
-        delivery_platform.get(db_c.DELIVERY_PLATFORM_STATUS)
-        != db_c.STATUS_SUCCEEDED
-    ):
-        logger.error(
-            "%s authentication failed.", delivery_platform.get(db_c.NAME)
-        )
+    if delivery_platform.get(db_c.DELIVERY_PLATFORM_STATUS) != db_c.STATUS_SUCCEEDED:
+        logger.error("%s authentication failed.", delivery_platform.get(db_c.NAME))
         raise FailedDestinationDependencyError(
             delivery_platform[api_c.NAME], HTTPStatus.FAILED_DEPENDENCY
         )
@@ -672,6 +650,7 @@ def get_destination_config(
         audience_id,
         destination_id,
         [],
+        username,
         engagement_id,
         destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
     )
@@ -705,9 +684,7 @@ def get_destination_config(
 
     # Setup AWS Batch env dict
     env_dict = {
-        AudienceRouterConfig.DELIVERY_JOB_ID.name: str(
-            audience_delivery_job[db_c.ID]
-        ),
+        AudienceRouterConfig.DELIVERY_JOB_ID.name: str(audience_delivery_job[db_c.ID]),
         MongoDBCredentials.MONGO_DB_HOST.name: config.MONGO_DB_HOST,
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
@@ -788,9 +765,7 @@ def toggle_event_driven_routers(
         # set state based on active engagements
         # if there are active engagements, the router should be enabled.
         state = (
-            CloudWatchState.ENABLE
-            if active_engagements
-            else CloudWatchState.DISABLE
+            CloudWatchState.ENABLE if active_engagements else CloudWatchState.DISABLE
         )
 
     # TODO - hookup after ORCH-401 deploys the FLDR and CPDR to a cloud watch event.
@@ -849,6 +824,7 @@ async def deliver_audience_to_destination(
         audience_id=audience_id,
         destination=destination,
         engagement_id=db_c.ZERO_OBJECT_ID,
+        username=user_name,
     )
     batch_destination.register()
     batch_destination.submit()

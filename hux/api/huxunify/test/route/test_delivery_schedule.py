@@ -117,9 +117,7 @@ class TestDeliveryRoutes(RouteTestCase):
             },
         ]
 
-        self.audiences = [
-            create_audience(self.database, **x) for x in audiences
-        ]
+        self.audiences = [create_audience(self.database, **x) for x in audiences]
 
         engagements = [
             {
@@ -163,6 +161,7 @@ class TestDeliveryRoutes(RouteTestCase):
                 api_c.AUDIENCE_ID: self.audiences[1][db_c.ID],
                 db_c.DELIVERY_PLATFORM_ID: self.destinations[1][db_c.ID],
                 db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: [],
+                db_c.DELIVERY_JOB_USERNAME: self.user_name,
                 api_c.ENGAGEMENT_ID: ObjectId(self.engagement_ids[0]),
                 # db_c.DELETED: False
             }
@@ -196,9 +195,7 @@ class TestDeliveryRoutes(RouteTestCase):
         """
 
         self.request_mocker.stop()
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         delivery_schedule = {
@@ -225,9 +222,7 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         # validate the schedule was actually set.
-        engagement = get_engagement(
-            self.database, ObjectId(self.engagement_ids[0])
-        )
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
         self.assertIn(db_c.AUDIENCES, engagement)
 
         # take the first audience
@@ -267,17 +262,13 @@ class TestDeliveryRoutes(RouteTestCase):
         """
 
         self.request_mocker.stop()
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         delivery_schedule = {
             api_c.PERIODICIY: "Weekly",
             # sample twice to force an in place shuffle.
-            api_c.DAY_OF_WEEK: sample(
-                sample(api_c.DAY_LIST, day_of_week), day_of_week
-            ),
+            api_c.DAY_OF_WEEK: sample(sample(api_c.DAY_LIST, day_of_week), day_of_week),
             api_c.EVERY: weeks,
             api_c.HOUR: hours,
             api_c.MINUTE: minutes,
@@ -300,9 +291,7 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         # validate the schedule was actually set.
-        engagement = get_engagement(
-            self.database, ObjectId(self.engagement_ids[0])
-        )
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
         self.assertIn(db_c.AUDIENCES, engagement)
 
         # take the first audience
@@ -342,9 +331,7 @@ class TestDeliveryRoutes(RouteTestCase):
         """
 
         self.request_mocker.stop()
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         delivery_schedule = {
@@ -373,9 +360,7 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         # validate the schedule was actually set.
-        engagement = get_engagement(
-            self.database, ObjectId(self.engagement_ids[0])
-        )
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
         self.assertIn(db_c.AUDIENCES, engagement)
 
         # take the first audience
@@ -423,9 +408,7 @@ class TestDeliveryRoutes(RouteTestCase):
         """
 
         self.request_mocker.stop()
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         delivery_schedule = {
@@ -454,9 +437,7 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         # validate the schedule was actually set.
-        engagement = get_engagement(
-            self.database, ObjectId(self.engagement_ids[0])
-        )
+        engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
         self.assertIn(db_c.AUDIENCES, engagement)
 
         # take the first audience

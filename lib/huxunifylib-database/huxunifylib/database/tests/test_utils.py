@@ -257,6 +257,7 @@ class TestUtils(unittest.TestCase):
             audience_id,
             delivery_platform_id,
             self.generic_campaigns,
+            "test_user",
         )
 
         self.assertTrue(delivery_doc is not None)
@@ -303,6 +304,7 @@ class TestUtils(unittest.TestCase):
             audience_id,
             delivery_platform_id,
             self.generic_campaigns,
+            "test_user",
         )
 
         self.assertTrue(delivery_doc is not None)
@@ -315,15 +317,11 @@ class TestUtils(unittest.TestCase):
 
         self.assertTrue(success_flag)
 
-        success_flag = delete_util.delete_ingestion_job(
-            database, ingestion_job_id
-        )
+        success_flag = delete_util.delete_ingestion_job(database, ingestion_job_id)
 
         self.assertTrue(success_flag)
 
-        failure_flag = delete_util.delete_ingestion_job(
-            database, "abac12351342cd"
-        )
+        failure_flag = delete_util.delete_ingestion_job(database, "abac12351342cd")
 
         self.assertFalse(failure_flag)
 
@@ -331,9 +329,7 @@ class TestUtils(unittest.TestCase):
 
         self.assertTrue(success_flag)
 
-        failure_flag = delete_util.delete_data_source(
-            database, "abac12351342cd"
-        )
+        failure_flag = delete_util.delete_data_source(database, "abac12351342cd")
 
         self.assertFalse(failure_flag)
 
@@ -355,9 +351,7 @@ class TestUtils(unittest.TestCase):
 
         self.assertTrue(success_flag)
 
-        false_flag = delete_util.delete_delivery_job(
-            database, "abac12351342cd"
-        )
+        false_flag = delete_util.delete_delivery_job(database, "abac12351342cd")
 
         self.assertFalse(false_flag)
 
@@ -499,6 +493,7 @@ class TestUtils(unittest.TestCase):
             audience_id=ObjectId(),
             delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
+            username="test_user",
         )
 
         # set synthetic performance metrics
@@ -534,11 +529,9 @@ class TestUtils(unittest.TestCase):
             check_doc = None
         self.assertIsNone(check_doc)
 
-        success_flag = (
-            delete_util.delete_performance_metrics_by_delivery_job_id(
-                database=self.database,
-                delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
-            )
+        success_flag = delete_util.delete_performance_metrics_by_delivery_job_id(
+            database=self.database,
+            delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
         )
         self.assertTrue(success_flag)
         try:
@@ -579,6 +572,7 @@ class TestUtils(unittest.TestCase):
             audience_id=ObjectId(),
             delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
+            username="test_user",
         )
 
         event_details = {
