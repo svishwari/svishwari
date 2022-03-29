@@ -269,7 +269,9 @@ class DispAdIndividualAudienceSummary(DisplayAdsSummary):
 
     name = fields.String()
     id = fields.String()
-    destinations = fields.List(fields.Nested(DispAdIndividualDestinationSummary))
+    destinations = fields.List(
+        fields.Nested(DispAdIndividualDestinationSummary)
+    )
 
 
 class AudiencePerformanceDisplayAdsSchema(Schema):
@@ -281,7 +283,9 @@ class AudiencePerformanceDisplayAdsSchema(Schema):
         ordered = True
 
     summary = fields.Nested(DisplayAdsSummary)
-    audience_performance = fields.List(fields.Nested(DispAdIndividualAudienceSummary))
+    audience_performance = fields.List(
+        fields.Nested(DispAdIndividualAudienceSummary)
+    )
 
 
 class EmailSummary(Schema):
@@ -333,7 +337,9 @@ class EmailIndividualAudienceSummary(EmailSummary):
 
     name = fields.String()
     id = fields.String()
-    destinations = fields.List(fields.Nested(EmailIndividualDestinationSummary))
+    destinations = fields.List(
+        fields.Nested(EmailIndividualDestinationSummary)
+    )
 
 
 class AudiencePerformanceEmailSchema(Schema):
@@ -345,7 +351,9 @@ class AudiencePerformanceEmailSchema(Schema):
         ordered = True
 
     summary = fields.Nested(EmailSummary)
-    audience_performance = fields.List(fields.Nested(EmailIndividualAudienceSummary))
+    audience_performance = fields.List(
+        fields.Nested(EmailIndividualAudienceSummary)
+    )
 
 
 class FacebookCampaignSchema(Schema):
@@ -495,7 +503,9 @@ class EngagementAudienceSchema(Schema):
             }
         ],
     )
-    destinations = fields.Nested(EngagementAudienceDestinationSchema, many=True)
+    destinations = fields.Nested(
+        EngagementAudienceDestinationSchema, many=True
+    )
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME)
     created_by = fields.String(attribute=db_c.CREATED_BY)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
@@ -711,9 +721,9 @@ def weighted_engagement_status(engagements: list) -> list:
                         engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)
                         .get(api_c.SCHEDULE)
                         .get(api_c.PERIODICIY)
-                        if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE).get(
-                            api_c.SCHEDULE
-                        )
+                        if engagement.get(
+                            db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                        ).get(api_c.SCHEDULE)
                         else None
                     )
 
@@ -748,7 +758,9 @@ def weighted_engagement_status(engagements: list) -> list:
 
             status_rank = {
                 api_c.STATUS: audience[api_c.STATUS],
-                api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(audience[api_c.STATUS], 0),
+                api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(
+                    audience[api_c.STATUS], 0
+                ),
             }
             status_ranks.append(status_rank)
             audiences.append(audience)
@@ -766,11 +778,19 @@ def weighted_engagement_status(engagements: list) -> list:
             engagement[api_c.STATUS] = api_c.STATUS_DELIVERING
         elif engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
             if (
-                engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(api_c.START_DATE)
-                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(api_c.END_DATE)
-                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][api_c.START_DATE]
+                engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
+                    api_c.START_DATE
+                )
+                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
+                    api_c.END_DATE
+                )
+                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    api_c.START_DATE
+                ]
                 <= datetime.now()
-                <= engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][api_c.END_DATE]
+                <= engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    api_c.END_DATE
+                ]
             ):
                 engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
             else:
@@ -778,7 +798,8 @@ def weighted_engagement_status(engagements: list) -> list:
         elif api_c.STATUS_NOT_DELIVERED in status_values:
             engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
         elif all(
-            status_value == api_c.STATUS_DELIVERED for status_value in status_values
+            status_value == api_c.STATUS_DELIVERED
+            for status_value in status_values
         ):
             engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
         else:
@@ -813,4 +834,8 @@ def weight_delivery_status(audience: list) -> str:
     status_ranks.sort(key=lambda x: x[api_c.WEIGHT])
 
     # take the first item in the sorted list, and grab the status
-    return status_ranks[0][api_c.STATUS] if status_ranks else api_c.STATUS_NOT_DELIVERED
+    return (
+        status_ranks[0][api_c.STATUS]
+        if status_ranks
+        else api_c.STATUS_NOT_DELIVERED
+    )
