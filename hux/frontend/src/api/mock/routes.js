@@ -714,10 +714,14 @@ export const defineRoutes = (server) => {
     return demographicsData
   })
   server.get("/audiences/:id/:type", async () => {
-    // Introduced a delay of 15 seconds to
-    // replicate the API delay in processing the BLOB.
-    await new Promise((r) => setTimeout(r, 15000))
-    return audienceCSVData
+      // Introduced a delay of 5 seconds to
+      await new Promise((r) => setTimeout(r, 5000))
+      const code = 200
+      const headers = {}
+      const body = {
+        message: "Successfully data downloaded",
+      }
+    return new Response(code, headers, body)
   })
 
   server.get("/audiences/:id", (schema, request) => {

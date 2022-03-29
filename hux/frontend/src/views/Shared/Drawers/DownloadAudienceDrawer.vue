@@ -11,9 +11,10 @@
             <span>Download a generic .csv file of this audience.</span>
           </div>
           <v-checkbox
-            v-model="selectedGeneral"
             color="primary lighten-6"
             class="text--base-1 decrease-margin"
+            v-model="selectedGeneral"
+            @change="checkboxChange(checkboxData[0].type)"
           >
             <template v-slot:label>
               <span class="body-1 color-darken">
@@ -34,11 +35,12 @@
         </div>
         <v-checkbox
           v-for="data in checkboxData[1]"
+          v-model="selectedGeneral"
           :key="data.id"
-          v-model="selectedHashed[data.id]"
           multiple
           color="primary lighten-6"
           class="text--base-1 decrease-margin"
+          @change="checkboxChange(data.type)"
         >
           <template v-slot:label>
             <span class="body-1 color-darken">
@@ -89,7 +91,8 @@
         variant="primary"
         size="large"
         :is-tile="true"
-        :is-disabled="false"
+        :is-disabled="selectedTypes.length == 0"
+         @click="download"
       >
         Download
       </hux-button>
@@ -112,33 +115,34 @@ export default {
     Logo,
     Icon,
   },
-
   props: {
-    value: {
-      type: Object,
-      required: true,
-    },
-
     toggle: {
       type: Boolean,
       required: false,
       default: false,
     },
+    audienceData: {
+      type: Object,
+      required: true,
+      default: {},
+    }
   },
 
   data() {
     return {
       localToggle: false,
       loading: false,
+      selectedGeneral: false,
       checkboxData: [
         {
           title: ".csv",
+          type: "generic_ads"
         },
         [
           {
             id: 0,
             title: "Amazon",
-            type: "amazon-advertising",
+            type: "amazon-ads",
           },
           {
             id: 1,
@@ -147,8 +151,7 @@ export default {
           },
         ],
       ],
-      selectedHashed: [],
-      selectedGeneral: false,
+      selectedTypes: [],
     }
   },
 
@@ -172,11 +175,36 @@ export default {
   },
 
   methods: {
-    ...mapActions({}),
+    ...mapActions({
+      downloadAudienceData: "audiences/downloadAudienceData",
+      setAlert: "alerts/setAlert",
+    }),
+    async download() {
+      this.closeDrawer()
+      if (this.selectedTypes.length > 0) {
+      this.setAlert({
+        type: "pending",
+        message: `Download for the '${this.audienceData.name}' has started in background, stay tuned.`,
+      })
+      await this.downloadAudienceData({
+        id: this.audienceData.id,
+        type: this.selectedTypes,
+      })
+      }
+      this.selectedTypes = []
+      this.selectedGeneral = false
+    },
     closeDrawer() {
       this.localToggle = false
-      this.localSelectedAudiences = this.value
     },
+    checkboxChange(ads_type) {
+      this.selectedGeneral = true
+     if (this.selectedTypes.indexOf(ads_type) == -1) {
+       this.selectedTypes.push(ads_type)
+     } else {
+       this.selectedTypes = this.selectedTypes.filter(em => em !== ads_type)
+     }
+    }
   },
 }
 </script>

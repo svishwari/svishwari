@@ -136,7 +136,6 @@ import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/Tru
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
-import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
 
 export default {
@@ -160,14 +159,13 @@ export default {
       isFilterToggled: false,
       segmentLength: 1,
       addSegmentData: addSegmentData,
-      segmentScores: segmentScores,
       overviewData: overviewData,
     }
   },
   computed: {
     ...mapGetters({
-      // TODO: enable this once API endpoint available
-      // segmentScores: "trustId/getSegmentsComparison",
+       segmentScores: "trustId/getSegmentsComparison",
+       // TODO: enable this once API endpoint available
       // overviewData: "trustId/getTrustOverview",
     }),
     getSegment() {

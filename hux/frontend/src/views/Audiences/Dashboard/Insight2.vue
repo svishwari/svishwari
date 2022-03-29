@@ -431,7 +431,7 @@
     />
 
     <download-audience-drawer
-      :value="toggleDownloadAudienceDrawer"
+    :audience-data="audience"
       :toggle="toggleDownloadAudienceDrawer"
       @onToggle="(isToggled) => (toggleDownloadAudienceDrawer = isToggled)"
     />
@@ -529,28 +529,6 @@ export default {
           icon: "lookalike",
           statusSize: 21,
           size: 12,
-        },
-      ],
-      downloadOptions: [
-        {
-          id: "c2b0bf2d9d48",
-          name: ".csv",
-          type: "amazon_ads",
-          title: "Amazon Advertising CSV",
-          icon: "amazon-outline",
-        },
-        {
-          id: "5e112c22f1b1",
-          name: ".csv",
-          type: "google_ads",
-          title: "Google Ads CSV",
-          icon: "google-ads-outline",
-        },
-        {
-          id: "2349d4353b9f",
-          title: "Generic CSV",
-          name: ".csv",
-          type: "generic_ads",
         },
       ],
       loading: false,
@@ -768,7 +746,6 @@ export default {
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
-      downloadAudienceData: "audiences/fetchAudienceData",
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
       getEngagementById: "engagements/get",

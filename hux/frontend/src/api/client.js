@@ -326,10 +326,7 @@ client["audiences"].getAudiences = (data) => {
 }
 
 client["audiences"].downloadAudience = (audienceId, fileType) => {
-  return http.get(`/audiences/${audienceId}/${fileType}`, {
-    timeout: 0,
-    responseType: "blob",
-  })
+  return http.get(`/audiences/${audienceId}/${fileType}`)
 }
 
 client["audiences"].demographics = (audienceId) => {

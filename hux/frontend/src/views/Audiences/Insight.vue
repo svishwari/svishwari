@@ -626,7 +626,7 @@
     />
 
     <download-audience-drawer
-      :audience-id="audienceId"
+    :audience-data="audience"
       :toggle="menuDrawer"
       @onToggle="(isToggled) => (menuDrawer = isToggled)"
     />
@@ -757,28 +757,6 @@ export default {
           href: this.$route.path,
           icon: "lookalike",
           size: 12,
-        },
-      ],
-      downloadOptions: [
-        {
-          id: "c2b0bf2d9d48",
-          name: ".csv",
-          type: "amazon_ads",
-          title: "Amazon Advertising CSV",
-          icon: "amazon-outline",
-        },
-        {
-          id: "5e112c22f1b1",
-          name: ".csv",
-          type: "google_ads",
-          title: "Google Ads CSV",
-          icon: "google-ads-outline",
-        },
-        {
-          id: "2349d4353b9f",
-          title: "Generic CSV",
-          name: ".csv",
-          type: "generic_ads",
         },
       ],
       loading: false,
@@ -1043,7 +1021,6 @@ export default {
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
-      downloadAudienceData: "audiences/fetchAudienceData",
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
       updateLookalikeAudience: "audiences/updateLookalike",
@@ -1109,18 +1086,6 @@ export default {
       } finally {
         this.loadingDemographics = false
       }
-    },
-    async initiateFileDownload(option) {
-      const audienceName = this.audience.name
-      this.setAlert({
-        type: "pending",
-        message: `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`,
-      })
-      const fileBlob = await this.downloadAudienceData({
-        id: this.audienceId,
-        type: option.type,
-      })
-      saveFile(fileBlob)
     },
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
