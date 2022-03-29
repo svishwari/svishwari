@@ -37,6 +37,9 @@
                   :value="item[col.value]"
                   :color="getRhombusColour(item).stroke"
                   :variant="getRhombusColour(item).variant"
+                  :text-color="
+                    item[col.value] < 0 ? 'error--text' : 'black--text'
+                  "
                 />
               </template>
               <template v-else-if="col.value === 'attribute_description'">
