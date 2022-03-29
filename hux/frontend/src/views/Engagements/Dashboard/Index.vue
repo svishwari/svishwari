@@ -510,7 +510,7 @@ export default {
           this.confirmDialog.btnText = "Yes, edit delivery schedule"
           this.confirmDialog.leftBtnText = "Cancel"
           this.confirmDialog.body =
-            "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+            "This will override the default delivery schedule for this audience. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
           this.showConfirmModal = true
           this.selectedAudienceId = event.data.id
           this.selectedAudienceName = event.data.name

@@ -128,7 +128,7 @@
             </div>
           </v-stepper-content>
           <v-stepper-content step="2">
-            <div class="new-engament-wrap">
+            <div class="new-engament-wrap content-section">
               <h6 class="mb-8 text-h6 black--text text--darken-4">
                 Build a new engagement to see performance information on this
                 audience.
@@ -190,98 +190,107 @@
                     </template>
                   </v-menu>
                 </div>
-                <div class="d-flex flex-column delivery-options">
-                  <v-btn-toggle
-                    v-model="newEngagement.delivery_schedule"
-                    mandatory
+                <div class="d-flex">
+                  <div
+                    class="
+                      cursor-pointer
+                      text-center
+                      rounded-lg
+                      manual
+                      py-5
+                      px-5
+                      mr-2
+                      ml-2
+                    "
+                    :class="[isActive ? 'active' : 'box-shadow-1']"
+                    @click="toggleClass($event), resetSchedule()"
                   >
-                    <v-btn
-                      class="active-delivery-option"
-                      :class="
-                        newEngagement.delivery_schedule == 0
-                          ? 'btn-radio-active'
-                          : 'btn-radio-inactive'
-                      "
-                      height="40"
-                      width="175"
-                      @click="resetSchedule()"
+                    <icon
+                      type="manual"
+                      :color="isActive ? 'primary' : 'black'"
+                      :variant="isActive ? 'lighten6' : ''"
+                      :size="40"
+                    />
+                    <div
+                      class="mt-2 text-button"
+                      :class="isActive ? 'primary--text text--lighten-6' : ''"
                     >
-                      <v-radio
-                        :off-icon="
-                          newEngagement.delivery_schedule == 0
-                            ? '$radioOn'
-                            : '$radioOff'
-                        "
-                      />
-                      <v-icon class="ico primary--text" size="16">
-                        mdi-gesture-tap
-                      </v-icon>
                       Manual
-                    </v-btn>
-                    <v-btn
-                      class="active-delivery-option"
-                      :class="
-                        isRecurring ? 'btn-radio-active' : 'btn-radio-inactive'
-                      "
-                      height="40"
-                      width="175"
+                    </div>
+                    <div class="pt-2 black--text text--lighten-4 text-body-2">
+                      Deliver this engagement when you are ready.
+                    </div>
+                  </div>
+                  <div
+                    class="
+                      cursor-pointer
+                      text-center
+                      rounded-lg
+                      recurring
+                      py-5
+                      px-5
+                      ml-2
+                    "
+                    :class="[!isActive ? 'active' : 'box-shadow-1']"
+                    @click="toggleClass($event)"
+                  >
+                    <icon
+                      type="recurring"
+                      :color="!isActive ? 'primary' : 'black'"
+                      :variant="!isActive ? 'lighten6' : ''"
+                      :size="40"
+                    />
+                    <div
+                      class="mt-2 text-button"
+                      :class="!isActive ? 'primary--text text--lighten-6' : ''"
                     >
-                      <v-radio
-                        :off-icon="isRecurring ? '$radioOn' : '$radioOff'"
-                      />
-                      <v-icon class="ico primary--text" size="16">
-                        mdi-clock-check-outline
-                      </v-icon>
                       Recurring
-                    </v-btn>
-                  </v-btn-toggle>
+                    </div>
+                    <div class="pt-2 black--text text--lighten-4 text-body-2">
+                      Deliver this engagement during a chosen timeframe.
+                    </div>
+                  </div>
                 </div>
-                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
-                  <div>
-                    <span
-                      class="
-                        date-picker-label
-                        black--text
-                        text--darken-4 text-caption
-                      "
-                    >
-                      Start date
-                    </span>
-                    <hux-start-date
-                      class=""
-                      :label="selectedStartDate"
-                      :selected="selectedStartDate"
-                      @on-date-select="onStartDateSelect"
+                <div v-if="!isActive" class="schedule-recurring mt-6 px-6 py-5">
+                  <div class="d-flex align-center">
+                    <div>
+                      <div class="text-body-2 pl-2 mb-n2">Start date</div>
+                      <hux-start-date
+                        :label="selectedStartDate"
+                        :selected="selectedStartDate"
+                        @on-date-select="onStartDateSelect"
+                      />
+                    </div>
+                    <div>
+                      <icon
+                        class="ml-2 mr-1 mt-3"
+                        type="arrow"
+                        :size="19"
+                        color="primary"
+                        variant="lighten6"
+                      />
+                    </div>
+                    <div>
+                      <div class="text-body-2 pl-2 mb-n2">End date</div>
+                      <hux-end-date
+                        :label="selectedEndDate"
+                        :selected="selectedEndDate"
+                        :is-sub-menu="true"
+                        :min-date="endMinDate"
+                        @on-date-select="onEndDateSelect"
+                      />
+                    </div>
+                  </div>
+                  <div class="mx-2 mt-2">
+                    <hux-schedule-picker
+                      v-model="schedule"
+                      short
+                      :colon-sign="true"
+                      :start-date="selectedStartDate"
+                      :end-date="selectedEndDate"
                     />
                   </div>
-                  <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28" />
-                  <div>
-                    <span
-                      class="
-                        date-picker-label
-                        black--text
-                        text--darken-4 text-caption
-                      "
-                    >
-                      End date
-                    </span>
-                    <hux-end-date
-                      class=""
-                      :label="selectedEndDate"
-                      :selected="selectedEndDate"
-                      :is-sub-menu="true"
-                      :min-date="endMinDate"
-                      @on-date-select="(val) => (selectedEndDate = val)"
-                    />
-                  </div>
-                </v-row>
-                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
-                  <hux-schedule-picker
-                    v-model="schedule"
-                    :start-date="selectedStartDate"
-                    :end-date="selectedEndDate"
-                  />
-                </v-row>
+                </div>
               </v-form>
             </div>
           </v-stepper-content>
@@ -395,12 +404,17 @@ export default {
       newEngagementValid: false,
       newEngagementRules: [(v) => !!v || "Engagement name is required"],
       sortBy: sortBy,
-      selectedStartDate: "Select date",
+      selectedStartDate: new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10),
       selectedEndDate: "Select date",
       schedule: JSON.parse(JSON.stringify(deliverySchedule())),
       endMinDate: new Date(
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
+      isActive: true,
     }
   },
 
@@ -410,6 +424,28 @@ export default {
     },
     isRecurring() {
       return this.newEngagement.delivery_schedule == 1
+    },
+    scheduleConfig() {
+      const recurringConfig = {
+        every: this.schedule.every,
+        periodicity: this.schedule.periodicity,
+        hour: this.schedule.hour,
+        minute: this.schedule.minute,
+        period: this.schedule.period,
+      }
+      if (this.schedule) {
+        switch (this.schedule.periodicity) {
+          case "Weekly":
+            recurringConfig["day_of_week"] = this.schedule.day_of_week
+            break
+          case "Monthly":
+            recurringConfig["day_of_month"] = [this.schedule.monthlyDayDate]
+            break
+          default:
+            recurringConfig
+        }
+      }
+      return recurringConfig
     },
   },
 
@@ -448,6 +484,18 @@ export default {
       this.selectedEndDate = null
       this.endMinDate = val
     },
+    onEndDateSelect(val) {
+      if (!val) {
+        this.selectedEndDate = "No end date"
+      } else {
+        this.selectedEndDate = val
+      }
+    },
+    initializeDate(date, defaultDate) {
+      return date == "Select date" || date == "No end date"
+        ? defaultDate
+        : new Date(date).toISOString()
+    },
     resetSchedule() {
       this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
       this.endMinDate = new Date(
@@ -481,10 +529,17 @@ export default {
       this.loading = true
       const payload = {
         name: this.newEngagement.name,
-        delivery_schedule: this.newEngagement.delivery_schedule,
         audiences: [],
-        start_date: this.selectedStartDate,
-        end_date: this.selectedEndDate,
+        delivery_schedule: !this.isActive
+          ? {
+              schedule: this.scheduleConfig,
+              start_date: this.initializeDate(
+                this.selectedStartDate,
+                new Date().toISOString()
+              ),
+              end_date: this.initializeDate(this.selectedEndDate, null),
+            }
+          : null,
       }
       if (this.newEngagement.description) {
         payload["description"] = this.newEngagement.description
@@ -550,6 +605,22 @@ export default {
     onSortIconClick: function () {
       this.toggleSort()
       this.sortEngagements()
+    },
+    toggleClass: function (event) {
+      if (!event.currentTarget.classList.contains("active")) {
+        this.isActive = !this.isActive
+      }
+      if (this.isActive) {
+        this.resetSchedule()
+      } else {
+        this.selectedStartDate = new Date(
+          Date.now() - new Date().getTimezoneOffset() * 60000
+        )
+          .toISOString()
+          .substr(0, 10)
+
+        this.selectedEndDate = "No end date"
+      }
     },
   },
 }
@@ -642,5 +713,57 @@ export default {
   background-image: url("../../assets/images/no-alert-frame.png");
   background-position: center;
   background-size: 100%;
+}
+.manual,
+.recurring {
+  height: 175px;
+  width: 260px;
+  border-radius: 12px;
+}
+.manual.active,
+.recurring.active {
+  border: 1px solid var(--v-primary-lighten4);
+}
+.schedule-recurring {
+  background: var(--v-primary-lighten1);
+  border: 1px solid var(--v-black-lighten2);
+  border-radius: 5px;
+  .hux-date-picker {
+    ::v-deep .main-button {
+      min-width: 153px !important;
+      width: 200px !important;
+    }
+  }
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
+.content-section {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+::v-deep .edit-schedule-wrapper {
+  .periodicity-select {
+    width: 207px !important;
+  }
+  .every-select {
+    width: 120px !important;
+  }
+  .hour-select,
+  .minute-select,
+  .period-select {
+    width: 100px !important;
+  }
 }
 </style>
