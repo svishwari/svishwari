@@ -12,9 +12,10 @@
               :items="[
                 {
                   text: 'HX TrustID',
+                  superscript: 'TM',
                   disabled: true,
                   href: '/hx-trustid',
-                  icon: 'hx-trustid-colored',
+                  icon: 'hx-trustid-header',
                   iconSize: 36,
                   iconColor: 'black',
                   iconColorVariant: 'base',
@@ -24,7 +25,7 @@
           </div>
           <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
             Measure the signals of trust, predict how trust sentiment will
-            impact customer &nbsp; employee behaviors, and identify actions to
+            impact customer &amp; employee behaviors, and identify actions to
             (re)build trust.
           </div>
         </template>

@@ -214,12 +214,13 @@ export default {
     },
 
     scheduleConfig() {
-      const recurringConfig = {}
-      recurringConfig["every"] = this.localSchedule.every
-      recurringConfig["periodicity"] = this.localSchedule.periodicity
-      recurringConfig["hour"] = this.localSchedule.hour
-      recurringConfig["minute"] = this.localSchedule.minute
-      recurringConfig["period"] = this.localSchedule.period
+      const recurringConfig = {
+        every: this.localSchedule.every,
+        periodicity: this.localSchedule.periodicity,
+        hour: this.localSchedule.hour,
+        minute: this.localSchedule.minute,
+        period: this.localSchedule.period,
+      }
       if (this.localSchedule) {
         switch (this.localSchedule.periodicity) {
           case "Weekly":
@@ -307,7 +308,7 @@ export default {
     },
 
     cancel() {
-      this.$emit("onToggle")
+      this.$emit("onToggle", false)
       this.localToggle = false
     },
 
@@ -329,7 +330,7 @@ export default {
         audienceId: this.audienceId,
         data: requestPayload,
       })
-      this.$emit("onToggle")
+      this.$emit("onToggle", false)
       this.localToggle = false
     },
 
@@ -339,7 +340,7 @@ export default {
         audienceId: this.audienceId,
         data: {},
       })
-      this.$emit("onToggle")
+      this.$emit("onToggle", false)
       this.localToggle = false
     },
 
