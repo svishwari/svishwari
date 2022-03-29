@@ -305,6 +305,7 @@ export default {
 <style lang="scss" scoped>
 .datasource-datafeeds-table {
   margin-top: 1px;
+  margin-right: 10px;
   ::v-deep .hux-data-table {
     table {
       .data-feed-name {
@@ -321,6 +322,7 @@ export default {
       tr {
         td {
           height: 60px;
+          white-space: nowrap;
         }
       }
       tbody {
