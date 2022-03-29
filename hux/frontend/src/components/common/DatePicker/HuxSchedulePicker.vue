@@ -49,6 +49,11 @@
             append-icon="mdi-chevron-down"
           />
         </span>
+        <span
+          v-if="colonSign"
+          class="black--text text--darken-4 body-1 ml-1 mr-2"
+          >:</span
+        >
         <span class="pr-2">
           <v-select
             v-model="minute"
@@ -190,6 +195,10 @@ export default {
       required: false,
     },
     short: {
+      type: Boolean,
+      default: false,
+    },
+    colonSign: {
       type: Boolean,
       default: false,
     },
