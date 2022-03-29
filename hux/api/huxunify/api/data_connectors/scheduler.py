@@ -1,4 +1,4 @@
-"""Purpose of this module is to park schedule modules for delivery schedule."""
+"""Purpose of this module is to park schedule modules for delivery schedule"""
 import asyncio
 from datetime import datetime
 from pymongo import MongoClient
@@ -67,7 +67,9 @@ def _add_cron_for_monthly(schedule: dict, cron_exp: dict) -> str:
     )
 
     day_of_month_list = [str(item) for item in day_of_month_list]
-    period_items = [item.lower() for item in schedule.get("monthly_period_items", [])]
+    period_items = [
+        item.lower() for item in schedule.get("monthly_period_items", [])
+    ]
 
     if len(period_items) == 1:
         period_item_val = monthly_period_items_dict.get(period_items[0])
@@ -177,12 +179,16 @@ def generate_cron(schedule: dict) -> str:
 
         cron_exp["day_of_week"] = ",".join(schedule.get("day_of_week"))
         if schedule["every"] > 1:
-            cron_exp["day_of_week"] = f"{cron_exp['day_of_week']}#{schedule['every']}"
+            cron_exp[
+                "day_of_week"
+            ] = f"{cron_exp['day_of_week']}#{schedule['every']}"
 
     if schedule["periodicity"] == "Daily":
         cron_exp["day_of_month"] = "*"
         if schedule["every"] > 1:
-            cron_exp["day_of_month"] = f"{cron_exp['day_of_month']}/{schedule['every']}"
+            cron_exp[
+                "day_of_month"
+            ] = f"{cron_exp['day_of_month']}/{schedule['every']}"
 
     if schedule["periodicity"] == "Monthly":
         cron_exp = _add_cron_for_monthly(schedule, cron_exp)
@@ -190,7 +196,9 @@ def generate_cron(schedule: dict) -> str:
     return " ".join([str(val) for val in cron_exp.values()])
 
 
-async def delivery_destination(database, engagement, audience_id, destination_id):
+async def delivery_destination(
+    database, engagement, audience_id, destination_id
+):
     """Async function that couriers delivery jobs.
 
     Args:
@@ -242,11 +250,16 @@ async def delivery_destination(database, engagement, audience_id, destination_id
         ]:
             continue
         batch_destination = get_destination_config(
-            database, *pair, engagement[db_c.ID], username=engagement[db_c.UPDATED_BY]
+            database,
+            *pair,
+            engagement[db_c.ID],
+            username=engagement[db_c.UPDATED_BY],
         )
         batch_destination.register()
         batch_destination.submit()
-        delivery_job_ids.append(str(batch_destination.audience_delivery_job_id))
+        delivery_job_ids.append(
+            str(batch_destination.audience_delivery_job_id)
+        )
 
     logger.info(
         "Successfully created delivery jobs %s.",
@@ -306,7 +319,9 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
                 if delivery_schedule.get(api_c.SCHEDULE_CRON):
                     schedule_cron = delivery_schedule[api_c.SCHEDULE_CRON]
                 else:
-                    schedule_cron = generate_cron(delivery_schedule.get(api_c.SCHEDULE))
+                    schedule_cron = generate_cron(
+                        delivery_schedule.get(api_c.SCHEDULE)
+                    )
                 # check if the schedule falls within the cron time frame.
                 next_schedule = get_next_schedule(
                     schedule_cron,
@@ -368,7 +383,8 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     api_c.TASK,
                     f"Removing Destination '{destination[api_c.NAME]}'.",
                     "\n".join(
-                        f"{key.title()}: {value}" for key, value in destination.items()
+                        f"{key.title()}: {value}"
+                        for key, value in destination.items()
                     ),
                 )
 
@@ -376,7 +392,9 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     database=database,
                     delivery_platform_id=destination[db_c.ID],
                     name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+                    delivery_platform_type=destination[
+                        db_c.DELIVERY_PLATFORM_TYPE
+                    ],
                     enabled=False,
                     deleted=True,
                 )
@@ -421,5 +439,7 @@ def run_scheduled_tecton_feature_cache(database: MongoClient) -> None:
 
     for model in all_models:
         # fire and forget task.
-        task = loop.create_task(cache_model_features(database, model[api_c.ID]))
+        task = loop.create_task(
+            cache_model_features(database, model[api_c.ID])
+        )
         loop.run_until_complete(task)
