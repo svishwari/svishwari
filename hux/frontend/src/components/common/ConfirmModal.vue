@@ -206,7 +206,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 20px 28px;
     background: var(--v-primary-lighten1);
   }
 }
