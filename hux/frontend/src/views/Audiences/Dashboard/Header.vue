@@ -63,7 +63,7 @@
               mdi-dots-vertical
             </v-icon>
           </template>
-          <v-list class="text-body-1">
+          <v-list class="text-body-1 pa-0">
             <v-list-item-group>
               <v-list-item @click="favoriteAudience()"> Favorite </v-list-item>
               <v-list-item @click="initiateDelete()">
@@ -135,6 +135,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.v-list-item {
+  min-height: 32px;
+}
 .insight-height {
   height: 30px !important;
 }

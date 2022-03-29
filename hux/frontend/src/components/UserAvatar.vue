@@ -30,11 +30,14 @@
         <v-avatar class="mr-2" size="45">
           <icon type="user_avatar" :size="45" color="white" />
         </v-avatar>
-        <v-list-item-title
-          class="black--text font-weight-bold d-flex flex-column"
-        >
-          <span>{{ firstName }} {{ lastName }}</span>
-        </v-list-item-title>
+        <div>
+          <v-list-item-title
+            class="black--text font-weight-bold d-flex flex-column"
+          >
+            <span>{{ firstName }} {{ lastName }}</span>
+          </v-list-item-title>
+          <v-list-item-subtitle> Person </v-list-item-subtitle>
+        </div>
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_password">
         <v-list-item-title class="text-body-1 black--text">

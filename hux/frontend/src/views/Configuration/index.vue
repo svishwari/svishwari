@@ -21,7 +21,7 @@
     </div>
     <div
       v-if="!loading"
-      class="config-content flex-grow-1 flex-shrink-1 mw-100 content-section"
+      class="config-content flex-grow-1 flex-shrink-1 mw-100"
     >
       <v-row v-if="isConfigActivated">
         <v-col>
@@ -136,7 +136,6 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 210px);
-  overflow-x: visible !important;
+  overflow-y: scroll !important;
 }
 </style>
