@@ -126,23 +126,26 @@ export default {
       required: true,
     },
   },
-  computed: {
-    colorCodes() {
-      return {
-        humanity: { stroke: "primary", variant: "darken6" },
-        transparency: { stroke: "yellow", variant: "darken1" },
-        capability: { stroke: "primary", variant: "darken5" },
-        reliability: { stroke: "secondary", variant: "lighten2" },
-      }
-    },
-  },
   methods: {
     formatText: formatText,
     numberWithCommas: numberWithCommas,
     cardColors(attributeName) {
-      return attributeName in this.colorCodes
-        ? this.colorCodes[attributeName]
-        : { stroke: "primary", variant: "base" }
+      switch (attributeName) {
+        case "humanity":
+          return { stroke: "primary", variant: "darken6" }
+
+        case "transparency":
+          return { stroke: "yellow", variant: "darken1" }
+
+        case "capability":
+          return { stroke: "primary", variant: "darken5" }
+
+        case "reliability":
+          return { stroke: "secondary", variant: "lighten2" }
+
+        default:
+          return { stroke: "primary", variant: "base" }
+      }
     },
     progressBarData(data) {
       if (Object.keys(data).length == 0) return []
