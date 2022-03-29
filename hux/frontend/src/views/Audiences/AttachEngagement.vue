@@ -277,7 +277,7 @@
                         :selected="selectedEndDate"
                         :is-sub-menu="true"
                         :min-date="endMinDate"
-                        @on-date-select="(val) => (selectedEndDate = val)"
+                        @on-date-select="onEndDateSelect"
                       />
                     </div>
                   </div>
@@ -425,6 +425,28 @@ export default {
     isRecurring() {
       return this.newEngagement.delivery_schedule == 1
     },
+    scheduleConfig() {
+      const recurringConfig = {
+        every: this.schedule.every,
+        periodicity: this.schedule.periodicity,
+        hour: this.schedule.hour,
+        minute: this.schedule.minute,
+        period: this.schedule.period,
+      }
+      if (this.schedule) {
+        switch (this.schedule.periodicity) {
+          case "Weekly":
+            recurringConfig["day_of_week"] = this.schedule.day_of_week
+            break
+          case "Monthly":
+            recurringConfig["day_of_month"] = [this.schedule.monthlyDayDate]
+            break
+          default:
+            recurringConfig
+        }
+      }
+      return recurringConfig
+    },
   },
 
   watch: {
@@ -462,6 +484,18 @@ export default {
       this.selectedEndDate = null
       this.endMinDate = val
     },
+    onEndDateSelect(val) {
+      if (!val) {
+        this.selectedEndDate = "No end date"
+      } else {
+        this.selectedEndDate = val
+      }
+    },
+    initializeDate(date, defaultDate) {
+      return date == "Select date" || date == "No end date"
+        ? defaultDate
+        : new Date(date).toISOString()
+    },
     resetSchedule() {
       this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
       this.endMinDate = new Date(
@@ -495,10 +529,17 @@ export default {
       this.loading = true
       const payload = {
         name: this.newEngagement.name,
-        delivery_schedule: this.newEngagement.delivery_schedule,
         audiences: [],
-        start_date: this.selectedStartDate,
-        end_date: this.selectedEndDate,
+        delivery_schedule: !this.isActive
+          ? {
+              schedule: this.scheduleConfig,
+              start_date: this.initializeDate(
+                this.selectedStartDate,
+                new Date().toISOString()
+              ),
+              end_date: this.initializeDate(this.selectedEndDate, null),
+            }
+          : null,
       }
       if (this.newEngagement.description) {
         payload["description"] = this.newEngagement.description

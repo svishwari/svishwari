@@ -5,7 +5,7 @@
     content-height="300px"
     :enable-apply="enableApply"
     :style="{ height: viewHeight }"
-    @clear="clear"
+    @clear="clearAndReload"
     @apply="apply"
     @close="close"
   >
@@ -54,6 +54,8 @@ export default {
       selectedFavourite: false,
       selectedEngagementsWorkedWith: false,
       enableApply: false,
+      pendingFavorites: false,
+      pendingWorkedWith: false,
     }
   },
 
@@ -79,15 +81,13 @@ export default {
       this.selectedFavourite = false
       this.selectedEngagementsWorkedWith = false
     },
-    clear() {
-      this.enableApply = true
-      this.clearFilter()
-    },
     clearAndReload() {
       this.clearFilter()
       this.apply()
     },
     apply() {
+      this.pendingFavorites = this.selectedFavourite
+      this.pendingWorkedWith = this.selectedEngagementsWorkedWith
       this.$emit("onSectionAction", {
         selectedFavourite: this.selectedFavourite,
         selectedEngagementsWorkedWith: this.selectedEngagementsWorkedWith,
@@ -99,6 +99,8 @@ export default {
       this.localDrawer = false
     },
     close() {
+      this.selectedFavourite = this.pendingFavorites
+      this.selectedEngagementsWorkedWith = this.pendingWorkedWith
       this.localDrawer = false
     },
   },
