@@ -1,4 +1,4 @@
-"""Purpose of this file is to house all the courier tests"""
+"""Purpose of this file is to house all the courier tests."""
 import asyncio
 from http import HTTPStatus
 from unittest import TestCase, mock

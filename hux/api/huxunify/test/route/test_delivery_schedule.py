@@ -1,4 +1,4 @@
-"""Purpose of this file is to house all the delivery schedule API tests"""
+"""Purpose of this file is to house all the delivery schedule API tests."""
 from random import sample
 from unittest import mock
 from http import HTTPStatus

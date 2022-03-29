@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use,too-many-lines,unused-argument
-"""Paths for delivery API"""
+"""Paths for delivery API."""
 import asyncio
 from http import HTTPStatus
 from typing import Tuple

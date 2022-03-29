@@ -1,5 +1,5 @@
 # pylint: disable=too-many-lines,unused-argument
-"""Paths for Orchestration API"""
+"""Paths for Orchestration API."""
 import asyncio
 import re
 import time

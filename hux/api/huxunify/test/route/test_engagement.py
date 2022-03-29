@@ -1,5 +1,5 @@
 # pylint: disable=too-many-lines
-"""Purpose of this file is to house all the engagement API endpoint tests"""
+"""Purpose of this file is to house all the engagement API endpoint tests."""
 import json
 import random
 import string

@@ -1,4 +1,4 @@
-"""Purpose of this module is to park schedule modules for delivery schedule"""
+"""Purpose of this module is to park schedule modules for delivery schedule."""
 import asyncio
 from datetime import datetime
 from pymongo import MongoClient

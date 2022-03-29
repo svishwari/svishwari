@@ -1,4 +1,4 @@
-"""purpose of this file is to house all delivery related components
+"""purpose of this file is to house all delivery related components.
  - delivery of an audience
 """
 from http import HTTPStatus

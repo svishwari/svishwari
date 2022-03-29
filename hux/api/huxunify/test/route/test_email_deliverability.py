@@ -1,5 +1,5 @@
 # pylint: disable=too-many-public-methods
-"""Tests for email deliverability APIs"""
+"""Tests for email deliverability APIs."""
 import datetime
 from http import HTTPStatus
 from unittest import mock
