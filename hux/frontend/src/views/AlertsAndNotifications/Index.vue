@@ -128,7 +128,7 @@
           </hux-lazy-data-table>
         </v-row>
         <v-row
-          v-if="notificationData.length == 0 && !loading"
+          v-if="notificationData.length == 0 && !isEmptyError && !loading"
           class="background-empty"
         >
           <empty-page type="no-alerts" :size="50">
@@ -158,8 +158,7 @@
         </v-row>
         <v-row
           v-if="
-            notificationData.length > 0 &&
-            notificationData.length <= 0 &&
+            notificationData.length == 0 && isEmptyError &&
             !loading
           "
           class="d-flex justify-center align-center"
@@ -278,6 +277,7 @@ export default {
       batchDetails: {},
       isFilterToggled: false,
       isAlertsToggled: false,
+      isEmptyError: false,
       notificationId: null,
       numFiltersSelected: 0,
       finalFilterApplied: 1,
@@ -309,11 +309,13 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getUserData()
     try {
       this.setDefaultData()
+      await this.getUserData()
       await this.fetchNotificationsByBatch()
       this.calculateLastBatch()
+    } catch (error) {
+      this.isEmptyError = true
     } finally {
       this.loading = false
     }
@@ -412,6 +414,7 @@ export default {
       this.finalFilterApplied = data.filterApplied
       this.isFilterToggled = true
       this.enableLazyLoad = false
+      this.isEmptyError = false
       this.loading = true
       try {
         let today_date = new Date()
@@ -474,7 +477,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .notification-wrap {
-  background: white;
+  background: var(--v-white-base);
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }

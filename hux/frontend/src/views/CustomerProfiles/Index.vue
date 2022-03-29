@@ -338,7 +338,7 @@
             <v-row class="mt-2 mb-4">
               <v-col md="12">
                 <v-card
-                  class="mt-3 rounded-lg box-shadow-5 tab-card-3"
+                  class="mt-3 rounded-lg box-shadow-5"
                   height="395"
                 >
                   <v-row>
