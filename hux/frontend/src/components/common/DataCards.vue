@@ -20,7 +20,37 @@
             :cols="field.col"
             :class="headerClass"
           >
-            <div class="px-4 py-2">
+            <tooltip v-if="field.tooltip">
+              <template #label-content>
+                <div class="px-4 py-2">
+                  <span class="text-body-2 black--text text--lighten-4">
+                    {{ field.label }}
+                    <v-btn
+                      v-if="field.sortable"
+                      icon
+                      x-small
+                      @click="setSortBy(field.key)"
+                    >
+                      <v-icon
+                        x-small
+                        :class="{
+                          'primary--text text--lighten-8': isSortedBy(
+                            field.key
+                          ),
+                          'rotate-icon-180': isSortedBy(field.key) && sortDesc,
+                        }"
+                      >
+                        mdi-arrow-down
+                      </v-icon>
+                    </v-btn>
+                  </span>
+                </div>
+              </template>
+              <template #hover-content>
+                {{ field.tooltip }}
+              </template>
+            </tooltip>
+            <div v-else class="px-4 py-2">
               <span class="text-body-2 black--text text--lighten-4">
                 {{ field.label }}
                 <v-btn
@@ -89,9 +119,14 @@
 
 <script>
 const ALL = -1
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "DataCards",
+
+  components: {
+    Tooltip,
+  },
 
   props: {
     items: {

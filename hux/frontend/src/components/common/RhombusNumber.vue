@@ -1,5 +1,13 @@
 <template>
-  <v-card class="card-style" :style="style" shaped outlined>
+  <v-card
+    :class="{
+      'border-image': borderImage,
+    }"
+    class="card-style"
+    :style="style"
+    shaped
+    outlined
+  >
     <v-card-text :class="`text-subtitle-1 text-style ${textColor}`">
       {{ value }}
     </v-card-text>
@@ -17,17 +25,27 @@ export default {
     color: {
       type: String,
       required: false,
-      default: "green",
+      default: "primary",
+    },
+    variant: {
+      type: String,
+      required: false,
+      default: "darken1",
     },
     textColor: {
       type: String,
       required: false,
       default: "black--text",
     },
+    borderImage: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   computed: {
     style() {
-      return "border-color: " + this.color
+      return "border-color: var(--v-" + this.color + "-" + this.variant + ")"
     },
   },
 }
@@ -48,5 +66,16 @@ export default {
   padding: 0px;
   display: block;
   text-align: center;
+}
+
+.border-image {
+  border-image-source: linear-gradient(
+    122deg,
+    #e3e34d 2.41%,
+    #0e7b7e 38.12%,
+    #3a88b8 51.2%,
+    #add1d6 98.98%
+  );
+  border-image-slice: 1;
 }
 </style>

@@ -90,8 +90,7 @@
               <data-cards
                 bordered
                 class="mr-4"
-                card-class="py-5 pa-4 d-flex justify-center"
-                header-class="d-flex justify-center"
+                card-class="py-5 pa-4"
                 :items="getSegmentTableData"
                 :fields="getSegmentTableHeaders"
               >
@@ -108,6 +107,13 @@
                     :key="header.key"
                     :value="row.value"
                     :text-color="row.value < 0 ? 'error--text' : 'black--text'"
+                    :border-image="header.key == 'trust_id'"
+                    :color="
+                      colColorArr[header.key] && colColorArr[header.key].stroke
+                    "
+                    :variant="
+                      colColorArr[header.key] && colColorArr[header.key].variant
+                    "
                   ></rhombus-number>
 
                   <span
@@ -116,7 +122,9 @@
                   >
                     <span v-if="row.value.length != 0">
                       <v-chip
-                        v-for="(filter, filterIndex) in row.value"
+                        v-for="(filter, filterIndex) in Object.keys(
+                          row.value[0]
+                        )"
                         :key="filterIndex"
                         small
                         class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
@@ -140,18 +148,21 @@
                 </template>
 
                 <template #field:delete="row">
-                  <div class="d-flex align-center justify-end mr-2">
+                  <div
+                    v-if="getSelectedSegment.segments.length > 1"
+                    class="d-flex align-center justify-end mr-2"
+                  >
                     <hux-icon
                       type="trash"
                       class="cursor-pointer"
                       :size="18"
                       color="black"
-                      @click.native="removeAudience(row.item)"
+                      @click.native="removeSegment(row.item)"
                     />
                   </div>
                 </template>
               </data-cards>
-              <div v-if="segmentScores.length < 5">
+              <div v-if="getSelectedSegment.segments.length < 5">
                 <v-list class="add-segment no-data-width" :height="22">
                   <v-list-item @click="filterToggle()">
                     <hux-icon
@@ -246,13 +257,13 @@ export default {
       loading: false,
       segmentComparisonLoading: false,
       tabOption: 0,
-      selectedSegment: null,
+      selectedSegment: "composite & signal scores",
       isFilterToggled: false,
       segmentLength: 1,
       addSegmentData: addSegmentData,
       segmentScores: segmentScores,
       overviewData: overviewData,
-      colorArr: [
+      borderColorArr: [
         {
           color: "primary",
           variant: "darken1",
@@ -274,6 +285,58 @@ export default {
           variant: "darken1",
         },
       ],
+      colColorArr: {
+        // Humanity
+        humanity: { stroke: "primary", variant: "darken6" },
+        quickly_resolves_issues: { stroke: "primary", variant: "darken6" },
+        values_respects_everyone: { stroke: "primary", variant: "darken6" },
+        values_society_environment: { stroke: "primary", variant: "darken6" },
+        takes_care_of_employees: { stroke: "primary", variant: "darken6" },
+
+        // Transparency
+        transparency: { stroke: "yellow", variant: "darken1" },
+        honesty_marketing_comms: { stroke: "yellow", variant: "darken1" },
+        upfront_on_how_they_make_money: {
+          stroke: "yellow",
+          variant: "darken1",
+        },
+        plain_language_data_policy: { stroke: "yellow", variant: "darken1" },
+        clear_fees_costs: { stroke: "yellow", variant: "darken1" },
+
+        // Reliability
+        reliability: { stroke: "secondary", variant: "lighten2" },
+        continuous_product_improvement: {
+          stroke: "secondary",
+          variant: "lighten2",
+        },
+        consistent_quality: { stroke: "secondary", variant: "lighten2" },
+        smooth_digital_interactions: {
+          stroke: "secondary",
+          variant: "lighten2",
+        },
+        timely_issue_resolution: { stroke: "secondary", variant: "lighten2" },
+
+        //Capability
+        capability: { stroke: "primary", variant: "darken5" },
+        product_quality: { stroke: "primary", variant: "darken5" },
+        good_value: { stroke: "primary", variant: "darken5" },
+        competent_leaders_employess: { stroke: "primary", variant: "darken5" },
+        long_term_solutions_improvements: {
+          stroke: "primary",
+          variant: "darken5",
+        },
+      },
+      tooltips: {
+        trust_id: "TrustID is scored on a scale between -100 to 100",
+        humanity:
+          "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
+        transparency:
+          "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
+        reliability:
+          "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
+        capability:
+          "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
+      },
     }
   },
   computed: {
@@ -287,8 +350,9 @@ export default {
         return item.segment_filter
       })
     },
+
     getSegmentTableData() {
-      return this.segmentScores[0].segments.map((x, index) => {
+      return this.getSelectedSegment.segments.map((x, index) => {
         let segment = {
           segment_name: x.segment_name,
           attribute_filters: x.attribute_filters,
@@ -298,22 +362,34 @@ export default {
           segment[item.attribute_type] = item.attribute_score
         })
 
-        segment.colors = this.colorArr[index]
+        segment.colors = this.borderColorArr[index]
+        console.log(segment)
 
         return segment
       })
     },
+
     getSegmentTableHeaders() {
-      let headers = []
-      Object.keys(this.getSegmentTableData[0]).forEach((item) => {
-        if (item != "colors") {
-          headers.push({
-            key: item,
-            label: formatText(item),
-            col:
-              item == "segment_name" ? 1 : item == "attribute_filters" ? 5 : 1,
-          })
-        }
+      let headers = [
+        {
+          key: "segment_name",
+          label: "Segment",
+          col: 2,
+        },
+        {
+          key: "attribute_filters",
+          label: "Segment filters",
+          col: 4,
+        },
+      ]
+
+      this.getSelectedSegment.segments[0].attributes.forEach((item) => {
+        headers.push({
+          key: item.attribute_type,
+          label: item.attribute_name,
+          col: 1,
+          tooltip: this.tooltips[item.attribute_type],
+        })
       })
 
       headers.push({
@@ -322,6 +398,12 @@ export default {
       })
 
       return headers
+    },
+
+    getSelectedSegment() {
+      return this.segmentScores.find(
+        (x) => x.segment_filter == this.selectedSegment?.toLowerCase()
+      )
     },
   },
   async mounted() {
@@ -349,6 +431,14 @@ export default {
     },
     addSegment() {
       this.isFilterToggled = !this.isFilterToggled
+    },
+    removeSegment(item) {
+      this.getSelectedSegment.segments.splice(
+        this.getSelectedSegment.segments.findIndex(
+          (x) => x.segment_name == item.segment_name
+        ),
+        1
+      )
     },
   },
 }
