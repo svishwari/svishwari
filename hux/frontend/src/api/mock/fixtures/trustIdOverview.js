@@ -17,7 +17,7 @@ export default {
     },
     {
       attribute_name: "transparency",
-      attribute_score: 51,
+      attribute_score: -98,
       attribute_description:
         "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
       overall_customer_rating: {

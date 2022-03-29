@@ -1,6 +1,9 @@
 <template>
   <v-card class="rhombus-card-wrapper" :style="style" shaped outlined>
-    <v-card-text class="text-subtitle-1 text-style">
+    <v-card-text
+      class="text-subtitle-1 text-style"
+      :class="value < 0 ? 'error--text' : 'black--text'"
+    >
       {{ value }}
     </v-card-text>
   </v-card>
@@ -38,7 +41,6 @@ export default {
 }
 .text-style {
   // num style
-  color: black !important;
   line-height: 16px;
   transform: translate(0%, 25%) rotate(-45deg);
   padding: 0px;

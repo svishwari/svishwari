@@ -38,7 +38,7 @@
                 />
               </template>
               <template v-else-if="col.value === 'attribute_description'">
-                <tooltip>
+                <tooltip min-width="300px" max-width="300px">
                   <template slot="label-content">
                     <span class="text-ellipsis text-width">
                       {{ item[col.value] }}
@@ -50,7 +50,7 @@
                 </tooltip>
               </template>
               <template v-else-if="col.value === 'overall_customer_rating'">
-                <tooltip max-width="288px">
+                <tooltip max-width="183px">
                   <template #label-content>
                     <progress-stack-bar
                       :width="180"
