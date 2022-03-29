@@ -1,6 +1,9 @@
 import ScoreCard from "./scoreCard.vue"
+
 const ICON = ["hx-trustid", "hx-trustid-colored"]
+
 const TITLE = ["Transparency", "Humanity"]
+
 export default {
   component: scoreCard,
   title: "Components",
@@ -41,6 +44,7 @@ export default {
     },
   },
 }
+
 const Template = (args, { argTypes }) => ({
   components: { ScoreCard },
   props: Object.keys(argTypes),
@@ -49,4 +53,5 @@ const Template = (args, { argTypes }) => ({
   },
   template: "<score-card  v-bind='$props' v-on='$props' />",
 })
+
 export const scoreCard = Template.bind({})
