@@ -56,7 +56,7 @@ def set_survey_response(
     try:
         metrics_id = collection.insert_one(
             {
-                db_c.CREATE_TIME: datetime.datetime.utcnow(),
+                db_c.CREATE_TIME: datetime.utcnow(),
                 db_c.SURVEY_RESPONSES: responses_dict,
                 db_c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
                 db_c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
