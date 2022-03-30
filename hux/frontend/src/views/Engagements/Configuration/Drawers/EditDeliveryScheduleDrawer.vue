@@ -7,7 +7,7 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <icon type="clock" :size="32" class="ml-2 mr-2" />
+        <icon type="clock" :size="32" class="mx-2" />
         <h3 class="pl-1 text-h2 black--text">Edit delivery schedule</h3>
       </div>
     </template>
@@ -50,7 +50,7 @@
         </div>
         <div
           v-if="isRecurringFlag"
-          class="delivery-background pl-6 pr-4 pt-5 pb-5 mt-6 mr-6 mb-5"
+          class="delivery-background pl-6 pr-4 py-5 mt-6 mr-6 mb-5"
         >
           <v-row class="delivery-schedule mt-7 ml-n2">
             <div>
@@ -71,7 +71,7 @@
               />
             </div>
             <icon
-              class="mx-2 mt-half"
+              class="mx-2 arrow-margin"
               type="arrow"
               :size="19"
               color="primary"
@@ -368,7 +368,7 @@ export default {
   ::v-deep .plain-card {
     margin-bottom: 0px !important;
   }
-  .mt-half {
+  .arrow-margin {
     margin-top: 2px;
   }
   .delivery-background {
