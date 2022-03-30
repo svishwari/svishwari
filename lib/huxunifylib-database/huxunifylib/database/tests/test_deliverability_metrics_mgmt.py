@@ -242,7 +242,9 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             data[0].get(db_c.INBOX_PERCENTAGE_DATA)[0][db_c.INBOX_PERCENTAGE],
             float,
         )
-        self.assertTrue(data[0].get(db_c.INBOX_PERCENTAGE_DATA)[0][db_c.CREATE_TIME])
+        self.assertTrue(
+            data[0].get(db_c.INBOX_PERCENTAGE_DATA)[0][db_c.CREATE_TIME]
+        )
 
     def test_inbox_percentage_data_parameters(self):
         """Test for domain inbox percentage data with start and end date."""
@@ -262,7 +264,9 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             data[0].get(db_c.INBOX_PERCENTAGE_DATA)[0][db_c.INBOX_PERCENTAGE],
             float,
         )
-        self.assertTrue(data[0].get(db_c.INBOX_PERCENTAGE_DATA)[0][db_c.CREATE_TIME])
+        self.assertTrue(
+            data[0].get(db_c.INBOX_PERCENTAGE_DATA)[0][db_c.CREATE_TIME]
+        )
 
     def test_get_overall_inbox_rate(self):
         """Test get overall inbox rate"""
@@ -281,37 +285,51 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
         )
 
         self.assertIsInstance(performance_metrics, list)
-        self.assertIsInstance(performance_metrics[0].get(db_c.DOMAIN_NAME), str)
+        self.assertIsInstance(
+            performance_metrics[0].get(db_c.DOMAIN_NAME), str
+        )
         self.assertIsInstance(
             performance_metrics[0].get(db_c.DELIVERABILITY_METRICS), list
         )
 
         self.assertIsInstance(
-            performance_metrics[0].get(db_c.DELIVERABILITY_METRICS)[0].get("sent"),
+            performance_metrics[0]
+            .get(db_c.DELIVERABILITY_METRICS)[0]
+            .get("sent"),
             int,
         )
 
         self.assertEqual(
             self.aggregated_sent,
-            performance_metrics[0].get(db_c.DELIVERABILITY_METRICS)[0].get("sent"),
+            performance_metrics[0]
+            .get(db_c.DELIVERABILITY_METRICS)[0]
+            .get("sent"),
         )
 
         self.assertIsInstance(
-            performance_metrics[0].get(db_c.DELIVERABILITY_METRICS)[0].get("opens"),
+            performance_metrics[0]
+            .get(db_c.DELIVERABILITY_METRICS)[0]
+            .get("opens"),
             int,
         )
         self.assertEqual(
             self.aggregated_opens,
-            performance_metrics[0].get(db_c.DELIVERABILITY_METRICS)[0].get("opens"),
+            performance_metrics[0]
+            .get(db_c.DELIVERABILITY_METRICS)[0]
+            .get("opens"),
         )
 
         self.assertIsInstance(
-            performance_metrics[0].get(db_c.DELIVERABILITY_METRICS)[0].get("clicks"),
+            performance_metrics[0]
+            .get(db_c.DELIVERABILITY_METRICS)[0]
+            .get("clicks"),
             int,
         )
         self.assertEqual(
             self.aggregated_clicks,
-            performance_metrics[0].get(db_c.DELIVERABILITY_METRICS)[0].get("clicks"),
+            performance_metrics[0]
+            .get(db_c.DELIVERABILITY_METRICS)[0]
+            .get("clicks"),
         )
 
     def test_get_deliverability_data_aggregate(self):
@@ -327,12 +345,18 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
         )
 
         self.assertIsInstance(performance_metrics, list)
-        self.assertIsInstance(performance_metrics[0].get(db_c.DOMAIN_NAME), str)
+        self.assertIsInstance(
+            performance_metrics[0].get(db_c.DOMAIN_NAME), str
+        )
 
         self.assertIsInstance(performance_metrics[0].get("sent"), int)
-        self.assertEqual(self.aggregated_sent, performance_metrics[0].get("sent"))
+        self.assertEqual(
+            self.aggregated_sent, performance_metrics[0].get("sent")
+        )
         self.assertIsInstance(performance_metrics[0].get("opens"), int)
-        self.assertEqual(self.aggregated_opens, performance_metrics[0].get("opens"))
+        self.assertEqual(
+            self.aggregated_opens, performance_metrics[0].get("opens")
+        )
         self.assertIsInstance(performance_metrics[0].get("clicks"), int)
         self.assertEqual(
             self.aggregated_clicks,

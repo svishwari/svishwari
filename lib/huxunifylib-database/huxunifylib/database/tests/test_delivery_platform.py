@@ -73,7 +73,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.auth_details_sfmc,
         )
 
-        self.ingestion_job_doc = dm.set_ingestion_job(self.database, ObjectId())
+        self.ingestion_job_doc = dm.set_ingestion_job(
+            self.database, ObjectId()
+        )
 
         self.source_audience_doc = am.create_audience(
             self.database,
@@ -113,15 +115,17 @@ class TestDeliveryPlatform(unittest.TestCase):
             t_c.TEST_USER_NAME,
         )
 
-        self.lookalike_audience_doc = dpm.create_delivery_platform_lookalike_audience(
-            self.database,
-            self.delivery_platform_doc[db_c.ID],
-            self.source_audience_doc,
-            "Lookalike audience",
-            0.01,
-            "US",
-            "Kam Chancellor",
-            31,
+        self.lookalike_audience_doc = (
+            dpm.create_delivery_platform_lookalike_audience(
+                self.database,
+                self.delivery_platform_doc[db_c.ID],
+                self.source_audience_doc,
+                "Lookalike audience",
+                0.01,
+                "US",
+                "Kam Chancellor",
+                31,
+            )
         )
 
         doc = dpm.set_connection_status(
@@ -188,7 +192,9 @@ class TestDeliveryPlatform(unittest.TestCase):
 
     def test_set_delivery_platform_sfmc(self):
         """Test set_delivery_platform for sfmc."""
-        sfmc_configuration = {db_c.PERFORMANCE_METRICS_DATA_EXTENSION: "data_extension"}
+        sfmc_configuration = {
+            db_c.PERFORMANCE_METRICS_DATA_EXTENSION: "data_extension"
+        }
         doc = dpm.set_delivery_platform(
             self.database,
             db_c.DELIVERY_PLATFORM_SFMC,
@@ -276,8 +282,12 @@ class TestDeliveryPlatform(unittest.TestCase):
             doc[db_c.DELIVERY_PLATFORM_TYPE], db_c.DELIVERY_PLATFORM_FACEBOOK
         )
 
-        self.assertEqual(doc[db_c.DELIVERY_PLATFORM_AUTH], self.auth_details_facebook)
-        self.assertEqual(doc[db_c.DELIVERY_PLATFORM_STATUS], db_c.STATUS_PENDING)
+        self.assertEqual(
+            doc[db_c.DELIVERY_PLATFORM_AUTH], self.auth_details_facebook
+        )
+        self.assertEqual(
+            doc[db_c.DELIVERY_PLATFORM_STATUS], db_c.STATUS_PENDING
+        )
 
     def test_get_delivery_platforms_by_id(self):
         """Test get_delivery_platforms list"""
@@ -317,7 +327,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             "My second delivery platform for SFMC",
         )
 
-        self.assertEqual(doc[db_c.DELIVERY_PLATFORM_TYPE], db_c.DELIVERY_PLATFORM_SFMC)
+        self.assertEqual(
+            doc[db_c.DELIVERY_PLATFORM_TYPE], db_c.DELIVERY_PLATFORM_SFMC
+        )
 
     def test_get_delivery_platform_sfmc(self):
         """Test get_delivery_platform for sfmc."""
@@ -337,10 +349,16 @@ class TestDeliveryPlatform(unittest.TestCase):
             doc[db_c.DELIVERY_PLATFORM_NAME], "My delivery platform for SFMC"
         )
 
-        self.assertEqual(doc[db_c.DELIVERY_PLATFORM_TYPE], db_c.DELIVERY_PLATFORM_SFMC)
+        self.assertEqual(
+            doc[db_c.DELIVERY_PLATFORM_TYPE], db_c.DELIVERY_PLATFORM_SFMC
+        )
 
-        self.assertEqual(doc[db_c.DELIVERY_PLATFORM_AUTH], self.auth_details_sfmc)
-        self.assertEqual(doc[db_c.DELIVERY_PLATFORM_STATUS], db_c.STATUS_PENDING)
+        self.assertEqual(
+            doc[db_c.DELIVERY_PLATFORM_AUTH], self.auth_details_sfmc
+        )
+        self.assertEqual(
+            doc[db_c.DELIVERY_PLATFORM_STATUS], db_c.STATUS_PENDING
+        )
         self.assertFalse(db_c.DELETED in doc)
 
     def test_get_all_delivery_platforms(self):
@@ -422,7 +440,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         # Set and get name
         new_name = "New name"
 
-        doc = dpm.set_name(self.database, self.delivery_platform_doc[db_c.ID], new_name)
+        doc = dpm.set_name(
+            self.database, self.delivery_platform_doc[db_c.ID], new_name
+        )
 
         self.assertIsNotNone(doc)
         self.assertTrue(db_c.DELIVERY_PLATFORM_NAME in doc)
@@ -556,14 +576,18 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
         self.assertTrue(
-            get_doc[db_c.CONFIGURATION][db_c.PERFORMANCE_METRICS_DATA_EXTENSION]
+            get_doc[db_c.CONFIGURATION][
+                db_c.PERFORMANCE_METRICS_DATA_EXTENSION
+            ]
         )
         self.assertTrue(
             get_doc[db_c.CONFIGURATION][db_c.CAMPAIGN_ACTIVITY_DATA_EXTENSION]
         )
 
         self.assertEqual(
-            get_doc[db_c.CONFIGURATION][db_c.PERFORMANCE_METRICS_DATA_EXTENSION],
+            get_doc[db_c.CONFIGURATION][
+                db_c.PERFORMANCE_METRICS_DATA_EXTENSION
+            ],
             performance_data_extension,
         )
         self.assertEqual(
@@ -609,7 +633,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(
             delivery_job[db_c.AUDIENCE_ID], self.source_audience_doc[db_c.ID]
         )
-        self.assertEqual(delivery_job[db_c.JOB_STATUS], db_c.AUDIENCE_STATUS_DELIVERING)
+        self.assertEqual(
+            delivery_job[db_c.JOB_STATUS], db_c.AUDIENCE_STATUS_DELIVERING
+        )
 
     def test_delivery_job_status(self):
         """Test delivery job status functions."""
@@ -676,7 +702,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(
             delivery_job[db_c.AUDIENCE_ID], self.source_audience_doc[db_c.ID]
         )
-        self.assertEqual(delivery_job[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING)
+        self.assertEqual(
+            delivery_job[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING
+        )
 
     def test_get_all_delivery_jobs_sort(self):
         """Test test_get_all_delivery_job."""
@@ -718,8 +746,8 @@ class TestDeliveryPlatform(unittest.TestCase):
         """Test get lookalike audiences functions."""
 
         # Set delivery job lookalike audiences
-        lookalike_audiences = dpm.get_all_delivery_platform_lookalike_audiences(
-            self.database
+        lookalike_audiences = (
+            dpm.get_all_delivery_platform_lookalike_audiences(self.database)
         )
 
         # test that data was returned.
@@ -756,7 +784,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.delivery_platform_doc[db_c.ID],
         )
 
-        self.assertTrue(self.delivery_job_doc[db_c.ID], most_recent_delivery[db_c.ID])
+        self.assertTrue(
+            self.delivery_job_doc[db_c.ID], most_recent_delivery[db_c.ID]
+        )
 
     def test_get_delivery_jobs(self):
         """Test get_audience_delivery_job."""
@@ -876,7 +906,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database, delivery_job_doc[db_c.ID]
         )
         self.assertEqual(
-            len(updated_delivery_job_doc[db_c.DELIVERY_PLATFORM_LOOKALIKE_AUDS]),
+            len(
+                updated_delivery_job_doc[db_c.DELIVERY_PLATFORM_LOOKALIKE_AUDS]
+            ),
             2,
         )
 
@@ -929,7 +961,9 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
         self.assertEqual(doc[db_c.LOOKALIKE_AUD_SIZE_PERCENTAGE], 0.03)
-        self.assertEqual(doc[db_c.LOOKALIKE_AUD_NAME], "New lookalike audience")
+        self.assertEqual(
+            doc[db_c.LOOKALIKE_AUD_NAME], "New lookalike audience"
+        )
         self.assertEqual(
             doc[db_c.LOOKALIKE_AUD_COUNTRY],
             "UK",
@@ -1291,13 +1325,15 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(lookalike_audience is not None)
 
         # create another lookalike audience
-        lookalike_audience_new = dpm.create_delivery_platform_lookalike_audience(
-            self.database,
-            delivery_platform_id,
-            self.source_audience_doc,
-            "Lookalike audience added",
-            0.05,
-            "US",
+        lookalike_audience_new = (
+            dpm.create_delivery_platform_lookalike_audience(
+                self.database,
+                delivery_platform_id,
+                self.source_audience_doc,
+                "Lookalike audience added",
+                0.05,
+                "US",
+            )
         )
 
         self.assertTrue(lookalike_audience_new is not None)
@@ -1361,7 +1397,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             )
         )
 
-        delivery_config = {db_c.DELIVERY_PLATFORM_SFMC_DATA_EXT_NAME: "Test SFMC"}
+        delivery_config = {
+            db_c.DELIVERY_PLATFORM_SFMC_DATA_EXT_NAME: "Test SFMC"
+        }
 
         # set the delivery job
         # pylint: disable=E1121
@@ -1383,7 +1421,9 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         # check the delivery config was set
         self.assertIn(db_c.DELIVERY_PLATFORM_CONFIG, doc)
-        self.assertDictEqual(doc[db_c.DELIVERY_PLATFORM_CONFIG], delivery_config)
+        self.assertDictEqual(
+            doc[db_c.DELIVERY_PLATFORM_CONFIG], delivery_config
+        )
 
     def test_set_multiple_delivery_jobs_for_destination(self):
         """Test set_delivery_job for multiple destinations."""
@@ -1448,7 +1488,9 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(doc)
 
-        delivery_job = dpm.get_delivery_job(self.database, doc[db_c.ID], engagement_id)
+        delivery_job = dpm.get_delivery_job(
+            self.database, doc[db_c.ID], engagement_id
+        )
 
         self.assertIsNotNone(delivery_job)
         self.assertIn(db_c.AUDIENCE_ID, delivery_job)
@@ -1458,7 +1500,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(
             delivery_job[db_c.AUDIENCE_ID], self.source_audience_doc[db_c.ID]
         )
-        self.assertEqual(delivery_job[db_c.JOB_STATUS], db_c.AUDIENCE_STATUS_DELIVERING)
+        self.assertEqual(
+            delivery_job[db_c.JOB_STATUS], db_c.AUDIENCE_STATUS_DELIVERING
+        )
         self.assertIn(db_c.ENGAGEMENT_ID, delivery_job)
         self.assertEqual(engagement_id, delivery_job[db_c.ENGAGEMENT_ID])
         self.assertFalse(db_c.DELETED in delivery_job)
@@ -1588,7 +1632,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
         self.assertIsNotNone(updated_doc)
-        self.assertEqual(len(updated_doc[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1)
+        self.assertEqual(
+            len(updated_doc[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1
+        )
 
     def test_get_delivery_job_engagement_detail(self):
         """Delivery job is set with engagement/audience id and retrieved."""
@@ -1662,7 +1708,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc)
         self.assertEqual(len(doc[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1)
 
-        count = dpm.delete_delivery_job_generic_campaigns(self.database, [doc[db_c.ID]])
+        count = dpm.delete_delivery_job_generic_campaigns(
+            self.database, [doc[db_c.ID]]
+        )
         self.assertEqual(count, 1)
 
         doc = dpm.get_delivery_job(self.database, doc[db_c.ID])
@@ -1898,7 +1946,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             {
                 "delivery_platform_name": "sfmc",
                 "delivery_job_id": delivery_job_id,
-                "create_time": datetime.datetime(2021, 6, 26, 14, 4, 15, 369000),
+                "create_time": datetime.datetime(
+                    2021, 6, 26, 14, 4, 15, 369000
+                ),
                 "start_time": datetime.datetime(2021, 6, 25, 0, 0),
                 "end_time": datetime.datetime(2021, 6, 26, 0, 0),
                 "delivery_platform_generic_campaigns": {
@@ -1927,7 +1977,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             {
                 "delivery_platform_name": "sfmc",
                 "delivery_job_id": delivery_job_id,
-                "create_time": datetime.datetime(2021, 6, 25, 14, 4, 15, 369000),
+                "create_time": datetime.datetime(
+                    2021, 6, 25, 14, 4, 15, 369000
+                ),
                 "start_time": datetime.datetime(2021, 6, 24, 0, 0),
                 "end_time": datetime.datetime(2021, 6, 25, 0, 0),
                 "delivery_platform_generic_campaigns": {
