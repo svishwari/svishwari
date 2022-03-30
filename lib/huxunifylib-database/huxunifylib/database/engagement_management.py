@@ -53,9 +53,7 @@ def set_engagement(
     # validate audiences
     validate_audiences(audiences, check_empty=False)
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     if name_exists(
         database,
@@ -127,17 +125,11 @@ def get_engagements_summary(
         Union[list, None]: List of all engagement documents.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     pipeline = [
         # filter out the deleted engagements
-        {
-            "$match": build_get_engagements_query_filter(
-                query_filter, engagement_ids
-            )
-        },
+        {"$match": build_get_engagements_query_filter(query_filter, engagement_ids)},
         # unwind the audiences object so that we can do the nested joins
         {
             "$unwind": {
@@ -189,11 +181,7 @@ def get_engagements_summary(
         },
         # add the lookalike id field by assigning None directly. this is a workaround because
         # document DB does not support LET statements in pipelines.
-        {
-            "$addFields": {
-                "lookalike_id": {"$ifNull": ["$lookalikes._id", None]}
-            }
-        },
+        {"$addFields": {"lookalike_id": {"$ifNull": ["$lookalikes._id", None]}}},
         # coalesce the unwind of an audience with lookalikes
         {
             "$addFields": {
@@ -213,9 +201,7 @@ def get_engagements_summary(
                 "audiences.is_lookalike": {
                     "$cond": [{"$eq": ["$lookalike_id", None]}, False, True]
                 },
-                "audiences.id": {
-                    "$ifNull": ["$audiences.id", "$audiences._id"]
-                },
+                "audiences.id": {"$ifNull": ["$audiences.id", "$audiences._id"]},
                 "audiences.filters": {
                     "$ifNull": [
                         "$audiences.filters",
@@ -320,9 +306,7 @@ def get_engagements_summary(
                     "audience_update_time": "$audiences.update_time",
                     "audience_create_time": "$audiences.create_time",
                     "is_audience_lookalike": "$audiences.is_lookalike",
-                    "delivery_schedule": {
-                        "$ifNull": ["$delivery_schedule", ""]
-                    },
+                    "delivery_schedule": {"$ifNull": ["$delivery_schedule", ""]},
                 },
                 # push the grouped destinations into an array
                 "destinations": {
@@ -418,15 +402,11 @@ def get_engagements_summary(
                 "audiences.destinations.is_ad_platform": {
                     "$ifNull": ["$destination.is_ad_platform", None]
                 },
-                "audiences.destinations.name": {
-                    "$ifNull": ["$destination.name", None]
-                },
+                "audiences.destinations.name": {"$ifNull": ["$destination.name", None]},
                 "audiences.destinations.category": {
                     "$ifNull": ["$destination.category", None]
                 },
-                "audiences.destinations.link": {
-                    "$ifNull": ["$destination.link", None]
-                },
+                "audiences.destinations.link": {"$ifNull": ["$destination.link", None]},
                 "audiences.destinations.delivery_platform_type": {
                     "$ifNull": ["$destination.delivery_platform_type", None]
                 },
@@ -448,7 +428,7 @@ def get_engagements_summary(
     if batch_size > 0:
         batch_offset_pipeline.append({"$limit": batch_size})
 
-    pipeline = pipeline + batch_offset_pipeline
+    pipeline += batch_offset_pipeline
 
     try:
         return list(collection.aggregate(pipeline))
@@ -474,12 +454,11 @@ def build_get_engagements_query_filter(
 
     query_filter = {db_c.DELETED: False}
 
-    if filters:
-        if db_c.WORKED_BY in filters:
-            query_filter["$or"] = [
-                {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
-                {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
-            ]
+    if filters and (db_c.WORKED_BY in filters):
+        query_filter["$or"] = [
+            {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
+            {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
+        ]
 
     if engagement_ids is not None:
         query_filter[db_c.ID] = {"$in": engagement_ids}
@@ -525,9 +504,7 @@ def get_engagements(database: DatabaseClient) -> Union[list, None]:
         Union[list, None]: List of all engagement documents.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
@@ -554,9 +531,7 @@ def get_engagement(
         Union[dict, None]: Dict of an engagement.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return collection.find_one(
@@ -588,9 +563,7 @@ def delete_engagement(
         bool: Flag indicating successful operation.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         if hard_delete:
@@ -651,9 +624,7 @@ def update_engagement(
     if audiences:
         validate_audiences(audiences, check_empty=True)
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     update_doc = {
         db_c.ENGAGEMENT_NAME: name,
@@ -713,19 +684,13 @@ def remove_audiences_from_engagement(
     # validate audiences
     validate_object_id_list(audience_ids)
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return collection.find_one_and_update(
             {db_c.ID: engagement_id},
             {
-                "$pull": {
-                    f"{db_c.AUDIENCES}": {
-                        db_c.OBJECT_ID: {"$in": audience_ids}
-                    }
-                },
+                "$pull": {f"{db_c.AUDIENCES}": {db_c.OBJECT_ID: {"$in": audience_ids}}},
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                     db_c.UPDATED_BY: user_name,
@@ -772,9 +737,7 @@ def append_audiences_to_engagement(
     # validate audiences
     validate_audiences(audiences)
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return collection.find_one_and_update(
@@ -843,9 +806,7 @@ def get_engagements_by_audience(
         Union[list, None]: list of engagements.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return list(
@@ -863,9 +824,7 @@ def get_engagements_by_audience(
     return None
 
 
-def validate_object_id_list(
-    object_ids: list, check_empty: bool = True
-) -> None:
+def validate_object_id_list(object_ids: list, check_empty: bool = True) -> None:
     """A function for validating a list of object ids.
 
     Args:
@@ -912,9 +871,7 @@ def add_delivery_job(
     """
 
     # get the engagement collection
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return collection.find_one_and_update(
@@ -982,9 +939,7 @@ def append_destination_to_engagement_audience(
     if not isinstance(user_name, str):
         raise TypeError("user_name must be a string")
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     # workaround due to limitation in DocumentDB
     engagement_doc = collection.find_one(
@@ -1002,9 +957,9 @@ def append_destination_to_engagement_audience(
         # match audience
         if audience.get(db_c.OBJECT_ID) == audience_id:
             # append destinations to the matched audience
-            engagement_doc[db_c.AUDIENCES][i][
+            engagement_doc[db_c.AUDIENCES][i][db_c.DESTINATIONS] = audience.get(
                 db_c.DESTINATIONS
-            ] = audience.get(db_c.DESTINATIONS) + [destination]
+            ) + [destination]
             updated = True
 
     # only update if the destination was added.
@@ -1058,9 +1013,7 @@ def remove_destination_from_engagement_audience(
         dict: updated engagement object.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     # workaround due to limitation in DocumentDB
     engagement_doc = collection.find_one(
@@ -1125,9 +1078,7 @@ def check_active_engagement_deliveries(
         Union[list, None]: List of all engagement documents.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     pipeline = [
         {"$match": {"status": "Active", "deleted": False}},
@@ -1138,16 +1089,8 @@ def check_active_engagement_deliveries(
             }
         },
         {"$unwind": {"path": "$audiences.destinations"}},
-        {
-            "$match": {
-                "audiences.destinations.delivery_job_id": {"$exists": True}
-            }
-        },
-        {
-            "$addFields": {
-                "delivery_job_id": "$audiences.destinations.delivery_job_id"
-            }
-        },
+        {"$match": {"audiences.destinations.delivery_job_id": {"$exists": True}}},
+        {"$addFields": {"delivery_job_id": "$audiences.destinations.delivery_job_id"}},
         {
             "$lookup": {
                 "from": "delivery_jobs",
@@ -1187,18 +1130,14 @@ def remove_audience_from_all_engagements(
         bool: Boolean flag indicating if the audience has been removed from all engagements.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         collection.update_many(
             filter={f"{db_c.AUDIENCES}.{db_c.OBJECT_ID}": audience_id},
             update={
                 "$pull": {
-                    f"{db_c.AUDIENCES}": {
-                        db_c.OBJECT_ID: {"$in": [audience_id]}
-                    }
+                    f"{db_c.AUDIENCES}": {db_c.OBJECT_ID: {"$in": [audience_id]}}
                 },
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
