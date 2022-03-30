@@ -36,7 +36,7 @@
           >
             <span>{{ firstName }} {{ lastName }}</span>
           </v-list-item-title>
-          <v-list-item-subtitle> Person </v-list-item-subtitle>
+          <v-list-item-subtitle> {{ capitalize(role) }} </v-list-item-subtitle>
         </div>
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_password">
@@ -81,6 +81,7 @@ export default {
     ...mapGetters({
       firstName: "users/getFirstname",
       lastName: "users/getLastName",
+      role: "users/getCurrentUserRole",
     }),
     initials() {
       return this.firstName[0] + this.lastName[0]
@@ -89,6 +90,10 @@ export default {
   methods: {
     initiateLogout() {
       this.$auth.logout()
+    },
+
+    capitalize(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1)
     },
   },
 }
