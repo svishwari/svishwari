@@ -243,6 +243,14 @@ S_TYPE_MOBILE_DEVICE_ID = "mobile_device_id"
 S_TYPE_PHONE_NUMBER = "phone_number"
 S_TYPE_POSTAL_CODE = "postal_code"
 S_TYPE_STATE_OR_PROVINCE = "state_or_province"
+S_TYPE_SURVEY_CUSTOMER_ID = "customer_id"
+
+#Trust Id Survey Constants
+SURVEY_ID = "survey_id"
+SURVEY_URL = "url"
+SURVEY_RESPONSES = "responses"
+SURVEY_RESPONSE_DATE = "response_date"
+
 
 DESTINATION_COLUMN = "destination_column"
 TRANSFORMER = "transformer"
@@ -331,6 +339,7 @@ DELIVERY_PLATFORM_MAILCHIMP = "mailchimp"
 DELIVERY_PLATFORM_LIVERAMP = "liveramp"
 DELIVERY_PLATFORM_PINTEREST = "pinterest"
 DELIVERY_PLATFORM_THE_TRADEDESK = "the_trade_desk"
+DELIVERY_PLATFORM_TRUST_ID = "trust-id"
 DELIVERY_PLATFORM_TWITTER = DATA_SOURCE_PLATFORM_TWITTER
 DELIVERY_PLATFORM_GOOGLE_DV360 = "google_dv360"
 DELIVERY_PLATFORM_SFCC = "salesforce_commerce_cloud"
