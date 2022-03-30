@@ -103,7 +103,8 @@ class AudienceDownloadsTest(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
-            f"{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
+            f"{self.audience[db_c.ID]}/download",
+            params={api_c.DOWNLOAD_TYPES: [api_c.GOOGLE_ADS]},
             headers=t_c.STANDARD_HEADERS,
         )
 

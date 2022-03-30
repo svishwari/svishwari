@@ -385,6 +385,7 @@ STATUS_WEIGHTS = {
 }
 # Download Audience Fields
 DOWNLOAD_TYPES = "download_types"
+DOWNLOAD_TYPE="download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
 GENERIC_ADS = "generic_ads"
