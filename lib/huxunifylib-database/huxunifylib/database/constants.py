@@ -245,7 +245,7 @@ S_TYPE_POSTAL_CODE = "postal_code"
 S_TYPE_STATE_OR_PROVINCE = "state_or_province"
 S_TYPE_SURVEY_CUSTOMER_ID = "customer_id"
 
-#Trust Id Survey Constants
+# Trust Id Survey Constants
 SURVEY_ID = "survey_id"
 SURVEY_URL = "url"
 SURVEY_RESPONSES = "responses"
