@@ -12,7 +12,7 @@
 
       <page-header header-height="40">
         <template #left>
-          <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+          <v-btn icon @click.native="showFilter()">
             <icon
               type="filter"
               :size="27"
@@ -283,6 +283,12 @@ export default {
 
     resetFilters() {
       this.items = this.allDeliveries
+    },
+
+    showFilter() {
+      if (this.allDeliveries.length > 0) {
+         this.isFilterToggled = !this.isFilterToggled
+      }
     },
 
     showHideMatchRate(matchRateFlag) {

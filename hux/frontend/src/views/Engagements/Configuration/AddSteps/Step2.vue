@@ -5,7 +5,7 @@
       v-show="Object.values(value.audiences).length > 0"
       bordered
       class="mr-4"
-      card-class="py-5 pa-4"
+      card-class="py-5 pa-5"
       :items="Object.values(value.audiences)"
       :fields="[
         {
