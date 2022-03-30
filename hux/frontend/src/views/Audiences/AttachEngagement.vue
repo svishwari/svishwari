@@ -439,7 +439,13 @@ export default {
             recurringConfig["day_of_week"] = this.schedule.day_of_week
             break
           case "Monthly":
-            recurringConfig["day_of_month"] = [this.schedule.monthlyDayDate]
+            recurringConfig["monthly_period_items"] = [
+              this.schedule.monthlyPeriod,
+            ]
+            recurringConfig["day_of_month"] =
+              this.schedule.monthlyPeriod === "Day"
+                ? [this.schedule.monthlyDayDate]
+                : [this.schedule.monthlyDay]
             break
           default:
             recurringConfig

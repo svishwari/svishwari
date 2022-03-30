@@ -82,7 +82,7 @@
             'bordered-card': bordered,
             'mt-0': index == 0,
           }"
-          class="data-card my-3"
+          class="data-card my-3 text-body-1"
           :style="
             bordered
               ? item.colors

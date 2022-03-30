@@ -3,12 +3,12 @@ import json
 from http import HTTPStatus
 from unittest import mock
 
-from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.collection_management import create_document
 from hypothesis import given, settings, strategies as st
 
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
@@ -17,7 +17,7 @@ from huxunify.api.schema.model import (
     ModelDriftSchema,
 )
 from huxunify.test import constants as t_c
-from huxunify.api.data_connectors.tecton import Tecton
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 
 
 # Allow 30 secs per hypothesis example (deadline is specified in milliseconds)
@@ -250,7 +250,7 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(ModelVersionSchema(many=True).dump(response))
+        self.assertTrue(ModelVersionSchema(many=True).dump(response.json))
 
     @given(model_id=st.integers(min_value=100, max_value=1000))
     @settings(settings.load_profile("hypothesis_setting_profile"))

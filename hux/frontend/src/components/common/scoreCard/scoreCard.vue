@@ -8,7 +8,7 @@
   >
     <div class="score-card-info">
       <icon
-        class="model-icon"
+        class="model-icon pa-1"
         :type="icon"
         size="24"
         :stroke="stroke"
