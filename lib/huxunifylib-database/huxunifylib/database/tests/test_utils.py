@@ -5,7 +5,6 @@ import unittest
 import mongomock
 from bson import ObjectId
 
-import huxunify.test.constants as t_c
 import huxunifylib.database.constants as db_c
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.audience_management as am
@@ -29,6 +28,8 @@ class TestUtils(unittest.TestCase):
         self.database = DatabaseClient(host="localhost", port=27017).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
+
+        self.test_user = "test_user"
 
         self.generic_campaigns = [
             {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
@@ -258,7 +259,7 @@ class TestUtils(unittest.TestCase):
             audience_id,
             delivery_platform_id,
             self.generic_campaigns,
-            t_c.TEST_USER_NAME,
+            self.test_user,
         )
 
         self.assertTrue(delivery_doc is not None)
@@ -305,7 +306,7 @@ class TestUtils(unittest.TestCase):
             audience_id,
             delivery_platform_id,
             self.generic_campaigns,
-            t_c.TEST_USER_NAME,
+            self.test_user,
         )
 
         self.assertTrue(delivery_doc is not None)
@@ -502,7 +503,7 @@ class TestUtils(unittest.TestCase):
             audience_id=ObjectId(),
             delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
-            username=t_c.TEST_USER_NAME,
+            username=self.test_user,
         )
 
         # set synthetic performance metrics
@@ -583,7 +584,7 @@ class TestUtils(unittest.TestCase):
             audience_id=ObjectId(),
             delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
-            username=t_c.TEST_USER_NAME,
+            username=self.test_user,
         )
 
         event_details = {

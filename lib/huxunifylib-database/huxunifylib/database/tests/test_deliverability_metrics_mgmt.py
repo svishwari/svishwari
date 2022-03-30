@@ -5,7 +5,6 @@ import datetime
 
 import mongomock
 
-import huxunify.test.constants as t_c
 import huxunifylib.database.constants as db_c
 
 from huxunifylib.database.client import DatabaseClient
@@ -140,11 +139,13 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
         ]
 
+        self.test_user = "test_user"
+
         audience = create_audience(
             database=self.database,
             name="all",
             audience_filters=[],
-            user_name=t_c.TEST_USER_NAME,
+            user_name=self.test_user,
         )
 
         # Create a delivery job.
@@ -153,7 +154,7 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             audience[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             generic_campaigns,
-            t_c.TEST_USER_NAME,
+            self.test_user,
         )
 
         start_date = end_date = datetime.datetime.strptime(
