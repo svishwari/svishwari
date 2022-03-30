@@ -115,8 +115,13 @@ def set_survey_responses_bulk(
             insert_result["insert_status"] = True
             insert_result["inserted_ids"] = result.inserted_ids
 
-        collection.create_index([(db_c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
-
+        collection.create_index(
+            [
+                (db_c.S_TYPE_SURVEY_CUSTOMER_ID, pymongo.ASCENDING),
+                (db_c.DELIVERY_PLATFORM_ID, pymongo.ASCENDING),
+                (db_c.SURVEY_ID, pymongo.ASCENDING),
+            ]
+        )
         return insert_result
     except pymongo.errors.BulkWriteError as exc:
         for err in exc.details["writeErrors"]:
