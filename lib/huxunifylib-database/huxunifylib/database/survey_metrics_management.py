@@ -94,8 +94,6 @@ def set_survey_responses_bulk(
 
     Args:
         database (DatabaseClient): A database client.
-        collection_name (str): Name of collection in which operation is
-            performed.
         survey_responses_docs (list): A list containing survey response
             documents.
 
