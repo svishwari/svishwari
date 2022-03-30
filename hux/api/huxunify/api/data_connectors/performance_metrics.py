@@ -265,23 +265,31 @@ def get_performance_metrics_stub(
     """
 
     if ad_type == api_c.DISPLAY_ADS:
-        destination_type = db_c.DELIVERY_PLATFORM_FACEBOOK
+        destination_types = [db_c.DELIVERY_PLATFORM_FACEBOOK]
         stub_data = api_c.PERFORMANCE_METRIC_DISPLAY_STUB
     else:
-        destination_type = db_c.DELIVERY_PLATFORM_SFMC
+        destination_types = [
+            db_c.DELIVERY_PLATFORM_SFMC,
+            db_c.DELIVERY_PLATFORM_TWILIO,
+        ]
         stub_data = api_c.PERFORMANCE_METRIC_EMAIL_STUB
 
     # Get all destinations that are related to Email metrics
-    destination = delivery_platform_management.get_delivery_platform_by_type(
-        database, destination_type
-    )
+    destination_ids = []
+    for destination_type in destination_types:
+        destination = (
+            delivery_platform_management.get_delivery_platform_by_type(
+                database, destination_type
+            )
+        )
+        if destination is not None:
+            destination_ids.append(destination[db_c.ID])
 
     # Group all the performance metrics for the engagement
-    final_metric = stub_data
+    final_metric = {api_c.SUMMARY: stub_data}
     final_metric.update(
         {api_c.ID: str(engagement_id), api_c.NAME: engagement.get(api_c.NAME)}
     )
-
     audience_metrics_list = []
     # For each audience in engagement.audience
     for eng_audience in engagement.get(api_c.AUDIENCES):
@@ -310,9 +318,7 @@ def get_performance_metrics_stub(
         audience_destination_metrics_list = []
         for audience_destination in eng_audience.get(api_c.DESTINATIONS):
             destination_id = audience_destination.get(api_c.ID)
-            if destination_id is None or destination_id not in [
-                destination.get(db_c.ID)
-            ]:
+            if destination_id is None or destination_id not in destination_ids:
                 logger.warning(
                     "Invalid destination encountered, ignoring performance metrics for it. "
                     "destination_id=%s, audience_id=%s, engagement_id=%s",
