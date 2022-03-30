@@ -227,9 +227,13 @@ export default {
             recurringConfig["day_of_week"] = this.localSchedule.day_of_week
             break
           case "Monthly":
-            recurringConfig["day_of_month"] = [
-              this.localSchedule.monthlyDayDate,
+            recurringConfig["monthly_period_items"] = [
+              this.localSchedule.monthlyPeriod,
             ]
+            recurringConfig["day_of_month"] =
+              this.localSchedule.monthlyPeriod === "Day"
+                ? [this.localSchedule.monthlyDayDate]
+                : [this.localSchedule.monthlyDay]
             break
           default:
             recurringConfig
