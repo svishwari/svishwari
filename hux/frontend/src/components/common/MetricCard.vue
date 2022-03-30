@@ -42,13 +42,8 @@
         </span>
         <div
           v-else
-          class="
-            d-flex
-            align-center
-            text-body-2
-            pb-1
-          "
-          :style="{ color: textColor ? textColor : 'var(--v-black-lighten-4)'}"
+          class="d-flex align-center text-body-2 pb-1"
+          :style="{ color: textColor ? textColor : 'var(--v-black-lighten-4)' }"
         >
           {{ title }}
           <tooltip position-top :max-width="tooltipWidth">
@@ -97,7 +92,9 @@
               'no-click': !interactable,
               'flex-grow-1 align-center': highLevel,
             }"
-             :style="{ color: textColor ? textColor : 'var(--v-black-lighten-4)'}"
+            :style="{
+              color: textColor ? textColor : 'var(--v-black-lighten-4)',
+            }"
           >
             {{ subtitle }}
           </span>
@@ -113,7 +110,7 @@
             interactable ? 'primary--text ' : '',
             highLevel ? 'highlevel-title-above' : '',
           ]"
-          :style="{ color: textColor ? textColor : 'var(--v-black-lighten-4)'}"
+          :style="{ color: textColor ? textColor : 'var(--v-black-lighten-4)' }"
         >
           <span v-if="highLevel">
             <slot name="title"></slot>

@@ -287,7 +287,7 @@ export default {
 
     showFilter() {
       if (this.allDeliveries.length > 0) {
-         this.isFilterToggled = !this.isFilterToggled
+        this.isFilterToggled = !this.isFilterToggled
       }
     },
 

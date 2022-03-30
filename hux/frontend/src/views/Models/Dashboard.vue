@@ -182,16 +182,22 @@
                     :min-width="152"
                     :height="80"
                     :title="metric"
-                    :subtitle="showCurrentVersion ? 'Current version' : 'Past version'"
+                    :subtitle="
+                      showCurrentVersion ? 'Current version' : 'Past version'
+                    "
                     :high-level="true"
                     :interactable="false"
                     :title-above="true"
-                    :text-color="showCurrentVersion ? '': 'var(--v-error-base)'"
+                    :text-color="
+                      showCurrentVersion ? '' : 'var(--v-error-base)'
+                    "
                   >
                     <template #title>
                       <tooltip>
                         <template #label-content>
-                          {{ showCurrentVersion ? metric : versionData | Empty }}
+                          {{
+                            showCurrentVersion ? metric : versionData | Empty
+                          }}
                         </template>
                         <template #hover-content>
                           <div class="mb-3">
@@ -696,7 +702,7 @@ export default {
         this.showCurrentVersion = false
         this.versionData = params.version
       } else this.showCurrentVersion = true
-  },
+    },
     async fetchLift(params) {
       this.loadingLift = true
       try {
