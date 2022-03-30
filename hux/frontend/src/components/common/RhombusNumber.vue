@@ -1,6 +1,14 @@
 <template>
-  <v-card class="card-style" :style="style" shaped outlined>
-    <v-card-text class="text-subtitle-1 text-style">
+  <v-card
+    :class="{
+      'border-image': borderImage,
+    }"
+    class="rhombus-card-wrapper"
+    :style="style"
+    shaped
+    outlined
+  >
+    <v-card-text :class="`text-subtitle-1 text-style ${textColor}`">
       {{ value }}
     </v-card-text>
   </v-card>
@@ -17,19 +25,34 @@ export default {
     color: {
       type: String,
       required: false,
-      default: "green",
+      default: "primary",
+    },
+    variant: {
+      type: String,
+      required: false,
+      default: "darken1",
+    },
+    textColor: {
+      type: String,
+      required: false,
+      default: "black--text",
+    },
+    borderImage: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   computed: {
     style() {
-      return "border-color: " + this.color
+      return "border-color: var(--v-" + this.color + "-" + this.variant + ")"
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.card-style {
+.rhombus-card-wrapper {
   transform: rotate(45deg);
   width: 30px;
   height: 30px;
@@ -38,11 +61,21 @@ export default {
 }
 .text-style {
   // num style
-  color: black !important;
   line-height: 16px;
   transform: translate(0%, 25%) rotate(-45deg);
   padding: 0px;
   display: block;
   text-align: center;
+}
+
+.border-image {
+  border-image-source: linear-gradient(
+    122deg,
+    #e3e34d 2.41%,
+    #0e7b7e 38.12%,
+    #3a88b8 51.2%,
+    #add1d6 98.98%
+  );
+  border-image-slice: 1;
 }
 </style>

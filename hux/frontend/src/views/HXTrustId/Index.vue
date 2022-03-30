@@ -87,7 +87,82 @@
                 :width="245"
                 @onselect="getSelectedData"
               ></link-dropdown>
-              <div>
+              <data-cards
+                bordered
+                class="mr-4"
+                card-class="py-5 pa-4"
+                :items="getSegmentTableData"
+                :fields="getSegmentTableHeaders"
+              >
+                <template
+                  v-for="header in getSegmentTableHeaders"
+                  #[`field:${header.key}`]="row"
+                >
+                  <rhombus-number
+                    v-if="
+                      !['segment_name', 'attribute_filters', 'colors'].includes(
+                        header.key
+                      )
+                    "
+                    :key="header.key"
+                    :value="row.value"
+                    :text-color="row.value < 0 ? 'error--text' : 'black--text'"
+                    :border-image="header.key == 'trust_id'"
+                    :color="
+                      colColorArr[header.key] && colColorArr[header.key].stroke
+                    "
+                    :variant="
+                      colColorArr[header.key] && colColorArr[header.key].variant
+                    "
+                  ></rhombus-number>
+
+                  <span
+                    v-else-if="header.key == 'attribute_filters'"
+                    :key="header.key"
+                  >
+                    <span v-if="row.value.length != 0">
+                      <v-chip
+                        v-for="(filter, filterIndex) in Object.keys(
+                          row.value[0]
+                        )"
+                        :key="filterIndex"
+                        small
+                        class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                        text-color="primary"
+                        color="var(--v-primary-lighten3)"
+                      >
+                        {{ formatText(filter) }}
+                      </v-chip>
+                    </span>
+                    <span v-else>
+                      <v-chip
+                        small
+                        class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                        text-color="primary"
+                        color="var(--v-primary-lighten3)"
+                      >
+                        All customers
+                      </v-chip>
+                    </span>
+                  </span>
+                </template>
+
+                <template #field:delete="row">
+                  <div
+                    v-if="getSelectedSegment.segments.length > 1"
+                    class="d-flex align-center justify-end mr-2"
+                  >
+                    <hux-icon
+                      type="trash"
+                      class="cursor-pointer"
+                      :size="18"
+                      color="black"
+                      @click.native="removeSegment(row.item)"
+                    />
+                  </div>
+                </template>
+              </data-cards>
+              <div v-if="getSelectedSegment.segments.length < 5">
                 <v-list class="add-segment no-data-width" :height="22">
                   <v-list-item @click="filterToggle()">
                     <hux-icon
@@ -107,8 +182,30 @@
                   </v-list-item>
                 </v-list>
               </div>
+              <div v-else>
+                <v-card class="empty-text">
+                  <hux-icon
+                    type="critical"
+                    :size="21"
+                    stroke="error"
+                    color="white"
+                    class="mr-4 ml-6"
+                  />
+                  <span
+                    class="error--text text-subtitle-1 mr-4"
+                    :style="{ fontWeight: 800 }"
+                    >OH NO!</span
+                  >
+                  <span class="text-body-2 error--text"
+                    >You’ve reached the limit for the number of comparisons.
+                    Remove a comparison to add a new one.
+                  </span>
+                </v-card>
+              </div>
             </v-tab-item>
-            <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
+            <v-tab-item key="attributes" class="tab-item">
+              <trust-id-attributes :data="overviewData.attributes" />
+            </v-tab-item>
           </v-tabs-items>
         </div>
         <div class="ml-auto segment-drawer">
@@ -134,6 +231,10 @@ import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
+import DataCards from "@/components/common/DataCards.vue"
+import { formatText } from "@/utils"
+import RhombusNumber from "@/components/common/RhombusNumber.vue"
+import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
@@ -149,6 +250,9 @@ export default {
     Page,
     PageHeader,
     TrustComparisonChart,
+    DataCards,
+    RhombusNumber,
+    TrustIdAttributes,
     HuxIcon,
     AddSegmentDrawer,
   },
@@ -157,12 +261,117 @@ export default {
       loading: false,
       segmentComparisonLoading: false,
       tabOption: 0,
-      selectedSegment: null,
+      selectedSegment: "composite & signal scores",
       isFilterToggled: false,
       segmentLength: 1,
       addSegmentData: addSegmentData,
       segmentScores: segmentScores,
       overviewData: overviewData,
+      borderColorArr: [
+        {
+          color: "primary",
+          variant: "darken1",
+        },
+        {
+          color: "primary",
+          variant: "lighten4",
+        },
+        {
+          color: "primary",
+          variant: "lighten6",
+        },
+        {
+          color: "info",
+          variant: "base",
+        },
+        {
+          color: "secondary",
+          variant: "darken1",
+        },
+      ],
+      colColorArr: {
+        // Humanity
+        humanity: { stroke: "primary", variant: "darken6" },
+        quickly_resolves_issues: { stroke: "primary", variant: "darken6" },
+        values_respects_everyone: { stroke: "primary", variant: "darken6" },
+        values_society_environment: { stroke: "primary", variant: "darken6" },
+        takes_care_of_employees: { stroke: "primary", variant: "darken6" },
+
+        // Transparency
+        transparency: { stroke: "yellow", variant: "darken1" },
+        honesty_marketing_comms: { stroke: "yellow", variant: "darken1" },
+        upfront_on_how_they_make_money: {
+          stroke: "yellow",
+          variant: "darken1",
+        },
+        plain_language_data_policy: { stroke: "yellow", variant: "darken1" },
+        clear_fees_costs: { stroke: "yellow", variant: "darken1" },
+
+        // Reliability
+        reliability: { stroke: "secondary", variant: "lighten2" },
+        continuous_product_improvement: {
+          stroke: "secondary",
+          variant: "lighten2",
+        },
+        consistent_quality: { stroke: "secondary", variant: "lighten2" },
+        smooth_digital_interactions: {
+          stroke: "secondary",
+          variant: "lighten2",
+        },
+        timely_issue_resolution: { stroke: "secondary", variant: "lighten2" },
+
+        //Capability
+        capability: { stroke: "primary", variant: "darken5" },
+        product_quality: { stroke: "primary", variant: "darken5" },
+        good_value: { stroke: "primary", variant: "darken5" },
+        competent_leaders_employess: { stroke: "primary", variant: "darken5" },
+        long_term_solutions_improvements: {
+          stroke: "primary",
+          variant: "darken5",
+        },
+      },
+      tooltips: {
+        trust_id: "TrustID is scored on a scale between -100 to 100",
+        humanity:
+          "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
+        transparency:
+          "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
+        reliability:
+          "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
+        capability:
+          "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
+        product_quality:
+          "Products are good quality, accessible and safe to use",
+        good_value:
+          "Prices of products, services, and experiences are good value for money",
+        competent_leaders_employess:
+          "Employees and leadership are competent and understand how to respond to needs",
+        long_term_solutions_improvements:
+          "Creates long-term solutions and improvements that work well for me",
+        quickly_resolves_issues:
+          "Quickly resolves issues with safety, security and satisfaction top of mind",
+        values_respects_everyone:
+          "Values and respects everyone, regardless of background, identity or beliefs",
+        values_society_environment:
+          "Values the good of society and the environment, not just profit",
+        takes_care_of_employees: "Takes care of employees",
+        honesty_marketing_comms:
+          "Marketing and communications are accurate and honest",
+        upfront_on_how_they_make_money:
+          "Upfront about how they make and spend money from interactions",
+        plain_language_data_policy:
+          "How and why my data is used is communicated in plain and easy to understand language",
+        clear_fees_costs:
+          "Clear and upfront about fees and costs of products, services and experiences",
+        continuous_product_improvement:
+          "Can be counted on to improve the quality of products and services",
+        consistent_quality:
+          "Consistently delivers products, services and experiences with quality",
+        smooth_digital_interactions:
+          "Facilitates digital interactions that run smoothly and work when needed",
+        timely_issue_resolution:
+          "Resolves issues in an adequate and timely manner",
+      },
     }
   },
   computed: {
@@ -175,6 +384,60 @@ export default {
       return this.segmentScores.map((item) => {
         return item.segment_filter
       })
+    },
+
+    getSegmentTableData() {
+      return this.getSelectedSegment.segments.map((x, index) => {
+        let segment = {
+          segment_name: x.segment_name,
+          attribute_filters: x.attribute_filters,
+        }
+
+        x.attributes.forEach((item) => {
+          segment[item.attribute_type] = item.attribute_score
+        })
+
+        segment.colors = this.borderColorArr[index]
+
+        return segment
+      })
+    },
+
+    getSegmentTableHeaders() {
+      let headers = [
+        {
+          key: "segment_name",
+          label: "Segment",
+          col: 2,
+        },
+        {
+          key: "attribute_filters",
+          label: "Segment filters",
+          col: 4,
+        },
+      ]
+
+      this.getSelectedSegment.segments[0].attributes.forEach((item) => {
+        headers.push({
+          key: item.attribute_type,
+          label: item.attribute_name,
+          col: 1,
+          tooltip: this.tooltips[item.attribute_type],
+        })
+      })
+
+      headers.push({
+        key: "delete",
+        col: 1,
+      })
+
+      return headers
+    },
+
+    getSelectedSegment() {
+      return this.segmentScores.find(
+        (x) => x.segment_filter == this.selectedSegment?.toLowerCase()
+      )
     },
   },
   async mounted() {
@@ -196,11 +459,20 @@ export default {
     getSelectedData(value) {
       this.selectedSegment = value
     },
+    formatText: formatText,
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
     },
     addSegment() {
       this.isFilterToggled = !this.isFilterToggled
+    },
+    removeSegment(item) {
+      this.getSelectedSegment.segments.splice(
+        this.getSelectedSegment.segments.findIndex(
+          (x) => x.segment_name == item.segment_name
+        ),
+        1
+      )
     },
   },
 }
@@ -272,5 +544,11 @@ export default {
 }
 ::v-deep .wrapper {
   width: 320px !important;
+}
+
+.empty-text.empty-text {
+  height: 60px;
+  align-items: center;
+  display: flex;
 }
 </style>

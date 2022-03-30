@@ -8,7 +8,7 @@
   >
     <div class="score-card-info">
       <icon
-        class="model-icon"
+        class="model-icon pa-1"
         :type="icon"
         size="24"
         :stroke="stroke"
@@ -63,12 +63,10 @@ export default {
     stroke: {
       type: String,
       required: false,
-      default: "primary",
     },
     variant: {
       type: String,
       required: false,
-      default: "base",
     },
   },
   computed: {
@@ -109,6 +107,7 @@ export default {
     }
     .model-name {
       display: block;
+      color: var(--v-black-lighten4) !important;
     }
     .model-value {
       float: left;
