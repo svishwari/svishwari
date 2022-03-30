@@ -118,59 +118,88 @@ class TestDestinationRoutes(RouteTestCase):
         """Test for email_deliverability overview endpoint."""
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}/" f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/overview",
+            f"{t_c.BASE_ENDPOINT}/"
+            f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/overview",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertTrue(
-            t_c.validate_schema(EmailDeliverabilityOverviewSchema(), response.json)
+            t_c.validate_schema(
+                EmailDeliverabilityOverviewSchema(), response.json
+            )
         )
-        self.assertIsInstance(response.json.get(api_c.SENDING_DOMAINS_OVERVIEW), list)
+        self.assertIsInstance(
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW), list
+        )
 
         self.assertIsInstance(
-            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(db_c.DOMAIN_NAME),
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                db_c.DOMAIN_NAME
+            ),
             str,
         )
 
         sent = (
             self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT)
-            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.HARD_BOUNCES)
-            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.UNSUBSCRIBES)
-            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.COMPLAINTS)
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.HARD_BOUNCES
+            )
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.UNSUBSCRIBES
+            )
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.COMPLAINTS
+            )
         )
         delivered = sent - (
             self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.BOUNCES)
-            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.HARD_BOUNCES)
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.HARD_BOUNCES
+            )
         )
 
         self.assertIsInstance(
-            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(api_c.SENT),
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.SENT
+            ),
             int,
         )
         self.assertEqual(
             sent,
-            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(api_c.SENT),
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.SENT
+            ),
         )
 
         self.assertIsInstance(
-            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(api_c.OPEN_RATE),
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.OPEN_RATE
+            ),
             float,
         )
         self.assertAlmostEqual(
-            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS) / delivered,
-            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(api_c.OPEN_RATE),
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS)
+            / delivered,
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.OPEN_RATE
+            ),
             places=2,
         )
 
         self.assertIsInstance(
-            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(api_c.CLICK_RATE),
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.CLICK_RATE
+            ),
             float,
         )
         self.assertAlmostEqual(
-            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS) / delivered,
-            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(api_c.CLICK_RATE),
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS)
+            / delivered,
+            response.json.get(api_c.SENDING_DOMAINS_OVERVIEW)[0].get(
+                api_c.CLICK_RATE
+            ),
             places=2,
         )
 
@@ -178,14 +207,17 @@ class TestDestinationRoutes(RouteTestCase):
         """Test email deliverability data for all domains."""
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}/" f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains",
+            f"{t_c.BASE_ENDPOINT}/"
+            f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertTrue(
-            t_c.validate_schema(EmailDeliverabiliyDomainsSchema(), response.json)
+            t_c.validate_schema(
+                EmailDeliverabiliyDomainsSchema(), response.json
+            )
         )
 
         # Ensure all domains present in data.
@@ -204,7 +236,9 @@ class TestDestinationRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertTrue(
-            t_c.validate_schema(EmailDeliverabiliyDomainsSchema(), response.json)
+            t_c.validate_schema(
+                EmailDeliverabiliyDomainsSchema(), response.json
+            )
         )
 
         self.assertIn(api_c.DOMAIN_1, response.json.get(api_c.SENT)[0].keys())
@@ -262,7 +296,9 @@ class TestDestinationRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         response_data = response.json
         self.assertTrue(
-            t_c.validate_schema(EmailDeliverabiliyDomainsSchema(), response_data)
+            t_c.validate_schema(
+                EmailDeliverabiliyDomainsSchema(), response_data
+            )
         )
 
         # Ensure different campaigns data are not aggregated.
@@ -339,7 +375,9 @@ class TestDestinationRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         response_data = response.json
         self.assertTrue(
-            t_c.validate_schema(EmailDeliverabiliyDomainsSchema(), response_data)
+            t_c.validate_schema(
+                EmailDeliverabiliyDomainsSchema(), response_data
+            )
         )
 
         sent_day_1 = self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
@@ -355,13 +393,21 @@ class TestDestinationRoutes(RouteTestCase):
         sent_day_2 = (
             self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT)
             + metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.SENT)
-            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.HARD_BOUNCES)
-            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.UNSUBSCRIBES)
-            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.COMPLAINTS)
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.HARD_BOUNCES
+            )
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.UNSUBSCRIBES
+            )
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.COMPLAINTS
+            )
         )
         delivered_day_2 = sent_day_2 - (
             self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.BOUNCES)
-            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.HARD_BOUNCES)
+            - self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.HARD_BOUNCES
+            )
         )
 
         self.assertEqual(
@@ -370,28 +416,34 @@ class TestDestinationRoutes(RouteTestCase):
 
         # Ensure rates are calculated properly.
         self.assertAlmostEqual(
-            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS) / sent_day_1,
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS)
+            / sent_day_1,
             response.json.get(api_c.OPEN_RATE)[0].get(api_c.DOMAIN_1),
             places=2,
         )
         self.assertAlmostEqual(
-            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS) / delivered_day_2,
+            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.OPENS)
+            / delivered_day_2,
             response.json.get(api_c.OPEN_RATE)[1].get(api_c.DOMAIN_1),
             places=2,
         )
 
         self.assertAlmostEqual(
-            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS) / sent_day_1,
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS)
+            / sent_day_1,
             response.json.get(api_c.CLICK_RATE)[0].get(api_c.DOMAIN_1),
             places=2,
         )
         self.assertAlmostEqual(
-            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS) / delivered_day_2,
+            metrics_2.get(db_c.PERFORMANCE_METRICS).get(api_c.CLICKS)
+            / delivered_day_2,
             response.json.get(api_c.CLICK_RATE)[1].get(api_c.DOMAIN_1),
             places=2,
         )
         self.assertAlmostEqual(
-            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(api_c.UNSUBSCRIBES)
+            self.metrics_1.get(db_c.PERFORMANCE_METRICS).get(
+                api_c.UNSUBSCRIBES
+            )
             / sent_day_1,
             response.json.get(api_c.UNSUBSCRIBE_RATE)[0].get(api_c.DOMAIN_1),
             places=2,
