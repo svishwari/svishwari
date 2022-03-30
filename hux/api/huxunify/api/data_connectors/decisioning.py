@@ -18,17 +18,13 @@ class Decisioning:
         """
         return self.decisioning_client.get_models_api_v1alpha1_models_get()
 
-    def get_model_info(self, model_id: str) -> list:
+    def get_model_info(self, model_id: str) -> dict:
         """ Gets the model info from decisioning.
 
         Args:
             model_id (str): ID of the model.
 
         Returns:
-            list: model info
+            dict: model info dictionary.
         """
-        return self.decisioning_client.get_model_info_api_v1alpha1_models_model_id_get(model_id)
-
-if __name__ == "__main__":
-    dec = Decisioning()
-    print(dec.get_models())
+        return self.decisioning_client.get_model_info_api_v1alpha1_models_model_id_get(model_id)[0]
