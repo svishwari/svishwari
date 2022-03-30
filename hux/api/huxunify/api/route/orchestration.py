@@ -662,8 +662,10 @@ class AudienceView(SwaggerView):
                             db_c.LOOKALIKE_SOURCE_AUD_FILTERS
                         )
 
-                # combine the two lists and serve
-                audiences += lookalikes
+                    # add the built lookalike dict to the list of audiences to
+                    # be returned
+                    audiences.append(lookalike)
+
         elif lookalikeable:
             # if lookalikeable is set to true, filter out the audiences that
             # are not lookalikeable.
