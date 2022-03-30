@@ -755,6 +755,7 @@ class TectonMockConnector(Tecton):
         super().__init__(config)
         self.feature_service: TectonMockService = TectonMockService
 
+    # pylint: disable=arguments-differ
     def map_model_response(self, response: dict) -> List[dict]:
         """Map model response to a usable dict.
         Args:
