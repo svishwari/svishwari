@@ -1,5 +1,6 @@
 # pylint: disable=unused-argument,too-many-lines
 """Paths for Orchestration API"""
+import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from http import HTTPStatus
@@ -34,6 +35,7 @@ from huxunifylib.database.transform.transform_dataframe import (
     transform_fields_amazon_file,
 )
 
+import multiprocessing
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.aws import upload_file
@@ -72,6 +74,7 @@ from huxunify.api.route.utils import (
     logger,
     Validation,
     get_start_end_dates,
+    generate_audience_file,
 )
 
 # setup the audiences blueprint
@@ -159,7 +162,7 @@ def get_audience_data_async(
 
 @add_view_to_blueprint(
     audience_bp,
-    f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>/<download_type>",
+    f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>/download",
     "AudienceDownloadView",
 )
 class AudienceDownload(SwaggerView):
@@ -175,12 +178,14 @@ class AudienceDownload(SwaggerView):
             "example": "5f5f7262997acad4bac4373b",
         },
         {
-            "name": api_c.DOWNLOAD_TYPE,
+            "name": api_c.DOWNLOAD_TYPES,
             "description": "Download Type",
-            "type": "string",
-            "in": "path",
+            "type": "array",
+            "in": "query",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
             "required": True,
-            "example": api_c.GOOGLE_ADS,
+            "example": [api_c.GOOGLE_ADS, api_c.AMAZON_ADS, api_c.GENERIC_ADS],
         },
     ]
     responses = {
@@ -198,9 +203,7 @@ class AudienceDownload(SwaggerView):
     # pylint: disable=no-self-use, too-many-locals
     @api_error_handler()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def get(
-        self, audience_id: str, download_type: str, user: dict
-    ) -> Tuple[Response, int]:
+    def get(self, audience_id: str, user: dict) -> Tuple[Response, int]:
         """Downloads an audience.
 
         ---
@@ -209,14 +212,15 @@ class AudienceDownload(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
-            download_type (str): Download type.
+            download_types (list[str]): Download type.
             user (dict): User object.
 
         Returns:
             Tuple[Response, int]: File Object Response, HTTP status code.
         """
+        download_types = request.args.getlist(api_c.DOWNLOAD_TYPES)
 
-        download_types = {
+        applicable_download_types = {
             api_c.GOOGLE_ADS: (
                 transform_fields_google_file,
                 api_c.GOOGLE_ADS_DEFAULT_COLUMNS,
@@ -233,15 +237,16 @@ class AudienceDownload(SwaggerView):
 
         token_response = get_token_from_request(request)
 
-        if not download_types.get(download_type):
-            return (
-                jsonify(
-                    {
-                        "message": "Invalid download type or download type not supported"
-                    }
-                ),
-                HTTPStatus.BAD_REQUEST,
-            )
+        for download_type in download_types:
+            if download_type not in applicable_download_types.keys():
+                return (
+                    jsonify(
+                        {
+                            "message": "Invalid download types or download types not supported"
+                        }
+                    ),
+                    HTTPStatus.BAD_REQUEST,
+                )
 
         database = get_db_client()
         audience = orchestration_management.get_audience(
@@ -255,31 +260,39 @@ class AudienceDownload(SwaggerView):
                 HTTPStatus.NOT_FOUND,
             )
 
-        # set transform function based on download type in request
-        transform_function = download_types.get(download_type)[0]
-
         # get environment config
         config = get_config()
 
         if config.RETURN_EMPTY_AUDIENCE_FILE:
             logger.info(
-                "%s config set to %s, will generate empty %s type audience file.",
+                "%s config set to %s, will generate empty %s type audience files.",
                 api_c.RETURN_EMPTY_AUDIENCE_FILE,
                 config.RETURN_EMPTY_AUDIENCE_FILE,
-                download_type,
+                ",".join(download_types),
             )
-            data_batches = [
-                pd.DataFrame(columns=download_types.get(download_type)[1])
-            ]
-            # change transform function to not transform any fields if config
-            # is set to download empty audience file
-            transform_function = do_not_transform_fields
+            for download_type in download_types:
+                data_batches = [
+                    pd.DataFrame(
+                        columns=applicable_download_types.get(download_type)[1]
+                    )
+                ]
+                # change transform function to not transform any fields if config
+                # is set to download empty audience file
+                transform_function = do_not_transform_fields
+                generate_audience_file(
+                    database=database,
+                    user_name=user[db_c.USER_NAME],
+                    download_type=download_type,
+                    audience_id=audience_id,
+                    data_batches=data_batches,
+                    transform_function=transform_function,
+                )
         else:
             logger.info(
-                "%s config set to %s, will generate %s type audience file with content.",
+                "%s config set to %s, will generate %s type audience files with content.",
                 api_c.RETURN_EMPTY_AUDIENCE_FILE,
                 config.RETURN_EMPTY_AUDIENCE_FILE,
-                download_type,
+                ",".join(download_types),
             )
             cdp = connector_cdp.ConnectorCDP(access_token=token_response[0])
 
@@ -294,64 +307,52 @@ class AudienceDownload(SwaggerView):
                 },
             )
 
-        audience_file_name = (
-            f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
-            f"_{audience_id}_{download_type}.csv"
-        )
-
-        with open(
-            audience_file_name, "w", newline="", encoding="utf-8"
-        ) as csvfile:
-            for dataframe_batch in data_batches:
-                transform_function(dataframe_batch).to_csv(
-                    csvfile,
-                    mode="a",
-                    index=False,
+            for download_type in download_types:
+                # set transform function based on download type in request
+                transform_function = applicable_download_types.get(
+                    download_type
+                )[0]
+                generate_audience_file(
+                    database=database,
+                    user_name=user[db_c.USER_NAME],
+                    download_type=download_type,
+                    audience_id=audience_id,
+                    data_batches=data_batches,
+                    transform_function=transform_function,
                 )
-
-        logger.info(
-            "Uploading generated %s audience file to %s S3 bucket",
-            audience_file_name,
-            config.S3_DATASET_BUCKET,
-        )
-        if upload_file(
-            file_name=audience_file_name,
-            bucket=config.S3_DATASET_BUCKET,
-            object_name=audience_file_name,
-            user_name=user[api_c.USER_NAME],
-            file_type=api_c.AUDIENCE,
-        ):
-            create_audience_audit(
-                database=database,
-                audience_id=audience_id,
-                download_type=download_type,
-                file_name=audience_file_name,
-                user_name=user[api_c.USER_NAME],
-            )
-            logger.info(
-                "Created an audit log for %s audience file creation",
-                audience_file_name,
-            )
-        audience_file = Path(audience_file_name)
-        data = audience_file.read_bytes()
-        audience_file.unlink()
 
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             f'{user[api_c.USER_NAME]} downloaded the audience, "{audience[db_c.NAME]}"'
-            f" with format {download_type}.",
+            f" with formats {','.join(download_types)}",
             db_c.NOTIFICATION_CATEGORY_AUDIENCES,
             user[api_c.USER_NAME],
         )
+
+        zipfile_name = f"{audience_id}_audience_data.zip"
+        folder_name = "downloadaudiences"
+        # zip all the audiences which are inside in the folder
+        with zipfile.ZipFile(
+            zipfile_name, "w", compression=zipfile.ZIP_STORED
+        ) as zipfolder:
+
+            folder = Path(__file__).parent.parent.joinpath(folder_name)
+            for file in folder.rglob("**/*.csv"):
+                zipfolder.write(file, arcname=file.name)
+                file.unlink()
+
+        zip_file = Path(zipfile_name)
+        data = zip_file.read_bytes()
+        zip_file.unlink()
 
         return (
             Response(
                 data,
                 headers={
-                    "Content-Type": "application/csv",
+                    "Content-Type": "application/zip",
                     "Access-Control-Expose-Headers": "Content-Disposition",
-                    "Content-Disposition": f"attachment; filename={audience_file_name};",
+                    "Content-Disposition": f"attachment; filename={zipfile_name};",
                 },
             ),
             HTTPStatus.OK,

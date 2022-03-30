@@ -5,12 +5,16 @@ from collections import defaultdict
 from datetime import datetime, date
 import re
 from itertools import groupby
-from typing import Tuple, Union, Generator
+from pathlib import Path
+from typing import Tuple, Union, Generator, Callable
 from http import HTTPStatus
+
+import pandas as pd
 from bson import ObjectId
 
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
+from huxunifylib.database.audit_management import create_audience_audit
 
 from pandas import DataFrame
 
@@ -36,6 +40,7 @@ from huxunifylib.database.user_management import (
 )
 from huxunifylib.database.client import DatabaseClient
 
+from huxunify.api.data_connectors.aws import upload_file
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
@@ -1216,3 +1221,70 @@ def set_destination_authentication_secrets(
             ) from exc
 
     return ssm_params
+
+
+def generate_audience_file(
+    data_batches: pd.DataFrame,
+    transform_function: Callable,
+    audience_id: ObjectId,
+    download_type: str,
+    user_name: str,
+    database: DatabaseClient,
+) -> None:
+    """Generates Audience File
+
+    Args:
+        database(DatabaseClient): MongoDB Client
+        user_name(str): User name
+        download_type(str): Download Type selected
+        audience_id(ObjectId): Audience Id
+        data_batches(pd.Dataframe): Data batches retrieved from cdp
+        transform_function(Callable): Transform Function
+
+    Returns:
+
+    """
+    config=get_config()
+    folder_name = "downloadaudiences"
+    audience_file_name = (
+        f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
+        f"_{audience_id}_{download_type}.csv"
+    )
+    with open(
+        Path(__file__).parent.parent.joinpath(folder_name)
+        / audience_file_name,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as csvfile:
+        for dataframe_batch in data_batches:
+            transform_function(dataframe_batch).to_csv(
+                csvfile,
+                mode="a",
+                index=False,
+            )
+
+    logger.info(
+        "Uploading generated %s audience file to %s S3 bucket",
+        audience_file_name,
+        config.S3_DATASET_BUCKET,
+    )
+    if upload_file(
+        file_name=Path(__file__).parent.parent.joinpath(folder_name)
+        / audience_file_name,
+        bucket=config.S3_DATASET_BUCKET,
+        object_name=audience_file_name,
+        user_name=user_name,
+        file_type=api_c.AUDIENCE,
+    ):
+        create_audience_audit(
+            database=database,
+            audience_id=audience_id,
+            download_type=download_type,
+            file_name=audience_file_name,
+            user_name=user_name,
+        )
+        logger.info(
+            "Created an audit log for %s audience file creation",
+            audience_file_name,
+        )
