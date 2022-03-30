@@ -1,5 +1,6 @@
 # pylint: disable=invalid-name,line-too-long,too-many-lines
-"""Purpose of this file is housing shared components for tests."""
+"""Purpose of this file is housing shared components for tests.
+"""
 from datetime import datetime
 import time
 from http import HTTPStatus
