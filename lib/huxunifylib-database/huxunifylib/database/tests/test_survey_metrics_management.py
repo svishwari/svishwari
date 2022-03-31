@@ -91,11 +91,11 @@ class TestSurveyMetricsManagement(unittest.TestCase):
 
         self.assertIsNotNone(insert_doc)
         self.assertEqual(insert_doc[db_c.SURVEY_ID], "05957cf207be7d88638")
-        self.assertEqual(insert_doc[db_c.DELIVERY_PLATFORM_TYPE], "trust-id")
+        self.assertEqual(insert_doc[db_c.DELIVERY_PLATFORM_TYPE], "trust_id")
         self.assertEqual(
             insert_doc[db_c.S_TYPE_SURVEY_CUSTOMER_ID], "127956489"
         )
-        self.assertEqual(insert_doc[db_c.SURVEY_URL], "sample@trustdomain.com")
+        self.assertEqual(insert_doc[db_c.URL], "sample@trustdomain.com")
 
     def test_set_survey_responses_bulk(self):
         """Test set survey response bulk in Survey Metrics collection"""
@@ -182,13 +182,13 @@ class TestSurveyMetricsManagement(unittest.TestCase):
             db_c.SURVEY_RESPONSE_DATE: datetime.datetime(
                 2022, 3, 28, 14, 4, 15, 369000
             ),
-            db_c.SURVEY_URL: "https://survey-demo.com/v1",
+            db_c.URL: "https://survey-demo.com/v1",
             db_c.SURVEY_ID: "34dmwnkq9ae32fo0s",
             db_c.SURVEY_RESPONSES: responses_2,
             "responses": responses_1,
         }
         sample_response_doc2 = {
-            db_c.DELIVERY_PLATFORM_TYPE: "trust-id",
+            db_c.DELIVERY_PLATFORM_TYPE: "trust_id",
             db_c.DELIVERY_PLATFORM_ID: self.delivery_platform_doc[db_c.ID],
             db_c.CREATE_TIME: datetime.datetime(
                 2022, 3, 27, 14, 4, 15, 369000
@@ -197,7 +197,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
             db_c.SURVEY_RESPONSE_DATE: datetime.datetime(
                 2022, 3, 27, 14, 4, 15, 369000
             ),
-            db_c.SURVEY_URL: "https://survey-demo.com/v2",
+            db_c.URL: "https://survey-demo.com/v2",
             db_c.SURVEY_ID: "34dmwn39dmie32fo0s",
             db_c.SURVEY_RESPONSES: responses_2,
         }

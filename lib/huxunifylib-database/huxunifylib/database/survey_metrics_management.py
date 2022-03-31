@@ -62,7 +62,7 @@ def set_survey_response(
                 db_c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
                 db_c.SURVEY_ID: survey_id,
                 db_c.S_TYPE_SURVEY_CUSTOMER_ID: customer_id,
-                db_c.SURVEY_URL: url,
+                db_c.URL: url,
                 db_c.SURVEY_RESPONSE_DATE: response_date,
             }
         ).inserted_id
