@@ -4,7 +4,7 @@
       <strong
         v-if="enableTitle"
         :class="{
-          'text-h5 black--text text--darken-4 mb-2 d-block': true,
+          'text-body-1 black--text text--darken-4 mb-2 d-block': true,
           '': applyCaptionStyle,
         }"
       >

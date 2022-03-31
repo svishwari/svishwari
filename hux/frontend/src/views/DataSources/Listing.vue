@@ -176,12 +176,12 @@ export default {
         {
           text: "Data feed",
           value: "name",
-          width: "170",
+          width: "180",
         },
         {
           text: "Status",
           value: "status",
-          width: "84",
+          width: "100",
         },
         {
           text: "Records received",
@@ -305,7 +305,6 @@ export default {
 <style lang="scss" scoped>
 .datasource-datafeeds-table {
   margin-top: 1px;
-  margin-right: 10px;
   ::v-deep .hux-data-table {
     table {
       .data-feed-name {

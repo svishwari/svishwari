@@ -228,7 +228,7 @@
             />
             <hux-icon
               type="add_audience"
-              :size="31"
+              :size="37"
               color="primary"
               class="mr-1"
             />

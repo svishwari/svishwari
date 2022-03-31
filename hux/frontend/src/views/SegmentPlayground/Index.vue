@@ -26,7 +26,7 @@
         <v-menu
           v-if="isEdit"
           v-model="openMenu"
-          class="menu-wrapper"
+          class="menu-wrapper bring-front"
           bottom
           offset-y
         >
@@ -633,5 +633,8 @@ export default {
   height: calc(100vh - 200px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
+}
+.bring-front {
+  z-index: 100;
 }
 </style>
