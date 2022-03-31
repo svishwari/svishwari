@@ -20,16 +20,16 @@
               :variant="filterApplied > 0 ? 'lighten6' : 'darken4'"
             />
             <v-badge
-            v-if="filterApplied > 0"
-            :content="filterApplied"
-            color="white"
-            offset-x="6"
-            offset-y="4"
-            light
-            bottom
-            overlap
-            bordered
-          />
+              v-if="filterApplied > 0"
+              :content="filterApplied"
+              color="white"
+              offset-x="6"
+              offset-y="4"
+              light
+              bottom
+              overlap
+              bordered
+            />
           </v-btn>
         </template>
       </page-header>

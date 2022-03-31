@@ -88,7 +88,6 @@ export default {
   border-radius: 5px;
   .match-rate {
     background-color: var(--v-primary-lighten1) !important;
-  //  color: var(--v-black-base) !important;;
     .matchrate-header {
       border: none !important;
     }

@@ -56,7 +56,7 @@
               color="primary lighten-3"
               close-icon="mdi-close"
               @click:close="removeValue(filterIndex, valueIndex)"
-            > e
+            >
               {{ selectedValue.name }}
             </v-chip>
           </span>
@@ -120,7 +120,7 @@ export default {
       for (let filter of this.filters) {
         filter.value.forEach(() => counter++)
       }
-       this.$emit("updateCount", counter)
+      this.$emit("updateCount", counter)
     },
   },
 }

@@ -3,7 +3,9 @@
     <div v-if="isDataExists" class="rounded-sm lookalikes box-shadow-none">
       <div class="header d-flex mx-6 pr-3 py-5">
         <hux-icon type="lookalike" :size="24" class="mr-2" />
-        <span class="float-left text-h3 black--text text--base"> Lookalikes </span>
+        <span class="float-left text-h3 black--text text--base">
+          Lookalikes
+        </span>
       </div>
       <div
         v-for="data in lookalikeData"
