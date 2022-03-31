@@ -65,17 +65,6 @@ class AudienceDownloadsTest(RouteTestCase):
             return_value=self.database,
         ).start()
 
-        # mock upload_file in audiences
-        mock.patch(
-            "huxunify.api.route.audiences.upload_file",
-            return_value=True,
-        ).start()
-
-        mock.patch(
-            "huxunify.api.route.utils.upload_file",
-            return_value=True,
-        ).start()
-
         # create audience first
         audience = {
             db_c.AUDIENCE_NAME: "Test Audience",

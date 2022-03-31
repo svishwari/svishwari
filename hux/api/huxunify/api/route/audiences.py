@@ -27,7 +27,6 @@ from huxunifylib.connectors import connector_cdp
 from huxunifylib.database import (
     orchestration_management,
 )
-from huxunifylib.database.audit_management import create_audience_audit
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.transform.transform_dataframe import (
@@ -35,10 +34,9 @@ from huxunifylib.database.transform.transform_dataframe import (
     transform_fields_amazon_file,
 )
 
-import multiprocessing
+
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_demographic_by_state,
@@ -212,7 +210,6 @@ class AudienceDownload(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
-            download_types (list[str]): Download type.
             user (dict): User object.
 
         Returns:
@@ -238,7 +235,7 @@ class AudienceDownload(SwaggerView):
         token_response = get_token_from_request(request)
 
         for download_type in download_types:
-            if download_type not in applicable_download_types.keys():
+            if download_type not in applicable_download_types:
                 return (
                     jsonify(
                         {

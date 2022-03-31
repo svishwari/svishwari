@@ -14,7 +14,7 @@ from bson import ObjectId
 
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
-from huxunifylib.database.audit_management import create_audience_audit
+
 
 from pandas import DataFrame
 
@@ -25,6 +25,7 @@ from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
 
+from huxunifylib.database.audit_management import create_audience_audit
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -40,7 +41,7 @@ from huxunifylib.database.user_management import (
 )
 from huxunifylib.database.client import DatabaseClient
 
-from huxunify.api.data_connectors.aws import upload_file
+
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
@@ -1099,10 +1100,14 @@ def clean_and_aggregate_datafeed_details(
             }
         )
         # compute run duration if success or running and end_dt available
-        if df_detail[api_c.STATUS] in [
-            api_c.STATUS_SUCCESS,
-            api_c.STATUS_RUNNING,
-        ] and df_detail.get(api_c.PROCESSED_END_DATE):
+        if (
+            df_detail[api_c.STATUS]
+            in [
+                api_c.STATUS_SUCCESS,
+                api_c.STATUS_RUNNING,
+            ]
+            and df_detail.get(api_c.PROCESSED_END_DATE)
+        ):
             df_detail[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
                 int(
                     (
@@ -1244,7 +1249,6 @@ def generate_audience_file(
     Returns:
 
     """
-    config = get_config()
     folder_name = "downloadaudiences"
     audience_file_name = (
         f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
@@ -1267,12 +1271,15 @@ def generate_audience_file(
     logger.info(
         "Uploading generated %s audience file to %s S3 bucket",
         audience_file_name,
-        config.S3_DATASET_BUCKET,
+        get_config().S3_DATASET_BUCKET,
     )
-    if upload_file(
-        file_name=Path(__file__).parent.parent.joinpath(folder_name)
+    filename = (
+        Path(__file__).parent.parent.joinpath(folder_name)
         / audience_file_name,
-        bucket=config.S3_DATASET_BUCKET,
+    )
+    if CloudClient().upload_file(
+        file_name=str(filename[0]),
+        bucket=get_config().S3_DATASET_BUCKET,
         object_name=audience_file_name,
         user_name=user_name,
         file_type=api_c.AUDIENCE,
