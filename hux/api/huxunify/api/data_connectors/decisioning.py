@@ -28,3 +28,9 @@ class Decisioning:
             dict: model info dictionary.
         """
         return self.decisioning_client.get_model_info_api_v1alpha1_models_model_id_get(model_id)[0]
+
+
+if __name__ =="__main__":
+    print(Decisioning().get_models())
+    print(Decisioning().get_model_info("model-Propensity_Type_Cancelled-v5-dev"))
+    print("Hello")
