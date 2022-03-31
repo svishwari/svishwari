@@ -81,7 +81,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
         insert_doc = set_survey_response(
             database=self.database,
             delivery_platform_id=self.delivery_platform_doc[db_c.ID],
-            delivery_platform_type="trust-id",
+            delivery_platform_type="trust_id",
             survey_id="05957cf207be7d88638",
             url="sample@trustdomain.com",
             response_date=datetime.datetime.utcnow(),
