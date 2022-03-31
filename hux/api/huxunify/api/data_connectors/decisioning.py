@@ -6,7 +6,7 @@ from huxunify.api.config import get_config
 class Decisioning:
 
     def __init__(self):
-        config = configuration.Configuration(host="https://hux-kubeflow-api-dec.hux-decisioning-dev.in")
+        config = configuration.Configuration(host="https://hux-model-api-dec.decisioning-pendleton.in/")
         # config = configuration.Configuration(get_config().DECISIONING_URL)
         self.decisioning_client = dec_client(api_client=api_client.ApiClient(configuration=config))
 
@@ -32,5 +32,5 @@ class Decisioning:
 
 if __name__ =="__main__":
     print(Decisioning().get_models())
-    print(Decisioning().get_model_info("model-Propensity_Type_Cancelled-v5-dev"))
+    # print(Decisioning().get_model_info("model-Propensity_Type_Cancelled-v5-dev"))
     print("Hello")
