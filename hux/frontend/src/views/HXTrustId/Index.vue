@@ -114,6 +114,7 @@
                     :variant="
                       colColorArr[header.key] && colColorArr[header.key].variant
                     "
+                    class="ml-4"
                   ></rhombus-number>
 
                   <span
