@@ -633,12 +633,14 @@ def drop_collections(database: MongoClient) -> None:
     if db_c.USER_COLLECTION in collections_to_drop:
         collections_to_drop.remove(db_c.USER_COLLECTION)
 
+    # do not drop destination collection if it exists
+    if db_c.DELIVERY_PLATFORM_COLLECTION in collections_to_drop:
+        collections_to_drop.remove(db_c.DELIVERY_PLATFORM_COLLECTION)
+
     # if drop all collections is false, do not drop the restricted collections
     if not strtobool(os.environ.get("DROP_ALL_COLLECTIONS", default="False")):
         collections_to_drop = [
-            x
-            for x in collections_to_drop
-            if x not in db_c.RESTRICTED_COLLECTIONS
+            x for x in collections_to_drop if x not in db_c.RESTRICTED_COLLECTIONS
         ]
 
     for collection in collections_to_drop:
@@ -666,15 +668,11 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
             source_type=data_source[db_c.DATA_SOURCE_TYPE],
             status=data_source[db_c.STATUS],
         )[db_c.ID]
-        logging.info(
-            "Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id
-        )
+        logging.info("Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id)
     logging.info("Pre-populate data sources complete.")
 
 
-def insert_delivery_platforms(
-    database: MongoClient, delivery_platforms: list
-) -> None:
+def insert_delivery_platforms(database: MongoClient, delivery_platforms: list) -> None:
     """Insertion of Delivery Platforms Collection.
 
     Args:
@@ -752,9 +750,7 @@ def insert_models(database: MongoClient, models: list) -> None:
     logging.info("Pre-populate models complete.")
 
 
-def insert_client_projects(
-    database: MongoClient, client_projects: list
-) -> None:
+def insert_client_projects(database: MongoClient, client_projects: list) -> None:
     """Insert data into client_projects collection.
 
     Args:

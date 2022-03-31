@@ -14,6 +14,7 @@ from huxunifylib.database.delivery_platform_management import (
     get_performance_metrics_by_engagement_details,
     get_delivery_jobs_using_metadata,
 )
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import (
@@ -42,9 +43,7 @@ def get_display_ads_campaign_metrics(
     delivery_campaigns = []
     for job in delivery_jobs:
         if job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]:
-            delivery_campaigns.extend(
-                job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
-            )
+            delivery_campaigns.extend(job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS])
 
     for campaign in delivery_campaigns:
         job_list = []
@@ -105,9 +104,7 @@ def group_engagement_performance_metrics(
 
         # Group all delivery jobs by audience id
         audience_delivery_jobs = [
-            x
-            for x in delivery_jobs
-            if x[db_c.AUDIENCE_ID] == audience.get(db_c.ID)
+            x for x in delivery_jobs if x[db_c.AUDIENCE_ID] == audience.get(db_c.ID)
         ]
         #  Group performance metrics for the audience
         audience_metrics = update_metrics(
@@ -122,10 +119,7 @@ def group_engagement_performance_metrics(
         audience_destination_metrics_list = []
         for audience_destination in eng_audience.get(api_c.DESTINATIONS):
             destination_id = audience_destination.get(api_c.ID)
-            if (
-                destination_id is None
-                or destination_id not in target_destinations
-            ):
+            if destination_id is None or destination_id not in target_destinations:
                 logger.warning(
                     "Invalid destination encountered, ignoring performance metrics for it. "
                     "destination_id=%s, audience_id=%s, engagement_id=%s",
@@ -142,11 +136,17 @@ def group_engagement_performance_metrics(
             ]
 
             # get delivery platform
-            delivery_platform = (
-                delivery_platform_management.get_delivery_platform(
-                    database, destination_id
-                )
+            delivery_platform = delivery_platform_management.get_delivery_platform(
+                database, destination_id
             )
+
+            if not delivery_platform:
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_CRITICAL,
+                    (f'"{destination_id}" because the destination does not exist.'),
+                )
+                continue
 
             #  Group performance metrics for the destination
             destination_metrics = update_metrics(
@@ -156,22 +156,18 @@ def group_engagement_performance_metrics(
                 performance_metrics,
                 metrics_type,
             )
-            destination_metrics[
-                api_c.DELIVERY_PLATFORM_TYPE
-            ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
+            destination_metrics[api_c.DELIVERY_PLATFORM_TYPE] = delivery_platform[
+                db_c.DELIVERY_PLATFORM_TYPE
+            ]
 
             if metrics_type == api_c.DISPLAY_ADS:
-                destination_metrics[
-                    api_c.CAMPAIGNS
-                ] = get_display_ads_campaign_metrics(
+                destination_metrics[api_c.CAMPAIGNS] = get_display_ads_campaign_metrics(
                     audience_destination_jobs,
                     performance_metrics,
                     metrics_type,
                 )
             audience_destination_metrics_list.append(destination_metrics)
-        audience_metrics[
-            api_c.DESTINATIONS
-        ] = audience_destination_metrics_list
+        audience_metrics[api_c.DESTINATIONS] = audience_destination_metrics_list
         audience_metrics_list.append(audience_metrics)
 
     return audience_metrics_list
