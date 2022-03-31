@@ -1244,7 +1244,7 @@ def generate_audience_file(
     Returns:
 
     """
-    config=get_config()
+    config = get_config()
     folder_name = "downloadaudiences"
     audience_file_name = (
         f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
