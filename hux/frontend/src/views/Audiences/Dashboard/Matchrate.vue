@@ -1,7 +1,7 @@
 <template>
   <div class="match-rate-wrapper">
     <div v-if="numMatchRates !== 0" class="match-rate">
-      <div class="text-h3 black-base">Match rates</div>
+      <div class="text-h3 black--text text--base">Match rates</div>
 
       <v-row class="matchrate-header mt-3 body-2">
         <v-col cols="12" md="4" class="ml-2">
@@ -88,6 +88,7 @@ export default {
   border-radius: 5px;
   .match-rate {
     background-color: var(--v-primary-lighten1) !important;
+  //  color: var(--v-black-base) !important;;
     .matchrate-header {
       border: none !important;
     }
@@ -102,6 +103,7 @@ export default {
       margin: 8px;
       height: 45px;
       .matchrate-col {
+        color: var(--v-black-base) !important;
         padding: 0px !important;
         margin: 0px !important;
       }

@@ -65,7 +65,7 @@
           </template>
           <v-list class="list-wrapper">
             <v-list-item-group>
-              <v-list-item @click="favoriteAudience()"> Favorite </v-list-item>
+              <v-list-item @click="favoriteAudience()"> {{audienceData.favorite ? "Unfavorite" : "Favorite"}} </v-list-item>
               <v-list-item @click="initiateDelete()">
                 Delete audience
               </v-list-item>

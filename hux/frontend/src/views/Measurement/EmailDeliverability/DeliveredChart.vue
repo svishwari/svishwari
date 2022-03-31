@@ -14,7 +14,7 @@
         :months-duration="monthsDuration"
         @tooltipDisplay="toolTipDisplay"
       />
-      <div class="value-container ma-8 mr-4 mt-7">
+      <div class="legend-container ma-8 mr-4 mt-7">
         <span class="line mr-2"></span>
         <span class="text-h6">Open rate</span>
       </div>
@@ -258,6 +258,10 @@ export default {
     align-items: center;
     color: var(--v-black-base) !important;
     @extend .global-heading;
+  }
+  .legend-container {
+    @extend .value-container;
+    color: var(--v-black-lighten4) !important;
   }
   .value-section {
     @extend .global-heading;

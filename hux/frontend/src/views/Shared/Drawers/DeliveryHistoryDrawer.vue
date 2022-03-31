@@ -16,9 +16,20 @@
             <icon
               type="filter"
               :size="27"
-              :color="isFilterToggled ? 'primary' : 'black'"
-              :variant="isFilterToggled ? 'lighten6' : 'darken4'"
+              :color="filterApplied > 0 ? 'primary' : 'black'"
+              :variant="filterApplied > 0 ? 'lighten6' : 'darken4'"
             />
+            <v-badge
+            v-if="filterApplied > 0"
+            :content="filterApplied"
+            color="white"
+            offset-x="6"
+            offset-y="4"
+            light
+            bottom
+            overlap
+            bordered
+          />
           </v-btn>
         </template>
       </page-header>
@@ -29,6 +40,7 @@
         :filters="filters"
         @onReset="resetFilters"
         @onCheckboxChange="showHideMatchRate"
+        @updateCount="UpdateFilterCount"
       />
 
       <hux-data-table
@@ -220,6 +232,7 @@ export default {
           width: "20%",
         },
       ],
+      filterApplied: 0,
     }
   },
 
@@ -302,6 +315,10 @@ export default {
           width: "20%",
         })
       }
+    },
+
+    UpdateFilterCount(count) {
+      this.filterApplied = count
     },
 
     async fetchHistory() {
