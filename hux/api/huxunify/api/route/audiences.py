@@ -38,7 +38,7 @@ from huxunifylib.database.transform.transform_dataframe import (
 import multiprocessing
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors.aws import upload_file
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_demographic_by_state,
