@@ -38,46 +38,83 @@ class TestSurveyMetricsManagement(unittest.TestCase):
     def test_set_survey_response(self):
         """Test set survey response in Survey Metrics collection"""
 
+        # Survey Response 1
         responses = {
-            "VXID": "01202482628359",
-            "Adobe ID": "02482628359",
+            "signals": [
+                {
+                    "HUMANITY": {
+                        "attributes": [
+                            {
+                                "description": "Takes care of employees",
+                                "score": 4,
+                                "rating": 0,
+                            },
+                            {
+                                "description": "Values the good of society and the environment, not just profit",
+                                "score": 5,
+                                "rating": 0,
+                            },
+                        ],
+                        "score": 4,
+                        "rating": 0,
+                    },
+                    "CAPABILITY": {
+                        "attributes": [
+                            {
+                                "description": "Creates long term solutions and improvements that work well for me",
+                                "score": 4,
+                                "rating": 0,
+                            }
+                        ],
+                        "score": 5,
+                        "rating": 0,
+                    },
+                    "TRANSPARENCY": {
+                        "attributes": [
+                            {
+                                "description": "arketing and communications are accurate and honest",
+                                "score": 5,
+                                "rating": 0,
+                            }
+                        ],
+                        "score": 5,
+                        "rating": 0,
+                    },
+                    "RELIABILITY": {
+                        "attributes": [
+                            {
+                                "description": "Consistently and dependably delivers upon promises it makes",
+                                "score": 4,
+                                "rating": 0,
+                            }
+                        ],
+                        "score": 5,
+                        "rating": 0,
+                    },
+                }
+            ],
+            "VXID": 232134,
+            "Adobe ID": 482628359,
             "Customer Email": "sample@email.com",
             "Survey Time to Complete (in Minutes)": 59,
             "survey_is_mobile": "Yes",
             "Banner Indicator": "Yes",
             "trustid_brand_unit": "brand_unit",
             "Consent Statement": "Yes, I agree to proceed",
-            "HUM_Demonstrates empathy and kindness towards me, and treats everyone fairly": 4,
-            "REL_Consistently and dependably delivers upon promises it makes": 5,
-            "CAP_Creates quality products, services, and/or experiences": 2,
-            "REL_Facilitates digital interactions that run smoothly and work when needed": 3,
             "Children in Household": "",
             "Household Seniors Y/N": "",
-            "Age": "",
-            "Time": "",
-            "StraightLine": "",
-            "USE": "",
-            "prospect_with_vxid": "",
-            "HUMANITY": "",
-            "RELIABILITY": "",
-            "CAPABILITY": "",
-            "TRANSPARENCY": "",
+            "Employment Status": "",
+            "Opinion_Bucket": "",
             "TopCategory": "",
             "TopCategory_HL": "",
-            "Per_Web": "",
-            "Prospect_Temp": "",
-            "Existing_Class": "",
-            "VisitsTotal": "",
-            "activeDays": "",
-            "VisitsWeb": "",
-            "VisitsApps": "",
-            "activeDaysThisWeek": "",
-            "viewsArts": "",
-            "viewsBusiness": 0,
-            "viewsCareers": 0,
+            "desktop": "",
+            "Tenure (days)": "",
+            "Tenure (months)": "",
+            "channel": "",
+            "recency": "",
+            "freq": "",
         }
 
-        # Survey Response 1
         insert_doc = set_survey_response(
             database=self.database,
             delivery_platform_id=self.delivery_platform_doc[db_c.ID],
@@ -102,74 +139,156 @@ class TestSurveyMetricsManagement(unittest.TestCase):
 
         # Sample Response 1
         responses_1 = {
-            "VXID": "01202482628359",
-            "Adobe ID": "02482628359",
+            "signals": [
+                {
+                    "HUMANITY": {
+                        "attributes": [
+                            {
+                                "description": "Takes care of employees",
+                                "score": 4,
+                                "rating": 0,
+                            },
+                            {
+                                "description": "Values the good of society and the environment, not just profit",
+                                "score": 5,
+                                "rating": 0,
+                            },
+                        ],
+                        "score": 4,
+                        "rating": 0,
+                    },
+                    "CAPABILITY": {
+                        "attributes": [
+                            {
+                                "description": "Creates long term solutions and improvements that work well for me",
+                                "score": 4,
+                                "rating": 0,
+                            }
+                        ],
+                        "score": 5,
+                        "rating": 0,
+                    },
+                    "TRANSPARENCY": {
+                        "attributes": [
+                            {
+                                "description": "arketing and communications are accurate and honest",
+                                "score": 5,
+                                "rating": 0,
+                            }
+                        ],
+                        "score": 5,
+                        "rating": 0,
+                    },
+                    "RELIABILITY": {
+                        "attributes": [
+                            {
+                                "description": "Consistently and dependably delivers upon promises it makes",
+                                "score": 4,
+                                "rating": 0,
+                            }
+                        ],
+                        "score": 5,
+                        "rating": 0,
+                    },
+                }
+            ],
+            "VXID": 232134,
+            "Adobe ID": 482628359,
             "Customer Email": "sample@email.com",
             "Survey Time to Complete (in Minutes)": 59,
             "survey_is_mobile": "Yes",
             "Banner Indicator": "Yes",
             "trustid_brand_unit": "brand_unit",
             "Consent Statement": "Yes, I agree to proceed",
-            "HUM_Demonstrates empathy and kindness towards me, and treats everyone fairly": 4,
-            "REL_Consistently and dependably delivers upon promises it makes": 5,
-            "CAP_Creates quality products, services, and/or experiences": 2,
-            "REL_Facilitates digital interactions that run smoothly and work when needed": 3,
             "Children in Household": "",
             "Household Seniors Y/N": "",
-            "Age": "",
-            "Time": "",
-            "StraightLine": "",
-            "USE": "",
-            "prospect_with_vxid": "",
-            "HUMANITY": "",
-            "RELIABILITY": "",
-            "CAPABILITY": "",
-            "TRANSPARENCY": "",
+            "Employment Status": "",
+            "Opinion_Bucket": "",
             "TopCategory": "",
             "TopCategory_HL": "",
-            "Per_Web": "",
-            "Prospect_Temp": "",
-            "Existing_Class": "",
-            "VisitsTotal": "",
-            "activeDays": "",
-            "VisitsWeb": "",
-            "VisitsApps": "",
-            "activeDaysThisWeek": "",
-            "viewsArts": "",
-            "viewsBusiness": 0,
-            "viewsCareers": 0,
+            "desktop": "",
+            "Tenure (days)": "",
+            "Tenure (months)": "",
+            "channel": "",
+            "recency": "",
+            "freq": "",
         }
 
         # Sample Response 2
         responses_2 = {
-            "VXID": "01202482628359",
-            "Adobe ID": "02482628359",
+            "signals": [
+                {
+                    "HUMANITY": {
+                        "attributes": [
+                            {
+                                "description": "Takes care of employees",
+                                "score": 4,
+                                "rating": 0,
+                            },
+                            {
+                                "description": "Values the good of society and the environment, not just profit",
+                                "score": 5,
+                                "rating": 0,
+                            },
+                        ],
+                        "score": 4,
+                        "rating": 0,
+                    },
+                    "CAPABILITY": {
+                        "attributes": [
+                            {
+                                "description": "Creates long term solutions and improvements that work well for me",
+                                "score": 4,
+                                "rating": 0,
+                            }
+                        ],
+                        "score": 5,
+                        "rating": 0,
+                    },
+                    "TRANSPARENCY": {
+                        "attributes": [
+                            {
+                                "description": "arketing and communications are accurate and honest",
+                                "score": 5,
+                                "rating": 0,
+                            }
+                        ],
+                        "score": 5,
+                        "rating": 0,
+                    },
+                    "RELIABILITY": {
+                        "attributes": [
+                            {
+                                "description": "Consistently and dependably delivers upon promises it makes",
+                                "score": 4,
+                                "rating": 0,
+                            }
+                        ],
+                        "score": 5,
+                        "rating": 0,
+                    },
+                }
+            ],
+            "VXID": 232134,
+            "Adobe ID": 482628359,
             "Customer Email": "sample@email.com",
             "Survey Time to Complete (in Minutes)": 59,
             "survey_is_mobile": "Yes",
             "Banner Indicator": "Yes",
             "trustid_brand_unit": "brand_unit",
             "Consent Statement": "Yes, I agree to proceed",
-            "HUM_Demonstrates empathy and kindness towards me, and treats everyone fairly": 4,
-            "REL_Consistently and dependably delivers upon promises it makes": 5,
-            "CAP_Creates quality products, services, and/or experiences": 2,
-            "REL_Facilitates digital interactions that run smoothly and work when needed": 3,
             "Children in Household": "",
             "Household Seniors Y/N": "",
-            "Age": "",
-            "Time": "",
-            "HUMANITY": "",
-            "RELIABILITY": "",
-            "CAPABILITY": "",
-            "TRANSPARENCY": "",
+            "Employment Status": "",
+            "Opinion_Bucket": "",
             "TopCategory": "",
-            "activeDays": "",
-            "VisitsWeb": "",
-            "VisitsApps": "",
-            "activeDaysThisWeek": "",
-            "viewsArts": "",
-            "viewsBusiness": 0,
-            "viewsCareers": 0,
+            "TopCategory_HL": "",
+            "desktop": "",
+            "Tenure (days)": "",
+            "Tenure (months)": "",
+            "channel": "",
+            "recency": "",
+            "freq": "",
         }
 
         sample_response_doc1 = {
