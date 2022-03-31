@@ -75,7 +75,7 @@ class AudienceDownloadsTest(RouteTestCase):
         self.audience = create_audience(self.database, **audience)
 
         mock.patch(
-            "huxunify.api.route.audiences.create_audience_audit",
+            "huxunify.api.route.utils.create_audience_audit",
             return_value={
                 api_c.USER_NAME: self.user_name,
                 api_c.AUDIENCE_ID: self.audience,
