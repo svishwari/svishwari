@@ -48,12 +48,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                                 "description": "Takes care of employees",
                                 "score": 4,
                                 "rating": 0,
-                            },
-                            {
-                                "description": "Values the good of society and the environment, not just profit",
-                                "score": 5,
-                                "rating": 0,
-                            },
+                            }
                         ],
                         "score": 4,
                         "rating": 0,
@@ -61,7 +56,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                     "CAPABILITY": {
                         "attributes": [
                             {
-                                "description": "Creates long term solutions and improvements that work well for me",
+                                "description": "Creates long term solutions that work well",
                                 "score": 4,
                                 "rating": 0,
                             }
@@ -72,7 +67,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                     "TRANSPARENCY": {
                         "attributes": [
                             {
-                                "description": "arketing and communications are accurate and honest",
+                                "description": "marketing and communications are accurate",
                                 "score": 5,
                                 "rating": 0,
                             }
@@ -83,7 +78,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                     "RELIABILITY": {
                         "attributes": [
                             {
-                                "description": "Consistently and dependably delivers upon promises it makes",
+                                "description": "Consistently delivers upon promises it makes",
                                 "score": 4,
                                 "rating": 0,
                             }
@@ -147,12 +142,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                                 "description": "Takes care of employees",
                                 "score": 4,
                                 "rating": 0,
-                            },
-                            {
-                                "description": "Values the good of society and the environment, not just profit",
-                                "score": 5,
-                                "rating": 0,
-                            },
+                            }
                         ],
                         "score": 4,
                         "rating": 0,
@@ -160,7 +150,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                     "CAPABILITY": {
                         "attributes": [
                             {
-                                "description": "Creates long term solutions and improvements that work well for me",
+                                "description": "Creates long term solutions that work well",
                                 "score": 4,
                                 "rating": 0,
                             }
@@ -171,7 +161,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                     "TRANSPARENCY": {
                         "attributes": [
                             {
-                                "description": "arketing and communications are accurate and honest",
+                                "description": "marketing and communications are accurate",
                                 "score": 5,
                                 "rating": 0,
                             }
@@ -182,7 +172,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                     "RELIABILITY": {
                         "attributes": [
                             {
-                                "description": "Consistently and dependably delivers upon promises it makes",
+                                "description": "Consistently delivers upon promises it makes",
                                 "score": 4,
                                 "rating": 0,
                             }
@@ -224,12 +214,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                                 "description": "Takes care of employees",
                                 "score": 4,
                                 "rating": 0,
-                            },
-                            {
-                                "description": "Values the good of society and the environment, not just profit",
-                                "score": 5,
-                                "rating": 0,
-                            },
+                            }
                         ],
                         "score": 4,
                         "rating": 0,
@@ -237,7 +222,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                     "CAPABILITY": {
                         "attributes": [
                             {
-                                "description": "Creates long term solutions and improvements that work well for me",
+                                "description": "Creates long term solutions that work well",
                                 "score": 4,
                                 "rating": 0,
                             }
@@ -248,7 +233,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                     "TRANSPARENCY": {
                         "attributes": [
                             {
-                                "description": "arketing and communications are accurate and honest",
+                                "description": "marketing and communications are accurate",
                                 "score": 5,
                                 "rating": 0,
                             }
@@ -259,7 +244,7 @@ class TestSurveyMetricsManagement(unittest.TestCase):
                     "RELIABILITY": {
                         "attributes": [
                             {
-                                "description": "Consistently and dependably delivers upon promises it makes",
+                                "description": "Consistently delivers upon promises it makes",
                                 "score": 4,
                                 "rating": 0,
                             }
