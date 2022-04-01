@@ -82,8 +82,8 @@
               <slot
                 name="row-item"
                 :item="item"
-                :index="index"
                 :headers="nestedHeaders"
+                :index="index"
               />
             </tr>
           </tbody>
