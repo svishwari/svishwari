@@ -211,7 +211,7 @@ export default {
         .style("stroke-width", 1)
 
       let hoverRectRange = w + 100
-      let maxRightLimit =   (hoverRectRange * 85)/100
+      let maxRightLimit = (hoverRectRange * 85) / 100
 
       svg
         .append("rect")
@@ -219,7 +219,7 @@ export default {
         .attr("height", h)
         .style("stroke", "transparent")
         .style("fill", "transparent")
-        .on("mousemove", (mouseEvent) => mousemove(mouseEvent, ))
+        .on("mousemove", (mouseEvent) => mousemove(mouseEvent))
         .on("mouseout", () => mouseout())
       let bisectDate = d3Array.bisector((d) => d).right
       let mouseout = () => {
@@ -268,7 +268,8 @@ export default {
           }
         })
 
-        dataToolTip.invertPosition = finalXCoordinate > maxRightLimit ? true: false
+        dataToolTip.invertPosition =
+          finalXCoordinate > maxRightLimit ? true : false
         dataToolTip.xPosition = finalXCoordinate
         dataToolTip.yPosition = yData
         this.tooltipDisplay(true, dataToolTip)

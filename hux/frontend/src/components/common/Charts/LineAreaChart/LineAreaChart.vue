@@ -251,7 +251,7 @@ export default {
         svg.selectAll(".child-hover-circle").remove()
         this.tooltipDisplay(false)
 
-        let maxRightLimit =   (w * 85)/100
+        let maxRightLimit = (w * 85) / 100
         let x0 = dateFormatter(xScale.invert(d3Select.pointer(mouseEvent)[0]))
 
         let dateD = dateFormatter(x0)
@@ -297,12 +297,13 @@ export default {
               .style("fill", "white")
               .style("pointer-events", "none")
           }
-        })        
+        })
 
         if (dataToolTip) {
           dataToolTip.xPosition = finalXCoordinate
           // Invert tooltip positioning to avoid cut off
-           dataToolTip.invertPosition = finalXCoordinate > maxRightLimit ? true: false
+          dataToolTip.invertPosition =
+            finalXCoordinate > maxRightLimit ? true : false
           dataToolTip.yPosition = yData
           this.tooltipDisplay(true, dataToolTip)
         }
