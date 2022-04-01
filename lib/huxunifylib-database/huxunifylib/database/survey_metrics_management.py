@@ -120,7 +120,6 @@ def set_survey_responses_bulk(
                 (db_c.SURVEY_ID, pymongo.ASCENDING),
             ]
         )
-        return insert_result
     except pymongo.errors.BulkWriteError as exc:
         for err in exc.details["writeErrors"]:
             if err["code"] == db_c.DUPLICATE_ERR_CODE:
