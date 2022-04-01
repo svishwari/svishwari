@@ -44,6 +44,9 @@
           }"
         >
           {{ item.text }}
+          <sup class="title-superscript">
+            {{ item.superscript }}
+          </sup>
         </span>
       </v-breadcrumbs-item>
     </template>
@@ -99,5 +102,11 @@ export default {
   .allow-overflow {
     overflow: clip;
   }
+}
+.title-superscript {
+  @extend .superscript;
+  font-size: 8px;
+  left: -8px;
+  top: -18px;
 }
 </style>

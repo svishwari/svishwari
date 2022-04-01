@@ -1,4 +1,5 @@
 """Purpose of this file is to test data sources."""
+from http import HTTPStatus
 from unittest import TestCase
 import pytest
 import requests
@@ -29,7 +30,7 @@ class TestDataSources(TestCase):
         )
 
         # test success
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
         # add the crud object to pytest for cleaning after.
         pytest.CRUD_OBJECTS += [

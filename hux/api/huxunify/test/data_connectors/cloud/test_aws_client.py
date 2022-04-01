@@ -1,7 +1,10 @@
 """Purpose of this module is to host all AWSClient tests."""
+import tempfile
+import string
 from unittest import TestCase, mock
 
 import boto3
+from hypothesis import given, settings, strategies
 from moto import mock_ssm, mock_s3
 
 from huxunify.api.config import get_config
@@ -45,6 +48,56 @@ class AWSClientTests(TestCase):
         secret_val = "MY SECRET"
         self.aws_client.set_secret(secret_key, secret_val)
         self.assertEqual(secret_val, self.aws_client.get_secret(secret_key))
+
+    @mock_s3
+    @given(
+        user_name=strategies.text(alphabet=string.ascii_letters),
+        file_type=strategies.text(alphabet=string.ascii_letters),
+    )
+    @settings(deadline=600)
+    def test_upload_file(self, user_name: str, file_type: str):
+        """Test upload of file to mocked S3 dataset bucket.
+
+        Args:
+            user_name (str): Value for User name.
+            file_type (str): Type of File.
+        """
+
+        if not user_name:
+            return
+
+        if not file_type:
+            return
+
+        s3_client = boto3.client("s3", region_name=self.config.AWS_REGION)
+
+        with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
+            s3_client.create_bucket(Bucket=self.config.S3_DATASET_BUCKET)
+
+            self.assertTrue(
+                self.aws_client.upload_file(
+                    file_name=temp_file.name,
+                    file_type=file_type,
+                    user_name=user_name,
+                )
+            )
+
+    @mock_s3
+    def test_download_file(self):
+        """Test download of file to mocked S3 dataset bucket."""
+        s3_client = boto3.client("s3", region_name=self.config.AWS_REGION)
+
+        with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
+            s3_client.create_bucket(Bucket=self.config.S3_DATASET_BUCKET)
+            s3_client.put_object(
+                Bucket=self.config.S3_DATASET_BUCKET,
+                Key=temp_file.name,
+                Body="",
+            )
+
+            self.assertTrue(
+                self.aws_client.download_file(temp_file.name, "test user")
+            )
 
     @mock_s3
     def test_health_check_storage_service(self):
