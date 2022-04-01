@@ -3,7 +3,9 @@ import csv
 import string
 from datetime import datetime
 from http import HTTPStatus
+from io import BytesIO
 from unittest import TestCase, mock
+from zipfile import ZipFile
 
 import mongomock
 import requests_mock
@@ -58,6 +60,11 @@ class AudienceDownloadsTest(RouteTestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch(
+            "huxunify.api.route.audiences.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # create audience first
         audience = {
             db_c.AUDIENCE_NAME: "Test Audience",
@@ -68,7 +75,7 @@ class AudienceDownloadsTest(RouteTestCase):
         self.audience = create_audience(self.database, **audience)
 
         mock.patch(
-            "huxunify.api.route.audiences.create_audience_audit",
+            "huxunify.api.route.utils.create_audience_audit",
             return_value={
                 api_c.USER_NAME: self.user_name,
                 api_c.AUDIENCE_ID: self.audience,
@@ -107,12 +114,12 @@ class AudienceDownloadsTest(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
-            f"{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
+            f"{self.audience[db_c.ID]}/download?download_types={api_c.GOOGLE_ADS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual("application/csv", response.content_type)
+        self.assertEqual("application/zip", response.content_type)
 
     def test_download_amazon_ads(self) -> None:
         """Test to check download amazon_ads customers hashed data."""
@@ -136,12 +143,12 @@ class AudienceDownloadsTest(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
-            f"{self.audience[db_c.ID]}/{api_c.AMAZON_ADS}",
+            f"{self.audience[db_c.ID]}/download?download_types={api_c.AMAZON_ADS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual("application/csv", response.content_type)
+        self.assertEqual("application/zip", response.content_type)
 
     def test_download_generic_ads(self) -> None:
         """Test to check download generic customers both hashed and PII data."""
@@ -165,12 +172,42 @@ class AudienceDownloadsTest(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
-            f"{self.audience[db_c.ID]}/{api_c.GENERIC_ADS}",
+            f"{self.audience[db_c.ID]}/download?download_types={api_c.GENERIC_ADS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual("application/csv", response.content_type)
+        self.assertEqual("application/zip", response.content_type)
+
+    def test_download_multiple_types(self) -> None:
+        """Test to check download multiple types"""
+
+        # mock read_batches() in ConnectorCDP class to a return a test generator
+        mock.patch.object(
+            ConnectorCDP,
+            "read_batch",
+            return_value=t_c.dataframe_method(),
+        ).start()
+
+        mock.patch.object(
+            ConnectorCDP,
+            "_connect",
+            return_value=True,
+        ).start()
+
+        mock.patch.object(
+            ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
+        ).start()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/download?download_types={api_c.GOOGLE_ADS}"
+            f"&download_types={api_c.AMAZON_ADS}&download_types={api_c.GENERIC_ADS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual("application/zip", response.content_type)
 
     def test_download_empty_google_ads(self) -> None:
         """Test to check download empty google_ads audience file."""
@@ -185,16 +222,17 @@ class AudienceDownloadsTest(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
-            f"{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
+            f"{self.audience[db_c.ID]}/download?download_types={api_c.GOOGLE_ADS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual("application/csv", response.content_type)
-        row_count = len(
-            list(csv.reader(response.data.decode("utf-8").splitlines()))
-        )
-        self.assertEqual(1, row_count)
+        self.assertEqual("application/zip", response.content_type)
+
+        with ZipFile(BytesIO(response.data)) as zipfile:
+            for file in zipfile.namelist():
+                row_count = len(list(csv.reader(file.splitlines())))
+                self.assertEqual(1, row_count)
 
     def test_download_empty_amazon_ads(self) -> None:
         """Test to check download empty amazon_ads audience file."""
@@ -209,16 +247,16 @@ class AudienceDownloadsTest(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
-            f"{self.audience[db_c.ID]}/{api_c.AMAZON_ADS}",
+            f"{self.audience[db_c.ID]}/download?download_types={api_c.AMAZON_ADS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual("application/csv", response.content_type)
-        row_count = len(
-            list(csv.reader(response.data.decode("utf-8").splitlines()))
-        )
-        self.assertEqual(1, row_count)
+        self.assertEqual("application/zip", response.content_type)
+        with ZipFile(BytesIO(response.data)) as zipfile:
+            for file in zipfile.namelist():
+                row_count = len(list(csv.reader(file.splitlines())))
+                self.assertEqual(1, row_count)
 
     def test_download_empty_generic_ads(self) -> None:
         """Test to check download empty generic_ads audience file."""
@@ -233,16 +271,41 @@ class AudienceDownloadsTest(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
-            f"{self.audience[db_c.ID]}/{api_c.GENERIC_ADS}",
+            f"{self.audience[db_c.ID]}/download?download_types={api_c.GENERIC_ADS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual("application/csv", response.content_type)
-        row_count = len(
-            list(csv.reader(response.data.decode("utf-8").splitlines()))
+        self.assertEqual("application/zip", response.content_type)
+        with ZipFile(BytesIO(response.data)) as zipfile:
+            for file in zipfile.namelist():
+                row_count = len(list(csv.reader(file.splitlines())))
+                self.assertEqual(1, row_count)
+
+    def test_download_empty_multiple_types(self) -> None:
+        """Test to check download empty multiple types"""
+
+        # mock config to change the RETURN_EMPTY_AUDIENCE_FILE config value to
+        # True since pytest mode's default value for this config is False
+        self.config.RETURN_EMPTY_AUDIENCE_FILE = True
+        mock.patch(
+            "huxunify.api.config.get_config",
+            return_value=self.config,
+        ).start()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/download?download_types={api_c.GOOGLE_ADS}"
+            f"&download_types={api_c.AMAZON_ADS}&download_types={api_c.GENERIC_ADS}",
+            headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(1, row_count)
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual("application/zip", response.content_type)
+        with ZipFile(BytesIO(response.data)) as zipfile:
+            for file in zipfile.namelist():
+                row_count = len(list(csv.reader(file.splitlines())))
+                self.assertEqual(1, row_count)
 
 
 class AudienceInsightsTest(TestCase):

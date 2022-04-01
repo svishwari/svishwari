@@ -384,6 +384,7 @@ STATUS_WEIGHTS = {
     db_c.STATUS_FAILED: 0,
 }
 # Download Audience Fields
+DOWNLOAD_TYPES = "download_types"
 DOWNLOAD_TYPE = "download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
