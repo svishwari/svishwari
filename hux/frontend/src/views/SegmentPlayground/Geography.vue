@@ -36,7 +36,7 @@
       </div>
       <div v-if="!showMapView && data.geo" class="pt-2">
         <map-state-list
-          v-if="!loadingGeoOverview"
+          v-if="!loading"
           :map-data="data.geo"
           :configuration-data="configurationData"
           :header-config="headerConfig"
