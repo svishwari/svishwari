@@ -1784,4 +1784,3 @@ APPLICATION_CATEGORIES = [
     "Monitoring",
     "Uncategorized",
 ]
-ADDED = "added"
