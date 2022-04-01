@@ -58,7 +58,9 @@ class ApplicationsTests(RouteTestCase):
         ]
 
         self.applications = [
-            create_document(self.database, db_c.APPLICATIONS_COLLECTION, application)
+            create_document(
+                self.database, db_c.APPLICATIONS_COLLECTION, application
+            )
             for application in applications
         ]
 
@@ -70,7 +72,9 @@ class ApplicationsTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertFalse(ApplicationsGETSchema(many=True).validate(response.json))
+        self.assertFalse(
+            ApplicationsGETSchema(many=True).validate(response.json)
+        )
         for application in response.json:
             self.assertFalse(application[api_c.IS_ADDED])
 
@@ -106,9 +110,13 @@ class ApplicationsTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertFalse(ApplicationsGETSchema(many=True).validate(response.json))
+        self.assertFalse(
+            ApplicationsGETSchema(many=True).validate(response.json)
+        )
         self.assertEqual(len(response.json), 1)
-        self.assertEqual(response.json[0][api_c.ID], str(self.applications[0][db_c.ID]))
+        self.assertEqual(
+            response.json[0][api_c.ID], str(self.applications[0][db_c.ID])
+        )
         self.assertTrue(response.json[0][api_c.IS_ADDED])
 
     def test_success_create_applications(self):
@@ -130,14 +138,20 @@ class ApplicationsTests(RouteTestCase):
         self.assertEqual(
             response.json[api_c.CATEGORY], applications_request[api_c.CATEGORY]
         )
-        self.assertEqual(response.json[api_c.URL], applications_request[api_c.URL])
-        self.assertEqual(response.json[api_c.NAME], applications_request[api_c.NAME])
+        self.assertEqual(
+            response.json[api_c.URL], applications_request[api_c.URL]
+        )
+        self.assertEqual(
+            response.json[api_c.NAME], applications_request[api_c.NAME]
+        )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
         # Ensure the application is created in applications collection
         applications = ApplicationsGETSchema(many=True).dump(
-            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[db_c.DOCUMENTS]
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
+                db_c.DOCUMENTS
+            ]
         )
         names = [i[api_c.NAME] for i in applications]
         self.assertEqual(len(applications), 3)
@@ -175,7 +189,9 @@ class ApplicationsTests(RouteTestCase):
 
         # Ensure the application is created in applications collection
         applications = ApplicationsGETSchema(many=True).dump(
-            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[db_c.DOCUMENTS]
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
+                db_c.DOCUMENTS
+            ]
         )
         names = [i[api_c.NAME] for i in applications]
         self.assertEqual(len(applications), 3)
@@ -195,7 +211,9 @@ class ApplicationsTests(RouteTestCase):
 
         # Ensure a duplicate application is NOT created in applications collection
         applications = ApplicationsGETSchema(many=True).dump(
-            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[db_c.DOCUMENTS]
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
+                db_c.DOCUMENTS
+            ]
         )
         names = [i[api_c.NAME] for i in applications]
         self.assertEqual(len(applications), 3)
@@ -223,7 +241,9 @@ class ApplicationsTests(RouteTestCase):
 
         # Ensure no new application is created in applications collection
         applications = ApplicationsGETSchema(many=True).dump(
-            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[db_c.DOCUMENTS]
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
+                db_c.DOCUMENTS
+            ]
         )
         self.assertEqual(len(applications), 2)
 
@@ -311,7 +331,8 @@ class ApplicationsTests(RouteTestCase):
         }
 
         response = self.app.patch(
-            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/" f"{ObjectId()}",
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
+            f"{ObjectId()}",
             headers=t_c.STANDARD_HEADERS,
             json=patch_request_body,
         )

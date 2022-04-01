@@ -132,7 +132,9 @@ class ApplicationGetView(SwaggerView):
                 db_c.APPLICATIONS_COLLECTION,
                 {
                     db_c.ENABLED: True,
-                    db_c.CATEGORY: {"$nin": ["Uncategorized", "uncategorized"]},
+                    db_c.CATEGORY: {
+                        "$nin": ["Uncategorized", "uncategorized"]
+                    },
                 },
             ).get(db_c.DOCUMENTS)
 
