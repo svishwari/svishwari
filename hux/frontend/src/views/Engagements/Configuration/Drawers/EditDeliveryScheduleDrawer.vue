@@ -7,7 +7,7 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <icon type="clock" :size="32" class="mr-2" />
+        <icon type="clock" :size="32" class="mx-2" />
         <h3 class="pl-1 text-h2 black--text">Edit delivery schedule</h3>
       </div>
     </template>
@@ -50,9 +50,9 @@
         </div>
         <div
           v-if="isRecurringFlag"
-          class="delivery-background px-4 pt-4 pb-6 mr-6"
+          class="delivery-background pl-6 pr-4 py-5 mt-6 mr-6 mb-5"
         >
-          <v-row class="delivery-schedule mt-6 ml-n2">
+          <v-row class="delivery-schedule mt-7 ml-n2">
             <div>
               <span
                 class="
@@ -71,7 +71,7 @@
               />
             </div>
             <icon
-              class="mx-2"
+              class="mx-2 arrow-margin"
               type="arrow"
               :size="19"
               color="primary"
@@ -97,7 +97,7 @@
               />
             </div>
           </v-row>
-          <v-row class="delivery-schedule mt-5">
+          <v-row class="delivery-schedule mt-4 mb-0">
             <hux-schedule-picker
               v-model="localSchedule"
               short
@@ -227,9 +227,13 @@ export default {
             recurringConfig["day_of_week"] = this.localSchedule.day_of_week
             break
           case "Monthly":
-            recurringConfig["day_of_month"] = [
-              this.localSchedule.monthlyDayDate,
+            recurringConfig["monthly_period_items"] = [
+              this.localSchedule.monthlyPeriod,
             ]
+            recurringConfig["day_of_month"] =
+              this.localSchedule.monthlyPeriod === "Day"
+                ? [this.localSchedule.monthlyDayDate]
+                : [this.localSchedule.monthlyDay]
             break
           default:
             recurringConfig
@@ -293,8 +297,8 @@ export default {
     cardClass(schedule, isRecurringFlag) {
       return (schedule == "Manual" && !isRecurringFlag) ||
         (schedule == "Recurring" && isRecurringFlag)
-        ? "border-card mb-11"
-        : "model-desc-card mr-0 mb-11"
+        ? "border-card"
+        : "model-desc-card mr-0"
     },
 
     changeSchedule(val) {
@@ -365,11 +369,16 @@ export default {
   .border-card {
     border: solid 1px var(--v-primary-lighten6);
   }
+  ::v-deep .plain-card {
+    margin-bottom: 0px !important;
+  }
+  .arrow-margin {
+    margin-top: 2px;
+  }
   .delivery-background {
     border: solid 1px var(--v-black-lighten2);
     background: var(--v-primary-lighten1);
     position: relative;
-    bottom: 25px;
     border-radius: 5px;
   }
   .delivery-schedule {
@@ -379,17 +388,18 @@ export default {
         .pr-2:nth-child(1) {
           .select-common {
             width: 207px !important;
-            margin-right: 16px !important;
+            margin-right: 8px !important;
           }
         }
         .pr-2:nth-child(2) {
           .select-common {
-            width: 120px !important;
+            width: 126px !important;
           }
         }
       }
       .d-flex:nth-child(2) {
         .select-common {
+          padding-top: 0px !important;
           width: 100px !important;
         }
         .pr-2:nth-child(1) {
@@ -399,7 +409,7 @@ export default {
             &::after {
               content: ":" !important;
               margin-top: 8px !important;
-              margin-left: 16px !important;
+              margin-left: 13px !important;
             }
           }
         }

@@ -403,7 +403,10 @@ export default {
 }
 .help-section {
   background: var(--v-primary-lighten2);
+  bottom: 0px;
+  position: absolute;
   height: 96px;
+  width: 100%;
 }
 ::-webkit-scrollbar {
   width: 5px;

@@ -1,6 +1,6 @@
 <template>
   <div class="hux-select-wrapper">
-    <label class="hux-select-label mt-6 mr-3 text-body-1 black--text">
+    <label class="hux-select-label mt-4 mr-3 text-body-1 black--text">
       Segments by
     </label>
     <v-select
@@ -76,8 +76,15 @@ export default {
       .v-input__slot {
         .v-select__slot {
           .v-select__selections {
+            background-image: linear-gradient(
+              to right,
+              var(--v-primary-base) 40%,
+              rgba(255, 255, 255, 0) 20%
+            );
+            background-position: bottom;
+            background-size: 4px 1px;
+            background-repeat: repeat-x;
             .v-select__selection {
-              margin-bottom: 0 !important;
               color: var(--v-primary-base) !important;
             }
           }
@@ -91,8 +98,12 @@ export default {
         }
       }
       .v-input__slot:before {
-        border-style: dotted !important;
-        border-color: var(--v-primary-base) !important;
+        border-style: none !important;
+      }
+    }
+    &.v-input--is-focused {
+      &.primary--text {
+        color: transparent !important;
       }
     }
   }
@@ -102,6 +113,9 @@ export default {
   .v-select-list {
     ::v-deep .v-list-item {
       min-height: 32px !important;
+    }
+    ::v-deep .v-list-item.v-list-item--highlighted::before {
+      opacity: 0 !important;
     }
   }
 }

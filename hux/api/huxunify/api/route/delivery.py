@@ -57,10 +57,9 @@ from huxunify.api.data_connectors.courier import (
 
 delivery_bp = Blueprint("/", import_name=__name__)
 
-
+# pylint: disable=inconsistent-return-statements
 @delivery_bp.before_request
 @secured()
-# pylint: disable=inconsistent-return-statements
 def before_request() -> Tuple[dict, int]:
     """Protect all of the engagement endpoints.
 
@@ -880,7 +879,6 @@ class AudienceDeliverHistoryView(SwaggerView):
                 and delivery_engagement
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
-
                 delivery_history.append(
                     {
                         api_c.ENGAGEMENT: delivery_engagement,

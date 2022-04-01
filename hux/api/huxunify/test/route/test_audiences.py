@@ -23,6 +23,7 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
 
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.schema.customers import (
@@ -42,6 +43,8 @@ class AudienceDownloadsTest(RouteTestCase):
 
     def setUp(self) -> None:
         """Setup tests."""
+        config = get_config()
+        config.CLOUD_PROVIDER = "aws"
 
         self.audiences_endpoint = (
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
@@ -53,12 +56,6 @@ class AudienceDownloadsTest(RouteTestCase):
         mock.patch(
             "huxunify.api.route.audiences.get_db_client",
             return_value=self.database,
-        ).start()
-
-        # mock upload_file in audiences
-        mock.patch(
-            "huxunify.api.route.audiences.upload_file",
-            return_value=True,
         ).start()
 
         # create audience first
@@ -80,6 +77,13 @@ class AudienceDownloadsTest(RouteTestCase):
                 db_c.FILE_NAME: "abc.csv",
             },
         ).start()
+
+        for subclass in CloudClient.__subclasses__():
+            mock.patch.object(
+                subclass,
+                "upload_file",
+                return_value=True,
+            ).start()
 
     def test_download_google_ads(self) -> None:
         """Test to check download google_ads customers hashed data."""
