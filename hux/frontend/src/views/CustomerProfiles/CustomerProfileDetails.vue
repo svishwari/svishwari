@@ -224,11 +224,9 @@ export default {
       this.loadingCustomerEvents = true
       try {
         await this.getEvents(this.id)
-      }
-      catch (error) {
+      } catch (error) {
         this.customerEventsError = true
-      }
-      finally {
+      } finally {
         this.loadingCustomerEvents = false
       }
     },

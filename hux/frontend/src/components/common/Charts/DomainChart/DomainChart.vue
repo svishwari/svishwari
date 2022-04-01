@@ -126,7 +126,11 @@ export default {
           .nice(5)
       }
 
-      let invertedChart = ['Delivered rate','Click rate','Complaints rate'].some(d => d === this.typeOfChart)
+      let invertedChart = [
+        "Delivered rate",
+        "Click rate",
+        "Complaints rate",
+      ].some((d) => d === this.typeOfChart)
 
       let stackArea = d3Shape.stack().keys([this.domain_name])
 
@@ -275,7 +279,7 @@ export default {
       }
 
       let mousemove = (mouseEvent) => {
-        let maxRightLimit =   (w * 85)/100
+        let maxRightLimit = (w * 85) / 100
         svg.selectAll(".parent-hover-circle").remove()
         svg.selectAll(".child-hover-circle").remove()
         this.tooltipDisplay(false)
@@ -332,7 +336,8 @@ export default {
         if (dataToolTip && yData) {
           dataToolTip.yPosition = yData
         }
-        dataToolTip.invertPosition = finalXCoordinate > maxRightLimit && invertedChart ? true: false
+        dataToolTip.invertPosition =
+          finalXCoordinate > maxRightLimit && invertedChart ? true : false
         dataToolTip.domain_name = this.domain_name
         this.tooltipDisplay(true, dataToolTip)
       }
