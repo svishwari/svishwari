@@ -535,6 +535,7 @@ def add_applications_to_users(
                     }
                 }
             },
+            return_document=ReturnDocument.AFTER,
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
