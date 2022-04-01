@@ -239,7 +239,8 @@ class AudienceDownload(SwaggerView):
                 return (
                     jsonify(
                         {
-                            "message": "Invalid download types or download types not supported"
+                            "message": f"{download_type} download type is "
+                            f"either invalid or not supported yet"
                         }
                     ),
                     HTTPStatus.BAD_REQUEST,
@@ -327,7 +328,10 @@ class AudienceDownload(SwaggerView):
             user[api_c.USER_NAME],
         )
 
-        zipfile_name = f"{audience_id}_audience_data.zip"
+        zipfile_name = (
+            f"{datetime.now().strftime('%Y%m%d%H%M%S')}_"
+            f"{audience_id}_audience_data.zip"
+        )
         folder_name = "downloadaudiences"
         # zip all the audiences which are inside in the folder
         with zipfile.ZipFile(
