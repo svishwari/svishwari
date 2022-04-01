@@ -267,7 +267,7 @@ export default {
               .style("pointer-events", "none")
           }
         })
-
+        // Invert tooltip positioning to avoid cut off
         dataToolTip.invertPosition =
           finalXCoordinate > maxRightLimit ? true : false
         dataToolTip.xPosition = finalXCoordinate
