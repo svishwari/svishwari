@@ -237,6 +237,7 @@
           >
             <hux-filter-panels :expanded="[0]">
               <hux-filter-panel
+                class="filter-panel"
                 title="Time"
                 :count="numFiltersSelected"
                 :disabled="true"
@@ -487,6 +488,9 @@ $headerOffsetY: 70px;
 .idr-filter {
   margin-top: -30px;
   margin-right: -30px;
+  .filter-panel {
+    pointer-events: none;
+  }
 }
 ::-webkit-scrollbar {
   width: 5px;

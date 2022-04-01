@@ -236,7 +236,7 @@ export default {
         .attr("height", h)
         .style("stroke", "transparent")
         .style("fill", "transparent")
-        .on("mousemove", (mouseEvent) => mousemove(mouseEvent))
+        .on("mousemove", (mouseEvent) => mousemove(mouseEvent, w))
         .on("mouseout", () => mouseout())
 
       let mouseout = () => {
@@ -246,11 +246,12 @@ export default {
         this.tooltipDisplay(false)
       }
 
-      let mousemove = (mouseEvent) => {
+      let mousemove = (mouseEvent, w) => {
         svg.selectAll(".parent-hover-circle").remove()
         svg.selectAll(".child-hover-circle").remove()
         this.tooltipDisplay(false)
 
+        let maxRightLimit = (w * 85) / 100
         let x0 = dateFormatter(xScale.invert(d3Select.pointer(mouseEvent)[0]))
 
         let dateD = dateFormatter(x0)
@@ -300,6 +301,9 @@ export default {
 
         if (dataToolTip) {
           dataToolTip.xPosition = finalXCoordinate
+          // Invert tooltip positioning to avoid cut off
+          dataToolTip.invertPosition =
+            finalXCoordinate > maxRightLimit ? true : false
           dataToolTip.yPosition = yData
           this.tooltipDisplay(true, dataToolTip)
         }
