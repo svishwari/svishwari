@@ -142,7 +142,6 @@
                           "
                           :class="{ 'normal-icon': isExpanded }"
                         />
-                        {{ header.fixed }}
                       </span>
                     </template>
                   </menu-cell>
@@ -301,11 +300,6 @@
             <td
               v-if="parentItem.audiences.length > 0"
               :colspan="expandedHeaders.length"
-              :class="{
-                'fixed-column': expandedHeaders.fixed,
-                'v-data-table__divider': expandedHeaders.fixed,
-                'primary--text': expandedHeaders.fixed,
-              }"
               class="pa-0 child"
             >
               <hux-data-table
