@@ -45,6 +45,7 @@ from huxunify.api.data_connectors.courier import toggle_event_driven_routers
 from huxunify.api.data_connectors.performance_metrics import (
     get_performance_metrics,
     generate_metrics_file,
+    get_performance_metrics_stub,
 )
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
@@ -1850,7 +1851,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
                 "message": api_c.ENGAGEMENT_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        final_metric = get_performance_metrics(
+        final_metric = get_performance_metrics_stub(
             database, engagement, engagement_id, api_c.DISPLAY_ADS
         )
 
@@ -1916,7 +1917,7 @@ class EngagementMetricsEmail(SwaggerView):
                 "message": api_c.ENGAGEMENT_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        final_metric = get_performance_metrics(
+        final_metric = get_performance_metrics_stub(
             database, engagement, engagement_id, api_c.EMAIL
         )
         return (
