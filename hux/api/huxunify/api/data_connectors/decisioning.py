@@ -1,3 +1,6 @@
+import json
+from pprint import pprint
+
 from huxmodelclient import api_client, configuration
 from huxmodelclient.api import DefaultApi as dec_client
 from huxunify.api.config import get_config
@@ -6,7 +9,7 @@ from huxunify.api.config import get_config
 class Decisioning:
 
     def __init__(self):
-        config = configuration.Configuration(host="https://hux-model-api-dec.decisioning-pendleton.in/")
+        config = configuration.Configuration(host="https://hux-model-api-dec.decisioning-pendleton.in")
         # config = configuration.Configuration(get_config().DECISIONING_URL)
         self.decisioning_client = dec_client(api_client=api_client.ApiClient(configuration=config))
 
@@ -27,10 +30,10 @@ class Decisioning:
         Returns:
             dict: model info dictionary.
         """
-        return self.decisioning_client.get_model_info_api_v1alpha1_models_model_id_get(model_id)[0]
+        return self.decisioning_client.get_model_info_api_v1alpha1_models_model_id_get(model_id)[0].to_dict()
 
 
 if __name__ =="__main__":
     print(Decisioning().get_models())
-    # print(Decisioning().get_model_info("model-Propensity_Type_Cancelled-v5-dev"))
-    print("Hello")
+    resp = Decisioning().get_model_info("model-Propensity_ctg_tk_blanket-v5-dev").to_dict()
+    print(json.dumps(resp))
