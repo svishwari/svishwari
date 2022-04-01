@@ -428,4 +428,7 @@ export default {
 .chart-card {
   margin-top: 94px;
 }
+::v-deep .v-data-table-header__icon {
+  margin-left: 4px !important;
+}
 </style>

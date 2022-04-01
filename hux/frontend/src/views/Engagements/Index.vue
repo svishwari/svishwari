@@ -142,6 +142,7 @@
                           "
                           :class="{ 'normal-icon': isExpanded }"
                         />
+                        {{ header.fixed }}
                       </span>
                     </template>
                   </menu-cell>
@@ -164,7 +165,7 @@
                         <logo
                           class="mr-1"
                           :type="destination.delivery_platform_type"
-                          :size="18"
+                          :size="24"
                         />
                       </template>
                       <template #hover-content>
@@ -300,6 +301,11 @@
             <td
               v-if="parentItem.audiences.length > 0"
               :colspan="expandedHeaders.length"
+              :class="{
+                'fixed-column': expandedHeaders.fixed,
+                'v-data-table__divider': expandedHeaders.fixed,
+                'primary--text': expandedHeaders.fixed,
+              }"
               class="pa-0 child"
             >
               <hux-data-table

@@ -30,14 +30,17 @@
               v-if="audience && !audience.is_lookalike"
               :disabled="relatedEngagements.length == 0"
               text
-              color="primary"
+              :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
               class="body-1 ml-n3 mt-n2"
               data-e2e="delivery-history"
               @click="openDeliveryHistoryDrawer()"
             >
               <icon
                 class="mr-1"
-                type="history"
+                :class="relatedEngagements.length == 0 ? 'icon_grey' : ''"
+                :type="
+                  relatedEngagements.length == 0 ? 'history_grey' : 'history'
+                "
                 :size="24"
                 :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
                 :variant="relatedEngagements.length == 0 ? 'lighten3' : 'base'"
@@ -1446,5 +1449,8 @@ export default {
   .v-tabs-slider-wrapper
   .v-tabs-slider {
   margin-top: 2px !important;
+}
+.icon_grey {
+  margin-top: 10px;
 }
 </style>

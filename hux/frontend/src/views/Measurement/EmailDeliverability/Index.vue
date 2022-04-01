@@ -1,39 +1,41 @@
 <template>
   <page max-width="100%" class="idr-wrapper">
     <template #header>
-      <page-header
-        class="page-header py-5"
-        header-min-height="110"
-        header-max-height="120"
-      >
-        <template #left>
-          <div>
-            <breadcrumb
-              :items="[
-                {
-                  text: 'Email Deliverability',
-                  disabled: true,
-                  href: '/email-deliverability',
-                  icon: 'email_deliverability',
-                  iconSize: 36,
-                  iconColor: 'black',
-                  iconColorVariant: 'base',
-                },
-              ]"
-            />
-          </div>
-          <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
-            In-depth review of key delivery metrics, reputation, and inbox
-            indicators that mailbox providers pay attention to when evaluating
-            an email sender’s digital reputation.
-          </div>
-        </template>
-      </page-header>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
+      <span class="header-section">
+        <page-header
+          class="page-header py-5"
+          header-min-height="110"
+          header-max-height="120"
+        >
+          <template #left>
+            <div>
+              <breadcrumb
+                :items="[
+                  {
+                    text: 'Email Deliverability',
+                    disabled: true,
+                    href: '/email-deliverability',
+                    icon: 'email_deliverability',
+                    iconSize: 36,
+                    iconColor: 'black',
+                    iconColorVariant: 'base',
+                  },
+                ]"
+              />
+            </div>
+            <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
+              In-depth review of key delivery metrics, reputation, and inbox
+              indicators that mailbox providers pay attention to when evaluating
+              an email sender’s digital reputation.
+            </div>
+          </template>
+        </page-header>
+        <v-progress-linear :active="loading" :indeterminate="loading" />
+      </span>
     </template>
     <div
       v-if="overviewData && !loading"
-      class="flex-grow-1 flex-shrink-1 mw-100 content-section"
+      class="flex-grow-1 flex-shrink-1 content-section"
     >
       <!-- Header Overview section -->
       <overview data-e2e="deliverability-overview" :entity="entity" />
@@ -262,9 +264,12 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--v-black-lighten3);
 }
+.header-section {
+  position: fixed;
+  width: 89%;
+  z-index: 999999 !important;
+}
 .content-section {
-  height: calc(100vh - 200px);
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+  margin-top: 110px;
 }
 </style>
