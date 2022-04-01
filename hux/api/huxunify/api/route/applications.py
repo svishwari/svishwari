@@ -8,7 +8,11 @@ from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.database.user_management import update_user
+from huxunifylib.database.user_management import (
+    update_user_applications,
+    add_applications_to_users,
+    get_user_applications,
+)
 from huxunifylib.database import (
     constants as db_c,
     collection_management,
@@ -115,30 +119,11 @@ class ApplicationGetView(SwaggerView):
             else []
         )
 
-        applications = []
         # Return the applications user has already added
         if user_added:
-            if (
-                db_c.USER_APPLICATIONS not in user
-                or not user[db_c.USER_APPLICATIONS]
-            ):
+            applications = get_user_applications(database, user[db_c.OKTA_ID])
+            if not applications:
                 return HuxResponse.OK(api_c.EMPTY_USER_APPLICATION_RESPONSE)
-
-            applications = collection_management.get_documents(
-                database,
-                db_c.APPLICATIONS_COLLECTION,
-                {db_c.ID: {"$in": user_application_ids}},
-            ).get(db_c.DOCUMENTS)
-
-            for app in applications:
-                app[api_c.URL] = next(
-                    (
-                        item
-                        for item in user[db_c.USER_APPLICATIONS]
-                        if item[api_c.ID] == app[db_c.ID]
-                    )
-                )[api_c.URL]
-                app[api_c.IS_ADDED] = True
         # Return all the applications user can add.
         # In this case, we do not need to show uncategorized applications
         else:
@@ -147,9 +132,7 @@ class ApplicationGetView(SwaggerView):
                 db_c.APPLICATIONS_COLLECTION,
                 {
                     db_c.ENABLED: True,
-                    db_c.CATEGORY: {
-                        "$nin": ["Uncategorized", "uncategorized"]
-                    },
+                    db_c.CATEGORY: {"$nin": ["Uncategorized", "uncategorized"]},
                 },
             ).get(db_c.DOCUMENTS)
 
@@ -246,26 +229,11 @@ class ApplicationsPostView(SwaggerView):
             )
 
         # add applications to user doc
-        updated_user_doc = (
-            user[db_c.USER_APPLICATIONS]
-            if db_c.USER_APPLICATIONS in user
-            and user[db_c.USER_APPLICATIONS] is not None
-            else []
-        )
-        user_apps = [
-            d
-            for d in updated_user_doc
-            if d[api_c.ID] != existing_application[db_c.ID]
-        ]
-        user_apps.append(
-            {
-                api_c.ID: existing_application[db_c.ID],
-                db_c.URL: new_application[api_c.URL],
-            }
-        )
-
-        update_user(
-            database, user[db_c.OKTA_ID], {db_c.USER_APPLICATIONS: user_apps}
+        add_applications_to_users(
+            database=database,
+            okta_id=user[db_c.OKTA_ID],
+            application_id=existing_application.get(db_c.ID),
+            url=new_application.get(api_c.URL),
         )
 
         logger.info(
@@ -304,9 +272,7 @@ class ApplicationsPatchView(SwaggerView):
             "in": "body",
             "type": "object",
             "description": "Input Application's fields to edit.",
-            "example": {
-                api_c.URL: "URL_Link",
-            },
+            "example": {api_c.URL: "URL_Link", api_c.ADDED: True},
         },
     ]
 
@@ -367,27 +333,12 @@ class ApplicationsPatchView(SwaggerView):
                 "message": f"Application {application_id} not found"
             }, HTTPStatus.NOT_FOUND
 
-        # add applications to user doc
-        updated_user_doc = (
-            user[db_c.USER_APPLICATIONS]
-            if db_c.USER_APPLICATIONS in user
-            and user[db_c.USER_APPLICATIONS] is not None
-            else []
-        )
-        user_apps = [
-            d
-            for d in updated_user_doc
-            if d[api_c.ID] != existing_application[db_c.ID]
-        ]
-        user_apps.append(
-            {
-                api_c.ID: existing_application[db_c.ID],
-                db_c.URL: new_application[api_c.URL],
-            }
-        )
-
-        update_user(
-            database, user[db_c.OKTA_ID], {db_c.USER_APPLICATIONS: user_apps}
+        update_user_applications(
+            database=database,
+            okta_id=user[db_c.OKTA_ID],
+            application_id=ObjectId(application_id),
+            url=new_application.get(api_c.URL),
+            is_added=new_application.get(api_c.ADDED, True),
         )
 
         logger.info(

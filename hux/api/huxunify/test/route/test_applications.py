@@ -9,9 +9,7 @@ from hypothesis import given, strategies as st
 
 from huxunify.api.schema.applications import ApplicationsGETSchema
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
-from huxunifylib.database.user_management import (
-    set_user,
-)
+from huxunifylib.database.user_management import set_user
 from huxunifylib.database.collection_management import (
     get_documents,
     create_document,
@@ -60,9 +58,7 @@ class ApplicationsTests(RouteTestCase):
         ]
 
         self.applications = [
-            create_document(
-                self.database, db_c.APPLICATIONS_COLLECTION, application
-            )
+            create_document(self.database, db_c.APPLICATIONS_COLLECTION, application)
             for application in applications
         ]
 
@@ -74,20 +70,29 @@ class ApplicationsTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertFalse(
-            ApplicationsGETSchema(many=True).validate(response.json)
-        )
+        self.assertFalse(ApplicationsGETSchema(many=True).validate(response.json))
         for application in response.json:
             self.assertFalse(application[api_c.IS_ADDED])
 
     def test_get_all_applications_success_user_only(self):
         """Test get all applications successfully with no params."""
+        application = self.applications[0]
 
-        patch_request_body = {
-            api_c.URL: "NEW_URL_Link",
+        applications_request = {
+            api_c.CATEGORY: application.get(api_c.CATEGORY),
+            api_c.NAME: application.get(api_c.NAME),
+            api_c.URL: "URL_Link",
         }
+        # Creating application so it is added to user.
+        self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
 
-        response = self.app.patch(
+        patch_request_body = {api_c.URL: "NEW_URL_Link"}
+
+        self.app.patch(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
             f"{self.applications[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -101,20 +106,16 @@ class ApplicationsTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertFalse(
-            ApplicationsGETSchema(many=True).validate(response.json)
-        )
+        self.assertFalse(ApplicationsGETSchema(many=True).validate(response.json))
         self.assertEqual(len(response.json), 1)
-        self.assertEqual(
-            response.json[0][api_c.ID], str(self.applications[0][db_c.ID])
-        )
+        self.assertEqual(response.json[0][api_c.ID], str(self.applications[0][db_c.ID]))
         self.assertTrue(response.json[0][api_c.IS_ADDED])
 
     def test_success_create_applications(self):
         """Test creating application successfully."""
 
         applications_request = {
-            api_c.CATEGORY: "uncategorized",
+            api_c.CATEGORY: "Uncategorized",
             api_c.NAME: "Custom Application",
             api_c.URL: "URL_Link",
         }
@@ -129,20 +130,14 @@ class ApplicationsTests(RouteTestCase):
         self.assertEqual(
             response.json[api_c.CATEGORY], applications_request[api_c.CATEGORY]
         )
-        self.assertEqual(
-            response.json[api_c.URL], applications_request[api_c.URL]
-        )
-        self.assertEqual(
-            response.json[api_c.NAME], applications_request[api_c.NAME]
-        )
+        self.assertEqual(response.json[api_c.URL], applications_request[api_c.URL])
+        self.assertEqual(response.json[api_c.NAME], applications_request[api_c.NAME])
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
         # Ensure the application is created in applications collection
         applications = ApplicationsGETSchema(many=True).dump(
-            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
-                db_c.DOCUMENTS
-            ]
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[db_c.DOCUMENTS]
         )
         names = [i[api_c.NAME] for i in applications]
         self.assertEqual(len(applications), 3)
@@ -152,7 +147,7 @@ class ApplicationsTests(RouteTestCase):
         """Test create invalid application."""
 
         applications_request = {
-            api_c.CATEGORY: "uncategorized",
+            api_c.CATEGORY: "Uncategorized",
             api_c.NAME: "Custom Application",
         }
         response = self.app.post(
@@ -167,7 +162,7 @@ class ApplicationsTests(RouteTestCase):
         """Test create invalid application."""
 
         applications_request = {
-            api_c.CATEGORY: "uncategorized",
+            api_c.CATEGORY: "Uncategorized",
             api_c.NAME: "Custom Application",
             api_c.URL: "URL_Link",
         }
@@ -180,16 +175,14 @@ class ApplicationsTests(RouteTestCase):
 
         # Ensure the application is created in applications collection
         applications = ApplicationsGETSchema(many=True).dump(
-            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
-                db_c.DOCUMENTS
-            ]
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[db_c.DOCUMENTS]
         )
         names = [i[api_c.NAME] for i in applications]
         self.assertEqual(len(applications), 3)
         self.assertIn(applications_request[api_c.NAME], names)
 
         applications_request = {
-            api_c.CATEGORY: "uncategorized",
+            api_c.CATEGORY: "Uncategorized",
             api_c.NAME: "Custom Application",
             api_c.URL: "URL_Link",
         }
@@ -202,9 +195,7 @@ class ApplicationsTests(RouteTestCase):
 
         # Ensure a duplicate application is NOT created in applications collection
         applications = ApplicationsGETSchema(many=True).dump(
-            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
-                db_c.DOCUMENTS
-            ]
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[db_c.DOCUMENTS]
         )
         names = [i[api_c.NAME] for i in applications]
         self.assertEqual(len(applications), 3)
@@ -232,9 +223,7 @@ class ApplicationsTests(RouteTestCase):
 
         # Ensure no new application is created in applications collection
         applications = ApplicationsGETSchema(many=True).dump(
-            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[
-                db_c.DOCUMENTS
-            ]
+            get_documents(self.database, db_c.APPLICATIONS_COLLECTION)[db_c.DOCUMENTS]
         )
         self.assertEqual(len(applications), 2)
 
@@ -270,6 +259,20 @@ class ApplicationsTests(RouteTestCase):
         patch_request_body = {
             api_c.URL: "NEW_URL_Link",
         }
+
+        application = self.applications[0]
+
+        applications_request = {
+            api_c.CATEGORY: application.get(api_c.CATEGORY),
+            api_c.NAME: application.get(api_c.NAME),
+            api_c.URL: "URL_Link",
+        }
+        # Create the application ensuring it is added to the user collection.
+        self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
 
         response = self.app.patch(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
@@ -308,8 +311,7 @@ class ApplicationsTests(RouteTestCase):
         }
 
         response = self.app.patch(
-            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
-            f"{ObjectId()}",
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/" f"{ObjectId()}",
             headers=t_c.STANDARD_HEADERS,
             json=patch_request_body,
         )
