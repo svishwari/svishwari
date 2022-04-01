@@ -6,6 +6,7 @@ import re
 from typing import Any, Union
 from bson import ObjectId
 import pymongo
+from pymongo import ReturnDocument
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.db_exceptions as de
@@ -125,6 +126,7 @@ def set_user(
             db_c.LOOKALIKE: [],
         },
         db_c.USER_DASHBOARD_CONFIGURATION: {},
+        db_c.USER_APPLICATIONS: [],
         db_c.USER_PII_ACCESS: pii_access,
     }
 
@@ -441,6 +443,178 @@ def manage_user_dashboard_config(
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
         )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def update_user_applications(
+    database: DatabaseClient,
+    okta_id: str,
+    application_id: ObjectId,
+    url: str = None,
+    is_added: bool = True,
+) -> Union[dict, None]:
+    """A function to update user applications.
+
+    Args:
+        database (DatabaseClient): A database client.
+        okta_id (str): Okta ID of a user doc.
+        application_id (ObjectId): ID of the application.
+        url (Optional, str): URL to be updated.
+        is_added (bool): flag for soft delete if False, defaults to True.
+
+    Returns:
+        Union[dict, None]: Updated document for a user.
+    """
+    update_dict = {"applications.$.added": is_added}
+    if url:
+        update_dict["applications.$.url"] = url
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+    try:
+        return collection.find_one_and_update(
+            filter={
+                db_c.OKTA_ID: okta_id,
+                db_c.USER_APPLICATIONS: {
+                    "$elemMatch": {"id": ObjectId(application_id)}
+                },
+            },
+            update={"$set": update_dict},
+            return_document=ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def add_applications_to_users(
+    database: DatabaseClient,
+    okta_id: str,
+    application_id: ObjectId,
+    url: str = None,
+) -> Union[dict, None]:
+    """A function to add user applications.
+
+    Args:
+        database (DatabaseClient): A database client.
+        okta_id (str): Okta ID of a user doc.
+        application_id (ObjectId): ID of the application.
+        url (Optional, str): URL to be updated.
+
+    Returns:
+        Union[dict, None]: Updated document for a user.
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+    try:
+        return collection.find_one_and_update(
+            filter={
+                "okta_id": okta_id,
+                "applications": {
+                    "$not": {
+                        "$elemMatch": {
+                            "id": application_id,
+                        }
+                    }
+                },
+            },
+            update={
+                "$push": {
+                    "applications": {
+                        db_c.OBJECT_ID: application_id,
+                        db_c.URL: url,
+                        db_c.ADDED: True,
+                    }
+                }
+            },
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+def get_user_applications(
+    database: DatabaseClient, okta_id: str
+) -> Union[list, None]:
+    """A function to fetch user applications.
+
+    Args:
+        database (DatabaseClient): A database client.
+        okta_id (str): Okta ID of a user doc.
+
+    Returns:
+        Union[list, None]: List of applications for a user.
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+    pipeline = [
+        {"$match": {"okta_id": okta_id}},
+        {
+            "$unwind": {
+                "path": "$applications",
+                "preserveNullAndEmptyArrays": False,
+            }
+        },
+        {
+            "$addFields": {
+                "application_id": "$applications.id",
+                "application_url": "$applications.url",
+                "application_added": "$applications.added",
+            }
+        },
+        {
+            "$lookup": {
+                "from": "applications",
+                "localField": "application_id",
+                "foreignField": "_id",
+                "as": "application",
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$application",
+                "preserveNullAndEmptyArrays": False,
+            }
+        },
+        {
+            "$project": {
+                "_id": "$application._id",
+                "name": "$application.name",
+                "category": "$application.category",
+                "type": "$application.type",
+                "icon": "$application.icon",
+                "enabled": "$application.enabled",
+                "create_time": "$application.create_time",
+                "created_by": "$application.created_by",
+                "deleted": "$application.deleted",
+                "url": {
+                    "$cond": {
+                        "if": {"$eq": ["$application_url", None]},
+                        "then": "",
+                        "else": "$application_url",
+                    }
+                },
+                "is_added": {
+                    "$cond": {
+                        "if": {"$eq": ["$application_added", None]},
+                        "then": True,
+                        "else": "$application_added",
+                    }
+                },
+            }
+        },
+    ]
+
+    try:
+        return list(collection.aggregate(pipeline))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
