@@ -18,5 +18,5 @@ export default {
   create_time: () => faker.date.recent(),
   update_time: () => faker.date.recent(),
   type: () => faker.random.arrayElement(["module", "business_solution"]),
-  description: `description for klj kljlk jlkj lkjlk jklj klj klj klj kljlk jlk jlk jlk jkl jkl jkh jkhkjh kjhk hjkh kjhk jhh khk hkj hkj hkjh kh  ${faker.address.state()}`,
+  description: `description for ${faker.address.state()}`,
 }
