@@ -162,7 +162,7 @@ class ApplicationsPostView(SwaggerView):
             "type": "object",
             "description": "Input Applications body.",
             "example": {
-                api_c.CATEGORY: "uncategorized",
+                api_c.CATEGORY: "Uncategorized",
                 api_c.NAME: "Custom Application",
                 api_c.URL: "URL_Link",
             },
