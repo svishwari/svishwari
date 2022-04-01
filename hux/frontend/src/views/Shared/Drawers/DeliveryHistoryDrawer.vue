@@ -16,8 +16,18 @@
             <icon
               type="filter"
               :size="27"
-              :color="filterApplied > 0 ? 'primary' : 'black'"
-              :variant="filterApplied > 0 ? 'lighten6' : 'darken4'"
+              :color="
+                allDeliveries.length === 0 || finalFilterApplied === 0
+                  ? 'black'
+                  : 'primary'
+              "
+              :variant="
+                allDeliveries.length == 0
+                  ? 'lighten3'
+                  : finalFilterApplied > 0
+                  ? 'lighten6'
+                  : 'darken4'
+              "
             />
             <v-badge
               v-if="filterApplied > 0"
