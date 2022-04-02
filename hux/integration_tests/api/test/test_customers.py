@@ -1,10 +1,9 @@
-"""Purpose of this file is to test customers"""
+"""Purpose of this file is to test customers."""
 import datetime
 from http import HTTPStatus
 from unittest import TestCase
 import pytest
 import requests
-from hux.integration_tests.api.test.conftest import Crud
 
 
 class TestCustomers(TestCase):
@@ -208,7 +207,8 @@ class TestCustomers(TestCase):
         )
 
         response = requests.get(
-            f"{pytest.API_URL}/{self.IDR}/datafeeds/{str(datafeeds_response.json()[0]['datafeed_id'])}",
+            f"{pytest.API_URL}/{self.IDR}/datafeeds/"
+            f"{str(datafeeds_response.json()[0]['datafeed_id'])}",
             headers=pytest.HEADERS,
         )
 
