@@ -112,7 +112,7 @@
         <v-col md="6">
           <v-card class="rounded-lg box-shadow-5" height="365">
             <v-card-title class="pb-2 pl-6 pt-5">
-              <h3 class="text-h3">Unsubscribe Rate</h3>
+              <h3 class="text-h3">Unsubscribe rate</h3>
             </v-card-title>
             <domain-overview-chart
               :chart-data="domainChartData.unsubscribeRate.data"
