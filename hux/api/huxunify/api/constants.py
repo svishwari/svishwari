@@ -384,6 +384,7 @@ STATUS_WEIGHTS = {
     db_c.STATUS_FAILED: 0,
 }
 # Download Audience Fields
+DOWNLOAD_TYPES = "download_types"
 DOWNLOAD_TYPE = "download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
@@ -1775,6 +1776,38 @@ TRUST_ID_SUPPORTED_FILTERS_STUB = [
         ],
     },
 ]
+
+PERFORMANCE_METRIC_EMAIL_STUB = {
+    "sent": 2045,
+    "hard_bounces": 197,
+    "hard_bounces_rate": 0,
+    "delivered": 1578,
+    "delivered_rate": 0,
+    "open": 0,
+    "open_rate": 0,
+    "clicks": 719,
+    "conversions": 0,
+    "click_to_open_rate": 0,
+    "unique_clicks": 704,
+    "unique_opens": 937,
+    "unsubscribe": 0,
+    "unsubscribe_rate": 0,
+}
+
+
+PERFORMANCE_METRIC_DISPLAY_STUB = {
+    "spend": 100,
+    "reach": 300,
+    "impressions": 239,
+    "conversions": 188,
+    "clicks": 55,
+    "frequency": 10,
+    "cost_per_thousand_impressions": 434,
+    "click_through_rate": 23.5,
+    "cost_per_action": 7.56,
+    "cost_per_click": 9.67,
+    "engagement_rate": 23,
+}
 
 APPLICATION_CATEGORIES = [
     "Modeling",

@@ -201,6 +201,7 @@ export default {
       svg
         .append("text")
         .attr("transform", `translate(${w - 20}, ${h + 25})`)
+        .style("fill", "#4F4F4F")
         .text("Today")
 
       d3Transition.transition()
