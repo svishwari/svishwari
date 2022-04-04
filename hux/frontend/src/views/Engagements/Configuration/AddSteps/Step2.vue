@@ -78,8 +78,18 @@
                     data-e2e="add-destination"
                     @click="openSelectDestinationsDrawer(row.item.id)"
                   >
-                    <icon type="plus" color="primary" size="12" class="mr-1" />
-                    <icon type="destination" color="primary" size="24" />
+                    <icon
+                      type="plus"
+                      :size="16"
+                      color="primary"
+                      class="mr-1 plus-icon"
+                    />
+                    <icon
+                      type="destination_button"
+                      :size="34"
+                      color="primary"
+                      class="mr-0 mb-n1"
+                    />
                   </div>
                 </template>
                 <template #hover-content>Add destination(s)</template>
