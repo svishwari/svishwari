@@ -187,6 +187,8 @@ UPDATED_BY = "updated_by"
 JOB_START_TIME = "start_time"
 JOB_END_TIME = "end_time"
 JOB_ID = "ingestion_job_id"
+INSERT_STATUS = "insert_status"
+INSERTED_IDS = "inserted_ids"
 
 # category constants
 CATEGORY = "category"
