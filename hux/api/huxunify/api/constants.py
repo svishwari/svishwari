@@ -1692,6 +1692,7 @@ ALERT_SAMPLE_RESPONSE = {
 
 # Trust ID
 TRUST_ID_ENDPOINT = "/trust_id"
+TRUST_ID_TAG = "trust-id"
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"
@@ -1699,6 +1700,13 @@ HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
 LIST_OF_SIGNALS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+SEGMENT_TYPES = [
+    "composite & signal scores",
+    "humanity attributes",
+    "reliability attributes",
+    "capability attributes",
+    "transparency attributes",
+]
 
 ALLOWED_FILTERS = "allowed_filters"
 TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
