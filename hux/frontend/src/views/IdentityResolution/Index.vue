@@ -47,7 +47,7 @@
     </template>
 
     <template>
-      <div class="d-flex">
+      <div class="d-flex height-fix">
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
@@ -468,6 +468,10 @@ $headerOffsetY: 70px;
   .filter-panel {
     pointer-events: none;
   }
+}
+.height-fix {
+  height: calc(100vh - 240px);
+  overflow: hidden;
 }
 ::-webkit-scrollbar {
   width: 5px;
