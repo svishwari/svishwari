@@ -136,12 +136,8 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-<<<<<<< HEAD
-  overflow-y: scroll !important;
-=======
   height: calc(100vh - 240px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
->>>>>>> develop
 }
 </style>
