@@ -16,13 +16,13 @@ class Caching:
 
     @staticmethod
     def check_and_return_cache(
-        cache_key: str,
+        cache_key: Union[dict, str],
         method: Callable,
         keyword_arguments: dict,
     ) -> Union[list, dict]:
         """Checks for cache to return or creates an entry
         Args:
-            cache_key(str): Cache key
+            cache_key(dict,str): Cache key
             method(Callable): Method to retrieve data if there is no cache
             keyword_arguments(dict): Keyword arguments for method
 
@@ -41,5 +41,7 @@ class Caching:
                 cache_key=cache_key,
                 cache_value=data,
             )
+        else:
+            logger.info("Cache Data available, retrieving from cache")
 
         return data
