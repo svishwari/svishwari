@@ -196,7 +196,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             ]:
                 continue
             batch_destination = get_destination_config(
-                database, *pair, engagement_id
+                database, *pair, engagement_id, username=user[api_c.USER_NAME]
             )
             batch_destination.register()
             batch_destination.submit()
@@ -310,7 +310,7 @@ class EngagementDeliverAudienceView(SwaggerView):
             if pair[0] != audience_id:
                 continue
             batch_destination = get_destination_config(
-                database, *pair, engagement_id
+                database, *pair, engagement_id, username=user[api_c.USER_NAME]
             )
             batch_destination.register()
             batch_destination.submit()
@@ -438,7 +438,7 @@ class EngagementDeliverView(SwaggerView):
             if audiences and pair[0] in audiences:
                 continue
             batch_destination = get_destination_config(
-                database, *pair, engagement_id
+                database, *pair, engagement_id, username=user[api_c.USER_NAME]
             )
             batch_destination.register()
             batch_destination.submit()

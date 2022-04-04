@@ -83,6 +83,7 @@ class TestDestinationRoutes(RouteTestCase):
             self.audience[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            t_c.TEST_USER_NAME,
         )
 
         self.metrics_1 = set_performance_metrics(
