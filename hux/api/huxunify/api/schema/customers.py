@@ -134,18 +134,29 @@ class CustomerStateSchema(Schema):
     size = Integer(required=True)
 
 
+class IDROverviewSchema(Schema):
+    """IDR Overview Schema"""
+
+    updated = DateTimeWithZ()
+    total_records = Integer(required=True)
+    match_rate = Float(required=True)
+    total_unique_ids = Integer(required=True)
+    total_individual_ids = Integer(required=True)
+    total_household_ids = Integer(required=True)
+    total_address_ids = Integer(required=True)
+    total_anonymous_ids = Integer(required=True)
+
+
 class CustomerOverviewSchema(Schema):
     """Customer Profile Overview Schema"""
 
     total_records = Integer(required=True, default=0)
-    match_rate = Float(required=True, default=0.0)
-    total_unique_ids = Integer(required=True, default=0)
-    total_unknown_ids = Integer(required=True, default=0)
-    total_anonymous_ids = Integer(required=True, default=0)
-    total_address_ids = Integer(required=True, default=0)
-    total_known_ids = Integer(required=True, default=0)
-    total_individual_ids = Integer(required=True, default=0)
-    total_household_ids = Integer(required=True, default=0)
+    # match_rate = Float(required=True, default=0.0)
+    # total_unique_ids = Integer(required=True, default=0)
+    # total_individual_ids = Integer(required=True, default=0)
+    # total_household_ids = Integer(required=True, default=0)
+    # total_address_ids = Integer(required=True, default=0)
+    # total_anonymous_ids = Integer(required=True, default=0)
     total_customers = Integer(required=True, default=0)
     total_countries = Integer(required=True, default=0)
     total_us_states = Integer(required=True, default=0)
@@ -160,18 +171,7 @@ class CustomerOverviewSchema(Schema):
     gender_women_count = Integer(required=True, default=0)
     gender_other_count = Integer(required=True, default=0)
     geo = List(Nested(CustomerStateSchema), default=[])
-
-
-class IDROverviewSchema(Schema):
-    """IDR Overview Schema"""
-
-    total_records = Integer(required=True)
-    match_rate = Float(required=True)
-    total_unique_ids = Integer(required=True)
-    total_individual_ids = Integer(required=True)
-    total_household_ids = Integer(required=True)
-    total_address_ids = Integer(required=True)
-    total_anonymous_ids = Integer(required=True)
+    idr_data = Nested(IDROverviewSchema, default={})
 
 
 class CustomersSchema(Schema):

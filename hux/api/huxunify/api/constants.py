@@ -1139,6 +1139,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
+IDR_DATA = "idr_data"
 DATA_FEEDS = "data_feeds"
 TIMESTAMP = "timestamp"
 STITCHED = "stitched"
