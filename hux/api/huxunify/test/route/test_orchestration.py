@@ -209,6 +209,7 @@ class OrchestrationRouteTest(RouteTestCase):
                 self.audiences[0][db_c.ID],
                 self.destinations[0][db_c.ID],
                 [],
+                self.user_name,
                 ObjectId(engagement_id),
             )
             for engagement_id in self.engagement_ids
@@ -233,6 +234,7 @@ class OrchestrationRouteTest(RouteTestCase):
                 self.audiences[0][db_c.ID],
                 destination[db_c.ID],
                 [],
+                self.user_name,
                 db_c.ZERO_OBJECT_ID,
             )
             for destination in self.destinations

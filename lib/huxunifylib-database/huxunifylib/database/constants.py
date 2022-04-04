@@ -31,6 +31,7 @@ AGE = "age"
 MIN = "min"
 MAX = "max"
 LINK = "link"
+USERNAME = "username"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
