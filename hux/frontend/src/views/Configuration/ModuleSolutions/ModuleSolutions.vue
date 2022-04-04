@@ -161,4 +161,7 @@ export default {
     color: var(--v-black-base) !important;
   }
 }
+::v-deep .descriptive-card .description {
+  -webkit-line-clamp: inherit !important;
+}
 </style>

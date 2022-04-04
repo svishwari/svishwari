@@ -136,7 +136,7 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 210px);
+  height: calc(100vh - 240px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
