@@ -150,7 +150,7 @@ class IDROverviewSchema(Schema):
 class CustomerOverviewSchema(Schema):
     """Customer Profile Overview Schema"""
 
-    total_records = Integer(required=True, default=0)
+    # total_records = Integer(required=True, default=0)
     # match_rate = Float(required=True, default=0.0)
     # total_unique_ids = Integer(required=True, default=0)
     # total_individual_ids = Integer(required=True, default=0)
@@ -171,7 +171,7 @@ class CustomerOverviewSchema(Schema):
     gender_women_count = Integer(required=True, default=0)
     gender_other_count = Integer(required=True, default=0)
     geo = List(Nested(CustomerStateSchema), default=[])
-    idr_data = Nested(IDROverviewSchema, default={})
+    idr_insights = Nested(IDROverviewSchema, default={})
 
 
 class CustomersSchema(Schema):

@@ -137,7 +137,7 @@ class CustomerOverview(SwaggerView):
             {"token": token_response[0]},
         )
 
-        customers_overview[api_c.IDR_DATA] = Caching.check_and_return_cache(
+        customers_overview[api_c.IDR_INSIGHTS] = Caching.check_and_return_cache(
             f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}",
             get_identity_overview,
             {"token": token_response[0]},
@@ -254,7 +254,7 @@ class CustomerPostOverview(SwaggerView):
             {"token": token_response[0]},
         )
 
-        customers_overview[api_c.IDR_DATA] = Caching.check_and_return_cache(
+        customers_overview[api_c.IDR_INSIGHTS] = Caching.check_and_return_cache(
             "".join(
                 [f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}"]
                 + list(generate_cache_key_string(filters)),

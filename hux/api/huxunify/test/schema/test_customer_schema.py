@@ -115,7 +115,6 @@ class CustomerSchemaTest(TestCase):
         """Test CustomerOverviewSchema."""
 
         customer = {
-            api_c.TOTAL_RECORDS: 10,
             api_c.TOTAL_CUSTOMERS: 105080,
             api_c.TOTAL_COUNTRIES: 1,
             api_c.TOTAL_STATES: 42,

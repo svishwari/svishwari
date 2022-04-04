@@ -138,7 +138,7 @@ class TestCustomersOverview(RouteTestCase):
 
         expected_response = t_c.CUSTOMER_INSIGHT_RESPONSE[api_c.BODY].copy()
 
-        expected_response[api_c.IDR_DATA] = t_c.IDENTITY_INSIGHT_RESPONSE[
+        expected_response[api_c.IDR_INSIGHTS] = t_c.IDENTITY_INSIGHT_RESPONSE[
             api_c.BODY
         ]
         expected_response[api_c.GEOGRAPHICAL] = get_geographic_customers_data(
