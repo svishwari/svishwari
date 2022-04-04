@@ -46,17 +46,11 @@
           <v-btn
             text
             color="primary"
-            class="text-body-1 ml-n3 mt-n2"
+            class="text-body-1 mt-n2"
             data-e2e="deliver-all"
             @click="$emit('deliverEngagement', $event)"
           >
-            <icon
-              class="mr-1"
-              type="deliver_2"
-              :size="37"
-              :color="'primary'"
-              :variant="'base'"
-            />
+            <icon type="deliver_2" :size="37" color="primary" class="mr-n3" />
             <span class="deliverAll"> Deliver all </span>
           </v-btn>
         </div>
@@ -251,6 +245,8 @@ export default {
 }
 .deliverAll {
   margin-top: 2px;
+  min-width: 7rem;
+  height: 2rem;
 }
 .eng-dash-no-aud-container {
   padding: 32px 55px 24px 55px;
