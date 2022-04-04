@@ -316,7 +316,7 @@ def delete_favorite_from_all_users(
     favorites_list = f"{db_c.USER_FAVORITES}.{component_name}"
 
     try:
-        return collection.update_many(
+        collection.update_many(
             {
                 favorites_list: {"$eq": component_id},
             },
@@ -328,10 +328,11 @@ def delete_favorite_from_all_users(
             },
             upsert=False,
         )
+        return True
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return None
+    return False
 
 
 @retry(
@@ -383,24 +384,11 @@ def manage_user_favorites(
     id_filter = {db_c.ID: component_id}
 
     try:
-        if component_name == db_c.AUDIENCES:
-            # check audience first
-            audience_found = get_document(
-                database, db_c.AUDIENCES_COLLECTION, id_filter
-            )
-            if not audience_found:
-                # try lookalike
-                if get_document(
-                    database, db_c.LOOKALIKE_AUDIENCE_COLLECTION, id_filter
-                ):
-                    component_name = db_c.LOOKALIKE
-                else:
-                    raise de.InvalidID(component_id)
-        else:
-            if not delete_flag and not get_document(
-                database, component_collection[component_name], id_filter
-            ):
-                raise de.InvalidID(component_id)
+        # if adding and the resource DNE then raise error
+        if not delete_flag and not get_document(
+            database, component_collection[component_name], id_filter
+        ):
+            raise de.InvalidID(component_id)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
