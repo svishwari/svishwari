@@ -297,6 +297,47 @@ def update_user(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def delete_favorite_from_all_users(
+    database: DatabaseClient, component_name: str, component_id: ObjectId
+) -> bool:
+    """Deletes the an id from all lists in the favorites for a user
+
+    Args:
+        database (DatabaseClient): A database client.
+        component_name (str):
+        component_id (ObjectId): MongoDB ID of the input component.
+
+    Returns:
+        bool: Indicates success or failure.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+    component_name = component_name.lower()
+    favorites_list = f"{db_c.USER_FAVORITES}.{component_name}"
+
+    try:
+        return collection.update_many(
+            {
+                favorites_list: {"$eq": component_id},
+            },
+            {
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                },
+                "$pull": {favorites_list: component_id},
+            },
+            upsert=False,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def manage_user_favorites(
     database: DatabaseClient,
     okta_id: str,
