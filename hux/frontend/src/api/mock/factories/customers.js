@@ -156,15 +156,20 @@ export const customersOverview = {
   total_cities: 14659,
   total_countries: 1,
   total_customers: 23905153,
-  total_household_ids: 33311636,
-  total_individual_ids: 54080052,
   total_known_ids: 15270332,
-  total_records: 20372628,
-  total_unique_ids: 73374722,
   total_unknown_ids: 0,
   total_us_states: 52,
-  updated: faker.date.recent(7),
   geo: mapData,
+  idr_data: {
+    updated: faker.date.recent(7),
+    total_records: 273326,
+    match_rate: 0.87,
+    total_unique_ids: 49974,
+    total_individual_ids: 54080052,
+    total_household_ids: 33311636,
+    total_address_ids: 1614,
+    total_anonymous_ids: 6326,
+  },
 }
 
 /**
