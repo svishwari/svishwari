@@ -312,5 +312,5 @@ class TestSurveyMetricsManagement(unittest.TestCase):
             database=self.database, survey_responses_docs=sample_responses_list
         )
 
-        self.assertTrue(insert_result["insert_status"])
-        self.assertIsNotNone(insert_result["inserted_ids"])
+        self.assertTrue(insert_result[db_c.INSERT_STATUS])
+        self.assertIsNotNone(insert_result[db_c.INSERTED_IDS])

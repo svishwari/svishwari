@@ -66,13 +66,6 @@ def set_survey_response(
                 db_c.SURVEY_RESPONSE_DATE: response_date,
             }
         ).inserted_id
-        collection.create_index(
-            [
-                (db_c.S_TYPE_SURVEY_CUSTOMER_ID, pymongo.ASCENDING),
-                (db_c.DELIVERY_PLATFORM_ID, pymongo.ASCENDING),
-                (db_c.SURVEY_ID, pymongo.ASCENDING),
-            ]
-        )
         if metrics_id:
             return collection.find_one({db_c.ID: metrics_id})
     except pymongo.errors.OperationFailure as exc:
@@ -90,7 +83,7 @@ def set_survey_responses_bulk(
     database: DatabaseClient,
     survey_responses_docs: list,
 ) -> dict:
-    """Helper to store bulk suvey responses.
+    """Method to store bulk survey responses.
 
     Args:
         database (DatabaseClient): A database client.
@@ -104,22 +97,15 @@ def set_survey_responses_bulk(
     platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
 
-    insert_result = {"insert_status": False}
+    insert_result = {db_c.INSERT_STATUS: False}
 
     try:
         result = collection.insert_many(survey_responses_docs, ordered=True)
 
         if result.acknowledged:
-            insert_result["insert_status"] = True
-            insert_result["inserted_ids"] = result.inserted_ids
+            insert_result[db_c.INSERT_STATUS] = True
+            insert_result[db_c.INSERTED_IDS] = result.inserted_ids
 
-        collection.create_index(
-            [
-                (db_c.S_TYPE_SURVEY_CUSTOMER_ID, pymongo.ASCENDING),
-                (db_c.DELIVERY_PLATFORM_ID, pymongo.ASCENDING),
-                (db_c.SURVEY_ID, pymongo.ASCENDING),
-            ]
-        )
     except pymongo.errors.BulkWriteError as exc:
         for err in exc.details["writeErrors"]:
             if err["code"] == db_c.DUPLICATE_ERR_CODE:
