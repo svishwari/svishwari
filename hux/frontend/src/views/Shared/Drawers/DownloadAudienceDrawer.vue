@@ -156,10 +156,6 @@ export default {
       selectedTypes: [],
     }
   },
-  updated() {
-      this.checkboxData[0].selected = false
-      this.checkboxData[1].forEach(ch => ch.selected = false)
-  },
   computed: {
     ...mapGetters({
       getPiiAccess: "users/getPiiAccess",
@@ -171,11 +167,14 @@ export default {
   watch: {
     toggle(value) {
       this.localToggle = value
-
     },
     localToggle(value) {
       this.$emit("onToggle", value)
     },
+  },
+  updated() {
+    this.checkboxData[0].selected = false
+    this.checkboxData[1].forEach((ch) => (ch.selected = false))
   },
   methods: {
     ...mapActions({

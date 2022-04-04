@@ -713,7 +713,7 @@ export const defineRoutes = (server) => {
     demographicsData.demo = mapData
     return demographicsData
   })
-  server.get("/audiences/:id/download", async (schema, request) => {
+  server.get("/audiences/:id/download", async () => {
     // Introduced a delay of 15 seconds to
     // replicate the API delay in processing the BLOB.
     await new Promise((r) => setTimeout(r, 15000))
