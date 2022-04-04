@@ -160,6 +160,7 @@ export const customersOverview = {
   total_unknown_ids: 0,
   total_us_states: 52,
   geo: mapData,
+  // IDR Insight drawer data
   idr_data: {
     updated: faker.date.recent(7),
     total_records: 273326,
