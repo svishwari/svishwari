@@ -223,10 +223,9 @@ export default {
     async getCustomerEvent() {
       this.loadingCustomerEvents = true
       try {
-        var res = this.getEvents(this.id)
-        if (!res) {
-          this.customerEventsError = true
-        }
+        await this.getEvents(this.id)
+      } catch (error) {
+        this.customerEventsError = true
       } finally {
         this.loadingCustomerEvents = false
       }
