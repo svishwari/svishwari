@@ -924,7 +924,7 @@ export default {
       } else {
         await this.loadAudienceInsights()
       }
-    }, 
+    },
 
     /**
      * Formatting the values to the desired format using predefined application filters.
