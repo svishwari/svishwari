@@ -397,7 +397,7 @@ export default {
             "transform",
             `translate(${this.finalXCoordinate},${this.finalYCoordinate})`
           )
-
+          // Tooltip position inversion in case of extreme corner
           this.toolTipStyle.left =
             this.finalXCoordinate > maxRightLimit ? "-98px" : "25px"
           this.showTooltip = true
