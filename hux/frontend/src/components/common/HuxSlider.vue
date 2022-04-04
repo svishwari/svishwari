@@ -4,7 +4,7 @@
       v-if="isRangeSlider"
       v-model="localValue"
       class="hux-range-slider"
-      :class="readMode ? 'readmode-hux-range-slider' : 'hux-range-slider'"
+      :class="readOnly ? 'readmode-hux-range-slider' : 'hux-range-slider'"
       :max="max"
       :min="min"
       :step="step"
@@ -246,11 +246,11 @@ export default {
         width: 16px;
         height: 16px;
         background-color: var(--v-white-base) !important;
-        border: 1px solid var(--v-secondary-lighten1) !important;
+        border: 1px solid var(--v-black-lighten3) !important;
         box-sizing: border-box;
         box-shadow: 0px 1px 5px rgb(0 0 0 / 15%);
         border-radius: 100px;
-        border-color: var(--v-secondary-lighten1) !important;
+        border-color: var(--v-black-lighten3) !important;
         &:before {
           content: none;
         }
