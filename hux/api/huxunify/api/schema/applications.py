@@ -6,7 +6,7 @@ from marshmallow.validate import OneOf
 
 from huxunifylib.database import constants as db_c
 
-from huxunify.api.constants import APPLICATION_CATEGORIES
+from huxunify.api.constants import APPLICATION_CATEGORIES, UNCATEGORIZED
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api.schema.utils import (
     validate_object_id,
@@ -28,7 +28,7 @@ class ApplicationsGETSchema(Schema):
     category = Str()
     name = Str()
     url = Str()
-    type = Str(default="uncategorized")
+    type = Str(default=UNCATEGORIZED)
     is_added = Boolean()
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)

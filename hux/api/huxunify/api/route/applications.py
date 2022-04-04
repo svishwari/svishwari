@@ -133,7 +133,10 @@ class ApplicationGetView(SwaggerView):
                 {
                     db_c.ENABLED: True,
                     db_c.CATEGORY: {
-                        "$nin": ["Uncategorized", "uncategorized"]
+                        "$nin": [
+                            api_c.UNCATEGORIZED.capitalize(),
+                            api_c.UNCATEGORIZED,
+                        ]
                     },
                 },
             ).get(db_c.DOCUMENTS)
@@ -162,7 +165,7 @@ class ApplicationsPostView(SwaggerView):
             "type": "object",
             "description": "Input Applications body.",
             "example": {
-                api_c.CATEGORY: "Uncategorized",
+                api_c.CATEGORY: api_c.UNCATEGORIZED.capitalize(),
                 api_c.NAME: "Custom Application",
                 api_c.URL: "URL_Link",
             },
