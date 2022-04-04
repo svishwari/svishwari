@@ -33,7 +33,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
     <template>
-      <div class="d-flex">
+      <div class="d-flex height-fix">
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
@@ -529,7 +529,7 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 200px);
+  height: calc(100vh - 240px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
@@ -551,5 +551,9 @@ export default {
   height: 60px;
   align-items: center;
   display: flex;
+}
+.height-fix {
+  height: calc(100vh - 240px);
+  overflow: hidden;
 }
 </style>

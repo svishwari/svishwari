@@ -38,7 +38,7 @@
             <span v-if="item.type" class="pr-2">
               <logo :type="item.type" :size="21" />
             </span>
-            <span class="text-h6">{{ item.name }}</span>
+            <span class="text-body-1">{{ item.name }}</span>
           </div>
         </div>
       </div>
