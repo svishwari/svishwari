@@ -304,7 +304,7 @@ def delete_favorite_from_all_users(
 
     Args:
         database (DatabaseClient): A database client.
-        component_name (str):
+        component_name (str): name of the component.
         component_id (ObjectId): MongoDB ID of the input component.
 
     Returns:
@@ -351,8 +351,7 @@ def manage_user_favorites(
     Args:
         database (DatabaseClient): A database client.
         okta_id (str): Okta ID of a user doc.
-        component_name (ObjectId): name of the component (i.e campaigns,
-            destinations, etc.).
+        component_name (ObjectId): name of the component.
         component_id (ObjectId): MongoDB ID of the input component.
         delete_flag (bool): Boolean that specifies to add/remove a favorite
             component, defaults to false.
