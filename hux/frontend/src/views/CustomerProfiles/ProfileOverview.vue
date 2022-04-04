@@ -153,7 +153,7 @@ export default {
         {
           id: 2,
           title: "Match confidence",
-          value: this.profile["match_confidence"],
+          value: this.profile["match_confidence"] || "-",
           format: "slider",
           hoverTooltip:
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",

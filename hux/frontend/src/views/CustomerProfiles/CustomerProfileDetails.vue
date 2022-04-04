@@ -176,7 +176,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      customer: "customers/single",
+      customer: "customers/singles",
       events: "customers/getEvents",
     }),
 
@@ -185,24 +185,12 @@ export default {
     },
 
     customerProfile() {
-      var res
+      let res = {}
       try {
         res = this.customer(this.$route.params.id)
       } catch (error) {
-        res = {
-          overview: {
-            first_name: "-",
-            last_name: "-",
-            since: "-",
-            match_confidence: "-",
-            conversion_time: "-",
-            last_click: "-",
-            last_purchase: "-",
-            last_email_opened: "-",
-          },
-        }
+        res = { overview: {} }
       }
-      console.log("res: ", res)
       return res
     },
 
