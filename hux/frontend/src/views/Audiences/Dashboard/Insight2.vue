@@ -205,7 +205,7 @@
           </metric-card>
         </div>
       </v-card>
-      <v-tabs v-model="tabOption" class="tabs-group mt-8">
+      <v-tabs v-model="tabOption" class="mt-8">
         <v-tabs-slider color="primary"></v-tabs-slider>
         <div class="d-flex">
           <v-tab
@@ -300,7 +300,7 @@
                   Digital advertising
                 </v-card-title>
                 <v-card-text v-if="showAdvertising">
-                  <div class="match-rates mx-2 my-1">
+                  <div class="mx-2 my-1">
                     <matchrate
                       :match-rate="
                         audienceData.digital_advertising &&
@@ -1312,14 +1312,10 @@ export default {
     background: transparent !important;
   }
 
-  .tabs-group {
-  }
   .tabs-item {
     .delivery-tab {
       .digital-adv {
         height: auto !important;
-        .match-rates {
-        }
         .lookalikes {
           border-radius: 12px !important;
         }

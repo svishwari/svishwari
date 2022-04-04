@@ -173,7 +173,7 @@ const actions = {
       if (response.status == 200) {
         handleSuccess("Audience data downloaded successfully", response.status)
       }
-      return response.data
+      return response
     } catch (error) {
       handleError(error)
       throw error

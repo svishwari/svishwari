@@ -11,7 +11,7 @@
             <span>Download a generic .csv file of this audience.</span>
           </div>
           <v-checkbox
-            v-model="selectedGeneral"
+            v-model="checkboxData[0].selected"
             color="primary lighten-6"
             class="text--base-1 decrease-margin"
             @change="checkboxChange(checkboxData[0].type)"
@@ -36,7 +36,7 @@
         <v-checkbox
           v-for="data in checkboxData[1]"
           :key="data.id"
-          v-model="selectedGeneral"
+          v-model="data.selected"
           multiple
           color="primary lighten-6"
           class="text--base-1 decrease-margin"
@@ -45,7 +45,7 @@
           <template v-slot:label>
             <span class="body-1 color-darken">
               .csv for
-              <logo :type="data.type" size="18" class="mb-n1" />
+              <logo :type="data.type" :size="18" class="mb-n1" />
               {{ data.title }}
             </span>
           </template>
@@ -102,13 +102,13 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import { saveFile } from "@/utils"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 import Logo from "@/components/common/Logo.vue"
 import Icon from "@/components/common/Icon.vue"
 export default {
   name: "DownloadAudienceDrawer",
-
   components: {
     Drawer,
     HuxButton,
@@ -127,7 +127,6 @@ export default {
       default: () => {},
     },
   },
-
   data() {
     return {
       localToggle: false,
@@ -137,24 +136,30 @@ export default {
         {
           title: ".csv",
           type: "generic_ads",
+          selected: false,
         },
         [
           {
             id: 0,
             title: "Amazon",
-            type: "amazon-ads",
+            type: "amazon_ads",
+            selected: true,
           },
           {
             id: 1,
             title: "Google",
-            type: "google-ads",
+            type: "google_ads",
+            selected: false,
           },
         ],
       ],
       selectedTypes: [],
     }
   },
-
+  updated() {
+      this.checkboxData[0].selected = false
+      this.checkboxData[1].forEach(ch => ch.selected = false)
+  },
   computed: {
     ...mapGetters({
       getPiiAccess: "users/getPiiAccess",
@@ -163,39 +168,42 @@ export default {
       return this.getPiiAccess
     },
   },
-
   watch: {
     toggle(value) {
       this.localToggle = value
-    },
 
+    },
     localToggle(value) {
       this.$emit("onToggle", value)
     },
   },
-
   methods: {
     ...mapActions({
       downloadAudienceData: "audiences/downloadAudienceData",
       setAlert: "alerts/setAlert",
     }),
     async download() {
-      this.closeDrawer()
       if (this.selectedTypes.length > 0) {
+        let fileTypesQuery = ""
+        this.selectedTypes.forEach((data, index) => {
+          fileTypesQuery += index !== 0 ? "&" : ""
+          fileTypesQuery += "download_types=" + data
+        })
         this.setAlert({
           type: "pending",
           message: `Download for the '${this.audienceData.name}' has started in background, stay tuned.`,
         })
-        await this.downloadAudienceData({
+        this.closeDrawer()
+        const fileBlob = await this.downloadAudienceData({
           id: this.audienceData.id,
-          type: this.selectedTypes,
+          type: fileTypesQuery,
         })
+        saveFile(fileBlob)
       }
-      this.selectedTypes = []
-      this.selectedGeneral = false
     },
     closeDrawer() {
       this.localToggle = false
+      this.selectedTypes = []
     },
     checkboxChange(ads_type) {
       this.selectedGeneral = true
