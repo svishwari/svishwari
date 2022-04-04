@@ -155,6 +155,7 @@ export default {
     toggleClass: function (event) {
       if (!event.currentTarget.classList.contains("active")) {
         this.isActive = !this.isActive
+       this.$emit("isReccrActive", this.isActive)
       }
       if (this.isActive) {
         this.value.delivery_schedule.end_date = ""

@@ -33,7 +33,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
     <template>
-      <div class="d-flex height-fix">
+      <div class="d-flex">
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
@@ -546,14 +546,9 @@ export default {
 ::v-deep .wrapper {
   width: 320px !important;
 }
-
 .empty-text.empty-text {
   height: 60px;
   align-items: center;
   display: flex;
-}
-.height-fix {
-  height: calc(100vh - 240px);
-  overflow: hidden;
 }
 </style>

@@ -72,8 +72,8 @@
       <step-2 v-model="data" />
     </div>
 
-    <div v-if="currentStep === 3">
-      <step-3 v-model="data" />
+    <div v-if="currentStep === 3" >
+      <step-3 v-model="data" @isReccrActive="recurringActive" />
     </div>
 
     <hux-footer>
@@ -125,7 +125,7 @@
           Create
         </hux-button>
         <hux-button
-          v-if="currentStep == 3"
+          v-if="currentStep == 3 && hideCreateDeliver"
           is-tile
           color="primary"
           height="40"
@@ -200,6 +200,7 @@ export default {
       currentStep: 1,
       navigateTo: false,
       flagForModal: false,
+      hideCreateDeliver: true
     }
   },
 
@@ -239,6 +240,9 @@ export default {
 
     nextStep() {
       this.currentStep = this.currentStep + 1
+    },
+    recurringActive(value) {
+      this.hideCreateDeliver = value
     },
 
     payload() {
