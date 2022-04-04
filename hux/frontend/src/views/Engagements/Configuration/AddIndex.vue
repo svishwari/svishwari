@@ -72,7 +72,7 @@
       <step-2 v-model="data" />
     </div>
 
-    <div v-if="currentStep === 3" >
+    <div v-if="currentStep === 3">
       <step-3 v-model="data" @isReccrActive="recurringActive" />
     </div>
 
@@ -200,7 +200,7 @@ export default {
       currentStep: 1,
       navigateTo: false,
       flagForModal: false,
-      hideCreateDeliver: true
+      hideCreateDeliver: true,
     }
   },
 
