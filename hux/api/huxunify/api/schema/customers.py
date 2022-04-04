@@ -150,13 +150,6 @@ class IDROverviewSchema(Schema):
 class CustomerOverviewSchema(Schema):
     """Customer Profile Overview Schema"""
 
-    # total_records = Integer(required=True, default=0)
-    # match_rate = Float(required=True, default=0.0)
-    # total_unique_ids = Integer(required=True, default=0)
-    # total_individual_ids = Integer(required=True, default=0)
-    # total_household_ids = Integer(required=True, default=0)
-    # total_address_ids = Integer(required=True, default=0)
-    # total_anonymous_ids = Integer(required=True, default=0)
     total_customers = Integer(required=True, default=0)
     total_countries = Integer(required=True, default=0)
     total_us_states = Integer(required=True, default=0)
