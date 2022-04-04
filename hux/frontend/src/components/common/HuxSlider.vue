@@ -93,6 +93,7 @@ export default {
       default: false,
     },
   },
+
   data() {
     return {
       currentValue: this.isRangeSlider
