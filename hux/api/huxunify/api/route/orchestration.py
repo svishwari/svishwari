@@ -1992,7 +1992,7 @@ class DeleteAudienceView(SwaggerView):
         if audience:
             # remove the audience from all users favorites
             delete_favorite_from_all_users(
-                get_db_client(),
+                database,
                 component_name=db_c.AUDIENCES,
                 component_id=ObjectId(audience_id),
             )
