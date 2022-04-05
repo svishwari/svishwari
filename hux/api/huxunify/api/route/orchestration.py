@@ -1213,7 +1213,10 @@ class AudiencePostView(SwaggerView):
                     if pair[0] != audience_doc[db_c.ID]:
                         continue
                     batch_destination = get_destination_config(
-                        database, engagement[db_c.ID], *pair
+                        database,
+                        engagement[db_c.ID],
+                        *pair,
+                        username=user[api_c.USER_NAME],
                     )
                     batch_destination.register()
                     batch_destination.submit()

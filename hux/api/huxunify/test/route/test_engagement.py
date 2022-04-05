@@ -153,6 +153,7 @@ class TestEngagementMetricsDisplayAds(RouteTestCase):
                     api_c.AD_SET_NAME: self.ad_set_name,
                 }
             ],
+            t_c.TEST_USER_NAME,
             self.engagement_id,
         )
 
@@ -333,6 +334,7 @@ class TestEngagementMetricsEmail(TestCase):
                     db_c.AUDIENCE_ID: self.audience_id,
                 }
             ],
+            t_c.TEST_USER_NAME,
             self.engagement_id_sfmc,
         )
 
@@ -548,6 +550,7 @@ class TestEngagementPerformanceDownload(TestCase):
                     db_c.AUDIENCE_ID: self.audience_id,
                 }
             ],
+            t_c.TEST_USER_NAME,
             self.engagement_id_sfmc,
         )
 

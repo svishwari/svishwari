@@ -1139,6 +1139,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
+IDR_INSIGHTS = "idr_insights"
 DATA_FEEDS = "data_feeds"
 TIMESTAMP = "timestamp"
 STITCHED = "stitched"
@@ -1808,3 +1809,12 @@ PERFORMANCE_METRIC_DISPLAY_STUB = {
     "cost_per_click": 9.67,
     "engagement_rate": 23,
 }
+
+APPLICATION_CATEGORIES = [
+    "Modeling",
+    "Reporting",
+    "Data Processing",
+    "Data Storage",
+    "Monitoring",
+    "Uncategorized",
+]

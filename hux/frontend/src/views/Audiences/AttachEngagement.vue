@@ -2,20 +2,8 @@
   <drawer v-model="localDrawer" :loading="loading" @onClose="goToStep1()">
     <template #header-left>
       <div class="d-flex align-center">
-        <icon
-          v-if="viewStep == '1'"
-          type="engagements"
-          :size="18"
-          color="black-darken4"
-        />
-        <h3
-          v-if="viewStep == '1'"
-          class="text-h3 ml-2 black--text text--darken-4"
-        >
-          Add to an engagement
-        </h3>
-        <h3 v-else class="text-h3 ml-2 black--text text--darken-4">
-          Add a new engagement
+        <h3 class="text-h2 ml-2 black--text text--darken-4">
+          Add this audience to an engagement
         </h3>
       </div>
     </template>
@@ -53,27 +41,22 @@
               </v-row>
             </div>
             <div v-else class="ma-1">
-              <h6 class="mb-6 text-h6 black--text text--darken-4">
-                Select an existing engagement or create a new one. You are
-                required to have at least one selected.
-              </h6>
               <huxButton
                 variant="primary base"
                 icon-color="white"
                 icon-variant="base"
                 icon="plus"
                 size="small"
-                is-custom-icon
                 class="ma-2 caption"
                 is-tile
                 height="40"
                 @click="goToAddNewEngagement()"
               >
-                New engagement
+                Create a new engagement
               </huxButton>
               <div class="engagement-list-wrap mt-6">
                 <div>
-                  <span class="text-caption">Engagement name</span>
+                  <span class="text-caption ml-2">Engagement name</span>
                   <v-icon
                     v-if="showSortIcon"
                     :class="{ 'rotate-icon-180': toggleSortIcon }"
@@ -129,9 +112,10 @@
           </v-stepper-content>
           <v-stepper-content step="2">
             <div class="new-engament-wrap content-section">
-              <h6 class="mb-8 text-h6 black--text text--darken-4">
-                Build a new engagement to see performance information on this
-                audience.
+              <h6 class="mb-8 text-body-1 black--text text--darken-4">
+                Add this audience to a new engagement. Tell us a little bit
+                about this engagement. What is the name of it? What is the
+                purpose?
               </h6>
               <v-form ref="newEngagementRef" v-model="newEngagementValid">
                 <text-field
@@ -150,45 +134,9 @@
                   height="40"
                 />
                 <div class="mb-2">
-                  <span class="black--text text--darken-4 text-caption">
-                    Delivery schedule
+                  <span class="text-body-1 black--text text--darken-4">
+                    Set up the delivery schedule
                   </span>
-                  <v-menu max-width="240" open-on-hover offset-y>
-                    <template #activator="{ on }">
-                      <v-icon
-                        color="primary"
-                        :size="8"
-                        class="ml-1 mb-1"
-                        v-on="on"
-                      >
-                        mdi-information-outline
-                      </v-icon>
-                    </template>
-                    <template #default>
-                      <div class="px-4 py-2 white">
-                        <div class="black--text text--darken-4 text-caption">
-                          Manual delivery
-                        </div>
-                        <div
-                          class="black--text text--darken-1 text-caption mt-1"
-                        >
-                          Choose this option if you want the engagement
-                          delivered immediately or at a future date and time.
-                        </div>
-                        <div
-                          class="black--text text--darken-4 text-caption mt-3"
-                        >
-                          Recurring delivery
-                        </div>
-                        <div
-                          class="black--text text--darken-1 text-caption mt-1"
-                        >
-                          Choose this option if you want the engagement
-                          delivered on a specific recurring basis you selected.
-                        </div>
-                      </div>
-                    </template>
-                  </v-menu>
                 </div>
                 <div class="d-flex">
                   <div
@@ -229,7 +177,8 @@
                       recurring
                       py-5
                       px-5
-                      ml-2
+                      ml-5
+                      mb-1
                     "
                     :class="[!isActive ? 'active' : 'box-shadow-1']"
                     @click="toggleClass($event)"
@@ -723,7 +672,7 @@ export default {
 .manual,
 .recurring {
   height: 175px;
-  width: 260px;
+  width: 255px;
   border-radius: 12px;
 }
 .manual.active,
@@ -755,10 +704,6 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--v-black-lighten3);
 }
-.content-section {
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-}
 ::v-deep .edit-schedule-wrapper {
   .periodicity-select {
     width: 207px !important;
@@ -771,5 +716,8 @@ export default {
   .period-select {
     width: 100px !important;
   }
+}
+::v-deep .new-engament-wrap {
+  height: calc(100% - 150px) !important;
 }
 </style>
