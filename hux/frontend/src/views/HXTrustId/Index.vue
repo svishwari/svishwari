@@ -268,7 +268,6 @@ export default {
       addSegmentData: addSegmentData,
       segmentScores: segmentScores,
       overviewData: overviewData,
-      segmentScores: segmentScores,
       borderColorArr: [
         {
           color: "primary",
