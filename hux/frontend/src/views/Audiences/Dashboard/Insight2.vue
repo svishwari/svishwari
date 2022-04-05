@@ -1426,4 +1426,7 @@ export default {
 .icon_grey {
   margin-top: 10px;
 }
+::v-deep .v-card--link .v-chip {
+  cursor: auto !important;
+}
 </style>
