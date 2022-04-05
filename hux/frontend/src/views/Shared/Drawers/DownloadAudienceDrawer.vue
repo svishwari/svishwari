@@ -11,9 +11,10 @@
             <span>Download a generic .csv file of this audience.</span>
           </div>
           <v-checkbox
-            v-model="selectedGeneral"
+            v-model="checkboxData[0].selected"
             color="primary lighten-6"
             class="text--base-1 decrease-margin"
+            @change="checkboxChange(checkboxData[0].type)"
           >
             <template v-slot:label>
               <span class="body-1 color-darken">
@@ -35,15 +36,16 @@
         <v-checkbox
           v-for="data in checkboxData[1]"
           :key="data.id"
-          v-model="selectedHashed[data.id]"
+          v-model="data.selected"
           multiple
           color="primary lighten-6"
           class="text--base-1 decrease-margin"
+          @change="checkboxChange(data.type)"
         >
           <template v-slot:label>
             <span class="body-1 color-darken">
               .csv for
-              <logo :type="data.type" size="18" class="mb-n1" />
+              <logo :type="data.type" :size="18" class="mb-n1" />
               {{ data.title }}
             </span>
           </template>
@@ -89,7 +91,8 @@
         variant="primary"
         size="large"
         :is-tile="true"
-        :is-disabled="false"
+        :is-disabled="selectedTypes.length == 0"
+        @click="download"
       >
         Download
       </hux-button>
@@ -99,59 +102,60 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import { saveFile } from "@/utils"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 import Logo from "@/components/common/Logo.vue"
 import Icon from "@/components/common/Icon.vue"
 export default {
   name: "DownloadAudienceDrawer",
-
   components: {
     Drawer,
     HuxButton,
     Logo,
     Icon,
   },
-
   props: {
-    value: {
-      type: Object,
-      required: true,
-    },
-
     toggle: {
       type: Boolean,
       required: false,
       default: false,
     },
+    audienceData: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
   },
-
   data() {
     return {
       localToggle: false,
       loading: false,
+      selectedGeneral: false,
       checkboxData: [
         {
           title: ".csv",
+          type: "generic_ads",
+          selected: false,
         },
         [
           {
             id: 0,
             title: "Amazon",
-            type: "amazon-advertising",
+            type: "amazon_ads",
+            selected: true,
           },
           {
             id: 1,
             title: "Google",
-            type: "google-ads",
+            type: "google_ads",
+            selected: false,
           },
         ],
       ],
-      selectedHashed: [],
-      selectedGeneral: false,
+      selectedTypes: [],
     }
   },
-
   computed: {
     ...mapGetters({
       getPiiAccess: "users/getPiiAccess",
@@ -160,22 +164,53 @@ export default {
       return this.getPiiAccess
     },
   },
-
   watch: {
     toggle(value) {
       this.localToggle = value
     },
-
     localToggle(value) {
       this.$emit("onToggle", value)
     },
   },
-
+  updated() {
+    this.checkboxData[0].selected = false
+    this.checkboxData[1].forEach((ch) => (ch.selected = false))
+  },
   methods: {
-    ...mapActions({}),
+    ...mapActions({
+      downloadAudienceData: "audiences/downloadAudienceData",
+      setAlert: "alerts/setAlert",
+    }),
+    async download() {
+      if (this.selectedTypes.length > 0) {
+        let fileTypesQuery = ""
+        this.selectedTypes.forEach((data, index) => {
+          fileTypesQuery += index !== 0 ? "&" : ""
+          fileTypesQuery += "download_types=" + data
+        })
+        this.setAlert({
+          type: "pending",
+          message: `Download for the '${this.audienceData.name}' has started in background, stay tuned.`,
+        })
+        this.closeDrawer()
+        const fileBlob = await this.downloadAudienceData({
+          id: this.audienceData.id,
+          type: fileTypesQuery,
+        })
+        saveFile(fileBlob)
+      }
+    },
     closeDrawer() {
       this.localToggle = false
-      this.localSelectedAudiences = this.value
+      this.selectedTypes = []
+    },
+    checkboxChange(ads_type) {
+      this.selectedGeneral = true
+      if (this.selectedTypes.indexOf(ads_type) == -1) {
+        this.selectedTypes.push(ads_type)
+      } else {
+        this.selectedTypes = this.selectedTypes.filter((em) => em !== ads_type)
+      }
     },
   },
 }
