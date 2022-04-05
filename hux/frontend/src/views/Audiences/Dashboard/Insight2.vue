@@ -205,7 +205,7 @@
           </metric-card>
         </div>
       </v-card>
-      <v-tabs v-model="tabOption" class="tabs-group mt-8">
+      <v-tabs v-model="tabOption" class="mt-8">
         <v-tabs-slider color="primary"></v-tabs-slider>
         <div class="d-flex">
           <v-tab
@@ -300,7 +300,7 @@
                   Digital advertising
                 </v-card-title>
                 <v-card-text v-if="showAdvertising">
-                  <div class="match-rates mx-2 my-1">
+                  <div class="mx-2 my-1">
                     <matchrate
                       :match-rate="
                         audienceData.digital_advertising &&
@@ -434,7 +434,7 @@
     />
 
     <download-audience-drawer
-      :value="toggleDownloadAudienceDrawer"
+      :audience-data="audience"
       :toggle="toggleDownloadAudienceDrawer"
       @onToggle="(isToggled) => (toggleDownloadAudienceDrawer = isToggled)"
     />
@@ -532,28 +532,6 @@ export default {
           icon: "lookalike",
           statusSize: 21,
           size: 12,
-        },
-      ],
-      downloadOptions: [
-        {
-          id: "c2b0bf2d9d48",
-          name: ".csv",
-          type: "amazon_ads",
-          title: "Amazon Advertising CSV",
-          icon: "amazon-outline",
-        },
-        {
-          id: "5e112c22f1b1",
-          name: ".csv",
-          type: "google_ads",
-          title: "Google Ads CSV",
-          icon: "google-ads-outline",
-        },
-        {
-          id: "2349d4353b9f",
-          title: "Generic CSV",
-          name: ".csv",
-          type: "generic_ads",
         },
       ],
       loading: false,
@@ -771,7 +749,6 @@ export default {
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
-      downloadAudienceData: "audiences/fetchAudienceData",
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
       getEngagementById: "engagements/get",
@@ -1335,14 +1312,10 @@ export default {
     background: transparent !important;
   }
 
-  .tabs-group {
-  }
   .tabs-item {
     .delivery-tab {
       .digital-adv {
         height: auto !important;
-        .match-rates {
-        }
         .lookalikes {
           border-radius: 12px !important;
         }

@@ -17,14 +17,14 @@
               type="filter"
               :size="27"
               :color="
-                allDeliveries.length === 0 || finalFilterApplied === 0
+                allDeliveries.length === 0 || filterApplied === 0
                   ? 'black'
                   : 'primary'
               "
               :variant="
                 allDeliveries.length == 0
                   ? 'lighten3'
-                  : finalFilterApplied > 0
+                  : filterApplied > 0
                   ? 'lighten6'
                   : 'darken4'
               "

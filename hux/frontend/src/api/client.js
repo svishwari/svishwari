@@ -325,8 +325,8 @@ client["audiences"].getAudiences = (data) => {
   return http.get(`/audiences?${newURLFormat}`)
 }
 
-client["audiences"].downloadAudience = (audienceId, fileType) => {
-  return http.get(`/audiences/${audienceId}/${fileType}`, {
+client["audiences"].downloadAudience = (audienceId, query) => {
+  return http.get(`/audiences/${audienceId}/download?${query}`, {
     timeout: 0,
     responseType: "blob",
   })
