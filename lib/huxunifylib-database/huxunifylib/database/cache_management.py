@@ -24,7 +24,7 @@ def create_cache_entry(
 
     Args:
         database (DatabaseClient): A database client.
-        cache_key (Union(dict,str)): name of the cache key.
+        cache_key (Union(dict,str)): cache key string or dict.
         cache_value (str): name of the cache key value.
         expire_after_seconds (int): Time for the document to expire in seconds.
         platform (str, Optional): Underlying DB on which Mongo DB API is based.
