@@ -22,11 +22,11 @@
                     max-char
                   "
                 >
-                  {{ profile["first_name"] || "-" }}
+                  {{ profile["first_name"] | Empty }}
                 </span>
               </template>
               <template #hover-content>
-                {{ profile["first_name"] || "-" }}
+                {{ profile["first_name"] | Empty }}
               </template>
             </tooltip>
             <span
@@ -34,7 +34,7 @@
               class="text-subtitle-1 text-ellipsis black--text d-block max-char"
               :class="showPii ? '' : 'blur-text'"
             >
-              {{ profile["first_name"] || "-" }}
+              {{ profile["first_name"] | Empty }}
             </span>
           </span>
           <span class="d-flex align-baseline">
@@ -51,11 +51,11 @@
                     black--text
                   "
                 >
-                  {{ profile["last_name"] || "-" }}
+                  {{ profile["last_name"] | Empty }}
                 </span>
               </template>
               <template #hover-content>
-                {{ profile["last_name"] || "-" }}
+                {{ profile["last_name"] | Empty }}
               </template>
             </tooltip>
             <span
@@ -63,7 +63,7 @@
               class="text-subtitle-1 text-ellipsis black--text d-block max-char"
               :class="showPii ? '' : 'blur-text'"
             >
-              {{ profile["last_name"] || "-" }}
+              {{ profile["last_name"] | Empty }}
             </span>
           </span>
         </v-card-text>
@@ -153,7 +153,7 @@ export default {
         {
           id: 2,
           title: "Match confidence",
-          value: this.profile["match_confidence"] || "-",
+          value: this.profile["match_confidence"],
           format: this.profile["match_confidence"] ? "slider" : "date-relative",
           hoverTooltip:
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
