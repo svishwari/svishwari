@@ -113,7 +113,7 @@ export default {
         },
         {
           id: 2,
-          title: "Target Size",
+          title: "Target size",
           value: this.fetchKey(this.data, "size"),
           subLabel: null,
         },

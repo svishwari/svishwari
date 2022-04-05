@@ -176,27 +176,27 @@ export default {
         {
           text: "Data feed",
           value: "name",
-          width: "170",
+          width: "180",
         },
         {
           text: "Status",
           value: "status",
-          width: "84",
+          width: "100",
         },
         {
           text: "Records received",
           value: "records_received",
-          width: "125",
+          width: "110",
         },
         {
           text: "Records processed",
           value: "records_processed",
-          width: "132",
+          width: "122",
         },
         {
           text: "% of records processed",
           value: "records_processed_percentage",
-          width: "150",
+          width: "125",
         },
         {
           text: "30 day avg",
@@ -208,7 +208,7 @@ export default {
         {
           text: "Last processed",
           value: "last_processed",
-          width: "120",
+          width: "160",
         },
       ],
       loading: true,
@@ -321,6 +321,7 @@ export default {
       tr {
         td {
           height: 60px;
+          white-space: nowrap;
         }
       }
       tbody {

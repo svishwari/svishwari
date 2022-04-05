@@ -30,11 +30,14 @@
         <v-avatar class="mr-2" size="45">
           <icon type="user_avatar" :size="45" color="white" />
         </v-avatar>
-        <v-list-item-title
-          class="black--text font-weight-bold d-flex flex-column"
-        >
-          <span>{{ firstName }} {{ lastName }}</span>
-        </v-list-item-title>
+        <div>
+          <v-list-item-title
+            class="black--text font-weight-bold d-flex flex-column"
+          >
+            <span>{{ firstName }} {{ lastName }}</span>
+          </v-list-item-title>
+          <v-list-item-subtitle> {{ capitalize(role) }} </v-list-item-subtitle>
+        </div>
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_password">
         <v-list-item-title class="text-body-1 black--text">
@@ -78,6 +81,7 @@ export default {
     ...mapGetters({
       firstName: "users/getFirstname",
       lastName: "users/getLastName",
+      role: "users/getCurrentUserRole",
     }),
     initials() {
       return this.firstName[0] + this.lastName[0]
@@ -86,6 +90,10 @@ export default {
   methods: {
     initiateLogout() {
       this.$auth.logout()
+    },
+
+    capitalize(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1)
     },
   },
 }

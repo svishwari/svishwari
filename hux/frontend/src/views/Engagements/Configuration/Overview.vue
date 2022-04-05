@@ -31,7 +31,7 @@
             v-if="
               item.title === 'Delivery schedule' ||
               item.title === 'Engagement name' ||
-              item.title === 'Audiences'
+              item.title === 'No. of Audiences'
             "
           >
             <tooltip>
@@ -139,7 +139,7 @@ export default {
           subtitle: this.value.name,
         },
         {
-          title: "Audiences",
+          title: "No. of Audiences",
           subtitle:
             this.selectedAudiences.length > 0
               ? this.selectedAudiences.length
