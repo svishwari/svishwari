@@ -73,11 +73,7 @@ from huxunify.api.schema.customers import (
     CustomersSchema,
 )
 from huxunify.api import constants as api_c
-from huxunify.api.route.utils import (
-    group_gender_spending,
-    Validation,
-    generate_cache_key_string,
-)
+from huxunify.api.route.utils import group_gender_spending, Validation
 
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
@@ -260,7 +256,6 @@ class CustomerPostOverview(SwaggerView):
             api_c.IDR_INSIGHTS
         ] = Caching.check_and_return_cache(
             {"endpoint": f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}", **filters},
-
             get_identity_overview,
             {"token": token_response[0], api_c.AUDIENCE_FILTERS: filters},
         )
