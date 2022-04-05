@@ -137,7 +137,10 @@ class TestCustomersOverview(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         expected_response = t_c.CUSTOMER_INSIGHT_RESPONSE[api_c.BODY].copy()
-        expected_response.update(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY])
+
+        expected_response[api_c.IDR_INSIGHTS] = t_c.IDENTITY_INSIGHT_RESPONSE[
+            api_c.BODY
+        ]
         expected_response[api_c.GEOGRAPHICAL] = get_geographic_customers_data(
             t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE[api_c.BODY]
         )
