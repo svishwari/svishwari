@@ -42,6 +42,6 @@ class Caching:
                 cache_value=data,
             )
         else:
-            logger.info("Cache Data available, retrieving from cache")
+            logger.info("Cache Data available, retrieving from the cache.")
 
         return data
