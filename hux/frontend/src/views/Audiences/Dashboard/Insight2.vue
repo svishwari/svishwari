@@ -1261,7 +1261,7 @@ export default {
         window.open(data.link, "_blank")
       }
     },
-    matchHeight() { 
+    matchHeight() {
       var heightString = this.$refs.infoBox.$el.clientHeight + "px"
       Vue.set(this.matchrateStyles, "height", heightString)
     },
