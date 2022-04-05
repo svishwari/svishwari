@@ -190,7 +190,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      customer: "customers/singles",
+      customer: "customers/single",
       events: "customers/getEvents",
     }),
 
