@@ -324,7 +324,7 @@ class CDPConnectionsTest(TestCase):
 
         self.assertEqual(
             clean_cdm_fields(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY]),
-            identity_insights
+            identity_insights,
         )
 
     def test_get_identity_overview_raise_dependency_error(self):
