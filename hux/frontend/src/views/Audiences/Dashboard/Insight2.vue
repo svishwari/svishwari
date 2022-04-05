@@ -1222,7 +1222,8 @@ export default {
       this.confirmDialog.icon = "edit"
       this.confirmDialog.subtitle = data.name
       this.confirmDialog.type = "error"
-      this.confirmDialog.body = "Are you sure you want to edit this audience?"
+      this.confirmDialog.body = `Are you sure you want to edit this audience? <br>
+        By changing this audience, all related engagements must be re-delivered.`
       this.confirmDialog.actionType = "edit audience"
     },
     favoriteAudience(data) {
