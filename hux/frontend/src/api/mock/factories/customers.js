@@ -161,7 +161,7 @@ export const customersOverview = {
   total_us_states: 52,
   geo: mapData,
   // IDR Insight drawer data
-  idr_data: {
+  idr_insights: {
     updated: faker.date.recent(7),
     total_records: 273326,
     match_rate: 0.87,

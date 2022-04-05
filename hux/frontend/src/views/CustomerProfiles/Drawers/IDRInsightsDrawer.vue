@@ -197,7 +197,7 @@ export default {
   },
 
   mounted() {
-    this.idrData = this.overview.idr_data
+    this.idrData = this.overview.idr_insights
     this.mapIDRItems()
   },
 
