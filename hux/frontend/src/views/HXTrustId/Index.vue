@@ -444,7 +444,7 @@ export default {
     this.segmentComparisonLoading = true
     try {
       await this.getOverview()
-   //   await this.getTrustIdComparison()
+      //   await this.getTrustIdComparison()
     } finally {
       this.loading = false
       this.segmentComparisonLoading = false
