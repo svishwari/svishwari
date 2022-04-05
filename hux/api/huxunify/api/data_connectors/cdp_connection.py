@@ -39,7 +39,8 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
             return True, "CDP connections available."
         return (
             False,
-            f"CDP connections not available. Received {response.status_code}",
+            f"Received status code: {response.status_code}, "
+            f"Received message: {response.json()}",
         )
 
     except Exception as exception:  # pylint: disable=broad-except

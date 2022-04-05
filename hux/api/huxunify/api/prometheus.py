@@ -134,6 +134,12 @@ def record_health_status(connection: Connections) -> object:
                Response (object): returns a decorated function object.
             """
             status = in_function(*args, **kwargs)
+            if not status[0]:
+                logger.error(
+                    "Connection to %s is down. Error Message: %s",
+                    connection.value,
+                    status[1],
+                )
             health_check_metrics.labels(name=connection.value).set(status[0])
             return status
 
