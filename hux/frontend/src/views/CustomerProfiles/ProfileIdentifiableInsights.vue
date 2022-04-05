@@ -184,7 +184,6 @@ export default {
   }
 }
 .no-data-chart-frame {
-  background-image: url("../../assets/images/empty-3-charts.png");
-  background-position: center;
+  @include no-data-frame-bg("../../assets/images/empty-3-charts.png");
 }
 </style>

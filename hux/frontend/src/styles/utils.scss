@@ -248,3 +248,8 @@
   font-weight: bold;
   position: relative;
 }
+
+@mixin no-data-frame-bg($link) {
+  background-image: url($link);
+  background-position: center;
+}

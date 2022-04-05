@@ -190,7 +190,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      customer: "customers/single",
+      customer: "customers/singles",
       events: "customers/getEvents",
     }),
 
@@ -307,7 +307,6 @@ export default {
   background: var(--v-white-base) !important;
 }
 .no-data-chart-frame {
-  background-image: url("../../assets/images/no-customers-chart-frame.png");
-  background-position: center;
+  @include no-data-frame-bg("../../assets/images/no-customers-chart-frame.png");
 }
 </style>

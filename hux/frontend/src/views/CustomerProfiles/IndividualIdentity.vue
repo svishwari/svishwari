@@ -69,7 +69,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .no-data-chart-frame {
-  background-image: url("../../assets/images/empty-1-chart.png");
-  background-position: center;
+  @include no-data-frame-bg("../../assets/images/empty-1-chart.png");
 }
 </style>
