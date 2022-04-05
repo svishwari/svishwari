@@ -307,6 +307,6 @@ export default {
   background: var(--v-white-base) !important;
 }
 .no-data-chart-frame {
-  @include no-data-frame-bg("../../assets/images/no-customers-chart-frame.png");
+  @include no-data-frame-bg("no-customers-chart-frame.png");
 }
 </style>

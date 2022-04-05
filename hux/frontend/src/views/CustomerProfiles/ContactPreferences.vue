@@ -104,6 +104,6 @@ export default {
   }
 }
 .no-data-chart-frame {
-  @include no-data-frame-bg("../../assets/images/empty-1-chart.png");
+  @include no-data-frame-bg("empty-1-chart.png");
 }
 </style>

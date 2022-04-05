@@ -184,6 +184,6 @@ export default {
   }
 }
 .no-data-chart-frame {
-  @include no-data-frame-bg("../../assets/images/empty-3-charts.png");
+  @include no-data-frame-bg("empty-3-charts.png");
 }
 </style>
