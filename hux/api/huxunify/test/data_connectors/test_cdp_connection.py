@@ -78,14 +78,17 @@ class CDPConnectionsTest(TestCase):
         Args:
             request_mocker (Mocker): request_mocker object
         """
+        bad_request_message = {"message": "Failed to connect"}
         request_mocker.get(
             f"{self.config.CDP_CONNECTION_SERVICE}/healthcheck",
             status_code=HTTPStatus.BAD_REQUEST,
+            json=bad_request_message,
         )
         status, message = check_cdp_connections_api_connection()
         self.assertFalse(status)
         self.assertEqual(
-            f"CDP connections not available. Received {HTTPStatus.BAD_REQUEST}",
+            f"Received status code: {HTTPStatus.BAD_REQUEST}, "
+            f"Received message: {bad_request_message}",
             message,
         )
 
