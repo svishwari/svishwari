@@ -33,7 +33,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
     <template>
-      <div class="d-flex">
+      <div class="d-flex height-fix">
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
@@ -239,7 +239,6 @@ import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
-import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
 
 export default {
@@ -266,7 +265,6 @@ export default {
       isFilterToggled: false,
       segmentLength: 1,
       addSegmentData: addSegmentData,
-      segmentScores: segmentScores,
       overviewData: overviewData,
       borderColorArr: [
         {
@@ -377,8 +375,8 @@ export default {
   },
   computed: {
     ...mapGetters({
+      segmentScores: "trustId/getSegmentsComparison",
       // TODO: enable this once API endpoint available
-      // segmentScores: "trustId/getSegmentsComparison",
       // overviewData: "trustId/getTrustOverview",
     }),
     getSegment() {
@@ -551,5 +549,9 @@ export default {
   height: 60px;
   align-items: center;
   display: flex;
+}
+.height-fix {
+  height: calc(100vh - 240px);
+  overflow: hidden;
 }
 </style>

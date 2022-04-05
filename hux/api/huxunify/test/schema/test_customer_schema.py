@@ -115,13 +115,6 @@ class CustomerSchemaTest(TestCase):
         """Test CustomerOverviewSchema."""
 
         customer = {
-            api_c.TOTAL_RECORDS: 10,
-            api_c.MATCH_RATE: 0.42,
-            api_c.TOTAL_UNIQUE_IDS: 10,
-            api_c.TOTAL_UNKNOWN_IDS: 2,
-            api_c.TOTAL_KNOWN_IDS: 8,
-            api_c.TOTAL_INDIVIDUAL_IDS: 5,
-            api_c.TOTAL_HOUSEHOLD_IDS: 5,
             api_c.TOTAL_CUSTOMERS: 105080,
             api_c.TOTAL_COUNTRIES: 1,
             api_c.TOTAL_STATES: 42,
@@ -135,8 +128,6 @@ class CustomerSchemaTest(TestCase):
             api_c.GENDER_MEN_COUNT: 53001,
             api_c.GENDER_WOMEN_COUNT: 65845,
             api_c.GENDER_OTHER_COUNT: 2453,
-            api_c.TOTAL_ADDRESS_IDS: 1245,
-            api_c.TOTAL_ANONYMOUS_IDS: 0,
         }
 
         self.assertFalse(CustomerOverviewSchema().validate(customer))

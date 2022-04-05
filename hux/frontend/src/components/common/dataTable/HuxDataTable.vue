@@ -103,7 +103,7 @@
           <v-alert color="primary lighten-1" class="empty-table ma-0">
             <v-row class="text-left black--text text--darken-1">
               <slot v-if="$slots.empty" name="empty"></slot>
-              <v-col v-else class="grow">{{ empty }}</v-col>
+              <v-col v-else class="grow text-body-1">{{ empty }}</v-col>
             </v-row>
           </v-alert>
         </template>
