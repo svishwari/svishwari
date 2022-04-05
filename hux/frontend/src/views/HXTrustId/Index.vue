@@ -241,7 +241,6 @@ import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
 import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
-import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export default {
   name: "HXTrustID",
