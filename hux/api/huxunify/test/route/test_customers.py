@@ -17,8 +17,12 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCountriesSchema,
     CustomerRevenueInsightsSchema,
     CustomerProfileContactPreferencesSchema,
+    IDROverviewSchema,
 )
-from huxunify.api.data_connectors.cdp import get_geographic_customers_data
+from huxunify.api.data_connectors.cdp import (
+    get_geographic_customers_data,
+    clean_cdm_fields,
+)
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
@@ -63,6 +67,12 @@ class TestCustomersOverview(RouteTestCase):
             "huxunify.api.route.utils.get_user_info",
             return_value=t_c.VALID_USER_RESPONSE,
         ).start()
+
+    def tearDown(self) -> None:
+        """Destroy resources before each test"""
+
+        # drop cache collection
+        self.request_mocker.stop()
 
     def test_get_customers(self):
         """Test get customers."""
@@ -138,9 +148,9 @@ class TestCustomersOverview(RouteTestCase):
 
         expected_response = t_c.CUSTOMER_INSIGHT_RESPONSE[api_c.BODY].copy()
 
-        expected_response[api_c.IDR_INSIGHTS] = t_c.IDENTITY_INSIGHT_RESPONSE[
-            api_c.BODY
-        ]
+        expected_response[api_c.IDR_INSIGHTS] = IDROverviewSchema().dump(
+            clean_cdm_fields(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY])
+        )
         expected_response[api_c.GEOGRAPHICAL] = get_geographic_customers_data(
             t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE[api_c.BODY]
         )
@@ -217,9 +227,12 @@ class TestCustomersOverview(RouteTestCase):
         data = response.json
         self.assertTrue(data[api_c.OVERVIEW])
         self.assertTrue(data[api_c.DATE_RANGE])
+        expected_response = IDROverviewSchema().dump(
+            clean_cdm_fields(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY])
+        )
         for key, value in data[api_c.OVERVIEW].items():
             self.assertEqual(
-                t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY][key], value
+                expected_response[key], value
             )
 
     def test_get_customer_by_id(self):

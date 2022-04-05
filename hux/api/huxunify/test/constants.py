@@ -147,6 +147,7 @@ IDENTITY_INSIGHT_RESPONSE = {
         "total_address_ids": 1614,
         "total_individual_ids": 1614,
         "total_household_ids": 1760,
+        "updated": "2021-12-17T02:50:52.777Z",
     },
     "message": "ok",
 }
