@@ -323,7 +323,7 @@ class CDPConnectionsTest(TestCase):
         identity_insights = get_identity_overview(token="")
 
         self.assertEqual(
-            clean_cdm_fields(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY]),
+            clean_cdm_fields(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY].copy()),
             identity_insights,
         )
 
