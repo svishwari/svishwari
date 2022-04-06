@@ -6,6 +6,13 @@ from typing import Tuple
 
 from flasgger import SwaggerView
 from flask import Blueprint, request
+
+from huxunifylib.database import constants as db_c
+from huxunifylib.database.user_management import (
+    get_user_trust_id_segments,
+    add_user_trust_id_segments,
+)
+
 from huxunify.api import constants as api_c
 
 from huxunify.api.route.decorators import (
@@ -31,11 +38,7 @@ from huxunify.api.stubbed_data.trust_id_stub import (
     trust_id_comparison_stub_data,
     trust_id_filters_stub,
 )
-from huxunifylib.database import constants as db_c
-from huxunifylib.database.user_management import (
-    get_user_trust_id_segments,
-    add_user_trust_id_segments,
-)
+
 
 trust_id_bp = Blueprint(api_c.TRUST_ID_ENDPOINT, import_name=__name__)
 
