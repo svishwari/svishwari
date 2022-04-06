@@ -6,7 +6,7 @@
     >
       <div class="d-flex align-center">
         <span class="pr-2">
-          <span class="black--text text--darken-4 text-caption">Repeat</span>
+          <span class="black--text text--darken-4 text-body-2">Repeat</span>
           <v-select
             v-model="value.periodicity"
             :items="repeatItems"
@@ -14,12 +14,12 @@
             dense
             outlined
             background-color="white"
-            class="select-common periodicity-select mt-1"
+            class="select-common periodicity-select"
             append-icon="mdi-chevron-down"
           />
         </span>
         <span class="pr-2">
-          <span class="black--text text--darken-4 text-caption">Every</span>
+          <span class="black--text text--darken-4 text-body-2">Every</span>
           <v-select
             v-model="value.every"
             :items="everyItems"
@@ -27,7 +27,7 @@
             dense
             outlined
             background-color="white"
-            class="select-common every-select mt-1"
+            class="select-common every-select"
             append-icon="mdi-chevron-down"
           />
         </span>
@@ -45,7 +45,7 @@
             outlined
             background-color="white"
             class="select-common hour-select mt-1"
-            :class="short ? 'pt-2' : 'pt-5'"
+            :class="short ? '' : 'pt-5'"
             append-icon="mdi-chevron-down"
           />
         </span>
@@ -63,7 +63,7 @@
             outlined
             background-color="white"
             class="select-common minute-select mt-1"
-            :class="short ? 'pt-2' : 'pt-5'"
+            :class="short ? '' : 'pt-5'"
             append-icon="mdi-chevron-down"
           />
         </span>
@@ -76,15 +76,15 @@
             outlined
             background-color="white"
             class="select-common period-select mt-1"
-            :class="short ? 'pt-2' : 'pt-5'"
+            :class="short ? '' : 'pt-5'"
             append-icon="mdi-chevron-down"
           />
         </span>
       </div>
     </div>
 
-    <div v-if="value.periodicity === 'Weekly'" class="weekly-buttons mt-4">
-      <div class="text-caption black--text mb-1">On</div>
+    <div v-if="value.periodicity === 'Weekly'" class="weekly-buttons mt-3">
+      <div class="text-body-2 black--text mb-1">On</div>
       <v-btn
         v-for="day in day_of_week"
         :key="day.value"
@@ -112,8 +112,8 @@
       </v-btn>
     </div>
 
-    <div v-if="value.periodicity === 'Monthly'" class="mt-4">
-      <div class="text-caption black--text mb-1">On</div>
+    <div v-if="value.periodicity === 'Monthly'" class="mt-3">
+      <div class="text-body-2 black--text mb-1">On</div>
       <div class="d-flex">
         <v-select
           v-model="value.monthlyPeriod"
@@ -154,7 +154,7 @@
       :schedule="value"
       :start-date="startDate"
       :end-date="endDate"
-      class="pt-4 body-1"
+      class="pt-3 text-body-1"
     />
 
     <div
@@ -355,18 +355,29 @@ export default {
 
 .select-menu-class {
   .v-select-list {
-    ::v-deep .v-list-item__title {
-      font-size: 14px;
+    padding: 0px !important;
+    ::v-deep .v-list-item {
+      min-height: 32px !important;
+      .v-list-item__content {
+        padding: 5px 0px !important ;
+        .v-list-item__title {
+          font-family: "Open Sans" !important;
+          font-style: normal !important;
+          font-weight: 400 !important;
+          font-size: 16px !important;
+          line-height: 22px !important;
+        }
+      }
     }
   }
 }
 
 ::v-deep .monthly-period-select {
-  max-width: 154px;
+  max-width: 115px;
 }
 
 ::v-deep .monthly-day-select {
-  max-width: 154px;
+  max-width: 66px;
 }
 
 ::v-deep .select-common {

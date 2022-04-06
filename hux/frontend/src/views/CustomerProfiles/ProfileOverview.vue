@@ -22,11 +22,11 @@
                     max-char
                   "
                 >
-                  {{ profile["first_name"] }}
+                  {{ profile["first_name"] | Empty }}
                 </span>
               </template>
               <template #hover-content>
-                {{ profile["first_name"] }}
+                {{ profile["first_name"] | Empty }}
               </template>
             </tooltip>
             <span
@@ -34,7 +34,7 @@
               class="text-subtitle-1 text-ellipsis black--text d-block max-char"
               :class="showPii ? '' : 'blur-text'"
             >
-              {{ profile["first_name"] }}
+              {{ profile["first_name"] | Empty }}
             </span>
           </span>
           <span class="d-flex align-baseline">
@@ -51,11 +51,11 @@
                     black--text
                   "
                 >
-                  {{ profile["last_name"] }}
+                  {{ profile["last_name"] | Empty }}
                 </span>
               </template>
               <template #hover-content>
-                {{ profile["last_name"] }}
+                {{ profile["last_name"] | Empty }}
               </template>
             </tooltip>
             <span
@@ -63,7 +63,7 @@
               class="text-subtitle-1 text-ellipsis black--text d-block max-char"
               :class="showPii ? '' : 'blur-text'"
             >
-              {{ profile["last_name"] }}
+              {{ profile["last_name"] | Empty }}
             </span>
           </span>
         </v-card-text>
@@ -78,7 +78,7 @@
       >
         <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
           <div class="text-body-2 black--text text--lighten-4 pb-1">
-            {{ data.title }}
+            {{ data.title | Empty }}
             <tooltip v-if="data.hoverTooltip" position-top>
               <template #label-content>
                 <icon
@@ -91,7 +91,7 @@
                 />
               </template>
               <template #hover-content>
-                {{ data.hoverTooltip }}
+                {{ data.hoverTooltip | Empty }}
               </template>
             </tooltip>
           </div>

@@ -50,7 +50,7 @@
         </div>
         <div
           v-if="isRecurringFlag"
-          class="delivery-background pl-6 pr-4 py-5 mt-6 mr-6 mb-5"
+          class="delivery-background pl-6 pr-4 pt-4 pb-5 mt-6 mr-6 mb-5"
         >
           <v-row class="delivery-schedule mt-7 ml-n2">
             <div>
@@ -58,7 +58,7 @@
                 class="
                   date-picker-label
                   black--text
-                  text--darken-4 text-caption
+                  text--darken-4 text-body-2
                 "
               >
                 Start date
@@ -82,7 +82,7 @@
                 class="
                   date-picker-label
                   black--text
-                  text--darken-4 text-caption
+                  text--darken-4 text-body-2
                 "
               >
                 End date
@@ -421,7 +421,7 @@ export default {
   }
   .date-picker-label {
     position: absolute;
-    margin-top: -30px;
+    margin-top: -26px;
     margin-left: 8px;
   }
 }

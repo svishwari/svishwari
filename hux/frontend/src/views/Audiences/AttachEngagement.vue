@@ -47,7 +47,7 @@
                 icon-variant="base"
                 icon="plus"
                 size="small"
-                class="ma-2 caption"
+                class="ma-0 caption"
                 is-tile
                 height="40"
                 @click="goToAddNewEngagement()"
