@@ -2,6 +2,8 @@
 
 from datetime import datetime
 from collections import defaultdict
+from typing import Optional
+
 from dateutil.relativedelta import relativedelta
 from pymongo import MongoClient
 
@@ -76,7 +78,7 @@ def get_performance_metrics_deliverability_data(
     domains: list,
     start_date: datetime,
     end_date: datetime,
-    fill_empty: bool = True,
+    fill_empty: Optional[bool] = True,
 ) -> dict:
     """Get performance metrics email deliverability metrics.
     Args:
@@ -84,7 +86,7 @@ def get_performance_metrics_deliverability_data(
         domains (list): List of domain names to fetch delivered rate data.
         start_date (datetime): Start date for data to be fetched.
         end_date (datetime): End time for data to be fetched.
-        fill_empty (Optional, bool): Fills empty dates with zeroes if True.
+        fill_empty (Optional(bool)): Fills empty dates with zeroes if True.
     Returns:
         dict: Deliverability data dict.
     """
