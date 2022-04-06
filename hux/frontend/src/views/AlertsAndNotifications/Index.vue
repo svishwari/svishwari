@@ -340,7 +340,7 @@ export default {
     async toggleDrawer(notificationId) {
       this.notificationId = notificationId
       await this.getNotificationByID(notificationId)
-      this.alertDrawer = !this.alertDrawer 
+      this.alertDrawer = !this.alertDrawer
     },
     intersected() {
       if (this.batchDetails.batch_number <= this.lastBatch) {
