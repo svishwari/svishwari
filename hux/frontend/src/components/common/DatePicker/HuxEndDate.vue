@@ -32,7 +32,7 @@
           :is-disabled="isDisabled"
           @click="endmenu = true"
         >
-          {{ optionSelected || "Select date" }}
+          {{ selected | Date("MM/DD/YYYY") | Empty(selected) }}
         </huxButton>
       </template>
       <v-list>
@@ -141,13 +141,6 @@ export default {
         .toISOString()
         .substr(0, 10),
     }
-  },
-  computed: {
-    optionSelected() {
-      return (
-        this.$options.filters.Date(this.selected, "MM/DD/YYYY") || this.selected
-      )
-    },
   },
   methods: {
     onCancel() {

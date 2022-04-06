@@ -518,31 +518,30 @@ export default {
         this.loading = false
       }
     },
+    takeActionEngagement(someAction, engagement) {
+      if (this.closeOnAction) {
+        this.$emit("onAddEngagement", {
+          data: engagement,
+          action: someAction,
+        })
+        this.localDrawer = false
+      }
+      this.$emit("onEngagementChange", this.selectedEngagements)
+    },
     onEngagementClick: function (engagement) {
       if (
-        this.selectedEngagements.filter((eng) => eng.id === engagement.id)
-          .length > 0
+        this.selectedEngagements &&
+        this.selectedEngagements.some((eng) => eng.id === engagement.id)
       ) {
         const deselectedId = this.selectedEngagements.findIndex(
           (eng) => eng.id === engagement.id
         )
 
         this.selectedEngagements.splice(deselectedId, 1)
-        if (this.closeOnAction) {
-          this.$emit("onAddEngagement", {
-            data: engagement,
-            action: "Detach",
-          })
-          this.localDrawer = false
-        }
-        this.$emit("onEngagementChange", this.selectedEngagements)
+        this.takeActionEngagement("Detach", engagement)
       } else {
         this.selectedEngagements.push(engagement)
-        if (this.closeOnAction) {
-          this.$emit("onAddEngagement", { data: engagement, action: "Attach" })
-          this.localDrawer = false
-        }
-        this.$emit("onEngagementChange", this.selectedEngagements)
+        this.takeActionEngagement("Attach", engagement)
       }
     },
     sortEngagements: function () {

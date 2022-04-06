@@ -45,7 +45,7 @@
             outlined
             background-color="white"
             class="select-common hour-select mt-1"
-            :class="short ? '' : 'pt-5'"
+            :class="dropdownPadding"
             append-icon="mdi-chevron-down"
           />
         </span>
@@ -63,7 +63,7 @@
             outlined
             background-color="white"
             class="select-common minute-select mt-1"
-            :class="short ? '' : 'pt-5'"
+            :class="dropdownPadding"
             append-icon="mdi-chevron-down"
           />
         </span>
@@ -76,7 +76,7 @@
             outlined
             background-color="white"
             class="select-common period-select mt-1"
-            :class="short ? '' : 'pt-5'"
+            :class="dropdownPadding"
             append-icon="mdi-chevron-down"
           />
         </span>
@@ -260,6 +260,9 @@ export default {
     }
   },
   computed: {
+    dropdownPadding() {
+      return this.short ? "" : "pt-5"
+    },
     everyItems() {
       return this.value.periodicity === "Daily"
         ? Array.from({ length: 7 }, (_, i) => i + 1)
@@ -361,7 +364,6 @@ export default {
       .v-list-item__content {
         padding: 5px 0px !important ;
         .v-list-item__title {
-          font-family: "Open Sans" !important;
           font-style: normal !important;
           font-weight: 400 !important;
           font-size: 16px !important;

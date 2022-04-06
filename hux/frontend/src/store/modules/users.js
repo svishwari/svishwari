@@ -153,7 +153,7 @@ const actions = {
   async requestTeamMember(_, payload) {
     try {
       const result = await api.users.requestTeamMember(payload)
-      if (result) {
+      if (result && result.status == 201) {
         handleSuccess(result.data.summary, result.status)
       }
       return result
