@@ -27,7 +27,11 @@ from huxunifylib.database.orchestration_management import (
     delete_audience,
 )
 
-from huxunifylib.database.user_management import manage_user_favorites
+from huxunifylib.database.user_management import (
+    manage_user_favorites,
+    delete_user,
+    set_user,
+)
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
 )
@@ -1614,3 +1618,181 @@ class OrchestrationRouteTest(RouteTestCase):
         audience = response.json
         # Validate digital_advertising is not present since we have sfmc.
         self.assertFalse(audience.get(api_c.DIGITAL_ADVERTISING))
+
+    # pylint: disable=attribute-defined-outside-init
+    def test_viewer_user_permissions(self) -> None:
+        """Test Viewer user access to different orchestration API end points."""
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_VIEWER_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_VIEWER_USER_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=t_c.VALID_VIEWER_USER_RESPONSE[api_c.ROLE],
+        )
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
+            json=t_c.MOCKED_CUSTOMER_EVENT_TYPES,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        mock.patch(
+            "huxunify.api.orchestration.read_stub_city_zip_data",
+            return_value=t_c.CITY_ZIP_STUB_DATA,
+        )
+        response = self.app.get(
+            f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+        }
+
+        response = self.app.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+        audiences = []
+
+        for i in range(4):
+            audiences.append(
+                create_audience(
+                    self.database,
+                    f"audience{i}",
+                    [],
+                    self.user_name,
+                    [],
+                    100 + i,
+                )
+            )
+
+        remove_audience_from_all_engagements(
+            self.database, audiences[0][db_c.ID], self.user_name
+        )
+
+        response = self.app.delete(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+    # pylint: disable=attribute-defined-outside-init
+    def test_editor_user_permissions(self) -> None:
+        """Test Editor user access to different orchestration API end points."""
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_EDITOR_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_EDITOR_USER_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=t_c.VALID_EDITOR_USER_RESPONSE[api_c.ROLE],
+        )
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
+            json=t_c.MOCKED_CUSTOMER_EVENT_TYPES,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        mock.patch(
+            "huxunify.api.orchestration.read_stub_city_zip_data",
+            return_value=t_c.CITY_ZIP_STUB_DATA,
+        )
+        response = self.app.get(
+            f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+        }
+
+        response = self.app.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+
+        audiences = []
+
+        for i in range(4):
+            audiences.append(
+                create_audience(
+                    self.database,
+                    f"audience{i}",
+                    [],
+                    self.user_name,
+                    [],
+                    100 + i,
+                )
+            )
+
+        remove_audience_from_all_engagements(
+            self.database, audiences[0][db_c.ID], self.user_name
+        )
+
+        response = self.app.delete(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
