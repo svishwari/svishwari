@@ -344,9 +344,9 @@ client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
-client["audiences"].create = (resourceId, data) => {
-  return http.post("/lookalike-audiences", data)
-}
+// client["audiences"].create = (resourceId, data) => {
+//   return http.post("/lookalike-audiences", data)
+// }
 
 client["audiences"].deliveries = (resourceId, query) => {
   return http.get(`/audiences/${resourceId}/delivery-history?${query}`)

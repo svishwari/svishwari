@@ -4,7 +4,7 @@
       <v-card
         class="rounded-lg card-info-wrapper box-shadow-5"
         min-width="200"
-        color="white"
+        :color="profile['first_name'] ? 'white' : 'no-background'"
         height="75"
       >
         <v-card-text class="py-3 px-4 d-flex flex-column">
@@ -38,9 +38,9 @@
             </span>
           </span>
           <span class="d-flex align-baseline">
-            <span class="text-body-2 black--text text--lighten-4 mr-2"
-              >Last</span
-            >
+            <span class="text-body-2 black--text text--lighten-4 mr-2">
+              Last
+            </span>
             <tooltip v-if="showPii">
               <template #label-content>
                 <span
@@ -154,7 +154,7 @@ export default {
           id: 2,
           title: "Match confidence",
           value: this.profile["match_confidence"],
-          format: "slider",
+          format: this.profile["match_confidence"] ? "slider" : "date-relative",
           hoverTooltip:
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
           e2e: "match-confidence",

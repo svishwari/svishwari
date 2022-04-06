@@ -3,7 +3,7 @@
     <drop-menu
       :min-midth="300"
       :max-width="353"
-      :close-on-click="false"
+      close-on-click
       content-class="tips-menu"
       class="drop-menu-div"
     >
