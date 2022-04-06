@@ -128,6 +128,7 @@
         <v-select
           v-if="value.monthlyPeriod !== 'Day'"
           v-model="value.monthlyDay"
+          multiple
           :items="monthlyDayItems"
           :menu-props="menuProps"
           dense
@@ -138,7 +139,8 @@
         />
         <v-select
           v-else
-          v-model="monthlyDayDate"
+          v-model="value.monthlyDayDate"
+          multiple
           :items="monthlyDayDateItems"
           :menu-props="menuProps"
           dense
@@ -270,7 +272,9 @@ export default {
     monthlyDayDate: {
       get() {
         return parseInt(
-          this.value && this.value.day_of_month ? this.value.day_of_month[0] : 1
+          this.value && this.value.monthlyDayDate.length
+            ? this.value.monthlyDayDate
+            : [1]
         )
       },
       set(value) {
@@ -355,6 +359,9 @@ export default {
 
 .select-menu-class {
   .v-select-list {
+    ::v-deep .v-simple-checkbox {
+      display: none;
+    }
     ::v-deep .v-list-item__title {
       font-size: 14px;
     }

@@ -393,8 +393,8 @@ export default {
             ]
             recurringConfig["day_of_month"] =
               this.schedule.monthlyPeriod === "Day"
-                ? [this.schedule.monthlyDayDate]
-                : [this.schedule.monthlyDay]
+                ? this.schedule.monthlyDayDate
+                : this.schedule.monthlyDay
             break
           default:
             recurringConfig
