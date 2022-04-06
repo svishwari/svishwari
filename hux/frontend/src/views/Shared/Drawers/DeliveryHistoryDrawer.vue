@@ -12,12 +12,33 @@
 
       <page-header header-height="40">
         <template #left>
-          <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+          <v-btn icon @click.native="showFilter()">
             <icon
               type="filter"
               :size="27"
-              :color="isFilterToggled ? 'primary' : 'black'"
-              :variant="isFilterToggled ? 'lighten6' : 'darken4'"
+              :color="
+                allDeliveries.length === 0 || filterApplied === 0
+                  ? 'black'
+                  : 'primary'
+              "
+              :variant="
+                allDeliveries.length == 0
+                  ? 'lighten3'
+                  : filterApplied > 0
+                  ? 'lighten6'
+                  : 'darken4'
+              "
+            />
+            <v-badge
+              v-if="filterApplied > 0"
+              :content="filterApplied"
+              color="white"
+              offset-x="6"
+              offset-y="4"
+              light
+              bottom
+              overlap
+              bordered
             />
           </v-btn>
         </template>
@@ -29,6 +50,7 @@
         :filters="filters"
         @onReset="resetFilters"
         @onCheckboxChange="showHideMatchRate"
+        @updateCount="UpdateFilterCount"
       />
 
       <hux-data-table
@@ -220,6 +242,7 @@ export default {
           width: "20%",
         },
       ],
+      filterApplied: 0,
     }
   },
 
@@ -285,6 +308,12 @@ export default {
       this.items = this.allDeliveries
     },
 
+    showFilter() {
+      if (this.allDeliveries.length > 0) {
+        this.isFilterToggled = !this.isFilterToggled
+      }
+    },
+
     showHideMatchRate(matchRateFlag) {
       this.showMatchRate = matchRateFlag
       if (!matchRateFlag) {
@@ -296,6 +325,10 @@ export default {
           width: "20%",
         })
       }
+    },
+
+    UpdateFilterCount(count) {
+      this.filterApplied = count
     },
 
     async fetchHistory() {

@@ -123,7 +123,7 @@
                           type="plus"
                           :size="17"
                           color="primary"
-                          class="ml-n1 mt-1"
+                          class="ml-n1 mt-1 cursor-pointer"
                         />
                       </div>
                     </template>
@@ -228,7 +228,7 @@
             />
             <hux-icon
               type="add_audience"
-              :size="31"
+              :size="37"
               color="primary"
               class="mr-1"
             />

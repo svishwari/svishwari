@@ -30,14 +30,17 @@
               v-if="audience && !audience.is_lookalike"
               :disabled="relatedEngagements.length == 0"
               text
-              color="primary"
+              :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
               class="body-1 ml-n3 mt-n2"
               data-e2e="delivery-history"
               @click="openDeliveryHistoryDrawer()"
             >
               <icon
                 class="mr-1"
-                type="history"
+                :class="relatedEngagements.length == 0 ? 'icon_grey' : ''"
+                :type="
+                  relatedEngagements.length == 0 ? 'history_grey' : 'history'
+                "
                 :size="24"
                 :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
                 :variant="relatedEngagements.length == 0 ? 'lighten3' : 'base'"
@@ -202,7 +205,7 @@
           </metric-card>
         </div>
       </v-card>
-      <v-tabs v-model="tabOption" class="tabs-group mt-8">
+      <v-tabs v-model="tabOption" class="mt-8">
         <v-tabs-slider color="primary"></v-tabs-slider>
         <div class="d-flex">
           <v-tab
@@ -297,7 +300,7 @@
                   Digital advertising
                 </v-card-title>
                 <v-card-text v-if="showAdvertising">
-                  <div class="match-rates mx-2 my-1">
+                  <div class="mx-2 my-1">
                     <matchrate
                       :match-rate="
                         audienceData.digital_advertising &&
@@ -431,7 +434,7 @@
     />
 
     <download-audience-drawer
-      :value="toggleDownloadAudienceDrawer"
+      :audience-data="audience"
       :toggle="toggleDownloadAudienceDrawer"
       @onToggle="(isToggled) => (toggleDownloadAudienceDrawer = isToggled)"
     />
@@ -529,28 +532,6 @@ export default {
           icon: "lookalike",
           statusSize: 21,
           size: 12,
-        },
-      ],
-      downloadOptions: [
-        {
-          id: "c2b0bf2d9d48",
-          name: ".csv",
-          type: "amazon_ads",
-          title: "Amazon Advertising CSV",
-          icon: "amazon-outline",
-        },
-        {
-          id: "5e112c22f1b1",
-          name: ".csv",
-          type: "google_ads",
-          title: "Google Ads CSV",
-          icon: "google-ads-outline",
-        },
-        {
-          id: "2349d4353b9f",
-          title: "Generic CSV",
-          name: ".csv",
-          type: "generic_ads",
         },
       ],
       loading: false,
@@ -768,7 +749,6 @@ export default {
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
-      downloadAudienceData: "audiences/fetchAudienceData",
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
       getEngagementById: "engagements/get",
@@ -1222,7 +1202,8 @@ export default {
       this.confirmDialog.icon = "edit"
       this.confirmDialog.subtitle = data.name
       this.confirmDialog.type = "error"
-      this.confirmDialog.body = "Are you sure you want to edit this audience?"
+      this.confirmDialog.body = `Are you sure you want to edit this audience? <br>
+        By changing this audience, all related engagements must be re-delivered.`
       this.confirmDialog.actionType = "edit audience"
     },
     favoriteAudience(data) {
@@ -1332,14 +1313,10 @@ export default {
     background: transparent !important;
   }
 
-  .tabs-group {
-  }
   .tabs-item {
     .delivery-tab {
       .digital-adv {
         height: auto !important;
-        .match-rates {
-        }
         .lookalikes {
           border-radius: 12px !important;
         }
@@ -1446,5 +1423,11 @@ export default {
   .v-tabs-slider-wrapper
   .v-tabs-slider {
   margin-top: 2px !important;
+}
+.icon_grey {
+  margin-top: 10px;
+}
+::v-deep .v-card--link .v-chip {
+  cursor: auto !important;
 }
 </style>

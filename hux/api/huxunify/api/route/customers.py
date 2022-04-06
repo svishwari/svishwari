@@ -73,11 +73,7 @@ from huxunify.api.schema.customers import (
     CustomersSchema,
 )
 from huxunify.api import constants as api_c
-from huxunify.api.route.utils import (
-    group_gender_spending,
-    Validation,
-    generate_cache_key_string,
-)
+from huxunify.api.route.utils import group_gender_spending, Validation
 
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
@@ -137,13 +133,13 @@ class CustomerOverview(SwaggerView):
             {"token": token_response[0]},
         )
 
-        identity_overview = Caching.check_and_return_cache(
+        customers_overview[
+            api_c.IDR_INSIGHTS
+        ] = Caching.check_and_return_cache(
             f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}",
             get_identity_overview,
             {"token": token_response[0]},
         )
-
-        customers_overview.update(identity_overview)
 
         customers_overview[
             api_c.GEOGRAPHICAL
@@ -248,36 +244,29 @@ class CustomerPostOverview(SwaggerView):
 
         filters = convert_unique_city_filter(request.json)
         customers_overview = Caching.check_and_return_cache(
-            "".join(
-                [f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}"]
-                + list(generate_cache_key_string(filters)),
-            ),
+            {
+                "endpoint": f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+                **filters,
+            },
             get_customers_overview,
-            {"token": token_response[0]},
+            {"token": token_response[0], api_c.AUDIENCE_FILTERS: filters},
         )
 
-        identity_overview = Caching.check_and_return_cache(
-            "".join(
-                [f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}"]
-                + list(generate_cache_key_string(filters)),
-            ),
+        customers_overview[
+            api_c.IDR_INSIGHTS
+        ] = Caching.check_and_return_cache(
+            {"endpoint": f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}", **filters},
             get_identity_overview,
-            {"token": token_response[0]},
+            {"token": token_response[0], api_c.AUDIENCE_FILTERS: filters},
         )
-
-        customers_overview.update(identity_overview)
 
         customers_overview[
             api_c.GEOGRAPHICAL
         ] = Caching.check_and_return_cache(
-            "".join(
-                [f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.GEOGRAPHICAL}"]
-                + list(
-                    generate_cache_key_string(
-                        request.json[api_c.AUDIENCE_FILTERS]
-                    )
-                ),
-            ),
+            {
+                "endpoint": f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.GEOGRAPHICAL}",
+                **filters,
+            },
             get_demographic_by_state,
             {
                 "token": token_response[0],

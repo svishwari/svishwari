@@ -4,7 +4,7 @@
       <strong
         v-if="enableTitle"
         :class="{
-          'text-h5 black--text text--darken-4 mb-2 d-block': true,
+          'text-body-1 black--text text--darken-4 mb-2 d-block': true,
           '': applyCaptionStyle,
         }"
       >
@@ -127,7 +127,7 @@
                     />
                     <hux-slider
                       v-model="condition.range"
-                      :read-only="false"
+                      :read-only="readMode ? true : false"
                       :min="condition.attribute.min"
                       :max="condition.attribute.max"
                       :step="condition.attribute.steps"
@@ -209,10 +209,10 @@
         <v-chip
           small
           class="mx-2 my-1 text-body-1 cursor-pointer"
-          text-color="primary"
-          color="black lighten-2"
+          :text-color="readMode ? 'white' : 'primary'"
+          :color="readMode ? 'black lighten-3' : 'primary lighten-3'"
           :ripple="false"
-          @click.native="addNewSection()"
+          @click.native="!readMode && addNewSection()"
         >
           <tooltip>
             <template #label-content> + </template>
@@ -776,6 +776,9 @@ export default {
               .v-slider__track-container {
                 width: 101%;
               }
+            }
+            ::v-deep .v-input__control .v-input__slot .v-slider__thumb {
+              border: none !important;
             }
           }
         }

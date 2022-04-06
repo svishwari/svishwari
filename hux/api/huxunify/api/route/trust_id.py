@@ -5,12 +5,8 @@ from http import HTTPStatus
 from typing import Tuple
 
 from flasgger import SwaggerView
-from flask import Blueprint, request
+from flask import Blueprint
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.trust_id import (
-    get_trust_id_overview_data,
-    get_trust_id_signal_data,
-)
 
 from huxunify.api.route.decorators import (
     secured,
@@ -22,9 +18,15 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
-    SignalOverviewSchema,
+    TrustIdAttributesSchema,
+    TrustIdComparisonSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.stubbed_data.trust_id_stub import (
+    trust_id_overview_stub_data,
+    trust_id_attribute_stub_data,
+    trust_id_comparison_stub_data,
+)
 
 trust_id_bp = Blueprint(api_c.TRUST_ID_ENDPOINT, import_name=__name__)
 
@@ -45,56 +47,6 @@ def before_request():
 class TrustIdOverview(SwaggerView):
     """Trust ID overview Class."""
 
-    # TODO build parameters dynamically when Trust ID serves dynamic filters.
-    parameters = [
-        {
-            "name": api_c.MIN_AGE,
-            "description": "Minimum age of customers for Trust ID scores.",
-            "in": "query",
-            "type": "integer",
-            "required": False,
-            "example": 23,
-        },
-        {
-            "name": api_c.MAX_AGE,
-            "description": "Maximum age of customers for Trust ID scores.",
-            "in": "query",
-            "type": "integer",
-            "required": False,
-            "example": 23,
-        },
-        {
-            "name": api_c.GENDER,
-            "description": "Gender of customers for Trust ID scores.",
-            "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
-            "collectionFormat": "multi",
-            "required": False,
-            "example": "male",
-        },
-        {
-            "name": api_c.OCCUPATION,
-            "description": "Gender of customers for Trust ID scores.",
-            "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
-            "collectionFormat": "multi",
-            "required": False,
-            "example": "male",
-        },
-        {
-            "name": api_c.CUSTOMER_TYPE,
-            "description": "Gender of customers for Trust ID scores.",
-            "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
-            "collectionFormat": "multi",
-            "required": False,
-            "example": "male",
-        },
-    ]
-
     responses = {
         HTTPStatus.OK.value: {
             "description": "Trust ID overview data",
@@ -102,7 +54,7 @@ class TrustIdOverview(SwaggerView):
         }
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.INSIGHTS]
+    tags = [api_c.TRUST_ID_TAG]
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
@@ -123,103 +75,95 @@ class TrustIdOverview(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        applied_filters = {}
-
-        # TODO Remove stub when Trust ID dynamic filters available.
-        # get all list based args
-        for list_filter in filter(
-            lambda x: x[api_c.TYPE] == "list",
-            api_c.TRUST_ID_SUPPORTED_FILTERS_STUB,
-        ):
-            if request.args.getlist(list_filter.get(api_c.NAME)):
-                applied_filters[
-                    list_filter.get(api_c.NAME)
-                ] = request.args.getlist(list_filter.get(api_c.NAME))
-
-        # get all range based args
-        for range_filter in filter(
-            lambda x: x[api_c.TYPE] == "range",
-            api_c.TRUST_ID_SUPPORTED_FILTERS_STUB,
-        ):
-            if request.args.get("min_" + range_filter.get(api_c.NAME)):
-                applied_filters[
-                    "min_" + range_filter.get(api_c.NAME)
-                ] = request.args.get("min_" + range_filter.get(api_c.NAME))
-
-            if request.args.get("max_" + range_filter.get(api_c.NAME)):
-                applied_filters[
-                    "max_" + range_filter.get(api_c.NAME)
-                ] = request.args.get("max_" + range_filter.get(api_c.NAME))
-
-        overview_data = get_trust_id_overview_data(applied_filters)
-        overview_data[
-            api_c.ALLOWED_FILTERS
-        ] = api_c.TRUST_ID_SUPPORTED_FILTERS_STUB
-
         return HuxResponse.OK(
-            data=overview_data,
+            data=trust_id_overview_stub_data,
             data_schema=TrustIdOverviewSchema(),
         )
 
 
 @add_view_to_blueprint(
     trust_id_bp,
-    f"{api_c.TRUST_ID_ENDPOINT}/signal/<signal_name>",
-    "TrustIdSignal",
+    f"{api_c.TRUST_ID_ENDPOINT}/attributes",
+    "TrustIdAttributes",
 )
-class TrustIdSignal(SwaggerView):
-    """Trust ID signal data fetch Class."""
-
-    # TODO build parameters dynamically when Trust ID serves dynamic filters.
-    parameters = [
-        {
-            "name": api_c.SIGNAL_NAME,
-            "description": "Signal name",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": api_c.CAPABILITY,
-        }
-    ]
+class TrustIdAttributes(SwaggerView):
+    """Trust ID attributes data fetch Class."""
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Trust ID signal data",
-            "schema": SignalOverviewSchema,
+            "description": "Trust ID attributes data",
+            "schema": {"type": "array", "items": TrustIdAttributesSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to fetch signal data"
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.INSIGHTS]
+    tags = [api_c.TRUST_ID_TAG]
 
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, signal_name: str, user: dict) -> Tuple[dict, int]:
-        """Retrieves Trust ID signal data.
+    def get(self, user: dict) -> Tuple[list, int]:
+        """Retrieves Trust ID attributes data.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Args:
-            signal_name (str): Name of the signal to fetch the data for.
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: dict of user, HTTP status code.
+            Tuple[list, int]: list of attribute-wise data, HTTP status code.
 
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        # TODO Remove stub when Trust ID data available.
-        if signal_name not in api_c.LIST_OF_SIGNALS:
-            return HuxResponse.BAD_REQUEST(
-                f"Signal name {signal_name} not supported."
-            )
+        return HuxResponse.OK(
+            data=trust_id_attribute_stub_data,
+            data_schema=TrustIdAttributesSchema(),
+        )
+
+
+@add_view_to_blueprint(
+    trust_id_bp,
+    f"{api_c.TRUST_ID_ENDPOINT}/comparison",
+    "TrustIdAttributeComparison",
+)
+class TrustIdAttributeComparison(SwaggerView):
+    """Trust ID comparison data fetch Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Trust ID comparison data",
+            "schema": {"type": "array", "items": TrustIdComparisonSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to fetch comparison data"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.TRUST_ID_TAG]
+
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
+        """Retrieves Trust ID comparison data.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[list, int]: list of comparison data, HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
 
         return HuxResponse.OK(
-            data=get_trust_id_signal_data(signal_name),
-            data_schema=SignalOverviewSchema(),
+            data=trust_id_comparison_stub_data,
+            data_schema=TrustIdComparisonSchema(),
         )

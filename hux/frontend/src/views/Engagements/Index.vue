@@ -164,7 +164,7 @@
                         <logo
                           class="mr-1"
                           :type="destination.delivery_platform_type"
-                          :size="18"
+                          :size="24"
                         />
                       </template>
                       <template #hover-content>

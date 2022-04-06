@@ -89,7 +89,7 @@
           data-e2e="audience-table"
           class="big-table"
         >
-          <template #row-item="{ item }">
+          <template #row-item="{ item, index }">
             <td
               v-for="header in columnDefs"
               :key="header.value"
@@ -119,6 +119,7 @@
                   :is-favorite="isUserFavorite(item, 'audiences')"
                   class="text-body-1"
                   :show-star="!item.is_lookalike"
+                  :nudge-top="audienceList.length - 1 == index ? '70' : ''"
                   @actionFavorite="handleActionFavorite(item, 'audiences')"
                 />
               </div>
@@ -204,7 +205,6 @@
                           :key="destination.id"
                           class="mr-1"
                           :type="destination.type"
-                          :size="18"
                         />
                       </template>
                       <template #hover-content>
@@ -234,7 +234,6 @@
                               :key="extraDestination.id"
                               class="mr-4"
                               :type="extraDestination.type"
-                              :size="18"
                             />
                             <span>{{ extraDestination.name }}</span>
                           </div>

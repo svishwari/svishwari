@@ -628,6 +628,7 @@ def get_destination_config(
     audience_id: ObjectId,
     destination: dict,
     engagement_id: ObjectId,
+    username: str,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
@@ -636,6 +637,8 @@ def get_destination_config(
         audience_id (ObjectId): The ID of the audience.
         destination (dict): Destination object.
         engagement_id (ObjectId): The ID of the engagement.
+        username (str): Username of user requesting to get the destination
+            config.
 
     Returns:
         DestinationBatchJob: Destination batch job object.
@@ -672,6 +675,7 @@ def get_destination_config(
         audience_id,
         destination_id,
         [],
+        username,
         engagement_id,
         destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
     )
@@ -849,6 +853,7 @@ async def deliver_audience_to_destination(
         audience_id=audience_id,
         destination=destination,
         engagement_id=db_c.ZERO_OBJECT_ID,
+        username=user_name,
     )
     batch_destination.register()
     batch_destination.submit()

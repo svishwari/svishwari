@@ -4,7 +4,7 @@
       <v-card
         class="rounded-lg card-info-wrapper box-shadow-5"
         min-width="200"
-        color="white"
+        :color="profile['first_name'] ? 'white' : 'no-background'"
         height="75"
       >
         <v-card-text class="py-3 px-4 d-flex flex-column">
@@ -22,11 +22,11 @@
                     max-char
                   "
                 >
-                  {{ profile["first_name"] }}
+                  {{ profile["first_name"] | Empty }}
                 </span>
               </template>
               <template #hover-content>
-                {{ profile["first_name"] }}
+                {{ profile["first_name"] | Empty }}
               </template>
             </tooltip>
             <span
@@ -34,13 +34,13 @@
               class="text-subtitle-1 text-ellipsis black--text d-block max-char"
               :class="showPii ? '' : 'blur-text'"
             >
-              {{ profile["first_name"] }}
+              {{ profile["first_name"] | Empty }}
             </span>
           </span>
           <span class="d-flex align-baseline">
-            <span class="text-body-2 black--text text--lighten-4 mr-2"
-              >Last</span
-            >
+            <span class="text-body-2 black--text text--lighten-4 mr-2">
+              Last
+            </span>
             <tooltip v-if="showPii">
               <template #label-content>
                 <span
@@ -51,11 +51,11 @@
                     black--text
                   "
                 >
-                  {{ profile["last_name"] }}
+                  {{ profile["last_name"] | Empty }}
                 </span>
               </template>
               <template #hover-content>
-                {{ profile["last_name"] }}
+                {{ profile["last_name"] | Empty }}
               </template>
             </tooltip>
             <span
@@ -63,7 +63,7 @@
               class="text-subtitle-1 text-ellipsis black--text d-block max-char"
               :class="showPii ? '' : 'blur-text'"
             >
-              {{ profile["last_name"] }}
+              {{ profile["last_name"] | Empty }}
             </span>
           </span>
         </v-card-text>
@@ -154,7 +154,7 @@ export default {
           id: 2,
           title: "Match confidence",
           value: this.profile["match_confidence"],
-          format: "slider",
+          format: this.profile["match_confidence"] ? "slider" : "date-relative",
           hoverTooltip:
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
           e2e: "match-confidence",

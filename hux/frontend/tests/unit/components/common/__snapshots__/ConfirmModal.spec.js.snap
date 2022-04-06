@@ -35,9 +35,7 @@ exports[`Tests Confirm Modal Confirm modal displays props content 1`] = `
               text--darken-4 text-subtitle-1
               pt-6
               font-weight-regular
-            ">
-        Body prop
-      </div>
+            ">Body prop</div>
     </div>
     <div class="confirm-modal-footer">
       <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2" class="btn-border box-shadow-none"><span class="primary--text">Nevermind!</span></huxbutton-stub>

@@ -238,7 +238,6 @@ import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
-import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
 
 export default {
@@ -265,7 +264,6 @@ export default {
       isFilterToggled: false,
       segmentLength: 1,
       addSegmentData: addSegmentData,
-      segmentScores: segmentScores,
       overviewData: overviewData,
       borderColorArr: [
         {
@@ -376,8 +374,8 @@ export default {
   },
   computed: {
     ...mapGetters({
+      segmentScores: "trustId/getSegmentsComparison",
       // TODO: enable this once API endpoint available
-      // segmentScores: "trustId/getSegmentsComparison",
       // overviewData: "trustId/getTrustOverview",
     }),
     getSegment() {
@@ -445,7 +443,7 @@ export default {
     this.segmentComparisonLoading = true
     try {
       await this.getOverview()
-      await this.getTrustIdComparison()
+      //   await this.getTrustIdComparison()
     } finally {
       this.loading = false
       this.segmentComparisonLoading = false
@@ -528,7 +526,7 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 200px);
+  height: calc(100vh - 240px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
@@ -545,7 +543,6 @@ export default {
 ::v-deep .wrapper {
   width: 320px !important;
 }
-
 .empty-text.empty-text {
   height: 60px;
   align-items: center;

@@ -181,7 +181,7 @@ export default {
 
     currentSchedule: {
       type: Object,
-      required: true,
+      required: false,
     },
 
     engagementId: {

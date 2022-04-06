@@ -114,6 +114,9 @@ export default {
     ::v-deep .v-list-item {
       min-height: 32px !important;
     }
+    ::v-deep .v-list-item.v-list-item--highlighted::before {
+      opacity: 0 !important;
+    }
   }
 }
 </style>

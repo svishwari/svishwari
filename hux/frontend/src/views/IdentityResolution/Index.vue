@@ -47,7 +47,7 @@
     </template>
 
     <template>
-      <div class="d-flex">
+      <div class="d-flex height-fix">
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
@@ -237,6 +237,7 @@
           >
             <hux-filter-panels :expanded="[0]">
               <hux-filter-panel
+                class="filter-panel"
                 title="Time"
                 :count="numFiltersSelected"
                 :disabled="true"
@@ -278,7 +279,6 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { endOfMonth } from "@/utils"
-
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -292,10 +292,8 @@ import Tooltip from "@/components/common/Tooltip.vue"
 import DataFeeds from "./DataFeeds.vue"
 import IDRMatchingTrend from "@/components/common/IDRMatchingTrend/IDRMatchingTrend"
 import EmptyPage from "@/components/common/EmptyPage"
-
 export default {
   name: "IdentityResolution",
-
   components: {
     Page,
     Breadcrumb,
@@ -311,7 +309,6 @@ export default {
     IDRMatchingTrend,
     EmptyPage,
   },
-
   data() {
     return {
       loadingOverview: true,
@@ -324,7 +321,6 @@ export default {
       dataFeedsErrorState: false,
     }
   },
-
   computed: {
     ...mapGetters({
       overview: "identity/overview",
@@ -333,28 +329,24 @@ export default {
       matchingTrends: "identity/matchingTrends",
       responseTimeFrame: "identity/responseTimeFrame",
     }),
-
     minDate() {
       return this.$options.filters.Date(
         this.timeFrame["start_date"],
         "YYYY-MM-DD"
       )
     },
-
     maxDate() {
       return this.$options.filters.Date(
         this.timeFrame["end_date"],
         "YYYY-MM-DD"
       )
     },
-
     selectedDateRange() {
       return {
         startDate: this.filterStartDate,
         endDate: this.filterEndDate ? endOfMonth(this.filterEndDate) : null,
       }
     },
-
     numFiltersSelected() {
       if (
         this.filterStartDate !== this.minDate ||
@@ -364,15 +356,12 @@ export default {
       }
       return 0
     },
-
     totalFiltersSelected() {
       return this.numFiltersSelected
     },
-
     hasMatchingTrendsData() {
       return this.matchingTrends && this.matchingTrends.length
     },
-
     loading() {
       return (
         this.loadingOverview ||
@@ -381,7 +370,6 @@ export default {
       )
     },
   },
-
   async mounted() {
     try {
       await this.refreshData()
@@ -392,14 +380,12 @@ export default {
       })
     }
   },
-
   methods: {
     ...mapActions({
       getOverview: "identity/getOverview",
       getDataFeeds: "identity/getDataFeeds",
       getMatchingTrends: "identity/getMatchingTrends",
     }),
-
     async refreshData() {
       this.loadingMatchingTrends = true
       this.loadingDataFeeds = true
@@ -411,7 +397,6 @@ export default {
         this.loadMatchingTrends()
       }
     },
-
     setFilters({ startDate, endDate }) {
       if (startDate && endDate) {
         this.filterStartDate = this.$options.filters.Date(
@@ -421,12 +406,10 @@ export default {
         this.filterEndDate = this.$options.filters.Date(endDate, "YYYY-MM-DD")
       }
     },
-
     resetFilters() {
       this.filterStartDate = this.minDate
       this.filterEndDate = this.maxDate
     },
-
     async loadMatchingTrends() {
       this.loadingMatchingTrends = true
       try {
@@ -437,7 +420,6 @@ export default {
         this.loadingMatchingTrends = false
       }
     },
-
     async loadDataFeeds() {
       this.loadingDataFeeds = true
       try {
@@ -448,7 +430,6 @@ export default {
         this.loadingDataFeeds = false
       }
     },
-
     async loadOverview() {
       this.loadingOverview = true
       try {
@@ -464,7 +445,6 @@ export default {
 $offset: 110px;
 $headerOffsetX: 220px + 32px;
 $headerOffsetY: 70px;
-
 .idr-wrapper {
   .idr-slide-group {
     ::v-deep .theme--light.v-icon {
@@ -474,11 +454,9 @@ $headerOffsetY: 70px;
       color: var(--v-black-lighten3) !important;
     }
   }
-
   .idr-metric-card {
     margin: 4px !important;
   }
-
   .matching-trend-chart-frame {
     background-image: url("../../assets/images/no-matching-trend-chart-frame.png");
     background-position: center;
@@ -487,6 +465,13 @@ $headerOffsetY: 70px;
 .idr-filter {
   margin-top: -30px;
   margin-right: -30px;
+  .filter-panel {
+    pointer-events: none;
+  }
+}
+.height-fix {
+  height: calc(100vh - 240px);
+  overflow: hidden;
 }
 ::-webkit-scrollbar {
   width: 5px;

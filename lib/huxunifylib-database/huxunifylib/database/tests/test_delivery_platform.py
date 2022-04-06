@@ -27,6 +27,8 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
+        self.test_user = "test_user"
+
         self.generic_campaigns = [
             {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
         ]
@@ -68,7 +70,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database,
             db_c.DELIVERY_PLATFORM_SFMC,
             "My second delivery platform for SFMC",
-            "test_user",
+            self.test_user,
             self.auth_details_sfmc,
         )
 
@@ -103,6 +105,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.source_audience_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
         )
 
         self.delivery_job_2_doc = dpm.set_delivery_job(
@@ -110,6 +113,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.audience_2_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
         )
 
         self.lookalike_audience_doc = (
@@ -149,6 +153,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.source_audience_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
         )[db_c.ID]
 
     def test_set_delivery_platform_facebook(self):
@@ -607,6 +612,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.delivery_platform_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
         )
 
         self.assertIsNotNone(doc)
@@ -852,6 +858,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             source_audience_id,
             delivery_platform_id,
             self.generic_campaigns,
+            self.test_user,
         )
 
         # create lookalike audience with delivery job associated with
@@ -1092,6 +1099,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.source_audience_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
             engagement_id=engagement_id,
         )
 
@@ -1302,6 +1310,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             source_audience_id,
             delivery_platform_id,
             self.generic_campaigns,
+            self.test_user,
         )
 
         # create lookalike audience
@@ -1364,6 +1373,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.source_audience_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
             engagement_id,
         )
 
@@ -1399,6 +1409,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.source_audience_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
             engagement_id,
             delivery_config,
         )
@@ -1441,6 +1452,7 @@ class TestDeliveryPlatform(unittest.TestCase):
                 self.source_audience_doc[db_c.ID],
                 destination[db_c.ID],
                 self.generic_campaigns,
+                self.test_user,
                 engagement_id,
             )
 
@@ -1471,6 +1483,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.source_audience_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
             engagement_id,
         )
 
@@ -1520,6 +1533,7 @@ class TestDeliveryPlatform(unittest.TestCase):
                 self.source_audience_doc[db_c.ID],
                 destination[db_c.ID],
                 self.generic_campaigns,
+                self.test_user,
                 engagement_id,
             )
 
@@ -1610,6 +1624,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.source_audience_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
             engagement_id=engagement_id,
         )
 
@@ -1638,6 +1653,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.source_audience_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
             engagement_id=engagement_id,
         )
         self.assertIsNotNone(doc)
@@ -1686,6 +1702,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.source_audience_doc[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            self.test_user,
             engagement_id=engagement_id,
         )
 

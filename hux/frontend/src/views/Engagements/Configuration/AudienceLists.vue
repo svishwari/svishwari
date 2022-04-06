@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="rounded-lg card-style audiences-lists ml-7" flat>
+    <v-card class="rounded-lg card-style-list audiences-lists ml-6" flat>
       <v-card-title class="d-flex justify-space-between">
         <div class="d-flex align-center">
           <icon
@@ -47,7 +47,7 @@
                   :key="destination.id"
                 >
                   <template #label-content>
-                    <logo class="mr-1" :type="destination.type" :size="18" />
+                    <logo class="mr-1" :type="destination.type" :size="24" />
                   </template>
                   <template #hover-content>
                     <span>{{ destination.type }}</span>
@@ -187,9 +187,33 @@ export default {
     white-space: nowrap;
   }
 }
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
 .info-widget {
   background: var(--v-yellow-lighten1);
   border: 1px solid var(--v-primary-lighten1);
   text-align: justify;
+}
+.card-style-list {
+  border: 1px solid var(--v-black-lighten2);
+  border-radius: 12px !important;
+}
+::v-deep .hux-data-table[data-v-1db23c48] table tr:last-child > td {
+  border-bottom: none !important;
+}
+::v-deep .theme--light .v-data-table {
+  background-color: transparent !important;
 }
 </style>
