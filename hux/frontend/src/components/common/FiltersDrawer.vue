@@ -191,5 +191,19 @@ $zIndex: 4;
     bottom: 0;
     z-index: $zIndex;
   }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-black-lighten3);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-black-lighten3);
+  }
 }
 </style>
