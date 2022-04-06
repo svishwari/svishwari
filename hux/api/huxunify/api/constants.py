@@ -1634,6 +1634,7 @@ BOUNCES = "bounces"
 HARD_BOUNCES = "hard_bounces"
 OPENS = "opens"
 CLICKS = "clicks"
+FILL_EMPTY_DATES = "fill_empty_dates"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"
