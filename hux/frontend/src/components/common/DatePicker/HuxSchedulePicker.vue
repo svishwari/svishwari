@@ -128,9 +128,10 @@
         <v-select
           v-if="value.monthlyPeriod !== 'Day'"
           v-model="value.monthlyDay"
-          multiple
           :items="monthlyDayItems"
           :menu-props="menuProps"
+          multiple
+          small-chips
           dense
           outlined
           background-color="white"
@@ -140,9 +141,10 @@
         <v-select
           v-else
           v-model="value.monthlyDayDate"
-          multiple
           :items="monthlyDayDateItems"
           :menu-props="menuProps"
+          multiple
+          small-chips
           dense
           outlined
           background-color="white"
@@ -359,17 +361,30 @@ export default {
 
 .select-menu-class {
   .v-select-list {
-    ::v-deep .v-simple-checkbox {
-      display: none;
-    }
-    ::v-deep .v-list-item__title {
-      font-size: 14px;
+    padding: 0px !important;
+    ::v-deep .v-list-item {
+      min-height: 32px !important;
+      .v-list-item__action {
+        .v-simple-checkbox {
+          background-color: transparent;
+        }
+      }
+      .v-list-item__content {
+        padding: 5px 0px !important ;
+        .v-list-item__title {
+          font-family: "Open Sans" !important;
+          font-style: normal !important;
+          font-weight: 400 !important;
+          font-size: 16px !important;
+          line-height: 22px !important;
+        }
+      }
     }
   }
 }
 
 ::v-deep .monthly-period-select {
-  max-width: 154px;
+  max-width: 115px;
 }
 
 ::v-deep .monthly-day-select {
