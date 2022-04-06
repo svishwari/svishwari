@@ -9,6 +9,7 @@ from bson import ObjectId
 
 from huxunifylib.connectors import FacebookConnector
 
+from huxunifylib.database.user_management import delete_user, set_user
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     collection_management,
@@ -1139,3 +1140,173 @@ class TestDestinationRoutes(RouteTestCase):
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
         self.assertIsNone(destination)
+
+    # pylint: disable=attribute-defined-outside-init
+    def test_viewer_user_permissions(self) -> None:
+        """Test Viewer user access to different destination API end points."""
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_VIEWER_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_VIEWER_USER_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=t_c.VALID_VIEWER_USER_RESPONSE[api_c.ROLE],
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        new_destination_request = {
+            api_c.NAME: "My custom destination",
+            api_c.CONTACT_EMAIL: "test_email@gmail.com",
+            api_c.CLIENT_REQUEST: True,
+            api_c.CLIENT_ACCOUNT: True,
+            api_c.USE_CASE: "Testing",
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/request",
+            headers=t_c.STANDARD_HEADERS,
+            json=new_destination_request,
+        )
+
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
+            f"/{destination_id}/{api_c.AUTHENTICATION}",
+            json=self.new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+        # get destination ID
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+    # pylint: disable=attribute-defined-outside-init
+    @mock.patch(
+        "huxunify.api.route.destination.JiraConnection.create_jira_issue"
+    )
+    @mock.patch("huxunify.api.route.destination.JiraConnection.__init__")
+    def test_editor_user_permissions(
+        self, jira_class_init, jira_create_issue_mock
+    ) -> None:
+        """Test Editor user access to different destination API end points.
+
+        Args:
+            jira_class_init (MagicMock): Mock creating jira class.
+            jira_create_issue_mock (MagicMock): Mock creating jira issue.
+        """
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_EDITOR_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_EDITOR_USER_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=t_c.VALID_EDITOR_USER_RESPONSE[api_c.ROLE],
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        new_destination_request = {
+            api_c.NAME: "My custom destination",
+            api_c.CONTACT_EMAIL: "test_email@gmail.com",
+            api_c.CLIENT_REQUEST: True,
+            api_c.CLIENT_ACCOUNT: True,
+            api_c.USE_CASE: "Testing",
+        }
+
+        jira_class_init.return_value = None
+        jira_create_issue_mock.return_value = {db_c.CONSTANT_KEY: ""}
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/request",
+            headers=t_c.STANDARD_HEADERS,
+            json=new_destination_request,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        # get destination ID
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+    # pylint: disable=attribute-defined-outside-init
+    def test_admin_user_permissions(self) -> None:
+        """Test Admin user access to different destination API end points."""
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
+        )
+
+        # get destination ID
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
