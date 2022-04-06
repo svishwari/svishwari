@@ -358,7 +358,7 @@ class SetEngagement(SwaggerView):
                 if get_delivery_platform(database, destination.get(api_c.ID)):
                     destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
                 else:
-                    logger.warn(
+                    logger.warning(
                         "Destination %s could not be found.",
                         destination.get(api_c.ID),
                     )
@@ -491,7 +491,7 @@ class UpdateEngagement(SwaggerView):
                 if get_delivery_platform(database, destination.get(api_c.ID)):
                     destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
                 else:
-                    logger.warn(
+                    logger.warning(
                         "Destination %s could not be found.",
                         destination.get(api_c.ID),
                     )
@@ -702,7 +702,7 @@ class AddAudienceEngagement(SwaggerView):
                 if get_delivery_platform(database, destination.get(api_c.ID)):
                     destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
                 else:
-                    logger.warn(
+                    logger.warning(
                         "Destination %s could not be found.",
                         destination.get(api_c.ID),
                     )

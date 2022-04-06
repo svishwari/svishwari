@@ -159,6 +159,7 @@ def group_engagement_performance_metrics(
                             f"the destination does not exist."
                         ),
                     ),
+                    db_c.NOTIFICATION_CATEGORY_METRICS,
                 )
                 continue
 

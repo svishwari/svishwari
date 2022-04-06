@@ -820,7 +820,7 @@ class AudienceGetView(SwaggerView):
                     database, lookalike_audience.get(db_c.DELIVERY_PLATFORM_ID)
                 )
                 if not destination:
-                    logger.warn(
+                    logger.warning(
                         "Destination %s could not be found.",
                         destination.get(api_c.ID),
                     )
