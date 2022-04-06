@@ -37,12 +37,54 @@ VALID_INTROSPECTION_RESPONSE = {
     "client_id": "1234",
     "uid": "00u7acrr5pEmJ09lc2p7",
 }
+VALID_VIEWER_INTROSPECTION_RESPONSE = {
+    "active": True,
+    "scope": "openid email profile",
+    "username": "user1",
+    "exp": 1234,
+    "iat": 12345,
+    "sub": "user1_viewer@deloitte.com",
+    "aud": "sample_aud",
+    "iss": "sample_iss",
+    "jti": "sample_jti",
+    "token_type": "Bearer",
+    "client_id": "1234",
+    "uid": "00u7acrr5pEmJ09lc2p7",
+}
+VALID_EDITOR_INTROSPECTION_RESPONSE = {
+    "active": True,
+    "scope": "openid email profile",
+    "username": "user1",
+    "exp": 1234,
+    "iat": 12345,
+    "sub": "user1_editor@deloitte.com",
+    "aud": "sample_aud",
+    "iss": "sample_iss",
+    "jti": "sample_jti",
+    "token_type": "Bearer",
+    "client_id": "1234",
+    "uid": "00u7acrr5pEmJ09lc2p7",
+}
 INVALID_INTROSPECTION_RESPONSE = {"active": False}
 VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
     api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
     api_c.NAME: "USER 1",
     api_c.ROLE: db_c.USER_ROLE_ADMIN,
+    api_c.USER_PII_ACCESS: True,
+}
+VALID_VIEWER_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
+    api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
+    api_c.NAME: "VIEWER USER",
+    api_c.ROLE: db_c.USER_ROLE_VIEWER,
+    api_c.USER_PII_ACCESS: True,
+}
+VALID_EDITOR_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: VALID_EDITOR_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
+    api_c.EMAIL: VALID_EDITOR_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
+    api_c.NAME: "EDITOR USER",
+    api_c.ROLE: db_c.USER_ROLE_EDITOR,
     api_c.USER_PII_ACCESS: True,
 }
 # response missing some fields
@@ -147,6 +189,7 @@ IDENTITY_INSIGHT_RESPONSE = {
         "total_address_ids": 1614,
         "total_individual_ids": 1614,
         "total_household_ids": 1760,
+        "updated": "2021-12-17T02:50:52.777Z",
     },
     "message": "ok",
 }

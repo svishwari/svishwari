@@ -29,6 +29,7 @@ from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import (
     set_user,
     manage_user_favorites,
+    delete_user,
 )
 from huxunifylib.connectors import FacebookConnector
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
@@ -604,16 +605,20 @@ class TestEngagementPerformanceDownload(TestCase):
 class TestEngagementRoutes(TestCase):
     """Tests for Engagement route APIs."""
 
+    def __init__(self, methodName: str = ...):
+        super().__init__(methodName)
+
     def setUp(self) -> None:
         """Setup resources before each test."""
 
-        # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(
             t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
         )
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
-        request_mocker.start()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
 
         self.app = create_app().test_client()
 
@@ -2541,3 +2546,125 @@ class TestEngagementRoutes(TestCase):
         #         db_c.LATEST_DELIVERY
         #     ][api_c.MATCH_RATE], 0
         # )
+
+    def test_viewer_user_permissions(self) -> None:
+        """Test Viewer user access to different engagement API end points."""
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_VIEWER_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_VIEWER_USER_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=t_c.VALID_VIEWER_USER_RESPONSE[api_c.ROLE],
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        # Viewer user doesnt have post endpoint permission
+        engagement = {
+            db_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
+                    db_c.DESTINATIONS: [
+                        {db_c.OBJECT_ID: str(self.destinations[0][db_c.ID])},
+                    ],
+                }
+            ],
+            db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
+            db_c.ENGAGEMENT_NAME: "Soumya's Test Engagement",
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            data=json.dumps(engagement),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+        # Viewer user doesnt have delete endpoint permission
+        engagement_id = self.engagement_ids[0]
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        engagement_id = self.engagement_ids[0]
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+    def test_editor_user_permissions(self) -> None:
+        """Test Editor user access to different engagement API end points."""
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_EDITOR_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_EDITOR_USER_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=t_c.VALID_EDITOR_USER_RESPONSE[api_c.ROLE],
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        engagement = {
+            db_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
+                    db_c.DESTINATIONS: [
+                        {db_c.OBJECT_ID: str(self.destinations[0][db_c.ID])},
+                    ],
+                }
+            ],
+            db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
+            db_c.ENGAGEMENT_NAME: "Soumya's Test Engagement",
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            data=json.dumps(engagement),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+
+        engagement_id = self.engagement_ids[0]
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        engagement_id = self.engagement_ids[0]
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
