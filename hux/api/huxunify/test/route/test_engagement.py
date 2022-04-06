@@ -153,6 +153,7 @@ class TestEngagementMetricsDisplayAds(RouteTestCase):
                     api_c.AD_SET_NAME: self.ad_set_name,
                 }
             ],
+            t_c.TEST_USER_NAME,
             self.engagement_id,
         )
 
@@ -186,12 +187,12 @@ class TestEngagementMetricsDisplayAds(RouteTestCase):
         self.assertTrue(
             validate_schema(DisplayAdsSummary(), response.json["summary"])
         )
-        self.assertEqual(response.json["summary"]["impressions"], 70487)
-        self.assertEqual(response.json["summary"]["spend"], 14507)
+        self.assertEqual(response.json["summary"]["impressions"], 239)
+        self.assertEqual(response.json["summary"]["spend"], 100)
         self.assertTrue(response.json["audience_performance"])
         self.assertTrue(response.json["audience_performance"][0]["id"])
         self.assertEqual(
-            response.json["audience_performance"][0]["impressions"], 70487
+            response.json["audience_performance"][0]["impressions"], 239
         )
         self.assertTrue(
             response.json["audience_performance"][0]["destinations"]
@@ -200,18 +201,7 @@ class TestEngagementMetricsDisplayAds(RouteTestCase):
             response.json["audience_performance"][0]["destinations"][0][
                 "impressions"
             ],
-            70487,
-        )
-        self.assertTrue(
-            response.json["audience_performance"][0]["destinations"][0][
-                "campaigns"
-            ]
-        )
-        self.assertEqual(
-            response.json["audience_performance"][0]["destinations"][0][
-                "campaigns"
-            ][0]["impressions"],
-            70487,
+            239,
         )
 
     def test_display_ads_invalid_engagement(self):
@@ -344,6 +334,7 @@ class TestEngagementMetricsEmail(TestCase):
                     db_c.AUDIENCE_ID: self.audience_id,
                 }
             ],
+            t_c.TEST_USER_NAME,
             self.engagement_id_sfmc,
         )
 
@@ -377,14 +368,16 @@ class TestEngagementMetricsEmail(TestCase):
         self.assertTrue(
             validate_schema(EmailSummary(), response.json["summary"])
         )
-        self.assertEqual(response.json["summary"]["hard_bounces"], 125)
-        self.assertEqual(response.json["summary"]["sent"], 125)
+        self.assertEqual(response.json["summary"]["hard_bounces"], 197)
+        self.assertEqual(response.json["summary"]["sent"], 2045)
         self.assertTrue(response.json["audience_performance"])
         self.assertTrue(response.json["audience_performance"][0]["id"])
         self.assertEqual(
-            response.json["audience_performance"][0]["hard_bounces"], 125
+            response.json["audience_performance"][0]["hard_bounces"], 197
         )
-        self.assertEqual(response.json["audience_performance"][0]["sent"], 125)
+        self.assertEqual(
+            response.json["audience_performance"][0]["sent"], 2045
+        )
         self.assertTrue(
             response.json["audience_performance"][0]["destinations"]
         )
@@ -392,13 +385,13 @@ class TestEngagementMetricsEmail(TestCase):
             response.json["audience_performance"][0]["destinations"][0][
                 "hard_bounces"
             ],
-            125,
+            197,
         )
         self.assertEqual(
             response.json["audience_performance"][0]["destinations"][0][
                 "sent"
             ],
-            125,
+            2045,
         )
 
     def test_email_invalid_engagement(self):
@@ -557,6 +550,7 @@ class TestEngagementPerformanceDownload(TestCase):
                     db_c.AUDIENCE_ID: self.audience_id,
                 }
             ],
+            t_c.TEST_USER_NAME,
             self.engagement_id_sfmc,
         )
 

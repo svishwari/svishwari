@@ -104,8 +104,8 @@
     </v-card>
     <v-card
       v-else
-      class="rounded-lg card-info-wrapper box-shadow-5"
-      height="200px"
+      class="no-data-chart-frame rounded-lg card-info-wrapper box-shadow-5"
+      height="280px"
     >
       <empty-page
         class="title-no-notification"
@@ -114,7 +114,7 @@
       >
         <template #title>
           <div class="title-no-notification">
-            Customer insights is currently unavailable
+            Customer data is currently unavailable
           </div>
         </template>
         <template #subtitle>
@@ -182,5 +182,8 @@ export default {
   td {
     height: 40px !important;
   }
+}
+.no-data-chart-frame {
+  @include no-data-frame-bg("empty-3-charts.png");
 }
 </style>

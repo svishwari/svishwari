@@ -337,7 +337,7 @@
       :sub-title="`${value.name}?`"
       left-btn-text="Cancel"
       right-btn-text="Yes, edit"
-      body="Are you sure you want to edit this engagement?
+      body="Are you sure you want to edit this engagement? <br>
 By changing the engagement, you may need to reschedule the delivery time and it will impact all associated audiences and destinations."
       @onCancel="showUpdateModal = false"
       @onConfirm="restoreEngagement()"

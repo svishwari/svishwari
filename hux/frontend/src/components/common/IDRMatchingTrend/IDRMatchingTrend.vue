@@ -113,6 +113,9 @@ export default {
           this.currentData["date"],
           "MMM DD, YYYY"
         )
+        this.toolTipStyle.left = this.currentData.invertPosition
+          ? "-80px"
+          : "69px"
       }
     },
     getCordinates(args) {

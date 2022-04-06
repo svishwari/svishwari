@@ -325,8 +325,8 @@ client["audiences"].getAudiences = (data) => {
   return http.get(`/audiences?${newURLFormat}`)
 }
 
-client["audiences"].downloadAudience = (audienceId, fileType) => {
-  return http.get(`/audiences/${audienceId}/${fileType}`, {
+client["audiences"].downloadAudience = (audienceId, query) => {
+  return http.get(`/audiences/${audienceId}/download?${query}`, {
     timeout: 0,
     responseType: "blob",
   })
@@ -340,9 +340,9 @@ client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
-client["audiences"].create = (resourceId, data) => {
-  return http.post("/lookalike-audiences", data)
-}
+// client["audiences"].create = (resourceId, data) => {
+//   return http.post("/lookalike-audiences", data)
+// }
 
 client["audiences"].deliveries = (resourceId, query) => {
   return http.get(`/audiences/${resourceId}/delivery-history?${query}`)

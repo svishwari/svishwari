@@ -209,9 +209,13 @@ export default {
         .attr("class", "hover-line-y")
         .style("stroke", "#1E1E1E")
         .style("stroke-width", 1)
+
+      let hoverRectRange = w + 100
+      let maxRightLimit = (hoverRectRange * 85) / 100
+
       svg
         .append("rect")
-        .attr("width", w + 100)
+        .attr("width", hoverRectRange)
         .attr("height", h)
         .style("stroke", "transparent")
         .style("fill", "transparent")
@@ -263,7 +267,9 @@ export default {
               .style("pointer-events", "none")
           }
         })
-
+        // Invert tooltip positioning to avoid cut off
+        dataToolTip.invertPosition =
+          finalXCoordinate > maxRightLimit ? true : false
         dataToolTip.xPosition = finalXCoordinate
         dataToolTip.yPosition = yData
         this.tooltipDisplay(true, dataToolTip)

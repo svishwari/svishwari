@@ -655,6 +655,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.audience[db_c.ID],
             self.destination[db_c.ID],
             [],
+            self.user_name,
             engagement_id,
         )
         self.assertTrue(audience_delivery_job)

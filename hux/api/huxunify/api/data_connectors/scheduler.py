@@ -250,7 +250,10 @@ async def delivery_destination(
         ]:
             continue
         batch_destination = get_destination_config(
-            database, *pair, engagement[db_c.ID]
+            database,
+            *pair,
+            engagement[db_c.ID],
+            username=engagement[db_c.UPDATED_BY],
         )
         batch_destination.register()
         batch_destination.submit()

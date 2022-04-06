@@ -248,3 +248,10 @@
   font-weight: bold;
   position: relative;
 }
+
+$path--rel: "../../assets/images";
+
+@mixin no-data-frame-bg($link) {
+  background-image: url("#{$path--rel}/#{$link}");
+  background-position: center;
+}

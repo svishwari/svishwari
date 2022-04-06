@@ -426,6 +426,7 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
             audience[db_c.ID],
             self.destination[db_c.ID],
             [],
+            self.user_name,
             engagement_id,
         )
 

@@ -7,6 +7,7 @@
     :max-width="maxWidth"
     :min-width="minWidth"
     :nudge-right="nudgeRight"
+    :nudge-top="nudgeTop"
     :z-index="zIndex"
   >
     <template #activator="{ on }">
@@ -47,6 +48,11 @@ export default {
       default: undefined,
     },
     nudgeRight: {
+      type: [String, Number],
+      required: false,
+      default: 0,
+    },
+    nudgeTop: {
       type: [String, Number],
       required: false,
       default: 0,

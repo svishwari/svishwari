@@ -9,9 +9,7 @@ from hypothesis import given, strategies as st
 
 from huxunify.api.schema.applications import ApplicationsGETSchema
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
-from huxunifylib.database.user_management import (
-    set_user,
-)
+from huxunifylib.database.user_management import set_user
 from huxunifylib.database.collection_management import (
     get_documents,
     create_document,
@@ -82,12 +80,23 @@ class ApplicationsTests(RouteTestCase):
 
     def test_get_all_applications_success_user_only(self):
         """Test get all applications successfully with no params."""
+        application = self.applications[0]
 
-        patch_request_body = {
-            api_c.URL: "NEW_URL_Link",
+        applications_request = {
+            api_c.CATEGORY: application.get(api_c.CATEGORY),
+            api_c.NAME: application.get(api_c.NAME),
+            api_c.URL: "URL_Link",
         }
+        # Creating application so it is added to user.
+        self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
 
-        response = self.app.patch(
+        patch_request_body = {api_c.URL: "NEW_URL_Link"}
+
+        self.app.patch(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
             f"{self.applications[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -114,7 +123,7 @@ class ApplicationsTests(RouteTestCase):
         """Test creating application successfully."""
 
         applications_request = {
-            api_c.CATEGORY: "uncategorized",
+            api_c.CATEGORY: "Uncategorized",
             api_c.NAME: "Custom Application",
             api_c.URL: "URL_Link",
         }
@@ -152,7 +161,7 @@ class ApplicationsTests(RouteTestCase):
         """Test create invalid application."""
 
         applications_request = {
-            api_c.CATEGORY: "uncategorized",
+            api_c.CATEGORY: "Uncategorized",
             api_c.NAME: "Custom Application",
         }
         response = self.app.post(
@@ -167,7 +176,7 @@ class ApplicationsTests(RouteTestCase):
         """Test create invalid application."""
 
         applications_request = {
-            api_c.CATEGORY: "uncategorized",
+            api_c.CATEGORY: "Uncategorized",
             api_c.NAME: "Custom Application",
             api_c.URL: "URL_Link",
         }
@@ -189,7 +198,7 @@ class ApplicationsTests(RouteTestCase):
         self.assertIn(applications_request[api_c.NAME], names)
 
         applications_request = {
-            api_c.CATEGORY: "uncategorized",
+            api_c.CATEGORY: "Uncategorized",
             api_c.NAME: "Custom Application",
             api_c.URL: "URL_Link",
         }
@@ -270,6 +279,20 @@ class ApplicationsTests(RouteTestCase):
         patch_request_body = {
             api_c.URL: "NEW_URL_Link",
         }
+
+        application = self.applications[0]
+
+        applications_request = {
+            api_c.CATEGORY: application.get(api_c.CATEGORY),
+            api_c.NAME: application.get(api_c.NAME),
+            api_c.URL: "URL_Link",
+        }
+        # Create the application ensuring it is added to the user collection.
+        self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
 
         response = self.app.patch(
             f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"

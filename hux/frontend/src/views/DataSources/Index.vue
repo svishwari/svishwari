@@ -28,7 +28,7 @@
               size="large"
               is-tile
               height="40"
-              class="ma-2 font-weight-regular no-shadow mr-0 caption"
+              class="ma-2 font-weight-regular no-shadow mr-10 caption"
               data-e2e="addDataSource"
               @click="toggleDrawer()"
             >
@@ -206,7 +206,7 @@ export default {
 .header-section {
   position: fixed;
   width: 89%;
-  z-index: 999999 !important;
+  z-index: 6 !important;
 }
 .content-section {
   margin-top: 180px;

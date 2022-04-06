@@ -159,6 +159,8 @@ class CourierTest(TestCase):
             engagement_doc[db_c.CREATED_BY],
         )
 
+        self.test_user = t_c.TEST_USER_NAME
+
         self.assertIsInstance(engagement_id, ObjectId)
         self.engagement = get_engagement(self.database, engagement_id)
         self.assertTrue(self.engagement)
@@ -348,7 +350,10 @@ class CourierTest(TestCase):
 
         for pair in delivery_route:
             batch_destination = get_destination_config(
-                self.database, *pair, self.engagement[db_c.ID]
+                self.database,
+                *pair,
+                self.engagement[db_c.ID],
+                username=self.test_user,
             )
 
             self.assertIsNotNone(batch_destination.aws_envs)
@@ -375,7 +380,10 @@ class CourierTest(TestCase):
         # walk the delivery route
         for pair in delivery_route:
             batch_destination = get_destination_config(
-                self.database, *pair, self.engagement[db_c.ID]
+                self.database,
+                *pair,
+                self.engagement[db_c.ID],
+                username=self.test_user,
             )
 
             batch_destination.aws_envs[
@@ -410,7 +418,10 @@ class CourierTest(TestCase):
         # walk the delivery route
         for pair in delivery_route:
             batch_destination = get_destination_config(
-                self.database, *pair, self.engagement[db_c.ID]
+                self.database,
+                *pair,
+                self.engagement[db_c.ID],
+                username=self.test_user,
             )
 
             # Register job

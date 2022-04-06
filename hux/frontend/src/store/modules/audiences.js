@@ -167,9 +167,12 @@ const actions = {
     }
   },
 
-  async fetchAudienceData(_, { id, type }) {
+  async downloadAudienceData(_, { id, type }) {
     try {
       const response = await api.audiences.downloadAudience(id, type)
+      if (response.status == 200) {
+        handleSuccess("Audience data downloaded successfully", response.status)
+      }
       return response
     } catch (error) {
       handleError(error)
