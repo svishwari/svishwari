@@ -330,6 +330,8 @@ export default {
     this.updateSizes()
 
     this.notHistogramKeys = this.updateHistoArr
+
+    this.$emit("attribute-options", this)
   },
 
   created() {

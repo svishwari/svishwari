@@ -114,7 +114,6 @@
                     :variant="
                       colColorArr[header.key] && colColorArr[header.key].variant
                     "
-                    class="ml-4"
                   ></rhombus-number>
 
                   <span
@@ -454,8 +453,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getOverview: "trustId/getTrustIdOverview",
-      getTrustIdComparison: "trustId/getTrustIdComparison",
+      // getOverview: "trustId/getTrustIdOverview",
+      // getTrustIdComparison: "trustId/getTrustIdComparison",
     }),
     getSelectedData(value) {
       this.selectedSegment = value
