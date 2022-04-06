@@ -303,8 +303,7 @@ class TrustIdAddSegment(SwaggerView):
         ]:
             return HuxResponse.CONFLICT(
                 message=(
-                    f"Segment with name {segment_details[api_c.NAME]} "
-                    f"already exists !"
+                    "Segment with given name already exists !"
                 )
             )
 
@@ -313,8 +312,9 @@ class TrustIdAddSegment(SwaggerView):
             database, user[db_c.OKTA_ID], segment_details
         )[db_c.TRUST_ID_SEGMENTS]
 
-        # Update logic to filter trust id data based on added segments using updated_segments
+        # Update logic to filter trust id data based on added
+        # segments using updated_segments
         return HuxResponse.CREATED(
             data=trust_id_comparison_stub_data,
-            data_schema=TrustIdComparisonSchema,
+            data_schema=TrustIdComparisonSchema(),
         )
