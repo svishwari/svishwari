@@ -1992,11 +1992,19 @@ class EngagementPerformanceDownload(SwaggerView):
             )
 
         final_email_metric = get_performance_metrics(
-            database, engagement, engagement_id, api_c.EMAIL
+            database,
+            engagement,
+            engagement_id,
+            api_c.EMAIL,
+            user[api_c.USER_NAME],
         )
 
         final_display_ads_metric = get_performance_metrics(
-            database, engagement, engagement_id, api_c.DISPLAY_ADS
+            database,
+            engagement,
+            engagement_id,
+            api_c.DISPLAY_ADS,
+            user[api_c.USER_NAME],
         )
 
         folder_name = "performancemetrics"

@@ -667,6 +667,7 @@ def get_destination_config(
                 f"the destination does not exist."
             ),
             db_c.NOTIFICATION_CATEGORY_METRICS,
+            username,
         )
         raise FailedDestinationDependencyError(
             destination_id, HTTPStatus.NOT_FOUND

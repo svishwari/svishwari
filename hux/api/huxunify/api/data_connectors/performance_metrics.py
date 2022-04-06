@@ -74,6 +74,7 @@ def group_engagement_performance_metrics(
     performance_metrics: list,
     target_destinations: list,
     metrics_type: str,
+    username: str,
 ) -> dict:
     """Group performance metrics for engagement
 
@@ -83,6 +84,7 @@ def group_engagement_performance_metrics(
         performance_metrics (list): List of performance metrics.
         target_destinations (list): List of target destinations.
         metrics_type (str): Type of performance metrics.
+        username (str): Username
 
     Returns:
         dict: Grouped performance metrics.
@@ -160,6 +162,7 @@ def group_engagement_performance_metrics(
                         ),
                     ),
                     db_c.NOTIFICATION_CATEGORY_METRICS,
+                    username,
                 )
                 continue
 
@@ -197,6 +200,7 @@ def get_performance_metrics(
     engagement: object,
     engagement_id: str,
     ad_type: str,
+    username: str,
 ) -> dict:
     """Gets performance metrics for engagement
 
@@ -205,6 +209,7 @@ def get_performance_metrics(
         engagement (object): Engagement object
         engagement_id (str): Id of engagement
         ad_type (str): Advertisement type
+        username (str): Username
 
     Returns:
         dict: Email Performance metrics of an engagement
@@ -255,6 +260,7 @@ def get_performance_metrics(
         performance_metrics,
         [destination.get(db_c.ID)],
         ad_type,
+        username,
     )
     final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
 
