@@ -666,7 +666,7 @@ def get_destination_config(
                 f'"Can not fetch destination {destination_id}" because '
                 f"the destination does not exist."
             ),
-            db_c.NOTIFICATION_CATEGORY_METRICS,
+            db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             username,
         )
         raise FailedDestinationDependencyError(
@@ -857,7 +857,7 @@ async def deliver_audience_to_destination(
                 f'to destination ID "{destination_id}" '
                 f"because the destination does not exist."
             ),
-            db_c.NOTIFICATION_CATEGORY_DELIVERY,
+            db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             user_name,
         )
         return
