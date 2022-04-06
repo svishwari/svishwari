@@ -636,7 +636,7 @@ def add_user_trust_id_segments(
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
-        return collection.find_one_update(
+        return collection.find_one_and_update(
             {db_c.OKTA_ID: okta_id},
             {
                 "$push": {db_c.TRUST_ID_SEGMENTS: segment},

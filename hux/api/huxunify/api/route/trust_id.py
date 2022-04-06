@@ -270,7 +270,7 @@ class TrustIdAddSegment(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, user: dict) -> Tuple[list, int]:
-        """Retrieves Trust ID segment filters.
+        """Add Trust ID segment.
 
         ---
         security:
