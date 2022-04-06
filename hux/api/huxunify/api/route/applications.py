@@ -353,7 +353,8 @@ class ApplicationsPatchView(SwaggerView):
         )
 
         application = existing_application
-        application[api_c.URL] = new_application[api_c.URL]
+        if new_application.get(api_c.URL):
+            application[api_c.URL] = new_application[api_c.URL]
 
         return (
             jsonify(ApplicationsGETSchema().dump(application)),
