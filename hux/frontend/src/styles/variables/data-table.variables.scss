@@ -8,7 +8,7 @@ $data-table-mobile-row-header-font-weight: 400 !default;
 $data-table-row-header-font-weight: 400 !default;
 
 // Customizations
-$data-table-heading: map-get($headings, "body-2") !default;
+$data-table-heading: map-get($headings, "body-1") !default;
 
 .v-data-table {
   > .v-data-table__wrapper {

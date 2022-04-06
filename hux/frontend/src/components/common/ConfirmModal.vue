@@ -36,9 +36,8 @@
                 pt-6
                 font-weight-regular
               "
-            >
-              {{ body }}
-            </div>
+              v-html="body"
+            ></div>
           </slot>
         </div>
         <div class="confirm-modal-footer">

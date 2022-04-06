@@ -120,8 +120,6 @@ def set_user(
         db_c.USER_LOGIN_COUNT: 0,
         db_c.USER_FAVORITES: {
             db_c.AUDIENCES: [],
-            db_c.DESTINATIONS: [],
-            db_c.CAMPAIGNS: [],
             db_c.ENGAGEMENTS: [],
             db_c.LOOKALIKE: [],
         },

@@ -28,7 +28,7 @@
               size="large"
               is-tile
               height="40"
-              class="ma-2 font-weight-regular no-shadow mr-0 caption"
+              class="ma-2 font-weight-regular no-shadow mr-10 caption"
               data-e2e="addDataSource"
               @click="toggleDrawer()"
             >
