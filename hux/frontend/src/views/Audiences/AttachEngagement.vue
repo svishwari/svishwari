@@ -523,21 +523,19 @@ export default {
         this.selectedEngagements.filter((eng) => eng.id === engagement.id)
           .length > 0
       ) {
-        if (this.selectedEngagements.length !== 1) {
-          const deselectedId = this.selectedEngagements.findIndex(
-            (eng) => eng.id === engagement.id
-          )
+        const deselectedId = this.selectedEngagements.findIndex(
+          (eng) => eng.id === engagement.id
+        )
 
-          this.selectedEngagements.splice(deselectedId, 1)
-          if (this.closeOnAction) {
-            this.$emit("onAddEngagement", {
-              data: engagement,
-              action: "Detach",
-            })
-            this.localDrawer = false
-          }
-          this.$emit("onEngagementChange", this.selectedEngagements)
+        this.selectedEngagements.splice(deselectedId, 1)
+        if (this.closeOnAction) {
+          this.$emit("onAddEngagement", {
+            data: engagement,
+            action: "Detach",
+          })
+          this.localDrawer = false
         }
+        this.$emit("onEngagementChange", this.selectedEngagements)
       } else {
         this.selectedEngagements.push(engagement)
         if (this.closeOnAction) {
