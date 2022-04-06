@@ -114,16 +114,24 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
     """
 
     return {
-        SFMCCredentials.SFMC_ACCOUNT_ID.value: sfmc_auth.get(api_c.SFMC_ACCOUNT_ID),
-        SFMCCredentials.SFMC_AUTH_URL.value: sfmc_auth.get(api_c.SFMC_AUTH_BASE_URI),
-        SFMCCredentials.SFMC_CLIENT_ID.value: sfmc_auth.get(api_c.SFMC_CLIENT_ID),
+        SFMCCredentials.SFMC_ACCOUNT_ID.value: sfmc_auth.get(
+            api_c.SFMC_ACCOUNT_ID
+        ),
+        SFMCCredentials.SFMC_AUTH_URL.value: sfmc_auth.get(
+            api_c.SFMC_AUTH_BASE_URI
+        ),
+        SFMCCredentials.SFMC_CLIENT_ID.value: sfmc_auth.get(
+            api_c.SFMC_CLIENT_ID
+        ),
         SFMCCredentials.SFMC_CLIENT_SECRET.value: sfmc_auth.get(
             api_c.SFMC_CLIENT_SECRET
         ),
         SFMCCredentials.SFMC_SOAP_ENDPOINT.value: sfmc_auth.get(
             api_c.SFMC_SOAP_BASE_URI
         ),
-        SFMCCredentials.SFMC_URL.value: sfmc_auth.get(api_c.SFMC_REST_BASE_URI),
+        SFMCCredentials.SFMC_URL.value: sfmc_auth.get(
+            api_c.SFMC_REST_BASE_URI
+        ),
     }
 
 
@@ -183,10 +191,14 @@ class DestinationGetView(SwaggerView):
             get_db_client(), destination_id
         )
 
-        return HuxResponse.OK(data=destination, data_schema=DestinationGetSchema())
+        return HuxResponse.OK(
+            data=destination, data_schema=DestinationGetSchema()
+        )
 
 
-@add_view_to_blueprint(dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsView")
+@add_view_to_blueprint(
+    dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsView"
+)
 class DestinationsView(SwaggerView):
     """Destinations view class."""
 
@@ -215,7 +227,9 @@ class DestinationsView(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[Response, int]:  # pylint: disable=no-self-use
+    def get(
+        self, user: dict
+    ) -> Tuple[Response, int]:  # pylint: disable=no-self-use
         """Retrieves all destinations.
 
         ---
@@ -229,7 +243,9 @@ class DestinationsView(SwaggerView):
             Tuple[Response, int]: Response list of destinations, HTTP status code.
         """
         database = get_db_client()
-        destinations = destination_management.get_all_delivery_platforms(database)
+        destinations = destination_management.get_all_delivery_platforms(
+            database
+        )
 
         refresh_all = request.args.get(
             api_c.DESTINATION_REFRESH,
@@ -267,13 +283,17 @@ class DestinationsView(SwaggerView):
                             str(exception),
                             destination[api_c.DELIVERY_PLATFORM_TYPE],
                         )
-                        destination[db_c.DELIVERY_PLATFORM_STATUS] = db_c.STATUS_FAILED
+                        destination[
+                            db_c.DELIVERY_PLATFORM_STATUS
+                        ] = db_c.STATUS_FAILED
 
                     destination_management.update_delivery_platform(
                         database=database,
                         delivery_platform_id=destination[db_c.ID],
                         name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                        delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+                        delivery_platform_type=destination[
+                            db_c.DELIVERY_PLATFORM_TYPE
+                        ],
                         status=destination[db_c.DELIVERY_PLATFORM_STATUS],
                     )
             # using a default here in case we do not have a proper mapping
@@ -285,7 +305,9 @@ class DestinationsView(SwaggerView):
                 destination[db_c.DELIVERY_PLATFORM_STATUS],
             )
 
-        return HuxResponse.OK(data=destinations, data_schema=DestinationGetSchema())
+        return HuxResponse.OK(
+            data=destinations, data_schema=DestinationGetSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -322,18 +344,24 @@ class DestinationAuthenticationPostView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to update the authentication details of the destination.",
         },
-        HTTPStatus.NOT_FOUND.value: {"description": api_c.DESTINATION_NOT_FOUND},
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.DESTINATION_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler(
-        custom_message={ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}}
+        custom_message={
+            ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
+        }
     )
     @validate_destination()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def put(self, destination_id: ObjectId, user: dict) -> Tuple[Response, int]:
+    def put(
+        self, destination_id: ObjectId, user: dict
+    ) -> Tuple[Response, int]:
         """Sets a destination's authentication details.
 
         ---
@@ -368,22 +396,32 @@ class DestinationAuthenticationPostView(SwaggerView):
             sfmc_config = body.get(db_c.CONFIGURATION)
             if not sfmc_config or not isinstance(sfmc_config, dict):
                 logger.error("%s", api_c.SFMC_CONFIGURATION_MISSING)
-                return HuxResponse.BAD_REQUEST(api_c.SFMC_CONFIGURATION_MISSING)
+                return HuxResponse.BAD_REQUEST(
+                    api_c.SFMC_CONFIGURATION_MISSING
+                )
 
             performance_de = sfmc_config.get(
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
             )
             if not performance_de:
                 logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED)
-                return HuxResponse.BAD_REQUEST(api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED)
-            campaign_de = sfmc_config.get(api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION)
+                return HuxResponse.BAD_REQUEST(
+                    api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED
+                )
+            campaign_de = sfmc_config.get(
+                api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION
+            )
             if not campaign_de:
                 logger.error("%s", api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
-                return HuxResponse.BAD_REQUEST(api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
+                return HuxResponse.BAD_REQUEST(
+                    api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED
+                )
             DestinationDataExtConfigSchema().load(sfmc_config)
             if performance_de == campaign_de:
                 logger.error("%s", api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR)
-                return HuxResponse.BAD_REQUEST(api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR)
+                return HuxResponse.BAD_REQUEST(
+                    api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR
+                )
         elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
             FacebookAuthCredsSchema().load(auth_details)
         elif platform_type in [
@@ -409,7 +447,9 @@ class DestinationAuthenticationPostView(SwaggerView):
             data=destination_management.update_delivery_platform(
                 database=database,
                 delivery_platform_id=destination_id,
-                delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+                delivery_platform_type=destination[
+                    db_c.DELIVERY_PLATFORM_TYPE
+                ],
                 name=destination[db_c.DELIVERY_PLATFORM_NAME],
                 authentication_details=authentication_parameters,
                 added=is_added,
@@ -487,7 +527,9 @@ class DestinationValidatePostView(SwaggerView):
         HTTPStatus.OK.value: {
             "description": "Validated destination successfully.",
             "schema": {
-                "example": {"message": "Destination is validated successfully"},
+                "example": {
+                    "message": "Destination is validated successfully"
+                },
             },
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -564,7 +606,9 @@ class DestinationValidatePostView(SwaggerView):
             logger.info("Successfully validated SFMC destination.")
             return HuxResponse.OK(
                 api_c.DESTINATION_AUTHENTICATION_SUCCESS,
-                extra_fields={api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list},
+                extra_fields={
+                    api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list
+                },
             )
         elif platform_type in [
             db_c.DELIVERY_PLATFORM_SENDGRID,
@@ -597,7 +641,9 @@ class DestinationValidatePostView(SwaggerView):
                     ).get(api_c.QUALTRICS_OWNER_ID),
                     QualtricsCredentials.QUALTRICS_DIRECTORY_ID.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.QUALTRICS_DIRECTORY_ID),
+                    ).get(
+                        api_c.QUALTRICS_DIRECTORY_ID
+                    ),
                 }
             )
             if qualtrics_connector.check_connection():
@@ -616,7 +662,9 @@ class DestinationValidatePostView(SwaggerView):
                     ).get(api_c.GOOGLE_REFRESH_TOKEN),
                     GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.GOOGLE_CLIENT_CUSTOMER_ID),
+                    ).get(
+                        api_c.GOOGLE_CLIENT_CUSTOMER_ID
+                    ),
                     GoogleCredentials.GOOGLE_CLIENT_ID.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
                     ).get(api_c.GOOGLE_CLIENT_ID),
@@ -632,10 +680,14 @@ class DestinationValidatePostView(SwaggerView):
             logger.error("Could not validate Google Ads successfully.")
 
         else:
-            logger.error("Destination type %s not supported yet.", body.get(db_c.TYPE))
+            logger.error(
+                "Destination type %s not supported yet.", body.get(db_c.TYPE)
+            )
             return HuxResponse.BAD_REQUEST(api_c.DESTINATION_NOT_SUPPORTED)
 
-        logger.error("Could not validate destination type %s.", body.get(db_c.TYPE))
+        logger.error(
+            "Could not validate destination type %s.", body.get(db_c.TYPE)
+        )
         return HuxResponse.FORBIDDEN(api_c.DESTINATION_AUTHENTICATION_FAILED)
 
 
@@ -700,9 +752,14 @@ class DestinationDataExtView(SwaggerView):
                 "details missing.",
                 destination_id,
             )
-            return HuxResponse.BAD_REQUEST(api_c.DESTINATION_AUTHENTICATION_FAILED)
+            return HuxResponse.BAD_REQUEST(
+                api_c.DESTINATION_AUTHENTICATION_FAILED
+            )
 
-        if destination[api_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC:
+        if (
+            destination[api_c.DELIVERY_PLATFORM_TYPE]
+            == db_c.DELIVERY_PLATFORM_SFMC
+        ):
             try:
                 sfmc_connector = SFMCConnector(
                     auth_details=get_auth_from_parameter_store(
@@ -717,7 +774,9 @@ class DestinationDataExtView(SwaggerView):
                     destination_id,
                 )
             except AuthenticationFailed:
-                return HuxResponse.FORBIDDEN(api_c.DESTINATION_AUTHENTICATION_FAILED)
+                return HuxResponse.FORBIDDEN(
+                    api_c.DESTINATION_AUTHENTICATION_FAILED
+                )
 
         else:
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
@@ -770,7 +829,9 @@ class DestinationDataExtPostView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to create destination data extension.",
             "schema": {
-                "example": {"message": "Destination data extension cannot be created."},
+                "example": {
+                    "message": "Destination data extension cannot be created."
+                },
             },
         },
     }
@@ -806,9 +867,14 @@ class DestinationDataExtPostView(SwaggerView):
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
             return HuxResponse.BAD_REQUEST(api_c.DATA_EXTENSION_NOT_SUPPORTED)
 
-        body = DestinationDataExtPostSchema().load(request.get_json(), partial=True)
+        body = DestinationDataExtPostSchema().load(
+            request.get_json(), partial=True
+        )
 
-        if destination[api_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC:
+        if (
+            destination[api_c.DELIVERY_PLATFORM_TYPE]
+            == db_c.DELIVERY_PLATFORM_SFMC
+        ):
 
             sfmc_connector = SFMCConnector(
                 auth_details=get_auth_from_parameter_store(
@@ -819,7 +885,9 @@ class DestinationDataExtPostView(SwaggerView):
 
             if not sfmc_connector.check_connection():
                 logger.info("Could not validate SFMC successfully.")
-                return HuxResponse.FORBIDDEN(api_c.DESTINATION_AUTHENTICATION_FAILED)
+                return HuxResponse.FORBIDDEN(
+                    api_c.DESTINATION_AUTHENTICATION_FAILED
+                )
 
             status_code = HTTPStatus.CREATED
 
@@ -937,16 +1005,18 @@ class DestinationPatchView(SwaggerView):
 
         database = get_db_client()
 
-        updated_destination = destination_management.update_delivery_platform_doc(
-            database,
-            destination_id,
-            {
-                **request.get_json(),
-                **{
-                    db_c.UPDATED_BY: user[api_c.USER_NAME],
-                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+        updated_destination = (
+            destination_management.update_delivery_platform_doc(
+                database,
+                destination_id,
+                {
+                    **request.get_json(),
+                    **{
+                        db_c.UPDATED_BY: user[api_c.USER_NAME],
+                        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    },
                 },
-            },
+            )
         )
 
         create_notification(
@@ -1053,7 +1123,9 @@ class DestinationsRequestView(SwaggerView):
         )
 
         # check if any found documents
-        destinations = destinations.get(db_c.DOCUMENTS, []) if destinations else []
+        destinations = (
+            destinations.get(db_c.DOCUMENTS, []) if destinations else []
+        )
 
         # check if it was requested
         if destinations:
@@ -1114,7 +1186,9 @@ class DestinationsRequestView(SwaggerView):
             user[api_c.USER_NAME],
         )
 
-        return HuxResponse.OK(data=destination, data_schema=DestinationGetSchema())
+        return HuxResponse.OK(
+            data=destination, data_schema=DestinationGetSchema()
+        )
 
 
 @add_view_to_blueprint(
