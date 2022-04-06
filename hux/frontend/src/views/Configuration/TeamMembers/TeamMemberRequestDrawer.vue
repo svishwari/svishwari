@@ -208,12 +208,12 @@ export default {
           type: "admin",
         },
         {
-          name: "View-only",
-          type: "viewer",
-        },
-        {
           name: "Edit",
           type: "editor",
+        },
+        {
+          name: "View-only",
+          type: "viewer",
         },
       ],
       firstName: "",
@@ -223,7 +223,7 @@ export default {
       requestText: "",
       pii: {
         hoverTooltip:
-          "Sensitive and PII data are only accessible to individuals tha been granted permission by an Admin.",
+          "Sensitive and PII data are only accessible to individuals that have been granted permission by an Admin.",
         tooltipWidth: "300px",
       },
       switchLabel: [

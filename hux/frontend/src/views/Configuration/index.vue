@@ -21,7 +21,7 @@
     </div>
     <div
       v-if="!loading"
-      class="config-content flex-grow-1 flex-shrink-1 mw-100 content-section"
+      class="config-content flex-grow-1 flex-shrink-1 mw-100"
     >
       <v-row v-if="isConfigActivated">
         <v-col>

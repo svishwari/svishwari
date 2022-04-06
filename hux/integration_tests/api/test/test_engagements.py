@@ -1,4 +1,6 @@
 """Purpose of this file is to integration test for engagements."""
+from typing import Union
+
 from time import time
 from unittest import TestCase
 from http import HTTPStatus
@@ -52,7 +54,7 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        self.assertTrue(isinstance(response.json(), dict))
+        self.assertIsInstance(response.json(), dict)
 
         # add the crud object to pytest for cleaning after
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
@@ -67,8 +69,8 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(isinstance(response.json(), list))
-        self.assertTrue(len(response.json()) >= 1)
+        self.assertIsInstance(response.json(), list)
+        self.assertGreaterEqual(len(response.json()), 1)
 
     def test_get_engagement_by_id(self):
         """Test get engagement by ID."""
@@ -97,7 +99,7 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
+        self.assertIsInstance(create_response.json(), dict)
 
         engagement_id = create_response.json()["id"]
 
@@ -109,7 +111,7 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
-        self.assertTrue(isinstance(fetch_response.json(), dict))
+        self.assertIsInstance(fetch_response.json(), dict)
         self.assertEqual(engagement_id, fetch_response.json()["id"])
 
         # add the crud object to pytest for cleaning after
@@ -147,7 +149,7 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
+        self.assertIsInstance(create_response.json(), dict)
 
         engagement_id = create_response.json()["id"]
 
@@ -185,7 +187,7 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, update_response.status_code)
-        self.assertTrue(isinstance(update_response.json(), dict))
+        self.assertIsInstance(update_response.json(), dict)
         self.assertEqual(engagement_id, update_response.json()["id"])
         self.assertEqual(
             updated_engagement_name, update_response.json()["name"]
@@ -224,7 +226,7 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
+        self.assertIsInstance(create_response.json(), dict)
 
         engagement_id = create_response.json()["id"]
 
@@ -275,8 +277,8 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
-        self.assertTrue(len(create_response.json()["audiences"]) == 1)
+        self.assertIsInstance(create_response.json(), dict)
+        self.assertEqual(len(create_response.json()["audiences"]), 1)
 
         engagement_id = create_response.json()["id"]
 
@@ -313,7 +315,7 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.CREATED, add_audience_response.status_code)
-        self.assertTrue(isinstance(add_audience_response.json(), dict))
+        self.assertIsInstance(add_audience_response.json(), dict)
 
         # get the engagement by id for further validation
         fetch_response = requests.get(
@@ -323,9 +325,9 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
-        self.assertTrue(isinstance(fetch_response.json(), dict))
+        self.assertIsInstance(fetch_response.json(), dict)
         self.assertEqual(engagement_id, fetch_response.json()["id"])
-        self.assertTrue(len(fetch_response.json()["audiences"]) == 2)
+        self.assertEqual(len(fetch_response.json()["audiences"]), 2)
 
         # add the crud object to pytest for cleaning after
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
@@ -372,8 +374,8 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
-        self.assertTrue(len(create_response.json()["audiences"]) == 2)
+        self.assertIsInstance(create_response.json(), dict)
+        self.assertEqual(len(create_response.json()["audiences"]), 2)
 
         engagement_id = create_response.json()["id"]
 
@@ -398,9 +400,9 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
-        self.assertTrue(isinstance(fetch_response.json(), dict))
+        self.assertIsInstance(fetch_response.json(), dict)
         self.assertEqual(engagement_id, fetch_response.json()["id"])
-        self.assertTrue(len(fetch_response.json()["audiences"]) == 1)
+        self.assertEqual(len(fetch_response.json()["audiences"]), 1)
 
         # add the crud object to pytest for cleaning after
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
@@ -432,10 +434,10 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
-        self.assertTrue(len(create_response.json()["audiences"]) == 1)
-        self.assertTrue(
-            len(create_response.json()["audiences"][0]["destinations"]) == 1
+        self.assertIsInstance(create_response.json(), dict)
+        self.assertEqual(len(create_response.json()["audiences"]), 1)
+        self.assertEqual(
+            len(create_response.json()["audiences"][0]["destinations"]), 1
         )
 
         engagement_id = create_response.json()["id"]
@@ -456,14 +458,14 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, add_destination_response.status_code)
-        self.assertTrue(isinstance(add_destination_response.json(), dict))
+        self.assertIsInstance(add_destination_response.json(), dict)
         self.assertEqual(engagement_id, add_destination_response.json()["id"])
-        self.assertTrue(len(add_destination_response.json()["audiences"]) == 1)
-        self.assertTrue(
+        self.assertEqual(len(add_destination_response.json()["audiences"]), 1)
+        self.assertEqual(
             len(
                 add_destination_response.json()["audiences"][0]["destinations"]
-            )
-            == 2
+            ),
+            2,
         )
 
         # add the crud object to pytest for cleaning after
@@ -506,10 +508,10 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
-        self.assertTrue(len(create_response.json()["audiences"]) == 1)
-        self.assertTrue(
-            len(create_response.json()["audiences"][0]["destinations"]) == 2
+        self.assertIsInstance(create_response.json(), dict)
+        self.assertEqual(len(create_response.json()["audiences"]), 1)
+        self.assertEqual(
+            len(create_response.json()["audiences"][0]["destinations"]), 2
         )
 
         engagement_id = create_response.json()["id"]
@@ -534,11 +536,11 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
-        self.assertTrue(isinstance(fetch_response.json(), dict))
+        self.assertIsInstance(fetch_response.json(), dict)
         self.assertEqual(engagement_id, fetch_response.json()["id"])
-        self.assertTrue(len(fetch_response.json()["audiences"]) == 1)
-        self.assertTrue(
-            len(fetch_response.json()["audiences"][0]["destinations"]) == 1
+        self.assertEqual(len(fetch_response.json()["audiences"]), 1)
+        self.assertEqual(
+            len(fetch_response.json()["audiences"][0]["destinations"]), 1
         )
 
         # add the crud object to pytest for cleaning after
@@ -571,7 +573,7 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
+        self.assertIsInstance(create_response.json(), dict)
 
         engagement_id = create_response.json()["id"]
 
@@ -584,7 +586,7 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, get_email_metrics_response.status_code)
-        self.assertTrue(isinstance(get_email_metrics_response.json(), dict))
+        self.assertIsInstance(get_email_metrics_response.json(), dict)
         self.assertTrue(
             get_email_metrics_response.json()["audience_performance"]
         )
@@ -619,7 +621,7 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
+        self.assertIsInstance(create_response.json(), dict)
 
         engagement_id = create_response.json()["id"]
 
@@ -669,7 +671,7 @@ class TestEngagements(TestCase):
 
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertTrue(isinstance(create_response.json(), dict))
+        self.assertIsInstance(create_response.json(), dict)
 
         engagement_id = create_response.json()["id"]
 
@@ -684,12 +686,94 @@ class TestEngagements(TestCase):
         self.assertEqual(
             HTTPStatus.OK, get_display_ads_metrics_response.status_code
         )
-        self.assertTrue(
-            isinstance(get_display_ads_metrics_response.json(), dict)
-        )
+        self.assertIsInstance(get_display_ads_metrics_response.json(), dict)
         self.assertTrue(
             get_display_ads_metrics_response.json()["audience_performance"]
         )
 
         # add the crud object to pytest for cleaning after
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
+    def get_engagement_audience_facebook_destination_id(
+        self,
+    ) -> Union[dict, None]:
+        """Get the engagement id from the get engagements response and the
+        corresponding audience_id and destination_id of destination type
+        facebook that are nested within the response and return it as a dict
+        object.
+
+        Returns:
+            Union[dict, None]: engagement_id, and corresponding audience_id,
+                destination_id(of type facebook).
+        """
+
+        response = requests.get(
+            f"{pytest.API_URL}/{self.ENGAGEMENTS}",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), list)
+
+        for engagement in response.json():
+            for audience in engagement["audiences"]:
+                # ensure that the audience is not a lookalike audience since
+                # campaign mappings endpoints require regular audience
+                get_audience = requests.get(
+                    f'{pytest.API_URL}/audiences/{audience["id"]}',
+                    headers=pytest.HEADERS,
+                ).json()
+                if get_audience and get_audience["is_lookalike"]:
+                    continue
+                for destination in audience["destinations"]:
+                    if destination["name"] == "Facebook":
+                        return {
+                            "engagement_id": engagement["id"],
+                            "audience_id": audience["id"],
+                            "destination_id": destination["id"],
+                        }
+
+        return None
+
+    def test_get_campaign_mappings_to_attach_to_audience(self):
+        """Test get campaign mappings."""
+
+        request_query_params_value = (
+            self.get_engagement_audience_facebook_destination_id()
+        )
+
+        if request_query_params_value:
+            get_campaign_mappings_response = requests.get(
+                f"{pytest.API_URL}/{self.ENGAGEMENTS}/"
+                f'{request_query_params_value["engagement_id"]}/audience/'
+                f'{request_query_params_value["audience_id"]}/destination/'
+                f'{request_query_params_value["destination_id"]}/campaign-mappings',
+                headers=pytest.HEADERS,
+            )
+
+            # test success
+            self.assertEqual(
+                HTTPStatus.OK, get_campaign_mappings_response.status_code
+            )
+            self.assertIsInstance(get_campaign_mappings_response.json(), dict)
+
+    def test_get_campaigns(self):
+        """Test get campaigns."""
+
+        request_query_params_value = (
+            self.get_engagement_audience_facebook_destination_id()
+        )
+
+        if request_query_params_value:
+            get_campaigns_response = requests.get(
+                f"{pytest.API_URL}/{self.ENGAGEMENTS}/"
+                f'{request_query_params_value["engagement_id"]}/audience/'
+                f'{request_query_params_value["audience_id"]}/destination/'
+                f'{request_query_params_value["destination_id"]}/campaigns',
+                headers=pytest.HEADERS,
+            )
+
+            # test success
+            self.assertEqual(HTTPStatus.OK, get_campaigns_response.status_code)
+            self.assertIsInstance(get_campaigns_response.json(), list)

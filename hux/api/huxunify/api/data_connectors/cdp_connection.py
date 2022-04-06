@@ -97,7 +97,7 @@ def get_identity_overview(
         "Successfully retrieved Identity Insights from Connections API."
     )
 
-    return response.json()[api_c.BODY]
+    return clean_cdm_fields(response.json()[api_c.BODY])
 
 
 def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
