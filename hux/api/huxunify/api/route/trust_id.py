@@ -288,12 +288,21 @@ class TrustIdAddSegment(SwaggerView):
 
         # Return the trust id segments for user
         segments = get_user_trust_id_segments(database, user[db_c.OKTA_ID])
-        if not segments:
-            return HuxResponse.OK(api_c.EMPTY_USER_APPLICATION_RESPONSE)
 
         if len(segments) >= 5:
             return HuxResponse.FORBIDDEN(
                 message="Threshold of maximum segments reached."
+            )
+
+        # Check if a segment with the specified name exists
+        if segment_details[api_c.SEGMENT_NAME] in [
+            x[api_c.SEGMENT_NAME] for x in segments
+        ]:
+            return HuxResponse.CONFLICT(
+                message=(
+                    f"Segment with name {segment_details[api_c.NAME]} "
+                    f"already exists !"
+                )
             )
 
         # pylint: disable=unused-variable
