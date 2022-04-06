@@ -302,7 +302,7 @@ class TrustIdAddSegment(SwaggerView):
             x[api_c.SEGMENT_NAME] for x in segments
         ]:
             return HuxResponse.CONFLICT(
-                message=("Segment with given name already exists !")
+                message=("Segment with the given name already exists!")
             )
 
         # pylint: disable=unused-variable
