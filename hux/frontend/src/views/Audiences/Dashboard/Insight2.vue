@@ -895,7 +895,7 @@ export default {
           break
         default:
           break
-      } 
+      }
       if (this.confirmDialog.actionType === "remove audience") {
         this.$router.push({ name: "Audiences" })
       } else {
