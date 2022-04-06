@@ -144,7 +144,9 @@ export default {
   },
   computed: {
     optionSelected() {
-      return this.$options.filters.Date(this.selected, "MM/DD/YYYY") || this.selected
+      return (
+        this.$options.filters.Date(this.selected, "MM/DD/YYYY") || this.selected
+      )
     },
   },
   methods: {

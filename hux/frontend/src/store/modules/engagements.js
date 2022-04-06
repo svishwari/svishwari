@@ -363,9 +363,16 @@ const actions = {
       throw error
     }
   },
-  async attachEngagementAudienceDestination(_, { engagementId, audienceId, data }) {
+  async attachEngagementAudienceDestination(
+    _,
+    { engagementId, audienceId, data }
+  ) {
     try {
-      await api.engagements.attachAudienceDestination(engagementId, audienceId, data)
+      await api.engagements.attachAudienceDestination(
+        engagementId,
+        audienceId,
+        data
+      )
     } catch (error) {
       handleError(error)
       throw error
@@ -379,9 +386,16 @@ const actions = {
       throw error
     }
   },
-  async detachEngagementAudienceDestination(_, { engagementId, audienceId, data }) {
+  async detachEngagementAudienceDestination(
+    _,
+    { engagementId, audienceId, data }
+  ) {
     try {
-      await api.engagements.detachAudienceDestination(engagementId, audienceId, data)
+      await api.engagements.detachAudienceDestination(
+        engagementId,
+        audienceId,
+        data
+      )
     } catch (error) {
       handleError(error)
       throw error

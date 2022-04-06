@@ -168,8 +168,15 @@ client["engagements"].attachDestination = (audienceId, data) => {
   return http.post(`/audiences/${audienceId}/destinations`, data)
 }
 
-client["engagements"].attachAudienceDestination = (engagementId, audienceId, data) => {
-  return http.post(`/engagements/${engagementId}/audience/${audienceId}/destinations`, data)
+client["engagements"].attachAudienceDestination = (
+  engagementId,
+  audienceId,
+  data
+) => {
+  return http.post(
+    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
+    data
+  )
 }
 
 client["engagements"].detachDestination = (audienceId, data) => {

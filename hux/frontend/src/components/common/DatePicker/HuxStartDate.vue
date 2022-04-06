@@ -113,7 +113,9 @@ export default {
   },
   computed: {
     optionSelected() {
-      return this.$options.filters.Date(this.selected, "MM/DD/YYYY") || this.label
+      return (
+        this.$options.filters.Date(this.selected, "MM/DD/YYYY") || this.label
+      )
     },
   },
   methods: {

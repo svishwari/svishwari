@@ -55,11 +55,7 @@
           <v-row class="delivery-schedule mt-7 ml-n2">
             <div>
               <span
-                class="
-                  date-picker-label
-                  black--text
-                  text--darken-4 text-body-2
-                "
+                class="date-picker-label black--text text--darken-4 text-body-2"
               >
                 Start date
               </span>
@@ -79,11 +75,7 @@
             />
             <div>
               <span
-                class="
-                  date-picker-label
-                  black--text
-                  text--darken-4 text-body-2
-                "
+                class="date-picker-label black--text text--darken-4 text-body-2"
               >
                 End date
               </span>
