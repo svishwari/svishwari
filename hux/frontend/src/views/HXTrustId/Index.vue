@@ -188,8 +188,7 @@
                   <hux-icon
                     type="critical"
                     :size="21"
-                    stroke="error"
-                    color="white"
+                    color="error"
                     class="mr-4 ml-6"
                   />
                   <span

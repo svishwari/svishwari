@@ -82,7 +82,7 @@
             'bordered-card': bordered,
             'mt-0': index == 0,
           }"
-          class="data-card my-3 text-body-1"
+          class="data-card my-3 text-body-1 alignment"
           :style="
             bordered
               ? item.colors
@@ -231,5 +231,11 @@ export default {
 .bordered-card {
   border-left: 8px solid var(--v-primary-lighten6);
   border-radius: 0px;
+}
+
+.alignment {
+  height: 60px;
+  display: flex;
+  align-items: center;
 }
 </style>
