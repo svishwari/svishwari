@@ -282,7 +282,7 @@
                     showAdvertising &&
                     audienceData.lookalike_audiences.length > 0
                       ? advertisingHeight
-                      : '380px',
+                      : '400px',
                 }"
                 @click="toggleAd()"
               >
@@ -733,7 +733,7 @@ export default {
     ) {
       this.advertisingHeight =
         this.$refs.advertisingcard.parentElement.parentElement.clientHeight +
-        21 +
+        17 +
         "px"
     }
   },
