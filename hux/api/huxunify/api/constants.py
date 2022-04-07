@@ -1635,6 +1635,7 @@ BOUNCES = "bounces"
 HARD_BOUNCES = "hard_bounces"
 OPENS = "opens"
 CLICKS = "clicks"
+FILL_EMPTY_DATES = "fill_empty_dates"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"
@@ -1708,8 +1709,8 @@ SEGMENT_TYPES = [
     "capability attributes",
     "transparency attributes",
 ]
-
-ALLOWED_FILTERS = "allowed_filters"
+SEGMENT_NAME = "segment_name"
+SEGMENT_FILTERS = "segment_filters"
 TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
 SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
 ATTRIBUTE_SCORES = "attribute_scores"

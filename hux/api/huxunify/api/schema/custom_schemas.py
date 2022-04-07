@@ -65,7 +65,7 @@ class RoundedFloat(Float):
             float: Rounded float.
 
         """
-        if not value:
+        if value is None:
             return None
 
         return round(

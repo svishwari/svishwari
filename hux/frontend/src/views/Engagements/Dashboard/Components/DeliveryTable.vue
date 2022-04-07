@@ -224,7 +224,7 @@
               type="plus"
               :size="15"
               color="primary"
-              class="mr-1 mb-2"
+              class="mr-1 mb-3"
             />
             <hux-icon
               type="add_audience"

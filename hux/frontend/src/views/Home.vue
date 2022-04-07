@@ -97,7 +97,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row class="latest-alert-main">
         <v-col>
           <v-card
             class="rounded-lg box-shadow-5"
@@ -433,5 +433,8 @@ export default {
 }
 ::v-deep .v-data-table-header__icon {
   margin-left: 4px !important;
+}
+.latest-alert-main {
+  margin-bottom: 80px;
 }
 </style>

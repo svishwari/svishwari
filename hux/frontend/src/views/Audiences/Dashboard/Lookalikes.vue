@@ -30,7 +30,6 @@
                 :to="`/audiences/${data.id}/insight`"
                 class="text-decoration-none menu-link"
                 append
-                target="_blank"
               >
                 <span class="text-body-1 primary--text">{{ data.name }}</span>
               </router-link>

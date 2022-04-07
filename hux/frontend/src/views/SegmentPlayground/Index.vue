@@ -102,6 +102,7 @@
             ref="filters"
             :rules="audience.attributeRules"
             @loadingOverAllSize="(data) => updateLoad(data)"
+            @attribute-options="(data) => attributeOptions(data)"
           />
         </v-col>
         <v-col class="col-4 overviews pl-6 pr-0 py-6">
@@ -396,10 +397,10 @@ export default {
       this.loadingOverview = false
       this.loading = false
     }
-    if (this.audienceId !== "") {
-      const data = this.getAudience(this.audienceId)
-      this.mapAudienceData(data)
-    }
+    // if (this.audienceId !== "") {
+    //   const data = this.getAudience(this.audienceId)
+    //   this.mapAudienceData(data)
+    // }
   },
   methods: {
     ...mapActions({
@@ -517,11 +518,17 @@ export default {
         }
       }
     },
+
+    attributeOptions(data) {
+      this.$refs.filters = data
+      this.mapAudienceData(this.getAudience(this.audienceId))
+    },
+
     mapAudienceData(data) {
       const _audienceObject = JSON.parse(JSON.stringify(data))
       _audienceObject.originalName = _audienceObject.name
       // Mapping the filters of audience.
-      const attributeOptions = this.$refs.filters.attributeOptions()
+      const attributeOptions = this.$refs?.filters.attributeOptions()
       _audienceObject.attributeRules = _audienceObject.filters.map(
         (filter) => ({
           id: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
@@ -548,12 +555,12 @@ export default {
             cond.attribute,
             attributeOptions
           )
-          let _operators = this.$refs.filters.operatorOptions(cond)
+          let _operators = this.$refs?.filters.operatorOptions(cond)
           cond.operator =
             cond.operator !== "range"
               ? _operators.filter((opt) => opt.key === cond.operator)[0]
               : cond.operator
-          this.$refs.filters.triggerSizing(cond, false)
+          this.$refs?.filters.triggerSizing(cond, false)
         })
       })
       this.$set(this, "audience", _audienceObject)
@@ -561,7 +568,7 @@ export default {
         this.audience.name = ""
       }
       this.$nextTick(function () {
-        this.$refs.filters.getOverallSize()
+        this.$refs?.filters.getOverallSize()
       })
     },
   },

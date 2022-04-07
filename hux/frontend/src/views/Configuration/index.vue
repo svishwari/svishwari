@@ -140,4 +140,7 @@ export default {
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
+::v-deep .descriptive-card .description {
+  padding-bottom: 10px;
+}
 </style>
