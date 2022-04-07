@@ -91,6 +91,7 @@
             <hux-schedule-picker
               v-model="value.delivery_schedule.schedule"
               short
+              colon-sign
               :start-date="selectedStartDate"
               :end-date="selectedEndDate"
             />
@@ -216,6 +217,20 @@ export default {
       ::v-deep .main-button {
         min-width: 153px !important;
         width: 153px !important;
+      }
+    }
+    ::v-deep .edit-schedule-wrapper {
+      .d-flex:nth-child(1) {
+        .pr-2:nth-child(1) {
+          .select-common {
+            width: 148px !important;
+          }
+        }
+        .pr-2:nth-child(2) {
+          .select-common {
+            width: 106px !important;
+          }
+        }
       }
     }
   }
