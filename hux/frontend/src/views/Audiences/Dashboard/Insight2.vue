@@ -748,6 +748,8 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
+      attachEngagementAudienceDestination:
+        "engagements/attachEngagementAudienceDestination",
       getDemographics: "audiences/getDemographics",
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
@@ -803,6 +805,7 @@ export default {
     },
     addStandaloneDestination() {
       this.closeAllDrawers()
+      this.engagementId = null
       this.showSelectDestinationsDrawer = true
     },
     async deliverEngagement(event) {
@@ -1090,10 +1093,19 @@ export default {
     },
     async triggerAttachDestination(event) {
       const payload = event.destination
-      await this.attachAudienceDestination({
-        audienceId: this.audienceId,
-        data: payload,
-      })
+      if (this.engagementId) {
+        await this.attachEngagementAudienceDestination({
+          engagementId: this.engagementId,
+          audienceId: this.audienceId,
+          data: payload,
+        })
+      } else {
+        // for standalone deliveries
+        await this.attachAudienceDestination({
+          audienceId: this.audienceId,
+          data: payload,
+        })
+      }
       await this.loadAudienceInsights()
     },
     async triggerRemoveDestination(event) {

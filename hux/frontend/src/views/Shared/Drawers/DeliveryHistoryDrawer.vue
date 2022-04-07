@@ -1,7 +1,7 @@
 <template>
   <drawer v-model="localToggle" content-padding="pa-0">
     <template #header-left>
-      <div class="d-flex align-center">
+      <div class="d-flex align-center ml-2">
         <icon type="clock" :size="32" class="mr-2" />
         <h2 class="text-h2">Delivery history</h2>
       </div>
