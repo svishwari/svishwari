@@ -38,7 +38,7 @@
             <span v-if="item.type" class="pr-2">
               <logo :type="item.type" :size="21" />
             </span>
-            <span class="text-body-1">{{ item.name }}</span>
+            <span class="text-body-1">{{ item.name || item }}</span>
           </div>
         </div>
       </div>
@@ -84,6 +84,12 @@ export default {
       required: false,
       default: 0,
     },
+
+    itemsAsArray: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   data: function () {
@@ -95,6 +101,9 @@ export default {
 
   computed: {
     filteredItems() {
+      if (this.itemsAsArray) {
+        return this.items
+      }
       let searchText = this.searchText ? this.searchText.toLowerCase() : ""
       return this.items.filter((each) =>
         each.name.toLowerCase().includes(searchText)

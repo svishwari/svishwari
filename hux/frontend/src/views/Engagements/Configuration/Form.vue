@@ -455,7 +455,13 @@ export default {
           this.localSchedule &&
           this.localSchedule.periodicity == "Monthly"
         ) {
-          recurringConfig["day_of_month"] = [this.localSchedule.monthlyDayDate]
+          recurringConfig["monthly_period_items"] = [
+            this.localSchedule.monthlyPeriod,
+          ]
+          recurringConfig["day_of_month"] =
+            this.localSchedule.monthlyPeriod === "Day"
+              ? this.localSchedule.monthlyDayDate
+              : this.localSchedule.monthlyDay
         }
         requestPayload["delivery_schedule"] = {
           start_date:

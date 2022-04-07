@@ -288,13 +288,11 @@ export default {
           ]
 
           if (local_schedule.monthlyPeriod === "Day") {
-            requestPayload.delivery_schedule.schedule.day_of_month = [
-              local_schedule.monthlyDayDate,
-            ]
+            requestPayload.delivery_schedule.schedule.day_of_month =
+              local_schedule.monthlyDayDate
           } else {
-            requestPayload.delivery_schedule.schedule.day_of_month = [
-              local_schedule.monthlyDay,
-            ]
+            requestPayload.delivery_schedule.schedule.day_of_month =
+              local_schedule.monthlyDay
           }
         }
       } else {
