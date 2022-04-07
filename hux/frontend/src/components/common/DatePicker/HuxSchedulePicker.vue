@@ -125,32 +125,54 @@
           class="select-common monthly-period-select mr-2"
           append-icon="mdi-chevron-down"
         />
-        <v-select
+        <hux-drop-down-search
           v-if="value.monthlyPeriod !== 'Day'"
           v-model="value.monthlyDay"
+          :toggle-drop-down="toggleDropDown"
+          :min-selection="1"
           :items="monthlyDayItems"
-          :menu-props="menuProps"
-          multiple
-          small-chips
-          dense
-          outlined
-          background-color="white"
-          class="select-common monthly-day-select"
-          append-icon="mdi-chevron-down"
-        />
-        <v-select
+          :is-search-enabled="false"
+          no-case-change
+          :name="monthlyDayLabel"
+        >
+          <template #activator>
+            <div class="mr-2">
+              <v-select
+                dense
+                readonly
+                :placeholder="monthlyDayLabel"
+                class="dropdown-select-placeholder"
+                outlined
+                background-color="white"
+                append-icon="mdi-chevron-down"
+              />
+            </div>
+          </template>
+        </hux-drop-down-search>
+        <hux-drop-down-search
           v-else
           v-model="value.monthlyDayDate"
+          :toggle-drop-down="toggleDropDown"
+          :min-selection="1"
           :items="monthlyDayDateItems"
-          :menu-props="menuProps"
-          multiple
-          small-chips
-          dense
-          outlined
-          background-color="white"
-          class="select-common monthly-day-select"
-          append-icon="mdi-chevron-down"
-        />
+          :is-search-enabled="false"
+          no-case-change
+          :name="monthlyDayDateLabel"
+        >
+          <template #activator>
+            <div class="mr-2">
+              <v-select
+                dense
+                readonly
+                :placeholder="monthlyDayDateLabel"
+                class="dropdown-select-placeholder"
+                outlined
+                background-color="white"
+                append-icon="mdi-chevron-down"
+              />
+            </div>
+          </template>
+        </hux-drop-down-search>
       </div>
     </div>
 
@@ -177,12 +199,14 @@
 <script>
 import { dayAbbreviation } from "@/utils"
 import HuxDeliveryText from "@/components/common/DatePicker/HuxDeliveryText"
+import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 
 export default {
   name: "HuxSchedulePicker",
 
   components: {
     HuxDeliveryText,
+    HuxDropDownSearch,
   },
 
   props: {
@@ -261,9 +285,16 @@ export default {
         offsetY: true,
         nudgeBottom: "4px",
       },
+      toggleDropDown: false,
     }
   },
   computed: {
+    monthlyDayLabel() {
+      return `Day (${this.value.monthlyDay.length})`
+    },
+    monthlyDayDateLabel() {
+      return `Day (${this.value.monthlyDayDate.length})`
+    },
     everyItems() {
       return this.value.periodicity === "Daily"
         ? Array.from({ length: 7 }, (_, i) => i + 1)
@@ -417,6 +448,23 @@ export default {
   }
   .day-button-selected {
     border: 1px solid var(--v-primary-lighten6) !important;
+  }
+}
+
+::v-deep .dropdown-select-placeholder {
+  max-width: 110px !important;
+  .v-input__control {
+    .v-input__slot {
+      fieldset {
+        border-color: var(--v-black-lighten3);
+      }
+      input::placeholder {
+        color: var(--v-black-base);
+      }
+    }
+    .v-text-field__details {
+      display: none;
+    }
   }
 }
 </style>
