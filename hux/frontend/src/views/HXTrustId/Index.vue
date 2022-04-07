@@ -188,8 +188,7 @@
                   <hux-icon
                     type="critical"
                     :size="21"
-                    stroke="error"
-                    color="white"
+                    color="error"
                     class="mr-4 ml-6"
                   />
                   <span
@@ -240,6 +239,7 @@ import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
 import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
+import segmentComparisonScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export default {
   name: "HXTrustID",
@@ -266,6 +266,7 @@ export default {
       segmentLength: 1,
       addSegmentData: addSegmentData,
       overviewData: overviewData,
+      segmentScores: segmentComparisonScores,
       borderColorArr: [
         {
           color: "primary",
@@ -375,7 +376,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      segmentScores: "trustId/getSegmentsComparison",
+      // segmentScores: "trustId/getSegmentsComparison",
       // TODO: enable this once API endpoint available
       // overviewData: "trustId/getTrustOverview",
     }),
@@ -443,7 +444,7 @@ export default {
     this.loading = true
     this.segmentComparisonLoading = true
     try {
-      await this.getOverview()
+      // await this.getOverview()
       //   await this.getTrustIdComparison()
     } finally {
       this.loading = false
@@ -452,8 +453,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getOverview: "trustId/getTrustIdOverview",
-      getTrustIdComparison: "trustId/getTrustIdComparison",
+      // getOverview: "trustId/getTrustIdOverview",
+      // getTrustIdComparison: "trustId/getTrustIdComparison",
     }),
     getSelectedData(value) {
       this.selectedSegment = value

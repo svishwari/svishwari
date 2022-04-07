@@ -1635,6 +1635,7 @@ BOUNCES = "bounces"
 HARD_BOUNCES = "hard_bounces"
 OPENS = "opens"
 CLICKS = "clicks"
+FILL_EMPTY_DATES = "fill_empty_dates"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"
@@ -1693,6 +1694,7 @@ ALERT_SAMPLE_RESPONSE = {
 
 # Trust ID
 TRUST_ID_ENDPOINT = "/trust_id"
+TRUST_ID_TAG = "trust-id"
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"
@@ -1700,8 +1702,15 @@ HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
 LIST_OF_SIGNALS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
-
-ALLOWED_FILTERS = "allowed_filters"
+SEGMENT_TYPES = [
+    "composite & signal scores",
+    "humanity attributes",
+    "reliability attributes",
+    "capability attributes",
+    "transparency attributes",
+]
+SEGMENT_NAME = "segment_name"
+SEGMENT_FILTERS = "segment_filters"
 TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
 SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
 ATTRIBUTE_SCORES = "attribute_scores"

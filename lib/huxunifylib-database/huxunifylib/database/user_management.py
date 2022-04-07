@@ -618,3 +618,61 @@ def get_user_applications(
         logging.error(exc)
 
     return None
+
+
+def add_user_trust_id_segments(
+    database: DatabaseClient, okta_id: str, segment: dict
+) -> Union[list, None]:
+    """A function to add trust id segments for a user.
+
+    Args:
+        database (DatabaseClient): A database client.
+        okta_id (str): Okta ID of a user doc.
+        segment (dict): Segment to be added.
+
+    Returns:
+        Union[list, None]: List of trust id segments for a user.
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+
+    try:
+        return collection.find_one_and_update(
+            {db_c.OKTA_ID: okta_id},
+            {
+                "$push": {db_c.TRUST_ID_SEGMENTS: segment},
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                },
+            },
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+def get_user_trust_id_segments(
+    database: DatabaseClient, okta_id: str
+) -> Union[list, None]:
+    """A function to fetch trust id segments for a user.
+
+    Args:
+        database (DatabaseClient): A database client.
+        okta_id (str): Okta ID of a user doc.
+
+    Returns:
+        Union[list, None]: List of trust id segments for a user.
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+
+    try:
+        return list(
+            collection.find_one({db_c.OKTA_ID: okta_id}).get(
+                db_c.TRUST_ID_SEGMENTS
+            )
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None

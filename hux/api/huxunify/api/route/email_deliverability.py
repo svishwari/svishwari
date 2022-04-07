@@ -1,8 +1,6 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for the email deliverability API."""
 import datetime
-from datetime import timedelta
-from random import uniform, randint
 from http import HTTPStatus
 from typing import Tuple
 
@@ -34,7 +32,7 @@ from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_start_end_dates,
     get_db_client,
-    clean_domain_name_string,
+    Validation as validation,
 )
 from huxunify.api.schema.email_deliverability import (
     EmailDeliverabilityOverviewSchema,
@@ -186,6 +184,15 @@ class EmailDeliverabilityDomains(SwaggerView):
             "required": False,
             "example": "domain_1",
         },
+        {
+            "name": api_c.FILL_EMPTY_DATES,
+            "description": "Flag to specify if empty dates to be filled.",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "default": True,
+            "example": "true",
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -218,24 +225,9 @@ class EmailDeliverabilityDomains(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
-
-        # TODO Remove stub when email deliverability data available.
-
-        sent_data = []
-
-        unsubscribe_rate_data = []
-        open_rate_data = []
-        click_rate_data = []
-        complaints_rate_data = []
-        delivered_rate_data = []
-
-        percent_data_field_list = [
-            unsubscribe_rate_data,
-            open_rate_data,
-            click_rate_data,
-            complaints_rate_data,
-            delivered_rate_data,
-        ]
+        fill_empty_dates = validation.validate_bool(
+            request.args.get(api_c.FILL_EMPTY_DATES, default="true")
+        )
 
         domains = request.args.getlist(api_c.DOMAIN_NAME)
 
@@ -265,33 +257,9 @@ class EmailDeliverabilityDomains(SwaggerView):
         # Default 3 months.
         start_date, end_date = get_start_end_dates(request, delta=3)
 
-        curr_date = datetime.datetime.strptime(
-            start_date, api_c.DEFAULT_DATE_FORMAT
-        )
-
         end_date = datetime.datetime.strptime(
             end_date, api_c.DEFAULT_DATE_FORMAT
         )
-
-        while curr_date <= end_date:
-            count_data = {
-                clean_domain_name_string(domain): randint(400, 900)
-                for domain in domains
-            }
-            count_data.update({api_c.DATE: curr_date})
-
-            sent_data.append(count_data)
-
-            for i in range(5):
-                percent_data = {
-                    clean_domain_name_string(domain): round(
-                        uniform(0.6, 0.9), 2
-                    )
-                    for domain in domains
-                }
-                percent_data.update({api_c.DATE: curr_date})
-                percent_data_field_list[i].append(percent_data)
-            curr_date = curr_date + timedelta(days=1)
 
         data = {
             api_c.DELIVERED_RATE: get_delivered_rate_data(
@@ -301,6 +269,7 @@ class EmailDeliverabilityDomains(SwaggerView):
                     start_date, api_c.DEFAULT_DATE_FORMAT
                 ),
                 end_date=end_date,
+                fill_empty=fill_empty_dates,
             )
         }
 
@@ -311,6 +280,7 @@ class EmailDeliverabilityDomains(SwaggerView):
                 start_date, api_c.DEFAULT_DATE_FORMAT
             ),
             end_date=end_date,
+            fill_empty=fill_empty_dates,
         )
         data.update(performance_metrics)
 

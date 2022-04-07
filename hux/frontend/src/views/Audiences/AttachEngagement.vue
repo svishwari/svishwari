@@ -47,7 +47,7 @@
                 icon-variant="base"
                 icon="plus"
                 size="small"
-                class="ma-2 caption"
+                class="ma-0 caption"
                 is-tile
                 height="40"
                 @click="goToAddNewEngagement()"
@@ -393,8 +393,8 @@ export default {
             ]
             recurringConfig["day_of_month"] =
               this.schedule.monthlyPeriod === "Day"
-                ? [this.schedule.monthlyDayDate]
-                : [this.schedule.monthlyDay]
+                ? this.schedule.monthlyDayDate
+                : this.schedule.monthlyDay
             break
           default:
             recurringConfig
@@ -518,33 +518,28 @@ export default {
         this.loading = false
       }
     },
+    takeActionEngagement(someAction, engagement) {
+      if (this.closeOnAction) {
+        this.$emit("onAddEngagement", {
+          data: engagement,
+          action: someAction,
+        })
+        this.localDrawer = false
+      }
+      this.$emit("onEngagementChange", this.selectedEngagements)
+    },
     onEngagementClick: function (engagement) {
       if (
-        this.selectedEngagements.filter((eng) => eng.id === engagement.id)
-          .length > 0
+        this.selectedEngagements &&
+        this.selectedEngagements.some((eng) => eng.id === engagement.id)
       ) {
-        if (this.selectedEngagements.length !== 1) {
-          const deselectedId = this.selectedEngagements.findIndex(
-            (eng) => eng.id === engagement.id
-          )
-
-          this.selectedEngagements.splice(deselectedId, 1)
-          if (this.closeOnAction) {
-            this.$emit("onAddEngagement", {
-              data: engagement,
-              action: "Detach",
-            })
-            this.localDrawer = false
-          }
-          this.$emit("onEngagementChange", this.selectedEngagements)
-        }
+        this.selectedEngagements = this.selectedEngagements.filter(
+          (eng) => eng.id !== engagement.id
+        )
+        this.takeActionEngagement("Detach", engagement)
       } else {
         this.selectedEngagements.push(engagement)
-        if (this.closeOnAction) {
-          this.$emit("onAddEngagement", { data: engagement, action: "Attach" })
-          this.localDrawer = false
-        }
-        this.$emit("onEngagementChange", this.selectedEngagements)
+        this.takeActionEngagement("Attach", engagement)
       }
     },
     sortEngagements: function () {

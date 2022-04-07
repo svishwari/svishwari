@@ -160,8 +160,8 @@ export function deliverySchedule(schedule = {}) {
     minute: 15,
     period: "AM",
     monthlyPeriod: "Day",
-    monthlyDay: "Day",
-    monthlyDayDate: 1,
+    monthlyDay: ["Day"],
+    monthlyDayDate: [1],
     day_of_week: ["SUN"],
   }
   if (schedule) {

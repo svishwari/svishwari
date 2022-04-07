@@ -61,7 +61,7 @@ export default {
 }
 .text-style {
   // num style
-  line-height: 16px;
+  line-height: 18px;
   transform: translate(0%, 25%) rotate(-45deg);
   padding: 0px;
   display: block;
