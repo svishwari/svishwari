@@ -105,12 +105,10 @@ class TrustIdSegmentSchema(Schema):
 class TrustIdComparisonSchema(Schema):
     """Trust ID comparison schema"""
 
-    segment_type = (
-        Str(
-            required=True,
-            example="composite & signal scores",
-            validate=OneOf(api_c.SEGMENT_TYPES),
-        ),
+    segment_type = Str(
+        required=True,
+        example="composite & signal scores",
+        validate=OneOf(api_c.SEGMENT_TYPES),
     )
     segments = List(Nested(TrustIdSegmentSchema))
 

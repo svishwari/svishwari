@@ -171,9 +171,8 @@ export default {
 <style lang="scss" scoped>
 .lookalike-wrapper {
   background-color: var(--v-primary-lighten1) !important;
-  border: 1px solid var(--v-black-lighten2);
   box-sizing: border-box;
-  border-radius: 5px;
+  border-radius: 5px !important;
   .lookalikes {
     .header {
       height: 40px;
@@ -190,6 +189,15 @@ export default {
   }
   .no-lookalike {
     background: var(--v-primary-lighten1);
+    border-radius: 5px !important;
+    ::v-deep .metric-card-wrapper {
+      .titleColor {
+        svg {
+          width: 24px !important;
+          height: 24px !important;
+        }
+      }
+    }
   }
 }
 ::v-deep .titleColor {
@@ -197,6 +205,7 @@ export default {
 }
 ::v-deep .metric-card-wrapper {
   padding: 20px 24px !important;
+  border-radius: 5px !important;
 }
 .add-lookalike {
   height: 60px !important;

@@ -195,11 +195,11 @@
         @onClick="changeSchedule(true)"
       />
     </div>
-    <div v-if="isRecurringFlag" class="delivery-background px-4 pt-4 pb-6">
+    <div v-if="isRecurringFlag" class="delivery-background px-4 pt-3 pb-6">
       <v-row class="delivery-schedule mt-6 ml-n2">
         <div>
           <span
-            class="date-picker-label black--text text--darken-4 text-caption"
+            class="date-picker-label black--text text--darken-4 text-body-2"
           >
             Start date
           </span>
@@ -213,7 +213,7 @@
         <icon class="mx-2" type="arrow" :size="28" color="black-lighten3" />
         <div>
           <span
-            class="date-picker-label black--text text--darken-4 text-caption"
+            class="date-picker-label black--text text--darken-4 text-body-2"
           >
             End date
           </span>
@@ -738,7 +738,7 @@ export default {
 }
 .date-picker-label {
   position: absolute;
-  margin-top: -30px;
+  margin-top: -26px;
   margin-left: 8px;
 }
 .form-steps {
