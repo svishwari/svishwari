@@ -392,6 +392,24 @@ export default {
   }
 }
 
+.select-menu-class {
+  .v-select-list {
+    padding: 0px !important;
+    ::v-deep .v-list-item {
+      min-height: 32px !important;
+      .v-list-item__content {
+        padding: 5px 0px !important ;
+        .v-list-item__title {
+          font-style: normal !important;
+          font-weight: 400 !important;
+          font-size: 16px !important;
+          line-height: 22px !important;
+        }
+      }
+    }
+  }
+}
+
 ::v-deep .monthly-period-select {
   max-width: 115px;
 }
