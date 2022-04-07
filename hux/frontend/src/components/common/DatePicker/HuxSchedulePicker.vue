@@ -44,8 +44,7 @@
             dense
             outlined
             background-color="white"
-            class="select-common hour-select mt-1"
-            :class="dropdownPadding"
+            :class="dropdownPadding('hour-select')"
             append-icon="mdi-chevron-down"
           />
         </span>
@@ -62,8 +61,7 @@
             dense
             outlined
             background-color="white"
-            class="select-common minute-select mt-1"
-            :class="dropdownPadding"
+            :class="dropdownPadding('minute-select')"
             append-icon="mdi-chevron-down"
           />
         </span>
@@ -75,8 +73,7 @@
             dense
             outlined
             background-color="white"
-            class="select-common period-select mt-1"
-            :class="dropdownPadding"
+            :class="dropdownPadding('period-select')"
             append-icon="mdi-chevron-down"
           />
         </span>
@@ -260,9 +257,6 @@ export default {
     }
   },
   computed: {
-    dropdownPadding() {
-      return this.short ? "" : "pt-5"
-    },
     everyItems() {
       return this.value.periodicity === "Daily"
         ? Array.from({ length: 7 }, (_, i) => i + 1)
@@ -316,6 +310,11 @@ export default {
   },
 
   methods: {
+    dropdownPadding(widthClass) {
+      return this.short
+        ? `select-common mt-1 ${widthClass}`
+        : `pt-5 select-common mt-1 ${widthClass}`
+    },
     toggleWeekDay(day) {
       if (this.isDaySelected(day)) {
         if (this.value.day_of_week.length !== 1) {

@@ -533,11 +533,9 @@ export default {
         this.selectedEngagements &&
         this.selectedEngagements.some((eng) => eng.id === engagement.id)
       ) {
-        const deselectedId = this.selectedEngagements.findIndex(
-          (eng) => eng.id === engagement.id
+        this.selectedEngagements = this.selectedEngagements.filter(
+          (eng) => eng.id !== engagement.id
         )
-
-        this.selectedEngagements.splice(deselectedId, 1)
         this.takeActionEngagement("Detach", engagement)
       } else {
         this.selectedEngagements.push(engagement)
