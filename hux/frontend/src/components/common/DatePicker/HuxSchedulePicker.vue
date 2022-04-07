@@ -132,7 +132,7 @@
           :min-selection="1"
           :items="monthlyDayItems"
           :is-search-enabled="false"
-          no-case-change
+          items-as-array
           :name="monthlyDayLabel"
         >
           <template #activator>
@@ -156,7 +156,7 @@
           :min-selection="1"
           :items="monthlyDayDateItems"
           :is-search-enabled="false"
-          no-case-change
+          items-as-array
           :name="monthlyDayDateLabel"
         >
           <template #activator>

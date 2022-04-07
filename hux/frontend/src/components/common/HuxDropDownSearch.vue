@@ -85,7 +85,7 @@ export default {
       default: 0,
     },
 
-    noCaseChange: {
+    itemsAsArray: {
       type: Boolean,
       required: false,
       default: false,
@@ -101,7 +101,7 @@ export default {
 
   computed: {
     filteredItems() {
-      if (this.noCaseChange) {
+      if (this.itemsAsArray) {
         return this.items
       }
       let searchText = this.searchText ? this.searchText.toLowerCase() : ""
