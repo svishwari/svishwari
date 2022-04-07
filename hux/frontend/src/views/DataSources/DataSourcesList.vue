@@ -17,7 +17,7 @@
           :icon-color="true"
           :logo-option="true"
           :dot-option="'Remove'"
-          class="mr-10 model-desc-card"
+          class="mr-12 model-desc-card"
           height="225"
           width="255"
           data-e2e="dataSourcesList"
