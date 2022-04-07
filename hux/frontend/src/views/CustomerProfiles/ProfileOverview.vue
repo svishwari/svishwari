@@ -78,7 +78,7 @@
       >
         <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
           <div class="text-body-2 black--text text--lighten-4 pb-1">
-            {{ data.title }}
+            {{ data.title | Empty }}
             <tooltip v-if="data.hoverTooltip" position-top>
               <template #label-content>
                 <icon
@@ -91,7 +91,7 @@
                 />
               </template>
               <template #hover-content>
-                {{ data.hoverTooltip }}
+                {{ data.hoverTooltip | Empty }}
               </template>
             </tooltip>
           </div>

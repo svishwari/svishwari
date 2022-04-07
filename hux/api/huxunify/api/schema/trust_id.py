@@ -105,11 +105,24 @@ class TrustIdSegmentSchema(Schema):
 class TrustIdComparisonSchema(Schema):
     """Trust ID comparison schema"""
 
-    segment_type = (
-        Str(
-            required=True,
-            example="composite & signal scores",
-            validate=OneOf(api_c.SEGMENT_TYPES),
-        ),
+    segment_type = Str(
+        required=True,
+        example="composite & signal scores",
+        validate=OneOf(api_c.SEGMENT_TYPES),
     )
     segments = List(Nested(TrustIdSegmentSchema))
+
+
+class TrustIdSegmentFilterSchema(Schema):
+    """Trust ID segment filter schema"""
+
+    type = Str(example="children_count", required=True)
+    description = Str(example="Children count", required=True)
+    values = List(Str(example=["1", "2", "3", "4", "5+"]), default=[])
+
+
+class TrustIdSegmentPostSchema(Schema):
+    """Trust ID segment POST schema"""
+
+    segment_name = Str(example="Segment 1", required=True)
+    segment_filters = List(Nested(TrustIdSegmentFilterSchema), default=[])

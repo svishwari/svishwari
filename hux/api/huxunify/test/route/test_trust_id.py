@@ -34,7 +34,7 @@ class TestTrustIDRoutes(RouteTestCase):
         """Test for trust_id attributes data endpoint."""
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}" f"{api_c.TRUST_ID_ENDPOINT}/attributes",
+            f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/attributes",
             headers=t_c.STANDARD_HEADERS,
         )
 

@@ -252,6 +252,7 @@ S_TYPE_SURVEY_CUSTOMER_ID = "customer_id"
 SURVEY_ID = "survey_id"
 SURVEY_RESPONSES = "responses"
 SURVEY_RESPONSE_DATE = "response_date"
+TRUST_ID_SEGMENTS = "trust_id_segments"
 
 
 DESTINATION_COLUMN = "destination_column"

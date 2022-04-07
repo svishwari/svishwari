@@ -32,7 +32,7 @@
           :is-disabled="isDisabled"
           @click="endmenu = true"
         >
-          {{ selected || "Select date" }}
+          {{ selected | Date("MM/DD/YYYY") | Empty(selected) }}
         </huxButton>
       </template>
       <v-list>
