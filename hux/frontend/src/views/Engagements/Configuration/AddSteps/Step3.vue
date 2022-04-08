@@ -192,6 +192,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@mixin dropdown-width($value) {
+  .select-common {
+    width: $value !important;
+  }
+}
 .eng-step-3 {
   margin-right: 16px;
   .d-flex {
@@ -221,11 +226,6 @@ export default {
     }
     ::v-deep .edit-schedule-wrapper {
       .d-flex:nth-child(1) {
-        @mixin dropdown-width($value) {
-          .select-common {
-            width: $value !important;
-          }
-        }
         .pr-2:nth-child(1) {
           @include dropdown-width(148px);
         }
