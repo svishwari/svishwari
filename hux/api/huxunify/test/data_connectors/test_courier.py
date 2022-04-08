@@ -6,8 +6,6 @@ import mongomock
 from bson import ObjectId
 from hypothesis import given, strategies as st
 import requests_mock
-import boto3
-from botocore.stub import Stubber
 
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -37,14 +35,12 @@ from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
-    CloudWatchState,
 )
 from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
     get_okta_test_user_creds,
     get_destination_config,
     get_audience_destination_pairs,
-    toggle_event_driven_routers,
     deliver_audience_to_destination,
     BaseDestinationBatchJob,
     AWSDestinationBatchJob,
@@ -514,33 +510,6 @@ class CourierTest(TestCase):
                 destination[db_c.DELIVERY_PLATFORM_TYPE]
             ][api_c.AWS_SSM_NAME]:
                 self.assertEqual(auth[secret.upper()], simulated_secret)
-
-    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
-    def test_toggle_event_driven_routers(
-        self, mock_boto_client: mock.MagicMock
-    ):
-        """Test function toggle_event_driven_routers.
-
-        Args:
-            mock_boto_client (mock.MagicMock): mock boto client.
-        """
-
-        rule_params = {"Name": "fake-rule"}
-        rule_response = {
-            "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value},
-        }
-
-        # simulate the event return rule
-        client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
-
-        stub_client = Stubber(client)
-        stub_client.add_response(
-            CloudWatchState.ENABLE.value, rule_response, rule_params
-        )
-        stub_client.activate()
-        mock_boto_client.return_value = client
-
-        self.assertIsNone(toggle_event_driven_routers(self.database))
 
     def test_run_scheduled_delivery(self):
         """Test run scheduled delivery for an audience in an engagement."""

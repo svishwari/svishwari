@@ -7,7 +7,6 @@ from typing import TypeVar
 from bson import ObjectId
 from pymongo import MongoClient
 
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
@@ -16,7 +15,6 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import (
     add_delivery_job,
-    check_active_engagement_deliveries,
 )
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.orchestration_management import get_audience
@@ -33,9 +31,6 @@ from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config, Config
-from huxunify.api.data_connectors.aws import (
-    CloudWatchState,
-)
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedDestinationDependencyError,
 )
@@ -764,42 +759,6 @@ def get_audience_destination_pairs(audiences: list) -> list:
         for dest in aud[db_c.DESTINATIONS]
         if isinstance(dest, dict)
     ]
-
-
-def toggle_event_driven_routers(
-    database: DatabaseClient,
-    state: CloudWatchState = None,
-    routers: list = None,
-) -> None:
-    """Toggle event driven routers in cloudwatch.
-
-    Args:
-        database (DatabaseClient): Mongo database client.
-        state (CloudWatchState): Cloudwatch toggle state enum.
-        routers (list): List of router names to toggle.
-
-    Returns:
-
-    """
-
-    # grab default routers if not provided.
-    routers = get_config().EVENT_ROUTERS if routers is None else routers
-
-    # get all the active engagements
-    active_engagements = check_active_engagement_deliveries(database)
-
-    if state is None:
-        # set state based on active engagements
-        # if there are active engagements, the router should be enabled.
-        state = (
-            CloudWatchState.ENABLE
-            if active_engagements
-            else CloudWatchState.DISABLE
-        )
-
-    # TODO - hookup after ORCH-401 deploys the FLDR and CPDR to a cloud watch event.
-    # # toggle the routers
-    # _ = [toggle_cloud_watch_rule(x, state) for x in routers]
 
 
 async def deliver_audience_to_destination(
