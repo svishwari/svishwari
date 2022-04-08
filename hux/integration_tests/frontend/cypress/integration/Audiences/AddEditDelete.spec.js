@@ -9,7 +9,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
     cy.signin()
     cy.visit(route.audiences)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000)
+    cy.wait(5000)
   })
 
   // For adding a new audience
@@ -84,19 +84,22 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
           expect(loc.pathname.toString()).to.contain("/update")
         })
 
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(5000)
+
         // Edit audience name
         cy.get(selector.audience.editAudienceName).eq(0).type(` edited`)
 
         // Waiting for fetch the response
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(2000)
+        cy.wait(4000)
 
         // click on Apply changes and Save
         cy.get(selector.audience.actionAudience).click()
 
         // Wait for audience to be edited
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(2000)
+        cy.wait(4000)
       }
     })
   })
@@ -115,7 +118,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
         cy.contains("Delete audience").click()
         cy.contains("Yes, delete it").click()
         //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(2000)
+        cy.wait(3000)
       }
     })
   })
