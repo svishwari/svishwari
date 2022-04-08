@@ -195,7 +195,7 @@
         @onClick="changeSchedule(true)"
       />
     </div>
-    <div v-if="isRecurringFlag" class="delivery-background px-4 pt-3 pb-6">
+    <div v-if="isRecurringFlag" class="delivery-background px-6 pt-5 pb-6">
       <v-row class="delivery-schedule mt-6 ml-n2">
         <div>
           <span
@@ -789,7 +789,7 @@ export default {
   margin-top: 2px;
 }
 .delivery-background {
-  width: 612px;
+  width: 632px;
   border: solid 1px var(--v-black-lighten2);
   background: #f9fafb;
   position: relative;
