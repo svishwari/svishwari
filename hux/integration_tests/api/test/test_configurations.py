@@ -48,7 +48,7 @@ class TestConfigurations(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
-        self.assertTrue("settings" in response.json())
+        self.assertIn("settings", response.json())
         self.assertIsInstance(response.json()["settings"], list)
 
     def test_update_navigation_settings_type_configuration(self):
@@ -63,7 +63,7 @@ class TestConfigurations(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
-        self.assertTrue("settings" in response.json())
+        self.assertIn("settings", response.json())
         self.assertIsInstance(response.json()["settings"], list)
 
         request_settings_size = len(response.json()["settings"])
@@ -76,7 +76,7 @@ class TestConfigurations(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, update_response.status_code)
         self.assertIsInstance(update_response.json(), dict)
-        self.assertTrue("settings" in update_response.json())
+        self.assertIn("settings", response.json())
         self.assertIsInstance(update_response.json()["settings"], list)
         self.assertEqual(
             request_settings_size, len(update_response.json()["settings"])
