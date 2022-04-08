@@ -221,15 +221,16 @@ export default {
     }
     ::v-deep .edit-schedule-wrapper {
       .d-flex:nth-child(1) {
-        .pr-2:nth-child(1) {
+        @mixin dropdown-width($value) {
           .select-common {
-            width: 148px !important;
+            width: $value !important;
           }
         }
+        .pr-2:nth-child(1) {
+          @include dropdown-width(148px);
+        }
         .pr-2:nth-child(2) {
-          .select-common {
-            width: 106px !important;
-          }
+          @include dropdown-width(106px);
         }
       }
     }
