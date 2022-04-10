@@ -15,6 +15,8 @@ const NEW_AUDIENCE = {
 const state = {
   audiences: [],
 
+  total: 0,
+
   newAudience: NEW_AUDIENCE,
 
   constants: {},
@@ -55,17 +57,22 @@ const getters = {
   geoCountries: (state) => state.geoCountries,
 
   geoStates: (state) => state.geoStates,
+
+  total: (state) => state.total,
 }
 
 const mutations = {
   SET_ALL(state, items) {
-    state.audiences = []
     let getAudience = items.sort(function (a, b) {
       return a.name === b.name ? 0 : a.name < b.name ? -1 : 1
     })
     getAudience.forEach((item) => {
       Vue.set(state.audiences, item.id, item)
     })
+  },
+
+  SET_TOTAL(state, item) {
+    Vue.set(state, "total", item)
   },
 
   SET_ONE(state, item) {
@@ -139,6 +146,10 @@ const mutations = {
   UPDATE_LOOKALIKE(state, data) {
     Vue.set(state.audiences[data.id], "name", data.name)
   },
+
+  RESET_ALL(state) {
+    Vue.set(state, "audiences", [])
+  },
 }
 
 const actions = {
@@ -150,17 +161,24 @@ const actions = {
       favorites = false,
       worked_by = false,
       attribute = [],
+      batchDetails = {}
     }
   ) {
     try {
+      if (!batchDetails.isLazyLoad) {
+        commit("RESET_ALL")
+      }
       const response = await api.audiences.getAudiences({
         lookalikeable: lookalikeable,
         deliveries: deliveries,
         favorites: favorites,
         worked_by: worked_by,
         attribute: attribute,
+        batch_number: batchDetails.batch_number,
+        batch_size: batchDetails.batch_size
       })
-      commit("SET_ALL", response.data)
+      commit("SET_ALL", response.data.audiences)
+      commit("SET_TOTAL", response.data.total)
     } catch (error) {
       handleError(error)
       throw error

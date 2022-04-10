@@ -79,15 +79,17 @@
             </router-link>
           </template>
         </page-header>
-        <hux-data-table
+        <hux-lazy-data-table
           v-if="!loading && audienceList.length > 0"
           :columns="columnDefs"
           :data-items="audienceList"
-          view-height="calc(100vh - 253px)"
           sort-column="update_time"
           sort-desc="false"
           data-e2e="audience-table"
           class="big-table"
+          :enable-lazy-load="enableLazyLoad"
+          view-height="calc(100vh - 253px)"
+          @bottomScrollEvent="intersected"
         >
           <template #row-item="{ item, index }">
             <td
@@ -292,7 +294,7 @@
               </div>
             </td>
           </template>
-        </hux-data-table>
+        </hux-lazy-data-table>
 
         <look-alike-audience
           ref="lookalikeWorkflow"
@@ -459,7 +461,8 @@ import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+// import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue"
 import Avatar from "@/components/common/Avatar.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
@@ -481,7 +484,7 @@ export default {
     Breadcrumb,
     huxButton,
     EmptyPage,
-    HuxDataTable,
+    HuxLazyDataTable,
     Avatar,
     Size,
     TimeStamp,
@@ -581,6 +584,9 @@ export default {
       confirmModal: false,
       confirmSubtitle: "",
       isFilterToggled: false,
+      enableLazyLoad: false,
+      lastBatch: 0,
+      batchDetails: {},
     }
   },
   computed: {
@@ -588,9 +594,11 @@ export default {
       rowData: "audiences/list",
       userFavorites: "users/favorites",
       ruleAttributes: "audiences/audiencesRules",
+      totalAudiences: "audiences/total",
     }),
     audienceList() {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
+    //  console.log(this.rowData)
       audienceValue.forEach((audience) => {
         if (!("filters" in audience)) {
           audience["filters"] = "null"
@@ -629,8 +637,12 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.getAllAudiences({})
+      this.batchDetails.batch_size = 50
+      this.batchDetails.batch_number = 1
+      this.batchDetails.isLazyLoad = false
+      await this.fetchAudienceByBatch()
       await this.getAudiencesRules()
+      this.calculateLastBatch()
     } catch (error) {
       this.showError = true
     } finally {
@@ -645,6 +657,30 @@ export default {
       deleteAudience: "audiences/remove",
       getAudiencesRules: "audiences/fetchConstants",
     }),
+    
+    
+    intersected() {
+      debugger
+      if (this.batchDetails.batch_number <= this.lastBatch) {
+        this.batchDetails.isLazyLoad = true
+        this.enableLazyLoad = true
+        this.fetchAudienceByBatch()
+      } else {
+        this.enableLazyLoad = false
+      }
+    },
+    async fetchAudienceByBatch() {
+      await this.getAllAudiences({
+        batchDetails: this.batchDetails
+      })
+      this.batchDetails.batch_number++
+    },
+    calculateLastBatch() {
+      this.lastBatch = Math.ceil(
+        this.totalAudiences / this.batchDetails.batch_size
+      )
+      console.log(this.lastBatch)
+    },
 
     async confirmEdit() {
       this.confirmEditModal = false

@@ -718,7 +718,34 @@ export const defineRoutes = (server) => {
   })
 
   // audiences
-  server.get("/audiences")
+  // server.get("/audiences", (schema, request) => {
+  //   let currentBatch =
+  //     request.queryParams.batch_number || request.queryParams.batchNumber
+  //   let batchSize =
+  //     request.queryParams.batch_size || request.queryParams.batchSize
+  //   let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+  //   let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+  //   let allNotifications = schema.audience.all()
+  //   const notifications = {
+  //     notifications: allNotifications.models.slice(initialCount, lastCount),
+  //     total: allNotifications.length,
+  //   }
+  //   return notifications
+  // })
+  server.get("/audiences", (schema, request) => {
+    let currentBatch = request.queryParams.batch_number
+    let batchSize = request.queryParams.batch_size
+    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let allAudiences = schema.audiences.all()
+    const audiences = {
+      audiences: allAudiences.models.slice(initialCount, lastCount),
+      total: allAudiences.length,
+    }
+    return audiences
+  })
+
+ // server.get("/audiences")
 
   server.get("/audiences/:id/audience_insights", () => {
     demographicsData.demo = mapData
@@ -744,9 +771,7 @@ export const defineRoutes = (server) => {
     const requestData = JSON.parse(request.requestBody)
     requestData.engagements = []
     requestData.destinations = []
-
     const now = dayjs().toJSON()
-
     const attrs = {
       ...requestData,
       create_time: () => now,
@@ -754,7 +779,6 @@ export const defineRoutes = (server) => {
       update_time: () => now,
       updated_by: me.full_name(),
     }
-
     return server.create("audience", attrs)
   })
 

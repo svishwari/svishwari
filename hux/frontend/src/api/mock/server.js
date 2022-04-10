@@ -50,10 +50,7 @@ import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 export function makeServer({ environment = "development" } = {}) {
   // models
   const models = {
-    audience: Model.extend({
-      destinations: hasMany("destination"),
-      // engagements: hasMany("engagement"),
-    }),
+    audience: Model.extend(),
     audiencePerformance: Model,
     customer: Model,
     customerProfile: Model,
