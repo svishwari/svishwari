@@ -2,12 +2,12 @@ export default [
   {
     type: "households_with_children_under_18",
     description: "Households with children under 18",
-    values: ["true"]
+    values: ["true", "false"],
   },
   {
     type: "households_with_seniors_over_65",
     description: "Households with seniors over 65",
-    values: ["true"]
+    values: ["true", "false"],
   },
   {
     type: "age",

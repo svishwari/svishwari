@@ -37,7 +37,7 @@
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
-          <overview v-if="!loading" :data="overviewData" />
+          <overview v-if="!loading" :data="trustIdOverview" />
           <v-tabs v-model="tabOption" class="mt-8">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
@@ -237,7 +237,7 @@ import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
-import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
+import overviewData from "@/api/mock/fixtures/trustIdAttribute.js"
 import segmentComparisonScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export default {
@@ -376,7 +376,7 @@ export default {
     ...mapGetters({
       // segmentScores: "trustId/getSegmentsComparison",
       // TODO: enable this once API endpoint available
-      // overviewData: "trustId/getTrustOverview",
+      trustIdOverview: "trustId/getTrustOverview",
       addSegmentData: "trustId/getFilters",
       attributeData: "trustId/getTrustAttributes",
     }),
@@ -444,7 +444,7 @@ export default {
     this.loading = true
     this.segmentComparisonLoading = true
     try {
-      // await this.getOverview()
+       await this.getOverview()
       // await this.getTrustIdComparison()
       await this.getUserFilters()
       await this.getTrustIdAttribute()
@@ -455,7 +455,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      // getOverview: "trustId/getTrustIdOverview",
+       getOverview: "trustId/getTrustIdOverview",
       // getTrustIdComparison: "trustId/getTrustIdComparison",
       getUserFilters: "trustId/getUserFilters",
       addNewSegment: "trustId/addSegment",
@@ -476,7 +476,7 @@ export default {
       this.loading = false
     }
       this.isFilterToggled = !this.isFilterToggled
-      this.$router.go()
+      //this.$router.go()
     },
     removeSegment(item) {
       this.getSelectedSegment.segments.splice(

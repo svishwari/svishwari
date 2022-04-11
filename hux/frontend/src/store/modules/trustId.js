@@ -39,7 +39,7 @@ const mutations = {
 const actions = {
   async getTrustIdOverview({ commit }) {
     try {
-      const response = await api.users.trustIdOverview()
+      const response = await api.trustId.trustIdOverview()
       commit("SET_TRUSTID_OVERVIEW", response.data)
     } catch (error) {
       handleError(error)
