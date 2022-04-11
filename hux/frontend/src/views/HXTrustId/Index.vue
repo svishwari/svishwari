@@ -214,7 +214,7 @@
             v-model="isFilterToggled"
             view-height="calc(100vh - 180px)"
             :segment-data="addSegmentData"
-            :segment-length="segmentLength"
+            :segment-length="segmentScores.length"
             @onSectionAction="addSegment"
           />
         </div>
@@ -237,7 +237,8 @@ import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
-import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
+// TODO: will romve after checking in dev
+// import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
 import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
 import segmentComparisonScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 
@@ -264,7 +265,7 @@ export default {
       selectedSegment: "composite & signal scores",
       isFilterToggled: false,
       segmentLength: 1,
-      addSegmentData: addSegmentData,
+      addSegments: [],
       overviewData: overviewData,
       segmentScores: segmentComparisonScores,
       borderColorArr: [
@@ -379,6 +380,7 @@ export default {
       // segmentScores: "trustId/getSegmentsComparison",
       // TODO: enable this once API endpoint available
       // overviewData: "trustId/getTrustOverview",
+      addSegmentData: "trustId/getAddSegment",
       attributeData: "trustId/getTrustAttributes",
     }),
     getSegment() {
@@ -446,7 +448,8 @@ export default {
     this.segmentComparisonLoading = true
     try {
       // await this.getOverview()
-      // await this.getTrustIdComparison()
+      //   await this.getTrustIdComparison()
+      await this.getSegmentData()
       await this.getTrustIdAttribute()
     } finally {
       this.loading = false
@@ -457,6 +460,7 @@ export default {
     ...mapActions({
       // getOverview: "trustId/getTrustIdOverview",
       // getTrustIdComparison: "trustId/getTrustIdComparison",
+      getSegmentData: "trustId/getSegmentData",
       getTrustIdAttribute: "trustId/getTrustAttributes",
     }),
     getSelectedData(value) {

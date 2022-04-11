@@ -507,4 +507,8 @@ client["trustId"].getAttributes = () => {
   return http.get("/trust_id/attributes")
 }
 
+client["trustId"].getSegments = () => {
+  return http.get("/trust_id/user_filters")
+}
+
 export default client
