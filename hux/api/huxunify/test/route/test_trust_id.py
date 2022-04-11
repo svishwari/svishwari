@@ -15,6 +15,7 @@ from huxunify.api import constants as api_c
 
 class TestTrustIDRoutes(RouteTestCase):
     """Tests for trust ID endpoints."""
+
     def setUp(self):
         """Set up resources"""
         super().setUp()
@@ -71,10 +72,7 @@ class TestTrustIDRoutes(RouteTestCase):
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
-            json={
-                "segment_name": "Test Add Segment",
-                "segment_filters": []
-            },
+            json={"segment_name": "Test Add Segment", "segment_filters": []},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -88,10 +86,7 @@ class TestTrustIDRoutes(RouteTestCase):
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
-            json={
-                "segment_name": "Test Segment",
-                "segment_filters": []
-            },
+            json={"segment_name": "Test Segment", "segment_filters": []},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -102,9 +97,7 @@ class TestTrustIDRoutes(RouteTestCase):
 
         response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
-            query_string={
-                "segment_name": "Test Segment"
-            },
+            query_string={"segment_name": "Test Segment"},
             headers=t_c.STANDARD_HEADERS,
         )
 
