@@ -30,6 +30,7 @@ const mutations = {
   },
   SET_USER_FILTERS(state, data) {
     Vue.set(state, "userFilters", data)
+  },
   SET_TRUST_ATTRIBUTES(state, trustIdAttributes) {
     Vue.set(state, "trustIdAttributes", trustIdAttributes)
   },
