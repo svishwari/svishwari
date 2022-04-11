@@ -504,4 +504,8 @@ client["trustId"].getComparison = () => {
   return http.get("/trust_id/comparison")
 }
 
+client["trustId"].getSegments = () => {
+  return http.get("/trust_id/user_filters")
+}
+
 export default client
