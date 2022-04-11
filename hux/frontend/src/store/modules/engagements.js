@@ -6,7 +6,9 @@ import dayjs from "dayjs"
 const namespaced = true
 
 const state = {
-  items: {},
+  items: [],
+
+  total: 0,
 
   audiencePerformance: {
     ads: {},
@@ -41,6 +43,8 @@ const getters = {
   campaignMapping: (state) => (id) => {
     return state.campaignMappings[id]
   },
+
+  total: (state) => state.total,
 }
 
 const mutations = {
@@ -51,6 +55,10 @@ const mutations = {
       item.isCurrentRow = false
       Vue.set(state.items, item.id, item)
     })
+  },
+
+  SET_TOTAL(state, item) {
+    Vue.set(state, "total", item)
   },
 
   SET_ONE(state, item) {
@@ -111,29 +119,26 @@ const mutations = {
   REMOVE_ENGAGEMENT(state, id) {
     Vue.delete(state.items, id)
   },
+
+  RESET_ALL(state) {
+    Vue.set(state, "items", [])
+  },
 }
 
 const actions = {
-  async getAll({ commit }) {
+  async getAll({ commit }, batchDetails) {
     try {
-      const response = await api.engagements.all()
-      commit("SET_ALL", response.data)
-    } catch (error) {
-      handleError(error)
-      throw error
-    }
-  },
-
-  async getAllFiltered(
-    { commit },
-    { favorites = false, my_engagements = false }
-  ) {
-    try {
-      const response = await api.engagements.allFiltered({
-        favorites: favorites,
-        my_engagements: my_engagements,
+      if (!batchDetails?.isLazyLoad) {
+        commit("RESET_ALL")
+      }
+      const response = await api.engagements.getEngagements({
+        favorites: batchDetails?.favorites,
+        my_engagements: batchDetails?.my_engagements,
+        batch_number: batchDetails?.batch_number,
+        batch_size: batchDetails?.batch_size,
       })
-      commit("SET_ALL", response.data)
+      commit("SET_ALL", response.data.engagements)
+      commit("SET_TOTAL", response.data.total)
     } catch (error) {
       handleError(error)
       throw error
