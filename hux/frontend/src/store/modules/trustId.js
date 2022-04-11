@@ -8,6 +8,7 @@ const state = {
   trustIdOverview: null,
   segmentComparison: [],
   userFilters: [],
+  trustIdAttributes: [],
 }
 
 const getters = {
@@ -16,6 +17,8 @@ const getters = {
   getSegmentsComparison: (state) => state.segmentComparison,
 
   getFilters: (state) => state.userFilters,
+  
+  getTrustAttributes: (state) => state.trustIdAttributes,
 }
 
 const mutations = {
@@ -27,6 +30,8 @@ const mutations = {
   },
   SET_USER_FILTERS(state, data) {
     Vue.set(state, "userFilters", data)
+  SET_TRUST_ATTRIBUTES(state, trustIdAttributes) {
+    Vue.set(state, "trustIdAttributes", trustIdAttributes)
   },
 }
 
@@ -62,6 +67,15 @@ const actions = {
     try {
       const response = await api.trustId.addSegment(payload)
       commit("SET_SEGMENT_COMPARISON", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async getTrustAttributes({ commit }) {
+    try {
+      const response = await api.trustId.getAttributes()
+      commit("SET_TRUST_ATTRIBUTES", response)
     } catch (error) {
       handleError(error)
       throw error

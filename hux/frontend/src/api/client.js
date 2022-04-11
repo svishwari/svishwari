@@ -504,6 +504,9 @@ client["trustId"].trustIdOverview = () => {
 client["trustId"].getComparison = () => {
   return http.get("/trust_id/comparison")
 }
+client["trustId"].getAttributes = () => {
+  return http.get("/trust_id/attributes")
+}
 
 client["trustId"].getUserFilters = () => {
   return http.get("trust_id/user_filters")
