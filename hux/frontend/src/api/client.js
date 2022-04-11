@@ -508,8 +508,8 @@ client["trustId"].getAttributes = () => {
   return http.get("/trust_id/attributes")
 }
 
-client["trustId"].getUserFilters = () => {
-  return http.get("trust_id/user_filters")
+client["trustId"].getSegments = () => {
+  return http.get("/trust_id/user_filters")
 }
 
 client["trustId"].addSegment = (data) => {

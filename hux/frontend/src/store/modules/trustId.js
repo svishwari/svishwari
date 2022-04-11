@@ -7,7 +7,7 @@ const namespaced = true
 const state = {
   trustIdOverview: null,
   segmentComparison: [],
-  userFilters: [],
+  addSegment: [],
   trustIdAttributes: [],
 }
 
@@ -16,8 +16,8 @@ const getters = {
 
   getSegmentsComparison: (state) => state.segmentComparison,
 
-  getFilters: (state) => state.userFilters,
-  
+  getAddSegment: (state) => state.addSegment,
+
   getTrustAttributes: (state) => state.trustIdAttributes,
 }
 
@@ -28,8 +28,8 @@ const mutations = {
   SET_SEGMENT_COMPARISON(state, data) {
     Vue.set(state, "segmentComparison", data)
   },
-  SET_USER_FILTERS(state, data) {
-    Vue.set(state, "userFilters", data)
+  SET_ADD_SEGMENT(state, data) {
+    Vue.set(state, "addSegment", data)
   },
   SET_TRUST_ATTRIBUTES(state, trustIdAttributes) {
     Vue.set(state, "trustIdAttributes", trustIdAttributes)
@@ -55,10 +55,10 @@ const actions = {
       throw error
     }
   },
-  async getUserFilters({ commit }) {
-    try {
-      const response = await api.trustId.getUserFilters()
-      commit("SET_USER_FILTERS", response.data)
+async getSegmentData({ commit }) {
+  try {
+    const response = await api.trustId.getSegments()
+    commit("SET_ADD_SEGMENT", response.data)
     } catch (error) {
       handleError(error)
       throw error

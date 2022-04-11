@@ -99,7 +99,9 @@ export default {
       localDrawer: this.value,
       selectedAttributes: [],
       enableApply: false,
-      segmentName: "Segment" + " " + (this.segmentLength + 1),
+      segmentName: "Segment",
+      // TODO: once Delete segment API is integrated
+      // segmentName: "Segment" + " " + (this.segmentLength + 1),
       segmentDataObj: {},
     }
   },
@@ -206,7 +208,7 @@ export default {
   align-items: start;
 }
 ::v-deep .v-input--selection-controls__input {
-  margin-top: 2px !important;
+  margin-top: 0px !important;
 }
 ::v-deep .hux-filters-drawer .content {
   overflow-x: hidden;
