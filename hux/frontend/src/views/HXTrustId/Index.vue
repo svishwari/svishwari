@@ -215,7 +215,7 @@
             view-height="calc(100vh - 180px)"
             :segment-data="addSegmentData"
             :segment-length="segmentLength"
-            @onSectionAction="addSegment"
+            @onSectionAction="addSegment($event)"
           />
         </div>
       </div>
@@ -237,7 +237,6 @@ import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
-import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
 import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
 import segmentComparisonScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 
@@ -264,7 +263,6 @@ export default {
       selectedSegment: "composite & signal scores",
       isFilterToggled: false,
       segmentLength: 1,
-      addSegmentData: addSegmentData,
       overviewData: overviewData,
       segmentScores: segmentComparisonScores,
       borderColorArr: [
@@ -379,6 +377,7 @@ export default {
       // segmentScores: "trustId/getSegmentsComparison",
       // TODO: enable this once API endpoint available
       // overviewData: "trustId/getTrustOverview",
+      addSegmentData: "trustId/getFilters",
     }),
     getSegment() {
       return this.segmentScores.map((item) => {
@@ -445,7 +444,8 @@ export default {
     this.segmentComparisonLoading = true
     try {
       // await this.getOverview()
-      //   await this.getTrustIdComparison()
+      // await this.getTrustIdComparison()
+      await this.getUserFilters()
     } finally {
       this.loading = false
       this.segmentComparisonLoading = false
@@ -455,6 +455,8 @@ export default {
     ...mapActions({
       // getOverview: "trustId/getTrustIdOverview",
       // getTrustIdComparison: "trustId/getTrustIdComparison",
+      getUserFilters: "trustId/getUserFilters",
+      addNewSegment: "trustId/addSegment",
     }),
     getSelectedData(value) {
       this.selectedSegment = value
@@ -463,8 +465,15 @@ export default {
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
     },
-    addSegment() {
+    async addSegment(event) {   
+      this.loading = true
+      try {
+      await this.addNewSegment(event)
+    } finally {
+      this.loading = false
+    }
       this.isFilterToggled = !this.isFilterToggled
+      this.$router.go()
     },
     removeSegment(item) {
       this.getSelectedSegment.segments.splice(

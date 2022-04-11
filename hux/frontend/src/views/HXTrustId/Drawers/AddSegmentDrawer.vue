@@ -125,10 +125,21 @@ export default {
     clear() {
       this.segmentDataObj = {}
     },
+    segmentFilters() {
+      const payload = []
+      Object.entries(this.segmentDataObj).forEach(([key, value]) => {
+          payload.push({
+            type: key.split("#")[0],
+            description: key.split("#")[1],
+            values: Array.isArray(value) ? value : [value.toString()]
+          })
+        })
+      return payload
+    },
     apply() {
       this.$emit("onSectionAction", {
-        segmentName: this.segmentName,
-        segmentDataObj: this.segmentDataObj,
+        segment_name: this.segmentName,
+        segment_filters: this.segmentFilters(),
       })
     },
     close() {

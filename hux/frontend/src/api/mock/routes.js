@@ -101,7 +101,6 @@ export const defineRoutes = (server) => {
       alerts: requestData.alerts,
     })
   })
-  server.get("/trust_id/overview", () => trustIdOverview)
 
   //client projects
   server.get("/client-projects")
@@ -887,7 +886,11 @@ export const defineRoutes = (server) => {
   server.get("/email_deliverability/overview", () => emailDeliverabilityOveriew)
 
   // trust id
+  server.get("/trust_id/overview", () => trustIdOverview)
+
   server.get("/trust_id/comparison", () => trustIdComparisonData)
 
   server.get("/trust_id/user_filters", () => addSegmentData)
+
+  server.post("/trust_id/segment", () => trustIdComparisonData)
 }
