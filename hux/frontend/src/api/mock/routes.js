@@ -213,7 +213,20 @@ export const defineRoutes = (server) => {
   server.get("/destinations/constants", () => destinationsConstants)
 
   // engagements
-  server.get("/engagements")
+  server.get("/engagements", (schema, request) => {
+    let currentBatch = request.queryParams.batch_number
+    let batchSize = request.queryParams.batch_size
+    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let allEngagements = schema.engagements.all()
+    const engagements = {
+      engagements: allEngagements.models.slice(initialCount, lastCount),
+      total: allEngagements.length,
+    }
+    return engagements
+  })
+
+ // server.get("/engagements")
 
   server.get("/engagements/:id", (schema, request) => {
     const id = request.params.id
