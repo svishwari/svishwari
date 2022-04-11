@@ -173,6 +173,7 @@ export default {
   background-color: var(--v-primary-lighten1) !important;
   box-sizing: border-box;
   border-radius: 5px !important;
+  border: 1px solid var(--v-black-lighten2);
   .lookalikes {
     .header {
       height: 40px;
@@ -191,8 +192,10 @@ export default {
     background: var(--v-primary-lighten1);
     border-radius: 5px !important;
     ::v-deep .metric-card-wrapper {
+      border: 0 !important;
       .titleColor {
         svg {
+          padding-top: 0 !important;
           width: 24px !important;
           height: 24px !important;
         }

@@ -278,12 +278,6 @@ def get_performance_metrics_deliverability_data(
             delivered_open_rate_data = sorted(
                 delivered_open_rate_data, key=lambda data: data.get(api_c.DATE)
             )
-            delivered_open_rate_data = fill_domain_daily_data(
-                start_date=start_date,
-                end_date=end_date,
-                domain_data=delivered_open_rate_data,
-                domain_name=domain_name,
-            )
     return {
         api_c.SENT: sorted(
             sent_count_data, key=lambda data: data.get(api_c.DATE)

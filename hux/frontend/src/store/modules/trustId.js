@@ -7,12 +7,15 @@ const namespaced = true
 const state = {
   trustIdOverview: null,
   segmentComparison: [],
+  trustIdAttributes: [],
 }
 
 const getters = {
   getTrustOverview: (state) => state.trustIdOverview,
 
   getSegmentsComparison: (state) => state.segmentComparison,
+
+  getTrustAttributes: (state) => state.trustIdAttributes,
 }
 
 const mutations = {
@@ -21,6 +24,9 @@ const mutations = {
   },
   SET_SEGMENT_COMPARISON(state, data) {
     Vue.set(state, "segmentComparison", data)
+  },
+  SET_TRUST_ATTRIBUTES(state, trustIdAttributes) {
+    Vue.set(state, "trustIdAttributes", trustIdAttributes)
   },
 }
 
@@ -38,6 +44,15 @@ const actions = {
     try {
       const response = await api.trustId.getComparison()
       commit("SET_SEGMENT_COMPARISON", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async getTrustAttributes({ commit }) {
+    try {
+      const response = await api.trustId.getAttributes()
+      commit("SET_TRUST_ATTRIBUTES", response)
     } catch (error) {
       handleError(error)
       throw error
