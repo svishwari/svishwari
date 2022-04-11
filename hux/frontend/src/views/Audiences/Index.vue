@@ -637,9 +637,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      this.batchDetails.batch_size = 50
-      this.batchDetails.batch_number = 1
-      this.batchDetails.isLazyLoad = false
+      this.setDefaultBatch()
       await this.fetchAudienceByBatch()
       await this.getAudiencesRules()
       this.calculateLastBatch()
@@ -657,10 +655,19 @@ export default {
       deleteAudience: "audiences/remove",
       getAudiencesRules: "audiences/fetchConstants",
     }),
-    
+
+    setDefaultBatch() {
+      this.batchDetails.batch_size = 50
+      this.batchDetails.batch_number = 1
+      this.batchDetails.isLazyLoad = false
+      this.batchDetails.lookalikeable = false
+      this.batchDetails.favorites = false
+      this.batchDetails.worked_by = false
+      this.batchDetails.attribute = []
+      this.batchDetails.deliveries = 2
+    },
     
     intersected() {
-      debugger
       if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
         this.enableLazyLoad = true
@@ -670,16 +677,13 @@ export default {
       }
     },
     async fetchAudienceByBatch() {
-      await this.getAllAudiences({
-        batchDetails: this.batchDetails
-      })
+      await this.getAllAudiences(this.batchDetails)
       this.batchDetails.batch_number++
     },
     calculateLastBatch() {
       this.lastBatch = Math.ceil(
         this.totalAudiences / this.batchDetails.batch_size
       )
-      console.log(this.lastBatch)
     },
 
     async confirmEdit() {
@@ -883,13 +887,14 @@ export default {
     },
 
     async applyFilter(params) {
-      this.finalFilterApplied = params.filterApplied
       this.loading = true
-      await this.getAllAudiences({
-        favorites: params.selectedFavourite,
-        worked_by: params.selectedAudienceWorkedWith,
-        attribute: params.selectedAttributes,
-      })
+      this.finalFilterApplied = params.filterApplied
+      this.setDefaultBatch()
+      this.batchDetails.favorites = params.selectedFavourite,
+      this.batchDetails.worked_by = params.selectedAudienceWorkedWith,
+      this.batchDetails.attribute = params.selectedAttributes,
+      await this.fetchAudienceByBatch()
+      this.calculateLastBatch()
       this.loading = false
     },
     formatText: formatText,
