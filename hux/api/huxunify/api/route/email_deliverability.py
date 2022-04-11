@@ -116,6 +116,7 @@ class EmailDeliverabilityOverview(SwaggerView):
                     start_date, api_c.DEFAULT_DATE_FORMAT
                 ),
                 end_date=end_date,
+                fill_empty=False,
             ).get(f"{api_c.DELIVERED}_{api_c.OPEN_RATE}")
         )
 
