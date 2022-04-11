@@ -458,7 +458,7 @@ export default {
   },
   methods: {
     ...mapActions({
-       getOverview: "trustId/getTrustIdOverview",
+      getOverview: "trustId/getTrustIdOverview",
       // getTrustIdComparison: "trustId/getTrustIdComparison",
       addNewSegment: "trustId/addSegment",
       getSegmentData: "trustId/getSegmentData",
@@ -471,13 +471,13 @@ export default {
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
     },
-    async addSegment(event) {   
+    async addSegment(event) {
       this.loading = true
       try {
-      await this.addNewSegment(event)
-    } finally {
-      this.loading = false
-    }
+        await this.addNewSegment(event)
+      } finally {
+        this.loading = false
+      }
       this.isFilterToggled = !this.isFilterToggled
       //this.$router.go()
     },

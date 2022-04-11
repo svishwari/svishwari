@@ -130,12 +130,12 @@ export default {
     segmentFilters() {
       const payload = []
       Object.entries(this.segmentDataObj).forEach(([key, value]) => {
-          payload.push({
-            type: key.split("#")[0],
-            description: key.split("#")[1],
-            values: Array.isArray(value) ? value : [value.toString()]
-          })
+        payload.push({
+          type: key.split("#")[0],
+          description: key.split("#")[1],
+          values: Array.isArray(value) ? value : [value.toString()],
         })
+      })
       return payload
     },
     apply() {

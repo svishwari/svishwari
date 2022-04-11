@@ -59,7 +59,7 @@ export default {
             count: 3818,
           },
           disagree: {
-            percentage: 0.10,
+            percentage: 0.1,
             count: 19091,
           },
         },

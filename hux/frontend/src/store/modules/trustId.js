@@ -55,10 +55,10 @@ const actions = {
       throw error
     }
   },
-async getSegmentData({ commit }) {
-  try {
-    const response = await api.trustId.getSegments()
-    commit("SET_ADD_SEGMENT", response.data)
+  async getSegmentData({ commit }) {
+    try {
+      const response = await api.trustId.getSegments()
+      commit("SET_ADD_SEGMENT", response.data)
     } catch (error) {
       handleError(error)
       throw error
