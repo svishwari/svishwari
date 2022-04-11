@@ -21,7 +21,7 @@
               :key="col.value"
               class="black--text text--darken-4 text-body-1"
             >
-              <template v-if="col.value === 'attribute_name'">
+              <template v-if="col.value === 'signal_name'">
                 <div class="attribute-name">
                   <rhombus-number
                     class="rhombus-icon"
@@ -157,7 +157,7 @@ export default {
   },
   data() {
     return {
-      sortColumn: "attribute_name",
+      sortColumn: "signal_name",
       sortDesc: true,
       trustColor: {
         humanity: { stroke: "primary", variant: "darken6" },
@@ -168,7 +168,7 @@ export default {
       columns: [
         {
           text: "Name of signal",
-          value: "attribute_name",
+          value: "signal_name",
           width: "170px",
           tooltipWidth: "300px",
           hoverTooltip:
@@ -216,7 +216,7 @@ export default {
       return results
     },
     getRhombusColour(val) {
-      return this.trustColor[val.attribute_name]
+      return this.trustColor[val.signal_name]
     },
   },
 }
