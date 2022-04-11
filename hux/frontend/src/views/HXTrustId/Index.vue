@@ -237,6 +237,7 @@ import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
+// TODO: will romve after checking in dev
 // import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
 import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
 import segmentComparisonScores from "@/api/mock/fixtures/segmentComparisonScores.js"
@@ -380,6 +381,7 @@ export default {
       // TODO: enable this once API endpoint available
       // overviewData: "trustId/getTrustOverview",
       addSegmentData: "trustId/getAddSegment",
+      attributeData: "trustId/getTrustAttributes",
     }),
     getSegment() {
       return this.segmentScores.map((item) => {
@@ -448,6 +450,7 @@ export default {
       // await this.getOverview()
       //   await this.getTrustIdComparison()
       await this.getSegmentData()
+      await this.getTrustIdAttribute()
     } finally {
       this.loading = false
       this.segmentComparisonLoading = false
@@ -458,6 +461,7 @@ export default {
       // getOverview: "trustId/getTrustIdOverview",
       // getTrustIdComparison: "trustId/getTrustIdComparison",
       getSegmentData: "trustId/getSegmentData",
+      getTrustIdAttribute: "trustId/getTrustAttributes",
     }),
     getSelectedData(value) {
       this.selectedSegment = value
