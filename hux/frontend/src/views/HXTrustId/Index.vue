@@ -479,7 +479,7 @@ export default {
         this.loading = false
       }
       this.isFilterToggled = !this.isFilterToggled
-      //this.$router.go()
+      this.$router.go()
     },
     removeSegment(item) {
       this.getSelectedSegment.segments.splice(
