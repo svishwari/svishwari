@@ -226,7 +226,7 @@ export const defineRoutes = (server) => {
     return engagements
   })
 
- // server.get("/engagements")
+  // server.get("/engagements")
 
   server.get("/engagements/:id", (schema, request) => {
     const id = request.params.id
@@ -758,7 +758,7 @@ export const defineRoutes = (server) => {
     return audiences
   })
 
- // server.get("/audiences")
+  // server.get("/audiences")
 
   server.get("/audiences/:id/audience_insights", () => {
     demographicsData.demo = mapData

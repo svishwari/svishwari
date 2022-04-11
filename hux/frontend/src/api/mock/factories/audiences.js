@@ -24,17 +24,17 @@ const destinationData = () => {
     type: "facebook",
     status: "Active",
     category: "Advertising",
-  
+
     is_enabled: false,
     is_added: false,
-  
+
     create_time: () => faker.date.recent(),
     created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
     update_time: () => faker.date.recent(),
     updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
-  
+
     engagements: () => faker.datatype.number({ min: 0, max: 10 }),
-  
+
     // request destination fields
     contact_email: null,
     client_request: null,
@@ -146,7 +146,8 @@ export const audience = {
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   engagements: () => mockEngagements(faker.datatype.number({ min: 0, max: 5 })),
-  destinations:() => mockDestinations(faker.datatype.number({ min: 0, max: 5 })),
+  destinations: () =>
+    mockDestinations(faker.datatype.number({ min: 0, max: 5 })),
   is_lookalike: () => false,
   lookalikeable: () => faker.random.arrayElement(["Active"]),
   lookalike_audiences: () => mockLookalikeAudiences(5),

@@ -153,10 +153,7 @@ const mutations = {
 }
 
 const actions = {
-  async getAll(
-    { commit },
-      batchDetails
-  ) {
+  async getAll({ commit }, batchDetails) {
     try {
       if (!batchDetails?.isLazyLoad) {
         commit("RESET_ALL")
@@ -168,7 +165,7 @@ const actions = {
         worked_by: batchDetails?.worked_by,
         attribute: batchDetails?.attribute,
         batch_number: batchDetails?.batch_number,
-        batch_size: batchDetails?.batch_size
+        batch_size: batchDetails?.batch_size,
       })
       commit("SET_ALL", response.data.audiences)
       commit("SET_TOTAL", response.data.total)

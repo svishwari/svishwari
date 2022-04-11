@@ -598,7 +598,7 @@ export default {
     }),
     audienceList() {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
-    //  console.log(this.rowData)
+      //  console.log(this.rowData)
       audienceValue.forEach((audience) => {
         if (!("filters" in audience)) {
           audience["filters"] = "null"
@@ -666,7 +666,7 @@ export default {
       this.batchDetails.attribute = []
       this.batchDetails.deliveries = 2
     },
-    
+
     intersected() {
       if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
@@ -890,10 +890,10 @@ export default {
       this.loading = true
       this.finalFilterApplied = params.filterApplied
       this.setDefaultBatch()
-      this.batchDetails.favorites = params.selectedFavourite,
-      this.batchDetails.worked_by = params.selectedAudienceWorkedWith,
-      this.batchDetails.attribute = params.selectedAttributes,
-      await this.fetchAudienceByBatch()
+      ;(this.batchDetails.favorites = params.selectedFavourite),
+        (this.batchDetails.worked_by = params.selectedAudienceWorkedWith),
+        (this.batchDetails.attribute = params.selectedAttributes),
+        await this.fetchAudienceByBatch()
       this.calculateLastBatch()
       this.loading = false
     },

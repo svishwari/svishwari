@@ -2,7 +2,7 @@
  * Mock API server using Mirage.js - only included in src/main.js for local
  * development and for unit testing and not for production builds.
  */
-import { belongsTo, createServer, Factory, hasMany, Model } from "miragejs"
+import { belongsTo, createServer, Factory, Model } from "miragejs"
 import config from "@/config"
 import AppSerializer from "./serializer"
 
