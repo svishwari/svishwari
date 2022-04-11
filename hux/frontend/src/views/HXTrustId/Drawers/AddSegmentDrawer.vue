@@ -99,7 +99,9 @@ export default {
       localDrawer: this.value,
       selectedAttributes: [],
       enableApply: false,
-      segmentName: "Segment" + " " + (this.segmentLength + 1),
+      segmentName: "Segment",
+      // TODO: once Delete segment API is integrated
+      // segmentName: "Segment" + " " + (this.segmentLength + 1),
       segmentDataObj: {},
     }
   },
