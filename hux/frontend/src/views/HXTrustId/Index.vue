@@ -214,7 +214,7 @@
             v-model="isFilterToggled"
             view-height="calc(100vh - 180px)"
             :segment-data="addSegmentData"
-            :segment-length="segmentScores.length-1"
+            :segment-length="segmentScores.length - 1"
             @onSectionAction="addSegment"
           />
         </div>

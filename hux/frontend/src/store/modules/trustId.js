@@ -7,7 +7,7 @@ const namespaced = true
 const state = {
   trustIdOverview: null,
   segmentComparison: [],
-  addSegment: []
+  addSegment: [],
 }
 
 const getters = {
