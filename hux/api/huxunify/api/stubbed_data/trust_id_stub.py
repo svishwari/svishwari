@@ -48,9 +48,9 @@ trust_id_overview_stub_data = {
             "overall_customer_rating": {
                 "total_customers": 190909,
                 "rating": {
-                    "agree": {"percentage": 88, "count": 168000},
-                    "neutral": {"percentage": 2, "count": 3818},
-                    "disagree": {"percentage": 10, "count": 19091},
+                    "agree": {"percentage": 0.88, "count": 168000},
+                    "neutral": {"percentage": 0.02, "count": 3818},
+                    "disagree": {"percentage": 0.10, "count": 19091},
                 },
             },
         },
