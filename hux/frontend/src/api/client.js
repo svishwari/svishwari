@@ -503,5 +503,8 @@ client["emailDeliverability"].getOverview = () => {
 client["trustId"].getComparison = () => {
   return http.get("/trust_id/comparison")
 }
+client["trustId"].getAttributes = () => {
+  return http.get("/trust_id/attributes")
+}
 
 export default client

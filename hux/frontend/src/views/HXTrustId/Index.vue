@@ -379,6 +379,7 @@ export default {
       // segmentScores: "trustId/getSegmentsComparison",
       // TODO: enable this once API endpoint available
       // overviewData: "trustId/getTrustOverview",
+      attributeData: "trustId/getTrustAttributes",
     }),
     getSegment() {
       return this.segmentScores.map((item) => {
@@ -445,7 +446,8 @@ export default {
     this.segmentComparisonLoading = true
     try {
       // await this.getOverview()
-      //   await this.getTrustIdComparison()
+      // await this.getTrustIdComparison()
+      await this.getTrustIdAttribute()
     } finally {
       this.loading = false
       this.segmentComparisonLoading = false
@@ -455,6 +457,7 @@ export default {
     ...mapActions({
       // getOverview: "trustId/getTrustIdOverview",
       // getTrustIdComparison: "trustId/getTrustIdComparison",
+      getTrustIdAttribute: "trustId/getTrustAttributes",
     }),
     getSelectedData(value) {
       this.selectedSegment = value
