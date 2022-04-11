@@ -130,6 +130,7 @@ const sideMenuOptions = {
           },
           size: 14,
           display: true,
+          defaultState: defaultState.trustId,
         },
         {
           icon: "email_deliverability",

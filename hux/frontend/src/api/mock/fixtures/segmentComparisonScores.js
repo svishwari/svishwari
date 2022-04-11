@@ -1,10 +1,10 @@
 export default [
   {
-    segment_filter: "composite & signal scores",
+    segment_type: "composite & signal scores",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -45,7 +45,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -86,7 +86,7 @@ export default [
       },
       {
         segment_name: "Segment 3",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -127,7 +127,7 @@ export default [
       },
       {
         segment_name: "Segment 4",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -168,7 +168,7 @@ export default [
       },
       {
         segment_name: "Segment 5",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -210,11 +210,11 @@ export default [
     ],
   },
   {
-    segment_filter: "capability attributes",
+    segment_type: "capability attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "capability",
@@ -256,11 +256,11 @@ export default [
     ],
   },
   {
-    segment_filter: "humanity attributes",
+    segment_type: "humanity attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "humanity",
@@ -300,7 +300,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [
+        segment_filters: [
           {
             age: [
               {
@@ -356,11 +356,11 @@ export default [
     ],
   },
   {
-    segment_filter: "transparency attributes",
+    segment_type: "transparency attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "transparency",
@@ -401,7 +401,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [
+        segment_filters: [
           {
             age: [
               {
@@ -458,11 +458,11 @@ export default [
     ],
   },
   {
-    segment_filter: "reliability attributes",
+    segment_type: "reliability attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "reliability",
@@ -503,7 +503,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [
+        segment_filters: [
           {
             age: [
               {
