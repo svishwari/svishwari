@@ -75,7 +75,9 @@
                       </span>
                     </v-card-title>
                     <trust-comparison-chart
-                      v-if="!segmentComparisonLoading && segmentScores.length > 0"
+                      v-if="
+                        !segmentComparisonLoading && segmentScores.length > 0
+                      "
                       :segment-scores="segmentScores"
                       data-e2e="trust-comparison-chart"
                     />
@@ -89,12 +91,12 @@
                 @onselect="getSelectedData"
               ></link-dropdown>
               <data-cards
+                v-if="getSegmentTableData.length > 0"
                 bordered
                 class="mr-4"
                 card-class="py-5 pa-4"
                 :items="getSegmentTableData"
                 :fields="getSegmentTableHeaders"
-                v-if="getSegmentTableData.length > 0"
               >
                 <template
                   v-for="header in getSegmentTableHeaders"
@@ -152,7 +154,10 @@
 
                 <template #field:delete="row">
                   <div
-                    v-if="getSelectedSegment && getSelectedSegment.segments.length > 1"
+                    v-if="
+                      getSelectedSegment &&
+                      getSelectedSegment.segments.length > 1
+                    "
                     class="d-flex align-center justify-end mr-2"
                   >
                     <hux-icon
@@ -165,7 +170,11 @@
                   </div>
                 </template>
               </data-cards>
-              <div v-if="getSelectedSegment && getSelectedSegment.segments.length < 5">
+              <div
+                v-if="
+                  getSelectedSegment && getSelectedSegment.segments.length < 5
+                "
+              >
                 <v-list class="add-segment no-data-width" :height="22">
                   <v-list-item @click="filterToggle()">
                     <hux-icon
@@ -387,20 +396,22 @@ export default {
     },
 
     getSegmentTableData() {
-      return this.getSelectedSegment ?  this.getSelectedSegment.segments.map((x, index) => {
-        let segment = {
-          segment_name: x.segment_name,
-          segment_filters: x.segment_filters,
-        }
+      return this.getSelectedSegment
+        ? this.getSelectedSegment.segments.map((x, index) => {
+            let segment = {
+              segment_name: x.segment_name,
+              segment_filters: x.segment_filters,
+            }
 
-        x.attributes.forEach((item) => {
-          segment[item.attribute_type] = item.attribute_score
-        })
+            x.attributes.forEach((item) => {
+              segment[item.attribute_type] = item.attribute_score
+            })
 
-        segment.colors = this.borderColorArr[index]
+            segment.colors = this.borderColorArr[index]
 
-        return segment
-      }) : []
+            return segment
+          })
+        : []
     },
 
     getSegmentTableHeaders() {
