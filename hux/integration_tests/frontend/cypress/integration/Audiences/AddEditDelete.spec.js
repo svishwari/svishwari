@@ -67,7 +67,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
   // For editing the above added audience
   it("should be able to edit a newly added audience via Segment Playground", () => {
     cy.location("pathname").should("eq", route.audiences)
-    cy.get(".menu-cell-wrapper").each(($el) => {
+    cy.get(selector.audience.audiencenameclick).each(($el) => {
       if ($el.text().includes(`Test audience ${audienceName}`)) {
         // Make the vertical dots visible
         cy.wrap($el)
@@ -107,7 +107,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
   // For deleting the above added audience
   it("should be able to delete a newly added audience", () => {
     cy.location("pathname").should("eq", route.audiences)
-    cy.get(".menu-cell-wrapper").each(($el) => {
+    cy.get(selector.audience.audiencenameclick).each(($el) => {
       if ($el.text().includes(`Test audience ${audienceName} edited`)) {
         // Make the vertical dots visible
         cy.wrap($el)
