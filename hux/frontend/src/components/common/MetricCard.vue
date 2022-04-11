@@ -64,7 +64,7 @@
 
         <slot name="extra-item"></slot>
 
-        <div class="subtitle-slot">
+        <div class="subtitle-slot mt-1">
           <span
             class="text-caption"
             :class="{

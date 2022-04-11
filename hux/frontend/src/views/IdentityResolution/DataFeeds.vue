@@ -69,12 +69,15 @@
                 <v-btn
                   text
                   class="pa-1 text-body-1"
+                  style="right: 16px"
                   height="auto"
                   color="primary"
                   data-e2e="lastrun"
                   @click="openLastRunDrawer(item)"
                 >
-                  {{ item[col.value] | Date("relative") }}
+                  <div class="ml-4 mr-4">
+                    {{ item[col.value] | Date("relative") }}
+                  </div>
                 </v-btn>
                 <template #tooltip>{{ item[col.value] | Date }}</template>
               </tooltip>
