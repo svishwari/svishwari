@@ -122,6 +122,7 @@ export default {
     .v-data-table-header {
       tr {
         th {
+          box-shadow: none !important;
           background: var(--v-primary-lighten2);
           height: 40px !important;
         }
@@ -130,11 +131,6 @@ export default {
     tr {
       td {
         height: 60px !important;
-      }
-      &:last-child {
-        td {
-          border-bottom: none;
-        }
       }
     }
     .ellipsis {

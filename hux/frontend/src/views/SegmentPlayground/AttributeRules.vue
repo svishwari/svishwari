@@ -4,7 +4,7 @@
       <strong
         v-if="enableTitle"
         :class="{
-          'text-h5 black--text text--darken-4 mb-2 d-block': true,
+          'text-body-1 black--text text--darken-4 mb-2 d-block': true,
           '': applyCaptionStyle,
         }"
       >
@@ -86,10 +86,17 @@
                     "
                     v-model="condition.text"
                     class="item-text-field"
-                    :placeholder="getPlaceHolderText(condition)"
+                    placeholder="Enter value"
                     required
                     @blur="triggerSizing(condition)"
                   />
+                  <span
+                    v-if="
+                      condition.operator && condition.attribute.type === 'text'
+                    "
+                    class="ml-2 text-body-1"
+                    >Days</span
+                  >
                   <hux-autocomplete
                     v-if="
                       condition.operator && condition.attribute.type === 'list'
@@ -120,7 +127,7 @@
                     />
                     <hux-slider
                       v-model="condition.range"
-                      :read-only="false"
+                      :read-only="readMode ? true : false"
                       :min="condition.attribute.min"
                       :max="condition.attribute.max"
                       :step="condition.attribute.steps"
@@ -202,10 +209,10 @@
         <v-chip
           small
           class="mx-2 my-1 text-body-1 cursor-pointer"
-          text-color="primary"
-          color="black lighten-2"
+          :text-color="readMode ? 'white' : 'primary'"
+          :color="readMode ? 'black lighten-3' : 'primary lighten-3'"
           :ripple="false"
-          @click.native="addNewSection()"
+          @click.native="!readMode && addNewSection()"
         >
           <tooltip>
             <template #label-content> + </template>
@@ -229,6 +236,7 @@ import TextField from "../../components/common/TextField.vue"
 import Icon from "@/components/common/Icon"
 import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
+import { v4 as uuidv4 } from "uuid"
 
 const NEW_RULE_SECTION = {
   id: "",
@@ -304,12 +312,26 @@ export default {
     lastIndex() {
       return this.rules.length - 1
     },
+
+    updateHistoArr() {
+      return this.notHistogramKeys.concat(
+        Object.keys(this.ruleAttributes.rule_attributes.general.events).map(
+          (x) =>
+            x != "name" &&
+            this.ruleAttributes.rule_attributes.general.events[x].name
+        )
+      )
+    },
   },
   async mounted() {
     this.sizeHandler()
     this.chartDimensions.height = 26
     await this.getAudiencesRules()
     this.updateSizes()
+
+    this.notHistogramKeys = this.updateHistoArr
+
+    this.$emit("attribute-options", this)
   },
 
   created() {
@@ -347,8 +369,7 @@ export default {
 
     isTextORSelect(condition) {
       return condition.attribute
-        ? condition.attribute.type === "text" ||
-            condition.attribute.type === "list"
+        ? ["text", "list"].includes(condition.attribute.type)
         : false
     },
     /**
@@ -417,6 +438,17 @@ export default {
         return Object.keys(this.ruleAttributes.text_operators)
           .map((key) => {
             if (key.includes("equal")) {
+              return {
+                key: key,
+                name: this.ruleAttributes.text_operators[key],
+              }
+            }
+          })
+          .filter(Boolean)
+      } else if (condition.attribute.type === "text") {
+        return Object.keys(this.ruleAttributes.text_operators)
+          .map((key) => {
+            if (key.includes("within_the_last")) {
               return {
                 key: key,
                 name: this.ruleAttributes.text_operators[key],
@@ -563,7 +595,7 @@ export default {
     },
     addNewCondition(id) {
       const newCondition = JSON.parse(JSON.stringify(NEW_CONDITION))
-      newCondition.id = Math.floor(Math.random() * 1024).toString(16)
+      newCondition.id = uuidv4()
       const sectionFound = this.rules.filter((rule) => rule.id === id)
       if (sectionFound.length > 0) sectionFound[0].conditions.push(newCondition)
     },
@@ -592,7 +624,7 @@ export default {
     },
     addNewSection() {
       const newSection = JSON.parse(JSON.stringify(NEW_RULE_SECTION))
-      newSection.id = Math.floor(Math.random() * 1024).toString(16)
+      newSection.id = uuidv4()
       this.rules.push(newSection)
       this.addNewCondition(newSection.id)
     },
@@ -744,6 +776,9 @@ export default {
               .v-slider__track-container {
                 width: 101%;
               }
+            }
+            ::v-deep .v-input__control .v-input__slot .v-slider__thumb {
+              border: none !important;
             }
           }
         }

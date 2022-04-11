@@ -77,7 +77,7 @@
                 size="large"
                 is-custom-icon
                 class="ma-2 font-weight-regular no-shadow mr-0 caption"
-                is-tilehux
+                is-tile
                 :is-disabled="isEmptyError"
                 height="40"
               >
@@ -164,7 +164,7 @@
                         <logo
                           class="mr-1"
                           :type="destination.delivery_platform_type"
-                          :size="18"
+                          :size="24"
                         />
                       </template>
                       <template #hover-content>

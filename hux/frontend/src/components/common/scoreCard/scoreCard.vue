@@ -7,7 +7,13 @@
     elevation="0"
   >
     <div class="score-card-info">
-      <icon class="model-icon" :type="icon" size="24" color="primary" />
+      <icon
+        class="model-icon pa-1"
+        :type="icon"
+        size="24"
+        :stroke="stroke"
+        :variant="variant"
+      />
       <span class="model-name text-body-2">{{ title }}</span>
       <span class="text-subtitle-1" :class="{ 'model-value ': hasSlot }">
         {{ value }}
@@ -54,6 +60,14 @@ export default {
       required: true,
       default: 75,
     },
+    stroke: {
+      type: String,
+      required: false,
+    },
+    variant: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     hasSlot() {
@@ -93,6 +107,7 @@ export default {
     }
     .model-name {
       display: block;
+      color: var(--v-black-lighten4) !important;
     }
     .model-value {
       float: left;

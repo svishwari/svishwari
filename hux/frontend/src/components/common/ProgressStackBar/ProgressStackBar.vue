@@ -1,12 +1,11 @@
 <template>
   <div class="chart-container">
-    <div ref="progressStackBarChart" class="chart"></div>
+    <div ref="progressStackBarChart" :class="dynamicChartID"></div>
   </div>
 </template>
 
 <script>
 import groupData from "./groupData"
-import sampleData from "./sampleData"
 import * as d3Format from "d3-format"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
@@ -27,6 +26,32 @@ export default {
       default: false,
       required: false,
     },
+    value: {
+      type: Array,
+      default() {
+        return [
+          { label: "Group-1", value: 20 },
+          { label: "Group-2", value: 28 },
+          { label: "Group-3", value: 52 },
+        ]
+      },
+      required: false,
+    },
+    barId: {
+      type: [Number, String],
+      default: 1,
+      required: false,
+    },
+    data: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+  },
+  data() {
+    return {
+      dynamicChartID: `bar-${this.barId}`,
+    }
   },
   watch: {
     chartDimensions: {
@@ -35,14 +60,15 @@ export default {
           .select(this.$refs.progressStackBarChart)
           .selectAll("svg")
           .remove()
-        this.stackedBar(".chart", sampleData)
+        this.stackedBar(`.${this.dynamicChartId}`, this.data)
       },
       immediate: false,
       deep: true,
     },
   },
   mounted() {
-    this.stackedBar(".chart", sampleData)
+    this.dynamicChartId = `bar-${this.barId}`
+    this.stackedBar(`.${this.dynamicChartId}`, this.data)
   },
   methods: {
     rounded_rect(x, y, w, h, r, tl, tr, bl, br) {
@@ -84,7 +110,7 @@ export default {
         f: d3Format.format(".1f"),
         margin: { top: 20, right: 10, bottom: 20, left: 10 },
         width: this.width,
-        height: this.showPercentage ? 200 : this.height,
+        height: this.showPercentage ? 50 : this.height,
         barHeight: this.height,
         colors: ["#DA291C", "#FFCD00", "#86BC25"],
         ...config,

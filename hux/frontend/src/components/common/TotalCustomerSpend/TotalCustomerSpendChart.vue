@@ -68,6 +68,9 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
+        this.toolTipStyle.left = this.currentData.invertPosition
+          ? "-125px"
+          : "70px"
       }
     },
     sizeHandler() {

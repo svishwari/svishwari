@@ -52,6 +52,22 @@ export function handleSuccess(message, status) {
 }
 
 /**
+ * Handles an info Message.
+ *
+ * @param {string} message
+ * eslint-disable-next-line jsdoc/require-returns-check
+ * @param {number} status
+ * eslint-disable-next-line jsdoc/require-returns-check
+ */
+export function handleInfo(message, status) {
+  store.dispatch("alerts/setAlert", {
+    message: message,
+    code: status,
+    type: "info",
+  })
+}
+
+/**
  * Get color HEX code
  *
  * @param {*} str string to generate color from
@@ -144,8 +160,8 @@ export function deliverySchedule(schedule = {}) {
     minute: 15,
     period: "AM",
     monthlyPeriod: "Day",
-    monthlyDay: "Day",
-    monthlyDayDate: 1,
+    monthlyDay: ["Day"],
+    monthlyDayDate: [1],
     day_of_week: ["SUN"],
   }
   if (schedule) {
@@ -356,6 +372,17 @@ export function formatDate(date) {
 }
 
 /**
+ * Returns minimum date for enddate time picker converted to ISO format string
+ *
+ * @returns {string} formatted HTML
+ */
+export function endMinDateGenerator() {
+  return new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60000
+  ).toISOString()
+}
+
+/**
  * Returns local time zone
  *
  * @param {string} date - date to be formatted
@@ -379,4 +406,14 @@ export function formatDateToLocal(date) {
  */
 export function formatInnerHTML(text) {
   return { innerHTML: text }
+}
+
+/**
+ * Returns number converted to string with commas
+ *
+ * @param {string} num - number to be formatted to string
+ * @returns {string} formatted number
+ */
+export function numberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }

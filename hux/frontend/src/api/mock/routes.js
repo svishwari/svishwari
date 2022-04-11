@@ -27,6 +27,9 @@ import { addedApplications, applications } from "./factories/application"
 import domainData from "@/api/mock/fixtures/domainLineData.js"
 import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 import runDurationData from "@/api/mock/fixtures/runDurationData.js"
+import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
+import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
+import trustIdComparisonData from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export const defineRoutes = (server) => {
   // Users
@@ -98,6 +101,7 @@ export const defineRoutes = (server) => {
       alerts: requestData.alerts,
     })
   })
+  server.get("/trust_id/overview", () => trustIdOverview)
 
   //client projects
   server.get("/client-projects")
@@ -287,6 +291,17 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
+  // Attaching an Destination to an Engagement attached to a Audience
+  server.post("/engagements/:id/audience/:audienceId/destinations", () => {
+    const code = 200
+    const headers = {}
+    const body = {
+      message:
+        "Successfully added destination to engagement attached to audience",
+    }
+    return new Response(code, headers, body)
+  })
+
   // Attaching an Audience to an Engagement
   server.post("/engagements/:id/audiences", (schema, request) => {
     const code = 200
@@ -398,6 +413,15 @@ export const defineRoutes = (server) => {
       return { message: "Successfully updated delivery schedule" }
     }
   )
+
+  server.post("/engagements/:id/audience/:audienceId/schedule", () => {
+    const code = 201
+    const headers = {}
+    const body = {
+      message: "Successfully updated delivery schedule",
+    }
+    return new Response(code, headers, body)
+  })
 
   server.post(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/deliver",
@@ -700,7 +724,7 @@ export const defineRoutes = (server) => {
     demographicsData.demo = mapData
     return demographicsData
   })
-  server.get("/audiences/:id/:type", async () => {
+  server.get("/audiences/:id/download", async () => {
     // Introduced a delay of 15 seconds to
     // replicate the API delay in processing the BLOB.
     await new Promise((r) => setTimeout(r, 15000))
@@ -861,4 +885,11 @@ export const defineRoutes = (server) => {
   server.get("/email_deliverability/domains", () => domainData)
 
   server.get("/email_deliverability/overview", () => emailDeliverabilityOveriew)
+
+  // trust id
+  server.get("/trust_id/comparison", () => trustIdComparisonData)
+
+  server.get("/trust_id/user_filters", () => addSegmentData)
+
+  server.get("/trust_id/attributes", () => trustIdOverview)
 }

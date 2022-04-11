@@ -487,6 +487,7 @@ class TestAudienceManagement(unittest.TestCase):
                 audience_doc[db_c.ID],
                 delivery_platform_doc[db_c.ID],
                 [],
+                self.user_name,
             )
 
             # store the audience obj
@@ -558,6 +559,7 @@ class TestAudienceManagement(unittest.TestCase):
                 audience_doc[db_c.ID],
                 delivery_platform_doc[db_c.ID],
                 [],
+                self.user_name,
             )
 
             # store the audience obj

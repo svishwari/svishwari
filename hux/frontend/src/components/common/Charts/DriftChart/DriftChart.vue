@@ -317,6 +317,11 @@ export default {
       // Shows tooltip
       let tooltip = svg.append("g").style("display", "none")
 
+      let hoverAreaWidth =
+        width - this.margin.right > 0
+          ? width - this.margin.right - this.margin.left
+          : 0
+
       tooltip
         .append("circle")
         .attr("r", 5)
@@ -326,12 +331,7 @@ export default {
 
       svg
         .append("rect")
-        .attr(
-          "width",
-          width - this.margin.right > 0
-            ? width - this.margin.right - this.margin.left
-            : 0
-        )
+        .attr("width", hoverAreaWidth)
         .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
         .attr(
           "height",
@@ -363,6 +363,7 @@ export default {
         this.$options.filters.Date(value, "MM/DD/YYYY")
 
       let mousemove = (mouseEvent, data) => {
+        let maxRightLimit = (hoverAreaWidth * 85) / 100
         let x0 = dateFormatter(
           xCoordinateFunction.invert(d3Select.pointer(mouseEvent)[0])
         )
@@ -396,7 +397,9 @@ export default {
             "transform",
             `translate(${this.finalXCoordinate},${this.finalYCoordinate})`
           )
-
+          // Tooltip position inversion in case of extreme corner
+          this.toolTipStyle.left =
+            this.finalXCoordinate > maxRightLimit ? "-98px" : "25px"
           this.showTooltip = true
           this.tooltipValue = currentData.yAxisValue
           this.tooltipValueDate = currentData.xAxisValue

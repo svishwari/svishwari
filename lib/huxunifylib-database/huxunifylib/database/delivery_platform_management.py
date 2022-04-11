@@ -1094,6 +1094,7 @@ def set_delivery_job(
     audience_id: ObjectId,
     delivery_platform_id: ObjectId,
     delivery_platform_generic_campaigns: list,
+    username: str,
     engagement_id: ObjectId = None,
     delivery_platform_config: dict = None,
 ) -> Union[dict, None]:
@@ -1104,6 +1105,7 @@ def set_delivery_job(
         audience_id (ObjectId): MongoDB ID of the delivered audience.
         delivery_platform_id (ObjectId): Delivery platform ID.
         delivery_platform_generic_campaigns (list): generic campaign IDs.
+        username (str): Username of user requesting to deliver an audience.
         engagement_id (ObjectId): Engagement ID.
         delivery_platform_config (dict): the delivery platform config
             object that holds the data extensions.
@@ -1112,11 +1114,15 @@ def set_delivery_job(
         Union[dict, None]: Delivery job configuration.
 
     Raises:
+        MissingValueException: Raised if the username is missing.
         InvalidID: If the passed in delivery_platform_id did not fetch a doc
             from the relevant db collection.
         NoDeliveryPlatformConnection: If the delivery platform connection is
             not successful.
     """
+
+    if username is None:
+        raise de.MissingValueException("username")
 
     dp_doc = get_delivery_platform(database, delivery_platform_id)
 
@@ -1144,6 +1150,7 @@ def set_delivery_job(
         ),
         db_c.DELETED: False,
         db_c.DELIVERY_PLATFORM_AUD_SIZE: 0,
+        db_c.USERNAME: username,
     }
     if engagement_id is not None:
         doc[db_c.ENGAGEMENT_ID] = engagement_id

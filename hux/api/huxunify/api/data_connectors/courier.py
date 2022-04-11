@@ -7,7 +7,6 @@ from typing import TypeVar
 from bson import ObjectId
 from pymongo import MongoClient
 
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
@@ -16,7 +15,6 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import (
     add_delivery_job,
-    check_active_engagement_deliveries,
 )
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.orchestration_management import get_audience
@@ -33,9 +31,6 @@ from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config, Config
-from huxunify.api.data_connectors.aws import (
-    CloudWatchState,
-)
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedDestinationDependencyError,
 )
@@ -197,8 +192,8 @@ class BaseDestinationBatchJob:
 
     provider = None
 
-    @classmethod
-    def generate_job(
+    # pylint: disable=unused-argument
+    def __new__(
         cls,
         database: MongoClient,
         audience_delivery_job_id: ObjectId,
@@ -207,39 +202,32 @@ class BaseDestinationBatchJob:
         destination_type: str,
         config: Config = get_config(),
     ) -> TypeVar("T", bound="BaseDestinationBatchJob"):
-        """Generate the correct
+        """Override the new class to handle subclass mapping.
 
         Args:
             database (MongoClient): The mongo database client.
-            audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
+            audience_delivery_job_id (ObjectId): Audience delivery job ID.
             secrets_dict (dict): The AWS secret dict for a batch job.
             env_dict (dict): The AWS env dict for a batch job.
-            destination_type (str): The type of destination (i.e. facebook, sfcm)
-            config (config): config object.
+            destination_type (str): Type of destination (i.e. facebook, sfmc).
+            config (Config): configuration object.
 
         Returns:
-            BaseDestinationBatchJob
-
-        Raises:
-            Exception: Exception thrown if an unknown cloud provider is requested
+            BaseDestinationBatchJob: Subclass of BaseDestinationBatchJob.
         """
 
-        subclass_map = {x.provider.lower(): x for x in cls.__subclasses__()}
+        provider = config.CLOUD_PROVIDER.lower()
+        subclass_map = {
+            subclass.provider.lower(): subclass
+            for subclass in cls.__subclasses__()
+        }
 
-        if config.CLOUD_PROVIDER.lower() not in subclass_map:
-            raise Exception(
-                f"Cloud provider {config.CLOUD_PROVIDER} does not support destination batch jobs!"
-            )
-
-        destination_batch_job = subclass_map[config.CLOUD_PROVIDER.lower()]
-
-        return destination_batch_job(
-            database,
-            audience_delivery_job_id,
-            secrets_dict,
-            env_dict,
-            destination_type,
+        subclass = (
+            subclass_map[provider]
+            if provider in subclass_map
+            else BaseDestinationBatchJob
         )
+        return super(BaseDestinationBatchJob, subclass).__new__(subclass)
 
     def __init__(
         self,
@@ -635,6 +623,7 @@ def get_destination_config(
     audience_id: ObjectId,
     destination: dict,
     engagement_id: ObjectId,
+    username: str,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
@@ -643,6 +632,8 @@ def get_destination_config(
         audience_id (ObjectId): The ID of the audience.
         destination (dict): Destination object.
         engagement_id (ObjectId): The ID of the engagement.
+        username (str): Username of user requesting to get the destination
+            config.
 
     Returns:
         DestinationBatchJob: Destination batch job object.
@@ -679,6 +670,7 @@ def get_destination_config(
         audience_id,
         destination_id,
         [],
+        username,
         engagement_id,
         destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
     )
@@ -769,42 +761,6 @@ def get_audience_destination_pairs(audiences: list) -> list:
     ]
 
 
-def toggle_event_driven_routers(
-    database: DatabaseClient,
-    state: CloudWatchState = None,
-    routers: list = None,
-) -> None:
-    """Toggle event driven routers in cloudwatch.
-
-    Args:
-        database (DatabaseClient): Mongo database client.
-        state (CloudWatchState): Cloudwatch toggle state enum.
-        routers (list): List of router names to toggle.
-
-    Returns:
-
-    """
-
-    # grab default routers if not provided.
-    routers = get_config().EVENT_ROUTERS if routers is None else routers
-
-    # get all the active engagements
-    active_engagements = check_active_engagement_deliveries(database)
-
-    if state is None:
-        # set state based on active engagements
-        # if there are active engagements, the router should be enabled.
-        state = (
-            CloudWatchState.ENABLE
-            if active_engagements
-            else CloudWatchState.DISABLE
-        )
-
-    # TODO - hookup after ORCH-401 deploys the FLDR and CPDR to a cloud watch event.
-    # # toggle the routers
-    # _ = [toggle_cloud_watch_rule(x, state) for x in routers]
-
-
 async def deliver_audience_to_destination(
     database: MongoClient,
     audience_id: ObjectId,
@@ -856,6 +812,7 @@ async def deliver_audience_to_destination(
         audience_id=audience_id,
         destination=destination,
         engagement_id=db_c.ZERO_OBJECT_ID,
+        username=user_name,
     )
     batch_destination.register()
     batch_destination.submit()

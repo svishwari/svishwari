@@ -5,12 +5,16 @@ from collections import defaultdict
 from datetime import datetime, date
 import re
 from itertools import groupby
-from typing import Tuple, Union, Generator
+from pathlib import Path
+from typing import Tuple, Union, Generator, Callable
 from http import HTTPStatus
+
+import pandas as pd
 from bson import ObjectId
 
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
+
 
 from pandas import DataFrame
 
@@ -21,6 +25,7 @@ from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
 
+from huxunifylib.database.audit_management import create_audience_audit
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -36,14 +41,11 @@ from huxunifylib.database.user_management import (
 )
 from huxunifylib.database.client import DatabaseClient
 
+
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.tecton import Tecton
-from huxunify.api.data_connectors.aws import (
-    check_aws_ssm,
-    check_aws_batch,
-)
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     get_user_info,
@@ -58,7 +60,7 @@ from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.exceptions import (
     unified_exceptions as ue,
 )
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import record_health_status, Connections
 from huxunify.api.stubbed_data.stub_shap_data import shap_data
 from huxunify.api.schema.user import RequestedUserSchema
 
@@ -98,6 +100,7 @@ def get_db_client() -> MongoClient:
     return db_client_factory.get_resource(**get_config().MONGO_DB_CONFIG)
 
 
+@record_health_status(Connections.DB)
 def check_mongo_connection() -> Tuple[bool, str]:
     """Validate mongo DB connection.
 
@@ -108,11 +111,9 @@ def check_mongo_connection() -> Tuple[bool, str]:
     try:
         # test finding documents
         get_all_data_sources(get_db_client())
-        record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, True)
         return True, "Mongo available."
     # pylint: disable=broad-except
     except Exception:
-        record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, False)
         return False, "Mongo not available."
 
 
@@ -132,11 +133,9 @@ def get_health_check() -> HealthCheck:
     health.add_check(check_mongo_connection)
     health.add_check(Tecton().check_tecton_connection)
     health.add_check(check_okta_connection)
-    health.add_check(check_aws_ssm)
-    health.add_check(check_aws_batch)
-    # TODO HUS-1200
-    # health.add_check(check_aws_s3)
-    # health.add_check(check_aws_events)
+    health.add_check(CloudClient().health_check_secret_storage)
+    health.add_check(CloudClient().health_check_batch_service)
+    health.add_check(CloudClient().health_check_storage_service)
     health.add_check(check_cdm_api_connection)
     health.add_check(check_cdp_connections_api_connection)
     health.add_check(JiraConnection.check_jira_connection)
@@ -1223,3 +1222,72 @@ def set_destination_authentication_secrets(
             ) from exc
 
     return ssm_params
+
+
+def generate_audience_file(
+    data_batches: pd.DataFrame,
+    transform_function: Callable,
+    audience_id: ObjectId,
+    download_type: str,
+    user_name: str,
+    database: DatabaseClient,
+) -> None:
+    """Generates Audience File
+
+    Args:
+        database(DatabaseClient): MongoDB Client
+        user_name(str): User name
+        download_type(str): Download Type selected
+        audience_id(ObjectId): Audience Id
+        data_batches(pd.Dataframe): Data batches retrieved from cdp
+        transform_function(Callable): Transform Function
+
+    Returns:
+
+    """
+    folder_name = "downloadaudiences"
+    audience_file_name = (
+        f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
+        f"_{audience_id}_{download_type}.csv"
+    )
+    with open(
+        Path(__file__).parent.parent.joinpath(folder_name)
+        / audience_file_name,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as csvfile:
+        for dataframe_batch in data_batches:
+            transform_function(dataframe_batch).to_csv(
+                csvfile,
+                mode="a",
+                index=False,
+            )
+
+    logger.info(
+        "Uploading generated %s audience file to %s S3 bucket",
+        audience_file_name,
+        get_config().S3_DATASET_BUCKET,
+    )
+    filename = (
+        Path(__file__).parent.parent.joinpath(folder_name)
+        / audience_file_name,
+    )
+    if CloudClient().upload_file(
+        file_name=str(filename[0]),
+        bucket=get_config().S3_DATASET_BUCKET,
+        object_name=audience_file_name,
+        user_name=user_name,
+        file_type=api_c.AUDIENCE,
+    ):
+        create_audience_audit(
+            database=database,
+            audience_id=audience_id,
+            download_type=download_type,
+            file_name=audience_file_name,
+            user_name=user_name,
+        )
+        logger.info(
+            "Created an audit log for %s audience file creation",
+            audience_file_name,
+        )

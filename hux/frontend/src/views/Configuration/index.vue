@@ -21,7 +21,7 @@
     </div>
     <div
       v-if="!loading"
-      class="config-content flex-grow-1 flex-shrink-1 mw-100 content-section"
+      class="config-content flex-grow-1 flex-shrink-1 mw-100"
     >
       <v-row v-if="isConfigActivated">
         <v-col>
@@ -97,7 +97,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch("configurations/getConfigModels")
+      await this.$store.dispatch("configuration/getConfigModels")
       this.isConfigActivated = true
     } catch (error) {
       this.isConfigActivated = false
@@ -136,8 +136,11 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 210px);
+  height: calc(100vh - 240px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
+}
+::v-deep .descriptive-card .description {
+  padding-bottom: 10px;
 }
 </style>

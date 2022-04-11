@@ -35,7 +35,11 @@
 
       <v-row class="mt-0">
         <v-col md="12" class="pt-0 pr-1">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="370">
+          <v-card
+            v-if="!customerEventsError"
+            class="mt-3 rounded-lg box-shadow-5"
+            height="370"
+          >
             <v-card-title class="py-5 pl-6 d-flex justify-space-between">
               <h3 class="text-h3 black--text text--darken-4 mt-n2">
                 Customer events
@@ -80,6 +84,34 @@
               data-e2e="customer-event-chart"
             />
           </v-card>
+          <v-card
+            v-else
+            class="
+              no-data-chart-frame
+              rounded-lg
+              card-info-wrapper
+              box-shadow-5
+            "
+            height="280px"
+          >
+            <empty-page
+              class="title-no-notification"
+              type="error-on-screens"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">
+                  Events chart is currently unavailable
+                </div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Our team is working hard to fix it. Please be patient and try
+                  again soon!
+                </div>
+              </template>
+            </empty-page>
+          </v-card>
         </v-col>
       </v-row>
       <customer-events-drawer
@@ -104,6 +136,7 @@ import IndividualIdentity from "./IndividualIdentity.vue"
 import CustomerEventsDrawer from "./Drawers/CustomerEventsDrawer"
 import Icon from "@/components/common/Icon"
 import { sortBy } from "lodash"
+import EmptyPage from "@/components/common/EmptyPage.vue"
 
 export default {
   name: "CustomerProfileDetails",
@@ -117,6 +150,7 @@ export default {
     IndividualIdentity,
     CustomerEventsDrawer,
     Icon,
+    EmptyPage,
   },
   data() {
     return {
@@ -126,7 +160,7 @@ export default {
         {
           text: "All Customers",
           disabled: false,
-          href: this.$router.resolve({ name: "CustomerProfiles" }).href,
+          href: this.$router.resolve({ name: "Customers" }).href,
           icon: "customer-profiles",
         },
         {
@@ -151,6 +185,7 @@ export default {
       loadingCustomerEvents: true,
       customerEventsDrawer: false,
       showPIIData: false,
+      customerEventsError: false,
     }
   },
   computed: {
@@ -164,7 +199,13 @@ export default {
     },
 
     customerProfile() {
-      return this.customer(this.$route.params.id)
+      let res = {}
+      try {
+        res = this.customer(this.$route.params.id)
+      } catch (error) {
+        res = { overview: {} }
+      }
+      return res
     },
 
     eventsForTable() {
@@ -203,6 +244,8 @@ export default {
       this.loadingCustomerEvents = true
       try {
         await this.getEvents(this.id)
+      } catch (error) {
+        this.customerEventsError = true
       } finally {
         this.loadingCustomerEvents = false
       }
@@ -262,5 +305,8 @@ export default {
 }
 .chart-style {
   background: var(--v-white-base) !important;
+}
+.no-data-chart-frame {
+  @include no-data-frame-bg("no-customers-chart-frame.png");
 }
 </style>

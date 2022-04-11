@@ -1,6 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
-import { handleError } from "@/utils"
+import { handleError, handleSuccess } from "@/utils"
 import rules from "../../api/mock/factories/rules.json"
 
 const namespaced = true
@@ -167,9 +167,12 @@ const actions = {
     }
   },
 
-  async fetchAudienceData(_, { id, type }) {
+  async downloadAudienceData(_, { id, type }) {
     try {
       const response = await api.audiences.downloadAudience(id, type)
+      if (response.status == 200) {
+        handleSuccess("Audience data downloaded successfully", response.status)
+      }
       return response
     } catch (error) {
       handleError(error)
@@ -279,6 +282,9 @@ const actions = {
         response = await api.audiences.createAndDeliver(audience)
       } else {
         response = await api.audiences.create(audience)
+        if (response.status == 200) {
+          handleSuccess("Audience successfully created", response.status)
+        }
       }
       commit("SET_ONE", response.data)
       return response.data
@@ -291,6 +297,9 @@ const actions = {
     try {
       const response = await api.audiences.update(id, payload)
       commit("SET_ONE", response.data)
+      if (response.status == 200) {
+        handleSuccess("Audience successfully updated", response.status)
+      }
       return response.data
     } catch (error) {
       handleError(error)

@@ -27,19 +27,20 @@
               {{ subTitle }}
             </div>
           </slot>
-          <slot name="body">
-            <div
-              v-if="body"
-              class="
-                black--text
-                text--darken-4 text-subtitle-1
-                pt-6
-                font-weight-regular
-              "
-            >
-              {{ body }}
-            </div>
-          </slot>
+          <div class="body-slot mx-7">
+            <slot name="body">
+              <div
+                v-if="body"
+                class="
+                  black--text
+                  text--darken-4 text-subtitle-1
+                  pt-6
+                  font-weight-regular
+                "
+                v-html="body"
+              ></div>
+            </slot>
+          </div>
         </div>
         <div class="confirm-modal-footer">
           <slot name="footer">
@@ -206,7 +207,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 20px 28px;
     background: var(--v-primary-lighten1);
   }
 }

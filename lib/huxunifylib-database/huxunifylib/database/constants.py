@@ -31,6 +31,7 @@ AGE = "age"
 MIN = "min"
 MAX = "max"
 LINK = "link"
+USERNAME = "username"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
@@ -58,6 +59,7 @@ CLIENT_PROJECTS_COLLECTION = "client_projects"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 MODELS_COLLECTION = "models"
+SURVEY_METRICS_COLLECTION = "survey_metrics"
 
 CONSTANT_NAME = "constant"
 CONSTANT_KEY = "key"
@@ -186,6 +188,8 @@ UPDATED_BY = "updated_by"
 JOB_START_TIME = "start_time"
 JOB_END_TIME = "end_time"
 JOB_ID = "ingestion_job_id"
+INSERT_STATUS = "insert_status"
+INSERTED_IDS = "inserted_ids"
 
 # category constants
 CATEGORY = "category"
@@ -242,6 +246,14 @@ S_TYPE_MOBILE_DEVICE_ID = "mobile_device_id"
 S_TYPE_PHONE_NUMBER = "phone_number"
 S_TYPE_POSTAL_CODE = "postal_code"
 S_TYPE_STATE_OR_PROVINCE = "state_or_province"
+S_TYPE_SURVEY_CUSTOMER_ID = "customer_id"
+
+# Trust Id Survey Constants
+SURVEY_ID = "survey_id"
+SURVEY_RESPONSES = "responses"
+SURVEY_RESPONSE_DATE = "response_date"
+TRUST_ID_SEGMENTS = "trust_id_segments"
+
 
 DESTINATION_COLUMN = "destination_column"
 TRANSFORMER = "transformer"
@@ -330,6 +342,7 @@ DELIVERY_PLATFORM_MAILCHIMP = "mailchimp"
 DELIVERY_PLATFORM_LIVERAMP = "liveramp"
 DELIVERY_PLATFORM_PINTEREST = "pinterest"
 DELIVERY_PLATFORM_THE_TRADEDESK = "the_trade_desk"
+DELIVERY_PLATFORM_TRUST_ID = "trust_id"
 DELIVERY_PLATFORM_TWITTER = DATA_SOURCE_PLATFORM_TWITTER
 DELIVERY_PLATFORM_GOOGLE_DV360 = "google_dv360"
 DELIVERY_PLATFORM_SFCC = "salesforce_commerce_cloud"
@@ -626,6 +639,7 @@ ALLOWED_COLLECTIONS = [
     APPLICATIONS_COLLECTION,
     CLIENT_PROJECTS_COLLECTION,
     DELIVERABILITY_METRICS_COLLECTION,
+    SURVEY_METRICS_COLLECTION,
 ]
 
 # 30 minutes.

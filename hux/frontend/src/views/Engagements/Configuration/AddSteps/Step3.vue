@@ -69,7 +69,7 @@
             </div>
             <div>
               <icon
-                class="ml-2 mr-1"
+                class="ml-2 mr-1 arrow-top-margin"
                 type="arrow"
                 :size="19"
                 color="primary"
@@ -155,6 +155,7 @@ export default {
     toggleClass: function (event) {
       if (!event.currentTarget.classList.contains("active")) {
         this.isActive = !this.isActive
+        this.$emit("isReccrActive", this.isActive)
       }
       if (this.isActive) {
         this.value.delivery_schedule.end_date = ""
@@ -208,6 +209,9 @@ export default {
     background: var(--v-primary-lighten1);
     border: 1px solid var(--v-black-lighten2);
     border-radius: 5px;
+    .arrow-top-margin {
+      margin-top: 10px !important;
+    }
     .hux-date-picker {
       ::v-deep .main-button {
         min-width: 153px !important;

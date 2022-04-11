@@ -31,6 +31,8 @@
           :key="config.name"
           :icon="config.icon"
           :icon-color="'white'"
+          :logo-size="40"
+          :logo-box-padding="'10px'"
           :title="config.name"
           :description="config.description"
           :disabled="['pending', 'requested'].includes(config.status)"
@@ -38,7 +40,6 @@
           :coming-soon="false"
           :logo-option="true"
           :interactable="false"
-          description-height="90px"
           height="225"
           width="255"
           class="mr-12 model-desc-card"
@@ -77,6 +78,8 @@
           :key="config.name"
           :icon="config.icon"
           :icon-color="'white'"
+          :logo-size="40"
+          :logo-box-padding="'10px'"
           :title="config.name"
           :description="config.description"
           :disabled="['pending', 'requested'].includes(config.status)"
@@ -84,7 +87,6 @@
           :coming-soon="false"
           :logo-option="true"
           :interactable="false"
-          description-height="90px"
           height="225"
           width="255"
           class="mr-12 model-desc-card"
@@ -131,7 +133,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getConfigurations: "configurations/configurationModels",
+      getConfigurations: "configuration/configurationModels",
     }),
 
     moduleCards() {
@@ -160,5 +162,8 @@ export default {
   ::v-deep .v-label {
     color: var(--v-black-base) !important;
   }
+}
+::v-deep .descriptive-card .description {
+  -webkit-line-clamp: inherit !important;
 }
 </style>

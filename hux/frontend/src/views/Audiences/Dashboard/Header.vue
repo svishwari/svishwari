@@ -47,7 +47,7 @@
               <span v-if="audienceData.is_lookalike === true">
                 Edit {{ audienceData.name }}
               </span>
-              <span v-else> Click to edit this audience</span>
+              <span v-else>Edit Audience</span>
             </div>
           </template>
         </tooltip>
@@ -63,9 +63,11 @@
               mdi-dots-vertical
             </v-icon>
           </template>
-          <v-list class="list-wrapper">
+          <v-list class="text-body-1 pa-0">
             <v-list-item-group>
-              <v-list-item @click="favoriteAudience()"> Favorite </v-list-item>
+              <v-list-item @click="favoriteAudience()">
+                {{ audienceData.favorite ? "Unfavorite" : "Favorite" }}
+              </v-list-item>
               <v-list-item @click="initiateDelete()">
                 Delete audience
               </v-list-item>
@@ -135,6 +137,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.v-list-item {
+  min-height: 32px;
+}
 .insight-height {
   height: 30px !important;
 }

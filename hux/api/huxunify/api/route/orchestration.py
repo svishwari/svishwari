@@ -4,7 +4,6 @@ import asyncio
 import re
 import time
 from http import HTTPStatus
-from threading import Thread
 from typing import Tuple, Union
 from datetime import datetime, timedelta
 import aiohttp
@@ -22,9 +21,6 @@ from huxunifylib.connectors import (
 
 from huxunifylib.database.user_management import manage_user_favorites
 from huxunifylib.database.delete_util import delete_lookalike_audience
-from huxunifylib.database.delivery_platform_management import (
-    update_pending_delivery_jobs,
-)
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -56,8 +52,10 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs_async,
     get_spending_by_gender_async,
     get_customers_overview_async,
+    get_customer_event_types,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
+from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
 )
@@ -391,15 +389,6 @@ class AudienceView(SwaggerView):
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
 
-        # Update delivery status.
-        logger.info("Updating delivery jobs")
-        Thread(
-            target=update_pending_delivery_jobs,
-            args=[
-                database,
-            ],
-        ).start()
-
         # get all audiences
         audiences = orchestration_management.get_all_audiences(
             database=database,
@@ -676,15 +665,6 @@ class AudienceGetView(SwaggerView):
         token_response = get_token_from_request(request)
 
         database = get_db_client()
-
-        # Update delivery status.
-        logger.info("Updating delivery jobs")
-        Thread(
-            target=update_pending_delivery_jobs,
-            args=[
-                database,
-            ],
-        ).start()
 
         # get the audience
         audience_id = ObjectId(audience_id)
@@ -1233,7 +1213,10 @@ class AudiencePostView(SwaggerView):
                     if pair[0] != audience_doc[db_c.ID]:
                         continue
                     batch_destination = get_destination_config(
-                        database, engagement[db_c.ID], *pair
+                        database,
+                        engagement[db_c.ID],
+                        *pair,
+                        username=user[api_c.USER_NAME],
                     )
                     batch_destination.register()
                     batch_destination.submit()
@@ -1463,14 +1446,32 @@ class AudienceRules(SwaggerView):
             Tuple[Response, int]: dict of audience rules, HTTP status code.
         """
 
+        token_response = get_token_from_request(request)
+
         rules_constants = {
             "text_operators": {
                 "contains": "Contains",
                 "not_contains": "Does not contain",
                 "equals": "Equals",
                 "not_equals": "Does not equal",
+                "within_the_last": "Within the last",
+                "not_within_the_last": "Not within the last",
             }
         }
+
+        # Fetch events from CDM. Check cache first.
+        event_types = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.EVENTS}",
+            get_customer_event_types,
+            {"token": token_response[0]},
+        )
+
+        event_types_rules = {api_c.NAME: api_c.EVENTS.capitalize()}
+        for event_type in event_types:
+            event_types_rules[event_type[api_c.TYPE]] = {
+                api_c.NAME: event_type[api_c.LABEL],
+                api_c.TYPE: api_c.TEXT,
+            }
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
@@ -1479,77 +1480,6 @@ class AudienceRules(SwaggerView):
         rules_from_cdm = {
             "rule_attributes": {
                 "model_scores": {
-                    "age_density": {
-                        "name": "Age Density",
-                        "type": "range",
-                        "min": 0,
-                        "max": 99,
-                        "steps": 5,
-                        "values": [
-                            (46, 3631),
-                            (51, 2807),
-                            (55, 2131),
-                            (54, 2261),
-                            (25, 3284),
-                            (69, 421),
-                            (43, 4012),
-                            (26, 3386),
-                            (63, 955),
-                            (24, 3099),
-                            (59, 1485),
-                            (70, 350),
-                            (77, 107),
-                            (18, 8804),
-                            (64, 867),
-                            (31, 4097),
-                            (56, 1916),
-                            (34, 4392),
-                            (21, 2623),
-                            (44, 3878),
-                            (48, 3394),
-                            (19, 2207),
-                            (52, 2703),
-                            (78, 86),
-                            (61, 1125),
-                            (73, 218),
-                            (36, 4417),
-                            (57, 1835),
-                            (60, 1265),
-                            (49, 3188),
-                            (39, 4407),
-                            (20, 2453),
-                            (45, 3883),
-                            (30, 3997),
-                            (28, 3855),
-                            (65, 760),
-                            (32, 4348),
-                            (40, 4370),
-                            (22, 2797),
-                            (27, 3612),
-                            (50, 2944),
-                            (72, 265),
-                            (67, 571),
-                            (29, 3914),
-                            (33, 4233),
-                            (42, 4111),
-                            (58, 1597),
-                            (23, 2989),
-                            (38, 4394),
-                            (53, 2381),
-                            (68, 443),
-                            (47, 3531),
-                            (71, 303),
-                            (37, 4298),
-                            (75, 202),
-                            (66, 658),
-                            (41, 4261),
-                            (62, 1063),
-                            (79, 65),
-                            (35, 4500),
-                            (74, 208),
-                            (76, 128),
-                        ],
-                    },
                     "propensity_to_unsubscribe": {
                         "name": "Propensity to unsubscribe",
                         "type": "range",
@@ -1691,6 +1621,7 @@ class AudienceRules(SwaggerView):
                             "options": [],
                         },
                     },
+                    "events": event_types_rules,
                 },
             }
         }

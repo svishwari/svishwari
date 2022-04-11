@@ -1,4 +1,4 @@
-"""Purpose of this module is to park schedule modules for delivery schedule"""
+"""Purpose of this module is to park schedule modules for delivery schedule."""
 import asyncio
 from datetime import datetime
 from pymongo import MongoClient
@@ -250,7 +250,10 @@ async def delivery_destination(
         ]:
             continue
         batch_destination = get_destination_config(
-            database, *pair, engagement[db_c.ID]
+            database,
+            *pair,
+            engagement[db_c.ID],
+            username=engagement[db_c.UPDATED_BY],
         )
         batch_destination.register()
         batch_destination.submit()
@@ -305,9 +308,7 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
                 if not isinstance(destination, dict):
                     continue
                 delivery_schedule = (
-                    destination.get(api_c.DELIVERY_SCHEDULE)
-                    if destination.get(api_c.DELIVERY_SCHEDULE)
-                    else audience.get(api_c.DELIVERY_SCHEDULE)
+                    audience.get(api_c.DELIVERY_SCHEDULE)
                     if audience.get(api_c.DELIVERY_SCHEDULE)
                     else engagement.get(api_c.DELIVERY_SCHEDULE)
                 )
@@ -315,9 +316,7 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
                 if not delivery_schedule:
                     continue
 
-                if destination.get(api_c.DELIVERY_SCHEDULE):
-                    schedule_cron = generate_cron(delivery_schedule)
-                elif delivery_schedule.get(api_c.SCHEDULE_CRON):
+                if delivery_schedule.get(api_c.SCHEDULE_CRON):
                     schedule_cron = delivery_schedule[api_c.SCHEDULE_CRON]
                 else:
                     schedule_cron = generate_cron(

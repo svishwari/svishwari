@@ -23,7 +23,7 @@ Argo CD|[https://argocd.hux-unified-dev1.in/](https://argocd.hux-unified-dev1.in
 Customer API|[https://customer-profile-api.main.use1.hux-unified-dev1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-dev1.in/docs#/)|[https://customer-profile-api.main.use1.hux-unified-stg1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-stg1.in/docs#/)|[https://customer-profile-api.main.use1.hux-unified-rc1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-rc1.in/docs#/)| - |
 Connections API|[https://connections-api.main.use1.hux-unified-dev1.in/docs#/](https://connections-api.main.use1.hux-unified-dev1.in/docs#/)|[https://connections-api.main.use1.hux-unified-stg1.in/docs#/](https://connections-api.main.use1.hux-unified-stg1.in/docs#/)|[https://connections-api.main.use1.hux-unified-rc1.in/docs#/](https://connections-api.main.use1.hux-unified-rc1.in/docs#/)| - |
 Tecton|[http://decisioning-client.tecton.ai/](http://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|
-Grafana|[https://grafana.hux-unified-dev1.in/](https://grafana.hux-unified-dev1.in/)|[https://grafana.hux-unified-stg1.in/](https://grafana.hux-unified-stg1.in/)|[https://grafana.hux-unified-rc1.in/](https://grafana.hux-unified-rc1.in/)|[https://grafana.hux-unified-prd1.in/](https://grafana.hux-unified-prd1.in/)|
+Grafana|[https://grafana.huxui-main-use1-unified-dev1.hux-unified-dev1.in/](https://grafana.huxui-main-use1-unified-dev1.hux-unified-dev1.in/)|[https://grafana.hux-unified-stg1.in/](https://grafana.hux-unified-stg1.in/)|[https://grafana.hux-unified-rc1.in/](https://grafana.hux-unified-rc1.in/)|[https://grafana.hux-unified-prd1.in/](https://grafana.hux-unified-prd1.in/)|
 Prometheus|[https://prometheus.i.hux-unified-dev1.in/](https://prometheus.i.hux-unified-dev1.in/)|[https://prometheus.int.hux-unified-stg1.in/](https://prometheus.int.hux-unified-stg1.in/)|[https://prometheus.i.huxui-main-use1-unified-rc1.hux-unified-rc1.in/](https://prometheus.i.huxui-main-use1-unified-rc1.hux-unified-rc1.in/)| - |
 
 ## Azure Environments
@@ -37,6 +37,8 @@ Connections API|[https://connections-api.main.use2.hux-husdev2.in/docs](https://
 Metrics API |[https://identity-metrics-api.main.use2.hux-husdev2.in/](https://identity-metrics-api.main.use2.hux-husdev2.in/)| - | - | - |
 Grafana|[https://grafana.hux-husdev2.in/login](https://grafana.hux-husdev2.in/login)| - | - | - |
 Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.hux-husdev2.in/graph)| - | - | - |
+
+Note: To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN). 
 
 ## Introduction (Project Justice League)
 Create a unified project platform.

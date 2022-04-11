@@ -71,7 +71,7 @@ const routes = [
   },
   //#region Data Management
   {
-    path: "/datasources/:id",
+    path: "/data-sources/:id",
     name: "DataSourceListing",
     component: () => import("@/views/DataSources/Listing.vue"),
     meta: {
@@ -81,7 +81,7 @@ const routes = [
     },
   },
   {
-    path: "/datasources/:id/datafeeds/:name",
+    path: "/data-sources/:id/datafeeds/:name",
     name: "DataSourceFeedsListing",
     component: () => import("@/views/DataSources/DataFeedsListing.vue"),
     meta: {
@@ -92,7 +92,7 @@ const routes = [
   },
   {
     path: "/identity-resolution",
-    name: "IdentityResolution",
+    name: "Identity",
     component: () => import("@/views/IdentityResolution/Index"),
     meta: {
       layout: "app",
@@ -138,7 +138,7 @@ const routes = [
   //#region Customer Insights
   {
     path: "/customers",
-    name: "CustomerProfiles",
+    name: "Customers",
     component: () => import("@/views/CustomerProfiles/Index"),
     meta: {
       layout: "app",

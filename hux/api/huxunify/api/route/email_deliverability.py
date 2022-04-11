@@ -1,8 +1,6 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for the email deliverability API."""
 import datetime
-from datetime import timedelta
-from random import uniform, randint
 from http import HTTPStatus
 from typing import Tuple
 
@@ -34,7 +32,7 @@ from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_start_end_dates,
     get_db_client,
-    clean_domain_name_string,
+    Validation as validation,
 )
 from huxunify.api.schema.email_deliverability import (
     EmailDeliverabilityOverviewSchema,
@@ -93,7 +91,6 @@ class EmailDeliverabilityOverview(SwaggerView):
 
         # TODO Remove stub when email deliverability data available.
 
-        delivered_open_rate_overview = []
         # Default 3 months.
         start_date, end_date = get_start_end_dates(request, delta=3)
 
@@ -111,36 +108,53 @@ class EmailDeliverabilityOverview(SwaggerView):
         domain_name = domains[0] if domains else api_c.DOMAIN_1
         api_c.SENDING_DOMAINS_OVERVIEW_STUB[0][api_c.DOMAIN_NAME] = domain_name
 
-        performance_metrics_data = get_deliverability_data_performance_metrics(
-            database=database,
-            start_date=start_date,
-            end_date=end_date,
-            domains=[domain_name],
-            mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
+        delivered_open_rate_overview = (
+            get_performance_metrics_deliverability_data(
+                database=database,
+                domains=[domains[0]],
+                start_date=datetime.datetime.strptime(
+                    start_date, api_c.DEFAULT_DATE_FORMAT
+                ),
+                end_date=end_date,
+                fill_empty=False,
+            ).get(f"{api_c.DELIVERED}_{api_c.OPEN_RATE}")
         )
 
-        for domain_data in performance_metrics_data:
-            for metrics in domain_data.get(db_c.DELIVERABILITY_METRICS):
-                delivered_open_rate_overview.append(
-                    {
-                        api_c.DATE: metrics.get(api_c.DATE),
-                        api_c.OPEN_RATE: metrics.get(api_c.OPEN_RATE),
-                        api_c.DELIVERED_COUNT: metrics.get(api_c.DELIVERED),
-                    }
-                )
-
-        delivered_open_rate_overview.sort(
-            key=lambda data: data.get(api_c.DATE)
+        aggregated_data_domain_wise = (
+            get_deliverability_data_performance_metrics(
+                database=database,
+                domains=[domain_name],
+                start_date=start_date,
+                end_date=end_date,
+                aggregate=True,
+                mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
+            )
         )
 
-        aggregated_data = get_deliverability_data_performance_metrics(
-            database=database,
-            domains=[domain_name],
-            start_date=start_date,
-            end_date=end_date,
-            aggregate=True,
-            mock=bool(get_config().FLASK_ENV == api_c.TEST_MODE),
-        )
+        aggregated_data = []
+
+        for domain_data in aggregated_data_domain_wise:
+            sent = (
+                domain_data.get(api_c.SENT)
+                - domain_data.get(api_c.HARD_BOUNCES)
+                - domain_data.get(api_c.UNSUBSCRIBES)
+                - domain_data.get(api_c.COMPLAINTS)
+            )
+
+            # Delivery is sent - soft bounces.
+            delivered = sent - domain_data.get(api_c.SOFT_BOUNCES)
+
+            aggregated_data.append(
+                {
+                    api_c.DOMAIN_NAME: domain_data.get(api_c.DOMAIN_NAME),
+                    api_c.SENT: sent,
+                    api_c.BOUNCE_RATE: domain_data.get(api_c.BOUNCES)
+                    / delivered,
+                    api_c.OPEN_RATE: domain_data.get(api_c.OPENS) / delivered,
+                    api_c.CLICK_RATE: domain_data.get(api_c.CLICKS)
+                    / delivered,
+                }
+            )
 
         return HuxResponse.OK(
             data={
@@ -170,6 +184,15 @@ class EmailDeliverabilityDomains(SwaggerView):
             "collectionFormat": "multi",
             "required": False,
             "example": "domain_1",
+        },
+        {
+            "name": api_c.FILL_EMPTY_DATES,
+            "description": "Flag to specify if empty dates to be filled.",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "default": True,
+            "example": "true",
         },
     ]
     responses = {
@@ -203,24 +226,9 @@ class EmailDeliverabilityDomains(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
-
-        # TODO Remove stub when email deliverability data available.
-
-        sent_data = []
-
-        unsubscribe_rate_data = []
-        open_rate_data = []
-        click_rate_data = []
-        complaints_rate_data = []
-        delivered_rate_data = []
-
-        percent_data_field_list = [
-            unsubscribe_rate_data,
-            open_rate_data,
-            click_rate_data,
-            complaints_rate_data,
-            delivered_rate_data,
-        ]
+        fill_empty_dates = validation.validate_bool(
+            request.args.get(api_c.FILL_EMPTY_DATES, default="true")
+        )
 
         domains = request.args.getlist(api_c.DOMAIN_NAME)
 
@@ -250,33 +258,9 @@ class EmailDeliverabilityDomains(SwaggerView):
         # Default 3 months.
         start_date, end_date = get_start_end_dates(request, delta=3)
 
-        curr_date = datetime.datetime.strptime(
-            start_date, api_c.DEFAULT_DATE_FORMAT
-        )
-
         end_date = datetime.datetime.strptime(
             end_date, api_c.DEFAULT_DATE_FORMAT
         )
-
-        while curr_date <= end_date:
-            count_data = {
-                clean_domain_name_string(domain): randint(400, 900)
-                for domain in domains
-            }
-            count_data.update({api_c.DATE: curr_date})
-
-            sent_data.append(count_data)
-
-            for i in range(5):
-                percent_data = {
-                    clean_domain_name_string(domain): round(
-                        uniform(0.6, 0.9), 2
-                    )
-                    for domain in domains
-                }
-                percent_data.update({api_c.DATE: curr_date})
-                percent_data_field_list[i].append(percent_data)
-            curr_date = curr_date + timedelta(days=1)
 
         data = {
             api_c.DELIVERED_RATE: get_delivered_rate_data(
@@ -286,6 +270,7 @@ class EmailDeliverabilityDomains(SwaggerView):
                     start_date, api_c.DEFAULT_DATE_FORMAT
                 ),
                 end_date=end_date,
+                fill_empty=fill_empty_dates,
             )
         }
 
@@ -296,6 +281,7 @@ class EmailDeliverabilityDomains(SwaggerView):
                 start_date, api_c.DEFAULT_DATE_FORMAT
             ),
             end_date=end_date,
+            fill_empty=fill_empty_dates,
         )
         data.update(performance_metrics)
 

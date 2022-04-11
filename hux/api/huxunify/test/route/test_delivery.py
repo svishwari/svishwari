@@ -1,5 +1,5 @@
+# pylint: disable=too-many-lines
 """Purpose of this file is to house all the delivery API tests."""
-
 from unittest import mock
 from http import HTTPStatus
 from bson import ObjectId
@@ -17,7 +17,7 @@ from huxunifylib.database.engagement_management import (
     get_engagement,
 )
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.database.user_management import set_user
+from huxunifylib.database.user_management import set_user, delete_user
 from huxunifylib.connectors import AWSBatchConnector
 import huxunify.test.constants as t_c
 import huxunify.api.constants as api_c
@@ -176,6 +176,7 @@ class TestDeliveryRoutes(RouteTestCase):
                 api_c.AUDIENCE_ID: self.audiences[1][db_c.ID],
                 db_c.DELIVERY_PLATFORM_ID: self.destinations[1][db_c.ID],
                 db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: [],
+                db_c.USERNAME: self.user_name,
                 api_c.ENGAGEMENT_ID: ObjectId(self.engagement_ids[0]),
                 # db_c.DELETED: False
             }
@@ -284,6 +285,32 @@ class TestDeliveryRoutes(RouteTestCase):
                 f"{t_c.BASE_ENDPOINT}"
                 f"{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
                 f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/"
+                f"{api_c.DELIVER}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_deliver_all_destination_for_engagement_audience_valid_ids(self):
+        """Test delivery of a destination for all audiences in an engagement
+        with valid IDs."""
+
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{db_c.ZERO_OBJECT_ID}/"
                 f"{api_c.DESTINATION}/{destination_id}/"
                 f"{api_c.DELIVER}"
             ),
@@ -797,3 +824,237 @@ class TestDeliveryRoutes(RouteTestCase):
                 for d in x[db_c.DESTINATIONS]
             )
         )
+
+    def test_set_delivery_schedule_for_an_engagement_audience(self):
+        """Test setting delivery schedule for an engagement audience."""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        delivery_schedule = {
+            api_c.SCHEDULE: {
+                api_c.PERIODICIY: api_c.DAILY,
+                api_c.EVERY: 1,
+                api_c.HOUR: 12,
+                api_c.MINUTE: 15,
+                api_c.PERIOD: api_c.AM,
+            },
+            api_c.START_DATE: "2022-03-02T00:00:00.000Z",
+            api_c.END_DATE: "2022-03-04T00:00:00.000Z",
+        }
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                f"{api_c.SCHEDULE}"
+            ),
+            json=delivery_schedule,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertDictEqual(
+            {api_c.MESSAGE: "Successfully updated delivery schedule."},
+            response.json,
+        )
+
+        # validate the schedule was actually set.
+        engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+        self.assertIn(db_c.AUDIENCES, engagement)
+
+        audiences = list(engagement[db_c.AUDIENCES])
+        # check that there are two audiences in the engagement
+        self.assertEqual(2, len(audiences))
+
+        # validate that the delivery_schedule is only set for the audience that
+        # is passed in the request
+        for audience in audiences:
+            if audience[api_c.ID] == self.audiences[0][db_c.ID]:
+                self.assertIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, audience)
+            else:
+                self.assertNotIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, audience)
+
+    def test_remove_delivery_schedule_for_an_engagement_audience(self):
+        """Test removing delivery schedule for an engagement audience."""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                f"{api_c.SCHEDULE}?{api_c.UNSET}=True"
+            ),
+            json={},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertDictEqual(
+            {api_c.MESSAGE: "Successfully removed delivery schedule."},
+            response.json,
+        )
+
+        # validate the schedule was actually unset.
+        engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+        self.assertIn(db_c.AUDIENCES, engagement)
+        self.assertFalse(
+            any(
+                aud.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)
+                for aud in engagement[db_c.AUDIENCES]
+            )
+        )
+
+    # pylint: disable=attribute-defined-outside-init
+    def test_viewer_user_permissions(self) -> None:
+        """Test Viewer user access to different delivery API end points."""
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_VIEWER_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_VIEWER_USER_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=t_c.VALID_VIEWER_USER_RESPONSE[api_c.ROLE],
+        )
+
+        audience_id = self.audiences[1][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/{api_c.DELIVER}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+        audience_id = self.audiences[0][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/"
+                f"{api_c.DELIVER}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+        engagement_id = self.engagement_ids[0]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.DELIVER}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+        engagement_id = self.engagement_ids[0]
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    # pylint: disable=attribute-defined-outside-init
+    def test_editor_user_permissions(self) -> None:
+        """Test Editor user access to different delivery API end points."""
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_EDITOR_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_EDITOR_USER_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=t_c.VALID_EDITOR_USER_RESPONSE[api_c.ROLE],
+        )
+
+        audience_id = self.audiences[1][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/{api_c.DELIVER}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        audience_id = self.audiences[0][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/"
+                f"{api_c.DELIVER}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        engagement_id = self.engagement_ids[0]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.DELIVER}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        engagement_id = self.engagement_ids[0]
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)

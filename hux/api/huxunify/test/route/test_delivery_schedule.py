@@ -163,6 +163,7 @@ class TestDeliveryRoutes(RouteTestCase):
                 api_c.AUDIENCE_ID: self.audiences[1][db_c.ID],
                 db_c.DELIVERY_PLATFORM_ID: self.destinations[1][db_c.ID],
                 db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: [],
+                db_c.USERNAME: self.user_name,
                 api_c.ENGAGEMENT_ID: ObjectId(self.engagement_ids[0]),
                 # db_c.DELETED: False
             }

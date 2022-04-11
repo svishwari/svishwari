@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use
-"""Schemas for the Engagements API"""
+"""Schemas for the Engagements API."""
 from datetime import datetime
 from bson import ObjectId
 from flask_marshmallow import Schema
@@ -500,6 +500,9 @@ class EngagementAudienceSchema(Schema):
                 ],
             }
         ],
+    )
+    delivery_schedule = fields.Dict(
+        attribute=api_c.AUDIENCE_DELIVERY_SCHEDULE, required=False
     )
     destinations = fields.Nested(
         EngagementAudienceDestinationSchema, many=True

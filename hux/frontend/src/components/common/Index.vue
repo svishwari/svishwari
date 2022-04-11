@@ -1230,6 +1230,27 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader>Score Card</v-subheader>
+    <score-card :width="150" :height="90" title="Transparency" :value="73" />
+    <score-card :width="150" :height="90" title="Humanity" :value="71">
+      <template #progress-bar>
+        <progress-stack-bar :width="81" :height="6" :show-percentage="false" />
+      </template>
+    </score-card>
+
+    <v-divider class="mt-10" />
+
+    <v-subheader>Progress Stack Bar</v-subheader>
+    <progress-stack-bar
+      :width="180"
+      :height="6"
+      :show-percentage="true"
+      :data="progressStackBarData"
+      :bar-id="1"
+    />
+
+    <v-divider class="mt-10" />
+
     <v-subheader>Logos</v-subheader>
     <logo type="bluecore"></logo>
     <logo type="bluecore" :size="48"></logo>
@@ -1430,6 +1451,8 @@ import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Avatar from "@/components/common/Avatar"
+import scoreCard from "@/components/common/scoreCard/scoreCard.vue"
+import ProgressStackBar from "@/components/common/ProgressStackBar/ProgressStackBar.vue"
 
 export default {
   name: "Components",
@@ -1463,9 +1486,16 @@ export default {
     DoughnutChart,
     Tooltip,
     Avatar,
+    scoreCard,
+    ProgressStackBar,
   },
   data() {
     return {
+      progressStackBarData: [
+        { label: "Group-1", value: 20 },
+        { label: "Group-2", value: 28 },
+        { label: "Group-3", value: 52 },
+      ],
       genderChartDimensions: {
         width: 269,
         height: 200,

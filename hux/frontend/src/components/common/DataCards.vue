@@ -14,8 +14,43 @@
           no-gutters
           :class="{ 'pl-2': bordered, 'data-card-headers': true }"
         >
-          <v-col v-for="field in fields" :key="field.label" :cols="field.col">
-            <div class="px-4 py-2">
+          <v-col
+            v-for="field in fields"
+            :key="field.label"
+            :cols="field.col"
+            :class="headerClass"
+          >
+            <tooltip v-if="field.tooltip">
+              <template #label-content>
+                <div class="px-4 py-2">
+                  <span class="text-body-2 black--text text--lighten-4">
+                    {{ field.label }}
+                    <v-btn
+                      v-if="field.sortable"
+                      icon
+                      x-small
+                      @click="setSortBy(field.key)"
+                    >
+                      <v-icon
+                        x-small
+                        :class="{
+                          'primary--text text--lighten-8': isSortedBy(
+                            field.key
+                          ),
+                          'rotate-icon-180': isSortedBy(field.key) && sortDesc,
+                        }"
+                      >
+                        mdi-arrow-down
+                      </v-icon>
+                    </v-btn>
+                  </span>
+                </div>
+              </template>
+              <template #hover-content>
+                {{ field.tooltip }}
+              </template>
+            </tooltip>
+            <div v-else class="px-4 py-2">
               <span class="text-body-2 black--text text--lighten-4">
                 {{ field.label }}
                 <v-btn
@@ -47,7 +82,14 @@
             'bordered-card': bordered,
             'mt-0': index == 0,
           }"
-          class="data-card my-3"
+          class="data-card my-3 text-body-1 alignment"
+          :style="
+            bordered
+              ? item.colors
+                ? style(item.colors.color, item.colors.variant)
+                : style()
+              : ''
+          "
         >
           <v-row align="center" no-gutters>
             <v-col v-for="field in fields" :key="field.key" :cols="field.col">
@@ -83,9 +125,14 @@
 
 <script>
 const ALL = -1
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "DataCards",
+
+  components: {
+    Tooltip,
+  },
 
   props: {
     items: {
@@ -121,6 +168,12 @@ export default {
       required: false,
       default: "pa-4",
     },
+
+    headerClass: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
 
   data() {
@@ -145,6 +198,12 @@ export default {
   },
 
   methods: {
+    style(color, variant) {
+      return `border-left: 10px solid var(--v-${color ? color : "primary"}-${
+        variant ? variant : "lighten6"
+      })`
+    },
+
     setSortBy(key) {
       if (this.isSortedBy(key)) {
         this.sortDesc = !this.sortDesc
@@ -172,5 +231,11 @@ export default {
 .bordered-card {
   border-left: 8px solid var(--v-primary-lighten6);
   border-radius: 0px;
+}
+
+.alignment {
+  height: 60px;
+  display: flex;
+  align-items: center;
 }
 </style>

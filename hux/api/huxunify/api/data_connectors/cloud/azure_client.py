@@ -12,9 +12,8 @@ from azure.storage.blob import BlobClient
 from huxunify.api.data_connectors.cloud.cloud_client import (
     CloudClient,
 )
-import huxunify.api.constants as api_c
 from huxunify.api.config import get_config, Config
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import record_health_status, Connections
 
 
 class AzureClient(CloudClient):
@@ -162,8 +161,9 @@ class AzureClient(CloudClient):
 
         return True
 
+    @record_health_status(Connections.BATCH_SERVICE)
     def health_check_batch_service(self) -> Tuple[bool, str]:
-        """Checks the health of the cloud batch service.
+        """Checks the health of the Azure batch service.
 
         Returns:
             Tuple[bool, str]: Returns bool for health status and message
@@ -183,13 +183,11 @@ class AzureClient(CloudClient):
         except BatchErrorException as exc:
             status = False, getattr(exc, "message", repr(exc))
 
-        record_health_status_metric(
-            api_c.AZURE_BATCH_CONNECTION_HEALTH, status[0]
-        )
         return status
 
+    @record_health_status(Connections.STORAGE_SERVICE)
     def health_check_storage_service(self) -> Tuple[bool, str]:
-        """Checks the health of the cloud storage service.
+        """Checks the health of the azure blob storage.
 
         Returns:
             Tuple[bool, str]: Returns bool for health status and message
@@ -209,7 +207,29 @@ class AzureClient(CloudClient):
             else "Azure Blob service unavailable.",
         )
 
-        record_health_status_metric(
-            api_c.AZURE_BLOB_CONNECTION_HEALTH, status[0]
-        )
         return status
+
+    # pylint: disable=broad-except
+    @record_health_status(Connections.SECRET_STORAGE_SERVICE)
+    def health_check_secret_storage(self) -> Tuple[bool, str]:
+        """Checks the health of the Azure key vault.
+
+        Returns:
+            Tuple[bool, str]: Returns bool for health status and message
+        """
+        secret_name = "<secret name here>"
+
+        try:
+            credential = DefaultAzureCredential()
+            client = SecretClient(
+                vault_url=self.vault_url, credential=credential
+            )
+            client.get_secret(secret_name)
+            return True, "Azure key vault available."
+        except Exception as exc:
+            logging.error(
+                "Failed to get %s from Azure key vault. Azure key vault is unavailable",
+                secret_name,
+            )
+            logging.error(exc)
+            return False, "Azure key vault unavailable."

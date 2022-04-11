@@ -9,6 +9,7 @@ from requests_mock import Mocker
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
+from huxunify.api.data_connectors.cdp import clean_cdm_fields
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
@@ -252,7 +253,7 @@ class CDPConnectionsTest(TestCase):
             )
 
     @given(data_source_type=st.text(alphabet=string.ascii_letters))
-    @settings(deadline=100)
+    @settings(deadline=500)
     def test_get_data_source_data_feeds_raise_dependency_error(
         self, data_source_type: str
     ) -> None:
@@ -322,7 +323,8 @@ class CDPConnectionsTest(TestCase):
         identity_insights = get_identity_overview(token="")
 
         self.assertEqual(
-            t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY], identity_insights
+            clean_cdm_fields(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY].copy()),
+            identity_insights,
         )
 
     def test_get_identity_overview_raise_dependency_error(self):

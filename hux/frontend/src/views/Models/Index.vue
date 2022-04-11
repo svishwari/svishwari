@@ -77,7 +77,11 @@
               <v-col cols="5">
                 <card-stat
                   label="Version"
-                  :value="model.latest_version | Empty"
+                  :value="
+                    model.latest_version.length == 10
+                      ? model.latest_version.substring(2)
+                      : model.latest_version | Empty
+                  "
                   stat-class="border-0"
                   data-e2e="model-version"
                 >
@@ -329,7 +333,7 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 210px);
+  height: calc(100vh - 252px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }

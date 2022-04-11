@@ -74,6 +74,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
+      notificationData: {},
     }
   },
 
@@ -81,10 +82,6 @@ export default {
     ...mapGetters({
       getSingleNotification: "notifications/single",
     }),
-
-    notificationData() {
-      return this.getSingleNotification(this.notificationId)
-    },
 
     notificationContent() {
       if (this.notificationData) {
@@ -123,6 +120,7 @@ export default {
     },
     localDrawer: function () {
       this.$emit("input", this.localDrawer)
+      if (this.localDrawer) this.updateNotificationData()
     },
   },
 
@@ -147,6 +145,9 @@ export default {
       if (value) {
         return value === "Informational" ? "lighten6" : "base"
       }
+    },
+    updateNotificationData() {
+      this.notificationData = this.getSingleNotification(this.notificationId)
     },
   },
 }

@@ -1,6 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
-import { handleError } from "@/utils"
+import { handleError, handleSuccess, handleInfo } from "@/utils"
 import dayjs from "dayjs"
 
 const namespaced = true
@@ -194,6 +194,22 @@ const actions = {
     }
   },
 
+  async deliveryScheduleAudience(_, { engagementId, audienceId, data }) {
+    try {
+      let response = await api.engagements.editDeliveryAudience(
+        engagementId,
+        audienceId,
+        data
+      )
+      if (response.status == 201) {
+        handleSuccess("Audience was successfuly delivered", response.status)
+      }
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async add({ commit }, engagement) {
     try {
       const payload = {
@@ -250,7 +266,12 @@ const actions = {
 
   async deliver(_, id) {
     try {
-      await api.engagements.deliver(id)
+      let res = await api.engagements.deliver(id)
+      if (res.status == 200) {
+        handleSuccess("Audiences were successfuly delivered", res.status)
+      } else if (res.status == 206) {
+        handleInfo("Deliveries are currently disabled", res.status)
+      }
     } catch (error) {
       handleError(error)
       throw error
@@ -337,6 +358,21 @@ const actions = {
   async attachAudienceDestination(_, { audienceId, data }) {
     try {
       await api.engagements.attachDestination(audienceId, data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async attachEngagementAudienceDestination(
+    _,
+    { engagementId, audienceId, data }
+  ) {
+    try {
+      await api.engagements.attachAudienceDestination(
+        engagementId,
+        audienceId,
+        data
+      )
     } catch (error) {
       handleError(error)
       throw error
