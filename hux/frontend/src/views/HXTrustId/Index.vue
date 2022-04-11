@@ -204,7 +204,7 @@
               </div>
             </v-tab-item>
             <v-tab-item key="attributes" class="tab-item">
-              <trust-id-attributes :data="overviewData.attributes" />
+              <trust-id-attributes :data="attributeData.data" />
             </v-tab-item>
           </v-tabs-items>
         </div>
@@ -239,7 +239,6 @@ import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 // TODO: will romve after checking in dev
 // import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
-import overviewData from "@/api/mock/fixtures/trustIdAttribute.js"
 import segmentComparisonScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export default {
@@ -266,7 +265,6 @@ export default {
       isFilterToggled: false,
       segmentLength: 1,
       addSegments: [],
-      overviewData: overviewData,
       segmentScores: segmentComparisonScores,
       borderColorArr: [
         {
@@ -477,9 +475,8 @@ export default {
         await this.addNewSegment(event)
       } finally {
         this.loading = false
+        this.isFilterToggled = !this.isFilterToggled
       }
-      this.isFilterToggled = !this.isFilterToggled
-      this.$router.go()
     },
     removeSegment(item) {
       this.getSelectedSegment.segments.splice(

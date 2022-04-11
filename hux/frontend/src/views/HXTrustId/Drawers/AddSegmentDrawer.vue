@@ -114,6 +114,18 @@ export default {
           element.type != "households_with_seniors_over_65"
       )
     },
+    segmentFilters() {
+      const payload = []
+      Object.entries(this.segmentDataObj).forEach(([key, value]) => {
+        let [keyValue, descriptionValue] = key.split("#")
+        payload.push({
+          type: keyValue,
+          description: descriptionValue,
+          values: Array.isArray(value) ? value : [value.toString()],
+        })
+      })
+      return payload
+    },
   },
   watch: {
     value: function () {
@@ -127,21 +139,10 @@ export default {
     clear() {
       this.segmentDataObj = {}
     },
-    segmentFilters() {
-      const payload = []
-      Object.entries(this.segmentDataObj).forEach(([key, value]) => {
-        payload.push({
-          type: key.split("#")[0],
-          description: key.split("#")[1],
-          values: Array.isArray(value) ? value : [value.toString()],
-        })
-      })
-      return payload
-    },
     apply() {
       this.$emit("onSectionAction", {
         segment_name: this.segmentName,
-        segment_filters: this.segmentFilters(),
+        segment_filters: this.segmentFilters,
       })
     },
     close() {

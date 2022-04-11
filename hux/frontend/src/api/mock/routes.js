@@ -29,6 +29,7 @@ import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 import runDurationData from "@/api/mock/fixtures/runDurationData.js"
 import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
 import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
+import trustIdAttribute from "@/api/mock/fixtures/trustIdAttribute.js"
 import trustIdComparisonData from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export const defineRoutes = (server) => {
@@ -894,5 +895,5 @@ export const defineRoutes = (server) => {
 
   server.post("/trust_id/segment", () => trustIdComparisonData)
 
-  server.get("/trust_id/attributes", () => trustIdOverview)
+  server.get("/trust_id/attributes", () => trustIdAttribute)
 }
