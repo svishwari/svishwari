@@ -42,10 +42,17 @@ export default {
       required: false,
       default: false,
     },
+    borderWidth: {
+      type: Number,
+      required: false,
+    },
   },
   computed: {
     style() {
-      return "border-color: var(--v-" + this.color + "-" + this.variant + ")"
+      return {
+        "border-color": "var(--v-" + this.color + "-" + this.variant + ")",
+        "border-width": this.borderWidth + "px",
+      }
     },
   },
 }
@@ -57,7 +64,6 @@ export default {
   width: 30px;
   height: 30px;
   border-radius: 0 !important;
-  border-width: 2px;
 }
 .text-style {
   // num style
