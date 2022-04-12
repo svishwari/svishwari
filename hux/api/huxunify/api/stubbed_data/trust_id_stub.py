@@ -48,9 +48,9 @@ trust_id_overview_stub_data = {
             "overall_customer_rating": {
                 "total_customers": 190909,
                 "rating": {
-                    "agree": {"percentage": 88, "count": 168000},
-                    "neutral": {"percentage": 2, "count": 3818},
-                    "disagree": {"percentage": 10, "count": 19091},
+                    "agree": {"percentage": 0.88, "count": 168000},
+                    "neutral": {"percentage": 0.02, "count": 3818},
+                    "disagree": {"percentage": 0.10, "count": 19091},
                 },
             },
         },
@@ -138,7 +138,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "age",
                         "description": "Age",
-                        "value": [
+                        "values": [
                             "18-20 years",
                             "21-24 years",
                             "50-54 years",
@@ -148,7 +148,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "gender",
                         "description": "Gender",
-                        "value": ["Female"],
+                        "values": ["Female"],
                     },
                 ],
                 "attributes": [
@@ -266,7 +266,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "age",
                         "description": "Age",
-                        "value": [
+                        "values": [
                             "18-20 years",
                             "21-24 years",
                             "50-54 years",
@@ -276,7 +276,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "gender",
                         "description": "Gender",
-                        "value": ["Female"],
+                        "values": ["Female"],
                     },
                 ],
                 "attributes": [
@@ -388,7 +388,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "age",
                         "description": "Age",
-                        "value": [
+                        "values": [
                             "18-20 years",
                             "21-24 years",
                             "50-54 years",
@@ -398,7 +398,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "gender",
                         "description": "Gender",
-                        "value": ["Female"],
+                        "values": ["Female"],
                     },
                 ],
                 "attributes": [
@@ -511,7 +511,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "age",
                         "description": "Age",
-                        "value": [
+                        "values": [
                             "18-20 years",
                             "21-24 years",
                             "50-54 years",
@@ -521,7 +521,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "gender",
                         "description": "Gender",
-                        "value": ["Female"],
+                        "values": ["Female"],
                     },
                 ],
                 "attributes": [
@@ -636,7 +636,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "age",
                         "description": "Age",
-                        "value": [
+                        "values": [
                             "18-20 years",
                             "21-24 years",
                             "50-54 years",
@@ -646,7 +646,7 @@ trust_id_comparison_stub_data = [
                     {
                         "type": "gender",
                         "description": "Gender",
-                        "value": ["Female"],
+                        "values": ["Female"],
                     },
                 ],
                 "attributes": [

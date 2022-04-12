@@ -718,15 +718,28 @@ class TestEngagements(TestCase):
 
         for engagement in response.json():
             for audience in engagement["audiences"]:
-                # ensure that the audience is not a lookalike audience since
-                # campaign mappings endpoints require regular audience
-                get_audience = requests.get(
-                    f'{pytest.API_URL}/audiences/{audience["id"]}',
-                    headers=pytest.HEADERS,
-                ).json()
-                if get_audience and get_audience["is_lookalike"]:
-                    continue
                 for destination in audience["destinations"]:
+                    # ensure the destination exists
+                    get_destination = requests.get(
+                        f'{pytest.API_URL}/destinations/{destination["id"]}',
+                        headers=pytest.HEADERS,
+                    )
+                    if get_destination.status_code == 404:
+                        continue
+                    # ensure that the audience is not a lookalike audience since
+                    # campaign mappings endpoints require regular audience
+                    get_audience = requests.get(
+                        f'{pytest.API_URL}/audiences/{audience["id"]}',
+                        headers=pytest.HEADERS,
+                    )
+                    get_audience_response = get_audience.json()
+                    if (
+                        get_audience.status_code == 200
+                        and get_audience_response
+                        and "is_lookalike" in get_audience_response
+                        and get_audience_response["is_lookalike"]
+                    ):
+                        continue
                     if destination["name"] == "Facebook":
                         return {
                             "engagement_id": engagement["id"],
