@@ -78,6 +78,7 @@
                       v-if="
                         !segmentComparisonLoading && segmentScores.length > 0
                       "
+                      ref="comparisonChart"
                       :segment-scores="segmentScores"
                       data-e2e="trust-comparison-chart"
                     />
@@ -479,6 +480,7 @@ export default {
       this.loading = true
       try {
         await this.addNewSegment(event)
+        this.$refs.comparisonChart.initializeComparisonChart()
       } finally {
         this.loading = false
         this.isFilterToggled = !this.isFilterToggled
