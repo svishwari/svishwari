@@ -28,13 +28,13 @@
         <tooltip max-width="288px">
           <template #label-content>
             <score-card
-              :title="formatText(scorecard.attribute_name)"
+              :title="formatText(scorecard.signal_name)"
               icon="hx-trustId-attribute"
               :value="scorecard.attribute_score"
               :width="150"
               :height="90"
-              :stroke="cardColors(scorecard.attribute_name).stroke"
-              :variant="cardColors(scorecard.attribute_name).variant"
+              :stroke="cardColors(scorecard.signal_name).stroke"
+              :variant="cardColors(scorecard.signal_name).variant"
             >
               <template #progress-bar>
                 <progress-stack-bar

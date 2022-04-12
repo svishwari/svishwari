@@ -627,9 +627,8 @@ export default {
         "Are you sure you want to edit this engagement?"
       this.confirmDialog.btnText = "Yes, edit"
       this.confirmDialog.leftBtnText = "Cancel"
-      this.confirmDialog.body =
-        "Are you sure you want to edit this engagement?\
-By changing the engagement, you may need to reschedule the delivery time and it will impact all associated audiences and destinations."
+      this.confirmDialog.body = `Are you sure you want to edit this engagement? <br>
+By changing the engagement, you may need to reschedule the delivery time and it will impact all associated audiences and destinations.`
     },
     async removeEngagement(data) {
       this.showConfirmModal = true
@@ -639,9 +638,8 @@ By changing the engagement, you may need to reschedule the delivery time and it 
       this.confirmDialog.type = "error"
       this.confirmDialog.subtitle = data.name
       this.confirmDialog.btnText = "Yes, delete engagement"
-      this.confirmDialog.body =
-        "Are you sure you want to delete this Engagement?\
-By deleting this engagement you will not be able to recover it and it may impact any associated destinations."
+      this.confirmDialog.body = `Are you sure you want to delete this Engagement? <br>
+By deleting this engagement you will not be able to recover it and it may impact any associated destinations.`
       this.deleteActionData = data
     },
 
