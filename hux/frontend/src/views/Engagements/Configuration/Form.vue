@@ -195,7 +195,7 @@
         @onClick="changeSchedule(true)"
       />
     </div>
-    <div v-if="isRecurringFlag" class="delivery-background px-4 pt-3 pb-6">
+    <div v-if="isRecurringFlag" class="delivery-background px-6 pt-5 pb-6">
       <v-row class="delivery-schedule mt-6 ml-n2">
         <div>
           <span
@@ -210,7 +210,13 @@
             @on-date-select="onStartDateSelect"
           />
         </div>
-        <icon class="mx-2" type="arrow" :size="28" color="black-lighten3" />
+        <icon
+          class="mx-2 arrow-margin"
+          type="arrow"
+          :size="19"
+          color="primary"
+          variant="lighten6"
+        />
         <div>
           <span
             class="date-picker-label black--text text--darken-4 text-body-2"
@@ -232,6 +238,7 @@
           v-model="localSchedule"
           :start-date="selectedStartDate"
           :end-date="selectedEndDate"
+          colon-sign
         />
       </v-row>
     </div>
@@ -735,6 +742,13 @@ export default {
     margin-top: -30px;
     color: var(--v-black-lighten3) !important;
   }
+  ::v-deep .edit-schedule-wrapper {
+    .d-flex:nth-child(2) {
+      .ml-1 {
+        margin-top: 18px !important;
+      }
+    }
+  }
 }
 .date-picker-label {
   position: absolute;
@@ -771,8 +785,11 @@ export default {
 .border-card {
   border: solid 1px var(--v-primary-lighten6);
 }
+.arrow-margin {
+  margin-top: 2px;
+}
 .delivery-background {
-  width: 612px;
+  width: 632px;
   border: solid 1px var(--v-black-lighten2);
   background: #f9fafb;
   position: relative;

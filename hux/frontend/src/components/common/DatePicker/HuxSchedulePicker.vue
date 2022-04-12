@@ -426,6 +426,15 @@ export default {
         color: var(--v-black-lighten3) !important;
         border-width: 1px !important;
       }
+      .v-select__slot {
+        .v-input__append-inner {
+          .v-input__icon {
+            .v-icon {
+              color: var(--v-black-base) !important;
+            }
+          }
+        }
+      }
       input::placeholder {
         color: var(--v-black-lighten3) !important;
       }
