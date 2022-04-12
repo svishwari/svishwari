@@ -857,7 +857,7 @@ async def deliver_audience_to_destination(
                 f'to destination ID "{destination_id}" '
                 f"because the destination does not exist."
             ),
-            db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
+            db_c.NOTIFICATION_CATEGORY_DELIVERY,
             user_name,
         )
         return
