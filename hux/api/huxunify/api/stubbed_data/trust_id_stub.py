@@ -163,7 +163,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "humanity",
                         "attribute_name": "Humanity",
-                        "attribute_score": 71,
+                        "attribute_score": 65,
                         "attribute_description": (
                             "Humanity is demonstrating empathy and kindness "
                             "towards customers, and treating everyone fairly. "
@@ -173,7 +173,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "transparency",
                         "attribute_name": "Transparency",
-                        "attribute_score": 71,
+                        "attribute_score": 78,
                         "attribute_description": (
                             "Transparency is openly sharing all information, "
                             "motives, and choices in straightforward and plain"
@@ -184,7 +184,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "capability",
                         "attribute_name": "Capability",
-                        "attribute_score": 78,
+                        "attribute_score": 73,
                         "attribute_description": (
                             "Capability is creating quality products, "
                             "services, and/or experiences. It is scored "
@@ -194,7 +194,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "reliability",
                         "attribute_name": "Reliability",
-                        "attribute_score": 71,
+                        "attribute_score": -14,
                         "attribute_description": (
                             "Reliability is consistently and dependably "
                             "delivering on promises. It is scored on a "
@@ -283,7 +283,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "capability",
                         "attribute_name": "Capability",
-                        "attribute_score": 68,
+                        "attribute_score": 73,
                         "attribute_description": (
                             "Capability is creating quality products, "
                             "services, and/or experiences. It is scored "
@@ -293,7 +293,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "product_quality",
                         "attribute_name": "Product quality",
-                        "attribute_score": 68,
+                        "attribute_score": 88,
                         "attribute_description": (
                             "Products are good quality, accessible "
                             "and safe to use"
@@ -302,7 +302,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "good_value",
                         "attribute_name": "Good value",
-                        "attribute_score": 68,
+                        "attribute_score": 78,
                         "attribute_description": (
                             "Prices of products, services, and "
                             "experiences are good value for money"
@@ -311,7 +311,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "competent_leaders_employess",
                         "attribute_name": "Competent leaders & employees",
-                        "attribute_score": 68,
+                        "attribute_score": 84,
                         "attribute_description": (
                             "Employees and leadership are competent and "
                             "understand how to respond to needs"
@@ -320,7 +320,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "long_term_solutions_improvements",
                         "attribute_name": "Long-term solutions & improvements",
-                        "attribute_score": 68,
+                        "attribute_score": 48,
                         "attribute_description": (
                             "Creates long-term solutions and improvements "
                             "that work well for me"
@@ -405,7 +405,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "humanity",
                         "attribute_name": "Humanity",
-                        "attribute_score": 71,
+                        "attribute_score": 65,
                         "attribute_description": (
                             "Humanity is demonstrating empathy and kindness "
                             "towards customers, and treating everyone fairly. "
@@ -415,7 +415,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "quickly_resolves_issues",
                         "attribute_name": "Quickly Resolves Issues",
-                        "attribute_score": 71,
+                        "attribute_score": 74,
                         "attribute_description": (
                             "Quickly resolves issues with safety, security "
                             "and satisfaction top of mind"
@@ -424,7 +424,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "values_respects_everyone",
                         "attribute_name": "Values & respects everyone",
-                        "attribute_score": 67,
+                        "attribute_score": 64,
                         "attribute_description": (
                             "Values and respects everyone, regardless of "
                             "background, identity or beliefs"
@@ -433,7 +433,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "values_society_environment",
                         "attribute_name": "Values society & environment",
-                        "attribute_score": 50,
+                        "attribute_score": -10,
                         "attribute_description": (
                             "Values the good of society and the environment, "
                             "not just profit"
@@ -528,7 +528,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "transparency",
                         "attribute_name": "Transparency",
-                        "attribute_score": 68,
+                        "attribute_score": 78,
                         "attribute_description": (
                             "Transparency is openly sharing all information, "
                             "motives, and choices in straightforward and plain"
@@ -539,7 +539,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "honesty_marketing_comms",
                         "attribute_name": "Honesty marketing & comms",
-                        "attribute_score": 68,
+                        "attribute_score": 78,
                         "attribute_description": (
                             "Marketing and communications are accurate "
                             "and honest"
@@ -557,7 +557,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "plain_language_data_policy",
                         "attribute_name": "Plain language data policy",
-                        "attribute_score": 68,
+                        "attribute_score": 88,
                         "attribute_description": (
                             "How and why my data is used is communicated in "
                             "plain and easy to understand language"
@@ -566,7 +566,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "clear_fees_costs",
                         "attribute_name": "Clear fees & costs",
-                        "attribute_score": 68,
+                        "attribute_score": 78,
                         "attribute_description": (
                             "Clear and upfront about fees and costs of "
                             "products, services and experiences"
@@ -653,7 +653,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "reliability",
                         "attribute_name": "Reliability",
-                        "attribute_score": 68,
+                        "attribute_score": 34,
                         "attribute_description": (
                             "Reliability is consistently and dependably "
                             "delivering on promises. It is scored on a "
@@ -663,7 +663,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "continuous_product_improvement",
                         "attribute_name": "Continuous product improvement",
-                        "attribute_score": 68,
+                        "attribute_score": 42,
                         "attribute_description": (
                             "Can be counted on to improve the quality "
                             "of products and services"
@@ -672,7 +672,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "consistent_quality",
                         "attribute_name": "Consistent quality",
-                        "attribute_score": 68,
+                        "attribute_score": 79,
                         "attribute_description": (
                             "Consistently delivers products, services "
                             "and experiences with quality"
@@ -681,7 +681,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "smooth_digital_interactions",
                         "attribute_name": "Smooth digital interactions",
-                        "attribute_score": 68,
+                        "attribute_score": 8,
                         "attribute_description": (
                             "Facilitates digital interactions that run "
                             "smoothly and work when needed"
@@ -690,7 +690,7 @@ trust_id_comparison_stub_data = [
                     {
                         "attribute_type": "timely_issue_resolution",
                         "attribute_name": "Timely issue resolution",
-                        "attribute_score": 68,
+                        "attribute_score": -18,
                         "attribute_description": (
                             "Resolves issues in an adequate and timely manner"
                         ),
@@ -955,12 +955,12 @@ trust_id_filters_stub = [
     {
         "type": "households_with_children_under_18",
         "description": "Households with children under 18",
-        "values": [True, False],
+        "values": ["true"],
     },
     {
         "type": "households_with_seniors_over_65",
         "description": "Households with seniors over 65",
-        "values": [True, False],
+        "values": ["true"],
     },
     {
         "type": "age",
