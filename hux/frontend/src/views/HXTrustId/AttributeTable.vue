@@ -75,12 +75,12 @@
                         </span>
                         <span>
                           {{
-                            item[col.value].rating.agree.percentage
+                            item[col.value].rating.disagree.percentage
                               | Numeric(false, false, false, true)
                           }}
                           |
                           {{
-                            numberWithCommas(item[col.value].rating.agree.count)
+                            numberWithCommas(item[col.value].rating.disagree.count)
                           }}
                         </span>
                         <span class="tooltip-subheading neutral-color my-2">
@@ -103,13 +103,13 @@
                         </span>
                         <span>
                           {{
-                            item[col.value].rating.disagree.percentage
+                            item[col.value].rating.agree.percentage
                               | Numeric(false, false, false, true)
                           }}
                           |
                           {{
                             numberWithCommas(
-                              item[col.value].rating.disagree.count
+                              item[col.value].rating.agree.count
                             )
                           }}
                         </span>

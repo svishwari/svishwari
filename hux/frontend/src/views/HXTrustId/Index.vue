@@ -468,6 +468,8 @@ export default {
       addNewSegment: "trustId/addSegment",
       getSegmentData: "trustId/getSegmentData",
       getTrustIdAttribute: "trustId/getTrustAttributes",
+      deleteSegment: "trustId/removeSegment",
+      setAlert: "alerts/setAlert",
     }),
     getSelectedData(value) {
       this.selectedSegment = value
@@ -486,15 +488,35 @@ export default {
         this.isFilterToggled = !this.isFilterToggled
       }
     },
-    removeSegment(item) {
-      this.getSelectedSegment.segments.splice(
-        this.getSelectedSegment.segments.findIndex(
-          (x) => x.segment_name == item.segment_name
-        ),
-        1
-      )
+    async removeSegment(item) {
+      this.loading = true
+      try {
+        let response = await this.deleteSegment({
+          segment_name: item.segment_name,
+        })
+        if (response.length > 0) {
+          this.loading = true
+          this.getOverview()
+          this.getTrustIdComparison()
+          this.getTrustIdAttribute()
+          this.$refs.comparisonChart.initializeComparisonChart()
+          this.setAlert({
+            type: "success",
+            message: `'${item.segment_name}' has been deleted Successfully.`,
+          })
+
+          this.loading = false
+        }
+      } catch (error) {
+        this.loading = false
+        this.setAlert({
+          type: "error",
+          message: `${error.response.data.message}`,
+        })
+      }
     },
   },
+
 }
 </script>
 
