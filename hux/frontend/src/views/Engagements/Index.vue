@@ -1084,8 +1084,8 @@ export default {
       this.batchDetails.favorites = params.selectedFavourite
       this.batchDetails.my_engagements = params.selectedEngagementsWorkedWith
       try {
-      await this.fetchEngagementsByBatch()
-      this.calculateLastBatch()
+        await this.fetchEngagementsByBatch()
+        this.calculateLastBatch()
       } catch (error) {
         this.isEmptyError = true
         this.clearFilter()

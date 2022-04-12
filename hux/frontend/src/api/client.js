@@ -156,8 +156,6 @@ client["engagements"].getEngagements = (data) => {
   return http.get(`/engagements?${newURLFormat}`)
 }
 
-
-
 client["engagements"].deliver = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/deliver`, data)
 }
