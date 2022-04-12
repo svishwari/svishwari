@@ -356,6 +356,11 @@ class SetEngagement(SwaggerView):
             for destination in audience.get(api_c.DESTINATIONS):
                 if get_delivery_platform(database, destination.get(api_c.ID)):
                     destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
+                else:
+                    logger.warning(
+                        "Destination %s could not be found.",
+                        destination.get(api_c.ID),
+                    )
 
         engagement_id = set_engagement(
             database=database,
@@ -484,6 +489,11 @@ class UpdateEngagement(SwaggerView):
             for destination in audience.get(api_c.DESTINATIONS):
                 if get_delivery_platform(database, destination.get(api_c.ID)):
                     destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
+                else:
+                    logger.warning(
+                        "Destination %s could not be found.",
+                        destination.get(api_c.ID),
+                    )
 
         engagement = update_engagement(
             database=database,
@@ -684,6 +694,11 @@ class AddAudienceEngagement(SwaggerView):
             for destination in audience.get(api_c.DESTINATIONS):
                 if get_delivery_platform(database, destination.get(api_c.ID)):
                     destination[db_c.DATA_ADDED] = datetime.datetime.utcnow()
+                else:
+                    logger.warning(
+                        "Destination %s could not be found.",
+                        destination.get(api_c.ID),
+                    )
 
             if not audience_to_attach:
                 # check if lookalike
@@ -1955,11 +1970,19 @@ class EngagementPerformanceDownload(SwaggerView):
             )
 
         final_email_metric = get_performance_metrics(
-            database, engagement, engagement_id, api_c.EMAIL
+            database,
+            engagement,
+            engagement_id,
+            api_c.EMAIL,
+            user[api_c.USER_NAME],
         )
 
         final_display_ads_metric = get_performance_metrics(
-            database, engagement, engagement_id, api_c.DISPLAY_ADS
+            database,
+            engagement,
+            engagement_id,
+            api_c.DISPLAY_ADS,
+            user[api_c.USER_NAME],
         )
 
         folder_name = "performancemetrics"

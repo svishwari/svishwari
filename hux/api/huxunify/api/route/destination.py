@@ -1258,7 +1258,7 @@ class DestinationDeleteView(SwaggerView):
             database,
             db_c.DELIVERY_PLATFORM_COLLECTION,
             {db_c.ID: ObjectId(destination_id)},
-            True,
+            False,
             user[api_c.USER_NAME],
         )
 

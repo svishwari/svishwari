@@ -1003,19 +1003,6 @@ class DeleteDestinationAudience(SwaggerView):
         )
         destination[api_c.ID] = ObjectId(destination.get(api_c.ID))
 
-        # get destinations
-        destination_to_remove = get_delivery_platform(
-            database, destination.get(api_c.ID)
-        )
-
-        if not destination_to_remove:
-            logger.error(
-                "Could not find destination with id %s.", destination[api_c.ID]
-            )
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
-
         audience = remove_destination_from_audience(
             database=database,
             audience_id=audience_id,
@@ -1025,7 +1012,7 @@ class DeleteDestinationAudience(SwaggerView):
         if audience:
             logger.info(
                 "Destination %s removed from audience %s.",
-                destination_to_remove[db_c.NAME],
+                destination[api_c.ID],
                 audience[db_c.NAME],
             )
 
@@ -1033,7 +1020,7 @@ class DeleteDestinationAudience(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f'Destination "{destination_to_remove[db_c.NAME]}" removed from '
+                    f'Destination "{destination[api_c.ID]}" removed from '
                     f'audience "{audience[db_c.NAME]}" '
                 ),
                 db_c.NOTIFICATION_CATEGORY_AUDIENCES,

@@ -14,6 +14,7 @@ from huxunifylib.database.delivery_platform_management import (
     get_performance_metrics_by_engagement_details,
     get_delivery_jobs_using_metadata,
 )
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import (
@@ -73,6 +74,7 @@ def group_engagement_performance_metrics(
     performance_metrics: list,
     target_destinations: list,
     metrics_type: str,
+    username: str,
 ) -> dict:
     """Group performance metrics for engagement
 
@@ -82,6 +84,7 @@ def group_engagement_performance_metrics(
         performance_metrics (list): List of performance metrics.
         target_destinations (list): List of target destinations.
         metrics_type (str): Type of performance metrics.
+        username (str): Username
 
     Returns:
         dict: Grouped performance metrics.
@@ -148,6 +151,21 @@ def group_engagement_performance_metrics(
                 )
             )
 
+            if not delivery_platform:
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_CRITICAL,
+                    (
+                        (
+                            f'"Can not fetch destination {destination_id}" because '
+                            f"the destination does not exist."
+                        ),
+                    ),
+                    db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
+                    username,
+                )
+                continue
+
             #  Group performance metrics for the destination
             destination_metrics = update_metrics(
                 destination_id,
@@ -182,6 +200,7 @@ def get_performance_metrics(
     engagement: object,
     engagement_id: str,
     ad_type: str,
+    username: str,
 ) -> dict:
     """Gets performance metrics for engagement
 
@@ -190,6 +209,7 @@ def get_performance_metrics(
         engagement (object): Engagement object
         engagement_id (str): Id of engagement
         ad_type (str): Advertisement type
+        username (str): Username
 
     Returns:
         dict: Email Performance metrics of an engagement
@@ -240,6 +260,7 @@ def get_performance_metrics(
         performance_metrics,
         [destination.get(db_c.ID)],
         ad_type,
+        username,
     )
     final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
 
