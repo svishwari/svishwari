@@ -168,7 +168,7 @@ const actions = {
         batch_size: batchDetails?.batch_size,
       })
       commit("SET_ALL", response.data.audiences)
-      commit("SET_TOTAL", response.data.total)
+      commit("SET_TOTAL", response.data.total_records)
     } catch (error) {
       handleError(error)
       throw error
