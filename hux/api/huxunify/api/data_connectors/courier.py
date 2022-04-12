@@ -653,6 +653,20 @@ def get_destination_config(
         destination_id,
     )
 
+    if not delivery_platform:
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_CRITICAL,
+            (
+                f'"Can not fetch destination {destination_id}" because '
+                f"the destination does not exist."
+            ),
+            db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
+            username,
+        )
+        raise FailedDestinationDependencyError(
+            destination_id, HTTPStatus.NOT_FOUND
+        )
     # validate destination status first.
     if (
         delivery_platform.get(db_c.DELIVERY_PLATFORM_STATUS)

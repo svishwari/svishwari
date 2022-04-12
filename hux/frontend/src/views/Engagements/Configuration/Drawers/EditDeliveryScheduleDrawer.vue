@@ -93,6 +93,7 @@
             <hux-schedule-picker
               v-model="localSchedule"
               short
+              colon-sign
               :start-date="selectedStartDate"
               :end-date="selectedEndDate"
             />
@@ -395,14 +396,10 @@ export default {
           width: 100px !important;
         }
         .pr-2:nth-child(1) {
+          padding-right: 0px !important;
           .select-common {
             width: 120px !important;
             margin-right: 4px !important;
-            &::after {
-              content: ":" !important;
-              margin-top: 8px !important;
-              margin-left: 13px !important;
-            }
           }
         }
         .pr-2:nth-child(2) {

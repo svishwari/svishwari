@@ -48,9 +48,6 @@ client["users"].getRequestedUsers = () => {
 client["users"].tickets = () => {
   return http.get("users/tickets")
 }
-client["users"].trustIdOverview = () => {
-  return http.get("trust_id/overview")
-}
 //#endregion
 
 //#region Configurations
@@ -500,6 +497,10 @@ client["emailDeliverability"].getOverview = () => {
 }
 
 //#region trustId
+client["trustId"].trustIdOverview = () => {
+  return http.get("trust_id/overview")
+}
+
 client["trustId"].getComparison = () => {
   return http.get("/trust_id/comparison")
 }
@@ -509,6 +510,13 @@ client["trustId"].getAttributes = () => {
 
 client["trustId"].getSegments = () => {
   return http.get("/trust_id/user_filters")
+}
+
+client["trustId"].addSegment = (data) => {
+  return http.post("trust_id/segment", data)
+}
+client["trustId"].removeSegmentData = ({ segment_name }) => {
+  return http.delete(`/trust_id/segment?segment_name=${segment_name}`)
 }
 
 export default client

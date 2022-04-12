@@ -27,8 +27,9 @@
                     class="rhombus-icon"
                     :color="getRhombusColour(item).stroke"
                     :variant="getRhombusColour(item).variant"
+                    :border-width="1"
                   />
-                  {{ item[col.value] }}
+                  {{ item[col.value] | TitleCase }}
                 </div>
               </template>
               <template v-else-if="col.value === 'attribute_score'">
@@ -40,6 +41,7 @@
                   :text-color="
                     item[col.value] < 0 ? 'error--text' : 'black--text'
                   "
+                  :border-width="2"
                 />
               </template>
               <template v-else-if="col.value === 'attribute_description'">
@@ -73,12 +75,14 @@
                         </span>
                         <span>
                           {{
-                            item[col.value].rating.agree.percentage
+                            item[col.value].rating.disagree.percentage
                               | Numeric(false, false, false, true)
                           }}
                           |
                           {{
-                            numberWithCommas(item[col.value].rating.agree.count)
+                            numberWithCommas(
+                              item[col.value].rating.disagree.count
+                            )
                           }}
                         </span>
                         <span class="tooltip-subheading neutral-color my-2">
@@ -101,14 +105,12 @@
                         </span>
                         <span>
                           {{
-                            item[col.value].rating.disagree.percentage
+                            item[col.value].rating.agree.percentage
                               | Numeric(false, false, false, true)
                           }}
                           |
                           {{
-                            numberWithCommas(
-                              item[col.value].rating.disagree.count
-                            )
+                            numberWithCommas(item[col.value].rating.agree.count)
                           }}
                         </span>
                       </div>

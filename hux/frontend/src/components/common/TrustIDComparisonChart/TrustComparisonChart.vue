@@ -78,16 +78,25 @@ export default {
       toolTipStyle: TooltipConfiguration.trustIdComparisonChart,
     }
   },
-  mounted() {
-    this.sizeHandler()
-    this.initializeSegmentData()
-    this.processData()
-    this.setLegendsData()
-    new ResizeObserver(this.sizeHandler).observe(
-      this.$refs.trustIdComparisonChart
-    )
+  watch: {
+    segmentScores: function () {
+      this.initializeComparisonChart()
+    },
   },
+  mounted() {
+    this.initializeComparisonChart()
+  },
+
   methods: {
+    initializeComparisonChart() {
+      this.sizeHandler()
+      this.initializeSegmentData()
+      this.processData()
+      this.setLegendsData()
+      new ResizeObserver(this.sizeHandler).observe(
+        this.$refs.trustIdComparisonChart
+      )
+    },
     toolTipDisplay(...arg) {
       this.show = arg[0]
       if (this.show) {
@@ -118,7 +127,7 @@ export default {
     initializeSegmentData() {
       if (this.segmentScores) {
         this.sourceData = this.segmentScores.find(
-          (data) => data.segment_filter == "composite & signal scores"
+          (data) => data.segment_type == "composite & signal scores"
         ).segments
         this.sourceData.forEach(
           (data, index) => (data.color = this.colors[index])

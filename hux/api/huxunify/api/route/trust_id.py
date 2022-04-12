@@ -1,6 +1,6 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for TrustID APIs."""
-
+import copy
 from http import HTTPStatus
 from typing import Tuple
 
@@ -181,7 +181,7 @@ class TrustIdAttributeComparison(SwaggerView):
         custom_segments = get_user_trust_id_segments(
             database=get_db_client(), okta_id=user[db_c.OKTA_ID]
         )
-        required_comparison_data = trust_id_comparison_stub_data.copy()
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
         for seg in custom_segments:
             _ = [
                 x["segments"].append(
@@ -308,7 +308,7 @@ class TrustIdAddSegment(SwaggerView):
         # Return the trust id segments for user
         segments = get_user_trust_id_segments(database, user[db_c.OKTA_ID])
 
-        if len(segments) >= 5:
+        if len(segments) >= 3:
             return HuxResponse.FORBIDDEN(
                 message="Threshold of maximum segments reached."
             )
@@ -328,7 +328,7 @@ class TrustIdAddSegment(SwaggerView):
             database, user[db_c.OKTA_ID], segment_details
         )[db_c.TRUST_ID_SEGMENTS]
 
-        required_comparison_data = trust_id_comparison_stub_data.copy()
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
         for seg in updated_segments:
             _ = [
                 x["segments"].append(
@@ -408,7 +408,7 @@ class TrustIdRemoveSegment(SwaggerView):
             get_db_client(), user[db_c.OKTA_ID], segment_name
         )[db_c.TRUST_ID_SEGMENTS]
 
-        required_comparison_data = trust_id_comparison_stub_data.copy()
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
         for seg in updated_segments:
             _ = [
                 x["segments"].append(
