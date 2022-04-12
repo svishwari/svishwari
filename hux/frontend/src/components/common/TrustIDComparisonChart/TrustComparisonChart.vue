@@ -78,9 +78,15 @@ export default {
       toolTipStyle: TooltipConfiguration.trustIdComparisonChart,
     }
   },
+  watch: {
+    segmentScores: function () {
+      this.initializeComparisonChart()
+    },
+  },
   mounted() {
     this.initializeComparisonChart()
   },
+
   methods: {
     initializeComparisonChart() {
       this.sizeHandler()
