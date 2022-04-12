@@ -28,6 +28,7 @@ from huxunifylib.database.engagement_management import (
     append_audiences_to_engagement,
     append_destination_to_engagement_audience,
     remove_destination_from_engagement_audience,
+    get_engagements_count,
 )
 from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.database import (
@@ -46,6 +47,7 @@ from huxunify.api.data_connectors.performance_metrics import (
     generate_metrics_file,
     get_performance_metrics_stub,
 )
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementGetSchema,
@@ -59,6 +61,7 @@ from huxunify.api.schema.engagement import (
     DestinationEngagedAudienceSchema,
     weighted_engagement_status,
     EngagementPutSchema,
+    EngagementsBatchGetSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -115,12 +118,30 @@ class EngagementSearch(SwaggerView):
             "default": False,
             "example": "False",
         },
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
+            "in": "query",
+            "type": "string",
+            "description": "Max number of engagements to be returned. 0 returns all engagements",
+            "example": api_c.ENGAGEMENTS_DEFAULT_BATCH_SIZE,
+            "required": False,
+            "default": api_c.ENGAGEMENTS_DEFAULT_BATCH_SIZE,
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
+            "in": "query",
+            "type": "string",
+            "description": "Number of engagements batch to be returned.",
+            "example": api_c.DEFAULT_BATCH_NUMBER,
+            "required": False,
+            "default": api_c.DEFAULT_BATCH_NUMBER,
+        },
     ]
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of engagements.",
-            "schema": {"type": "array", "items": EngagementGetSchema},
+            "description": "List of engagements with total number of engagements.",
+            "schema": EngagementsBatchGetSchema,
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -143,28 +164,54 @@ class EngagementSearch(SwaggerView):
         """
 
         database = get_db_client()
-        # get user favorite engagements
-        favorite_engagements = get_user_favorites(
-            database, user[api_c.USER_NAME], db_c.ENGAGEMENTS
-        )
 
         # read the optional request args and set the required query_filter to
         # query the DB.
         query_filter = {}
-
         if request.args.get(api_c.MY_ENGAGEMENTS) and validation.validate_bool(
             request.args.get(api_c.MY_ENGAGEMENTS)
         ):
             query_filter[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
+        batch_size = validation.validate_integer(
+            value=request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_SIZE,
+                str(api_c.ENGAGEMENTS_DEFAULT_BATCH_SIZE),
+            ),
+            validate_zero_or_greater=True,
+        )
+
+        batch_number = validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_NUMBER,
+                str(api_c.DEFAULT_BATCH_NUMBER),
+            )
+        )
+
+        # get user favorite engagements
+        favorite_engagements = None
+        if request.args.get(api_c.FAVORITES) and validation.validate_bool(
+            request.args.get(api_c.FAVORITES)
+        ):
+            favorite_engagements = get_user_favorites(
+                database, user[api_c.USER_NAME], db_c.ENGAGEMENTS
+            )
+
         # get the engagement summary
         engagements = get_engagements_summary(
             database=database,
-            engagement_ids=favorite_engagements
-            if request.args.get(api_c.FAVORITES)
-            and validation.validate_bool(request.args.get(api_c.FAVORITES))
-            else None,
+            engagement_ids=favorite_engagements,
             query_filter=query_filter,
+            batch_size=batch_size,
+            batch_number=batch_number,
+        )
+
+        # get total engagements count to add it to response for pagination
+        # request
+        engagements_count = get_engagements_count(
+            database=database,
+            filters=query_filter,
+            engagement_ids=favorite_engagements,
         )
 
         # weight the engagement status
@@ -177,9 +224,13 @@ class EngagementSearch(SwaggerView):
                 if engagement.get(db_c.ID) in favorite_engagements
             ]
 
-        return (
-            jsonify(EngagementGetSchema().dump(engagements, many=True)),
-            HTTPStatus.OK.value,
+        engagements_batch = {
+            api_c.TOTAL_RECORDS: engagements_count,
+            api_c.ENGAGEMENT_TAG: engagements,
+        }
+
+        return HuxResponse.OK(
+            data=engagements_batch, data_schema=EngagementsBatchGetSchema()
         )
 
 

@@ -962,6 +962,69 @@ class TestEngagementManagement(unittest.TestCase):
                 self.assertIn(db_c.OBJECT_ID, destination)
                 self.assertIn(db_c.CATEGORY, destination)
 
+    def test_get_engagements_summary_batch_offset(self) -> None:
+        """Test get_engagements_summary function with batch offset to limit
+        number of records returned."""
+
+        # create another audience
+        audience = om.create_audience(
+            self.database, "audience_group", [], self.user_name, [], 1560
+        )
+
+        for i in range(17):
+            new_engagement = {
+                db_c.ENGAGEMENT_NAME: f"Spring 2202{i}",
+                db_c.ENGAGEMENT_DESCRIPTION: f"high ltv for spring 202{i}",
+                db_c.AUDIENCES: [
+                    {
+                        db_c.OBJECT_ID: audience[db_c.ID],
+                        db_c.DESTINATIONS: [
+                            {
+                                db_c.OBJECT_ID: self.destinations[0][db_c.ID],
+                                db_c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
+                                db_c.STATUS: db_c.STATUS_PENDING,
+                            },
+                            {
+                                db_c.OBJECT_ID: self.destinations[1][db_c.ID],
+                                db_c.STATUS: db_c.AUDIENCE_STATUS_ERROR
+                                if i % 5 == 0
+                                else db_c.STATUS_SUCCEEDED,
+                            },
+                        ],
+                    },
+                    {
+                        db_c.OBJECT_ID: self.audience[db_c.ID],
+                        db_c.DESTINATIONS: [
+                            {
+                                db_c.OBJECT_ID: self.destinations[1][db_c.ID],
+                                db_c.STATUS: db_c.STATUS_FAILED
+                                if i % 5 == 0
+                                else db_c.STATUS_SUCCEEDED,
+                            }
+                        ],
+                    },
+                ],
+            }
+
+            em.set_engagement(
+                self.database,
+                new_engagement[db_c.ENGAGEMENT_NAME],
+                new_engagement[db_c.ENGAGEMENT_DESCRIPTION],
+                new_engagement[db_c.AUDIENCES],
+                self.user_name,
+            )
+
+        for i in range(1, 4):
+            engagement_docs = em.get_engagements_summary(
+                database=self.database, batch_size=5, batch_number=i
+            )
+
+            self.assertTrue(engagement_docs)
+            if i < 4:
+                self.assertEqual(len(engagement_docs), 5)
+            else:
+                self.assertEqual(len(engagement_docs), 2)
+
     def test_append_destination_to_engagement_audience(self):
         """Test appending a destination to an engagement audience"""
 
