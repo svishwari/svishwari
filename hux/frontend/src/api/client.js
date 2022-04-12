@@ -146,7 +146,7 @@ client["destinations"].updateDestination = (id, data) => {
 //#endregion
 
 //#region Engagement custom endpoints
-client["engagements"].allFiltered = (data) => {
+client["engagements"].getEngagements = (data) => {
   let URLData = []
   for (const property in data) {
     let formURL = property + "=" + data[property]
@@ -155,6 +155,8 @@ client["engagements"].allFiltered = (data) => {
   let newURLFormat = URLData.join("@").toString().replace(/@/g, "&")
   return http.get(`/engagements?${newURLFormat}`)
 }
+
+
 
 client["engagements"].deliver = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/deliver`, data)

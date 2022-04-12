@@ -49,7 +49,6 @@ const getters = {
 
 const mutations = {
   SET_ALL(state, items) {
-    state.items = []
     items.forEach((item) => {
       item.audienceList = []
       item.isCurrentRow = false

@@ -889,10 +889,10 @@ export default {
       this.loading = true
       this.finalFilterApplied = params.filterApplied
       this.setDefaultBatch()
-      ;(this.batchDetails.favorites = params.selectedFavourite),
-        (this.batchDetails.worked_by = params.selectedAudienceWorkedWith),
-        (this.batchDetails.attribute = params.selectedAttributes),
-        await this.fetchAudienceByBatch()
+      this.batchDetails.favorites = params.selectedFavourite
+      this.batchDetails.worked_by = params.selectedAudienceWorkedWith
+      this.batchDetails.attribute = params.selectedAttributes
+      await this.fetchAudienceByBatch()
       this.calculateLastBatch()
       this.loading = false
     },
