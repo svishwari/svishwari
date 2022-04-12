@@ -1,5 +1,6 @@
 """Module to park all performance metrics components"""
 import csv
+import copy
 from datetime import datetime
 from pathlib import Path
 
@@ -336,7 +337,7 @@ def get_performance_metrics_stub(
             continue
 
         #  Group performance metrics for the audience
-        audience_metrics = stub_data
+        audience_metrics = copy.deepcopy(stub_data)
         audience_metrics.update(
             {
                 api_c.ID: str(audience.get(db_c.ID)),
@@ -366,7 +367,7 @@ def get_performance_metrics_stub(
             )
 
             #  Group performance metrics for the destination
-            destination_metrics = stub_data
+            destination_metrics = copy.deepcopy(stub_data)
             destination_metrics[
                 api_c.DELIVERY_PLATFORM_TYPE
             ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
