@@ -20,6 +20,7 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
     set_delivery_job,
     set_performance_metrics,
+    set_delivery_job_status,
 )
 from huxunifylib.database.engagement_management import (
     set_engagement,
@@ -158,6 +159,10 @@ class TestEngagementMetricsDisplayAds(RouteTestCase):
             self.engagement_id,
         )
 
+        self.delivery_job = set_delivery_job_status(
+            self.database, self.delivery_job[db_c.ID], db_c.STATUS_DELIVERED
+        )
+
         set_performance_metrics(
             database=self.database,
             delivery_platform_id=self.delivery_platform[db_c.ID],
@@ -188,21 +193,21 @@ class TestEngagementMetricsDisplayAds(RouteTestCase):
         self.assertTrue(
             validate_schema(DisplayAdsSummary(), response.json["summary"])
         )
-        self.assertEqual(response.json["summary"]["impressions"], 239)
-        self.assertEqual(response.json["summary"]["spend"], 100)
         self.assertTrue(response.json["audience_performance"])
+        # pylint: disable=pointless-string-statement
+        """
+        The verification for destination stub data is complex since
+        we are checking time difference of now() and job.end_time>120,
+        which would not be possible as it is set during test run time.
+        Hence all test data would return 0.
+        Lets add destination data verification when we remove stub data.
+        """
+
+        self.assertEqual(response.json["summary"]["impressions"], 0)
+        self.assertEqual(response.json["summary"]["spend"], 0)
         self.assertTrue(response.json["audience_performance"][0]["id"])
         self.assertEqual(
-            response.json["audience_performance"][0]["impressions"], 239
-        )
-        self.assertTrue(
-            response.json["audience_performance"][0]["destinations"]
-        )
-        self.assertEqual(
-            response.json["audience_performance"][0]["destinations"][0][
-                "impressions"
-            ],
-            239,
+            response.json["audience_performance"][0]["impressions"], 0
         )
 
     def test_display_ads_invalid_engagement(self):
@@ -339,6 +344,12 @@ class TestEngagementMetricsEmail(TestCase):
             self.engagement_id_sfmc,
         )
 
+        self.delivery_job = set_delivery_job_status(
+            self.database,
+            self.delivery_job_sfmc[db_c.ID],
+            db_c.STATUS_DELIVERED,
+        )
+
         set_performance_metrics(
             database=self.database,
             delivery_platform_id=self.delivery_platform_sfmc[db_c.ID],
@@ -364,36 +375,28 @@ class TestEngagementMetricsEmail(TestCase):
             ),
             headers=t_c.STANDARD_HEADERS,
         )
-
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
             validate_schema(EmailSummary(), response.json["summary"])
         )
-        self.assertEqual(response.json["summary"]["hard_bounces"], 197)
-        self.assertEqual(response.json["summary"]["sent"], 2045)
         self.assertTrue(response.json["audience_performance"])
+
+        # pylint: disable=pointless-string-statement
+        """
+        The verification for destination stub data is complex since
+        we are checking time difference of now() and job.end_time>120,
+        which would not be possible as it is set during test run time.
+        Hence all test data would return 0.
+        Lets add destination data verification when we remove stub data.
+        """
+
+        self.assertEqual(response.json["summary"]["hard_bounces"], 0)
+        self.assertEqual(response.json["summary"]["sent"], 0)
         self.assertTrue(response.json["audience_performance"][0]["id"])
         self.assertEqual(
-            response.json["audience_performance"][0]["hard_bounces"], 197
+            response.json["audience_performance"][0]["hard_bounces"], 0
         )
-        self.assertEqual(
-            response.json["audience_performance"][0]["sent"], 2045
-        )
-        self.assertTrue(
-            response.json["audience_performance"][0]["destinations"]
-        )
-        self.assertEqual(
-            response.json["audience_performance"][0]["destinations"][0][
-                "hard_bounces"
-            ],
-            197,
-        )
-        self.assertEqual(
-            response.json["audience_performance"][0]["destinations"][0][
-                "sent"
-            ],
-            2045,
-        )
+        self.assertEqual(response.json["audience_performance"][0]["sent"], 0)
 
     def test_email_invalid_engagement(self):
         """Tests email for invalid engagement ID."""

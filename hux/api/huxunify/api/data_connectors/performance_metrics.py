@@ -305,7 +305,7 @@ def get_performance_metrics_stub(
                     and (
                         datetime.now() - match[db_c.JOB_END_TIME]
                     ).total_seconds()
-                    > 120
+                    >= 120
                 ):
                     destination_ids.append(destination[db_c.ID])
                     break
@@ -313,7 +313,7 @@ def get_performance_metrics_stub(
     if not destination_ids and ad_type == api_c.DISPLAY_ADS:
         stub_data = api_c.PERFORMANCE_METRIC_DISPLAY_STUB_NO_DELIVERY
 
-    if not destination_ids and ad_type == api_c.EMAIL_METRICS:
+    if not destination_ids and ad_type == api_c.EMAIL:
         stub_data = api_c.PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY
 
     # Group all the performance metrics for the engagement
