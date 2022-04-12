@@ -79,15 +79,18 @@ export default {
     }
   },
   mounted() {
-    this.sizeHandler()
-    this.initializeSegmentData()
-    this.processData()
-    this.setLegendsData()
-    new ResizeObserver(this.sizeHandler).observe(
-      this.$refs.trustIdComparisonChart
-    )
+    this.initializeComparisonChart()
   },
   methods: {
+    initializeComparisonChart() {
+      this.sizeHandler()
+      this.initializeSegmentData()
+      this.processData()
+      this.setLegendsData()
+      new ResizeObserver(this.sizeHandler).observe(
+        this.$refs.trustIdComparisonChart
+      )
+    },
     toolTipDisplay(...arg) {
       this.show = arg[0]
       if (this.show) {
