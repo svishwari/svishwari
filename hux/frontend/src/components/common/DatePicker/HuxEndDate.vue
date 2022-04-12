@@ -188,7 +188,7 @@ export default {
         }
       }
       .v-icon {
-        color: var(--v-primary-base);
+        color: var(--v-black-base);
       }
     }
   }

@@ -19,9 +19,14 @@ class RatingSchema(Schema):
 class RatingOverviewSchema(Schema):
     """Rating overview schema"""
 
-    agree = Nested(RatingSchema)
-    neutral = Nested(RatingSchema)
+    class Meta:
+        """Meta class to handle ordering of schema"""
+
+        ordered = True
+
     disagree = Nested(RatingSchema)
+    neutral = Nested(RatingSchema)
+    agree = Nested(RatingSchema)
 
 
 class OverallCustomerRatingSchema(Schema):
@@ -91,7 +96,7 @@ class SegmentFilterSchema(Schema):
 
     type = Str(example="age", required=True)
     description = Str(example="Age", required=True)
-    value = List(Str())
+    values = List(Str())
 
 
 class TrustIdSegmentSchema(Schema):

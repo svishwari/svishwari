@@ -1,6 +1,6 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for TrustID APIs."""
-
+import copy
 from http import HTTPStatus
 from typing import Tuple
 
@@ -11,6 +11,7 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.user_management import (
     get_user_trust_id_segments,
     add_user_trust_id_segments,
+    remove_user_trust_id_segments,
 )
 
 from huxunify.api import constants as api_c
@@ -177,8 +178,23 @@ class TrustIdAttributeComparison(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
+        custom_segments = get_user_trust_id_segments(
+            database=get_db_client(), okta_id=user[db_c.OKTA_ID]
+        )
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
+        for seg in custom_segments:
+            _ = [
+                x["segments"].append(
+                    {
+                        "segment_name": seg["segment_name"],
+                        "segment_filters": seg["segment_filters"],
+                        "attributes": x["segments"][-1]["attributes"],
+                    }
+                )
+                for x in required_comparison_data
+            ]
         return HuxResponse.OK(
-            data=trust_id_comparison_stub_data,
+            data=required_comparison_data,
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -292,27 +308,122 @@ class TrustIdAddSegment(SwaggerView):
         # Return the trust id segments for user
         segments = get_user_trust_id_segments(database, user[db_c.OKTA_ID])
 
-        if len(segments) >= 5:
+        if len(segments) >= 3:
             return HuxResponse.FORBIDDEN(
                 message="Threshold of maximum segments reached."
             )
 
+        added_segments = [
+            x["segment_name"]
+            for x in trust_id_comparison_stub_data[0]["segments"]
+        ]
+        added_segments.extend([x[api_c.SEGMENT_NAME] for x in segments])
         # Check if a segment with the specified name exists
-        if segment_details[api_c.SEGMENT_NAME] in [
-            x[api_c.SEGMENT_NAME] for x in segments
-        ]:
+        if segment_details[api_c.SEGMENT_NAME] in added_segments:
             return HuxResponse.CONFLICT(
                 message=("Segment with the given name already exists!")
             )
 
-        # pylint: disable=unused-variable
         updated_segments = add_user_trust_id_segments(
             database, user[db_c.OKTA_ID], segment_details
         )[db_c.TRUST_ID_SEGMENTS]
 
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
+        for seg in updated_segments:
+            _ = [
+                x["segments"].append(
+                    {
+                        "segment_name": seg["segment_name"],
+                        "segment_filters": seg["segment_filters"],
+                        "attributes": x["segments"][-1]["attributes"],
+                    }
+                )
+                for x in required_comparison_data
+            ]
+
         # Update logic to filter trust id data based on added
         # segments using updated_segments
         return HuxResponse.CREATED(
-            data=trust_id_comparison_stub_data,
+            data=required_comparison_data,
+            data_schema=TrustIdComparisonSchema(),
+        )
+
+
+@add_view_to_blueprint(
+    trust_id_bp,
+    f"{api_c.TRUST_ID_ENDPOINT}/segment",
+    "TrustIdRemoveSegment",
+)
+class TrustIdRemoveSegment(SwaggerView):
+    """Trust ID remove segment class."""
+
+    parameters = [
+        {
+            "name": "segment_name",
+            "in": "query",
+            "type": "string",
+            "description": "Name of segment to remove.",
+            "example": "Segment 1",
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Trust ID segment removed successfully",
+            "schema": {"type": "array", "items": TrustIdComparisonSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to remove segment"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.TRUST_ID_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def delete(self, user: dict) -> Tuple[list, int]:
+        """Remove Trust ID segment.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[list, int]: list of segment filters, HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
+
+        segment_name = request.args.get(api_c.SEGMENT_NAME)
+        if not segment_name:
+            return HuxResponse.BAD_REQUEST(
+                message="Missing required segment name."
+            )
+
+        updated_segments = remove_user_trust_id_segments(
+            get_db_client(), user[db_c.OKTA_ID], segment_name
+        )[db_c.TRUST_ID_SEGMENTS]
+
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
+        for seg in updated_segments:
+            _ = [
+                x["segments"].append(
+                    {
+                        "segment_name": seg["segment_name"],
+                        "segment_filters": seg["segment_filters"],
+                        "attributes": x["segments"][-1]["attributes"],
+                    }
+                )
+                for x in required_comparison_data
+            ]
+
+        # Update logic to filter trust id data based on added
+        # segments using updated_segments
+        return HuxResponse.OK(
+            data=required_comparison_data,
             data_schema=TrustIdComparisonSchema(),
         )

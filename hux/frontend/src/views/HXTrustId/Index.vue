@@ -37,7 +37,7 @@
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
-          <overview v-if="!loading" :data="overviewData" />
+          <overview v-if="!loading" :data="trustIdOverview" />
           <v-tabs v-model="tabOption" class="mt-8">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
@@ -75,7 +75,10 @@
                       </span>
                     </v-card-title>
                     <trust-comparison-chart
-                      v-if="!segmentComparisonLoading"
+                      v-if="
+                        !segmentComparisonLoading && segmentScores.length > 0
+                      "
+                      ref="comparisonChart"
                       :segment-scores="segmentScores"
                       data-e2e="trust-comparison-chart"
                     />
@@ -83,11 +86,13 @@
                 </v-col>
               </v-row>
               <link-dropdown
+                v-if="getSegment.length > 0"
                 :data-list="getSegment"
                 :width="245"
                 @onselect="getSelectedData"
               ></link-dropdown>
               <data-cards
+                v-if="getSegmentTableData.length > 0"
                 bordered
                 class="mr-4"
                 card-class="py-5 pa-4"
@@ -100,7 +105,7 @@
                 >
                   <rhombus-number
                     v-if="
-                      !['segment_name', 'attribute_filters', 'colors'].includes(
+                      !['segment_name', 'segment_filters', 'colors'].includes(
                         header.key
                       )
                     "
@@ -118,7 +123,7 @@
                   ></rhombus-number>
 
                   <span
-                    v-else-if="header.key == 'attribute_filters'"
+                    v-else-if="header.key == 'segment_filters'"
                     :key="header.key"
                   >
                     <span v-if="row.value.length != 0">
@@ -150,7 +155,10 @@
 
                 <template #field:delete="row">
                   <div
-                    v-if="getSelectedSegment.segments.length > 1"
+                    v-if="
+                      getSelectedSegment &&
+                      getSelectedSegment.segments.length > 1
+                    "
                     class="d-flex align-center justify-end mr-2"
                   >
                     <hux-icon
@@ -163,7 +171,11 @@
                   </div>
                 </template>
               </data-cards>
-              <div v-if="getSelectedSegment.segments.length < 5">
+              <div
+                v-if="
+                  getSelectedSegment && getSelectedSegment.segments.length < 5
+                "
+              >
                 <v-list class="add-segment no-data-width" :height="22">
                   <v-list-item @click="filterToggle()">
                     <hux-icon
@@ -204,7 +216,7 @@
               </div>
             </v-tab-item>
             <v-tab-item key="attributes" class="tab-item">
-              <trust-id-attributes :data="overviewData.attributes" />
+              <trust-id-attributes :data="attributeData.data" />
             </v-tab-item>
           </v-tabs-items>
         </div>
@@ -214,8 +226,8 @@
             v-model="isFilterToggled"
             view-height="calc(100vh - 180px)"
             :segment-data="addSegmentData"
-            :segment-length="segmentLength"
-            @onSectionAction="addSegment"
+            :segment-length="segmentScores.length"
+            @onSectionAction="addSegment($event)"
           />
         </div>
       </div>
@@ -237,9 +249,6 @@ import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
-import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
-import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
-import segmentComparisonScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export default {
   name: "HXTrustID",
@@ -264,9 +273,7 @@ export default {
       selectedSegment: "composite & signal scores",
       isFilterToggled: false,
       segmentLength: 1,
-      addSegmentData: addSegmentData,
-      overviewData: overviewData,
-      segmentScores: segmentComparisonScores,
+      addSegments: [],
       borderColorArr: [
         {
           color: "primary",
@@ -376,31 +383,32 @@ export default {
   },
   computed: {
     ...mapGetters({
-      // segmentScores: "trustId/getSegmentsComparison",
-      // TODO: enable this once API endpoint available
-      // overviewData: "trustId/getTrustOverview",
+      segmentScores: "trustId/getSegmentsComparison",
+      trustIdOverview: "trustId/getTrustOverview",
+      addSegmentData: "trustId/getAddSegment",
+      attributeData: "trustId/getTrustAttributes",
     }),
     getSegment() {
-      return this.segmentScores.map((item) => {
-        return item.segment_filter
-      })
+      return this.segmentScores.map((item) => item.segment_type)
     },
 
     getSegmentTableData() {
-      return this.getSelectedSegment.segments.map((x, index) => {
-        let segment = {
-          segment_name: x.segment_name,
-          attribute_filters: x.attribute_filters,
-        }
+      return this.getSelectedSegment
+        ? this.getSelectedSegment.segments.map((x, index) => {
+            let segment = {
+              segment_name: x.segment_name,
+              segment_filters: x.segment_filters,
+            }
 
-        x.attributes.forEach((item) => {
-          segment[item.attribute_type] = item.attribute_score
-        })
+            x.attributes.forEach((item) => {
+              segment[item.attribute_type] = item.attribute_score
+            })
 
-        segment.colors = this.borderColorArr[index]
+            segment.colors = this.borderColorArr[index]
 
-        return segment
-      })
+            return segment
+          })
+        : []
     },
 
     getSegmentTableHeaders() {
@@ -411,7 +419,7 @@ export default {
           col: 2,
         },
         {
-          key: "attribute_filters",
+          key: "segment_filters",
           label: "Segment filters",
           col: 4,
         },
@@ -436,7 +444,7 @@ export default {
 
     getSelectedSegment() {
       return this.segmentScores.find(
-        (x) => x.segment_filter == this.selectedSegment?.toLowerCase()
+        (x) => x.segment_type == this.selectedSegment?.toLowerCase()
       )
     },
   },
@@ -444,8 +452,10 @@ export default {
     this.loading = true
     this.segmentComparisonLoading = true
     try {
-      // await this.getOverview()
-      //   await this.getTrustIdComparison()
+      await this.getOverview()
+      await this.getTrustIdComparison()
+      await this.getSegmentData()
+      await this.getTrustIdAttribute()
     } finally {
       this.loading = false
       this.segmentComparisonLoading = false
@@ -453,8 +463,11 @@ export default {
   },
   methods: {
     ...mapActions({
-      // getOverview: "trustId/getTrustIdOverview",
-      // getTrustIdComparison: "trustId/getTrustIdComparison",
+      getOverview: "trustId/getTrustIdOverview",
+      getTrustIdComparison: "trustId/getTrustIdComparison",
+      addNewSegment: "trustId/addSegment",
+      getSegmentData: "trustId/getSegmentData",
+      getTrustIdAttribute: "trustId/getTrustAttributes",
     }),
     getSelectedData(value) {
       this.selectedSegment = value
@@ -463,8 +476,15 @@ export default {
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
     },
-    addSegment() {
-      this.isFilterToggled = !this.isFilterToggled
+    async addSegment(event) {
+      this.loading = true
+      try {
+        await this.addNewSegment(event)
+        this.$refs.comparisonChart.initializeComparisonChart()
+      } finally {
+        this.loading = false
+        this.isFilterToggled = !this.isFilterToggled
+      }
     },
     removeSegment(item) {
       this.getSelectedSegment.segments.splice(

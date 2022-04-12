@@ -86,6 +86,7 @@ export default {
             background-repeat: repeat-x;
             .v-select__selection {
               color: var(--v-primary-base) !important;
+              padding-bottom: 1px;
             }
           }
           .v-input__append-inner {
