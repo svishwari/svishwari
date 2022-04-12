@@ -34,6 +34,9 @@ const mutations = {
   SET_TRUST_ATTRIBUTES(state, trustIdAttributes) {
     Vue.set(state, "trustIdAttributes", trustIdAttributes)
   },
+  REMOVE_SEGMENT(state, name) {
+    Vue.delete(state, name)
+  },
 }
 
 const actions = {
@@ -77,6 +80,20 @@ const actions = {
     try {
       const response = await api.trustId.getAttributes()
       commit("SET_TRUST_ATTRIBUTES", response)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async removeSegment({ commit }, { segment_name }) {
+    try {
+      const payload = {
+        segment_name: segment_name,
+      }
+      const response = await api.trustId.removeSegmentData(payload)
+      commit("REMOVE_SEGMENT", response.data)
+      return response.data
     } catch (error) {
       handleError(error)
       throw error
