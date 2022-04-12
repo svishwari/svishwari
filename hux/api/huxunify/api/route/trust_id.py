@@ -1,6 +1,6 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for TrustID APIs."""
-
+import copy
 from http import HTTPStatus
 from typing import Tuple
 
@@ -328,7 +328,7 @@ class TrustIdAddSegment(SwaggerView):
             database, user[db_c.OKTA_ID], segment_details
         )[db_c.TRUST_ID_SEGMENTS]
 
-        required_comparison_data = trust_id_comparison_stub_data.copy()
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
         for seg in updated_segments:
             _ = [
                 x["segments"].append(
@@ -408,7 +408,7 @@ class TrustIdRemoveSegment(SwaggerView):
             get_db_client(), user[db_c.OKTA_ID], segment_name
         )[db_c.TRUST_ID_SEGMENTS]
 
-        required_comparison_data = trust_id_comparison_stub_data.copy()
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
         for seg in updated_segments:
             _ = [
                 x["segments"].append(
