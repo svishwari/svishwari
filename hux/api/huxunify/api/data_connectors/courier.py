@@ -666,7 +666,7 @@ def get_destination_config(
                 f'"Can not fetch destination {destination_id}" because '
                 f"the destination does not exist."
             ),
-            db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
+            db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
             username,
         )
         raise FailedDestinationDependencyError(
