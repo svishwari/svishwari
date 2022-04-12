@@ -1399,13 +1399,35 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        engagements = response.json
+        engagements_batch = response.json
+        engagements = engagements_batch[api_c.ENGAGEMENT_TAG]
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(engagements), len(expected_engagements))
         for engagement in engagements:
             self.assertEqual(self.user_name, engagement[db_c.CREATED_BY])
             self.assertIn(api_c.FAVORITE, engagement)
             self.assertIsNotNone(engagement[db_c.STATUS])
+
+    def test_get_engagements_batch_offset(self):
+        """Test get all engagements with batch offset."""
+
+        all_engagements = get_engagements(self.database)
+        self.assertEqual(len(all_engagements), 2)
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}?"
+            f"{api_c.QUERY_PARAMETER_BATCH_SIZE}=1&{api_c.QUERY_PARAMETER_BATCH_NUMBER}=1",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        engagements = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(engagements[api_c.TOTAL_RECORDS], 2)
+        self.assertEqual(len(engagements[api_c.ENGAGEMENT_TAG]), 1)
+        for engagement in engagements[api_c.ENGAGEMENT_TAG]:
+            self.assertEqual(
+                all_engagements[0][api_c.NAME], engagement[api_c.NAME]
+            )
 
     def test_get_engagements_with_valid_filters(self):
         """Test get all engagements API with valid filters."""
@@ -1416,7 +1438,8 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        fetched_engagements = response.json
+        engagements_batch = response.json
+        fetched_engagements = engagements_batch[api_c.ENGAGEMENT_TAG]
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(fetched_engagements)
         self.assertEqual(1, len(fetched_engagements))
@@ -1487,7 +1510,8 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        fetched_engagements = response.json
+        engagements_batch = response.json
+        fetched_engagements = engagements_batch[api_c.ENGAGEMENT_TAG]
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertFalse(fetched_engagements)
 

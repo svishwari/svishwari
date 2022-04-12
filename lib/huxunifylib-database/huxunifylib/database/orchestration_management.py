@@ -14,6 +14,7 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
+from huxunifylib.database.utils import get_collection_count
 
 
 @retry(
@@ -218,6 +219,8 @@ def get_all_audiences(
     include_users: bool = False,
     filters: dict = None,
     audience_ids: list = None,
+    batch_size: int = 0,
+    batch_number: int = 1,
 ) -> Union[list, None]:
     """A function to get all existing audiences.
 
@@ -225,26 +228,76 @@ def get_all_audiences(
         database (DatabaseClient): A database client.
         include_users (bool): Flag to include users.
         filters (dict, Optional): A dict of filters to be applied on the
-        audience.
+            audience.
         audience_ids (list, Optional): A list of audience IDs.
+        batch_size (int): Number of audiences per batch.
+        batch_number (int): Number of audiences batch to be returned.
 
     Returns:
         Union[list, None]: A list of all audiences.
     """
+
     am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[db_c.AUDIENCES_COLLECTION]
 
+    find_filters = build_get_audiences_query_filter(filters, audience_ids)
+
+    skips = batch_size * (batch_number - 1)
+
+    # Get audience configurations and add to list
+    try:
+        if include_users:
+            batch_offset_pipeline = []
+            if skips > 0:
+                batch_offset_pipeline.append({"$skip": skips})
+            if batch_size > 0:
+                batch_offset_pipeline.append({"$limit": batch_size})
+
+            # lookup to users
+            return list(
+                collection.aggregate(
+                    [{"$match": {db_c.DELETED: False}}]
+                    + USER_LOOKUP_PIPELINE
+                    + batch_offset_pipeline
+                )
+            )
+
+        return list(
+            collection.find(find_filters, {db_c.DELETED: 0})
+            .skip(skips)
+            .limit(batch_size)
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+def build_get_audiences_query_filter(
+    filters: dict = None, audience_ids: list = None
+) -> dict:
+    """A function to retrieve count of audiences documents.
+
+    Args:
+        filters (dict, Optional): A dict of filters to be applied on the
+            audience.
+        audience_ids (list, Optional): A list of audience IDs.
+
+    Returns:
+        dict: Query filter dict.
+    """
+
     if not filters:
-        find_filters = {db_c.DELETED: False}
+        query_filter = {db_c.DELETED: False}
     else:
-        find_filters = {}
+        query_filter = {}
         if filters.get(db_c.WORKED_BY):
-            find_filters["$or"] = [
+            query_filter["$or"] = [
                 {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
                 {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
             ]
         if filters.get(db_c.ATTRIBUTE):
-            find_filters["$and"] = [
+            query_filter["$and"] = [
                 {
                     db_c.ATTRIBUTE_FILTER_FIELD: {
                         "$regex": rf"^{attribute}$",
@@ -255,24 +308,9 @@ def get_all_audiences(
             ]
 
     if audience_ids is not None:
-        find_filters[db_c.ID] = {"$in": audience_ids}
+        query_filter[db_c.ID] = {"$in": audience_ids}
 
-    # Get audience configurations and add to list
-    try:
-        if include_users:
-            # lookup to users
-            return list(
-                collection.aggregate(
-                    [{"$match": {db_c.DELETED: False}}, {db_c.DELETED: 0}]
-                    + USER_LOOKUP_PIPELINE
-                )
-            )
-
-        return list(collection.find(find_filters, {db_c.DELETED: 0}))
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return None
+    return query_filter
 
 
 @retry(
@@ -773,6 +811,30 @@ def get_all_audiences_and_deliveries(
         logging.error(exc)
 
     return None
+
+
+def get_audiences_count(
+    database: DatabaseClient, filters: dict = None, audience_ids: list = None
+) -> int:
+    """A function to retrieve count of audiences documents.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filters (Union[dict[Tuple], None]): Mongo filter query.
+        audience_ids (list, Optional): A list of audience IDs.
+
+    Returns:
+        int: Count of audiences documents.
+    """
+
+    return get_collection_count(
+        database,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.AUDIENCES_COLLECTION,
+        build_get_audiences_query_filter(
+            filters=filters, audience_ids=audience_ids
+        ),
+    )
 
 
 @retry(

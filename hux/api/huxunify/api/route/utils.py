@@ -327,11 +327,15 @@ class Validation:
     """Validation class for input parameters"""
 
     @staticmethod
-    def validate_integer(value: str) -> int:
+    def validate_integer(
+        value: str, validate_zero_or_greater: bool = False
+    ) -> int:
         """Validates that an integer is valid
 
         Args:
             value (str): String value from the caller.
+            validate_zero_or_greater(bool): Boolean value to validate if value
+            is equal to or greater than zero.
 
         Returns:
             int: Result of the integer conversion.
@@ -345,7 +349,11 @@ class Validation:
         max_value = 2147483647
 
         if value.isdigit():
-            if int(value) <= 0:
+            if validate_zero_or_greater and int(value) < 0:
+                raise ue.InputParamsValidationError(
+                    value, "zero or positive integer"
+                )
+            if not validate_zero_or_greater and int(value) <= 0:
                 raise ue.InputParamsValidationError(value, "positive integer")
             if int(value) > max_value:
                 raise ue.InputParamsValidationError(value, "integer")

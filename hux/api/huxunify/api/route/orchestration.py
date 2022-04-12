@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import aiohttp
 from flasgger import SwaggerView
 from bson import ObjectId
-from flask import Blueprint, request, jsonify, Response
+from flask import Blueprint, request, Response
 from marshmallow import INCLUDE
 from pymongo import MongoClient
 
@@ -42,6 +42,7 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
     LookalikeAudiencePutSchema,
+    AudiencesBatchGetSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -330,12 +331,30 @@ class AudienceView(SwaggerView):
             "required": False,
             "example": "age",
         },
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
+            "in": "query",
+            "type": "string",
+            "description": "Max number of audiences to be returned. 0 returns all audiences",
+            "example": api_c.AUDIENCES_DEFAULT_BATCH_SIZE,
+            "required": False,
+            "default": api_c.AUDIENCES_DEFAULT_BATCH_SIZE,
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
+            "in": "query",
+            "type": "string",
+            "description": "Number of audiences per batch to be returned.",
+            "example": api_c.DEFAULT_BATCH_NUMBER,
+            "required": False,
+            "default": api_c.DEFAULT_BATCH_NUMBER,
+        },
     ]
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of all Audiences.",
-            "schema": {"type": "array", "items": AudienceGetSchema},
+            "description": "List of Audiences with total number of audiences.",
+            "schema": AudiencesBatchGetSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get all Audiences."
@@ -363,6 +382,7 @@ class AudienceView(SwaggerView):
         """
 
         database = get_db_client()
+
         # read the optional request args and set the required filter_dict to
         # query the DB.
         filter_dict = {}
@@ -389,11 +409,44 @@ class AudienceView(SwaggerView):
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
 
+        batch_size = validation.validate_integer(
+            value=request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_SIZE,
+                str(api_c.AUDIENCES_DEFAULT_BATCH_SIZE),
+            ),
+            validate_zero_or_greater=True,
+        )
+
+        batch_number = validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_NUMBER,
+                str(api_c.DEFAULT_BATCH_NUMBER),
+            )
+        )
+
         # get all audiences
         audiences = orchestration_management.get_all_audiences(
             database=database,
             filters=filter_dict,
             audience_ids=favorite_audiences,
+            batch_size=batch_size,
+            batch_number=batch_number,
+        )
+
+        # get total audiences count to add it to response for pagination
+        # request
+        audiences_count = orchestration_management.get_audiences_count(
+            database=database,
+            filters=filter_dict,
+            audience_ids=favorite_audiences,
+        )
+
+        # query and fetch the lookalike audiences only if the batch size in the
+        # request payload is greater than the audiences fetched, in which case
+        # we can query the lookalike_audiences collection as well and append it
+        # to the list of audiences to be returned in response
+        fetch_lookalike_audiences = batch_size == 0 or (
+            batch_size > 0 and len(audiences) < batch_size
         )
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
@@ -517,8 +570,10 @@ class AudienceView(SwaggerView):
                 audience[db_c.ID] in favorite_audiences
             )
 
-        # fetch lookalike audiences if lookalikeable is set to false
-        # as lookalike audiences can not be lookalikeable
+        lookalikes_count = 0
+
+        # fetch lookalike audiences if lookalikeable is set to false as
+        # lookalike audiences can not be lookalikeable
         if not lookalikeable:
             # get all lookalikes and append to the audience list
             query_filter = {db_c.DELETED: False}
@@ -555,57 +610,78 @@ class AudienceView(SwaggerView):
                 query_filter,
                 {db_c.DELETED: 0},
             )
-            lookalikes = (
-                []
+
+            # get total lookalike audiences count to add it to response for
+            # pagination request
+            lookalikes_count = (
+                0
                 if lookalikes is None
-                else lookalikes.get(db_c.DOCUMENTS, [])
+                else lookalikes.get(api_c.TOTAL_RECORDS, 0)
             )
 
-            # get the facebook delivery platform for lookalikes
-            facebook_destination = (
-                destination_management.get_delivery_platform_by_type(
-                    database, db_c.DELIVERY_PLATFORM_FACEBOOK
+            # query for lookalike audiences only if required number of regular
+            # audiences are not fetched based on the batch offset values passed
+            # in the request
+            if fetch_lookalike_audiences:
+                lookalikes = (
+                    []
+                    if lookalikes is None
+                    else lookalikes.get(db_c.DOCUMENTS, [])
                 )
-            )
 
-            # set the is_lookalike property to True so UI knows it is a lookalike.
-            for lookalike in lookalikes:
-                lookalike[api_c.LOOKALIKEABLE] = False
-                lookalike[api_c.IS_LOOKALIKE] = True
-
-                lookalike[db_c.STATUS] = lookalike.get(
-                    db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
-                )
-                lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
-                    db_c.CREATE_TIME
-                ]
-                lookalike[db_c.DESTINATIONS] = (
-                    [facebook_destination] if facebook_destination else []
-                )
-                lookalike[api_c.FAVORITE] = bool(
-                    lookalike[db_c.ID] in favorite_lookalike_audiences
-                )
-                if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
-                    # rename the key
-                    lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
-                        db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                # get the facebook delivery platform for lookalikes
+                facebook_destination = (
+                    destination_management.get_delivery_platform_by_type(
+                        database, db_c.DELIVERY_PLATFORM_FACEBOOK
                     )
+                )
 
-            # combine the two lists and serve.
-            audiences += lookalikes
+                for lookalike in lookalikes:
+                    lookalike = {
+                        **lookalike,
+                        api_c.LOOKALIKEABLE: False,
+                        api_c.IS_LOOKALIKE: True,
+                        db_c.STATUS: lookalike.get(
+                            db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
+                        ),
+                        db_c.AUDIENCE_LAST_DELIVERED: lookalike[
+                            db_c.CREATE_TIME
+                        ],
+                        db_c.DESTINATIONS: (
+                            [facebook_destination]
+                            if facebook_destination
+                            else []
+                        ),
+                        api_c.FAVORITE: bool(
+                            lookalike[db_c.ID] in favorite_lookalike_audiences
+                        ),
+                    }
+                    if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
+                        # rename the key
+                        lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
+                            db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                        )
 
-        else:
-            # if lookalikeable is set to true, filter out the audiences
-            # that are not lookalikeable.
+                    # add the built lookalike dict to the list of audiences to
+                    # be returned
+                    audiences.append(lookalike)
+
+        elif lookalikeable:
+            # if lookalikeable is set to true, filter out the audiences that
+            # are not lookalikeable.
             audiences = [
                 x
                 for x in audiences
                 if x[api_c.LOOKALIKEABLE] == api_c.STATUS_ACTIVE
             ]
 
-        return (
-            jsonify(AudienceGetSchema().dump(audiences, many=True)),
-            HTTPStatus.OK,
+        audiences_batch = {
+            api_c.TOTAL_RECORDS: audiences_count + lookalikes_count,
+            api_c.AUDIENCES: audiences,
+        }
+
+        return HuxResponse.OK(
+            data=audiences_batch, data_schema=AudiencesBatchGetSchema()
         )
 
 

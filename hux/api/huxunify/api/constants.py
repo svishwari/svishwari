@@ -761,6 +761,7 @@ AUDIENCE_DELIVERY_SCHEDULE = "audience_delivery_schedule"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
 MY_ENGAGEMENTS = "my_engagements"
+ENGAGEMENTS_DEFAULT_BATCH_SIZE = 0
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -937,6 +938,7 @@ LOOKALIKE = "lookalike"
 LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
+AUDIENCES_DEFAULT_BATCH_SIZE = 0
 
 PARAM_STORE_PREFIX = "unified"
 SECRET_STORAGE_ERROR_MSG = (

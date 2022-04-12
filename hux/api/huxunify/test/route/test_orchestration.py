@@ -839,7 +839,8 @@ class OrchestrationRouteTest(RouteTestCase):
             f"{self.audience_api_endpoint}",
             headers=t_c.STANDARD_HEADERS,
         )
-        audiences = response.json
+        audiences_batch = response.json
+        audiences = audiences_batch[api_c.AUDIENCES]
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
 
@@ -1507,7 +1508,8 @@ class OrchestrationRouteTest(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        audiences = response.json
+        audiences_batch = response.json
+        audiences = audiences_batch[api_c.AUDIENCES]
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
         self.assertEqual(2, len(audiences))
@@ -1518,6 +1520,25 @@ class OrchestrationRouteTest(RouteTestCase):
             str(self.lookalike_audience_doc[db_c.ID]), audiences[1][api_c.ID]
         )
 
+    def test_get_audiences_with_batch_offset(self):
+        """Test get all audiences with batch offset."""
+
+        response = self.app.get(
+            f"{self.audience_api_endpoint}?{api_c.QUERY_PARAMETER_BATCH_SIZE}"
+            f"=1&{api_c.QUERY_PARAMETER_BATCH_NUMBER}=1",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audiences = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audiences)
+        self.assertEqual(audiences[api_c.TOTAL_RECORDS], 3)
+        self.assertEqual(len(audiences[api_c.AUDIENCES]), 1)
+        self.assertEqual(
+            str(self.audiences[0][db_c.ID]),
+            audiences[api_c.AUDIENCES][0][api_c.ID],
+        )
+
     def test_get_lookalike_audiences_with_valid_filters(self):
         """Test get all audiences with valid filters."""
 
@@ -1526,7 +1547,8 @@ class OrchestrationRouteTest(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        audiences = response.json
+        audiences_batch = response.json
+        audiences = audiences_batch[api_c.AUDIENCES]
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
         self.assertEqual(2, len(audiences))
@@ -1545,7 +1567,8 @@ class OrchestrationRouteTest(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        audiences = response.json
+        audiences_batch = response.json
+        audiences = audiences_batch[api_c.AUDIENCES]
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
         self.assertEqual(3, len(audiences))
