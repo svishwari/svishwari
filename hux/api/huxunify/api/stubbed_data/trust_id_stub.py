@@ -309,7 +309,7 @@ trust_id_comparison_stub_data = [
                         ),
                     },
                     {
-                        "attribute_type": "competent_leaders_employess",
+                        "attribute_type": "competent_leaders_employees",
                         "attribute_name": "Competent leaders & employees",
                         "attribute_score": 68,
                         "attribute_description": (
