@@ -13,7 +13,7 @@
     @close="close"
   >
     <div class="filter-body">
-      <hux-filter-panels :expanded="selectedAttributes.length > 0 ? [0] : []">
+      <hux-filter-panels>
         <div class="checkboxFavorite">
           <text-field
             v-model="segmentName"
@@ -99,7 +99,9 @@ export default {
       localDrawer: this.value,
       selectedAttributes: [],
       enableApply: false,
-      segmentName: "Segment" + " " + (this.segmentLength + 1),
+      segmentName: "Segment",
+      // TODO: once Delete segment API is integrated
+      // segmentName: "Segment" + " " + (this.segmentLength + 1),
       segmentDataObj: {},
     }
   },
@@ -189,5 +191,15 @@ export default {
 }
 .input-box-Field {
   width: 280px !important;
+}
+::v-deep .v-input--selection-controls .v-input__slot {
+  margin-bottom: 0px !important;
+  align-items: start;
+}
+::v-deep .v-input--selection-controls__input {
+  margin-top: 0px !important;
+}
+::v-deep .hux-filters-drawer .content {
+  overflow-x: hidden;
 }
 </style>

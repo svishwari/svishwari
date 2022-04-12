@@ -291,6 +291,17 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
+  // Attaching an Destination to an Engagement attached to a Audience
+  server.post("/engagements/:id/audience/:audienceId/destinations", () => {
+    const code = 200
+    const headers = {}
+    const body = {
+      message:
+        "Successfully added destination to engagement attached to audience",
+    }
+    return new Response(code, headers, body)
+  })
+
   // Attaching an Audience to an Engagement
   server.post("/engagements/:id/audiences", (schema, request) => {
     const code = 200
@@ -879,4 +890,6 @@ export const defineRoutes = (server) => {
   server.get("/trust_id/comparison", () => trustIdComparisonData)
 
   server.get("/trust_id/user_filters", () => addSegmentData)
+
+  server.get("/trust_id/attributes", () => trustIdOverview)
 }

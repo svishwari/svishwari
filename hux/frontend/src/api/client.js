@@ -168,13 +168,24 @@ client["engagements"].attachDestination = (audienceId, data) => {
   return http.post(`/audiences/${audienceId}/destinations`, data)
 }
 
+client["engagements"].attachAudienceDestination = (
+  engagementId,
+  audienceId,
+  data
+) => {
+  return http.post(
+    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
+    data
+  )
+}
+
 client["engagements"].detachDestination = (audienceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
-    return http.delete(`/audience/${audienceId}/destinations`, { data: data })
+    return http.delete(`/audiences/${audienceId}/destinations`, { data: data })
   } else {
-    return http.delete(`/audience/${audienceId}/destinations/${data.id}`)
+    return http.delete(`/audiences/${audienceId}/destinations/${data.id}`)
   }
 }
 
@@ -491,6 +502,13 @@ client["emailDeliverability"].getOverview = () => {
 //#region trustId
 client["trustId"].getComparison = () => {
   return http.get("/trust_id/comparison")
+}
+client["trustId"].getAttributes = () => {
+  return http.get("/trust_id/attributes")
+}
+
+client["trustId"].getSegments = () => {
+  return http.get("/trust_id/user_filters")
 }
 
 export default client

@@ -363,6 +363,21 @@ const actions = {
       throw error
     }
   },
+  async attachEngagementAudienceDestination(
+    _,
+    { engagementId, audienceId, data }
+  ) {
+    try {
+      await api.engagements.attachAudienceDestination(
+        engagementId,
+        audienceId,
+        data
+      )
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
   async detachAudienceDestination(_, { audienceId, data }) {
     try {
       await api.engagements.detachDestination(audienceId, data)

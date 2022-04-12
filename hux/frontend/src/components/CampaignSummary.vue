@@ -1,6 +1,6 @@
 <template>
   <div class="pa-0 campaign-summary">
-    <v-card flat class="card-style" style="position: sticky">
+    <v-card flat class="card-style performance-metric">
       <v-card-text>
         <div class="d-flex summary-tab-wrap">
           <metric-card
@@ -911,6 +911,12 @@ export default {
   }
   .destination-col {
     margin-top: 5px;
+  }
+  .performance-metric {
+    height: 112px;
+    position: sticky;
+    display: flex;
+    align-items: center;
   }
 }
 </style>

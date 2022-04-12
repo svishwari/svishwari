@@ -23,29 +23,45 @@ class TestDelivery(TestCase):
 
         self.engagement_id = None
         self.audience_id = None
+        self.facebook_destination_id = None
 
         for engagement in engagements:
             for audience in engagement["audiences"]:
-                self.engagement_id = engagement["id"]
-                self.audience_id = audience["id"]
+                for destination in audience["destinations"]:
+                    # ensure the destination exists
+                    get_destination = requests.get(
+                        f'{pytest.API_URL}/destinations/{destination["id"]}',
+                        headers=pytest.HEADERS,
+                    )
+                    if get_destination.status_code == 404:
+                        continue
+                    # fetch only facebook's destination_id
+                    if get_destination.json()["name"] != "Facebook":
+                        continue
+                    # ensure that the audience is not a lookalike audience
+                    # since delivery requires regular audience
+                    get_audience = requests.get(
+                        f'{pytest.API_URL}/audiences/{audience["id"]}',
+                        headers=pytest.HEADERS,
+                    )
+                    get_audience_response = get_audience.json()
+                    if (
+                        get_audience.status_code == 200
+                        and get_audience_response
+                        and "is_lookalike" in get_audience_response
+                        and get_audience_response["is_lookalike"]
+                    ):
+                        continue
+                    self.engagement_id = engagement["id"]
+                    self.audience_id = audience["id"]
+                    self.facebook_destination_id = destination["id"]
+                    break
+                else:
+                    continue
                 break
             else:
                 continue
             break
-
-        # fetch facebook's destination_id
-        destinations = requests.get(
-            f"{pytest.API_URL}/destinations",
-            headers=pytest.HEADERS,
-        ).json()
-        self.destination_id = next(
-            (
-                destination["id"]
-                for destination in destinations
-                if destination["name"] == "Facebook"
-            ),
-            None,
-        )
 
     def test_get_engagement_delivery_history(self):
         """Test get engagement delivery history."""
@@ -82,7 +98,7 @@ class TestDelivery(TestCase):
             json={
                 "destinations": [
                     {
-                        "id": self.destination_id,
+                        "id": self.facebook_destination_id,
                     },
                 ],
             },
@@ -99,8 +115,23 @@ class TestDelivery(TestCase):
         # request to deliver an audience from an engagement to a destination
         response = requests.post(
             f"{pytest.API_URL}/{self.ENGAGEMENTS}/{self.engagement_id}/"
-            f"deliver?destinations={self.destination_id}&"
+            f"deliver?destinations={self.facebook_destination_id}&"
             f"audiences={self.audience_id}",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
+
+    def test_deliver_engagement_audience_to_destination(self):
+        """Test deliver an engagement audience to a destination."""
+
+        # request to deliver an audience from an engagement to a destination
+        response = requests.post(
+            f"{pytest.API_URL}/{self.ENGAGEMENTS}/{self.engagement_id}/"
+            f"audience/{self.audience_id}/destination/"
+            f"{self.facebook_destination_id}/deliver",
             headers=pytest.HEADERS,
         )
 
@@ -113,7 +144,7 @@ class TestDelivery(TestCase):
         reset it."""
 
         # request to set delivery schedule of an audience in engagement
-        response = requests.post(
+        set_response = requests.post(
             f"{pytest.API_URL}/{self.ENGAGEMENTS}/{self.engagement_id}/"
             f"audience/{self.audience_id}/schedule",
             json={
@@ -131,11 +162,11 @@ class TestDelivery(TestCase):
         )
 
         # test success
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsInstance(response.json(), dict)
+        self.assertEqual(HTTPStatus.OK, set_response.status_code)
+        self.assertIsInstance(set_response.json(), dict)
 
         # request to reset delivery schedule of an audience in engagement
-        response = requests.post(
+        reset_response = requests.post(
             f"{pytest.API_URL}/{self.ENGAGEMENTS}/{self.engagement_id}/"
             f"audience/{self.audience_id}/schedule",
             json={},
@@ -143,8 +174,8 @@ class TestDelivery(TestCase):
         )
 
         # test success
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsInstance(response.json(), dict)
+        self.assertEqual(HTTPStatus.OK, reset_response.status_code)
+        self.assertIsInstance(reset_response.json(), dict)
 
     def test_deliver_audience_in_an_engagement(self):
         """Test deliver audience in an engagement to the destinations attached
@@ -161,3 +192,42 @@ class TestDelivery(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
+
+    def test_update_and_delete_destination_delivery_schedule_in_engagement_audience(
+        self,
+    ):
+        """Test updating and followed by deleting delivery schedule for a
+        destination in an engagement audience."""
+
+        # request to set delivery schedule of a destination in engagement
+        # audience
+        post_response = requests.post(
+            f"{pytest.API_URL}/{self.ENGAGEMENTS}/{self.engagement_id}/"
+            f"audience/{self.audience_id}/destination/"
+            f"{self.facebook_destination_id}/schedule",
+            json={
+                "periodicity": "Daily",
+                "every": 21,
+                "hour": 11,
+                "minute": 15,
+                "period": "PM",
+            },
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, post_response.status_code)
+        self.assertIsInstance(post_response.json(), dict)
+
+        # request to reset delivery schedule of a destination in engagement
+        # audience
+        delete_response = requests.delete(
+            f"{pytest.API_URL}/{self.ENGAGEMENTS}/{self.engagement_id}/"
+            f"audience/{self.audience_id}/destination/"
+            f"{self.facebook_destination_id}/schedule",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, delete_response.status_code)
+        self.assertIsInstance(delete_response.json(), dict)

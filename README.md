@@ -38,6 +38,8 @@ Metrics API |[https://identity-metrics-api.main.use2.hux-husdev2.in/](https://id
 Grafana|[https://grafana.hux-husdev2.in/login](https://grafana.hux-husdev2.in/login)| - | - | - |
 Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.hux-husdev2.in/graph)| - | - | - |
 
+Note: To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN). 
+
 ## Introduction (Project Justice League)
 Create a unified project platform.
 ![image](https://user-images.githubusercontent.com/20735170/114725970-303d1a80-9cfa-11eb-870f-e36d0588b8a3.png)

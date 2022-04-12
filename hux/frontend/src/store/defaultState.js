@@ -114,6 +114,12 @@ const defaultState = {
     },
     overview: {},
   },
+  trustId: {
+    trustIdOverview: null,
+    segmentComparison: [],
+    addSegment: [],
+    trustIdAttributes: [],
+  },
 }
 
 export default defaultState
