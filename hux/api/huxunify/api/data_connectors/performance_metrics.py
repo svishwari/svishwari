@@ -274,6 +274,13 @@ def get_performance_metrics_stub(
         ]
         stub_data = api_c.PERFORMANCE_METRIC_EMAIL_STUB
 
+    delivery_jobs = get_delivery_jobs_using_metadata(
+        database, engagement_id=ObjectId(engagement_id)
+    )
+
+    delivery_job_destinations = [
+        x[db_c.DELIVERY_PLATFORM_ID] for x in delivery_jobs
+    ]
     # Get all destinations that are related to Email metrics
     destination_ids = []
     for destination_type in destination_types:
@@ -282,8 +289,17 @@ def get_performance_metrics_stub(
                 database, destination_type
             )
         )
-        if destination is not None:
+        if (
+            destination is not None
+            and destination[db_c.ID] in delivery_job_destinations
+        ):
             destination_ids.append(destination[db_c.ID])
+
+    if not destination_ids and ad_type == api_c.DISPLAY_ADS:
+        stub_data = api_c.PERFORMANCE_METRIC_DISPLAY_STUB_NO_DELIVERY
+
+    if not destination_ids and ad_type == api_c.EMAIL_METRICS:
+        stub_data = api_c.PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY
 
     # Group all the performance metrics for the engagement
     final_metric = {api_c.SUMMARY: stub_data}

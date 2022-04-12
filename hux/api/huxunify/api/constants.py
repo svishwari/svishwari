@@ -1819,6 +1819,37 @@ PERFORMANCE_METRIC_DISPLAY_STUB = {
     "engagement_rate": 23,
 }
 
+PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY = {
+    "sent": 0,
+    "hard_bounces": 0,
+    "hard_bounces_rate": 0,
+    "delivered": 0,
+    "delivered_rate": 0,
+    "open": 0,
+    "open_rate": 0,
+    "clicks": 0,
+    "conversions": 0,
+    "click_to_open_rate": 0,
+    "unique_clicks": 0,
+    "unique_opens": 0,
+    "unsubscribe": 0,
+    "unsubscribe_rate": 0,
+}
+
+PERFORMANCE_METRIC_DISPLAY_STUB_NO_DELIVERY = {
+    "spend": 0,
+    "reach": 0,
+    "impressions": 0,
+    "conversions": 0,
+    "clicks": 0,
+    "frequency": 0,
+    "cost_per_thousand_impressions": 0,
+    "click_through_rate": 0,
+    "cost_per_action": 0,
+    "cost_per_click": 0,
+    "engagement_rate": 0,
+}
+
 APPLICATION_CATEGORIES = [
     "Modeling",
     "Reporting",
