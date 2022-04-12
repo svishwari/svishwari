@@ -120,6 +120,7 @@ class OktaTest(TestCase):
         Args:
             request_mocker (Mocker): Request mock object.
         """
+        bad_request_message = {"message": "Failed to connect"}
 
         # setup the request mock post
         request_mocker.get(
@@ -127,13 +128,16 @@ class OktaTest(TestCase):
             f"/oauth2/v1/keys?client_id="
             f"{self.config.OKTA_CLIENT_ID}",
             status_code=HTTPStatus.BAD_REQUEST,
+            json=bad_request_message,
         )
 
         status, message = check_okta_connection()
 
         self.assertFalse(status)
         self.assertEqual(
-            f"OKTA not available. Received: {HTTPStatus.BAD_REQUEST}", message
+            f"Received status code: {HTTPStatus.BAD_REQUEST}, "
+            f"Received message: {bad_request_message}",
+            message,
         )
 
     def test_check_okta_connection_exception(self):

@@ -202,7 +202,7 @@ class AWSClient(CloudClient):
                 return True, f"{client.value} available."
             return (
                 False,
-                f"{client.value} unavailable. Received: "
+                f"{client.value} unavailable. Received status code: "
                 f"{resp['ResponseMetadata']['HTTPStatusCode']}",
             )
         except Exception as exception:  # pylint: disable=broad-except
