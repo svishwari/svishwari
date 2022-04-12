@@ -314,11 +314,6 @@ class TestUtils(unittest.TestCase):
 
         delivery_id_2 = delivery_doc[db_c.ID]
 
-        # Test soft delete functions
-        success_flag = delete_util.delete_audience(database, audience_id)
-
-        self.assertTrue(success_flag)
-
         success_flag = delete_util.delete_ingestion_job(
             database, ingestion_job_id
         )
