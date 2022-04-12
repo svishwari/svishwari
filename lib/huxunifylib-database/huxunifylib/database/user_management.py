@@ -652,6 +652,40 @@ def add_user_trust_id_segments(
     return None
 
 
+def remove_user_trust_id_segments(
+    database: DatabaseClient, okta_id: str, segment_name: str
+) -> Union[list, None]:
+    """A function to fetch trust id segments for a user.
+
+    Args:
+        database (DatabaseClient): A database client.
+        okta_id (str): Okta ID of a user doc.
+        segment_name (str): Name of segment.
+
+    Returns:
+        Union[list, None]: List of trust id segments for a user.
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+
+    try:
+        return collection.find_one_and_update(
+            {db_c.OKTA_ID: okta_id},
+            {
+                "$pull": {
+                    db_c.TRUST_ID_SEGMENTS: {db_c.SEGMENT_NAME: segment_name}
+                },
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                },
+            },
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
 def get_user_trust_id_segments(
     database: DatabaseClient, okta_id: str
 ) -> Union[list, None]:
@@ -669,7 +703,7 @@ def get_user_trust_id_segments(
     try:
         return list(
             collection.find_one({db_c.OKTA_ID: okta_id}).get(
-                db_c.TRUST_ID_SEGMENTS
+                db_c.TRUST_ID_SEGMENTS, []
             )
         )
     except pymongo.errors.OperationFailure as exc:

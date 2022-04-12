@@ -908,4 +908,6 @@ export const defineRoutes = (server) => {
   server.get("/trust_id/comparison", () => trustIdComparisonData)
 
   server.get("/trust_id/user_filters", () => addSegmentData)
+
+  server.get("/trust_id/attributes", () => trustIdOverview)
 }

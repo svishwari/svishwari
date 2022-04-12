@@ -41,7 +41,6 @@ from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
 )
 from huxunify.api.data_connectors.scheduler import generate_cron
-from huxunify.api.data_connectors.courier import toggle_event_driven_routers
 from huxunify.api.data_connectors.performance_metrics import (
     get_performance_metrics,
     generate_metrics_file,
@@ -502,9 +501,6 @@ class UpdateEngagement(SwaggerView):
             "Successfully updated engagement with ID %s.", engagement_id
         )
 
-        # toggle routers since the engagement was updated.
-        toggle_event_driven_routers(database)
-
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
@@ -584,9 +580,6 @@ class DeleteEngagement(SwaggerView):
                 user[api_c.USER_NAME],
             )
             logger.info("Successfully deleted engagement %s.", engagement_id)
-
-            # toggle routers since the engagement was deleted.
-            toggle_event_driven_routers(database)
 
             # remove the engagement from user favorites
             manage_user_favorites(
@@ -733,9 +726,6 @@ class AddAudienceEngagement(SwaggerView):
                 user[api_c.USER_NAME],
             )
 
-        # toggle routers since the engagement was updated.
-        toggle_event_driven_routers(database)
-
         return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
 
 
@@ -848,9 +838,6 @@ class DeleteAudienceEngagement(SwaggerView):
                 db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
                 user[api_c.USER_NAME],
             )
-
-        # toggle routers since the engagement was updated.
-        toggle_event_driven_routers(database)
 
         return {}, HTTPStatus.NO_CONTENT
 
@@ -991,9 +978,6 @@ class AddDestinationEngagedAudience(SwaggerView):
             db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             user[api_c.USER_NAME],
         )
-
-        # toggle routers since the engagement was updated.
-        toggle_event_driven_routers(database)
 
         return (
             EngagementGetSchema().dump(
@@ -1139,9 +1123,6 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             user[api_c.USER_NAME],
         )
-
-        # toggle routers since the engagement was updated.
-        toggle_event_driven_routers(database)
 
         updated_engagement = get_engagements_summary(
             database, [ObjectId(engagement_id)]
@@ -1414,9 +1395,6 @@ class UpdateCampaignsForAudience(SwaggerView):
             db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
             user[api_c.USER_NAME],
         )
-
-        # toggle routers since the engagement was updated.
-        toggle_event_driven_routers(database)
 
         return (
             jsonify(CampaignSchema().dump(campaigns, many=True)),
