@@ -597,7 +597,6 @@ export default {
     }),
     audienceList() {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
-      //  console.log(this.rowData)
       audienceValue.forEach((audience) => {
         if (!("filters" in audience)) {
           audience["filters"] = "null"
