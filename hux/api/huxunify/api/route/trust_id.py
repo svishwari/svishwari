@@ -181,7 +181,7 @@ class TrustIdAttributeComparison(SwaggerView):
         custom_segments = get_user_trust_id_segments(
             database=get_db_client(), okta_id=user[db_c.OKTA_ID]
         )
-        required_comparison_data = trust_id_comparison_stub_data.copy()
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
         for seg in custom_segments:
             _ = [
                 x["segments"].append(
