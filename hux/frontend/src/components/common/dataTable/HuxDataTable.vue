@@ -253,6 +253,7 @@ export default {
     overflow-x: auto;
   }
   ::v-deep table {
+    table-layout: fixed;
     .fixed-column {
       position: absolute;
       align-items: center;

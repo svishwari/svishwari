@@ -307,6 +307,7 @@ export default {
   margin-top: 1px;
   ::v-deep .hux-data-table {
     table {
+      table-layout: initial;
       .data-feed-name {
         @extend .text-ellipsis;
         max-width: 25ch;
@@ -321,10 +322,12 @@ export default {
       tr {
         td {
           padding-left: 42px !important;
-          padding-right: 42px !important;
           height: 60px;
           white-space: nowrap;
           text-overflow: ellipsis !important;
+          &:last-child {
+            padding-right: 30px !important;
+          }
         }
       }
       tbody {

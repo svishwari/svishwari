@@ -68,8 +68,7 @@
               <tooltip v-else-if="col.value === 'last_run'">
                 <v-btn
                   text
-                  class="pa-1 text-body-1"
-                  style="right: 16px"
+                  class="pa-1 text-body-1 r-16"
                   height="auto"
                   color="primary"
                   data-e2e="lastrun"
@@ -250,5 +249,8 @@ export default {
 .data-feeds-table-frame {
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
+}
+.r-16 {
+  right: 16px;
 }
 </style>
