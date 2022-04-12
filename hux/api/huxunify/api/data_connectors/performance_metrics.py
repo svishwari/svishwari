@@ -293,7 +293,15 @@ def get_performance_metrics_stub(
             destination is not None
             and destination[db_c.ID] in delivery_job_destinations
         ):
-            destination_ids.append(destination[db_c.ID])
+            match = [
+                x for x in delivery_jobs if destination[db_c.ID] == x[db_c.ID]
+            ]
+            if (
+                match[api_c.STATUS] == api_c.STATUS_DELIVERED
+                and (datetime.now() - match[db_c.JOB_END_TIME]).total_seconds()
+                > 120
+            ):
+                destination_ids.append(destination[db_c.ID])
 
     if not destination_ids and ad_type == api_c.DISPLAY_ADS:
         stub_data = api_c.PERFORMANCE_METRIC_DISPLAY_STUB_NO_DELIVERY
