@@ -80,7 +80,9 @@
                           }}
                           |
                           {{
-                            numberWithCommas(item[col.value].rating.disagree.count)
+                            numberWithCommas(
+                              item[col.value].rating.disagree.count
+                            )
                           }}
                         </span>
                         <span class="tooltip-subheading neutral-color my-2">
@@ -108,9 +110,7 @@
                           }}
                           |
                           {{
-                            numberWithCommas(
-                              item[col.value].rating.agree.count
-                            )
+                            numberWithCommas(item[col.value].rating.agree.count)
                           }}
                         </span>
                       </div>

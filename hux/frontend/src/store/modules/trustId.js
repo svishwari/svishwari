@@ -86,7 +86,7 @@ const actions = {
     }
   },
 
-  async removeSegment({ commit }, {segment_name}) {
+  async removeSegment({ commit }, { segment_name }) {
     try {
       const payload = {
         segment_name: segment_name,

@@ -516,7 +516,6 @@ export default {
       }
     },
   },
-
 }
 </script>
 
