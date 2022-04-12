@@ -27,8 +27,9 @@
                     class="rhombus-icon"
                     :color="getRhombusColour(item).stroke"
                     :variant="getRhombusColour(item).variant"
+                    :borderWidth="1"
                   />
-                  {{ item[col.value] }}
+                  {{ item[col.value] | TitleCase }}
                 </div>
               </template>
               <template v-else-if="col.value === 'attribute_score'">
@@ -40,6 +41,7 @@
                   :text-color="
                     item[col.value] < 0 ? 'error--text' : 'black--text'
                   "
+                  :borderWidth="2"
                 />
               </template>
               <template v-else-if="col.value === 'attribute_description'">
