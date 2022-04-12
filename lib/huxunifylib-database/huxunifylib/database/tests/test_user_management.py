@@ -497,6 +497,26 @@ class TestUserManagement(unittest.TestCase):
         self.assertTrue(updated_user_doc)
         self.assertIn(segment, updated_user_doc[db_c.TRUST_ID_SEGMENTS])
 
+    def test_remove_user_trust_id_segments(self):
+        """Test remove trust id segment to user"""
+        segment = {"segment_name": "Test Segment", "segment_filters": []}
+
+        updated_user_doc = um.add_user_trust_id_segments(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            segment=segment,
+        )
+        self.assertTrue(updated_user_doc)
+        self.assertIn(segment, updated_user_doc[db_c.TRUST_ID_SEGMENTS])
+
+        updated_user_doc = um.remove_user_trust_id_segments(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            segment_name=segment["segment_name"],
+        )
+        self.assertTrue(updated_user_doc)
+        self.assertNotIn(segment, updated_user_doc[db_c.TRUST_ID_SEGMENTS])
+
     def test_get_user_trust_id_segments(self):
         """Test fetch trust id segments"""
         segment = {"segment_name": "Test Segment", "segment_filters": []}

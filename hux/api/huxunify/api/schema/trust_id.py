@@ -91,7 +91,7 @@ class SegmentFilterSchema(Schema):
 
     type = Str(example="age", required=True)
     description = Str(example="Age", required=True)
-    value = List(Str())
+    values = List(Str())
 
 
 class TrustIdSegmentSchema(Schema):
