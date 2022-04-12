@@ -37,7 +37,7 @@
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
-          <overview v-if="!loading" :data="overviewData" />
+          <overview v-if="!loading" :data="trustIdOverview" />
           <v-tabs v-model="tabOption" class="mt-8">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
@@ -78,6 +78,7 @@
                       v-if="
                         !segmentComparisonLoading && segmentScores.length > 0
                       "
+                      ref="comparisonChart"
                       :segment-scores="segmentScores"
                       data-e2e="trust-comparison-chart"
                     />
@@ -215,7 +216,7 @@
               </div>
             </v-tab-item>
             <v-tab-item key="attributes" class="tab-item">
-              <trust-id-attributes :data="overviewData.attributes" />
+              <trust-id-attributes :data="attributeData.data" />
             </v-tab-item>
           </v-tabs-items>
         </div>
@@ -226,7 +227,7 @@
             view-height="calc(100vh - 180px)"
             :segment-data="addSegmentData"
             :segment-length="segmentScores.length"
-            @onSectionAction="addSegment"
+            @onSectionAction="addSegment($event)"
           />
         </div>
       </div>
@@ -248,9 +249,6 @@ import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
-// TODO: will romve after checking in dev
-// import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
-import overviewData from "@/api/mock/fixtures/trustIdOverview.js"
 
 export default {
   name: "HXTrustID",
@@ -276,7 +274,6 @@ export default {
       isFilterToggled: false,
       segmentLength: 1,
       addSegments: [],
-      overviewData: overviewData,
       borderColorArr: [
         {
           color: "primary",
@@ -386,8 +383,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      // overviewData: "trustId/getTrustOverview",
       segmentScores: "trustId/getSegmentsComparison",
+      trustIdOverview: "trustId/getTrustOverview",
       addSegmentData: "trustId/getAddSegment",
       attributeData: "trustId/getTrustAttributes",
     }),
@@ -455,7 +452,7 @@ export default {
     this.loading = true
     this.segmentComparisonLoading = true
     try {
-      // await this.getOverview()
+      await this.getOverview()
       await this.getTrustIdComparison()
       await this.getSegmentData()
       await this.getTrustIdAttribute()
@@ -466,8 +463,9 @@ export default {
   },
   methods: {
     ...mapActions({
-      // getOverview: "trustId/getTrustIdOverview",
+      getOverview: "trustId/getTrustIdOverview",
       getTrustIdComparison: "trustId/getTrustIdComparison",
+      addNewSegment: "trustId/addSegment",
       getSegmentData: "trustId/getSegmentData",
       getTrustIdAttribute: "trustId/getTrustAttributes",
     }),
@@ -478,8 +476,15 @@ export default {
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
     },
-    addSegment() {
-      this.isFilterToggled = !this.isFilterToggled
+    async addSegment(event) {
+      this.loading = true
+      try {
+        await this.addNewSegment(event)
+        this.$refs.comparisonChart.initializeComparisonChart()
+      } finally {
+        this.loading = false
+        this.isFilterToggled = !this.isFilterToggled
+      }
     },
     removeSegment(item) {
       this.getSelectedSegment.segments.splice(
