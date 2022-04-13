@@ -417,3 +417,17 @@ export function formatInnerHTML(text) {
 export function numberWithCommas(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
+
+/**
+ * Returns initial and batch count for request
+ *
+ * @param {object} request - request for calculating batch size and count
+ * @returns {array} array of strings
+ */
+ export function getBatchCounts(request) {
+  let currentBatch = request.queryParams.batch_number
+  let batchSize = request.queryParams.batch_size
+  let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+  let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+  return [initialCount, lastCount]
+}
