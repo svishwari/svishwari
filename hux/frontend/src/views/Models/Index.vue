@@ -150,6 +150,7 @@
         :icon-size="50"
         title="Models are currently unavailable"
         subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+        class="models-error-height"
       >
       </error>
     </v-row>
@@ -336,5 +337,8 @@ export default {
   height: calc(100vh - 252px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
+}
+.models-error-height {
+  height: 280px !important;
 }
 </style>
