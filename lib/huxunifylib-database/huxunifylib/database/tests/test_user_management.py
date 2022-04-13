@@ -19,7 +19,7 @@ from huxunifylib.database.db_exceptions import (
 )
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
 class TestUserManagement(unittest.TestCase):
     """Test user management module."""
 
