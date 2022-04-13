@@ -1044,7 +1044,7 @@ export default {
     }),
 
     setDefaultBatch() {
-      this.batchDetails.batch_size = 50
+      this.batchDetails.batch_size = 25
       this.batchDetails.batch_number = 1
       this.batchDetails.favorites = false
       this.batchDetails.my_engagements = false
