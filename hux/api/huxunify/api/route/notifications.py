@@ -10,9 +10,9 @@ import pymongo
 from bson import ObjectId
 from flask import Blueprint, request, Response
 from flasgger import SwaggerView
+from huxunifylib.database.user_management import update_all_users
 
 from huxunifylib.util.general.logging import logger
-
 
 from huxunifylib.database import (
     constants as db_c,
@@ -380,6 +380,11 @@ class NotificationStream(SwaggerView):
                             [(db_c.NOTIFICATION_FIELD_CREATED, -1)],
                         )
                     )
+                )
+                # update all users seen_notifications as False
+                update_all_users(
+                    database=get_db_client(),
+                    update_doc={db_c.SEEN_NOTIFICATIONS: False},
                 )
 
         # return the event stream response

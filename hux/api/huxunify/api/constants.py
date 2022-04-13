@@ -959,6 +959,7 @@ FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
+RESET = "reset"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -1803,7 +1804,6 @@ PERFORMANCE_METRIC_EMAIL_STUB = {
     "unsubscribe": 0,
     "unsubscribe_rate": 0,
 }
-
 
 PERFORMANCE_METRIC_DISPLAY_STUB = {
     "spend": 100,
