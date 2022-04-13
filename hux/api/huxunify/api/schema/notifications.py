@@ -1,4 +1,4 @@
-"""Schemas for the notifications API"""
+"""Schemas for the notifications API."""
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, List, Nested

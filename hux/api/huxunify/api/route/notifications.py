@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use
-"""Paths for Notifications API"""
+"""Paths for Notifications API."""
 import asyncio
 import json
 from http import HTTPStatus
@@ -42,7 +42,9 @@ from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
-notifications_bp = Blueprint(api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__)
+notifications_bp = Blueprint(
+    api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__
+)
 
 
 @notifications_bp.before_request
@@ -110,7 +112,9 @@ class CreateNotification(SwaggerView):
             username=user[db_c.USER_DISPLAY_NAME],
         )
 
-        return HuxResponse.CREATED(data=notification, data_schema=NotificationSchema())
+        return HuxResponse.CREATED(
+            data=notification, data_schema=NotificationSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -243,20 +247,26 @@ class NotificationsSearch(SwaggerView):
             set(db_c.NOTIFICATION_TYPES)
         ):
             logger.error("Invalid Notification Type")
-            return HuxResponse.BAD_REQUEST("Invalid or incomplete arguments received")
+            return HuxResponse.BAD_REQUEST(
+                "Invalid or incomplete arguments received"
+            )
 
         notification_categories = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
         )
         notification_categories = (
-            list(notification_categories.split(",")) if notification_categories else []
+            list(notification_categories.split(","))
+            if notification_categories
+            else []
         )
 
-        if notification_categories and not set(notification_categories).issubset(
-            set(db_c.NOTIFICATION_CATEGORIES)
-        ):
+        if notification_categories and not set(
+            notification_categories
+        ).issubset(set(db_c.NOTIFICATION_CATEGORIES)):
             logger.error("Invalid Notification Category")
-            return HuxResponse.BAD_REQUEST("Invalid or incomplete arguments received")
+            return HuxResponse.BAD_REQUEST(
+                "Invalid or incomplete arguments received"
+            )
 
         users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
         if users:
@@ -277,7 +287,9 @@ class NotificationsSearch(SwaggerView):
             )
         ):
             logger.error("Invalid or incomplete arguments received.")
-            return HuxResponse.BAD_REQUEST("Invalid or incomplete arguments received")
+            return HuxResponse.BAD_REQUEST(
+                "Invalid or incomplete arguments received"
+            )
 
         sort_order = (
             pymongo.ASCENDING
@@ -350,14 +362,18 @@ class NotificationStream(SwaggerView):
                 # get the previous time, take last minute.
                 previous_time = datetime.utcnow().replace(
                     tzinfo=timezone.utc
-                ) - timedelta(minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60))
+                ) - timedelta(
+                    minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60)
+                )
 
                 database = get_db_client()
 
                 notifications_dict = notification_management.get_notifications(
                     database,
                     {
-                        db_c.NOTIFICATION_FIELD_CREATED: {"$gt": previous_time},
+                        db_c.NOTIFICATION_FIELD_CREATED: {
+                            "$gt": previous_time
+                        },
                         db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
                         db_c.NOTIFICATION_FIELD_DESCRIPTION: {
                             "$regex": "^Successfully delivered audience"
@@ -375,7 +391,9 @@ class NotificationStream(SwaggerView):
                 )
 
                 # dump the output notification list to the notification schema.
-                yield json.dumps(NotificationsSchema().dump(notifications_dict))
+                yield json.dumps(
+                    NotificationsSchema().dump(notifications_dict)
+                )
 
         # return the event stream response
         return Response(event_stream(), mimetype="text/event-stream")
@@ -438,7 +456,9 @@ class NotificationSearch(SwaggerView):
             )
             return HuxResponse.NOT_FOUND(api_c.NOTIFICATION_NOT_FOUND)
 
-        return HuxResponse.OK(data=notification, data_schema=NotificationSchema())
+        return HuxResponse.OK(
+            data=notification, data_schema=NotificationSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -475,7 +495,9 @@ class DeleteNotification(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels([api_c.ADMIN_LEVEL])
-    def delete(self, notification_id: ObjectId, user: dict) -> Tuple[Response, int]:
+    def delete(
+        self, notification_id: ObjectId, user: dict
+    ) -> Tuple[Response, int]:
         """Deletes a notification by ID.
 
         ---
@@ -501,7 +523,9 @@ class DeleteNotification(SwaggerView):
 
             return HuxResponse.NO_CONTENT()
 
-        logger.error("Could not delete notification with ID %s.", notification_id)
+        logger.error(
+            "Could not delete notification with ID %s.", notification_id
+        )
         return HuxResponse.BAD_REQUEST(api_c.OPERATION_FAILED)
 
 
@@ -534,6 +558,8 @@ class NotificationUsers(SwaggerView):
         Returns:
             Tuple[Response, int] dict of notifications, HTTP status code.
         """
-        users = notification_management.get_distinct_notification_users(get_db_client())
+        users = notification_management.get_distinct_notification_users(
+            get_db_client()
+        )
 
         return HuxResponse.OK(data=users)
