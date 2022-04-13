@@ -74,7 +74,7 @@ def handle_api_exception(exc: Exception, description: str = "") -> None:
         description (str): Exception description.
 
     Returns:
-          None
+          None.
     """
 
     logger.error(
@@ -330,7 +330,7 @@ class Validation:
     def validate_integer(
         value: str, validate_zero_or_greater: bool = False
     ) -> int:
-        """Validates that an integer is valid
+        """Validates that an integer is valid.
 
         Args:
             value (str): String value from the caller.
@@ -341,7 +341,8 @@ class Validation:
             int: Result of the integer conversion.
 
         Raises:
-            InputParamsValidationError: Error that is raised if input is invalid.
+            InputParamsValidationError: Error that is raised if input is
+                invalid.
         """
 
         # max_value added to protect snowflake/and other apps that
@@ -387,14 +388,14 @@ class Validation:
     def validate_date(
         date_string: str, date_format: str = api_c.DEFAULT_DATE_FORMAT
     ) -> datetime:
-        """Validates is a single date is valid
+        """Validates is a single date is valid.
 
         Args:
             date_string (str): Input date string.
             date_format (str): Date string format.
 
         Returns:
-            datetime: datetime object for the string date passed in
+            datetime: datetime object for the string date passed in.
 
         Raises:
             InputParamsValidationError: Error that is raised if input is
@@ -456,13 +457,16 @@ def is_component_favorite(
     okta_user_id: str, component_name: str, component_id: str
 ) -> bool:
     """Checks if component is in favorites of a user.
+
     Args:
         okta_user_id (str): Okta User ID.
         component_name (str): Name of component in user favorite.
         component_id (str): ID of the favorite component.
+
     Returns:
         bool: If component is favorite or not.
     """
+
     user_favorites = get_user(get_db_client(), okta_user_id).get(
         api_c.FAVORITES
     )
@@ -508,7 +512,7 @@ def get_start_end_dates(request: dict, delta: int) -> (str, str):
 def get_user_favorites(
     database: DatabaseClient, user_name: str, component_name: str
 ) -> list:
-    """Get user favorites for a component
+    """Get user favorites for a component.
 
     Args:
         database (DatabaseClient): A database client.
@@ -516,8 +520,9 @@ def get_user_favorites(
         component_name (str): Name of component in user favorite.
 
     Returns:
-        list: List of ids of favorite component
+        list: List of ids of favorite component.
     """
+
     user = get_all_users(database, {db_c.USER_DISPLAY_NAME: user_name})
     if not user:
         return []
@@ -589,15 +594,14 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
 
 def get_required_shap_data(features: list = None) -> dict:
-    """Read in Shap Models Data JSON into a dict
+    """Read in Shap Models Data JSON into a dict.
 
     Args:
         features (list): string list of the features to be returned.
-        If none is passed, all features are returned
+            If none is passed, all features are returned.
 
     Returns:
-        dict: data placed into a dict where the keys are the column names
-
+        dict: data placed into a dict where the keys are the column names.
     """
 
     # return required shap feature data
@@ -609,14 +613,15 @@ def get_required_shap_data(features: list = None) -> dict:
 
 
 def convert_unique_city_filter(request_json: dict) -> dict:
-    """To convert request json to have unique city
+    """To convert request json to have unique city.
 
     Args:
-        request_json (dict): Input audience filter json object
+        request_json (dict): Input audience filter json object.
 
     Returns:
         dict: Converted audience filter.
     """
+
     try:
         for filters in request_json[api_c.AUDIENCE_FILTERS]:
             for item in filters[api_c.AUDIENCE_SECTION_FILTERS]:
@@ -692,7 +697,7 @@ def set_destination_category_in_engagement(engagement: dict):
     """Set destination_category in engagement dictionary.
 
     Args:
-        engagement (dict): engagement dict to be set with destination_category
+        engagement (dict): engagement dict to be set with destination_category.
     """
 
     # build destination_category object that groups audiences by destinations
@@ -833,6 +838,7 @@ def validate_if_resource_owner(
          resource_name (str): Name of the resource.
          resource_id (str): ID of the resource.
          user_name (str): User name of the user.
+
      Returns:
          bool: True if the name of user is the same as created_by.
     """
@@ -956,14 +962,15 @@ def extract_user_request_details_from_issue(
 def group_and_aggregate_datafeed_details_by_date(
     datafeed_details: list,
 ) -> list:
-    """Group and aggregate data feed details by date
+    """Group and aggregate data feed details by date.
 
     Args:
-        datafeed_details (list): list of data feed details to group
+        datafeed_details (list): list of data feed details to group.
 
     Returns:
-        list: List of aggregated and grouped data feed details
+        list: List of aggregated and grouped data feed details.
     """
+
     grouped_datafeed_details = []
 
     grouped_by_date = groupby(
@@ -1064,14 +1071,14 @@ def group_and_aggregate_datafeed_details_by_date(
 def clean_and_aggregate_datafeed_details(
     datafeed_details: list, do_aggregate: bool = False
 ) -> list:
-    """Clean and aggregate datafeed details
+    """Clean and aggregate datafeed details.
 
     Args:
-        datafeed_details (list): List of data feed file details
-        do_aggregate (bool): Flag specifying if aggregation needed
+        datafeed_details (list): List of data feed file details.
+        do_aggregate (bool): Flag specifying if aggregation needed.
 
     Returns:
-        list: list of data feed details
+        list: list of data feed details.
     """
 
     stdev_sample_list = []
@@ -1134,11 +1141,14 @@ def clean_and_aggregate_datafeed_details(
 
 def clean_domain_name_string(domain_name: str) -> str:
     """Cleans strings like abc.com for Marshmallow attribute field.
+
     Args:
         domain_name (str): Name of the domain.
+
     Returns:
         str: Cleaned domain name.
     """
+
     # This is to handle @ present in sfmc data.
     if "@" in domain_name:
         domain_name = domain_name.split("@")[1]
@@ -1147,15 +1157,15 @@ def clean_domain_name_string(domain_name: str) -> str:
 
 
 def parse_seconds_to_duration_string(duration: int):
-    """Convert duration timedelta to HH:MM:SS format
+    """Convert duration timedelta to HH:MM:SS format.
 
     Args:
-        duration (int): Duration in seconds
+        duration (int): Duration in seconds.
 
     Returns:
-        str: duration string
-
+        str: duration string.
     """
+
     seconds = duration % 60
     minutes = (duration // 60) % 60
     hours = duration // (60 * 60)
@@ -1164,12 +1174,15 @@ def parse_seconds_to_duration_string(duration: int):
 
 
 def generate_cache_key_string(data: Union[dict, list]) -> Generator:
-    """Generates cache key strings for dicts and lists
+    """Generates cache key strings for dicts and lists.
+
     Args:
-        data (Union[dict,list]): Input data to get cache key
+        data (Union[dict,list]): Input data to get cache key.
+
     Yields:
-        Generator: String Generator
+        Generator: String Generator.
     """
+
     for item in data:
         if isinstance(item, list):
             generate_cache_key_string(item)
@@ -1195,10 +1208,12 @@ def set_destination_authentication_secrets(
 
     Returns:
         ssm_params (dict): The key to where the parameters are stored.
+
     Raises:
         KeyError: Exception when the key is missing in the object.
         ProblemException: Any exception raised during endpoint execution.
     """
+
     ssm_params = {}
 
     if destination_type not in api_c.DESTINATION_SECRETS:
