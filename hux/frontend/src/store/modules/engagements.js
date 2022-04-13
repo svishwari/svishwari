@@ -224,10 +224,10 @@ const actions = {
           engagement.delivery_schedule === null
             ? null
             : {
-              schedule: engagement.delivery_schedule.schedule,
-              end_date: engagement.delivery_schedule.end_date,
-              start_date: engagement.delivery_schedule.start_date,
-            },
+                schedule: engagement.delivery_schedule.schedule,
+                end_date: engagement.delivery_schedule.end_date,
+                start_date: engagement.delivery_schedule.start_date,
+              },
         audiences: Object.values(engagement.audiences).map((audience) => {
           return {
             id: audience.id,
