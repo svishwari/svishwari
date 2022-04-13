@@ -219,7 +219,7 @@ export const defineRoutes = (server) => {
       engagements: allEngagements.models,
       total_records: allEngagements.length,
     }
-    if (request.queryParams?.batch_size) {
+    if (request.queryParams.batch_size != 0) {
       let [initialCount, lastCount] = getBatchCounts(request)
       engagements.engagements = allEngagements.models.slice(
         initialCount,
@@ -729,7 +729,7 @@ export const defineRoutes = (server) => {
       audiences: allAudiences.models,
       total_records: allAudiences.length,
     }
-    if (request.queryParams?.batch_size) {
+    if (request.queryParams.batch_size != 0) {
       let [initialCount, lastCount] = getBatchCounts(request)
       audiences.audiences = allAudiences.models.slice(initialCount, lastCount)
     }

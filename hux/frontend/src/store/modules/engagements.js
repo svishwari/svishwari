@@ -127,19 +127,15 @@ const mutations = {
 const actions = {
   async getAll({ commit }, batchDetails) {
     try {
-      let requestParams = {}
-      if (batchDetails) {
-        if (!batchDetails?.isLazyLoad) {
-          commit("RESET_ALL")
-        }
-        requestParams = {
-          favorites: batchDetails?.favorites,
-          my_engagements: batchDetails?.my_engagements,
-          batch_number: batchDetails?.batch_number,
-          batch_size: batchDetails?.batch_size,
-        }
+      if (!batchDetails?.isLazyLoad) {
+        commit("RESET_ALL")
       }
-      const response = await api.engagements.getEngagements(requestParams)
+      const response = await api.engagements.getEngagements({
+        favorites: batchDetails ? batchDetails.favorites : false,
+        my_engagements: batchDetails ? batchDetails.my_engagements : false,
+        batch_number: batchDetails ? batchDetails.batch_number : 1,
+        batch_size: batchDetails ? batchDetails.batch_size : 0,
+      })
       commit("SET_ALL", response.data.engagements)
       commit("SET_TOTAL", response.data.total_records)
     } catch (error) {
@@ -228,10 +224,10 @@ const actions = {
           engagement.delivery_schedule === null
             ? null
             : {
-                schedule: engagement.delivery_schedule.schedule,
-                end_date: engagement.delivery_schedule.end_date,
-                start_date: engagement.delivery_schedule.start_date,
-              },
+              schedule: engagement.delivery_schedule.schedule,
+              end_date: engagement.delivery_schedule.end_date,
+              start_date: engagement.delivery_schedule.start_date,
+            },
         audiences: Object.values(engagement.audiences).map((audience) => {
           return {
             id: audience.id,

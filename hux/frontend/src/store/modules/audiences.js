@@ -155,22 +155,19 @@ const mutations = {
 const actions = {
   async getAll({ commit }, batchDetails) {
     try {
-      let requestParams = {}
-      if (batchDetails) {
-        if (!batchDetails?.isLazyLoad) {
-          commit("RESET_ALL")
-        }
-        requestParams = {
-          lookalikeable: batchDetails?.lookalikeable,
-          deliveries: batchDetails?.deliveries,
-          favorites: batchDetails?.favorites,
-          worked_by: batchDetails?.worked_by,
-          attribute: batchDetails?.attribute,
-          batch_number: batchDetails?.batch_number,
-          batch_size: batchDetails?.batch_size,
-        }
+      if (!batchDetails?.isLazyLoad) {
+        commit("RESET_ALL")
       }
-      const response = await api.audiences.getAudiences(requestParams)
+
+      const response = await api.audiences.getAudiences({
+        lookalikeable: batchDetails ? batchDetails.lookalikeable : false,
+        deliveries: batchDetails ? batchDetails.deliveries : false,
+        favorites: batchDetails ? batchDetails.favorites : false,
+        worked_by: batchDetails ? batchDetails.worked_by : false,
+        attribute: batchDetails ? batchDetails.attribute : [],
+        batch_number: batchDetails ? batchDetails.batch_number : 1,
+        batch_size: batchDetails ? batchDetails.batch_size : 0,
+      })
       commit("SET_ALL", response.data.audiences)
       commit("SET_TOTAL", response.data.total_records)
     } catch (error) {
