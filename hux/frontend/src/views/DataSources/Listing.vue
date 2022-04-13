@@ -176,7 +176,7 @@ export default {
         {
           text: "Data feed",
           value: "name",
-          width: "180",
+          width: "120",
         },
         {
           text: "Status",
@@ -191,12 +191,12 @@ export default {
         {
           text: "Records processed",
           value: "records_processed",
-          width: "122",
+          width: "100",
         },
         {
           text: "% of records processed",
           value: "records_processed_percentage",
-          width: "125",
+          width: "110",
         },
         {
           text: "30 day avg",
@@ -208,7 +208,7 @@ export default {
         {
           text: "Last processed",
           value: "last_processed",
-          width: "160",
+          width: "120",
         },
       ],
       loading: true,
@@ -307,6 +307,7 @@ export default {
   margin-top: 1px;
   ::v-deep .hux-data-table {
     table {
+      table-layout: initial;
       .data-feed-name {
         @extend .text-ellipsis;
         max-width: 25ch;
@@ -320,16 +321,16 @@ export default {
       }
       tr {
         td {
+          padding-left: 42px !important;
           height: 60px;
           white-space: nowrap;
+          text-overflow: ellipsis !important;
+          &:last-child {
+            padding-right: 30px !important;
+          }
         }
       }
       tbody {
-        tr {
-          td {
-            padding-left: 42px;
-          }
-        }
         tr:last-child {
           td {
             border-bottom: 1px solid var(--v-black-lighten3) !important;

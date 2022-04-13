@@ -68,13 +68,15 @@
               <tooltip v-else-if="col.value === 'last_run'">
                 <v-btn
                   text
-                  class="pa-1 text-body-1"
+                  class="pa-1 text-body-1 r-16"
                   height="auto"
                   color="primary"
                   data-e2e="lastrun"
                   @click="openLastRunDrawer(item)"
                 >
-                  {{ item[col.value] | Date("relative") }}
+                  <div class="ml-4 mr-4">
+                    {{ item[col.value] | Date("relative") }}
+                  </div>
                 </v-btn>
                 <template #tooltip>{{ item[col.value] | Date }}</template>
               </tooltip>
@@ -250,5 +252,8 @@ export default {
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
   background-size: 90%;
+}
+.r-16 {
+  right: 16px;
 }
 </style>
