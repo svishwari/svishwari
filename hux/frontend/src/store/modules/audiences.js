@@ -155,7 +155,7 @@ const mutations = {
 const actions = {
   async getAll({ commit }, batchDetails) {
     try {
-      let requestParams =  {}
+      let requestParams = {}
       if (batchDetails) {
         if (!batchDetails?.isLazyLoad) {
           commit("RESET_ALL")
