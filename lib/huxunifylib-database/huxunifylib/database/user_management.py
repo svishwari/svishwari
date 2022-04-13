@@ -178,12 +178,15 @@ def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
+def get_all_users(
+    database: DatabaseClient, filter_dict: dict = None, project_dict: dict = None
+) -> list:
     """A function to get all user documents.
 
     Args:
         database (DatabaseClient): A database client.
         filter_dict (dict): filter dictionary for adding custom filters.
+        project_dict(dict): project dictionary to return specific fields.
 
     Returns:
         list: List of all user documents.
@@ -192,7 +195,12 @@ def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
-        return list(collection.find(filter_dict if filter_dict else {}))
+        return list(
+            collection.find(
+                filter_dict if filter_dict else {},
+                projection=project_dict if project_dict else {db_c.DELETED: 0},
+            )
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -541,9 +549,7 @@ def add_applications_to_users(
     return None
 
 
-def get_user_applications(
-    database: DatabaseClient, okta_id: str
-) -> Union[list, None]:
+def get_user_applications(database: DatabaseClient, okta_id: str) -> Union[list, None]:
     """A function to fetch user applications.
 
     Args:
@@ -671,9 +677,7 @@ def remove_user_trust_id_segments(
         return collection.find_one_and_update(
             {db_c.OKTA_ID: okta_id},
             {
-                "$pull": {
-                    db_c.TRUST_ID_SEGMENTS: {db_c.SEGMENT_NAME: segment_name}
-                },
+                "$pull": {db_c.TRUST_ID_SEGMENTS: {db_c.SEGMENT_NAME: segment_name}},
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
@@ -702,9 +706,7 @@ def get_user_trust_id_segments(
 
     try:
         return list(
-            collection.find_one({db_c.OKTA_ID: okta_id}).get(
-                db_c.TRUST_ID_SEGMENTS, []
-            )
+            collection.find_one({db_c.OKTA_ID: okta_id}).get(db_c.TRUST_ID_SEGMENTS, [])
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

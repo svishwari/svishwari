@@ -9,6 +9,7 @@ from dateutil.relativedelta import relativedelta
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database.user_management import set_user, update_user
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.notifications import NotificationSchema
@@ -76,6 +77,9 @@ class TestNotificationRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        # assert that the return json body is successfully validated to return
+        # an empty dict
+        self.assertFalse(NotificationSchema().validate(response.json))
 
     def test_create_notification_invalid_category(self):
         """Test create notification"""
@@ -136,7 +140,9 @@ class TestNotificationRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(NotificationSchema().validate(response.json))
+        # assert that the return json body is successfully validated to return
+        # an empty dict
+        self.assertFalse(NotificationSchema().validate(response.json))
 
     def test_get_notification_with_username(self):
         """Test get notification."""
@@ -206,17 +212,12 @@ class TestNotificationRoutes(RouteTestCase):
     def test_get_notifications_custom_params(self):
         """Test get notifications with filters."""
 
-        expected_notification_types = ",".join(
-            [x.title() for x in db_c.NOTIFICATION_TYPES[:-1]]
-        )
-        expected_notification_categories = ",".join(
-            [x.title() for x in db_c.NOTIFICATION_CATEGORIES[:-1]]
-        )
+        expected_notification_types = ",".join(db_c.NOTIFICATION_TYPES[:-1])
+        expected_notification_categories = ",".join(db_c.NOTIFICATION_CATEGORIES[:-1])
         expected_notifications = [
             x
             for x in self.notifications
-            if x[api_c.NOTIFICATION_TYPE]
-            in expected_notification_types.split(",")
+            if x[api_c.NOTIFICATION_TYPE] in expected_notification_types.split(",")
             and x[db_c.CATEGORY] in expected_notification_categories.split(",")
         ]
         response = self.app.get(
@@ -239,9 +240,7 @@ class TestNotificationRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(
-            len(expected_notifications), response.json[api_c.TOTAL]
-        )
+        self.assertEqual(len(expected_notifications), response.json[api_c.TOTAL])
         self.assertCountEqual(
             expected_notifications, response.json[api_c.NOTIFICATIONS_TAG]
         )
@@ -283,6 +282,26 @@ class TestNotificationRoutes(RouteTestCase):
             username=self.test_username,
         )
 
+        # write a user to the database
+        user = set_user(
+            database=self.database,
+            okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],
+            email_address=t_c.VALID_USER_RESPONSE[api_c.EMAIL],
+            display_name=t_c.VALID_USER_RESPONSE[api_c.NAME],
+            role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
+        )
+        # update the user with alert configurations
+        user = update_user(
+            database=self.database,
+            okta_id=user[db_c.OKTA_ID],
+            update_doc={
+                **api_c.ALERT_SAMPLE_RESPONSE,
+                **{
+                    db_c.UPDATED_BY: user[db_c.USER_DISPLAY_NAME],
+                },
+            },
+        )
+
         with self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/stream",
             headers=t_c.STANDARD_HEADERS,
@@ -295,12 +314,10 @@ class TestNotificationRoutes(RouteTestCase):
                 self.assertIn(db_c.NOTIFICATIONS_COLLECTION, notifications)
                 self.assertEqual(notifications[api_c.TOTAL], 1)
 
-                for notification in notifications[
-                    db_c.NOTIFICATIONS_COLLECTION
-                ]:
+                for notification in notifications[db_c.NOTIFICATIONS_COLLECTION]:
                     self.assertEqual(
                         notification[api_c.NOTIFICATION_TYPE],
-                        db_c.NOTIFICATION_TYPE_SUCCESS.title(),
+                        db_c.NOTIFICATION_TYPE_SUCCESS,
                     )
                 break
 
