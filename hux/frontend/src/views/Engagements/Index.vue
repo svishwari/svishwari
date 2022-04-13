@@ -316,7 +316,10 @@
               >
                 <template #item-row="{ item, expandFunc, isExpanded }">
                   <tr :class="{ 'expanded-row': isExpanded }">
-                    <td :style="{ width: expandedHeaders[0].width }"></td>
+                    <td
+                      :style="{ width: expandedHeaders[0].width }"
+                      class="expanded-row-cover"
+                    ></td>
                     <td
                       v-for="header in getAudienceHeaders(subHeaders)"
                       :key="header.value"
@@ -328,9 +331,6 @@
                       <div v-if="header.value == 'name'">
                         <menu-cell
                           :value="item[header.value]"
-                          :menu-options="
-                            getAudienceActionItems(item, parentItem.id)
-                          "
                           route-name="AudienceInsight"
                           :route-param="item['id']"
                           :data="item"
@@ -1490,6 +1490,19 @@ export default {
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }
+      ::v-deep .v-data-table {
+        .v-data-table__wrapper {
+          tr {
+            td:first-child {
+              width: 300px;
+              position: fixed;
+              margin-left: 220px;
+              display: block;
+              background-color: var(--v-primary-lighten1);
+            }
+          }
+        }
+      }
     }
   }
   ::v-deep .hux-data-table.expanded-table {
@@ -1497,6 +1510,13 @@ export default {
       box-shadow: inset 0px 10px 10px -4px #d0d0ce !important;
       .child-row {
         border-right: none;
+      }
+      .expanded-row-cover {
+        width: 300px;
+        position: fixed;
+        margin-left: 220px;
+        display: block;
+        background-color: var(--v-primary-lighten1);
       }
     }
     td:nth-child(1) {
