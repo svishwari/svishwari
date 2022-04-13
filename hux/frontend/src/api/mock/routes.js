@@ -214,11 +214,17 @@ export const defineRoutes = (server) => {
 
   // engagements
   server.get("/engagements", (schema, request) => {
-    let [initialCount, lastCount] = getBatchCounts(request)
     let allEngagements = schema.engagements.all()
     const engagements = {
-      engagements: allEngagements.models.slice(initialCount, lastCount),
+      engagements: allEngagements.models,
       total_records: allEngagements.length,
+    }
+    if (request.queryParams.batch_size != 0) {
+      let [initialCount, lastCount] = getBatchCounts(request)
+      engagements.engagements = allEngagements.models.slice(
+        initialCount,
+        lastCount
+      )
     }
     return engagements
   })
@@ -718,11 +724,14 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/audiences", (schema, request) => {
-    let [initialCount, lastCount] = getBatchCounts(request)
     let allAudiences = schema.audiences.all()
     const audiences = {
-      audiences: allAudiences.models.slice(initialCount, lastCount),
+      audiences: allAudiences.models,
       total_records: allAudiences.length,
+    }
+    if (request.queryParams.batch_size != 0) {
+      let [initialCount, lastCount] = getBatchCounts(request)
+      audiences.audiences = allAudiences.models.slice(initialCount, lastCount)
     }
     return audiences
   })

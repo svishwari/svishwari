@@ -131,10 +131,10 @@ const actions = {
         commit("RESET_ALL")
       }
       const response = await api.engagements.getEngagements({
-        favorites: batchDetails?.favorites,
-        my_engagements: batchDetails?.my_engagements,
-        batch_number: batchDetails?.batch_number,
-        batch_size: batchDetails?.batch_size,
+        favorites: batchDetails ? batchDetails.favorites : false,
+        my_engagements: batchDetails ? batchDetails.my_engagements : false,
+        batch_number: batchDetails ? batchDetails.batch_number : 1,
+        batch_size: batchDetails ? batchDetails.batch_size : 0,
       })
       commit("SET_ALL", response.data.engagements)
       commit("SET_TOTAL", response.data.total_records)

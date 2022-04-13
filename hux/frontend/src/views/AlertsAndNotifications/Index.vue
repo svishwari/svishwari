@@ -423,19 +423,19 @@ export default {
         this.batchDetails.batch_size = 25
         this.batchDetails.batch_number = 1
         this.batchDetails.isLazyLoad = false
-        if (data.selctedAlertType.length !== 0) {
+        if (data.selectedAlertType.length !== 0) {
           this.batchDetails.notification_types =
-            data.selctedAlertType.toString()
+            data.selectedAlertType.toString()
         } else {
           delete this.batchDetails.notification_types
         }
-        if (data.selctedCategory.length !== 0) {
-          this.batchDetails.category = data.selctedCategory.toString()
+        if (data.selectedCategory.length !== 0) {
+          this.batchDetails.category = data.selectedCategory.toString()
         } else {
           delete this.batchDetails.category
         }
-        if (data.selctedUsers.length !== 0) {
-          this.batchDetails.users = data.selctedUsers.toString()
+        if (data.selectedUsers.length !== 0) {
+          this.batchDetails.users = data.selectedUsers.toString()
         } else {
           delete this.batchDetails.users
         }
