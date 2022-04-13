@@ -59,16 +59,16 @@ USER_LOOKUP_PIPELINE = [
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_user(
-        database: DatabaseClient,
-        okta_id: str,
-        email_address: str,
-        role: str = db_c.USER_ROLE_VIEWER,
-        organization: str = "",
-        subscriptions: list = None,
-        display_name: str = "",
-        profile_photo: str = "",
-        pii_access: bool = False,
-        seen_notifications: bool = False,
+    database: DatabaseClient,
+    okta_id: str,
+    email_address: str,
+    role: str = db_c.USER_ROLE_VIEWER,
+    organization: str = "",
+    subscriptions: list = None,
+    display_name: str = "",
+    profile_photo: str = "",
+    pii_access: bool = False,
+    seen_notifications: bool = False,
 ) -> Union[dict, None]:
     """A function to set a user.
 
@@ -96,10 +96,10 @@ def set_user(
 
     # validate okta_id and email_address
     if (
-            not isinstance(okta_id, str)
-            or not isinstance(email_address, str)
-            or not re.search(db_c.EMAIL_REGEX, email_address)
-            or not okta_id
+        not isinstance(okta_id, str)
+        or not isinstance(email_address, str)
+        or not re.search(db_c.EMAIL_REGEX, email_address)
+        or not okta_id
     ):
         return None
 
@@ -133,11 +133,11 @@ def set_user(
 
     # validate okta
     if name_exists(
-            database,
-            db_c.DATA_MANAGEMENT_DATABASE,
-            db_c.USER_COLLECTION,
-            db_c.OKTA_ID,
-            okta_id,
+        database,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.USER_COLLECTION,
+        db_c.OKTA_ID,
+        okta_id,
     ):
         raise de.DuplicateName(okta_id)
 
@@ -207,8 +207,8 @@ def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_user(
-        database: DatabaseClient,
-        okta_id: str,
+    database: DatabaseClient,
+    okta_id: str,
 ) -> bool:
     """A function to delete a user.
 
@@ -235,7 +235,7 @@ def delete_user(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_user(
-        database: DatabaseClient, okta_id: str, update_doc: dict
+    database: DatabaseClient, okta_id: str, update_doc: dict
 ) -> Union[dict, None]:
     """A function to update a user.
 
@@ -273,7 +273,7 @@ def update_user(
         db_c.UPDATED_BY,
         db_c.USER_PII_ACCESS,
         db_c.USER_ALERTS,
-        db_c.SEEN_NOTIFICATIONS
+        db_c.SEEN_NOTIFICATIONS,
     ]
 
     # validate allowed fields, any invalid returns, raise error
@@ -302,7 +302,7 @@ def update_user(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_all_users(
-        database: DatabaseClient, update_doc: dict
+    database: DatabaseClient, update_doc: dict
 ) -> Union[dict, None]:
     """A function to update a user.
 
@@ -335,7 +335,7 @@ def update_all_users(
         db_c.UPDATED_BY,
         db_c.USER_PII_ACCESS,
         db_c.USER_ALERTS,
-        db_c.SEEN_NOTIFICATIONS
+        db_c.SEEN_NOTIFICATIONS,
     ]
 
     # validate allowed fields, any invalid returns, raise error
@@ -351,7 +351,6 @@ def update_all_users(
             {},
             {"$set": update_doc},
             upsert=False,
-
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -364,11 +363,11 @@ def update_all_users(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def manage_user_favorites(
-        database: DatabaseClient,
-        okta_id: str,
-        component_name: str,
-        component_id: ObjectId,
-        delete_flag: bool = False,
+    database: DatabaseClient,
+    okta_id: str,
+    component_name: str,
+    component_id: ObjectId,
+    delete_flag: bool = False,
 ) -> Union[dict, None]:
     """A function to add a favorite component for a user.
 
@@ -393,9 +392,9 @@ def manage_user_favorites(
 
     # validate user input id and campaign id
     if (
-            not okta_id
-            or not isinstance(component_id, ObjectId)
-            or component_name not in db_c.FAVORITE_COMPONENTS
+        not okta_id
+        or not isinstance(component_id, ObjectId)
+        or component_name not in db_c.FAVORITE_COMPONENTS
     ):
         return None
 
@@ -416,14 +415,14 @@ def manage_user_favorites(
             if not audience_found:
                 # try lookalike
                 if get_document(
-                        database, db_c.LOOKALIKE_AUDIENCE_COLLECTION, id_filter
+                    database, db_c.LOOKALIKE_AUDIENCE_COLLECTION, id_filter
                 ):
                     component_name = db_c.LOOKALIKE
                 else:
                     raise de.InvalidID(component_id)
         else:
             if not delete_flag and not get_document(
-                    database, component_collection[component_name], id_filter
+                database, component_collection[component_name], id_filter
             ):
                 raise de.InvalidID(component_id)
     except pymongo.errors.OperationFailure as exc:
@@ -464,11 +463,11 @@ def manage_user_favorites(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def manage_user_dashboard_config(
-        database: DatabaseClient,
-        okta_id: str,
-        config_key: str,
-        config_value: Any,
-        delete_flag: bool = False,
+    database: DatabaseClient,
+    okta_id: str,
+    config_key: str,
+    config_value: Any,
+    delete_flag: bool = False,
 ) -> Union[dict, None]:
     """A function to manage user dashboard configuration.
 
@@ -517,11 +516,11 @@ def manage_user_dashboard_config(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_user_applications(
-        database: DatabaseClient,
-        okta_id: str,
-        application_id: ObjectId,
-        url: str = None,
-        is_added: bool = True,
+    database: DatabaseClient,
+    okta_id: str,
+    application_id: ObjectId,
+    url: str = None,
+    is_added: bool = True,
 ) -> Union[dict, None]:
     """A function to update user applications.
 
@@ -561,10 +560,10 @@ def update_user_applications(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def add_applications_to_users(
-        database: DatabaseClient,
-        okta_id: str,
-        application_id: ObjectId,
-        url: str = None,
+    database: DatabaseClient,
+    okta_id: str,
+    application_id: ObjectId,
+    url: str = None,
 ) -> Union[dict, None]:
     """A function to add user applications.
 
@@ -608,7 +607,7 @@ def add_applications_to_users(
 
 
 def get_user_applications(
-        database: DatabaseClient, okta_id: str
+    database: DatabaseClient, okta_id: str
 ) -> Union[list, None]:
     """A function to fetch user applications.
 
@@ -687,7 +686,7 @@ def get_user_applications(
 
 
 def add_user_trust_id_segments(
-        database: DatabaseClient, okta_id: str, segment: dict
+    database: DatabaseClient, okta_id: str, segment: dict
 ) -> Union[list, None]:
     """A function to add trust id segments for a user.
 
@@ -719,7 +718,7 @@ def add_user_trust_id_segments(
 
 
 def remove_user_trust_id_segments(
-        database: DatabaseClient, okta_id: str, segment_name: str
+    database: DatabaseClient, okta_id: str, segment_name: str
 ) -> Union[list, None]:
     """A function to fetch trust id segments for a user.
 
@@ -753,7 +752,7 @@ def remove_user_trust_id_segments(
 
 
 def get_user_trust_id_segments(
-        database: DatabaseClient, okta_id: str
+    database: DatabaseClient, okta_id: str
 ) -> Union[list, None]:
     """A function to fetch trust id segments for a user.
 

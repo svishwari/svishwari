@@ -211,12 +211,12 @@ class TestUserManagement(unittest.TestCase):
         """
 
         # set update_doc dict to update the user_doc\
-        um.update_all_users(database=self.database, update_doc={db_c.SEEN_NOTIFICATIONS:True})
+        um.update_all_users(
+            database=self.database, update_doc={db_c.SEEN_NOTIFICATIONS: True}
+        )
 
         for user in um.get_all_users(database=self.database):
             self.assertTrue(user.get(db_c.SEEN_NOTIFICATIONS))
-
-
 
     def test_update_user_failure_disallowed_field(self) -> None:
         """Test update_user routine failure with disallowed field."""
