@@ -422,9 +422,9 @@ export function numberWithCommas(num) {
  * Returns initial and batch count for request
  *
  * @param {object} request - request for calculating batch size and count
- * @returns {array} array of strings
+ * @returns {Array} array of strings
  */
- export function getBatchCounts(request) {
+export function getBatchCounts(request) {
   let currentBatch = request.queryParams.batch_number
   let batchSize = request.queryParams.batch_size
   let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
