@@ -213,7 +213,18 @@ export const defineRoutes = (server) => {
   server.get("/destinations/constants", () => destinationsConstants)
 
   // engagements
-  server.get("/engagements")
+  server.get("/engagements", (schema, request) => {
+    let currentBatch = request.queryParams.batch_number
+    let batchSize = request.queryParams.batch_size
+    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let allEngagements = schema.engagements.all()
+    const engagements = {
+      engagements: allEngagements.models.slice(initialCount, lastCount),
+      total: allEngagements.length,
+    }
+    return engagements
+  })
 
   server.get("/engagements/:id", (schema, request) => {
     const id = request.params.id
@@ -717,8 +728,18 @@ export const defineRoutes = (server) => {
     return schema.users.all()
   })
 
-  // audiences
-  server.get("/audiences")
+  server.get("/audiences", (schema, request) => {
+    let currentBatch = request.queryParams.batch_number
+    let batchSize = request.queryParams.batch_size
+    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let allAudiences = schema.audiences.all()
+    const audiences = {
+      audiences: allAudiences.models.slice(initialCount, lastCount),
+      total: allAudiences.length,
+    }
+    return audiences
+  })
 
   server.get("/audiences/:id/audience_insights", () => {
     demographicsData.demo = mapData
@@ -744,9 +765,7 @@ export const defineRoutes = (server) => {
     const requestData = JSON.parse(request.requestBody)
     requestData.engagements = []
     requestData.destinations = []
-
     const now = dayjs().toJSON()
-
     const attrs = {
       ...requestData,
       create_time: () => now,
@@ -754,7 +773,6 @@ export const defineRoutes = (server) => {
       update_time: () => now,
       updated_by: me.full_name(),
     }
-
     return server.create("audience", attrs)
   })
 
