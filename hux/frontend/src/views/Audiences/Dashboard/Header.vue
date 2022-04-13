@@ -43,7 +43,7 @@
             </span>
           </template>
           <template #hover-content>
-            <div class="text--body-1 pb-2">
+            <div class="text--body-1">
               <span v-if="audienceData.is_lookalike === true">
                 Edit {{ audienceData.name }}
               </span>
