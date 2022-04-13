@@ -662,24 +662,18 @@
         </empty-page>
       </div>
 
-      <empty-page
+      <div
         v-if="!loading && rowData.length == 0 && isEmptyError"
-        class="unavailable-engagement"
-        type="error-on-screens"
-        :size="50"
+        class="error-wrap"
       >
-        <template #title>
-          <div class="title-no-notification">
-            Engagements are currently unavailable
-          </div>
-        </template>
-        <template #subtitle>
-          <div class="des-no-notification">
-            Our team is working hard to fix it. Please be patient and try again
-            soon!
-          </div>
-        </template>
-      </empty-page>
+        <error
+          icon-type="error-on-screens"
+          :icon-size="50"
+          title="Engagements are currently unavailable"
+          subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+        >
+        </error>
+      </div>
 
       <div class="ml-auto">
         <engagement-filter
@@ -820,7 +814,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
-import EmptyPage from "@/components/common/EmptyPage"
+import Error from "@/components/common/screens/Error"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Icon from "@/components/common/Icon"
 import huxButton from "@/components/common/huxButton"
@@ -844,7 +838,7 @@ export default {
     Breadcrumb,
     Icon,
     huxButton,
-    EmptyPage,
+    Error,
     HuxLazyDataTable,
     HuxDataTable,
     Avatar,
@@ -1338,7 +1332,7 @@ export default {
 
 <style lang="scss" scoped>
 .engagements-wrap {
-  background: var(--v-white-base);
+  background: var(--v-primary-lighten1);
   ::v-deep .menu-cell-wrapper {
     .action-icon {
       .fav-action {
