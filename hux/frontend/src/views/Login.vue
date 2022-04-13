@@ -112,12 +112,18 @@ export default {
           margin: 0;
           background: transparent;
           width: 100%;
+          overflow-y: hidden !important;
           .okta-sign-in-header {
             display: none;
           }
           .auth-content {
             padding-left: 0;
             border: none;
+            .mfa-verify {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+            }
             .icon {
               visibility: hidden;
             }
