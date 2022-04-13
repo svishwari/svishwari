@@ -460,6 +460,7 @@ $headerOffsetY: 70px;
   .matching-trend-chart-frame {
     background-image: url("../../assets/images/no-matching-trend-chart-frame.png");
     background-position: center;
+    background-size: 90% 100%;
   }
 }
 .idr-filter {

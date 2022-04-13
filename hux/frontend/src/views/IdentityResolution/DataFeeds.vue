@@ -87,7 +87,7 @@
         ></last-run-drawer>
       </v-card-text>
 
-      <v-row v-else class="data-feeds-table-frame py-14">
+      <v-row v-else class="data-feeds-table-frame">
         <empty-page v-if="!isErrorState" type="model-features-empty" :size="50">
           <template #title>
             <div class="title-no-notification">No data to show</div>
@@ -245,7 +245,10 @@ export default {
 }
 
 .data-feeds-table-frame {
+  padding-top: 144px !important;
+  padding-bottom: 144px !important;
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
+  background-size: 90%;
 }
 </style>
