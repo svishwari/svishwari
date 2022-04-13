@@ -179,7 +179,9 @@ def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_users(
-    database: DatabaseClient, filter_dict: dict = None, project_dict: dict = None
+    database: DatabaseClient,
+    filter_dict: dict = None,
+    project_dict: dict = None,
 ) -> list:
     """A function to get all user documents.
 
@@ -549,7 +551,9 @@ def add_applications_to_users(
     return None
 
 
-def get_user_applications(database: DatabaseClient, okta_id: str) -> Union[list, None]:
+def get_user_applications(
+    database: DatabaseClient, okta_id: str
+) -> Union[list, None]:
     """A function to fetch user applications.
 
     Args:
@@ -677,7 +681,9 @@ def remove_user_trust_id_segments(
         return collection.find_one_and_update(
             {db_c.OKTA_ID: okta_id},
             {
-                "$pull": {db_c.TRUST_ID_SEGMENTS: {db_c.SEGMENT_NAME: segment_name}},
+                "$pull": {
+                    db_c.TRUST_ID_SEGMENTS: {db_c.SEGMENT_NAME: segment_name}
+                },
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
@@ -706,7 +712,9 @@ def get_user_trust_id_segments(
 
     try:
         return list(
-            collection.find_one({db_c.OKTA_ID: okta_id}).get(db_c.TRUST_ID_SEGMENTS, [])
+            collection.find_one({db_c.OKTA_ID: okta_id}).get(
+                db_c.TRUST_ID_SEGMENTS, []
+            )
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

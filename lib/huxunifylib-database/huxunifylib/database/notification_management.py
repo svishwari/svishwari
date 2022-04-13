@@ -60,7 +60,9 @@ def create_notification(
         raise MissingValueException("username")
 
     # get collection
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.NOTIFICATIONS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
+    ]
 
     # get current time
     current_time = datetime.utcnow()
@@ -148,7 +150,9 @@ def get_notifications_batch(
     """
 
     # get collection
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.NOTIFICATIONS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
+    ]
 
     skips = batch_size * (batch_number - 1)
     query = dict({db_c.DELETED: False})  # type: Dict[str,Any]
@@ -156,7 +160,11 @@ def get_notifications_batch(
         query.update({db_c.TYPE: {"$in": notification_types}})
     if notification_categories:
         query.update(
-            {db_c.NOTIFICATION_FIELD_CATEGORY: {"$in": notification_categories}}
+            {
+                db_c.NOTIFICATION_FIELD_CATEGORY: {
+                    "$in": notification_categories
+                }
+            }
         )
     if users:
         query.update({db_c.NOTIFICATION_FIELD_USERNAME: {"$in": users}})
@@ -217,7 +225,9 @@ def get_notifications(
     """
 
     # get collection
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.NOTIFICATIONS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
+    ]
 
     query_filter[db_c.DELETED] = False
 
@@ -226,7 +236,9 @@ def get_notifications(
             total_records=collection.count_documents(query_filter),
             notifications=list(
                 collection.find(query_filter if query_filter else {}).sort(
-                    sort_order if sort_order else [("$natural", pymongo.ASCENDING)]
+                    sort_order
+                    if sort_order
+                    else [("$natural", pymongo.ASCENDING)]
                 )
             ),
         )
@@ -256,7 +268,9 @@ def delete_notification(
         bool: Flag indicating successful operation.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.NOTIFICATIONS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
+    ]
 
     try:
         if hard_delete:
@@ -289,10 +303,14 @@ def get_notification(
 
     """
     # get collection
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.NOTIFICATIONS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
+    ]
 
     try:
-        return collection.find_one({db_c.ID: notification_id, db_c.DELETED: False})
+        return collection.find_one(
+            {db_c.ID: notification_id, db_c.DELETED: False}
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -312,7 +330,9 @@ def get_distinct_notification_users(
 
     """
     # get collection
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.NOTIFICATIONS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
+    ]
 
     try:
         return collection.distinct(db_c.NOTIFICATION_FIELD_USERNAME)
