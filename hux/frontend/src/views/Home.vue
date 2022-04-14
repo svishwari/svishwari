@@ -389,12 +389,14 @@ export default {
 
 .total-customers-chart-frame {
   background-image: url("../assets/images/no-customers-chart-frame.png");
-  background-position: center;
+  background-position: bottom;
+  background-size: 93% 87%;
 }
 
 .notifications-table-frame {
   background-image: url("../assets/images/no-lift-chart-frame.png");
-  background-position: center;
+  background-position: bottom;
+  background-size: 93% 87%;
 }
 
 .margin-2px-top-3px-bottom {

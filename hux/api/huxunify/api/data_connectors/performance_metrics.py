@@ -292,7 +292,7 @@ def get_performance_metrics_stub(
     else:
         destination_types = [
             db_c.DELIVERY_PLATFORM_SFMC,
-            db_c.DELIVERY_PLATFORM_TWILIO,
+            db_c.DELIVERY_PLATFORM_SENDGRID,
         ]
         stub_data = api_c.PERFORMANCE_METRIC_EMAIL_STUB
 

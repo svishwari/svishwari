@@ -186,7 +186,6 @@ export default {
     .error-row {
       padding-top: 75px !important;
       padding-bottom: 75px !important;
-      bottom: 70px !important;
       position: relative;
     }
   }

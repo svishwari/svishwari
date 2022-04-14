@@ -2,7 +2,7 @@
 # pylint: disable=too-many-lines
 import logging
 import datetime
-from typing import Union
+from typing import Union, Optional
 
 from bson import ObjectId
 import pymongo
@@ -27,7 +27,7 @@ def set_engagement(
     user_name: str,
     delivery_schedule: dict = None,
     deleted: bool = False,
-) -> ObjectId:
+) -> Optional[ObjectId]:
     """A function to create an engagement.
 
     Args:
