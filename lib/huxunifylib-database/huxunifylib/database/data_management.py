@@ -3,7 +3,7 @@
 
 import logging
 import datetime
-from typing import Any, Union
+from typing import Any, Union, Optional
 import pandas as pd
 from bson import ObjectId
 import pymongo
@@ -1177,7 +1177,7 @@ def get_all_data_source_ids(
 def get_data_source_recent_ingestion_job_id(
     database: DatabaseClient,
     data_source_id: ObjectId,
-) -> ObjectId:
+) -> Optional[ObjectId]:
     """A function to get the most recent ingestion job ID of a data source.
 
     Args:
