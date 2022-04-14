@@ -343,8 +343,14 @@ class NotificationStream(SwaggerView):
             Tuple[dict, int]: dict of notifications, HTTP status code.
         """
 
-        def event_stream() -> Generator[Tuple[dict, int], None, None]:
+        def event_stream(
+            request_url_root: str,
+        ) -> Generator[Tuple[dict, int], None, None]:
             """Stream notifications with a generator.
+
+            Args:
+                request_url_root (str): URL root of environment/system from
+                    where the request originated.
 
             Yields:
                 Generator[Tuple[dict, int], None, None]: Generator of
@@ -386,7 +392,9 @@ class NotificationStream(SwaggerView):
                 # email to users with alert configurations
                 asyncio.run(
                     build_notification_recipients_and_send_email(
-                        database, notifications_dict.get("notifications", [])
+                        database,
+                        notifications_dict.get("notifications", []),
+                        request_url_root,
                     )
                 )
 
@@ -396,7 +404,9 @@ class NotificationStream(SwaggerView):
                 )
 
         # return the event stream response
-        return Response(event_stream(), mimetype="text/event-stream")
+        return Response(
+            event_stream(request.url_root), mimetype="text/event-stream"
+        )
 
 
 @add_view_to_blueprint(

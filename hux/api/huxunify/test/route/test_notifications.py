@@ -296,7 +296,7 @@ class TestNotificationRoutes(RouteTestCase):
             role=t_c.VALID_USER_RESPONSE[api_c.ROLE],
         )
         # update the user with alert configurations
-        user = update_user(
+        update_user(
             database=self.database,
             okta_id=user[db_c.OKTA_ID],
             update_doc={

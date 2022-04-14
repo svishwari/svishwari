@@ -1115,10 +1115,14 @@ def clean_and_aggregate_datafeed_details(
             }
         )
         # compute run duration if success or running and end_dt available
-        if df_detail[api_c.STATUS] in [
-            api_c.STATUS_SUCCESS,
-            api_c.STATUS_RUNNING,
-        ] and df_detail.get(api_c.PROCESSED_END_DATE):
+        if (
+            df_detail[api_c.STATUS]
+            in [
+                api_c.STATUS_SUCCESS,
+                api_c.STATUS_RUNNING,
+            ]
+            and df_detail.get(api_c.PROCESSED_END_DATE)
+        ):
             df_detail[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
                 int(
                     (
@@ -1318,7 +1322,7 @@ def generate_audience_file(
 
 # pylint: disable=unused-variable
 async def build_notification_recipients_and_send_email(
-    database: DatabaseClient, notifications: list
+    database: DatabaseClient, notifications: list, req_env_url_root: str
 ):
     """Get user alert configuration and prepare notifications to send user
     email.
@@ -1326,6 +1330,8 @@ async def build_notification_recipients_and_send_email(
     Args:
         database (DatabaseClient): A database client.
         notifications (list): list of notifications to be prepared for email.
+        req_env_url_root (str): Environment base URL that needs to be passed in
+            to send email function.
     """
 
     if not notifications:
@@ -1393,6 +1399,7 @@ async def build_notification_recipients_and_send_email(
             api_c.NOTIFICATION_EMAIL_ALERT_CATEGORY: notification_category,
             api_c.NOTIFICATION_EMAIL_ALERT_TYPE: notification_type,
             api_c.NOTIFICATION_EMAIL_ALERT_DESCRIPTION: notification_description,
+            api_c.URL: req_env_url_root,
         }
 
         # TODO: call send email function to actually send an email
