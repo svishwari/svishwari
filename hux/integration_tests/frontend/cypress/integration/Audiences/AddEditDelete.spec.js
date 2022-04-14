@@ -51,10 +51,8 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
       .type(`Test audience ${audienceName}`)
 
     // Click on save audience icon
-    cy.get(".confirm-modal-wrapper")
-      .find("button")
-      .contains("Save")
-      .click({ force: true })
+    cy.get(".confirm-modal-wrapper").find("button").contains("Save")
+    //.click({ force: true })
 
     // Wait for audience to be created
     // eslint-disable-next-line cypress/no-unnecessary-waiting
