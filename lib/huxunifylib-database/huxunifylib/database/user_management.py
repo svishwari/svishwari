@@ -304,7 +304,7 @@ def update_user(
 def update_all_users(
     database: DatabaseClient, update_doc: dict
 ) -> Union[dict, None]:
-    """A function to update a user.
+    """Function to update all users.
 
     Args:
         database (DatabaseClient): A database client.
