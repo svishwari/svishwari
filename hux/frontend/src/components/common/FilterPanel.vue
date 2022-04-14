@@ -4,10 +4,11 @@
       class="header"
       :disabled="disabled"
       :hide-actions="hideActions"
+      @click="headerclick = !headerclick"
     >
       <h4
         :class="
-          count == 0
+          count == 0 && !headerclick
             ? 'text-body-1 black--text'
             : 'text-body-1 primary--text text--lighten-6'
         "
@@ -16,7 +17,9 @@
         <span v-if="count" class="ml-1">({{ count }})</span>
       </h4>
       <template #actions>
-        <v-icon :color="count == 0 ? 'black' : 'blue'"> $expand </v-icon>
+        <v-icon :color="count == 0 && !headerclick ? 'black' : 'blue'">
+          $expand
+        </v-icon>
       </template>
     </v-expansion-panel-header>
 
@@ -52,6 +55,28 @@ export default defineComponent({
       default: false,
     },
   },
+  data() {
+    return {
+      headerclick: false,
+    }
+  },
+  methods: {
+    // headerclick(e) {
+    //   this.headerVli
+    //   console.log("e.target.classList", e.target.classList)
+    //   // if (e.target.classList.contains("v-expansion-panel-header--active")) {
+    //   //   console.log("event closing",e)
+    //   // }
+    //   // else {
+    //   //    console.log("event opening",e)
+    //   // }
+    //   // let target = e.target,
+    //   //   header = ".v-expansion-panel__header"
+    //   // if (target.is(header) || target.parents(header).is(header)) {
+    //   //   console.log("Hello World")
+    //   // }
+    // },
+  },
 })
 </script>
 
@@ -73,6 +98,8 @@ $headerHeight: 40px;
     ::v-deep .v-expansion-panel-content__wrap {
       padding: $padding;
     }
+  }
+  .openClass {
   }
 }
 </style>
