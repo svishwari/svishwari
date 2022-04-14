@@ -307,10 +307,15 @@ export default {
   computed: {
     ...mapGetters({
       ruleAttributes: "audiences/audiencesRules",
+      overviewData: "customers/overview",
     }),
 
     lastIndex() {
       return this.rules.length - 1
+    },
+
+    ifRouteSegmentPlayground() {
+      return this.$route.name === "SegmentPlayground"
     },
 
     updateHistoArr() {
@@ -328,7 +333,9 @@ export default {
     this.chartDimensions.height = 26
     await this.getAudiencesRules()
     this.updateSizes()
-
+    if (this.ifRouteSegmentPlayground) {
+      this.overAllSize = this.overviewData.total_customers
+    }
     this.notHistogramKeys = this.updateHistoArr
 
     this.$emit("attribute-options", this)
@@ -535,11 +542,13 @@ export default {
             value = this.rules[i].conditions[j].text
             type = this.rules[i].conditions[j].operator.key
           }
-          attributeRulesArray.push({
-            field: this.rules[i].conditions[j].attribute.key,
-            type: type,
-            value: value,
-          })
+          if (value) {
+            attributeRulesArray.push({
+              field: this.rules[i].conditions[j].attribute.key,
+              type: type,
+              value: value,
+            })
+          }
         }
         let sectionObject = {
           section_aggregator: aggregatorOperand,
