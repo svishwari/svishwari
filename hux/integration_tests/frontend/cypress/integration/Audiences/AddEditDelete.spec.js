@@ -9,7 +9,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
     cy.signin()
     cy.visit(route.audiences)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000)
+    cy.wait(5000)
   })
 
   // For adding a new audience
@@ -67,7 +67,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
   // For editing the above added audience
   it("should be able to edit a newly added audience via Segment Playground", () => {
     cy.location("pathname").should("eq", route.audiences)
-    cy.get(".menu-cell-wrapper").each(($el) => {
+    cy.get(selector.audience.audiencenameclick).each(($el) => {
       if ($el.text().includes(`Test audience ${audienceName}`)) {
         // Make the vertical dots visible
         cy.wrap($el)
@@ -84,19 +84,22 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
           expect(loc.pathname.toString()).to.contain("/update")
         })
 
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(5000)
+
         // Edit audience name
         cy.get(selector.audience.editAudienceName).eq(0).type(` edited`)
 
         // Waiting for fetch the response
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(2000)
+        cy.wait(4000)
 
         // click on Apply changes and Save
         cy.get(selector.audience.actionAudience).click()
 
         // Wait for audience to be edited
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(2000)
+        cy.wait(4000)
       }
     })
   })
@@ -104,7 +107,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
   // For deleting the above added audience
   it("should be able to delete a newly added audience", () => {
     cy.location("pathname").should("eq", route.audiences)
-    cy.get(".menu-cell-wrapper").each(($el) => {
+    cy.get(selector.audience.audiencenameclick).each(($el) => {
       if ($el.text().includes(`Test audience ${audienceName} edited`)) {
         // Make the vertical dots visible
         cy.wrap($el)
@@ -115,7 +118,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
         cy.contains("Delete audience").click()
         cy.contains("Yes, delete it").click()
         //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(2000)
+        cy.wait(3000)
       }
     })
   })

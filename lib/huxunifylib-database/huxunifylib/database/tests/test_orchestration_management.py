@@ -371,6 +371,28 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertEqual(audiences[0][db_c.AUDIENCE_NAME], "Audience1")
         self.assertEqual(audiences[1][db_c.AUDIENCE_NAME], "Audience2")
 
+    def test_get_all_audiences_batch_offset(self):
+        """Test get_all_audiences with batch offset to limit number of records
+        returned."""
+
+        for i in range(17):
+            am.create_audience(
+                self.database,
+                f"New Audience {i}",
+                self.audience_filters,
+                user_name=self.user_name,
+            )
+
+        for i in range(1, 4):
+            audiences = am.get_all_audiences(
+                database=self.database, batch_size=5, batch_number=i
+            )
+            self.assertTrue(audiences)
+            if i < 4:
+                self.assertEqual(len(audiences), 5)
+            else:
+                self.assertEqual(len(audiences), 2)
+
     def test_get_all_audiences_filter(self):
         """Test get_all_audiences with filters."""
         audience_1 = am.create_audience(

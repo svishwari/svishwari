@@ -1,7 +1,7 @@
 import { Response } from "miragejs"
 import dayjs from "dayjs"
 import faker from "faker"
-
+import { getBatchCounts } from "@/utils"
 import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
 import { me } from "./factories/me"
@@ -213,7 +213,21 @@ export const defineRoutes = (server) => {
   server.get("/destinations/constants", () => destinationsConstants)
 
   // engagements
-  server.get("/engagements")
+  server.get("/engagements", (schema, request) => {
+    let allEngagements = schema.engagements.all()
+    const engagements = {
+      engagements: allEngagements.models,
+      total_records: allEngagements.length,
+    }
+    if (request.queryParams.batch_size != 0) {
+      let [initialCount, lastCount] = getBatchCounts(request)
+      engagements.engagements = allEngagements.models.slice(
+        initialCount,
+        lastCount
+      )
+    }
+    return engagements
+  })
 
   server.get("/engagements/:id", (schema, request) => {
     const id = request.params.id
@@ -662,10 +676,7 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/customers", (schema, request) => {
-    let currentBatch = request.queryParams.batch_number
-    let batchSize = request.queryParams.batch_size
-    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
-    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let [initialCount, lastCount] = getBatchCounts(request)
     const customers = schema.customers.all().slice(initialCount, lastCount)
     return customers
   })
@@ -694,12 +705,7 @@ export const defineRoutes = (server) => {
 
   // notifications
   server.get("/notifications", (schema, request) => {
-    let currentBatch =
-      request.queryParams.batch_number || request.queryParams.batchNumber
-    let batchSize =
-      request.queryParams.batch_size || request.queryParams.batchSize
-    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
-    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let [initialCount, lastCount] = getBatchCounts(request)
     let allNotifications = schema.notifications.all()
     const notifications = {
       notifications: allNotifications.models.slice(initialCount, lastCount),
@@ -717,8 +723,18 @@ export const defineRoutes = (server) => {
     return schema.users.all()
   })
 
-  // audiences
-  server.get("/audiences")
+  server.get("/audiences", (schema, request) => {
+    let allAudiences = schema.audiences.all()
+    const audiences = {
+      audiences: allAudiences.models,
+      total_records: allAudiences.length,
+    }
+    if (request.queryParams.batch_size != 0) {
+      let [initialCount, lastCount] = getBatchCounts(request)
+      audiences.audiences = allAudiences.models.slice(initialCount, lastCount)
+    }
+    return audiences
+  })
 
   server.get("/audiences/:id/audience_insights", () => {
     demographicsData.demo = mapData
@@ -744,9 +760,7 @@ export const defineRoutes = (server) => {
     const requestData = JSON.parse(request.requestBody)
     requestData.engagements = []
     requestData.destinations = []
-
     const now = dayjs().toJSON()
-
     const attrs = {
       ...requestData,
       create_time: () => now,
@@ -754,7 +768,6 @@ export const defineRoutes = (server) => {
       update_time: () => now,
       updated_by: me.full_name(),
     }
-
     return server.create("audience", attrs)
   })
 

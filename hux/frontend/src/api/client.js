@@ -143,7 +143,7 @@ client["destinations"].updateDestination = (id, data) => {
 //#endregion
 
 //#region Engagement custom endpoints
-client["engagements"].allFiltered = (data) => {
+client["engagements"].getEngagements = (data) => {
   let URLData = []
   for (const property in data) {
     let formURL = property + "=" + data[property]

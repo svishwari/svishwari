@@ -46,7 +46,7 @@ The API is UI-driven.
 
 ## Installation
 ```
-# clone the repo
+# clone the repository
 git clone https://github.com/DeloitteHux/hux-unified.git
 
 # cd to the hux/api repo

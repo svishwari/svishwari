@@ -4,6 +4,8 @@ from datetime import datetime
 from bson import ObjectId
 from flask_marshmallow import Schema
 from marshmallow import fields, validate, pre_load, post_dump
+from marshmallow.fields import Nested, List, Int
+
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
@@ -613,6 +615,13 @@ class EngagementGetSchema(Schema):
             engagement[api_c.DELIVERY_SCHEDULE] = None
 
         return engagement
+
+
+class EngagementsBatchGetSchema(Schema):
+    """Engagements batch schema."""
+
+    total_records = Int(example=1)
+    engagements = List(Nested(EngagementGetSchema))
 
 
 # pylint: disable=too-many-branches,too-many-statements
