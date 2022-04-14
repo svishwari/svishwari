@@ -205,11 +205,8 @@ class SeenNotifications(SwaggerView):
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Seen Notification Flag",
-        },
-        HTTPStatus.CREATED.value: {
-            "description": "Notification Flag Resetted",
-        },
+            "description": "Seen Notification Flag or Reset Flag",
+        }
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
@@ -247,9 +244,7 @@ class SeenNotifications(SwaggerView):
                 update_doc={db_c.SEEN_NOTIFICATIONS: True},
             )
             if user_details:
-                return HuxResponse.CREATED(
-                    data={db_c.SEEN_NOTIFICATIONS: True}
-                )
+                return HuxResponse.OK(data={db_c.SEEN_NOTIFICATIONS: True})
         user = get_user(database=get_db_client(), okta_id=okta_id)
         return HuxResponse.OK(
             data={

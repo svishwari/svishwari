@@ -228,12 +228,15 @@ class TestUserRoutes(RouteTestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-        reset_endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/seen_notifications?{api_c.RESET}=true"
+        reset_endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/"
+            f"seen_notifications?{api_c.RESET}=true"
+        )
         reset_response = self.app.get(
             reset_endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(reset_response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(reset_response.status_code, HTTPStatus.OK)
 
     def test_get_user_profile_bad_request_failure(self):
         """Test 400 response of getting user profile using Okta ID."""
