@@ -60,23 +60,6 @@ export default defineComponent({
       headerclick: false,
     }
   },
-  methods: {
-    // headerclick(e) {
-    //   this.headerVli
-    //   console.log("e.target.classList", e.target.classList)
-    //   // if (e.target.classList.contains("v-expansion-panel-header--active")) {
-    //   //   console.log("event closing",e)
-    //   // }
-    //   // else {
-    //   //    console.log("event opening",e)
-    //   // }
-    //   // let target = e.target,
-    //   //   header = ".v-expansion-panel__header"
-    //   // if (target.is(header) || target.parents(header).is(header)) {
-    //   //   console.log("Hello World")
-    //   // }
-    // },
-  },
 })
 </script>
 
@@ -98,8 +81,6 @@ $headerHeight: 40px;
     ::v-deep .v-expansion-panel-content__wrap {
       padding: $padding;
     }
-  }
-  .openClass {
   }
 }
 </style>
