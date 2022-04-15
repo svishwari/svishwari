@@ -345,6 +345,10 @@ class TestCustomersOverview(RouteTestCase):
             f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
             json=t_c.IDENTITY_INSIGHT_RESPONSE,
         )
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event_types",
+            json=t_c.EVENT_TYPES_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.app.post(

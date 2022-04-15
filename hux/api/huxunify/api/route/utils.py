@@ -2,7 +2,7 @@
 # pylint: disable=too-many-lines
 import statistics
 from collections import defaultdict
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import re
 from itertools import groupby
 from pathlib import Path
@@ -1307,7 +1307,7 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
         event_types(List[dict]): List of event_types
 
     Returns:
-
+        None
     """
     for section in filters[api_c.AUDIENCE_FILTERS]:
         for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
@@ -1324,14 +1324,14 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                 section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
                 section_filter.update({api_c.TYPE: "event"})
                 start_date = (
-                    datetime.datetime.utcnow()
-                    - datetime.timedelta(
+                    datetime.utcnow()
+                    - timedelta(
                         days=int(
                             section_filter.get(api_c.AUDIENCE_FILTER_VALUE)
                         )
                     )
                 ).strftime("%Y-%m-%d")
-                end_date = datetime.datetime.utcnow().strftime("%Y-%m-%d")
+                end_date = datetime.utcnow().strftime("%Y-%m-%d")
                 section_filter.update(
                     {
                         api_c.VALUE: [

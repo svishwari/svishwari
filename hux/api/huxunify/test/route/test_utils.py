@@ -1,4 +1,5 @@
 """Purpose of this file is to house all the route/utils tests."""
+import copy
 from datetime import datetime, timedelta
 from http import HTTPStatus
 from unittest import TestCase, mock
@@ -25,6 +26,7 @@ from huxunify.api.route.utils import (
     check_mongo_connection,
     get_health_check,
     filter_team_member_requests,
+    convert_filters_for_events,
 )
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
@@ -387,3 +389,54 @@ class TestRouteUtils(TestCase):
             api_c.STATE_IN_PROGRESS,
             [request.get(api_c.STATUS) for request in filtered_requests],
         )
+
+    def test_convert_filters_for_events(self):
+        """Test convert_filters_for_events method."""
+
+        event_filters = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {
+                            "field": "traits_analysed",
+                            "type": "within_the_last",
+                            "value": "12",
+                        }
+                    ],
+                }
+            ]
+        }
+
+        event_types = [
+            {api_c.TYPE: "traits_analysed", api_c.LABEL: "Traits Analysed"},
+            {api_c.TYPE: "sales_made", api_c.LABEL: "Sales Made"},
+        ]
+
+        expected_filters = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {
+                            "field": "event",
+                            "type": "event",
+                            "value": [
+                                {
+                                    "field": "event_name",
+                                    "type": "equals",
+                                    "value": "traits_analysed",
+                                },
+                                {
+                                    "field": "created",
+                                    "type": "range",
+                                    "value": ["2022-04-03", "2022-04-15"],
+                                },
+                            ],
+                        }
+                    ],
+                }
+            ]
+        }
+        convert_filters_for_events(event_filters, event_types)
+        self.assertEqual(event_filters, expected_filters)
