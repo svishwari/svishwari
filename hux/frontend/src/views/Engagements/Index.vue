@@ -18,14 +18,14 @@
             :color="
               isEmptyError
                 ? 'black'
-                : finalFilterApplied > 0
+                : isFilterToggled
                 ? 'primary'
                 : 'black'
             "
             :variant="
               isEmptyError
                 ? 'lighten3'
-                : finalFilterApplied > 0
+                : isFilterToggled
                 ? 'lighten6'
                 : 'darken4'
             "

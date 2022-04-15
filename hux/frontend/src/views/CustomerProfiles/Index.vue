@@ -652,7 +652,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.getOverview()
+      this.getOverview()
       this.mapOverviewData()
       this.fetchTotalCustomers()
       this.fetchCustomerSpend()

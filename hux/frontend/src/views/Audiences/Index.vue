@@ -19,11 +19,11 @@
           <icon
             type="filter"
             :size="27"
-            :color="finalFilterApplied > 0 ? 'primary' : 'black'"
+            :color="isFilterToggled > 0 ? 'primary' : 'black'"
             :variant="
               showError
                 ? 'lighten3'
-                : finalFilterApplied > 0
+                : isFilterToggled > 0
                 ? 'lighten6'
                 : 'darken4'
             "

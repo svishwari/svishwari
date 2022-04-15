@@ -24,8 +24,8 @@
           <icon
             type="filter"
             :size="27"
-            :color="totalFiltersSelected > 0 ? 'primary' : 'black'"
-            :variant="totalFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+            :color="isFilterToggled ? 'primary' : 'black'"
+            :variant="isFilterToggled ? 'lighten6' : 'darken4'"
           />
           <v-badge
             v-if="totalFiltersSelected > 0"
@@ -165,7 +165,7 @@
                     </div>
                   </v-card-title>
 
-                  <i-d-r-matching-trend :map-data="matchingTrends" />
+                  <i-d-r-matching-trend :map-data="matchingTrends" class="trends-chart"/>
                 </span>
 
                 <v-row v-else class="matching-trend-chart-frame py-14">
@@ -481,5 +481,11 @@ $headerOffsetY: 70px;
   padding: 30px;
   overflow-y: auto !important;
   overflow-x: hidden !important;
+}
+.trends-chart {
+  margin-left: 40px;
+  margin-right: 40px;
+  margin-top: 10px;
+  margin-bottom: 60px;
 }
 </style>

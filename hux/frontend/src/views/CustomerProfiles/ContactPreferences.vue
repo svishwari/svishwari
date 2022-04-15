@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card v-if="insights" class="rounded-lg card-info-wrapper box-shadow-5">
+    <v-card v-if="insights && !profileError" class="rounded-lg card-info-wrapper box-shadow-5">
       <v-card-title
         class="card-heading py-5 pl-6"
         data-e2e="contact-preferencecs"
@@ -31,16 +31,15 @@
     >
       <empty-page
         class="title-no-notification pa-8"
-        type="error-on-screens"
+        :type="profileError ? 'error-on-screens' : 'no-customer-data'"
         :size="50"
       >
         <template #title>
-          <div class="title-no-notification">Unavailable</div>
+          <div class="title-no-notification">{{profileError ? "Unavailable" : "No customer Data"}}</div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">
-            Our team is working hard to fix this data table. Please be patient
-            and try again soon!
+            {{profileError ? "Our team is working hard to fix this data table. Please be patient and try again soon!" : "Customer data will appear here once customer data is available."}}
           </div>
         </template>
       </empty-page>
@@ -58,6 +57,11 @@ export default {
       type: Object,
       required: true,
       default: () => {},
+    },
+    profileError: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   computed: {
