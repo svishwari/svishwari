@@ -1,5 +1,4 @@
-"""
-Purpose of this file is for getting an okta access token.
+"""Purpose of this file is for getting an okta access token.
 https://developer.okta.com/docs/reference/api/authn/
 """
 import re
@@ -13,9 +12,7 @@ import pyperclip
 
 
 class PasswordType:
-    """
-    Class for handling the password type in argparse.
-    """
+    """Class for handling the password type in argparse."""
 
     DEFAULT = "Prompt if not specified"
 
@@ -32,15 +29,18 @@ class PasswordType:
             value = getpass("Okta Password: ")
         self.value = value
 
-    def __str__(self):
-        """Get string value of password."""
+    def __str__(self) -> str:
+        """Get string value of password.
+
+        Returns:
+            value (str): string.
+
+        """
         return self.value
 
 
 class OktaOIDC:
-    """
-    purpose of this class is for housing okta OIDC workflows.
-    """
+    """Purpose of this class is for housing okta OIDC workflows."""
 
     HEADERS = {
         "content-type": "application/json",
