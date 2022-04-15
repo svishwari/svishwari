@@ -882,16 +882,6 @@
 
     <v-divider class="mt-10" />
 
-    <v-subheader> Hux Table</v-subheader>
-    <hux-table
-      :column-def="columnDefs"
-      :table-data="rowData"
-      height="250px"
-      has-check-box
-    ></hux-table>
-
-    <v-divider class="mt-10" />
-
     <v-subheader> Drawer</v-subheader>
     <v-btn @click="drawer = !drawer">Toggle Drawer</v-btn>
     <drawer v-model="drawer">
@@ -1424,7 +1414,6 @@ import CardInfo from "@/components/common/CardInfo"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import TextField from "@/components/common/TextField"
-import HuxTable from "@/components/common/huxTable.vue"
 import huxButton from "@/components/common/huxButton"
 import DropdownMenu from "@/components/common/DropdownMenu"
 import PageHeader from "@/components/PageHeader"
@@ -1464,7 +1453,6 @@ export default {
     huxButton,
     DropdownMenu,
     PageHeader,
-    HuxTable,
     Drawer,
     MetricCard,
     DescriptiveCard,
