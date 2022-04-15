@@ -1,8 +1,8 @@
 """Locust file."""
-
+from http import HTTPStatus
 from os import getenv
 from dotenv import load_dotenv
-from locust import HttpUser, task, between
+from locust import HttpUser, task
 from locust.log import setup_logging
 from huxunifylib.util.general.logging import logger
 from get_okta_token import OktaOIDC
@@ -26,14 +26,14 @@ ACCESS_TOKEN = "ACCESS_TOKEN"
 class APIUser(HttpUser):
     """Load test User class."""
 
-    # How long a simulated user should wait between executing tasks
-    wait_time = between(1, 3)
-    host = "https://unified-ui-dev.main.use1.hux-unified-dev1.in/api/v1"
+    def __init__(self, *args, **kwargs):
+        """override the init and define custom attributes"""
+        super().__init__(*args, **kwargs)
+        self.headers = None
 
     # A User will call its on_start method when it starts running
     def on_start(self):
         logger.info("Starting load tests")
-        self.host = "https://unified-ui-dev.main.use1.hux-unified-dev1.in/api/v1"
         okta_oidc = OktaOIDC(**OKTA_PARAM_DICT)
         # set the token for pytest usage.
         access_token = okta_oidc.get_access_token(False)
@@ -57,20 +57,17 @@ class APIUser(HttpUser):
         """Load test method for GET all audiences."""
 
         with self.client.get(
-            f"{self.host}/audiences", headers=self.headers, catch_response=True
+            "/audiences", headers=self.headers, catch_response=True
         ) as response:
-            if response.status_code != 200:
-                response.failure("Got wrong response")
-            elif response.elapsed.total_seconds() > 0.5:
-                response.failure("Audience GET all request took too long")
+            # ensure the response is valid.
+            if response.status_code != HTTPStatus.OK:
+                response.failure(response.status_code)
 
     @task
     def get_destinations(self):
         """Load test method for GET all destinations."""
         with self.client.get(
-            f"{self.host}/destinations", headers=self.headers, catch_response=True
+            "/destinations", headers=self.headers, catch_response=True
         ) as response:
-            if response.status_code != 200:
-                response.failure("Got wrong response")
-            elif response.elapsed.total_seconds() > 0.5:
-                response.failure("Destinations GET all request took too long")
+            if response.status_code != HTTPStatus.OK:
+                response.failure(response.status_code)
