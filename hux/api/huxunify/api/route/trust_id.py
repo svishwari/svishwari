@@ -272,7 +272,7 @@ class TrustIdAddSegment(SwaggerView):
     ]
 
     responses = {
-        HTTPStatus.CREATED.value: {
+        HTTPStatus.OK.value: {
             "description": "Trust ID segment added successfully",
             "schema": {"type": "array", "items": TrustIdComparisonSchema},
         },
