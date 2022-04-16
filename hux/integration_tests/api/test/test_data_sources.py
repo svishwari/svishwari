@@ -36,12 +36,16 @@ class TestDataSources(TestCase):
         self.assertEqual(len(response.json()), 1)
 
         # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()[0]["id"])]
+        pytest.CRUD_OBJECTS += [
+            Crud(self.COLLECTION, response.json()[0]["id"])
+        ]
 
     def test_delete_data_source(self):
         """Test deleting a data source."""
 
-        data_source_type = f"E2E-test_data_sources-dataSource-{int(time() * 1000)}"
+        data_source_type = (
+            f"E2E-test_data_sources-dataSource-{int(time() * 1000)}"
+        )
 
         # set up the request post to create a test data source that is to be
         # deleted
@@ -134,9 +138,13 @@ class TestDataSources(TestCase):
         )
 
         # test success
-        self.assertEqual(HTTPStatus.OK, data_source_data_feeds_response.status_code)
+        self.assertEqual(
+            HTTPStatus.OK, data_source_data_feeds_response.status_code
+        )
         self.assertIsInstance(data_source_data_feeds_response.json(), dict)
-        self.assertIsInstance(data_source_data_feeds_response.json()["datafeeds"], list)
+        self.assertIsInstance(
+            data_source_data_feeds_response.json()["datafeeds"], list
+        )
         self.assertGreaterEqual(
             len(data_source_data_feeds_response.json()["datafeeds"]), 1
         )
@@ -150,9 +158,12 @@ class TestDataSources(TestCase):
 
         # test success
         self.assertEqual(
-            HTTPStatus.OK, data_source_data_feed_data_feeds_response.status_code
+            HTTPStatus.OK,
+            data_source_data_feed_data_feeds_response.status_code,
         )
-        self.assertIsInstance(data_source_data_feed_data_feeds_response.json(), list)
+        self.assertIsInstance(
+            data_source_data_feed_data_feeds_response.json(), list
+        )
 
     def test_update_data_source(self):
         """Test updating a data source."""
@@ -192,8 +203,12 @@ class TestDataSources(TestCase):
         self.assertEqual(HTTPStatus.OK, update_response.status_code)
         self.assertIsInstance(update_response.json(), list)
         self.assertEqual(len(update_response.json()), 1)
-        self.assertEqual(data_source_id_to_update, update_response.json()[0]["id"])
+        self.assertEqual(
+            data_source_id_to_update, update_response.json()[0]["id"]
+        )
         self.assertEqual("Pending", update_response.json()[0]["status"])
 
         # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, data_source_id_to_update)]
+        pytest.CRUD_OBJECTS += [
+            Crud(self.COLLECTION, data_source_id_to_update)
+        ]

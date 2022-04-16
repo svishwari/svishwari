@@ -66,7 +66,9 @@ class TestTrustId(TestCase):
     def test_add_and_remove_trust_id_segment(self):
         """Test adding and removing trust ID segment for a user."""
 
-        segment_name = f"E2E test_trust_id Integration Test-{int(time() * 1000)}"
+        segment_name = (
+            f"E2E test_trust_id Integration Test-{int(time() * 1000)}"
+        )
 
         # request to add trust ID segment to a user
         add_response = requests.post(
