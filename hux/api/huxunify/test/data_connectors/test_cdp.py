@@ -193,7 +193,9 @@ class CDPTest(TestCase):
         self.assertEqual(data[api_c.INSIGHTS][api_c.AGE], api_c.REDACTED)
 
     @given(
-        date_text=st.one_of(st.text(alphabet=string.ascii_letters), st.none())
+        date_text=st.one_of(
+            st.text(alphabet=string.ascii_letters), st.datetimes(), st.none()
+        )
     )
     def test_cdm_data_mapping(self, date_text: str):
         """Test mapped customer data types.
