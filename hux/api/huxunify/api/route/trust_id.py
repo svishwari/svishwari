@@ -107,7 +107,9 @@ class TrustIdAttributes(SwaggerView):
             "description": "Trust ID attributes data",
             "schema": {"type": "array", "items": TrustIdAttributesSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to fetch signal data"},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to fetch signal data"
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
@@ -274,7 +276,9 @@ class TrustIdAddSegment(SwaggerView):
             "description": "Trust ID segment added successfully",
             "schema": {"type": "array", "items": TrustIdComparisonSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to add new segment"},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to add new segment"
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
@@ -310,7 +314,8 @@ class TrustIdAddSegment(SwaggerView):
             )
 
         added_segments = [
-            x["segment_name"] for x in trust_id_comparison_stub_data[0]["segments"]
+            x["segment_name"]
+            for x in trust_id_comparison_stub_data[0]["segments"]
         ]
         added_segments.extend([x[api_c.SEGMENT_NAME] for x in segments])
         # Check if a segment with the specified name exists
@@ -367,7 +372,9 @@ class TrustIdRemoveSegment(SwaggerView):
             "description": "Trust ID segment removed successfully",
             "schema": {"type": "array", "items": TrustIdComparisonSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to remove segment"},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to remove segment"
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
@@ -393,7 +400,9 @@ class TrustIdRemoveSegment(SwaggerView):
 
         segment_name = request.args.get(api_c.SEGMENT_NAME)
         if not segment_name:
-            return HuxResponse.BAD_REQUEST(message="Missing required segment name.")
+            return HuxResponse.BAD_REQUEST(
+                message="Missing required segment name."
+            )
 
         updated_segments = remove_user_trust_id_segments(
             get_db_client(), user[db_c.OKTA_ID], segment_name
