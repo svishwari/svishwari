@@ -39,7 +39,7 @@
           :action-menu="false"
           :coming-soon="false"
           :logo-option="true"
-          :interactable="false"
+          :interactable="config.status == 'active'"
           height="225"
           width="255"
           class="mr-12 model-desc-card"
@@ -86,7 +86,7 @@
           :action-menu="false"
           :coming-soon="false"
           :logo-option="true"
-          :interactable="false"
+          :interactable="config.status == 'active'"
           height="225"
           width="255"
           class="mr-12 model-desc-card"
@@ -162,8 +162,5 @@ export default {
   ::v-deep .v-label {
     color: var(--v-black-base) !important;
   }
-}
-::v-deep .descriptive-card .description {
-  -webkit-line-clamp: inherit !important;
 }
 </style>

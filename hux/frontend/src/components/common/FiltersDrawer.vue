@@ -149,7 +149,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 $footerHeight: 80px;
-$headerHeight: 40px;
+$headerHeight: 70px;
 $padding: 20px;
 $width: 300px;
 $zIndex: 4;

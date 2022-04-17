@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hux-page max-width="100%">
+    <hux-page max-width="100%" class="home-page">
       <template #header>
         <hux-page-header
           :title="`Welcome back, ${fullName}!`"
@@ -389,12 +389,14 @@ export default {
 
 .total-customers-chart-frame {
   background-image: url("../assets/images/no-customers-chart-frame.png");
-  background-position: center;
+  background-position: bottom;
+  background-size: 93% 87%;
 }
 
 .notifications-table-frame {
   background-image: url("../assets/images/no-lift-chart-frame.png");
-  background-position: center;
+  background-position: bottom;
+  background-size: 93% 87%;
 }
 
 .margin-2px-top-3px-bottom {
@@ -403,8 +405,6 @@ export default {
 }
 .help-section {
   background: var(--v-primary-lighten2);
-  bottom: 0px;
-  position: absolute;
   height: 96px;
   width: 100%;
 }
@@ -434,7 +434,10 @@ export default {
 ::v-deep .v-data-table-header__icon {
   margin-left: 4px !important;
 }
-.latest-alert-main {
-  margin-bottom: 80px;
+::v-deep.home-page {
+  .container {
+    height: 100% !important;
+    overflow: hidden !important;
+  }
 }
 </style>

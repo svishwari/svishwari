@@ -75,7 +75,7 @@
 
     <template v-else>
       <div
-        class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title text-h4"
+        class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title"
         :class="disabled || !interactable ? 'black--text' : 'primary--text'"
         :style="{ 'padding-top': !icon ? '56px' : null }"
         data-e2e="card-title"
@@ -212,7 +212,7 @@ export default {
     topRightAdjustment: {
       type: String,
       required: false,
-      default: "mt-2 mr-8",
+      default: "mt-3 mr-8",
     },
   },
 }

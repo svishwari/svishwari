@@ -5,7 +5,7 @@ import time
 import logging
 import datetime
 from collections import defaultdict
-from typing import Tuple, Generator, Union
+from typing import Tuple, Generator, Union, Optional
 import pandas as pd
 from bson import ObjectId
 import pymongo
@@ -112,7 +112,7 @@ def get_ingested_data(
     database: DatabaseClient,
     query: dict,
     batch_size: int = 1000,
-) -> Tuple[pd.DataFrame, ObjectId]:
+) -> Tuple[pd.DataFrame, Optional[ObjectId]]:
     """A function to get ingested data given a query (filters).
 
     Args:
@@ -182,7 +182,7 @@ def get_audience(
     audience_id: ObjectId,
     start_id: ObjectId = None,
     batch_size: int = 1000,
-) -> Tuple[pd.DataFrame, ObjectId]:
+) -> Tuple[pd.DataFrame, Optional[ObjectId]]:
     """A function to get an audience.
 
     Args:
@@ -414,7 +414,7 @@ def get_audience_insights(
 def get_audience_data_source_id(
     database: DatabaseClient,
     audience_id: ObjectId,
-) -> ObjectId:
+) -> Optional[ObjectId]:
     """A function to get data source ID of an audience.
 
     Args:
