@@ -362,12 +362,12 @@ export function formatText(text) {
 }
 
 /**
- * Returns the string with space replaced with Underscore & Lower Case 
+ * Returns the string with space replaced with Underscore & Lower Case
  *
  * @param {string} text - string to be formatted
  * @returns {string} formatted string
  */
- export function formatRequestText(text) {
+export function formatRequestText(text) {
   return text.replaceAll(" ", "_").toLowerCase()
 }
 

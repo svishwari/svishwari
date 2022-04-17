@@ -425,13 +425,16 @@ export default {
         this.batchDetails.batch_number = 1
         this.batchDetails.isLazyLoad = false
         if (data.selectedAlertType.length !== 0) {
-          this.batchDetails.notification_types =
-            formatRequestText(data.selectedAlertType.toString())
+          this.batchDetails.notification_types = formatRequestText(
+            data.selectedAlertType.toString()
+          )
         } else {
           delete this.batchDetails.notification_types
         }
         if (data.selectedCategory.length !== 0) {
-          this.batchDetails.category = formatRequestText(data.selectedCategory.toString())
+          this.batchDetails.category = formatRequestText(
+            data.selectedCategory.toString()
+          )
         } else {
           delete this.batchDetails.category
         }
