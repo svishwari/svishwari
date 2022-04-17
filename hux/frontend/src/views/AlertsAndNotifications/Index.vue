@@ -189,6 +189,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import { formatRequestText } from "@/utils"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
@@ -425,12 +426,12 @@ export default {
         this.batchDetails.isLazyLoad = false
         if (data.selectedAlertType.length !== 0) {
           this.batchDetails.notification_types =
-            data.selectedAlertType.toString()
+            formatRequestText(data.selectedAlertType.toString())
         } else {
           delete this.batchDetails.notification_types
         }
         if (data.selectedCategory.length !== 0) {
-          this.batchDetails.category = data.selectedCategory.toString()
+          this.batchDetails.category = formatRequestText(data.selectedCategory.toString())
         } else {
           delete this.batchDetails.category
         }
