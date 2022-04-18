@@ -301,7 +301,6 @@ def update_user(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-<<<<<<< HEAD
 def delete_favorite_from_all_users(
     database: DatabaseClient, component_name: str, component_id: ObjectId
 ) -> bool:
@@ -338,7 +337,8 @@ def delete_favorite_from_all_users(
         logging.error(exc)
 
     return False
-=======
+
+
 def update_all_users(
     database: DatabaseClient, update_doc: dict
 ) -> Union[dict, None]:
@@ -394,7 +394,6 @@ def update_all_users(
         logging.error(exc)
 
     return None
->>>>>>> ef4a46936452368c8db0727ec1210ff46d926d64
 
 
 @retry(
