@@ -167,7 +167,7 @@
 
                   <i-d-r-matching-trend
                     :map-data="matchingTrends"
-                    class="trends-chart"
+                    class="ml-10 mr-10 mt-2 mb-15"
                   />
                 </span>
 
@@ -484,11 +484,5 @@ $headerOffsetY: 70px;
   padding: 30px;
   overflow-y: auto !important;
   overflow-x: hidden !important;
-}
-.trends-chart {
-  margin-left: 40px;
-  margin-right: 40px;
-  margin-top: 10px;
-  margin-bottom: 60px;
 }
 </style>

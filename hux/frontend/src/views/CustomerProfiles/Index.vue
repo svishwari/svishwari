@@ -649,7 +649,7 @@ export default {
       demographicsData: "customers/demographics",
     }),
   },
-  async mounted() {
+  mounted() {
     this.loading = true
     try {
       this.getOverview()
