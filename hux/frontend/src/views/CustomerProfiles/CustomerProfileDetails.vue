@@ -24,7 +24,7 @@
         <v-row class="table-card mb-3">
           <v-col cols="6" class="pb-0">
             <profile-identifiable-insights
-              :profileError="customerProfileError"
+              :profile-error="customerProfileError"
               :insights="customerProfile['insights']"
               :piiaccess="customerProfile['pii_access']"
               :show-pii="showPIIData"
@@ -33,13 +33,13 @@
           </v-col>
           <v-col class="pb-0 customCol">
             <contact-preferences
-              :profileError="customerProfileError"
+              :profile-error="customerProfileError"
               :insights="customerProfile['contact_preferences']"
             />
           </v-col>
           <v-col class="matix-card-space pb-0">
             <individual-identity
-              :profileError="customerProfileError"
+              :profile-error="customerProfileError"
               :insights="customerProfile['identity_resolution']"
             />
           </v-col>
@@ -108,17 +108,27 @@
             >
               <empty-page
                 class="title-no-notification"
-                :type="customerEventsError ? 'error-on-screens' : 'no-customer-data'"
+                :type="
+                  customerEventsError ? 'error-on-screens' : 'no-customer-data'
+                "
                 :size="50"
               >
                 <template #title>
                   <div class="title-no-notification">
-                    {{customerEventsError ? "Events chart is currently unavailable" : "No customer events to show"}}
+                    {{
+                      customerEventsError
+                        ? "Events chart is currently unavailable"
+                        : "No customer events to show"
+                    }}
                   </div>
                 </template>
                 <template #subtitle>
                   <div class="des-no-notification">
-                    {{customerEventsError ? "Our team is working hard to fix it. Please be patient and try again soon!" : "Customer events will appear here once customer data finishes to upload. Please check back later."}}
+                    {{
+                      customerEventsError
+                        ? "Our team is working hard to fix it. Please be patient and try again soon!"
+                        : "Customer events will appear here once customer data finishes to upload. Please check back later."
+                    }}
                   </div>
                 </template>
               </empty-page>

@@ -165,7 +165,10 @@
                     </div>
                   </v-card-title>
 
-                  <i-d-r-matching-trend :map-data="matchingTrends" class="trends-chart"/>
+                  <i-d-r-matching-trend
+                    :map-data="matchingTrends"
+                    class="trends-chart"
+                  />
                 </span>
 
                 <v-row v-else class="matching-trend-chart-frame py-14">

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-card v-if="insights && !profileError" class="rounded-lg card-info-wrapper box-shadow-5">
+    <v-card
+      v-if="insights && !profileError"
+      class="rounded-lg card-info-wrapper box-shadow-5"
+    >
       <v-card-title
         class="card-heading py-5 pl-6"
         data-e2e="contact-preferencecs"
@@ -35,11 +38,17 @@
         :size="50"
       >
         <template #title>
-          <div class="title-no-notification">{{profileError ? "Unavailable" : "No customer Data"}}</div>
+          <div class="title-no-notification">
+            {{ profileError ? "Unavailable" : "No customer Data" }}
+          </div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">
-            {{profileError ? "Our team is working hard to fix this data table. Please be patient and try again soon!" : "Customer data will appear here once customer data is available."}}
+            {{
+              profileError
+                ? "Our team is working hard to fix this data table. Please be patient and try again soon!"
+                : "Customer data will appear here once customer data is available."
+            }}
           </div>
         </template>
       </empty-page>

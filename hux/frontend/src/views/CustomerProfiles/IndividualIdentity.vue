@@ -36,11 +36,19 @@
         :size="50"
       >
         <template #title>
-          <div class="title-no-notification">{{profileError ? "Individual ID unavailable" : "No customer data"}}</div>
+          <div class="title-no-notification">
+            {{
+              profileError ? "Individual ID unavailable" : "No customer data"
+            }}
+          </div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">
-            {{profileError ? "Our team is working hard to fix it. Please be patient and try again soon!" : "Individual ID will appear here once customer data is available."}}
+            {{
+              profileError
+                ? "Our team is working hard to fix it. Please be patient and try again soon!"
+                : "Individual ID will appear here once customer data is available."
+            }}
           </div>
         </template>
       </empty-page>

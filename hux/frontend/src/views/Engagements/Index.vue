@@ -16,11 +16,7 @@
             type="filter"
             :size="27"
             :color="
-              isEmptyError
-                ? 'black'
-                : isFilterToggled
-                ? 'primary'
-                : 'black'
+              isEmptyError ? 'black' : isFilterToggled ? 'primary' : 'black'
             "
             :variant="
               isEmptyError

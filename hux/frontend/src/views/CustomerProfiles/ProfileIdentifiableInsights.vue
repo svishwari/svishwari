@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-card v-if="insights && !profileError" class="rounded-lg card-info-wrapper box-shadow-5">
+    <v-card
+      v-if="insights && !profileError"
+      class="rounded-lg card-info-wrapper box-shadow-5"
+    >
       <v-card-title
         class="pl-6"
         :class="piiaccess ? 'py-3 d-flex justify-space-between' : 'py-5'"
@@ -114,12 +117,20 @@
       >
         <template #title>
           <div class="title-no-notification">
-            {{profileError ? "Customer data is currently unavailable" : "No customer data to show"}}
+            {{
+              profileError
+                ? "Customer data is currently unavailable"
+                : "No customer data to show"
+            }}
           </div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">
-            {{profileError ? "Our team is working hard to fix it. Please be patient and try again soon!" : "Customer data will appear here once customer data is available. Please check back later."}}
+            {{
+              profileError
+                ? "Our team is working hard to fix it. Please be patient and try again soon!"
+                : "Customer data will appear here once customer data is available. Please check back later."
+            }}
           </div>
         </template>
       </empty-page>
