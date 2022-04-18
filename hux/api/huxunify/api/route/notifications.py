@@ -362,7 +362,10 @@ class NotificationStream(SwaggerView):
                 ) - timedelta(
                     minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60)
                 )
-
+                update_all_users(
+                    database=get_db_client(),
+                    update_doc={db_c.SEEN_NOTIFICATIONS: False},
+                )
                 # dump the output notification list to the notification schema.
                 yield json.dumps(
                     NotificationsSchema().dump(
@@ -382,10 +385,6 @@ class NotificationStream(SwaggerView):
                     )
                 )
                 # update all users seen_notifications as False
-                update_all_users(
-                    database=get_db_client(),
-                    update_doc={db_c.SEEN_NOTIFICATIONS: False},
-                )
 
         # return the event stream response
         return Response(event_stream(), mimetype="text/event-stream")
