@@ -961,6 +961,7 @@ FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
+RESET = "reset"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -1801,7 +1802,6 @@ PERFORMANCE_METRIC_EMAIL_STUB = {
     "unsubscribe_rate": 0,
 }
 
-
 PERFORMANCE_METRIC_DISPLAY_STUB = {
     "spend": 100,
     "reach": 300,
@@ -1810,10 +1810,10 @@ PERFORMANCE_METRIC_DISPLAY_STUB = {
     "clicks": 55,
     "frequency": 10,
     "cost_per_thousand_impressions": 434,
-    "click_through_rate": 23.5,
+    "click_through_rate": 0.23,
     "cost_per_action": 7.56,
     "cost_per_click": 9.67,
-    "engagement_rate": 23,
+    "engagement_rate": 0.23,
 }
 
 PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY = {

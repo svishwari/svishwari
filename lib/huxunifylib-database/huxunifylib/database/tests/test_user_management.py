@@ -19,7 +19,7 @@ from huxunifylib.database.db_exceptions import (
 )
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
 class TestUserManagement(unittest.TestCase):
     """Test user management module."""
 
@@ -212,6 +212,21 @@ class TestUserManagement(unittest.TestCase):
         self.assertIsNotNone(user_doc)
         self.assertIn(db_c.USER_LOGIN_COUNT, user_doc)
         self.assertEqual(login_count + 1, user_doc[db_c.USER_LOGIN_COUNT])
+
+    def test_update_all_users(self) -> None:
+        """Test update_all_users.
+
+        Args:
+
+        """
+
+        # set update_doc dict to update the user_doc\
+        um.update_all_users(
+            database=self.database, update_doc={db_c.SEEN_NOTIFICATIONS: True}
+        )
+
+        for user in um.get_all_users(database=self.database):
+            self.assertTrue(user.get(db_c.SEEN_NOTIFICATIONS))
 
     def test_update_user_failure_disallowed_field(self) -> None:
         """Test update_user routine failure with disallowed field."""

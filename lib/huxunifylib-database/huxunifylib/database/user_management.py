@@ -68,6 +68,7 @@ def set_user(
     display_name: str = "",
     profile_photo: str = "",
     pii_access: bool = False,
+    seen_notifications: bool = False,
 ) -> Union[dict, None]:
     """A function to set a user.
 
@@ -84,6 +85,7 @@ def set_user(
         profile_photo (str): a profile photo url for the user, defaults to an
             empty string.
         pii_access (bool): PII Access, defaults to False
+        seen_notifications (bool): Seen Notifications Flag, defaults to False
 
     Returns:
         Union[dict, None]: MongoDB document for a user.
@@ -126,6 +128,7 @@ def set_user(
         db_c.USER_DASHBOARD_CONFIGURATION: {},
         db_c.USER_APPLICATIONS: [],
         db_c.USER_PII_ACCESS: pii_access,
+        db_c.SEEN_NOTIFICATIONS: seen_notifications,
     }
 
     # validate okta
@@ -280,6 +283,7 @@ def update_user(
         db_c.UPDATED_BY,
         db_c.USER_PII_ACCESS,
         db_c.USER_ALERTS,
+        db_c.SEEN_NOTIFICATIONS,
     ]
 
     # validate allowed fields, any invalid returns, raise error
@@ -296,6 +300,67 @@ def update_user(
             {"$set": update_doc},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def update_all_users(
+    database: DatabaseClient, update_doc: dict
+) -> Union[dict, None]:
+    """Function to update all users.
+
+    Args:
+        database (DatabaseClient): A database client.
+        update_doc (dict): Dict of key values to update.
+
+    Returns:
+        Union[dict, None]: Updated MongoDB document for a user.
+
+    Raises:
+        DuplicateFieldType: Error if a key that is passed in update_doc dict is
+            not part of the allowed fields list.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+
+    allowed_fields = [
+        db_c.USER_ROLE,
+        db_c.USER_ORGANIZATION,
+        db_c.USER_SUBSCRIPTION,
+        db_c.S_TYPE_EMAIL,
+        db_c.USER_DISPLAY_NAME,
+        db_c.USER_PROFILE_PHOTO,
+        db_c.USER_FAVORITES,
+        db_c.USER_APPLICATIONS,
+        db_c.USER_DASHBOARD_CONFIGURATION,
+        db_c.USER_LOGIN_COUNT,
+        db_c.UPDATE_TIME,
+        db_c.UPDATED_BY,
+        db_c.USER_PII_ACCESS,
+        db_c.USER_ALERTS,
+        db_c.SEEN_NOTIFICATIONS,
+    ]
+
+    # validate allowed fields, any invalid returns, raise error
+    key_check = [key for key in update_doc.keys() if key not in allowed_fields]
+    if any(key_check):
+        raise de.DuplicateFieldType(",".join(key_check))
+
+    # set the update time
+    update_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
+
+    try:
+        return collection.update_many(
+            {},
+            {"$set": update_doc},
+            upsert=False,
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

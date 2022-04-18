@@ -161,7 +161,7 @@ const actions = {
 
       const response = await api.audiences.getAudiences({
         lookalikeable: batchDetails ? batchDetails.lookalikeable : false,
-        deliveries: batchDetails ? batchDetails.deliveries : false,
+        deliveries: batchDetails ? batchDetails.deliveries : 2,
         favorites: batchDetails ? batchDetails.favorites : false,
         worked_by: batchDetails ? batchDetails.worked_by : false,
         attribute: batchDetails ? batchDetails.attribute : [],

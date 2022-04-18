@@ -402,6 +402,7 @@ USER_ROLES = [USER_ROLE_ADMIN, USER_ROLE_EDITOR, USER_ROLE_VIEWER]
 COMPONENT_ID = "component_id"
 COMPONENT_NAME = "component_name"
 USER_PII_ACCESS = "pii_access"
+SEEN_NOTIFICATIONS = "seen_notifications"
 
 CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"

@@ -1140,9 +1140,9 @@ export default {
           engagementId: event.data.id,
           data: payload,
         })
-        // this.$router.push({
-        //   name: "AudienceUpdate",
-        // })
+        this.selectedEngagements = this.selectedEngagements.filter(
+          (eng) => eng.id !== event.data.id
+        )
         this.refresh()
         this.refreshEntity()
       }
