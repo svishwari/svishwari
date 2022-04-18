@@ -214,6 +214,7 @@ export default {
       customerProfileError: false,
     }
   },
+
   computed: {
     ...mapGetters({
       customer: "customers/single",
@@ -230,7 +231,6 @@ export default {
         res = this.customer(this.$route.params.id)
       } catch (error) {
         res = { overview: {} }
-        this.customerProfileError = true
       }
       return res
     },
@@ -248,6 +248,17 @@ export default {
         eventObject = eventObject.concat(sortBy(temp, [(o) => o.event_type]))
         return eventObject
       }, [])
+    },
+  },
+
+  watch: {
+    customerProfile: {
+      deep: true,
+      handler: function (newVal) {
+        if (newVal["overview"] && newVal["overview"] == {}) {
+          this.customerProfileError = true
+        }
+      },
     },
   },
 
