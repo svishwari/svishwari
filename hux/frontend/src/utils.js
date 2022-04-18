@@ -441,3 +441,16 @@ export function getBatchCounts(request) {
   let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
   return [initialCount, lastCount]
 }
+
+/**
+ * Returns true if url is invalid else false
+ *
+ * @param {string} url - url to be checked if invalid
+ * @returns {boolean} boolean value
+ */
+export function isInvalidURL(url) {
+  return (
+    url === "" ||
+    !/^[^!@#$%^*()={}\\/.<>":?|,_&]+\.[^!@#$%^*()={}\\/.<>":?|,_&]+$/.test(url)
+  )
+}
