@@ -293,6 +293,7 @@ export default {
       }
 
       let mousemove = (mouseEvent) => {
+        let maxRightLimit = (w * 85) / 100
         svg.selectAll(".parent-hover-circle").remove()
         svg.selectAll(".child-hover-circle").remove()
         this.tooltipDisplay(false)
@@ -348,6 +349,8 @@ export default {
         })
         dataToolTip.xPosition = finalXCoordinate
         dataToolTip.yPosition = yData
+        dataToolTip.invertPosition =
+          finalXCoordinate > maxRightLimit ? true : false
         this.tooltipDisplay(true, dataToolTip)
       }
       this.lastBarAnimation = setInterval(blinkLastBar, 1000)
