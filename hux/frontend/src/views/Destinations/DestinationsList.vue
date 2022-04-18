@@ -141,7 +141,7 @@
       v-model="editConfirmModal"
       right-btn-text="Save changes"
       left-btn-text="Nevermind!"
-      :is-disabled="isInvalidURL"
+      :is-disabled="isInvalidURL(newURL)"
       @onCancel="editConfirmModal = false"
       @onConfirm="updateDestinationURL()"
     >
@@ -166,7 +166,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 import sortBy from "lodash/sortBy"
-
+import { isInvalidURL } from "@/utils"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import Status from "@/components/common/Status"
@@ -214,15 +214,6 @@ export default {
       destinations: "destinations/list",
     }),
 
-    isInvalidURL() {
-      return (
-        this.newURL === "" ||
-        !/^[^!@#$%^*()={}\\/.<>":?|,_&]+\.[^!@#$%^*()={}\\/.<>":?|,_&]+$/.test(
-          this.newURL
-        )
-      )
-    },
-
     addedDestinations() {
       return sortBy(this.destinations, ["status", "name"]).filter(
         (destination) => destination.is_added
@@ -240,6 +231,8 @@ export default {
       updateDestination: "destinations/update",
       setAlert: "alerts/setAlert",
     }),
+
+    isInvalidURL: isInvalidURL,
 
     openModal(destination) {
       this.selectedDestination = destination
