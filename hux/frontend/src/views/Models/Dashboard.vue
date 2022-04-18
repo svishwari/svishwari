@@ -683,11 +683,6 @@ export default {
     this.$store.dispatch("models/clearModelValues")
     window.removeEventListener("resize", this.sizeHandler)
   },
-  updated() {
-    if (this.$refs["decisioning-drift"]) {
-      this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
-    }
-  },
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
@@ -734,7 +729,9 @@ export default {
       this.featuresLoading = false
     },
     sizeHandler() {
-      this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
+      if (this.$refs["decisioning-drift"]) {
+        this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
+      }
     },
     async fetchModelFeatures(params) {
       this.loadingModelFeatures = true
