@@ -141,9 +141,7 @@ class TestUserRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_deleting_DNE_audience_from_favorite(self):
-        """Tests adding invalid audience as a user favorite.
-        Testing by sending audience_id not in DB, here using engagement ID.
-        """
+        """Tests deleting DNE audience as a user favorite."""
 
         audience_id = ObjectId()
 
