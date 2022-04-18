@@ -64,6 +64,9 @@ export default {
     alerts: function () {
       if (this.alerts.length > 0 && this.alerts[0].code == 401) {
         this.infoModal = true
+      } else if (this.alerts.length > 0 && this.alerts[0].code == 503) {
+        this.infoModal = false
+        this.$router.push({ name: "ServiceError" })
       } else {
         this.infoModal = false
       }
