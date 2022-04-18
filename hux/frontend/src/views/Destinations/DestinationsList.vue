@@ -141,17 +141,17 @@
       v-model="editConfirmModal"
       right-btn-text="Save changes"
       left-btn-text="Nevermind!"
+      :is-disabled="isInvalidURL"
       @onCancel="editConfirmModal = false"
       @onConfirm="updateDestinationURL()"
     >
       <template #body>
         <div class="mx-4">
-          <icon type="edit" :size="38" />
+          <icon type="edit" :size="42" color="primary" variant="lighten6" />
           <div class="text-h2 mb-4">Editing destination URL</div>
           <text-field
             v-model="newURL"
             label-text="Edit destination URL"
-            :is-disabled="newURL === ''"
             placeholder="Destination URL"
             class="pt-5"
             height="40"
@@ -213,6 +213,15 @@ export default {
     ...mapGetters({
       destinations: "destinations/list",
     }),
+
+    isInvalidURL() {
+      return (
+        this.newURL === "" ||
+        !/^[^!@#$%^*()={}\\/.<>":?|,_&]+\.[^!@#$%^*()={}\\/.<>":?|,_&]+$/.test(
+          this.newURL
+        )
+      )
+    },
 
     addedDestinations() {
       return sortBy(this.destinations, ["status", "name"]).filter(
