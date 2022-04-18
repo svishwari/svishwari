@@ -143,7 +143,7 @@ export default {
         case "Size":
           return this.data.total_customers
         case "Age Range":
-          return this.data.min_age || this.data.max_age
+          return this.data.min_age && this.data.max_age
             ? `${this.data.min_age}-${this.data.max_age}`
             : "—"
         case "Countries":
