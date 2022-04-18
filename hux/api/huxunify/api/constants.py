@@ -1,5 +1,5 @@
 # pylint: disable=too-many-lines
-"""This module contains connector defines"""
+"""This module contains connector defines."""
 import os
 import random
 import datetime

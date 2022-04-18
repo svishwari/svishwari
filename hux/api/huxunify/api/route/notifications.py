@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use
-"""Paths for Notifications API"""
+"""Paths for Notifications API."""
 import asyncio
 import json
 from http import HTTPStatus

@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use,disable=unused-argument
-"""Paths for the User API"""
+"""Paths for the User API."""
 import datetime
 import random
 from http import HTTPStatus
