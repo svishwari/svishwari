@@ -86,7 +86,7 @@
             </router-link>
           </template>
         </page-header>
-        <hux-data-table
+        <hux-lazy-data-table
           v-if="!loading && rowData.length > 0"
           :columns="columnDefs"
           :data-items="rowData"
@@ -96,6 +96,8 @@
           nested
           data-e2e="engagement-table"
           class="big-table"
+          :enable-lazy-load="enableLazyLoad"
+          @bottomScrollEvent="intersected"
         >
           <template #item-row="{ item, expandFunc, isExpanded }">
             <tr :class="{ 'expanded-row': isExpanded }">
@@ -164,7 +166,7 @@
                         <logo
                           class="mr-1"
                           :type="destination.delivery_platform_type"
-                          :size="18"
+                          :size="24"
                         />
                       </template>
                       <template #hover-content>
@@ -314,7 +316,10 @@
               >
                 <template #item-row="{ item, expandFunc, isExpanded }">
                   <tr :class="{ 'expanded-row': isExpanded }">
-                    <td :style="{ width: expandedHeaders[0].width }"></td>
+                    <td
+                      :style="{ width: expandedHeaders[0].width }"
+                      class="expanded-row-cover"
+                    ></td>
                     <td
                       v-for="header in getAudienceHeaders(subHeaders)"
                       :key="header.value"
@@ -326,9 +331,6 @@
                       <div v-if="header.value == 'name'">
                         <menu-cell
                           :value="item[header.value]"
-                          :menu-options="
-                            getAudienceActionItems(item, parentItem.id)
-                          "
                           route-name="AudienceInsight"
                           :route-param="item['id']"
                           :data="item"
@@ -586,7 +588,7 @@
               </hux-data-table>
             </td>
           </template>
-        </hux-data-table>
+        </hux-lazy-data-table>
 
         <look-alike-audience
           ref="lookalikeWorkflow"
@@ -822,7 +824,8 @@ import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Icon from "@/components/common/Icon"
 import huxButton from "@/components/common/huxButton"
-import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
+import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue"
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Avatar from "../../components/common/Avatar.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
@@ -842,6 +845,7 @@ export default {
     Icon,
     huxButton,
     EmptyPage,
+    HuxLazyDataTable,
     HuxDataTable,
     Avatar,
     TimeStamp,
@@ -879,6 +883,9 @@ export default {
       manualDeliverySchedule: "Manual",
       numFiltersSelected: 0,
       finalFilterApplied: 0,
+      enableLazyLoad: false,
+      lastBatch: 0,
+      batchDetails: {},
       columnDefs: [
         {
           text: "Engagement name",
@@ -948,6 +955,7 @@ export default {
       engagementData: "engagements/list",
       audiencesData: "audiences/audience",
       userFavorites: "users/favorites",
+      totalEngagements: "engagements/total",
     }),
     audience(id) {
       return this.audiencesData(id)
@@ -1013,7 +1021,9 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.getAllEngagements()
+      this.setDefaultBatch()
+      await this.fetchEngagementsByBatch()
+      this.calculateLastBatch()
     } catch (error) {
       this.isEmptyError = true
     } finally {
@@ -1024,7 +1034,6 @@ export default {
   methods: {
     ...mapActions({
       getAllEngagements: "engagements/getAll",
-      getAllFilteredEngagements: "engagements/getAllFiltered",
       updateAudienceList: "engagements/updateAudienceList",
       updateEngagement: "engagements/updateEngagement",
       detachAudience: "engagements/detachAudience",
@@ -1033,6 +1042,32 @@ export default {
       clearFavorite: "users/clearFavorite",
       deleteEngagement: "engagements/remove",
     }),
+
+    setDefaultBatch() {
+      this.batchDetails.batch_size = 25
+      this.batchDetails.batch_number = 1
+      this.batchDetails.favorites = false
+      this.batchDetails.my_engagements = false
+    },
+
+    intersected() {
+      if (this.batchDetails.batch_number <= this.lastBatch) {
+        this.batchDetails.isLazyLoad = true
+        this.enableLazyLoad = true
+        this.fetchEngagementsByBatch()
+      } else {
+        this.enableLazyLoad = false
+      }
+    },
+    async fetchEngagementsByBatch() {
+      await this.getAllEngagements(this.batchDetails)
+      this.batchDetails.batch_number++
+    },
+    calculateLastBatch() {
+      this.lastBatch = Math.ceil(
+        this.totalEngagements / this.batchDetails.batch_size
+      )
+    },
 
     clearFilter() {
       this.$refs.filters.clearAndReload()
@@ -1045,11 +1080,12 @@ export default {
     async applyFilter(params) {
       this.loading = true
       this.finalFilterApplied = params.filterApplied
+      this.setDefaultBatch()
+      this.batchDetails.favorites = params.selectedFavourite
+      this.batchDetails.my_engagements = params.selectedEngagementsWorkedWith
       try {
-        await this.getAllFilteredEngagements({
-          favorites: params.selectedFavourite,
-          my_engagements: params.selectedEngagementsWorkedWith,
-        })
+        await this.fetchEngagementsByBatch()
+        this.calculateLastBatch()
       } catch (error) {
         this.isEmptyError = true
         this.clearFilter()
@@ -1103,7 +1139,8 @@ export default {
       await this.updateEngagement(payload)
       this.loading = true
       try {
-        await this.getAllEngagements()
+        this.setDefaultBatch()
+        await this.fetchEngagementsByBatch()
       } catch (error) {
         this.isEmptyError = true
       } finally {
@@ -1141,7 +1178,8 @@ export default {
           engagementId: this.selectedEngagementId,
           data: removePayload,
         })
-        await this.getAllEngagements()
+        this.setDefaultBatch()
+        await this.fetchEngagementsByBatch()
       } catch (error) {
         this.isEmptyError = true
       } finally {
@@ -1452,6 +1490,19 @@ export default {
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }
+      ::v-deep .v-data-table {
+        .v-data-table__wrapper {
+          tr {
+            td:first-child {
+              width: 300px;
+              position: fixed;
+              margin-left: 220px;
+              display: block;
+              background-color: var(--v-primary-lighten1);
+            }
+          }
+        }
+      }
     }
   }
   ::v-deep .hux-data-table.expanded-table {
@@ -1459,6 +1510,13 @@ export default {
       box-shadow: inset 0px 10px 10px -4px #d0d0ce !important;
       .child-row {
         border-right: none;
+      }
+      .expanded-row-cover {
+        width: 300px;
+        position: fixed;
+        margin-left: 220px;
+        display: block;
+        background-color: var(--v-primary-lighten1);
       }
     }
     td:nth-child(1) {

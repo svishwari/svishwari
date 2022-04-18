@@ -84,19 +84,22 @@ export default {
         .paddingInner(0.22)
         .paddingOuter(0.11)
 
+      let minYvalue = d3Array.min(this.segmentScores, (d) =>
+        Math.min(...d.values.map((em) => em.value))
+      )
+
+      let maxYvalue = d3Array.max(this.segmentScores, (d) =>
+        Math.max(...d.values.map((em) => em.value))
+      )
+
+      let enableNegativeAxis = minYvalue < 0
+
       // Adding dynamic domain values
       let getdomainValues = () => {
-        if (this.emptyState) {
+        if (this.emptyState || !enableNegativeAxis) {
           return [0, 100]
         } else {
-          return [
-            d3Array.min(this.segmentScores, (d) =>
-              Math.min(...d.values.map((em) => em.value))
-            ),
-            d3Array.max(this.segmentScores, (d) =>
-              Math.max(...d.values.map((em) => em.value))
-            ),
-          ]
+          return [minYvalue, maxYvalue]
         }
       }
 

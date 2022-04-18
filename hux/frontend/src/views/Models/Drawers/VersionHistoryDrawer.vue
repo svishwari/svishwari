@@ -26,11 +26,7 @@
             :style="{ width: header.width }"
             class="pr-0"
           >
-            <tooltip
-              v-if="header.value == 'version'"
-              position-top
-              nudge-right="90"
-            >
+            <tooltip v-if="header.value == 'version'" nudge-right="25">
               <span
                 class="cell text-body-1 ml-2 primary--text cursor-pointer"
                 :class="[item.current ? 'font-weight-bold' : '']"

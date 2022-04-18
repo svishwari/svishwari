@@ -384,6 +384,7 @@ STATUS_WEIGHTS = {
     db_c.STATUS_FAILED: 0,
 }
 # Download Audience Fields
+DOWNLOAD_TYPES = "download_types"
 DOWNLOAD_TYPE = "download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
@@ -760,6 +761,7 @@ AUDIENCE_DELIVERY_SCHEDULE = "audience_delivery_schedule"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
 MY_ENGAGEMENTS = "my_engagements"
+ENGAGEMENTS_DEFAULT_BATCH_SIZE = 0
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -936,6 +938,7 @@ LOOKALIKE = "lookalike"
 LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
+AUDIENCES_DEFAULT_BATCH_SIZE = 0
 
 PARAM_STORE_PREFIX = "unified"
 SECRET_STORAGE_ERROR_MSG = (
@@ -958,6 +961,7 @@ FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
+RESET = "reset"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -1138,6 +1142,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
+IDR_INSIGHTS = "idr_insights"
 DATA_FEEDS = "data_feeds"
 TIMESTAMP = "timestamp"
 STITCHED = "stitched"
@@ -1633,6 +1638,7 @@ BOUNCES = "bounces"
 HARD_BOUNCES = "hard_bounces"
 OPENS = "opens"
 CLICKS = "clicks"
+FILL_EMPTY_DATES = "fill_empty_dates"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"
@@ -1691,6 +1697,7 @@ ALERT_SAMPLE_RESPONSE = {
 
 # Trust ID
 TRUST_ID_ENDPOINT = "/trust_id"
+TRUST_ID_TAG = "trust-id"
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"
@@ -1698,8 +1705,15 @@ HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
 LIST_OF_SIGNALS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
-
-ALLOWED_FILTERS = "allowed_filters"
+SEGMENT_TYPES = [
+    "composite & signal scores",
+    "humanity attributes",
+    "reliability attributes",
+    "capability attributes",
+    "transparency attributes",
+]
+SEGMENT_NAME = "segment_name"
+SEGMENT_FILTERS = "segment_filters"
 TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
 SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
 ATTRIBUTE_SCORES = "attribute_scores"
@@ -1774,4 +1788,75 @@ TRUST_ID_SUPPORTED_FILTERS_STUB = [
             {"employee": "Employee"},
         ],
     },
+]
+
+PERFORMANCE_METRIC_EMAIL_STUB = {
+    "sent": 2045,
+    "hard_bounces": 197,
+    "hard_bounces_rate": 0,
+    "delivered": 1578,
+    "delivered_rate": 0,
+    "open": 0,
+    "open_rate": 0,
+    "clicks": 719,
+    "conversions": 0,
+    "click_to_open_rate": 0,
+    "unique_clicks": 704,
+    "unique_opens": 937,
+    "unsubscribe": 0,
+    "unsubscribe_rate": 0,
+}
+
+PERFORMANCE_METRIC_DISPLAY_STUB = {
+    "spend": 100,
+    "reach": 300,
+    "impressions": 239,
+    "conversions": 188,
+    "clicks": 55,
+    "frequency": 10,
+    "cost_per_thousand_impressions": 434,
+    "click_through_rate": 0.23,
+    "cost_per_action": 7.56,
+    "cost_per_click": 9.67,
+    "engagement_rate": 0.23,
+}
+
+PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY = {
+    "sent": 0,
+    "hard_bounces": 0,
+    "hard_bounces_rate": 0,
+    "delivered": 0,
+    "delivered_rate": 0,
+    "open": 0,
+    "open_rate": 0,
+    "clicks": 0,
+    "conversions": 0,
+    "click_to_open_rate": 0,
+    "unique_clicks": 0,
+    "unique_opens": 0,
+    "unsubscribe": 0,
+    "unsubscribe_rate": 0,
+}
+
+PERFORMANCE_METRIC_DISPLAY_STUB_NO_DELIVERY = {
+    "spend": 0,
+    "reach": 0,
+    "impressions": 0,
+    "conversions": 0,
+    "clicks": 0,
+    "frequency": 0,
+    "cost_per_thousand_impressions": 0,
+    "click_through_rate": 0,
+    "cost_per_action": 0,
+    "cost_per_click": 0,
+    "engagement_rate": 0,
+}
+
+APPLICATION_CATEGORIES = [
+    "Modeling",
+    "Reporting",
+    "Data Processing",
+    "Data Storage",
+    "Monitoring",
+    "Uncategorized",
 ]

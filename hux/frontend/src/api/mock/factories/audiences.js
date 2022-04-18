@@ -18,6 +18,31 @@ export const audienceInsights = pick(customersOverview, [
   "total_customers",
 ])
 
+const destinationData = () => {
+  return {
+    name: "Facebook",
+    type: "facebook",
+    status: "Active",
+    category: "Advertising",
+
+    is_enabled: false,
+    is_added: false,
+
+    create_time: () => faker.date.recent(),
+    created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
+    update_time: () => faker.date.recent(),
+    updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
+
+    engagements: () => faker.datatype.number({ min: 0, max: 10 }),
+
+    // request destination fields
+    contact_email: null,
+    client_request: null,
+    client_account: null,
+    use_case: null,
+  }
+}
+
 const engagementData = () => {
   return {
     id: `${faker.datatype.number({ min: 1, max: 10 })}`,
@@ -88,6 +113,10 @@ const mockEngagements = (num = 3) => {
   return Array.from({ length: num }, engagementData)
 }
 
+const mockDestinations = (num = 3) => {
+  return Array.from({ length: num }, destinationData)
+}
+
 const mockLookalikeAudiences = (num = 3) => {
   return Array.from({ length: num }, lookalikeAudience)
 }
@@ -117,6 +146,8 @@ export const audience = {
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   engagements: () => mockEngagements(faker.datatype.number({ min: 0, max: 5 })),
+  destinations: () =>
+    mockDestinations(faker.datatype.number({ min: 0, max: 5 })),
   is_lookalike: () => false,
   lookalikeable: () => faker.random.arrayElement(["Active"]),
   lookalike_audiences: () => mockLookalikeAudiences(5),

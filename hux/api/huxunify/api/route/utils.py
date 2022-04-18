@@ -5,12 +5,16 @@ from collections import defaultdict
 from datetime import datetime, date
 import re
 from itertools import groupby
-from typing import Tuple, Union, Generator
+from pathlib import Path
+from typing import Tuple, Union, Generator, Callable
 from http import HTTPStatus
+
+import pandas as pd
 from bson import ObjectId
 
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
+
 
 from pandas import DataFrame
 
@@ -21,6 +25,7 @@ from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
 
+from huxunifylib.database.audit_management import create_audience_audit
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -35,6 +40,7 @@ from huxunifylib.database.user_management import (
     set_user,
 )
 from huxunifylib.database.client import DatabaseClient
+
 
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
@@ -321,11 +327,15 @@ class Validation:
     """Validation class for input parameters"""
 
     @staticmethod
-    def validate_integer(value: str) -> int:
+    def validate_integer(
+        value: str, validate_zero_or_greater: bool = False
+    ) -> int:
         """Validates that an integer is valid
 
         Args:
             value (str): String value from the caller.
+            validate_zero_or_greater(bool): Boolean value to validate if value
+            is equal to or greater than zero.
 
         Returns:
             int: Result of the integer conversion.
@@ -339,7 +349,11 @@ class Validation:
         max_value = 2147483647
 
         if value.isdigit():
-            if int(value) <= 0:
+            if validate_zero_or_greater and int(value) < 0:
+                raise ue.InputParamsValidationError(
+                    value, "zero or positive integer"
+                )
+            if not validate_zero_or_greater and int(value) <= 0:
                 raise ue.InputParamsValidationError(value, "positive integer")
             if int(value) > max_value:
                 raise ue.InputParamsValidationError(value, "integer")
@@ -1216,3 +1230,72 @@ def set_destination_authentication_secrets(
             ) from exc
 
     return ssm_params
+
+
+def generate_audience_file(
+    data_batches: pd.DataFrame,
+    transform_function: Callable,
+    audience_id: ObjectId,
+    download_type: str,
+    user_name: str,
+    database: DatabaseClient,
+) -> None:
+    """Generates Audience File
+
+    Args:
+        database(DatabaseClient): MongoDB Client
+        user_name(str): User name
+        download_type(str): Download Type selected
+        audience_id(ObjectId): Audience Id
+        data_batches(pd.Dataframe): Data batches retrieved from cdp
+        transform_function(Callable): Transform Function
+
+    Returns:
+
+    """
+    folder_name = "downloadaudiences"
+    audience_file_name = (
+        f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
+        f"_{audience_id}_{download_type}.csv"
+    )
+    with open(
+        Path(__file__).parent.parent.joinpath(folder_name)
+        / audience_file_name,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as csvfile:
+        for dataframe_batch in data_batches:
+            transform_function(dataframe_batch).to_csv(
+                csvfile,
+                mode="a",
+                index=False,
+            )
+
+    logger.info(
+        "Uploading generated %s audience file to %s S3 bucket",
+        audience_file_name,
+        get_config().S3_DATASET_BUCKET,
+    )
+    filename = (
+        Path(__file__).parent.parent.joinpath(folder_name)
+        / audience_file_name,
+    )
+    if CloudClient().upload_file(
+        file_name=str(filename[0]),
+        bucket=get_config().S3_DATASET_BUCKET,
+        object_name=audience_file_name,
+        user_name=user_name,
+        file_type=api_c.AUDIENCE,
+    ):
+        create_audience_audit(
+            database=database,
+            audience_id=audience_id,
+            download_type=download_type,
+            file_name=audience_file_name,
+            user_name=user_name,
+        )
+        logger.info(
+            "Created an audit log for %s audience file creation",
+            audience_file_name,
+        )

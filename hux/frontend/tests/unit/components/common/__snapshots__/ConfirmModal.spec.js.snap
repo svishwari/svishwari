@@ -7,7 +7,9 @@ exports[`Tests Confirm Modal Confirm modal displays icon content 1`] = `
       <svg-as-component-stub src="assets/icons/sad-face" width="42" height="42" color="primary" variant="base" fillopacity="1" strokeopacity="1"></svg-as-component-stub>
       <!---->
       <!---->
-      <!---->
+      <div class="body-slot mx-7">
+        <!---->
+      </div>
     </div>
     <div class="confirm-modal-footer">
       <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2" class="btn-border box-shadow-none"><span class="primary--text">Nevermind!</span></huxbutton-stub>
@@ -30,13 +32,13 @@ exports[`Tests Confirm Modal Confirm modal displays props content 1`] = `
       <div class="black--text text--darken-4 text-h2 mt-n2">
         Subtitle prop
       </div>
-      <div class="
-              black--text
-              text--darken-4 text-subtitle-1
-              pt-6
-              font-weight-regular
-            ">
-        Body prop
+      <div class="body-slot mx-7">
+        <div class="
+                black--text
+                text--darken-4 text-subtitle-1
+                pt-6
+                font-weight-regular
+              ">Body prop</div>
       </div>
     </div>
     <div class="confirm-modal-footer">
@@ -56,7 +58,9 @@ exports[`Tests Confirm Modal Confirm modal displays slots content 1`] = `
       <icon-stub type="sad-face" size="42" color="primary" fillopacity="1" strokeopacity="1"></icon-stub>
       <div>Title slot</div>
       <div>This is a subtitle slot that displays below the title</div>
-      <div>Body slot</div>
+      <div class="body-slot mx-7">
+        <div>Body slot</div>
+      </div>
     </div>
     <div class="confirm-modal-footer">
       <div>This is a footer slot that displays at the bottom</div>

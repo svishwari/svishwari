@@ -12,10 +12,7 @@
           </div>
         </template>
       </page-header>
-      <page-header
-        v-if="areDestinationsAvailable || showError"
-        header-height="71"
-      >
+      <page-header v-if="areDestinationsAvailable" header-height="71">
         <template #left>
           <v-btn disabled icon>
             <icon type="search" :size="20" color="black" variant="lighten3" />
@@ -24,7 +21,7 @@
 
         <template #right>
           <router-link
-            v-if="!showError"
+            v-if="!showError && getRole == 'admin'"
             :to="{ name: 'DestinationConfiguration' }"
             class="text-decoration-none"
             data-e2e="addDestination"
@@ -40,27 +37,12 @@
               Add a destination
             </huxButton>
           </router-link>
-          <huxButton v-else variant="white" is-tile is-disabled class="ma-2">
-            Add a destination
-          </huxButton>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
-      <destinations-list v-if="isConnectionStarted" :show-error="showError" />
-      <div v-else class="empty-state-wrap text-center">
-        <v-icon color="primary lighten-8" x-large>
-          mdi-alert-circle-outline
-        </v-icon>
-        <div class="text-h3">Oops! There’s nothing here yet</div>
-        <div class="font-weight-regular text-h6 my-2">
-          To create a connection, you need to add a destination or a data
-          source!
-          <br />
-          Begin by selecting a button below.
-        </div>
-      </div>
+      <destinations-list :show-error="showError" />
     </div>
     <data-source-configuration v-model="drawer" />
   </page>
@@ -106,19 +88,9 @@ export default {
 
   computed: {
     ...mapGetters({
-      dataSources: "dataSources/list",
       destinations: "destinations/list",
+      getRole: "users/getCurrentUserRole",
     }),
-
-    isConnectionStarted() {
-      const availableDataSources = this.dataSources.filter(
-        (each) => each.is_added
-      )
-      const availableDestinations = this.destinations.filter(
-        (each) => each.is_added
-      )
-      return availableDataSources.length > 0 || availableDestinations.length > 0
-    },
 
     areDestinationsAvailable() {
       return this.destinations.some((each) => each.is_added)
@@ -155,7 +127,6 @@ export default {
 
   methods: {
     ...mapActions({
-      getDataSources: "dataSources/getAll",
       getDestinations: "destinations/getAll",
     }),
     toggleDrawer() {

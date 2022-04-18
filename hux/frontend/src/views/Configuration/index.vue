@@ -10,6 +10,7 @@
         </template>
         <template #right>
           <tips-menu
+            v-if="isConfigActivated"
             :panel-list-items="panelListItems"
             header="Configuration user guide"
             class="mr-3"
@@ -21,7 +22,7 @@
     </div>
     <div
       v-if="!loading"
-      class="config-content flex-grow-1 flex-shrink-1 mw-100 content-section"
+      class="config-content flex-grow-1 flex-shrink-1 mw-100"
     >
       <v-row v-if="isConfigActivated">
         <v-col>
@@ -34,7 +35,6 @@
         :icon-size="50"
         title="Client settings is currently unavailable"
         subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-        class="my-8"
       >
       </error>
     </div>
@@ -136,8 +136,11 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 210px);
+  height: calc(100vh - 240px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
+}
+::v-deep .descriptive-card .description {
+  padding-bottom: 10px;
 }
 </style>

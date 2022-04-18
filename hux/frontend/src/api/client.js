@@ -48,9 +48,6 @@ client["users"].getRequestedUsers = () => {
 client["users"].tickets = () => {
   return http.get("users/tickets")
 }
-client["users"].trustIdOverview = () => {
-  return http.get("trust_id/overview")
-}
 //#endregion
 
 //#region Configurations
@@ -146,7 +143,7 @@ client["destinations"].updateDestination = (id, data) => {
 //#endregion
 
 //#region Engagement custom endpoints
-client["engagements"].allFiltered = (data) => {
+client["engagements"].getEngagements = (data) => {
   let URLData = []
   for (const property in data) {
     let formURL = property + "=" + data[property]
@@ -168,13 +165,24 @@ client["engagements"].attachDestination = (audienceId, data) => {
   return http.post(`/audiences/${audienceId}/destinations`, data)
 }
 
+client["engagements"].attachAudienceDestination = (
+  engagementId,
+  audienceId,
+  data
+) => {
+  return http.post(
+    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
+    data
+  )
+}
+
 client["engagements"].detachDestination = (audienceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
-    return http.delete(`/audience/${audienceId}/destinations`, { data: data })
+    return http.delete(`/audiences/${audienceId}/destinations`, { data: data })
   } else {
-    return http.delete(`/audience/${audienceId}/destinations/${data.id}`)
+    return http.delete(`/audiences/${audienceId}/destinations/${data.id}`)
   }
 }
 
@@ -325,8 +333,8 @@ client["audiences"].getAudiences = (data) => {
   return http.get(`/audiences?${newURLFormat}`)
 }
 
-client["audiences"].downloadAudience = (audienceId, fileType) => {
-  return http.get(`/audiences/${audienceId}/${fileType}`, {
+client["audiences"].downloadAudience = (audienceId, query) => {
+  return http.get(`/audiences/${audienceId}/download?${query}`, {
     timeout: 0,
     responseType: "blob",
   })
@@ -340,9 +348,9 @@ client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
-client["audiences"].create = (resourceId, data) => {
-  return http.post("/lookalike-audiences", data)
-}
+// client["audiences"].create = (resourceId, data) => {
+//   return http.post("/lookalike-audiences", data)
+// }
 
 client["audiences"].deliveries = (resourceId, query) => {
   return http.get(`/audiences/${resourceId}/delivery-history?${query}`)
@@ -489,8 +497,26 @@ client["emailDeliverability"].getOverview = () => {
 }
 
 //#region trustId
+client["trustId"].trustIdOverview = () => {
+  return http.get("trust_id/overview")
+}
+
 client["trustId"].getComparison = () => {
   return http.get("/trust_id/comparison")
+}
+client["trustId"].getAttributes = () => {
+  return http.get("/trust_id/attributes")
+}
+
+client["trustId"].getSegments = () => {
+  return http.get("/trust_id/user_filters")
+}
+
+client["trustId"].addSegment = (data) => {
+  return http.post("trust_id/segment", data)
+}
+client["trustId"].removeSegmentData = ({ segment_name }) => {
+  return http.delete(`/trust_id/segment?segment_name=${segment_name}`)
 }
 
 export default client

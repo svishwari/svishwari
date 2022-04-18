@@ -60,7 +60,7 @@
     >
       <template #label-content>
         <div
-          class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title text-h4"
+          class="text-h4 px-6 pb-3 pt-2 text-ellipsis d-block title text-h4"
           :class="disabled || !interactable ? 'black--text' : 'primary--text'"
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
@@ -75,7 +75,7 @@
 
     <template v-else>
       <div
-        class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title text-h4"
+        class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title"
         :class="disabled || !interactable ? 'black--text' : 'primary--text'"
         :style="{ 'padding-top': !icon ? '56px' : null }"
         data-e2e="card-title"
@@ -212,7 +212,7 @@ export default {
     topRightAdjustment: {
       type: String,
       required: false,
-      default: "mt-2 mr-8",
+      default: "mt-3 mr-8",
     },
   },
 }
@@ -266,7 +266,6 @@ export default {
     text-align: -webkit-center;
   }
   .description {
-    min-height: 36px;
     -webkit-box-orient: vertical !important;
     -webkit-line-clamp: 2 !important;
     overflow: hidden !important;
@@ -279,5 +278,12 @@ export default {
 .icon-margin {
   margin-left: -6px !important;
   margin-top: -6px !important;
+}
+.v-menu__content {
+  &.theme--light {
+    &.menuable__content__active {
+      margin-top: 28px !important;
+    }
+  }
 }
 </style>

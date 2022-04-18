@@ -119,7 +119,8 @@ class Tecton:
                 return True, "Tecton available."
             return (
                 False,
-                f"Tecton not available. Received: {response.status_code}",
+                f"Received status code: {response.status_code}, "
+                f"Received message: {response.json()}",
             )
 
         except Exception as exception:  # pylint: disable=broad-except

@@ -25,9 +25,8 @@ describe("Data Management > Data Sources", () => {
       cy.get("button").contains("Request 1 data source").click()
       cy.location("pathname").should("eq", route.dataSources)
 
-      // TODO: improve waiting for the data source list to load
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1000)
+      cy.wait(4000)
 
       // make sure that number of data sources have increased by 1
       cy.get(selector.datasources)
@@ -75,12 +74,12 @@ describe("Data Management > Data Sources", () => {
     cy.get(selector.datasources).eq(0).click()
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
+    cy.wait(4000)
     cy.get(".datasource-datafeeds-table").should("exist")
 
     cy.get(".data-feed-name").eq(0).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
+    cy.wait(4000)
     cy.get(selector.dataFilesWrapper).then((elem) => {
       if (elem.find(".datasource-datafeeds-details-table").length > 0) {
         cy.get(selector.dataFeedDetailsTable).should("exist")

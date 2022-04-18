@@ -50,16 +50,12 @@
         </div>
         <div
           v-if="isRecurringFlag"
-          class="delivery-background pl-6 pr-4 py-5 mt-6 mr-6 mb-5"
+          class="delivery-background pl-6 pr-4 pt-4 pb-5 mt-6 mr-6 mb-5"
         >
           <v-row class="delivery-schedule mt-7 ml-n2">
             <div>
               <span
-                class="
-                  date-picker-label
-                  black--text
-                  text--darken-4 text-caption
-                "
+                class="date-picker-label black--text text--darken-4 text-body-2"
               >
                 Start date
               </span>
@@ -79,11 +75,7 @@
             />
             <div>
               <span
-                class="
-                  date-picker-label
-                  black--text
-                  text--darken-4 text-caption
-                "
+                class="date-picker-label black--text text--darken-4 text-body-2"
               >
                 End date
               </span>
@@ -101,6 +93,7 @@
             <hux-schedule-picker
               v-model="localSchedule"
               short
+              colon-sign
               :start-date="selectedStartDate"
               :end-date="selectedEndDate"
             />
@@ -181,7 +174,7 @@ export default {
 
     currentSchedule: {
       type: Object,
-      required: true,
+      required: false,
     },
 
     engagementId: {
@@ -232,8 +225,8 @@ export default {
             ]
             recurringConfig["day_of_month"] =
               this.localSchedule.monthlyPeriod === "Day"
-                ? [this.localSchedule.monthlyDayDate]
-                : [this.localSchedule.monthlyDay]
+                ? this.localSchedule.monthlyDayDate
+                : this.localSchedule.monthlyDay
             break
           default:
             recurringConfig
@@ -403,14 +396,10 @@ export default {
           width: 100px !important;
         }
         .pr-2:nth-child(1) {
+          padding-right: 0px !important;
           .select-common {
             width: 120px !important;
             margin-right: 4px !important;
-            &::after {
-              content: ":" !important;
-              margin-top: 8px !important;
-              margin-left: 13px !important;
-            }
           }
         }
         .pr-2:nth-child(2) {
@@ -421,7 +410,7 @@ export default {
   }
   .date-picker-label {
     position: absolute;
-    margin-top: -30px;
+    margin-top: -26px;
     margin-left: 8px;
   }
 }

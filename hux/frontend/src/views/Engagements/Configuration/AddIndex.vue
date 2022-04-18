@@ -73,7 +73,7 @@
     </div>
 
     <div v-if="currentStep === 3">
-      <step-3 v-model="data" />
+      <step-3 v-model="data" @isReccrActive="recurringActive" />
     </div>
 
     <hux-footer>
@@ -125,7 +125,7 @@
           Create
         </hux-button>
         <hux-button
-          v-if="currentStep == 3"
+          v-if="currentStep == 3 && hideCreateDeliver"
           is-tile
           color="primary"
           height="40"
@@ -200,6 +200,7 @@ export default {
       currentStep: 1,
       navigateTo: false,
       flagForModal: false,
+      hideCreateDeliver: true,
     }
   },
 
@@ -239,6 +240,9 @@ export default {
 
     nextStep() {
       this.currentStep = this.currentStep + 1
+    },
+    recurringActive(value) {
+      this.hideCreateDeliver = value
     },
 
     payload() {
@@ -284,13 +288,11 @@ export default {
           ]
 
           if (local_schedule.monthlyPeriod === "Day") {
-            requestPayload.delivery_schedule.schedule.day_of_month = [
-              local_schedule.monthlyDayDate,
-            ]
+            requestPayload.delivery_schedule.schedule.day_of_month =
+              local_schedule.monthlyDayDate
           } else {
-            requestPayload.delivery_schedule.schedule.day_of_month = [
-              local_schedule.monthlyDay,
-            ]
+            requestPayload.delivery_schedule.schedule.day_of_month =
+              local_schedule.monthlyDay
           }
         }
       } else {

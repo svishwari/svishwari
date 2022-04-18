@@ -37,12 +37,54 @@ VALID_INTROSPECTION_RESPONSE = {
     "client_id": "1234",
     "uid": "00u7acrr5pEmJ09lc2p7",
 }
+VALID_VIEWER_INTROSPECTION_RESPONSE = {
+    "active": True,
+    "scope": "openid email profile",
+    "username": "user1",
+    "exp": 1234,
+    "iat": 12345,
+    "sub": "user1_viewer@deloitte.com",
+    "aud": "sample_aud",
+    "iss": "sample_iss",
+    "jti": "sample_jti",
+    "token_type": "Bearer",
+    "client_id": "1234",
+    "uid": "00u7acrr5pEmJ09lc2p7",
+}
+VALID_EDITOR_INTROSPECTION_RESPONSE = {
+    "active": True,
+    "scope": "openid email profile",
+    "username": "user1",
+    "exp": 1234,
+    "iat": 12345,
+    "sub": "user1_editor@deloitte.com",
+    "aud": "sample_aud",
+    "iss": "sample_iss",
+    "jti": "sample_jti",
+    "token_type": "Bearer",
+    "client_id": "1234",
+    "uid": "00u7acrr5pEmJ09lc2p7",
+}
 INVALID_INTROSPECTION_RESPONSE = {"active": False}
 VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
     api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
     api_c.NAME: "USER 1",
     api_c.ROLE: db_c.USER_ROLE_ADMIN,
+    api_c.USER_PII_ACCESS: True,
+}
+VALID_VIEWER_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
+    api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
+    api_c.NAME: "VIEWER USER",
+    api_c.ROLE: db_c.USER_ROLE_VIEWER,
+    api_c.USER_PII_ACCESS: True,
+}
+VALID_EDITOR_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: VALID_EDITOR_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
+    api_c.EMAIL: VALID_EDITOR_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
+    api_c.NAME: "EDITOR USER",
+    api_c.ROLE: db_c.USER_ROLE_EDITOR,
     api_c.USER_PII_ACCESS: True,
 }
 # response missing some fields
@@ -119,22 +161,20 @@ CDM_HEALTHCHECK_RESPONSE = {
 CUSTOMER_INSIGHT_RESPONSE = {
     "code": 200,
     "body": {
-        "total_records": 20238,
-        "match_rate": 0.05,
-        "total_unique_ids": 14238,
-        "total_unknown_ids": 4515,
-        "total_known_ids": 13620,
-        "total_individual_ids": 313,
-        "total_household_ids": 9927,
         "total_customers": 3329,
         "total_countries": 2,
         "total_us_states": 44,
         "total_cities": 2513,
         "min_age": 18,
         "max_age": 66,
+        "avg_age": 40,
         "gender_women": 42345,
         "gender_men": 52567,
         "gender_other": 6953,
+        "max_ltv_actual": 998.79824,
+        "max_ltv_predicted": 1069.68824,
+        "min_ltv_actual": 0.00072,
+        "min_ltv_predicted": 70.89072,
     },
     "message": "ok",
 }
@@ -142,13 +182,14 @@ CUSTOMER_INSIGHT_RESPONSE = {
 IDENTITY_INSIGHT_RESPONSE = {
     "code": 200,
     "body": {
-        "total_records": 18238,
-        "match_rate": 0.5,
-        "total_unique_ids": 13238,
-        "total_unknown_ids": 3515,
-        "total_known_ids": 11620,
-        "total_individual_ids": 513,
-        "total_household_ids": 9827,
+        "total_records": 273326,
+        "match_rate": 0.87,
+        "total_unique_ids": 49974,
+        "total_anonymous_ids": 6326,
+        "total_address_ids": 1614,
+        "total_individual_ids": 1614,
+        "total_household_ids": 1760,
+        "updated": "2021-12-17T02:50:52.777Z",
     },
     "message": "ok",
 }

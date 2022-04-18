@@ -1,11 +1,11 @@
 """Tests for trust ID APIs."""
 from http import HTTPStatus
-
-from hypothesis import given, strategies as st
+from unittest import mock
 
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
-    SignalOverviewSchema,
+    TrustIdAttributesSchema,
+    TrustIdComparisonSchema,
 )
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 
@@ -15,6 +15,16 @@ from huxunify.api import constants as api_c
 
 class TestTrustIDRoutes(RouteTestCase):
     """Tests for trust ID endpoints."""
+
+    def setUp(self):
+        """Set up resources"""
+        super().setUp()
+
+        # mock get_db_client() for the trust id.
+        mock.patch(
+            "huxunify.api.route.trust_id.get_db_client",
+            return_value=self.database,
+        ).start()
 
     def test_trust_id_overview(self):
         """Test for trust_id overview endpoint."""
@@ -30,95 +40,68 @@ class TestTrustIDRoutes(RouteTestCase):
             t_c.validate_schema(TrustIdOverviewSchema(), response.json)
         )
 
-        self.assertTrue(api_c.ALLOWED_FILTERS)
-        self.assertTrue(api_c.ATTRIBUTE_SCORES)
-
-        self.assertIsInstance(
-            response.json.get(api_c.TRUST_ID_SCORE_OVERVIEW), int
-        )
-
-        self.assertIsInstance(
-            response.json.get(api_c.SIGNAL_SCORES_OVERVIEW, {}).get(
-                api_c.CAPABILITY
-            ),
-            int,
-        )
-
-    def test_trust_id_overview_filters(self):
-        """Test for trust_id overview endpoint with filters."""
+    def test_trust_id_attributes_data(self):
+        """Test for trust_id attributes data endpoint."""
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}"
-            f"{api_c.TRUST_ID_ENDPOINT}/overview?gender=male&max_age=40",
+            f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/attributes",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-        self.assertTrue(
-            t_c.validate_schema(TrustIdOverviewSchema(), response.json)
+        self.assertFalse(
+            TrustIdAttributesSchema(many=True).validate(response.json)
         )
 
-        self.assertTrue(api_c.ALLOWED_FILTERS)
-        self.assertTrue(api_c.ATTRIBUTE_SCORES)
-
-        self.assertIsInstance(
-            response.json.get(api_c.TRUST_ID_SCORE_OVERVIEW), int
-        )
-
-        self.assertIsInstance(
-            response.json.get(api_c.SIGNAL_SCORES_OVERVIEW, {}).get(
-                api_c.CAPABILITY
-            ),
-            int,
-        )
-
-    @given(st.sampled_from(api_c.LIST_OF_SIGNALS))
-    def test_trust_id_signal_data(self, signal_name: str):
-        """Test for trust_id signal data endpoint.
-        Args:
-            signal_name (str): Name of the signal.
-        """
+    def test_trust_id_comparison_data(self):
+        """Test for trust_id comparison data endpoint."""
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}"
-            f"{api_c.TRUST_ID_ENDPOINT}/signal/{signal_name}",
+            f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/comparison",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-
-        self.assertTrue(
-            t_c.validate_schema(SignalOverviewSchema(), response.json)
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
         )
 
-        self.assertIsInstance(response.json.get(api_c.SIGNAL_NAME), str)
-        self.assertIsInstance(response.json.get(api_c.SIGNAL_SCORE), int)
-        self.assertIsInstance(
-            response.json.get(api_c.OVERALL_CUSTOMER_RATING, {}).get(
-                api_c.TOTAL_CUSTOMERS
-            ),
-            int,
-        )
-        self.assertIsInstance(
-            response.json.get(api_c.OVERALL_CUSTOMER_RATING, {}).get(
-                api_c.RATING
-            ),
-            dict,
-        )
-        self.assertIsInstance(
-            response.json.get(api_c.CUSTOMER_ATTRIBUTE_RATINGS)[0].get(
-                api_c.ATTRIBUTE_SCORE
-            ),
-            int,
-        )
+    def test_add_trust_id_segment(self):
+        """Test for trust_id segment addition endpoint."""
 
-    def test_trust_id_invalid_signal(self):
-        """Test for trust_id signal data endpoint for invalid signal."""
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}" f"{api_c.TRUST_ID_ENDPOINT}/signal/random",
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
+            json={"segment_name": "Test Add Segment", "segment_filters": []},
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )
+
+    def test_remove_trust_id_segment(self):
+        """Test for trust_id segment removal endpoint."""
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
+            json={"segment_name": "Test Segment", "segment_filters": []},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
+            query_string={"segment_name": "Test Segment"},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )

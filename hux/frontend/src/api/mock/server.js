@@ -2,7 +2,7 @@
  * Mock API server using Mirage.js - only included in src/main.js for local
  * development and for unit testing and not for production builds.
  */
-import { belongsTo, createServer, Factory, hasMany, Model } from "miragejs"
+import { belongsTo, createServer, Factory, Model } from "miragejs"
 import config from "@/config"
 import AppSerializer from "./serializer"
 
@@ -50,10 +50,7 @@ import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 export function makeServer({ environment = "development" } = {}) {
   // models
   const models = {
-    audience: Model.extend({
-      destinations: hasMany("destination"),
-      // engagements: hasMany("engagement"),
-    }),
+    audience: Model.extend(),
     audiencePerformance: Model,
     customer: Model,
     customerProfile: Model,

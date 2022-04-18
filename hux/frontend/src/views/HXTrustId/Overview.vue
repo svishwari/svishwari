@@ -21,20 +21,20 @@
         </tooltip>
       </div>
       <div
-        v-for="(scorecard, index) in data && data.attributes"
+        v-for="(scorecard, index) in data && data.signals"
         :key="index"
         class="mr-4"
       >
         <tooltip max-width="288px">
           <template #label-content>
             <score-card
-              :title="formatText(scorecard.attribute_name)"
+              :title="formatText(scorecard.signal_name)"
               icon="hx-trustId-attribute"
-              :value="scorecard.attribute_score"
+              :value="scorecard.signal_score"
               :width="150"
               :height="90"
-              :stroke="cardColors(scorecard.attribute_name).stroke"
-              :variant="cardColors(scorecard.attribute_name).variant"
+              :stroke="cardColors(scorecard.signal_name).stroke"
+              :variant="cardColors(scorecard.signal_name).variant"
             >
               <template #progress-bar>
                 <progress-stack-bar
@@ -52,7 +52,7 @@
           <template #hover-content>
             <div class="body-2">
               <div class="mb-1">
-                {{ scorecard.attribute_description }}
+                {{ scorecard.signal_description }}
               </div>
               <div class="d-flex flex-column">
                 <span class="tooltip-subheading disagree-color my-2"
@@ -129,8 +129,8 @@ export default {
   methods: {
     formatText: formatText,
     numberWithCommas: numberWithCommas,
-    cardColors(attributeName) {
-      switch (attributeName) {
+    cardColors(signalName) {
+      switch (signalName) {
         case "humanity":
           return { stroke: "primary", variant: "darken6" }
 

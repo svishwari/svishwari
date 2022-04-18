@@ -22,8 +22,8 @@ export default function (server) {
   geoCountry.forEach((seed) => server.create("geoCountry", seed))
   configurationSeeds.forEach((seed) => server.create("configuration", seed))
 
-  server.createList("audience", 10)
-  server.createList("engagement", 5)
+  server.createList("audience", 100)
+  server.createList("engagement", 100)
   server.createList("clientProject", 3)
   server.createList("audiencePerformance", 10)
   server.createList("customer", 5000)

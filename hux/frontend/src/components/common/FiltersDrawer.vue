@@ -149,7 +149,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 $footerHeight: 80px;
-$headerHeight: 40px;
+$headerHeight: 70px;
 $padding: 20px;
 $width: 300px;
 $zIndex: 4;
@@ -190,6 +190,20 @@ $zIndex: 4;
     position: fixed;
     bottom: 0;
     z-index: $zIndex;
+  }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-black-lighten3);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-black-lighten3);
   }
 }
 </style>
