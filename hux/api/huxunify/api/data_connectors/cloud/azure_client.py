@@ -82,6 +82,7 @@ class AzureClient(CloudClient):
             logging.error("Failed to set %s in Azure key vault.", secret_name)
             raise exc
 
+    # pylint:disable=broad-except
     def upload_file(
         self, file_name: str, file_type: str, user_name: str, **kwargs
     ) -> bool:
@@ -135,6 +136,7 @@ class AzureClient(CloudClient):
 
         return True
 
+    # pylint:disable=broad-except
     def download_file(self, file_name: str, user_name: str, **kwargs) -> bool:
         """Download a file from the cloud.
 
@@ -168,6 +170,11 @@ class AzureClient(CloudClient):
             with open(file_name, "wb") as file_writer:
                 download_stream = blob_client.download_blob()
                 file_writer.write(download_stream.readall())
+                logging.info(
+                    "Finished downloading %s from Azure blob container: %s",
+                    file_name,
+                    container_name,
+                )
         except Exception as exc:
             logging.error(
                 "Failed to download %s from blob container: %s",
