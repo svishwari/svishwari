@@ -151,10 +151,9 @@ import Icon from "@/components/common/Icon"
 import HuxSwitch from "@/components/common/Switch.vue"
 import TextField from "@/components/common/TextField.vue"
 import { mapActions, mapGetters } from "vuex"
-import { formatText } from "@/utils"
+import { formatText, formatInnerHTML } from "@/utils"
 import Tooltip from "@/components/common/Tooltip.vue"
 import HuxButton from "@/components/common/huxButton.vue"
-import { formatInnerHTML } from "@/utils"
 
 export default {
   name: "AlertConfigureDrawer",

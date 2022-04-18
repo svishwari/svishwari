@@ -362,6 +362,16 @@ export function formatText(text) {
 }
 
 /**
+ * Returns the string with space replaced with Underscore & Lower Case
+ *
+ * @param {string} text - string to be formatted
+ * @returns {string} formatted string
+ */
+export function formatRequestText(text) {
+  return text.replaceAll(" ", "_").toLowerCase()
+}
+
+/**
  * Returns grouped month year from GMT time stamp
  *
  * @param {string} date - date to be formatted
