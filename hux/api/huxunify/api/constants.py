@@ -1815,10 +1815,10 @@ PERFORMANCE_METRIC_DISPLAY_STUB = {
     "clicks": 55,
     "frequency": 10,
     "cost_per_thousand_impressions": 434,
-    "click_through_rate": 23.5,
+    "click_through_rate": 0.23,
     "cost_per_action": 7.56,
     "cost_per_click": 9.67,
-    "engagement_rate": 23,
+    "engagement_rate": 0.23,
 }
 
 PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY = {
