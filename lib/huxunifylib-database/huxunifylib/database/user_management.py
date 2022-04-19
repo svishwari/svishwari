@@ -301,6 +301,44 @@ def update_user(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def delete_favorite_from_all_users(
+    database: DatabaseClient, component_name: str, component_id: ObjectId
+) -> bool:
+    """Deletes the an id from all lists in the favorites for a user
+
+    Args:
+        database (DatabaseClient): A database client.
+        component_name (str): name of the component.
+        component_id (ObjectId): MongoDB ID of the input component.
+
+    Returns:
+        bool: Indicates success or failure.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+    component_name = component_name.lower()
+    favorites_list = f"{db_c.USER_FAVORITES}.{component_name}"
+
+    try:
+        collection.update_many(
+            {
+                favorites_list: {"$eq": component_id},
+            },
+            {
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                },
+                "$pull": {favorites_list: component_id},
+            },
+            upsert=False,
+        )
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
 def update_all_users(
     database: DatabaseClient, update_doc: dict
 ) -> Union[dict, None]:
@@ -374,8 +412,7 @@ def manage_user_favorites(
     Args:
         database (DatabaseClient): A database client.
         okta_id (str): Okta ID of a user doc.
-        component_name (ObjectId): name of the component (i.e campaigns,
-            destinations, etc.).
+        component_name (str): name of the component.
         component_id (ObjectId): MongoDB ID of the input component.
         delete_flag (bool): Boolean that specifies to add/remove a favorite
             component, defaults to false.
@@ -407,24 +444,11 @@ def manage_user_favorites(
     id_filter = {db_c.ID: component_id}
 
     try:
-        if component_name == db_c.AUDIENCES:
-            # check audience first
-            audience_found = get_document(
-                database, db_c.AUDIENCES_COLLECTION, id_filter
-            )
-            if not audience_found:
-                # try lookalike
-                if get_document(
-                    database, db_c.LOOKALIKE_AUDIENCE_COLLECTION, id_filter
-                ):
-                    component_name = db_c.LOOKALIKE
-                else:
-                    raise de.InvalidID(component_id)
-        else:
-            if not delete_flag and not get_document(
-                database, component_collection[component_name], id_filter
-            ):
-                raise de.InvalidID(component_id)
+        # if adding and the resource DNE then raise error
+        if not delete_flag and not get_document(
+            database, component_collection[component_name], id_filter
+        ):
+            raise de.InvalidID(component_id)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

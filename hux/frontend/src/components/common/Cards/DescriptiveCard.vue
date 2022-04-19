@@ -279,4 +279,11 @@ export default {
   margin-left: -6px !important;
   margin-top: -6px !important;
 }
+.v-menu__content {
+  &.theme--light {
+    &.menuable__content__active {
+      margin-top: 28px !important;
+    }
+  }
+}
 </style>
