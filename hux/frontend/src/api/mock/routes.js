@@ -148,10 +148,14 @@ export const defineRoutes = (server) => {
 
   server.patch("/destinations/:id", (schema, request) => {
     const id = request.params.id
-
-    return schema.destinations
-      .find(id)
-      .update({ is_added: false, status: "Pending" })
+    const requestData = JSON.parse(request.requestBody)
+    if (requestData.link) {
+      return schema.destinations.find(id).update({ link: requestData.link })
+    } else {
+      return schema.destinations
+        .find(id)
+        .update({ is_added: false, status: "Pending" })
+    }
   })
 
   server.get("/destinations/:destinationId/data-extensions")
@@ -717,6 +721,10 @@ export const defineRoutes = (server) => {
     const id = request.params.notification_id
     let singleNotification = schema.notifications.find(id)
     return singleNotification
+  })
+
+  server.get("/notifications/users", (schema) => {
+    return schema.users.all().models.map((user) => user.display_name)
   })
 
   server.get("/users", (schema) => {
