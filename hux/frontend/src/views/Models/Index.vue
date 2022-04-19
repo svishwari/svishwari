@@ -341,4 +341,8 @@ export default {
 .models-error-height {
   height: 280px !important;
 }
+::v-deep .title-up {
+  position: relative;
+  top: -4px;
+}
 </style>

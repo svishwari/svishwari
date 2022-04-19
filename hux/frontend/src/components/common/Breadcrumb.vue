@@ -40,7 +40,7 @@
         <span
           :class="{
             'black--text': item.disabled,
-            'pl-1 text-h1': true,
+            'pl-1 text-h1 title-up': true,
           }"
         >
           {{ item.text }}
