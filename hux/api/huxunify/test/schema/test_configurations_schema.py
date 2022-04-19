@@ -9,8 +9,8 @@ from huxunify.api.schema.configurations import ConfigurationsSchema
 class ConfigurationsSchemaTest(TestCase):
     """Test Configurations Schema Classes."""
 
-    def test_notification_schema(self):
-        """Test NotificationSchema."""
+    def test_configurations_schema(self):
+        """Test ConfigurationsSchema."""
 
         doc = dict(
             _id=str(ObjectId()),

@@ -181,12 +181,17 @@ def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
+def get_all_users(
+    database: DatabaseClient,
+    filter_dict: dict = None,
+    project_dict: dict = None,
+) -> list:
     """A function to get all user documents.
 
     Args:
         database (DatabaseClient): A database client.
         filter_dict (dict): filter dictionary for adding custom filters.
+        project_dict(dict): project dictionary to return specific fields.
 
     Returns:
         list: List of all user documents.
@@ -195,7 +200,12 @@ def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
-        return list(collection.find(filter_dict if filter_dict else {}))
+        return list(
+            collection.find(
+                filter_dict if filter_dict else {},
+                projection=project_dict if project_dict else {db_c.DELETED: 0},
+            )
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

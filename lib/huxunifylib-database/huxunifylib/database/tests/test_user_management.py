@@ -161,19 +161,25 @@ class TestUserManagement(unittest.TestCase):
         )
 
     def test_get_users(self) -> None:
-        """Test get_all_users routine."""
+        """Test get all users function."""
 
         user_docs = um.get_all_users(database=self.database)
 
         self.assertIsNotNone(user_docs)
 
     def test_get_users_filter_and_projection(self) -> None:
-        """Test get_all_users routine."""
+        """Test get all users function with filter and projection."""
 
         # pylint: disable=too-many-function-args
         user_docs = um.get_all_users(
-            self.database,
-            {db_c.USER_DISPLAY_NAME: self.user_doc[db_c.USER_DISPLAY_NAME]},
+            database=self.database,
+            filter_dict={
+                db_c.USER_DISPLAY_NAME: self.user_doc[db_c.USER_DISPLAY_NAME]
+            },
+            project_dict={
+                db_c.OKTA_ID: 1,
+                db_c.USER_DISPLAY_NAME: 1,
+            },
         )
 
         self.assertTrue(user_docs)
@@ -183,6 +189,10 @@ class TestUserManagement(unittest.TestCase):
             self.user_doc[db_c.USER_DISPLAY_NAME],
             user_docs[0][db_c.USER_DISPLAY_NAME],
         )
+        for project_field in user_docs[0].keys():
+            self.assertIn(
+                project_field, [db_c.ID, db_c.OKTA_ID, db_c.USER_DISPLAY_NAME]
+            )
 
     @given(login_count=st.integers(min_value=0, max_value=9))
     def test_update_user_success(self, login_count: int) -> None:
