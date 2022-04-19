@@ -1,19 +1,21 @@
 """Module for Azure cloud operations"""
 import logging
 from typing import Tuple
+from pathlib import Path
 
 from azure.batch import BatchServiceClient
 from azure.batch.batch_auth import SharedKeyCredentials
 from azure.batch.models import BatchErrorException
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
-from azure.storage.blob import BlobClient
+from azure.storage.blob import ContainerClient
 
 from huxunify.api.data_connectors.cloud.cloud_client import (
     CloudClient,
 )
 from huxunify.api.config import get_config, Config
 from huxunify.api.prometheus import record_health_status, Connections
+from huxunify.api import constants as api_c
 
 
 class AzureClient(CloudClient):
@@ -27,9 +29,9 @@ class AzureClient(CloudClient):
         self.vault_url = (
             f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
         )
-        self.blob_connection_url = (
-            f"https:AccountName={self.config.AZURE_STORAGE_ACCOUNT_NAME}"
-            f";AccountKey={self.config.AZURE_STORAGE_ACCOUNT_KEY}"
+        self.storage_container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
+        self.storage_connection_string = (
+            self.config.AZURE_STORAGE_CONNECTION_STRING
         )
 
     def get_secret(self, secret_name: str, **kwargs) -> str:
@@ -80,6 +82,7 @@ class AzureClient(CloudClient):
             logging.error("Failed to set %s in Azure key vault.", secret_name)
             raise exc
 
+    # pylint:disable=broad-except
     def upload_file(
         self, file_name: str, file_type: str, user_name: str, **kwargs
     ) -> bool:
@@ -94,11 +97,46 @@ class AzureClient(CloudClient):
         Returns:
             bool: bool indicator if the upload was successful
 
-        Raises:
-            NotImplementedError: Error if function is not implemented
         """
-        raise NotImplementedError()
+        container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
+        connection_string = self.config.AZURE_STORAGE_CONNECTION_STRING
 
+        try:
+            logging.info(
+                "Uploading %s to Azure blob container: %s",
+                file_name,
+                container_name,
+            )
+            container_client = ContainerClient.from_connection_string(
+                connection_string, container_name
+            )
+            blob_client = container_client.get_blob_client(
+                Path(file_name).name
+            )
+
+            metadata = {
+                api_c.CREATED_BY: user_name if user_name else "",
+                api_c.TYPE: file_type if file_type else "",
+            }
+            with open(Path(file_name).name, "rb") as data:
+                blob_client.upload_blob(data=data, metadata=metadata)
+                logging.info(
+                    "Finished uploading %s to Azure blob container: %s",
+                    file_name,
+                    container_name,
+                )
+        except Exception as exc:
+            logging.error(
+                "Failed to upload %s to blob container: %s",
+                file_name,
+                container_name,
+            )
+            logging.error(exc)
+            return False
+
+        return True
+
+    # pylint:disable=broad-except
     def download_file(self, file_name: str, user_name: str, **kwargs) -> bool:
         """Download a file from the cloud.
 
@@ -113,7 +151,40 @@ class AzureClient(CloudClient):
         Raises:
             NotImplementedError: Error if function is not implemented
         """
-        raise NotImplementedError()
+        container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
+        connection_string = self.config.AZURE_STORAGE_CONNECTION_STRING
+
+        try:
+            logging.info(
+                "Downloading %s from Azure blob container: %s",
+                file_name,
+                container_name,
+            )
+            container_client = ContainerClient.from_connection_string(
+                connection_string, container_name
+            )
+            blob_client = container_client.get_blob_client(
+                Path(file_name).name
+            )
+
+            with open(file_name, "wb") as file_writer:
+                download_stream = blob_client.download_blob()
+                file_writer.write(download_stream.readall())
+                logging.info(
+                    "Finished downloading %s from Azure blob container: %s",
+                    file_name,
+                    container_name,
+                )
+        except Exception as exc:
+            logging.error(
+                "Failed to download %s from blob container: %s",
+                file_name,
+                container_name,
+            )
+            logging.error(exc)
+            return False
+
+        return True
 
     @record_health_status(Connections.BATCH_SERVICE)
     def health_check_batch_service(self) -> Tuple[bool, str]:
@@ -146,13 +217,10 @@ class AzureClient(CloudClient):
         Returns:
             Tuple[bool, str]: Returns bool for health status and message
         """
-
-        blob_client = BlobClient(
-            account_url=self.blob_connection_url,
-            container_name=self.config.AZURE_STORAGE_CONTAINER_NAME,
-            blob_name=self.config.AZURE_STORAGE_BLOB_NAME,
+        container_client = ContainerClient.from_connection_string(
+            self.storage_connection_string, self.storage_container_name
         )
-        client_status = blob_client.exists()
+        client_status = container_client.exists()
 
         status = (
             client_status,
