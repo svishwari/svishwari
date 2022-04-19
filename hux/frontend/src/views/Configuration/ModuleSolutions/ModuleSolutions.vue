@@ -163,4 +163,10 @@ export default {
     color: var(--v-black-base) !important;
   }
 }
+::v-deep .descriptive-card .description {
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 5 !important;
+  overflow: hidden !important;
+  display: -webkit-box !important;
+}
 </style>
