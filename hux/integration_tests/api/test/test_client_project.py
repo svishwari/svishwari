@@ -15,8 +15,7 @@ class TestClientProjects(TestCase):
         """Testing GET Client Projects endpoint."""
 
         response = requests.get(
-            f"{pytest.API_URL}/{self.CLIENT_PROJECTS}",
-            headers=pytest.HEADERS
+            f"{pytest.API_URL}/{self.CLIENT_PROJECTS}", headers=pytest.HEADERS
         )
 
         # test success
@@ -26,8 +25,7 @@ class TestClientProjects(TestCase):
         """Testing PATCH Client Projects endpoint."""
 
         get_response = requests.get(
-            f"{pytest.API_URL}/{self.CLIENT_PROJECTS}",
-            headers=pytest.HEADERS
+            f"{pytest.API_URL}/{self.CLIENT_PROJECTS}", headers=pytest.HEADERS
         )
 
         id = get_response.json()[0].get("id")
@@ -35,12 +33,10 @@ class TestClientProjects(TestCase):
 
         response = requests.patch(
             f"{pytest.API_URL}/{self.CLIENT_PROJECTS}/{id}",
-            json=
-            {
+            json={
                 "url": url,
-            }
-            ,
-            headers=pytest.HEADERS
+            },
+            headers=pytest.HEADERS,
         )
 
         # test success
