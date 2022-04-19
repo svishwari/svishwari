@@ -15,7 +15,9 @@ from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import FacebookConnector
 
-from huxunifylib.database.user_management import manage_user_favorites
+from huxunifylib.database.user_management import (
+    delete_favorite_from_all_users,
+)
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import (
@@ -642,13 +644,11 @@ class DeleteEngagement(SwaggerView):
             )
             logger.info("Successfully deleted engagement %s.", engagement_id)
 
-            # remove the engagement from user favorites
-            manage_user_favorites(
+            # remove the engagement from all users favorites
+            delete_favorite_from_all_users(
                 get_db_client(),
-                okta_id=user[db_c.OKTA_ID],
                 component_name=db_c.ENGAGEMENTS,
                 component_id=engagement_id,
-                delete_flag=True,
             )
 
             return {}, HTTPStatus.NO_CONTENT

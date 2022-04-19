@@ -649,10 +649,10 @@ export default {
       demographicsData: "customers/demographics",
     }),
   },
-  async mounted() {
+  mounted() {
     this.loading = true
     try {
-      await this.getOverview()
+      this.getOverview()
       this.mapOverviewData()
       this.fetchTotalCustomers()
       this.fetchCustomerSpend()

@@ -1114,16 +1114,11 @@ NOTIFICATIONS_TAG = "notifications"
 NOTIFICATION_ID = "notification_id"
 NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
+NOTIFICATION_EMAIL_RECIPIENTS = "recipients"
+NOTIFICATION_EMAIL_ALERT_CATEGORY = "alert_category"
+NOTIFICATION_EMAIL_ALERT_TYPE = "alert_type"
+NOTIFICATION_EMAIL_ALERT_DESCRIPTION = "alert_description"
 
-NOTIFICATION_CATEGORIES = [
-    ENGAGEMENT_TAG,
-    DELIVERY_TAG,
-    ORCHESTRATION_TAG,
-    DESTINATIONS_TAG,
-    CDP_DATA_SOURCES_TAG,
-    CUSTOMERS_TAG,
-    MODELS,
-]
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
@@ -1688,7 +1683,7 @@ ALERT_SAMPLE_RESPONSE = {
             },
             DELIVERY_TAG: {
                 db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_SUCCESS: True,
                 db_c.NOTIFICATION_TYPE_CRITICAL: False,
             },
         },
@@ -1843,10 +1838,10 @@ PERFORMANCE_METRIC_DISPLAY_STUB = {
     "clicks": 55,
     "frequency": 10,
     "cost_per_thousand_impressions": 434,
-    "click_through_rate": 23.5,
+    "click_through_rate": 0.23,
     "cost_per_action": 7.56,
     "cost_per_click": 9.67,
-    "engagement_rate": 23,
+    "engagement_rate": 0.23,
 }
 
 PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY = {

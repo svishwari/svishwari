@@ -1424,7 +1424,6 @@ import CardInfo from "@/components/common/CardInfo"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import TextField from "@/components/common/TextField"
-import HuxTable from "@/components/common/huxTable.vue"
 import huxButton from "@/components/common/huxButton"
 import DropdownMenu from "@/components/common/DropdownMenu"
 import PageHeader from "@/components/PageHeader"
@@ -1464,7 +1463,6 @@ export default {
     huxButton,
     DropdownMenu,
     PageHeader,
-    HuxTable,
     Drawer,
     MetricCard,
     DescriptiveCard,

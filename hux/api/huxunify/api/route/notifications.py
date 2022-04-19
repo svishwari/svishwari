@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use
-"""Paths for Notifications API"""
+"""Paths for Notifications API."""
+import asyncio
 import json
 from http import HTTPStatus
 from typing import Tuple, Generator
@@ -31,7 +32,11 @@ from huxunify.api.route.decorators import (
     requires_access_levels,
 )
 from huxunify.api.route.return_util import HuxResponse
-from huxunify.api.route.utils import get_db_client, Validation
+from huxunify.api.route.utils import (
+    get_db_client,
+    Validation,
+    build_notification_recipients_and_send_email,
+)
 from huxunify.api import constants as api_c
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -45,7 +50,7 @@ notifications_bp = Blueprint(
 @notifications_bp.before_request
 @secured()
 def before_request():
-    """Protect all of the notifications endpoints."""
+    """Protect all the notifications endpoints."""
 
     pass  # pylint: disable=unnecessary-pass
 
@@ -101,9 +106,9 @@ class CreateNotification(SwaggerView):
 
         notification = notification_management.create_notification(
             database=get_db_client(),
-            notification_type=body["type"],
-            category=body["category"],
-            description=body["description"],
+            notification_type=body[api_c.TYPE],
+            category=body[api_c.CATEGORY],
+            description=body[api_c.DESCRIPTION],
             username=user[db_c.USER_DISPLAY_NAME],
         )
 
@@ -235,9 +240,7 @@ class NotificationsSearch(SwaggerView):
             api_c.QUERY_PARAMETER_NOTIFICATION_TYPES, []
         )
         notification_types = (
-            [x.lower() for x in notification_types.split(",")]
-            if notification_types
-            else []
+            list(notification_types.split(",")) if notification_types else []
         )
 
         if notification_types and not set(notification_types).issubset(
@@ -252,7 +255,7 @@ class NotificationsSearch(SwaggerView):
             api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
         )
         notification_categories = (
-            [x.lower() for x in notification_categories.split(",")]
+            list(notification_categories.split(","))
             if notification_categories
             else []
         )
@@ -340,8 +343,14 @@ class NotificationStream(SwaggerView):
             Tuple[dict, int]: dict of notifications, HTTP status code.
         """
 
-        def event_stream() -> Generator[Tuple[dict, int], None, None]:
+        def event_stream(
+            request_url_root: str,
+        ) -> Generator[Tuple[dict, int], None, None]:
             """Stream notifications with a generator.
+
+            Args:
+                request_url_root (str): URL root of environment/system from
+                    where the request originated.
 
             Yields:
                 Generator[Tuple[dict, int], None, None]: Generator of
@@ -363,32 +372,46 @@ class NotificationStream(SwaggerView):
                     minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60)
                 )
 
-                # dump the output notification list to the notification schema.
-                yield json.dumps(
-                    NotificationsSchema().dump(
-                        notification_management.get_notifications(
-                            get_db_client(),
-                            {
-                                db_c.NOTIFICATION_FIELD_CREATED: {
-                                    "$gt": previous_time
-                                },
-                                db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
-                                db_c.NOTIFICATION_FIELD_DESCRIPTION: {
-                                    "$regex": "^Successfully delivered audience"
-                                },
-                            },
-                            [(db_c.NOTIFICATION_FIELD_CREATED, -1)],
-                        )
-                    )
-                )
-                # update all users seen_notifications as False
+                database = get_db_client()
+
                 update_all_users(
-                    database=get_db_client(),
+                    database=database,
                     update_doc={db_c.SEEN_NOTIFICATIONS: False},
                 )
 
+                notifications_dict = notification_management.get_notifications(
+                    database,
+                    {
+                        db_c.NOTIFICATION_FIELD_CREATED: {
+                            "$gt": previous_time
+                        },
+                        db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
+                        db_c.NOTIFICATION_FIELD_DESCRIPTION: {
+                            "$regex": "^Successfully delivered audience"
+                        },
+                    },
+                    [(db_c.NOTIFICATION_FIELD_CREATED, -1)],
+                )
+
+                # run async function to prepare notifications to be sent as
+                # email to users with alert configurations
+                asyncio.run(
+                    build_notification_recipients_and_send_email(
+                        database,
+                        notifications_dict.get("notifications", []),
+                        request_url_root,
+                    )
+                )
+
+                # dump the output notification list to the notification schema.
+                yield json.dumps(
+                    NotificationsSchema().dump(notifications_dict)
+                )
+
         # return the event stream response
-        return Response(event_stream(), mimetype="text/event-stream")
+        return Response(
+            event_stream(request.url_root), mimetype="text/event-stream"
+        )
 
 
 @add_view_to_blueprint(
@@ -423,15 +446,19 @@ class NotificationSearch(SwaggerView):
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, notification_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves notification.
+
         ---
         security:
             - Bearer: ["Authorization"]
+
         Args:
             notification_id (str): Notification Id
             user (dict): user object.
         Returns:
+
             Tuple[Response, int] dict of notifications, HTTP status code.
         """
+
         notification_id = ObjectId(notification_id)
         notification = notification_management.get_notification(
             get_db_client(), notification_id
