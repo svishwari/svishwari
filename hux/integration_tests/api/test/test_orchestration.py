@@ -15,6 +15,23 @@ class TestOrchestration(TestCase):
     AUDIENCES = "audiences"
     DESTINATIONS = "destinations"
     COLLECTION = db_c.AUDIENCES_COLLECTION
+    DEFAULT_AUDIENCE_FILTERS = [
+        {
+            "section_aggregator": "ALL",
+            "section_filters": [
+                {
+                    "field": "age",
+                    "type": "range",
+                    "value": [50, 60],
+                },
+                {
+                    "field": "State",
+                    "type": "equals",
+                    "value": "AL",
+                },
+            ],
+        }
+    ]
 
     def test_get_audience_rules(self):
         """Test get audience rules"""
@@ -45,23 +62,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -138,23 +139,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -194,23 +179,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -255,23 +224,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -313,23 +266,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -358,23 +295,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -403,23 +324,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -447,23 +352,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -498,23 +387,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -544,23 +417,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
@@ -576,23 +433,7 @@ class TestOrchestration(TestCase):
         response = requests.put(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 58],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ]
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
             },
             headers=pytest.HEADERS,
         )
@@ -609,23 +450,7 @@ class TestOrchestration(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}",
             json={
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "age",
-                                "type": "range",
-                                "value": [18, 78],
-                            },
-                            {
-                                "field": "State",
-                                "type": "equals",
-                                "value": "AL",
-                            },
-                        ],
-                    }
-                ],
+                "filters": self.DEFAULT_AUDIENCE_FILTERS,
                 "name": f"E2E test_audiences Integration Test-"
                 f"{int(time() * 1000)}",
             },
