@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card
-      v-if="insights"
+      v-if="insights && !profileError"
       class="rounded-lg box-shadow-5"
       height="240"
       data-e2e="chord"
@@ -25,21 +25,30 @@
       </v-card-title>
       <identity-chart :chart-data="insights"></identity-chart>
     </v-card>
-    <v-card v-else class="pt-4 rounded-lg box-shadow-5" height="200px">
+    <v-card
+      v-else
+      class="no-data-chart-frame pt-4 rounded-lg box-shadow-5"
+      height="280px"
+    >
       <empty-page
-        class="title-no-notification"
-        type="error-on-screens"
+        class="title-no-notification pa-8"
+        :type="profileError ? 'error-on-screens' : 'no-customer-data'"
         :size="50"
       >
         <template #title>
           <div class="title-no-notification">
-            Individual identity is currently unavailable
+            {{
+              profileError ? "Individual ID unavailable" : "No customer data"
+            }}
           </div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">
-            Our team is working hard to fix it. Please be patient and try again
-            soon!
+            {{
+              profileError
+                ? "Our team is working hard to fix it. Please be patient and try again soon!"
+                : "Individual ID will appear here once customer data is available."
+            }}
           </div>
         </template>
       </empty-page>
@@ -62,6 +71,16 @@ export default {
       required: true,
       default: () => {},
     },
+    profileError: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 }
 </script>
+<style lang="scss" scoped>
+.no-data-chart-frame {
+  @include no-data-frame-bg("empty-1-chart.png");
+}
+</style>

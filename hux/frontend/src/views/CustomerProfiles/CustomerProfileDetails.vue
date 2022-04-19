@@ -5,105 +5,141 @@
         <breadcrumb :items="items" />
       </template>
     </page-header>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
-
-    <div v-if="!loading && customerProfile" class="pa-7">
-      <profile-overview
-        :profile="customerProfile['overview']"
-        :show-pii="showPIIData"
-      />
-      <v-row class="table-card mb-3">
-        <v-col cols="6" class="pb-0">
-          <profile-identifiable-insights
-            :insights="customerProfile['insights']"
-            :piiaccess="customerProfile['pii_access']"
-            :show-pii="showPIIData"
-            @togglePII="getCustomerTogglePII"
-          />
-        </v-col>
-        <v-col class="pb-0 customCol">
-          <contact-preferences
-            :insights="customerProfile['contact_preferences']"
-          />
-        </v-col>
-        <v-col class="matix-card-space pb-0">
-          <individual-identity
-            :insights="customerProfile['identity_resolution']"
-          />
-        </v-col>
-      </v-row>
-
-      <v-row class="mt-0">
-        <v-col md="12" class="pt-0 pr-1">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="370">
-            <v-card-title class="py-5 pl-6 d-flex justify-space-between">
-              <h3 class="text-h3 black--text text--darken-4 mt-n2">
-                Customer events
-                <span class="text-body-1 black--text text--lighten-4">
-                  (All time)
-                </span>
-              </h3>
-              <v-btn
-                text
-                min-width="80"
-                class="
-                  d-flex
-                  align-right
-                  primary--text
-                  text-decoration-none
-                  pl-0
-                  pr-0
-                  idr-link
-                  text-body-1
-                  mt-n2
-                "
-                data-e2e="eventsDrawerButton"
-                @click="toggleCustomerEventsDrawer()"
-              >
-                <icon
-                  type="events-drawer"
-                  color="primary"
-                  :size="18"
-                  class="mr-1"
-                />
-                Event details
-              </v-btn>
-            </v-card-title>
-            <v-progress-linear
-              v-if="loadingCustomerEvents"
-              :active="loadingCustomerEvents"
-              :indeterminate="loadingCustomerEvents"
+    <div v-if="customerError" class="error-wrap">
+      <error
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Engagements are currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
+      </error>
+    </div>
+    <div v-else>
+      <v-progress-linear :active="loading" :indeterminate="loading" />
+      <div v-if="!loading && customerProfile" class="pa-7">
+        <profile-overview
+          :profile="customerProfile['overview']"
+          :show-pii="showPIIData"
+        />
+        <v-row class="table-card mb-3">
+          <v-col cols="6" class="pb-0">
+            <profile-identifiable-insights
+              :profile-error="customerProfileError"
+              :insights="customerProfile['insights']"
+              :piiaccess="customerProfile['pii_access']"
+              :show-pii="showPIIData"
+              @togglePII="getCustomerTogglePII"
             />
-            <customer-event-chart
-              v-if="!loadingCustomerEvents && !customerEventsError"
-              :customers-data="events"
-              data-e2e="customer-event-chart"
+          </v-col>
+          <v-col class="pb-0 customCol">
+            <contact-preferences
+              :profile-error="customerProfileError"
+              :insights="customerProfile['contact_preferences']"
             />
-            <empty-page
-              v-else-if="customerEventsError"
-              class="title-no-notification"
-              type="error-on-screens"
-              :size="50"
+          </v-col>
+          <v-col class="matix-card-space pb-0">
+            <individual-identity
+              :profile-error="customerProfileError"
+              :insights="customerProfile['identity_resolution']"
+            />
+          </v-col>
+        </v-row>
+
+        <v-row class="mt-0">
+          <v-col md="12" class="pt-0 pr-1">
+            <v-card
+              v-if="events.length != 0 && !customerEventsError"
+              class="mt-3 rounded-lg box-shadow-5"
+              height="370"
             >
-              <template #title>
-                <div class="title-no-notification">
-                  Customer events chart is currently unavailable
-                </div>
-              </template>
-              <template #subtitle>
-                <div class="des-no-notification">
-                  Our team is working hard to fix it. Please be patient and try
-                  again soon!
-                </div>
-              </template>
-            </empty-page>
-          </v-card>
-        </v-col>
-      </v-row>
-      <customer-events-drawer
-        v-model="customerEventsDrawer"
-        :events="eventsForTable"
-      />
+              <v-card-title class="py-5 pl-6 d-flex justify-space-between">
+                <h3 class="text-h3 black--text text--darken-4 mt-n2">
+                  Customer events
+                  <span class="text-body-1 black--text text--lighten-4">
+                    (All time)
+                  </span>
+                </h3>
+                <v-btn
+                  text
+                  min-width="80"
+                  class="
+                    d-flex
+                    align-right
+                    primary--text
+                    text-decoration-none
+                    pl-0
+                    pr-0
+                    idr-link
+                    text-body-1
+                    mt-n2
+                  "
+                  data-e2e="eventsDrawerButton"
+                  @click="toggleCustomerEventsDrawer()"
+                >
+                  <icon
+                    type="events-drawer"
+                    color="primary"
+                    :size="18"
+                    class="mr-1"
+                  />
+                  Event details
+                </v-btn>
+              </v-card-title>
+              <v-progress-linear
+                v-if="loadingCustomerEvents"
+                :active="loadingCustomerEvents"
+                :indeterminate="loadingCustomerEvents"
+              />
+              <customer-event-chart
+                v-if="!loadingCustomerEvents"
+                :customers-data="events"
+                data-e2e="customer-event-chart"
+              />
+            </v-card>
+            <v-card
+              v-else
+              class="
+                no-data-chart-frame
+                rounded-lg
+                card-info-wrapper
+                box-shadow-5
+              "
+              height="280px"
+            >
+              <empty-page
+                class="title-no-notification"
+                :type="
+                  customerEventsError ? 'error-on-screens' : 'no-customer-data'
+                "
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">
+                    {{
+                      customerEventsError
+                        ? "Events chart is currently unavailable"
+                        : "No customer events to show"
+                    }}
+                  </div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    {{
+                      customerEventsError
+                        ? "Our team is working hard to fix it. Please be patient and try again soon!"
+                        : "Customer events will appear here once customer data finishes to upload. Please check back later."
+                    }}
+                  </div>
+                </template>
+              </empty-page>
+            </v-card>
+          </v-col>
+        </v-row>
+        <customer-events-drawer
+          v-model="customerEventsDrawer"
+          :events="eventsForTable"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -123,6 +159,7 @@ import CustomerEventsDrawer from "./Drawers/CustomerEventsDrawer"
 import Icon from "@/components/common/Icon"
 import { sortBy } from "lodash"
 import EmptyPage from "@/components/common/EmptyPage.vue"
+import Error from "@/components/common/screens/Error"
 
 export default {
   name: "CustomerProfileDetails",
@@ -137,6 +174,7 @@ export default {
     CustomerEventsDrawer,
     Icon,
     EmptyPage,
+    Error,
   },
   data() {
     return {
@@ -172,8 +210,11 @@ export default {
       customerEventsDrawer: false,
       showPIIData: false,
       customerEventsError: false,
+      customerError: false,
+      customerProfileError: false,
     }
   },
+
   computed: {
     ...mapGetters({
       customer: "customers/single",
@@ -185,7 +226,13 @@ export default {
     },
 
     customerProfile() {
-      return this.customer(this.$route.params.id)
+      let res = {}
+      try {
+        res = this.customer(this.$route.params.id)
+      } catch (error) {
+        res = { overview: {} }
+      }
+      return res
     },
 
     eventsForTable() {
@@ -204,10 +251,25 @@ export default {
     },
   },
 
+  watch: {
+    customerProfile: {
+      deep: true,
+      handler: function (newVal) {
+        if (newVal["overview"] && newVal["overview"] == {}) {
+          this.customerProfileError = true
+        }
+      },
+    },
+  },
+
   async mounted() {
     this.loading = true
     try {
       await this.getCustomer(this.id)
+    } catch (error) {
+      this.customerError = true
+    }
+    try {
       this.getCustomerEvent()
     } finally {
       this.loading = false
@@ -223,10 +285,9 @@ export default {
     async getCustomerEvent() {
       this.loadingCustomerEvents = true
       try {
-        var res = this.getEvents(this.id)
-        if (!res) {
-          this.customerEventsError = true
-        }
+        await this.getEvents(this.id)
+      } catch (error) {
+        this.customerEventsError = true
       } finally {
         this.loadingCustomerEvents = false
       }
@@ -286,5 +347,11 @@ export default {
 }
 .chart-style {
   background: var(--v-white-base) !important;
+}
+.no-data-chart-frame {
+  @include no-data-frame-bg("no-customers-chart-frame.png");
+}
+::v-deep .error-wrap {
+  padding-right: 60px;
 }
 </style>

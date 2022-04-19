@@ -4,7 +4,7 @@
       <strong
         v-if="enableTitle"
         :class="{
-          'text-h5 black--text text--darken-4 mb-2 d-block': true,
+          'text-body-1 black--text text--darken-4 mb-2 d-block': true,
           '': applyCaptionStyle,
         }"
       >
@@ -90,6 +90,13 @@
                     required
                     @blur="triggerSizing(condition)"
                   />
+                  <span
+                    v-if="
+                      condition.operator && condition.attribute.type === 'text'
+                    "
+                    class="ml-2 text-body-1"
+                    >Days</span
+                  >
                   <hux-autocomplete
                     v-if="
                       condition.operator && condition.attribute.type === 'list'
@@ -120,7 +127,7 @@
                     />
                     <hux-slider
                       v-model="condition.range"
-                      :read-only="false"
+                      :read-only="readMode ? true : false"
                       :min="condition.attribute.min"
                       :max="condition.attribute.max"
                       :step="condition.attribute.steps"
@@ -202,10 +209,10 @@
         <v-chip
           small
           class="mx-2 my-1 text-body-1 cursor-pointer"
-          text-color="primary"
-          color="black lighten-2"
+          :text-color="readMode ? 'white' : 'primary'"
+          :color="readMode ? 'black lighten-3' : 'primary lighten-3'"
           :ripple="false"
-          @click.native="addNewSection()"
+          @click.native="!readMode && addNewSection()"
         >
           <tooltip>
             <template #label-content> + </template>
@@ -229,7 +236,6 @@ import TextField from "../../components/common/TextField.vue"
 import Icon from "@/components/common/Icon"
 import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
-import { formatText } from "../../utils"
 import { v4 as uuidv4 } from "uuid"
 
 const NEW_RULE_SECTION = {
@@ -301,16 +307,23 @@ export default {
   computed: {
     ...mapGetters({
       ruleAttributes: "audiences/audiencesRules",
+      overviewData: "customers/overview",
     }),
 
     lastIndex() {
       return this.rules.length - 1
     },
 
+    ifRouteSegmentPlayground() {
+      return this.$route.name === "SegmentPlayground"
+    },
+
     updateHistoArr() {
       return this.notHistogramKeys.concat(
         Object.keys(this.ruleAttributes.rule_attributes.general.events).map(
-          (x) => x != "name" && formatText(x)
+          (x) =>
+            x != "name" &&
+            this.ruleAttributes.rule_attributes.general.events[x].name
         )
       )
     },
@@ -320,8 +333,12 @@ export default {
     this.chartDimensions.height = 26
     await this.getAudiencesRules()
     this.updateSizes()
-
+    if (this.ifRouteSegmentPlayground) {
+      this.overAllSize = this.overviewData.total_customers
+    }
     this.notHistogramKeys = this.updateHistoArr
+
+    this.$emit("attribute-options", this)
   },
 
   created() {
@@ -525,11 +542,13 @@ export default {
             value = this.rules[i].conditions[j].text
             type = this.rules[i].conditions[j].operator.key
           }
-          attributeRulesArray.push({
-            field: this.rules[i].conditions[j].attribute.key,
-            type: type,
-            value: value,
-          })
+          if (value) {
+            attributeRulesArray.push({
+              field: this.rules[i].conditions[j].attribute.key,
+              type: type,
+              value: value,
+            })
+          }
         }
         let sectionObject = {
           section_aggregator: aggregatorOperand,
@@ -766,6 +785,9 @@ export default {
               .v-slider__track-container {
                 width: 101%;
               }
+            }
+            ::v-deep .v-input__control .v-input__slot .v-slider__thumb {
+              border: none !important;
             }
           }
         }

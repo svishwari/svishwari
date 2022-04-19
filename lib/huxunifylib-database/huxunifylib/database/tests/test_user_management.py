@@ -2,6 +2,7 @@
 
 import unittest
 import mongomock
+from bson import ObjectId
 from hypothesis import given, strategies as st
 
 import huxunifylib.database.user_management as um
@@ -9,6 +10,7 @@ import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.constants as db_c
+from huxunifylib.database import collection_management
 
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.db_exceptions import (
@@ -17,7 +19,7 @@ from huxunifylib.database.db_exceptions import (
 )
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
 class TestUserManagement(unittest.TestCase):
     """Test user management module."""
 
@@ -159,19 +161,25 @@ class TestUserManagement(unittest.TestCase):
         )
 
     def test_get_users(self) -> None:
-        """Test get_all_users routine."""
+        """Test get all users function."""
 
         user_docs = um.get_all_users(database=self.database)
 
         self.assertIsNotNone(user_docs)
 
     def test_get_users_filter_and_projection(self) -> None:
-        """Test get_all_users routine."""
+        """Test get all users function with filter and projection."""
 
         # pylint: disable=too-many-function-args
         user_docs = um.get_all_users(
-            self.database,
-            {db_c.USER_DISPLAY_NAME: self.user_doc[db_c.USER_DISPLAY_NAME]},
+            database=self.database,
+            filter_dict={
+                db_c.USER_DISPLAY_NAME: self.user_doc[db_c.USER_DISPLAY_NAME]
+            },
+            project_dict={
+                db_c.OKTA_ID: 1,
+                db_c.USER_DISPLAY_NAME: 1,
+            },
         )
 
         self.assertTrue(user_docs)
@@ -181,6 +189,10 @@ class TestUserManagement(unittest.TestCase):
             self.user_doc[db_c.USER_DISPLAY_NAME],
             user_docs[0][db_c.USER_DISPLAY_NAME],
         )
+        for project_field in user_docs[0].keys():
+            self.assertIn(
+                project_field, [db_c.ID, db_c.OKTA_ID, db_c.USER_DISPLAY_NAME]
+            )
 
     @given(login_count=st.integers(min_value=0, max_value=9))
     def test_update_user_success(self, login_count: int) -> None:
@@ -200,6 +212,21 @@ class TestUserManagement(unittest.TestCase):
         self.assertIsNotNone(user_doc)
         self.assertIn(db_c.USER_LOGIN_COUNT, user_doc)
         self.assertEqual(login_count + 1, user_doc[db_c.USER_LOGIN_COUNT])
+
+    def test_update_all_users(self) -> None:
+        """Test update_all_users.
+
+        Args:
+
+        """
+
+        # set update_doc dict to update the user_doc\
+        um.update_all_users(
+            database=self.database, update_doc={db_c.SEEN_NOTIFICATIONS: True}
+        )
+
+        for user in um.get_all_users(database=self.database):
+            self.assertTrue(user.get(db_c.SEEN_NOTIFICATIONS))
 
     def test_update_user_failure_disallowed_field(self) -> None:
         """Test update_user routine failure with disallowed field."""
@@ -386,3 +413,149 @@ class TestUserManagement(unittest.TestCase):
         self.assertNotIn(
             pinned_key, updated_doc[db_c.USER_DASHBOARD_CONFIGURATION]
         )
+
+    def test_add_applications_to_users(self):
+        """Test add user applications"""
+        application_id = ObjectId()
+        url = "https://www.test1.com"
+
+        updated_user_doc = um.add_applications_to_users(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            application_id=application_id,
+            url=url,
+        )
+        self.assertTrue(updated_user_doc)
+        self.assertEqual(
+            url,
+            updated_user_doc.get(db_c.USER_APPLICATIONS, [{}])[0].get(
+                db_c.URL
+            ),
+        )
+        self.assertEqual(
+            application_id,
+            updated_user_doc.get(db_c.USER_APPLICATIONS, [{}])[0].get(
+                db_c.OBJECT_ID
+            ),
+        )
+
+    def test_update_user_applications(self):
+        """Test update user applications"""
+        application_id = ObjectId()
+        updated_url = "https://www.test2.com"
+
+        um.add_applications_to_users(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            application_id=application_id,
+            url="https://www.test1.com",
+        )
+        updated_user_doc = um.update_user_applications(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            application_id=application_id,
+            url=updated_url,
+        )
+
+        self.assertTrue(updated_user_doc)
+        self.assertEqual(
+            updated_url,
+            updated_user_doc.get(db_c.USER_APPLICATIONS, [{}])[0].get(
+                db_c.URL
+            ),
+        )
+        self.assertEqual(
+            application_id,
+            updated_user_doc.get(db_c.USER_APPLICATIONS, [{}])[0].get(
+                db_c.OBJECT_ID
+            ),
+        )
+
+    def test_get_user_applications(self):
+        """Test for get user applications."""
+
+        # Create an application.
+        new_application = {
+            db_c.CATEGORY: "Uncategorized",
+            db_c.NAME: "Custom",
+            db_c.ENABLED: True,
+        }
+
+        application = collection_management.create_document(
+            database=self.database,
+            collection=db_c.APPLICATIONS_COLLECTION,
+            new_doc=new_application,
+            username=self.user_doc[db_c.USER_DISPLAY_NAME],
+        )
+
+        # Add the application to the user.
+        um.add_applications_to_users(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            application_id=application.get(db_c.ID),
+            url="https://www.test1.com",
+        )
+
+        user_applications = um.get_user_applications(
+            database=self.database, okta_id=self.user_doc[db_c.OKTA_ID]
+        )
+
+        self.assertIsInstance(user_applications, list)
+        self.assertEqual(
+            new_application[db_c.CATEGORY],
+            user_applications[0].get(db_c.CATEGORY),
+        )
+        self.assertEqual(
+            new_application[db_c.NAME], user_applications[0].get(db_c.NAME)
+        )
+        self.assertTrue(user_applications[0].get("is_added"))
+
+    def test_add_user_trust_id_segments(self):
+        """Test add trust id segment to user"""
+        segment = {"segment_name": "Test Segment", "segment_filters": []}
+
+        updated_user_doc = um.add_user_trust_id_segments(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            segment=segment,
+        )
+        self.assertTrue(updated_user_doc)
+        self.assertIn(segment, updated_user_doc[db_c.TRUST_ID_SEGMENTS])
+
+    def test_remove_user_trust_id_segments(self):
+        """Test remove trust id segment to user"""
+        segment = {"segment_name": "Test Segment", "segment_filters": []}
+
+        updated_user_doc = um.add_user_trust_id_segments(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            segment=segment,
+        )
+        self.assertTrue(updated_user_doc)
+        self.assertIn(segment, updated_user_doc[db_c.TRUST_ID_SEGMENTS])
+
+        updated_user_doc = um.remove_user_trust_id_segments(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            segment_name=segment["segment_name"],
+        )
+        self.assertTrue(updated_user_doc)
+        self.assertNotIn(segment, updated_user_doc[db_c.TRUST_ID_SEGMENTS])
+
+    def test_get_user_trust_id_segments(self):
+        """Test fetch trust id segments"""
+        segment = {"segment_name": "Test Segment", "segment_filters": []}
+
+        updated_user_doc = um.add_user_trust_id_segments(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            segment=segment,
+        )
+        self.assertTrue(updated_user_doc)
+
+        trust_id_segments = um.get_user_trust_id_segments(
+            database=self.database, okta_id=self.user_doc[db_c.OKTA_ID]
+        )
+
+        self.assertTrue(trust_id_segments)
+        self.assertEqual([segment], trust_id_segments)

@@ -122,13 +122,15 @@ const sideMenuOptions = {
           defaultState: defaultState.customerprofiles,
         },
         {
-          icon: "hx-trustid-colored",
+          icon: "hx-trustid",
           title: "HX TrustID",
+          superscript: "TM",
           link: {
             name: "HXTrustID",
           },
           size: 14,
           display: true,
+          defaultState: defaultState.trustId,
         },
         {
           icon: "email_deliverability",

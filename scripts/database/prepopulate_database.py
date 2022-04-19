@@ -633,6 +633,10 @@ def drop_collections(database: MongoClient) -> None:
     if db_c.USER_COLLECTION in collections_to_drop:
         collections_to_drop.remove(db_c.USER_COLLECTION)
 
+    # do not drop destination collection if it exists
+    if db_c.DELIVERY_PLATFORM_COLLECTION in collections_to_drop:
+        collections_to_drop.remove(db_c.DELIVERY_PLATFORM_COLLECTION)
+
     # if drop all collections is false, do not drop the restricted collections
     if not strtobool(os.environ.get("DROP_ALL_COLLECTIONS", default="False")):
         collections_to_drop = [

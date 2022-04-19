@@ -21,7 +21,7 @@
           class="ma-2 main-button pr-1"
           @click="menu = true"
         >
-          {{ optionSelected["name"] || label }}
+          {{ selected | Date("MM/DD/YYYY") | Empty(label) }}
         </huxButton>
       </template>
       <v-list v-if="endDate">
@@ -111,11 +111,6 @@ export default {
       ).toISOString(),
     }
   },
-  computed: {
-    optionSelected() {
-      return this.selected || this.label
-    },
-  },
   methods: {
     selectDate(data) {
       this.$emit("on-date-select", data)
@@ -150,7 +145,7 @@ export default {
         }
       }
       .v-icon {
-        color: var(--v-primary-base);
+        color: var(--v-black-base);
       }
     }
   }

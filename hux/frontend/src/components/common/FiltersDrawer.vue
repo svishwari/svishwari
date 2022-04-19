@@ -8,9 +8,13 @@
       class="hux-filters-drawer"
     >
       <div class="wrapper">
-        <div class="header">
+        <div class="header header-height-fix">
           <slot name="header">
-            <h2 class="text-h2">
+            <h2 v-if="headerName" class="text-h2">
+              {{ headerName }}
+            </h2>
+
+            <h2 v-else class="text-h2">
               Filter
               <span v-if="count">({{ count }})</span>
             </h2>
@@ -45,6 +49,7 @@
                 ml-auto
                 primary--text
                 mr-3
+                submit-button
                 btn-border
                 box-shadow-none
               "
@@ -57,7 +62,7 @@
               is-tile
               color="primary"
               class="text-button ml-auto"
-              width="157"
+              :width="submitButtonWidth"
               :is-disabled="
                 !customValidation
                   ? !Boolean(count) && !enableApply
@@ -65,7 +70,7 @@
               "
               @click="$emit('apply')"
             >
-              Apply filter
+              {{ submitButton }}
             </hux-button>
           </slot>
         </div>
@@ -117,6 +122,21 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    headerName: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    submitButton: {
+      type: String,
+      required: false,
+      default: "Apply filter",
+    },
+    submitButtonWidth: {
+      type: String,
+      required: false,
+      default: "157",
+    },
   },
 
   computed: {
@@ -129,7 +149,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 $footerHeight: 80px;
-$headerHeight: 40px;
+$headerHeight: 70px;
 $padding: 20px;
 $width: 300px;
 $zIndex: 4;
@@ -170,6 +190,20 @@ $zIndex: 4;
     position: fixed;
     bottom: 0;
     z-index: $zIndex;
+  }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-black-lighten3);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-black-lighten3);
   }
 }
 </style>

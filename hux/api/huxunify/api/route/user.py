@@ -18,6 +18,7 @@ from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
     update_user,
+    get_user,
 )
 from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
@@ -35,6 +36,7 @@ from huxunify.api.route.utils import (
     get_user_from_db,
     create_description_for_user_request,
     filter_team_member_requests,
+    Validation as validation,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.user import (
@@ -181,6 +183,76 @@ class UserProfile(SwaggerView):
                 title=HTTPStatus.BAD_REQUEST.description,
                 detail="Unable to get user profile.",
             ) from exc
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/seen_notifications",
+    "SeenNotifications",
+)
+class SeenNotifications(SwaggerView):
+    """Seen Notifications API Class"""
+
+    parameters = [
+        {
+            "name": api_c.RESET,
+            "description": "Reset Flag for Seen Notifications",
+            "in": "query",
+            "type": "boolean",
+            "required": False,
+            "default": False,
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Seen Notification Flag or Reset Flag",
+        }
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(
+        self,
+        user: dict,
+    ) -> Tuple[dict, int]:
+        """Gets and Resets Seen Notifications.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
+
+
+        Returns:
+            Tuple[dict, int]: Seen Notification dict, HTTP status code.
+        """
+
+        okta_id = introspect_token(get_token_from_request(request)[0]).get(
+            api_c.OKTA_USER_ID
+        )
+
+        if request.args.get(api_c.RESET) and validation.validate_bool(
+            request.args.get(api_c.RESET)
+        ):
+            user_details = update_user(
+                get_db_client(),
+                okta_id=okta_id,
+                update_doc={db_c.SEEN_NOTIFICATIONS: True},
+            )
+            if user_details:
+                return HuxResponse.OK(data={db_c.SEEN_NOTIFICATIONS: True})
+        user = get_user(database=get_db_client(), okta_id=okta_id)
+        return HuxResponse.OK(
+            data={
+                db_c.SEEN_NOTIFICATIONS: user.get(
+                    db_c.SEEN_NOTIFICATIONS, False
+                )
+            }
+        )
 
 
 @add_view_to_blueprint(
@@ -771,7 +843,7 @@ class UserPreferencesView(SwaggerView):
             "in": "body",
             "type": "object",
             "description": "Input user preferences body.",
-            "example": {api_c.ALERTS: api_c.ALERT_SAMPLE_RESPONSE},
+            "example": api_c.ALERT_SAMPLE_RESPONSE,
         }
     ]
 
@@ -792,7 +864,7 @@ class UserPreferencesView(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @requires_access_levels([api_c.ADMIN_LEVEL])
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def put(self, user: dict) -> Tuple[dict, int]:
         """Updates a user preferences.
 

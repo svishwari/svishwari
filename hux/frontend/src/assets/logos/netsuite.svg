@@ -5,3 +5,15 @@
 <path fill-rule="evenodd" clip-rule="evenodd" d="M10.7957 6.05883V3.99121H14.0532V11.4652H11.8894V6.05883" fill="#B9C7D4"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M6.13776 7.06445V12.4268C6.47987 12.4268 6.85398 12.4268 7.20842 12.4268V14.5384H3.97363V7.06445" fill="#B9C7D4"/>
 </svg>
+
+<svg width="100%" height="100%" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_7981_119728)">
+<path d="M2.2478 4.86129H4.29931V9.73477H5.32074V11.6391H2.2478V4.86129ZM11.7436 9.34524H9.6921V4.47176H8.67068V2.56738H11.7436V9.34524Z" fill="#BACCDB"/>
+<path d="M1.77161 2.10059H8.25508V7.6665L5.7621 4.45506H1.77161V2.10059ZM12.211 12.1158H5.72748V6.54986L8.22046 9.76129H12.211" fill="#125580"/>
+</g>
+<defs>
+<clipPath id="clip0_7981_119728">
+<rect width="13" height="12.9844" fill="white" transform="translate(0.5 0.75)"/>
+</clipPath>
+</defs>
+</svg>

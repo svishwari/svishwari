@@ -237,7 +237,7 @@ export default {
   },
   methods: {
     fetchKey(obj, key) {
-      return obj && obj[key] ? obj[key] : "-"
+      return obj && !isNaN(obj[key]) ? obj[key] : "-"
     },
   },
 }

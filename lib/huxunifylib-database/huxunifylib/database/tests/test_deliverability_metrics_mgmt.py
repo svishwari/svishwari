@@ -139,11 +139,13 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
         ]
 
+        self.test_user = "test_user"
+
         audience = create_audience(
             database=self.database,
             name="all",
             audience_filters=[],
-            user_name="test_user",
+            user_name=self.test_user,
         )
 
         # Create a delivery job.
@@ -152,6 +154,7 @@ class TestDeliverabilityMetricsMgmt(unittest.TestCase):
             audience[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             generic_campaigns,
+            self.test_user,
         )
 
         start_date = end_date = datetime.datetime.strptime(

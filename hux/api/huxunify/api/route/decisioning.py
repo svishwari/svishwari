@@ -796,7 +796,7 @@ class ModelFeaturesView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model features.",
-            "schema": {"type": "array", "items": ModelVersionSchema},
+            "schema": {"type": "array", "items": FeatureSchema},
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -910,7 +910,7 @@ class ModelImportanceFeaturesView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model feature importance.",
-            "schema": {"type": "array", "items": ModelVersionSchema},
+            "schema": {"type": "array", "items": FeatureSchema},
         },
     }
     responses.update(AUTH401_RESPONSE)

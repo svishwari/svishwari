@@ -34,7 +34,8 @@ def check_okta_connection() -> Tuple[bool, str]:
             return True, "OKTA available."
         return (
             False,
-            f"OKTA not available. Received: {response.status_code}",
+            f"Received status code: {response.status_code}, "
+            f"Received message: {response.json()}",
         )
 
     except Exception as exception:  # pylint: disable=broad-except

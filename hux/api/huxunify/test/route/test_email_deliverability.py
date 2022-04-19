@@ -83,6 +83,7 @@ class TestDestinationRoutes(RouteTestCase):
             self.audience[db_c.ID],
             self.delivery_platform_doc[db_c.ID],
             self.generic_campaigns,
+            t_c.TEST_USER_NAME,
         )
 
         self.metrics_1 = set_performance_metrics(
@@ -288,7 +289,7 @@ class TestDestinationRoutes(RouteTestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/"
             f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains?"
-            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}",
+            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}&{api_c.FILL_EMPTY_DATES}=false",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -367,7 +368,7 @@ class TestDestinationRoutes(RouteTestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}/"
             f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains?"
-            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}",
+            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}&{api_c.FILL_EMPTY_DATES}=false",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -452,4 +453,78 @@ class TestDestinationRoutes(RouteTestCase):
             / delivered_day_2,
             response.json.get(api_c.UNSUBSCRIBE_RATE)[1].get(api_c.DOMAIN_1),
             places=2,
+        )
+
+    def test_email_deliverability_fill_dates(self):
+        """Test email deliverability data fill dates."""
+
+        set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_job_id=self.delivery_job_doc[db_c.ID],
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_SFMC,
+            generic_campaigns=self.generic_campaigns[0]["campaign_id"],
+            metrics_dict={
+                "journey_name": "SFMCJourney_2",
+                "journey_id": "43925808-c52e-11eb-826e-bae5bebfd7a3",
+                "from_addr": "dev-sfmc@domain_1",
+                "journey_creation_date": "2021-09-01T12:14:46Z",
+                "hux_engagement_id": "60c2fd6515eb844f53cdc669",
+                "hux_audience_id": "60a7a15cc1e230dbd54ef428",
+                "sent": 200,
+                "delivered": 0,
+                "opens": 107,
+                "unique_opens": 91,
+                "clicks": 71,
+                "unique_clicks": 67,
+                "bounces": 1,
+                "hard_bounces": 0,
+                "unsubscribes": 27,
+                "complaints": 11,
+            },
+            start_time=datetime.datetime.utcnow(),
+            end_time=datetime.datetime.utcnow() + datetime.timedelta(days=-1),
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}/"
+            f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains?"
+            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}&{api_c.FILL_EMPTY_DATES}=false",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        non_filled_data = response.json
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}/"
+            f"{api_c.EMAIL_DELIVERABILITY_ENDPOINT}/domains?"
+            f"{api_c.DOMAIN_NAME}={api_c.DOMAIN_1}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        filled_data = response.json
+        # Ensure the actual data is present in filled data.
+        self.assertIn(
+            non_filled_data.get(api_c.OPEN_RATE)[0],
+            filled_data.get(api_c.OPEN_RATE),
+        )
+        self.assertIn(
+            non_filled_data.get(api_c.OPEN_RATE)[1],
+            filled_data.get(api_c.OPEN_RATE),
+        )
+
+        self.assertIn(
+            non_filled_data.get(api_c.SENT)[0], filled_data.get(api_c.SENT)
+        )
+        self.assertIn(
+            non_filled_data.get(api_c.SENT)[1], filled_data.get(api_c.SENT)
+        )
+
+        self.assertIn(
+            non_filled_data.get(api_c.CLICK_RATE)[0],
+            filled_data.get(api_c.CLICK_RATE),
+        )
+        self.assertIn(
+            non_filled_data.get(api_c.CLICK_RATE)[1],
+            filled_data.get(api_c.CLICK_RATE),
         )

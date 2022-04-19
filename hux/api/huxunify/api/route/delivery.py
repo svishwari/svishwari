@@ -57,10 +57,9 @@ from huxunify.api.data_connectors.courier import (
 
 delivery_bp = Blueprint("/", import_name=__name__)
 
-
+# pylint: disable=inconsistent-return-statements
 @delivery_bp.before_request
 @secured()
-# pylint: disable=inconsistent-return-statements
 def before_request() -> Tuple[dict, int]:
     """Protect all of the engagement endpoints.
 
@@ -197,7 +196,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             ]:
                 continue
             batch_destination = get_destination_config(
-                database, *pair, engagement_id
+                database, *pair, engagement_id, username=user[api_c.USER_NAME]
             )
             batch_destination.register()
             batch_destination.submit()
@@ -311,7 +310,7 @@ class EngagementDeliverAudienceView(SwaggerView):
             if pair[0] != audience_id:
                 continue
             batch_destination = get_destination_config(
-                database, *pair, engagement_id
+                database, *pair, engagement_id, username=user[api_c.USER_NAME]
             )
             batch_destination.register()
             batch_destination.submit()
@@ -439,7 +438,7 @@ class EngagementDeliverView(SwaggerView):
             if audiences and pair[0] in audiences:
                 continue
             batch_destination = get_destination_config(
-                database, *pair, engagement_id
+                database, *pair, engagement_id, username=user[api_c.USER_NAME]
             )
             batch_destination.register()
             batch_destination.submit()
@@ -880,7 +879,6 @@ class AudienceDeliverHistoryView(SwaggerView):
                 and delivery_engagement
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
-
                 delivery_history.append(
                     {
                         api_c.ENGAGEMENT: delivery_engagement,

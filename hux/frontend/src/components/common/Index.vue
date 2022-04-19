@@ -882,16 +882,6 @@
 
     <v-divider class="mt-10" />
 
-    <v-subheader> Hux Table</v-subheader>
-    <hux-table
-      :column-def="columnDefs"
-      :table-data="rowData"
-      height="250px"
-      has-check-box
-    ></hux-table>
-
-    <v-divider class="mt-10" />
-
     <v-subheader> Drawer</v-subheader>
     <v-btn @click="drawer = !drawer">Toggle Drawer</v-btn>
     <drawer v-model="drawer">
@@ -1241,7 +1231,13 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Progress Stack Bar</v-subheader>
-    <progress-stack-bar :width="180" :height="6" :show-percentage="true" />
+    <progress-stack-bar
+      :width="180"
+      :height="6"
+      :show-percentage="true"
+      :data="progressStackBarData"
+      :bar-id="1"
+    />
 
     <v-divider class="mt-10" />
 
@@ -1418,7 +1414,6 @@ import CardInfo from "@/components/common/CardInfo"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import TextField from "@/components/common/TextField"
-import HuxTable from "@/components/common/huxTable.vue"
 import huxButton from "@/components/common/huxButton"
 import DropdownMenu from "@/components/common/DropdownMenu"
 import PageHeader from "@/components/PageHeader"
@@ -1458,7 +1453,6 @@ export default {
     huxButton,
     DropdownMenu,
     PageHeader,
-    HuxTable,
     Drawer,
     MetricCard,
     DescriptiveCard,
@@ -1485,6 +1479,11 @@ export default {
   },
   data() {
     return {
+      progressStackBarData: [
+        { label: "Group-1", value: 20 },
+        { label: "Group-2", value: 28 },
+        { label: "Group-3", value: 52 },
+      ],
       genderChartDimensions: {
         width: 269,
         height: 200,

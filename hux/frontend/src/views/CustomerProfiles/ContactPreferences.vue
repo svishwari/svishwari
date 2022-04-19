@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-card v-if="insights" class="rounded-lg card-info-wrapper box-shadow-5">
+    <v-card
+      v-if="insights && !profileError"
+      class="rounded-lg card-info-wrapper box-shadow-5"
+    >
       <v-card-title
         class="card-heading py-5 pl-6"
         data-e2e="contact-preferencecs"
@@ -24,21 +27,28 @@
         </v-simple-table>
       </v-card-text>
     </v-card>
-    <v-card v-else class="pt-4 rounded-lg box-shadow-5" height="200px">
+    <v-card
+      v-else
+      class="no-data-chart-frame pt-4 rounded-lg box-shadow-5"
+      height="280px"
+    >
       <empty-page
-        class="title-no-notification"
-        type="error-on-screens"
+        class="title-no-notification pa-8"
+        :type="profileError ? 'error-on-screens' : 'no-customer-data'"
         :size="50"
       >
         <template #title>
           <div class="title-no-notification">
-            Contact preferences are currently unavailable
+            {{ profileError ? "Unavailable" : "No customer Data" }}
           </div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">
-            Our team is working hard to fix it. Please be patient and try again
-            soon!
+            {{
+              profileError
+                ? "Our team is working hard to fix this data table. Please be patient and try again soon!"
+                : "Customer data will appear here once customer data is available."
+            }}
           </div>
         </template>
       </empty-page>
@@ -56,6 +66,11 @@ export default {
       type: Object,
       required: true,
       default: () => {},
+    },
+    profileError: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   computed: {
@@ -100,5 +115,8 @@ export default {
   td {
     height: 40px !important;
   }
+}
+.no-data-chart-frame {
+  @include no-data-frame-bg("empty-1-chart.png");
 }
 </style>

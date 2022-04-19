@@ -119,7 +119,8 @@ class Tecton:
                 return True, "Tecton available."
             return (
                 False,
-                f"Tecton not available. Received: {response.status_code}",
+                f"Received status code: {response.status_code}, "
+                f"Received message: {response.json()}",
             )
 
         except Exception as exception:  # pylint: disable=broad-except
@@ -755,6 +756,7 @@ class TectonMockConnector(Tecton):
         super().__init__(config)
         self.feature_service: TectonMockService = TectonMockService
 
+    # pylint: disable=arguments-differ
     def map_model_response(self, response: dict) -> List[dict]:
         """Map model response to a usable dict.
         Args:

@@ -46,17 +46,11 @@
           <v-btn
             text
             color="primary"
-            class="text-body-1 ml-n3 mt-n2"
+            class="text-body-1 mt-n2"
             data-e2e="deliver-all"
             @click="$emit('deliverEngagement', $event)"
           >
-            <icon
-              class="mr-1"
-              type="deliver_2"
-              :size="37"
-              :color="'primary'"
-              :variant="'base'"
-            />
+            <icon type="deliver_2" :size="37" color="primary" class="mr-n3" />
             <span class="deliverAll"> Deliver all </span>
           </v-btn>
         </div>
@@ -160,7 +154,8 @@ export default {
         { id: 1, title: "Deliver now", active: true },
         { id: 2, title: "Create lookalike", active: true },
         { id: 3, title: "Add a destination", active: true },
-        { id: 4, title: "Remove audience", active: true },
+        { id: 4, title: "Edit delivery schedule", active: true },
+        { id: 5, title: "Remove audience", active: true },
       ],
     }
   },
@@ -250,6 +245,8 @@ export default {
 }
 .deliverAll {
   margin-top: 2px;
+  min-width: 7rem;
+  height: 2rem;
 }
 .eng-dash-no-aud-container {
   padding: 32px 55px 24px 55px;

@@ -1,10 +1,10 @@
 export default [
   {
-    segment_filter: "composite & signal scores",
+    segment_type: "composite & signal scores",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -45,7 +45,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -86,7 +86,7 @@ export default [
       },
       {
         segment_name: "Segment 3",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -127,7 +127,7 @@ export default [
       },
       {
         segment_name: "Segment 4",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -168,7 +168,7 @@ export default [
       },
       {
         segment_name: "Segment 5",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "trust_id",
@@ -210,11 +210,11 @@ export default [
     ],
   },
   {
-    segment_filter: "capability attributes",
+    segment_type: "capability attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "capability",
@@ -248,62 +248,6 @@ export default [
             attribute_type: "long_term_solutions_improvements",
             attribute_name: "Long-term solutions & improvements",
             attribute_score: 71,
-            attribute_description:
-              "Creates long-term solutions and improvements that work well for me",
-          },
-        ],
-      },
-      {
-        segment_name: "Segment 2",
-        attribute_filters: [
-          {
-            age: [
-              {
-                type: "range",
-                value: [18, 55],
-              },
-            ],
-            gender: [
-              {
-                type: "string",
-                value: "women",
-              },
-            ],
-          },
-        ],
-        attributes: [
-          {
-            attribute_type: "capability",
-            attribute_name: "Capability",
-            attribute_score: 68,
-            attribute_description:
-              "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "product_quality",
-            attribute_name: "Product quality",
-            attribute_score: 68,
-            attribute_description:
-              "Products are good quality, accessible and safe to use",
-          },
-          {
-            attribute_type: "good_value",
-            attribute_name: "Good value",
-            attribute_score: 68,
-            attribute_description:
-              "Prices of products, services, and experiences are good value for money",
-          },
-          {
-            attribute_type: "competent_leaders_employess",
-            attribute_name: "Competent leaders & employees",
-            attribute_score: 68,
-            attribute_description:
-              "Employees and leadership are competent and understand how to respond to needs",
-          },
-          {
-            attribute_type: "long_term_solutions_improvements",
-            attribute_name: "Long-term solutions & improvements",
-            attribute_score: 68,
             attribute_description:
               "Creates long-term solutions and improvements that work well for me",
           },
@@ -312,11 +256,11 @@ export default [
     ],
   },
   {
-    segment_filter: "humanity attributes",
+    segment_type: "humanity attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "humanity",
@@ -356,7 +300,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [
+        segment_filters: [
           {
             age: [
               {
@@ -412,11 +356,11 @@ export default [
     ],
   },
   {
-    segment_filter: "transparency attributes",
+    segment_type: "transparency attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "transparency",
@@ -457,7 +401,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [
+        segment_filters: [
           {
             age: [
               {
@@ -514,11 +458,11 @@ export default [
     ],
   },
   {
-    segment_filter: "reliability attributes",
+    segment_type: "reliability attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
         attributes: [
           {
             attribute_type: "reliability",
@@ -559,7 +503,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [
+        segment_filters: [
           {
             age: [
               {

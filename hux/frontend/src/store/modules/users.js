@@ -153,7 +153,9 @@ const actions = {
   async requestTeamMember(_, payload) {
     try {
       const result = await api.users.requestTeamMember(payload)
-      //dispatch("getRequestedUsers")
+      if (result && result.status == 201) {
+        handleSuccess(result.data.summary, result.status)
+      }
       return result
     } catch (error) {
       handleError(error)

@@ -17,7 +17,10 @@ export default {
   columbiaBlue: "#a0dcff",
   skyBlue: "#80d1ef",
   oceanBlue: "#42EFFD",
+  adriaticHaze: "#92C7CD",
   royalBlue: "#0C9DDB",
+  curiousBlue: "#3C89B7",
+  lagoonBlue: "#037E8E",
   pantoneBlue: "#0076A8",
   tealBlue: "#396286",
 }

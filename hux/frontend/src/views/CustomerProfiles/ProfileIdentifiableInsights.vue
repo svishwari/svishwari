@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-card v-if="insights" class="rounded-lg card-info-wrapper box-shadow-5">
+    <v-card
+      v-if="insights && !profileError"
+      class="rounded-lg card-info-wrapper box-shadow-5"
+    >
       <v-card-title
         class="pl-6"
         :class="piiaccess ? 'py-3 d-flex justify-space-between' : 'py-5'"
@@ -104,23 +107,30 @@
     </v-card>
     <v-card
       v-else
-      class="rounded-lg card-info-wrapper box-shadow-5"
-      height="200px"
+      class="no-data-chart-frame rounded-lg card-info-wrapper box-shadow-5"
+      height="280px"
     >
       <empty-page
         class="title-no-notification"
-        type="error-on-screens"
+        :type="profileError ? 'error-on-screens' : 'no-customer-data'"
         :size="50"
       >
         <template #title>
           <div class="title-no-notification">
-            Customer insights is currently unavailable
+            {{
+              profileError
+                ? "Customer data is currently unavailable"
+                : "No customer data to show"
+            }}
           </div>
         </template>
         <template #subtitle>
           <div class="des-no-notification">
-            Our team is working hard to fix it. Please be patient and try again
-            soon!
+            {{
+              profileError
+                ? "Our team is working hard to fix it. Please be patient and try again soon!"
+                : "Customer data will appear here once customer data is available. Please check back later."
+            }}
           </div>
         </template>
       </empty-page>
@@ -152,6 +162,11 @@ export default {
       required: false,
       default: false,
     },
+    profileError: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   computed: {
     showHidePIIButton() {
@@ -182,5 +197,8 @@ export default {
   td {
     height: 40px !important;
   }
+}
+.no-data-chart-frame {
+  @include no-data-frame-bg("empty-3-charts.png");
 }
 </style>

@@ -9,6 +9,7 @@ from requests_mock import Mocker
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
+from huxunify.api.data_connectors.cdp import clean_cdm_fields
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
@@ -78,14 +79,17 @@ class CDPConnectionsTest(TestCase):
         Args:
             request_mocker (Mocker): request_mocker object
         """
+        bad_request_message = {"message": "Failed to connect"}
         request_mocker.get(
             f"{self.config.CDP_CONNECTION_SERVICE}/healthcheck",
             status_code=HTTPStatus.BAD_REQUEST,
+            json=bad_request_message,
         )
         status, message = check_cdp_connections_api_connection()
         self.assertFalse(status)
         self.assertEqual(
-            f"CDP connections not available. Received {HTTPStatus.BAD_REQUEST}",
+            f"Received status code: {HTTPStatus.BAD_REQUEST}, "
+            f"Received message: {bad_request_message}",
             message,
         )
 
@@ -322,7 +326,8 @@ class CDPConnectionsTest(TestCase):
         identity_insights = get_identity_overview(token="")
 
         self.assertEqual(
-            t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY], identity_insights
+            clean_cdm_fields(t_c.IDENTITY_INSIGHT_RESPONSE[api_c.BODY].copy()),
+            identity_insights,
         )
 
     def test_get_identity_overview_raise_dependency_error(self):

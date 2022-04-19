@@ -192,6 +192,7 @@ class TestRouteUtils(TestCase):
 
         Validation.validate_integer("1")
         Validation.validate_integer("12345")
+        Validation.validate_integer(value="0", validate_zero_or_greater=True)
 
     def test_validate_boolean(self):
         """Tests the Validation class static method validate_boolean."""

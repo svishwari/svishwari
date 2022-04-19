@@ -160,8 +160,8 @@ export function deliverySchedule(schedule = {}) {
     minute: 15,
     period: "AM",
     monthlyPeriod: "Day",
-    monthlyDay: "Day",
-    monthlyDayDate: 1,
+    monthlyDay: ["Day"],
+    monthlyDayDate: [1],
     day_of_week: ["SUN"],
   }
   if (schedule) {
@@ -362,6 +362,16 @@ export function formatText(text) {
 }
 
 /**
+ * Returns the string with space replaced with Underscore & Lower Case
+ *
+ * @param {string} text - string to be formatted
+ * @returns {string} formatted string
+ */
+export function formatRequestText(text) {
+  return text.replaceAll(" ", "_").toLowerCase()
+}
+
+/**
  * Returns grouped month year from GMT time stamp
  *
  * @param {string} date - date to be formatted
@@ -369,6 +379,17 @@ export function formatText(text) {
  */
 export function formatDate(date) {
   return dayjs(date).format("MMM DD")
+}
+
+/**
+ * Returns minimum date for enddate time picker converted to ISO format string
+ *
+ * @returns {string} formatted HTML
+ */
+export function endMinDateGenerator() {
+  return new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60000
+  ).toISOString()
 }
 
 /**
@@ -395,4 +416,41 @@ export function formatDateToLocal(date) {
  */
 export function formatInnerHTML(text) {
   return { innerHTML: text }
+}
+
+/**
+ * Returns number converted to string with commas
+ *
+ * @param {string} num - number to be formatted to string
+ * @returns {string} formatted number
+ */
+export function numberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+
+/**
+ * Returns initial and batch count for request
+ *
+ * @param {object} request - request for calculating batch size and count
+ * @returns {Array} array of strings
+ */
+export function getBatchCounts(request) {
+  let currentBatch = request.queryParams.batch_number
+  let batchSize = request.queryParams.batch_size
+  let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+  let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+  return [initialCount, lastCount]
+}
+
+/**
+ * Returns true if url is invalid else false
+ *
+ * @param {string} url - url to be checked if invalid
+ * @returns {boolean} boolean value
+ */
+export function isInvalidURL(url) {
+  return (
+    url === "" ||
+    !/^[^!@#$%^*()={}\\/.<>":?|,_&]+\.[^!@#$%^*()={}\\/.<>":?|,_&]+$/.test(url)
+  )
 }

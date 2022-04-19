@@ -9,8 +9,8 @@
           <icon
             type="filter"
             :size="27"
-            :color="finalFilterApplied > 0 ? 'primary' : 'black'"
-            :variant="finalFilterApplied > 0 ? 'lighten6' : 'darken4'"
+            :color="isFilterToggled ? 'primary' : 'black'"
+            :variant="isFilterToggled ? 'lighten6' : 'darken4'"
           />
           <v-badge
             v-if="finalFilterApplied > 0"
@@ -128,7 +128,7 @@
           </hux-lazy-data-table>
         </v-row>
         <v-row
-          v-if="notificationData.length == 0 && !loading"
+          v-if="notificationData.length == 0 && !isEmptyError && !loading"
           class="background-empty"
         >
           <empty-page type="no-alerts" :size="50">
@@ -157,11 +157,7 @@
           </empty-page>
         </v-row>
         <v-row
-          v-if="
-            notificationData.length > 0 &&
-            notificationData.length <= 0 &&
-            !loading
-          "
+          v-if="notificationData.length == 0 && isEmptyError && !loading"
           class="d-flex justify-center align-center"
         >
           <error
@@ -193,6 +189,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import { formatRequestText } from "@/utils"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
@@ -278,6 +275,7 @@ export default {
       batchDetails: {},
       isFilterToggled: false,
       isAlertsToggled: false,
+      isEmptyError: false,
       notificationId: null,
       numFiltersSelected: 0,
       finalFilterApplied: 1,
@@ -309,11 +307,13 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getUserData()
     try {
       this.setDefaultData()
+      await this.getUserData()
       await this.fetchNotificationsByBatch()
       this.calculateLastBatch()
+    } catch (error) {
+      this.isEmptyError = true
     } finally {
       this.loading = false
     }
@@ -412,6 +412,7 @@ export default {
       this.finalFilterApplied = data.filterApplied
       this.isFilterToggled = true
       this.enableLazyLoad = false
+      this.isEmptyError = false
       this.loading = true
       try {
         let today_date = new Date()
@@ -423,19 +424,22 @@ export default {
         this.batchDetails.batch_size = 25
         this.batchDetails.batch_number = 1
         this.batchDetails.isLazyLoad = false
-        if (data.selctedAlertType.length !== 0) {
-          this.batchDetails.notification_types =
-            data.selctedAlertType.toString()
+        if (data.selectedAlertType.length !== 0) {
+          this.batchDetails.notification_types = formatRequestText(
+            data.selectedAlertType.toString()
+          )
         } else {
           delete this.batchDetails.notification_types
         }
-        if (data.selctedCategory.length !== 0) {
-          this.batchDetails.category = data.selctedCategory.toString()
+        if (data.selectedCategory.length !== 0) {
+          this.batchDetails.category = formatRequestText(
+            data.selectedCategory.toString()
+          )
         } else {
           delete this.batchDetails.category
         }
-        if (data.selctedUsers.length !== 0) {
-          this.batchDetails.users = data.selctedUsers.toString()
+        if (data.selectedUsers.length !== 0) {
+          this.batchDetails.users = data.selectedUsers.toString()
         } else {
           delete this.batchDetails.users
         }
@@ -474,7 +478,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .notification-wrap {
-  background: white;
+  background: var(--v-white-base);
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }

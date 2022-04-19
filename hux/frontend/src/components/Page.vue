@@ -29,5 +29,8 @@ export default {
 .container {
   max-width: 1220px;
   padding: 30px;
+  height: calc(100vh - 180px);
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 </style>

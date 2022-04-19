@@ -6,7 +6,7 @@ import logging
 from functools import partial
 import datetime
 from operator import itemgetter
-from typing import Union
+from typing import Union, Optional, List
 
 from bson import ObjectId
 import pymongo
@@ -1094,6 +1094,7 @@ def set_delivery_job(
     audience_id: ObjectId,
     delivery_platform_id: ObjectId,
     delivery_platform_generic_campaigns: list,
+    username: str,
     engagement_id: ObjectId = None,
     delivery_platform_config: dict = None,
 ) -> Union[dict, None]:
@@ -1104,6 +1105,7 @@ def set_delivery_job(
         audience_id (ObjectId): MongoDB ID of the delivered audience.
         delivery_platform_id (ObjectId): Delivery platform ID.
         delivery_platform_generic_campaigns (list): generic campaign IDs.
+        username (str): Username of user requesting to deliver an audience.
         engagement_id (ObjectId): Engagement ID.
         delivery_platform_config (dict): the delivery platform config
             object that holds the data extensions.
@@ -1112,11 +1114,15 @@ def set_delivery_job(
         Union[dict, None]: Delivery job configuration.
 
     Raises:
+        MissingValueException: Raised if the username is missing.
         InvalidID: If the passed in delivery_platform_id did not fetch a doc
             from the relevant db collection.
         NoDeliveryPlatformConnection: If the delivery platform connection is
             not successful.
     """
+
+    if username is None:
+        raise de.MissingValueException("username")
 
     dp_doc = get_delivery_platform(database, delivery_platform_id)
 
@@ -1144,6 +1150,7 @@ def set_delivery_job(
         ),
         db_c.DELETED: False,
         db_c.DELIVERY_PLATFORM_AUD_SIZE: 0,
+        db_c.USERNAME: username,
     }
     if engagement_id is not None:
         doc[db_c.ENGAGEMENT_ID] = engagement_id
@@ -2139,7 +2146,7 @@ def _get_performance_metrics(
     domain: str = None,
     pending_transfer_for_feedback: bool = False,
     pending_transfer_for_report: bool = False,
-) -> Union[list, None]:
+) -> Optional[List[dict]]:
     """Helper method to retrieve campaign performance metrics or activities.
 
     Args:
@@ -2159,7 +2166,7 @@ def _get_performance_metrics(
             that have not been transferred for report. Defaults to False.
 
     Returns:
-        Union[list, None]: list of metrics.
+        Optional[List[dict]]: list of metrics.
 
     Raises:
         InvalidID: If the passed in delivery_job_id did not fetch a doc from
@@ -2493,7 +2500,7 @@ def set_audience_customers(
 def get_all_audience_customers(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
-) -> Cursor:
+) -> Optional[Cursor]:
     """A function to fetch all audience customers docs for a delivery job.
 
     Args:

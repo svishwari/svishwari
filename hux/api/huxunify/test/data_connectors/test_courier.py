@@ -6,8 +6,6 @@ import mongomock
 from bson import ObjectId
 from hypothesis import given, strategies as st
 import requests_mock
-import boto3
-from botocore.stub import Stubber
 
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -37,15 +35,12 @@ from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
-    set_cloud_watch_rule,
-    CloudWatchState,
 )
 from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
     get_okta_test_user_creds,
     get_destination_config,
     get_audience_destination_pairs,
-    toggle_event_driven_routers,
     deliver_audience_to_destination,
     BaseDestinationBatchJob,
     AWSDestinationBatchJob,
@@ -159,6 +154,8 @@ class CourierTest(TestCase):
             engagement_doc[db_c.AUDIENCES],
             engagement_doc[db_c.CREATED_BY],
         )
+
+        self.test_user = t_c.TEST_USER_NAME
 
         self.assertIsInstance(engagement_id, ObjectId)
         self.engagement = get_engagement(self.database, engagement_id)
@@ -349,7 +346,10 @@ class CourierTest(TestCase):
 
         for pair in delivery_route:
             batch_destination = get_destination_config(
-                self.database, *pair, self.engagement[db_c.ID]
+                self.database,
+                *pair,
+                self.engagement[db_c.ID],
+                username=self.test_user,
             )
 
             self.assertIsNotNone(batch_destination.aws_envs)
@@ -376,7 +376,10 @@ class CourierTest(TestCase):
         # walk the delivery route
         for pair in delivery_route:
             batch_destination = get_destination_config(
-                self.database, *pair, self.engagement[db_c.ID]
+                self.database,
+                *pair,
+                self.engagement[db_c.ID],
+                username=self.test_user,
             )
 
             batch_destination.aws_envs[
@@ -411,7 +414,10 @@ class CourierTest(TestCase):
         # walk the delivery route
         for pair in delivery_route:
             batch_destination = get_destination_config(
-                self.database, *pair, self.engagement[db_c.ID]
+                self.database,
+                *pair,
+                self.engagement[db_c.ID],
+                username=self.test_user,
             )
 
             # Register job
@@ -504,136 +510,6 @@ class CourierTest(TestCase):
                 destination[db_c.DELIVERY_PLATFORM_TYPE]
             ][api_c.AWS_SSM_NAME]:
                 self.assertEqual(auth[secret.upper()], simulated_secret)
-
-    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
-    def test_create_cloud_watch_rule(self, mock_boto_client: mock.MagicMock):
-        """Test function create_cloud_watch_rule
-
-        Args:
-            mock_boto_client (mock.MagicMock): mock boto client.
-        """
-
-        # use audience once
-        for destination_id in self.audience_one[db_c.DESTINATIONS]:
-
-            # get destination
-            destination = get_delivery_platform(self.database, destination_id)
-
-            # create the rule name
-            cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
-
-            # put params
-            put_rule_params = {
-                "Name": cw_name,
-                "ScheduleExpression": "cron(15 0 * * ? *)",
-                "Description": "",
-                "State": api_c.ENABLED.upper(),
-                "RoleArn": "fake_arn",
-            }
-
-            put_rule_response = {
-                "RuleArn": "test-result-rulearn",
-                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value},
-            }
-
-            # simulate the event return rule
-            client = boto3.client(
-                api_c.AWS_EVENTS_NAME, get_config().AWS_REGION
-            )
-            stub_client = Stubber(client)
-            stub_client.add_response(
-                "put_rule", put_rule_response, put_rule_params
-            )
-            stub_client.activate()
-
-            mock_boto_client.return_value = client
-
-            result = set_cloud_watch_rule(
-                cw_name, "cron(15 0 * * ? *)", "fake_arn"
-            )
-
-            # test mocked client result
-            self.assertEqual(result, put_rule_response["RuleArn"])
-
-    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
-    def test_create_cloud_watch_rule_fail(
-        self, mock_boto_client: mock.MagicMock
-    ):
-        """Test function create_cloud_watch_rule failure.
-
-        Args:
-            mock_boto_client (mock.MagicMock): mock boto client.
-        """
-
-        # use audience once
-        for destination_id in self.audience_one[db_c.DESTINATIONS]:
-            # get destination
-            destination = get_delivery_platform(self.database, destination_id)
-
-            # create the rule name
-            cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
-
-            # put params
-            put_rule_params = {
-                "Name": cw_name,
-                "ScheduleExpression": "cron(15 0 * * ? *)",
-                "Description": "",
-                "State": api_c.ENABLED.upper(),
-                "RoleArn": "fake_arn",
-            }
-
-            put_rule_response = {
-                "RuleArn": "test-result-rulearn",
-                "ResponseMetadata": {
-                    "HTTPStatusCode": HTTPStatus.BAD_REQUEST.value
-                },
-            }
-
-            # simulate the event return rule
-            client = boto3.client(
-                api_c.AWS_EVENTS_NAME, get_config().AWS_REGION
-            )
-            stub_client = Stubber(client)
-            stub_client.add_response(
-                "put_rule", put_rule_response, put_rule_params
-            )
-            stub_client.activate()
-
-            mock_boto_client.return_value = client
-
-            result = set_cloud_watch_rule(
-                cw_name, "cron(15 0 * * ? *)", "fake_arn"
-            )
-
-            # test mocked client result
-            self.assertIsNone(result)
-
-    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
-    def test_toggle_event_driven_routers(
-        self, mock_boto_client: mock.MagicMock
-    ):
-        """Test function toggle_event_driven_routers.
-
-        Args:
-            mock_boto_client (mock.MagicMock): mock boto client.
-        """
-
-        rule_params = {"Name": "fake-rule"}
-        rule_response = {
-            "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value},
-        }
-
-        # simulate the event return rule
-        client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
-
-        stub_client = Stubber(client)
-        stub_client.add_response(
-            CloudWatchState.ENABLE.value, rule_response, rule_params
-        )
-        stub_client.activate()
-        mock_boto_client.return_value = client
-
-        self.assertIsNone(toggle_event_driven_routers(self.database))
 
     def test_run_scheduled_delivery(self):
         """Test run scheduled delivery for an audience in an engagement."""

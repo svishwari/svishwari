@@ -1,16 +1,20 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for TrustID APIs."""
-
+import copy
 from http import HTTPStatus
 from typing import Tuple
 
 from flasgger import SwaggerView
 from flask import Blueprint, request
-from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.trust_id import (
-    get_trust_id_overview_data,
-    get_trust_id_signal_data,
+
+from huxunifylib.database import constants as db_c
+from huxunifylib.database.user_management import (
+    get_user_trust_id_segments,
+    add_user_trust_id_segments,
+    remove_user_trust_id_segments,
 )
+
+from huxunify.api import constants as api_c
 
 from huxunify.api.route.decorators import (
     secured,
@@ -20,11 +24,22 @@ from huxunify.api.route.decorators import (
 )
 
 from huxunify.api.route.return_util import HuxResponse
+from huxunify.api.route.utils import get_db_client
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
-    SignalOverviewSchema,
+    TrustIdAttributesSchema,
+    TrustIdComparisonSchema,
+    TrustIdSegmentFilterSchema,
+    TrustIdSegmentPostSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.stubbed_data.trust_id_stub import (
+    trust_id_overview_stub_data,
+    trust_id_attribute_stub_data,
+    trust_id_comparison_stub_data,
+    trust_id_filters_stub,
+)
+
 
 trust_id_bp = Blueprint(api_c.TRUST_ID_ENDPOINT, import_name=__name__)
 
@@ -45,56 +60,6 @@ def before_request():
 class TrustIdOverview(SwaggerView):
     """Trust ID overview Class."""
 
-    # TODO build parameters dynamically when Trust ID serves dynamic filters.
-    parameters = [
-        {
-            "name": api_c.MIN_AGE,
-            "description": "Minimum age of customers for Trust ID scores.",
-            "in": "query",
-            "type": "integer",
-            "required": False,
-            "example": 23,
-        },
-        {
-            "name": api_c.MAX_AGE,
-            "description": "Maximum age of customers for Trust ID scores.",
-            "in": "query",
-            "type": "integer",
-            "required": False,
-            "example": 23,
-        },
-        {
-            "name": api_c.GENDER,
-            "description": "Gender of customers for Trust ID scores.",
-            "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
-            "collectionFormat": "multi",
-            "required": False,
-            "example": "male",
-        },
-        {
-            "name": api_c.OCCUPATION,
-            "description": "Gender of customers for Trust ID scores.",
-            "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
-            "collectionFormat": "multi",
-            "required": False,
-            "example": "male",
-        },
-        {
-            "name": api_c.CUSTOMER_TYPE,
-            "description": "Gender of customers for Trust ID scores.",
-            "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
-            "collectionFormat": "multi",
-            "required": False,
-            "example": "male",
-        },
-    ]
-
     responses = {
         HTTPStatus.OK.value: {
             "description": "Trust ID overview data",
@@ -102,7 +67,7 @@ class TrustIdOverview(SwaggerView):
         }
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.INSIGHTS]
+    tags = [api_c.TRUST_ID_TAG]
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
@@ -123,103 +88,342 @@ class TrustIdOverview(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        applied_filters = {}
-
-        # TODO Remove stub when Trust ID dynamic filters available.
-        # get all list based args
-        for list_filter in filter(
-            lambda x: x[api_c.TYPE] == "list",
-            api_c.TRUST_ID_SUPPORTED_FILTERS_STUB,
-        ):
-            if request.args.getlist(list_filter.get(api_c.NAME)):
-                applied_filters[
-                    list_filter.get(api_c.NAME)
-                ] = request.args.getlist(list_filter.get(api_c.NAME))
-
-        # get all range based args
-        for range_filter in filter(
-            lambda x: x[api_c.TYPE] == "range",
-            api_c.TRUST_ID_SUPPORTED_FILTERS_STUB,
-        ):
-            if request.args.get("min_" + range_filter.get(api_c.NAME)):
-                applied_filters[
-                    "min_" + range_filter.get(api_c.NAME)
-                ] = request.args.get("min_" + range_filter.get(api_c.NAME))
-
-            if request.args.get("max_" + range_filter.get(api_c.NAME)):
-                applied_filters[
-                    "max_" + range_filter.get(api_c.NAME)
-                ] = request.args.get("max_" + range_filter.get(api_c.NAME))
-
-        overview_data = get_trust_id_overview_data(applied_filters)
-        overview_data[
-            api_c.ALLOWED_FILTERS
-        ] = api_c.TRUST_ID_SUPPORTED_FILTERS_STUB
-
         return HuxResponse.OK(
-            data=overview_data,
+            data=trust_id_overview_stub_data,
             data_schema=TrustIdOverviewSchema(),
         )
 
 
 @add_view_to_blueprint(
     trust_id_bp,
-    f"{api_c.TRUST_ID_ENDPOINT}/signal/<signal_name>",
-    "TrustIdSignal",
+    f"{api_c.TRUST_ID_ENDPOINT}/attributes",
+    "TrustIdAttributes",
 )
-class TrustIdSignal(SwaggerView):
-    """Trust ID signal data fetch Class."""
-
-    # TODO build parameters dynamically when Trust ID serves dynamic filters.
-    parameters = [
-        {
-            "name": api_c.SIGNAL_NAME,
-            "description": "Signal name",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": api_c.CAPABILITY,
-        }
-    ]
+class TrustIdAttributes(SwaggerView):
+    """Trust ID attributes data fetch Class."""
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Trust ID signal data",
-            "schema": SignalOverviewSchema,
+            "description": "Trust ID attributes data",
+            "schema": {"type": "array", "items": TrustIdAttributesSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to fetch signal data"
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.INSIGHTS]
+    tags = [api_c.TRUST_ID_TAG]
 
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, signal_name: str, user: dict) -> Tuple[dict, int]:
-        """Retrieves Trust ID signal data.
+    def get(self, user: dict) -> Tuple[list, int]:
+        """Retrieves Trust ID attributes data.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Args:
-            signal_name (str): Name of the signal to fetch the data for.
             user (dict): user object.
 
         Returns:
-            Tuple[dict, int]: dict of user, HTTP status code.
+            Tuple[list, int]: list of attribute-wise data, HTTP status code.
 
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        # TODO Remove stub when Trust ID data available.
-        if signal_name not in api_c.LIST_OF_SIGNALS:
-            return HuxResponse.BAD_REQUEST(
-                f"Signal name {signal_name} not supported."
-            )
+        return HuxResponse.OK(
+            data=trust_id_attribute_stub_data,
+            data_schema=TrustIdAttributesSchema(),
+        )
+
+
+@add_view_to_blueprint(
+    trust_id_bp,
+    f"{api_c.TRUST_ID_ENDPOINT}/comparison",
+    "TrustIdAttributeComparison",
+)
+class TrustIdAttributeComparison(SwaggerView):
+    """Trust ID comparison data fetch Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Trust ID comparison data",
+            "schema": {"type": "array", "items": TrustIdComparisonSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to fetch comparison data"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.TRUST_ID_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
+        """Retrieves Trust ID comparison data.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[list, int]: list of comparison data, HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
+
+        custom_segments = get_user_trust_id_segments(
+            database=get_db_client(), okta_id=user[db_c.OKTA_ID]
+        )
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
+        for seg in custom_segments:
+            _ = [
+                x["segments"].append(
+                    {
+                        "segment_name": seg["segment_name"],
+                        "segment_filters": seg["segment_filters"],
+                        "attributes": x["segments"][-1]["attributes"],
+                    }
+                )
+                for x in required_comparison_data
+            ]
+        return HuxResponse.OK(
+            data=required_comparison_data,
+            data_schema=TrustIdComparisonSchema(),
+        )
+
+
+@add_view_to_blueprint(
+    trust_id_bp,
+    f"{api_c.TRUST_ID_ENDPOINT}/user_filters",
+    "TrustIdSegmentFilters",
+)
+class TrustIdSegmentFilters(SwaggerView):
+    """Trust ID segment filters fetch Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Trust ID segment filters",
+            "schema": {"type": "array", "items": TrustIdSegmentFilterSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to fetch comparison data"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.TRUST_ID_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
+        """Retrieves Trust ID segment filters.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[list, int]: list of segment filters, HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
 
         return HuxResponse.OK(
-            data=get_trust_id_signal_data(signal_name),
-            data_schema=SignalOverviewSchema(),
+            data=trust_id_filters_stub,
+            data_schema=TrustIdSegmentFilterSchema(),
+        )
+
+
+@add_view_to_blueprint(
+    trust_id_bp,
+    f"{api_c.TRUST_ID_ENDPOINT}/segment",
+    "TrustIdAddSegment",
+)
+class TrustIdAddSegment(SwaggerView):
+    """Trust ID add segment class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Segment with selected filters.",
+            "example": {
+                api_c.SEGMENT_NAME: "Segment 1",
+                api_c.SEGMENT_FILTERS: [
+                    {
+                        api_c.TYPE: "age",
+                        api_c.DESCRIPTION: "Age",
+                        api_c.VALUES: ["18-20 years", "21-24 years"],
+                    }
+                ],
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Trust ID segment added successfully",
+            "schema": {"type": "array", "items": TrustIdComparisonSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to add new segment"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.TRUST_ID_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(self, user: dict) -> Tuple[list, int]:
+        """Add Trust ID segment.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[list, int]: list of segment filters, HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
+
+        segment_details = TrustIdSegmentPostSchema().load(request.json)
+        database = get_db_client()
+
+        # Return the trust id segments for user
+        segments = get_user_trust_id_segments(database, user[db_c.OKTA_ID])
+
+        if len(segments) >= 3:
+            return HuxResponse.FORBIDDEN(
+                message="Threshold of maximum segments reached."
+            )
+
+        added_segments = [
+            x["segment_name"]
+            for x in trust_id_comparison_stub_data[0]["segments"]
+        ]
+        added_segments.extend([x[api_c.SEGMENT_NAME] for x in segments])
+        # Check if a segment with the specified name exists
+        if segment_details[api_c.SEGMENT_NAME] in added_segments:
+            return HuxResponse.CONFLICT(
+                message=("Segment with the given name already exists!")
+            )
+
+        updated_segments = add_user_trust_id_segments(
+            database, user[db_c.OKTA_ID], segment_details
+        )[db_c.TRUST_ID_SEGMENTS]
+
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
+        for seg in updated_segments:
+            _ = [
+                x["segments"].append(
+                    {
+                        "segment_name": seg["segment_name"],
+                        "segment_filters": seg["segment_filters"],
+                        "attributes": x["segments"][-1]["attributes"],
+                    }
+                )
+                for x in required_comparison_data
+            ]
+
+        # Update logic to filter trust id data based on added
+        # segments using updated_segments
+        return HuxResponse.CREATED(
+            data=required_comparison_data,
+            data_schema=TrustIdComparisonSchema(),
+        )
+
+
+@add_view_to_blueprint(
+    trust_id_bp,
+    f"{api_c.TRUST_ID_ENDPOINT}/segment",
+    "TrustIdRemoveSegment",
+)
+class TrustIdRemoveSegment(SwaggerView):
+    """Trust ID remove segment class."""
+
+    parameters = [
+        {
+            "name": "segment_name",
+            "in": "query",
+            "type": "string",
+            "description": "Name of segment to remove.",
+            "example": "Segment 1",
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Trust ID segment removed successfully",
+            "schema": {"type": "array", "items": TrustIdComparisonSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to remove segment"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.TRUST_ID_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def delete(self, user: dict) -> Tuple[list, int]:
+        """Remove Trust ID segment.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[list, int]: list of segment filters, HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
+
+        segment_name = request.args.get(api_c.SEGMENT_NAME)
+        if not segment_name:
+            return HuxResponse.BAD_REQUEST(
+                message="Missing required segment name."
+            )
+
+        updated_segments = remove_user_trust_id_segments(
+            get_db_client(), user[db_c.OKTA_ID], segment_name
+        )[db_c.TRUST_ID_SEGMENTS]
+
+        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
+        for seg in updated_segments:
+            _ = [
+                x["segments"].append(
+                    {
+                        "segment_name": seg["segment_name"],
+                        "segment_filters": seg["segment_filters"],
+                        "attributes": x["segments"][-1]["attributes"],
+                    }
+                )
+                for x in required_comparison_data
+            ]
+
+        # Update logic to filter trust id data based on added
+        # segments using updated_segments
+        return HuxResponse.OK(
+            data=required_comparison_data,
+            data_schema=TrustIdComparisonSchema(),
         )

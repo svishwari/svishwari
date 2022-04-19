@@ -10,6 +10,7 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.delivery_platform_management as dpm
+import huxunifylib.database.orchestration_management as om
 
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -177,7 +178,7 @@ def delete_ingestion_job_audiences(
         ingestion_job_id,
     )
     for audience_id in audience_ids:
-        if not delete_audience(database, audience_id):
+        if not om.delete_audience(database, audience_id):
             return False
     return True
 
@@ -393,44 +394,6 @@ def delete_delivery_platform(
             if collection.find_one_and_update(
                 {db_c.ID: delivery_platform_id},
                 {"$set": update_doc},
-                upsert=False,
-                return_document=pymongo.ReturnDocument.AFTER,
-            ):
-                return True
-        except pymongo.errors.OperationFailure as exc:
-            logging.error(exc)
-
-    return False
-
-
-@retry(
-    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def delete_audience(
-    database: DatabaseClient,
-    audience_id: ObjectId,
-) -> bool:
-    """A function to soft delete an audience.
-
-    Args:
-        database (DatabaseClient): A database client.
-        audience_id (ObjectId): MongoDB ID of the audience.
-
-    Returns:
-        bool: A flag indicating successful deletion.
-    """
-
-    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[db_c.AUDIENCES_COLLECTION]
-
-    if delete_audience_delivery_jobs(database, audience_id):
-        update_dict = {db_c.DELETED: True}
-
-        try:
-            if collection.find_one_and_update(
-                {db_c.ID: audience_id},
-                {"$set": update_dict},
                 upsert=False,
                 return_document=pymongo.ReturnDocument.AFTER,
             ):

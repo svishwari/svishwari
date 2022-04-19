@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import aiohttp
 from flasgger import SwaggerView
 from bson import ObjectId
-from flask import Blueprint, request, jsonify, Response
+from flask import Blueprint, request, Response
 from marshmallow import INCLUDE
 from pymongo import MongoClient
 
@@ -19,7 +19,9 @@ from huxunifylib.connectors import (
     FacebookConnector,
 )
 
-from huxunifylib.database.user_management import manage_user_favorites
+from huxunifylib.database.user_management import (
+    delete_favorite_from_all_users,
+)
 from huxunifylib.database.delete_util import delete_lookalike_audience
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
@@ -42,6 +44,7 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
     LookalikeAudiencePutSchema,
+    AudiencesBatchGetSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -52,8 +55,10 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs_async,
     get_spending_by_gender_async,
     get_customers_overview_async,
+    get_customer_event_types,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
+from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
 )
@@ -328,12 +333,30 @@ class AudienceView(SwaggerView):
             "required": False,
             "example": "age",
         },
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
+            "in": "query",
+            "type": "string",
+            "description": "Max number of audiences to be returned. 0 returns all audiences",
+            "example": api_c.AUDIENCES_DEFAULT_BATCH_SIZE,
+            "required": False,
+            "default": api_c.AUDIENCES_DEFAULT_BATCH_SIZE,
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
+            "in": "query",
+            "type": "string",
+            "description": "Number of audiences per batch to be returned.",
+            "example": api_c.DEFAULT_BATCH_NUMBER,
+            "required": False,
+            "default": api_c.DEFAULT_BATCH_NUMBER,
+        },
     ]
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of all Audiences.",
-            "schema": {"type": "array", "items": AudienceGetSchema},
+            "description": "List of Audiences with total number of audiences.",
+            "schema": AudiencesBatchGetSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get all Audiences."
@@ -361,6 +384,7 @@ class AudienceView(SwaggerView):
         """
 
         database = get_db_client()
+
         # read the optional request args and set the required filter_dict to
         # query the DB.
         filter_dict = {}
@@ -387,11 +411,44 @@ class AudienceView(SwaggerView):
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
 
+        batch_size = validation.validate_integer(
+            value=request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_SIZE,
+                str(api_c.AUDIENCES_DEFAULT_BATCH_SIZE),
+            ),
+            validate_zero_or_greater=True,
+        )
+
+        batch_number = validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_NUMBER,
+                str(api_c.DEFAULT_BATCH_NUMBER),
+            )
+        )
+
         # get all audiences
         audiences = orchestration_management.get_all_audiences(
             database=database,
             filters=filter_dict,
             audience_ids=favorite_audiences,
+            batch_size=batch_size,
+            batch_number=batch_number,
+        )
+
+        # get total audiences count to add it to response for pagination
+        # request
+        audiences_count = orchestration_management.get_audiences_count(
+            database=database,
+            filters=filter_dict,
+            audience_ids=favorite_audiences,
+        )
+
+        # query and fetch the lookalike audiences only if the batch size in the
+        # request payload is greater than the audiences fetched, in which case
+        # we can query the lookalike_audiences collection as well and append it
+        # to the list of audiences to be returned in response
+        fetch_lookalike_audiences = batch_size == 0 or (
+            batch_size > 0 and len(audiences) < batch_size
         )
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
@@ -515,8 +572,10 @@ class AudienceView(SwaggerView):
                 audience[db_c.ID] in favorite_audiences
             )
 
-        # fetch lookalike audiences if lookalikeable is set to false
-        # as lookalike audiences can not be lookalikeable
+        lookalikes_count = 0
+
+        # fetch lookalike audiences if lookalikeable is set to false as
+        # lookalike audiences can not be lookalikeable
         if not lookalikeable:
             # get all lookalikes and append to the audience list
             query_filter = {db_c.DELETED: False}
@@ -553,57 +612,78 @@ class AudienceView(SwaggerView):
                 query_filter,
                 {db_c.DELETED: 0},
             )
-            lookalikes = (
-                []
+
+            # get total lookalike audiences count to add it to response for
+            # pagination request
+            lookalikes_count = (
+                0
                 if lookalikes is None
-                else lookalikes.get(db_c.DOCUMENTS, [])
+                else lookalikes.get(api_c.TOTAL_RECORDS, 0)
             )
 
-            # get the facebook delivery platform for lookalikes
-            facebook_destination = (
-                destination_management.get_delivery_platform_by_type(
-                    database, db_c.DELIVERY_PLATFORM_FACEBOOK
+            # query for lookalike audiences only if required number of regular
+            # audiences are not fetched based on the batch offset values passed
+            # in the request
+            if fetch_lookalike_audiences:
+                lookalikes = (
+                    []
+                    if lookalikes is None
+                    else lookalikes.get(db_c.DOCUMENTS, [])
                 )
-            )
 
-            # set the is_lookalike property to True so UI knows it is a lookalike.
-            for lookalike in lookalikes:
-                lookalike[api_c.LOOKALIKEABLE] = False
-                lookalike[api_c.IS_LOOKALIKE] = True
-
-                lookalike[db_c.STATUS] = lookalike.get(
-                    db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
-                )
-                lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
-                    db_c.CREATE_TIME
-                ]
-                lookalike[db_c.DESTINATIONS] = (
-                    [facebook_destination] if facebook_destination else []
-                )
-                lookalike[api_c.FAVORITE] = bool(
-                    lookalike[db_c.ID] in favorite_lookalike_audiences
-                )
-                if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
-                    # rename the key
-                    lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
-                        db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                # get the facebook delivery platform for lookalikes
+                facebook_destination = (
+                    destination_management.get_delivery_platform_by_type(
+                        database, db_c.DELIVERY_PLATFORM_FACEBOOK
                     )
+                )
 
-            # combine the two lists and serve.
-            audiences += lookalikes
+                for lookalike in lookalikes:
+                    lookalike = {
+                        **lookalike,
+                        api_c.LOOKALIKEABLE: False,
+                        api_c.IS_LOOKALIKE: True,
+                        db_c.STATUS: lookalike.get(
+                            db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
+                        ),
+                        db_c.AUDIENCE_LAST_DELIVERED: lookalike[
+                            db_c.CREATE_TIME
+                        ],
+                        db_c.DESTINATIONS: (
+                            [facebook_destination]
+                            if facebook_destination
+                            else []
+                        ),
+                        api_c.FAVORITE: bool(
+                            lookalike[db_c.ID] in favorite_lookalike_audiences
+                        ),
+                    }
+                    if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
+                        # rename the key
+                        lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
+                            db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                        )
 
-        else:
-            # if lookalikeable is set to true, filter out the audiences
-            # that are not lookalikeable.
+                    # add the built lookalike dict to the list of audiences to
+                    # be returned
+                    audiences.append(lookalike)
+
+        elif lookalikeable:
+            # if lookalikeable is set to true, filter out the audiences that
+            # are not lookalikeable.
             audiences = [
                 x
                 for x in audiences
                 if x[api_c.LOOKALIKEABLE] == api_c.STATUS_ACTIVE
             ]
 
-        return (
-            jsonify(AudienceGetSchema().dump(audiences, many=True)),
-            HTTPStatus.OK,
+        audiences_batch = {
+            api_c.TOTAL_RECORDS: audiences_count + lookalikes_count,
+            api_c.AUDIENCES: audiences,
+        }
+
+        return HuxResponse.OK(
+            data=audiences_batch, data_schema=AudiencesBatchGetSchema()
         )
 
 
@@ -817,6 +897,11 @@ class AudienceGetView(SwaggerView):
                 destination = destination_management.get_delivery_platform(
                     database, lookalike_audience.get(db_c.DELIVERY_PLATFORM_ID)
                 )
+                if not destination:
+                    logger.warning(
+                        "Destination %s could not be found.",
+                        destination.get(api_c.ID),
+                    )
                 lookalike_audience[
                     db_c.DELIVERY_PLATFORM_TYPE
                 ] = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
@@ -1211,7 +1296,10 @@ class AudiencePostView(SwaggerView):
                     if pair[0] != audience_doc[db_c.ID]:
                         continue
                     batch_destination = get_destination_config(
-                        database, engagement[db_c.ID], *pair
+                        database,
+                        engagement[db_c.ID],
+                        *pair,
+                        username=user[api_c.USER_NAME],
                     )
                     batch_destination.register()
                     batch_destination.submit()
@@ -1441,14 +1529,32 @@ class AudienceRules(SwaggerView):
             Tuple[Response, int]: dict of audience rules, HTTP status code.
         """
 
+        token_response = get_token_from_request(request)
+
         rules_constants = {
             "text_operators": {
                 "contains": "Contains",
                 "not_contains": "Does not contain",
                 "equals": "Equals",
                 "not_equals": "Does not equal",
+                "within_the_last": "Within the last",
+                "not_within_the_last": "Not within the last",
             }
         }
+
+        # Fetch events from CDM. Check cache first.
+        event_types = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.EVENTS}",
+            get_customer_event_types,
+            {"token": token_response[0]},
+        )
+
+        event_types_rules = {api_c.NAME: api_c.EVENTS.capitalize()}
+        for event_type in event_types:
+            event_types_rules[event_type[api_c.TYPE]] = {
+                api_c.NAME: event_type[api_c.LABEL],
+                api_c.TYPE: api_c.TEXT,
+            }
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
@@ -1457,77 +1563,6 @@ class AudienceRules(SwaggerView):
         rules_from_cdm = {
             "rule_attributes": {
                 "model_scores": {
-                    "age_density": {
-                        "name": "Age Density",
-                        "type": "range",
-                        "min": 0,
-                        "max": 99,
-                        "steps": 5,
-                        "values": [
-                            (46, 3631),
-                            (51, 2807),
-                            (55, 2131),
-                            (54, 2261),
-                            (25, 3284),
-                            (69, 421),
-                            (43, 4012),
-                            (26, 3386),
-                            (63, 955),
-                            (24, 3099),
-                            (59, 1485),
-                            (70, 350),
-                            (77, 107),
-                            (18, 8804),
-                            (64, 867),
-                            (31, 4097),
-                            (56, 1916),
-                            (34, 4392),
-                            (21, 2623),
-                            (44, 3878),
-                            (48, 3394),
-                            (19, 2207),
-                            (52, 2703),
-                            (78, 86),
-                            (61, 1125),
-                            (73, 218),
-                            (36, 4417),
-                            (57, 1835),
-                            (60, 1265),
-                            (49, 3188),
-                            (39, 4407),
-                            (20, 2453),
-                            (45, 3883),
-                            (30, 3997),
-                            (28, 3855),
-                            (65, 760),
-                            (32, 4348),
-                            (40, 4370),
-                            (22, 2797),
-                            (27, 3612),
-                            (50, 2944),
-                            (72, 265),
-                            (67, 571),
-                            (29, 3914),
-                            (33, 4233),
-                            (42, 4111),
-                            (58, 1597),
-                            (23, 2989),
-                            (38, 4394),
-                            (53, 2381),
-                            (68, 443),
-                            (47, 3531),
-                            (71, 303),
-                            (37, 4298),
-                            (75, 202),
-                            (66, 658),
-                            (41, 4261),
-                            (62, 1063),
-                            (79, 65),
-                            (35, 4500),
-                            (74, 208),
-                            (76, 128),
-                        ],
-                    },
                     "propensity_to_unsubscribe": {
                         "name": "Propensity to unsubscribe",
                         "type": "range",
@@ -1669,6 +1704,7 @@ class AudienceRules(SwaggerView):
                             "options": [],
                         },
                     },
+                    "events": event_types_rules,
                 },
             }
         }
@@ -2038,13 +2074,11 @@ class DeleteAudienceView(SwaggerView):
 
         # attempt to delete the audience from audiences collection first
         if audience:
-            # remove the engagement from user favorites
-            manage_user_favorites(
+            # remove the audience from all users favorites
+            delete_favorite_from_all_users(
                 database,
-                okta_id=user[db_c.OKTA_ID],
                 component_name=db_c.AUDIENCES,
                 component_id=ObjectId(audience_id),
-                delete_flag=True,
             )
             deleted_audience = orchestration_management.delete_audience(
                 database, ObjectId(audience_id)
@@ -2068,12 +2102,11 @@ class DeleteAudienceView(SwaggerView):
         )
 
         if not audience:
-            manage_user_favorites(
-                database,
-                okta_id=user[db_c.OKTA_ID],
+            # remove the lookalike audience from all users favorites
+            delete_favorite_from_all_users(
+                get_db_client(),
                 component_name=db_c.LOOKALIKE,
                 component_id=ObjectId(audience_id),
-                delete_flag=True,
             )
             return HuxResponse.NO_CONTENT()
 

@@ -1,7 +1,7 @@
 import { Response } from "miragejs"
 import dayjs from "dayjs"
 import faker from "faker"
-
+import { getBatchCounts } from "@/utils"
 import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
 import { me } from "./factories/me"
@@ -27,6 +27,9 @@ import { addedApplications, applications } from "./factories/application"
 import domainData from "@/api/mock/fixtures/domainLineData.js"
 import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
 import runDurationData from "@/api/mock/fixtures/runDurationData.js"
+import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
+import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
+import trustIdAttribute from "@/api/mock/fixtures/trustIdAttribute.js"
 import trustIdComparisonData from "@/api/mock/fixtures/segmentComparisonScores.js"
 
 export const defineRoutes = (server) => {
@@ -210,7 +213,21 @@ export const defineRoutes = (server) => {
   server.get("/destinations/constants", () => destinationsConstants)
 
   // engagements
-  server.get("/engagements")
+  server.get("/engagements", (schema, request) => {
+    let allEngagements = schema.engagements.all()
+    const engagements = {
+      engagements: allEngagements.models,
+      total_records: allEngagements.length,
+    }
+    if (request.queryParams.batch_size != 0) {
+      let [initialCount, lastCount] = getBatchCounts(request)
+      engagements.engagements = allEngagements.models.slice(
+        initialCount,
+        lastCount
+      )
+    }
+    return engagements
+  })
 
   server.get("/engagements/:id", (schema, request) => {
     const id = request.params.id
@@ -284,6 +301,17 @@ export const defineRoutes = (server) => {
     audience.standalone_deliveries.push(destination)
     const body = {
       message: "Successfully added destination to standalone deliveries",
+    }
+    return new Response(code, headers, body)
+  })
+
+  // Attaching an Destination to an Engagement attached to a Audience
+  server.post("/engagements/:id/audience/:audienceId/destinations", () => {
+    const code = 200
+    const headers = {}
+    const body = {
+      message:
+        "Successfully added destination to engagement attached to audience",
     }
     return new Response(code, headers, body)
   })
@@ -399,6 +427,15 @@ export const defineRoutes = (server) => {
       return { message: "Successfully updated delivery schedule" }
     }
   )
+
+  server.post("/engagements/:id/audience/:audienceId/schedule", () => {
+    const code = 201
+    const headers = {}
+    const body = {
+      message: "Successfully updated delivery schedule",
+    }
+    return new Response(code, headers, body)
+  })
 
   server.post(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/deliver",
@@ -639,10 +676,7 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/customers", (schema, request) => {
-    let currentBatch = request.queryParams.batch_number
-    let batchSize = request.queryParams.batch_size
-    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
-    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let [initialCount, lastCount] = getBatchCounts(request)
     const customers = schema.customers.all().slice(initialCount, lastCount)
     return customers
   })
@@ -671,12 +705,7 @@ export const defineRoutes = (server) => {
 
   // notifications
   server.get("/notifications", (schema, request) => {
-    let currentBatch =
-      request.queryParams.batch_number || request.queryParams.batchNumber
-    let batchSize =
-      request.queryParams.batch_size || request.queryParams.batchSize
-    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
-    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let [initialCount, lastCount] = getBatchCounts(request)
     let allNotifications = schema.notifications.all()
     const notifications = {
       notifications: allNotifications.models.slice(initialCount, lastCount),
@@ -694,14 +723,24 @@ export const defineRoutes = (server) => {
     return schema.users.all()
   })
 
-  // audiences
-  server.get("/audiences")
+  server.get("/audiences", (schema, request) => {
+    let allAudiences = schema.audiences.all()
+    const audiences = {
+      audiences: allAudiences.models,
+      total_records: allAudiences.length,
+    }
+    if (request.queryParams.batch_size != 0) {
+      let [initialCount, lastCount] = getBatchCounts(request)
+      audiences.audiences = allAudiences.models.slice(initialCount, lastCount)
+    }
+    return audiences
+  })
 
   server.get("/audiences/:id/audience_insights", () => {
     demographicsData.demo = mapData
     return demographicsData
   })
-  server.get("/audiences/:id/:type", async () => {
+  server.get("/audiences/:id/download", async () => {
     // Introduced a delay of 15 seconds to
     // replicate the API delay in processing the BLOB.
     await new Promise((r) => setTimeout(r, 15000))
@@ -721,9 +760,7 @@ export const defineRoutes = (server) => {
     const requestData = JSON.parse(request.requestBody)
     requestData.engagements = []
     requestData.destinations = []
-
     const now = dayjs().toJSON()
-
     const attrs = {
       ...requestData,
       create_time: () => now,
@@ -731,7 +768,6 @@ export const defineRoutes = (server) => {
       update_time: () => now,
       updated_by: me.full_name(),
     }
-
     return server.create("audience", attrs)
   })
 
@@ -864,5 +900,13 @@ export const defineRoutes = (server) => {
   server.get("/email_deliverability/overview", () => emailDeliverabilityOveriew)
 
   // trust id
+  server.get("/trust_id/overview", () => trustIdOverview)
+
   server.get("/trust_id/comparison", () => trustIdComparisonData)
+
+  server.get("/trust_id/user_filters", () => addSegmentData)
+
+  server.post("/trust_id/segment", () => trustIdComparisonData)
+
+  server.get("/trust_id/attributes", () => trustIdAttribute)
 }

@@ -24,6 +24,7 @@
             filter.value.length > 0 ? ` (${filter.value.length})` : ''
           }`"
           @onToggle="handleFilterValueChange(i)"
+          @onValueChange="counterUpdate()"
         >
           <template #activator>
             <div class="mr-2">
@@ -93,12 +94,14 @@ export default {
     removeValue(filterIndex, valueIndex) {
       this.filters[filterIndex].value.splice(valueIndex, 1)
       this.handleFilterValueChange(filterIndex)
+      this.counterUpdate()
     },
 
     resetAll() {
       this.filters.map((each) => {
         each.value = []
       })
+      this.counterUpdate()
       this.$emit("onReset")
     },
 
@@ -110,6 +113,14 @@ export default {
 
     handleCheckboxValueChange() {
       this.$emit("onCheckboxChange", this.showMatchRate)
+    },
+
+    counterUpdate() {
+      let counter = 0
+      for (let filter of this.filters) {
+        filter.value.forEach(() => counter++)
+      }
+      this.$emit("updateCount", counter)
     },
   },
 }

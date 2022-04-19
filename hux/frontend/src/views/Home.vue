@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hux-page max-width="100%">
+    <hux-page max-width="100%" class="home-page">
       <template #header>
         <hux-page-header
           :title="`Welcome back, ${fullName}!`"
@@ -97,7 +97,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row class="latest-alert-main">
         <v-col>
           <v-card
             class="rounded-lg box-shadow-5"
@@ -389,12 +389,14 @@ export default {
 
 .total-customers-chart-frame {
   background-image: url("../assets/images/no-customers-chart-frame.png");
-  background-position: center;
+  background-position: bottom;
+  background-size: 93% 87%;
 }
 
 .notifications-table-frame {
   background-image: url("../assets/images/no-lift-chart-frame.png");
-  background-position: center;
+  background-position: bottom;
+  background-size: 93% 87%;
 }
 
 .margin-2px-top-3px-bottom {
@@ -404,6 +406,7 @@ export default {
 .help-section {
   background: var(--v-primary-lighten2);
   height: 96px;
+  width: 100%;
 }
 ::-webkit-scrollbar {
   width: 5px;
@@ -427,5 +430,14 @@ export default {
 }
 .chart-card {
   margin-top: 94px;
+}
+::v-deep .v-data-table-header__icon {
+  margin-left: 4px !important;
+}
+::v-deep.home-page {
+  .container {
+    height: 100% !important;
+    overflow: hidden !important;
+  }
 }
 </style>

@@ -31,14 +31,15 @@
           :key="config.name"
           :icon="config.icon"
           :icon-color="'white'"
+          :logo-size="40"
+          :logo-box-padding="'10px'"
           :title="config.name"
           :description="config.description"
           :disabled="['pending', 'requested'].includes(config.status)"
           :action-menu="false"
           :coming-soon="false"
           :logo-option="true"
-          :interactable="false"
-          description-height="90px"
+          :interactable="config.status == 'active'"
           height="225"
           width="255"
           class="mr-12 model-desc-card"
@@ -77,14 +78,15 @@
           :key="config.name"
           :icon="config.icon"
           :icon-color="'white'"
+          :logo-size="40"
+          :logo-box-padding="'10px'"
           :title="config.name"
           :description="config.description"
           :disabled="['pending', 'requested'].includes(config.status)"
           :action-menu="false"
           :coming-soon="false"
           :logo-option="true"
-          :interactable="false"
-          description-height="90px"
+          :interactable="config.status == 'active'"
           height="225"
           width="255"
           class="mr-12 model-desc-card"
@@ -160,5 +162,11 @@ export default {
   ::v-deep .v-label {
     color: var(--v-black-base) !important;
   }
+}
+::v-deep .descriptive-card .description {
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 5 !important;
+  overflow: hidden !important;
+  display: -webkit-box !important;
 }
 </style>

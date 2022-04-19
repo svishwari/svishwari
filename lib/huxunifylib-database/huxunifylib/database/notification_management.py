@@ -48,7 +48,7 @@ def create_notification(
     """
 
     # validate type
-    if notification_type.lower() not in db_c.NOTIFICATION_TYPES:
+    if notification_type not in db_c.NOTIFICATION_TYPES:
         raise ValueError("Invalid notification type provided.")
 
     if category not in db_c.NOTIFICATION_CATEGORIES:
