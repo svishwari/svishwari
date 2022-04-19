@@ -121,7 +121,7 @@ export default {
         .scaleBand()
         .domain(d3Array.range(this.emailData.length))
         .range([0, w])
-        .paddingInner(0.22)
+        .paddingInner(0.55)
         .paddingOuter(0.11)
 
       let yScale1 = d3Scale
