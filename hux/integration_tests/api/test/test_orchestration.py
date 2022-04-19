@@ -30,6 +30,7 @@ class TestOrchestration(TestCase):
 
     def test_get_all_audiences(self):
         """Test get all audiences."""
+
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}", headers=pytest.HEADERS
         )
@@ -75,6 +76,7 @@ class TestOrchestration(TestCase):
 
     def test_get_histogram_data(self):
         """Test get rules histogram data."""
+
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/rules/age/histogram",
             headers=pytest.HEADERS,
@@ -95,6 +97,7 @@ class TestOrchestration(TestCase):
 
     def test_get_histogram_models_data(self):
         """Test get histogram data for models."""
+
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/rules/model/histogram?"
             f"model_name=propensity_to_unsubscribe",
@@ -115,6 +118,7 @@ class TestOrchestration(TestCase):
 
     def test_get_location_rules_constant(self):
         """Test get location rules constant."""
+
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/rules/city/ka",
             headers=pytest.HEADERS,
