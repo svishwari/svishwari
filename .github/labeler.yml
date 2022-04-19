@@ -13,3 +13,13 @@ UX/UI:
 DB:
 - lib/*
 - lib/**/*
+
+# Add 'API_INT_TESTS' label to any change to lib/ files within the source dir
+API_INT_TESTS:
+- hux/integration_tests/api/*
+- hux/integration_tests/api/**/*
+
+# Add 'UI_INT_TESTS' label to any change to lib/ files within the source dir
+UI_INT_TESTS:
+- hux/integration_tests/frontend/*
+- hux/integration_tests/frontend/**/*

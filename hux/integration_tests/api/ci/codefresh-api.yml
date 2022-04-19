@@ -7,6 +7,7 @@ stages:
   - git
   - set_env
   - docker
+  - tox_parallel
   - artifactory
 
 steps:
@@ -47,6 +48,21 @@ steps:
     working_directory: '${{CF_REPO_NAME}}/${{API_INTEGRATION_TEST_PATH}}'
     dockerfile: 'Dockerfile'
     tag: '${{DOCKER_TAG}}'
+
+  Tox_Tests:
+    stage: tox_parallel
+    title: "Tox Pylint and Coverage checks."
+    image: huxhub.repo.mgnt.in/tox-ci
+    working_directory: '${{CF_REPO_NAME}}/hux/integration_tests/api/'
+    description: "run tests using tox"
+    commands:
+      - tox -e ${TOXENV} -- --skip-model-generate
+    scale:
+      pylintCheck:
+        title: 'pylintCheck'
+        environment:
+          - TOXENV=pylintCheck
+    fail_fast: false
 
   PublishToArtifactory:
     stage: artifactory
