@@ -19,7 +19,9 @@ from huxunifylib.connectors import (
     FacebookConnector,
 )
 
-from huxunifylib.database.user_management import manage_user_favorites
+from huxunifylib.database.user_management import (
+    delete_favorite_from_all_users,
+)
 from huxunifylib.database.delete_util import delete_lookalike_audience
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
@@ -2072,13 +2074,11 @@ class DeleteAudienceView(SwaggerView):
 
         # attempt to delete the audience from audiences collection first
         if audience:
-            # remove the engagement from user favorites
-            manage_user_favorites(
+            # remove the audience from all users favorites
+            delete_favorite_from_all_users(
                 database,
-                okta_id=user[db_c.OKTA_ID],
                 component_name=db_c.AUDIENCES,
                 component_id=ObjectId(audience_id),
-                delete_flag=True,
             )
             deleted_audience = orchestration_management.delete_audience(
                 database, ObjectId(audience_id)
@@ -2102,12 +2102,11 @@ class DeleteAudienceView(SwaggerView):
         )
 
         if not audience:
-            manage_user_favorites(
-                database,
-                okta_id=user[db_c.OKTA_ID],
+            # remove the lookalike audience from all users favorites
+            delete_favorite_from_all_users(
+                get_db_client(),
                 component_name=db_c.LOOKALIKE,
                 component_id=ObjectId(audience_id),
-                delete_flag=True,
             )
             return HuxResponse.NO_CONTENT()
 

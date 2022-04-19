@@ -68,6 +68,7 @@ def set_user(
     display_name: str = "",
     profile_photo: str = "",
     pii_access: bool = False,
+    seen_notifications: bool = False,
 ) -> Union[dict, None]:
     """A function to set a user.
 
@@ -84,6 +85,7 @@ def set_user(
         profile_photo (str): a profile photo url for the user, defaults to an
             empty string.
         pii_access (bool): PII Access, defaults to False
+        seen_notifications (bool): Seen Notifications Flag, defaults to False
 
     Returns:
         Union[dict, None]: MongoDB document for a user.
@@ -126,6 +128,7 @@ def set_user(
         db_c.USER_DASHBOARD_CONFIGURATION: {},
         db_c.USER_APPLICATIONS: [],
         db_c.USER_PII_ACCESS: pii_access,
+        db_c.SEEN_NOTIFICATIONS: seen_notifications,
     }
 
     # validate okta
@@ -178,12 +181,17 @@ def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
+def get_all_users(
+    database: DatabaseClient,
+    filter_dict: dict = None,
+    project_dict: dict = None,
+) -> list:
     """A function to get all user documents.
 
     Args:
         database (DatabaseClient): A database client.
         filter_dict (dict): filter dictionary for adding custom filters.
+        project_dict(dict): project dictionary to return specific fields.
 
     Returns:
         list: List of all user documents.
@@ -192,7 +200,12 @@ def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
-        return list(collection.find(filter_dict if filter_dict else {}))
+        return list(
+            collection.find(
+                filter_dict if filter_dict else {},
+                projection=project_dict if project_dict else {db_c.DELETED: 0},
+            )
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -270,6 +283,7 @@ def update_user(
         db_c.UPDATED_BY,
         db_c.USER_PII_ACCESS,
         db_c.USER_ALERTS,
+        db_c.SEEN_NOTIFICATIONS,
     ]
 
     # validate allowed fields, any invalid returns, raise error
@@ -297,6 +311,105 @@ def update_user(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def delete_favorite_from_all_users(
+    database: DatabaseClient, component_name: str, component_id: ObjectId
+) -> bool:
+    """Deletes the an id from all lists in the favorites for a user
+
+    Args:
+        database (DatabaseClient): A database client.
+        component_name (str): name of the component.
+        component_id (ObjectId): MongoDB ID of the input component.
+
+    Returns:
+        bool: Indicates success or failure.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+    component_name = component_name.lower()
+    favorites_list = f"{db_c.USER_FAVORITES}.{component_name}"
+
+    try:
+        collection.update_many(
+            {
+                favorites_list: {"$eq": component_id},
+            },
+            {
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                },
+                "$pull": {favorites_list: component_id},
+            },
+            upsert=False,
+        )
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+def update_all_users(
+    database: DatabaseClient, update_doc: dict
+) -> Union[dict, None]:
+    """Function to update all users.
+
+    Args:
+        database (DatabaseClient): A database client.
+        update_doc (dict): Dict of key values to update.
+
+    Returns:
+        Union[dict, None]: Updated MongoDB document for a user.
+
+    Raises:
+        DuplicateFieldType: Error if a key that is passed in update_doc dict is
+            not part of the allowed fields list.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
+
+    allowed_fields = [
+        db_c.USER_ROLE,
+        db_c.USER_ORGANIZATION,
+        db_c.USER_SUBSCRIPTION,
+        db_c.S_TYPE_EMAIL,
+        db_c.USER_DISPLAY_NAME,
+        db_c.USER_PROFILE_PHOTO,
+        db_c.USER_FAVORITES,
+        db_c.USER_APPLICATIONS,
+        db_c.USER_DASHBOARD_CONFIGURATION,
+        db_c.USER_LOGIN_COUNT,
+        db_c.UPDATE_TIME,
+        db_c.UPDATED_BY,
+        db_c.USER_PII_ACCESS,
+        db_c.USER_ALERTS,
+        db_c.SEEN_NOTIFICATIONS,
+    ]
+
+    # validate allowed fields, any invalid returns, raise error
+    key_check = [key for key in update_doc.keys() if key not in allowed_fields]
+    if any(key_check):
+        raise de.DuplicateFieldType(",".join(key_check))
+
+    # set the update time
+    update_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
+
+    try:
+        return collection.update_many(
+            {},
+            {"$set": update_doc},
+            upsert=False,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def manage_user_favorites(
     database: DatabaseClient,
     okta_id: str,
@@ -309,8 +422,7 @@ def manage_user_favorites(
     Args:
         database (DatabaseClient): A database client.
         okta_id (str): Okta ID of a user doc.
-        component_name (ObjectId): name of the component (i.e campaigns,
-            destinations, etc.).
+        component_name (str): name of the component.
         component_id (ObjectId): MongoDB ID of the input component.
         delete_flag (bool): Boolean that specifies to add/remove a favorite
             component, defaults to false.
@@ -342,24 +454,11 @@ def manage_user_favorites(
     id_filter = {db_c.ID: component_id}
 
     try:
-        if component_name == db_c.AUDIENCES:
-            # check audience first
-            audience_found = get_document(
-                database, db_c.AUDIENCES_COLLECTION, id_filter
-            )
-            if not audience_found:
-                # try lookalike
-                if get_document(
-                    database, db_c.LOOKALIKE_AUDIENCE_COLLECTION, id_filter
-                ):
-                    component_name = db_c.LOOKALIKE
-                else:
-                    raise de.InvalidID(component_id)
-        else:
-            if not delete_flag and not get_document(
-                database, component_collection[component_name], id_filter
-            ):
-                raise de.InvalidID(component_id)
+        # if adding and the resource DNE then raise error
+        if not delete_flag and not get_document(
+            database, component_collection[component_name], id_filter
+        ):
+            raise de.InvalidID(component_id)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

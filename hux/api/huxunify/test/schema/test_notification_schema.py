@@ -27,10 +27,10 @@ class TestNotificationSchema(TestCase):
         res = NotificationSchema().dump(doc)
 
         self.assertEqual(
-            res["notification_type"], doc[db_c.NOTIFICATION_FIELD_TYPE].title()
+            res[api_c.NOTIFICATION_TYPE], doc[db_c.NOTIFICATION_FIELD_TYPE]
         )
         self.assertEqual(
             res[db_c.NOTIFICATION_FIELD_CATEGORY],
-            doc[db_c.NOTIFICATION_FIELD_CATEGORY].title(),
+            doc[db_c.NOTIFICATION_FIELD_CATEGORY],
         )
         self.assertIsInstance(res[db_c.NOTIFICATION_FIELD_CREATED], str)

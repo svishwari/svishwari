@@ -158,6 +158,7 @@ class UserSchema(Schema):
     last_login = DateTimeWithZ(required=True, attribute=db_c.UPDATE_TIME)
     modified = DateTimeWithZ(required=True)
     alerts = Nested(UserAlertCategorySchema)
+    seen_notifications = Bool(default=False)
 
 
 class RequestedUserSchema(Schema):

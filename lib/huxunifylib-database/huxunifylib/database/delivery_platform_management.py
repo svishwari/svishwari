@@ -6,7 +6,7 @@ import logging
 from functools import partial
 import datetime
 from operator import itemgetter
-from typing import Union
+from typing import Union, Optional, List
 
 from bson import ObjectId
 import pymongo
@@ -2146,7 +2146,7 @@ def _get_performance_metrics(
     domain: str = None,
     pending_transfer_for_feedback: bool = False,
     pending_transfer_for_report: bool = False,
-) -> Union[list, None]:
+) -> Optional[List[dict]]:
     """Helper method to retrieve campaign performance metrics or activities.
 
     Args:
@@ -2166,7 +2166,7 @@ def _get_performance_metrics(
             that have not been transferred for report. Defaults to False.
 
     Returns:
-        Union[list, None]: list of metrics.
+        Optional[List[dict]]: list of metrics.
 
     Raises:
         InvalidID: If the passed in delivery_job_id did not fetch a doc from
@@ -2500,7 +2500,7 @@ def set_audience_customers(
 def get_all_audience_customers(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
-) -> Cursor:
+) -> Optional[Cursor]:
     """A function to fetch all audience customers docs for a delivery job.
 
     Args:

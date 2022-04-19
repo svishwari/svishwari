@@ -1,4 +1,4 @@
-# This is the CI pipeline for Unified Solution API
+# This is the CI pipeline for Load Tests Unified Solution API
 
 version: "1.0"
 
@@ -37,7 +37,7 @@ steps:
     image: alpine
     working_directory: "${{CF_REPO_NAME}}"
     commands:
-      - cat ./hux/load_tests/api/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+      - cat ./hux/load_tests/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   build_image:
     stage: "docker"
@@ -61,3 +61,4 @@ steps:
       branch:
         only:
           - main
+          - develop

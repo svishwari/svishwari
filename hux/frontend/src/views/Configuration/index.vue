@@ -10,6 +10,7 @@
         </template>
         <template #right>
           <tips-menu
+            v-if="isConfigActivated"
             :panel-list-items="panelListItems"
             header="Configuration user guide"
             class="mr-3"
@@ -34,7 +35,6 @@
         :icon-size="50"
         title="Client settings is currently unavailable"
         subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-        class="my-8"
       >
       </error>
     </div>

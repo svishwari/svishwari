@@ -12,10 +12,7 @@
           </div>
         </template>
       </page-header>
-      <page-header
-        v-if="areDestinationsAvailable || showError"
-        header-height="71"
-      >
+      <page-header v-if="areDestinationsAvailable" header-height="71">
         <template #left>
           <v-btn disabled icon>
             <icon type="search" :size="20" color="black" variant="lighten3" />
@@ -24,7 +21,7 @@
 
         <template #right>
           <router-link
-            v-if="!showError"
+            v-if="!showError && getRole == 'admin'"
             :to="{ name: 'DestinationConfiguration' }"
             class="text-decoration-none"
             data-e2e="addDestination"
@@ -40,9 +37,6 @@
               Add a destination
             </huxButton>
           </router-link>
-          <huxButton v-else variant="white" is-tile is-disabled class="ma-2">
-            Add a destination
-          </huxButton>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -95,6 +89,7 @@ export default {
   computed: {
     ...mapGetters({
       destinations: "destinations/list",
+      getRole: "users/getCurrentUserRole",
     }),
 
     areDestinationsAvailable() {
