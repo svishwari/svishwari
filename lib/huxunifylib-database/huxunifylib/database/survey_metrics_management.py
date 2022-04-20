@@ -129,7 +129,7 @@ def set_survey_responses_bulk(
 def get_survey_responses(
     database: DatabaseClient,
     filters: list = None,
-) -> dict:
+) -> Union[list, None]:
     """Method to store bulk survey responses.
 
     Args:
@@ -137,7 +137,7 @@ def get_survey_responses(
         filters (list): Filters to apply, default None.
 
     Returns:
-        dict: dict containing insert_status & list of inserted ids.
+        Union[list, None]: List of survey responses, default None.
     """
 
     platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
