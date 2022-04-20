@@ -1,7 +1,7 @@
 # pylint: disable=too-many-public-methods
 """Locust file."""
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from os import getenv
 from dotenv import load_dotenv
@@ -88,7 +88,7 @@ class APIUser(HttpUser):
                 response.failure(response.status_code)
             else:
                 with self.client.get(
-                    "/audiences/" + response.json[0]["_id"],
+                    "/audiences/" + response.json()["audiences"][0]["id"],
                     headers=self.headers,
                     catch_response=True,
                 ) as response:
@@ -135,14 +135,14 @@ class APIUser(HttpUser):
             ],
         }
 
-        with self.client.get(
+        with self.client.post(
             "/audiences", headers=self.headers, json=audience_post, catch_response=True
         ) as response:
             # ensure the response is valid.
             if response.status_code != HTTPStatus.CREATED:
                 response.failure(response.status_code)
             else:
-                with self.client.get(
+                with self.client.delete(
                     "/audiences/" + response.json["id"],
                     headers=self.headers,
                     catch_response=True,
@@ -161,7 +161,7 @@ class APIUser(HttpUser):
             if response.status_code != HTTPStatus.OK:
                 response.failure(response.status_code)
             else:
-                audience_id = response.json()[0]["id"]
+                audience_id = response.json()["audiences"][0]["id"]
                 with self.client.get(
                     f"/audiences/{audience_id}/revenue",
                     headers=self.headers,
@@ -180,7 +180,7 @@ class APIUser(HttpUser):
             if response.status_code != HTTPStatus.OK:
                 response.failure(response.status_code)
             else:
-                audience_id = response.json()[0]["id"]
+                audience_id = response.json()["audiences"][0]["id"]
                 with self.client.get(
                     f"/audiences/{audience_id}/total",
                     headers=self.headers,
@@ -359,10 +359,8 @@ class APIUser(HttpUser):
     def customers_insights_demo(self):
         """Testing customers insights demo."""
 
-        start_date = (
-            datetime.datetime.utcnow() - datetime.timedelta(days=90)
-        ).strftime("%Y-%m-%d")
-        end_date = datetime.datetime.utcnow().strftime("%Y-%m-%d")
+        start_date = (datetime.utcnow() - timedelta(days=90)).strftime("%Y-%m-%d")
+        end_date = datetime.utcnow().strftime("%Y-%m-%d")
 
         with self.client.get(
             f"/customers-insights/demo?" f"start_date={start_date}&end_date={end_date}",
@@ -435,10 +433,8 @@ class APIUser(HttpUser):
     def customers_events(self):
         """Test Customer events."""
 
-        start_date = (
-            datetime.datetime.utcnow() - datetime.timedelta(days=90)
-        ).strftime("%Y-%m-%d")
-        end_date = datetime.datetime.utcnow().strftime("%Y-%m-%d")
+        start_date = (datetime.utcnow() - timedelta(days=90)).strftime("%Y-%m-%d")
+        end_date = datetime.utcnow().strftime("%Y-%m-%d")
 
         with self.client.get(
             "/customers", headers=self.headers, catch_response=True
