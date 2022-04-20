@@ -8,7 +8,7 @@ export const notification = {
   created: () => faker.date.recent(),
   description: () =>
     `New engagement named "${faker.address.state()}" created by "${faker.name.findName()}".`,
-  notification_type: () => "Success",
-  category: () => "Orchestration",
+  notification_type: () => "success",
+  category: () => "data_sources",
   username: () => faker.name.findName(),
 }
