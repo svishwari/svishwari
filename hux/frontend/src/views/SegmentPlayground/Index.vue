@@ -1,11 +1,5 @@
 <template>
-  <div
-    :class="
-      !loading && !hasOverview
-        ? 'playground-outermost-wrap white'
-        : 'playground-outermost-wrap'
-    "
-  >
+  <div class="playground-outermost-wrap">
     <page-header :header-height="isEdit ? '70' : '110'" help-icon>
       <template slot="left">
         <div>
@@ -160,19 +154,15 @@
         </template>
       </empty-page>
     </v-row>
-    <v-row v-else-if="!loading && errorState" class="ma-0 error-row">
-      <empty-page type="error-on-screens" :size="50">
-        <template #title>
-          <div class="h2">Segment playground is currently unavailable</div>
-        </template>
-        <template #subtitle>
-          <div class="body-2 mt-3">
-            Our team is working hard to fix it. Please be patient and try again
-            soon!
-          </div>
-        </template>
-      </empty-page>
-    </v-row>
+    <div v-else-if="!loading && errorState" class="error-wrap">
+      <error
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Segment playground is currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
+      </error>
+    </div>
     <confirm-modal
       v-model="confirmModal"
       :icon="confirmData.icon"
@@ -246,6 +236,7 @@ import Geography from "./Geography.vue"
 import Overview from "./Overview.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import EmptyPage from "@/components/common/EmptyPage.vue"
+import Error from "@/components/common/screens/Error"
 import { v4 as uuidv4 } from "uuid"
 
 export default {
@@ -263,6 +254,7 @@ export default {
     TextField,
     ConfirmModal,
     EmptyPage,
+    Error,
   },
   data() {
     return {
@@ -601,6 +593,9 @@ export default {
     .empty-row {
       padding-top: 150px !important;
     }
+    .error-wrap {
+      padding-right: 60px;
+    }
   }
 
   .audience-form {
@@ -637,7 +632,7 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 260px);
+  height: calc(100vh - 240px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }

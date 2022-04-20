@@ -843,7 +843,7 @@ class UserPreferencesView(SwaggerView):
             "in": "body",
             "type": "object",
             "description": "Input user preferences body.",
-            "example": {api_c.ALERTS: api_c.ALERT_SAMPLE_RESPONSE},
+            "example": api_c.ALERT_SAMPLE_RESPONSE,
         }
     ]
 

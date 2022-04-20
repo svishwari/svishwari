@@ -9,8 +9,8 @@
           <icon
             type="filter"
             :size="27"
-            :color="numFiltersSelected > 0 ? 'primary' : 'black'"
-            :variant="numFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+            :color="isFilterToggled ? 'primary' : 'black'"
+            :variant="isFilterToggled ? 'lighten6' : 'darken4'"
           />
           <v-badge
             v-if="numFiltersSelected > 0"

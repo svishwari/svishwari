@@ -24,8 +24,8 @@
           <icon
             type="filter"
             :size="27"
-            :color="totalCount > 0 ? 'primary' : 'black'"
-            :variant="totalCount > 0 ? 'lighten6' : 'darken4'"
+            :color="isFilterToggled ? 'primary' : 'black'"
+            :variant="isFilterToggled ? 'lighten6' : 'darken4'"
           />
           <v-badge
             v-if="totalCount > 0"
@@ -165,7 +165,10 @@
                     </div>
                   </v-card-title>
 
-                  <i-d-r-matching-trend :map-data="matchingTrends" />
+                  <i-d-r-matching-trend
+                    :map-data="matchingTrends"
+                    class="ml-10 mr-10 mt-2 mb-15"
+                  />
                 </span>
 
                 <v-row v-else class="matching-trend-chart-frame py-14">
