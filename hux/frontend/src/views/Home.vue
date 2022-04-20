@@ -370,7 +370,7 @@ export default {
       await this.getNotificationByID(notificationId)
       this.alertDrawer = !this.alertDrawer
     },
-    formatText : formatText,
+    formatText: formatText,
   },
 }
 </script>

@@ -456,7 +456,7 @@ export default {
       await this.getUsersNoti()
       this.getAllUsers = this.getUsers
     },
-    formatText : formatText,
+    formatText: formatText,
   },
 }
 </script>
