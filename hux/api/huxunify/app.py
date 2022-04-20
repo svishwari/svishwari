@@ -88,6 +88,8 @@ def create_app() -> Flask:
 
     # register the routes
     for route in ROUTES:
+        if get_config().ENV_NAME == "RC1" and route == "<Blueprint '/trust_id'>":
+            continue
         logging.debug("Registering %s.", route.name)
         flask_app.register_blueprint(route, url_prefix="/api/v1")
 
@@ -116,8 +118,8 @@ def create_app() -> Flask:
     # only add job if not test mode.
     # TODO: mock scheduled job in flask test client using AsyncIO.
     if (
-        flask_app.env != api_c.TEST_MODE
-        and not flask_app.config[api_c.DISABLE_SCHEDULED_DELIVERIES]
+            flask_app.env != api_c.TEST_MODE
+            and not flask_app.config[api_c.DISABLE_SCHEDULED_DELIVERIES]
     ):
         # add delivery schedule cron
         # lowest possible schedule denomination in unified is 15 minutes.
