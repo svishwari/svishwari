@@ -12,6 +12,7 @@ import {
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import { dataFeeds, dataFeedDetails } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
+import audienceHistogramData from "./factories/audienceHistogramData.js"
 import featureData from "./factories/featureData.json"
 import { requestedUser, someTickets } from "./factories/user.js"
 import audienceCSVData from "./factories/audienceCSVData"
@@ -794,6 +795,17 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/audiences/rules", () => attributeRules)
+
+  server.get("/audiences/rules/:field/histogram", (schema, request) => {
+    const field = request.params.field
+    if (field === "age") {
+      return audienceHistogramData[field]
+    } else {
+      const modelName = request.queryParams.model_name
+      return audienceHistogramData[modelName]
+    }
+  })
+
   server.get("/audiences/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const audience = schema.audiences.find(id)
