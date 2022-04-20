@@ -175,9 +175,7 @@ def get_survey_responses(
         },
     ]
     try:
-        survey_responses = list(collection.aggregate(pipeline))
-
-        return survey_responses
+        return list(collection.aggregate(pipeline))
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
