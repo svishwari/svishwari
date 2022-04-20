@@ -93,22 +93,17 @@
                 </div>
 
                 <div v-if="header.value == 'category'">
-                  {{ item[header.value] | Empty("-") }}
+                  {{ formatText(item[header.value]) | Empty("-") }}
                 </div>
 
                 <div v-if="header.value == 'notification_type'" class="d-flex">
-                  <icon
-                    :type="
-                      item['notification_type'] === 'Success'
-                        ? 'success_new'
-                        : item['notification_type']
-                    "
-                    :size="18"
-                    :color="getIconColor(item['notification_type'])"
-                    :variant="getVariantColor(item['notification_type'])"
-                    class="d-block mr-1"
+                  <status
+                    :status="formatText(item['notification_type'])"
+                    :show-label="false"
+                    class="d-flex"
+                    :icon-size="18"
                   />
-                  {{ item["notification_type"] | Empty("-") }}
+                  {{ formatText(item["notification_type"]) | Empty("-") }}
                 </div>
 
                 <tooltip v-if="header.value == 'description'" position-top>
@@ -189,7 +184,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import { formatRequestText } from "@/utils"
+import { formatRequestText, formatText } from "@/utils"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
@@ -202,6 +197,7 @@ import AlertDrawer from "./Drawer/AlertDrawer"
 import EmptyPage from "@/components/common/EmptyPage"
 import Error from "@/components/common/screens/Error"
 import AlertConfigureDrawer from "./Drawer/AlertConfigure.vue"
+import Status from "@/components/common/Status.vue"
 
 export default {
   name: "AlertsAndNotifications",
@@ -217,6 +213,7 @@ export default {
     AlertDrawer,
     EmptyPage,
     Error,
+    Status,
     AlertConfigureDrawer,
   },
   data() {
@@ -370,20 +367,6 @@ export default {
     toggleAlertDrawer() {
       this.isAlertsToggled = !this.isAlertsToggled
     },
-    getIconColor(value) {
-      if (value) {
-        return value === "Success"
-          ? "success"
-          : value === "Critical"
-          ? "error"
-          : "primary"
-      }
-    },
-    getVariantColor(value) {
-      if (value) {
-        return value === "Informational" ? "lighten6" : "base"
-      }
-    },
     setDefaultData() {
       let today_date = new Date()
       let getStartDate = new Date(
@@ -473,6 +456,7 @@ export default {
       await this.getUsersNoti()
       this.getAllUsers = this.getUsers
     },
+    formatText : formatText,
   },
 }
 </script>
