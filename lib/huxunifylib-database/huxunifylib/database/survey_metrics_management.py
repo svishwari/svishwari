@@ -130,7 +130,7 @@ def get_survey_responses(
     database: DatabaseClient,
     filters: list = None,
 ) -> Union[list, None]:
-    """Method to store bulk survey responses.
+    """Method to retrieve survey responses.
 
     Args:
         database (DatabaseClient): A database client.
