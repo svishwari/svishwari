@@ -21,9 +21,14 @@ jobs:
               - 'lib/huxunifylib-database/huxunifylib/**'
             scripts:
               - 'scripts/database/**'
+            api_intg_tests:
+              - 'hux/integration_tests/api/**'
+
       - if: steps.changes.outputs.api == 'true'
         run: black --check ./hux/api/huxunify
       - if: always() && steps.changes.outputs.dblib == 'true'
         run: black --check ./lib/huxunifylib-database/huxunifylib
       - if: always() && steps.changes.outputs.scripts == 'true'
         run: black --check ./scripts/database
+      - if: always() && steps.changes.outputs.api_intg_tests == 'true'
+        run: black --check ./hux/integration_tests/api/test
