@@ -2,7 +2,7 @@
   <div class="add-data-source--wrap">
     <drawer v-model="localDrawer" @onClose="closeAddModel">
       <template #header-left>
-        <breadcrumb :items="breadcrumbs" />
+        <breadcrumb :items="breadcrumbs" class="pl-2" />
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
@@ -37,7 +37,7 @@
             <div
               v-for="(item, key) in enabledModels"
               :key="key"
-              class="ma-3 mt-5"
+              class="ma-3 mt-6"
             >
               <div class="body-2 text-body-2 black--text text--lighten-4">
                 {{ key | TitleCase }}
@@ -274,7 +274,7 @@ export default {
 .add-data-source--wrap {
   .drawer-content.contentPadding {
     .card-horizontal-disabled {
-      @extend .box-shadow-5;
+      @extend .box-shadow-1;
       background: var(--v-white-base) !important;
       border: none !important;
     }

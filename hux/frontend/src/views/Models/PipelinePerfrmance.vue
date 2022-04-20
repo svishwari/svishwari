@@ -171,9 +171,7 @@
         </div>
       </span>
     </v-card>
-    <v-card
-      class="mt-6 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5 scoreing-card"
-    >
+    <v-card class="mt-6 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5">
       <v-progress-linear
         v-if="loading"
         :active="loading"
@@ -389,6 +387,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .pipeline-tab-wrap {
+  overflow: hidden;
   .card-border {
     border: 1px solid var(--v-black-lighten2);
     border-radius: 12px;
@@ -422,8 +421,5 @@ export default {
 .most-recent {
   min-width: 19.5% !important;
   max-width: 24% !important;
-}
-.scoreing-card {
-  margin-bottom: 9%;
 }
 </style>
