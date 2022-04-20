@@ -145,6 +145,14 @@
             <div v-if="header.value == 'next_delivery'" class="text-body-1">
               <time-stamp :value="item['next_delivery']" />
             </div>
+            <div v-if="header.value == 'replace'" class="text-body-1">
+              <hux-switch
+                v-model="header.toggle"
+                :switch-labels="switchLabels"
+                false-color="var(--v-black-lighten4)"
+                @change="handleChange($event)"
+              />
+            </div>
           </td>
         </template>
       </hux-data-table>
@@ -198,6 +206,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxIcon from "@/components/common/Icon.vue"
+import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
   name: "DeliveryDetails",
@@ -210,6 +219,7 @@ export default {
     TimeStamp,
     Size,
     HuxIcon,
+    HuxSwitch,
   },
 
   props: {
@@ -280,12 +290,12 @@ export default {
         {
           text: "Destination",
           value: "name",
-          width: "35%",
+          width: "25%",
         },
         {
           text: "Status",
           value: "status",
-          width: "25%",
+          width: "15%",
         },
         {
           text: "Target size",
@@ -299,6 +309,22 @@ export default {
           text: "Last delivery",
           value: "next_delivery",
           width: "25%",
+        },
+        {
+          text: "Replace",
+          value: "replace",
+          width: "20%",
+          toggle: true,
+        },
+      ],
+      switchLabels: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
         },
       ],
     }
@@ -423,6 +449,9 @@ export default {
         type: "pending",
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
+    },
+    handleChange(event) {
+      console.log(event)
     },
   },
 }
