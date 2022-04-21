@@ -25,6 +25,7 @@ Connections API|[https://connections-api.main.use1.hux-unified-dev1.in/docs#/](h
 Tecton|[http://decisioning-client.tecton.ai/](http://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|
 Grafana|[https://grafana.huxui-main-use1-unified-dev1.hux-unified-dev1.in/](https://grafana.huxui-main-use1-unified-dev1.hux-unified-dev1.in/)|[https://grafana.hux-unified-stg1.in/](https://grafana.hux-unified-stg1.in/)|[https://grafana.hux-unified-rc1.in/](https://grafana.hux-unified-rc1.in/)|[https://grafana.hux-unified-prd1.in/](https://grafana.hux-unified-prd1.in/)|
 Prometheus|[]()|[]()|[]()| - |
+Decisioning|[]()|[https://hux-model-api-dec.decisioning-pendleton.in/api/v1alpha1/models](https://hux-model-api-dec.decisioning-pendleton.in/api/v1alpha1/models)|[]()| - |
 
 ## Azure Environments
 Component|Dev URL| Stage URL | RC1 URL | Prod URL |
