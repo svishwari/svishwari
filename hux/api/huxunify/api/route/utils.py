@@ -1113,14 +1113,10 @@ def clean_and_aggregate_datafeed_details(
             }
         )
         # compute run duration if success or running and end_dt available
-        if (
-            df_detail[api_c.STATUS]
-            in [
-                api_c.STATUS_SUCCESS,
-                api_c.STATUS_RUNNING,
-            ]
-            and df_detail.get(api_c.PROCESSED_END_DATE)
-        ):
+        if df_detail[api_c.STATUS] in [
+            api_c.STATUS_SUCCESS,
+            api_c.STATUS_RUNNING,
+        ] and df_detail.get(api_c.PROCESSED_END_DATE):
             df_detail[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
                 int(
                     (
