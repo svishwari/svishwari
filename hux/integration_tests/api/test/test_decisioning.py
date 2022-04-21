@@ -1,45 +1,48 @@
 """Purpose of this file is to integration test for models."""
+from time import time
 from unittest import TestCase
 from http import HTTPStatus
 import pytest
 import requests
-from hux.integration_tests.api.test.conftest import Crud
 
 
 class TestModels(TestCase):
-    """Test Models / Decisioning."""
+    """Test Models/Decisioning."""
 
     MODELS = "models"
     COLLECTION = "models"
 
-    def test_create_model(self):
-        """Test creating an model."""
+    def test_create_and_delete_model(self):
+        """Test creating and deleting a model."""
 
-        response = requests.post(
+        create_response = requests.post(
             f"{pytest.API_URL}/{self.MODELS}",
             json=[
                 {
-                    "type": "purchase",
-                    "name": "Propensity to Purchase",
+                    "type": "model",
+                    "name": f"E2E test_decisioning Integration Test-"
+                    f"{int(time() * 1000)}",
                     "id": "9a44c346ba034ac8a699ae0ab3314003",
                     "status": "requested",
-                },
-                {
-                    "type": "unsubscribe",
-                    "name": "Propensity to Unsubscribe",
-                    "id": "eb5f35e34c0047d3b9022ef330952dd1",
-                    "status": "requested",
-                },
+                }
             ],
             headers=pytest.HEADERS,
         )
 
-        # test success
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        self.assertIsInstance(response.json(), dict)
+        # test create success
+        self.assertEqual(HTTPStatus.OK, create_response.status_code)
+        self.assertIsInstance(create_response.json(), list)
+        self.assertEqual(len(create_response.json()), 1)
 
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
+        delete_response = requests.delete(
+            f"{pytest.API_URL}/{self.MODELS}?"
+            f'model_id={create_response.json()[0]["id"]}',
+            headers=pytest.HEADERS,
+        )
+
+        # test delete success
+        self.assertEqual(HTTPStatus.OK, delete_response.status_code)
+        self.assertIsInstance(delete_response.json(), dict)
 
     def test_get_models(self):
         """Test get all models."""
@@ -55,7 +58,11 @@ class TestModels(TestCase):
         self.assertGreaterEqual(len(response.json()), 1)
 
     def test_update_model(self):
-        """Test updating an model."""
+        """Test updating a model."""
+
+        model_name = (
+            f"E2E test_decisioning Integration Test-{int(time() * 1000)}"
+        )
 
         # create a test model to update it
         create_response = requests.post(
@@ -63,7 +70,8 @@ class TestModels(TestCase):
             json=[
                 {
                     "type": "Classification",
-                    "name": "Propensity to Purchase",
+                    "name": model_name,
+                    "id": "9a44c346ba034ac8a699ae0ab3314003",
                     "category": "Email",
                     "description": "Likelihood of customer to purchase",
                     "status": "requested",
@@ -74,88 +82,56 @@ class TestModels(TestCase):
         )
 
         # test model created successfully
-        self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertIsInstance(create_response.json(), dict)
-
-        model_id = create_response.json()["id"]
-
-        # test model name
-        self.assertEqual(
-            "Propensity to Purchase", create_response.json()["name"]
-        )
+        self.assertEqual(HTTPStatus.OK, create_response.status_code)
+        self.assertIsInstance(create_response.json(), list)
+        self.assertEqual(len(create_response.json()), 1)
+        self.assertEqual(model_name, create_response.json()[0]["name"])
 
         update_response = requests.patch(
             f"{pytest.API_URL}/{self.MODELS}",
             json=[
                 {
-                    "id": model_id,
+                    "id": create_response.json()[0]["id"],
                     "type": "Classification",
-                    "name": "Propensity to Purchase - Updated",
-                    "category": "Email",
-                    "description": "Likelihood of customer to purchase",
-                    "status": "requested",
-                    "is_added": True,
+                    "name": model_name,
+                    "description": "Likelihood of customer to purchase updated",
                 }
             ],
             headers=pytest.HEADERS,
         )
 
-        # test success
+        # test update success
         self.assertEqual(HTTPStatus.OK, update_response.status_code)
-        self.assertIsInstance(update_response.json(), dict)
-        self.assertEqual(model_id, update_response.json()["id"])
+        self.assertIsInstance(update_response.json(), list)
+        self.assertEqual(len(update_response.json()), 1)
+        self.assertEqual(model_name, update_response.json()[0]["name"])
         self.assertEqual(
-            "Propensity to Purchase - Updated", update_response.json()["name"]
-        )
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, model_id)]
-
-    def test_delete_model(self):
-        """Test deleting an model."""
-
-        # create a test model to delete it
-        create_response = requests.post(
-            f"{pytest.API_URL}/{self.MODELS}",
-            json=[
-                {
-                    "type": "Classification",
-                    "name": "Propensity to Purchase",
-                    "category": "Email",
-                    "description": "Likelihood of customer to purchase",
-                    "status": "requested",
-                    "is_added": True,
-                }
-            ],
-            headers=pytest.HEADERS,
+            "Likelihood of customer to purchase updated",
+            update_response.json()[0]["description"],
         )
 
-        # test model created successfully
-        self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertIsInstance(create_response.json(), dict)
-
-        model_id = create_response.json()["id"]
-
+        # now delete the model from DB
         delete_response = requests.delete(
-            f"{pytest.API_URL}/{self.MODELS}?model_id={model_id}",
+            f"{pytest.API_URL}/{self.MODELS}?"
+            f'model_id={create_response.json()[0]["id"]}',
             headers=pytest.HEADERS,
         )
 
-        # test success
-        self.assertEqual(HTTPStatus.NO_CONTENT, delete_response.status_code)
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, model_id)]
+        # test delete success
+        self.assertEqual(HTTPStatus.OK, delete_response.status_code)
+        self.assertIsInstance(delete_response.json(), dict)
 
     def test_get_model_by_id_pipeline_performance(self):
         """Test get model by ID."""
 
         # create a test model to fetch by ID
         create_response = requests.post(
-            f"{pytest.API_URL}/{self.MODELS}/pipeline-performance",
+            f"{pytest.API_URL}/{self.MODELS}",
             json=[
                 {
-                    "type": "purchase",
-                    "name": "Propensity to Purchase",
+                    "type": "model",
+                    "name": f"E2E test_decisioning Integration Test-"
+                    f"{int(time() * 1000)}",
                     "id": "9a44c346ba034ac8a699ae0ab3314003",
                     "status": "requested",
                 }
@@ -164,10 +140,11 @@ class TestModels(TestCase):
         )
 
         # test model created successfully
-        self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
-        self.assertIsInstance(create_response.json(), dict)
+        self.assertEqual(HTTPStatus.OK, create_response.status_code)
+        self.assertIsInstance(create_response.json(), list)
+        self.assertEqual(len(create_response.json()), 1)
 
-        model_id = create_response.json()["id"]
+        model_id = create_response.json()[0]["id"]
 
         # get the model by id
         fetch_response = requests.get(
@@ -178,9 +155,5 @@ class TestModels(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
         self.assertIsInstance(fetch_response.json(), dict)
-        self.assertEqual(model_id, fetch_response.json()["id"])
-        self.assertIsNone(fetch_response.json()["training"])
-        self.assertIsNone(fetch_response.json()["scoring"])
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, model_id)]
+        self.assertIsNotNone(fetch_response.json()["training"])
+        self.assertIsNotNone(fetch_response.json()["scoring"])

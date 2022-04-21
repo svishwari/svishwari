@@ -3,7 +3,6 @@ from http import HTTPStatus
 from unittest import TestCase
 import pytest
 import requests
-from hux.integration_tests.api.test.conftest import Crud
 
 
 class TestClientProjects(TestCase):
@@ -28,13 +27,13 @@ class TestClientProjects(TestCase):
             f"{pytest.API_URL}/{self.CLIENT_PROJECTS}", headers=pytest.HEADERS
         )
 
-        id = get_response.json()[0].get("id")
-        url = get_response.json()[0].get("url")
+        client_project_id = get_response.json()[0].get("id")
+        client_project_url = get_response.json()[0].get("url")
 
         response = requests.patch(
-            f"{pytest.API_URL}/{self.CLIENT_PROJECTS}/{id}",
+            f"{pytest.API_URL}/{self.CLIENT_PROJECTS}/{client_project_id}",
             json={
-                "url": url,
+                "url": client_project_url,
             },
             headers=pytest.HEADERS,
         )

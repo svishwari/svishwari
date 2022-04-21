@@ -2,11 +2,9 @@
 from http import HTTPStatus
 from time import time
 from unittest import TestCase
-import huxunifylib.database.constants as db_c
 import pytest
 import requests
-
-from hux.integration_tests.api.test.conftest import Crud
+from conftest import Crud
 
 
 class TestOrchestration(TestCase):
@@ -14,7 +12,7 @@ class TestOrchestration(TestCase):
 
     AUDIENCES = "audiences"
     DESTINATIONS = "destinations"
-    COLLECTION = db_c.AUDIENCES_COLLECTION
+    COLLECTION = "audiences"
     DEFAULT_AUDIENCE_FILTERS = [
         {
             "section_aggregator": "ALL",
