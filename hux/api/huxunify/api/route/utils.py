@@ -1113,10 +1113,14 @@ def clean_and_aggregate_datafeed_details(
             }
         )
         # compute run duration if success or running and end_dt available
-        if df_detail[api_c.STATUS] in [
-            api_c.STATUS_SUCCESS,
-            api_c.STATUS_RUNNING,
-        ] and df_detail.get(api_c.PROCESSED_END_DATE):
+        if (
+            df_detail[api_c.STATUS]
+            in [
+                api_c.STATUS_SUCCESS,
+                api_c.STATUS_RUNNING,
+            ]
+            and df_detail.get(api_c.PROCESSED_END_DATE)
+        ):
             df_detail[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
                 int(
                     (
@@ -1322,7 +1326,7 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
         event_types(List[dict]): List of event_types
 
     Returns:
-        None
+
     """
     for section in filters[api_c.AUDIENCE_FILTERS]:
         for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
