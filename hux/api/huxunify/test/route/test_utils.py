@@ -430,7 +430,13 @@ class TestRouteUtils(TestCase):
                                 {
                                     "field": "created",
                                     "type": "range",
-                                    "value": ["2022-04-03", "2022-04-15"],
+                                    "value": [
+                                        (
+                                            datetime.utcnow()
+                                            - timedelta(days=12)
+                                        ).strftime("%Y-%m-%d"),
+                                        datetime.utcnow().strftime("%Y-%m-%d"),
+                                    ],
                                 },
                             ],
                         }
@@ -439,4 +445,11 @@ class TestRouteUtils(TestCase):
             ]
         }
         convert_filters_for_events(event_filters, event_types)
-        self.assertEqual(event_filters, expected_filters)
+        self.assertEqual(
+            event_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+            expected_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+        )
