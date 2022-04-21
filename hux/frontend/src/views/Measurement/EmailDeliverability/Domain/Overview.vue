@@ -17,7 +17,10 @@
           class="text-body-2"
           :style="{ width: header.width }"
         >
-          <div v-if="header.value == 'domain_name'" class="text-body-1">
+          <div
+            v-if="header.value == 'domain_name'"
+            class="text-body-1 overflow-hide"
+          >
             <span class="text-ellipsis mb-n1">
               {{ item.domain_name }}
             </span>
@@ -118,5 +121,8 @@ export default {
   ::v-deep .v-data-table .v-data-table-header th:last-child {
     border-top-right-radius: 12px !important;
   }
+}
+.overflow-hide {
+  overflow-x: hidden;
 }
 </style>

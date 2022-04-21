@@ -1,4 +1,5 @@
 """Purpose of this file is to integration test for trust id insights."""
+from time import time
 from unittest import TestCase
 from http import HTTPStatus
 import pytest
@@ -22,6 +23,7 @@ class TestTrustId(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
+        self.assertGreaterEqual(len(response.json()), 1)
 
     def test_get_trust_id_attributes(self):
         """Test get trust ID attributes data."""
@@ -34,6 +36,7 @@ class TestTrustId(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
+        self.assertGreaterEqual(len(response.json()), 1)
 
     def test_get_trust_id_comparison(self):
         """Test get trust ID comparison."""
@@ -46,6 +49,7 @@ class TestTrustId(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
+        self.assertGreaterEqual(len(response.json()), 1)
 
     def test_get_trust_id_overview(self):
         """Test get trust ID overview data."""
@@ -58,3 +62,40 @@ class TestTrustId(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
+
+    def test_add_and_remove_trust_id_segment(self):
+        """Test adding and removing trust ID segment for a user."""
+
+        segment_name = (
+            f"E2E test_trust_id Integration Test-{int(time() * 1000)}"
+        )
+
+        # request to add trust ID segment to a user
+        add_response = requests.post(
+            f"{pytest.API_URL}/{self.TRUST_ID}/segment",
+            json={
+                "segment_name": segment_name,
+                "segment_filters": [
+                    {
+                        "type": "age",
+                        "description": "Age",
+                        "values": ["18-20 years", "21-24 years"],
+                    }
+                ],
+            },
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.CREATED, add_response.status_code)
+        self.assertIsInstance(add_response.json(), list)
+
+        # request to remove trust ID segment to a user
+        remove_response = requests.delete(
+            f"{pytest.API_URL}/{self.TRUST_ID}/segment?segment_name={segment_name}",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, remove_response.status_code)
+        self.assertIsInstance(remove_response.json(), list)

@@ -92,8 +92,8 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.json.get("message"), api_c.OPERATION_SUCCESS)
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(api_c.OPERATION_SUCCESS, response.json.get("message"))
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
     def test_adding_audience_to_favorite(self):
         """Tests adding audience as a user favorite."""
@@ -110,21 +110,21 @@ class TestUserRoutes(RouteTestCase):
             endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(response.json.get("message"), api_c.OPERATION_SUCCESS)
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(api_c.OPERATION_SUCCESS, response.json.get("message"))
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
-    def test_adding_invalid_audience_to_favorite(self):
+    def test_adding_DNE_audience_to_favorite(self):
         """Tests adding invalid audience as a user favorite.
         Testing by sending audience_id not in DB, here using engagement ID.
         """
 
-        invalid_audience_id = ObjectId()
+        audience_id = ObjectId()
 
         endpoint = (
             f"{t_c.BASE_ENDPOINT}"
             f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
-            f"{invalid_audience_id}/"
+            f"{audience_id}/"
             f"{api_c.FAVORITE}"
         )
 
@@ -133,13 +133,31 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         expected_response_message = (
-            f"The ID <{invalid_audience_id}> does "
-            f"not exist in the database!"
+            f"The ID <{audience_id}> does " f"not exist in the database!"
         )
         self.assertEqual(
-            response.json.get("message"), expected_response_message
+            expected_response_message, response.json.get("message")
         )
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_deleting_DNE_audience_from_favorite(self):
+        """Tests deleting DNE audience as a user favorite."""
+
+        audience_id = ObjectId()
+
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
+            f"{db_c.AUDIENCES}/"
+            f"{audience_id}/"
+            f"{api_c.FAVORITE}"
+        )
+
+        response = self.app.delete(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_deleting_audience_from_favorite(self):
         """Tests deleting/un-favorite an audience."""
@@ -163,8 +181,8 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.json.get("message"), api_c.OPERATION_SUCCESS)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(api_c.OPERATION_SUCCESS, response.json.get("message"))
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_deleting_audience_not_in_favorite(self):
         """Tests deleting/un-favorite an audience not in favorites."""
@@ -186,7 +204,7 @@ class TestUserRoutes(RouteTestCase):
             f"{self.audience_id} not part of user " f"favorites"
         )
         self.assertEqual(
-            response.json.get("message"), expected_response_message
+            expected_response_message, response.json.get("message")
         )
 
     def test_get_user_profile_success(self):
@@ -213,8 +231,30 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         t_c.validate_schema(UserSchema(), response.json, True)
+
+    def test_get_seen_notifications(self):
+        """Tests get seen notifications of a user"""
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/seen_notifications"
+        )
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        reset_endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/"
+            f"seen_notifications?{api_c.RESET}=true"
+        )
+        reset_response = self.app.get(
+            reset_endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(reset_response.status_code, HTTPStatus.OK)
 
     def test_get_user_profile_bad_request_failure(self):
         """Test 400 response of getting user profile using Okta ID."""

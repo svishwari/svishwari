@@ -3,13 +3,13 @@ Repository for hux unified
 
 Component|Build|Version|CD|Docker Image
 ---------|---|---|---|---|
-huxunifylib-database|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_library?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=606bf0961ca52d74786e76ef&pipeline=unified_solution_library&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0)| - | - | - | 
-huxunify-api|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_api_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=605a45789f86ae45939bfec3&pipeline=unified_solution_api_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - | 
-huxunify-ui|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_ui_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=60658a58cefd71c868974159&pipeline=unified_solution_ui_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - | 
-huxunify-cd|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_cd?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=605c55329f86ae31179c045c&pipeline=unified_solution_cd&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - | 
-huxunify-scripts-ci|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_scripts_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=60eebd2127251f965005f666&pipeline=unified_solution_scripts_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - | 
+huxunifylib-database|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_library?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=606bf0961ca52d74786e76ef&pipeline=unified_solution_library&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0)| - | - | - |
+huxunify-api|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_api_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=605a45789f86ae45939bfec3&pipeline=unified_solution_api_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
+huxunify-ui|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_ui_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=60658a58cefd71c868974159&pipeline=unified_solution_ui_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
+huxunify-cd|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_cd?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=605c55329f86ae31179c045c&pipeline=unified_solution_cd&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
+huxunify-scripts-ci|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_scripts_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=60eebd2127251f965005f666&pipeline=unified_solution_scripts_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
 customer-profile-api|[![Codefresh build status](https://g.codefresh.io/api/badges/pipeline/deloittehux/HXP_CDM%2Fcustomer_profile_api_ci?key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ&date=1628594544780)](https://g.codefresh.io/pipelines/edit/new/builds?id=608adc2ade28641bed60176a&pipeline=customer_profile_api_ci&projects=HXP_CDM&projectId=6036b45b3bb11c75ac85caad)| - | - | - |
-argo-cd| - | - |[![ArgoCD health status](https://argocd-huxui.main.use1.hux-unified-dev1.in/api/badge?name=unified-api-huxui-main-use1-hux-unified-dev1)]| - |
+argo-cd| - | - |[![ArgoCD health status](https://argocd.hux-unified-dev1.in/applications/unified-ui-huxui-main-use1-hux-unified-dev1?resource=&operation=false)]| - |
 
 # Environments
 Hux unified solutions and other dependent environment URLs
@@ -24,7 +24,8 @@ Customer API|[https://customer-profile-api.main.use1.hux-unified-dev1.in/docs#/]
 Connections API|[https://connections-api.main.use1.hux-unified-dev1.in/docs#/](https://connections-api.main.use1.hux-unified-dev1.in/docs#/)|[https://connections-api.main.use1.hux-unified-stg1.in/docs#/](https://connections-api.main.use1.hux-unified-stg1.in/docs#/)|[https://connections-api.main.use1.hux-unified-rc1.in/docs#/](https://connections-api.main.use1.hux-unified-rc1.in/docs#/)| - |
 Tecton|[http://decisioning-client.tecton.ai/](http://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|
 Grafana|[https://grafana.huxui-main-use1-unified-dev1.hux-unified-dev1.in/](https://grafana.huxui-main-use1-unified-dev1.hux-unified-dev1.in/)|[https://grafana.hux-unified-stg1.in/](https://grafana.hux-unified-stg1.in/)|[https://grafana.hux-unified-rc1.in/](https://grafana.hux-unified-rc1.in/)|[https://grafana.hux-unified-prd1.in/](https://grafana.hux-unified-prd1.in/)|
-Prometheus|[https://prometheus.i.hux-unified-dev1.in/](https://prometheus.i.hux-unified-dev1.in/)|[https://prometheus.int.hux-unified-stg1.in/](https://prometheus.int.hux-unified-stg1.in/)|[https://prometheus.i.huxui-main-use1-unified-rc1.hux-unified-rc1.in/](https://prometheus.i.huxui-main-use1-unified-rc1.hux-unified-rc1.in/)| - |
+Prometheus|[]()|[]()|[]()| - |
+Decisioning|[]()|[https://hux-model-api-dec.decisioning-pendleton.in/api/v1alpha1/models](https://hux-model-api-dec.decisioning-pendleton.in/api/v1alpha1/models)|[]()| - |
 
 ## Azure Environments
 Component|Dev URL| Stage URL | RC1 URL | Prod URL |
@@ -38,7 +39,7 @@ Metrics API |[https://identity-metrics-api.main.use2.hux-husdev2.in/](https://id
 Grafana|[https://grafana.hux-husdev2.in/login](https://grafana.hux-husdev2.in/login)| - | - | - |
 Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.hux-husdev2.in/graph)| - | - | - |
 
-Note: To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN). 
+Note: To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN).
 
 ## Introduction (Project Justice League)
 Create a unified project platform.
@@ -68,7 +69,7 @@ Create a unified project platform.
 * [api](hux/api/README.md)
 * [frontend](hux/frontend/README.md)
 * [library](lib/README.md)
-    * [database](lib/huxunifylib/README.md)
+    * [database](lib/huxunifylib-database/README.md)
 
 
 # Add pre-commit git hooks

@@ -21,7 +21,7 @@
 
         <template #right>
           <router-link
-            v-if="!showError"
+            v-if="!showError && getRole == 'admin'"
             :to="{ name: 'DestinationConfiguration' }"
             class="text-decoration-none"
             data-e2e="addDestination"
@@ -89,6 +89,7 @@ export default {
   computed: {
     ...mapGetters({
       destinations: "destinations/list",
+      getRole: "users/getCurrentUserRole",
     }),
 
     areDestinationsAvailable() {

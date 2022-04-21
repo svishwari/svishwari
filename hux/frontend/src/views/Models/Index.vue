@@ -341,4 +341,13 @@ export default {
 .models-error-height {
   height: 280px !important;
 }
+::v-deep .title-up {
+  position: relative;
+  top: -4px;
+}
+::v-deep .descriptive-card .description {
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  height: 35px !important;
+}
 </style>

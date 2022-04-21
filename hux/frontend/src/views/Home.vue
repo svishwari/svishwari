@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hux-page max-width="100%">
+    <hux-page max-width="100%" class="home-page">
       <template #header>
         <hux-page-header
           :title="`Welcome back, ${fullName}!`"
@@ -140,15 +140,16 @@
 
                   <template v-if="header.value == 'category'">
                     <hux-tooltip>
-                      {{ item[header.value] }}
-                      <template #tooltip> {{ item[header.value] }} </template>
+                      {{ formatText(item[header.value]) | Empty("-") }}
+                      <template #tooltip>
+                        {{ formatText(item[header.value]) }}
+                      </template>
                     </hux-tooltip>
                   </template>
 
                   <template v-if="header.value == 'notification_type'">
-                    <!-- TODO: HUS-1305 update icon -->
                     <hux-status
-                      :status="item['notification_type']"
+                      :status="formatText(item['notification_type'])"
                       :show-label="true"
                       :icon-size="20"
                     />
@@ -254,6 +255,7 @@ import HuxTotalCustomerChart from "@/components/common/TotalCustomerChart/TotalC
 import AlertDrawer from "./AlertsAndNotifications/Drawer/AlertDrawer.vue"
 import EmptyPage from "@/components/common/EmptyPage"
 import Icon from "../components/common/Icon.vue"
+import { formatText } from "@/utils"
 
 export default {
   name: "Home",
@@ -368,6 +370,7 @@ export default {
       await this.getNotificationByID(notificationId)
       this.alertDrawer = !this.alertDrawer
     },
+    formatText: formatText,
   },
 }
 </script>
@@ -405,8 +408,6 @@ export default {
 }
 .help-section {
   background: var(--v-primary-lighten2);
-  bottom: 0px;
-  position: absolute;
   height: 96px;
   width: 100%;
 }
@@ -436,7 +437,10 @@ export default {
 ::v-deep .v-data-table-header__icon {
   margin-left: 4px !important;
 }
-.latest-alert-main {
-  margin-bottom: 80px;
+::v-deep.home-page {
+  .container {
+    height: 100% !important;
+    overflow: hidden !important;
+  }
 }
 </style>

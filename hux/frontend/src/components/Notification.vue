@@ -112,6 +112,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      alerts: "alerts/list",
       notifications: "notifications/latest5",
     }),
     mostRecentNotifications() {
@@ -119,6 +120,13 @@ export default {
         0,
         this.batchDetails.batch_size
       )
+    },
+  },
+  watch: {
+    alerts() {
+      if (this.alerts.length > 0 && this.alerts[0].code == 503) {
+        this.$router.push({ name: "ServiceError" })
+      }
     },
   },
   async mounted() {

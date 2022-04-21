@@ -41,7 +41,7 @@
           :size="logoSize"
           :color="iconColor"
           class="d-block"
-          :class="logoSize === 45 ? 'icon-margin' : ''"
+          :class="logoSize === 60 ? 'icon-margin' : ''"
         />
         <icon
           v-else
@@ -276,7 +276,14 @@ export default {
   margin-right: 24px !important;
 }
 .icon-margin {
-  margin-left: -6px !important;
-  margin-top: -6px !important;
+  margin-left: -10px !important;
+  margin-top: -10px !important;
+}
+.v-menu__content {
+  &.theme--light {
+    &.menuable__content__active {
+      margin-top: 28px !important;
+    }
+  }
 }
 </style>

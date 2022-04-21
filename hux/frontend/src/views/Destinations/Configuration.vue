@@ -13,29 +13,29 @@
 
     <div class="d-flex align-center mb-3">
       <template v-if="!(selectedDestination || selectedDestinationNotListed)">
-        <hux-icon
-          type="plus"
-          :size="16"
-          color="primary"
-          class="mr-4"
-          @click.native="toggleDrawer()"
-        />
-        <hux-icon
-          type="destination"
-          :size="32"
-          color="primary"
-          class="mr-2 box-shadow-25"
-          :style="{ 'border-radius': '50%' }"
-          @click.native="toggleDrawer()"
-        />
         <v-btn
           text
           min-width="7rem"
-          height="2rem"
+          height="3rem"
           class="primary--text text-body-1"
           data-e2e="drawerToggle"
           @click.native="toggleDrawer()"
         >
+          <hux-icon
+            type="plus"
+            :size="16"
+            color="primary"
+            class="mr-4"
+            @click.native="toggleDrawer()"
+          />
+          <hux-icon
+            type="destination"
+            :size="32"
+            color="primary"
+            class="mr-2 box-shadow-25"
+            :style="{ 'border-radius': '50%' }"
+            @click.native="toggleDrawer()"
+          />
           Destination
         </v-btn>
       </template>
@@ -326,7 +326,7 @@
     <drawer v-model="drawer">
       <template #header-left>
         <div class="d-flex align-center">
-          <hux-icon type="map" :size="32" class="mr-3" />
+          <hux-icon type="map" :size="32" class="ml-2 mr-3" />
           <h2 class="text-h2 pr-2 black--text text--lighten-4">
             Select a destination
           </h2>
@@ -340,7 +340,7 @@
         </div>
       </template>
       <template #default>
-        <div class="ma-3 font-weight-light px-6">
+        <div class="ma-3 font-weight-light px-3 pb-1">
           <div
             v-for="(value, category, index) in groupByCategory(
               enabledDestinations
@@ -382,7 +382,7 @@
               :key="destination.id"
               :title="destination.name"
               :icon="destination.type"
-              :is-added="destination.is_added"
+              :is-added="destination.is_added || isSelected(destination.id)"
               requested-button
               :is-available="destination.is_enabled"
               :is-already-added="destination.is_added"
