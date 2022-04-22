@@ -906,6 +906,12 @@ EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
 USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
 
+USER_DISPLAY_ROLES = {
+    db_c.USER_ROLE_ADMIN: "Admin",
+    db_c.USER_ROLE_EDITOR: "Edit",
+    db_c.USER_ROLE_VIEWER: "View-Only",
+}
+
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
 AUDIENCE_ENDPOINT = "/audiences"
