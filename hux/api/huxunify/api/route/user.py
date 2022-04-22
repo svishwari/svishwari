@@ -469,8 +469,8 @@ class UserView(SwaggerView):
             userinfo[api_c.USER_PHONE_NUMBER] = random.choice(
                 ["720-025-8322", "232-823-6049", "582-313-7191"]
             )
-            userinfo[api_c.USER_ACCESS_LEVEL] = random.choice(
-                ["Edit", "View-only", "Admin"]
+            userinfo[api_c.USER_ACCESS_LEVEL] = api_c.USER_DISPLAY_ROLES.get(
+                userinfo[db_c.USER_ROLE]
             )
 
         return (
