@@ -1,174 +1,181 @@
 """Purpose of this file is to get data from TrustID"""
-import random
+import statistics
 from collections import defaultdict
-from random import randint
-from typing import Union
 
+from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 
 
-# TODO Replace stub, use OOP when data is available.
-# pylint: disable=unused-argument
-def get_trust_id_overview_data(filters: Union[dict, None] = None) -> dict:
-    """Returns Overview data of all signals and attributes from TrustID.
+def aggregate_attributes(survey_responses: list) -> dict:
+    """Aggregate attribute data
 
     Args:
-        filters (dict, Optional): Filters to be applied to get TrustID data.
-    Returns:
-        dict: Trust ID overview data.
-    """
-    signal_scores_overview = defaultdict(list)
-    attribute_scores = []
+        survey_responses (list): List of survey responses
 
-    for signal, attributes in api_c.TRUST_ID_ATTRIBUTE_STUB.items():
-        for attribute in attributes:
-            attribute_score = randint(-20, 100)
-            signal_scores_overview[signal].append(attribute_score)
-            attribute_scores.append(
+    Returns:
+        (dict): Aggregated attribute data object
+    """
+    attribute_aggregated_values = defaultdict(dict)
+
+    # Calculate cumulative attribute score and rating
+    for survey_response in survey_responses:
+        for factor_name, values in survey_response[db_c.FACTORS].items():
+            for attribute in values[db_c.ATTRIBUTES]:
+                if attribute.get(api_c.RATING):
+                    if (
+                        attribute[db_c.DESCRIPTION]
+                        not in attribute_aggregated_values[
+                            factor_name.lower()
+                        ].keys()
+                    ):
+                        attribute_aggregated_values[factor_name.lower()][
+                            attribute[db_c.DESCRIPTION]
+                        ] = {}
+
+                    attribute_aggregated_values[factor_name.lower()][
+                        attribute[db_c.DESCRIPTION]
+                    ][api_c.RATING_MAP[attribute.get(api_c.RATING)]] = (
+                        int(
+                            attribute_aggregated_values[factor_name.lower()][
+                                attribute[db_c.DESCRIPTION]
+                            ].get(
+                                api_c.RATING_MAP[attribute[api_c.RATING]],
+                                0,
+                            )
+                        )
+                        + 1
+                    )
+            # attribute_aggregated_values[factor_name.lower()][
+            #     api_c.RATING_MAP[values.get(api_c.RATING)]
+            # ] = (
+            #         int(
+            #             attribute_aggregated_values[factor_name.lower()].get(
+            #                 api_c.RATING_MAP[values[api_c.RATING]], 0
+            #             )
+            #         )
+            #         + 1
+            # )
+
+    for factor_name, values in attribute_aggregated_values.items():
+        for attribute_description, attribute_values in values.items():
+            attribute_values.update(
                 {
-                    api_c.NAME_OF_SIGNAL: signal,
-                    api_c.ATTRIBUTE_SCORE: attribute_score,
-                    api_c.ATTRIBUTE_DESCRIPTION: attribute,
+                    api_c.SCORE: (
+                        attribute_values.get(api_c.AGREE, 0)
+                        - attribute_values.get(api_c.DISAGREE, 0)
+                    )
+                    / len(survey_responses)
+                    * 100
                 }
             )
 
-    signal_scores_overview = {
-        signal: sum(scores) // len(scores) + 1
-        for signal, scores in signal_scores_overview.items()
-    }
-
-    trust_id_score_overview = sum(signal_scores_overview.values()) // len(
-        signal_scores_overview.values()
-    )
-
-    return {
-        api_c.TRUST_ID_SCORE_OVERVIEW: trust_id_score_overview,
-        api_c.SIGNAL_SCORES_OVERVIEW: signal_scores_overview,
-        api_c.ATTRIBUTE_SCORES: attribute_scores,
-    }
+    return attribute_aggregated_values
 
 
-def get_trust_id_signal_data(signal_name: str) -> dict:
-    """Returns detailed information for a given signal.
+def get_trust_id_overview(survey_responses: list) -> dict:
+    """Fetch trust id overview data
 
     Args:
-        signal_name (str): Name of the signal for which information is needed.
+        survey_responses (list): List of survey responses
+
     Returns:
-        dict: Signal information.
+        (dict): Trust ID overview data
     """
-    # TODO Replace stub, use OOP when data is available.
+    aggregated_attributes = aggregate_attributes(survey_responses)
 
-    customer_attribute_ratings = []
-
-    total_customers_agree = 0
-    total_customers_neutral = 0
-    total_customers_disagree = 0
-    total_attribute_score = 0
-
-    for attribute in api_c.TRUST_ID_ATTRIBUTE_STUB.get(signal_name):
-        agree_customers = random.randint(0, 100000)
-        disagree_customers = random.randint(0, 100000)
-        neutral_customers = random.randint(0, 100000)
-
-        total_customers = (
-            agree_customers + disagree_customers + neutral_customers
-        )
-
-        attribute_score = int(
-            (
-                (
-                    agree_customers
-                    + (disagree_customers * -1)
-                    + (neutral_customers * 0.5)
-                )
-                / total_customers
-            )
-            * 100
-        )
-
-        customer_attribute_ratings.append(
+    overview_data = {
+        db_c.FACTORS: [
             {
-                api_c.ATTRIBUTE_DESCRIPTION: attribute,
-                api_c.ATTRIBUTE_SCORE: attribute_score,
+                api_c.FACTOR_NAME: factor_name,
+                api_c.FACTOR_SCORE: int(
+                    statistics.mean(
+                        [
+                            val[api_c.SCORE]
+                            for x, val in values.items()
+                            if isinstance(val, dict)
+                        ]
+                    )
+                ),
+                api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
+                    factor_name
+                ],
                 api_c.OVERALL_CUSTOMER_RATING: {
-                    api_c.TOTAL_CUSTOMERS: total_customers,
+                    api_c.TOTAL_CUSTOMERS: len(survey_responses),
                     api_c.RATING: {
-                        api_c.AGREE: {
-                            api_c.COUNT: agree_customers,
-                            api_c.PERCENTAGE: round(
-                                (agree_customers / total_customers) * 100, 2
+                        customer_rating: {
+                            api_c.COUNT: values.get(customer_rating, 0),
+                            api_c.PERCENTAGE: values.get(customer_rating, 0)
+                            / len(survey_responses),
+                        }
+                        for customer_rating in api_c.RATING_MAP.values()
+                    },
+                },
+            }
+            for factor_name, values in aggregated_attributes.items()
+        ]
+    }
+
+    overview_data[api_c.TRUST_ID_SCORE] = int(
+        statistics.mean(
+            [x[api_c.FACTOR_SCORE] for x in overview_data[db_c.FACTORS]]
+        )
+    )
+
+    return overview_data
+
+
+def get_trust_id_attributes(survey_responses: list) -> list:
+    """Get trust id values details
+
+    Args:
+        survey_responses (list): List or survey responses
+
+    Returns:
+          (list): List of values and their details
+
+    """
+    trust_id_attributes = []
+
+    attribute_aggregated_values = aggregate_attributes(survey_responses)
+
+    for factor_name, values in survey_responses[0][db_c.FACTORS].items():
+        for attribute in values[db_c.ATTRIBUTES]:
+            if attribute.get(api_c.RATING):
+                trust_id_attributes.append(
+                    {
+                        api_c.FACTOR_NAME: factor_name.lower(),
+                        api_c.ATTRIBUTE_DESCRIPTION: attribute[
+                            db_c.DESCRIPTION
+                        ],
+                    }
+                )
+
+    for attribute in list(trust_id_attributes):
+        attribute.update(
+            {
+                api_c.ATTRIBUTE_SCORE: attribute_aggregated_values[
+                    attribute[api_c.FACTOR_NAME]
+                ][attribute[api_c.ATTRIBUTE_DESCRIPTION]][api_c.SCORE],
+                api_c.OVERALL_CUSTOMER_RATING: {
+                    api_c.TOTAL_CUSTOMERS: len(survey_responses),
+                    api_c.RATING: {
+                        customer_rating: {
+                            api_c.COUNT: attribute_aggregated_values[
+                                attribute[api_c.FACTOR_NAME]
+                            ][attribute[api_c.ATTRIBUTE_DESCRIPTION]].get(
+                                customer_rating, 0
                             ),
-                        },
-                        api_c.NEUTRAL: {
-                            api_c.COUNT: neutral_customers,
-                            api_c.PERCENTAGE: round(
-                                (neutral_customers / total_customers) * 100, 2
-                            ),
-                        },
-                        api_c.DISAGREE: {
-                            api_c.COUNT: disagree_customers,
-                            api_c.PERCENTAGE: round(
-                                (disagree_customers / total_customers) * 100, 2
-                            ),
-                        },
+                            api_c.PERCENTAGE: attribute_aggregated_values[
+                                attribute[api_c.FACTOR_NAME]
+                            ][attribute[api_c.ATTRIBUTE_DESCRIPTION]].get(
+                                customer_rating, 0
+                            )
+                            / len(survey_responses),
+                        }
+                        for customer_rating in api_c.RATING_MAP.values()
                     },
                 },
             }
         )
 
-        total_customers_agree += agree_customers
-        total_customers_neutral += neutral_customers
-        total_customers_disagree += disagree_customers
-        total_attribute_score += attribute_score
-
-    total_attributes = len(api_c.TRUST_ID_ATTRIBUTE_STUB.get(signal_name))
-
-    approx_total_customers = (
-        total_customers_agree
-        + total_customers_neutral
-        + total_customers_disagree
-    ) // total_attributes
-
-    return {
-        api_c.FACTOR_NAME: signal_name,
-        api_c.FACTOR_SCORE: total_attribute_score // total_attributes,
-        api_c.OVERALL_CUSTOMER_RATING: {
-            api_c.TOTAL_CUSTOMERS: approx_total_customers,
-            api_c.RATING: {
-                api_c.AGREE: {
-                    api_c.COUNT: total_customers_agree // total_attributes,
-                    api_c.PERCENTAGE: round(
-                        (
-                            (total_customers_agree // total_attributes)
-                            / approx_total_customers
-                        )
-                        * 100,
-                        2,
-                    ),
-                },
-                api_c.DISAGREE: {
-                    api_c.COUNT: total_customers_disagree // total_attributes,
-                    api_c.PERCENTAGE: round(
-                        (
-                            (total_customers_disagree // total_attributes)
-                            / approx_total_customers
-                        )
-                        * 100,
-                        2,
-                    ),
-                },
-                api_c.NEUTRAL: {
-                    api_c.COUNT: total_customers_neutral // total_attributes,
-                    api_c.PERCENTAGE: round(
-                        (
-                            (total_customers_neutral // total_attributes)
-                            / approx_total_customers
-                        )
-                        * 100,
-                        2,
-                    ),
-                },
-            },
-        },
-        api_c.CUSTOMER_ATTRIBUTE_RATINGS: customer_attribute_ratings,
-    }
+    return trust_id_attributes
