@@ -390,6 +390,20 @@ const actions = {
       throw error
     }
   },
+
+  async detachDestinationAudi(_, { engagementId, audienceId, data }) {
+    try {
+      await api.engagements.detachDestinationOfAudience(
+        engagementId,
+        audienceId,
+        data
+      )
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async saveCampaignMappings(_, { id, audienceId, destinationId, data }) {
     try {
       await api.engagements.updateCampaignMapping(
