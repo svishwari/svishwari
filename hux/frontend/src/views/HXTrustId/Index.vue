@@ -151,7 +151,7 @@
                               <div
                                 v-for="(
                                   filterValue, filterValueIndex
-                                ) in aggregateHoverData(
+                                ) in aggregateAgeValues(
                                   filter.values,
                                   filter.type
                                 )"
@@ -299,7 +299,7 @@ import PageHeader from "@/components/PageHeader.vue"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 import DataCards from "@/components/common/DataCards.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import { formatText, formatInnerHTML, aggregateHoverData } from "@/utils"
+import { formatText, formatInnerHTML, aggregateAgeValues } from "@/utils"
 import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
@@ -528,7 +528,7 @@ export default {
       setAlert: "alerts/setAlert",
     }),
     formatInnerHTML: formatInnerHTML,
-    aggregateHoverData: aggregateHoverData,
+    aggregateAgeValues: aggregateAgeValues,
     getSelectedData(value) {
       this.selectedSegment = value
     },

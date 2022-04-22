@@ -451,7 +451,7 @@ export function getBatchCounts(request) {
  * @param {object} type - type of filter
  * @returns {Array} array of strings
  */
-export function aggregateHoverData(values, type) {
+export function aggregateAgeValues(values, type) {
   if (type !== "age") {
     return values
   } else {
