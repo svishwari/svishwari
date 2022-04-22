@@ -193,7 +193,13 @@ IDENTITY_INSIGHT_RESPONSE = {
     },
     "message": "ok",
 }
-
+EVENT_TYPES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {api_c.TYPE: "traits_analysed", api_c.LABEL: "Traits Analysed"},
+        {api_c.TYPE: "sales_made", api_c.LABEL: "Sales Made"},
+    ],
+}
 CUSTOMER_EVENT_BY_DAY_RESPONSE = {
     "code": 200,
     "body": [
@@ -615,7 +621,6 @@ MOCKED_GENDER_SPENDING_BY_DAY = {
     ],
 }
 
-
 MOCKED_CUSTOMER_EVENT_TYPES = {
     "code": 200,
     "body": [
@@ -778,7 +783,6 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
         api_c.PREDICTION_WINDOW: 90,
     },
 ]
-
 
 MOCKED_MODEL_PROPENSITY_FEATURES = {
     api_c.RESULTS: [
