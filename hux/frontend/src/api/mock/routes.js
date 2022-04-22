@@ -12,6 +12,7 @@ import {
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import { dataFeeds, dataFeedDetails } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
+import audienceHistogramData from "./factories/audienceHistogramData.js"
 import featureData from "./factories/featureData.json"
 import { requestedUser, someTickets } from "./factories/user.js"
 import audienceCSVData from "./factories/audienceCSVData"
@@ -148,10 +149,14 @@ export const defineRoutes = (server) => {
 
   server.patch("/destinations/:id", (schema, request) => {
     const id = request.params.id
-
-    return schema.destinations
-      .find(id)
-      .update({ is_added: false, status: "Pending" })
+    const requestData = JSON.parse(request.requestBody)
+    if (requestData.link) {
+      return schema.destinations.find(id).update({ link: requestData.link })
+    } else {
+      return schema.destinations
+        .find(id)
+        .update({ is_added: false, status: "Pending" })
+    }
   })
 
   server.get("/destinations/:destinationId/data-extensions")
@@ -719,6 +724,10 @@ export const defineRoutes = (server) => {
     return singleNotification
   })
 
+  server.get("/notifications/users", (schema) => {
+    return schema.users.all().models.map((user) => user.display_name)
+  })
+
   server.get("/users", (schema) => {
     return schema.users.all()
   })
@@ -786,6 +795,17 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/audiences/rules", () => attributeRules)
+
+  server.get("/audiences/rules/:field/histogram", (schema, request) => {
+    const field = request.params.field
+    if (field === "age") {
+      return audienceHistogramData[field]
+    } else {
+      const modelName = request.queryParams.model_name
+      return audienceHistogramData[modelName]
+    }
+  })
+
   server.get("/audiences/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const audience = schema.audiences.find(id)
