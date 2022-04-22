@@ -443,3 +443,36 @@ export function getBatchCounts(request) {
   let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
   return [initialCount, lastCount]
 }
+
+/**
+ * Returns array of aggregated data for age filter only
+ *
+ * @param {object} values - values to be aggregated
+ * @param {object} type - type of filter
+ * @returns {Array} array of strings
+ */
+export function aggregateHoverData(values, type) {
+  if (type !== "age") {
+    return values
+  } else {
+    let newValues = []
+    let stringValues = []
+    let [start, end] = values[0].split("-").map((val) => parseInt(val))
+    values.forEach((element) => {
+      let [i, j] = element.split("-").map((val) => parseInt(val))
+      if (!i) {
+        stringValues.push(element)
+      } else if (i == start || i == end + 1) {
+        end = j
+      } else {
+        newValues.push(`${start}-${end} years`)
+        start = i
+        end = j
+      }
+    })
+    if (start) {
+      newValues.push(`${start}-${end} years`)
+    }
+    return [...newValues, ...stringValues]
+  }
+}
