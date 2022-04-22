@@ -57,7 +57,7 @@ def aggregate_attributes(survey_responses: list) -> dict:
             # )
 
     for factor_name, values in attribute_aggregated_values.items():
-        for attribute_description, attribute_values in values.items():
+        for attribute_values in values.values():
             attribute_values.update(
                 {
                     api_c.SCORE: (
