@@ -3,14 +3,13 @@ from http import HTTPStatus
 from unittest import TestCase
 import pytest
 import requests
-import huxunifylib.database.constants as db_c
 
 
 class TestUsers(TestCase):
     """User endpoints test class"""
 
     USERS = "users"
-    COLLECTION = db_c.USER_COLLECTION
+    COLLECTION = "users"
 
     def setUp(self) -> None:
         """Setup for user tests"""
@@ -22,7 +21,7 @@ class TestUsers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.test_user = response.json()
-        self.original_alerts = self.test_user[db_c.USER_ALERTS]
+        self.original_alerts = self.test_user["alerts"]
 
     def tearDown(self) -> None:
         """Resets the test user after each test."""
@@ -91,19 +90,19 @@ class TestUsers(TestCase):
 
         for engagement_id in user["favorites"]["engagements"]:
             requests.delete(
-                f"{pytest.API_URL}/{self.USERS}/{db_c.ENGAGEMENTS}/{engagement_id}/favorite",
+                f"{pytest.API_URL}/{self.USERS}/engagements/{engagement_id}/favorite",
                 headers=pytest.HEADERS,
             )
 
         for audience_id in user["favorites"]["audiences"]:
             requests.delete(
-                f"{pytest.API_URL}/{self.USERS}/{db_c.AUDIENCES}/{audience_id}/favorite",
+                f"{pytest.API_URL}/{self.USERS}/audiences/{audience_id}/favorite",
                 headers=pytest.HEADERS,
             )
 
         for destination_id in user["favorites"]["destinations"]:
             requests.delete(
-                f"{pytest.API_URL}/{self.USERS}/{db_c.DESTINATIONS}/{destination_id}/favorite",
+                f"{pytest.API_URL}/{self.USERS}/destinations/{destination_id}/favorite",
                 headers=pytest.HEADERS,
             )
 
@@ -197,8 +196,9 @@ class TestUsers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-    def test_create_a_favorite(self):
-        """Test create user favorite"""
+    def test_create_and_delete_a_user_favorite(self):
+        """Test create and delete user favorite"""
+
         # retrieve all audiences
         response = requests.get(
             f"{pytest.API_URL}/audiences",
@@ -208,37 +208,17 @@ class TestUsers(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         # get the first audience ID
-        audience_id = response.json()[0]["id"]
+        audience_id = response.json()["audiences"][0]["id"]
 
         response = requests.post(
-            f"{pytest.API_URL}/{self.USERS}/{db_c.AUDIENCES}/{audience_id}/favorite",
-            headers=pytest.HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
-
-    def test_delete_a_favorite(self):
-        """Test delete user favorite"""
-        # retrieve all audiences
-        response = requests.get(
-            f"{pytest.API_URL}/audiences",
-            headers=pytest.HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-
-        # get the first audience ID
-        audience_id = response.json()[0]["id"]
-
-        response = requests.post(
-            f"{pytest.API_URL}/{self.USERS}/{db_c.AUDIENCES}/{audience_id}/favorite",
+            f"{pytest.API_URL}/{self.USERS}/audiences/{audience_id}/favorite",
             headers=pytest.HEADERS,
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
         response = requests.delete(
-            f"{pytest.API_URL}/{self.USERS}/{db_c.AUDIENCES}/{audience_id}/favorite",
+            f"{pytest.API_URL}/{self.USERS}/audiences/{audience_id}/favorite",
             headers=pytest.HEADERS,
         )
 
