@@ -93,9 +93,7 @@ class TestDestinations(TestCase):
 
         response = requests.patch(
             f"{pytest.API_URL}/{self.DESTINATIONS}/{destination['id']}",
-            json={
-                "enabled": destination["is_enabled"]
-            },
+            json={"enabled": destination["is_enabled"]},
             headers=pytest.HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
