@@ -19,8 +19,10 @@ def aggregate_attributes(survey_responses: list) -> dict:
 
     # Calculate cumulative attribute score and rating
     for survey_response in survey_responses:
-        for factor_name, values in survey_response[db_c.FACTORS].items():
-            for attribute in values[db_c.ATTRIBUTES]:
+        for factor_name, factor_values in survey_response[
+            db_c.FACTORS
+        ].items():
+            for attribute in factor_values[db_c.ATTRIBUTES]:
                 if attribute.get(api_c.RATING):
                     if (
                         attribute[db_c.DESCRIPTION]
@@ -46,18 +48,28 @@ def aggregate_attributes(survey_responses: list) -> dict:
                         + 1
                     )
 
-    for factor_name, values in attribute_aggregated_values.items():
-        for attribute_values in values.values():
-            attribute_values.update(
-                {
-                    api_c.SCORE: (
-                        attribute_values.get(api_c.AGREE, 0)
-                        - attribute_values.get(api_c.DISAGREE, 0)
-                    )
-                    / len(survey_responses)
-                    * 100
-                }
+            # set factor ratings
+            attribute_aggregated_values[factor_name.lower()][
+                api_c.RATING_MAP[factor_values[api_c.RATING]]
+            ] = (
+                attribute_aggregated_values[factor_name.lower()].get(
+                    api_c.RATING_MAP[factor_values[api_c.RATING]], 0
+                )
+                + 1
             )
+    for factor_name, factor_values in attribute_aggregated_values.items():
+        for attribute_values in factor_values.values():
+            if isinstance(attribute_values, dict):
+                attribute_values.update(
+                    {
+                        api_c.SCORE: (
+                            attribute_values.get(api_c.AGREE, 0)
+                            - attribute_values.get(api_c.DISAGREE, 0)
+                        )
+                        / len(survey_responses)
+                        * 100
+                    }
+                )
 
     return attribute_aggregated_values
 
@@ -77,15 +89,14 @@ def get_trust_id_overview(survey_responses: list) -> dict:
         db_c.FACTORS: [
             {
                 api_c.FACTOR_NAME: factor_name,
-                api_c.FACTOR_SCORE: int(
-                    statistics.mean(
-                        [
-                            val[api_c.SCORE]
-                            for x, val in values.items()
-                            if isinstance(val, dict)
-                        ]
+                api_c.FACTOR_SCORE: (
+                    (
+                        factor_values.get(api_c.AGREE, 0)
+                        - factor_values.get(api_c.DISAGREE, 0)
                     )
-                ),
+                    / len(survey_responses)
+                )
+                * 100,
                 api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
                     factor_name
                 ],
@@ -93,15 +104,17 @@ def get_trust_id_overview(survey_responses: list) -> dict:
                     api_c.TOTAL_CUSTOMERS: len(survey_responses),
                     api_c.RATING: {
                         customer_rating: {
-                            api_c.COUNT: values.get(customer_rating, 0),
-                            api_c.PERCENTAGE: values.get(customer_rating, 0)
+                            api_c.COUNT: factor_values.get(customer_rating, 0),
+                            api_c.PERCENTAGE: factor_values.get(
+                                customer_rating, 0
+                            )
                             / len(survey_responses),
                         }
                         for customer_rating in api_c.RATING_MAP.values()
                     },
                 },
             }
-            for factor_name, values in aggregated_attributes.items()
+            for factor_name, factor_values in aggregated_attributes.items()
         ]
     }
 
