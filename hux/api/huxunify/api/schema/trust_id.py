@@ -4,6 +4,7 @@ from flask_marshmallow import Schema
 from marshmallow.fields import List, Integer, Nested, Str, Float
 from marshmallow.validate import Range, OneOf
 
+from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 
 
@@ -36,18 +37,25 @@ class OverallCustomerRatingSchema(Schema):
     rating = Nested(RatingOverviewSchema)
 
 
-class SignalScoreOverviewSchema(Schema):
-    """Signal score overview schema"""
+class FactorScoreOverviewSchema(Schema):
+    """Factor score overview schema"""
 
     signal_name = Str(
+        attribute=api_c.FACTOR_NAME,
         required=True,
         example="capability",
-        validate=OneOf(api_c.LIST_OF_SIGNALS),
+        validate=OneOf(api_c.LIST_OF_FACTORS),
     )
     signal_score = Integer(
-        required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
+        attribute=api_c.FACTOR_SCORE,
+        required=True,
+        validate=Range(min_inclusive=-100, max_inclusive=100),
     )
-    signal_description = Str(required=True, example="Good Quality")
+    signal_description = Str(
+        attribute=api_c.FACTOR_DESCRIPTION,
+        required=True,
+        example="Good Quality",
+    )
     overall_customer_rating = Nested(OverallCustomerRatingSchema)
 
 
@@ -57,16 +65,17 @@ class TrustIdOverviewSchema(Schema):
     trust_id_score = Integer(
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
-    signals = List(Nested(SignalScoreOverviewSchema))
+    signals = List(Nested(FactorScoreOverviewSchema), attribute=db_c.FACTORS)
 
 
 class TrustIdAttributesSchema(Schema):
     """Trust ID attributes Schema"""
 
     signal_name = Str(
+        attribute=api_c.FACTOR_NAME,
         required=True,
         example="capability",
-        validate=OneOf(api_c.LIST_OF_SIGNALS),
+        validate=OneOf(api_c.LIST_OF_FACTORS),
     )
     attribute_score = Integer(
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
@@ -112,7 +121,7 @@ class TrustIdComparisonSchema(Schema):
 
     segment_type = Str(
         required=True,
-        example="composite & signal scores",
+        example="composite & factor scores",
         validate=OneOf(api_c.SEGMENT_TYPES),
     )
     segments = List(Nested(TrustIdSegmentSchema))
