@@ -103,7 +103,7 @@ export default {
   position: absolute;
   bottom: -2.5rem;
   right: 0;
-  z-index: 99;
+  z-index: 8;
 }
 .drop-menu-div {
   z-index: 1;
