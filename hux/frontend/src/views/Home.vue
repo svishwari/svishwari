@@ -1,6 +1,15 @@
 <template>
   <div>
-    <hux-page max-width="100%" class="home-page">
+    <hux-page
+      max-width="100%"
+      class="home-page"
+      :style="{
+        height:
+          totalCustomersChartErrorState && notificationsTableErrorState
+            ? 'calc(100vh - 167px)'
+            : unset,
+      }"
+    >
       <template #header>
         <hux-page-header
           :title="`Welcome back, ${fullName}!`"
@@ -140,16 +149,15 @@
 
                   <template v-if="header.value == 'category'">
                     <hux-tooltip>
-                      {{ formatText(item[header.value]) | Empty("-") }}
-                      <template #tooltip>
-                        {{ formatText(item[header.value]) }}
-                      </template>
+                      {{ item[header.value] }}
+                      <template #tooltip> {{ item[header.value] }} </template>
                     </hux-tooltip>
                   </template>
 
                   <template v-if="header.value == 'notification_type'">
+                    <!-- TODO: HUS-1305 update icon -->
                     <hux-status
-                      :status="formatText(item['notification_type'])"
+                      :status="item['notification_type']"
                       :show-label="true"
                       :icon-size="20"
                     />
@@ -255,7 +263,6 @@ import HuxTotalCustomerChart from "@/components/common/TotalCustomerChart/TotalC
 import AlertDrawer from "./AlertsAndNotifications/Drawer/AlertDrawer.vue"
 import EmptyPage from "@/components/common/EmptyPage"
 import Icon from "../components/common/Icon.vue"
-import { formatText } from "@/utils"
 
 export default {
   name: "Home",
@@ -370,7 +377,6 @@ export default {
       await this.getNotificationByID(notificationId)
       this.alertDrawer = !this.alertDrawer
     },
-    formatText: formatText,
   },
 }
 </script>
@@ -439,6 +445,7 @@ export default {
 }
 ::v-deep.home-page {
   .container {
+    padding-top: 45px !important;
     height: 100% !important;
     overflow: hidden !important;
   }
