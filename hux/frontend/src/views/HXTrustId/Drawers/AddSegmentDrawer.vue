@@ -137,6 +137,7 @@ export default {
   },
   methods: {
     clear() {
+      this.segmentName = "Segment"
       this.segmentDataObj = {}
     },
     apply() {
@@ -146,6 +147,7 @@ export default {
       })
     },
     close() {
+      this.segmentName = "Segment"
       this.segmentDataObj = {}
       this.localDrawer = false
     },
