@@ -1832,6 +1832,7 @@ PERFORMANCE_METRIC_EMAIL_STUB = {
     "open_rate": 0,
     "clicks": 719,
     "conversions": 0,
+    "click_through_rate": 0.23,
     "click_to_open_rate": 0,
     "unique_clicks": 704,
     "unique_opens": 937,
