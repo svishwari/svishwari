@@ -45,16 +45,6 @@ def aggregate_attributes(survey_responses: list) -> dict:
                         )
                         + 1
                     )
-            # attribute_aggregated_values[factor_name.lower()][
-            #     api_c.RATING_MAP[values.get(api_c.RATING)]
-            # ] = (
-            #         int(
-            #             attribute_aggregated_values[factor_name.lower()].get(
-            #                 api_c.RATING_MAP[values[api_c.RATING]], 0
-            #             )
-            #         )
-            #         + 1
-            # )
 
     for factor_name, values in attribute_aggregated_values.items():
         for attribute_values in values.values():
