@@ -287,32 +287,13 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Measurement",
-        db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
-        db_c.CONFIGURATION_FIELD_TYPE: "module",
-        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Find out why your audiences"
-        " think what they think, behave as they "
-        "behave and feel what they feel.",
-        db_c.CONFIGURATION_FIELD_STATUS: "pending",
-        db_c.CONFIGURATION_FIELD_ENABLED: True,
-        db_c.CONFIGURATION_FIELD_ROADMAP: False,
-    },
-    {
         db_c.CONFIGURATION_FIELD_NAME: "Commerce personal",
         db_c.CONFIGURATION_FIELD_ICON: "commerce_personal",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
-        "consectetur adipiscing elit ut aliquam.",
-        db_c.CONFIGURATION_FIELD_STATUS: "pending",
-        db_c.CONFIGURATION_FIELD_ENABLED: True,
-        db_c.CONFIGURATION_FIELD_ROADMAP: False,
-    },
-    {
-        db_c.CONFIGURATION_FIELD_NAME: "Digital Giant",
-        db_c.CONFIGURATION_FIELD_ICON: "digital_advertising",
-        db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
-        "consectetur adipiscing elit ut aliquam.",
+        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Exceed eCommerce revenue goals"
+        " with personalized content creation, "
+        "conversion, and experience optimization, and next best offer "
+        "determination.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -324,7 +305,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Ensure emails land in the right "
         "inbox by providing insights on all aspects of a "
         "successful marketing strategy from beginning to end.",
-        db_c.CONFIGURATION_FIELD_STATUS: "pending",
+        db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
@@ -367,7 +348,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain "
         "visibility, monitor and  engage with their customers "
         "based on AI – generated experienced based metrics.",
-        db_c.CONFIGURATION_FIELD_STATUS: "pending",
+        db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
