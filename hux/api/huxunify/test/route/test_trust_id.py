@@ -2,6 +2,9 @@
 from http import HTTPStatus
 from unittest import mock
 
+from huxunifylib.database.survey_metrics_management import (
+    set_survey_responses_bulk,
+)
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
     TrustIdAttributesSchema,
@@ -25,6 +28,10 @@ class TestTrustIDRoutes(RouteTestCase):
             "huxunify.api.route.trust_id.get_db_client",
             return_value=self.database,
         ).start()
+
+        _ = set_survey_responses_bulk(
+            self.database, t_c.TRUST_ID_SURVEY_RESPONSES
+        )
 
     def test_trust_id_overview(self):
         """Test for trust_id overview endpoint."""

@@ -120,3 +120,64 @@ def set_survey_responses_bulk(
         logging.error(exc)
 
     return insert_result
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_survey_responses(
+    database: DatabaseClient,
+    filters: list = None,
+) -> Union[list, None]:
+    """Method to retrieve survey responses.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filters (list): Filters to apply, default None.
+
+    Returns:
+        Union[list, None]: List of survey responses, default None.
+    """
+
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
+
+    match_query_filters = (
+        {
+            "$and": [
+                {
+                    "$or": [
+                        {
+                            f"responses.{x['description']}": {
+                                "$regex": val,
+                                "$options": "i",
+                            }
+                        }
+                        for val in x["values"]
+                    ]
+                }
+                for x in filters
+            ]
+        }
+        if filters
+        else {}
+    )
+
+    pipeline = [
+        {"$match": match_query_filters},
+        {
+            "$project": {
+                "survey_id": 1,
+                "customer_id": 1,
+                "factors": "$responses.factors",
+            }
+        },
+    ]
+    try:
+        return list(collection.aggregate(pipeline))
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None

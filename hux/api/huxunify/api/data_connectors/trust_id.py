@@ -130,8 +130,8 @@ def get_trust_id_signal_data(signal_name: str) -> dict:
     ) // total_attributes
 
     return {
-        api_c.SIGNAL_NAME: signal_name,
-        api_c.SIGNAL_SCORE: total_attribute_score // total_attributes,
+        api_c.FACTOR_NAME: signal_name,
+        api_c.FACTOR_SCORE: total_attribute_score // total_attributes,
         api_c.OVERALL_CUSTOMER_RATING: {
             api_c.TOTAL_CUSTOMERS: approx_total_customers,
             api_c.RATING: {
