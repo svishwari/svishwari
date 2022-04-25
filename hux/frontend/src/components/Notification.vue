@@ -43,7 +43,7 @@
             <v-list-item-title class="text-h6 black--text list-main">
               <div class="d-flex text-caption">
                 <status
-                :status="formatText(data.notification_type)"
+                  :status="formatText(data.notification_type)"
                   :show-label="false"
                   :icon-size="21"
                 />

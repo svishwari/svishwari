@@ -155,8 +155,10 @@
 
                   <template v-if="header.value == 'category'">
                     <hux-tooltip>
-                       {{ formatText(item[header.value]) | Empty("-") }}
-                      <template #tooltip> {{ formatText(item[header.value]) }} </template>
+                      {{ formatText(item[header.value]) | Empty("-") }}
+                      <template #tooltip>
+                        {{ formatText(item[header.value]) }}
+                      </template>
                     </hux-tooltip>
                   </template>
 

@@ -46,14 +46,12 @@
 import { mapGetters } from "vuex"
 import { formatText } from "@/utils"
 import Drawer from "@/components/common/Drawer"
-import Icon from "@/components/common/Icon"
 import Status from "@/components/common/Status.vue"
 
 export default {
   name: "AlertDrawer",
   components: {
     Drawer,
-    Icon,
     Status,
   },
 
