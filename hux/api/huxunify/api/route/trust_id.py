@@ -17,6 +17,10 @@ from huxunifylib.database.user_management import (
 
 from huxunify.api import constants as api_c
 
+from huxunify.api.data_connectors.trust_id import (
+    get_trust_id_attributes,
+    get_trust_id_overview,
+)
 from huxunify.api.route.decorators import (
     secured,
     add_view_to_blueprint,
@@ -27,8 +31,6 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
-    get_trust_id_attributes,
-    get_trust_id_overview,
 )
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
@@ -141,7 +143,15 @@ class TrustIdAttributes(SwaggerView):
         """
         survey_responses = get_survey_responses(get_db_client())
 
-        trust_id_attributes = get_trust_id_attributes(survey_responses)
+        trust_id_attributes = sorted(
+            sorted(
+                get_trust_id_attributes(survey_responses),
+                key=lambda x: x[api_c.ATTRIBUTE_SCORE],
+                reverse=True,
+            ),
+            key=lambda x: x[api_c.FACTOR_NAME],
+            reverse=False,
+        )
 
         return HuxResponse.OK(
             data=trust_id_attributes,
