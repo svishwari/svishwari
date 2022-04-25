@@ -443,3 +443,43 @@ export function getBatchCounts(request) {
   let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
   return [initialCount, lastCount]
 }
+
+/**
+ * Returns array of aggregated filters for age type filter only
+ *
+ * @param {object} filters - filters to be aggregated
+ * @returns {Array} array of strings
+ */
+export function aggregateAgeFilters(filters) {
+  if (!filters || filters.length == 0) {
+    return []
+  }
+  let numericFilters = []
+  let stringFilters = []
+  let [aggregatedFilterStart, aggregatedFilterEnd] = filters[0]
+    .split("-")
+    .map((val) => parseInt(val))
+  filters.forEach((filter) => {
+    let [currentFilterStart, currentFilterEnd] = filter
+      .split("-")
+      .map((val) => parseInt(val))
+    if (!currentFilterStart) {
+      stringFilters.push(filter)
+    } else if (
+      currentFilterStart == aggregatedFilterStart ||
+      currentFilterStart == aggregatedFilterEnd + 1
+    ) {
+      aggregatedFilterEnd = currentFilterEnd
+    } else {
+      numericFilters.push(
+        `${aggregatedFilterStart}-${aggregatedFilterEnd} years`
+      )
+      aggregatedFilterStart = currentFilterStart
+      aggregatedFilterEnd = currentFilterEnd
+    }
+  })
+  if (aggregatedFilterStart) {
+    numericFilters.push(`${aggregatedFilterStart}-${aggregatedFilterEnd} years`)
+  }
+  return [...numericFilters, ...stringFilters]
+}

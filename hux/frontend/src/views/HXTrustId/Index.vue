@@ -127,18 +127,69 @@
                     :key="header.key"
                   >
                     <span v-if="row.value.length != 0">
-                      <v-chip
-                        v-for="(filter, filterIndex) in Object.keys(
-                          row.value[0]
-                        )"
+                      <span
+                        v-for="(filter, filterIndex) in row.value"
                         :key="filterIndex"
-                        small
-                        class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                        text-color="primary"
-                        color="var(--v-primary-lighten3)"
                       >
-                        {{ formatText(filter) }}
-                      </v-chip>
+                        <tooltip v-if="filterIndex < 4">
+                          <template #label-content>
+                            <v-chip
+                              v-if="filterIndex < 4"
+                              small
+                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                              text-color="primary"
+                              color="var(--v-primary-lighten3)"
+                            >
+                              {{ filter.description }}
+                            </v-chip>
+                          </template>
+                          <template #hover-content>
+                            <span
+                              v-if="filterIndex < 4"
+                              class="text-body-2 black--text text--darken-4"
+                            >
+                              <div
+                                v-for="(
+                                  filterValue, filterValueIndex
+                                ) in pillHoverData(filter.values, filter.type)"
+                                :key="filterValueIndex"
+                              >
+                                <span
+                                  v-bind.prop="formatInnerHTML(filterValue)"
+                                />
+                                <br />
+                              </div>
+                            </span>
+                          </template>
+                        </tooltip>
+                      </span>
+                      <tooltip>
+                        <template #label-content>
+                          <span
+                            v-if="row.value.length > 4"
+                            class="text-subtitle-2 primary--text"
+                          >
+                            +{{ row.value.length - 4 }}
+                          </span>
+                        </template>
+                        <template #hover-content>
+                          <span
+                            v-for="(filter, filterIndex) in row.value"
+                            :key="filterIndex"
+                          >
+                            <v-chip
+                              v-if="filterIndex >= 4"
+                              small
+                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                              text-color="primary"
+                              color="var(--v-primary-lighten3)"
+                            >
+                              {{ filter.description }}
+                            </v-chip>
+                            <br v-if="filterIndex >= 4" />
+                          </span>
+                        </template>
+                      </tooltip>
                     </span>
                     <span v-else>
                       <v-chip
@@ -244,7 +295,8 @@ import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 import DataCards from "@/components/common/DataCards.vue"
-import { formatText } from "@/utils"
+import Tooltip from "@/components/common/Tooltip.vue"
+import { formatText, formatInnerHTML, aggregateAgeFilters } from "@/utils"
 import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
@@ -260,6 +312,7 @@ export default {
     PageHeader,
     TrustComparisonChart,
     DataCards,
+    Tooltip,
     RhombusNumber,
     TrustIdAttributes,
     HuxIcon,
@@ -471,6 +524,14 @@ export default {
       deleteSegment: "trustId/removeSegment",
       setAlert: "alerts/setAlert",
     }),
+    formatInnerHTML: formatInnerHTML,
+    pillHoverData(filters, type) {
+      if (type !== "age") {
+        return filters
+      } else {
+        return aggregateAgeFilters(filters)
+      }
+    },
     getSelectedData(value) {
       this.selectedSegment = value
     },
@@ -537,6 +598,15 @@ export default {
     ::v-deep .theme--light.v-tabs {
       .v-tabs-bar .v-tab:not(.v-tab--active) {
         color: var(--v-black-lighten4) !important;
+      }
+    }
+    ::v-deep .data-card {
+      .row {
+        .col:nth-child(2) {
+          .pa-4 {
+            padding-top: 22px !important;
+          }
+        }
       }
     }
     .tab-slider {
