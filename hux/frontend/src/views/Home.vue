@@ -1,6 +1,15 @@
 <template>
   <div>
-    <hux-page max-width="100%" class="home-page">
+    <hux-page
+      max-width="100%"
+      class="home-page"
+      :style="{
+        height:
+          totalCustomersChartErrorState && notificationsTableErrorState
+            ? 'calc(100vh - 167px)'
+            : unset,
+      }"
+    >
       <template #header>
         <hux-page-header
           :title="`Welcome back, ${fullName}!`"
@@ -33,7 +42,10 @@
             class="rounded-lg box-shadow-5"
             :height="totalCustomers.length == 0 ? 280 : 367"
           >
-            <v-card-title v-if="totalCustomers.length != 0" class="pa-6">
+            <v-card-title
+              v-if="totalCustomers.length != 0 && !loadingTotalCustomers"
+              class="pa-6"
+            >
               <h3 class="text-h3 black--text text--darken-4">
                 Total customers
                 <span class="text-body-1 black--text text--lighten-4">
@@ -104,7 +116,10 @@
             data-e2e="latest-notifications"
             :height="numNotifications == 0 ? 280 : auto"
           >
-            <v-card-title v-if="numNotifications != 0" class="pa-6">
+            <v-card-title
+              v-if="numNotifications != 0 && !loadingNotifications"
+              class="pa-6"
+            >
               <h3 class="text-h3 black--text text--darken-4">Latest alerts</h3>
             </v-card-title>
 
@@ -148,6 +163,7 @@
                   </template>
 
                   <template v-if="header.value == 'notification_type'">
+                    <!-- TODO: HUS-1305 update icon -->
                     <hux-status
                       :status="formatText(item['notification_type'])"
                       :show-label="true"
@@ -244,7 +260,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-
+import { formatText } from "@/utils"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxPage from "@/components/Page.vue"
 import HuxPageHeader from "@/components/PageHeader.vue"
@@ -255,7 +271,6 @@ import HuxTotalCustomerChart from "@/components/common/TotalCustomerChart/TotalC
 import AlertDrawer from "./AlertsAndNotifications/Drawer/AlertDrawer.vue"
 import EmptyPage from "@/components/common/EmptyPage"
 import Icon from "../components/common/Icon.vue"
-import { formatText } from "@/utils"
 
 export default {
   name: "Home",
@@ -439,6 +454,7 @@ export default {
 }
 ::v-deep.home-page {
   .container {
+    padding-top: 45px !important;
     height: 100% !important;
     overflow: hidden !important;
   }

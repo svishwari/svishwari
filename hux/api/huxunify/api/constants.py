@@ -906,6 +906,12 @@ EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
 USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
 
+USER_DISPLAY_ROLES = {
+    db_c.USER_ROLE_ADMIN: "Admin",
+    db_c.USER_ROLE_EDITOR: "Edit",
+    db_c.USER_ROLE_VIEWER: "View-Only",
+}
+
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
 AUDIENCE_ENDPOINT = "/audiences"
@@ -926,6 +932,8 @@ INSIGHTS = "insights"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
+AUDIENCE_FILTER_RANGE = "range"
+AUDIENCE_FILTER_NOT_RANGE = "not_range"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_LAST_DELIVERY = "last_delivery"
 AUDIENCE_ENGAGEMENTS = "engagements"
@@ -1700,7 +1708,7 @@ RELIABILITY = "reliability"
 HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
-LIST_OF_SIGNALS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
 SEGMENT_TYPES = [
     "composite & signal scores",
     "humanity attributes",
@@ -1710,6 +1718,7 @@ SEGMENT_TYPES = [
 ]
 SEGMENT_NAME = "segment_name"
 SEGMENT_FILTERS = "segment_filters"
+TRUST_ID_SCORE = "trust_id_score"
 TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
 SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
 ATTRIBUTE_SCORES = "attribute_scores"
@@ -1726,9 +1735,36 @@ RATING = "rating"
 AGREE = "agree"
 NEUTRAL = "neutral"
 DISAGREE = "disagree"
-SIGNAL_NAME = "signal_name"
-SIGNAL_SCORE = "signal_score"
+FACTOR_NAME = "factor_name"
+FACTOR_SCORE = "factor_score"
+FACTOR_DESCRIPTION = "factor_description"
 CUSTOMER_ATTRIBUTE_RATINGS = "customer_attribute_ratings"
+RATING_MAP = {
+    "-1": DISAGREE,
+    "0": NEUTRAL,
+    "1": AGREE,
+}
+FACTOR_DESCRIPTION_MAP = {
+    HUMANITY: (
+        "Humanity is demonstrating empathy and kindness towards "
+        "customers, and treating everyone fairly. It is scored "
+        "on a scale between -100 to 100"
+    ),
+    TRANSPARENCY: (
+        "Transparency is openly sharing all information, motives, and "
+        "choices in straightforward and plain language. It is scored "
+        "on a scale between -100 to 100"
+    ),
+    RELIABILITY: (
+        "Reliability is consistently and dependably delivering on "
+        "promises. It is scored on a scale between -100 to 100"
+    ),
+    CAPABILITY: (
+        "Capability is creating quality products, services, and/or "
+        "experiences. It is scored on a scale between -100 to 100"
+    ),
+}
+
 # TODO Remove STUB once data is available
 
 TRUST_ID_ATTRIBUTE_STUB = {
@@ -1796,6 +1832,7 @@ PERFORMANCE_METRIC_EMAIL_STUB = {
     "open_rate": 0,
     "clicks": 719,
     "conversions": 0,
+    "click_through_rate": 0.23,
     "click_to_open_rate": 0,
     "unique_clicks": 704,
     "unique_opens": 937,

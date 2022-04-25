@@ -14,6 +14,7 @@
         :coming-soon="false"
         :logo-option="true"
         :interactable="false"
+        logo-box-padding="8px"
         height="225"
         width="255"
         class="mr-12 model-desc-card"
