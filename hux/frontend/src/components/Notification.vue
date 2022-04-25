@@ -43,7 +43,7 @@
             <v-list-item-title class="text-h6 black--text list-main">
               <div class="d-flex text-caption">
                 <status
-                  :status="data.notification_type"
+                  :status="formatText(data.notification_type)"
                   :show-label="false"
                   :icon-size="21"
                 />
@@ -87,6 +87,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { orderBy } from "lodash"
+import { formatText } from "@/utils"
 import Status from "./common/Status.vue"
 import Tooltip from "./common/Tooltip.vue"
 import TimeStamp from "./common/huxTable/TimeStamp.vue"
@@ -139,6 +140,7 @@ export default {
     ...mapActions({
       getAllNotifications: "notifications/getAll",
     }),
+    formatText: formatText,
   },
 }
 </script>

@@ -88,6 +88,11 @@ def create_app() -> Flask:
 
     # register the routes
     for route in ROUTES:
+        if (
+            get_config().ENV_NAME == "RC1"
+            and route == "<Blueprint '/trust_id'>"
+        ):
+            continue
         logging.debug("Registering %s.", route.name)
         flask_app.register_blueprint(route, url_prefix="/api/v1")
 

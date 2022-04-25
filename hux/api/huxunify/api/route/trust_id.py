@@ -8,6 +8,7 @@ from flasgger import SwaggerView
 from flask import Blueprint, request
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.user_management import (
     get_user_trust_id_segments,
     add_user_trust_id_segments,
@@ -16,6 +17,10 @@ from huxunifylib.database.user_management import (
 
 from huxunify.api import constants as api_c
 
+from huxunify.api.data_connectors.trust_id import (
+    get_trust_id_attributes,
+    get_trust_id_overview,
+)
 from huxunify.api.route.decorators import (
     secured,
     add_view_to_blueprint,
@@ -24,7 +29,9 @@ from huxunify.api.route.decorators import (
 )
 
 from huxunify.api.route.return_util import HuxResponse
-from huxunify.api.route.utils import get_db_client
+from huxunify.api.route.utils import (
+    get_db_client,
+)
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
     TrustIdAttributesSchema,
@@ -34,8 +41,6 @@ from huxunify.api.schema.trust_id import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.stubbed_data.trust_id_stub import (
-    trust_id_overview_stub_data,
-    trust_id_attribute_stub_data,
     trust_id_comparison_stub_data,
     trust_id_filters_stub,
 )
@@ -88,8 +93,12 @@ class TrustIdOverview(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
+        survey_responses = get_survey_responses(get_db_client())
+
+        trust_id_overview = get_trust_id_overview(survey_responses)
+
         return HuxResponse.OK(
-            data=trust_id_overview_stub_data,
+            data=trust_id_overview,
             data_schema=TrustIdOverviewSchema(),
         )
 
@@ -108,7 +117,7 @@ class TrustIdAttributes(SwaggerView):
             "schema": {"type": "array", "items": TrustIdAttributesSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to fetch signal data"
+            "description": "Failed to fetch factor data"
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -117,7 +126,7 @@ class TrustIdAttributes(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
-        """Retrieves Trust ID attributes data.
+        """Retrieves Trust ID trust_id_attributes data.
 
         ---
         security:
@@ -132,9 +141,20 @@ class TrustIdAttributes(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
+        survey_responses = get_survey_responses(get_db_client())
+
+        trust_id_attributes = sorted(
+            sorted(
+                get_trust_id_attributes(survey_responses),
+                key=lambda x: x[api_c.ATTRIBUTE_SCORE],
+                reverse=True,
+            ),
+            key=lambda x: x[api_c.FACTOR_NAME],
+            reverse=False,
+        )
 
         return HuxResponse.OK(
-            data=trust_id_attribute_stub_data,
+            data=trust_id_attributes,
             data_schema=TrustIdAttributesSchema(),
         )
 

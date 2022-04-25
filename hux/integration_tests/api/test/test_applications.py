@@ -3,7 +3,7 @@ from http import HTTPStatus
 from unittest import TestCase
 import pytest
 import requests
-from hux.integration_tests.api.test.conftest import Crud
+from conftest import Crud
 
 
 class TestApplications(TestCase):
@@ -21,6 +21,7 @@ class TestApplications(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), list)
 
     def test_create_application(self):
         """Test create application"""
@@ -28,14 +29,16 @@ class TestApplications(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.APPLICATIONS}",
             json={
-                "category": "test_category",
-                "name": "test_create_application",
-                "url": "www.testapplication.com",
+                "category": "Uncategorized",
+                "name": "int_test_create_application",
+                "url": "www.inttestapplication.com",
             },
             headers=pytest.HEADERS,
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertIsInstance(response.json(), dict)
+
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
 
     def test_update_application(self):
@@ -44,23 +47,26 @@ class TestApplications(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.APPLICATIONS}",
             json={
-                "category": "test_category",
-                "name": "test_update_application",
-                "url": "www.testupdateapplication1.com",
+                "category": "Uncategorized",
+                "name": "int_test_update_application",
+                "url": "www.inttestupdateapplication1.com",
             },
             headers=pytest.HEADERS,
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
+        self.assertIsInstance(response.json(), dict)
 
         response = requests.patch(
-            f"{pytest.API_URL}/{self.APPLICATIONS}",
-            json={"url": "www.testupdateapplication2.com"},
+            f'{pytest.API_URL}/{self.APPLICATIONS}/{response.json()["id"]}',
+            json={"url": "www.inttestupdateapplication2.com"},
             headers=pytest.HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
         self.assertEqual(
-            "www.testupdateapplication2.com", response.json()["url"]
+            "www.inttestupdateapplication2.com", response.json()["url"]
         )
+
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]

@@ -22,7 +22,7 @@ OKTA_PARAM_DICT = {
 }
 MONGO_DB_CONFIG = {
     "host": getenv("MONGO_DB_HOST"),
-    "port": 27017,
+    "port": int(getenv("MONGO_DB_PORT")),
     "w": 1,
     "username": getenv("MONGO_DB_USERNAME"),
     "password": getenv("MONGO_DB_PASSWORD"),
@@ -33,8 +33,8 @@ MONGO_DB_CONFIG = {
 }
 ACCESS_TOKEN = "ACCESS_TOKEN"
 DATABASE = "data_management"
-TAVERN_TEST_API_VERSION = "TAVERN_TEST_API_VERSION"
-TAVERN_TEST_HOST = "TAVERN_TEST_HOST"
+INT_TEST_API_VERSION = "INT_TEST_API_VERSION"
+INT_TEST_HOST = "INT_TEST_HOST"
 AUTHORIZATION = "Authorization"
 BEARER = "Bearer"
 ID = "_id"
@@ -56,7 +56,7 @@ def pytest_configure(config: Config):
     # set global IDs
     pytest.CRUD_OBJECTS = []
     pytest.API_URL = (
-        f"{getenv(TAVERN_TEST_HOST)}/" f"{getenv(TAVERN_TEST_API_VERSION)}"
+        f"{getenv(INT_TEST_HOST)}/" f"{getenv(INT_TEST_API_VERSION)}"
     )
     pytest.DB_CLIENT = MongoClient(**MONGO_DB_CONFIG)[DATABASE]
 
