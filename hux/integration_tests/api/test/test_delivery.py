@@ -16,46 +16,62 @@ class TestDelivery(TestCase):
         """Setup resources before each test."""
 
         # get an engagement and an audience associated to it
-        engagements = requests.get(
+        response = requests.get(
             f"{pytest.API_URL}/{self.ENGAGEMENTS}",
             headers=pytest.HEADERS,
-        ).json()
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
+        self.assertIn("total_records", response.json())
+        self.assertIn(self.ENGAGEMENTS, response.json())
+        self.assertIsInstance(response.json()[self.ENGAGEMENTS], list)
 
         self.engagement_id = None
         self.audience_id = None
         self.facebook_destination_id = None
 
-        for engagement in engagements:
-            for audience in engagement["audiences"]:
+        for engagement in response.json()[self.ENGAGEMENTS]:
+            for audience in engagement[self.AUDIENCES]:
                 for destination in audience["destinations"]:
+                    # ensure a successful delivery exists for the audience in
+                    # the destination
+                    if (not destination["latest_delivery"]) or (
+                        destination["latest_delivery"]["status"]
+                        in ["Not Delivered", "Error"]
+                    ):
+                        continue
                     # ensure the destination exists
                     get_destination = requests.get(
                         f'{pytest.API_URL}/destinations/{destination["id"]}',
                         headers=pytest.HEADERS,
                     )
-                    if get_destination.status_code == 404:
-                        continue
                     # fetch only facebook's destination_id
-                    if get_destination.json()["name"] != "Facebook":
+                    if (get_destination.status_code == 404) or (
+                        get_destination.json()["name"] != "Facebook"
+                    ):
                         continue
                     # ensure that the audience is not a lookalike audience
                     # since delivery requires regular audience
                     get_audience = requests.get(
-                        f'{pytest.API_URL}/audiences/{audience["id"]}',
+                        f'{pytest.API_URL}/{self.AUDIENCES}/{audience["id"]}',
                         headers=pytest.HEADERS,
                     )
                     get_audience_response = get_audience.json()
                     if (
                         get_audience.status_code == 200
                         and get_audience_response
-                        and "is_lookalike" in get_audience_response
-                        and get_audience_response["is_lookalike"]
                     ):
-                        continue
-                    self.engagement_id = engagement["id"]
-                    self.audience_id = audience["id"]
-                    self.facebook_destination_id = destination["id"]
-                    break
+                        if (
+                            "is_lookalike" in get_audience_response
+                            and get_audience_response["is_lookalike"]
+                        ):
+                            continue
+                        self.engagement_id = engagement["id"]
+                        self.audience_id = audience["id"]
+                        self.facebook_destination_id = destination["id"]
+                        break
                 else:
                     continue
                 break
@@ -116,7 +132,7 @@ class TestDelivery(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.ENGAGEMENTS}/{self.engagement_id}/"
             f"deliver?destinations={self.facebook_destination_id}&"
-            f"audiences={self.audience_id}",
+            f"{self.AUDIENCES}={self.audience_id}",
             headers=pytest.HEADERS,
         )
 
