@@ -333,7 +333,8 @@ export default {
           width,
           "white",
           2,
-          1
+          1,
+          true
         )
         addHoverCircle(
           hoverCircles[1],
@@ -343,8 +344,33 @@ export default {
           width,
           barColorCodes[data.index],
           2,
-          0.7
+          0.7,
+          true
         )
+
+          addHoverCircle(
+          hoverCircles[2],
+          9,
+          data.barIndex,
+          data.open_rate,
+          width,
+          "white",
+          2,
+          1,
+          false
+        )
+        addHoverCircle(
+          hoverCircles[3],
+          7,
+          data.barIndex,
+          data.open_rate,
+          width,
+          "#E3E48D",
+          2,
+          0.7,
+          false
+        )
+
       }
 
       let blinkLastBar = () => {
@@ -366,13 +392,14 @@ export default {
         width,
         strokeColor,
         strokeWidth,
-        strokeOpacity
+        strokeOpacity,
+        isBarHover
       ) => {
         svg
           .append("circle")
           .classed(circleName, true)
           .attr("cx", xScale(cX) + width / 2)
-          .attr("cy", yScale1(cY))
+          .attr("cy", isBarHover ? yScale1(cY) : yScale2(cY))
           .attr("r", circleRadius)
           .style("stroke", strokeColor)
           .style("stroke-opacity", strokeOpacity)
