@@ -179,7 +179,7 @@ const actions = {
   async downloadAudienceData(_, { id, type }) {
     try {
       const response = await api.audiences.downloadAudience(id, type)
-      if (response.status == 200) {
+      if (response.status == 200 || response.status == 201) {
         handleSuccess("Audience data downloaded successfully", response.status)
       }
       return response
@@ -291,7 +291,7 @@ const actions = {
         response = await api.audiences.createAndDeliver(audience)
       } else {
         response = await api.audiences.create(audience)
-        if (response.status == 200) {
+        if (response.status == 201) {
           handleSuccess("Audience successfully created", response.status)
         }
       }
