@@ -486,6 +486,7 @@ export default {
       } finally {
         this.loading = false
         this.isFilterToggled = !this.isFilterToggled
+        this.$refs.comparisonChart.clear()
       }
     },
     async removeSegment(item) {

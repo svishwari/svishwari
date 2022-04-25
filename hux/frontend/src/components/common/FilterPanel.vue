@@ -71,6 +71,7 @@ $headerHeight: 40px;
     height: $headerHeight;
     padding: 0 $padding;
     border-top: 1px solid var(--v-black-lighten2);
+    cursor: unset;
   }
   &:last-child {
     .header {

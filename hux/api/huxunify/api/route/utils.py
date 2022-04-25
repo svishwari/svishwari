@@ -2,11 +2,11 @@
 # pylint: disable=too-many-lines
 import statistics
 from collections import defaultdict
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import re
 from itertools import groupby
 from pathlib import Path
-from typing import Tuple, Union, Generator, Callable
+from typing import Tuple, Union, Generator, Callable, List
 from http import HTTPStatus
 
 import pandas as pd
@@ -14,7 +14,6 @@ from bson import ObjectId
 
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
-
 
 from pandas import DataFrame
 
@@ -40,7 +39,6 @@ from huxunifylib.database.user_management import (
     set_user,
 )
 from huxunifylib.database.client import DatabaseClient
-
 
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
@@ -1316,6 +1314,59 @@ def generate_audience_file(
         )
 
 
+def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
+    """Method to Convert for Events
+
+    Args:
+        filters (dict): An audience filter
+        event_types(List[dict]): List of event_types
+
+    Returns:
+
+    """
+    for section in filters[api_c.AUDIENCE_FILTERS]:
+        for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
+            if section_filter.get(api_c.AUDIENCE_FILTER_FIELD) in [
+                x[api_c.TYPE] for x in event_types
+            ]:
+                event_name = section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
+                if section_filter.get(api_c.TYPE) == "within_the_last":
+                    is_range = True
+                elif section_filter.get(api_c.TYPE) == "not_within_the_last":
+                    is_range = False
+                else:
+                    break
+                section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
+                section_filter.update({api_c.TYPE: "event"})
+                start_date = (
+                    datetime.utcnow()
+                    - timedelta(
+                        days=int(
+                            section_filter.get(api_c.AUDIENCE_FILTER_VALUE)
+                        )
+                    )
+                ).strftime("%Y-%m-%d")
+                end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                section_filter.update(
+                    {
+                        api_c.VALUE: [
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "event_name",
+                                api_c.TYPE: "equals",
+                                api_c.VALUE: event_name,
+                            },
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "created",
+                                api_c.TYPE: api_c.AUDIENCE_FILTER_RANGE
+                                if is_range
+                                else api_c.AUDIENCE_FILTER_NOT_RANGE,
+                                api_c.VALUE: [start_date, end_date],
+                            },
+                        ]
+                    }
+                )
+
+
 # pylint: disable=unused-variable
 async def build_notification_recipients_and_send_email(
     database: DatabaseClient, notifications: list, req_env_url_root: str
@@ -1400,3 +1451,174 @@ async def build_notification_recipients_and_send_email(
 
         # TODO: call send email function to actually send an email
         # send_email(**send_email_dict)
+
+
+def aggregate_attributes(survey_responses: list) -> dict:
+    """Aggregate attribute data
+
+    Args:
+        survey_responses (list): List of survey responses
+
+    Returns:
+        (dict): Aggregated attribute data object
+    """
+    attribute_aggregated_values = defaultdict(dict)
+
+    # Calculate cumulative attribute score and rating
+    for survey_response in survey_responses:
+        for factor_name, values in survey_response[db_c.FACTORS].items():
+            for attribute in values[db_c.ATTRIBUTES]:
+                if (
+                    attribute_aggregated_values.get(factor_name.lower(), {})
+                    .get(attribute[db_c.DESCRIPTION], {})
+                    .get(api_c.SCORE)
+                ):
+                    attribute_aggregated_values[factor_name.lower()][
+                        attribute[db_c.DESCRIPTION]
+                    ][api_c.SCORE] += int(attribute[api_c.SCORE])
+
+                    attribute_aggregated_values[factor_name.lower()][
+                        attribute[db_c.DESCRIPTION]
+                    ][api_c.RATING] += int(attribute.get(api_c.RATING, 0))
+
+                else:
+                    attribute_aggregated_values[factor_name.lower()].update(
+                        {
+                            attribute[db_c.DESCRIPTION]: {
+                                api_c.SCORE: int(attribute.get(api_c.SCORE)),
+                                api_c.RATING: int(
+                                    attribute.get(api_c.RATING, 0)
+                                ),
+                            },
+                        }
+                    )
+
+                if attribute.get(api_c.RATING) is not None:
+                    attribute_aggregated_values[factor_name.lower()][
+                        attribute[db_c.DESCRIPTION]
+                    ][api_c.RATING_MAP[attribute.get(api_c.RATING)]] = (
+                        int(
+                            attribute_aggregated_values[factor_name.lower()][
+                                attribute[db_c.DESCRIPTION]
+                            ].get(api_c.RATING_MAP[attribute[api_c.RATING]], 0)
+                        )
+                        + 1
+                    )
+            attribute_aggregated_values[factor_name.lower()][
+                api_c.RATING_MAP[values.get(api_c.RATING)]
+            ] = (
+                int(
+                    attribute_aggregated_values[factor_name.lower()].get(
+                        api_c.RATING_MAP[values[api_c.RATING]], 0
+                    )
+                )
+                + 1
+            )
+
+    return attribute_aggregated_values
+
+
+def get_trust_id_overview(survey_responses: list) -> dict:
+    """Fetch trust id overview data
+
+    Args:
+        survey_responses (list): List of survey responses
+
+    Returns:
+        (dict): Trust ID overview data
+    """
+    aggregated_attributes = aggregate_attributes(survey_responses)
+
+    overview_data = {
+        db_c.FACTORS: [
+            {
+                api_c.FACTOR_NAME: factor_name,
+                api_c.FACTOR_SCORE: int(
+                    statistics.mean(
+                        [
+                            val[api_c.SCORE]
+                            for x, val in values.items()
+                            if isinstance(val, dict)
+                        ]
+                    )
+                ),
+                api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
+                    factor_name
+                ],
+                api_c.OVERALL_CUSTOMER_RATING: {
+                    api_c.TOTAL_CUSTOMERS: len(survey_responses),
+                    api_c.RATING: {
+                        customer_rating: {
+                            api_c.COUNT: values.get(customer_rating, 0),
+                            api_c.PERCENTAGE: values.get(customer_rating, 0)
+                            / len(survey_responses),
+                        }
+                        for customer_rating in api_c.RATING_MAP.values()
+                    },
+                },
+            }
+            for factor_name, values in aggregated_attributes.items()
+        ]
+    }
+
+    overview_data[api_c.TRUST_ID_SCORE] = int(
+        statistics.mean(
+            [x[api_c.FACTOR_SCORE] for x in overview_data[db_c.FACTORS]]
+        )
+    )
+
+    return overview_data
+
+
+def get_trust_id_attributes(survey_responses: list) -> list:
+    """Get trust id values details
+
+    Args:
+        survey_responses (list): List or survey responses
+
+    Returns:
+          (list): List of values and their details
+
+    """
+    trust_id_attributes = []
+
+    attribute_aggregated_values = aggregate_attributes(survey_responses)
+
+    for factor_name, values in survey_responses[0][db_c.FACTORS].items():
+        for attribute in values[db_c.ATTRIBUTES]:
+            trust_id_attributes.append(
+                {
+                    api_c.FACTOR_NAME: factor_name.lower(),
+                    api_c.ATTRIBUTE_DESCRIPTION: attribute[db_c.DESCRIPTION],
+                }
+            )
+
+    for attribute in list(trust_id_attributes):
+        attribute.update(
+            {
+                api_c.ATTRIBUTE_SCORE: attribute_aggregated_values[
+                    attribute[api_c.FACTOR_NAME]
+                ][attribute[api_c.ATTRIBUTE_DESCRIPTION]][api_c.SCORE],
+                api_c.OVERALL_CUSTOMER_RATING: {
+                    api_c.TOTAL_CUSTOMERS: len(survey_responses),
+                    api_c.RATING: {
+                        customer_rating: {
+                            api_c.COUNT: attribute_aggregated_values[
+                                attribute[api_c.FACTOR_NAME]
+                            ][attribute[api_c.ATTRIBUTE_DESCRIPTION]].get(
+                                customer_rating, 0
+                            ),
+                            api_c.PERCENTAGE: attribute_aggregated_values[
+                                attribute[api_c.FACTOR_NAME]
+                            ][attribute[api_c.ATTRIBUTE_DESCRIPTION]].get(
+                                customer_rating, 0
+                            )
+                            / len(survey_responses),
+                        }
+                        for customer_rating in api_c.RATING_MAP.values()
+                    },
+                },
+            }
+        )
+
+    return trust_id_attributes

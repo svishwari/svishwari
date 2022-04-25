@@ -111,11 +111,11 @@
                   <v-list class="menu-list-wrapper">
                     <v-list-item-group>
                       <v-list-item
-                        v-for="option in sectionActions"
+                        v-for="option in destinationActions"
                         :key="option.id"
                         :disabled="!option.active"
                         @click="
-                          $emit('onSectionAction', {
+                          $emit('onDestinationAction', {
                             target: option,
                             data: item,
                             parent: section,

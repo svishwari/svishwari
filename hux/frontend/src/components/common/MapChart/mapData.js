@@ -469,6 +469,18 @@ export default [
     max_age: 85,
   },
   {
+    name: "Puerto Rico",
+    population_percentage: 0.555,
+    size: 123456,
+    gender_women: 0.6057,
+    gender_men: 0.6057,
+    gender_other: 0.6057,
+    min_ltv: 240.0515,
+    max_ltv: 340.1234,
+    min_age: 21,
+    max_age: 85,
+  },
+  {
     name: "Rhode Island",
     population_percentage: 0.134,
     size: 123456,

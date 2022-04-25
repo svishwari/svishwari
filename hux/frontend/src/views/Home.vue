@@ -1,6 +1,15 @@
 <template>
   <div>
-    <hux-page max-width="100%" class="home-page">
+    <hux-page
+      max-width="100%"
+      class="home-page"
+      :style="{
+        height:
+          totalCustomersChartErrorState && notificationsTableErrorState
+            ? 'calc(100vh - 167px)'
+            : unset,
+      }"
+    >
       <template #header>
         <hux-page-header
           :title="`Welcome back, ${fullName}!`"
@@ -33,7 +42,10 @@
             class="rounded-lg box-shadow-5"
             :height="totalCustomers.length == 0 ? 280 : 367"
           >
-            <v-card-title v-if="totalCustomers.length != 0" class="pa-6">
+            <v-card-title
+              v-if="totalCustomers.length != 0 && !loadingTotalCustomers"
+              class="pa-6"
+            >
               <h3 class="text-h3 black--text text--darken-4">
                 Total customers
                 <span class="text-body-1 black--text text--lighten-4">
@@ -104,7 +116,10 @@
             data-e2e="latest-notifications"
             :height="numNotifications == 0 ? 280 : auto"
           >
-            <v-card-title v-if="numNotifications != 0" class="pa-6">
+            <v-card-title
+              v-if="numNotifications != 0 && !loadingNotifications"
+              class="pa-6"
+            >
               <h3 class="text-h3 black--text text--darken-4">Latest alerts</h3>
             </v-card-title>
 
@@ -436,6 +451,7 @@ export default {
 }
 ::v-deep.home-page {
   .container {
+    padding-top: 45px !important;
     height: 100% !important;
     overflow: hidden !important;
   }
