@@ -62,12 +62,12 @@ def aggregate_attributes(survey_responses: list) -> dict:
             if isinstance(attribute_values, dict):
                 attribute_values.update(
                     {
-                        api_c.SCORE: (
+                        api_c.SCORE: int((
                             attribute_values.get(api_c.AGREE, 0)
                             - attribute_values.get(api_c.DISAGREE, 0)
                         )
                         / len(survey_responses)
-                        * 100
+                        * 100)
                     }
                 )
 
@@ -89,12 +89,12 @@ def get_trust_id_overview(survey_responses: list) -> dict:
         db_c.FACTORS: [
             {
                 api_c.FACTOR_NAME: factor_name,
-                api_c.FACTOR_SCORE: (
+                api_c.FACTOR_SCORE: int((
                     (
                         factor_values.get(api_c.AGREE, 0)
                         - factor_values.get(api_c.DISAGREE, 0)
                     )
-                    / len(survey_responses)
+                    / len(survey_responses))
                 )
                 * 100,
                 api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
@@ -182,3 +182,32 @@ def get_trust_id_attributes(survey_responses: list) -> list:
         )
 
     return trust_id_attributes
+
+
+def get_trust_id_comparison_data(data_by_segment: list) -> dict:
+    """Get comparison data for trust id
+
+    Args:
+        data_by_segment (list): List of segment data
+
+    Returns:
+         (list): Segment-wise comparison data
+    """
+    data_by_factors = defaultdict(dict)
+
+    for segment_data in data_by_segment:
+        attributes_data = get_trust_id_attributes(
+            segment_data[api_c.SURVEY_RESPONSES]
+        )
+
+        for factor_name in api_c.LIST_OF_FACTORS:
+            if segment_data[api_c.SEGMENT_NAME] not in data_by_factors[factor_name].keys():
+                data_by_factors[factor_name] = {segment_data[api_c.SEGMENT_NAME]: []}
+            data_by_factors[factor_name][segment_data[api_c.SEGMENT_NAME]].extend(
+                [
+                    x
+                    for x in attributes_data
+                    if x[api_c.FACTOR_NAME] == factor_name
+               ]
+            )
+    return data_by_factors

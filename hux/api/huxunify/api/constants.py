@@ -1718,6 +1718,7 @@ SEGMENT_TYPES = [
 ]
 SEGMENT_NAME = "segment_name"
 SEGMENT_FILTERS = "segment_filters"
+SURVEY_RESPONSES = "survey_responses"
 TRUST_ID_SCORE = "trust_id_score"
 TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
 SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"

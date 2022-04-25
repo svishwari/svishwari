@@ -20,6 +20,7 @@ from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.trust_id import (
     get_trust_id_attributes,
     get_trust_id_overview,
+    get_trust_id_comparison_data,
 )
 from huxunify.api.route.decorators import (
     secured,
@@ -201,18 +202,29 @@ class TrustIdAttributeComparison(SwaggerView):
         custom_segments = get_user_trust_id_segments(
             database=get_db_client(), okta_id=user[db_c.OKTA_ID]
         )
+
+        segments_data = [{
+            api_c.SEGMENT_NAME: "Default segment",
+            api_c.SEGMENT_FILTERS: [],
+            api_c.SURVEY_RESPONSES: get_survey_responses(database=get_db_client())
+        }]
+
+        # TODO: Remove after real data integration
         required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
+
         for seg in custom_segments:
-            _ = [
-                x["segments"].append(
-                    {
-                        "segment_name": seg["segment_name"],
-                        "segment_filters": seg["segment_filters"],
-                        "attributes": x["segments"][-1]["attributes"],
-                    }
-                )
-                for x in required_comparison_data
-            ]
+            segments_data.append(
+                {
+                    api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
+                    api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
+                    api_c.SURVEY_RESPONSES: get_survey_responses(
+                        database=get_db_client(),
+                        filters=seg[api_c.SEGMENT_FILTERS],
+                    ),
+                }
+            )
+        _ = get_trust_id_comparison_data(segments_data)
+
         return HuxResponse.OK(
             data=required_comparison_data,
             data_schema=TrustIdComparisonSchema(),
