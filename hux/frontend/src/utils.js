@@ -445,34 +445,41 @@ export function getBatchCounts(request) {
 }
 
 /**
- * Returns array of aggregated data for age filter only
+ * Returns array of aggregated filters for age type filter only
  *
- * @param {object} values - values to be aggregated
- * @param {object} type - type of filter
+ * @param {object} filters - filters to be aggregated
  * @returns {Array} array of strings
  */
-export function aggregateAgeValues(values, type) {
-  if (type !== "age") {
-    return values
-  } else {
-    let newValues = []
-    let stringValues = []
-    let [start, end] = values[0].split("-").map((val) => parseInt(val))
-    values.forEach((element) => {
-      let [i, j] = element.split("-").map((val) => parseInt(val))
-      if (!i) {
-        stringValues.push(element)
-      } else if (i == start || i == end + 1) {
-        end = j
-      } else {
-        newValues.push(`${start}-${end} years`)
-        start = i
-        end = j
-      }
-    })
-    if (start) {
-      newValues.push(`${start}-${end} years`)
-    }
-    return [...newValues, ...stringValues]
+export function aggregateAgeFilters(filters) {
+  if (!filters || filters.length == 0) {
+    return []
   }
+  let numericFilters = []
+  let stringFilters = []
+  let [aggregatedFilterStart, aggregatedFilterEnd] = filters[0]
+    .split("-")
+    .map((val) => parseInt(val))
+  filters.forEach((filter) => {
+    let [currentFilterStart, currentFilterEnd] = filter
+      .split("-")
+      .map((val) => parseInt(val))
+    if (!currentFilterStart) {
+      stringFilters.push(filter)
+    } else if (
+      currentFilterStart == aggregatedFilterStart ||
+      currentFilterStart == aggregatedFilterEnd + 1
+    ) {
+      aggregatedFilterEnd = currentFilterEnd
+    } else {
+      numericFilters.push(
+        `${aggregatedFilterStart}-${aggregatedFilterEnd} years`
+      )
+      aggregatedFilterStart = currentFilterStart
+      aggregatedFilterEnd = currentFilterEnd
+    }
+  })
+  if (aggregatedFilterStart) {
+    numericFilters.push(`${aggregatedFilterStart}-${aggregatedFilterEnd} years`)
+  }
+  return [...numericFilters, ...stringFilters]
 }

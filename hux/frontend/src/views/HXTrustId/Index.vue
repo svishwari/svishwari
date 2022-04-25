@@ -151,10 +151,7 @@
                               <div
                                 v-for="(
                                   filterValue, filterValueIndex
-                                ) in aggregateAgeValues(
-                                  filter.values,
-                                  filter.type
-                                )"
+                                ) in pillHoverData(filter.values, filter.type)"
                                 :key="filterValueIndex"
                               >
                                 <span
@@ -299,7 +296,7 @@ import PageHeader from "@/components/PageHeader.vue"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 import DataCards from "@/components/common/DataCards.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import { formatText, formatInnerHTML, aggregateAgeValues } from "@/utils"
+import { formatText, formatInnerHTML, aggregateAgeFilters } from "@/utils"
 import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
@@ -528,7 +525,13 @@ export default {
       setAlert: "alerts/setAlert",
     }),
     formatInnerHTML: formatInnerHTML,
-    aggregateAgeValues: aggregateAgeValues,
+    pillHoverData(filters, type) {
+      if (type !== "age") {
+        return filters
+      } else {
+        return aggregateAgeFilters(filters)
+      }
+    },
     getSelectedData(value) {
       this.selectedSegment = value
     },
