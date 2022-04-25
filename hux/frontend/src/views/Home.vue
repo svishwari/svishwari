@@ -155,15 +155,15 @@
 
                   <template v-if="header.value == 'category'">
                     <hux-tooltip>
-                      {{ item[header.value] }}
-                      <template #tooltip> {{ item[header.value] }} </template>
+                       {{ formatText(item[header.value]) | Empty("-") }}
+                      <template #tooltip> {{ formatText(item[header.value]) }} </template>
                     </hux-tooltip>
                   </template>
 
                   <template v-if="header.value == 'notification_type'">
                     <!-- TODO: HUS-1305 update icon -->
                     <hux-status
-                      :status="item['notification_type']"
+                      :status="formatText(item['notification_type'])"
                       :show-label="true"
                       :icon-size="20"
                     />
@@ -258,7 +258,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-
+import { formatText } from "@/utils"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxPage from "@/components/Page.vue"
 import HuxPageHeader from "@/components/PageHeader.vue"
@@ -383,6 +383,7 @@ export default {
       await this.getNotificationByID(notificationId)
       this.alertDrawer = !this.alertDrawer
     },
+    formatText: formatText,
   },
 }
 </script>
