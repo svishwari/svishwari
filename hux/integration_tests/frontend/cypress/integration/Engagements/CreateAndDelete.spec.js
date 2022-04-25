@@ -59,15 +59,10 @@ describe("Orchestration > Engagement > Create and delete Engagement", () => {
     cy.get(selector.engagement.nextStep).click()
 
     // create engagement
-    cy.get(selector.engagement.createEngagement).click()
+    cy.get(selector.engagement.createEngagement)
 
-    //eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(5000)
     // go back to all engagements dashboard
-    cy.get(selector.engagement.allEngagements)
-      .contains("Engagements")
-      .eq(0)
-      .click()
+    cy.visit(route.engagements)
 
     //eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000)

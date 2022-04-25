@@ -42,7 +42,10 @@
             class="rounded-lg box-shadow-5"
             :height="totalCustomers.length == 0 ? 280 : 367"
           >
-            <v-card-title v-if="totalCustomers.length != 0" class="pa-6">
+            <v-card-title
+              v-if="totalCustomers.length != 0 && !loadingTotalCustomers"
+              class="pa-6"
+            >
               <h3 class="text-h3 black--text text--darken-4">
                 Total customers
                 <span class="text-body-1 black--text text--lighten-4">
@@ -113,7 +116,10 @@
             data-e2e="latest-notifications"
             :height="numNotifications == 0 ? 280 : auto"
           >
-            <v-card-title v-if="numNotifications != 0" class="pa-6">
+            <v-card-title
+              v-if="numNotifications != 0 && !loadingNotifications"
+              class="pa-6"
+            >
               <h3 class="text-h3 black--text text--darken-4">Latest alerts</h3>
             </v-card-title>
 
@@ -149,15 +155,17 @@
 
                   <template v-if="header.value == 'category'">
                     <hux-tooltip>
-                      {{ item[header.value] }}
-                      <template #tooltip> {{ item[header.value] }} </template>
+                      {{ formatText(item[header.value]) | Empty("-") }}
+                      <template #tooltip>
+                        {{ formatText(item[header.value]) }}
+                      </template>
                     </hux-tooltip>
                   </template>
 
                   <template v-if="header.value == 'notification_type'">
                     <!-- TODO: HUS-1305 update icon -->
                     <hux-status
-                      :status="item['notification_type']"
+                      :status="formatText(item['notification_type'])"
                       :show-label="true"
                       :icon-size="20"
                     />
@@ -252,7 +260,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-
+import { formatText } from "@/utils"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxPage from "@/components/Page.vue"
 import HuxPageHeader from "@/components/PageHeader.vue"
@@ -377,6 +385,7 @@ export default {
       await this.getNotificationByID(notificationId)
       this.alertDrawer = !this.alertDrawer
     },
+    formatText: formatText,
   },
 }
 </script>

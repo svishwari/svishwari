@@ -21,9 +21,18 @@
             v-if="header.value == 'domain_name'"
             class="text-body-1 overflow-hide"
           >
-            <span class="text-ellipsis mb-n1">
-              {{ item.domain_name }}
-            </span>
+            <tooltip>
+              <template #label-content>
+                <span class="text-ellipsis mb-n1">
+                  {{ item.domain_name }}
+                </span>
+              </template>
+              <template #hover-content>
+                <span class="text-ellipsis mb-n1">
+                  {{ item.domain_name }}
+                </span>
+              </template>
+            </tooltip>
           </div>
           <div v-if="header.value == 'sent'" class="text-body-1">
             <span class="text-ellipsis mb-n1">
@@ -58,9 +67,10 @@
 
 <script>
 import HuxDataTable from "../../../../components/common/dataTable/HuxDataTable.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 export default {
   name: "DomainOverview",
-  components: { HuxDataTable },
+  components: { HuxDataTable, Tooltip },
   props: {
     list: {
       type: Array,

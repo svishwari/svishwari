@@ -2,11 +2,11 @@
 # pylint: disable=too-many-lines
 import statistics
 from collections import defaultdict
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import re
 from itertools import groupby
 from pathlib import Path
-from typing import Tuple, Union, Generator, Callable
+from typing import Tuple, Union, Generator, Callable, List
 from http import HTTPStatus
 
 import pandas as pd
@@ -1312,6 +1312,59 @@ def generate_audience_file(
             "Created an audit log for %s audience file creation",
             audience_file_name,
         )
+
+
+def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
+    """Method to Convert for Events
+
+    Args:
+        filters (dict): An audience filter
+        event_types(List[dict]): List of event_types
+
+    Returns:
+
+    """
+    for section in filters[api_c.AUDIENCE_FILTERS]:
+        for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
+            if section_filter.get(api_c.AUDIENCE_FILTER_FIELD) in [
+                x[api_c.TYPE] for x in event_types
+            ]:
+                event_name = section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
+                if section_filter.get(api_c.TYPE) == "within_the_last":
+                    is_range = True
+                elif section_filter.get(api_c.TYPE) == "not_within_the_last":
+                    is_range = False
+                else:
+                    break
+                section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
+                section_filter.update({api_c.TYPE: "event"})
+                start_date = (
+                    datetime.utcnow()
+                    - timedelta(
+                        days=int(
+                            section_filter.get(api_c.AUDIENCE_FILTER_VALUE)
+                        )
+                    )
+                ).strftime("%Y-%m-%d")
+                end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                section_filter.update(
+                    {
+                        api_c.VALUE: [
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "event_name",
+                                api_c.TYPE: "equals",
+                                api_c.VALUE: event_name,
+                            },
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "created",
+                                api_c.TYPE: api_c.AUDIENCE_FILTER_RANGE
+                                if is_range
+                                else api_c.AUDIENCE_FILTER_NOT_RANGE,
+                                api_c.VALUE: [start_date, end_date],
+                            },
+                        ]
+                    }
+                )
 
 
 # pylint: disable=unused-variable

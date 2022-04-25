@@ -49,6 +49,7 @@ from huxunify.api.data_connectors.cdp import (
     get_spending_by_gender,
     get_demographic_by_country,
     get_revenue_by_day,
+    get_customer_event_types,
 )
 from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
@@ -61,6 +62,7 @@ from huxunify.api.route.utils import (
     get_start_end_dates,
     get_db_client,
     convert_unique_city_filter,
+    convert_filters_for_events,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -242,7 +244,15 @@ class CustomerPostOverview(SwaggerView):
 
         token_response = get_token_from_request(request)
 
+        # Fetch events from CDM. Check cache first.
+        event_types = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.EVENTS}",
+            get_customer_event_types,
+            {"token": token_response[0]},
+        )
+
         filters = convert_unique_city_filter(request.json)
+        convert_filters_for_events(filters, event_types)
         customers_overview = Caching.check_and_return_cache(
             {
                 "endpoint": f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",

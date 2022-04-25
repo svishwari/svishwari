@@ -218,9 +218,9 @@ class TestCustomers(TestCase):
         """Testing audience insights revenue."""
 
         audience_id = requests.get(
-            f"{pytest.API_URL}/audiences",
+            f"{pytest.API_URL}/{self.AUDIENCES}",
             headers=pytest.HEADERS,
-        ).json()[0]["id"]
+        ).json()[self.AUDIENCES][0]["id"]
 
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}/revenue",
@@ -233,9 +233,9 @@ class TestCustomers(TestCase):
         """Testing audience insights total."""
 
         audience_id = requests.get(
-            f"{pytest.API_URL}/audiences",
+            f"{pytest.API_URL}/{self.AUDIENCES}",
             headers=pytest.HEADERS,
-        ).json()[0]["id"]
+        ).json()[self.AUDIENCES][0]["id"]
 
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}/total",

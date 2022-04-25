@@ -129,8 +129,8 @@ export default {
   methods: {
     formatText: formatText,
     numberWithCommas: numberWithCommas,
-    cardColors(signalName) {
-      switch (signalName) {
+    cardColors(factorName) {
+      switch (factorName) {
         case "humanity":
           return { stroke: "primary", variant: "darken6" }
 
