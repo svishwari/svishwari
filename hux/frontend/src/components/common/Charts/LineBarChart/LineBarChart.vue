@@ -348,7 +348,7 @@ export default {
           true
         )
 
-          addHoverCircle(
+        addHoverCircle(
           hoverCircles[2],
           9,
           data.barIndex,
@@ -370,7 +370,6 @@ export default {
           0.7,
           false
         )
-
       }
 
       let blinkLastBar = () => {
