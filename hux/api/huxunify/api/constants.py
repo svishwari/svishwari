@@ -906,6 +906,12 @@ EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
 USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
 
+USER_DISPLAY_ROLES = {
+    db_c.USER_ROLE_ADMIN: "Admin",
+    db_c.USER_ROLE_EDITOR: "Edit",
+    db_c.USER_ROLE_VIEWER: "View-Only",
+}
+
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
 AUDIENCE_ENDPOINT = "/audiences"
@@ -926,6 +932,8 @@ INSIGHTS = "insights"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
+AUDIENCE_FILTER_RANGE = "range"
+AUDIENCE_FILTER_NOT_RANGE = "not_range"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_LAST_DELIVERY = "last_delivery"
 AUDIENCE_ENGAGEMENTS = "engagements"
@@ -1824,6 +1832,7 @@ PERFORMANCE_METRIC_EMAIL_STUB = {
     "open_rate": 0,
     "clicks": 719,
     "conversions": 0,
+    "click_through_rate": 0.23,
     "click_to_open_rate": 0,
     "unique_clicks": 704,
     "unique_opens": 937,

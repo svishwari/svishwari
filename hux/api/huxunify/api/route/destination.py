@@ -964,7 +964,7 @@ class DestinationPatchView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Destination updated.",
-            "schema": DestinationDataExtGetSchema,
+            "schema": DestinationGetSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to patch destination data.",

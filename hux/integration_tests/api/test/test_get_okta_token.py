@@ -1,9 +1,7 @@
 """Purpose of this file is to house the get okta token test."""
 from unittest import TestCase
-
 import requests_mock
-
-from hux.integration_tests.api.test.get_okta_token import (
+from get_okta_token import (
     PasswordType,
     OktaOIDC,
 )

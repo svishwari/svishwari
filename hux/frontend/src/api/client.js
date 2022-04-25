@@ -175,6 +175,18 @@ client["engagements"].attachAudienceDestination = (
     data
   )
 }
+client["engagements"].detachDestinationOfAudience = (
+  engagementId,
+  audienceId,
+  data
+) => {
+  // NOTE: The Hux API supports post data for a DELETE request method.
+  // Typically, this isn't RESTful so Mirage does not support this, hence this check
+  return http.delete(
+    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
+    { data: data }
+  )
+}
 
 client["engagements"].detachDestination = (audienceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.

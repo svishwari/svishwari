@@ -528,6 +528,7 @@ export default {
           this.confirmDialog.type = "error"
           this.confirmDialog.subtitle = event.data.name
           this.confirmDialog.btnText = "Yes, remove audience"
+          this.confirmDialog.leftBtnText = "Nevermind!"
           this.confirmDialog.body =
             "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement."
           this.deleteActionData = event.data

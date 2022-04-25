@@ -4,7 +4,7 @@ from time import time
 from unittest import TestCase
 import pytest
 import requests
-from hux.integration_tests.api.test.conftest import Crud
+from conftest import Crud
 
 
 class TestDataSources(TestCase):
