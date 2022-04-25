@@ -1,6 +1,6 @@
 export default [
   {
-    segment_type: "composite & signal scores",
+    segment_type: "composite & factor scores",
     segments: [
       {
         segment_name: "Segment 1",

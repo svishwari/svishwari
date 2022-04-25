@@ -127,7 +127,7 @@ export default {
     initializeSegmentData() {
       if (this.segmentScores) {
         this.sourceData = this.segmentScores.find(
-          (data) => data.segment_type == "composite & signal scores"
+          (data) => data.segment_type == "composite & factor scores"
         ).segments
         this.sourceData.forEach(
           (data, index) => (data.color = this.colors[index])

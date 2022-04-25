@@ -169,7 +169,7 @@ export default {
       },
       columns: [
         {
-          text: "Name of signal",
+          text: "Name of factor",
           value: "signal_name",
           width: "170px",
           tooltipWidth: "300px",
@@ -182,7 +182,7 @@ export default {
           width: "134px",
           tooltipWidth: "300px",
           hoverTooltip:
-            "Attribute scores are additional data points that can be used to diagnose what is driving a particular signal score.",
+            "Attribute scores are additional data points that can be used to diagnose what is driving a particular factor score.",
         },
         {
           text: "Attributes",
@@ -190,7 +190,7 @@ export default {
           width: "605px",
           tooltipWidth: "300px",
           hoverTooltip:
-            "Attributes are the trust-building actions that have the greatest impact on your 4 HX TrustID signal scores.",
+            "Attributes are the trust-building actions that have the greatest impact on your 4 HX TrustID factor scores.",
         },
         {
           text: "Customer rating",

@@ -24,7 +24,7 @@
             />
           </div>
           <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
-            Measure the signals of trust, predict how trust sentiment will
+            Measure the factors of trust, predict how trust sentiment will
             impact customer &amp; employee behaviors, and identify actions to
             (re)build trust.
           </div>
@@ -323,7 +323,7 @@ export default {
       loading: false,
       segmentComparisonLoading: false,
       tabOption: 0,
-      selectedSegment: "composite & signal scores",
+      selectedSegment: "composite & factor scores",
       isFilterToggled: false,
       segmentLength: 1,
       addSegments: [],
