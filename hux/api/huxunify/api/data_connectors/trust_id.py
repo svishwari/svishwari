@@ -109,10 +109,11 @@ def get_trust_id_overview(survey_responses: list) -> dict:
                     api_c.RATING: {
                         customer_rating: {
                             api_c.COUNT: factor_values.get(customer_rating, 0),
-                            api_c.PERCENTAGE: factor_values.get(
-                                customer_rating, 0
-                            )
-                            / len(survey_responses),
+                            api_c.PERCENTAGE: round(
+                                factor_values.get(customer_rating, 0)
+                                / len(survey_responses),
+                                4,
+                            ),
                         }
                         for customer_rating in api_c.RATING_MAP.values()
                     },
@@ -172,12 +173,15 @@ def get_trust_id_attributes(survey_responses: list) -> list:
                             ][attribute[api_c.ATTRIBUTE_DESCRIPTION]].get(
                                 customer_rating, 0
                             ),
-                            api_c.PERCENTAGE: attribute_aggregated_values[
-                                attribute[api_c.FACTOR_NAME]
-                            ][attribute[api_c.ATTRIBUTE_DESCRIPTION]].get(
-                                customer_rating, 0
-                            )
-                            / len(survey_responses),
+                            api_c.PERCENTAGE: round(
+                                attribute_aggregated_values[
+                                    attribute[api_c.FACTOR_NAME]
+                                ][attribute[api_c.ATTRIBUTE_DESCRIPTION]].get(
+                                    customer_rating, 0
+                                )
+                                / len(survey_responses),
+                                4,
+                            ),
                         }
                         for customer_rating in api_c.RATING_MAP.values()
                     },
@@ -188,7 +192,7 @@ def get_trust_id_attributes(survey_responses: list) -> list:
     return trust_id_attributes
 
 
-def get_trust_id_comparison_data(data_by_segment: list) -> dict:
+def get_trust_id_comparison_data(data_by_segment: list) -> list:
     """Get comparison data for trust id
 
     Args:
@@ -303,15 +307,16 @@ def get_trust_id_comparison_data(data_by_segment: list) -> dict:
                     continue
                 factor_comparison_data[api_c.SEGMENTS][-1][
                     api_c.ATTRIBUTES
-                ].extend(
+                ].insert(
+                    0,
                     [
                         x
                         for x in factor_data[api_c.ATTRIBUTES]
                         if x[api_c.ATTRIBUTE_TYPE] == factor_name
-                    ]
+                    ][0],
                 )
 
         trust_id_comparison_data.append(factor_comparison_data)
-    trust_id_comparison_data.append(composite_factor_scores)
+    trust_id_comparison_data.insert(0, composite_factor_scores)
 
     return trust_id_comparison_data
