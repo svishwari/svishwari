@@ -4,7 +4,6 @@ from flask_marshmallow import Schema
 from marshmallow.fields import List, Integer, Nested, Str, Float
 from marshmallow.validate import Range, OneOf
 
-from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 
 
@@ -46,18 +45,15 @@ class FactorScoreOverviewSchema(Schema):
         ordered = True
 
     factor_name = Str(
-        attribute=api_c.FACTOR_NAME,
         required=True,
         example="capability",
         validate=OneOf(api_c.LIST_OF_FACTORS),
     )
     factor_score = Integer(
-        attribute=api_c.FACTOR_SCORE,
         required=True,
         validate=Range(min_inclusive=-100, max_inclusive=100),
     )
     factor_description = Str(
-        attribute=api_c.FACTOR_DESCRIPTION,
         required=True,
         example="Good Quality",
     )
@@ -75,7 +71,7 @@ class TrustIdOverviewSchema(Schema):
     trust_id_score = Integer(
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
-    factors = List(Nested(FactorScoreOverviewSchema), attribute=db_c.FACTORS)
+    factors = List(Nested(FactorScoreOverviewSchema))
 
 
 class TrustIdAttributesSchema(Schema):
@@ -87,7 +83,6 @@ class TrustIdAttributesSchema(Schema):
         ordered = True
 
     factor_name = Str(
-        attribute=api_c.FACTOR_NAME,
         required=True,
         example="capability",
         validate=OneOf(api_c.LIST_OF_FACTORS),
