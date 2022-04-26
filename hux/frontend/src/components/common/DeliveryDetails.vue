@@ -147,7 +147,7 @@
             </div>
             <div v-if="header.value == 'replace'" class="text-body-1">
               <hux-switch
-                v-model="header.toggle"
+                v-model="item['replace']"
                 :switch-labels="switchLabels"
                 false-color="var(--v-black-lighten4)"
                 @change="handleChange($event)"
@@ -314,7 +314,6 @@ export default {
           text: "Replace",
           value: "replace",
           width: "20%",
-          toggle: true,
         },
       ],
       switchLabels: [
