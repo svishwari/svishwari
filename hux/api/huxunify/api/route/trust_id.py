@@ -275,9 +275,9 @@ class TrustIdAddSegment(SwaggerView):
                 api_c.SEGMENT_NAME: "Segment 1",
                 api_c.SEGMENT_FILTERS: [
                     {
-                        api_c.TYPE: "age",
-                        api_c.DESCRIPTION: "Age",
-                        api_c.VALUES: ["18-20 years", "21-24 years"],
+                        api_c.TYPE: "gender",
+                        api_c.DESCRIPTION: "Gender",
+                        api_c.VALUES: ["Female", "Male"],
                     }
                 ],
             },
