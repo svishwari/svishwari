@@ -947,6 +947,7 @@ LOOKALIKE = "lookalike"
 LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
+ATTRIBUTES = "attributes"
 AUDIENCES_DEFAULT_BATCH_SIZE = 0
 
 PARAM_STORE_PREFIX = "unified"
@@ -1709,6 +1710,8 @@ HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
 LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+SEGMENT_TYPE = "segment_type"
+SEGMENTS = "segments"
 SEGMENT_TYPES = [
     "composite & signal scores",
     "humanity attributes",
@@ -1724,6 +1727,8 @@ TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
 SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
 ATTRIBUTE_SCORES = "attribute_scores"
 NAME_OF_SIGNAL = "name_of_signal"
+ATTRIBUTE_TYPE = "attribute_type"
+ATTRIBUTE_NAME = "attribute_name"
 ATTRIBUTE_SCORE = "attribute_score"
 ATTRIBUTE_DESCRIPTION = "attribute_description"
 OCCUPATION = "occupation"
@@ -1736,6 +1741,7 @@ RATING = "rating"
 AGREE = "agree"
 NEUTRAL = "neutral"
 DISAGREE = "disagree"
+FACTORS = "factors"
 FACTOR_NAME = "factor_name"
 FACTOR_SCORE = "factor_score"
 FACTOR_DESCRIPTION = "factor_description"
@@ -1764,6 +1770,76 @@ FACTOR_DESCRIPTION_MAP = {
         "Capability is creating quality products, services, and/or "
         "experiences. It is scored on a scale between -100 to 100"
     ),
+}
+
+ATTRIBUTE_DESCRIPTION_TYPE_MAP = {
+    "products are good quality, accessible and safe to use": {
+        TYPE: "product_quality",
+        NAME: "Product quality",
+    },
+    "prices of products, services, and experiences are good value for money": {
+        TYPE: "good_value",
+        NAME: "Good value",
+    },
+    "employees and leadership are competent and understand how to respond to my needs": {
+        TYPE: "competent_leaders_employees",
+        NAME: "Competent leaders & employees",
+    },
+    "creates long term solutions and improvements that work well for me": {
+        TYPE: "long_term_solutions_improvements",
+        NAME: "Long-term solutions & improvements",
+    },
+    (
+        "customer support team quickly resolves issues with my safety, security, "
+        "and satisfaction top of mind"
+    ): {
+        TYPE: "quickly_resolves_issues",
+        NAME: "Quickly Resolves Issues",
+    },
+    "values & respects everyone, regardless of background, identity or beliefs": {
+        TYPE: "values_respects_everyone",
+        NAME: "Values & respects everyone",
+    },
+    "values the good of society and the environment, not just profit": {
+        TYPE: "values_society_environment",
+        NAME: "Values society & environment",
+    },
+    "takes care of employees": {
+        TYPE: "takes_care_of_employees",
+        NAME: "Takes care of employees",
+    },
+    "can be counted on to improve the quality of their products and services": {
+        TYPE: "continuous_product_improvement",
+        NAME: "Continuous product improvement",
+    },
+    "consistently delivers products, services, and experiences with quality": {
+        TYPE: "consistent_quality",
+        NAME: "Consistent quality",
+    },
+    "facilitates digital interactions that run smoothly and work when needed": {
+        TYPE: "smooth_digital_interactions",
+        NAME: "Smooth digital interactions",
+    },
+    "resolves issues in an adequate and timely manner": {
+        TYPE: "timely_issue_resolution",
+        NAME: "Timely issue resolution",
+    },
+    "arketing and communications are accurate and honest": {
+        TYPE: "honesty_marketing_comms",
+        NAME: "Honesty marketing & comms",
+    },
+    "is upfront about how they make and spend money from our interactions": {
+        TYPE: "upfront_on_how_they_make_money",
+        NAME: "Upfront on how they make money",
+    },
+    "how and why my data is used is communicated in plain and easy to understand language": {
+        TYPE: "plain_language_data_policy",
+        NAME: "Plain language data policy",
+    },
+    "is clear and upfront about fees and costs of products, services and experiences": {
+        TYPE: "clear_fees_costs",
+        NAME: "Clear fees & costs",
+    },
 }
 
 # TODO Remove STUB once data is available

@@ -203,14 +203,16 @@ class TrustIdAttributeComparison(SwaggerView):
             database=get_db_client(), okta_id=user[db_c.OKTA_ID]
         )
 
-        segments_data = [{
-            api_c.SEGMENT_NAME: "Default segment",
-            api_c.SEGMENT_FILTERS: [],
-            api_c.SURVEY_RESPONSES: get_survey_responses(database=get_db_client())
-        }]
-
-        # TODO: Remove after real data integration
-        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
+        # Set default segment without any filters
+        segments_data = [
+            {
+                api_c.SEGMENT_NAME: "Default segment",
+                api_c.SEGMENT_FILTERS: [],
+                api_c.SURVEY_RESPONSES: get_survey_responses(
+                    database=get_db_client()
+                ),
+            }
+        ]
 
         for seg in custom_segments:
             segments_data.append(
@@ -223,10 +225,9 @@ class TrustIdAttributeComparison(SwaggerView):
                     ),
                 }
             )
-        _ = get_trust_id_comparison_data(segments_data)
 
         return HuxResponse.OK(
-            data=required_comparison_data,
+            data=get_trust_id_comparison_data(segments_data),
             data_schema=TrustIdComparisonSchema(),
         )
 

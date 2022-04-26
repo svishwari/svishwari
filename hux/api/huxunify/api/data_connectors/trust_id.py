@@ -62,12 +62,14 @@ def aggregate_attributes(survey_responses: list) -> dict:
             if isinstance(attribute_values, dict):
                 attribute_values.update(
                     {
-                        api_c.SCORE: int((
-                            attribute_values.get(api_c.AGREE, 0)
-                            - attribute_values.get(api_c.DISAGREE, 0)
+                        api_c.SCORE: int(
+                            (
+                                attribute_values.get(api_c.AGREE, 0)
+                                - attribute_values.get(api_c.DISAGREE, 0)
+                            )
+                            / len(survey_responses)
+                            * 100
                         )
-                        / len(survey_responses)
-                        * 100)
                     }
                 )
 
@@ -89,12 +91,14 @@ def get_trust_id_overview(survey_responses: list) -> dict:
         db_c.FACTORS: [
             {
                 api_c.FACTOR_NAME: factor_name,
-                api_c.FACTOR_SCORE: int((
+                api_c.FACTOR_SCORE: int(
                     (
-                        factor_values.get(api_c.AGREE, 0)
-                        - factor_values.get(api_c.DISAGREE, 0)
+                        (
+                            factor_values.get(api_c.AGREE, 0)
+                            - factor_values.get(api_c.DISAGREE, 0)
+                        )
+                        / len(survey_responses)
                     )
-                    / len(survey_responses))
                 )
                 * 100,
                 api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
@@ -193,21 +197,128 @@ def get_trust_id_comparison_data(data_by_segment: list) -> dict:
     Returns:
          (list): Segment-wise comparison data
     """
-    data_by_factors = defaultdict(dict)
+    segment_data_by_factors = defaultdict(dict)
+    overview_data = {}
 
     for segment_data in data_by_segment:
         attributes_data = get_trust_id_attributes(
             segment_data[api_c.SURVEY_RESPONSES]
         )
+        overview_data[
+            segment_data[api_c.SEGMENT_NAME]
+        ] = get_trust_id_overview(segment_data[api_c.SURVEY_RESPONSES])
 
         for factor_name in api_c.LIST_OF_FACTORS:
-            if segment_data[api_c.SEGMENT_NAME] not in data_by_factors[factor_name].keys():
-                data_by_factors[factor_name] = {segment_data[api_c.SEGMENT_NAME]: []}
-            data_by_factors[factor_name][segment_data[api_c.SEGMENT_NAME]].extend(
+            if (
+                segment_data[api_c.SEGMENT_NAME]
+                not in segment_data_by_factors[factor_name].keys()
+            ):
+                segment_data_by_factors[factor_name].update(
+                    {segment_data[api_c.SEGMENT_NAME]: []}
+                )
+            segment_data_by_factors[factor_name][
+                segment_data[api_c.SEGMENT_NAME]
+            ].extend(
                 [
                     x
                     for x in attributes_data
                     if x[api_c.FACTOR_NAME] == factor_name
-               ]
+                ]
             )
-    return data_by_factors
+
+    composite_factor_scores = {
+        api_c.SEGMENT_TYPE: api_c.SEGMENT_TYPES[0],
+        api_c.SEGMENTS: [],
+    }
+
+    for segment_data in data_by_segment:
+        composite_factor_scores[api_c.SEGMENTS].append(
+            {
+                api_c.SEGMENT_NAME: segment_data[api_c.SEGMENT_NAME],
+                api_c.SEGMENT_FILTERS: segment_data[api_c.SEGMENT_FILTERS],
+                api_c.ATTRIBUTES: [
+                    {
+                        api_c.ATTRIBUTE_TYPE: x[api_c.FACTOR_NAME],
+                        api_c.ATTRIBUTE_NAME: x[api_c.FACTOR_NAME].title(),
+                        api_c.ATTRIBUTE_DESCRIPTION: x[
+                            api_c.FACTOR_DESCRIPTION
+                        ],
+                        api_c.ATTRIBUTE_SCORE: x[api_c.FACTOR_SCORE],
+                    }
+                    for x in overview_data[segment_data[api_c.SEGMENT_NAME]][
+                        api_c.FACTORS
+                    ]
+                ],
+            }
+        )
+        composite_factor_scores[api_c.SEGMENTS][-1][api_c.ATTRIBUTES].append(
+            {
+                api_c.ATTRIBUTE_TYPE: "HX TrustID",
+                api_c.ATTRIBUTE_NAME: "trust_id",
+                api_c.ATTRIBUTE_DESCRIPTION: "TrustID is scored on a scale between -100 to 100",
+                api_c.ATTRIBUTE_SCORE: overview_data[
+                    segment_data[api_c.SEGMENT_NAME]
+                ][api_c.TRUST_ID_SCORE],
+            }
+        )
+
+    segment_type_map = {
+        api_c.CAPABILITY: "capability attributes",
+        api_c.HUMANITY: "humanity attributes",
+        api_c.RELIABILITY: "reliability attributes",
+        api_c.TRANSPARENCY: "transparency attributes",
+    }
+
+    trust_id_comparison_data = []
+    for factor_name, data_by_factor in segment_data_by_factors.items():
+        factor_comparison_data = {
+            api_c.SEGMENT_TYPE: segment_type_map[factor_name],
+            api_c.SEGMENTS: [],
+        }
+        for segment_name, data in data_by_factor.items():
+            factor_comparison_data[api_c.SEGMENTS].append(
+                {
+                    api_c.SEGMENT_NAME: segment_name,
+                    api_c.SEGMENT_FILTERS: [
+                        segment[api_c.SEGMENT_FILTERS]
+                        for segment in data_by_segment
+                        if segment[api_c.SEGMENT_NAME] == segment_name
+                    ][0],
+                    api_c.ATTRIBUTES: [
+                        {
+                            api_c.ATTRIBUTE_DESCRIPTION: x[
+                                api_c.ATTRIBUTE_DESCRIPTION
+                            ],
+                            api_c.ATTRIBUTE_SCORE: x[api_c.ATTRIBUTE_SCORE],
+                            api_c.ATTRIBUTE_TYPE: api_c.ATTRIBUTE_DESCRIPTION_TYPE_MAP[
+                                x[api_c.ATTRIBUTE_DESCRIPTION].lower()
+                            ][
+                                api_c.TYPE
+                            ],
+                            api_c.ATTRIBUTE_NAME: api_c.ATTRIBUTE_DESCRIPTION_TYPE_MAP[
+                                x[api_c.ATTRIBUTE_DESCRIPTION].lower()
+                            ][
+                                api_c.NAME
+                            ],
+                        }
+                        for x in data
+                    ],
+                }
+            )
+            for factor_data in composite_factor_scores[api_c.SEGMENTS]:
+                if factor_data[api_c.SEGMENT_NAME] != segment_name:
+                    continue
+                factor_comparison_data[api_c.SEGMENTS][-1][
+                    api_c.ATTRIBUTES
+                ].extend(
+                    [
+                        x
+                        for x in factor_data[api_c.ATTRIBUTES]
+                        if x[api_c.ATTRIBUTE_TYPE] == factor_name
+                    ]
+                )
+
+        trust_id_comparison_data.append(factor_comparison_data)
+    trust_id_comparison_data.append(composite_factor_scores)
+
+    return trust_id_comparison_data
