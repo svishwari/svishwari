@@ -14,7 +14,7 @@
               <icon
                 data-e2e="notification-bell"
                 class="mx-2 my-2 nav-icon"
-                :type="seenNotifications? 'bell' : 'bell-notification'"
+                :type="seenNotifications ? 'bell' : 'bell-notification'"
                 :size="24"
                 :class="{ 'active-icon': batchDetails.menu }"
               />
