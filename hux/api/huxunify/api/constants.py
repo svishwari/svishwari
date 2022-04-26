@@ -1713,7 +1713,7 @@ LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
 SEGMENT_TYPE = "segment_type"
 SEGMENTS = "segments"
 SEGMENT_TYPES = [
-    "composite & signal scores",
+    "composite & factor scores",
     "humanity attributes",
     "reliability attributes",
     "capability attributes",
