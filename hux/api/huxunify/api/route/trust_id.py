@@ -1,6 +1,5 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for TrustID APIs."""
-import copy
 from http import HTTPStatus
 from typing import Tuple
 
@@ -32,6 +31,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
+    populate_trust_id_segments,
 )
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
@@ -42,7 +42,6 @@ from huxunify.api.schema.trust_id import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.stubbed_data.trust_id_stub import (
-    trust_id_comparison_stub_data,
     trust_id_filters_stub,
 )
 
@@ -203,28 +202,9 @@ class TrustIdAttributeComparison(SwaggerView):
             database=get_db_client(), okta_id=user[db_c.OKTA_ID]
         )
 
-        # Set default segment without any filters
-        segments_data = [
-            {
-                api_c.SEGMENT_NAME: "Default segment",
-                api_c.SEGMENT_FILTERS: [],
-                api_c.SURVEY_RESPONSES: get_survey_responses(
-                    database=get_db_client()
-                ),
-            }
-        ]
-
-        for seg in custom_segments:
-            segments_data.append(
-                {
-                    api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
-                    api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
-                    api_c.SURVEY_RESPONSES: get_survey_responses(
-                        database=get_db_client(),
-                        filters=seg[api_c.SEGMENT_FILTERS],
-                    ),
-                }
-            )
+        segments_data = populate_trust_id_segments(
+            database=get_db_client(), custom_segments=custom_segments
+        )
 
         return HuxResponse.OK(
             data=get_trust_id_comparison_data(segments_data),
@@ -341,16 +321,12 @@ class TrustIdAddSegment(SwaggerView):
         # Return the trust id segments for user
         segments = get_user_trust_id_segments(database, user[db_c.OKTA_ID])
 
-        if len(segments) >= 3:
+        if len(segments) >= 4:
             return HuxResponse.FORBIDDEN(
                 message="Threshold of maximum segments reached."
             )
 
-        added_segments = [
-            x["segment_name"]
-            for x in trust_id_comparison_stub_data[0]["segments"]
-        ]
-        added_segments.extend([x[api_c.SEGMENT_NAME] for x in segments])
+        added_segments = [segment.get(api_c.NAME) for segment in segments]
         # Check if a segment with the specified name exists
         if segment_details[api_c.SEGMENT_NAME] in added_segments:
             return HuxResponse.CONFLICT(
@@ -361,23 +337,12 @@ class TrustIdAddSegment(SwaggerView):
             database, user[db_c.OKTA_ID], segment_details
         )[db_c.TRUST_ID_SEGMENTS]
 
-        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
-        for seg in updated_segments:
-            _ = [
-                x["segments"].append(
-                    {
-                        "segment_name": seg["segment_name"],
-                        "segment_filters": seg["segment_filters"],
-                        "attributes": x["segments"][-1]["attributes"],
-                    }
-                )
-                for x in required_comparison_data
-            ]
+        segments_data = populate_trust_id_segments(
+            database=get_db_client(), custom_segments=updated_segments
+        )
 
-        # Update logic to filter trust id data based on added
-        # segments using updated_segments
         return HuxResponse.CREATED(
-            data=required_comparison_data,
+            data=get_trust_id_comparison_data(segments_data),
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -441,22 +406,11 @@ class TrustIdRemoveSegment(SwaggerView):
             get_db_client(), user[db_c.OKTA_ID], segment_name
         )[db_c.TRUST_ID_SEGMENTS]
 
-        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
-        for seg in updated_segments:
-            _ = [
-                x["segments"].append(
-                    {
-                        "segment_name": seg["segment_name"],
-                        "segment_filters": seg["segment_filters"],
-                        "attributes": x["segments"][-1]["attributes"],
-                    }
-                )
-                for x in required_comparison_data
-            ]
+        segments_data = populate_trust_id_segments(
+            database=get_db_client(), custom_segments=updated_segments
+        )
 
-        # Update logic to filter trust id data based on added
-        # segments using updated_segments
         return HuxResponse.OK(
-            data=required_comparison_data,
+            data=get_trust_id_comparison_data(segments_data),
             data_schema=TrustIdComparisonSchema(),
         )

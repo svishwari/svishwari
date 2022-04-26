@@ -1970,3 +1970,10 @@ APPLICATION_CATEGORIES = [
     "Monitoring",
     "Uncategorized",
 ]
+
+SEGMENT_TYPE_MAP = {
+    CAPABILITY: "capability attributes",
+    HUMANITY: "humanity attributes",
+    RELIABILITY: "reliability attributes",
+    TRANSPARENCY: "transparency attributes",
+}

@@ -25,6 +25,7 @@ from pymongo import MongoClient
 from huxunifylib.util.general.logging import logger
 
 from huxunifylib.database.audit_management import create_audience_audit
+from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -1113,10 +1114,14 @@ def clean_and_aggregate_datafeed_details(
             }
         )
         # compute run duration if success or running and end_dt available
-        if df_detail[api_c.STATUS] in [
-            api_c.STATUS_SUCCESS,
-            api_c.STATUS_RUNNING,
-        ] and df_detail.get(api_c.PROCESSED_END_DATE):
+        if (
+            df_detail[api_c.STATUS]
+            in [
+                api_c.STATUS_SUCCESS,
+                api_c.STATUS_RUNNING,
+            ]
+            and df_detail.get(api_c.PROCESSED_END_DATE)
+        ):
             df_detail[api_c.RUN_DURATION] = parse_seconds_to_duration_string(
                 int(
                     (
@@ -1451,3 +1456,37 @@ async def build_notification_recipients_and_send_email(
 
         # TODO: call send email function to actually send an email
         # send_email(**send_email_dict)
+
+
+def populate_trust_id_segments(
+    database: DatabaseClient, custom_segments: list
+) -> list:
+    """Function to populate Trust ID Segment data.
+    Args:
+        database (DatabaseClient): A database client.
+        custom_segments(list): List of user specific segments data.
+    Returns:
+        list: Filled segments data with survey responses.
+    """
+
+    # Set default segment without any filters
+    segments_data = [
+        {
+            api_c.SEGMENT_NAME: "Default segment",
+            api_c.SEGMENT_FILTERS: [],
+            api_c.SURVEY_RESPONSES: get_survey_responses(database=database),
+        }
+    ]
+
+    for seg in custom_segments:
+        segments_data.append(
+            {
+                api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
+                api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
+                api_c.SURVEY_RESPONSES: get_survey_responses(
+                    database=database,
+                    filters=seg[api_c.SEGMENT_FILTERS],
+                ),
+            }
+        )
+    return segments_data

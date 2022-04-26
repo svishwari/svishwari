@@ -262,17 +262,10 @@ def get_trust_id_comparison_data(data_by_segment: list) -> dict:
             }
         )
 
-    segment_type_map = {
-        api_c.CAPABILITY: "capability attributes",
-        api_c.HUMANITY: "humanity attributes",
-        api_c.RELIABILITY: "reliability attributes",
-        api_c.TRANSPARENCY: "transparency attributes",
-    }
-
     trust_id_comparison_data = []
     for factor_name, data_by_factor in segment_data_by_factors.items():
         factor_comparison_data = {
-            api_c.SEGMENT_TYPE: segment_type_map[factor_name],
+            api_c.SEGMENT_TYPE: api_c.SEGMENT_TYPE_MAP[factor_name],
             api_c.SEGMENTS: [],
         }
         for segment_name, data in data_by_factor.items():
