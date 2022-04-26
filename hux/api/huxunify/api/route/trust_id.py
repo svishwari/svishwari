@@ -326,7 +326,9 @@ class TrustIdAddSegment(SwaggerView):
                 message="Threshold of maximum segments reached."
             )
 
-        added_segments = [segment.get(api_c.NAME) for segment in segments]
+        added_segments = [
+            segment.get(api_c.SEGMENT_NAME) for segment in segments
+        ]
         # Check if a segment with the specified name exists
         if segment_details[api_c.SEGMENT_NAME] in added_segments:
             return HuxResponse.CONFLICT(

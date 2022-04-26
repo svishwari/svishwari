@@ -1479,14 +1479,16 @@ def populate_trust_id_segments(
     ]
 
     for seg in custom_segments:
-        segments_data.append(
-            {
-                api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
-                api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
-                api_c.SURVEY_RESPONSES: get_survey_responses(
-                    database=database,
-                    filters=seg[api_c.SEGMENT_FILTERS],
-                ),
-            }
+        survey_response = get_survey_responses(
+            database=database,
+            filters=seg[api_c.SEGMENT_FILTERS],
         )
+        if survey_response:
+            segments_data.append(
+                {
+                    api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
+                    api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
+                    api_c.SURVEY_RESPONSES: survey_response,
+                }
+            )
     return segments_data
