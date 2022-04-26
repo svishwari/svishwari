@@ -179,7 +179,7 @@ export default {
   data: () => ({
     // TODO: integrate with API endpoint for configuring this in the UI
     client: {
-      name: "Client",
+      name: "Retail Client",
       logo: "client",
     },
     menu: false,
