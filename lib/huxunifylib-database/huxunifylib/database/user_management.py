@@ -58,6 +58,7 @@ USER_LOOKUP_PIPELINE = [
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+# pylint: disable=too-many-locals
 def set_user(
     database: DatabaseClient,
     okta_id: str,
