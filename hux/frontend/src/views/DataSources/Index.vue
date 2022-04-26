@@ -184,6 +184,7 @@ export default {
 .datasource-loaded {
   ::v-deep {
     .error-row {
+      margin-top: -70px !important;
       padding-top: 75px !important;
       padding-bottom: 75px !important;
       position: relative;
