@@ -405,7 +405,7 @@ COMPONENT_ID = "component_id"
 COMPONENT_NAME = "component_name"
 USER_PII_ACCESS = "pii_access"
 SEEN_NOTIFICATIONS = "seen_notifications"
-LAST_SEEN_ALERT_TIME="last_seen_alert_time"
+LAST_SEEN_ALERT_TIME = "last_seen_alert_time"
 
 CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"
