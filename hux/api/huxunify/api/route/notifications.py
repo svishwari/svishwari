@@ -11,7 +11,7 @@ import pymongo
 from bson import ObjectId
 from flask import Blueprint, request, Response
 from flasgger import SwaggerView
-from huxunifylib.database.user_management import update_all_users
+from huxunifylib.database.user_management import update_all_users, update_user
 
 from huxunifylib.util.general.logging import logger
 
@@ -297,19 +297,50 @@ class NotificationsSearch(SwaggerView):
             else pymongo.DESCENDING
         )
 
+        notifications = notification_management.get_notifications_batch(
+            get_db_client(),
+            batch_size=batch_size,
+            sort_order=sort_order,
+            batch_number=batch_number,
+            notification_types=notification_types,
+            notification_categories=notification_categories,
+            users=users,
+            start_date=start_date,
+            end_date=end_date,
+        )
+
+        if batch_size == 5:
+            latest_notification_time = max(
+                [
+                    notification[db_c.NOTIFICATION_FIELD_CREATED]
+                    for notification in notifications[api_c.NOTIFICATIONS_TAG]
+                ]
+            )
+            if (
+                user.get(db_c.LAST_SEEN_ALERT_TIME) is None
+                or user.get(db_c.LAST_SEEN_ALERT_TIME)
+                < latest_notification_time
+            ):
+                update_user(
+                    database=get_db_client(),
+                    okta_id=user[db_c.OKTA_ID],
+                    update_doc={
+                        db_c.SEEN_NOTIFICATIONS: False,
+                        db_c.LAST_SEEN_ALERT_TIME: latest_notification_time,
+                    },
+                )
+        else:
+            update_user(
+                database=get_db_client(),
+                okta_id=user[db_c.OKTA_ID],
+                update_doc={db_c.SEEN_NOTIFICATIONS: True},
+            )
+        notifications.update(
+            {db_c.SEEN_NOTIFICATIONS: user[db_c.SEEN_NOTIFICATIONS]}
+        )
+
         return HuxResponse.OK(
-            data=notification_management.get_notifications_batch(
-                get_db_client(),
-                batch_size=batch_size,
-                sort_order=sort_order,
-                batch_number=batch_number,
-                notification_types=notification_types,
-                notification_categories=notification_categories,
-                users=users,
-                start_date=start_date,
-                end_date=end_date,
-            ),
-            data_schema=NotificationsSchema(),
+            data=notifications, data_schema=NotificationsSchema()
         )
 
 
