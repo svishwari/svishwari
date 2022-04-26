@@ -379,35 +379,12 @@ class IDROverviewWithDateRangeSchema(Schema):
     overview = Nested(IDROverviewSchema)
 
 
-class CustomerEventCountSchema(Schema):
-    """Customer Event with Count Schema"""
-
-    class Meta:
-        """Meta class for Schema"""
-
-        ordered = True
-
-    viewed_checkout = Integer(required=True, example=1)
-    abandoned_cart = Integer(
-        required=True, example=1, attribute=api_c.ABANDONED_CART
-    )
-    trait = Integer(required=True, example=1, attribute=api_c.TRAIT)
-    sale = Integer(required=True, example=1, attribute=api_c.SALE)
-    view_content = Integer(
-        required=True, example=1, attribute=api_c.VIEW_CONTENT
-    )
-    product_search = Integer(
-        required=True, example=1, attribute=api_c.PRODUCT_SEARCHED
-    )
-    purchase = Integer(required=True, example=1, attribute=api_c.PURCHASE)
-
-
 class CustomerEventsSchema(Schema):
     """Customer Events Schema"""
 
     date = DateTimeWithZ(required=True)
     total_event_count = Integer(required=True, example=5)
-    event_type_counts = Nested(CustomerEventCountSchema)
+    event_type_counts = Dict()
 
 
 class TotalCustomersInsightsSchema(Schema):
