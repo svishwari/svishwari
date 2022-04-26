@@ -267,7 +267,7 @@ export default {
 .header-section {
   position: fixed;
   width: 89%;
-  z-index: 999999 !important;
+  z-index: 6 !important;
 }
 .content-section {
   margin-top: 110px;

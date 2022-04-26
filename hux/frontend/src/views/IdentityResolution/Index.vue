@@ -232,7 +232,7 @@
           content-height="300px"
           @clear="resetFilters"
           @apply="applyFilters"
-          @close="isFilterToggled = !isFilterToggled"
+          @close="close"
         >
           <hux-filter-panels :expanded="[0]">
             <hux-filter-panel
@@ -316,6 +316,8 @@ export default {
       dataFeedsErrorState: false,
       totalCount: 0,
       enableApply: false,
+      selectedStartDate: null,
+      selectedEndDate: null,
     }
   },
   computed: {
@@ -396,6 +398,8 @@ export default {
     },
 
     applyFilters() {
+      this.selectedStartDate = this.filterStartDate
+      this.selectedEndDate = this.filterEndDate
       this.totalCount = this.numFiltersSelected
       this.refreshData()
     },
@@ -412,6 +416,7 @@ export default {
     resetFilters() {
       this.filterStartDate = this.minDate
       this.filterEndDate = this.maxDate
+      this.applyFilters()
     },
     async loadMatchingTrends() {
       this.loadingMatchingTrends = true
@@ -440,6 +445,19 @@ export default {
       } finally {
         this.loadingOverview = false
       }
+    },
+    close() {
+      if (this.selectedStartDate == null) {
+        this.filterStartDate = this.minDate
+      } else {
+        this.filterStartDate = this.selectedStartDate
+      }
+      if (this.selectedEndDate == null) {
+        this.filterEndDate = this.maxDate
+      } else {
+        this.filterEndDate = this.selectedEndDate
+      }
+      this.isFilterToggled = false
     },
   },
 }
