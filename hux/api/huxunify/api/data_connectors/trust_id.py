@@ -258,8 +258,8 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
         composite_factor_scores[api_c.SEGMENTS][-1][api_c.ATTRIBUTES].insert(
             0,
             {
-                api_c.ATTRIBUTE_TYPE: "HX TrustID",
-                api_c.ATTRIBUTE_NAME: "trust_id",
+                api_c.ATTRIBUTE_TYPE: "trust_id",
+                api_c.ATTRIBUTE_NAME: "HX TrustID",
                 api_c.ATTRIBUTE_DESCRIPTION: "TrustID is scored on a scale between -100 to 100",
                 api_c.ATTRIBUTE_SCORE: overview_data[
                     segment_data[api_c.SEGMENT_NAME]
