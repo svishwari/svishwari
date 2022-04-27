@@ -32,9 +32,9 @@ Decisioning|[]()|[https://hux-model-api-dec.decisioning-pendleton.in/api/v1alpha
 
 ## Azure Environments
 Component|Dev URL| Stage URL | RC1 URL | Prod URL |
----------|------|----------|---------|----------|
+---------|----|----------|---------|----------|
 Hux Unified UI|[https://unified-ui-dev.main.use2.hux-husdev2.in/](https://unified-ui-dev.main.use2.hux-husdev2.in/)| - | - | - |
-Hux Unified API| - | - | - | - |
+Hux Unified API|[https://unified-api-dev.main.use2.hux-husdev2.in/api/v1/ui/](https://unified-api-dev.main.use2.hux-husdev2.in/api/v1/ui/)| - | - | - |
 Argo CD|[https://argocd.hux-husdev2.in/](https://argocd.hux-husdev2.in/)| - | - | - |
 Customer API|[https://customer-profile-api.main.use2.hux-husdev2.in/docs](https://customer-profile-api.main.use2.hux-husdev2.in/docs)| - | - | - |
 Connections API|[https://connections-api.main.use2.hux-husdev2.in/docs](https://connections-api.main.use2.hux-husdev2.in/docs)| - | - | - |
