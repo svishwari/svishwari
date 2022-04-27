@@ -92,6 +92,10 @@ export default {
         Math.max(...d.values.map((em) => em.value))
       )
 
+      if (minYvalue == maxYvalue) {
+        maxYvalue = 0
+      }
+
       let enableNegativeAxis = minYvalue < 0
 
       // Adding dynamic domain values
