@@ -34,7 +34,7 @@ describe("Data Management > Data Sources", () => {
         .should("eq", $elem.length + 1)
 
       cy.get(selector.pendingStatus)
-        .eq(0)
+        .eq(-1)
         .siblings(".mdi-dots-vertical")
         .click()
       cy.get(selector.pendingDataSourceRemove).eq(0).click()
@@ -75,16 +75,18 @@ describe("Data Management > Data Sources", () => {
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000)
-    cy.get(".datasource-datafeeds-table").should("exist")
-
-    cy.get(".data-feed-name").eq(0).click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(4000)
-    cy.get(selector.dataFilesWrapper).then((elem) => {
-      if (elem.find(".datasource-datafeeds-details-table").length > 0) {
-        cy.get(selector.dataFeedDetailsTable).should("exist")
-      } else {
-        cy.wrap(elem.find(".empty-error-card")).should("exist")
+    cy.get(selector.datasourceDatafeedsTable).then((datafeeds) => {
+      if (datafeeds.find(".data-feed-name").length > 0) {
+        datafeeds.find(".data-feed-name").eq(0).click()
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(4000)
+        cy.get(selector.dataFilesWrapper).then((elem) => {
+          if (elem.find(".datasource-datafeeds-details-table").length > 0) {
+            cy.get(selector.dataFeedDetailsTable).should("exist")
+          } else {
+            cy.wrap(elem.find(".empty-error-card")).should("exist")
+          }
+        })
       }
     })
   })
