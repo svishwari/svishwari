@@ -22,26 +22,26 @@ describe("Data Management > Data Sources", () => {
           return false
         }
       })
-      cy.get("button").contains("Request 1 data source").click()
+      cy.get("button").contains("Request 1 data source")
+      cy.get("button").contains("Cancel").click()
       cy.location("pathname").should("eq", route.dataSources)
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(4000)
 
-      // make sure that number of data sources have increased by 1
-      cy.get(selector.datasources)
-        .its("length")
-        .should("eq", $elem.length + 1)
+      cy.get(selector.datasources).its("length").should("eq", $elem.length)
 
       cy.get(selector.pendingStatus)
-        .eq(-1)
+        .eq(0)
         .siblings(".mdi-dots-vertical")
         .click()
       cy.get(selector.pendingDataSourceRemove).eq(0).click()
       cy.get(selector.removeDataSourceConfirmation)
         .get("button")
         .contains("Yes, remove it")
-        .eq(0)
+      cy.get(selector.removeDataSourceConfirmation)
+        .get("button")
+        .contains("Nevermind")
         .click()
 
       cy.get(selector.engagement.exitDrawer).click()
