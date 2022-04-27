@@ -1,6 +1,6 @@
 export default [
   {
-    signal_name: "capability",
+    factor_name: "capability",
     attribute_score: -31,
     attribute_description:
       "Products are good quality, accessible and safe to use",
@@ -23,7 +23,7 @@ export default [
     },
   },
   {
-    signal_name: "capability",
+    factor_name: "capability",
     attribute_score: 16,
     attribute_description:
       "Prices of products, services, and experiences are good value for money",
@@ -46,7 +46,7 @@ export default [
     },
   },
   {
-    signal_name: "capability",
+    factor_name: "capability",
     attribute_score: 3,
     attribute_description:
       "Employees and leadership are competent and understand how to respond to needs",
@@ -69,7 +69,7 @@ export default [
     },
   },
   {
-    signal_name: "capability",
+    factor_name: "capability",
     attribute_score: 6,
     attribute_description:
       "Creates long-term solutions and improvements that work well for me",
@@ -92,7 +92,7 @@ export default [
     },
   },
   {
-    signal_name: "humanity",
+    factor_name: "humanity",
     attribute_score: 14,
     attribute_description:
       "Quickly resolves issues with safety, security and satisfaction top of mind",
@@ -115,7 +115,7 @@ export default [
     },
   },
   {
-    signal_name: "humanity",
+    factor_name: "humanity",
     attribute_score: 23,
     attribute_description:
       "Values and respects everyone, regardless of background, identity or beliefs",
@@ -138,7 +138,7 @@ export default [
     },
   },
   {
-    signal_name: "humanity",
+    factor_name: "humanity",
     attribute_score: 43,
     attribute_description:
       "Values the good of society and the environment, not just profit",
@@ -161,7 +161,7 @@ export default [
     },
   },
   {
-    signal_name: "humanity",
+    factor_name: "humanity",
     attribute_score: 6,
     attribute_description: "Takes care of employees",
     overall_customer_rating: {
@@ -183,7 +183,7 @@ export default [
     },
   },
   {
-    signal_name: "transparency",
+    factor_name: "transparency",
     attribute_score: -14,
     attribute_description:
       "Marketing and communications are accurate and honest",
@@ -206,7 +206,7 @@ export default [
     },
   },
   {
-    signal_name: "transparency",
+    factor_name: "transparency",
     attribute_score: 41,
     attribute_description:
       "Upfront about how they make and spend money from interactions",
@@ -229,7 +229,7 @@ export default [
     },
   },
   {
-    signal_name: "transparency",
+    factor_name: "transparency",
     attribute_score: -23,
     attribute_description:
       "How and why my data is used is communicated in plain and easy to understand language",
@@ -252,7 +252,7 @@ export default [
     },
   },
   {
-    signal_name: "transparency",
+    factor_name: "transparency",
     attribute_score: 6,
     attribute_description:
       "Clear and upfront about fees and costs of products, services and experiences",
@@ -275,7 +275,7 @@ export default [
     },
   },
   {
-    signal_name: "reliability",
+    factor_name: "reliability",
     attribute_score: -9,
     attribute_description:
       "Can be counted on to improve the quality of products and services",
@@ -298,7 +298,7 @@ export default [
     },
   },
   {
-    signal_name: "reliability",
+    factor_name: "reliability",
     attribute_score: 7,
     attribute_description:
       "Consistently delivers products, services and experiences with quality",
@@ -321,7 +321,7 @@ export default [
     },
   },
   {
-    signal_name: "reliability",
+    factor_name: "reliability",
     attribute_score: -33,
     attribute_description:
       "Facilitates digital interactions that run smoothly and work when needed",
@@ -344,7 +344,7 @@ export default [
     },
   },
   {
-    signal_name: "reliability",
+    factor_name: "reliability",
     attribute_score: 16,
     attribute_description: "Resolves issues in an adequate and timely manner",
     overall_customer_rating: {

@@ -293,53 +293,55 @@ export default {
           (element) => dateFormatter(element.date) == dateD
         )
 
-        svg
-          .selectAll(".hover-line-y")
-          .attr("x1", finalXCoordinate)
-          .attr("x2", finalXCoordinate)
-          .attr("y1", 0)
-          .attr("y2", h)
-          .style("display", "block")
+        if (dataToolTip) {
+          svg
+            .selectAll(".hover-line-y")
+            .attr("x1", finalXCoordinate)
+            .attr("x2", finalXCoordinate)
+            .attr("y1", 0)
+            .attr("y2", h)
+            .style("display", "block")
 
-        svg.selectAll(".dot").each(function () {
-          if (this.getAttribute("cx") == finalXCoordinate) {
-            let yPosition = this.getAttribute("cy")
-            yData = yPosition
-            svg
-              .append("circle")
-              .classed("parent-hover-circle", true)
-              .attr("cx", finalXCoordinate)
-              .attr("cy", yPosition)
-              .attr("r", 9)
-              .style("stroke", "white")
-              .style("stroke-opacity", "1")
-              .style("stroke-width", 1)
-              .style("fill", "white")
-              .style("pointer-events", "none")
+          svg.selectAll(".dot").each(function () {
+            if (this.getAttribute("cx") == finalXCoordinate) {
+              let yPosition = this.getAttribute("cy")
+              yData = yPosition
+              svg
+                .append("circle")
+                .classed("parent-hover-circle", true)
+                .attr("cx", finalXCoordinate)
+                .attr("cy", yPosition)
+                .attr("r", 9)
+                .style("stroke", "white")
+                .style("stroke-opacity", "1")
+                .style("stroke-width", 1)
+                .style("fill", "white")
+                .style("pointer-events", "none")
 
-            svg
-              .append("circle")
-              .classed("child-hover-circle", true)
-              .attr("cx", finalXCoordinate)
-              .attr("cy", yPosition)
-              .attr("r", 7)
-              .style("stroke", "#0076A8")
-              .style("stroke-opacity", "1")
-              .style("stroke-width", 2)
-              .style("fill", "white")
-              .style("pointer-events", "none")
+              svg
+                .append("circle")
+                .classed("child-hover-circle", true)
+                .attr("cx", finalXCoordinate)
+                .attr("cy", yPosition)
+                .attr("r", 7)
+                .style("stroke", "#0076A8")
+                .style("stroke-opacity", "1")
+                .style("stroke-width", 2)
+                .style("fill", "white")
+                .style("pointer-events", "none")
+            }
+          })
+          if (dataToolTip && finalXCoordinate) {
+            dataToolTip.xPosition = finalXCoordinate
           }
-        })
-        if (dataToolTip && finalXCoordinate) {
-          dataToolTip.xPosition = finalXCoordinate
+          if (dataToolTip && yData) {
+            dataToolTip.yPosition = yData
+          }
+          dataToolTip.invertPosition =
+            finalXCoordinate > maxRightLimit && invertedChart ? true : false
+          dataToolTip.domain_name = this.domain_name
+          this.tooltipDisplay(true, dataToolTip)
         }
-        if (dataToolTip && yData) {
-          dataToolTip.yPosition = yData
-        }
-        dataToolTip.invertPosition =
-          finalXCoordinate > maxRightLimit && invertedChart ? true : false
-        dataToolTip.domain_name = this.domain_name
-        this.tooltipDisplay(true, dataToolTip)
       }
     },
     tooltipDisplay(showTip, eventsData) {

@@ -1,15 +1,6 @@
 <template>
   <div>
-    <hux-page
-      max-width="100%"
-      class="home-page"
-      :style="{
-        height:
-          totalCustomersChartErrorState && notificationsTableErrorState
-            ? 'calc(100vh - 167px)'
-            : unset,
-      }"
-    >
+    <hux-page max-width="100%" class="home-page">
       <template #header>
         <hux-page-header
           :title="`Welcome back, ${fullName}!`"
@@ -133,7 +124,7 @@
               v-if="!loadingNotifications && numNotifications != 0"
               :columns="tableColumns"
               :data-items="notifications"
-              class="notifications-table"
+              class="notifications-table px-6"
               sort-column="created"
               sort-desc
             >
@@ -397,6 +388,12 @@ export default {
       background: var(--v-primary-lighten2) !important;
       padding: 0px 28px !important;
       height: 32px !important;
+      &:first-child {
+        border-top-left-radius: 12px !important;
+      }
+      &:last-child {
+        border-top-right-radius: 12px !important;
+      }
     }
     td {
       padding: 18px 28px !important;
@@ -453,6 +450,7 @@ export default {
   margin-left: 4px !important;
 }
 ::v-deep.home-page {
+  min-height: calc(100vh - 166px);
   .container {
     padding-top: 45px !important;
     height: 100% !important;

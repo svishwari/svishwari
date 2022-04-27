@@ -321,13 +321,7 @@ def get_performance_metrics_stub(
                 if destination[db_c.ID] == x[db_c.DELIVERY_PLATFORM_ID]
             ]
             for match in matches:
-                if (
-                    match[api_c.STATUS] == api_c.STATUS_DELIVERED
-                    and (
-                        datetime.now() - match[db_c.JOB_END_TIME]
-                    ).total_seconds()
-                    >= 120
-                ):
+                if match[api_c.STATUS] == api_c.STATUS_DELIVERED:
                     destination_ids.append(destination[db_c.ID])
                     break
 
