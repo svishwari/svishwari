@@ -1488,3 +1488,25 @@ def populate_trust_id_segments(
                 }
             )
     return segments_data
+
+
+def get_engaged_audience_last_delivery(audience: dict) -> None:
+    """Method for getting last delivery at engagement and engaged audience level
+    Args:
+        audience(dict): Engagement Object
+    Returns:
+    """
+
+    delivery_times = []
+
+    delivery_times.extend(
+        [
+            destination[api_c.LATEST_DELIVERY][db_c.UPDATE_TIME]
+            for destination in audience[api_c.DESTINATIONS]
+            if destination[api_c.LATEST_DELIVERY].get(api_c.STATUS).lower()
+            == api_c.DELIVERED
+        ]
+    )
+    audience[api_c.AUDIENCE_LAST_DELIVERED] = (
+        max(delivery_times) if delivery_times else None
+    )
