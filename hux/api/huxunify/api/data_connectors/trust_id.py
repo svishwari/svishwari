@@ -127,7 +127,7 @@ def get_trust_id_overview(survey_responses: list) -> dict:
         statistics.mean(
             [x[api_c.FACTOR_SCORE] for x in overview_data[db_c.FACTORS]]
         )
-    )
+    ) if overview_data.get(db_c.FACTORS) else 0
 
     return overview_data
 
