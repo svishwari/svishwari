@@ -51,7 +51,7 @@ class FeatureSchema(Schema):
     name = Str(required=True)
     description = Str(default="")
     feature_type = Str()
-    records_not_null = Int()
+    records_not_null = Str()
     feature_importance = Int()
     mean = Float()
     min = Float()
