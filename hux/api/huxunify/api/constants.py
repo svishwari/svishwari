@@ -1824,7 +1824,7 @@ ATTRIBUTE_DESCRIPTION_TYPE_MAP = {
         TYPE: "timely_issue_resolution",
         NAME: "Timely issue resolution",
     },
-    "arketing and communications are accurate and honest": {
+    "marketing and communications are accurate and honest": {
         TYPE: "honesty_marketing_comms",
         NAME: "Honesty marketing & comms",
     },
