@@ -160,7 +160,7 @@ export default {
   data() {
     return {
       sortColumn: "factor_name",
-      sortDesc: true,
+      sortDesc: false,
       trustColor: {
         humanity: { stroke: "primary", variant: "darken6" },
         transparency: { stroke: "yellow", variant: "darken1" },
