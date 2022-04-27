@@ -1492,8 +1492,10 @@ def populate_trust_id_segments(
 
 def get_engaged_audience_last_delivery(audience: dict) -> None:
     """Method for getting last delivery at engagement and engaged audience level
+
     Args:
         audience(dict): Engagement Object
+
     Returns:
     """
 
