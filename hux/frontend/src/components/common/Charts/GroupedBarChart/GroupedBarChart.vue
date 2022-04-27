@@ -259,6 +259,7 @@ export default {
               yPosition: y,
               width: barWidth,
               color: currentBar.color,
+              barIndex: i,
             }
 
             barDomain
@@ -355,6 +356,12 @@ export default {
           document
             .querySelector(".foreGroundParentCircle")
             .getBoundingClientRect().left
+
+        tooltipData.invertPosition =
+          tooltipData.attributeName == "Reliability" && tooltipData.barIndex > 2
+            ? true
+            : false
+
         this.tooltipDisplay(true, tooltipData)
       }
 
