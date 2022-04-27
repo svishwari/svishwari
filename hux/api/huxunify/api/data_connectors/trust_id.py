@@ -264,7 +264,7 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
                 api_c.ATTRIBUTE_SCORE: overview_data[
                     segment_data[api_c.SEGMENT_NAME]
                 ][api_c.TRUST_ID_SCORE],
-            }
+            },
         )
 
     trust_id_comparison_data = []
