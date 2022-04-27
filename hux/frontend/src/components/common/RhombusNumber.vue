@@ -8,7 +8,7 @@
     shaped
     outlined
   >
-    <v-card-text :class="`text-subtitle-2 text-style ${textColor}`">
+    <v-card-text :class="`text-subtitle-1 text-style ${textColor}`">
       {{ value }}
     </v-card-text>
   </v-card>
@@ -61,13 +61,13 @@ export default {
 <style lang="scss" scoped>
 .rhombus-card-wrapper {
   transform: rotate(45deg);
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   border-radius: 0 !important;
 }
 .text-style {
   // num style
-  line-height: 18px;
+  line-height: 22px;
   transform: translate(0%, 25%) rotate(-45deg);
   padding: 0px;
   display: block;
