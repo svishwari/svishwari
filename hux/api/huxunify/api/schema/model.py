@@ -48,15 +48,17 @@ class FeatureSchema(Schema):
     """Feature Schema"""
 
     id = Str()
-    version = Str()
-    feature_service = Str()
-    data_source = Str()
-    created_by = Str()
-    description = Str(default="")
     name = Str(required=True)
-    status = Str()
-    score = Float()
-    popularity = Float()
+    description = Str(default="")
+    feature_type = Str()
+    records_not_null = Int()
+    feature_importance = Int()
+    mean = Float()
+    min = Float()
+    max = Float()
+    unique_values = Int()
+    lcuv = Str()
+    mcuv = Str()
 
 
 class ModelLiftSchema(Schema):
