@@ -513,6 +513,7 @@ class EngagementAudienceSchema(Schema):
     created_by = fields.String(attribute=db_c.CREATED_BY)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
+    last_delivered = DateTimeWithZ(allow_none=True)
 
 
 class EngagementDestinationAudienceSchema(Schema):
@@ -595,6 +596,7 @@ class EngagementGetSchema(Schema):
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
     favorite = fields.Boolean(required=False, default=False)
+    last_delivered = DateTimeWithZ(allow_none=True)
 
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
