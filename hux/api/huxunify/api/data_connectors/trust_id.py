@@ -123,11 +123,15 @@ def get_trust_id_overview(survey_responses: list) -> dict:
         ]
     }
 
-    overview_data[api_c.TRUST_ID_SCORE] = int(
-        statistics.mean(
-            [x[api_c.FACTOR_SCORE] for x in overview_data[db_c.FACTORS]]
+    overview_data[api_c.TRUST_ID_SCORE] = (
+        int(
+            statistics.mean(
+                [x[api_c.FACTOR_SCORE] for x in overview_data[db_c.FACTORS]]
+            )
         )
-    ) if overview_data.get(db_c.FACTORS) else 0
+        if overview_data.get(db_c.FACTORS)
+        else 0
+    )
 
     return overview_data
 
