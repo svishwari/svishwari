@@ -4,7 +4,6 @@ from flask_marshmallow import Schema
 from marshmallow.fields import List, Integer, Nested, Str, Float
 from marshmallow.validate import Range, OneOf
 
-from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 
 
@@ -40,19 +39,21 @@ class OverallCustomerRatingSchema(Schema):
 class FactorScoreOverviewSchema(Schema):
     """Factor score overview schema"""
 
-    signal_name = Str(
-        attribute=api_c.FACTOR_NAME,
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    factor_name = Str(
         required=True,
         example="capability",
         validate=OneOf(api_c.LIST_OF_FACTORS),
     )
-    signal_score = Integer(
-        attribute=api_c.FACTOR_SCORE,
+    factor_score = Integer(
         required=True,
         validate=Range(min_inclusive=-100, max_inclusive=100),
     )
-    signal_description = Str(
-        attribute=api_c.FACTOR_DESCRIPTION,
+    factor_description = Str(
         required=True,
         example="Good Quality",
     )
@@ -62,17 +63,26 @@ class FactorScoreOverviewSchema(Schema):
 class TrustIdOverviewSchema(Schema):
     """Trust ID overview Schema"""
 
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
     trust_id_score = Integer(
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
-    signals = List(Nested(FactorScoreOverviewSchema), attribute=db_c.FACTORS)
+    factors = List(Nested(FactorScoreOverviewSchema))
 
 
 class TrustIdAttributesSchema(Schema):
     """Trust ID attributes Schema"""
 
-    signal_name = Str(
-        attribute=api_c.FACTOR_NAME,
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    factor_name = Str(
         required=True,
         example="capability",
         validate=OneOf(api_c.LIST_OF_FACTORS),
@@ -86,6 +96,11 @@ class TrustIdAttributesSchema(Schema):
 
 class AttributeScoreOverviewSchema(Schema):
     """Attribute score overview schema."""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
 
     attribute_type = Str(
         required=True,
@@ -111,6 +126,11 @@ class SegmentFilterSchema(Schema):
 class TrustIdSegmentSchema(Schema):
     """Trust ID segment schema"""
 
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
     segment_name = Str(required=True, example="Segment 1")
     segment_filters = List(Nested(SegmentFilterSchema), default=[])
     attributes = List(Nested(AttributeScoreOverviewSchema), required=True)
@@ -118,6 +138,11 @@ class TrustIdSegmentSchema(Schema):
 
 class TrustIdComparisonSchema(Schema):
     """Trust ID comparison schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
 
     segment_type = Str(
         required=True,
