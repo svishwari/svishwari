@@ -99,8 +99,8 @@ def get_trust_id_overview(survey_responses: list) -> dict:
                         )
                         / len(survey_responses)
                     )
-                )
-                * 100,
+                    * 100
+                ),
                 api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
                     factor_name
                 ],
