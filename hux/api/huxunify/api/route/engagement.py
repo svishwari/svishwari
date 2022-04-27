@@ -80,6 +80,7 @@ from huxunify.api.route.utils import (
     get_user_favorites,
     Validation as validation,
     set_destination_category_in_engagement,
+    get_engaged_audience_last_delivery,
 )
 from huxunify.api import constants as api_c
 
@@ -219,6 +220,19 @@ class EngagementSearch(SwaggerView):
         # weight the engagement status
         engagements = weighted_engagement_status(engagements)
 
+        for engagement in engagements:
+            engagement_last_deliveries = []
+            for audience in engagement[api_c.AUDIENCES]:
+                get_engaged_audience_last_delivery(audience)
+                if audience[api_c.AUDIENCE_LAST_DELIVERED]:
+                    engagement_last_deliveries.append(
+                        audience[api_c.AUDIENCE_LAST_DELIVERED]
+                    )
+            engagement[api_c.AUDIENCE_LAST_DELIVERED] = (
+                max(engagement_last_deliveries)
+                if engagement_last_deliveries
+                else None
+            )
         if favorite_engagements:
             _ = [
                 engagement.update({api_c.FAVORITE: True})
@@ -303,7 +317,19 @@ class IndividualEngagementSearch(SwaggerView):
 
         # weight the engagement status
         engagement = weighted_engagement_status(engagements)[0]
-
+        for engagement in engagements:
+            engagement_last_deliveries = []
+            for audience in engagement[api_c.AUDIENCES]:
+                get_engaged_audience_last_delivery(audience)
+                if audience[api_c.AUDIENCE_LAST_DELIVERED]:
+                    engagement_last_deliveries.append(
+                        audience[api_c.AUDIENCE_LAST_DELIVERED]
+                    )
+            engagement[api_c.AUDIENCE_LAST_DELIVERED] = (
+                max(engagement_last_deliveries)
+                if engagement_last_deliveries
+                else None
+            )
         # get user id
         favorite_engagements = get_user_favorites(
             database, user[api_c.USER_NAME], db_c.ENGAGEMENTS

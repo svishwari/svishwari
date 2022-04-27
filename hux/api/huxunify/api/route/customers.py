@@ -4,6 +4,7 @@ from http import HTTPStatus
 from typing import Tuple
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
 from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
@@ -12,6 +13,8 @@ from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
 )
+
+from huxunify.api.config import get_config
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
@@ -374,6 +377,19 @@ class IDROverview(SwaggerView):
                 start_date,
                 end_date,
             )
+
+            # TODO Only for demo purpose remove after actual data integration
+            if get_config().ENV_NAME == "RC1":
+                end_date = datetime.utcnow() - relativedelta(days=1)
+                delta_days = (
+                    end_date - max([data[api_c.DAY] for data in trend_data])
+                ).days
+                for data in trend_data:
+                    data[api_c.DAY] = data[api_c.DAY] + relativedelta(
+                        days=delta_days
+                    )
+                idr_overview[api_c.UPDATED] = end_date
+
             # cache
             create_cache_entry(
                 database,
@@ -690,6 +706,17 @@ class IDRDataFeeds(SwaggerView):
             },
         )
 
+        # TODO Only for demo purpose remove after actual data integration
+        if get_config().ENV_NAME == "RC1":
+            end_date = datetime.utcnow() - relativedelta(days=1)
+            delta_days = (
+                end_date - max([data[api_c.TIMESTAMP] for data in data_feeds])
+            ).days
+            for data in data_feeds:
+                data[api_c.TIMESTAMP] = data[api_c.TIMESTAMP] + relativedelta(
+                    days=delta_days
+                )
+
         return (
             jsonify(
                 DataFeedSchema().dump(
@@ -760,7 +787,31 @@ class IDRDataFeedDetails(SwaggerView):
             get_idr_data_feed_details,
             {"token": token_response[0], "datafeed_id": datafeed_id},
         )
+        # TODO Only for demo purpose remove after actual data integration
+        if get_config().ENV_NAME == "RC1":
+            start_date, end_date = get_start_end_dates(request, 6)
+            Validation.validate_date_range(start_date, end_date)
 
+            data_feeds = Caching.check_and_return_cache(
+                f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}.{start_date}.{end_date}",
+                get_idr_data_feeds,
+                {
+                    "token": token_response[0],
+                    "start_date": start_date,
+                    "end_date": end_date,
+                },
+            )
+            stub_end_date = datetime.utcnow() - relativedelta(days=1)
+            delta_days = (
+                stub_end_date
+                - max([data[api_c.TIMESTAMP] for data in data_feeds])
+            ).days
+            data_feed[api_c.STITCHED][api_c.STITCHED_TIMESTAMP] = data_feed[
+                api_c.STITCHED
+            ][api_c.STITCHED_TIMESTAMP] + relativedelta(days=delta_days)
+            data_feed[api_c.PINNING][api_c.PINNING_TIMESTAMP] = data_feed[
+                api_c.PINNING
+            ][api_c.PINNING_TIMESTAMP] + relativedelta(days=delta_days)
         return (
             DataFeedDetailsSchema().dump(data_feed),
             HTTPStatus.OK,
