@@ -25,6 +25,7 @@ from pymongo import MongoClient
 from huxunifylib.util.general.logging import logger
 
 from huxunifylib.database.audit_management import create_audience_audit
+from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -1453,175 +1454,40 @@ async def build_notification_recipients_and_send_email(
         # send_email(**send_email_dict)
 
 
-def aggregate_attributes(survey_responses: list) -> dict:
-    """Aggregate attribute data
-
+def populate_trust_id_segments(
+    database: DatabaseClient, custom_segments: list
+) -> list:
+    """Function to populate Trust ID Segment data.
     Args:
-        survey_responses (list): List of survey responses
-
+        database (DatabaseClient): A database client.
+        custom_segments(list): List of user specific segments data.
     Returns:
-        (dict): Aggregated attribute data object
+        list: Filled segments data with survey responses.
     """
-    attribute_aggregated_values = defaultdict(dict)
 
-    # Calculate cumulative attribute score and rating
-    for survey_response in survey_responses:
-        for factor_name, values in survey_response[db_c.FACTORS].items():
-            for attribute in values[db_c.ATTRIBUTES]:
-                if (
-                    attribute_aggregated_values.get(factor_name.lower(), {})
-                    .get(attribute[db_c.DESCRIPTION], {})
-                    .get(api_c.SCORE)
-                ):
-                    attribute_aggregated_values[factor_name.lower()][
-                        attribute[db_c.DESCRIPTION]
-                    ][api_c.SCORE] += int(attribute[api_c.SCORE])
+    # Set default segment without any filters
+    segments_data = [
+        {
+            api_c.SEGMENT_NAME: "Default segment",
+            api_c.SEGMENT_FILTERS: [],
+            api_c.SURVEY_RESPONSES: get_survey_responses(database=database),
+        }
+    ]
 
-                    attribute_aggregated_values[factor_name.lower()][
-                        attribute[db_c.DESCRIPTION]
-                    ][api_c.RATING] += int(attribute.get(api_c.RATING, 0))
-
-                else:
-                    attribute_aggregated_values[factor_name.lower()].update(
-                        {
-                            attribute[db_c.DESCRIPTION]: {
-                                api_c.SCORE: int(attribute.get(api_c.SCORE)),
-                                api_c.RATING: int(
-                                    attribute.get(api_c.RATING, 0)
-                                ),
-                            },
-                        }
-                    )
-
-                if attribute.get(api_c.RATING) is not None:
-                    attribute_aggregated_values[factor_name.lower()][
-                        attribute[db_c.DESCRIPTION]
-                    ][api_c.RATING_MAP[attribute.get(api_c.RATING)]] = (
-                        int(
-                            attribute_aggregated_values[factor_name.lower()][
-                                attribute[db_c.DESCRIPTION]
-                            ].get(api_c.RATING_MAP[attribute[api_c.RATING]], 0)
-                        )
-                        + 1
-                    )
-            attribute_aggregated_values[factor_name.lower()][
-                api_c.RATING_MAP[values.get(api_c.RATING)]
-            ] = (
-                int(
-                    attribute_aggregated_values[factor_name.lower()].get(
-                        api_c.RATING_MAP[values[api_c.RATING]], 0
-                    )
-                )
-                + 1
-            )
-
-    return attribute_aggregated_values
-
-
-def get_trust_id_overview(survey_responses: list) -> dict:
-    """Fetch trust id overview data
-
-    Args:
-        survey_responses (list): List of survey responses
-
-    Returns:
-        (dict): Trust ID overview data
-    """
-    aggregated_attributes = aggregate_attributes(survey_responses)
-
-    overview_data = {
-        db_c.FACTORS: [
-            {
-                api_c.FACTOR_NAME: factor_name,
-                api_c.FACTOR_SCORE: int(
-                    statistics.mean(
-                        [
-                            val[api_c.SCORE]
-                            for x, val in values.items()
-                            if isinstance(val, dict)
-                        ]
-                    )
-                ),
-                api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
-                    factor_name
-                ],
-                api_c.OVERALL_CUSTOMER_RATING: {
-                    api_c.TOTAL_CUSTOMERS: len(survey_responses),
-                    api_c.RATING: {
-                        customer_rating: {
-                            api_c.COUNT: values.get(customer_rating, 0),
-                            api_c.PERCENTAGE: values.get(customer_rating, 0)
-                            / len(survey_responses),
-                        }
-                        for customer_rating in api_c.RATING_MAP.values()
-                    },
-                },
-            }
-            for factor_name, values in aggregated_attributes.items()
-        ]
-    }
-
-    overview_data[api_c.TRUST_ID_SCORE] = int(
-        statistics.mean(
-            [x[api_c.FACTOR_SCORE] for x in overview_data[db_c.FACTORS]]
+    for seg in custom_segments:
+        survey_response = get_survey_responses(
+            database=database,
+            filters=seg[api_c.SEGMENT_FILTERS],
         )
-    )
-
-    return overview_data
-
-
-def get_trust_id_attributes(survey_responses: list) -> list:
-    """Get trust id values details
-
-    Args:
-        survey_responses (list): List or survey responses
-
-    Returns:
-          (list): List of values and their details
-
-    """
-    trust_id_attributes = []
-
-    attribute_aggregated_values = aggregate_attributes(survey_responses)
-
-    for factor_name, values in survey_responses[0][db_c.FACTORS].items():
-        for attribute in values[db_c.ATTRIBUTES]:
-            trust_id_attributes.append(
+        if survey_response:
+            segments_data.append(
                 {
-                    api_c.FACTOR_NAME: factor_name.lower(),
-                    api_c.ATTRIBUTE_DESCRIPTION: attribute[db_c.DESCRIPTION],
+                    api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
+                    api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
+                    api_c.SURVEY_RESPONSES: survey_response,
                 }
             )
-
-    for attribute in list(trust_id_attributes):
-        attribute.update(
-            {
-                api_c.ATTRIBUTE_SCORE: attribute_aggregated_values[
-                    attribute[api_c.FACTOR_NAME]
-                ][attribute[api_c.ATTRIBUTE_DESCRIPTION]][api_c.SCORE],
-                api_c.OVERALL_CUSTOMER_RATING: {
-                    api_c.TOTAL_CUSTOMERS: len(survey_responses),
-                    api_c.RATING: {
-                        customer_rating: {
-                            api_c.COUNT: attribute_aggregated_values[
-                                attribute[api_c.FACTOR_NAME]
-                            ][attribute[api_c.ATTRIBUTE_DESCRIPTION]].get(
-                                customer_rating, 0
-                            ),
-                            api_c.PERCENTAGE: attribute_aggregated_values[
-                                attribute[api_c.FACTOR_NAME]
-                            ][attribute[api_c.ATTRIBUTE_DESCRIPTION]].get(
-                                customer_rating, 0
-                            )
-                            / len(survey_responses),
-                        }
-                        for customer_rating in api_c.RATING_MAP.values()
-                    },
-                },
-            }
-        )
-
-    return trust_id_attributes
+    return segments_data
 
 
 def get_engaged_audience_last_delivery(audience: dict) -> None:
@@ -1631,7 +1497,6 @@ def get_engaged_audience_last_delivery(audience: dict) -> None:
         audience(dict): Engagement Object
 
     Returns:
-
     """
 
     delivery_times = []

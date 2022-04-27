@@ -92,6 +92,10 @@ export default {
         Math.max(...d.values.map((em) => em.value))
       )
 
+      if (minYvalue == maxYvalue) {
+        maxYvalue = 0
+      }
+
       let enableNegativeAxis = minYvalue < 0
 
       // Adding dynamic domain values
@@ -259,6 +263,7 @@ export default {
               yPosition: y,
               width: barWidth,
               color: currentBar.color,
+              barIndex: i,
             }
 
             barDomain
@@ -355,6 +360,12 @@ export default {
           document
             .querySelector(".foreGroundParentCircle")
             .getBoundingClientRect().left
+
+        tooltipData.invertPosition =
+          tooltipData.attributeName == "Reliability" && tooltipData.barIndex > 2
+            ? true
+            : false
+
         this.tooltipDisplay(true, tooltipData)
       }
 

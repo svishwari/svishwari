@@ -8,7 +8,7 @@
     shaped
     outlined
   >
-    <v-card-text :class="`text-subtitle-1 text-style ${textColor}`">
+    <v-card-text :class="`text-subtitle-2 text-style ${textColor}`">
       {{ value }}
     </v-card-text>
   </v-card>
