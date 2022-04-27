@@ -457,11 +457,11 @@ export function aggregateAgeFilters(filters) {
   let numericFilters = []
   let stringFilters = []
   let [aggregatedFilterStart, aggregatedFilterEnd] = filters[0]
-    .split("-")
+    .split("to")
     .map((val) => parseInt(val))
   filters.forEach((filter) => {
     let [currentFilterStart, currentFilterEnd] = filter
-      .split("-")
+      .split("to")
       .map((val) => parseInt(val))
     if (!currentFilterStart) {
       stringFilters.push(filter)
