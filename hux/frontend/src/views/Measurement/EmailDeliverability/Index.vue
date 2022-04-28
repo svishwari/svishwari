@@ -148,7 +148,9 @@
               <h3 class="text-h3">Delivered rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="!emailDomainErrorState && domainChartData.deliveredRate &&
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.deliveredRate &&
                 domainChartData.deliveredRate.data.length > 0
               "
               :chart-data="domainChartData.deliveredRate.data"
@@ -165,7 +167,8 @@
               </template>
               <template #subtitle>
                 <div class="des-no-notification">
-                  Delivered rate chart will appear here once Customer data is available.
+                  Delivered rate chart will appear here once Customer data is
+                  available.
                 </div>
               </template>
             </empty-page>
@@ -198,14 +201,16 @@
               <h3 class="text-h3">Open rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="!emailDomainErrorState && domainChartData.openRate &&
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.openRate &&
                 domainChartData.openRate.data.length > 0
               "
               :chart-data="domainChartData.openRate.data"
               :chart-type="domainChartData.openRate.type"
               data-e2e="open-rate-domain-chart"
             />
-             <empty-page
+            <empty-page
               v-else-if="domainChartData.openRate.data.length == 0"
               type="model-features-empty"
               :size="50"
@@ -215,7 +220,8 @@
               </template>
               <template #subtitle>
                 <div class="des-no-notification">
-                  Open rate chart will appear here once Customer data is available.
+                  Open rate chart will appear here once Customer data is
+                  available.
                 </div>
               </template>
             </empty-page>
@@ -245,14 +251,16 @@
               <h3 class="text-h3">Click rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="!emailDomainErrorState && domainChartData.clickRate &&
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.clickRate &&
                 domainChartData.clickRate.data.length > 0
               "
               :chart-data="domainChartData.clickRate.data"
               :chart-type="domainChartData.clickRate.type"
               data-e2e="click-rate-domain-chart"
             />
-             <empty-page
+            <empty-page
               v-else-if="domainChartData.clickRate.data.length == 0"
               type="model-features-empty"
               :size="50"
@@ -262,7 +270,8 @@
               </template>
               <template #subtitle>
                 <div class="des-no-notification">
-                  Click rate chart will appear here once Customer data is available.
+                  Click rate chart will appear here once Customer data is
+                  available.
                 </div>
               </template>
             </empty-page>
@@ -295,7 +304,9 @@
               <h3 class="text-h3">Unsubscribe rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="!emailDomainErrorState && domainChartData.unsubscribeRate &&
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.unsubscribeRate &&
                 domainChartData.unsubscribeRate.data.length > 0
               "
               :chart-data="domainChartData.unsubscribeRate.data"
@@ -312,7 +323,8 @@
               </template>
               <template #subtitle>
                 <div class="des-no-notification">
-                  Unsubscribe rate chart will appear here once Customer data is available.
+                  Unsubscribe rate chart will appear here once Customer data is
+                  available.
                 </div>
               </template>
             </empty-page>
@@ -342,14 +354,16 @@
               <h3 class="text-h3">Complaints rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="!emailDomainErrorState && domainChartData.complaintsRate &&
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.complaintsRate &&
                 domainChartData.complaintsRate.data.length > 0
               "
               :chart-data="domainChartData.complaintsRate.data"
               :chart-type="domainChartData.complaintsRate.type"
               data-e2e="complaints-rate-domain-chart"
             />
-             <empty-page
+            <empty-page
               v-else-if="domainChartData.complaintsRate.data.length == 0"
               type="model-features-empty"
               :size="50"
@@ -359,7 +373,8 @@
               </template>
               <template #subtitle>
                 <div class="des-no-notification">
-                  Complaints rate chart will appear here once Customer data is available.
+                  Complaints rate chart will appear here once Customer data is
+                  available.
                 </div>
               </template>
             </empty-page>
@@ -458,31 +473,31 @@ export default {
         await this.getEmailDomain()
         if (this.emailDomain) {
           this.domainChartData = {
-          sent: {
-            data: this.emailDomain.sent,
-            type: "sent",
-          },
-          openRate: {
-            data: this.emailDomain.open_rate,
-            type: "open rate",
-          },
-          deliveredRate: {
-            data: this.emailDomain.delivered_rate,
-            type: "Delivered rate",
-          },
-          clickRate: {
-            data: this.emailDomain.click_rate,
-            type: "Click rate",
-          },
-          unsubscribeRate: {
-            data: this.emailDomain.unsubscribe_rate,
-            type: "Unsubscribe rate",
-          },
-          complaintsRate: {
-            data: this.emailDomain.complaints_rate,
-            type: "Complaints rate",
-          },
-        }
+            sent: {
+              data: this.emailDomain.sent,
+              type: "sent",
+            },
+            openRate: {
+              data: this.emailDomain.open_rate,
+              type: "open rate",
+            },
+            deliveredRate: {
+              data: this.emailDomain.delivered_rate,
+              type: "Delivered rate",
+            },
+            clickRate: {
+              data: this.emailDomain.click_rate,
+              type: "Click rate",
+            },
+            unsubscribeRate: {
+              data: this.emailDomain.unsubscribe_rate,
+              type: "Unsubscribe rate",
+            },
+            complaintsRate: {
+              data: this.emailDomain.complaints_rate,
+              type: "Complaints rate",
+            },
+          }
         }
       } catch (error) {
         this.emailDomainErrorState = true
