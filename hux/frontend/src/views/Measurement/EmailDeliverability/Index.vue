@@ -96,7 +96,6 @@
           <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
             <v-card-title class="pb-2 pl-6 pt-5">
               <h3 class="text-h3">Sent</h3>
-              <!-- {{domainChartData.sent.data}} -->
             </v-card-title>
             <domain-overview-chart
               v-if="
