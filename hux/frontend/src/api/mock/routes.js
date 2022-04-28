@@ -715,6 +715,7 @@ export const defineRoutes = (server) => {
     const notifications = {
       notifications: allNotifications.models.slice(initialCount, lastCount),
       total: allNotifications.length,
+      seen_notifications: request.queryParams.batch_size > 5 ? true : false,
     }
     return notifications
   })
