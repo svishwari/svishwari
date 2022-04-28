@@ -278,11 +278,7 @@
                   'float-right': !showAdvertising,
                 }"
                 :style="{
-                  height:
-                    showAdvertising &&
-                    audienceData.lookalike_audiences.length > 0
-                      ? advertisingHeight
-                      : '400px',
+                  height: showAdvertising ? advertisingHeight : '400px',
                 }"
                 @click="toggleAd()"
               >
@@ -733,7 +729,6 @@ export default {
     ) {
       this.advertisingHeight =
         this.$refs.advertisingcard.parentElement.parentElement.clientHeight +
-        17 +
         "px"
     }
   },
