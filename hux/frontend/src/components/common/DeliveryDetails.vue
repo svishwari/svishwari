@@ -147,10 +147,11 @@
             </div>
             <div v-if="header.value == 'replace'" class="text-body-1">
               <hux-switch
-                v-model="item['replace']"
+                v-if="item['is_ad_platform']"
+                v-model="item['replace_audience']"
                 :switch-labels="switchLabels"
                 false-color="var(--v-black-lighten4)"
-                @change="handleChange($event)"
+                @change="handleChange($event, section, item)"
               />
             </div>
           </td>
@@ -368,6 +369,7 @@ export default {
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       setAlert: "alerts/setAlert",
+      updateReplace: "engagements/updateReplace",
     }),
     async deliverAll(engagement) {
       await this.deliverAudience({
@@ -449,8 +451,10 @@ export default {
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
     },
-    handleChange(event) {
+    async handleChange(event, engagement, delivery) {
       console.log(event)
+      console.log(engagement.id)
+      console.log(delivery.id)
     },
   },
 }
