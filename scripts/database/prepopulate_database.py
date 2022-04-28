@@ -379,15 +379,27 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "navigation_settings",
         db_c.CONFIGURATION_FIELD_SETTINGS: [
             {
+                db_c.CONFIGURATION_FIELD_NAME: "Home",
+                db_c.CONFIGURATION_FIELD_ICON: "home",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Configuration",
+                db_c.CONFIGURATION_FIELD_ICON: "configuration",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+            },
+            {
                 db_c.CONFIGURATION_FIELD_NAME: "Data Management",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                        db_c.CONFIGURATION_FIELD_ICON: "datasource",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                        db_c.CONFIGURATION_FIELD_ICON: "identity-resolution",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                 ],
@@ -398,22 +410,9 @@ configurations_constants = [
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Models",
+                        db_c.CONFIGURATION_FIELD_ICON: "models",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     }
-                ],
-            },
-            {
-                db_c.CONFIGURATION_FIELD_NAME: "Customer Insights",
-                db_c.CONFIGURATION_FIELD_ENABLED: True,
-                db_c.CONFIGURATION_FIELD_CHILDREN: [
-                    {
-                        db_c.CONFIGURATION_FIELD_NAME: "All Customers",
-                        db_c.CONFIGURATION_FIELD_ENABLED: True,
-                    },
-                    {
-                        db_c.CONFIGURATION_FIELD_NAME: "Segment Playground",
-                        db_c.CONFIGURATION_FIELD_ENABLED: True,
-                    },
                 ],
             },
             {
@@ -422,14 +421,44 @@ configurations_constants = [
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Destinations",
+                        db_c.CONFIGURATION_FIELD_ICON: "multiple_map_pins",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Segment Playground",
+                        db_c.CONFIGURATION_FIELD_ICON: "playground",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Audiences",
+                        db_c.CONFIGURATION_FIELD_ICON: "audiences",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Engagements",
+                        db_c.CONFIGURATION_FIELD_ICON: "speaker_up",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                ],
+            },
+            {
+                db_c.CONFIGURATION_FIELD_NAME: "Insights",
+                db_c.CONFIGURATION_FIELD_ENABLED: True,
+                db_c.CONFIGURATION_FIELD_CHILDREN: [
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Customers",
+                        db_c.CONFIGURATION_FIELD_ICON: "customer-profiles",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "HX TrustID",
+                        db_c.CONFIGURATION_FIELD_ICON: "hx-trustid",
+                        db_c.CONFIGURATION_FIELD_SUPERSCRIPT: "TM",
+                        db_c.CONFIGURATION_FIELD_ENABLED: True,
+                    },
+                    {
+                        db_c.CONFIGURATION_FIELD_NAME: "Email Deliverability",
+                        db_c.CONFIGURATION_FIELD_ICON: "email_deliverability",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                 ],
