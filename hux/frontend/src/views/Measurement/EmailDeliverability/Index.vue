@@ -45,6 +45,46 @@
         :email-data="deliveredCountData"
         data-e2e="delivered-count-open-rate-chart"
       />
+      <v-card class="mt-7 rounded-lg box-shadow-5">
+        <v-row
+          v-if="deliveredCountData.length == 0"
+          class="total-customers-chart-frame py-14"
+        >
+          <empty-page
+            v-if="!totalCustomersChartErrorState"
+            type="model-features-empty"
+            :size="50"
+          >
+            <template #title>
+              <div class="title-no-notification">No data to show</div>
+            </template>
+            <template #subtitle>
+              <div class="des-no-notification">
+                Total customer chart will appear here once Customer data is
+                available.
+              </div>
+            </template>
+          </empty-page>
+          <empty-page
+            v-else
+            class="title-no-notification"
+            type="error-on-screens"
+            :size="50"
+          >
+            <template #title>
+              <div class="title-no-notification">
+                Total customer chart is currently unavailable
+              </div>
+            </template>
+            <template #subtitle>
+              <div class="des-no-notification">
+                Our team is working hard to fix it. Please be patient and try
+                again soon!
+              </div>
+            </template>
+          </empty-page>
+        </v-row>
+      </v-card>
       <!-- Sending domains overview -->
       <overview-1
         v-if="overviewData"
@@ -149,6 +189,7 @@ import DeliveredChart from "./DeliveredChart.vue"
 import Overview1 from "./Domain/Overview.vue"
 import Overview from "./Overview.vue"
 import DomainOverviewChart from "@/components/common/DomainOverviewChart/DomainOverviewChart.vue"
+import EmptyPage from "@/components/common/EmptyPage"
 
 export default {
   name: "EmailDeliverability",
@@ -160,6 +201,7 @@ export default {
     DeliveredChart,
     Overview1,
     DomainOverviewChart,
+    EmptyPage,
   },
   data() {
     return {
@@ -172,6 +214,7 @@ export default {
       },
       domainChartData: {},
       deliveredCountData: [],
+      totalCustomersChartErrorState: false,
     }
   },
   computed: {
@@ -191,10 +234,14 @@ export default {
     }),
     async fetchOverview() {
       this.loading = true
-      await this.getOverviewData()
-      this.entity.overAllRate = this.overviewData.overall_inbox_rate
-      this.entity.overviewList = this.overviewData.sending_domains_overview
-      this.deliveredCountData = this.overviewData.delivered_open_rate_overview
+      try {
+        await this.getOverviewData()
+        this.entity.overAllRate = this.overviewData.overall_inbox_rate
+        this.entity.overviewList = this.overviewData.sending_domains_overview
+        this.deliveredCountData = this.overviewData.delivered_open_rate_overview
+      } catch (error) {
+        this.totalCustomersChartErrorState = true
+      }
       this.loading = false
     },
     async fetchDomainData() {
