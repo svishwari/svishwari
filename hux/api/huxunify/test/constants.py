@@ -1689,7 +1689,7 @@ TRUST_ID_SURVEY_RESPONSES = [
                             "score": "6",
                         },
                         {
-                            "description": "arketing and communications are accurate and honest",
+                            "description": "Marketing and communications are accurate and honest",
                             "score": "5",
                             "rating": "0",
                         },
