@@ -76,20 +76,23 @@ export default {
       .v-input__slot {
         .v-select__slot {
           .v-select__selections {
-            background-image: linear-gradient(
-              to right,
-              var(--v-primary-base) 40%,
-              rgba(255, 255, 255, 0) 20%
-            );
-            background-position: bottom;
-            background-size: 4px 1px;
-            background-repeat: repeat-x;
+            margin-bottom: -7px !important;
             .v-select__selection {
+              background-image: linear-gradient(
+                to right,
+                var(--v-primary-base) 40%,
+                rgba(255, 255, 255, 0) 20%
+              );
+              padding-bottom: 7px !important;
+              background-position: bottom;
+              background-size: 4px 1px;
+              background-repeat: repeat-x;
               color: var(--v-primary-base) !important;
-              padding-bottom: 1px;
             }
           }
           .v-input__append-inner {
+            position: relative;
+            right: 20px !important;
             .v-input__icon {
               .v-icon {
                 color: var(--v-primary-base) !important;
