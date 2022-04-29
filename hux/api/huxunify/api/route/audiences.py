@@ -815,7 +815,7 @@ class AudienceRulesHistogram(SwaggerView):
             ):
                 bucket_data = Caching.check_and_return_cache(
                     cache_key=f"{api_c.CUSTOMERS_ENDPOINT}/customer-profiles/"
-                    f"insights/counts/by-float-field",
+                    f"insights/counts/by-float-field?model_name={model_name}",
                     method=get_histogram_data,
                     keyword_arguments={
                         "field_name": model_name,
@@ -832,7 +832,7 @@ class AudienceRulesHistogram(SwaggerView):
 
                 api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL][model_name][
                     api_c.MAX
-                ] = histogram_data.max_val
+                ] = round(histogram_data.max_val, 1)
 
                 return (
                     api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL][
