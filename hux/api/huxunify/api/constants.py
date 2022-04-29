@@ -1450,6 +1450,8 @@ CLIENT_PROJECTS_ENDPOINT = "/client-projects"
 
 # Histogram data stub.
 VALUES = "values"
+VALUE_FROM = "value_from"
+VALUE_TO = "value_to"
 # TODO Remove once we have data from CDP
 AUDIENCE_RULES_HISTOGRAM_DATA = {
     MODEL: {
@@ -1544,8 +1546,8 @@ AUDIENCE_RULES_HISTOGRAM_DATA = {
     "age": {
         "name": "Age",
         "type": "range",
-        "min": 18,
-        "max": 79,
+        "min": 0,
+        "max": 100,
         "steps": 5,
         "values": [
             (18, 15129),

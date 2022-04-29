@@ -1,5 +1,4 @@
 """Purpose of this file is to house all the route/utils tests."""
-import copy
 from datetime import datetime, timedelta
 from http import HTTPStatus
 from unittest import TestCase, mock
@@ -27,6 +26,7 @@ from huxunify.api.route.utils import (
     get_health_check,
     filter_team_member_requests,
     convert_filters_for_events,
+    convert_cdp_buckets_to_histogram,
 )
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
@@ -452,4 +452,25 @@ class TestRouteUtils(TestCase):
             expected_filters[api_c.AUDIENCE_FILTERS][0][
                 api_c.AUDIENCE_SECTION_FILTERS
             ],
+        )
+
+    def test_convert_cdp_age_bucket_to_histogram(self):
+        """Test for convert_cdp_buckets_to_histogram method for age field."""
+
+        bucket_age_data = t_c.CDP_COUNT_BY_AGE_RESONSE.get(api_c.BODY, [])
+        histogram_data = convert_cdp_buckets_to_histogram(
+            bucket_data=bucket_age_data, field=api_c.AGE
+        )
+
+        self.assertEqual(t_c.AGE_HISTOGRAM_DATA, histogram_data.values)
+
+    def test_convert_cdp_bucket_data_to_histogram(self):
+        """Test for convert_cdp_buckets_to_histogram method."""
+
+        bucket_data = t_c.CDP_COUNTS_BY_FLOAT_RESONSE.get(api_c.BODY, [])
+        histogram_data = convert_cdp_buckets_to_histogram(
+            bucket_data=bucket_data
+        )
+        self.assertEqual(
+            t_c.COUNTS_BY_FLOAT_HISTOGRAM_DATA, histogram_data.values
         )

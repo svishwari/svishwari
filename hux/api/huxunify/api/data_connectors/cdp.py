@@ -1422,3 +1422,87 @@ def get_customer_event_types(token: str) -> list:
         )
 
     return response.json().get(api_c.BODY)
+
+
+def get_histogram_data(token: str, field_name: str) -> list:
+    """Get aggregated counts data for histogram creation.
+    Args:
+        token (str): OKTA JWT Token.
+        field_name (str): Name of the field for which data needs to be fetched.
+    Returns:
+        list: Aggregated counts data for the field.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    config = get_config()
+
+    logger.info("Getting data for histogram from CDP API.")
+    # TODO start and end date when CDM supports it.
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/counts/by-float-field",
+        json={
+            "start_date": "2021-06-19",
+            "end_date": "2021-12-26",
+            "filters": [],
+            "field_name": field_name,
+            "result_group_size": 10,
+        },
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to retrieve histogram data %s %s",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/event-types",
+            response.status_code,
+        )
+
+    return response.json().get(api_c.BODY)
+
+
+def get_age_histogram_data(token: str):
+    """Get aggregated age counts data for histogram creation.
+    Args:
+        token (str): OKTA JWT Token.
+    Returns:
+        list: Aggregated age counts data.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+    config = get_config()
+
+    logger.info("Getting age data for histogram from CDP API.")
+    # TODO start and end date when CDM supports it.
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-age",
+        json={
+            "start_date": "2021-06-19",
+            "end_date": "2021-12-26",
+            "filters": [],
+        },
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to retrieve histogram data %s %s",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/count-by-age",
+            response.status_code,
+        )
+
+    return response.json().get(api_c.BODY)
