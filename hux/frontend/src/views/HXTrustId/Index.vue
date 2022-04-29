@@ -88,7 +88,7 @@
               <link-dropdown
                 v-if="getSegment.length > 0"
                 :data-list="getSegment"
-                :width="245"
+                :width="dropdownWidth"
                 @onselect="getSelectedData"
               ></link-dropdown>
               <data-cards
@@ -441,6 +441,28 @@ export default {
       addSegmentData: "trustId/getAddSegment",
       attributeData: "trustId/getTrustAttributes",
     }),
+    dropdownWidth() {
+      switch (this.selectedSegment) {
+        case "composite & factor scores":
+          return 244
+
+        case "capability attributes":
+          return 193
+
+        case "humanity attributes":
+          return 193
+
+        case "transparency attributes":
+          return 223
+
+        case "reliability attributes":
+          return 190
+
+        default:
+          return 245
+      }
+    },
+
     getSegment() {
       return this.segmentScores.map((item) => item.segment_type)
     },
