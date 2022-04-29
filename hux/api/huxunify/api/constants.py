@@ -1456,6 +1456,8 @@ CLIENT_PROJECTS_ENDPOINT = "/client-projects"
 VALUES = "values"
 VALUE_FROM = "value_from"
 VALUE_TO = "value_to"
+HISTOGRAM_GROUP_SIZE = 10
+
 # TODO Remove once we have data from CDP
 AUDIENCE_RULES_HISTOGRAM_DATA = {
     MODEL: {

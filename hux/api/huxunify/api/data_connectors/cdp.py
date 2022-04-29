@@ -1441,7 +1441,7 @@ def get_histogram_data(token: str, field_name: str) -> list:
     config = get_config()
 
     logger.info("Getting data for histogram from CDP API.")
-    # TODO start and end date when CDM supports it.
+    # TODO Remove start and end date when CDM supports it.
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/counts/by-float-field",
         json={
@@ -1449,7 +1449,7 @@ def get_histogram_data(token: str, field_name: str) -> list:
             "end_date": "2021-12-26",
             "filters": [],
             "field_name": field_name,
-            "result_group_size": 10,
+            "result_group_size": api_c.HISTOGRAM_GROUP_SIZE,
         },
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
@@ -1485,7 +1485,7 @@ def get_age_histogram_data(token: str):
     config = get_config()
 
     logger.info("Getting age data for histogram from CDP API.")
-    # TODO start and end date when CDM supports it.
+    # TODO Remove start and end date when CDM supports it.
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-age",
         json={
