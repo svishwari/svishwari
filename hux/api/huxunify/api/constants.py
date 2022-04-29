@@ -1553,8 +1553,8 @@ AUDIENCE_RULES_HISTOGRAM_DATA = {
         "name": "Age",
         "type": "range",
         "min": 0,
-        "max": 100,
-        "steps": 5,
+        "max": 120,
+        "steps": 1,
         "values": [
             (18, 15129),
             (23, 17236),
