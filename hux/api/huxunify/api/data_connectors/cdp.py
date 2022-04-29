@@ -1472,8 +1472,10 @@ def get_histogram_data(token: str, field_name: str) -> list:
 
 def get_age_histogram_data(token: str):
     """Get aggregated age counts data for histogram creation.
+    
     Args:
         token (str): OKTA JWT Token.
+        
     Returns:
         list: Aggregated age counts data.
 
