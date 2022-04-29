@@ -513,7 +513,7 @@ class DeleteNotification(SwaggerView):
     def delete(
         self, notification_id: ObjectId, user: dict
     ) -> Tuple[Response, int]:
-        """Deletes a notification by ID.
+        """Hard deletes a notification by ID.
 
         ---
         security:
@@ -528,7 +528,7 @@ class DeleteNotification(SwaggerView):
         """
 
         if notification_management.delete_notification(
-            get_db_client(), ObjectId(notification_id)
+            get_db_client(), ObjectId(notification_id), True
         ):
             logger.info(
                 "Successfully deleted notification %s by user %s.",

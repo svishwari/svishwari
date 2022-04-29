@@ -54,6 +54,10 @@ client["users"].tickets = () => {
 client["configurations"].getModules = () => {
   return http.get("/configurations/modules")
 }
+
+client["configurations"].getSideBarConfig = () => {
+  return http.get("/configurations/navigation")
+}
 //#endregion
 
 //#region Customers

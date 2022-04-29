@@ -14,6 +14,7 @@ RUN pip install pip --upgrade
 RUN pip install pytest
 RUN pip install pymongo
 RUN pip install requests
+RUN pip install pyperclip
 
 # run the pytests application
-CMD ["py.test", "test/test_*.py", "-v"]
+CMD ["py.test", "test", "-v"]
