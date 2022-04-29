@@ -1426,9 +1426,11 @@ def get_customer_event_types(token: str) -> list:
 
 def get_histogram_data(token: str, field_name: str) -> list:
     """Get aggregated counts data for histogram creation.
+    
     Args:
         token (str): OKTA JWT Token.
         field_name (str): Name of the field for which data needs to be fetched.
+        
     Returns:
         list: Aggregated counts data for the field.
 
