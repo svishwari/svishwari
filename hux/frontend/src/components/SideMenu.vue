@@ -59,17 +59,20 @@
 
     <v-list
       v-for="item in displayedMenuItems"
-      :key="item.title"
+      :key="item.name"
       color="var(-v--primary-base)"
     >
-      <div v-if="item.label" class="list-group black--text mt-2">
+      <div
+        v-if="item.children && item.children.length > 0"
+        class="list-group black--text mt-2"
+      >
         <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-6">
-          {{ item.label }}
+          {{ item.name }}
         </span>
       </div>
 
       <v-list-item
-        v-if="!item.menu"
+        v-if="!item.children"
         class="pl-6 mr-2"
         :data-e2e="`nav-${item.icon}`"
         :to="item.link"
@@ -81,8 +84,8 @@
           :class="{ 'home-menu-icon ml-0': !isMini, ' mini-home-icon': isMini }"
         >
           <tooltip
-            v-if="item.title"
-            :key="item.title"
+            v-if="item.name"
+            :key="item.name"
             position-top
             color="black-lighten4"
           >
@@ -91,20 +94,20 @@
             </template>
             <template #hover-content>
               <span class="text-h6 error-base--text">
-                {{ item.title }}
+                {{ item.name }}
               </span>
             </template>
           </tooltip>
         </v-list-item-icon>
         <v-list-item-title class="black--text text-h6">
-          {{ item.title }}
+          {{ item.name }}
         </v-list-item-title>
       </v-list-item>
 
-      <div v-if="item.menu">
+      <div v-if="item.children">
         <v-list-item
-          v-for="menu in item.menu"
-          :key="menu.title"
+          v-for="menu in item.children"
+          :key="menu.name"
           class="pl-6 mr-2"
           :data-e2e="`nav-${menu.icon}`"
           :to="menu.link"
@@ -119,7 +122,7 @@
           >
             <tooltip
               v-if="menu.icon"
-              :key="menu.title"
+              :key="menu.name"
               position-top
               color="black"
             >
@@ -128,13 +131,13 @@
               </template>
               <template #hover-content>
                 <span class="black--text text-h6">
-                  {{ menu.title }}
+                  {{ menu.name }}
                 </span>
               </template>
             </tooltip>
           </v-list-item-icon>
           <v-list-item-title class="black--text text-h6">
-            {{ menu.title }}
+            {{ menu.name }}
             <span v-if="menu.superscript" class="title-superscript">
               {{ menu.superscript }}
             </span>
@@ -161,11 +164,11 @@
 </template>
 
 <script>
-import menuConfig from "@/menuConfig.js"
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
 import * as _ from "lodash"
+import { mapGetters, mapActions } from "vuex"
 
 export default {
   name: "SideMenu",
@@ -183,11 +186,14 @@ export default {
       logo: "client",
     },
     menu: false,
-    items: menuConfig.menu,
     prevItem: null,
   }),
 
   computed: {
+    ...mapGetters({
+      sideBarItems: "configuration/sideBarConfigs",
+    }),
+
     isMini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
     },
@@ -197,24 +203,30 @@ export default {
     },
 
     displayedMenuItems() {
-      return this.items.filter((x) => {
-        if (x.menu && x.display) {
-          x.menu = x.menu.filter((y) => y.display)
+      return this.sideBarItems.filter((x) => {
+        if (x.children && x.enabled) {
+          x.children = x.children.filter((y) => y.enabled)
           return true
         } else {
-          return x.display
+          return x.enabled
         }
       })
     },
   },
 
-  mounted() {
+  async mounted() {
+    await this.getSideBarConfig()
+    console.log(this.sideBarItems)
     this.trustidRoute(this.$route.name)
   },
 
   methods: {
+    ...mapActions({
+      getSideBarConfig: "configuration/getSideBarConfig",
+    }),
+
     navigate(item) {
-      this.trustidRoute(item.title)
+      this.trustidRoute(item.name)
       if (
         this.prevItem &&
         this.prevItem.defaultState &&
@@ -232,22 +244,31 @@ export default {
     },
 
     checkColored(title) {
-      if (title == "HX TrustID" || title == "HXTrustID") {
-        this.items[5].menu[1].icon = "hx-trustid-colored"
+      if (
+        this.sideBarItems.length > 0 &&
+        ["HX TrustID", "HXTrustID"].includes(title)
+      ) {
+        this.sideBarItems
+          .find((elem) => elem.name == "Insights")
+          .children.find((item) => item.name == "HX TrustID").icon =
+          "hx-trustid-colored"
         return true
       }
       return false
     },
 
     trustidRoute(title) {
-      if (!this.checkColored(title)) {
-        this.items[5].menu[1].icon = "hx-trustid"
+      if (this.sideBarItems.length > 0 && !this.checkColored(title)) {
+        this.sideBarItems
+          .find((elem) => elem.name == "Insights")
+          .children.find((item) => item.name == "HX TrustID").icon =
+          "hx-trustid"
       }
     },
 
     onMouseOver(item) {
       if (item) {
-        this.checkColored(item.title)
+        this.checkColored(item.name)
       }
     },
     onMouseLeave() {

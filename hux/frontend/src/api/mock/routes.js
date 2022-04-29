@@ -22,6 +22,7 @@ import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
+import menuConfig from "./fixtures/menuConfig"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
 import { addedApplications, applications } from "./factories/application"
@@ -896,6 +897,8 @@ export const defineRoutes = (server) => {
   server.get("/configurations/modules", (schema) => {
     return schema.configurations.all()
   })
+
+  server.get("/configurations/navigation", () => menuConfig)
 
   //applications
   server.get("/applications", (schema, request) => {
