@@ -87,6 +87,7 @@
               </v-row>
               <link-dropdown
                 v-if="getSegment.length > 0"
+                ref="dropdownValues"
                 :data-list="getSegment"
                 :width="dropdownWidth"
                 @onselect="getSelectedData"
@@ -432,6 +433,7 @@ export default {
         timely_issue_resolution:
           "Resolves issues in an adequate and timely manner",
       },
+      dropdownWidth: 245,
     }
   },
   computed: {
@@ -441,27 +443,6 @@ export default {
       addSegmentData: "trustId/getAddSegment",
       attributeData: "trustId/getTrustAttributes",
     }),
-    dropdownWidth() {
-      switch (this.selectedSegment) {
-        case "composite & factor scores":
-          return 244
-
-        case "capability attributes":
-          return 193
-
-        case "humanity attributes":
-          return 193
-
-        case "transparency attributes":
-          return 223
-
-        case "reliability attributes":
-          return 190
-
-        default:
-          return 245
-      }
-    },
 
     getSegment() {
       return this.segmentScores.map((item) => item.segment_type)
@@ -556,6 +537,13 @@ export default {
     },
     getSelectedData(value) {
       this.selectedSegment = value
+      this.dropdownWidth = 245
+      this.$nextTick(() => {
+        this.dropdownWidth =
+          this.$refs.dropdownValues.$el?.childNodes[1]?.childNodes[0]
+            ?.childNodes[0]?.childNodes[0]?.childNodes[0]?.childNodes[0]
+            ?.clientWidth + 50 || 245
+      })
     },
     formatText: formatText,
     filterToggle() {
