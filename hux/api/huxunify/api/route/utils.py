@@ -1,7 +1,7 @@
 """Purpose of this file is to house route utilities."""
 # pylint: disable=too-many-lines
 import statistics
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from datetime import datetime, date, timedelta
 import re
 from itertools import groupby
@@ -1511,4 +1511,38 @@ def get_engaged_audience_last_delivery(audience: dict) -> None:
     )
     audience[api_c.AUDIENCE_LAST_DELIVERED] = (
         max(delivery_times) if delivery_times else None
+    )
+
+
+def convert_cdp_buckets_to_histogram(
+    bucket_data: list, field: str = None
+) -> namedtuple:
+    """Method to convert data from CDP response to histogram format.
+
+    Args:
+         bucket_data (list): Body of CDP count-by response.
+         field (str): Name of field.
+    Returns:
+        Tuple[Union[int, float], Union[int, float], list]: Max, min and
+            converted values list.
+    """
+    CDPHistogramData = namedtuple("CDPHistogramData", "max_val min_val values")
+
+    if field == api_c.AGE:
+        value = api_c.AGE
+        max_val = bucket_data[-1].get(api_c.AGE)
+        min_val = bucket_data[0].get(api_c.AGE)
+
+    else:
+        value = api_c.VALUE_FROM
+        max_val = bucket_data[-1].get(api_c.VALUE_TO)
+        min_val = bucket_data[0].get(api_c.VALUE_FROM)
+
+    return CDPHistogramData(
+        max_val,
+        min_val,
+        [
+            (data.get(value), data.get(api_c.CUSTOMER_COUNT))
+            for data in bucket_data
+        ],
     )

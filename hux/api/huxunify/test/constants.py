@@ -1745,6 +1745,62 @@ TRUST_ID_SURVEY_RESPONSES = [
     }
 ]
 
+CDP_COUNT_BY_AGE_RESONSE = {
+    "code": 200,
+    "body": [
+        {"age": 18, "customer_count": 973},
+        {"age": 19, "customer_count": 264},
+        {"age": 20, "customer_count": 261},
+        {"age": 21, "customer_count": 317},
+        {"age": 22, "customer_count": 321},
+    ],
+    "message": "ok",
+}
+
+AGE_HISTOGRAM_DATA = [
+    (18, 973),
+    (19, 264),
+    (20, 261),
+    (21, 317),
+    (22, 321),
+]
+
+CDP_COUNT_BY_AGE_RESONSE = {
+    "code": 200,
+    "body": [
+        {"age": 18, "customer_count": 973},
+        {"age": 19, "customer_count": 264},
+        {"age": 20, "customer_count": 261},
+        {"age": 21, "customer_count": 317},
+        {"age": 22, "customer_count": 321},
+    ],
+    "message": "ok",
+}
+
+COUNTS_BY_FLOAT_HISTOGRAM_DATA = [
+    (0.00072, 2158),
+    (49.940596, 2220),
+    (99.880472, 2032),
+]
+
+CDP_COUNTS_BY_FLOAT_RESONSE = {
+    "code": 200,
+    "body": [
+        {"value_from": 0.00072, "value_to": 49.940596, "customer_count": 2158},
+        {
+            "value_from": 49.940596,
+            "value_to": 99.880472,
+            "customer_count": 2220,
+        },
+        {
+            "value_from": 99.880472,
+            "value_to": 149.820348,
+            "customer_count": 2032,
+        },
+    ],
+    "message": "ok",
+}
+
 TRUST_ID_SAMPLE_USER_SEGMENT = [
     {
         "segment_name": "Segment",
