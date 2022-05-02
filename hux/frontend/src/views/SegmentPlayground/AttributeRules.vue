@@ -320,10 +320,8 @@ export default {
 
     updateHistoArr() {
       return this.notHistogramKeys.concat(
-        Object.keys(this.ruleAttributes.rule_attributes.general.events).map(
-          (x) =>
-            x != "name" &&
-            this.ruleAttributes.rule_attributes.general.events[x].name
+        Object.keys(this.ruleAttributes.rule_attributes.general.events).filter(
+          (x) => x != "name"
         )
       )
     },
@@ -410,7 +408,8 @@ export default {
               if (hasSubOptins.length > 0) {
                 _subOption["menu"] = hasSubOptins.map((key) => {
                   const subOption = _subOption[key]
-                  subOption["key"] = subOption.name
+                  subOption["key"] =
+                    _subOption.key == "events" ? key : subOption.name
                   return subOption
                 })
               }
@@ -429,6 +428,13 @@ export default {
     },
     listOptions(condition) {
       if (condition.attribute.key === "City") {
+        // if (this.currenCitytData.length == 0) {
+        //   this.selectedValue = "City"
+        //   this.autoSearchFunc(condition.text)
+        // }
+        // condition.text = this.currenCitytData.find(
+        //   (item) => Object.values(item)[0].split(",")[0] == condition.text
+        // )
         return this.currenCitytData
       } else if (condition.attribute.key === "Zip") {
         return this.currentData

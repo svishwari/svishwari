@@ -54,6 +54,10 @@ client["users"].tickets = () => {
 client["configurations"].getModules = () => {
   return http.get("/configurations/modules")
 }
+
+client["configurations"].getSideBarConfig = () => {
+  return http.get("/configurations/navigation")
+}
 //#endregion
 
 //#region Customers
@@ -173,6 +177,18 @@ client["engagements"].attachAudienceDestination = (
   return http.post(
     `/engagements/${engagementId}/audience/${audienceId}/destinations`,
     data
+  )
+}
+client["engagements"].detachDestinationOfAudience = (
+  engagementId,
+  audienceId,
+  data
+) => {
+  // NOTE: The Hux API supports post data for a DELETE request method.
+  // Typically, this isn't RESTful so Mirage does not support this, hence this check
+  return http.delete(
+    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
+    { data: data }
   )
 }
 

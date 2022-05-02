@@ -92,7 +92,12 @@ export default {
         Math.max(...d.values.map((em) => em.value))
       )
 
+      if (minYvalue == maxYvalue) {
+        maxYvalue = 0
+      }
+
       let enableNegativeAxis = minYvalue < 0
+      let totalBarEnabled = 0
 
       // Adding dynamic domain values
       let getdomainValues = () => {
@@ -244,12 +249,15 @@ export default {
           // Adding bars to the specific attribute group
           const barDomain = d3Select.select(this)
           let barProp = d.values
+          totalBarEnabled = 0
+
           for (let i = 0; i < barProp.length; i++) {
             const currentBar = d.values[i]
             const y = yScale(currentBar.value)
             const height = currentBar.value < 0 ? y - yScale(0) : yScale(0) - y
             const barWidth = barSize(barProp.length)
             const x = (i - barProp.length / 2) * (barWidth + 2)
+            totalBarEnabled++
 
             let currentData = {
               segmentName: currentBar.segmentName,
@@ -259,6 +267,7 @@ export default {
               yPosition: y,
               width: barWidth,
               color: currentBar.color,
+              barIndex: i,
             }
 
             barDomain
@@ -355,6 +364,20 @@ export default {
           document
             .querySelector(".foreGroundParentCircle")
             .getBoundingClientRect().left
+
+        tooltipData.invertPosition = false
+
+        // Dynamic handling of bar tooltip inver positioning on the basis of bar index no. and total bars
+        if (tooltipData.attributeName == "Reliability") {
+          // Show left tooltip just for 1st bar
+          if (
+            [3, 4, 5].includes(totalBarEnabled) &&
+            tooltipData.barIndex == 0
+          ) {
+            tooltipData.invertPosition = false
+          } else tooltipData.invertPosition = true
+        }
+
         this.tooltipDisplay(true, tooltipData)
       }
 

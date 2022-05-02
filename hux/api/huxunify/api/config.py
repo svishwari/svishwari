@@ -34,6 +34,9 @@ class Config:
         api_c.AZURE_STORAGE_ACCOUNT_KEY, default=""
     )
     AZURE_STORAGE_BLOB_NAME = config(api_c.AZURE_STORAGE_BLOB_NAME, default="")
+    AZURE_STORAGE_CONNECTION_STRING = config(
+        api_c.AZURE_STORAGE_CONNECTION_STRING, default=""
+    )
     AZURE_STORAGE_CONTAINER_NAME = config(
         api_c.AZURE_STORAGE_CONTAINER_NAME, default=""
     )

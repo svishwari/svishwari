@@ -140,6 +140,7 @@ export const customerProfile = {
  * Customers overview schema
  */
 export const customersOverview = {
+  avg_age: 38,
   gender_men: 0.67621,
   gender_other: 0,
   gender_women: 0.30828,
@@ -147,10 +148,10 @@ export const customersOverview = {
   gender_women_count: 7171545,
   gender_other_count: 0,
   match_rate: 0.5972,
-  max_age: 35,
+  max_age: 79,
   max_ltv_actual: 90.4685,
   max_ltv_predicted: 94.574,
-  min_age: 7,
+  min_age: 18,
   min_ltv_actual: 77.9244,
   min_ltv_predicted: 52.0197,
   total_cities: 14659,

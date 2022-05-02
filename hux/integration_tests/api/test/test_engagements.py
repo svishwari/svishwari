@@ -6,7 +6,7 @@ from unittest import TestCase
 from http import HTTPStatus
 import pytest
 import requests
-from hux.integration_tests.api.test.conftest import Crud
+from conftest import Crud
 
 
 class TestEngagements(TestCase):
@@ -21,7 +21,7 @@ class TestEngagements(TestCase):
         self.audience_id = requests.get(
             f"{pytest.API_URL}/audiences",
             headers=pytest.HEADERS,
-        ).json()[0]["id"]
+        ).json()["audiences"][0]["id"]
 
         self.destination_id = requests.get(
             f"{pytest.API_URL}/destinations",
@@ -69,8 +69,11 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsInstance(response.json(), list)
-        self.assertGreaterEqual(len(response.json()), 1)
+        self.assertIsInstance(response.json(), dict)
+        self.assertIn("total_records", response.json())
+        self.assertIn(self.ENGAGEMENTS, response.json())
+        self.assertIsInstance(response.json()[self.ENGAGEMENTS], list)
+        self.assertGreaterEqual(len(response.json()[self.ENGAGEMENTS]), 1)
 
     def test_get_engagement_by_id(self):
         """Test get engagement by ID."""
@@ -286,7 +289,7 @@ class TestEngagements(TestCase):
         audience_id_to_add = requests.get(
             f"{pytest.API_URL}/audiences",
             headers=pytest.HEADERS,
-        ).json()[-1]["id"]
+        ).json()["audiences"][-1]["id"]
 
         add_audience_response = requests.post(
             f"{pytest.API_URL}/{self.ENGAGEMENTS}/{engagement_id}/audiences",
@@ -340,7 +343,7 @@ class TestEngagements(TestCase):
         audience_id_to_delete = requests.get(
             f"{pytest.API_URL}/audiences",
             headers=pytest.HEADERS,
-        ).json()[-1]["id"]
+        ).json()["audiences"][-1]["id"]
 
         # create a test engagement to add an audience to it
         create_response = requests.post(
@@ -714,17 +717,29 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsInstance(response.json(), list)
+        self.assertIsInstance(response.json(), dict)
+        self.assertIn("total_records", response.json())
+        self.assertIn(self.ENGAGEMENTS, response.json())
+        self.assertIsInstance(response.json()[self.ENGAGEMENTS], list)
 
-        for engagement in response.json():
+        for engagement in response.json()[self.ENGAGEMENTS]:
             for audience in engagement["audiences"]:
                 for destination in audience["destinations"]:
+                    # ensure a successful delivery exists for the audience in
+                    # the destination
+                    if (not destination["latest_delivery"]) or (
+                        destination["latest_delivery"]["status"]
+                        in ["Not Delivered", "Error"]
+                    ):
+                        continue
                     # ensure the destination exists
                     get_destination = requests.get(
                         f'{pytest.API_URL}/destinations/{destination["id"]}',
                         headers=pytest.HEADERS,
                     )
-                    if get_destination.status_code == 404:
+                    if (get_destination.status_code == 404) or (
+                        get_destination.json()["name"] != "Facebook"
+                    ):
                         continue
                     # ensure that the audience is not a lookalike audience since
                     # campaign mappings endpoints require regular audience
@@ -736,11 +751,12 @@ class TestEngagements(TestCase):
                     if (
                         get_audience.status_code == 200
                         and get_audience_response
-                        and "is_lookalike" in get_audience_response
-                        and get_audience_response["is_lookalike"]
                     ):
-                        continue
-                    if destination["name"] == "Facebook":
+                        if (
+                            "is_lookalike" in get_audience_response
+                            and get_audience_response["is_lookalike"]
+                        ):
+                            continue
                         return {
                             "engagement_id": engagement["id"],
                             "audience_id": audience["id"],

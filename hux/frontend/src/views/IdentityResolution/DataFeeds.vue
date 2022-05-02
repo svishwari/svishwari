@@ -235,14 +235,19 @@ export default {
 
 .hux-data-table {
   ::v-deep table {
+    position: relative;
     .v-data-table-header {
       tr {
         th {
           background: var(--v-primary-lighten2);
           height: 40px !important;
+          top: -30px;
         }
       }
     }
+  }
+  ::v-deep .table-overflow {
+    overflow-x: visible !important;
   }
 }
 

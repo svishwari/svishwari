@@ -1,18 +1,16 @@
 """This file holds the integration tests for notifications"""
 from http import HTTPStatus
 from unittest import TestCase
-import huxunifylib.database.constants as db_c
 import pytest
 import requests
-
-from hux.integration_tests.api.test.conftest import Crud
+from conftest import Crud
 
 
 class TestNotifications(TestCase):
     """Notifications tests class"""
 
     NOTIFICATIONS = "notifications"
-    COLLECTION = db_c.NOTIFICATIONS_COLLECTION
+    COLLECTION = "notifications"
 
     def test_distinct_users(self) -> None:
         """Test GET /notifications/users"""
@@ -30,8 +28,8 @@ class TestNotifications(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.NOTIFICATIONS}",
             json={
-                "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
-                "type": db_c.NOTIFICATION_TYPE_SUCCESS,
+                "category": "delivery",
+                "type": "success",
                 "description": "E2E integration test to create notification.",
             },
             headers=pytest.HEADERS,
@@ -47,8 +45,8 @@ class TestNotifications(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.NOTIFICATIONS}",
             json={
-                "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
-                "type": db_c.NOTIFICATION_TYPE_SUCCESS,
+                "category": "delivery",
+                "type": "success",
                 "description": "E2E integration test to get notification.",
             },
             headers=pytest.HEADERS,
@@ -72,8 +70,8 @@ class TestNotifications(TestCase):
         response = requests.post(
             f"{pytest.API_URL}/{self.NOTIFICATIONS}",
             json={
-                "category": db_c.NOTIFICATION_CATEGORY_DELIVERY,
-                "type": db_c.NOTIFICATION_TYPE_SUCCESS,
+                "category": "delivery",
+                "type": "success",
                 "description": "E2E integration test to delete a notification.",
             },
             headers=pytest.HEADERS,

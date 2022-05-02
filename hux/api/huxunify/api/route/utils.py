@@ -1,12 +1,12 @@
 """Purpose of this file is to house route utilities."""
 # pylint: disable=too-many-lines
 import statistics
-from collections import defaultdict
-from datetime import datetime, date
+from collections import defaultdict, namedtuple
+from datetime import datetime, date, timedelta
 import re
 from itertools import groupby
 from pathlib import Path
-from typing import Tuple, Union, Generator, Callable
+from typing import Tuple, Union, Generator, Callable, List
 from http import HTTPStatus
 
 import pandas as pd
@@ -14,7 +14,6 @@ from bson import ObjectId
 
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
-
 
 from pandas import DataFrame
 
@@ -26,6 +25,7 @@ from pymongo import MongoClient
 from huxunifylib.util.general.logging import logger
 
 from huxunifylib.database.audit_management import create_audience_audit
+from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -40,7 +40,6 @@ from huxunifylib.database.user_management import (
     set_user,
 )
 from huxunifylib.database.client import DatabaseClient
-
 
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
@@ -1316,6 +1315,59 @@ def generate_audience_file(
         )
 
 
+def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
+    """Method to Convert for Events
+
+    Args:
+        filters (dict): An audience filter
+        event_types(List[dict]): List of event_types
+
+    Returns:
+
+    """
+    for section in filters[api_c.AUDIENCE_FILTERS]:
+        for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
+            if section_filter.get(api_c.AUDIENCE_FILTER_FIELD) in [
+                x[api_c.TYPE] for x in event_types
+            ]:
+                event_name = section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
+                if section_filter.get(api_c.TYPE) == "within_the_last":
+                    is_range = True
+                elif section_filter.get(api_c.TYPE) == "not_within_the_last":
+                    is_range = False
+                else:
+                    break
+                section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
+                section_filter.update({api_c.TYPE: "event"})
+                start_date = (
+                    datetime.utcnow()
+                    - timedelta(
+                        days=int(
+                            section_filter.get(api_c.AUDIENCE_FILTER_VALUE)
+                        )
+                    )
+                ).strftime("%Y-%m-%d")
+                end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                section_filter.update(
+                    {
+                        api_c.VALUE: [
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "event_name",
+                                api_c.TYPE: "equals",
+                                api_c.VALUE: event_name,
+                            },
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "created",
+                                api_c.TYPE: api_c.AUDIENCE_FILTER_RANGE
+                                if is_range
+                                else api_c.AUDIENCE_FILTER_NOT_RANGE,
+                                api_c.VALUE: [start_date, end_date],
+                            },
+                        ]
+                    }
+                )
+
+
 # pylint: disable=unused-variable
 async def build_notification_recipients_and_send_email(
     database: DatabaseClient, notifications: list, req_env_url_root: str
@@ -1400,3 +1452,97 @@ async def build_notification_recipients_and_send_email(
 
         # TODO: call send email function to actually send an email
         # send_email(**send_email_dict)
+
+
+def populate_trust_id_segments(
+    database: DatabaseClient, custom_segments: list
+) -> list:
+    """Function to populate Trust ID Segment data.
+    Args:
+        database (DatabaseClient): A database client.
+        custom_segments(list): List of user specific segments data.
+    Returns:
+        list: Filled segments data with survey responses.
+    """
+
+    # Set default segment without any filters
+    segments_data = [
+        {
+            api_c.SEGMENT_NAME: "Default segment",
+            api_c.SEGMENT_FILTERS: [],
+            api_c.SURVEY_RESPONSES: get_survey_responses(database=database),
+        }
+    ]
+
+    for seg in custom_segments:
+        survey_response = get_survey_responses(
+            database=database,
+            filters=seg[api_c.SEGMENT_FILTERS],
+        )
+        if survey_response:
+            segments_data.append(
+                {
+                    api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
+                    api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
+                    api_c.SURVEY_RESPONSES: survey_response,
+                }
+            )
+    return segments_data
+
+
+def get_engaged_audience_last_delivery(audience: dict) -> None:
+    """Method for getting last delivery at engagement and engaged audience level
+
+    Args:
+        audience(dict): Engagement Object
+
+    Returns:
+    """
+
+    delivery_times = []
+
+    delivery_times.extend(
+        [
+            destination[api_c.LATEST_DELIVERY][db_c.UPDATE_TIME]
+            for destination in audience[api_c.DESTINATIONS]
+            if destination[api_c.LATEST_DELIVERY].get(api_c.STATUS).lower()
+            == api_c.DELIVERED
+        ]
+    )
+    audience[api_c.AUDIENCE_LAST_DELIVERED] = (
+        max(delivery_times) if delivery_times else None
+    )
+
+
+def convert_cdp_buckets_to_histogram(
+    bucket_data: list, field: str = None
+) -> namedtuple:
+    """Method to convert data from CDP response to histogram format.
+
+    Args:
+         bucket_data (list): Body of CDP count-by response.
+         field (str): Name of field.
+    Returns:
+        Tuple[Union[int, float], Union[int, float], list]: Max, min and
+            converted values list.
+    """
+    CDPHistogramData = namedtuple("CDPHistogramData", "max_val min_val values")
+
+    if field == api_c.AGE:
+        value = api_c.AGE
+        max_val = bucket_data[-1].get(api_c.AGE)
+        min_val = bucket_data[0].get(api_c.AGE)
+
+    else:
+        value = api_c.VALUE_FROM
+        max_val = bucket_data[-1].get(api_c.VALUE_TO)
+        min_val = bucket_data[0].get(api_c.VALUE_FROM)
+
+    return CDPHistogramData(
+        max_val,
+        min_val,
+        [
+            (data.get(value), data.get(api_c.CUSTOMER_COUNT))
+            for data in bucket_data
+        ],
+    )

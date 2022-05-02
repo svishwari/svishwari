@@ -36,37 +36,56 @@ class OverallCustomerRatingSchema(Schema):
     rating = Nested(RatingOverviewSchema)
 
 
-class SignalScoreOverviewSchema(Schema):
-    """Signal score overview schema"""
+class FactorScoreOverviewSchema(Schema):
+    """Factor score overview schema"""
 
-    signal_name = Str(
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    factor_name = Str(
         required=True,
         example="capability",
-        validate=OneOf(api_c.LIST_OF_SIGNALS),
+        validate=OneOf(api_c.LIST_OF_FACTORS),
     )
-    signal_score = Integer(
-        required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
+    factor_score = Integer(
+        required=True,
+        validate=Range(min_inclusive=-100, max_inclusive=100),
     )
-    signal_description = Str(required=True, example="Good Quality")
+    factor_description = Str(
+        required=True,
+        example="Good Quality",
+    )
     overall_customer_rating = Nested(OverallCustomerRatingSchema)
 
 
 class TrustIdOverviewSchema(Schema):
     """Trust ID overview Schema"""
 
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
     trust_id_score = Integer(
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
-    signals = List(Nested(SignalScoreOverviewSchema))
+    factors = List(Nested(FactorScoreOverviewSchema))
 
 
 class TrustIdAttributesSchema(Schema):
     """Trust ID attributes Schema"""
 
-    signal_name = Str(
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    factor_name = Str(
         required=True,
         example="capability",
-        validate=OneOf(api_c.LIST_OF_SIGNALS),
+        validate=OneOf(api_c.LIST_OF_FACTORS),
     )
     attribute_score = Integer(
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
@@ -77,6 +96,11 @@ class TrustIdAttributesSchema(Schema):
 
 class AttributeScoreOverviewSchema(Schema):
     """Attribute score overview schema."""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
 
     attribute_type = Str(
         required=True,
@@ -102,6 +126,11 @@ class SegmentFilterSchema(Schema):
 class TrustIdSegmentSchema(Schema):
     """Trust ID segment schema"""
 
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
     segment_name = Str(required=True, example="Segment 1")
     segment_filters = List(Nested(SegmentFilterSchema), default=[])
     attributes = List(Nested(AttributeScoreOverviewSchema), required=True)
@@ -110,9 +139,14 @@ class TrustIdSegmentSchema(Schema):
 class TrustIdComparisonSchema(Schema):
     """Trust ID comparison schema"""
 
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
     segment_type = Str(
         required=True,
-        example="composite & signal scores",
+        example="composite & factor scores",
         validate=OneOf(api_c.SEGMENT_TYPES),
     )
     segments = List(Nested(TrustIdSegmentSchema))

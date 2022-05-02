@@ -78,7 +78,7 @@ export default {
         this.currentData = arg[1]
         this.domain_name = arg[1].domain_name
         this.toolTipStyle.left = this.currentData.invertPosition
-          ? "-30px"
+          ? "-85px"
           : "85px"
       }
     },

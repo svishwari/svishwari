@@ -68,6 +68,7 @@ AZURE_BATCH_ACCOUNT_KEY = "AZURE_BATCH_ACCOUNT_KEY"
 AZURE_BATCH_ACCOUNT_URL = "AZURE_BATCH_ACCOUNT_URL"
 AZURE_STORAGE_ACCOUNT_NAME = "AZURE_STORAGE_ACCOUNT_NAME"
 AZURE_STORAGE_ACCOUNT_KEY = "AZURE_STORAGE_ACCOUNT_KEY"
+AZURE_STORAGE_CONNECTION_STRING = "AZURE_STORAGE_CONNECTION_STRING"
 AZURE_STORAGE_CONTAINER_NAME = "AZURE_STORAGE_CONTAINER_NAME"
 AZURE_STORAGE_BLOB_NAME = "AZURE_STORAGE_BLOB_NAME"
 AZURE_KEY_VAULT_NAME = "AZURE_KEY_VAULT_NAME"
@@ -906,6 +907,12 @@ EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
 USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
 
+USER_DISPLAY_ROLES = {
+    db_c.USER_ROLE_ADMIN: "Admin",
+    db_c.USER_ROLE_EDITOR: "Edit",
+    db_c.USER_ROLE_VIEWER: "View-Only",
+}
+
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
 AUDIENCE_ENDPOINT = "/audiences"
@@ -926,6 +933,8 @@ INSIGHTS = "insights"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
+AUDIENCE_FILTER_RANGE = "range"
+AUDIENCE_FILTER_NOT_RANGE = "not_range"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_LAST_DELIVERY = "last_delivery"
 AUDIENCE_ENGAGEMENTS = "engagements"
@@ -939,6 +948,7 @@ LOOKALIKE = "lookalike"
 LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
+ATTRIBUTES = "attributes"
 AUDIENCES_DEFAULT_BATCH_SIZE = 0
 
 PARAM_STORE_PREFIX = "unified"
@@ -1058,6 +1068,14 @@ PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
 FEATURE_SERVICE = "feature_service"
 DATA_SOURCE = "data_source"
+FEATURE_TYPE = "feature_type"
+MEAN = "mean"
+MIN = "min"
+MAX = "max"
+LCUV = "lcuv"
+MCUV = "mcuv"
+UNIQUE_VALUE = "unique_value"
+RECORDS_NOT_NULL = "records_not_null"
 POPULARITY = "popularity"
 BUCKET = "bucket"
 PREDICTED_VALUE = "predicted_value"
@@ -1216,20 +1234,16 @@ PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
                 f"2m-COGS-cnt-{i}",
             ]
         ),
+        FEATURE_TYPE: random.choice(["Numerical", "Categorial"]),
+        RECORDS_NOT_NULL: str(random.randint(1, 100)) + "%",
+        FEATURE_IMPORTANCE: random.randint(1, 3),
+        MEAN: random.uniform(1.0, 4.0),
+        MIN: random.uniform(1.0, 3.0),
+        MAX: random.uniform(3.0, 7.0),
         FEATURE_SERVICE: PURCHASE,
-        DATA_SOURCE: random.choice(
-            ["Buyers", "Retail", "Promotion", "Email", "Ecommerce"]
-        ),
-        CREATED_BY: random.choice(["Susan Miller", "Jack Miller"]),
-        STATUS: random.choice(
-            [
-                STATUS_PENDING,
-                STATUS_ACTIVE,
-                STATUS_STOPPED,
-            ]
-        ),
-        POPULARITY: random.randint(1, 3),
-        SCORE: round(random.uniform(0.5, 2.9), 4),
+        UNIQUE_VALUE: random.randint(1, 100),
+        LCUV: random.choice(["Women", "Gasoline", "Clothing", "Cars"]),
+        MCUV: random.choice(["Men", "Water", "Grocery", "Home accesories"]),
     }
     for i in range(50)
 ]
@@ -1441,6 +1455,10 @@ CLIENT_PROJECTS_ENDPOINT = "/client-projects"
 
 # Histogram data stub.
 VALUES = "values"
+VALUE_FROM = "value_from"
+VALUE_TO = "value_to"
+HISTOGRAM_GROUP_SIZE = 10
+
 # TODO Remove once we have data from CDP
 AUDIENCE_RULES_HISTOGRAM_DATA = {
     MODEL: {
@@ -1535,9 +1553,9 @@ AUDIENCE_RULES_HISTOGRAM_DATA = {
     "age": {
         "name": "Age",
         "type": "range",
-        "min": 18,
-        "max": 79,
-        "steps": 5,
+        "min": 0,
+        "max": 120,
+        "steps": 1,
         "values": [
             (18, 15129),
             (23, 17236),
@@ -1700,9 +1718,11 @@ RELIABILITY = "reliability"
 HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
-LIST_OF_SIGNALS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+SEGMENT_TYPE = "segment_type"
+SEGMENTS = "segments"
 SEGMENT_TYPES = [
-    "composite & signal scores",
+    "composite & factor scores",
     "humanity attributes",
     "reliability attributes",
     "capability attributes",
@@ -1710,25 +1730,125 @@ SEGMENT_TYPES = [
 ]
 SEGMENT_NAME = "segment_name"
 SEGMENT_FILTERS = "segment_filters"
+SURVEY_RESPONSES = "survey_responses"
+TRUST_ID_SCORE = "trust_id_score"
 TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
 SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
 ATTRIBUTE_SCORES = "attribute_scores"
 NAME_OF_SIGNAL = "name_of_signal"
+ATTRIBUTE_TYPE = "attribute_type"
+ATTRIBUTE_NAME = "attribute_name"
 ATTRIBUTE_SCORE = "attribute_score"
 ATTRIBUTE_DESCRIPTION = "attribute_description"
 OCCUPATION = "occupation"
 CUSTOMER_TYPE = "customer_type"
 OPTIONS = "options"
-MIN = "min"
-MAX = "max"
 OVERALL_CUSTOMER_RATING = "overall_customer_rating"
 RATING = "rating"
 AGREE = "agree"
 NEUTRAL = "neutral"
 DISAGREE = "disagree"
-SIGNAL_NAME = "signal_name"
-SIGNAL_SCORE = "signal_score"
+FACTORS = "factors"
+FACTOR_NAME = "factor_name"
+FACTOR_SCORE = "factor_score"
+FACTOR_DESCRIPTION = "factor_description"
 CUSTOMER_ATTRIBUTE_RATINGS = "customer_attribute_ratings"
+RATING_MAP = {
+    "-1": DISAGREE,
+    "0": NEUTRAL,
+    "1": AGREE,
+}
+FACTOR_DESCRIPTION_MAP = {
+    HUMANITY: (
+        "Humanity is demonstrating empathy and kindness towards "
+        "customers, and treating everyone fairly. It is scored "
+        "on a scale between -100 to 100"
+    ),
+    TRANSPARENCY: (
+        "Transparency is openly sharing all information, motives, and "
+        "choices in straightforward and plain language. It is scored "
+        "on a scale between -100 to 100"
+    ),
+    RELIABILITY: (
+        "Reliability is consistently and dependably delivering on "
+        "promises. It is scored on a scale between -100 to 100"
+    ),
+    CAPABILITY: (
+        "Capability is creating quality products, services, and/or "
+        "experiences. It is scored on a scale between -100 to 100"
+    ),
+}
+
+ATTRIBUTE_DESCRIPTION_TYPE_MAP = {
+    "products are good quality, accessible and safe to use": {
+        TYPE: "product_quality",
+        NAME: "Product quality",
+    },
+    "prices of products, services, and experiences are good value for money": {
+        TYPE: "good_value",
+        NAME: "Good value",
+    },
+    "employees and leadership are competent and understand how to respond to my needs": {
+        TYPE: "competent_leaders_employees",
+        NAME: "Competent leaders & employees",
+    },
+    "creates long term solutions and improvements that work well for me": {
+        TYPE: "long_term_solutions_improvements",
+        NAME: "Long-term solutions & improvements",
+    },
+    (
+        "customer support team quickly resolves issues with my safety, security, "
+        "and satisfaction top of mind"
+    ): {
+        TYPE: "quickly_resolves_issues",
+        NAME: "Quickly Resolves Issues",
+    },
+    "values & respects everyone, regardless of background, identity or beliefs": {
+        TYPE: "values_respects_everyone",
+        NAME: "Values & respects everyone",
+    },
+    "values the good of society and the environment, not just profit": {
+        TYPE: "values_society_environment",
+        NAME: "Values society & environment",
+    },
+    "takes care of employees": {
+        TYPE: "takes_care_of_employees",
+        NAME: "Takes care of employees",
+    },
+    "can be counted on to improve the quality of their products and services": {
+        TYPE: "continuous_product_improvement",
+        NAME: "Continuous product improvement",
+    },
+    "consistently delivers products, services, and experiences with quality": {
+        TYPE: "consistent_quality",
+        NAME: "Consistent quality",
+    },
+    "facilitates digital interactions that run smoothly and work when needed": {
+        TYPE: "smooth_digital_interactions",
+        NAME: "Smooth digital interactions",
+    },
+    "resolves issues in an adequate and timely manner": {
+        TYPE: "timely_issue_resolution",
+        NAME: "Timely issue resolution",
+    },
+    "marketing and communications are accurate and honest": {
+        TYPE: "honesty_marketing_comms",
+        NAME: "Honesty marketing & comms",
+    },
+    "is upfront about how they make and spend money from our interactions": {
+        TYPE: "upfront_on_how_they_make_money",
+        NAME: "Upfront on how they make money",
+    },
+    "how and why my data is used is communicated in plain and easy to understand language": {
+        TYPE: "plain_language_data_policy",
+        NAME: "Plain language data policy",
+    },
+    "is clear and upfront about fees and costs of products, services and experiences": {
+        TYPE: "clear_fees_costs",
+        NAME: "Clear fees & costs",
+    },
+}
+
 # TODO Remove STUB once data is available
 
 TRUST_ID_ATTRIBUTE_STUB = {
@@ -1796,6 +1916,7 @@ PERFORMANCE_METRIC_EMAIL_STUB = {
     "open_rate": 0,
     "clicks": 719,
     "conversions": 0,
+    "click_through_rate": 0.23,
     "click_to_open_rate": 0,
     "unique_clicks": 704,
     "unique_opens": 937,
@@ -1856,3 +1977,10 @@ APPLICATION_CATEGORIES = [
     "Monitoring",
     "Uncategorized",
 ]
+
+SEGMENT_TYPE_MAP = {
+    CAPABILITY: "capability attributes",
+    HUMANITY: "humanity attributes",
+    RELIABILITY: "reliability attributes",
+    TRANSPARENCY: "transparency attributes",
+}

@@ -4,6 +4,7 @@ from http import HTTPStatus
 from typing import Tuple
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
 from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
@@ -12,6 +13,8 @@ from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
 )
+
+from huxunify.api.config import get_config
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
@@ -49,6 +52,7 @@ from huxunify.api.data_connectors.cdp import (
     get_spending_by_gender,
     get_demographic_by_country,
     get_revenue_by_day,
+    get_customer_event_types,
 )
 from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
@@ -61,6 +65,7 @@ from huxunify.api.route.utils import (
     get_start_end_dates,
     get_db_client,
     convert_unique_city_filter,
+    convert_filters_for_events,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -242,7 +247,15 @@ class CustomerPostOverview(SwaggerView):
 
         token_response = get_token_from_request(request)
 
+        # Fetch events from CDM. Check cache first.
+        event_types = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.EVENTS}",
+            get_customer_event_types,
+            {"token": token_response[0]},
+        )
+
         filters = convert_unique_city_filter(request.json)
+        convert_filters_for_events(filters, event_types)
         customers_overview = Caching.check_and_return_cache(
             {
                 "endpoint": f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
@@ -364,6 +377,19 @@ class IDROverview(SwaggerView):
                 start_date,
                 end_date,
             )
+
+            # TODO Only for demo purpose remove after actual data integration
+            if get_config().ENV_NAME == "RC1":
+                end_date = datetime.utcnow() - relativedelta(days=1)
+                delta_days = (
+                    end_date - max([data[api_c.DAY] for data in trend_data])
+                ).days
+                for data in trend_data:
+                    data[api_c.DAY] = data[api_c.DAY] + relativedelta(
+                        days=delta_days
+                    )
+                idr_overview[api_c.UPDATED] = end_date
+
             # cache
             create_cache_entry(
                 database,
@@ -680,6 +706,17 @@ class IDRDataFeeds(SwaggerView):
             },
         )
 
+        # TODO Only for demo purpose remove after actual data integration
+        if get_config().ENV_NAME == "RC1":
+            end_date = datetime.utcnow() - relativedelta(days=1)
+            delta_days = (
+                end_date - max([data[api_c.TIMESTAMP] for data in data_feeds])
+            ).days
+            for data in data_feeds:
+                data[api_c.TIMESTAMP] = data[api_c.TIMESTAMP] + relativedelta(
+                    days=delta_days
+                )
+
         return (
             jsonify(
                 DataFeedSchema().dump(
@@ -750,7 +787,31 @@ class IDRDataFeedDetails(SwaggerView):
             get_idr_data_feed_details,
             {"token": token_response[0], "datafeed_id": datafeed_id},
         )
+        # TODO Only for demo purpose remove after actual data integration
+        if get_config().ENV_NAME == "RC1":
+            start_date, end_date = get_start_end_dates(request, 6)
+            Validation.validate_date_range(start_date, end_date)
 
+            data_feeds = Caching.check_and_return_cache(
+                f"{api_c.IDR_ENDPOINT}.{api_c.DATAFEEDS}.{start_date}.{end_date}",
+                get_idr_data_feeds,
+                {
+                    "token": token_response[0],
+                    "start_date": start_date,
+                    "end_date": end_date,
+                },
+            )
+            stub_end_date = datetime.utcnow() - relativedelta(days=1)
+            delta_days = (
+                stub_end_date
+                - max([data[api_c.TIMESTAMP] for data in data_feeds])
+            ).days
+            data_feed[api_c.STITCHED][api_c.STITCHED_TIMESTAMP] = data_feed[
+                api_c.STITCHED
+            ][api_c.STITCHED_TIMESTAMP] + relativedelta(days=delta_days)
+            data_feed[api_c.PINNING][api_c.PINNING_TIMESTAMP] = data_feed[
+                api_c.PINNING
+            ][api_c.PINNING_TIMESTAMP] + relativedelta(days=delta_days)
         return (
             DataFeedDetailsSchema().dump(data_feed),
             HTTPStatus.OK,

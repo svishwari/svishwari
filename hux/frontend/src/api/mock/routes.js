@@ -12,6 +12,7 @@ import {
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import { dataFeeds, dataFeedDetails } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
+import audienceHistogramData from "./factories/audienceHistogramData.js"
 import featureData from "./factories/featureData.json"
 import { requestedUser, someTickets } from "./factories/user.js"
 import audienceCSVData from "./factories/audienceCSVData"
@@ -21,6 +22,7 @@ import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
+import menuConfig from "./fixtures/menuConfig"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
 import { addedApplications, applications } from "./factories/application"
@@ -148,10 +150,14 @@ export const defineRoutes = (server) => {
 
   server.patch("/destinations/:id", (schema, request) => {
     const id = request.params.id
-
-    return schema.destinations
-      .find(id)
-      .update({ is_added: false, status: "Pending" })
+    const requestData = JSON.parse(request.requestBody)
+    if (requestData.link) {
+      return schema.destinations.find(id).update({ link: requestData.link })
+    } else {
+      return schema.destinations
+        .find(id)
+        .update({ is_added: false, status: "Pending" })
+    }
   })
 
   server.get("/destinations/:destinationId/data-extensions")
@@ -710,6 +716,7 @@ export const defineRoutes = (server) => {
     const notifications = {
       notifications: allNotifications.models.slice(initialCount, lastCount),
       total: allNotifications.length,
+      seen_notifications: request.queryParams.batch_size > 5 ? true : false,
     }
     return notifications
   })
@@ -717,6 +724,10 @@ export const defineRoutes = (server) => {
     const id = request.params.notification_id
     let singleNotification = schema.notifications.find(id)
     return singleNotification
+  })
+
+  server.get("/notifications/users", (schema) => {
+    return schema.users.all().models.map((user) => user.display_name)
   })
 
   server.get("/users", (schema) => {
@@ -786,6 +797,17 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/audiences/rules", () => attributeRules)
+
+  server.get("/audiences/rules/:field/histogram", (schema, request) => {
+    const field = request.params.field
+    if (field === "age") {
+      return audienceHistogramData[field]
+    } else {
+      const modelName = request.queryParams.model_name
+      return audienceHistogramData[modelName]
+    }
+  })
+
   server.get("/audiences/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const audience = schema.audiences.find(id)
@@ -875,6 +897,8 @@ export const defineRoutes = (server) => {
   server.get("/configurations/modules", (schema) => {
     return schema.configurations.all()
   })
+
+  server.get("/configurations/navigation", () => menuConfig)
 
   //applications
   server.get("/applications", (schema, request) => {

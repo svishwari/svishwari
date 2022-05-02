@@ -1,6 +1,5 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for TrustID APIs."""
-import copy
 from http import HTTPStatus
 from typing import Tuple
 
@@ -8,6 +7,7 @@ from flasgger import SwaggerView
 from flask import Blueprint, request
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.user_management import (
     get_user_trust_id_segments,
     add_user_trust_id_segments,
@@ -16,6 +16,11 @@ from huxunifylib.database.user_management import (
 
 from huxunify.api import constants as api_c
 
+from huxunify.api.data_connectors.trust_id import (
+    get_trust_id_attributes,
+    get_trust_id_overview,
+    get_trust_id_comparison_data,
+)
 from huxunify.api.route.decorators import (
     secured,
     add_view_to_blueprint,
@@ -24,7 +29,10 @@ from huxunify.api.route.decorators import (
 )
 
 from huxunify.api.route.return_util import HuxResponse
-from huxunify.api.route.utils import get_db_client
+from huxunify.api.route.utils import (
+    get_db_client,
+    populate_trust_id_segments,
+)
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
     TrustIdAttributesSchema,
@@ -34,9 +42,6 @@ from huxunify.api.schema.trust_id import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.stubbed_data.trust_id_stub import (
-    trust_id_overview_stub_data,
-    trust_id_attribute_stub_data,
-    trust_id_comparison_stub_data,
     trust_id_filters_stub,
 )
 
@@ -88,8 +93,12 @@ class TrustIdOverview(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
+        survey_responses = get_survey_responses(get_db_client())
+
+        trust_id_overview = get_trust_id_overview(survey_responses)
+
         return HuxResponse.OK(
-            data=trust_id_overview_stub_data,
+            data=trust_id_overview,
             data_schema=TrustIdOverviewSchema(),
         )
 
@@ -108,7 +117,7 @@ class TrustIdAttributes(SwaggerView):
             "schema": {"type": "array", "items": TrustIdAttributesSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to fetch signal data"
+            "description": "Failed to fetch factor data"
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -117,7 +126,7 @@ class TrustIdAttributes(SwaggerView):
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
-        """Retrieves Trust ID attributes data.
+        """Retrieves Trust ID trust_id_attributes data.
 
         ---
         security:
@@ -132,9 +141,20 @@ class TrustIdAttributes(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
+        survey_responses = get_survey_responses(get_db_client())
+
+        trust_id_attributes = sorted(
+            sorted(
+                get_trust_id_attributes(survey_responses),
+                key=lambda x: x[api_c.ATTRIBUTE_SCORE],
+                reverse=True,
+            ),
+            key=lambda x: x[api_c.FACTOR_NAME],
+            reverse=False,
+        )
 
         return HuxResponse.OK(
-            data=trust_id_attribute_stub_data,
+            data=trust_id_attributes,
             data_schema=TrustIdAttributesSchema(),
         )
 
@@ -181,20 +201,13 @@ class TrustIdAttributeComparison(SwaggerView):
         custom_segments = get_user_trust_id_segments(
             database=get_db_client(), okta_id=user[db_c.OKTA_ID]
         )
-        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
-        for seg in custom_segments:
-            _ = [
-                x["segments"].append(
-                    {
-                        "segment_name": seg["segment_name"],
-                        "segment_filters": seg["segment_filters"],
-                        "attributes": x["segments"][-1]["attributes"],
-                    }
-                )
-                for x in required_comparison_data
-            ]
+
+        segments_data = populate_trust_id_segments(
+            database=get_db_client(), custom_segments=custom_segments
+        )
+
         return HuxResponse.OK(
-            data=required_comparison_data,
+            data=get_trust_id_comparison_data(segments_data),
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -262,9 +275,9 @@ class TrustIdAddSegment(SwaggerView):
                 api_c.SEGMENT_NAME: "Segment 1",
                 api_c.SEGMENT_FILTERS: [
                     {
-                        api_c.TYPE: "age",
-                        api_c.DESCRIPTION: "Age",
-                        api_c.VALUES: ["18-20 years", "21-24 years"],
+                        api_c.TYPE: "gender",
+                        api_c.DESCRIPTION: "Gender",
+                        api_c.VALUES: ["Female", "Male"],
                     }
                 ],
             },
@@ -308,16 +321,14 @@ class TrustIdAddSegment(SwaggerView):
         # Return the trust id segments for user
         segments = get_user_trust_id_segments(database, user[db_c.OKTA_ID])
 
-        if len(segments) >= 3:
+        if len(segments) >= 4:
             return HuxResponse.FORBIDDEN(
                 message="Threshold of maximum segments reached."
             )
 
         added_segments = [
-            x["segment_name"]
-            for x in trust_id_comparison_stub_data[0]["segments"]
+            segment.get(api_c.SEGMENT_NAME) for segment in segments
         ]
-        added_segments.extend([x[api_c.SEGMENT_NAME] for x in segments])
         # Check if a segment with the specified name exists
         if segment_details[api_c.SEGMENT_NAME] in added_segments:
             return HuxResponse.CONFLICT(
@@ -328,23 +339,12 @@ class TrustIdAddSegment(SwaggerView):
             database, user[db_c.OKTA_ID], segment_details
         )[db_c.TRUST_ID_SEGMENTS]
 
-        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
-        for seg in updated_segments:
-            _ = [
-                x["segments"].append(
-                    {
-                        "segment_name": seg["segment_name"],
-                        "segment_filters": seg["segment_filters"],
-                        "attributes": x["segments"][-1]["attributes"],
-                    }
-                )
-                for x in required_comparison_data
-            ]
+        segments_data = populate_trust_id_segments(
+            database=get_db_client(), custom_segments=updated_segments
+        )
 
-        # Update logic to filter trust id data based on added
-        # segments using updated_segments
         return HuxResponse.CREATED(
-            data=required_comparison_data,
+            data=get_trust_id_comparison_data(segments_data),
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -408,22 +408,11 @@ class TrustIdRemoveSegment(SwaggerView):
             get_db_client(), user[db_c.OKTA_ID], segment_name
         )[db_c.TRUST_ID_SEGMENTS]
 
-        required_comparison_data = copy.deepcopy(trust_id_comparison_stub_data)
-        for seg in updated_segments:
-            _ = [
-                x["segments"].append(
-                    {
-                        "segment_name": seg["segment_name"],
-                        "segment_filters": seg["segment_filters"],
-                        "attributes": x["segments"][-1]["attributes"],
-                    }
-                )
-                for x in required_comparison_data
-            ]
+        segments_data = populate_trust_id_segments(
+            database=get_db_client(), custom_segments=updated_segments
+        )
 
-        # Update logic to filter trust id data based on added
-        # segments using updated_segments
         return HuxResponse.OK(
-            data=required_comparison_data,
+            data=get_trust_id_comparison_data(segments_data),
             data_schema=TrustIdComparisonSchema(),
         )

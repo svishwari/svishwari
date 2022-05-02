@@ -758,6 +758,7 @@ export default {
       markFavorite: "users/markFavorite",
       detachStandaloneDestination: "audiences/removeStandaloneDestination",
       updateLookalikeAudience: "audiences/updateLookalike",
+      removeAudienceDestination: "engagements/detachDestinationAudi",
     }),
     formatInnerHTML: formatInnerHTML,
     attributeOptions() {
@@ -879,7 +880,7 @@ export default {
           this.triggerAttachEngagement(this.deleteActionData)
           break
         case "remove-destination":
-          await this.detachAudienceDestination(this.deleteActionData)
+          await this.removeAudienceDestination(this.deleteActionData)
           break
         case "remove audience":
           await this.deleteAudience({ id: this.audience.id })

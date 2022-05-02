@@ -25,6 +25,8 @@ from huxunify.api.route.utils import (
     check_mongo_connection,
     get_health_check,
     filter_team_member_requests,
+    convert_filters_for_events,
+    convert_cdp_buckets_to_histogram,
 )
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
@@ -386,4 +388,89 @@ class TestRouteUtils(TestCase):
         self.assertIn(
             api_c.STATE_IN_PROGRESS,
             [request.get(api_c.STATUS) for request in filtered_requests],
+        )
+
+    def test_convert_filters_for_events(self):
+        """Test convert_filters_for_events method."""
+
+        event_filters = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {
+                            "field": "traits_analysed",
+                            "type": "within_the_last",
+                            "value": "12",
+                        }
+                    ],
+                }
+            ]
+        }
+
+        event_types = [
+            {api_c.TYPE: "traits_analysed", api_c.LABEL: "Traits Analysed"},
+            {api_c.TYPE: "sales_made", api_c.LABEL: "Sales Made"},
+        ]
+
+        expected_filters = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {
+                            "field": "event",
+                            "type": "event",
+                            "value": [
+                                {
+                                    "field": "event_name",
+                                    "type": "equals",
+                                    "value": "traits_analysed",
+                                },
+                                {
+                                    "field": "created",
+                                    "type": "range",
+                                    "value": [
+                                        (
+                                            datetime.utcnow()
+                                            - timedelta(days=12)
+                                        ).strftime("%Y-%m-%d"),
+                                        datetime.utcnow().strftime("%Y-%m-%d"),
+                                    ],
+                                },
+                            ],
+                        }
+                    ],
+                }
+            ]
+        }
+        convert_filters_for_events(event_filters, event_types)
+        self.assertEqual(
+            event_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+            expected_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+        )
+
+    def test_convert_cdp_age_bucket_to_histogram(self):
+        """Test for convert_cdp_buckets_to_histogram method for age field."""
+
+        bucket_age_data = t_c.CDP_COUNT_BY_AGE_RESONSE.get(api_c.BODY, [])
+        histogram_data = convert_cdp_buckets_to_histogram(
+            bucket_data=bucket_age_data, field=api_c.AGE
+        )
+
+        self.assertEqual(t_c.AGE_HISTOGRAM_DATA, histogram_data.values)
+
+    def test_convert_cdp_bucket_data_to_histogram(self):
+        """Test for convert_cdp_buckets_to_histogram method."""
+
+        bucket_data = t_c.CDP_COUNTS_BY_FLOAT_RESONSE.get(api_c.BODY, [])
+        histogram_data = convert_cdp_buckets_to_histogram(
+            bucket_data=bucket_data
+        )
+        self.assertEqual(
+            t_c.COUNTS_BY_FLOAT_HISTOGRAM_DATA, histogram_data.values
         )

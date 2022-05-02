@@ -21,6 +21,8 @@ jobs:
               - 'lib/huxunifylib-database/huxunifylib/**'
             scripts:
               - 'scripts/database/**'
+            api_intg_tests:
+              - 'hux/integration_tests/api/**'
       - if: steps.changes.outputs.api == 'true'
         working-directory: hux/api
         run: safety check
@@ -29,4 +31,7 @@ jobs:
         run: safety check
       - if: always() && steps.changes.outputs.scripts == 'true'
         working-directory: scripts
+        run: safety check
+      - if: always() && steps.changes.outputs.api_intg_tests == 'true'
+        working-directory: hux/integration_tests/api
         run: safety check

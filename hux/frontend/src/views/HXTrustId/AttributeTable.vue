@@ -21,7 +21,7 @@
               :key="col.value"
               class="black--text text--darken-4 text-body-1"
             >
-              <template v-if="col.value === 'signal_name'">
+              <template v-if="col.value === 'factor_name'">
                 <div class="attribute-name">
                   <rhombus-number
                     class="rhombus-icon"
@@ -159,8 +159,8 @@ export default {
   },
   data() {
     return {
-      sortColumn: "signal_name",
-      sortDesc: true,
+      sortColumn: "factor_name",
+      sortDesc: false,
       trustColor: {
         humanity: { stroke: "primary", variant: "darken6" },
         transparency: { stroke: "yellow", variant: "darken1" },
@@ -169,8 +169,8 @@ export default {
       },
       columns: [
         {
-          text: "Name of signal",
-          value: "signal_name",
+          text: "Name of factor",
+          value: "factor_name",
           width: "170px",
           tooltipWidth: "300px",
           hoverTooltip:
@@ -182,7 +182,7 @@ export default {
           width: "134px",
           tooltipWidth: "300px",
           hoverTooltip:
-            "Attribute scores are additional data points that can be used to diagnose what is driving a particular signal score.",
+            "Attribute scores are additional data points that can be used to diagnose what is driving a particular factor score.",
         },
         {
           text: "Attributes",
@@ -190,7 +190,7 @@ export default {
           width: "605px",
           tooltipWidth: "300px",
           hoverTooltip:
-            "Attributes are the trust-building actions that have the greatest impact on your 4 HX TrustID signal scores.",
+            "Attributes are the trust-building actions that have the greatest impact on your 4 HX TrustID factor scores.",
         },
         {
           text: "Customer rating",
@@ -218,7 +218,7 @@ export default {
       return results
     },
     getRhombusColour(val) {
-      return this.trustColor[val.signal_name]
+      return this.trustColor[val.factor_name]
     },
   },
 }

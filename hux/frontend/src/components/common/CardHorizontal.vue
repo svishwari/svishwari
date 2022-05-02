@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="d-flex justify-space-between align-center px-5 py-2 rounded"
+    class="d-flex justify-space-between align-center pl-5 pr-3 py-2 rounded"
     :class="{
       'card-horizontal-disabled': isDisabledOrDeselectable,
       'box-shadow-5': !isDisabledOrDeselectable,

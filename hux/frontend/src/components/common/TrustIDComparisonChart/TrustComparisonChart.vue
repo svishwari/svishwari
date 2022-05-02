@@ -101,6 +101,9 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
+        this.toolTipStyle.left = this.currentData.invertPosition
+          ? "-360px"
+          : "-228px"
       }
     },
     sizeHandler() {
@@ -127,7 +130,7 @@ export default {
     initializeSegmentData() {
       if (this.segmentScores) {
         this.sourceData = this.segmentScores.find(
-          (data) => data.segment_type == "composite & signal scores"
+          (data) => data.segment_type == "composite & factor scores"
         ).segments
         this.sourceData.forEach(
           (data, index) => (data.color = this.colors[index])

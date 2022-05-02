@@ -28,8 +28,8 @@
             :variant="isFilterToggled ? 'lighten6' : 'darken4'"
           />
           <v-badge
-            v-if="totalFiltersSelected > 0"
-            :content="totalFiltersSelected"
+            v-if="totalCount > 0"
+            :content="totalCount"
             color="white"
             offset-x="6"
             offset-y="4"
@@ -227,15 +227,15 @@
       <div class="ml-auto idr-filter">
         <hux-filters-drawer
           :is-toggled="isFilterToggled"
-          :count="totalFiltersSelected"
+          :count="numFiltersSelected"
+          :enable-apply="setEnableApply"
           content-height="300px"
           @clear="resetFilters"
-          @apply="refreshData"
-          @close="isFilterToggled = !isFilterToggled"
+          @apply="applyFilters"
+          @close="close"
         >
           <hux-filter-panels :expanded="[0]">
             <hux-filter-panel
-              class="filter-panel"
               title="Time"
               :count="numFiltersSelected"
               :disabled="true"
@@ -314,6 +314,10 @@ export default {
       filterEndDate: null,
       matchingTrendsErrorState: false,
       dataFeedsErrorState: false,
+      totalCount: 0,
+      enableApply: false,
+      selectedStartDate: null,
+      selectedEndDate: null,
     }
   },
   computed: {
@@ -351,9 +355,6 @@ export default {
       }
       return 0
     },
-    totalFiltersSelected() {
-      return this.numFiltersSelected
-    },
     hasMatchingTrendsData() {
       return this.matchingTrends && this.matchingTrends.length
     },
@@ -363,6 +364,9 @@ export default {
         this.loadingDataFeeds ||
         this.loadingMatchingTrends
       )
+    },
+    setEnableApply() {
+      return this.numFiltersSelected > 0 ? true : false
     },
   },
   async mounted() {
@@ -392,6 +396,14 @@ export default {
         this.loadMatchingTrends()
       }
     },
+
+    applyFilters() {
+      this.selectedStartDate = this.filterStartDate
+      this.selectedEndDate = this.filterEndDate
+      this.totalCount = this.numFiltersSelected
+      this.refreshData()
+    },
+
     setFilters({ startDate, endDate }) {
       if (startDate && endDate) {
         this.filterStartDate = this.$options.filters.Date(
@@ -404,6 +416,7 @@ export default {
     resetFilters() {
       this.filterStartDate = this.minDate
       this.filterEndDate = this.maxDate
+      this.applyFilters()
     },
     async loadMatchingTrends() {
       this.loadingMatchingTrends = true
@@ -433,6 +446,19 @@ export default {
         this.loadingOverview = false
       }
     },
+    close() {
+      if (this.selectedStartDate == null) {
+        this.filterStartDate = this.minDate
+      } else {
+        this.filterStartDate = this.selectedStartDate
+      }
+      if (this.selectedEndDate == null) {
+        this.filterEndDate = this.maxDate
+      } else {
+        this.filterEndDate = this.selectedEndDate
+      }
+      this.isFilterToggled = false
+    },
   },
 }
 </script>
@@ -458,13 +484,7 @@ $headerOffsetY: 70px;
     background-size: 90% 100%;
   }
 }
-.idr-filter {
-  margin-top: -30px;
-  margin-right: -30px;
-  .filter-panel {
-    pointer-events: none;
-  }
-}
+
 ::-webkit-scrollbar {
   width: 5px;
 }
