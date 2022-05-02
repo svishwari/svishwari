@@ -55,6 +55,7 @@ steps:
 
   ToxDocs:
     stage: tox
+    type: sequential
     title: "Tox - Sphinx documentation and validation"
     description: "Run sphinx validation tests using tox"
     image: readthedocs/build:6.0
@@ -67,24 +68,31 @@ steps:
     environment: *pip_common_envs
     scale:
       safety:
+        title: 'safety'
         environment:
           - TOXENV=safety
       secrets:
+        title: 'secrets'
         environment:
           - TOXENV=secrets
       dirhtml:
+        title: 'dirhtml'
         environment:
           - TOXENV=dirhtml
       doctest:
+        title: 'doctest'
         environment:
           - TOXENV=doctest
       linkcheck:
+        title: 'linkcheck'
         environment:
           - TOXENV=linkcheck
       spelling:
+        title: 'spelling'
         environment:
           - TOXENV=spelling
       style:
+        title: 'style'
         environment:
           - TOXENV=style
     fail_fast: false
