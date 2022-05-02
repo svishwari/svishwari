@@ -1,7 +1,6 @@
 # This is the CI pipeline for Unified Sphinx Docs
 
 version: "1.0"
-mode: sequential
 indicators:
   - environment: &pip_common_envs
       - PIP_INDEX_URL=${{ARTIFACTORY_PYTHON_READ}}
@@ -55,7 +54,6 @@ steps:
 
   ToxDocs:
     stage: tox
-    type: sequential
     title: "Tox - Sphinx documentation and validation"
     description: "Run sphinx validation tests using tox"
     image: readthedocs/build:6.0
