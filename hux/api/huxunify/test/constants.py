@@ -1745,6 +1745,50 @@ TRUST_ID_SURVEY_RESPONSES = [
     }
 ]
 
+TRUST_ID_SAMPLE_USER_SEGMENT = [
+    {
+        "segment_name": "Segment",
+        "segment_filters": [
+            {"type": "age", "values": ["50 to 54 years"], "description": "Age"}
+        ],
+    }
+]
+
+TRUST_ID_SAMPLE_HUMANITY_OVERVIEW = {
+    "factor_name": "humanity",
+    "factor_score": 100,
+    "factor_description": "Humanity is demonstrating empathy and kindness "
+    "towards customers, and "
+    "treating everyone fairly. "
+    "It is scored on a scale between -100 to 100",
+    "overall_customer_rating": {
+        "total_customers": 1,
+        "rating": {
+            "disagree": {"count": 0, "percentage": 0.0},
+            "neutral": {"count": 0, "percentage": 0.0},
+            "agree": {"count": 1, "percentage": 1.0},
+        },
+    },
+}
+
+TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE_AGG = {
+    "Takes care of employees": {"neutral": 1, "score": 0}
+}
+
+TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE = {
+    "factor_name": "humanity",
+    "attribute_description": "Takes care of employees",
+    "attribute_score": 0,
+    "overall_customer_rating": {
+        "total_customers": 1,
+        "rating": {
+            "disagree": {"count": 0, "percentage": 0.0},
+            "neutral": {"count": 1, "percentage": 1.0},
+            "agree": {"count": 0, "percentage": 0.0},
+        },
+    },
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
