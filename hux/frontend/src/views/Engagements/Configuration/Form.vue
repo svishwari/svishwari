@@ -567,10 +567,10 @@ export default {
       updateEngagement: "engagements/updateEngagement",
     }),
 
-    openAudieneDetailDrawer(item) {
+    openAudieneDetailDrawer(audience) {
       this.closeAllDrawers()
-      this.$refs.audienceDetailDrawer.fetchAudienceDetails(item.item.id)
-      this.selectedAudienceId = item.item.id
+      this.$refs.audienceDetailDrawer.fetchAudienceDetails(audience.item.id)
+      this.selectedAudienceId = audience.item.id
       this.showAddAudienceDetailDrawer = true
     },
 
