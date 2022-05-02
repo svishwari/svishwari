@@ -151,7 +151,6 @@
                 v-model="item['replace_audience']"
                 :switch-labels="switchLabels"
                 false-color="var(--v-black-lighten4)"
-                @change="handleChange($event, section, item)"
               />
             </div>
           </td>
@@ -450,11 +449,6 @@ export default {
         type: "pending",
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
-    },
-    async handleChange(event, engagement, delivery) {
-      console.log(event)
-      console.log(engagement.id)
-      console.log(delivery.id)
     },
   },
 }
