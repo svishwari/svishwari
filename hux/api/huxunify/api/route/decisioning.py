@@ -6,9 +6,12 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple, List
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, Response
 from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
+
+from huxunify.api.data_connectors.decisioning import Decisioning
+from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
@@ -107,11 +110,14 @@ class ModelsView(SwaggerView):
         """
 
         # convert all statuses to lower case
-        status = [
+        requested_statuses = [
             status.lower() for status in request.args.getlist(api_c.STATUS)
         ]
-        all_models = Tecton().get_models()
+        # TODO JIM implement caching here
+        token = get_token_from_request(request)[0]
+        all_models = Decisioning(token).get_all_models()
 
+        # TODO JIM why is this here? Can we please delete it?
         purchase_model = {
             api_c.TYPE: "Classification",
             api_c.CATEGORY: "Email",
@@ -130,10 +136,7 @@ class ModelsView(SwaggerView):
         }
         all_models.append(purchase_model)
 
-        for model in all_models:
-            if api_c.CATEGORY not in model:
-                model[api_c.CATEGORY] = api_c.UNCATEGORIZED
-
+        # TODO why are we getting models from our database? Is this valid anymore?
         database = get_db_client()
         unified_models = collection_management.get_documents(
             database, db_c.MODELS_COLLECTION
@@ -146,6 +149,7 @@ class ModelsView(SwaggerView):
             {db_c.TYPE: api_c.MODELS_TAG},
         )
         if config_models.get(db_c.DOCUMENTS):
+            # TODO JIM, Raj what is happening here and why?
             for model in all_models:
                 matched_model = next(
                     (
@@ -158,12 +162,11 @@ class ModelsView(SwaggerView):
                 if matched_model is not None:
                     model[api_c.STATUS] = matched_model[api_c.STATUS]
 
-        if status:
-            # match status is lower case
+        if requested_statuses:
             all_models = [
                 model
                 for model in all_models
-                if model[api_c.STATUS].lower() in status
+                if model[api_c.STATUS] in requested_statuses
             ]
 
         all_models.sort(key=lambda x: x[api_c.NAME])
@@ -233,6 +236,7 @@ class SetModelStatus(SwaggerView):
         Returns:
             Tuple[dict, int]: Model Requested, HTTP status code.
         """
+        # TODO JIM, with DEC API, what do we do with this EP?
 
         models = ModelRequestPostSchema().load(
             request.get_json(), unknown=True, many=True
@@ -343,6 +347,7 @@ class RemoveRequestedModel(SwaggerView):
         Returns:
             Tuple[dict, int]: Model Removed, HTTP status code.
         """
+        # TODO JIM, with DEC API, what do we do with this EP?
 
         database = get_db_client()
 
@@ -446,6 +451,7 @@ class UpdateModels(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
+        # TODO JIM, with DEC API, what do we do with this EP?
 
         models = ModelUpdatePatchSchema(many=True).load(request.json)
 
@@ -504,7 +510,7 @@ class ModelVersionHistoryView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
+    def get(self, model_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves model version history.
 
         ---
@@ -516,13 +522,14 @@ class ModelVersionHistoryView(SwaggerView):
             user (dict): User object
 
         Returns:
-            Tuple[List[dict], int]: List containing dict of model versions,
+            Tuple[Response, int]: List containing dict of model versions,
                 HTTP status code.
         """
 
         # TODO Remove once Propensity to Purchase info
         #  can be retrieved from tecton
         if model_id == "3":
+            # TODO JIM, what is this? can I delete plz?
             version_history = [
                 {
                     api_c.ID: model_id,
@@ -541,12 +548,10 @@ class ModelVersionHistoryView(SwaggerView):
             ]
 
         else:
-            version_history = Tecton().get_model_version_history(model_id)
+            token = get_token_from_request(request)[0]
+            version_history = Decisioning(token).get_model_version_history(model_id)
 
-        return (
-            jsonify(ModelVersionSchema(many=True).dump(version_history)),
-            HTTPStatus.OK.value,
-        )
+        return HuxResponse.OK(data_schema=ModelVersionSchema(), data=version_history)
 
 
 @add_view_to_blueprint(
@@ -590,7 +595,7 @@ class ModelOverview(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, model_id: str, user: dict) -> Tuple[dict, int]:
+    def get(self, model_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves model overview.
 
         ---
@@ -602,65 +607,18 @@ class ModelOverview(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[dict, int]: dict of model features, HTTP status code.
+            Tuple[Response, int]: dict of model features, HTTP status code.
         """
 
         # TODO Remove once Propensity to Purchase model data is being served
         #  from tecton.
+        # TODO JIM, what is this? Can I delete?? plz??
         if model_id == "3":
             overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
         else:
-            version = None
-            tecton = Tecton()
-            for version in tecton.get_model_version_history(model_id):
-                current_version = version.get(api_c.CURRENT_VERSION)
-
-                # try to get model performance
-                performance_metrics = tecton.get_model_performance_metrics(
-                    model_id,
-                    version[api_c.TYPE],
-                    current_version,
-                )
-
-                if request.args.get(api_c.VERSION) is not None:
-                    if (
-                        current_version == request.args.get(api_c.VERSION)
-                        and performance_metrics
-                    ):
-                        break
-
-                if (
-                    request.args.get(api_c.VERSION) is None
-                    and performance_metrics
-                ):
-                    break
-            else:
-                # if model versions not found, return not found.
-                return {}, HTTPStatus.NOT_FOUND
-
-            # generate the output
-            overview_data = {
-                api_c.MODEL_ID: version.get(api_c.ID),
-                api_c.MODEL_TYPE: version.get(
-                    api_c.TYPE, db_c.CATEGORY_UNKNOWN
-                ),
-                api_c.MODEL_NAME: version.get(
-                    api_c.NAME, db_c.CATEGORY_UNKNOWN
-                ),
-                api_c.DESCRIPTION: version.get(api_c.DESCRIPTION, ""),
-                api_c.MODEL_SHAP_DATA: get_required_shap_data(
-                    api_c.MODEL_ONE_SHAP_DATA
-                    if model_id == "17e1565dbd2821adaf88fd26658744aba9419a6f"
-                    else api_c.MODEL_TWO_SHAP_DATA,
-                ),
-                api_c.PERFORMANCE_METRIC: performance_metrics,
-            }
-
-        # dump schema and return to client.
-        return (
-            ModelDashboardSchema().dump(overview_data),
-            HTTPStatus.OK,
-        )
+            token = get_token_from_request(request)[0]
+            model_overview = Decisioning(token).get_model_overview(model_id)
+            return HuxResponse.OK(data=model_overview, data_schema=ModelDashboardSchema())
 
 
 @add_view_to_blueprint(
@@ -718,6 +676,9 @@ class ModelDriftView(SwaggerView):
             Tuple[List[dict], int]: List containing dict of model drift,
                 HTTP status code.
         """
+        # TODO JIM dec does not provide a model version. Propose
+        # getting rid of model_version field. It does not make
+        # sense to have it.
 
         # TODO Remove once Propensity to Purchase data is being served
         # from tecton
@@ -730,40 +691,20 @@ class ModelDriftView(SwaggerView):
                 for i in range(4)
             ]
         else:
-            tecton = Tecton()
             database = get_db_client()
-            # get model versions
-            model_versions = (
-                [
-                    {
-                        api_c.CURRENT_VERSION: model_version,
-                        api_c.TYPE: api_c.DRIFT,
-                    }
-                ]
-                if model_version
-                else tecton.get_model_version_history(model_id)
-            )
-
-            # if model versions not found, return not found.
-            if not model_versions:
-                return {}, HTTPStatus.NOT_FOUND
-
-            # take the latest model
-            latest_model = model_versions[0]
 
             drift_data = get_cache_entry(
                 database,
-                f"drift.{model_id}.{latest_model[api_c.CURRENT_VERSION]}",
+                f"drift.{model_id}",
             )
 
-            # create cache entry in db only if drift fetched from Tecton is not empty
+            # create cache entry in db only if drift fetched from decisioning is not empty
             if not drift_data:
-                drift_data = tecton.get_model_drift(
-                    model_id, latest_model[api_c.TYPE], model_versions
-                )
+                token = get_token_from_request(request)[0]
+                drift_data = Decisioning(token).get_model_drift(model_id)
                 create_cache_entry(
                     database,
-                    f"drift.{model_id}.{latest_model[api_c.CURRENT_VERSION]}",
+                    f"drift.{model_id}",
                     drift_data,
                 )
 

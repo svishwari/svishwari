@@ -8,7 +8,7 @@ from huxmodelclient.api import DefaultApi as dec_client
 from huxunify.api.config import get_config
 
 
-token = "eyJraWQiOiJoTjFIeDl6ZGVyZWVDbmRlU2dfWGZjRzJtZDhIZGFVYUk4MkRKRFltV0dZIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVhNjB6ZjFpMm1OakhzSzJwNyIsIm5hbWUiOiJKaW0gTWNNYWhvbiIsImVtYWlsIjoiamltY21haG9uQGRlbG9pdHRlLmNvbSIsInZlciI6MSwiaXNzIjoiaHR0cHM6Ly9kZWxvaXR0ZWRpZ2l0YWwtbXMub2t0YS5jb20iLCJhdWQiOiIwb2FiZWxjMGh5Z3BteDRPVDJwNyIsImlhdCI6MTY1MTE2MjM3OSwiZXhwIjoxNjUxMTY1OTc5LCJqdGkiOiJJRC5LYVRNeGh4SFI2QWtJM2wwZXJQQ0V3WEQxdGxQNnprTy14ek5iTzVGSXZnIiwiYW1yIjpbInB3ZCIsIm1mYSIsInN3ayJdLCJpZHAiOiIwb2FmZHVzNGhyM01pRGZ0QjJwNiIsIm5vbmNlIjoiRjhhVVdaSVZyMm5CZFNYcTI2OG5WbEc4R3hrMm81U0ZJQTk2Ullabks4RkNCQjVxQXIxR1JNY08xR2Z6SnVHOCIsInByZWZlcnJlZF91c2VybmFtZSI6ImppbWNtYWhvbkBkZWxvaXR0ZS5jb20iLCJhdXRoX3RpbWUiOjE2NTExNjIzNTQsImF0X2hhc2giOiJwU0xtcko4M3lVZi01Ukw4YVctZmRBIn0.IUTsmiSaQQ-d89f4UsBqlSXPZZaXkrf1Fx3NwAd2f9bLAEbRRX0Vvkr6W64mCZJmDGQA9F8mLlDp0P_HRqAh00puYzpdCcGelSjyBzRb1kf-SKFq7gZeGfJmFHVRsHP2IH8YML-zt7saPFp0nSD0C_w2Qv_uEUFj5wQA1Xl355ts2z2mALdnFQERPB-59xUJYmqRvJPvqnFDkJD4jRn4rlItkXJn96U9m_arVQIfCl6QEbX_ysdwCJ1CPEnIze_c4KrKo-Jk4H7WIPs_oGDce8IqYxJB_W8vww-izmXsiA69MNubSAKNuP89EJHz_waXCfTgd07p3mgD72OnmVo0zw"
+token = "eyJraWQiOiJoTjFIeDl6ZGVyZWVDbmRlU2dfWGZjRzJtZDhIZGFVYUk4MkRKRFltV0dZIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVhNjB6ZjFpMm1OakhzSzJwNyIsIm5hbWUiOiJKaW0gTWNNYWhvbiIsImVtYWlsIjoiamltY21haG9uQGRlbG9pdHRlLmNvbSIsInZlciI6MSwiaXNzIjoiaHR0cHM6Ly9kZWxvaXR0ZWRpZ2l0YWwtbXMub2t0YS5jb20iLCJhdWQiOiIwb2FiZWxjMGh5Z3BteDRPVDJwNyIsImlhdCI6MTY1MTQ2MDYyMywiZXhwIjoxNjUxNDY0MjIzLCJqdGkiOiJJRC5nSWtCRHlBQlRha1dCTnphb2NmY3JDR3lrSTdvdW9FS2hnTFlWa0pGSmVrIiwiYW1yIjpbIm90cCIsInB3ZCIsIm1mYSJdLCJpZHAiOiIwb2FmZHVzNGhyM01pRGZ0QjJwNiIsIm5vbmNlIjoiNmFUZ3VlSGdkM1V3T2l4U3pQQUs5WUNHVVdhSDlUUVU3anlqTkZ4RUpldmFrVUF5U1ZaNnFTREQxdnd5VElzNyIsInByZWZlcnJlZF91c2VybmFtZSI6ImppbWNtYWhvbkBkZWxvaXR0ZS5jb20iLCJhdXRoX3RpbWUiOjE2NTE0NjA1NDksImF0X2hhc2giOiJOSHMyak53SmxRWW53bklreVRQbHhBIn0.LGcQsNl2z_j9VC_sLK-ib9TRmFiwfIw7MczsqAH5DeqV6W_QwUerHQfsISDsV4UM7-VhXh73NL5Omw1XsxVmbsUC6BHbmjfAE2M0fHMa6hHc5QW7XZLC8I7HagJyqemoXl48UC5dseSDqf6XwqQB35wQ_qdPEw9vgBXmbAal-nbH_8RxscgA3d3APbSvkG4o3C9De5_PmDmNXZFWrek67MuwuJE9RuJOdM2HOdRMeinPyy5ShCExW7-BCtTkGk0SXn6rrj6LRsbwB28JrRRScoXxYrRqANq0qSYR2MDnlCzJdpfB-cYFt4Nw6OND43fNcD-mYO-HqyoJrZSWdzGsUg"
 
 
 def dec_call(url: str):
@@ -17,7 +17,8 @@ def dec_call(url: str):
 
 
 class Decisioning:
-    def __init__(self):
+    def __init__(self, token: str):
+        self.token = token
         config = configuration.Configuration(
             host="https://hux-model-api-dec.decisioning-pendleton.in",
         )
@@ -104,7 +105,7 @@ class Decisioning:
                     "id": model_info["model_id"],
                     "name": model_info["model_metadata"]["model_name"],
                     "description": model_info["model_metadata"]["description"],
-                    "status": model_info["model_metadata"]["status"],
+                    "status": model_info["model_metadata"]["status"].lower(),
                     "latest_version": model_info["model_version"],
                     "owner": model_info["model_metadata"]["owner"],
                     "lookback_window": model_info["model_metadata"][
@@ -118,7 +119,7 @@ class Decisioning:
                     ],
                     "last_trained": model_info["scheduled_date"],
                     "type": model_info["model_metadata"]["model_type"],
-                    "category": model_info["model_metadata"]["model_type"],
+                    "category": model_info["model_metadata"]["model_type"].lower(),
                     "past_version_count": model_info["past_version_count"],
                     "is_enabled": True,
                     "is_added": True,
@@ -167,21 +168,6 @@ class Decisioning:
         model_info = self.get_model_info(model_id)
 
         for feature in model_info["important_features"]:
-            features.append(
-                {
-                    "id": feature["model_id"],
-                    "name": feature["model_name"],
-                    "description": feature["model_description"],
-                    "version": feature["model_version"],
-                    "feature_service": "-",  # TODO
-                    "data_source": "-",  # TODO
-                    "created_by": "-",  # TODO
-                    "status": "-",  # TODO
-                    "score": "-",  # TODO
-                    "popularity": "-",  # TODO
-                }
-            )
-
             features.append(
                 {
                     "id": feature["model_id"],
@@ -309,14 +295,14 @@ class Decisioning:
         return lift_stats
 
     # TODO test
-    def get_model_drift(self, model_id: str) -> dict:
+    def get_model_drift(self, model_id: str) -> list:
         """Get the drift statics of a model.
 
         Args:
             model_id (str): ID of the model.
 
         Returns:
-            dict: drift statistics.
+            list: list of drift statistics.
         """
         model_infos = self.get_model_info_history(model_id)
         drift_data = []
@@ -333,13 +319,6 @@ class Decisioning:
 if __name__ == "__main__":
     model_id = "model-Propensity_ctg_tk_blanket-v5-dev"
     print(Decisioning().get_all_model_ids())
+    print(Decisioning().get_model_drift(model_id))
     # print(Decisioning().get_all_models())
     # print(Decisioning().get_health_status())
-    # models = Decisioning().get_all_models()
-    # for model in models:
-    #     print(model)
-
-    # model_info = Decisioning().get_model_info("model-Propensity_ctg_tk_blanket-v5-dev")
-    # print(f"info length: {len(model_info)}")
-    # for info in model_info:
-    #     print(info)
