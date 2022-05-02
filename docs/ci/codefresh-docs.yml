@@ -1,0 +1,74 @@
+# This is the CI pipeline for Unified Sphinx Docs
+
+version: "1.0"
+
+indicators:
+  - environment: &pip_common_envs
+      - PIP_INDEX_URL=${{ARTIFACTORY_PYTHON_READ}}
+
+stages:
+  - prepare
+  - git
+  - set_env
+  - tox
+
+steps:
+
+  PrepareBuildDetails:
+    stage: prepare
+    title: Prepare Build Details
+    type: parallel
+    steps:
+      GetTriggerName:
+        stage: prepare
+        title: get trigger name using id from spec yaml
+        type: deloittehux/get-trigger-name
+
+  CloneRepository:
+    stage: git
+    title: Cloning ${{CF_REPO_NAME}} repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}' # Git branch triggering the pipeline
+
+  set_env_var:
+    stage: set_env
+    title: Set environment variables
+    type: freestyle
+    image: alpine
+    working_directory: "${{CF_REPO_NAME}}"
+    commands:
+      - cat ./docs/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+
+  Tox_Docs:
+    stage: tox
+    title: "Tox - Sphinx documentation and validation"
+    description: "Run sphinx validation tests using tox"
+    image: readthedocs/build:6.0
+    working_directory: '${{CF_REPO_NAME}}/docs'
+    commands:
+      - tox -e ${TOXENV} -- --skip-model-generate
+    environment: *pip_common_envs
+    scale:
+      safety:
+        environment:
+          - TOXENV=safety
+      secrets:
+        environment:
+          - TOXENV=secrets
+      dirhtml:
+        environment:
+          - TOXENV=dirhtml
+      doctest:
+        environment:
+          - TOXENV=doctest
+      linkcheck:
+        environment:
+          - TOXENV=linkcheck
+      spelling:
+        environment:
+          - TOXENV=spelling
+      style:
+        environment:
+          - TOXENV=style
+    fail_fast: false
