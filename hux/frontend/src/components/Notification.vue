@@ -14,7 +14,7 @@
               <icon
                 data-e2e="notification-bell"
                 class="mx-2 my-2 nav-icon"
-                type="bell-notification"
+                :type="seenNotifications ? 'bell' : 'bell-notification'"
                 :size="24"
                 :class="{ 'active-icon': batchDetails.menu }"
               />
@@ -115,6 +115,7 @@ export default {
     ...mapGetters({
       alerts: "alerts/list",
       notifications: "notifications/latest5",
+      seenNotifications: "notifications/seenNotifications",
     }),
     mostRecentNotifications() {
       return orderBy(this.notifications, "created", "desc").slice(
@@ -129,11 +130,12 @@ export default {
         this.$router.push({ name: "ServiceError" })
       }
     },
+    $route() {
+      this.getLatestNotifications()
+    },
   },
   async mounted() {
-    this.$root.$on("refresh-notifications", async () => {
-      await this.getAllNotifications(this.batchDetails)
-    })
+    this.$root.$on("refresh-notifications", this.getLatestNotifications())
     await this.getAllNotifications(this.batchDetails)
   },
   methods: {
@@ -141,6 +143,9 @@ export default {
       getAllNotifications: "notifications/getAll",
     }),
     formatText: formatText,
+    async getLatestNotifications() {
+      await this.getAllNotifications(this.batchDetails)
+    },
   },
 }
 </script>

@@ -43,8 +43,11 @@ from huxunify.api.data_connectors.cdp import (
     get_demographic_by_country,
     get_customers_insights_count_by_day,
     get_revenue_by_day,
+    get_age_histogram_data,
+    get_histogram_data,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
+from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -73,6 +76,7 @@ from huxunify.api.route.utils import (
     Validation,
     get_start_end_dates,
     generate_audience_file,
+    convert_cdp_buckets_to_histogram,
 )
 
 # setup the audiences blueprint
@@ -783,18 +787,53 @@ class AudienceRulesHistogram(SwaggerView):
             Tuple[Response, int]: rules constants
         """
 
-        # TODO Remove stub once CDM API is integrated
+        token_response = get_token_from_request(request)
+
         if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA:
             return (
                 jsonify({"message": f"Data not found for {field_type}"}),
                 HTTPStatus.NOT_FOUND,
             )
 
+        if field_type == api_c.AGE:
+            bucket_data = Caching.check_and_return_cache(
+                cache_key=f"{api_c.CUSTOMERS_ENDPOINT}/customer-profiles/insights/count-by-age",
+                method=get_age_histogram_data,
+                keyword_arguments={"token": token_response[0]},
+            )
+            histogram_data = convert_cdp_buckets_to_histogram(
+                bucket_data=bucket_data, field=field_type
+            )
+            api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.AGE][
+                api_c.VALUES
+            ] = histogram_data.values
+
         if field_type == api_c.MODEL:
             model_name = request.args.get(api_c.MODEL_NAME, "")
             if model_name in list(
                 api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL]
             ):
+                bucket_data = Caching.check_and_return_cache(
+                    cache_key=f"{api_c.CUSTOMERS_ENDPOINT}/customer-profiles/"
+                    f"insights/counts/by-float-field?model_name={model_name}",
+                    method=get_histogram_data,
+                    keyword_arguments={
+                        "field_name": model_name,
+                        "token": token_response[0],
+                    },
+                )
+
+                histogram_data = convert_cdp_buckets_to_histogram(
+                    bucket_data=bucket_data
+                )
+                api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL][model_name][
+                    api_c.VALUES
+                ] = histogram_data.values
+
+                api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL][model_name][
+                    api_c.MAX
+                ] = round(histogram_data.max_val, 1)
+
                 return (
                     api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL][
                         model_name

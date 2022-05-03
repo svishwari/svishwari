@@ -1067,6 +1067,14 @@ PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
 FEATURE_SERVICE = "feature_service"
 DATA_SOURCE = "data_source"
+FEATURE_TYPE = "feature_type"
+MEAN = "mean"
+MIN = "min"
+MAX = "max"
+LCUV = "lcuv"
+MCUV = "mcuv"
+UNIQUE_VALUE = "unique_value"
+RECORDS_NOT_NULL = "records_not_null"
 POPULARITY = "popularity"
 BUCKET = "bucket"
 PREDICTED_VALUE = "predicted_value"
@@ -1225,20 +1233,16 @@ PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
                 f"2m-COGS-cnt-{i}",
             ]
         ),
+        FEATURE_TYPE: random.choice(["Numerical", "Categorial"]),
+        RECORDS_NOT_NULL: str(random.randint(1, 100)) + "%",
+        FEATURE_IMPORTANCE: random.randint(1, 3),
+        MEAN: random.uniform(1.0, 4.0),
+        MIN: random.uniform(1.0, 3.0),
+        MAX: random.uniform(3.0, 7.0),
         FEATURE_SERVICE: PURCHASE,
-        DATA_SOURCE: random.choice(
-            ["Buyers", "Retail", "Promotion", "Email", "Ecommerce"]
-        ),
-        CREATED_BY: random.choice(["Susan Miller", "Jack Miller"]),
-        STATUS: random.choice(
-            [
-                STATUS_PENDING,
-                STATUS_ACTIVE,
-                STATUS_STOPPED,
-            ]
-        ),
-        POPULARITY: random.randint(1, 3),
-        SCORE: round(random.uniform(0.5, 2.9), 4),
+        UNIQUE_VALUE: random.randint(1, 100),
+        LCUV: random.choice(["Women", "Gasoline", "Clothing", "Cars"]),
+        MCUV: random.choice(["Men", "Water", "Grocery", "Home accesories"]),
     }
     for i in range(50)
 ]
@@ -1450,6 +1454,10 @@ CLIENT_PROJECTS_ENDPOINT = "/client-projects"
 
 # Histogram data stub.
 VALUES = "values"
+VALUE_FROM = "value_from"
+VALUE_TO = "value_to"
+HISTOGRAM_GROUP_SIZE = 10
+
 # TODO Remove once we have data from CDP
 AUDIENCE_RULES_HISTOGRAM_DATA = {
     MODEL: {
@@ -1544,9 +1552,9 @@ AUDIENCE_RULES_HISTOGRAM_DATA = {
     "age": {
         "name": "Age",
         "type": "range",
-        "min": 18,
-        "max": 79,
-        "steps": 5,
+        "min": 0,
+        "max": 120,
+        "steps": 1,
         "values": [
             (18, 15129),
             (23, 17236),
@@ -1734,8 +1742,6 @@ ATTRIBUTE_DESCRIPTION = "attribute_description"
 OCCUPATION = "occupation"
 CUSTOMER_TYPE = "customer_type"
 OPTIONS = "options"
-MIN = "min"
-MAX = "max"
 OVERALL_CUSTOMER_RATING = "overall_customer_rating"
 RATING = "rating"
 AGREE = "agree"

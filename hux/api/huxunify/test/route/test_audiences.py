@@ -345,6 +345,11 @@ class AudienceInsightsTest(TestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch(
+            "huxunify.api.data_connectors.cache.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(
@@ -515,6 +520,14 @@ class AudienceInsightsTest(TestCase):
 
     def test_audience_histogram_rules_age(self) -> None:
         """Test get audience location rules histogram for age field."""
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights"
+            f"/count-by-age",
+            json=t_c.CDP_COUNT_BY_AGE_RESONSE,
+        )
+        self.request_mocker.start()
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.AGE}/histogram",
@@ -525,6 +538,14 @@ class AudienceInsightsTest(TestCase):
 
     def test_audience_histogram_rules_model(self) -> None:
         """Test get audience rules histogram for model field."""
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights"
+            f"/counts/by-float-field",
+            json=t_c.CDP_COUNTS_BY_FLOAT_RESONSE,
+        )
+        self.request_mocker.start()
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.MODEL}/histogram?{api_c.MODEL_NAME}=propensity_to_unsubscribe",
