@@ -647,6 +647,7 @@ def drop_collections(database: MongoClient) -> None:
         collections_to_drop.remove(db_c.DELIVERY_PLATFORM_COLLECTION)
 
     # if drop all collections is false, do not drop the restricted collections
+    # pylint: disable=eval-used
     if not eval(os.environ.get("DROP_ALL_COLLECTIONS", default="False")):
         collections_to_drop = [
             x
