@@ -35,11 +35,11 @@ class CreateAppTest(TestCase):
         limiter = Limiter(
             app,
             key_func=get_remote_address,
-            default_limits=["2 per day", "1 per hour"],
+            default_limits=["4 per day", "2 per hour"],
         )
 
         @app.route("/fast")
-        @limiter.limit("1/day")
+        @limiter.limit("4/day")
         # pylint: disable=missing-return-doc,missing-return-type-doc,unused-variable
         def fast():
             return (
