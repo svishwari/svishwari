@@ -102,7 +102,7 @@ export default {
       if (this.show) {
         this.currentData = arg[1]
         this.toolTipStyle.left = this.currentData.invertPosition
-          ? "-356px"
+          ? "-360px"
           : "-228px"
       }
     },

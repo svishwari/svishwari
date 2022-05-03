@@ -9,6 +9,7 @@ const state = {
   users: {},
   latest5: {},
   total: 0,
+  seenNotifications: false,
 }
 
 const getters = {
@@ -21,6 +22,8 @@ const getters = {
   single: (state) => (id) => state.items[id],
 
   total: (state) => state.total,
+
+  seenNotifications: (state) => state.seenNotifications,
 }
 
 const mutations = {
@@ -39,6 +42,10 @@ const mutations = {
 
   SET_TOTAL(state, item) {
     Vue.set(state, "total", item)
+  },
+
+  SET_SEEN_NOTIFICATIONS(state, item) {
+    Vue.set(state, "seenNotifications", item)
   },
 
   RESET_ALL(state) {
@@ -73,6 +80,7 @@ const actions = {
         commit("SET_TOTAL", response.data.total)
         commit("SET_ALL", response.data)
       }
+      commit("SET_SEEN_NOTIFICATIONS", response.data.seen_notifications)
     } catch (error) {
       handleError(error)
       throw error
