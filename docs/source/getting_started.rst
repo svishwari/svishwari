@@ -43,7 +43,7 @@ AWS Client VPN allows users to securely connect to services on AWS even if they 
 - You should now see the profile in the list on the AWS Client VPN software. Select it and click Connect.
 - During the connection process you will be redirected to your IdP for authentication (Okta). AWS Client VPN is using the default browser configured on your device,
 
-Please refer to this page `here <https://confluence.hux.deloitte.com/display/TO/How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users>`_ for more information about setting up and accessing AWS VPN client.
+Please refer to this `aws <https://confluence.hux.deloitte.com/display/TO/How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users>`_ confluence page for more information about setting up and accessing AWS VPN client.
 
 *************************************************
 Connecting to a AWS VPN and HUX Unified Resources
@@ -55,7 +55,7 @@ Connecting to a AWS VPN and HUX Unified Resources
 *************************************************
 Connecting to Azure VPN and HUX Unified Resources
 *************************************************
-Please refer to this page `here <https://confluence.hux.deloitte.com/display/HUS/Azure+Environment+Access>`_ for more information about setting up and accessing an HUX environment set up on Azure VPN client.
+Please refer to this `azure <https://confluence.hux.deloitte.com/display/HUS/Azure+Environment+Access>`_ confluence page for more information about setting up and accessing an HUX environment set up on Azure VPN client.
 
 ************
 Environments
