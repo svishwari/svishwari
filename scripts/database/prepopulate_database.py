@@ -5,7 +5,6 @@
 # pylint: disable=too-many-lines
 import logging
 import os
-from distutils.util import strtobool
 
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.cdp_data_source_management import create_data_source
@@ -648,7 +647,7 @@ def drop_collections(database: MongoClient) -> None:
         collections_to_drop.remove(db_c.DELIVERY_PLATFORM_COLLECTION)
 
     # if drop all collections is false, do not drop the restricted collections
-    if not strtobool(os.environ.get("DROP_ALL_COLLECTIONS", default="False")):
+    if not eval(os.environ.get("DROP_ALL_COLLECTIONS", default="False")):
         collections_to_drop = [
             x
             for x in collections_to_drop
