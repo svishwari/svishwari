@@ -4,4 +4,4 @@ huxunify
 .. toctree::
    :maxdepth: 4
 
-   huxunify
+   huxunify_api/huxunify

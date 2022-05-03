@@ -10,6 +10,7 @@ Welcome to HUX Unified Solution's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   getting_started
    modules
 
 Indices and tables

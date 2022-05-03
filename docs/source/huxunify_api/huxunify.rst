@@ -1,6 +1,14 @@
 huxunify package
 ================
 
+Module contents
+---------------
+
+.. automodule:: huxunify
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -16,14 +24,6 @@ huxunify.app module
 -------------------
 
 .. automodule:: huxunify.app
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: huxunify
    :members:
    :undoc-members:
    :show-inheritance:
