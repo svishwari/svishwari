@@ -10,6 +10,7 @@ Welcome to HUX Unified Solution's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   getting_started
    modules
 
 Indices and tables
@@ -17,4 +18,3 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
