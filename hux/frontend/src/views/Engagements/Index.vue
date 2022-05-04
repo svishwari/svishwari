@@ -261,6 +261,7 @@
                       </span>
                       <hux-delivery-text
                         v-else
+                        class="text-body-2"
                         :schedule="
                           item[header.value] ? item[header.value].schedule : {}
                         "
