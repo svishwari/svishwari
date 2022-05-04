@@ -7,6 +7,8 @@ from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
 from flask_apscheduler import APScheduler
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from huxunify.api.config import get_config
 from huxunify.api.prometheus import monitor_app
@@ -82,6 +84,12 @@ def create_app() -> Flask:
     # setup the flask app
     flask_app = Flask(__name__)
     flask_app.testing = flask_app.env == api_c.TEST_MODE
+
+    Limiter(
+        flask_app,
+        key_func=get_remote_address,
+        default_limits=["1000 per minute"],
+    )
 
     # setup CORS
     CORS(flask_app)

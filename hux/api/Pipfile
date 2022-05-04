@@ -42,6 +42,7 @@ azure-batch = {version="==11.0.0", index="pypi"}
 azure-mgmt-batch = {version="==16.0.0", index="pypi"}
 azure-keyvault-secrets = {version="==4.3.0", index="pypi"}
 azure-identity = {version="==1.7.1", index="pypi"}
+Flask-Limiter = {version="==2.4.0", index="pypi"}
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
