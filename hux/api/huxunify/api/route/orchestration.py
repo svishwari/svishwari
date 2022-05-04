@@ -263,7 +263,7 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 db_c.DELIVERY_PLATFORM_ID: x,
                 db_c.LINK: destination_dict.get(x).get(db_c.LINK),
                 db_c.IS_AD_PLATFORM: destination_dict.get(
-                    job.get(db_c.DELIVERY_PLATFORM_ID)
+                    destination_dict.get(db_c.DELIVERY_PLATFORM_ID)
                 ).get(db_c.IS_AD_PLATFORM),
             }
         )
