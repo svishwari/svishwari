@@ -49,7 +49,7 @@ def set_survey_response(
     platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
 
-    # Check validity of delivery job ID
+    # Check validity of delivery_platform_id
     if not dm.get_delivery_platform(database, delivery_platform_id):
         raise de.InvalidID(delivery_platform_id)
 
@@ -181,3 +181,56 @@ def get_survey_responses(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def delete_survey_responses(
+    database: DatabaseClient,
+    query: dict = None,
+) -> dict:
+    """Method to delete survey responses based on query parameter.
+
+    Args:
+        database (DatabaseClient): A database client.
+        query (dict): A dict containing query params & conditions
+
+    Returns:
+        dict: dict containing insert_status & list of inserted ids.
+    """
+
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
+
+    remove_status = {}
+
+    try:
+
+        if query:
+            query_result = collection.find(query)
+
+            if not list(query_result):
+                remove_status[db_c.STATUS] = False
+                remove_status[db_c.STATUS_MESSAGE] = "Incorrect query"
+                return remove_status
+
+        else:
+            query = {}
+
+        remove_result = collection.remove(query)
+        if remove_result["n"]:
+            remove_status[db_c.STATUS] = True
+            remove_status[
+                db_c.STATUS_MESSAGE
+            ] = "Total records deleted: " + str(remove_result["n"])
+
+        else:
+            remove_status[db_c.STATUS] = False
+            remove_status[db_c.STATUS_MESSAGE] = "Failed to delete records"
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return remove_status
