@@ -54,7 +54,7 @@ export default {
     }
   },
   watch: {
-    chartDimensions: {
+    data: {
       handler() {
         d3Select
           .select(this.$refs.progressStackBarChart)
