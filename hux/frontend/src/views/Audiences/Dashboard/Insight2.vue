@@ -278,7 +278,7 @@
                   'float-right': !showAdvertising,
                 }"
                 :style="{
-                  height: showAdvertising ? advertisingHeight : '400px',
+                  height: collapsibleBarHeight,
                 }"
                 @click="toggleAd()"
               >
@@ -622,6 +622,10 @@ export default {
       })
     },
 
+    collapsibleBarHeight() {
+      return this.showAdvertising ? this.advertisingHeight : "400px"
+    },
+
     showLookalike() {
       return !this.is_lookalike &&
         this.isLookalikable &&
@@ -728,7 +732,10 @@ export default {
       this.$refs.advertisingcard.parentElement.parentElement
     ) {
       this.advertisingHeight =
-        this.$refs.advertisingcard.parentElement.parentElement.clientHeight +
+        parseInt(
+          this.$refs.advertisingcard.parentElement.parentElement.clientHeight
+        ) +
+        this.audienceData.lookalike_audiences.length * 4 +
         "px"
     }
   },
