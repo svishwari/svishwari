@@ -311,7 +311,11 @@
                       data-e2e="audience-matchrates"
                     />
                   </div>
-                  <div ref="advertisingcard" class="lookalikes mx-2 my-6">
+                  <div
+                    ref="advertisingcard"
+                    class="lookalikes mx-2 my-6"
+                    data-e2e="lookalike-audiences"
+                  >
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
                       :standalone-data="audience.standalone_deliveries"
