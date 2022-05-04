@@ -933,4 +933,6 @@ export const defineRoutes = (server) => {
   server.post("/trust_id/segment", () => trustIdComparisonData)
 
   server.get("/trust_id/attributes", () => trustIdAttribute)
+
+  server.del("/trust_id/segment", () => trustIdComparisonData)
 }
