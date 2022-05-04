@@ -65,13 +65,14 @@
               <empty-page
                 v-if="!totalCustomersChartErrorState"
                 type="model-features-empty"
+                class="pt-5"
                 :size="50"
               >
                 <template #title>
-                  <div class="title-no-notification">No data to show</div>
+                  <div>No data to show</div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
+                  <div>
                     Total customer chart will appear here once Customer data is
                     available.
                   </div>
@@ -79,17 +80,15 @@
               </empty-page>
               <empty-page
                 v-else
-                class="title-no-notification"
                 type="error-on-screens"
+                class="pt-5"
                 :size="50"
               >
                 <template #title>
-                  <div class="title-no-notification">
-                    Total customer chart is currently unavailable
-                  </div>
+                  <div>Total customer chart is currently unavailable</div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
+                  <div>
                     Our team is working hard to fix it. Please be patient and
                     try again soon!
                   </div>
@@ -183,13 +182,14 @@
               <empty-page
                 v-if="!notificationsTableErrorState"
                 type="lift-table-empty"
+                class="pt-5"
                 :size="50"
               >
                 <template #title>
-                  <div class="title-no-notification">No data to show</div>
+                  <div>No data to show</div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
+                  <div>
                     Latest alerts table will appear here once you start getting
                     alerts.
                   </div>
@@ -197,17 +197,15 @@
               </empty-page>
               <empty-page
                 v-else
-                class="title-no-notification"
+                class="pt-5"
                 type="error-on-screens"
                 :size="50"
               >
                 <template #title>
-                  <div class="title-no-notification">
-                    Latest alerts table is currently unavailable
-                  </div>
+                  <div>Latest alerts table is currently unavailable</div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
+                  <div>
                     Our team is working hard to fix it. Please be patient and
                     try again soon!
                   </div>

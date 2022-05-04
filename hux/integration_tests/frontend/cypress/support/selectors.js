@@ -118,6 +118,7 @@ export default {
   pendingStatus: "[data-e2e='model-status-Pending']",
   dataFeedDetailsTable: "[data-e2e='data-feed-details-table']",
   dataFilesWrapper: "[data-e2e='data-files-wrapper']",
+  datasourceDatafeedsTable: "[data-e2e='datasource-datafeeds-table']",
 
   //destinations
   destination: {

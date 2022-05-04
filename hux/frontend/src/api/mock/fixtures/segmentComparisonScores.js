@@ -166,47 +166,6 @@ export default [
           },
         ],
       },
-      {
-        segment_name: "Segment 5",
-        segment_filters: [],
-        attributes: [
-          {
-            attribute_type: "trust_id",
-            attribute_name: "HX TrustID",
-            attribute_score: 11,
-            attribute_description:
-              "TrustID is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "humanity",
-            attribute_name: "Humanity",
-            attribute_score: 92,
-            attribute_description:
-              "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "transparency",
-            attribute_name: "Transparency",
-            attribute_score: 33,
-            attribute_description:
-              "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "capability",
-            attribute_name: "Capability",
-            attribute_score: 81,
-            attribute_description:
-              "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "reliability",
-            attribute_name: "Reliability",
-            attribute_score: 89,
-            attribute_description:
-              "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
-          },
-        ],
-      },
     ],
   },
   {

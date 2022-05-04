@@ -273,7 +273,7 @@
           <add-segment-drawer
             ref="filters"
             v-model="isFilterToggled"
-            view-height="calc(100vh - 180px)"
+            view-height="calc(100vh - 210px)"
             :segment-data="addSegmentData"
             :segment-length="segmentScores.length"
             @onSectionAction="addSegment($event)"
