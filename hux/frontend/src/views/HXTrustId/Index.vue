@@ -539,11 +539,18 @@ export default {
       this.selectedSegment = value
       this.dropdownWidth = 245
       this.$nextTick(() => {
-        this.dropdownWidth =
-          this.$refs.dropdownValues.$el?.childNodes[1]?.childNodes[0]
-            ?.childNodes[0]?.childNodes[0]?.childNodes[0]?.childNodes[0]
-            ?.clientWidth + 50 || 245
+        this.dropdownWidth = this.findChildHeight(
+          this.$refs.dropdownValues.$el.childNodes[1],
+          5
+        )
       })
+    },
+    findChildHeight(child, num) {
+      if (num == 0 || !child?.childNodes[0]) {
+        return child?.clientWidth + 50 || 245
+      } else {
+        return this.findChildHeight(child.childNodes[0], num - 1)
+      }
     },
     formatText: formatText,
     filterToggle() {
