@@ -278,11 +278,7 @@
                   'float-right': !showAdvertising,
                 }"
                 :style="{
-                  height:
-                    showAdvertising &&
-                    audienceData.lookalike_audiences.length > 0
-                      ? advertisingHeight
-                      : '400px',
+                  height: collapsibleBarHeight,
                 }"
                 @click="toggleAd()"
               >
@@ -311,7 +307,11 @@
                       data-e2e="audience-matchrates"
                     />
                   </div>
-                  <div ref="advertisingcard" class="lookalikes mx-2 my-6">
+                  <div
+                    ref="advertisingcard"
+                    class="lookalikes mx-2 my-6"
+                    data-e2e="lookalike-audiences"
+                  >
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
                       :standalone-data="audience.standalone_deliveries"
@@ -626,6 +626,10 @@ export default {
       })
     },
 
+    collapsibleBarHeight() {
+      return this.showAdvertising ? this.advertisingHeight : "400px"
+    },
+
     showLookalike() {
       return !this.is_lookalike &&
         this.isLookalikable &&
@@ -732,8 +736,10 @@ export default {
       this.$refs.advertisingcard.parentElement.parentElement
     ) {
       this.advertisingHeight =
-        this.$refs.advertisingcard.parentElement.parentElement.clientHeight +
-        17 +
+        parseInt(
+          this.$refs.advertisingcard.parentElement.parentElement.clientHeight
+        ) +
+        this.audienceData.lookalike_audiences.length * 4 +
         "px"
     }
   },

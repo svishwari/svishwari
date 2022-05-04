@@ -18,7 +18,7 @@
             v-for="field in fields"
             :key="field.label"
             :cols="field.col"
-            :class="headerClass"
+            :class="[headerClass, { center: field.center }]"
           >
             <tooltip v-if="field.tooltip">
               <template #label-content>
@@ -93,7 +93,7 @@
         >
           <v-row align="center" no-gutters>
             <v-col v-for="field in fields" :key="field.key" :cols="field.col">
-              <div :class="cardClass">
+              <div :class="[cardClass, { center: field.center }]">
                 <!-- cell slot -->
                 <slot
                   :name="`field:${field.key}`"

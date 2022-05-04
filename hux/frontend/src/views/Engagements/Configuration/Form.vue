@@ -49,13 +49,21 @@
       ]"
     >
       <template #field:name="row">
-        <span v-if="row.item.is_lookalike" class="d-flex align-items-center"
+        <span
+          v-if="row.item.is_lookalike"
+          class="d-flex align-items-center"
+          @click="openAudieneDetailDrawer(row)"
           ><icon type="lookalike" :size="24" class="mr-1" /><span
             class="body-1"
             >{{ row.value }}</span
           ></span
         >
-        <span v-else class="not-lookalike-color body-1">{{ row.value }}</span>
+        <span
+          v-else
+          class="not-lookalike-color body-1"
+          @click="openAudieneDetailDrawer(row)"
+          >{{ row.value }}</span
+        >
       </template>
 
       <template #field:size="row">
@@ -336,6 +344,14 @@
       @onBack="openSelectDestinationsDrawer"
     />
 
+    <audience-detail-drawer
+      v-if="value.audiences"
+      ref="audienceDetailDrawer"
+      v-model="value.audiences[selectedAudienceId]"
+      :toggle="showAddAudienceDetailDrawer"
+      @onToggle="(val) => (showAddAudienceDetailDrawer = val)"
+    />
+
     <confirm-modal
       v-model="showUpdateModal"
       icon="alert-edit"
@@ -370,6 +386,7 @@ import Icon from "@/components/common/Icon.vue"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
 import PlainCard from "@/components/common/Cards/PlainCard.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import AudienceDetailDrawer from "@/views/Engagements/Configuration/Drawers/AudienceDetailDrawer.vue"
 import { deliverySchedule } from "@/utils"
 
 export default {
@@ -392,6 +409,7 @@ export default {
     huxButton,
     PlainCard,
     ConfirmModal,
+    AudienceDetailDrawer,
   },
 
   props: {
@@ -421,6 +439,7 @@ export default {
       dontShowModal: false,
       isRecurringFlag: false,
       showUpdateModal: false,
+      showAddAudienceDetailDrawer: false,
     }
   },
 
@@ -548,6 +567,13 @@ export default {
       updateEngagement: "engagements/updateEngagement",
     }),
 
+    openAudieneDetailDrawer(audience) {
+      this.closeAllDrawers()
+      this.$refs.audienceDetailDrawer.fetchAudienceDetails(audience.item.id)
+      this.selectedAudienceId = audience.item.id
+      this.showAddAudienceDetailDrawer = true
+    },
+
     resetSchedule() {
       this.localSchedule = JSON.parse(JSON.stringify(deliverySchedule()))
     },
@@ -571,6 +597,7 @@ export default {
       this.showAddAudiencesDrawer = false
       this.showSelectDestinationsDrawer = false
       this.showDataExtensionDrawer = false
+      this.showAddAudienceDetailDrawer = false
     },
 
     scrollToTop() {

@@ -95,7 +95,6 @@
               <data-cards
                 v-if="getSegmentTableData.length > 0"
                 bordered
-                class="mr-4"
                 card-class="py-5 pa-4"
                 :items="getSegmentTableData"
                 :fields="getSegmentTableHeaders"
@@ -120,7 +119,6 @@
                     :variant="
                       colColorArr[header.key] && colColorArr[header.key].variant
                     "
-                    class="ml-4"
                   ></rhombus-number>
 
                   <span
@@ -276,7 +274,7 @@
           <add-segment-drawer
             ref="filters"
             v-model="isFilterToggled"
-            view-height="calc(100vh - 180px)"
+            view-height="calc(100vh - 210px)"
             :segment-data="addSegmentData"
             :segment-length="segmentScores.length"
             @onSectionAction="addSegment($event)"
@@ -487,6 +485,7 @@ export default {
           label: item.attribute_name,
           col: 1,
           tooltip: this.tooltips[item.attribute_type],
+          center: true,
         })
       })
 

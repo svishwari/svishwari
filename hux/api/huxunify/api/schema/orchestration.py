@@ -64,6 +64,7 @@ class AudienceDeliverySchema(Schema):
         required=True, validate=validate_object_id
     )
     link = fields.String()
+    is_ad_platform = fields.Bool()
 
 
 class DeliveriesSchema(Schema):

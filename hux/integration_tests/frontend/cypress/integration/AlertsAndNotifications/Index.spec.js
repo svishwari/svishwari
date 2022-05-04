@@ -27,11 +27,9 @@ describe("Notifications", () => {
     // route in notification screen
     cy.location("pathname").should("eq", route.notifications)
     // scroll down for lazy loading
-    cy.scrollTo("bottom", { duration: 1000 })
+    cy.scrollTo("bottom", { duration: 1000 }, { ensureScrollable: false })
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
-    // scroll up to click the return button
-    cy.scrollTo("top", { duration: 1000 })
     // click on the return to previous page button
     cy.get(selector.notification.notificationReturnButton).click()
   })

@@ -1,0 +1,96 @@
+# This is the CI pipeline for Unified Sphinx Docs
+
+version: "1.0"
+indicators:
+  - environment: &pip_common_envs
+      - PIP_INDEX_URL=${{ARTIFACTORY_PYTHON_READ}}
+      - PIP_CACHE_DIR=/codefresh/volume/pip-cache
+
+stages:
+  - prepare
+  - git
+  - set_env
+  - cache_deps
+  - tox
+
+steps:
+
+  PrepareBuildDetails:
+    stage: prepare
+    title: Prepare Build Details
+    type: parallel
+    steps:
+      GetTriggerName:
+        stage: prepare
+        title: get trigger name using id from spec yaml
+        type: deloittehux/get-trigger-name
+
+  CloneRepository:
+    stage: git
+    title: Cloning ${{CF_REPO_NAME}} repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}' # Git branch triggering the pipeline
+
+  SetEnvVars:
+    stage: set_env
+    title: Set environment variables
+    type: freestyle
+    image: alpine
+    working_directory: "${{CF_REPO_NAME}}"
+    commands:
+      - cat ./docs/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+
+  CacheDeps:
+    stage: cache_deps
+    title: Cache Dependencies
+    image: readthedocs/build:6.0
+    working_directory: '${{CF_REPO_NAME}}/docs'
+    commands:
+      - export PYENV_VERSION=$RTD_PYTHON_VERSION_37
+      - python3 -m pip install -U pip
+      - python3 -m pip install -r requirements.txt
+    environment: *pip_common_envs
+
+  ToxDocs:
+    stage: tox
+    title: "Tox - Sphinx documentation and validation"
+    description: "Run sphinx validation tests using tox"
+    image: readthedocs/build:6.0
+    working_directory: '${{CF_REPO_NAME}}/docs'
+    commands:
+      - export PYENV_VERSION=$RTD_PYTHON_VERSION_37
+      - python3 -m pip install -U pip
+      - python3 -m pip install tox
+      - python3 -m tox -r -v
+    environment: *pip_common_envs
+    scale:
+      safety:
+        title: 'safety'
+        environment:
+          - TOXENV=safety
+      secrets:
+        title: 'secrets'
+        environment:
+          - TOXENV=secrets
+      dirhtml:
+        title: 'dirhtml'
+        environment:
+          - TOXENV=dirhtml
+      doctest:
+        title: 'doctest'
+        environment:
+          - TOXENV=doctest
+      linkcheck:
+        title: 'linkcheck'
+        environment:
+          - TOXENV=linkcheck
+      spelling:
+        title: 'spelling'
+        environment:
+          - TOXENV=spelling
+      style:
+        title: 'style'
+        environment:
+          - TOXENV=style
+    fail_fast: false
