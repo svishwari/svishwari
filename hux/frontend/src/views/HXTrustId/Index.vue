@@ -87,9 +87,8 @@
               </v-row>
               <link-dropdown
                 v-if="getSegment.length > 0"
-                ref="dropdownValues"
                 :data-list="getSegment"
-                :width="dropdownWidth"
+                :width="245"
                 @onselect="getSelectedData"
               ></link-dropdown>
               <data-cards
@@ -431,7 +430,6 @@ export default {
         timely_issue_resolution:
           "Resolves issues in an adequate and timely manner",
       },
-      dropdownWidth: 245,
     }
   },
   computed: {
@@ -441,7 +439,6 @@ export default {
       addSegmentData: "trustId/getAddSegment",
       attributeData: "trustId/getTrustAttributes",
     }),
-
     getSegment() {
       return this.segmentScores.map((item) => item.segment_type)
     },
@@ -536,20 +533,6 @@ export default {
     },
     getSelectedData(value) {
       this.selectedSegment = value
-      this.dropdownWidth = 245
-      this.$nextTick(() => {
-        this.dropdownWidth = this.findChildHeight(
-          this.$refs.dropdownValues.$el.childNodes[1],
-          5
-        )
-      })
-    },
-    findChildHeight(child, num) {
-      if (num == 0 || !child?.childNodes[0]) {
-        return child?.clientWidth + 50 || 245
-      } else {
-        return this.findChildHeight(child.childNodes[0], num - 1)
-      }
     },
     formatText: formatText,
     filterToggle() {

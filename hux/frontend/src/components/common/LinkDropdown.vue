@@ -4,12 +4,13 @@
       Segments by
     </label>
     <v-select
+      ref="dropdownValues"
       v-model="getDefaultSelected"
       class="hux-select"
       item-text="name"
       item-value="last"
       :items="dataItems"
-      :style="`max-width: ${width}px`"
+      :style="`max-width: ${dropdownWidth}px`"
       :menu-props="{
         offsetY: true,
         nudgeBottom: '5px',
@@ -36,9 +37,12 @@ export default {
       default: 141,
     },
   },
-  data: () => ({
-    dataItems: [],
-  }),
+  data() {
+    return {
+      dataItems: [],
+      dropdownWidth: this.width,
+    }
+  },
   computed: {
     getDefaultSelected: {
       get() {
@@ -62,6 +66,20 @@ export default {
   methods: {
     onSelect(selectedValue) {
       this.$emit("onselect", selectedValue)
+      this.dropdownWidth = this.width
+      this.$nextTick(() => {
+        this.dropdownWidth = this.findChildHeight(
+          this.$refs.dropdownValues.$el,
+          5
+        )
+      })
+    },
+    findChildHeight(child, num) {
+      if (num == 0 || !child?.childNodes[0]) {
+        return child?.clientWidth + 50 || 245
+      } else {
+        return this.findChildHeight(child.childNodes[0], num - 1)
+      }
     },
   },
 }
