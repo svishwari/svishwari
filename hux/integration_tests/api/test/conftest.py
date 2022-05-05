@@ -118,7 +118,8 @@ def pytest_unconfigure(config):
 
     # clean stranded documents created by integration tests in various
     # collections
-    integration_test_user = getenv("INT_TEST_USER")
+    int_test_user_name = getenv("INT_TEST_USER_NAME")
+    logging.info("Integration test user's user name: %s", int_test_user_name)
 
     for (
         collection_name,
@@ -126,7 +127,7 @@ def pytest_unconfigure(config):
     ) in CLEAN_UP_COLLECTIONS_DICT.items():
         try:
             pytest.DB_CLIENT[collection_name].delete_many(
-                {collection_field: integration_test_user}
+                {collection_field: int_test_user_name}
             )
         except BaseException as exception:
             logging.error(
