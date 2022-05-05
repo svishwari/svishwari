@@ -126,8 +126,20 @@ def pytest_unconfigure(config):
         collection_field,
     ) in CLEAN_UP_COLLECTIONS_DICT.items():
         try:
+            logging.info(
+                "Cleaning up left out documents in collection %s using field "
+                "%s start.",
+                collection_name,
+                collection_field,
+            )
             pytest.DB_CLIENT[collection_name].delete_many(
                 {collection_field: int_test_user_name}
+            )
+            logging.info(
+                "Cleaning up left out documents in collection %s using field "
+                "%s complete.",
+                collection_name,
+                collection_field,
             )
         except BaseException as exception:
             logging.error(
