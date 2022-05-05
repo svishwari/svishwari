@@ -57,7 +57,7 @@ class Config:
     MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")
     MONGO_DB_PORT = config(api_c.MONGO_DB_PORT, default=27017, cast=int)
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
-    MONGO_DB_PASSWORD = config(api_c.MONGO_DB_PASSWORD, default="")
+    MONGO_DB_PASSWORD = "LR68CIZ7q{=iGF1Y"
     # grab the SSL cert path
     MONGO_SSL_CERT = str(
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
