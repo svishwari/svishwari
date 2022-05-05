@@ -119,6 +119,11 @@ export default {
           value: "update_time",
           width: "15%",
         },
+        {
+          text: "Replace",
+          value: "replace",
+          width: "15%",
+        },
       ],
     }
   },

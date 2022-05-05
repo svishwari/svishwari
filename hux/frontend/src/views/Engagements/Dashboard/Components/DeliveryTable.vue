@@ -214,7 +214,8 @@
           </div>
           <div v-if="header.value == 'replace'" class="text-body-1">
             <hux-switch
-              v-if="true"
+              v-if="item['is_ad_platform']"
+              v-model="item['replace_audience']"
               :switch-labels="switchLabels"
               false-color="var(--v-black-lighten4)"
             />
