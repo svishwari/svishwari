@@ -101,12 +101,12 @@ export default {
         {
           text: "Audiences",
           value: "name",
-          width: "35%",
+          width: "30%",
         },
         {
           text: "Status",
           value: "status",
-          width: "20%",
+          width: "10%",
         },
         {
           text: "Target size",
@@ -124,6 +124,11 @@ export default {
         {
           text: "Last Delivery",
           value: "update_time",
+          width: "15%",
+        },
+        {
+          text: "Replace",
+          value: "replace",
           width: "15%",
         },
       ],

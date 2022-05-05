@@ -212,6 +212,13 @@
                 : "—" | Percentage
             }}
           </div>
+          <div v-if="header.value == 'replace'" class="text-body-1">
+            <hux-switch
+              v-if="true"
+              :switch-labels="switchLabels"
+              false-color="var(--v-black-lighten4)"
+            />
+          </div>
         </td>
       </template>
     </hux-data-table>
@@ -235,7 +242,7 @@
           </template>
           <template #hover-content>
             <div class="py-2 white d-flex flex-column">
-              <span> Add a audience to this engagement </span>
+              <span> Add a audience to this engagement</span>
             </div>
           </template>
         </tooltip>
@@ -260,6 +267,7 @@ import Status from "@/components/common/Status.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import { formatText } from "@/utils.js"
+import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
   name: "DeliveryTable",
@@ -271,6 +279,7 @@ export default {
     Status,
     Size,
     TimeStamp,
+    HuxSwitch,
   },
   props: {
     section: {
@@ -308,6 +317,16 @@ export default {
   data() {
     return {
       openMenu: {},
+      switchLabels: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
+        },
+      ],
     }
   },
   computed: {
