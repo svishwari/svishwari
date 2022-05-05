@@ -12,6 +12,7 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.survey_metrics_management import (
     set_survey_response,
     set_survey_responses_bulk,
+    delete_survey_responses,
 )
 
 
@@ -129,8 +130,8 @@ class TestSurveyMetricsManagement(unittest.TestCase):
         )
         self.assertEqual(insert_doc[db_c.URL], "sample@trustdomain.com")
 
-    def test_set_survey_responses_bulk(self):
-        """Test set survey response bulk in Survey Metrics collection"""
+    def test_set_delete_survey_responses(self):
+        """Test set & delete survey responses in Survey Metrics collection"""
 
         # Sample Response 1
         responses_1 = {
@@ -314,3 +315,11 @@ class TestSurveyMetricsManagement(unittest.TestCase):
 
         self.assertTrue(insert_result[db_c.INSERT_STATUS])
         self.assertIsNotNone(insert_result[db_c.INSERTED_IDS])
+
+        query_param = {"customer_id": "12424873"}
+
+        remove_result = delete_survey_responses(
+            database=self.database, query=query_param
+        )
+        self.assertTrue(remove_result[db_c.STATUS])
+        self.assertIsNotNone(remove_result[db_c.STATUS_MESSAGE])
