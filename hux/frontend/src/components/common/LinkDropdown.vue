@@ -68,17 +68,17 @@ export default {
       this.$emit("onselect", selectedValue)
       this.dropdownWidth = this.width
       this.$nextTick(() => {
-        this.dropdownWidth = this.findChildHeight(
+        this.dropdownWidth = this.findOptionWidth(
           this.$refs.dropdownValues.$el,
           5
         )
       })
     },
-    findChildHeight(child, num) {
-      if (num == 0 || !child?.childNodes[0]) {
-        return child?.clientWidth + 50 || 245
+    findOptionWidth(option, num) {
+      if (num == 0 || !option?.childNodes[0]) {
+        return option?.clientWidth + 50 || 245
       } else {
-        return this.findChildHeight(child.childNodes[0], num - 1)
+        return this.findOptionWidth(option.childNodes[0], num - 1)
       }
     },
   },
