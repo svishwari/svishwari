@@ -51,33 +51,26 @@
           class="total-customers-chart-frame py-14"
         >
           <empty-page
-            v-if="!totalCustomersChartErrorState"
+            v-if="!emailOverviewErrorState"
             type="model-features-empty"
             :size="50"
           >
             <template #title>
-              <div class="title-no-notification">No data to show</div>
+              <div>No data to show</div>
             </template>
             <template #subtitle>
-              <div class="des-no-notification">
-                Total customer chart will appear here once Customer data is
-                available.
+              <div>
+                Delivered count chart will appear here once email overview data
+                is available.
               </div>
             </template>
           </empty-page>
-          <empty-page
-            v-else
-            class="title-no-notification"
-            type="error-on-screens"
-            :size="50"
-          >
+          <empty-page v-else type="error-on-screens" :size="50">
             <template #title>
-              <div class="title-no-notification">
-                Total customer chart is currently unavailable
-              </div>
+              <div>Delivered count chart is currently unavailable</div>
             </template>
             <template #subtitle>
-              <div class="des-no-notification">
+              <div>
                 Our team is working hard to fix it. Please be patient and try
                 again soon!
               </div>
@@ -108,32 +101,31 @@
               data-e2e="sent-domain-chart"
             />
             <empty-page
-              v-else-if="domainChartData.sent.data.length == 0"
+              v-else-if="!emailDomainErrorState"
               type="model-features-empty"
+              class="error-empty-spacing"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">No data to show</div>
+                <div>No data to show</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Sent chart will appear here once Customer data is available.
                 </div>
               </template>
             </empty-page>
             <empty-page
               v-else
-              class="title-no-notification"
+              class="error-empty-spacing"
               type="error-on-screens"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">
-                  Sent chart is currently unavailable
-                </div>
+                <div>Sent chart is currently unavailable</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Our team is working hard to fix it. Please be patient and try
                   again soon!
                 </div>
@@ -157,15 +149,16 @@
               data-e2e="delivered-rate-domain-chart"
             />
             <empty-page
-              v-else-if="domainChartData.deliveredRate.data.length == 0"
+              v-else-if="!emailDomainErrorState"
               type="model-features-empty"
+              class="error-empty-spacing"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">No data to show</div>
+                <div>No data to show</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Delivered rate chart will appear here once Customer data is
                   available.
                 </div>
@@ -173,17 +166,15 @@
             </empty-page>
             <empty-page
               v-else
-              class="title-no-notification"
+              class="error-empty-spacing"
               type="error-on-screens"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">
-                  Delivered rate chart is currently unavailable
-                </div>
+                <div>Delivered rate chart is currently unavailable</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Our team is working hard to fix it. Please be patient and try
                   again soon!
                 </div>
@@ -210,15 +201,16 @@
               data-e2e="open-rate-domain-chart"
             />
             <empty-page
-              v-else-if="domainChartData.openRate.data.length == 0"
+              v-else-if="!emailDomainErrorState"
               type="model-features-empty"
+              class="error-empty-spacing"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">No data to show</div>
+                <div>No data to show</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Open rate chart will appear here once Customer data is
                   available.
                 </div>
@@ -226,17 +218,15 @@
             </empty-page>
             <empty-page
               v-else
-              class="title-no-notification"
+              class="error-empty-spacing"
               type="error-on-screens"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">
-                  Open rate chart is currently unavailable
-                </div>
+                <div>Open rate chart is currently unavailable</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Our team is working hard to fix it. Please be patient and try
                   again soon!
                 </div>
@@ -260,15 +250,16 @@
               data-e2e="click-rate-domain-chart"
             />
             <empty-page
-              v-else-if="domainChartData.clickRate.data.length == 0"
+              v-else-if="!emailDomainErrorState"
               type="model-features-empty"
+              class="error-empty-spacing"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">No data to show</div>
+                <div>No data to show</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Click rate chart will appear here once Customer data is
                   available.
                 </div>
@@ -276,17 +267,15 @@
             </empty-page>
             <empty-page
               v-else
-              class="title-no-notification"
+              class="error-empty-spacing"
               type="error-on-screens"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">
-                  Click rate chart is currently unavailable
-                </div>
+                <div>Click rate chart is currently unavailable</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Our team is working hard to fix it. Please be patient and try
                   again soon!
                 </div>
@@ -313,15 +302,16 @@
               data-e2e="unsubscribe-rate-domain-chart"
             />
             <empty-page
-              v-else-if="domainChartData.unsubscribeRate.data.length == 0"
+              v-else-if="!emailDomainErrorState"
               type="model-features-empty"
+              class="error-empty-spacing"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">No data to show</div>
+                <div>No data to show</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Unsubscribe rate chart will appear here once Customer data is
                   available.
                 </div>
@@ -329,17 +319,15 @@
             </empty-page>
             <empty-page
               v-else
-              class="title-no-notification"
+              class="error-empty-spacing"
               type="error-on-screens"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">
-                  Unsubscribe rate chart is currently unavailable
-                </div>
+                <div>Unsubscribe rate chart is currently unavailable</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Our team is working hard to fix it. Please be patient and try
                   again soon!
                 </div>
@@ -363,15 +351,16 @@
               data-e2e="complaints-rate-domain-chart"
             />
             <empty-page
-              v-else-if="domainChartData.complaintsRate.data.length == 0"
+              v-else-if="!emailDomainErrorState"
+              class="error-empty-spacing"
               type="model-features-empty"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">No data to show</div>
+                <div>No data to show</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Complaints rate chart will appear here once Customer data is
                   available.
                 </div>
@@ -379,17 +368,15 @@
             </empty-page>
             <empty-page
               v-else
-              class="title-no-notification"
+              class="error-empty-spacing"
               type="error-on-screens"
               :size="50"
             >
               <template #title>
-                <div class="title-no-notification">
-                  Complaints rate chart is currently unavailable
-                </div>
+                <div>Complaints rate chart is currently unavailable</div>
               </template>
               <template #subtitle>
-                <div class="des-no-notification">
+                <div>
                   Our team is working hard to fix it. Please be patient and try
                   again soon!
                 </div>
@@ -431,12 +418,12 @@ export default {
       entity: {
         description:
           "Email engagement is key for successful email deliverability. The displayed charts highlight performance for the last 90 days.",
-        overAllRate: 0.95,
+        overAllRate: null,
         overviewList: [],
       },
       domainChartData: {},
       deliveredCountData: [],
-      totalCustomersChartErrorState: false,
+      emailOverviewErrorState: false,
       emailDomainErrorState: false,
     }
   },
@@ -459,11 +446,13 @@ export default {
       this.loading = true
       try {
         await this.getOverviewData()
-        this.entity.overAllRate = this.overviewData.overall_inbox_rate
-        this.entity.overviewList = this.overviewData.sending_domains_overview
-        this.deliveredCountData = this.overviewData.delivered_open_rate_overview
+        this.entity.overAllRate = this.overviewData?.overall_inbox_rate || null
+        this.entity.overviewList =
+          this.overviewData?.sending_domains_overview || []
+        this.deliveredCountData =
+          this.overviewData?.delivered_open_rate_overview || []
       } catch (error) {
-        this.totalCustomersChartErrorState = true
+        this.emailOverviewErrorState = true
       }
       this.loading = false
     },
@@ -523,6 +512,11 @@ export default {
   .overview-card {
     border-radius: 12px !important;
   }
+
+  ::v-deep .container {
+    overflow: hidden !important;
+    height: 100% !important;
+  }
 }
 ::-webkit-scrollbar {
   width: 5px;
@@ -545,5 +539,13 @@ export default {
 }
 .content-section {
   margin-top: 110px;
+  ::v-deep .error-empty-spacing {
+    &.empty-page {
+      .text-center {
+        position: relative;
+        bottom: 40px !important;
+      }
+    }
+  }
 }
 </style>
