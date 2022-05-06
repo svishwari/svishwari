@@ -58,6 +58,7 @@ USER_LOOKUP_PIPELINE = [
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+# pylint: disable=too-many-locals
 def set_user(
     database: DatabaseClient,
     okta_id: str,
@@ -69,6 +70,7 @@ def set_user(
     profile_photo: str = "",
     pii_access: bool = False,
     seen_notifications: bool = False,
+    last_seen_alert_time: datetime.datetime = None,
 ) -> Union[dict, None]:
     """A function to set a user.
 
@@ -86,6 +88,7 @@ def set_user(
             empty string.
         pii_access (bool): PII Access, defaults to False
         seen_notifications (bool): Seen Notifications Flag, defaults to False
+        last_seen_alert_time (datetime): Last Seen Alert Timestamp
 
     Returns:
         Union[dict, None]: MongoDB document for a user.
@@ -129,6 +132,7 @@ def set_user(
         db_c.USER_APPLICATIONS: [],
         db_c.USER_PII_ACCESS: pii_access,
         db_c.SEEN_NOTIFICATIONS: seen_notifications,
+        db_c.LAST_SEEN_ALERT_TIME: last_seen_alert_time,
     }
 
     # validate okta
@@ -284,6 +288,7 @@ def update_user(
         db_c.USER_PII_ACCESS,
         db_c.USER_ALERTS,
         db_c.SEEN_NOTIFICATIONS,
+        db_c.LAST_SEEN_ALERT_TIME,
     ]
 
     # validate allowed fields, any invalid returns, raise error

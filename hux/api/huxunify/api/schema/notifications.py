@@ -1,7 +1,7 @@
 """Schemas for the notifications API."""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, List, Nested
+from marshmallow.fields import Str, Int, List, Nested, Bool
 from marshmallow.validate import OneOf
 
 from huxunifylib.database import constants as db_c
@@ -51,6 +51,7 @@ class NotificationsSchema(Schema):
         attribute=api_c.TOTAL_RECORDS,
         example=1,
     )
+    seen_notifications = Bool(default=False)
     notifications = List(
         Nested(NotificationSchema),
         example=[
