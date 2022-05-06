@@ -159,6 +159,7 @@ class UserSchema(Schema):
     modified = DateTimeWithZ(required=True)
     alerts = Nested(UserAlertCategorySchema)
     seen_notifications = Bool(default=False)
+    last_seen_alert_time = DateTimeWithZ(allow_none=True)
 
 
 class RequestedUserSchema(Schema):

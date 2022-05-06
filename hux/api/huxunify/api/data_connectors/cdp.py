@@ -1445,8 +1445,6 @@ def get_histogram_data(token: str, field_name: str) -> list:
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/counts/by-float-field",
         json={
-            "start_date": "2021-06-19",
-            "end_date": "2021-12-26",
             "filters": [],
             "field_name": field_name,
             "result_group_size": api_c.HISTOGRAM_GROUP_SIZE,
@@ -1489,8 +1487,6 @@ def get_age_histogram_data(token: str):
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-age",
         json={
-            "start_date": "2021-06-19",
-            "end_date": "2021-12-26",
             "filters": [],
         },
         headers={

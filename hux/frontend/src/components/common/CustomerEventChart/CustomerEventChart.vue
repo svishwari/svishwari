@@ -24,19 +24,13 @@
             <span v-else>Event</span>
           </div>
           <div
-            v-for="event in eventsLabels"
-            :key="event.event_name"
+            v-for="event in currentData.eventsCollection"
+            :key="event"
             class="value-container"
           >
-            <div
-              v-if="currentData.eventsCollection.includes(event.event_name)"
-              class="event-list"
-            >
-              <icon :type="event.event_name" :size="16" />
+            <div class="event-list">
               <span class="text-label"
-                >{{ event.label_name }} ({{
-                  eventCount(event.event_name)
-                }})</span
+                >{{ formatText(event) }} ({{ eventCount(event) }})</span
               >
             </div>
           </div>
@@ -50,17 +44,16 @@
 </template>
 
 <script>
+import { formatText } from "@/utils"
 import BarChart from "@/components/common/Charts/BarChart/BarChart.vue"
-import Icon from "@/components/common/Icon"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 import { timeFormat } from "d3-time-format"
 import { nest } from "d3-collection"
-import customerEventsList from "./customerEventList.js"
 
 export default {
   name: "CustomerEventChart",
-  components: { BarChart, Icon, ChartTooltip },
+  components: { BarChart, ChartTooltip },
   props: {
     customersData: {
       type: Array,
@@ -80,7 +73,6 @@ export default {
         height: 0,
       },
       toolTipStyle: TooltipConfiguration.customerEventChart,
-      eventsLabels: customerEventsList,
     }
   },
   mounted() {
@@ -252,6 +244,7 @@ export default {
         }
       } else return currentValue
     },
+    formatText: formatText,
   },
 }
 </script>

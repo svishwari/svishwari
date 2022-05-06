@@ -27,9 +27,6 @@ from huxunifylib.util.general.logging import logger
 from huxunifylib.database.audit_management import create_audience_audit
 from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.util.client import db_client_factory
-from huxunifylib.database.cdp_data_source_management import (
-    get_all_data_sources,
-)
 from huxunifylib.database import (
     constants as db_c,
 )
@@ -108,8 +105,12 @@ def check_mongo_connection() -> Tuple[bool, str]:
     """
 
     try:
-        # test finding documents
-        get_all_data_sources(get_db_client())
+        # test finding documents, call directly to see errors.
+        _ = list(
+            get_db_client()[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.CDP_DATA_SOURCES_COLLECTION
+            ].find({})
+        )
         return True, "Mongo available."
     # pylint: disable=broad-except
     except Exception:
