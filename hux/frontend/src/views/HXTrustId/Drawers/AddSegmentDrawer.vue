@@ -8,6 +8,8 @@
     submit-button-width="79"
     submit-button="Add"
     :style="{ transition: '0.5s', height: viewHeight }"
+    :customValidation="true"
+    :enableApply="setEnableApply"
     @clear="clear"
     @apply="apply"
     @close="close"
@@ -126,6 +128,9 @@ export default {
       })
       return payload
     },
+    setEnableApply() {
+      return Object.keys(this.segmentFilters).length > 0 ? true : false
+    },
   },
   watch: {
     value: function () {
@@ -141,6 +146,7 @@ export default {
       this.segmentDataObj = {}
     },
     apply() {
+      console.log("this.segmentFilters", this.segmentFilters)
       this.$emit("onSectionAction", {
         segment_name: this.segmentName,
         segment_filters: this.segmentFilters,

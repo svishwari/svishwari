@@ -3,8 +3,52 @@ export default [
     segment_type: "composite & factor scores",
     segments: [
       {
+        segment_name: "All Customers",
+        segment_filters: [],
+        default: true,
+        attributes: [
+          {
+            attribute_type: "trust_id",
+            attribute_name: "HX TrustID",
+            attribute_score: 73,
+            attribute_description:
+              "TrustID is scored on a scale between -100 to 100",
+          },
+          {
+            attribute_type: "humanity",
+            attribute_name: "Humanity",
+            attribute_score: -20,
+            attribute_description:
+              "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
+          },
+          {
+            attribute_type: "transparency",
+            attribute_name: "Transparency",
+            attribute_score: 71,
+            attribute_description:
+              "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
+          },
+          {
+            attribute_type: "capability",
+            attribute_name: "Capability",
+            attribute_score: 78,
+            attribute_description:
+              "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
+          },
+          {
+            attribute_type: "reliability",
+            attribute_name: "Reliability",
+            attribute_score: 71,
+            attribute_description:
+              "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
+          },
+        ],
+      },
+
+      {
         segment_name: "Segment 1",
         segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "trust_id",
@@ -46,6 +90,7 @@ export default [
       {
         segment_name: "Segment 2",
         segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "trust_id",
@@ -87,6 +132,7 @@ export default [
       {
         segment_name: "Segment 3",
         segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "trust_id",
@@ -128,6 +174,7 @@ export default [
       {
         segment_name: "Segment 4",
         segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "trust_id",
@@ -174,6 +221,7 @@ export default [
       {
         segment_name: "Segment 1",
         segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "capability",
@@ -220,6 +268,7 @@ export default [
       {
         segment_name: "Segment 1",
         segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "humanity",
@@ -275,6 +324,7 @@ export default [
             ],
           },
         ],
+        default: false,
         attributes: [
           {
             attribute_type: "humanity",
@@ -320,6 +370,7 @@ export default [
       {
         segment_name: "Segment 1",
         segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "transparency",
@@ -376,6 +427,7 @@ export default [
             ],
           },
         ],
+        default: false,
         attributes: [
           {
             attribute_type: "transparency",
@@ -422,6 +474,7 @@ export default [
       {
         segment_name: "Segment 1",
         segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "reliability",
@@ -478,6 +531,7 @@ export default [
             ],
           },
         ],
+        default: false,
         attributes: [
           {
             attribute_type: "reliability",

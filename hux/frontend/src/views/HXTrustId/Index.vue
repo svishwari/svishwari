@@ -85,12 +85,38 @@
                   </v-card>
                 </v-col>
               </v-row>
-              <link-dropdown
-                v-if="getSegment.length > 0"
-                :data-list="getSegment"
-                :width="245"
-                @onselect="getSelectedData"
-              ></link-dropdown>
+              <v-row cl>
+                <v-col md="8">
+                  <link-dropdown
+                    v-if="getSegment.length > 0"
+                    :data-list="getSegment"
+                    :width="245"
+                    @onselect="getSelectedData"
+                  ></link-dropdown>
+                </v-col>
+                <v-col md="4">
+                  <div class="d-flex toggle-main-div">
+                    <span
+                      class="
+                        mr-5
+                        toggle-content
+                        text-body-1
+                        black--text
+                        text--base
+                      "
+                      >Compare segments to all customers</span
+                    >
+
+                    <hux-switch
+                      v-model="switchSegment"
+                      false-color="var(--v-black-lighten4)"
+                      :width="'60px'"
+                      :is-disabled="disableToggle"
+                      :switch-labels="switchLabel"
+                    />
+                  </div>
+                </v-col>
+              </v-row>
               <data-cards
                 v-if="getSegmentTableData.length > 0"
                 bordered
@@ -206,7 +232,8 @@
                   <div
                     v-if="
                       getSelectedSegment &&
-                      getSelectedSegment.segments.length > 1
+                      getSelectedSegment.segments.length > 1 &&
+                      !row.item.default
                     "
                     class="d-flex align-center justify-end mr-2"
                   >
@@ -299,6 +326,7 @@ import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
+import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
   name: "HXTrustID",
@@ -315,6 +343,7 @@ export default {
     TrustIdAttributes,
     HuxIcon,
     AddSegmentDrawer,
+    HuxSwitch,
   },
   data() {
     return {
@@ -325,6 +354,17 @@ export default {
       isFilterToggled: false,
       segmentLength: 1,
       addSegments: [],
+      switchSegment: true,
+      switchLabel: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
+        },
+      ],
       borderColorArr: [
         {
           color: "primary",
@@ -430,6 +470,7 @@ export default {
         timely_issue_resolution:
           "Resolves issues in an adequate and timely manner",
       },
+      disableToggle: false,
     }
   },
   computed: {
@@ -449,6 +490,7 @@ export default {
             let segment = {
               segment_name: x.segment_name,
               segment_filters: x.segment_filters,
+              default: x.default,
             }
 
             x.attributes.forEach((item) => {
@@ -456,7 +498,6 @@ export default {
             })
 
             segment.colors = this.borderColorArr[index]
-
             return segment
           })
         : []
@@ -660,5 +701,11 @@ export default {
   height: 60px;
   align-items: center;
   display: flex;
+}
+.toggle-content {
+  margin-top: 18px;
+}
+.toggle-main-div {
+  float: right;
 }
 </style>
