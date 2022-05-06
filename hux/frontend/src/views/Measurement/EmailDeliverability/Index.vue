@@ -45,7 +45,7 @@
         :email-data="deliveredCountData"
         data-e2e="delivered-count-open-rate-chart"
       />
-      <v-card class="mt-7 rounded-lg box-shadow-5">
+      <v-card class="my-9 rounded-lg box-shadow-5">
         <v-row
           v-if="deliveredCountData.length == 0"
           class="total-customers-chart-frame py-14"
@@ -514,8 +514,7 @@ export default {
   }
 
   ::v-deep .container {
-    overflow: hidden !important;
-    height: 100% !important;
+    height: calc(100vh - 70px) !important;
   }
 }
 ::-webkit-scrollbar {
