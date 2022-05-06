@@ -20,7 +20,7 @@
           :icon-size="32"
         />
         <h3 class="text-h2 ml-1 black--text text--darken-4">
-          Alert ID: {{ notificationData.id }}
+          Alert ID: {{ notificationData.id | Shorten }}
         </h3>
       </div>
     </template>
@@ -90,16 +90,21 @@ export default {
           },
           {
             id: 2,
+            title: "Alert object ID",
+            value: this.notificationData.id,
+          },
+          {
+            id: 3,
             title: "Category",
             value: formatText(this.notificationData.category),
           },
           {
-            id: 3,
+            id: 4,
             title: "Date",
             value: this.formattedDate(this.notificationData.created),
           },
           {
-            id: 4,
+            id: 5,
             title: "User",
             value: formatText(this.notificationData.username),
             subLabel: null,
