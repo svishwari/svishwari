@@ -31,14 +31,8 @@
               v-if="header.value == 'event_type'"
               class="d-flex align-center"
             >
-              <icon
-                :type="item[header.value]"
-                color="primary"
-                :size="24"
-                class="mr-1"
-              />
               <span class="position-event-center">
-                {{ event_underscore_remove(item[header.value]) }}
+                {{ formatText(item[header.value]) }}
               </span>
             </template>
             <template v-if="header.value == 'date'">
@@ -52,10 +46,11 @@
 </template>
 
 <script>
+
+import { formatText } from "@/utils"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Drawer from "@/components/common/Drawer.vue"
-import Icon from "@/components/common/Icon.vue"
-import { capitalize, split, join } from "lodash"
+
 
 export default {
   name: "CustomerEventsDrawer",
@@ -63,7 +58,6 @@ export default {
   components: {
     HuxDataTable,
     Drawer,
-    Icon,
   },
 
   props: {
@@ -108,9 +102,7 @@ export default {
   },
 
   methods: {
-    event_underscore_remove(str) {
-      return join(split(capitalize(str), "_"), " ")
-    },
+    formatText: formatText,
   },
 }
 </script>
