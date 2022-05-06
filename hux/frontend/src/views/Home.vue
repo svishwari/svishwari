@@ -124,7 +124,7 @@
               :columns="tableColumns"
               :data-items="notifications"
               class="notifications-table px-6"
-              sort-column="created_time"
+              sort-column="create_time"
               sort-desc
             >
               <template #row-item="{ item }">
@@ -168,8 +168,8 @@
                     </hux-tooltip>
                   </template>
 
-                  <template v-if="header.value == 'created_time'">
-                    <hux-time-stamp :value="item['created_time']" />
+                  <template v-if="header.value == 'create_time'">
+                    <hux-time-stamp :value="item['create_time']" />
                   </template>
                 </td>
               </template>
@@ -304,7 +304,7 @@ export default {
         },
         {
           text: "Time",
-          value: "created_time",
+          value: "create_time",
           width: "180px",
         },
       ],
