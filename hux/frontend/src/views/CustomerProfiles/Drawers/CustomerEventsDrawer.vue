@@ -46,11 +46,9 @@
 </template>
 
 <script>
-
 import { formatText } from "@/utils"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Drawer from "@/components/common/Drawer.vue"
-
 
 export default {
   name: "CustomerEventsDrawer",

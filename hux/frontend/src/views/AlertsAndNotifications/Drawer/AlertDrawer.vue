@@ -88,7 +88,7 @@ export default {
             value: this.notificationData.description,
             subLabel: null,
           },
-         {
+          {
             id: 2,
             title: "Alert object ID",
             value: this.notificationData.id,

@@ -28,13 +28,9 @@
             :key="event"
             class="value-container"
           >
-            <div
-              class="event-list"
-            >
+            <div class="event-list">
               <span class="text-label"
-                >{{ formatText(event) }} ({{
-                  eventCount(event)
-                }})</span
+                >{{ formatText(event) }} ({{ eventCount(event) }})</span
               >
             </div>
           </div>
@@ -48,7 +44,6 @@
 </template>
 
 <script>
-
 import { formatText } from "@/utils"
 import BarChart from "@/components/common/Charts/BarChart/BarChart.vue"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
