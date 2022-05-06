@@ -5,7 +5,7 @@ import faker from "faker"
  */
 export const notification = {
   id: () => faker.datatype.uuid(),
-  created: () => faker.date.recent(),
+  created_time: () => faker.date.recent(),
   description: () =>
     `New engagement named "${faker.address.state()}" created by "${faker.name.findName()}".`,
   notification_type: () => "success",

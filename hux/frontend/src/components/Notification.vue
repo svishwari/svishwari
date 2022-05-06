@@ -59,7 +59,7 @@
                     </template>
                   </tooltip>
                   <div class="text-body-2 black--text">
-                    <time-stamp :value="data.created" />
+                    <time-stamp :value="data.created_time" />
                   </div>
                 </div>
               </div>
@@ -118,7 +118,7 @@ export default {
       seenNotifications: "notifications/seenNotifications",
     }),
     mostRecentNotifications() {
-      return orderBy(this.notifications, "created", "desc").slice(
+      return orderBy(this.notifications, "created_time", "desc").slice(
         0,
         this.batchDetails.batch_size
       )

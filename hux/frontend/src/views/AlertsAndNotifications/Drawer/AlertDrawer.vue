@@ -101,7 +101,7 @@ export default {
           {
             id: 4,
             title: "Date",
-            value: this.formattedDate(this.notificationData.created),
+            value: this.formattedDate(this.notificationData.created_time),
           },
           {
             id: 5,

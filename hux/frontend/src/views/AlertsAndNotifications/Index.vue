@@ -67,7 +67,7 @@
           <hux-lazy-data-table
             :columns="columnDefs"
             :data-items="notificationData"
-            sort-column="created"
+            sort-column="created_time"
             sort-desc
             class="big-table"
             :enable-lazy-load="enableLazyLoad"
@@ -115,8 +115,8 @@
                   </template>
                 </tooltip>
 
-                <div v-if="header.value == 'created'">
-                  <time-stamp :value="item['created']" />
+                <div v-if="header.value == 'created_time'">
+                  <time-stamp :value="item['created_time']" />
                 </div>
               </td>
             </template>
@@ -260,11 +260,11 @@ export default {
         },
         {
           text: "Time",
-          value: "created",
+          value: "created_time",
           width: "220px",
         },
       ],
-      sortColumn: "created",
+      sortColumn: "created_time",
       sortDesc: true,
       loading: false,
       enableLazyLoad: false,
