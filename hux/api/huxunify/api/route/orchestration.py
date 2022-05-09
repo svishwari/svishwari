@@ -85,7 +85,7 @@ from huxunify.api.route.utils import (
     is_component_favorite,
     get_user_favorites,
     convert_unique_city_filter,
-    match_rate_data_for_audience,
+    match_rate_data_for_audience, convert_filters_for_events,
 )
 
 # setup the orchestration blueprint
@@ -1228,6 +1228,15 @@ class AudiencePostView(SwaggerView):
         audience_filters = convert_unique_city_filter(
             {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
         )
+
+        # Fetch events from CDM. Check cache first.
+        event_types = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.EVENTS}",
+            get_customer_event_types,
+            {"token": token_response[0]},
+        )
+
+        convert_filters_for_events(audience_filters,event_types)
         # get live audience size
         customers = get_customers_overview(
             token_response[0],
