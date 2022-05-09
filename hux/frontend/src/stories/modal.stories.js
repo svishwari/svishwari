@@ -1,16 +1,22 @@
-import Modal from "./Modal.vue"
-import HuxButton from "../../components/common/huxButton.vue"
+import Modal from "../components/common/ConfirmModal.vue"
+import HuxButton from "../components/common/huxButton.vue"
 import { action } from "@storybook/addon-actions"
 
 export default {
   component: Modal,
 
-  title: "Components/NewModal",
+  title: "NewComponents/Modal",
 
   argTypes: {
     title: { control: 'text' },
-    icon: { table: { disable: true } },
-    type: { table: { disable: true } },
+    icon: {
+      options: ["exclamation_outline", "trash_in_circle", "FAB_circle_bulb"],
+      control: { type: "select" },
+    },
+    type: {
+      options: ["primary", "secondary", "error", "warning"],
+      control: { type: "select" },
+    },
     iconColor: {
       options: ["success", "info", "warning", "error"],
       control: { type: "select" },
@@ -25,6 +31,8 @@ export default {
     showBack: { control: 'boolean' },
     showConfirm: { control: 'boolean' },
     showCancel: { control: 'boolean' },
+    iconSize: { control: 'number' },
+    value: { table: { disable: true } },
   },
 
   args: {
@@ -36,6 +44,7 @@ export default {
     showBack: "false",
     showConfirm: "true",
     showCancel: "true",
+    iconSize: 40,
   },
 }
 
@@ -69,25 +78,4 @@ const Template = (args, { argTypes }) => ({
     </div>`,
 })
 
-export const Negative = Template.bind({})
-Negative.args = {
-  type: "error",
-  icon: "trash_in_circle",
-  confirmBtnText: "Danger",
-  width: 600,
-  showBack: false,
-}
-export const Confirmative = Template.bind({})
-Confirmative.args = {
-  type: "primary",
-}
-
-export const Informative = Template.bind({})
-Informative.args = {
-  icon: "FAB_circle_bulb",
-  type: "error",
-  showCancel: "false",
-  showBack: "false",
-  type: "primary",
-  confirmBtnText: "OK"
-}
+export const ModalComponent = Template.bind({})
