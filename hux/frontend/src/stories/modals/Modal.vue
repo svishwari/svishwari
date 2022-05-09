@@ -37,6 +37,7 @@
         <div class="modal-footer">
           <slot name="footer">
             <huxButton
+              v-if="showCancel"
               size="large"
               variant="white"
               height="40"
@@ -61,7 +62,7 @@
             <huxButton
               v-if="showConfirm"
               size="large"
-              variant="primary"
+              :variant="type"
               height="40"
               :style="{ float: 'right' }"
               @click="onSubmit()"
@@ -165,6 +166,12 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+
+    showCancel: {
+      type: Boolean,
+      required: false,
+      dafault: false,
     },
   },
 

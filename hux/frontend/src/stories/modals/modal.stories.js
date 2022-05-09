@@ -5,7 +5,7 @@ import { action } from "@storybook/addon-actions"
 export default {
   component: Modal,
 
-  title: "Components/MyModal",
+  title: "Components/NewModal",
 
   argTypes: {
     title: { control: 'text' },
@@ -23,7 +23,8 @@ export default {
     width: { control: 'number' },
     isDisabled: { control: 'boolean' },
     showBack: { control: 'boolean' },
-    showConfirm: { table: { disable: true } },
+    showConfirm: { control: 'boolean' },
+    showCancel: { control: 'boolean' },
   },
 
   args: {
@@ -32,7 +33,9 @@ export default {
     iconColor: "warning",
     type: "warning",
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet suscipit maecenas egestas at sed.",
-    showBack: "true",
+    showBack: "false",
+    showConfirm: "true",
+    showCancel: "true",
   },
 }
 
@@ -67,16 +70,24 @@ const Template = (args, { argTypes }) => ({
 })
 
 export const Negative = Template.bind({})
+Negative.args = {
+  type: "error",
+  icon: "trash_in_circle",
+  confirmBtnText: "Danger",
+  width: 600,
+  showBack: false,
+}
 export const Confirmative = Template.bind({})
 Confirmative.args = {
-  body: "Are you sure you want to delete this audience? By deleting this audience you will not be able to recover it and it may impact any associated engagements.",
+  type: "primary",
 }
 
 export const Informative = Template.bind({})
 Informative.args = {
-  icon: "sad-face",
+  icon: "FAB_circle_bulb",
   type: "error",
-  title: "Action Word",
-  subTitle: "(i.e. Remove) ___________?",
-  body: "Are you sure you want to stop the configuration and go to another page? You will not be able to recover it but will need to start the process again.",
+  showCancel: "false",
+  showBack: "false",
+  type: "primary",
+  confirmBtnText: "OK"
 }
