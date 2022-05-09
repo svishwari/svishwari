@@ -11,7 +11,11 @@ import pymongo
 from bson import ObjectId
 from flask import Blueprint, request, Response
 from flasgger import SwaggerView
-from huxunifylib.database.user_management import update_all_users, update_user
+from huxunifylib.database.user_management import (
+    update_all_users,
+    update_user,
+    get_user,
+)
 
 from huxunifylib.util.general.logging import logger
 
@@ -335,8 +339,9 @@ class NotificationsSearch(SwaggerView):
                 okta_id=user[db_c.OKTA_ID],
                 update_doc={db_c.SEEN_NOTIFICATIONS: True},
             )
+        user_object = get_user(get_db_client(), okta_id=user[db_c.OKTA_ID])
         notifications.update(
-            {db_c.SEEN_NOTIFICATIONS: user[db_c.SEEN_NOTIFICATIONS]}
+            {db_c.SEEN_NOTIFICATIONS: user_object[db_c.SEEN_NOTIFICATIONS]}
         )
 
         return HuxResponse.OK(
