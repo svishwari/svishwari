@@ -315,6 +315,7 @@
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
                       :standalone-data="audience.standalone_deliveries"
+                      :engagement-data="audience.engagements"
                       @openCreateLookalike="lookalikePageRedirect()"
                     />
                   </div>

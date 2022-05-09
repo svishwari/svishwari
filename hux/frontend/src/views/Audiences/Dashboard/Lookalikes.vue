@@ -145,24 +145,25 @@ export default {
       required: false,
       default: () => [],
     },
-  },
-  data() {
-    return {
-      addLookalike: false,
-    }
+    engagementData: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
   computed: {
     isDataExists() {
-      this.filterStandalone
       return this.lookalikeData.length > 0 ? true : false
     },
-    filterStandalone() {
-      this.standaloneData.forEach((element) => {
-        if (element.status === "Delivered") {
-          this.addLookalike = true
-        }
-      })
-      return this.addLookalike
+    addLookalike() {
+      return (
+        this.standaloneData.some((element) => element.status === "Delivered") ||
+        this.engagementData.some((engagement) =>
+          engagement.deliveries.some(
+            (delivery) => delivery.status === "Delivered"
+          )
+        )
+      )
     },
   },
 }
