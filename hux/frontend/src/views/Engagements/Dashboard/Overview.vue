@@ -146,7 +146,7 @@ export default {
         },
         {
           text: "Last delivery",
-          value: "update_time",
+          value: "last_delivered",
           width: "15%",
         },
       ],

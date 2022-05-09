@@ -29,7 +29,7 @@
                 <logo :type="client.logo" :size="24" class="mr-2" />
                 {{ client.name }}
               </span>
-              <span class="mr-3">
+              <!-- <span class="mr-3">
                 <icon
                   type="chevron-down"
                   :size="14"
@@ -38,11 +38,11 @@
                   :class="{ 'menu-active rotate-icon-180': menu }"
                   data-e2e="client_panel_dropdown"
                 ></icon>
-              </span>
+              </span> -->
             </span>
           </div>
         </template>
-        <v-list-item class="white height-fix" data-e2e="client_panel">
+        <!-- <v-list-item class="white height-fix" data-e2e="client_panel">
           <v-list-item-title class="body-1">
             <a
               class="text-decoration-none black--text"
@@ -53,7 +53,7 @@
               Switch client project
             </a>
           </v-list-item-title>
-        </v-list-item>
+        </v-list-item> -->
       </v-menu>
     </template>
 
@@ -245,7 +245,7 @@ export default {
 
     checkColored(title) {
       if (
-        this.sideBarItems.length > 0 &&
+        this.sideBarItems?.length > 0 &&
         ["HX TrustID", "HXTrustID"].includes(title)
       ) {
         this.sideBarItems
@@ -258,7 +258,7 @@ export default {
     },
 
     trustidRoute(title) {
-      if (this.sideBarItems.length > 0 && !this.checkColored(title)) {
+      if (this.sideBarItems?.length > 0 && !this.checkColored(title)) {
         this.sideBarItems
           .find((elem) => elem.name == "Insights")
           .children.find((item) => item.name == "HX TrustID").icon =

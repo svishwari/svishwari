@@ -827,6 +827,7 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
 import EngagementFilter from "./Configuration/Drawers/EngagementFilter.vue"
+import EmptyPage from "@/components/common/EmptyPage"
 
 export default {
   name: "Engagements",
@@ -848,6 +849,7 @@ export default {
     ConfirmModal,
     HuxDeliveryText,
     EngagementFilter,
+    EmptyPage,
   },
   data() {
     return {
