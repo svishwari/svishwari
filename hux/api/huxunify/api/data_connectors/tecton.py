@@ -943,9 +943,11 @@ def cache(cache_key: str) -> object:
 
     return wrapper
 
+
 @cache("My cache value!")
 def my_func(arg_1: str = None, arg_2: int = None):
     print("Running test func!")
+
 
 # def retrieve_model_features(model_id: str, model_version: str = None, limit: int = 20) -> dict:
 #     """ Retrieves model features from Tecton

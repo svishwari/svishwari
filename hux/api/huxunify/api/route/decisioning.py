@@ -123,23 +123,30 @@ class ModelsView(SwaggerView):
             )
         else:
             today = datetime.now()
-            all_models = [{
-                api_c.ID: f"feature_id_{i}",
-                api_c.NAME: f"feature_name_{i}",
-                api_c.DESCRIPTION: f"Feature {i} description",
-                api_c.STATUS: api_c.STATUS_PENDING,
-                api_c.LATEST_VERSION: today.strftime("%Y.%m.%d"),
-                api_c.OWNER: "Susan Miller",
-                api_c.LOOKBACK_WINDOW: 365,
-                api_c.PREDICTION_WINDOW: 365,
-                api_c.FULCRUM_DATE: datetime(today.year, today.month, today.day),
-                api_c.LAST_TRAINED: datetime(today.year, today.month, today.day),
-                api_c.TYPE: choice(["binary", "classification"]),
-                api_c.CATEGORY: choice(["binary", "classification"]),
-                api_c.PAST_VERSION_COUNT: uniform(8, 12),
-                "is_enabled": True,
-                "is_added": True,
-            } for i in range(11)]
+            all_models = [
+                {
+                    api_c.ID: f"feature_id_{i}",
+                    api_c.NAME: f"feature_name_{i}",
+                    api_c.DESCRIPTION: f"Feature {i} description",
+                    api_c.STATUS: api_c.STATUS_PENDING,
+                    api_c.LATEST_VERSION: today.strftime("%Y.%m.%d"),
+                    api_c.OWNER: "Susan Miller",
+                    api_c.LOOKBACK_WINDOW: 365,
+                    api_c.PREDICTION_WINDOW: 365,
+                    api_c.FULCRUM_DATE: datetime(
+                        today.year, today.month, today.day
+                    ),
+                    api_c.LAST_TRAINED: datetime(
+                        today.year, today.month, today.day
+                    ),
+                    api_c.TYPE: choice(["binary", "classification"]),
+                    api_c.CATEGORY: choice(["binary", "classification"]),
+                    api_c.PAST_VERSION_COUNT: uniform(8, 12),
+                    "is_enabled": True,
+                    "is_added": True,
+                }
+                for i in range(11)
+            ]
 
         # TODO why are we getting models from our database? Is this valid anymore?
         database = get_db_client()
@@ -449,14 +456,16 @@ class ModelVersionHistoryView(SwaggerView):
                     api_c.ID: model_id,
                     api_c.NAME: "Propensity to Purchase",
                     api_c.DESCRIPTION: "Propensity of a customer making "
-                                       "a purchase after receiving an email.",
+                    "a purchase after receiving an email.",
                     api_c.STATUS: api_c.STATUS_ACTIVE,
                     api_c.VERSION: f"{today.strftime('%Y.%m.%d')}{i}",
                     api_c.TRAINED_DATE: today,
                     api_c.OWNER: "Susan Miller",
                     api_c.LOOKBACK_WINDOW: 90,
                     api_c.PREDICTION_WINDOW: 7,
-                    api_c.FULCRUM_DATE: datetime(today.year, today.month, today.day),
+                    api_c.FULCRUM_DATE: datetime(
+                        today.year, today.month, today.day
+                    ),
                 }
                 for i in range(10)
             ]
@@ -541,11 +550,11 @@ class ModelOverview(SwaggerView):
                     api_c.DESCRIPTION: "Likelihood of this action to occur.",
                     api_c.PERFORMANCE_METRIC: {
                         api_c.RMSE: -1,
-                        api_c.AUC: uniform(.01, .99),
-                        api_c.PRECISION: uniform(.01, .99),
-                        api_c.RECALL: uniform(.01, .99),
-                        api_c.CURRENT_VERSION: today.strftime('%Y.%m.%d')
-                    }
+                        api_c.AUC: uniform(0.01, 0.99),
+                        api_c.PRECISION: uniform(0.01, 0.99),
+                        api_c.RECALL: uniform(0.01, 0.99),
+                        api_c.CURRENT_VERSION: today.strftime("%Y.%m.%d"),
+                    },
                 }
             ]
 
@@ -626,7 +635,10 @@ class ModelDriftView(SwaggerView):
             drift_data = [
                 {
                     api_c.DRIFT: round(uniform(0.8, 1), 2),
-                    api_c.RUN_DATE: datetime(today.year, today.month, today.day) + timedelta(i),
+                    api_c.RUN_DATE: datetime(
+                        today.year, today.month, today.day
+                    )
+                    + timedelta(i),
                 }
                 for i in range(10)
             ]
@@ -727,7 +739,8 @@ class ModelFeaturesView(SwaggerView):
                     api_c.UNIQUE_VALUES: uniform(1000, 3000),
                     api_c.LCUV: uniform(1, 99),
                     api_c.MCUV: uniform(1, 99),
-                } for i in range(25)
+                }
+                for i in range(25)
             ]
 
         return HuxResponse.OK(

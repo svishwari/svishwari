@@ -206,7 +206,7 @@ class PyTestConfig(Config):
     JIRA_API_KEY = "fake-jira-key"
     JIRA_SERVER = "https://fake.fake.jira.fake"
 
-    #DECIOSIONING CONFIGURATION
+    # DECIOSIONING CONFIGURATION
     DECISIONING_URL = "https://fake.fake.decisioning.fake"
 
     # TECTON CONFIGURATION
