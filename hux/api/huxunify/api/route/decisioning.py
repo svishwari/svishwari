@@ -4,16 +4,11 @@ decision routes for the API"""
 from random import uniform, randint, choice
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Tuple, List
+from typing import Tuple
 
 from flask import Blueprint, jsonify, request, Response
 from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
-
-from huxunify.api.config import get_config
-from huxunify.api.data_connectors.cache import Caching
-from huxunify.api.data_connectors.decisioning import Decisioning
-from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
@@ -23,6 +18,11 @@ from huxunifylib.database import (
     notification_management,
 )
 from huxunifylib.database import constants as db_c
+
+from huxunify.api.config import get_config
+from huxunify.api.data_connectors.cache import Caching
+from huxunify.api.data_connectors.decisioning import Decisioning
+from huxunify.api.data_connectors.okta import get_token_from_request
 
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -108,16 +108,10 @@ class ModelsView(SwaggerView):
             Tuple[Response, int]: list containing dict of models,
                 HTTP status code.
         """
-        # TODO JIM, do I need to handle specific status requests here?
-        # do they need to be filtered out?
-        requested_statuses = [
-            status.lower() for status in request.args.getlist(api_c.STATUS)
-        ]
-
         if get_config().ENV_NAME == api_c.STAGING_ENV:
             token = get_token_from_request(request)[0]
             all_models = Caching.check_and_return_cache(
-                f"all_models.info",
+                "all_models.info",
                 Decisioning(token).get_all_models,
                 {},
             )
@@ -146,39 +140,6 @@ class ModelsView(SwaggerView):
                     "is_added": True,
                 }
                 for i in range(11)
-            ]
-
-        # TODO why are we getting models from our database? Is this valid anymore?
-        database = get_db_client()
-        unified_models = collection_management.get_documents(
-            database, db_c.MODELS_COLLECTION
-        ).get(db_c.DOCUMENTS)
-        all_models.extend(unified_models)
-
-        config_models = collection_management.get_documents(
-            get_db_client(),
-            db_c.CONFIGURATIONS_COLLECTION,
-            {db_c.TYPE: api_c.MODELS_TAG},
-        )
-        if config_models.get(db_c.DOCUMENTS):
-            # TODO JIM, Raj what is happening here and why?
-            for model in all_models:
-                matched_model = next(
-                    (
-                        item
-                        for item in config_models[db_c.DOCUMENTS]
-                        if item[api_c.NAME] == model[api_c.NAME]
-                    ),
-                    None,
-                )
-                if matched_model is not None:
-                    model[api_c.STATUS] = matched_model[api_c.STATUS]
-
-        if requested_statuses:
-            all_models = [
-                model
-                for model in all_models
-                if model[api_c.STATUS] in requested_statuses
             ]
 
         all_models.sort(key=lambda x: x[api_c.NAME])
@@ -245,8 +206,6 @@ class RequestModel(SwaggerView):
         Returns:
             Tuple[dict, int]: Model Requested, HTTP status code.
         """
-        # TODO JIM, with DEC API, what do we do with this EP?
-
         models = ModelRequestPostSchema().load(
             request.get_json(), unknown=True, many=True
         )
@@ -356,9 +315,6 @@ class RemoveRequestedModel(SwaggerView):
         Returns:
             Tuple[dict, int]: Model Removed, HTTP status code.
         """
-        # TODO JIM, with DEC API, what do we do with this EP?
-        # talk to Rebecca/David to see what we are supporting in the future.
-
         database = get_db_client()
 
         if not request.args:
