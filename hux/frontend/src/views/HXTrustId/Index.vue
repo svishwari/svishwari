@@ -111,8 +111,14 @@
                       v-model="switchSegment"
                       false-color="var(--v-black-lighten4)"
                       :width="'60px'"
-                      :is-disabled="disableToggle"
+                      :is-disabled="
+                        (!multipleSegments && onlyDefault) ||
+                        (multipleSegments && !onlyDefault)
+                          ? true
+                          : false
+                      "
                       :switch-labels="switchLabel"
+                      @change="toggleDefaultSwitch($event)"
                     />
                   </div>
                 </v-col>
@@ -123,6 +129,7 @@
                 card-class="py-5 pa-4"
                 :items="getSegmentTableData"
                 :fields="getSegmentTableHeaders"
+                :multipleSegments="multipleSegments"
               >
                 <template
                   v-for="header in getSegmentTableHeaders"
@@ -355,6 +362,8 @@ export default {
       segmentLength: 1,
       addSegments: [],
       switchSegment: true,
+      multipleSegments: false,
+      onlyDefault: false,
       switchLabel: [
         {
           condition: true,
@@ -549,6 +558,7 @@ export default {
       await this.getTrustIdComparison()
       await this.getSegmentData()
       await this.getTrustIdAttribute()
+      await this.applyDefaultSegmentChanges()
     } finally {
       this.loading = false
       this.segmentComparisonLoading = false
@@ -572,12 +582,24 @@ export default {
         return aggregateAgeFilters(filters)
       }
     },
+    applyDefaultSegmentChanges() {
+      this.multipleSegments = this.getSelectedSegment.segments.some(
+        (data) => !data.default
+      )
+      this.onlyDefault = this.getSelectedSegment.segments.some(
+        (data) => data.default
+      )
+    },
     getSelectedData(value) {
       this.selectedSegment = value
+      this.applyDefaultSegmentChanges()
     },
     formatText: formatText,
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
+    },
+    toggleDefaultSwitch(event) {
+      console.log("default event", event)
     },
     async addSegment(event) {
       this.loading = true
