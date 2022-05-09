@@ -1,17 +1,6 @@
 huxunify.api package
 ====================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   huxunify.api.data_connectors
-   huxunify.api.model
-   huxunify.api.route
-   huxunify.api.schema
-
 Module contents
 ---------------
 
@@ -19,3 +8,13 @@ Module contents
    :members:
    :undoc-members:
    :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 3
+
+   huxunify.api.data_connectors
+   huxunify.api.route
+   huxunify.api.schema

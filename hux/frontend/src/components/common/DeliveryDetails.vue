@@ -145,6 +145,14 @@
             <div v-if="header.value == 'next_delivery'" class="text-body-1">
               <time-stamp :value="item['next_delivery']" />
             </div>
+            <div v-if="header.value == 'replace'" class="text-body-1">
+              <hux-switch
+                v-if="item['is_ad_platform']"
+                v-model="item['replace_audience']"
+                :switch-labels="switchLabels"
+                false-color="var(--v-black-lighten4)"
+              />
+            </div>
           </td>
         </template>
       </hux-data-table>
@@ -198,6 +206,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxIcon from "@/components/common/Icon.vue"
+import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
   name: "DeliveryDetails",
@@ -210,6 +219,7 @@ export default {
     TimeStamp,
     Size,
     HuxIcon,
+    HuxSwitch,
   },
 
   props: {
@@ -280,12 +290,12 @@ export default {
         {
           text: "Destination",
           value: "name",
-          width: "35%",
+          width: "25%",
         },
         {
           text: "Status",
           value: "status",
-          width: "25%",
+          width: "15%",
         },
         {
           text: "Target size",
@@ -299,6 +309,21 @@ export default {
           text: "Last delivery",
           value: "next_delivery",
           width: "25%",
+        },
+        {
+          text: "Replace",
+          value: "replace",
+          width: "20%",
+        },
+      ],
+      switchLabels: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
         },
       ],
     }
@@ -343,6 +368,7 @@ export default {
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       setAlert: "alerts/setAlert",
+      updateReplace: "engagements/updateReplace",
     }),
     async deliverAll(engagement) {
       await this.deliverAudience({

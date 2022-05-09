@@ -38,6 +38,15 @@ INT_TEST_HOST = "INT_TEST_HOST"
 AUTHORIZATION = "Authorization"
 BEARER = "Bearer"
 ID = "_id"
+CLEAN_UP_COLLECTIONS_DICT = {
+    "applications": "created_by",
+    "audiences": "created_by",
+    "client_projects": "created_by",
+    "configurations": "created_by",
+    "delivery_jobs": "username",
+    "engagements": "created_by",
+    "notifications": "username",
+}
 
 
 # Declaring Crud namedtuple()
@@ -73,7 +82,7 @@ def pytest_configure(config: Config):
         pass
 
 
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument, disable=broad-except
 def pytest_unconfigure(config):
     """Override the pytest plugin. This hook is called for every plugin and
         initial conftest file after command line options have been parsed.
@@ -99,11 +108,42 @@ def pytest_unconfigure(config):
                 crud_obj.id,
                 crud_obj.collection,
             )
-        # pylint: disable=broad-except
         except BaseException as exception:
             logging.error(
                 "Cleaning Object ID %s for %s failed: %s.",
                 crud_obj.id,
                 crud_obj.collection,
+                str(exception),
+            )
+
+    # clean stranded documents created by integration tests in various
+    # collections
+    int_test_user_name = getenv("INT_TEST_USER_NAME")
+    logging.info("Integration test user's user name: %s", int_test_user_name)
+
+    for (
+        collection_name,
+        collection_field,
+    ) in CLEAN_UP_COLLECTIONS_DICT.items():
+        try:
+            logging.info(
+                "Cleaning up left out documents in collection %s using field "
+                "%s start.",
+                collection_name,
+                collection_field,
+            )
+            pytest.DB_CLIENT[collection_name].delete_many(
+                {collection_field: int_test_user_name}
+            )
+            logging.info(
+                "Cleaning up left out documents in collection %s using field "
+                "%s complete.",
+                collection_name,
+                collection_field,
+            )
+        except BaseException as exception:
+            logging.error(
+                "Cleaning stranded documents from collection %s failed: %s.",
+                collection_name,
                 str(exception),
             )

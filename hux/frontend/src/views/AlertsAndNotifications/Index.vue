@@ -88,7 +88,7 @@
               >
                 <div v-if="header.value == 'id'">
                   <a @click="toggleDrawer(item[header.value])"
-                    >{{ item[header.value] | Empty("-") }}
+                    >{{ item[header.value] | Shorten | Empty("-") }}
                   </a>
                 </div>
 

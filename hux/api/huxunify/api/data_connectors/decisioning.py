@@ -1,13 +1,11 @@
-import inspect
-import json
-from pprint import pprint
+"""This module holds the decisioning class that connects
+to the decisioning metrics API"""
 from datetime import datetime
 from typing import Tuple
 
 import requests
 from huxmodelclient import api_client, configuration
 from huxmodelclient.api import DefaultApi as dec_client
-from huxunify.api.config import get_config
 import huxunify.api.constants as api_c
 
 

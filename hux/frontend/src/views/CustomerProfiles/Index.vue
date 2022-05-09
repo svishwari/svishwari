@@ -20,7 +20,7 @@
       v-if="!loading"
       class="flex-grow-1 flex-shrink-1 mw-100 content-section"
     >
-      <div v-if="overviewListItems != 0" class="padding-30">
+      <div v-if="overviewListItems.length != 0" class="padding-30">
         <v-card class="card-style pa-5">
           <div class="d-flex justify-space-between">
             <h5 class="text-h3 mb-1">Customer overview</h5>
@@ -669,6 +669,15 @@ export default {
       getCustomerSpend: "customers/getCustomerSpend",
       getDemographics: "customers/getDemographics",
     }),
+    async fetchOverview() {
+      this.loadingOverview = true
+      try {
+        await this.getOverview()
+      } catch (error) {
+        this.overviewError = true
+      }
+      this.loadingOverview = false
+    },
     async fetchGeoOverview() {
       this.loadingGeoOverview = true
       try {

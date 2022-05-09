@@ -29,6 +29,7 @@ class NavigationSettings(Schema):
 
     name = Str()
     enabled = Boolean()
+    icon = Str()
     children = List(Dict())
 
 

@@ -8,7 +8,11 @@
 
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading && hasDataFeeds" class="datasource-datafeeds-table">
+    <v-row
+      v-if="!loading && hasDataFeeds"
+      class="datasource-datafeeds-table"
+      data-e2e="datasource-datafeeds-table"
+    >
       <hux-data-table
         sort-desc
         :columns="columns"
@@ -106,6 +110,7 @@
     <v-card
       v-else-if="!loading && hasDataFeeds == 0"
       class="empty-error-card mx-7"
+      data-e2e="datasource-datafeeds-table"
     >
       <v-row class="data-feed-frame py-14">
         <empty-page

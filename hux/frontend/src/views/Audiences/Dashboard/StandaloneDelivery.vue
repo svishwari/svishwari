@@ -121,6 +121,15 @@
               <div v-if="header.value == 'last_delivered'" class="text-body-1">
                 <time-stamp :value="item['last_delivered']" />
               </div>
+              <div v-if="header.value == 'replace'" class="text-body-1">
+                <hux-switch
+                  v-if="item['is_ad_platform']"
+                  v-model="item['replace_audience']"
+                  :switch-labels="switchLabels"
+                  false-color="var(--v-black-lighten4)"
+                  @change="handleChange($event, section, item)"
+                />
+              </div>
             </td>
           </template>
         </hux-data-table>
@@ -203,6 +212,7 @@ import Icon from "@/components/common/Icon.vue"
 import Logo from "@/components/common/Logo.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip"
+import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
   name: "StandaloneDelivery",
@@ -215,6 +225,7 @@ export default {
     Logo,
     HuxIcon,
     Tooltip,
+    HuxSwitch,
   },
   props: {
     audience: {
@@ -235,12 +246,12 @@ export default {
         {
           text: "Status",
           value: "status",
-          width: "25%",
+          width: "20%",
         },
         {
           text: "Target size",
           value: "size",
-          width: "15%",
+          width: "20%",
           hoverTooltip:
             "Average order value for all customers (known and anyonymous) for all time.",
         },
@@ -249,11 +260,26 @@ export default {
           value: "last_delivered",
           width: "25%",
         },
+        {
+          text: "Replace",
+          value: "replace",
+          width: "20%",
+        },
       ],
       destinationMenuOptions: [
         { id: 1, title: "Deliver now", active: true },
         { id: 3, title: "Open destination", active: true },
         { id: 4, title: "Remove destination", active: true },
+      ],
+      switchLabels: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
+        },
       ],
     }
   },
