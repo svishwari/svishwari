@@ -97,14 +97,13 @@ class PerformanceMetricSchema(Schema):
     current_version = Str(example="3.1.2")
 
 
-class ModelDashboardSchema(Schema):
+class ModelOverviewSchema(Schema):
     """Model Dashboard Schema"""
 
     model_type = Str()
     model_name = Str()
     description = Str()
     performance_metric = Nested(PerformanceMetricSchema)
-    shap_data = Dict()
 
 
 class ModelRequestPostSchema(Schema):
@@ -117,35 +116,6 @@ class ModelRequestPostSchema(Schema):
         validate=lambda x: x.lower() in [api_c.REQUESTED.lower()],
         required=True,
     )
-
-
-class ModelUpdatePatchSchema(Schema):
-    """Model Update Patch Schema"""
-
-    id = Str(required=True)
-    name = Str(required=True)
-    type = Str()
-    status = Str(
-        validate=lambda x: x.lower()
-        in [api_c.REQUESTED.lower(), api_c.STATUS_ACTIVE.lower()],
-        allow_none=True,
-    )
-    category = Str(
-        validate=OneOf(
-            [
-                db_c.MODEL_CATEGORY_EMAIL,
-                db_c.MODEL_CATEGORY_SALES_FORECASTING,
-                db_c.MODEL_CATEGORY_WEB,
-                db_c.MODEL_CATEGORY_RETENTION,
-                db_c.MODEL_CATEGORY_TRUST_ID,
-                db_c.MODEL_CATEGORY_UNCATEGORIZED,
-            ]
-        ),
-        required=False,
-        allow_none=True,
-    )
-    description = Str(required=False)
-    is_added = Bool(attribute=db_c.ADDED, required=False)
 
 
 class ModelPipelineRunDurationSchema(Schema):

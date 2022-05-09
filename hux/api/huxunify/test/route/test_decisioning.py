@@ -68,11 +68,6 @@ class DecisioningTests(RouteTestCase):
             t_c.validate_schema(ModelSchema(), response.json, True)
         )
 
-        self.assertEqual(
-            [x[api_c.NAME] for x in response.json],
-            sorted([x[api_c.NAME] for x in t_c.MOCKED_MODEL_RESPONSE]),
-        )
-
     def test_success_get_models_with_status(self):
         """Test get models from Tecton with status."""
 
@@ -87,11 +82,6 @@ class DecisioningTests(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
             t_c.validate_schema(ModelSchema(), response.json, True)
-        )
-
-        self.assertListEqual(
-            [x[api_c.NAME] for x in response.json],
-            ["Model1", "Model2"],
         )
 
     def test_success_request_model(self):
@@ -274,10 +264,11 @@ class DecisioningTests(RouteTestCase):
             f"{api_c.MODELS_VERSION_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
         )
-        if model_id in t_c.SUPPORTED_MODELS:
-            self.assertEqual(HTTPStatus.OK, response.status_code)
-        else:
-            self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(ModelVersionSchema(), response.json, True)
+        )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(settings.load_profile("hypothesis_setting_profile"))
@@ -376,9 +367,6 @@ class DecisioningTests(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
             t_c.validate_schema(FeatureSchema(), response.json, True)
-        )
-        self.assertTrue(
-            all((feature[api_c.SCORE] < 0 for feature in response.json))
         )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))

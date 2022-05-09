@@ -3,6 +3,7 @@ from Tecton.
 """
 import random
 import time
+from functools import wraps
 from math import log10
 import asyncio
 from json import dumps
@@ -897,3 +898,98 @@ class TectonMockConnector(Tecton):
             )
 
         return result_features
+
+
+def cache(cache_key: str) -> object:
+    """Purpose of this decorator is for recording the health status
+    metrics for the various services
+
+    Example: @record_health_status(ConnectionHealth.CONNECTION_NAME)
+
+    Args:
+        cache_key (str): key for the object in the cache.
+
+    Returns:
+        wrapper: returns the wrapped decorator function.
+    """
+
+    def wrapper(in_function: object) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+            Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for recording health status metrics.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+            value = in_function(*args, **kwargs)
+            print(*args)
+            print(**kwargs)
+
+            return value
+
+        return decorator
+
+    return wrapper
+
+@cache("My cache value!")
+def my_func(arg_1: str = None, arg_2: int = None):
+    print("Running test func!")
+
+# def retrieve_model_features(model_id: str, model_version: str = None, limit: int = 20) -> dict:
+#     """ Retrieves model features from Tecton
+#
+#     Args:
+#         model_id (str): Model ID.
+#         model_version (str): Model Version.
+#         limit (int): Limit of features to return, default is 20.
+#
+#     Returns:
+#
+#     """
+#
+#     tecton = Tecton()
+#
+#     model_versions = (
+#         [{api_c.CURRENT_VERSION: model_version}]
+#         if model_version
+#         else tecton.get_model_version_history(model_id)
+#     )
+#
+#     database = get_db_client()
+#     for version in model_versions:
+#         current_version = version.get(api_c.CURRENT_VERSION)
+#
+#         # check cache first
+#         features = get_cache_entry(
+#             database, f"features.{model_id}.{current_version}"
+#         )
+#         if features:
+#             break
+#
+#         # if no cache, grab from Tecton and cache after.
+#         features = tecton.get_model_features(model_id, current_version)
+#         if features:
+#             create_cache_entry(
+#                 database,
+#                 f"features.{model_id}.{current_version}",
+#                 features,
+#             )
+#             break
+#
+#     # sort the top features before serving them out
+#     features.sort(key=lambda x: x[api_c.SCORE], reverse=True)
+
+if __name__ == "__main__":
+    my_func("JIM", 3)

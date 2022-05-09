@@ -1,7 +1,7 @@
 # pylint: disable=too-many-lines,unused-argument
 """Purpose of this script is for housing the
 decision routes for the API"""
-from random import uniform, randint
+from random import uniform, randint, choice
 from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple, List
@@ -10,6 +10,8 @@ from flask import Blueprint, jsonify, request, Response
 from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
 
+from huxunify.api.config import get_config
+from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.decisioning import Decisioning
 from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunifylib.database.cache_management import (
@@ -31,17 +33,15 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
-    get_required_shap_data,
 )
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
     ModelDriftSchema,
     ModelLiftSchema,
-    ModelDashboardSchema,
+    ModelOverviewSchema,
     FeatureSchema,
     ModelRequestPostSchema,
-    ModelUpdatePatchSchema,
     ModelPipelinePerformanceSchema,
 )
 from huxunify.api.schema.configurations import ConfigurationsSchema
@@ -94,7 +94,7 @@ class ModelsView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[List[dict], int]:
+    def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves all models.
 
         ---
@@ -105,36 +105,41 @@ class ModelsView(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[List[dict], int]: list containing dict of models,
+            Tuple[Response, int]: list containing dict of models,
                 HTTP status code.
         """
-
-        # convert all statuses to lower case
+        # TODO JIM, do I need to handle specific status requests here?
+        # do they need to be filtered out?
         requested_statuses = [
             status.lower() for status in request.args.getlist(api_c.STATUS)
         ]
-        # TODO JIM implement caching here
-        token = get_token_from_request(request)[0]
-        all_models = Decisioning(token).get_all_models()
 
-        # TODO JIM why is this here? Can we please delete it?
-        purchase_model = {
-            api_c.TYPE: "Classification",
-            api_c.CATEGORY: "Email",
-            api_c.FULCRUM_DATE: datetime(2021, 6, 26),
-            api_c.PAST_VERSION_COUNT: 0,
-            api_c.LAST_TRAINED: datetime(2021, 6, 26),
-            api_c.LOOKBACK_WINDOW: 365,
-            api_c.NAME: "Propensity to Purchase",
-            api_c.DESCRIPTION: "Propensity of a customer making a purchase "
-            "after receiving an email.",
-            api_c.LATEST_VERSION: "",
-            api_c.PREDICTION_WINDOW: 365,
-            api_c.ID: 3,
-            api_c.OWNER: "Susan Miller",
-            api_c.STATUS: api_c.STATUS_PENDING,
-        }
-        all_models.append(purchase_model)
+        if get_config().ENV_NAME == api_c.STAGING_ENV:
+            token = get_token_from_request(request)[0]
+            all_models = Caching.check_and_return_cache(
+                f"all_models.info",
+                Decisioning(token).get_all_models,
+                {},
+            )
+        else:
+            today = datetime.now()
+            all_models = [{
+                api_c.ID: f"feature_id_{i}",
+                api_c.NAME: f"feature_name_{i}",
+                api_c.DESCRIPTION: f"Feature {i} description",
+                api_c.STATUS: api_c.STATUS_PENDING,
+                api_c.LATEST_VERSION: today.strftime("%Y.%m.%d"),
+                api_c.OWNER: "Susan Miller",
+                api_c.LOOKBACK_WINDOW: 365,
+                api_c.PREDICTION_WINDOW: 365,
+                api_c.FULCRUM_DATE: datetime(today.year, today.month, today.day),
+                api_c.LAST_TRAINED: datetime(today.year, today.month, today.day),
+                api_c.TYPE: choice(["binary", "classification"]),
+                api_c.CATEGORY: choice(["binary", "classification"]),
+                api_c.PAST_VERSION_COUNT: uniform(8, 12),
+                "is_enabled": True,
+                "is_added": True,
+            } for i in range(11)]
 
         # TODO why are we getting models from our database? Is this valid anymore?
         database = get_db_client()
@@ -171,14 +176,11 @@ class ModelsView(SwaggerView):
 
         all_models.sort(key=lambda x: x[api_c.NAME])
 
-        return (
-            jsonify(ModelSchema(many=True).dump(all_models)),
-            HTTPStatus.OK.value,
-        )
+        return HuxResponse.OK(data=all_models, data_schema=ModelSchema())
 
 
 @add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "SetModelStatus")
-class SetModelStatus(SwaggerView):
+class RequestModel(SwaggerView):
     """Class to request a model."""
 
     parameters = [
@@ -348,6 +350,7 @@ class RemoveRequestedModel(SwaggerView):
             Tuple[dict, int]: Model Removed, HTTP status code.
         """
         # TODO JIM, with DEC API, what do we do with this EP?
+        # talk to Rebecca/David to see what we are supporting in the future.
 
         database = get_db_client()
 
@@ -393,102 +396,6 @@ class RemoveRequestedModel(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"{api_c.MODELS_ENDPOINT}",
-    "UpdateModels",
-)
-class UpdateModels(SwaggerView):
-    """Class to partially update models."""
-
-    parameters = [
-        {
-            "name": api_c.BODY,
-            "in": api_c.BODY,
-            "type": "object",
-            "description": "Input model body.",
-            "example": [
-                {
-                    api_c.ID: "f561bcc9a68f4e959cc6479fcff5a3a1",
-                    api_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-                    api_c.NAME: "Propensity to Purchase",
-                    api_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
-                    api_c.DESCRIPTION: "Likelihood of customer to purchase",
-                    api_c.STATUS: api_c.REQUESTED,
-                    api_c.IS_ADDED: True,
-                }
-            ],
-        },
-    ]
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Model updated.",
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to update model.",
-        },
-    }
-
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.MODELS_TAG]
-
-    # pylint: disable=no-self-use
-    @requires_access_levels(api_c.USER_ROLE_ALL)
-    @api_error_handler()
-    def patch(self, user: dict) -> Tuple[list, int]:
-        """Updates a model.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Args:
-            user (dict): User object.
-
-        Returns:
-            Tuple[list, int]: List of updated requested models,
-                HTTP status code.
-
-        Raises:
-            ProblemException: Any exception raised during endpoint execution.
-        """
-        # TODO JIM, with DEC API, what do we do with this EP?
-
-        models = ModelUpdatePatchSchema(many=True).load(request.json)
-
-        updated_models = []
-
-        database = get_db_client()
-        for model in models:
-            # check if document exists in configurations collection
-            model_document = collection_management.get_document(
-                database,
-                db_c.CONFIGURATIONS_COLLECTION,
-                {
-                    db_c.OBJECT_ID: model.get(api_c.ID),
-                    db_c.NAME: model.get(api_c.NAME),
-                },
-            )
-
-            if model_document:
-                # update the document
-                updated_models.append(
-                    collection_management.update_document(
-                        database,
-                        db_c.CONFIGURATIONS_COLLECTION,
-                        model_document[db_c.ID],
-                        model,
-                        user[api_c.USER_NAME],
-                    )
-                )
-
-        return (
-            jsonify(ModelSchema().dump(updated_models, many=True)),
-            HTTPStatus.OK,
-        )
-
-
-@add_view_to_blueprint(
-    model_bp,
     f"{api_c.MODELS_ENDPOINT}/<model_id>/version-history",
     "ModelVersionHistoryView",
 )
@@ -525,33 +432,38 @@ class ModelVersionHistoryView(SwaggerView):
             Tuple[Response, int]: List containing dict of model versions,
                 HTTP status code.
         """
-
-        # TODO Remove once Propensity to Purchase info
-        #  can be retrieved from tecton
-        if model_id == "3":
-            # TODO JIM, what is this? can I delete plz?
+        # Dec API only available in stg, all other environments are mocked
+        if get_config().ENV_NAME == api_c.STAGING_ENV:
+            token = get_token_from_request(request)[0]
+            version_history = Caching.check_and_return_cache(
+                f"model_version_history.{model_id}",
+                Decisioning(token).get_model_version_history,
+                {
+                    "model_id": model_id,
+                },
+            )
+        else:
+            today = datetime.now()
             version_history = [
                 {
                     api_c.ID: model_id,
-                    api_c.LAST_TRAINED: datetime(2021, 6, 24 + i),
-                    api_c.DESCRIPTION: "Propensity of a customer making "
-                    "a purchase after receiving an email.",
-                    api_c.FULCRUM_DATE: datetime(2021, 6, 24 + i),
-                    api_c.LOOKBACK_WINDOW: 90,
                     api_c.NAME: "Propensity to Purchase",
-                    api_c.OWNER: "Susan Miller",
+                    api_c.DESCRIPTION: "Propensity of a customer making "
+                                       "a purchase after receiving an email.",
                     api_c.STATUS: api_c.STATUS_ACTIVE,
-                    api_c.CURRENT_VERSION: f"22.8.3{i}",
-                    api_c.PREDICTION_WINDOW: 90,
+                    api_c.VERSION: f"{today.strftime('%Y.%m.%d')}{i}",
+                    api_c.TRAINED_DATE: today,
+                    api_c.OWNER: "Susan Miller",
+                    api_c.LOOKBACK_WINDOW: 90,
+                    api_c.PREDICTION_WINDOW: 7,
+                    api_c.FULCRUM_DATE: datetime(today.year, today.month, today.day),
                 }
-                for i in range(3)
+                for i in range(10)
             ]
 
-        else:
-            token = get_token_from_request(request)[0]
-            version_history = Decisioning(token).get_model_version_history(model_id)
-
-        return HuxResponse.OK(data_schema=ModelVersionSchema(), data=version_history)
+        return HuxResponse.OK(
+            data=version_history, data_schema=ModelVersionSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -581,7 +493,7 @@ class ModelOverview(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model features.",
-            "schema": ModelDashboardSchema,
+            "schema": ModelOverviewSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve model overview"
@@ -610,15 +522,36 @@ class ModelOverview(SwaggerView):
             Tuple[Response, int]: dict of model features, HTTP status code.
         """
 
-        # TODO Remove once Propensity to Purchase model data is being served
-        #  from tecton.
-        # TODO JIM, what is this? Can I delete?? plz??
-        if model_id == "3":
-            overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
-        else:
+        # Dec API only available in stg, all other environments are mocked
+        if get_config().ENV_NAME == api_c.STAGING_ENV:
             token = get_token_from_request(request)[0]
-            model_overview = Decisioning(token).get_model_overview(model_id)
-            return HuxResponse.OK(data=model_overview, data_schema=ModelDashboardSchema())
+            model_overview = Caching.check_and_return_cache(
+                f"model_overview.{model_id}",
+                Decisioning(token).get_model_overview,
+                {
+                    "model_id": model_id,
+                },
+            )
+        else:
+            today = datetime.now()
+            model_overview = [
+                {
+                    api_c.MODEL_TYPE: choice(["binary", "classification"]),
+                    api_c.MODEL_NAME: f"Propensity_to_{choice(['purchase', 'open', 'view'])}",
+                    api_c.DESCRIPTION: "Likelihood of this action to occur.",
+                    api_c.PERFORMANCE_METRIC: {
+                        api_c.RMSE: -1,
+                        api_c.AUC: uniform(.01, .99),
+                        api_c.PRECISION: uniform(.01, .99),
+                        api_c.RECALL: uniform(.01, .99),
+                        api_c.CURRENT_VERSION: today.strftime('%Y.%m.%d')
+                    }
+                }
+            ]
+
+        return HuxResponse.OK(
+            data=model_overview, data_schema=ModelOverviewSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -660,7 +593,7 @@ class ModelDriftView(SwaggerView):
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self, user: dict, model_id: str, model_version: str = None
-    ) -> Tuple[List[dict], int]:
+    ) -> Tuple[Response, int]:
         """Retrieves model drift details.
 
         ---
@@ -673,45 +606,32 @@ class ModelDriftView(SwaggerView):
             model_version (str): Model Version.
 
         Returns:
-            Tuple[List[dict], int]: List containing dict of model drift,
+            Tuple[Response, int]: List containing dict of model drift,
                 HTTP status code.
         """
-        # TODO JIM dec does not provide a model version. Propose
-        # getting rid of model_version field. It does not make
-        # sense to have it.
-
-        # TODO Remove once Propensity to Purchase data is being served
-        # from tecton
-        if model_id == "3":
+        # Dec API only available in stg, all other environments are mocked
+        if get_config().ENV_NAME == api_c.STAGING_ENV:
+            token = get_token_from_request(request)[0]
+            version_cache_key = model_version if model_version else "current"
+            drift_data = Caching.check_and_return_cache(
+                f"features.{model_id}.{version_cache_key}",
+                Decisioning(token).get_model_drift,
+                {
+                    "model_id": model_id,
+                    "model_version": model_version,
+                },
+            )
+        else:
+            today = datetime.now()
             drift_data = [
                 {
                     api_c.DRIFT: round(uniform(0.8, 1), 2),
-                    api_c.RUN_DATE: datetime(2021, 6, 1) + timedelta(i),
+                    api_c.RUN_DATE: datetime(today.year, today.month, today.day) + timedelta(i),
                 }
-                for i in range(4)
+                for i in range(10)
             ]
-        else:
-            database = get_db_client()
 
-            drift_data = get_cache_entry(
-                database,
-                f"drift.{model_id}",
-            )
-
-            # create cache entry in db only if drift fetched from decisioning is not empty
-            if not drift_data:
-                token = get_token_from_request(request)[0]
-                drift_data = Decisioning(token).get_model_drift(model_id)
-                create_cache_entry(
-                    database,
-                    f"drift.{model_id}",
-                    drift_data,
-                )
-
-        return (
-            jsonify(ModelDriftSchema(many=True).dump(drift_data)),
-            HTTPStatus.OK.value,
-        )
+        return HuxResponse.OK(data=drift_data, data_schema=ModelDriftSchema())
 
 
 @add_view_to_blueprint(
@@ -722,6 +642,7 @@ class ModelDriftView(SwaggerView):
 class ModelFeaturesView(SwaggerView):
     """Model Features Class."""
 
+    # talked to Mukesh, we need version
     parameters = [
         api_c.MODEL_ID_PARAMS[0],
         {
@@ -732,6 +653,14 @@ class ModelFeaturesView(SwaggerView):
             "in": "path",
             "required": False,
             "example": "21.7.31",
+        },
+        {
+            "name": api_c.LIMIT,
+            "description": "Limit of features to pull, default is 20.",
+            "type": "int",
+            "in": "path",
+            "required": False,
+            "example": 20,
         },
     ]
     responses = {
@@ -754,7 +683,8 @@ class ModelFeaturesView(SwaggerView):
         user: dict,
         model_id: str,
         model_version: str = None,
-    ) -> Tuple[List[dict], int]:
+        limit: int = 20,
+    ) -> Tuple[Response, int]:
         """Retrieves model features.
 
         ---
@@ -767,56 +697,41 @@ class ModelFeaturesView(SwaggerView):
             model_version (str): Model Version.
 
         Returns:
-            Tuple[List[dict], int]: List containing dict of model features,
+            Tuple[Response, int]: List containing dict of model features,
                 HTTP status code.
         """
 
-        # TODO: Remove once this model data becomes
-        #  available and can be fetched from Tecton
-        # intercept to check if the model_id is for propensity_to_purchase
-        # to set features with stub data
-        if model_id == "3":
-            features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
-        else:
-            tecton = Tecton()
-
-            # get model versions
-            model_versions = (
-                [{api_c.CURRENT_VERSION: model_version}]
-                if model_version
-                else tecton.get_model_version_history(model_id)
+        if get_config().ENV_NAME == api_c.STAGING_ENV:
+            token = get_token_from_request(request)[0]
+            version_cache_key = model_version if model_version else "current"
+            features = Caching.check_and_return_cache(
+                f"features.{model_id}.{version_cache_key}",
+                Decisioning(token).get_model_features,
+                {
+                    "model_id": model_id,
+                    "model_version": model_version,
+                },
             )
-            database = get_db_client()
 
-            if not model_versions:
-                return jsonify([]), HTTPStatus.NOT_FOUND
+        else:
+            features = [
+                {
+                    api_c.ID: f"feature_id_{i}",
+                    api_c.NAME: f"feature_name_{i}",
+                    api_c.DESCRIPTION: f"Feature {1} description",
+                    api_c.RECORDS_NOT_NULL: uniform(60, 95),
+                    api_c.FEATURE_IMPORTANCE: uniform(1, 99),
+                    api_c.MEAN: uniform(1, 99),
+                    api_c.MIN: uniform(1, 99),
+                    api_c.MAX: uniform(1, 99),
+                    api_c.UNIQUE_VALUES: uniform(1000, 3000),
+                    api_c.LCUV: uniform(1, 99),
+                    api_c.MCUV: uniform(1, 99),
+                } for i in range(25)
+            ]
 
-            # loop versions until the latest version is found
-            for version in model_versions:
-                current_version = version.get(api_c.CURRENT_VERSION)
-
-                # check cache first
-                features = get_cache_entry(
-                    database, f"features.{model_id}.{current_version}"
-                )
-                if features:
-                    break
-
-                # if no cache, grab from Tecton and cache after.
-                features = tecton.get_model_features(model_id, current_version)
-
-                # create cache entry in db only if features fetched from Tecton is not empty
-                if features:
-                    create_cache_entry(
-                        database,
-                        f"features.{model_id}.{current_version}",
-                        features,
-                    )
-                    break
-
-        return (
-            jsonify(FeatureSchema(many=True).dump(features)),
-            HTTPStatus.OK.value,
+        return HuxResponse.OK(
+            data=features[:limit], data_schema=FeatureSchema()
         )
 
 
@@ -867,7 +782,7 @@ class ModelImportanceFeaturesView(SwaggerView):
         model_id: str,
         model_version: str = None,
         limit: int = 20,
-    ) -> Tuple[List[dict], int]:
+    ) -> Tuple[Response, int]:
         """Retrieves top model features sorted by score.
 
         ---
@@ -881,9 +796,23 @@ class ModelImportanceFeaturesView(SwaggerView):
             limit (int): Limit of features to return, default is 20.
 
         Returns:
-            Tuple[List[dict], int]: List containing dict of model features,
+            Tuple[Response, int]: List containing dict of model features,
                 HTTP status code.
         """
+        if get_config().ENV_NAME == api_c.STAGING_ENV:
+            token = get_token_from_request(request)[0]
+            features = Decisioning(token).get_model_drift(model_id)
+            version_cache_key = model_version if model_version else "current"
+            features = Caching.check_and_return_cache(
+                f"features.{model_id}.{version_cache_key}",
+                Decisioning(token).get_model_features,
+                {
+                    "model_id": model_id,
+                    "model_version": model_version,
+                },
+            )
+
+            return HuxResponse.OK(data=features, data_schema=FeatureSchema())
 
         tecton = Tecton()
 
@@ -920,9 +849,8 @@ class ModelImportanceFeaturesView(SwaggerView):
         # sort the top features before serving them out
         features.sort(key=lambda x: x[api_c.SCORE], reverse=True)
 
-        return (
-            jsonify(FeatureSchema(many=True).dump(features[:limit])),
-            HTTPStatus.OK.value,
+        return HuxResponse.OK(
+            data=features[:limit], data_schema=FeatureSchema()
         )
 
 
@@ -965,7 +893,7 @@ class ModelLiftView(SwaggerView):
         self,
         model_id: str,
         user: dict,
-    ) -> Tuple[List[dict], int]:
+    ) -> Tuple[Response, int]:
         """Retrieves model lift data.
 
         ---
@@ -977,52 +905,37 @@ class ModelLiftView(SwaggerView):
             user (dict): User object.
 
         Returns:
-            Tuple[List[dict], int]: List containing a dict of model lift data,
+            Tuple[Response, int]: List containing a dict of model lift data,
                 HTTP status code.
         """
 
-        # TODO Remove once Tecton serves lift data for model id 3
-
-        if model_id == "3":
+        # Dec API only available in stg, all other environments are mocked
+        if get_config().ENV_NAME == api_c.STAGING_ENV:
+            token = get_token_from_request(request)[0]
+            lift_data = Caching.check_and_return_cache(
+                f"lift.{model_id}",
+                Decisioning(token).get_model_lift,
+                {
+                    "model_id": model_id,
+                },
+            )
+        else:
             lift_data = [
                 {
-                    api_c.PREDICTED_RATE: uniform(0.01, 0.3),
                     api_c.BUCKET: 10 * i,
-                    api_c.PROFILE_SIZE_PERCENT: 0,
+                    api_c.PREDICTED_VALUE: randint(1000, 5000),
                     api_c.ACTUAL_VALUE: randint(1000, 5000),
-                    api_c.ACTUAL_RATE: uniform(0.01, 0.3),
                     api_c.PROFILE_COUNT: randint(1000, 100000),
+                    api_c.PREDICTED_RATE: uniform(0.01, 0.3),
+                    api_c.ACTUAL_RATE: uniform(0.01, 0.3),
+                    api_c.PREDICTED_LIFT: uniform(1, 5),
                     api_c.ACTUAL_LIFT: uniform(1, 5),
+                    api_c.PROFILE_SIZE_PERCENT: uniform(10, 60),
                 }
                 for i in range(1, 11)
             ]
-        else:
-            tecton = Tecton()
-
-            # get all model versions
-            model_versions = tecton.get_model_version_history(model_id)
-
-            if not model_versions:
-                return HuxResponse.NOT_FOUND(
-                    "No model version found for the model."
-                )
-
-            # set model version to latest version if not specified in the request
-            model_version = (
-                request.args.get(api_c.VERSION)
-                if request.args.get(api_c.VERSION)
-                else model_versions[0].get(api_c.CURRENT_VERSION)
-            )
-
-            lift_data = tecton.get_model_lift_async(model_id, model_version)
-
-        if not lift_data:
-            return HuxResponse.NOT_FOUND(
-                "No model lift data found for the model."
-            )
 
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
-
         return HuxResponse.OK(data=lift_data, data_schema=ModelLiftSchema())
 
 
