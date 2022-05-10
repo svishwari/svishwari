@@ -1,8 +1,11 @@
 """Purpose of this file is to integration test for destinations."""
+from os import getenv
+from time import time
 from unittest import TestCase
 from http import HTTPStatus
 import pytest
 import requests
+from conftest import Crud
 
 
 class TestDestinations(TestCase):
@@ -108,3 +111,39 @@ class TestDestinations(TestCase):
 
         self.assertEqual(HTTPStatus.OK, update_response.status_code)
         self.assertIsInstance(update_response.json(), dict)
+
+    def test_request_and_delete_a_destination(self):
+        """Test request of new destination followed by deleting it."""
+
+        create_destination_response = requests.post(
+            f"{pytest.API_URL}/{self.DESTINATIONS}/request",
+            json={
+                "contact_email": getenv("OKTA_TEST_USER_NAME"),
+                "client_request": "false",
+                "client_account": "false",
+                "name": f"E2E test_destinations Integration Test-"
+                f"{int(time() * 1000)}",
+            },
+            headers=pytest.HEADERS,
+        )
+
+        created_destination_id = create_destination_response.json()["id"]
+
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, created_destination_id)]
+
+        # test success
+        self.assertEqual(
+            HTTPStatus.OK, create_destination_response.status_code
+        )
+        self.assertIsInstance(create_destination_response.json(), dict)
+
+        delete_destination_response = requests.delete(
+            f"{pytest.API_URL}/{self.DESTINATIONS}/{created_destination_id}",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(
+            HTTPStatus.NO_CONTENT, delete_destination_response.status_code
+        )
