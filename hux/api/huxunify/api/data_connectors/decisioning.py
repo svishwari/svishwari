@@ -3,27 +3,20 @@ to the decisioning metrics API"""
 from datetime import datetime
 from typing import Tuple
 
-import requests
 from huxmodelclient import api_client, configuration
 from huxmodelclient.api import DefaultApi as dec_client
 import huxunify.api.constants as api_c
+from huxunify.api.config import get_config
+from huxunify.api.prometheus import record_health_status, Connections
+from huxunifylib.database import constants as db_c
 
-
-token = "eyJraWQiOiJoTjFIeDl6ZGVyZWVDbmRlU2dfWGZjRzJtZDhIZGFVYUk4MkRKRFltV0dZIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVhNjB6ZjFpMm1OakhzSzJwNyIsIm5hbWUiOiJKaW0gTWNNYWhvbiIsImVtYWlsIjoiamltY21haG9uQGRlbG9pdHRlLmNvbSIsInZlciI6MSwiaXNzIjoiaHR0cHM6Ly9kZWxvaXR0ZWRpZ2l0YWwtbXMub2t0YS5jb20iLCJhdWQiOiIwb2FiZWxjMGh5Z3BteDRPVDJwNyIsImlhdCI6MTY1MTg3OTIxNiwiZXhwIjoxNjUxODgyODE2LCJqdGkiOiJJRC4tcy15MF83WmtIX1hZQVBDc3BVVUFYaV94NkxVeDRWVlJoX1dZOVJ3aHE4IiwiYW1yIjpbInN3ayIsInB3ZCIsIm1mYSJdLCJpZHAiOiIwb2FmZHVzNGhyM01pRGZ0QjJwNiIsIm5vbmNlIjoiemJnRVQ3UkFEUnlyRnRZVXJaWUkwakd0OWxkZzVqV3VzVmVpMVlGT0gwQTlNNXR3OXA5UXM4c3NUMWlMM1ZNcyIsInByZWZlcnJlZF91c2VybmFtZSI6ImppbWNtYWhvbkBkZWxvaXR0ZS5jb20iLCJhdXRoX3RpbWUiOjE2NTE4NzkyMDUsImF0X2hhc2giOiJiWnlHT0YxS2htQWtIY1hwZ0R6RHR3In0.EaJAnmSQSEF59t0F5mgzdk2VDBs2pYUnkU89qE6L1WhHaqLo0pq3ZMLt6HyT-PftosxNErYmQu__v-Tv5Xq9Pf4eE3vnNqYX6D8IS5hTjgc3EwAFdcYFWKw1biMFAIndj3oKQwU1uGXFnymtbMCtq6PPoeS499zUSBhu_7FS_0t5N6bxd_eHFUZiwtu2cEOlJ1CySY6hnfXd9dFY4A0MeBBz7LSWp5x8xOXb0JYsPmUvuM3JSYMqPMaajaTBlUzA6wzFdfj6vrINwfmjb0rK6Ux1jqWtMV5GflB-eqO55_9IVKhsjjfDMsEnarqfM2i-4v3BddcGUFDmwDnLpJb3NQ"
-
-
-def dec_call(url: str):
-    headers = {"Authorization": f"Bearer {token}"}
-    return requests.get(url=url, headers=headers).json()
-
-
+# pylint: disable=redefined-outer-name
 class Decisioning:
+    """Decisioning metrics connector class"""
+
     def __init__(self, token: str):
         self.token = token
-        config = configuration.Configuration(
-            host="https://hux-model-api-dec.decisioning-pendleton.in"
-        )
-        # config = configuration.Configuration(get_config().DECISIONING_URL)
+        config = configuration.Configuration(host=get_config().DECISIONING_URL)
         self.decisioning_client = dec_client(
             api_client=api_client.ApiClient(
                 configuration=config,
@@ -88,7 +81,8 @@ class Decisioning:
             model_id
         )
 
-    # TODO need to sort this out with no token
+    # pylint: disable=no-member, broad-except
+    @record_health_status(Connections.DECISIONING)
     def get_health_status(self) -> Tuple[bool, str]:
         """Get the health status of the Decisioning API
 
@@ -106,9 +100,6 @@ class Decisioning:
 
         return False, "Decisioning Metrics API unavailable"
 
-        # return self.decisioning_client.healthz_api_v1alpha1_healthz_get()
-
-    # TODO good
     def get_all_models(self) -> list:
         """Gets a list of all models
 
@@ -123,27 +114,26 @@ class Decisioning:
 
             models.append(
                 {
-                    "id": model_info.model_id,
-                    "name": model_info.model_metadata.model_name,
-                    "description": model_info.model_metadata.description,
-                    "status": model_info.model_metadata.status.lower(),
-                    "latest_version": model_info.model_version,
-                    "owner": model_info.model_metadata.owner,
-                    "lookback_window": model_info.model_metadata.lookback_days,
-                    "prediction_window": model_info.model_metadata.prediction_days,
-                    "fulcrum_date": model_info.model_metadata.fulcrum_date,
-                    "last_trained": model_info.scheduled_date,
-                    "type": model_info.model_metadata.model_type.lower(),
-                    "category": model_info.model_metadata.model_type.lower(),
-                    "past_version_count": model_info.past_version_count,
-                    "is_enabled": True,
-                    "is_added": True,
+                    api_c.ID: model_info.model_id,
+                    api_c.NAME: model_info.model_metadata.model_name,
+                    api_c.DESCRIPTION: model_info.model_metadata.description,
+                    api_c.STATUS: model_info.model_metadata.status.lower(),
+                    api_c.LATEST_VERSION: model_info.model_version,
+                    api_c.OWNER: model_info.model_metadata.owner,
+                    api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
+                    api_c.PREDICTION_WINDOW: model_info.model_metadata.prediction_days,
+                    api_c.FULCRUM_DATE: model_info.model_metadata.fulcrum_date,
+                    api_c.LAST_TRAINED: model_info.scheduled_date,
+                    api_c.TYPE: model_info.model_metadata.model_type.lower(),
+                    api_c.CATEGORY: model_info.model_metadata.model_type.lower(),
+                    api_c.PAST_VERSION_COUNT: model_info.past_version_count,
+                    db_c.ENABLED: True,
+                    db_c.ADDED: True,
                 }
             )
 
         return models
 
-    # TODO good
     def get_model_overview(self, model_id: str) -> dict:
         """Get the feature importance for a model
 
@@ -157,19 +147,18 @@ class Decisioning:
         rmse = model_info.model_metrics.get("rmse", None)
 
         return {
-            "model_type": model_info.model_metadata.model_type,
-            "model_name": model_info.model_metadata.model_name,
-            "description": model_info.model_metadata.description,
-            "performance_metric": {
-                "rmse": rmse if rmse else -1.0,
-                "auc": model_info.model_metrics["AUC"],
-                "precision": model_info.model_metrics["precision"],
-                "recall": model_info.model_metrics["recall"],
-                "current_version": model_info.model_version,
+            api_c.MODEL_TYPE: model_info.model_metadata.model_type,
+            api_c.MODEL_NAME: model_info.model_metadata.model_name,
+            api_c.DESCRIPTION: model_info.model_metadata.description,
+            api_c.PERFORMANCE_METRIC: {
+                api_c.RMSE: rmse if rmse else -1.0,
+                api_c.AUC: model_info.model_metrics["AUC"],
+                api_c.PRECISION: model_info.model_metrics["precision"],
+                api_c.RECALL: model_info.model_metrics["recall"],
+                api_c.CURRENT_VERSION: model_info.model_version,
             },
         }
 
-    # TODO good (limit)
     def get_model_features(
         self, model_id: str, model_version: str = None
     ) -> list:
@@ -188,24 +177,23 @@ class Decisioning:
         for feature in model_info.important_features:
             features.append(
                 {
-                    "id": feature["model_id"],
-                    "name": feature["model_name"],
-                    "description": feature["feature_description"],
-                    "feature_type": feature["model_type"],
-                    "records_not_null": "-",
-                    "feature_importance": "-",
-                    "mean": "-",
-                    "min": "-",
-                    "max": "-",
-                    "unique_values": "-",
-                    "lcuv": "-",
-                    "mcuv": "-",
+                    api_c.ID: feature["model_id"],
+                    api_c.NAME: feature["model_name"],
+                    api_c.DESCRIPTION: feature["feature_description"],
+                    api_c.FEATURE_TYPE: feature["model_type"],
+                    api_c.RECORDS_NOT_NULL: None,
+                    api_c.FEATURE_IMPORTANCE: None,
+                    api_c.MEAN: None,
+                    api_c.MIN: None,
+                    api_c.MAX: None,
+                    api_c.UNIQUE_VALUES: None,
+                    api_c.LCUV: None,
+                    api_c.MCUV: None,
                 }
             )
 
         return features
 
-    # TODO good
     def get_model_version_history(self, model_id: str) -> list:
         """Get the feature importance for a model
 
@@ -222,22 +210,23 @@ class Decisioning:
         for model_info in model_infos:
             feature_history.append(
                 {
-                    "id": model_info.model_id,
-                    "name": model_info.model_metadata.model_name,
-                    "description": model_info.model_metadata.description,
-                    "status": model_info.model_metadata.status,
-                    "version": model_info.model_version,
-                    "trained_date": model_info.scheduled_date,
-                    "owner": model_info.model_metadata.owner,
-                    "lookback_window": model_info.model_metadata.lookback_days,
-                    "prediction_window": model_info.model_metadata.prediction_days,
-                    "fulcrum_date": model_info.model_metadata.fulcrum_date,
+                    api_c.ID: model_info.model_id,
+                    api_c.NAME: model_info.model_metadata.model_name,
+                    api_c.DESCRIPTION: model_info.model_metadata.description,
+                    api_c.STATUS: model_info.model_metadata.status,
+                    api_c.VERSION: model_info.model_version,
+                    api_c.LAST_TRAINED: model_info.scheduled_date,
+                    api_c.OWNER: model_info.model_metadata.owner,
+                    api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
+                    api_c.PREDICTION_WINDOW: model_info.model_metadata.prediction_days,
+                    api_c.FULCRUM_DATE: model_info.model_metadata.fulcrum_date,
                 }
             )
 
         return feature_history
 
     # TODO HUS-2969
+    # pylint: disable=no-self-use
     def get_model_pipeline_performance(self, model_id: str) -> dict:
         """Get the model performance of a model.
 
@@ -251,34 +240,33 @@ class Decisioning:
         return {
             "training": {
                 "id": model_id,
-                "most_recent_run_duration": "-",
+                "most_recent_run_duration": None,
                 "run_duration": [
                     {
-                        "status": "-",
-                        "timestamp": "-",
-                        "duration": "-",
+                        "status": None,
+                        "timestamp": None,
+                        "duration": None,
                     }
                 ],
-                "last_run": "-",
-                "frequency": "-",
-                "total_runs": "-",
+                "last_run": None,
+                "frequency": None,
+                "total_runs": None,
             },
             "scoring": {
-                "most_recent_run_duration": "-",
+                "most_recent_run_duration": None,
                 "run_duration": [
                     {
-                        "status": "-",
-                        "timestamp": "-",
-                        "duration": "-",
+                        "status": None,
+                        "timestamp": None,
+                        "duration": None,
                     }
                 ],
-                "last_run": "-",
-                "frequency": "-",
-                "total_runs": "-",
+                "last_run": None,
+                "frequency": None,
+                "total_runs": None,
             },
         }
 
-    # TODO good
     def get_model_lift(self, model_id: str) -> list:
         """Get the lift statics of a model.
 
@@ -308,7 +296,7 @@ class Decisioning:
 
         return lift_stats
 
-    # TODO test (cant use version here?)
+    # pylint: disable=unused-argument
     def get_model_drift(
         self, model_id: str, model_version: str = None
     ) -> list:
@@ -335,11 +323,3 @@ class Decisioning:
             )
 
         return drift_data
-
-
-if __name__ == "__main__":
-    model_id = "model-Propensity_ctg_tk_blanket-v5-dev"
-    print(Decisioning(token).get_health_status())
-    # print(Decisioning(token).get_model_drift(model_id))
-    # print(Decisioning().get_all_models())
-    # print(Decisioning().get_health_status()
