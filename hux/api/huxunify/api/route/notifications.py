@@ -312,7 +312,7 @@ class NotificationsSearch(SwaggerView):
         if batch_size == 5:
             latest_notification_time = max(
                 [
-                    notification[db_c.NOTIFICATION_FIELD_CREATED]
+                    notification[db_c.NOTIFICATION_FIELD_CREATE_TIME]
                     for notification in notifications[api_c.NOTIFICATIONS_TAG]
                 ]
             )
@@ -414,7 +414,7 @@ class NotificationStream(SwaggerView):
                 notifications_dict = notification_management.get_notifications(
                     database,
                     {
-                        db_c.NOTIFICATION_FIELD_CREATED: {
+                        db_c.NOTIFICATION_FIELD_CREATE_TIME: {
                             "$gt": previous_time
                         },
                         db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -422,7 +422,7 @@ class NotificationStream(SwaggerView):
                             "$regex": "^Successfully delivered audience"
                         },
                     },
-                    [(db_c.NOTIFICATION_FIELD_CREATED, -1)],
+                    [(db_c.NOTIFICATION_FIELD_CREATE_TIME, -1)],
                 )
 
                 # run async function to prepare notifications to be sent as
