@@ -5,10 +5,10 @@ from typing import Tuple
 
 from huxmodelclient import api_client, configuration
 from huxmodelclient.api import DefaultApi as dec_client
+from huxunifylib.database import constants as db_c
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.prometheus import record_health_status, Connections
-from huxunifylib.database import constants as db_c
 
 # pylint: disable=redefined-outer-name
 class Decisioning:
