@@ -83,8 +83,12 @@ class NotificationManagementTest(TestCase):
         )
 
         current_time = datetime.utcnow()
-        upper_bound = current_time + relativedelta(weeks=1) + relativedelta(minutes=1)
-        lower_bound = current_time + relativedelta(weeks=1) - relativedelta(minutes=1)
+        upper_bound = (
+            current_time + relativedelta(weeks=1) + relativedelta(minutes=1)
+        )
+        lower_bound = (
+            current_time + relativedelta(weeks=1) - relativedelta(minutes=1)
+        )
 
         self.assertIsNotNone(notification)
         self.assertIn(db_c.ID, notification)
@@ -115,8 +119,12 @@ class NotificationManagementTest(TestCase):
         )
 
         current_time = datetime.utcnow()
-        upper_bound = current_time + relativedelta(weeks=4) + relativedelta(minutes=1)
-        lower_bound = current_time + relativedelta(weeks=4) - relativedelta(minutes=1)
+        upper_bound = (
+            current_time + relativedelta(weeks=4) + relativedelta(minutes=1)
+        )
+        lower_bound = (
+            current_time + relativedelta(weeks=4) - relativedelta(minutes=1)
+        )
 
         self.assertIsNotNone(notification)
         self.assertIn(db_c.ID, notification)
@@ -178,7 +186,9 @@ class NotificationManagementTest(TestCase):
         self.assertCountEqual(
             self.notifications, notifications[db_c.NOTIFICATIONS_COLLECTION]
         )
-        self.assertEqual(len(self.notifications), notifications["total_records"])
+        self.assertEqual(
+            len(self.notifications), notifications["total_records"]
+        )
 
     def test_get_notifications_same_day_batch(self):
         """Test get all notifications via batch for a single day."""
@@ -191,14 +201,20 @@ class NotificationManagementTest(TestCase):
             notification_types=[],
             notification_categories=[],
             users=[],
-            start_date=datetime.combine(datetime.utcnow().date(), datetime.min.time()),
-            end_date=datetime.combine(datetime.utcnow().date(), datetime.min.time()),
+            start_date=datetime.combine(
+                datetime.utcnow().date(), datetime.min.time()
+            ),
+            end_date=datetime.combine(
+                datetime.utcnow().date(), datetime.min.time()
+            ),
         )
 
         self.assertCountEqual(
             self.notifications, notifications[db_c.NOTIFICATIONS_COLLECTION]
         )
-        self.assertEqual(len(self.notifications), notifications["total_records"])
+        self.assertEqual(
+            len(self.notifications), notifications["total_records"]
+        )
         for notification in notifications["notifications"]:
             self.assertEqual(
                 datetime.utcnow().date(),
@@ -237,7 +253,9 @@ class NotificationManagementTest(TestCase):
             )
         )
 
-        notification = nmg.get_notification(self.database, notification[db_c.ID])
+        notification = nmg.get_notification(
+            self.database, notification[db_c.ID]
+        )
         self.assertIsNone(notification)
 
     def test_hard_delete_notification(self):
@@ -260,7 +278,9 @@ class NotificationManagementTest(TestCase):
             )
         )
 
-        notification = nmg.get_notification(self.database, notification[db_c.ID])
+        notification = nmg.get_notification(
+            self.database, notification[db_c.ID]
+        )
         self.assertIsNone(notification)
 
     def test_get_notification(self):
@@ -270,7 +290,9 @@ class NotificationManagementTest(TestCase):
         )
         notification = nmg.get_notification(
             self.database,
-            notification_id=notifications[db_c.NOTIFICATIONS_COLLECTION][0][db_c.ID],
+            notification_id=notifications[db_c.NOTIFICATIONS_COLLECTION][0][
+                db_c.ID
+            ],
         )
         self.assertTrue(notification)
         self.assertFalse(notification[db_c.DELETED])
