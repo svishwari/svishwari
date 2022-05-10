@@ -16,7 +16,7 @@
                     disabled: true,
                     href: '/email-deliverability',
                     icon: 'email_deliverability',
-                    iconSize: 36,
+                    iconSize: 25,
                     iconColor: 'black',
                     iconColorVariant: 'base',
                   },
