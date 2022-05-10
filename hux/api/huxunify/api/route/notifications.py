@@ -321,7 +321,7 @@ class NotificationsSearch(SwaggerView):
                 or user.get(db_c.LAST_SEEN_ALERT_TIME)
                 < latest_notification_time
             ):
-                update_user(
+                user = update_user(
                     database=get_db_client(),
                     okta_id=user[db_c.OKTA_ID],
                     update_doc={
@@ -330,11 +330,12 @@ class NotificationsSearch(SwaggerView):
                     },
                 )
         else:
-            update_user(
+            user = update_user(
                 database=get_db_client(),
                 okta_id=user[db_c.OKTA_ID],
                 update_doc={db_c.SEEN_NOTIFICATIONS: True},
             )
+
         notifications.update(
             {db_c.SEEN_NOTIFICATIONS: user[db_c.SEEN_NOTIFICATIONS]}
         )
