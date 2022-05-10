@@ -1947,6 +1947,7 @@ PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY = {
     "open_rate": 0,
     "clicks": 0,
     "conversions": 0,
+    "click_through_rate": 0.23,
     "click_to_open_rate": 0,
     "unique_clicks": 0,
     "unique_opens": 0,
