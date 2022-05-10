@@ -310,7 +310,7 @@ configurations_constants = [
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Experience data platform",
-        db_c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        db_c.CONFIGURATION_FIELD_ICON: "experience_data_platform",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Brings voice of the customer "
         "to make improvements to your customer "
