@@ -663,6 +663,7 @@ class ModelFeaturesView(SwaggerView):
             user (dict): User object.
             model_id (str): Model ID.
             model_version (str): Model Version.
+            limit (int): Max number of records to be returned.
 
         Returns:
             Tuple[Response, int]: List containing dict of model features,

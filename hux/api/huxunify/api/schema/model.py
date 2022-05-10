@@ -1,8 +1,7 @@
 """Schemas for the Model Object"""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, Float, Nested, Dict, Bool, List
-from marshmallow.validate import OneOf
+from marshmallow.fields import Str, Int, Float, Nested, Bool, List
 
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
