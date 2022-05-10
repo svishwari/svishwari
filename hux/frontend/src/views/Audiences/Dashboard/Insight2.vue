@@ -314,8 +314,7 @@
                   >
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
-                      :standalone-data="audience.standalone_deliveries"
-                      :engagement-data="audience.engagements"
+                      :lookalikeable="lookalikeableAudience"
                       @openCreateLookalike="lookalikePageRedirect()"
                     />
                   </div>
@@ -631,12 +630,8 @@ export default {
       return this.showAdvertising ? this.advertisingHeight : "400px"
     },
 
-    showLookalike() {
-      return !this.is_lookalike &&
-        this.isLookalikable &&
-        this.isLookalikable != "Disabled"
-        ? true
-        : false
+    lookalikeableAudience() {
+      return this.isLookalikable && this.isLookalikable == "Active"
     },
     breadcrumbItems() {
       const items = [
