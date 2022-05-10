@@ -2,7 +2,7 @@
 # pylint: disable=too-many-lines
 import statistics
 from collections import defaultdict, namedtuple
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 import re
 from itertools import groupby
 from pathlib import Path
@@ -668,9 +668,16 @@ def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
         if match_rate_data.get(delivery.get(api_c.DELIVERY_PLATFORM_TYPE)):
             # Always ensure the latest successful
             # delivery is considered.
-            if delivery.get(db_c.UPDATE_TIME) > match_rate_data[
+            prev_update_time = match_rate_data[
                 delivery.get(api_c.DELIVERY_PLATFORM_TYPE)
-            ].get(api_c.AUDIENCE_LAST_DELIVERY, date.min):
+            ].get(api_c.AUDIENCE_LAST_DELIVERY)
+
+            prev_update_time = (
+                prev_update_time
+                if isinstance(prev_update_time, datetime)
+                else datetime.min
+            )
+            if delivery.get(db_c.UPDATE_TIME) > prev_update_time:
                 match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
                     api_c.AUDIENCE_LAST_DELIVERY: delivery.get(
                         db_c.UPDATE_TIME
