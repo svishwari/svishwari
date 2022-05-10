@@ -13,8 +13,7 @@ from flask import Blueprint, request, Response
 from flasgger import SwaggerView
 from huxunifylib.database.user_management import (
     update_all_users,
-    update_user,
-    get_user,
+    update_user
 )
 
 from huxunifylib.util.general.logging import logger
