@@ -60,7 +60,7 @@ class TestNotificationRoutes(RouteTestCase):
                 ],
                 many=True,
             ),
-            key=lambda x: x["created"],
+            key=lambda x: x[db_c.NOTIFICATION_FIELD_CREATE_TIME],
             reverse=True,
         )
 
@@ -213,14 +213,11 @@ class TestNotificationRoutes(RouteTestCase):
         """Test get notifications with filters."""
 
         expected_notification_types = ",".join(db_c.NOTIFICATION_TYPES[:-1])
-        expected_notification_categories = ",".join(
-            db_c.NOTIFICATION_CATEGORIES[:-1]
-        )
+        expected_notification_categories = ",".join(db_c.NOTIFICATION_CATEGORIES[:-1])
         expected_notifications = [
             x
             for x in self.notifications
-            if x[api_c.NOTIFICATION_TYPE]
-            in expected_notification_types.split(",")
+            if x[api_c.NOTIFICATION_TYPE] in expected_notification_types.split(",")
             and x[db_c.CATEGORY] in expected_notification_categories.split(",")
         ]
         response = self.app.get(
@@ -243,9 +240,7 @@ class TestNotificationRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(
-            len(expected_notifications), response.json[api_c.TOTAL]
-        )
+        self.assertEqual(len(expected_notifications), response.json[api_c.TOTAL])
         self.assertCountEqual(
             expected_notifications, response.json[api_c.NOTIFICATIONS_TAG]
         )
@@ -319,9 +314,7 @@ class TestNotificationRoutes(RouteTestCase):
                 self.assertIn(db_c.NOTIFICATIONS_COLLECTION, notifications)
                 self.assertEqual(notifications[api_c.TOTAL], 1)
 
-                for notification in notifications[
-                    db_c.NOTIFICATIONS_COLLECTION
-                ]:
+                for notification in notifications[db_c.NOTIFICATIONS_COLLECTION]:
                     self.assertEqual(
                         notification[api_c.NOTIFICATION_TYPE],
                         db_c.NOTIFICATION_TYPE_SUCCESS,

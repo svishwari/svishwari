@@ -25,8 +25,8 @@ class NotificationSchema(Schema):
         required=True,
         example="Facebook Delivery Stopped",
     )
-    created = DateTimeWithZ(
-        attribute="created",
+    create_time = DateTimeWithZ(
+        attribute="create_time",
         required=True,
         allow_none=False,
     )
@@ -60,7 +60,7 @@ class NotificationsSchema(Schema):
                 api_c.NOTIFICATION_TYPE: db_c.NOTIFICATION_TYPE_CRITICAL,
                 api_c.DESCRIPTION: "Facebook Delivery Stopped",
                 db_c.NOTIFICATION_FIELD_CATEGORY: db_c.NOTIFICATION_CATEGORY_DELIVERY,
-                db_c.NOTIFICATION_FIELD_CREATED: "2021-08-09T12:35:24.915Z",
+                db_c.NOTIFICATION_FIELD_CREATE_TIME: "2021-08-09T12:35:24.915Z",
             },
         ],
     )

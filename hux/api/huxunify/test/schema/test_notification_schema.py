@@ -20,7 +20,7 @@ class TestNotificationSchema(TestCase):
             _id=str(ObjectId()),
             type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description="Successfully delivered",
-            created=current_time,
+            create_time=current_time,
             category=api_c.DELIVERY_TAG,
         )
 
@@ -33,4 +33,4 @@ class TestNotificationSchema(TestCase):
             res[db_c.NOTIFICATION_FIELD_CATEGORY],
             doc[db_c.NOTIFICATION_FIELD_CATEGORY],
         )
-        self.assertIsInstance(res[db_c.NOTIFICATION_FIELD_CREATED], str)
+        self.assertIsInstance(res[db_c.NOTIFICATION_FIELD_CREATE_TIME], str)
