@@ -1,6 +1,7 @@
 """File for decorators used in the API routes"""
 # pylint: disable=too-many-statements,disable=unused-argument
 import getpass
+import logging
 from functools import wraps
 from typing import Any
 from http import HTTPStatus
@@ -325,7 +326,11 @@ def requires_access_levels(access_levels: list) -> object:
 
             # get the user info and the corresponding user document from db
             # from the access_token
+            logging.info("Fetching user information from Database.")
             user = get_user_from_db(token_response[0])
+            logging.info(
+                "Successfully fetched user information from Database."
+            )
 
             # if the user_response object is of type tuple, then return it as
             # such since a failure must have occurred while fetching user data

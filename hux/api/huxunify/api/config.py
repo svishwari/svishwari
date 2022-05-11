@@ -41,6 +41,9 @@ class Config:
         api_c.AZURE_STORAGE_CONTAINER_NAME, default=""
     )
     AZURE_KEY_VAULT_NAME = config(api_c.AZURE_KEY_VAULT_NAME, default="")
+    AZURE_TENANT_ID = config(api_c.AZURE_TENANT_ID, default="")
+    AZURE_CLIENT_ID = config(api_c.AZURE_CLIENT_ID, default="")
+    AZURE_CLIENT_SECRET = config(api_c.AZURE_CLIENT_SECRET, default="")
 
     # AWS_CONFIG
     AWS_REGION = config(api_c.AWS_REGION, default="")
@@ -62,15 +65,16 @@ class Config:
     MONGO_SSL_CERT = str(
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
     )
-
+    # TODO Remove when we have separate configs for environments.
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
         api_c.PORT: MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: MONGO_DB_PASSWORD,
-        api_c.SSL_CERT_PATH: MONGO_SSL_CERT,
     }
+    if CLOUD_PROVIDER != api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
 
     # OKTA CONFIGURATION
     OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
@@ -159,14 +163,18 @@ class DevelopmentConfig(Config):
 
     FLASK_ENV = api_c.DEVELOPMENT_MODE
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
+
+    # TODO Remove when we have separate configs for environments.
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
         api_c.HOST: Config.MONGO_DB_HOST,
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
-        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
+
+    if Config.CLOUD_PROVIDER != api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
