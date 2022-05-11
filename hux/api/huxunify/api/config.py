@@ -63,23 +63,15 @@ class Config:
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
     )
     # TODO Remove when we have separate configs for environments.
-    if CLOUD_PROVIDER == api_c.AZURE:
-        MONGO_DB_CONFIG = {
+    MONGO_DB_CONFIG = {
             api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
             api_c.HOST: MONGO_DB_HOST,
             api_c.PORT: MONGO_DB_PORT,
             api_c.USERNAME: MONGO_DB_USERNAME,
             api_c.PASSWORD: MONGO_DB_PASSWORD,
         }
-    else:
-        MONGO_DB_CONFIG = {
-            api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
-            api_c.HOST: MONGO_DB_HOST,
-            api_c.PORT: MONGO_DB_PORT,
-            api_c.USERNAME: MONGO_DB_USERNAME,
-            api_c.PASSWORD: MONGO_DB_PASSWORD,
-            api_c.SSL_CERT_PATH: MONGO_SSL_CERT,
-        }
+    if CLOUD_PROVIDER != api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
 
     # OKTA CONFIGURATION
     OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
