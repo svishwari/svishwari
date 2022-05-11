@@ -174,7 +174,7 @@ class EngagementDeliverDestinationView(SwaggerView):
         target_destination = get_delivery_platform(database, destination_id)
 
         replace_audience = Validation.validate_bool(
-            request.args.get(db_c.REPLACE_AUDIENCE)
+            request.args.get(db_c.REPLACE_AUDIENCE, "false")
         )
 
         # validate that the destination ID is attached to the audience

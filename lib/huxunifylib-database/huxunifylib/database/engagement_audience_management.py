@@ -20,7 +20,7 @@ from huxunifylib.database.delivery_platform_management import (
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_engagement_audience_destinations(
-        database: DatabaseClient, audience_ids: list = None
+    database: DatabaseClient, audience_ids: list = None
 ) -> Union[list, None]:
     """A function to get engagement audiences and their destinations
     across engagements.
@@ -94,7 +94,7 @@ def get_all_engagement_audience_destinations(
             encountered_destinations = {}
             for i, destination in enumerate(audience[db_c.DESTINATIONS]):
                 if encountered_destinations.get(
-                        str(destination.get(db_c.ID, ""))
+                    str(destination.get(db_c.ID, ""))
                 ):
                     audience[db_c.DESTINATIONS].pop(i)
                 encountered_destinations[str(destination.get(db_c.ID))] = True
@@ -112,13 +112,13 @@ def get_all_engagement_audience_destinations(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_engagement_audience_destination_schedule(
-        database: DatabaseClient,
-        engagement_id: ObjectId,
-        audience_id: ObjectId,
-        destination_id: ObjectId,
-        cron_expression: str,
-        user_name: str,
-        unset: bool = False,
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    cron_expression: str,
+    user_name: str,
+    unset: bool = False,
 ) -> dict:
     """A function to set the destination cron expression.
 
@@ -191,8 +191,14 @@ def set_engagement_audience_destination_schedule(
     )
 
 
-def set_replace_audience_flag(database: DatabaseClient, engagement_id: ObjectId, audience_id: ObjectId,
-                              destination_id: ObjectId, replace_audience: bool, user_name: str):
+def set_replace_audience_flag(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    replace_audience: bool,
+    user_name: str,
+):
     """
 
     Args:
@@ -233,7 +239,9 @@ def set_replace_audience_flag(database: DatabaseClient, engagement_id: ObjectId,
 
             destination[db_c.REPLACE_AUDIENCE] = replace_audience
 
-        engagement_doc.update({db_c.UPDATE_TIME: datetime.now(), db_c.UPDATED_BY: user_name})
+        engagement_doc.update(
+            {db_c.UPDATE_TIME: datetime.now(), db_c.UPDATED_BY: user_name}
+        )
         change = True
 
     # no changes, simply return.
@@ -260,12 +268,12 @@ def set_replace_audience_flag(database: DatabaseClient, engagement_id: ObjectId,
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_engagement_audience_schedule(
-        database: DatabaseClient,
-        engagement_id: ObjectId,
-        audience_id: ObjectId,
-        delivery_schedule: dict,
-        user_name: str,
-        unset: bool = False,
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    delivery_schedule: dict,
+    user_name: str,
+    unset: bool = False,
 ) -> Union[dict, None]:
     """A function to set the engagement audience delivery schedule.
 
@@ -336,8 +344,8 @@ def set_engagement_audience_schedule(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audience_engagement_id_pairs(
-        database: DatabaseClient,
-        audience_ids: list = None,
+    database: DatabaseClient,
+    audience_ids: list = None,
 ) -> Union[list, None]:
     """A function to get all audience and engagement pairs.
 
@@ -391,7 +399,7 @@ def get_all_audience_engagement_id_pairs(
 
 
 def align_audience_engagement_deliveries(
-        database, audience_delivery_jobs: list, audience_ids: list
+    database, audience_delivery_jobs: list, audience_ids: list
 ) -> dict:
     """A function to align and match audience deliveries.
 
@@ -474,8 +482,8 @@ def align_audience_engagement_deliveries(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audience_engagement_latest_deliveries(
-        database: DatabaseClient,
-        audience_engagement_ids: list = None,
+    database: DatabaseClient,
+    audience_engagement_ids: list = None,
 ) -> Union[list, None]:
     """A function to get all audience and engagement pairs.
 
@@ -528,8 +536,8 @@ def get_all_audience_engagement_latest_deliveries(
 
 
 def get_all_engagement_audience_deliveries(
-        database: DatabaseClient,
-        audience_ids: list = None,
+    database: DatabaseClient,
+    audience_ids: list = None,
 ) -> Dict[Any, Any]:
     """A function to get delivery jobs for all engagements and corresponding
     audiences nested within. This function is really just a work around

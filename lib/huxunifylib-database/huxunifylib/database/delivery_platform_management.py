@@ -26,19 +26,19 @@ import huxunifylib.database.audience_management as am
 )
 # pylint: disable=R0914
 def set_delivery_platform(
-        database: DatabaseClient,
-        delivery_platform_type: str,
-        name: str,
-        authentication_details: dict = None,
-        status: str = db_c.STATUS_PENDING,
-        enabled: bool = False,
-        added: bool = False,
-        deleted: bool = False,
-        user_name: str = None,
-        configuration: dict = None,
-        is_ad_platform: bool = False,
-        category: str = db_c.CATEGORY_UNKNOWN,
-        link: str = "",
+    database: DatabaseClient,
+    delivery_platform_type: str,
+    name: str,
+    authentication_details: dict = None,
+    status: str = db_c.STATUS_PENDING,
+    enabled: bool = False,
+    added: bool = False,
+    deleted: bool = False,
+    user_name: str = None,
+    configuration: dict = None,
+    is_ad_platform: bool = False,
+    category: str = db_c.CATEGORY_UNKNOWN,
+    link: str = "",
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -135,8 +135,8 @@ def set_delivery_platform(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_platforms_by_id(
-        database: DatabaseClient,
-        delivery_platform_ids: list,
+    database: DatabaseClient,
+    delivery_platform_ids: list,
 ) -> Union[list, None]:
     """A function to get a list of delivery platforms by id.
 
@@ -170,8 +170,8 @@ def get_delivery_platforms_by_id(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_platform(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
 ) -> Union[dict, None]:
     """A function to get a delivery platform.
 
@@ -203,8 +203,8 @@ def get_delivery_platform(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_platform_by_type(
-        database: DatabaseClient,
-        delivery_platform_type: str,
+    database: DatabaseClient,
+    delivery_platform_type: str,
 ) -> Union[dict, None]:
     """A function to get a delivery platform by type.
 
@@ -237,8 +237,8 @@ def get_delivery_platform_by_type(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_delivery_platforms(
-        database: DatabaseClient,
-        enabled: bool = None,
+    database: DatabaseClient,
+    enabled: bool = None,
 ) -> Union[list, None]:
     """A function to get all configured delivery platforms.
 
@@ -271,9 +271,9 @@ def get_all_delivery_platforms(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_connection_status(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
-        connection_status: str,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    connection_status: str,
 ) -> Union[dict, None]:
     """A function to set the status of connection to a delivery platform.
 
@@ -311,7 +311,7 @@ def set_connection_status(
 
 
 def get_connection_status(
-        database: DatabaseClient, delivery_platform_id: ObjectId
+    database: DatabaseClient, delivery_platform_id: ObjectId
 ) -> Union[str, None]:
     """A function to get status of connection to delivery platform.
 
@@ -340,9 +340,9 @@ def get_connection_status(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_authentication_details(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
-        authentication_details: dict,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    authentication_details: dict,
 ) -> Union[dict, None]:
     """A function to set delivery platform authentication details.
 
@@ -379,7 +379,7 @@ def set_authentication_details(
 
 
 def get_authentication_details(
-        database: DatabaseClient, delivery_platform_id: ObjectId
+    database: DatabaseClient, delivery_platform_id: ObjectId
 ) -> Union[dict, None]:
     """A function to get authentication details of a delivery platform.
 
@@ -407,9 +407,9 @@ def get_authentication_details(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_name(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
-        name: str,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    name: str,
 ) -> Union[dict, None]:
     """A function to set delivery platform name.
 
@@ -467,7 +467,7 @@ def set_name(
 
 
 def get_name(
-        database: DatabaseClient, delivery_platform_id: ObjectId
+    database: DatabaseClient, delivery_platform_id: ObjectId
 ) -> Union[str, None]:
     """A function to get name of a delivery platform.
 
@@ -495,9 +495,9 @@ def get_name(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_platform_type(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
-        delivery_platform_type: str,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    delivery_platform_type: str,
 ) -> Union[dict, None]:
     """A function to set delivery platform type.
 
@@ -542,7 +542,7 @@ def set_platform_type(
 
 
 def get_platform_type(
-        database: DatabaseClient, delivery_platform_id: ObjectId
+    database: DatabaseClient, delivery_platform_id: ObjectId
 ) -> Union[str, None]:
     """A function to get the delivery platform type.
 
@@ -571,20 +571,20 @@ def get_platform_type(
 )
 # pylint: disable=too-many-locals,too-many-branches
 def update_delivery_platform(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
-        name: str = None,
-        delivery_platform_type: str = None,
-        authentication_details: dict = None,
-        added: bool = None,
-        user_name: str = None,
-        enabled: bool = None,
-        deleted: bool = None,
-        performance_de: dict = None,
-        campaign_de: dict = None,
-        is_ad_platform: bool = None,
-        status: str = None,
-        link: str = None,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    name: str = None,
+    delivery_platform_type: str = None,
+    authentication_details: dict = None,
+    added: bool = None,
+    user_name: str = None,
+    enabled: bool = None,
+    deleted: bool = None,
+    performance_de: dict = None,
+    campaign_de: dict = None,
+    is_ad_platform: bool = None,
+    status: str = None,
+    link: str = None,
 ) -> Union[dict, None]:
     """A function to update delivery platform configuration.
 
@@ -651,8 +651,8 @@ def update_delivery_platform(
         update_doc[db_c.LINK] = link
 
     if (
-            cur_doc is not None
-            and cur_doc[db_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC
+        cur_doc is not None
+        and cur_doc[db_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC
     ):
         update_doc[db_c.CONFIGURATION] = {
             db_c.PERFORMANCE_METRICS_DATA_EXTENSION: performance_de,
@@ -706,15 +706,15 @@ def update_delivery_platform(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_delivery_platform_lookalike_audience(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
-        source_audience: dict,
-        name: str,
-        audience_size_percentage: float,
-        country: str = None,
-        user_name: str = "",
-        audience_size: int = 0,
-        status: str = db_c.AUDIENCE_STATUS_DELIVERING,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    source_audience: dict,
+    name: str,
+    audience_size_percentage: float,
+    country: str = None,
+    user_name: str = "",
+    audience_size: int = 0,
+    status: str = db_c.AUDIENCE_STATUS_DELIVERING,
 ) -> Union[dict, None]:
     """A function to create a delivery platform lookalike audience.
 
@@ -757,11 +757,11 @@ def create_delivery_platform_lookalike_audience(
 
     # Make sure the name will be unique
     if name_exists(
-            database,
-            db_c.DATA_MANAGEMENT_DATABASE,
-            db_c.LOOKALIKE_AUDIENCE_COLLECTION,
-            db_c.LOOKALIKE_AUD_NAME,
-            name,
+        database,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+        db_c.LOOKALIKE_AUD_NAME,
+        name,
     ):
         raise de.DuplicateName(name)
 
@@ -818,8 +818,8 @@ def create_delivery_platform_lookalike_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_platform_lookalike_audience(
-        database: DatabaseClient,
-        lookalike_audience_id: ObjectId,
+    database: DatabaseClient,
+    lookalike_audience_id: ObjectId,
 ) -> Union[dict, None]:
     """A function to get a delivery platform lookalike audience.
 
@@ -851,9 +851,9 @@ def get_delivery_platform_lookalike_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_delivery_platform_lookalike_audiences(
-        database: DatabaseClient,
-        filter_dict: dict = None,
-        projection: dict = None,
+    database: DatabaseClient,
+    filter_dict: dict = None,
+    projection: dict = None,
 ) -> Union[list, None]:
     """A function to get all delivery platform lookalike audience
     configurations.
@@ -897,9 +897,9 @@ def get_all_delivery_platform_lookalike_audiences(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_lookalike_audience_name(
-        database: DatabaseClient,
-        lookalike_audience_id: ObjectId,
-        name: str,
+    database: DatabaseClient,
+    lookalike_audience_id: ObjectId,
+    name: str,
 ) -> Union[dict, None]:
     """A function to update a delivery platform lookalike audience name.
 
@@ -960,9 +960,9 @@ def update_lookalike_audience_name(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_lookalike_audience_size_percentage(
-        database: DatabaseClient,
-        lookalike_audience_id: ObjectId,
-        audience_size_percentage: float,
+    database: DatabaseClient,
+    lookalike_audience_id: ObjectId,
+    audience_size_percentage: float,
 ) -> Union[dict, None]:
     """A function to update lookalike audience size percentage.
 
@@ -1003,13 +1003,13 @@ def update_lookalike_audience_size_percentage(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_lookalike_audience(
-        database: DatabaseClient,
-        lookalike_audience_id: ObjectId,
-        name: str = None,
-        audience_size_percentage: float = None,
-        country: str = None,
-        user_name: str = "",
-        audience_size: int = None,
+    database: DatabaseClient,
+    lookalike_audience_id: ObjectId,
+    name: str = None,
+    audience_size_percentage: float = None,
+    country: str = None,
+    user_name: str = "",
+    audience_size: int = None,
 ) -> Union[dict, None]:
     """A function to update lookalike audience.
 
@@ -1090,14 +1090,14 @@ def update_lookalike_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_delivery_job(
-        database: DatabaseClient,
-        audience_id: ObjectId,
-        delivery_platform_id: ObjectId,
-        delivery_platform_generic_campaigns: list,
-        username: str,
-        replace_audience: bool,
-        engagement_id: ObjectId = None,
-        delivery_platform_config: dict = None,
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    delivery_platform_id: ObjectId,
+    delivery_platform_generic_campaigns: list,
+    username: str,
+    replace_audience: bool = False,
+    engagement_id: ObjectId = None,
+    delivery_platform_config: dict = None,
 ) -> Union[dict, None]:
     """A function to set an audience delivery job.
 
@@ -1153,7 +1153,7 @@ def set_delivery_job(
         db_c.DELETED: False,
         db_c.DELIVERY_PLATFORM_AUD_SIZE: 0,
         db_c.USERNAME: username,
-        db_c.REPLACE_AUDIENCE: replace_audience
+        db_c.REPLACE_AUDIENCE: replace_audience,
     }
     if engagement_id is not None:
         doc[db_c.ENGAGEMENT_ID] = engagement_id
@@ -1194,9 +1194,9 @@ def set_delivery_job(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_job(
-        database: DatabaseClient,
-        delivery_job_id: ObjectId,
-        engagement_id: ObjectId = None,
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    engagement_id: ObjectId = None,
 ) -> Union[dict, None]:
     """A function to get an audience delivery job.
 
@@ -1230,13 +1230,13 @@ def get_delivery_job(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_jobs_using_metadata(
-        database: DatabaseClient,
-        engagement_id: ObjectId = None,
-        audience_id: ObjectId = None,
-        delivery_platform_id: ObjectId = None,
-        delivery_platform_ids: list = None,
-        engagement_ids: list = None,
-        audience_ids: list = None,
+    database: DatabaseClient,
+    engagement_id: ObjectId = None,
+    audience_id: ObjectId = None,
+    delivery_platform_id: ObjectId = None,
+    delivery_platform_ids: list = None,
+    engagement_ids: list = None,
+    audience_ids: list = None,
 ) -> Union[list, None]:
     """A function to get delivery jobs based on engagement details.
 
@@ -1257,9 +1257,9 @@ def get_delivery_jobs_using_metadata(
     """
 
     if (
-            engagement_id is None
-            and audience_id is None
-            and delivery_platform_id is None
+        engagement_id is None
+        and audience_id is None
+        and delivery_platform_id is None
     ):
         raise de.InvalidID()
 
@@ -1295,7 +1295,7 @@ def get_delivery_jobs_using_metadata(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_delivery_job_status(
-        database: DatabaseClient, delivery_job_id: ObjectId, job_status: str
+    database: DatabaseClient, delivery_job_id: ObjectId, job_status: str
 ) -> Union[dict, None]:
     """A function to set an delivery job status.
 
@@ -1337,7 +1337,7 @@ def set_delivery_job_status(
 
 
 def get_delivery_job_status(
-        database: DatabaseClient, delivery_job_id: ObjectId
+    database: DatabaseClient, delivery_job_id: ObjectId
 ) -> Union[str, None]:
     """A function to get an delivery job status.
 
@@ -1366,9 +1366,9 @@ def get_delivery_job_status(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_delivery_job_audience_size(
-        database: DatabaseClient,
-        delivery_job_id: ObjectId,
-        audience_size: int,
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    audience_size: int,
 ) -> Union[dict, None]:
     """A function to store delivery job audience size.
 
@@ -1409,9 +1409,9 @@ def set_delivery_job_audience_size(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_delivery_job_lookalike_audiences(
-        database: DatabaseClient,
-        delivery_job_id: ObjectId,
-        lookalike_audiences: list,
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    lookalike_audiences: list,
 ) -> Union[dict, None]:
     """A function to store delivery job lookalike audiences.
 
@@ -1448,7 +1448,7 @@ def set_delivery_job_lookalike_audiences(
 
 
 def get_delivery_job_audience_size(
-        database: DatabaseClient, delivery_job_id: ObjectId
+    database: DatabaseClient, delivery_job_id: ObjectId
 ) -> Union[int, None]:
     """A function to get delivery job audience size.
 
@@ -1478,9 +1478,9 @@ def get_delivery_job_audience_size(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_jobs(
-        database: DatabaseClient,
-        audience_id: ObjectId = None,
-        engagement_id: ObjectId = None,
+    database: DatabaseClient,
+    audience_id: ObjectId = None,
+    engagement_id: ObjectId = None,
 ) -> list:
     """Get audience delivery jobs if audience_id is specified, otherwise,
     get all delivery jobs. In the latter case only ID field is returned
@@ -1524,11 +1524,11 @@ def get_delivery_jobs(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_delivery_jobs(
-        database: DatabaseClient,
-        filter_dict: dict = None,
-        projection: dict = None,
-        sort_list: list = None,
-        limit: int = None,
+    database: DatabaseClient,
+    filter_dict: dict = None,
+    projection: dict = None,
+    sort_list: list = None,
+    limit: int = None,
 ) -> Union[list, None]:
     """A function to get all delivery jobs based on the args provided.
 
@@ -1585,9 +1585,9 @@ def get_all_delivery_jobs(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_audience_recent_delivery_job(
-        database: DatabaseClient,
-        audience_id: ObjectId,
-        delivery_platform_id: ObjectId,
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    delivery_platform_id: ObjectId,
 ) -> Union[dict, None]:
     """A function to get the most recent delivery job associated with
     a given audience and delivery platform.
@@ -1634,8 +1634,8 @@ def get_audience_recent_delivery_job(
 
 
 def get_ingestion_job_audience_delivery_jobs(
-        database: DatabaseClient,
-        ingestion_job_id: ObjectId,
+    database: DatabaseClient,
+    ingestion_job_id: ObjectId,
 ) -> list:
     """A function to get a list of of all audience deliveries given
     an ingestion job.
@@ -1672,9 +1672,9 @@ def get_ingestion_job_audience_delivery_jobs(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_delivery_job_generic_campaigns(
-        database: DatabaseClient,
-        delivery_job_id: ObjectId,
-        generic_campaign: list,
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    generic_campaign: list,
 ) -> Union[dict, None]:
     """A function to create/update delivery platform generic campaigns.
 
@@ -1720,8 +1720,8 @@ def create_delivery_job_generic_campaigns(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_delivery_job_generic_campaigns(
-        database: DatabaseClient,
-        delivery_job_ids: list,
+    database: DatabaseClient,
+    delivery_job_ids: list,
 ) -> int:
     """A function to update delivery platform generic campaigns.
 
@@ -1753,8 +1753,8 @@ def delete_delivery_job_generic_campaigns(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def favorite_delivery_platform(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
 ) -> Union[dict, None]:
     """A function to favorite a delivery platform.
 
@@ -1793,8 +1793,8 @@ def favorite_delivery_platform(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def unfavorite_delivery_platform(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
 ) -> Union[dict, None]:
     """A function to unfavorite a delivery platform.
 
@@ -1833,8 +1833,8 @@ def unfavorite_delivery_platform(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def favorite_lookalike_audience(
-        database: DatabaseClient,
-        lookalike_audience_id: ObjectId,
+    database: DatabaseClient,
+    lookalike_audience_id: ObjectId,
 ) -> Union[dict, None]:
     """A function to favorite a delivery platform lookalike audience.
 
@@ -1873,8 +1873,8 @@ def favorite_lookalike_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def unfavorite_lookalike_audience(
-        database: DatabaseClient,
-        lookalike_audience_id: ObjectId,
+    database: DatabaseClient,
+    lookalike_audience_id: ObjectId,
 ) -> Union[dict, None]:
     """A function to unfavorite a delivery platform lookalike audience.
 
@@ -1909,7 +1909,7 @@ def unfavorite_lookalike_audience(
 
 
 def get_delivery_platform_delivery_jobs(
-        database: DatabaseClient, delivery_platform_id: ObjectId
+    database: DatabaseClient, delivery_platform_id: ObjectId
 ) -> list:
     """A function to get all delivery jobs given a delivery platform.
 
@@ -1981,16 +1981,16 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def _set_performance_metrics(
-        database: DatabaseClient,
-        collection_name: str,
-        delivery_platform_id: ObjectId,
-        delivery_platform_type: str,
-        delivery_job_id: ObjectId,
-        generic_campaigns: list,
-        metrics_dict: dict,
-        event_details: dict,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
+    database: DatabaseClient,
+    collection_name: str,
+    delivery_platform_id: ObjectId,
+    delivery_platform_type: str,
+    delivery_job_id: ObjectId,
+    generic_campaigns: list,
+    metrics_dict: dict,
+    event_details: dict,
+    start_time: datetime.datetime,
+    end_time: datetime.datetime,
 ) -> Union[dict, None]:
     """Store campaign performance metrics helper function to accommodate
         differences in metric types across different delivery platforms.
@@ -2062,13 +2062,13 @@ def _set_performance_metrics(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_deliverability_metrics(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
-        delivery_platform_type: str,
-        domain: str,
-        metrics_dict: dict,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    delivery_platform_type: str,
+    domain: str,
+    metrics_dict: dict,
+    start_time: datetime.datetime,
+    end_time: datetime.datetime,
 ) -> Union[dict, None]:
     """Store deliverability metrics in the deliverability metrics collection.
     Args:
@@ -2140,15 +2140,15 @@ set_campaign_activity = partial(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def _get_performance_metrics(
-        database: DatabaseClient,
-        collection_name: str,
-        delivery_job_id: ObjectId = None,
-        min_start_time: datetime.datetime = None,
-        max_end_time: datetime.datetime = None,
-        delivery_platform_id: ObjectId = None,
-        domain: str = None,
-        pending_transfer_for_feedback: bool = False,
-        pending_transfer_for_report: bool = False,
+    database: DatabaseClient,
+    collection_name: str,
+    delivery_job_id: ObjectId = None,
+    min_start_time: datetime.datetime = None,
+    max_end_time: datetime.datetime = None,
+    delivery_platform_id: ObjectId = None,
+    domain: str = None,
+    pending_transfer_for_feedback: bool = False,
+    pending_transfer_for_report: bool = False,
 ) -> Optional[List[dict]]:
     """Helper method to retrieve campaign performance metrics or activities.
 
@@ -2182,16 +2182,16 @@ def _get_performance_metrics(
 
     # Check validity of delivery job ID
     if (
-            not get_delivery_job(database, delivery_job_id)
-            and collection_name != db_c.DELIVERABILITY_METRICS_COLLECTION
+        not get_delivery_job(database, delivery_job_id)
+        and collection_name != db_c.DELIVERABILITY_METRICS_COLLECTION
     ):
         logging.info("Delivery job with ID <%s> not found.", delivery_job_id)
         raise de.InvalidID(delivery_job_id)
 
     if (
-            delivery_platform_id
-            and not get_delivery_platform(database, delivery_platform_id)
-            and collection_name == db_c.DELIVERABILITY_METRICS_COLLECTION
+        delivery_platform_id
+        and not get_delivery_platform(database, delivery_platform_id)
+        and collection_name == db_c.DELIVERABILITY_METRICS_COLLECTION
     ):
         logging.info(
             "Delivery platform with ID <%s> not found.", delivery_platform_id
@@ -2260,9 +2260,9 @@ get_campaign_activity = partial(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_performance_metrics_by_engagement_details(
-        database: DatabaseClient,
-        engagement_id: ObjectId,
-        destination_ids: list,
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    destination_ids: list,
 ) -> Union[list, None]:
     """Retrieve campaign performance metrics using engagement id.
 
@@ -2308,10 +2308,10 @@ def get_performance_metrics_by_engagement_details(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def _set_performance_metrics_status(
-        database: DatabaseClient,
-        collection_name: str,
-        performance_metrics_id: ObjectId,
-        performance_metrics_status: str,
+    database: DatabaseClient,
+    collection_name: str,
+    performance_metrics_id: ObjectId,
+    performance_metrics_status: str,
 ) -> Union[dict, None]:
     """Helper to set performance metrics status.
 
@@ -2385,10 +2385,10 @@ set_deliverability_metrics_transferred_for_report = partial(
 
 
 def _get_all_performance_metrics(
-        database: DatabaseClient,
-        collection_name: str,
-        pending_transfer_for_feedback: bool = False,
-        pending_transfer_for_report: bool = False,
+    database: DatabaseClient,
+    collection_name: str,
+    pending_transfer_for_feedback: bool = False,
+    pending_transfer_for_report: bool = False,
 ) -> Union[list, None]:
     """Helper to retrieve all campaign performance metrics or activity
     depending on delivery platform. Optionally the result can be filtered by
@@ -2458,9 +2458,9 @@ get_all_campaign_activities = partial(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_audience_customers(
-        database: DatabaseClient,
-        delivery_job_id: ObjectId,
-        customer_list: list,
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    customer_list: list,
 ) -> Union[dict, None]:
     """A function to set audience customer list for a delivery job.
 
@@ -2501,8 +2501,8 @@ def set_audience_customers(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audience_customers(
-        database: DatabaseClient,
-        delivery_job_id: ObjectId,
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
 ) -> Optional[Cursor]:
     """A function to fetch all audience customers docs for a delivery job.
 
@@ -2533,9 +2533,9 @@ def get_all_audience_customers(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def _set_performance_metrics_bulk(
-        database: DatabaseClient,
-        collection_name: str,
-        performance_metric_docs: list,
+    database: DatabaseClient,
+    collection_name: str,
+    performance_metric_docs: list,
 ) -> dict:
     """Helper to store bulk campaign performance metrics or activities data
     depending on delivery platform.
@@ -2598,8 +2598,8 @@ set_campaign_activities = partial(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_most_recent_performance_metric_by_delivery_job(
-        database: DatabaseClient,
-        delivery_job_id: ObjectId,
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
 ) -> Union[dict, None]:
     """Retrieve the most recent campaign performance metrics associated with a
     given delivery job ID.
@@ -2627,8 +2627,8 @@ def get_most_recent_performance_metric_by_delivery_job(
     try:
         cursor = list(
             collection.find({db_c.DELIVERY_JOB_ID: delivery_job_id})
-                .sort([(db_c.JOB_END_TIME, -1)])
-                .limit(1)
+            .sort([(db_c.JOB_END_TIME, -1)])
+            .limit(1)
         )
         if len(cursor) > 0:
             return cursor[0]
@@ -2644,9 +2644,9 @@ def get_most_recent_performance_metric_by_delivery_job(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_most_recent_deliverability_metric_by_domain(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
-        domain: str,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    domain: str,
 ) -> Union[list, None]:
     """Retrieve the most recent deliverability metrics associated with a
     given platform ID and domain.
@@ -2678,8 +2678,8 @@ def get_most_recent_deliverability_metric_by_domain(
                     db_c.DOMAIN: domain,
                 }
             )
-                .sort([(db_c.JOB_END_TIME, -1)])
-                .limit(1)
+            .sort([(db_c.JOB_END_TIME, -1)])
+            .limit(1)
         )
         if len(cursor) > 0:
             return cursor[0]
@@ -2695,8 +2695,8 @@ def get_most_recent_deliverability_metric_by_domain(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_most_recent_campaign_activity_by_delivery_job(
-        database: DatabaseClient,
-        delivery_job_id: ObjectId,
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
 ) -> Union[dict, None]:
     """Retrieve the most recent campaign activity event associated with a given
      delivery job ID.
@@ -2724,8 +2724,8 @@ def get_most_recent_campaign_activity_by_delivery_job(
     try:
         cursor = list(
             collection.find({db_c.DELIVERY_JOB_ID: delivery_job_id})
-                .sort([(f"{db_c.EVENT_DETAILS}.{db_c.EVENT_DATE}", -1)])
-                .limit(1)
+            .sort([(f"{db_c.EVENT_DETAILS}.{db_c.EVENT_DATE}", -1)])
+            .limit(1)
         )
         if len(cursor) > 0:
             return cursor[0]
@@ -2741,9 +2741,9 @@ def get_most_recent_campaign_activity_by_delivery_job(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_delivery_platform_doc(
-        database: DatabaseClient,
-        delivery_platform_id: ObjectId,
-        update_dict: dict,
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    update_dict: dict,
 ) -> Union[dict, None]:
     """Update MongoDb document.
 

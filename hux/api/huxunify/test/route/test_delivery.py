@@ -6,6 +6,7 @@ from bson import ObjectId
 
 import huxunifylib.database.constants as db_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
+from huxunifylib.database.collection_management import get_document
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
     get_delivery_platform,
@@ -292,6 +293,41 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_replace_audience_deliver(self):
+        """Test audience with replace_audience flag"""
+
+        audience_id = self.audiences[0][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/"
+                f"{api_c.DELIVER}?{db_c.REPLACE_AUDIENCE}=true"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        engagement_doc = get_document(database=self.database,
+                                      collection=db_c.ENGAGEMENTS_COLLECTION,
+                                      query_filter={})
+        for audience in engagement_doc[db_c.AUDIENCES]:
+            for destination in audience[db_c.DESTINATIONS]:
+                if destination[api_c.ID] == destination_id and audience[api_c.ID]==audience_id:
+                    self.assertTrue(destination.get(db_c.REPLACE_AUDIENCE, False))
+                else:
+                    continue
 
     def test_deliver_all_destination_for_engagement_audience_valid_ids(self):
         """Test delivery of a destination for all audiences in an engagement
@@ -728,7 +764,7 @@ class TestDeliveryRoutes(RouteTestCase):
         self.assertEqual(
             {
                 api_c.MESSAGE: f"Successfully created delivery job(s) for "
-                f"audience ID {audience_id}"
+                               f"audience ID {audience_id}"
             },
             response.json,
         )
