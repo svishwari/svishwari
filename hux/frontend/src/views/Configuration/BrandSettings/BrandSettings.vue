@@ -130,7 +130,7 @@ export default {
       //   existingUsers: "users/getUsers",
       //   requestUsers: "users/getRequestedUsers",
     }),
-    toggleMainSwitch(value) {},
+    toggleMainSwitch() {},
   },
 }
 </script>
