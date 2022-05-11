@@ -9,7 +9,7 @@
                 Customize this client’s brand
               </div>
             </div>
-            <div class="black--text text-body-1">
+            <div class="black--text text-body-1 mt-4">
               Customize this client’s look and feel based on the industry you
               select. This will update the client’s name, homepage, copy, and
               iconography.
@@ -38,13 +38,36 @@
                 </template>
               </tooltip>
               <hux-switch
-                v-model="showAlerts"
+                v-model="showConfiguration"
                 false-color="var(--v-black-lighten4)"
                 width="57px"
-                :switch-labels="switchLabelFullAlerts"
+                :switch-labels="toggleSwitchLabels"
                 class="w-53"
                 @change="toggleMainSwitch($event)"
               />
+            </div>
+            <div v-if="enableSelection" class="black--text text-h6 mt-4">
+              <label class="mb-1">Industry</label>
+              <hux-dropdown
+                :label="newAppDetails['category']"
+                :selected="newAppDetails['category']"
+                :items="categoryOptions"
+                min-width="240"
+                @on-select="onSelectMenuItem"
+              />
+            </div>
+
+            <div v-if="enableSelection" class="black--text text-h6 mt-4">
+              <div v-for="label in labels" :key="label">
+                <label class="mb-1">{{ label }}</label>
+                <hux-dropdown
+                  :label="newAppDetails['category']"
+                  :selected="newAppDetails['category']"
+                  :items="categoryOptions"
+                  min-width="240"
+                  @on-select="onSelectMenuItem"
+                />
+              </div>
             </div>
           </div>
         </v-card>
@@ -73,6 +96,7 @@ import Tooltip from "@/components/common/Tooltip.vue"
 import HuxSwitch from "@/components/common/Switch.vue"
 import HuxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
+import HuxDropdown from "@/components/common/HuxDropdown.vue"
 
 export default {
   name: "BrandSettings",
@@ -82,6 +106,7 @@ export default {
     Tooltip,
     HuxButton,
     HuxFooter,
+    HuxDropdown,
   },
   data() {
     return {
@@ -95,8 +120,8 @@ export default {
           label: "OFF",
         },
       ],
-      showAlerts: true,
-      switchLabelFullAlerts: [
+      showConfiguration: false,
+      toggleSwitchLabels: [
         {
           condition: true,
           label: "ON",
@@ -106,6 +131,19 @@ export default {
           label: "OFF",
         },
       ],
+      newAppDetails: {
+        category: "Select",
+        name: null,
+        url: null,
+      },
+      labels: [
+        "What describes best this client?",
+        "Who is the client’s target audience?",
+        "What does the client wish to track? ",
+      ],
+      categoryOptions: [],
+      enableSelection: false,
+      industrySelected: false,
     }
   },
   computed: {
@@ -130,7 +168,9 @@ export default {
       //   existingUsers: "users/getUsers",
       //   requestUsers: "users/getRequestedUsers",
     }),
-    toggleMainSwitch() {},
+    toggleMainSwitch(value) {
+      this.enableSelection = value
+    },
   },
 }
 </script>
@@ -140,7 +180,7 @@ export default {
   ::v-deep.v-input--selection-controls {
     margin-top: 0px !important;
     padding-top: 0px !important;
-    margin-left: 10px !important;
+    margin-left: 21px !important;
   }
 }
 </style>
