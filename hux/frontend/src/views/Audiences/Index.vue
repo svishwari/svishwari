@@ -721,6 +721,7 @@ export default {
                     key: att,
                     name: attr[1][optionKey][att]["name"],
                     category: attr[0],
+                    optionName: attr[1][optionKey].name,
                   })
                 }
               })
@@ -729,6 +730,7 @@ export default {
                 key: optionKey,
                 name: attr[1][optionKey]["name"],
                 category: attr[0],
+                optionName: attr[1][optionKey].name,
               })
             }
           })
