@@ -662,13 +662,17 @@ export default {
     }
   }
 }
-::v-deep
-  .v-treeview
-  > .v-treeview-node
-  > .v-treeview-node__root
-  > .v-treeview-node__content
-  > .v-treeview-node__label
-  > span {
-  color: var(--v-black-lighten4) !important;
+::v-deep .v-treeview {
+  & > .v-treeview-node {
+    & > .v-treeview-node__root {
+      & > .v-treeview-node__content {
+        & > .v-treeview-node__label {
+          & > span {
+            color: var(--v-black-lighten4) !important;
+          }
+        }
+      }
+    }
+  }
 }
 </style>
