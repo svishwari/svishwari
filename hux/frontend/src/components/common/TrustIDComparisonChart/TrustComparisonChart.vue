@@ -59,7 +59,7 @@ export default {
     return {
       show: false,
       isEmptyState: false,
-      colors: ["#0076A8", "#A0DCFF", "#00A3E0", "#E3E48D", "#007680"],
+      colors: ["#A0DCFF", "#00A3E0", "#E3E48D", "#007680", "#9DD4CF"],
       attributes: [
         "trust_id",
         "humanity",
@@ -132,9 +132,13 @@ export default {
         this.sourceData = this.segmentScores.find(
           (data) => data.segment_type == "composite & factor scores"
         ).segments
-        this.sourceData.forEach(
-          (data, index) => (data.color = this.colors[index])
-        )
+        this.sourceData.forEach((data, index) => {
+          if (data.default) {
+            data.color = "#0076A8"
+          } else {
+            data.color = this.colors[index]
+          }
+        })
       } else {
         this.isEmptyState = true
       }

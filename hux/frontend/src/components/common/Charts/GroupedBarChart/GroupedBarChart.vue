@@ -228,6 +228,9 @@ export default {
           case 5:
             barWidth = 24
             break
+          case 6:
+            barWidth = 24
+            break
         }
         return xScale.bandwidth() < barWidth ? xScale.bandwidth() : barWidth
       }
