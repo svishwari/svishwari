@@ -1,4 +1,4 @@
-"""Module for Azure cloud operations"""
+"""Module for Azure cloud operations."""
 import logging
 from typing import Tuple
 from pathlib import Path
@@ -6,7 +6,7 @@ from pathlib import Path
 from azure.batch import BatchServiceClient
 from azure.batch.batch_auth import SharedKeyCredentials
 from azure.batch.models import BatchErrorException
-from azure.identity import DefaultAzureCredential
+from azure.identity import ClientSecretCredential
 from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import ContainerClient
 
@@ -19,13 +19,15 @@ from huxunify.api import constants as api_c
 
 
 class AzureClient(CloudClient):
-    """Class for Azure cloud operations"""
+    """Class for Azure cloud operations."""
 
     provider = "azure"
 
     def __init__(self, config: Config = get_config()):
-        """Instantiate the Azure client class"""
+        """Instantiate the Azure client class."""
+
         super().__init__(config)
+
         self.vault_url = (
             f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
         )
@@ -33,6 +35,29 @@ class AzureClient(CloudClient):
         self.storage_connection_string = (
             self.config.AZURE_STORAGE_CONNECTION_STRING
         )
+
+    def get_secret_client(self) -> SecretClient:
+        """Get Azure Secret client.
+
+        Returns:
+            SecretClient: Azure secret client.
+
+        Raises:
+            Exception: Exception that will be raised if the operation fails.
+        """
+
+        try:
+            return SecretClient(
+                vault_url=self.vault_url,
+                credential=ClientSecretCredential(
+                    tenant_id=self.config.AZURE_TENANT_ID,
+                    client_id=self.config.AZURE_CLIENT_ID,
+                    client_secret=self.config.AZURE_CLIENT_SECRET,
+                ),
+            )
+        except Exception as exc:
+            logging.error("Failed to initialise Azure secret client.")
+            raise exc
 
     def get_secret(self, secret_name: str, **kwargs) -> str:
         """Retrieve secret from cloud.
@@ -45,14 +70,13 @@ class AzureClient(CloudClient):
             str: The value of the secret.
 
         Raises:
-            Exception: Exception that will be raised if the operation fails
+            Exception: Exception that will be raised if the operation fails.
         """
+
         try:
-            credential = DefaultAzureCredential()
-            client = SecretClient(
-                vault_url=self.vault_url, credential=credential
-            )
-            return client.get_secret(secret_name).value
+            # gets the latest version of the secret if no version parameter is
+            # mentioned
+            return self.get_secret_client().get_secret(secret_name).value
         except Exception as exc:
             logging.error(
                 "Failed to get %s from Azure key vault.", secret_name
@@ -67,17 +91,14 @@ class AzureClient(CloudClient):
             value (str): The value of the secret.
             **kwargs (dict): function keyword arguments.
 
-        Returns:
-
         Raises:
-            Exception: Exception that will be raised if the operation fails
+            Exception: Exception that will be raised if the operation fails.
         """
+
         try:
-            credential = DefaultAzureCredential()
-            client = SecretClient(
-                vault_url=self.vault_url, credential=credential
-            )
-            client.set_secret(name=secret_name, value=value)
+            # creates a new secret if a secret with this secret name doesn't
+            # exist already, sets a new latest version of secret otherwise
+            self.get_secret_client().set_secret(name=secret_name, value=value)
         except Exception as exc:
             logging.error("Failed to set %s in Azure key vault.", secret_name)
             raise exc
@@ -86,7 +107,7 @@ class AzureClient(CloudClient):
     def upload_file(
         self, file_name: str, file_type: str, user_name: str, **kwargs
     ) -> bool:
-        """Uploads a file to Azure Blob
+        """Uploads a file to Azure Blob.
 
         Args:
             file_name (str): name of the file to upload.
@@ -95,9 +116,9 @@ class AzureClient(CloudClient):
             **kwargs (dict): function keyword arguments.
 
         Returns:
-            bool: bool indicator if the upload was successful
-
+            bool: bool indicator if the upload was successful.
         """
+
         container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
         connection_string = self.config.AZURE_STORAGE_CONNECTION_STRING
 
@@ -149,8 +170,9 @@ class AzureClient(CloudClient):
             bool: indication that download was successful.
 
         Raises:
-            NotImplementedError: Error if function is not implemented
+            NotImplementedError: Error if function is not implemented.
         """
+
         container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
         connection_string = self.config.AZURE_STORAGE_CONNECTION_STRING
 
@@ -191,7 +213,7 @@ class AzureClient(CloudClient):
         """Checks the health of the Azure batch service.
 
         Returns:
-            Tuple[bool, str]: Returns bool for health status and message
+            Tuple[bool, str]: Returns bool for health status and message.
         """
 
         credentials = SharedKeyCredentials(
@@ -215,8 +237,9 @@ class AzureClient(CloudClient):
         """Checks the health of the azure blob storage.
 
         Returns:
-            Tuple[bool, str]: Returns bool for health status and message
+            Tuple[bool, str]: Returns bool for health status and message.
         """
+
         container_client = ContainerClient.from_connection_string(
             self.storage_connection_string, self.storage_container_name
         )
@@ -237,16 +260,13 @@ class AzureClient(CloudClient):
         """Checks the health of the Azure key vault.
 
         Returns:
-            Tuple[bool, str]: Returns bool for health status and message
+            Tuple[bool, str]: Returns bool for health status and message.
         """
+
         secret_name = "<secret name here>"
 
         try:
-            credential = DefaultAzureCredential()
-            client = SecretClient(
-                vault_url=self.vault_url, credential=credential
-            )
-            client.get_secret(secret_name)
+            self.get_secret_client().get_secret(secret_name)
             return True, "Azure key vault available."
         except Exception as exc:
             logging.error(
