@@ -64,12 +64,12 @@ class Config:
     )
     # TODO Remove when we have separate configs for environments.
     MONGO_DB_CONFIG = {
-            api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
-            api_c.HOST: MONGO_DB_HOST,
-            api_c.PORT: MONGO_DB_PORT,
-            api_c.USERNAME: MONGO_DB_USERNAME,
-            api_c.PASSWORD: MONGO_DB_PASSWORD,
-        }
+        api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
+        api_c.HOST: MONGO_DB_HOST,
+        api_c.PORT: MONGO_DB_PORT,
+        api_c.USERNAME: MONGO_DB_USERNAME,
+        api_c.PASSWORD: MONGO_DB_PASSWORD,
+    }
     if CLOUD_PROVIDER != api_c.AZURE:
         MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
 
@@ -162,23 +162,17 @@ class DevelopmentConfig(Config):
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
 
     # TODO Remove when we have separate configs for environments.
-    if Config.CLOUD_PROVIDER == api_c.AZURE:
-        MONGO_DB_CONFIG = {
-            api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
-            api_c.HOST: Config.MONGO_DB_HOST,
-            api_c.PORT: Config.MONGO_DB_PORT,
-            api_c.USERNAME: MONGO_DB_USERNAME,
-            api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
-        }
-    else:
-        MONGO_DB_CONFIG = {
-            api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
-            api_c.HOST: Config.MONGO_DB_HOST,
-            api_c.PORT: Config.MONGO_DB_PORT,
-            api_c.USERNAME: MONGO_DB_USERNAME,
-            api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
-            api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
-        }
+    MONGO_DB_CONFIG = {
+        api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
+        api_c.HOST: Config.MONGO_DB_HOST,
+        api_c.PORT: Config.MONGO_DB_PORT,
+        api_c.USERNAME: MONGO_DB_USERNAME,
+        api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
+        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
+    }
+
+    if Config.CLOUD_PROVIDER != api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
