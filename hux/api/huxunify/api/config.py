@@ -171,7 +171,6 @@ class DevelopmentConfig(Config):
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
-        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
 
     if Config.CLOUD_PROVIDER != api_c.AZURE:
