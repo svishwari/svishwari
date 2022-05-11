@@ -568,13 +568,17 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     )
 
     # check if the user is in the database
+    logger.info("Getting database client.")
     database = get_db_client()
+    logger.info("Successfully got database client.")
+
     user = get_user(database, user_info[api_c.OKTA_ID_SUB])
 
     if user is None:
         # since a valid okta_id is extracted from the okta issuer, use the user
         # info and create a new user if no corresponding user record matching
         # the okta_id is found in DB
+        logger.info("Setting user in database.")
         user = set_user(
             database=database,
             okta_id=user_info[api_c.OKTA_ID_SUB],
@@ -582,6 +586,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             display_name=user_info[api_c.NAME],
             role=user_info.get(api_c.ROLE, db_c.USER_ROLE_VIEWER),
         )
+        logger.info("Successfully set user in database.")
 
         # return NOT_FOUND if user is still none
         if user is None:
