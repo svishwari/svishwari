@@ -393,6 +393,7 @@
       v-model="selectedDestinations"
       close-on-action
       :toggle="showSelectDestinationsDrawer"
+      :engagement-id="engagementId"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
       @onAddDestination="triggerAttachDestination($event)"
@@ -1116,11 +1117,13 @@ export default {
       await this.loadAudienceInsights()
     },
     async triggerRemoveDestination(event) {
+      console.log("event", event.destination)
       this.deleteActionData = {
+        engagementId: event.destination.engagementId,
         audienceId: this.audienceId,
         data: { id: event.destination.id },
       }
-      await this.detachAudienceDestination(this.deleteActionData)
+      await this.removeAudienceDestination(this.deleteActionData)
 
       await this.loadAudienceInsights()
     },

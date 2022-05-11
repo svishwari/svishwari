@@ -207,4 +207,7 @@ export default {
     padding: 14px 24px 14px 24px !important;
   }
 }
+::v-deep.hux-filters-drawer .footer {
+  height: 70px !important;
+}
 </style>
