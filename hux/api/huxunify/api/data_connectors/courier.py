@@ -624,6 +624,7 @@ def get_destination_config(
     destination: dict,
     engagement_id: ObjectId,
     username: str,
+    replace_audience: bool,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
@@ -634,6 +635,7 @@ def get_destination_config(
         engagement_id (ObjectId): The ID of the engagement.
         username (str): Username of user requesting to get the destination
             config.
+        replace_audience(bool): Audience replacement flag
 
     Returns:
         DestinationBatchJob: Destination batch job object.
@@ -685,6 +687,7 @@ def get_destination_config(
         destination_id,
         [],
         username,
+        replace_audience,
         engagement_id,
         destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
     )

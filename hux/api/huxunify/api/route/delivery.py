@@ -22,6 +22,7 @@ from huxunifylib.database.engagement_management import (
 from huxunifylib.database.engagement_audience_management import (
     set_engagement_audience_destination_schedule,
     set_engagement_audience_schedule,
+    set_replace_audience_flag,
 )
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.orchestration_management import (
@@ -37,7 +38,7 @@ from huxunify.api.route.decorators import (
     validate_destination,
     requires_access_levels,
 )
-from huxunify.api.route.utils import get_db_client, get_config
+from huxunify.api.route.utils import get_db_client, get_config, Validation
 from huxunify.api.schema.orchestration import (
     EngagementDeliveryHistorySchema,
     AudienceDeliveryHistorySchema,
@@ -56,6 +57,7 @@ from huxunify.api.data_connectors.courier import (
 )
 
 delivery_bp = Blueprint("/", import_name=__name__)
+
 
 # pylint: disable=inconsistent-return-statements
 @delivery_bp.before_request
@@ -108,6 +110,14 @@ class EngagementDeliverDestinationView(SwaggerView):
             "in": "path",
             "required": True,
             "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": db_c.REPLACE_AUDIENCE,
+            "description": "Audience Replace Flag",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "example": False,
         },
     ]
 
@@ -163,6 +173,10 @@ class EngagementDeliverDestinationView(SwaggerView):
         target_audience = get_audience(database, audience_id)
         target_destination = get_delivery_platform(database, destination_id)
 
+        replace_audience = Validation.validate_bool(
+            request.args.get(db_c.REPLACE_AUDIENCE)
+        )
+
         # validate that the destination ID is attached to the audience
         valid_destination = False
         for audience in engagement[db_c.AUDIENCES]:
@@ -196,7 +210,11 @@ class EngagementDeliverDestinationView(SwaggerView):
             ]:
                 continue
             batch_destination = get_destination_config(
-                database, *pair, engagement_id, username=user[api_c.USER_NAME]
+                database,
+                *pair,
+                engagement_id,
+                username=user[api_c.USER_NAME],
+                replace_audience=replace_audience,
             )
             batch_destination.register()
             batch_destination.submit()
@@ -222,6 +240,16 @@ class EngagementDeliverDestinationView(SwaggerView):
             ),
             category=db_c.NOTIFICATION_CATEGORY_DELIVERY,
             username=user[api_c.USER_NAME],
+        )
+
+        # Toggle replace audience flag in engaged-audience-destination
+        set_replace_audience_flag(
+            database=database,
+            engagement_id=engagement_id,
+            audience_id=audience_id,
+            destination_id=destination_id,
+            replace_audience=replace_audience,
+            user_name=user[db_c.USER_NAME],
         )
         return {
             "message": f"Successfully created delivery job(s) "
