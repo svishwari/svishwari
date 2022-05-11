@@ -49,23 +49,27 @@
             <div v-if="enableSelection" class="black--text text-h6 mt-4">
               <label class="mb-1">Industry</label>
               <hux-dropdown
-                :label="newAppDetails['category']"
-                :selected="newAppDetails['category']"
-                :items="categoryOptions"
-                min-width="240"
+                :label="currentIndustrySelection"
+                :selected="currentIndustrySelection"
+                :items="categoryOptions['industryOptions']"
+                min-width="300"
                 @on-select="onSelectMenuItem"
               />
             </div>
 
-            <div v-if="enableSelection" class="black--text text-h6 mt-4">
-              <div v-for="label in labels" :key="label">
-                <label class="mb-1">{{ label }}</label>
+            <div v-if="showSubCategories" class="black--text text-h6 mt-4">
+              <div v-for="option in labelOptions" :key="option.key">
+                <label class="mb-1">{{ option.label }}</label>
                 <hux-dropdown
-                  :label="newAppDetails['category']"
-                  :selected="newAppDetails['category']"
-                  :items="categoryOptions"
-                  min-width="240"
-                  @on-select="onSelectMenuItem"
+                  :label="finalSelection[option.key]"
+                  :selected="finalSelection[option.key]"
+                  :items="
+                    categoryOptions[option.key][
+                      currentIndustrySelection.toLowerCase()
+                    ]
+                  "
+                  min-width="300"
+                  @on-select="onSelectSubMenuItem($event, option.key)"
                 />
               </div>
             </div>
@@ -81,6 +85,7 @@
           is-tile
           variant="primary base"
           data-e2e="action-audience"
+          :is-disabled="isDisabled"
         >
           Update
         </hux-button>
@@ -97,6 +102,7 @@ import HuxSwitch from "@/components/common/Switch.vue"
 import HuxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import HuxDropdown from "@/components/common/HuxDropdown.vue"
+import categories from "./demo_config_options.json"
 
 export default {
   name: "BrandSettings",
@@ -136,14 +142,30 @@ export default {
         name: null,
         url: null,
       },
-      labels: [
-        "What describes best this client?",
-        "Who is the client’s target audience?",
-        "What does the client wish to track? ",
+      labelOptions: [
+        {
+          label: "What describes best this client?",
+          key: "retailOptions",
+        },
+        {
+          label: "Who is the client’s target audience?",
+          key: "customerOptions",
+        },
+        {
+          label: "What does the client wish to track?",
+          key: "conversionOptions",
+        },
       ],
-      categoryOptions: [],
+      categoryOptions: categories,
       enableSelection: false,
       industrySelected: false,
+      showSubCategories: false,
+      currentIndustrySelection: "Select",
+      finalSelection: {
+        retailOptions: "Select",
+        customerOptions: "Select",
+        conversionOptions: "Select",
+      },
     }
   },
   computed: {
@@ -170,6 +192,29 @@ export default {
     }),
     toggleMainSwitch(value) {
       this.enableSelection = value
+    },
+    onSelectMenuItem(item) {
+      if (item.name !== "Select") {
+        this.currentIndustrySelection = item.name
+        this.showSubCategories = true
+        this.finalSelection = {
+          retailOptions: "Select",
+          customerOptions: "Select",
+          conversionOptions: "Select",
+        }
+      }
+    },
+    onSelectSubMenuItem(value, item) {
+      this.finalSelection[item] = value.name
+    },
+    isDisabled() {
+      if (
+        this.finalSelection.retailOptions !== "Select" &&
+        this.finalSelection.customerOptions !== "Select" &&
+        this.finalSelection.conversionOptions !== "Select"
+      ) {
+        return false
+      } else return true
     },
   },
 }
