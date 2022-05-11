@@ -1,4 +1,4 @@
-"""Purpose of this file is to test applications endpoints."""
+"""Purpose of this file is to test core application checks."""
 from http import HTTPStatus
 from unittest import TestCase
 import pytest
