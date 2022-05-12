@@ -53,9 +53,7 @@
             ></v-checkbox>
           </div>
           <br />
-          <div class="text-body-1 black--text text--lighten-4 pb-2">
-            EVENTS
-          </div>
+          <div class="text-body-1 black--text text--lighten-4 pb-2">EVENTS</div>
           <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
               v-if="data.category == 'general' && data.optionName == 'Events'"
