@@ -625,6 +625,348 @@ applications_constants = [
 ]
 
 
+# Client Projects List
+rbac_matrix = {
+    "components": {
+        "alerts": {
+            "label": "Alerts",
+            "actions":[
+                {
+                    "type": "get_all",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "delete",
+                    "admin": True,
+                    "editor": False,
+                    "viewer": False,
+                },
+            ],
+        },
+        "destinations": {
+            "label": "Destinations",
+            "actions": [
+                {
+                    "type": "get_constants",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "validate",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_all",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_data_extensions",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "create_data_extensions",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "set_authentication_credentials",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "get_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "request_unsupported_destination",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "create_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "delete",
+                    "admin": True,
+                    "editor": False,
+                    "viewer": False,
+                },
+            ],
+        },
+        "audience": {
+            "label": "Audience",
+            "actions": [
+                {
+                    "type": "get_rules",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "create_lookalike",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "edit_lookalike",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "get_all",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "create",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "get_insights",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_countries",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_states",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_cities",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "download",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "get_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "update_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "delete_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+            ]
+        },
+        "user": {
+            "label": "User",
+            "actions": [
+                {
+                    "type": "contact_us",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_profile",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_all",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "update_one",
+                    "admin": True,
+                    "editor": False,
+                    "viewer": False,
+                },
+                {
+                    "type": "create_favorite",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "delete_favorite",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+            ]
+        },
+        "data_source": {
+            "label": "Data Source",
+            "actions": [
+                {
+                    "type": "get_all",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "request_new",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "delete_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "request_existing",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "get_datafeeds",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "update_list_of_data_sources",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+            ]
+        },
+        "engagements": {
+            "label": "Engagements",
+            "actions": [
+                {
+                    "type": "get_all",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "create_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "get_ad_metrics",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "get_email_metrics",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "download_email_metrics",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "add_destination_to_engagement",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "remove_destination_from_engagement",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "add_audience_to_engagement",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "remove_audience_from_engagement",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },                {
+                    "type": "get_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": True,
+                },
+                {
+                    "type": "update_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+                {
+                    "type": "delete_one",
+                    "admin": True,
+                    "editor": True,
+                    "viewer": False,
+                },
+            ]
+        }
+    }
+}
+
+
 def drop_collections(database: MongoClient) -> None:
     """Drop collections for writing.
 

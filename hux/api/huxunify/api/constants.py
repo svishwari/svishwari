@@ -972,6 +972,7 @@ FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
 RESET = "reset"
+RBAC_MATRIX = "rbac_matrix"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
