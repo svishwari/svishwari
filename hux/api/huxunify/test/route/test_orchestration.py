@@ -209,12 +209,12 @@ class OrchestrationRouteTest(RouteTestCase):
 
         self.delivery_jobs = [
             set_delivery_job(
-                self.database,
-                self.audiences[0][db_c.ID],
-                self.destinations[0][db_c.ID],
-                [],
-                self.user_name,
-                ObjectId(engagement_id),
+                database=self.database,
+                audience_id=self.audiences[0][db_c.ID],
+                delivery_platform_id=self.destinations[0][db_c.ID],
+                delivery_platform_generic_campaigns=[],
+                username=self.user_name,
+                engagement_id=ObjectId(engagement_id),
             )
             for engagement_id in self.engagement_ids
         ]
