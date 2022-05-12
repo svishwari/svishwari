@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use,too-many-lines,unused-argument
+# pylint: disable=no-self-use,too-many-lines,unused-argument,too-many-locals
 """Paths for delivery API."""
 import asyncio
 from http import HTTPStatus
