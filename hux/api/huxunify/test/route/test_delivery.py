@@ -319,13 +319,20 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        engagement_doc = get_document(database=self.database,
-                                      collection=db_c.ENGAGEMENTS_COLLECTION,
-                                      query_filter={})
+        engagement_doc = get_document(
+            database=self.database,
+            collection=db_c.ENGAGEMENTS_COLLECTION,
+            query_filter={},
+        )
         for audience in engagement_doc[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
-                if destination[api_c.ID] == destination_id and audience[api_c.ID]==audience_id:
-                    self.assertTrue(destination.get(db_c.REPLACE_AUDIENCE, False))
+                if (
+                    destination[api_c.ID] == destination_id
+                    and audience[api_c.ID] == audience_id
+                ):
+                    self.assertTrue(
+                        destination.get(db_c.REPLACE_AUDIENCE, False)
+                    )
                 else:
                     continue
 
@@ -764,7 +771,7 @@ class TestDeliveryRoutes(RouteTestCase):
         self.assertEqual(
             {
                 api_c.MESSAGE: f"Successfully created delivery job(s) for "
-                               f"audience ID {audience_id}"
+                f"audience ID {audience_id}"
             },
             response.json,
         )
