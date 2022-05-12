@@ -198,8 +198,8 @@ def set_replace_audience_flag(
     destination_id: ObjectId,
     replace_audience: bool,
     user_name: str,
-):
-    """
+) -> dict:
+    """Method for toggling replace_audience flag
 
     Args:
         database(DatabaseClient): A database client
@@ -210,7 +210,7 @@ def set_replace_audience_flag(
         user_name(str): User name
 
     Returns:
-
+        dict: Updated Engagement object
     """
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION

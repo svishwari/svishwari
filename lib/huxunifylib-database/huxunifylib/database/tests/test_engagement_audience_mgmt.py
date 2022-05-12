@@ -45,7 +45,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
 
         self.audience_id = ObjectId()
         self.engagement_id = (
-            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.ENGAGEMENTS_COLLECTION
+            ]
             .insert_one(
                 {
                     "name": "arkells",
@@ -59,7 +61,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
                     "audiences": [
                         {
                             "id": self.audience_id,
-                            "destinations": [{"id": self.destination[db_c.ID]}],
+                            "destinations": [
+                                {"id": self.destination[db_c.ID]}
+                            ],
                         }
                     ],
                 }
@@ -338,7 +342,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
     def test_get_all_engagement_audience_deliveries(self):
         """Test get all deliveries for engagement and audience pairs."""
 
-        audiences = [self.generate_audience_delivery_jobs(i) for i in range(11)]
+        audiences = [
+            self.generate_audience_delivery_jobs(i) for i in range(11)
+        ]
 
         # get all audiences and deliveries
         audience_deliveries = eam.get_all_engagement_audience_deliveries(
@@ -365,7 +371,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
                     self.destination[db_c.DELIVERY_PLATFORM_NAME],
                 )
                 self.assertIn(db_c.UPDATE_TIME, delivery)
-                self.assertEqual(delivery[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING)
+                self.assertEqual(
+                    delivery[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING
+                )
 
     def test_get_all_audience_engagement_id_pairs(self):
         """Test get all get_all_audience_engagement_id_pairs."""
@@ -399,7 +407,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         self.assertEqual(4, len(recent_deliveries))
 
         for delivery in recent_deliveries:
-            self.assertEqual(db_c.AUDIENCE_STATUS_DELIVERING, delivery.get(db_c.STATUS))
+            self.assertEqual(
+                db_c.AUDIENCE_STATUS_DELIVERING, delivery.get(db_c.STATUS)
+            )
 
     def test_align_audience_engagement_deliveries(self):
         """Test get all align_audience_engagement_deliveries."""
