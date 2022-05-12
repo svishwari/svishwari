@@ -17,7 +17,7 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.collection_management import (
     create_document,
 )
-from huxunifylib.database.data_management import set_constant, get_constant
+from huxunifylib.database.data_management import set_constant
 from pymongo import MongoClient
 
 from database.share import get_mongo_client

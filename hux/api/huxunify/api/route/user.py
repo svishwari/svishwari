@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use,disable=unused-argument
+# pylint: disable=no-self-use,unused-argument,too-many-lines
 """Paths for the User API."""
 import datetime
 import random
