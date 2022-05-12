@@ -17,6 +17,7 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.collection_management import (
     create_document,
 )
+from huxunifylib.database.data_management import set_constant, get_constant
 from pymongo import MongoClient
 
 from database.share import get_mongo_client
@@ -627,343 +628,605 @@ applications_constants = [
 
 # Client Projects List
 rbac_matrix = {
-    "components": {
-        "alerts": {
-            "label": "Alerts",
-            "actions":[
-                {
-                    "type": "get_all",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "delete",
-                    "admin": True,
-                    "editor": False,
-                    "viewer": False,
-                },
-            ],
-        },
-        "destinations": {
-            "label": "Destinations",
-            "actions": [
-                {
-                    "type": "get_constants",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "validate",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_all",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_data_extensions",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "create_data_extensions",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "set_authentication_credentials",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "get_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "request_unsupported_destination",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "create_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "delete",
-                    "admin": True,
-                    "editor": False,
-                    "viewer": False,
-                },
-            ],
-        },
-        "audience": {
-            "label": "Audience",
-            "actions": [
-                {
-                    "type": "get_rules",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "create_lookalike",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "edit_lookalike",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "get_all",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "create",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "get_insights",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_countries",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_states",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_cities",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "download",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "get_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "update_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "delete_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-            ]
-        },
-        "user": {
-            "label": "User",
-            "actions": [
-                {
-                    "type": "contact_us",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_profile",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_all",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "update_one",
-                    "admin": True,
-                    "editor": False,
-                    "viewer": False,
-                },
-                {
-                    "type": "create_favorite",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "delete_favorite",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-            ]
-        },
-        "data_source": {
-            "label": "Data Source",
-            "actions": [
-                {
-                    "type": "get_all",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "request_new",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "delete_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "request_existing",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "get_datafeeds",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "update_list_of_data_sources",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-            ]
-        },
-        "engagements": {
-            "label": "Engagements",
-            "actions": [
-                {
-                    "type": "get_all",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "create_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "get_ad_metrics",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "get_email_metrics",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "download_email_metrics",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "add_destination_to_engagement",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "remove_destination_from_engagement",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "add_audience_to_engagement",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "remove_audience_from_engagement",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },                {
-                    "type": "get_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": True,
-                },
-                {
-                    "type": "update_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-                {
-                    "type": "delete_one",
-                    "admin": True,
-                    "editor": True,
-                    "viewer": False,
-                },
-            ]
+    "constant": "rbac_matrix",
+    "value": {
+        "components": {
+            "alerts": {
+                "label": "Alerts",
+                "actions": [
+                    {
+                        "type": "get_all",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "delete",
+                        "admin": True,
+                        "editor": False,
+                        "viewer": False,
+                    },
+                ],
+            },
+            "destinations": {
+                "label": "Destinations",
+                "actions": [
+                    {
+                        "type": "get_constants",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "validate",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_all",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_data_extensions",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "create_data_extensions",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "set_authentication_credentials",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "request_unsupported_destination",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "create_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "delete",
+                        "admin": True,
+                        "editor": False,
+                        "viewer": False,
+                    },
+                ],
+            },
+            "audience": {
+                "label": "Audience",
+                "actions": [
+                    {
+                        "type": "get_rules",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "create_lookalike",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "edit_lookalike",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_all",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "create",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_insights",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_countries",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_states",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_cities",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "download",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "update_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "delete_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                ],
+            },
+            "user": {
+                "label": "User",
+                "actions": [
+                    {
+                        "type": "contact_us",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_profile",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_all",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "update_one",
+                        "admin": True,
+                        "editor": False,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "create_favorite",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "delete_favorite",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                ],
+            },
+            "data_source": {
+                "label": "Data Source",
+                "actions": [
+                    {
+                        "type": "get_all",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "request_new",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "delete_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "request_existing",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_datafeeds",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "update_list_of_data_sources",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                ],
+            },
+            "engagements": {
+                "label": "Engagements",
+                "actions": [
+                    {
+                        "type": "get_all",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "create_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_ad_metrics",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_email_metrics",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "download_email_metrics",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "add_destination_to_engagement",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "remove_destination_from_engagement",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "add_audience_to_engagement",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "remove_audience_from_engagement",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "update_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "delete_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                ],
+            },
+            "models": {
+                "label": "Models",
+                "actions": [
+                    {
+                        "type": "get_all",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "request_one",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_features",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_versions_history",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_overview",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_top_features",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_drift",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_lift",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                ],
+            },
+            "campaigns": {
+                "label": "Campaigns",
+                "actions": [
+                    {
+                        "type": "get_list_of_campaigns",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "update_campaign_for_engagement",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_campaign_mappings",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                ],
+            },
+            "delivery": {
+                "label": "Delivery",
+                "actions": [
+                    {
+                        "type": "schedule_delivery",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "delete_delivery",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "deliver",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "deliver_audience",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "deliver_engagement",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": False,
+                    },
+                    {
+                        "type": "get_engagement_history",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_audience_history",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                ],
+            },
+            "customers": {
+                "label": "Customers",
+                "actions": [
+                    {
+                        "type": "country_insights",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "revenue_insights",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "state_insights",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "city_insights",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "total_customer_insights",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "demographic_insights",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "customer_data_overview",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "list_of_customers",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "events_for_customer",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_customer_profile",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "filtered_customer_data_overview",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                ],
+            },
+            "idr": {
+                "label": "IDR",
+                "actions": [
+                    {
+                        "type": "matching_trends",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "get_single_datafeed",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "data_feeds",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "idr_overview",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                ],
+            },
+            "trustid": {
+                "label": "Trust ID",
+                "actions": [
+                    {
+                        "type": "trustid_overview",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "trustid_comparison",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "trustid_attributes",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "trustid_add_segment",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                    {
+                        "type": "trustid_user_filters",
+                        "admin": True,
+                        "editor": True,
+                        "viewer": True,
+                    },
+                ],
+            },
         }
-    }
+    },
 }
 
 
@@ -1162,6 +1425,31 @@ def insert_applications(database: MongoClient, applications: list) -> None:
     logging.info("Pre-populate applications complete.")
 
 
+def insert_constants(database: MongoClient, constants: list) -> None:
+    """Insert data into constants collection.
+
+    Args:
+        database (MongoClient): MongoDB Client.
+        constants (List): List of constants.
+    """
+
+    logging.info("Pre-populating constants.")
+
+    for constant in constants:
+        result_id = set_constant(
+            database,
+            constant[db_c.CONSTANT_NAME],
+            constant[db_c.CONSTANT_VALUE],
+        )
+        logging.info(
+            "Added %s, %s.",
+            constant[db_c.CONSTANT_NAME],
+            result_id,
+        )
+
+    logging.info("Pre-populate constants complete.")
+
+
 if __name__ == "__main__":
     # Initiate Data Base client
     db_client = get_mongo_client()
@@ -1172,4 +1460,5 @@ if __name__ == "__main__":
     insert_models(db_client, models_list)
     insert_client_projects(db_client, client_projects_list)
     insert_applications(db_client, applications_constants)
+    insert_constants(db_client, [rbac_matrix])
     logging.info("Pre-populate database procedure complete.")
