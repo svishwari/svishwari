@@ -1715,6 +1715,8 @@ ALERT_SAMPLE_RESPONSE = {
 # Trust ID
 TRUST_ID_ENDPOINT = "/trust_id"
 TRUST_ID_TAG = "trust-id"
+DEFAULT = "default"
+DEFAULT_TRUST_SEGMENT = "All Customers"
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"
