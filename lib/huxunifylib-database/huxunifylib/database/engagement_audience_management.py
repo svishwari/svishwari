@@ -248,18 +248,12 @@ def set_replace_audience_flag(
     if not change:
         return {}
 
-    # replace_one
-    collection.replace_one(
+    return collection.update(
         {
             db_c.ID: engagement_id,
         },
-        engagement_doc,
-    )
-
-    return collection.find_one(
-        {
-            db_c.ID: engagement_id,
-        }
+        {"$set": engagement_doc},
+        upsert=True,
     )
 
 

@@ -333,8 +333,6 @@ class TestDeliveryRoutes(RouteTestCase):
                     self.assertTrue(
                         destination.get(db_c.REPLACE_AUDIENCE, False)
                     )
-                else:
-                    continue
 
     def test_deliver_all_destination_for_engagement_audience_valid_ids(self):
         """Test delivery of a destination for all audiences in an engagement
