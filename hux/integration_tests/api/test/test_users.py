@@ -1,4 +1,4 @@
-"""Purpose of this file is to test user endpoints"""
+"""Purpose of this file is to test user endpoints."""
 from http import HTTPStatus
 from unittest import TestCase
 import pytest
@@ -6,13 +6,13 @@ import requests
 
 
 class TestUsers(TestCase):
-    """User endpoints test class"""
+    """User endpoints test class."""
 
     USERS = "users"
     COLLECTION = "users"
 
     def setUp(self) -> None:
-        """Setup for user tests"""
+        """Setup for user tests."""
 
         response = requests.get(
             f"{pytest.API_URL}/{self.USERS}/profile",
@@ -67,6 +67,7 @@ class TestUsers(TestCase):
                 },
             }
         }
+
         requests.put(
             f"{pytest.API_URL}/{self.USERS}/preferences",
             json=alert_preferences_all_off,
@@ -108,33 +109,40 @@ class TestUsers(TestCase):
 
     def test_retrieve_requested_users(self):
         """Test retrieve requested users."""
+
         response = requests.get(
             f"{pytest.API_URL}/{self.USERS}/requested_users",
             headers=pytest.HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), list)
 
     def test_retrieve_all_users(self):
-        """Test retrieve all users"""
+        """Test retrieve all users."""
+
         response = requests.get(
             f"{pytest.API_URL}/{self.USERS}",
             headers=pytest.HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), list)
 
     def test_retrieve_user_profile(self):
-        """Test retrieve the user profile"""
+        """Test retrieve the user profile."""
+
         response = requests.get(
             f"{pytest.API_URL}/{self.USERS}/profile",
             headers=pytest.HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
     def test_update_user_preferences(self):
-        """Test update user preferences"""
+        """Test update user preferences."""
+
         alert_preferences = {
             "alerts": {
                 "data_management": {
@@ -183,9 +191,11 @@ class TestUsers(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
     def test_update_user(self):
-        """Test update user"""
+        """Test update user."""
+
         new_config = {"dashboard_configuration": {"test_config_field": 1}}
 
         response = requests.patch(
@@ -195,9 +205,10 @@ class TestUsers(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
     def test_create_and_delete_a_user_favorite(self):
-        """Test create and delete user favorite"""
+        """Test create and delete user favorite."""
 
         # retrieve all audiences
         response = requests.get(
@@ -206,6 +217,7 @@ class TestUsers(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
         # get the first audience ID
         audience_id = response.json()["audiences"][0]["id"]
@@ -216,6 +228,7 @@ class TestUsers(TestCase):
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
         response = requests.delete(
             f"{pytest.API_URL}/{self.USERS}/audiences/{audience_id}/favorite",
@@ -223,12 +236,26 @@ class TestUsers(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
     def test_retrieve_user_requested_tickets(self):
-        """Test retrieve user requested tickets"""
+        """Test retrieve user requested tickets."""
+
         response = requests.get(
             f"{pytest.API_URL}/{self.USERS}/tickets",
             headers=pytest.HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), list)
+
+    def test_user_seen_notifications(self):
+        """Test user seen notifications."""
+
+        response = requests.get(
+            f"{pytest.API_URL}/{self.USERS}/seen_notifications",
+            headers=pytest.HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)

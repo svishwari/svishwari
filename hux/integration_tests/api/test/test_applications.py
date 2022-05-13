@@ -36,10 +36,10 @@ class TestApplications(TestCase):
             headers=pytest.HEADERS,
         )
 
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
+
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
-
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
 
     def test_update_application(self):
         """Test update application"""
@@ -53,6 +53,8 @@ class TestApplications(TestCase):
             },
             headers=pytest.HEADERS,
         )
+
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
@@ -68,5 +70,3 @@ class TestApplications(TestCase):
         self.assertEqual(
             "www.inttestupdateapplication2.com", response.json()["url"]
         )
-
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
