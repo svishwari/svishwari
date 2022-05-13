@@ -970,12 +970,16 @@ USER_EMAIL_ADDRESS = "email_address"
 USER_ACCESS_LEVEL = "access_level"
 USER_PII_ACCESS = "pii_access"
 USER_DESCRIPTION = "USER API"
+USER_DEMO_MODE = "demo_mode"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
 RESET = "reset"
+INDUSTRY = "industry"
+TARGET = "target"
+TRACK = "track"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -1710,6 +1714,13 @@ ALERT_SAMPLE_RESPONSE = {
             },
         },
     }
+}
+USER_DEMO_CONFIG_SAMPLE = {
+    USER_DEMO_MODE: True,
+    INDUSTRY: "Healthcare",
+    DESCRIPTION: "Health Care Industry",
+    TARGET: "Patients",
+    TRACK: "Prescriptions",
 }
 
 # Trust ID
