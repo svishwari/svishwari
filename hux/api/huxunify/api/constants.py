@@ -1717,6 +1717,7 @@ TRUST_ID_ENDPOINT = "/trust_id"
 TRUST_ID_TAG = "trust-id"
 DEFAULT = "default"
 DEFAULT_TRUST_SEGMENT = "All Customers"
+MAX_SEGMENTS_ALLOWED = 5
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"

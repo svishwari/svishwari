@@ -338,7 +338,7 @@ class TrustIdAddSegment(SwaggerView):
         # Return the trust id segments for user
         segments = get_user_trust_id_segments(database, user[db_c.OKTA_ID])
 
-        if len(segments) >= 4:
+        if len(segments) >= api_c.MAX_SEGMENTS_ALLOWED:
             return HuxResponse.FORBIDDEN(
                 message="Threshold of maximum segments reached."
             )
