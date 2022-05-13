@@ -582,7 +582,7 @@ class UserPatchView(SwaggerView):
         # update the document
         return (
             UserSchema().dump(updated_user),
-            HTTPStatus.OK,
+            HuxResponse.OK,
         )
 
 

@@ -626,7 +626,7 @@ applications_constants = [
 ]
 
 
-# Client Projects List
+# RBAC Matrix
 rbac_matrix = {
     "constant": "rbac_matrix",
     "value": {
