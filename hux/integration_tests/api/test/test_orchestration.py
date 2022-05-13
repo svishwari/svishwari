@@ -11,8 +11,10 @@ class TestOrchestration(TestCase):
     """Orchestration tests class"""
 
     AUDIENCES = "audiences"
+    LOOKALIKE_AUDIENCES = "lookalike-audiences"
     DESTINATIONS = "destinations"
     COLLECTION = "audiences"
+    LOOKALIKE_AUDIENCES_COLLECTION = "lookalike_audiences"
     DEFAULT_AUDIENCE_FILTERS = [
         {
             "section_aggregator": "ALL",
@@ -66,12 +68,13 @@ class TestOrchestration(TestCase):
             },
             headers=pytest.HEADERS,
         )
-        # test success
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        self.assertIsInstance(response.json(), dict)
 
         # add the crud object to pytest for cleaning after
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
+
+        # test success
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
     def test_get_histogram_data(self):
         """Test get rules histogram data."""
@@ -143,21 +146,24 @@ class TestOrchestration(TestCase):
             },
             headers=pytest.HEADERS,
         )
+
+        audience_id = response.json().get("id")
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
+
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
-        audience_id = response.json().get("id")
         # Get Audience insights.
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}/audience_insights",
             headers=pytest.HEADERS,
         )
+
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
 
     def test_add_destination_to_audience(self):
         """Test add destination to audience."""
@@ -183,11 +189,14 @@ class TestOrchestration(TestCase):
             },
             headers=pytest.HEADERS,
         )
+
+        audience_id = response.json().get("id")
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
+
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
-        audience_id = response.json().get("id")
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}/destinations",
             json={"id": destination_id},
@@ -201,8 +210,6 @@ class TestOrchestration(TestCase):
         self.assertEqual(
             destination_id, response.json().get("destinations")[0].get("id")
         )
-
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
 
     def test_remove_destination_from_audience(self):
         """Test remove destination from audience."""
@@ -228,11 +235,14 @@ class TestOrchestration(TestCase):
             },
             headers=pytest.HEADERS,
         )
+
+        audience_id = response.json().get("id")
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
+
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
-        audience_id = response.json().get("id")
         response = requests.post(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}/destinations",
             json={"id": destination_id},
@@ -255,8 +265,6 @@ class TestOrchestration(TestCase):
         )
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
-
     def test_get_country_level_audience_insights(self):
         """Test get country level audience Insights."""
 
@@ -270,11 +278,13 @@ class TestOrchestration(TestCase):
             },
             headers=pytest.HEADERS,
         )
+
+        audience_id = response.json().get("id")
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
+
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
-
-        audience_id = response.json().get("id")
 
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}/countries",
@@ -283,8 +293,6 @@ class TestOrchestration(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
-
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
 
     def test_get_state_level_audience_insights(self):
         """Test get state level audience Insights."""
@@ -299,11 +307,13 @@ class TestOrchestration(TestCase):
             },
             headers=pytest.HEADERS,
         )
+
+        audience_id = response.json().get("id")
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
+
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
-
-        audience_id = response.json().get("id")
 
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}/states",
@@ -312,8 +322,6 @@ class TestOrchestration(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
-
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
 
     def test_get_city_level_audience_insights(self):
         """Test get city level audience Insights."""
@@ -328,11 +336,13 @@ class TestOrchestration(TestCase):
             },
             headers=pytest.HEADERS,
         )
+
+        audience_id = response.json().get("id")
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
+
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
-
-        audience_id = response.json().get("id")
 
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}/cities",
@@ -341,8 +351,6 @@ class TestOrchestration(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
-
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
 
     def test_get_audience_download(self):
         """Test download audience file."""
@@ -356,12 +364,13 @@ class TestOrchestration(TestCase):
             },
             headers=pytest.HEADERS,
         )
-        # test success
-
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        self.assertIsInstance(response.json(), dict)
 
         audience_id = response.json().get("id")
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
+
+        # test success
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
         # Download Audience Files.
         response = requests.get(
@@ -377,8 +386,6 @@ class TestOrchestration(TestCase):
             "application/zip", response.headers.get("content-type")
         )
 
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
-
     def test_get_audience_by_id(self):
         """Test get audience by id."""
 
@@ -392,11 +399,12 @@ class TestOrchestration(TestCase):
             headers=pytest.HEADERS,
         )
 
+        audience_id = response.json().get("id")
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
+
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
-
-        audience_id = response.json().get("id")
 
         response = requests.get(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}",
@@ -406,8 +414,6 @@ class TestOrchestration(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
-
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
 
     def test_update_audience(self):
         """Test update audience."""
@@ -422,11 +428,12 @@ class TestOrchestration(TestCase):
             headers=pytest.HEADERS,
         )
 
+        audience_id = response.json().get("id")
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
+
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
-
-        audience_id = response.json().get("id")
 
         response = requests.put(
             f"{pytest.API_URL}/{self.AUDIENCES}/{audience_id}",
@@ -439,8 +446,6 @@ class TestOrchestration(TestCase):
         # test success
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
-
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, audience_id)]
 
     def test_delete_audience(self):
         """Test delete audience."""
@@ -468,3 +473,66 @@ class TestOrchestration(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_create_and_update_lookalike_audience(self):
+        """Test create and update lookalike audience."""
+
+        # get all audiences to get a lookalikable active source audience id
+        response = requests.get(
+            f"{pytest.API_URL}/{self.AUDIENCES}", headers=pytest.HEADERS
+        )
+        # test success
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
+
+        source_audience_id = None
+        lookalikeable_audiences_id = [
+            source_audience["id"]
+            for source_audience in response.json()["audiences"]
+            if source_audience
+            and "lookalikeable" in source_audience
+            and source_audience["lookalikeable"] == "Active"
+        ]
+        if lookalikeable_audiences_id and len(lookalikeable_audiences_id) > 0:
+            source_audience_id = lookalikeable_audiences_id[0]
+
+        if source_audience_id:
+            response = requests.post(
+                f"{pytest.API_URL}/{self.LOOKALIKE_AUDIENCES}",
+                json={
+                    "name": f"E2E test_orchestration Integration Test-"
+                    f"{int(time() * 1000)}",
+                    "audience_id": source_audience_id,
+                    "audience_size_percentage": 1.5,
+                },
+                headers=pytest.HEADERS,
+            )
+
+            lookalike_audience_id = response.json().get("id")
+            pytest.CRUD_OBJECTS += [
+                Crud(
+                    self.LOOKALIKE_AUDIENCES_COLLECTION, lookalike_audience_id
+                )
+            ]
+
+            # test success
+            self.assertEqual(HTTPStatus.ACCEPTED, response.status_code)
+            self.assertIsInstance(response.json(), dict)
+
+            updated_lookalike_audience_name = (
+                f"E2E test_orchestration Integration Test-{int(time() * 1000)}"
+            )
+
+            response = requests.put(
+                f"{pytest.API_URL}/{self.LOOKALIKE_AUDIENCES}/"
+                f"{lookalike_audience_id}",
+                json={"name": updated_lookalike_audience_name},
+                headers=pytest.HEADERS,
+            )
+
+            # test success
+            self.assertEqual(HTTPStatus.OK, response.status_code)
+            self.assertIsInstance(response.json(), dict)
+            self.assertEqual(
+                updated_lookalike_audience_name, response.json()["name"]
+            )

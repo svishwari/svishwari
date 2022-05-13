@@ -84,7 +84,7 @@ def create_notification(
     doc = {
         db_c.NOTIFICATION_FIELD_TYPE: notification_type,
         db_c.NOTIFICATION_FIELD_DESCRIPTION: description,
-        db_c.NOTIFICATION_FIELD_CREATED: current_time,
+        db_c.NOTIFICATION_FIELD_CREATE_TIME: current_time,
         db_c.DELETED: False,
         db_c.NOTIFICATION_FIELD_USERNAME: username,
     }
@@ -174,7 +174,7 @@ def get_notifications_batch(
 
         query.update(
             {
-                db_c.NOTIFICATION_FIELD_CREATED: {
+                db_c.NOTIFICATION_FIELD_CREATE_TIME: {
                     "$gte": start_date,
                     "$lt": end_date,
                 }
@@ -189,7 +189,7 @@ def get_notifications_batch(
                 collection.find(query)
                 .sort(
                     [
-                        (db_c.NOTIFICATION_FIELD_CREATED, -1),
+                        (db_c.NOTIFICATION_FIELD_CREATE_TIME, -1),
                         (db_c.ID, sort_order),
                     ]
                 )

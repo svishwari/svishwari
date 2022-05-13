@@ -405,6 +405,7 @@ COMPONENT_ID = "component_id"
 COMPONENT_NAME = "component_name"
 USER_PII_ACCESS = "pii_access"
 SEEN_NOTIFICATIONS = "seen_notifications"
+LAST_SEEN_ALERT_TIME = "last_seen_alert_time"
 
 CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"
@@ -462,7 +463,7 @@ NOTIFICATION_TYPES = [
 ]
 NOTIFICATION_FIELD_TYPE = "type"
 NOTIFICATION_FIELD_DESCRIPTION = "description"
-NOTIFICATION_FIELD_CREATED = "created"
+NOTIFICATION_FIELD_CREATE_TIME = "create_time"
 NOTIFICATION_FIELD_CATEGORY = "category"
 NOTIFICATION_FIELD_USERNAME = "username"
 

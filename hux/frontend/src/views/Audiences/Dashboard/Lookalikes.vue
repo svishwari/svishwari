@@ -61,7 +61,7 @@
         </v-list-item>
       </v-list>
     </div>
-    <div v-if="!isDataExists && !addLookalike" class="no-lookalike">
+    <div v-if="!isDataExists && !lookalikeable" class="no-lookalike">
       <metric-card
         class=""
         title="Lookalikes"
@@ -81,7 +81,7 @@
       </metric-card>
     </div>
 
-    <div v-if="!isDataExists && addLookalike" class="no-lookalike mx-6 my-6">
+    <div v-if="!isDataExists && lookalikeable" class="no-lookalike mx-6 my-6">
       <metric-card
         title="Lookalikes"
         :height="230"
@@ -140,29 +140,15 @@ export default {
       required: false,
       default: () => [],
     },
-    standaloneData: {
-      type: Array,
+    lookalikeable: {
+      type: Boolean,
       required: false,
-      default: () => [],
+      default: false,
     },
-  },
-  data() {
-    return {
-      addLookalike: false,
-    }
   },
   computed: {
     isDataExists() {
-      this.filterStandalone
       return this.lookalikeData.length > 0 ? true : false
-    },
-    filterStandalone() {
-      this.standaloneData.forEach((element) => {
-        if (element.status === "Delivered") {
-          this.addLookalike = true
-        }
-      })
-      return this.addLookalike
     },
   },
 }

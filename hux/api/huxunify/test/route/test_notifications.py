@@ -60,7 +60,7 @@ class TestNotificationRoutes(RouteTestCase):
                 ],
                 many=True,
             ),
-            key=lambda x: x["created"],
+            key=lambda x: x[db_c.NOTIFICATION_FIELD_CREATE_TIME],
             reverse=True,
         )
 
