@@ -1027,7 +1027,7 @@ class UsersRBACMatrix(SwaggerView):
 
         matrix = get_constant(
             database,
-            "rbac_matrix",
+            api_c.RBAC_MATRIX,
         )
 
         return (
