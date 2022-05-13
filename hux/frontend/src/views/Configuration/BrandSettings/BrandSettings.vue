@@ -85,7 +85,8 @@
           is-tile
           variant="primary base"
           data-e2e="action-audience"
-          :is-disabled="isDisabled"
+        :is-disabled="isDisabled"
+           @click="updatedConfigSettings"
         >
           Update
         </hux-button>
@@ -192,30 +193,38 @@ export default {
     }),
     toggleMainSwitch(value) {
       this.enableSelection = value
+      this.showSubCategories = false
+      this.currentIndustrySelection = "Select"
+      this.resetSubCategories()
     },
     onSelectMenuItem(item) {
       if (item.name !== "Select") {
         this.currentIndustrySelection = item.name
         this.showSubCategories = true
+        this.resetSubCategories()
+      }
+    },
+    resetSubCategories() {
         this.finalSelection = {
           retailOptions: "Select",
           customerOptions: "Select",
           conversionOptions: "Select",
         }
-      }
     },
     onSelectSubMenuItem(value, item) {
       this.finalSelection[item] = value.name
     },
     isDisabled() {
-      if (
+      return (
         this.finalSelection.retailOptions !== "Select" &&
         this.finalSelection.customerOptions !== "Select" &&
         this.finalSelection.conversionOptions !== "Select"
-      ) {
-        return false
-      } else return true
+      ) ? false : true
     },
+    updatedConfigSettings() {
+      console.log("aba")
+      this.$root.$emit("update-config-settings")
+    }
   },
 }
 </script>

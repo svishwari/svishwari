@@ -215,8 +215,8 @@ export default {
   },
 
   async mounted() {
+    this.$root.$on("update-config-settings",() => this.getCurrentConfiguration())
     await this.getSideBarConfig()
-    console.log(this.sideBarItems)
     this.trustidRoute(this.$route.name)
   },
 
@@ -273,6 +273,9 @@ export default {
     },
     onMouseLeave() {
       this.trustidRoute(this.$route.name)
+    },
+    getCurrentConfiguration() {
+      this.client.name = "Hero Client"
     },
   },
 }
