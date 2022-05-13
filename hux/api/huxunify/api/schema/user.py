@@ -26,6 +26,7 @@ class UserPatchSchema(Schema):
     role = Str(required=False)
     display_name = Str(required=False)
     dashboard_configuration = Dict(required=False)
+    demo_config = Dict(required=False)
     pii_access = Bool(required=False)
 
 
@@ -152,6 +153,7 @@ class UserSchema(Schema):
     organization = Str()
     subscriptions = List(Str())
     dashboard_configuration = Dict()
+    demo_config = Dict(example=api_c.USER_DEMO_CONFIG_SAMPLE)
     favorites = Nested(Favorites, required=True)
     profile_photo = Str()
     login_count = Int(required=True, default=0, example=10)
