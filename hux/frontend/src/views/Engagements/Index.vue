@@ -255,7 +255,7 @@
                         This engagement was delivered manually on
                         {{
                           item["last_delivered"]
-                            | Date("MMM D, YYYY [at] h:mm A")
+                            | Date("MMMM D, YYYY [at] h:mm A")
                             | Empty
                         }}
                       </span>
