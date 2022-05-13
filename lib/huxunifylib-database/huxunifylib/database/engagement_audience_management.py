@@ -248,12 +248,13 @@ def set_replace_audience_flag(
     if not change:
         return {}
 
-    return collection.update(
+    return collection.find_one_and_update(
         {
             db_c.ID: engagement_id,
         },
         {"$set": engagement_doc},
         upsert=True,
+        return_document=pymongo.ReturnDocument.AFTER,
     )
 
 
