@@ -51,24 +51,27 @@
               <hux-dropdown
                 :label="currentIndustrySelection"
                 :selected="currentIndustrySelection"
+                :show-hover="false"
                 :items="categoryOptions['industryOptions']"
-                min-width="300"
+                min-width="320"
                 @on-select="onSelectMenuItem"
               />
             </div>
-
+            <div v-if="showSubCategories" class="divider-class mt-1"></div>
             <div v-if="showSubCategories" class="black--text text-h6 mt-4">
               <div v-for="option in labelOptions" :key="option.key">
                 <label class="mb-1">{{ option.label }}</label>
                 <hux-dropdown
+                  class="ml-0"
                   :label="finalSelection[option.key]"
                   :selected="finalSelection[option.key]"
+                  :show-hover="false"
                   :items="
                     categoryOptions[option.key][
                       currentIndustrySelection.toLowerCase()
                     ]
                   "
-                  min-width="300"
+                  min-width="320"
                   @on-select="onSelectSubMenuItem($event, option.key)"
                 />
               </div>
@@ -85,8 +88,8 @@
           is-tile
           variant="primary base"
           data-e2e="action-audience"
-        :is-disabled="isDisabled"
-           @click="updatedConfigSettings"
+          :is-disabled="isDisabled()"
+          @click="updatedConfigSettings"
         >
           Update
         </hux-button>
@@ -189,7 +192,7 @@ export default {
     ...mapActions({
       //   updateUser: "users/updatePIIAccess",
       //   existingUsers: "users/getUsers",
-      //   requestUsers: "users/getRequestedUsers",
+      updateDemoConfig: "users/updateDemoConfig",
     }),
     toggleMainSwitch(value) {
       this.enableSelection = value
@@ -205,26 +208,29 @@ export default {
       }
     },
     resetSubCategories() {
-        this.finalSelection = {
-          retailOptions: "Select",
-          customerOptions: "Select",
-          conversionOptions: "Select",
-        }
+      this.finalSelection = {
+        retailOptions: "Select",
+        customerOptions: "Select",
+        conversionOptions: "Select",
+      }
     },
     onSelectSubMenuItem(value, item) {
       this.finalSelection[item] = value.name
     },
     isDisabled() {
-      return (
-        this.finalSelection.retailOptions !== "Select" &&
+      return this.finalSelection.retailOptions !== "Select" &&
         this.finalSelection.customerOptions !== "Select" &&
         this.finalSelection.conversionOptions !== "Select"
-      ) ? false : true
+        ? false
+        : true
     },
     updatedConfigSettings() {
-      console.log("aba")
+      this.updateDemoConfig({
+        demo_mode: true,
+        industry: this.currentIndustrySelection,
+      })
       this.$root.$emit("update-config-settings")
-    }
+    },
   },
 }
 </script>
@@ -235,6 +241,14 @@ export default {
     margin-top: 0px !important;
     padding-top: 0px !important;
     margin-left: 21px !important;
+  }
+  ::v-deep .hux-dropdown {
+    button {
+      margin-left: 0px !important;
+    }
+  }
+  .divider-class {
+    border-bottom: 1px solid var(--v-black-lighten2) !important;
   }
 }
 </style>

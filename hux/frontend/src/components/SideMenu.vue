@@ -192,6 +192,7 @@ export default {
   computed: {
     ...mapGetters({
       sideBarItems: "configuration/sideBarConfigs",
+      demoConfiguration: "users/getDemoConfiguration",
     }),
 
     isMini() {
@@ -215,7 +216,9 @@ export default {
   },
 
   async mounted() {
-    this.$root.$on("update-config-settings",() => this.getCurrentConfiguration())
+    this.$root.$on("update-config-settings", () =>
+      this.getCurrentConfiguration()
+    )
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
   },
@@ -275,7 +278,7 @@ export default {
       this.trustidRoute(this.$route.name)
     },
     getCurrentConfiguration() {
-      this.client.name = "Hero Client"
+      this.client.name = `${this.demoConfiguration.industry} Client`
     },
   },
 }

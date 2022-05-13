@@ -14,6 +14,7 @@ const state = {
     bugsReported: [],
     pii_access: false,
     alerts: {},
+    demo_config: {},
   },
   users: [],
   requestedUsers: [],
@@ -51,6 +52,10 @@ const mutations = {
 
   setTickets(state, tickets) {
     Vue.set(state, "tickets", tickets)
+  },
+
+  setDemoConfig(state, demo_config) {
+    state.userProfile.demo_config = demo_config
   },
 
   setAllRequestedUsers(state, requestedUsers) {
@@ -177,6 +182,10 @@ const actions = {
       throw error
     }
   },
+
+  updateDemoConfig({ commit }, payload) {
+    commit("setDemoConfig", payload)
+  },
 }
 
 const getters = {
@@ -205,6 +214,8 @@ const getters = {
   getAllTickets: (state) => state.tickets,
 
   getUserAlerts: (state) => state.userProfile.alerts,
+
+  getDemoConfiguration: (state) => state.userProfile.demo_config,
 }
 export default {
   namespaced,
