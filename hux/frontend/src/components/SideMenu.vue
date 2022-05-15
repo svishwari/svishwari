@@ -26,7 +26,12 @@
           <div class="pl-4 client py-2 mb-2" v-on="on">
             <span class="d-flex align-center justify-space-between">
               <span class="d-flex align-center black--text text-h4">
-                <logo v-if="!isDemoMode" :type="client.logo" :size="24" class="mr-2" />
+                <logo
+                  v-if="!isDemoMode"
+                  :type="client.logo"
+                  :size="24"
+                  class="mr-2"
+                />
                 <div v-else class="dot mr-2">
                   <logo :type="client.logo" :size="20" />
                 </div>

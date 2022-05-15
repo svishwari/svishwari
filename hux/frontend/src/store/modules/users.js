@@ -183,10 +183,7 @@ const actions = {
     try {
       const response = await api.users.updateDemoConfig(payload)
       if (response) {
-        handleSuccess(
-          "Demo Configuration Saved Successfully",
-          response.status
-        )
+        handleSuccess("Demo Configuration Saved Successfully", response.status)
       }
       commit("setApplicationUserProfile", response.data)
     } catch (error) {

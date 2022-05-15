@@ -20,7 +20,7 @@
             </div>
             <div class="black--text text-h6 d-flex mt-4">
               <h3 class="text-body-1">Demo mode</h3>
-              <tooltip maxWidth="24%" position-top>
+              <tooltip max-width="24%" position-top>
                 <template #label-content>
                   <icon
                     type="info"
@@ -32,12 +32,12 @@
                 </template>
                 <template #hover-content>
                   <div>
-                  Switching on demo mode will change the look and feel based on
-                  a selected industry. This will only apply to you. 
+                    Switching on demo mode will change the look and feel based
+                    on a selected industry. This will only apply to you.
                   </div>
                   <div class="mt-4">
-                  Switching off demo mode will return the client’s look and feel back to
-                  default.
+                    Switching off demo mode will return the client’s look and
+                    feel back to default.
                   </div>
                 </template>
               </tooltip>
@@ -59,12 +59,15 @@
                 :items="categoryOptions['industryOptions']"
                 min-width="320"
                 @on-select="onSelectMenuItem"
-                class="selected-label"
               />
             </div>
             <div v-if="showSubCategories" class="divider-class mt-1"></div>
             <div v-if="showSubCategories" class="black--text text-h6 mt-4">
-              <div class="mt-4" v-for="option in labelOptions" :key="option.key">
+              <div
+                v-for="option in labelOptions"
+                :key="option.key"
+                class="mt-4"
+              >
                 <label class="mb-1">{{ option.label }}</label>
                 <hux-dropdown
                   class="ml-0"
@@ -164,7 +167,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-        existingDemoConfiguration: "users/getDemoConfiguration",
+      existingDemoConfiguration: "users/getDemoConfiguration",
     }),
   },
   mounted() {
@@ -212,21 +215,21 @@ export default {
         industry: this.currentIndustrySelection,
         description: this.finalSelection.retailOptions,
         target: this.finalSelection.customerOptions,
-        track: this.finalSelection.conversionOptions
+        track: this.finalSelection.conversionOptions,
       })
       this.$root.$emit("update-config-settings")
     },
     prepopulateConfiguration() {
       this.showConfiguration = this.existingDemoConfiguration.demo_mode
       if (this.showConfiguration) {
-      this.enableSelection = true
-      this.showSubCategories = true
-      this.currentIndustrySelection = this.existingDemoConfiguration.industry
-      this.finalSelection = {
-        retailOptions: this.existingDemoConfiguration.description,
-        customerOptions: this.existingDemoConfiguration.target,
-        conversionOptions: this.existingDemoConfiguration.track,
-      }
+        this.enableSelection = true
+        this.showSubCategories = true
+        this.currentIndustrySelection = this.existingDemoConfiguration.industry
+        this.finalSelection = {
+          retailOptions: this.existingDemoConfiguration.description,
+          customerOptions: this.existingDemoConfiguration.target,
+          conversionOptions: this.existingDemoConfiguration.track,
+        }
       }
     },
   },

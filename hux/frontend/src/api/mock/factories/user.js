@@ -67,12 +67,12 @@ export const user = {
     },
   },
   demo_config: {
-      demo_mode: true,
-      industry: "Automotive",
-      description: "Pharmaceutical",
-      target: "Physicians",
-      track: "Sales"
-  }
+    demo_mode: true,
+    industry: "Automotive",
+    description: "Pharmaceutical",
+    target: "Physicians",
+    track: "Sales",
+  },
 }
 
 export const requestedUser = [

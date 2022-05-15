@@ -13,9 +13,9 @@
       <div class="d-flex">
         <icon
           v-if="icon"
-          :type="showDemoHeader ? `${icon}_logo`:icon"
+          :type="showDemoHeader ? `${icon}_logo` : icon"
           class="pr-1"
-          :size="showDemoHeader ? 40:20"
+          :size="showDemoHeader ? 40 : 20"
           color="black"
           variant="darken4"
         />
@@ -31,11 +31,11 @@
       </div>
     </div>
     <div v-if="showDemoHeader" class="demo-header">
-        <icon
-          :type="`${icon}_header`"
-          :customSize="{width:240, height: 110}"
-          :enableCustomSize="true"
-        />
+      <icon
+        :type="`${icon}_header`"
+        :custom-size="{ width: 240, height: 110 }"
+        :enable-custom-size="true"
+      />
     </div>
     <div class="page-header--right">
       <slot name="right"></slot>
@@ -90,7 +90,7 @@ export default {
       type: Boolean,
       required: false,
       default: false,
-    }
+    },
   },
 }
 </script>

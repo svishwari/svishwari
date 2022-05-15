@@ -7,7 +7,7 @@
           class="header-section"
           :header-height="110"
           :icon="demo_icon"
-          :showDemoHeader="showDemoHeader"
+          :show-demo-header="showDemoHeader"
           data-e2e="welcome-banner"
         >
           <template #left>
