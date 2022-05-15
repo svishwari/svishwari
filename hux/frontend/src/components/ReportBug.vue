@@ -18,6 +18,7 @@
         placeholder="Enter subject"
         class="px-13"
         height="40"
+        data-e2e="report-bug-subject"
         required
         @change="setBugSubject($event)"
       />
@@ -27,6 +28,7 @@
         placeholder="Enter a short description"
         class="px-13 bug-summary"
         height="206"
+        data-e2e="report-bug-description"
         required
         @change="setBugSummary($event)"
       />

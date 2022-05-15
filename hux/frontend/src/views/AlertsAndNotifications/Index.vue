@@ -106,7 +106,7 @@
                   {{ formatText(item["notification_type"]) | Empty("-") }}
                 </div>
 
-                <tooltip v-if="header.value == 'description'" position-top>
+                <tooltip v-if="header.value == 'description'" max-width="47%">
                   <template #label-content>
                     <span>{{ item[header.value] }}</span>
                   </template>
@@ -241,12 +241,12 @@ export default {
         {
           text: "Alert ID",
           value: "id",
-          width: "260",
+          width: "150",
         },
         {
           text: "Category",
           value: "category",
-          width: "240px",
+          width: "200px",
         },
         {
           text: "Type",
@@ -261,7 +261,7 @@ export default {
         {
           text: "Time",
           value: "create_time",
-          width: "220px",
+          width: "200px",
         },
       ],
       sortColumn: "create_time",
