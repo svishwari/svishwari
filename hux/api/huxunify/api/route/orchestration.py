@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,unused-argument
+# pylint: disable=too-many-lines,unused-argument,too-many-locals
 """Paths for Orchestration API."""
 import asyncio
 import re
