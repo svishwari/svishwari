@@ -59,7 +59,7 @@ export default {
     return {
       show: false,
       isEmptyState: false,
-      colors: ["#A0DCFF", "#00A3E0", "#E3E48D", "#007680", "#9DD4CF"],
+      colors: ["#0076A8", "#A0DCFF", "#00A3E0", "#E3E48D", "#007680", "#9DD4CF"],
       attributes: [
         "trust_id",
         "humanity",
@@ -132,13 +132,9 @@ export default {
         this.sourceData = this.segmentScores.find(
           (data) => data.segment_type == "composite & factor scores"
         ).segments
-        this.sourceData.forEach((data, index) => {
-          if (data.default) {
-            data.color = "#0076A8"
-          } else {
-            data.color = this.colors[index]
-          }
-        })
+        this.sourceData.forEach(
+          (data, index) => (data.color = this.colors[this.hasDefaultSegment() ? index : index+1])
+        )
       } else {
         this.isEmptyState = true
       }
@@ -174,13 +170,17 @@ export default {
       this.legendsData = []
       for (let [index, segment] of this.sourceData.entries()) {
         this.legendsData.push({
-          color: this.colors[index],
+          color: this.colors[this.hasDefaultSegment() ? index: index+1],
           checked: true,
           disabled: false,
           text: segment.segment_name,
         })
       }
     },
+
+    hasDefaultSegment() {
+      return this.sourceData.some(data => data.segment_name == "All Customers")
+    }
   },
 }
 </script>
