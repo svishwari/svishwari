@@ -74,6 +74,11 @@ export default {
       required: false,
       default: false,
     },
+    engagementId: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
 
   data() {
@@ -149,7 +154,7 @@ export default {
       const index = this.value.findIndex((each) => destination.id === each.id)
       this.value.splice(index, 1)
       this.$emit("onRemoveDestination", {
-        destination: { id: destination.id },
+        destination: { id: destination.id, engagementId: this.engagementId },
       })
     },
   },

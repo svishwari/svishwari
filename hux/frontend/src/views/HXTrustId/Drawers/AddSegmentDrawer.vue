@@ -216,4 +216,15 @@ export default {
 ::v-deep .hux-filters-drawer .content {
   overflow-x: hidden;
 }
+::v-deep .hux-filter-panels {
+  span {
+    .withoutExpansion {
+      .v-input__control {
+        .v-input__slot {
+          align-items: center;
+        }
+      }
+    }
+  }
+}
 </style>

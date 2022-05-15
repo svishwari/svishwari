@@ -11,6 +11,9 @@ from pymongo import MongoClient
 from get_okta_token import OktaOIDC
 
 
+# change log level from WARNING to INFO and initialise logger for conftest
+logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger(__name__)
 # ENV VARS
 OKTA_PARAM_DICT = {
     "org_url": getenv("OKTA_ISSUER"),
@@ -45,6 +48,7 @@ CLEAN_UP_COLLECTIONS_DICT = {
     "configurations": "created_by",
     "delivery_jobs": "username",
     "engagements": "created_by",
+    "lookalike_audiences": "created_by",
     "notifications": "username",
 }
 
@@ -64,9 +68,8 @@ def pytest_configure(config: Config):
 
     # set global IDs
     pytest.CRUD_OBJECTS = []
-    pytest.API_URL = (
-        f"{getenv(INT_TEST_HOST)}/" f"{getenv(INT_TEST_API_VERSION)}"
-    )
+    pytest.APP_URL = getenv(INT_TEST_HOST)
+    pytest.API_URL = f"{getenv(INT_TEST_HOST)}/{getenv(INT_TEST_API_VERSION)}"
     pytest.DB_CLIENT = MongoClient(**MONGO_DB_CONFIG)[DATABASE]
 
     try:
@@ -95,7 +98,7 @@ def pytest_unconfigure(config):
     crud_obj: Crud
     for crud_obj in pytest.CRUD_OBJECTS:
         try:
-            logging.info(
+            LOGGER.info(
                 "Cleaning Object ID %s for %s.",
                 crud_obj.id,
                 crud_obj.collection,
@@ -103,13 +106,13 @@ def pytest_unconfigure(config):
             pytest.DB_CLIENT[crud_obj.collection].delete_one(
                 {ID: ObjectId(crud_obj.id)}
             )
-            logging.info(
-                "Cleaning Object ID %s for %s. complete.",
+            LOGGER.info(
+                "Cleaning Object ID %s for %s complete.",
                 crud_obj.id,
                 crud_obj.collection,
             )
         except BaseException as exception:
-            logging.error(
+            LOGGER.error(
                 "Cleaning Object ID %s for %s failed: %s.",
                 crud_obj.id,
                 crud_obj.collection,
@@ -119,30 +122,33 @@ def pytest_unconfigure(config):
     # clean stranded documents created by integration tests in various
     # collections
     int_test_user_name = getenv("INT_TEST_USER_NAME")
-    logging.info("Integration test user's user name: %s", int_test_user_name)
+    LOGGER.info("Integration test user's user name: %s", int_test_user_name)
 
     for (
         collection_name,
         collection_field,
     ) in CLEAN_UP_COLLECTIONS_DICT.items():
         try:
-            logging.info(
+            LOGGER.info(
                 "Cleaning up left out documents in collection %s using field "
                 "%s start.",
                 collection_name,
                 collection_field,
             )
-            pytest.DB_CLIENT[collection_name].delete_many(
-                {collection_field: int_test_user_name}
+            deleted_count = (
+                pytest.DB_CLIENT[collection_name]
+                .delete_many({collection_field: int_test_user_name})
+                .deleted_count
             )
-            logging.info(
+            LOGGER.info(
                 "Cleaning up left out documents in collection %s using field "
-                "%s complete.",
+                "%s complete. Deleted documents count: %s.",
                 collection_name,
                 collection_field,
+                deleted_count,
             )
         except BaseException as exception:
-            logging.error(
+            LOGGER.error(
                 "Cleaning stranded documents from collection %s failed: %s.",
                 collection_name,
                 str(exception),
