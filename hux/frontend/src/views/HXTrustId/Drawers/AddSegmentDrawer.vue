@@ -35,6 +35,7 @@
             color="primary lighten-6"
             class="text--base-1 px-5 withoutExpansion checkboxFavorite"
             :label="list.description"
+            @change="checkboxChange(list.type + '#' + list.description)"
           ></v-checkbox>
         </span>
         <hux-filter-panels>
@@ -52,6 +53,7 @@
               class="text--base-1"
               :label="dataVal"
               :value="dataVal"
+              @change="checkboxChange(data.type + '#' + data.description)"
             ></v-checkbox>
           </hux-filter-panel>
         </hux-filter-panels>
@@ -126,6 +128,7 @@ export default {
           values: Array.isArray(value) ? value : [value.toString()],
         })
       })
+
       return payload
     },
     setEnableApply() {
@@ -145,8 +148,16 @@ export default {
       this.segmentName = "Segment"
       this.segmentDataObj = {}
     },
+    checkboxChange(keyType) {
+      if (!Array.isArray(this.segmentDataObj[keyType]) && !this.segmentDataObj[keyType]) {
+        delete this.segmentDataObj[keyType]
+      } else {
+        if (this.segmentDataObj[keyType].length == 0) {
+          delete this.segmentDataObj[keyType]
+        }
+      }
+    },
     apply() {
-      console.log("this.segmentFilters", this.segmentFilters)
       this.$emit("onSectionAction", {
         segment_name: this.segmentName,
         segment_filters: this.segmentFilters,
