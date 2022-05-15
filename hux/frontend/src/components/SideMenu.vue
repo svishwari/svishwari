@@ -26,7 +26,10 @@
           <div class="pl-4 client py-2 mb-2" v-on="on">
             <span class="d-flex align-center justify-space-between">
               <span class="d-flex align-center black--text text-h4">
-                <logo :type="client.logo" :size="24" class="mr-2" />
+                <logo v-if="!isDemoMode" :type="client.logo" :size="24" class="mr-2" />
+                <div v-else class="dot mr-2">
+                  <logo :type="client.logo" :size="20" />
+                </div>
                 {{ client.name }}
               </span>
               <span class="mr-3">
@@ -199,6 +202,10 @@ export default {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
     },
 
+    isDemoMode() {
+      return this.demoConfiguration?.demo_mode
+    },
+
     iconSize() {
       return this.isMini ? 21 : 16
     },
@@ -216,11 +223,9 @@ export default {
   },
 
   async mounted() {
-    this.$root.$on("update-config-settings", () =>
-      this.getCurrentConfiguration()
-    )
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
+    this.getCurrentConfiguration()
   },
 
   methods: {
@@ -277,8 +282,21 @@ export default {
     onMouseLeave() {
       this.trustidRoute(this.$route.name)
     },
+    updateClientInfo() {
+      if (this.isDemoMode) {
+        this.client.name = `${this.demoConfiguration.industry} Client`
+        this.client.logo = this.demoConfiguration?.industry.toLowerCase()
+      }
+    },
+    async setDemoConfiguration() {
+      await this.getSideBarConfig()
+      this.updateClientInfo()
+    },
     getCurrentConfiguration() {
-      this.client.name = `${this.demoConfiguration.industry} Client`
+      this.$root.$on("update-config-settings", () =>
+        this.setDemoConfiguration()
+      )
+      this.updateClientInfo()
     },
   },
 }
@@ -398,5 +416,15 @@ export default {
   font-size: 6px;
   left: -4px;
   top: -8px;
+}
+.dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--black-lighten2);
+  @extend .box-shadow-1;
+  background: var(--v-white-base);
+  text-align: -webkit-center;
+  padding-top: 2px !important;
 }
 </style>

@@ -54,10 +54,6 @@ const mutations = {
     Vue.set(state, "tickets", tickets)
   },
 
-  setDemoConfig(state, demo_config) {
-    state.userProfile.demo_config = demo_config
-  },
-
   setAllRequestedUsers(state, requestedUsers) {
     Vue.set(state, "requestedUsers", requestedUsers)
   },
@@ -183,8 +179,20 @@ const actions = {
     }
   },
 
-  updateDemoConfig({ commit }, payload) {
-    commit("setDemoConfig", payload)
+  async updateDemoConfig({ commit }, payload) {
+    try {
+      const response = await api.users.updateDemoConfig(payload)
+      if (response) {
+        handleSuccess(
+          "Demo Configuration Saved Successfully",
+          response.status
+        )
+      }
+      commit("setApplicationUserProfile", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
   },
 }
 

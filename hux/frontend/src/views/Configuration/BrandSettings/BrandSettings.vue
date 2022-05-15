@@ -20,7 +20,7 @@
             </div>
             <div class="black--text text-h6 d-flex mt-4">
               <h3 class="text-body-1">Demo mode</h3>
-              <tooltip position-top>
+              <tooltip maxWidth="24%" position-top>
                 <template #label-content>
                   <icon
                     type="info"
@@ -31,16 +31,20 @@
                   />
                 </template>
                 <template #hover-content>
+                  <div>
                   Switching on demo mode will change the look and feel based on
-                  a selected industry. This will only apply to you. Switching
-                  off demo mode will return the client’s look and feel back to
+                  a selected industry. This will only apply to you. 
+                  </div>
+                  <div class="mt-4">
+                  Switching off demo mode will return the client’s look and feel back to
                   default.
+                  </div>
                 </template>
               </tooltip>
               <hux-switch
                 v-model="showConfiguration"
                 false-color="var(--v-black-lighten4)"
-                width="57px"
+                width="64px"
                 :switch-labels="toggleSwitchLabels"
                 class="w-53"
                 @change="toggleMainSwitch($event)"
@@ -55,11 +59,12 @@
                 :items="categoryOptions['industryOptions']"
                 min-width="320"
                 @on-select="onSelectMenuItem"
+                class="selected-label"
               />
             </div>
             <div v-if="showSubCategories" class="divider-class mt-1"></div>
             <div v-if="showSubCategories" class="black--text text-h6 mt-4">
-              <div v-for="option in labelOptions" :key="option.key">
+              <div class="mt-4" v-for="option in labelOptions" :key="option.key">
                 <label class="mb-1">{{ option.label }}</label>
                 <hux-dropdown
                   class="ml-0"
@@ -71,7 +76,7 @@
                       currentIndustrySelection.toLowerCase()
                     ]
                   "
-                  min-width="320"
+                  min-width="360"
                   @on-select="onSelectSubMenuItem($event, option.key)"
                 />
               </div>
@@ -120,17 +125,6 @@ export default {
   },
   data() {
     return {
-      switchLabel: [
-        {
-          condition: true,
-          label: "ON",
-        },
-        {
-          condition: false,
-          label: "OFF",
-        },
-      ],
-      showConfiguration: false,
       toggleSwitchLabels: [
         {
           condition: true,
@@ -141,22 +135,17 @@ export default {
           label: "OFF",
         },
       ],
-      newAppDetails: {
-        category: "Select",
-        name: null,
-        url: null,
-      },
       labelOptions: [
         {
-          label: "What describes best this client?",
+          label: "What business category does this client belong to?",
           key: "retailOptions",
         },
         {
-          label: "Who is the client’s target audience?",
+          label: "Who is this client’s end consumer?",
           key: "customerOptions",
         },
         {
-          label: "What does the client wish to track?",
+          label: "What end consumer activity would you like to track? ",
           key: "conversionOptions",
         },
       ],
@@ -164,6 +153,7 @@ export default {
       enableSelection: false,
       industrySelected: false,
       showSubCategories: false,
+      showConfiguration: false,
       currentIndustrySelection: "Select",
       finalSelection: {
         retailOptions: "Select",
@@ -174,24 +164,16 @@ export default {
   },
   computed: {
     ...mapGetters({
-      //   getTeamMembers: "users/getUsers",
-      //   getRequestedMembers: "users/getRequestedUsers",
-      //   getCurrentUserEmail: "users/getEmailAddress",
-      //   getRole: "users/getCurrentUserRole",
+        existingDemoConfiguration: "users/getDemoConfiguration",
     }),
   },
-  async mounted() {
-    // try {
-    //   await this.existingUsers()
-    //   await this.requestUsers()
-    // } finally {
-    //   this.loadingAllUsers = false
-    // }
+  mounted() {
+    if (this.existingDemoConfiguration) {
+      this.prepopulateConfiguration()
+    }
   },
   methods: {
     ...mapActions({
-      //   updateUser: "users/updatePIIAccess",
-      //   existingUsers: "users/getUsers",
       updateDemoConfig: "users/updateDemoConfig",
     }),
     toggleMainSwitch(value) {
@@ -224,12 +206,28 @@ export default {
         ? false
         : true
     },
-    updatedConfigSettings() {
-      this.updateDemoConfig({
-        demo_mode: true,
+    async updatedConfigSettings() {
+      await this.updateDemoConfig({
+        demo_mode: this.showConfiguration,
         industry: this.currentIndustrySelection,
+        description: this.finalSelection.retailOptions,
+        target: this.finalSelection.customerOptions,
+        track: this.finalSelection.conversionOptions
       })
       this.$root.$emit("update-config-settings")
+    },
+    prepopulateConfiguration() {
+      this.showConfiguration = this.existingDemoConfiguration.demo_mode
+      if (this.showConfiguration) {
+      this.enableSelection = true
+      this.showSubCategories = true
+      this.currentIndustrySelection = this.existingDemoConfiguration.industry
+      this.finalSelection = {
+        retailOptions: this.existingDemoConfiguration.description,
+        customerOptions: this.existingDemoConfiguration.target,
+        conversionOptions: this.existingDemoConfiguration.track,
+      }
+      }
     },
   },
 }
@@ -244,6 +242,7 @@ export default {
   }
   ::v-deep .hux-dropdown {
     button {
+      margin-top: 0px !important;
       margin-left: 0px !important;
     }
   }

@@ -1,8 +1,8 @@
 <template>
   <svg-as-component
     :src="`assets/icons/${type}`"
-    :width="size"
-    :height="size"
+    :width="enableCustomSize ? customSize.width : size"
+    :height="enableCustomSize ? customSize.height : size"
     :color="color"
     :variant="variant"
     :fill-opacity="fillOpacity"
@@ -31,6 +31,23 @@ export default {
       type: [Number, String],
       required: false,
       default: 60,
+    },
+
+    enableCustomSize: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    customSize: {
+      type: Object,
+      required: false,
+      default() {
+        return {
+          width: 0,
+          height: 0,
+        }
+      },
     },
 
     color: {

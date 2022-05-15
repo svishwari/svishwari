@@ -7,6 +7,7 @@
           class="header-section"
           :header-height="110"
           :icon="demo_icon"
+          :showDemoHeader="showDemoHeader"
           data-e2e="welcome-banner"
         >
           <template #left>
@@ -313,6 +314,7 @@ export default {
       notificationId: null,
       totalCustomersChartErrorState: false,
       notificationsTableErrorState: false,
+      showDemoHeader: false,
       demo_icon: "automotive",
     }
   },
@@ -379,13 +381,14 @@ export default {
       this.alertDrawer = !this.alertDrawer
     },
     getCurrentConfiguration() {
+      this.showDemoHeader = true
       this.demo_icon = this.demoConfiguration.industry.toLowerCase()
     },
     demoConfigChangeTracker() {
       this.$root.$on("update-config-settings", () =>
         this.getCurrentConfiguration()
       )
-      if (this.demoConfiguration?.industry) {
+      if (this.demoConfiguration?.demo_mode) {
         this.getCurrentConfiguration()
       }
     },
