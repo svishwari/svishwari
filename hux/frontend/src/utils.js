@@ -5,6 +5,7 @@
 import dayjs from "dayjs"
 import store from "@/store/index.js"
 import { capitalize } from "lodash"
+import access from "./store/RBAC"
 
 /**
  * Forms the title for the page.
@@ -482,4 +483,9 @@ export function aggregateAgeFilters(filters) {
     numericFilters.push(`${aggregatedFilterStart}-${aggregatedFilterEnd} years`)
   }
   return [...numericFilters, ...stringFilters]
+}
+
+export function getAccess(screen, action) {
+  let role = store.getters["users/getCurrentUserRole"]
+  return access[role][screen][action]
 }

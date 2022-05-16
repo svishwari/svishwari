@@ -62,21 +62,23 @@
           </template>
 
           <template slot="right">
-            <router-link
-              :to="{ name: 'SegmentPlayground' }"
-              class="text-decoration-none"
-              append
-            >
-              <huxButton
-                variant="primary base"
-                size="large"
-                is-tile
-                class="ma-2 font-weight-regular no-shadow mr-0"
-                data-e2e="add-audience"
+            <span v-if="getAccess('audiences', 'create')">
+              <router-link
+                :to="{ name: 'SegmentPlayground' }"
+                class="text-decoration-none"
+                append
               >
-                Create an audience
-              </huxButton>
-            </router-link>
+                <huxButton
+                  variant="primary base"
+                  size="large"
+                  is-tile
+                  class="ma-2 font-weight-regular no-shadow mr-0"
+                  data-e2e="add-audience"
+                >
+                  Create an audience
+                </huxButton>
+              </router-link>
+            </span>
           </template>
         </page-header>
         <hux-lazy-data-table
@@ -331,7 +333,9 @@
             </div>
           </template>
           <template #button>
-            <span v-if="finalFilterApplied <= 0">
+            <span
+              v-if="finalFilterApplied <= 0 && getAccess('audiences', 'create')"
+            >
               <router-link
                 :to="{ name: 'SegmentPlayground' }"
                 class="text-decoration-none"
@@ -474,7 +478,7 @@ import Logo from "../../components/common/Logo.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import AudienceFilter from "./Configuration/Drawers/AudienceFilter"
 import Error from "@/components/common/screens/Error"
-import { formatText } from "@/utils.js"
+import { formatText, getAccess } from "@/utils.js"
 
 export default {
   name: "Audiences",
@@ -896,6 +900,7 @@ export default {
       this.loading = false
     },
     formatText: formatText,
+    getAccess: getAccess,
   },
 }
 </script>
