@@ -119,8 +119,8 @@ class ModelsView(SwaggerView):
             today = datetime.now()
             all_models = [
                 {
-                    api_c.ID: f"feature_id_{i}",
-                    api_c.NAME: f"feature_name_{i}",
+                    api_c.ID: f"Feature_id_{i}",
+                    api_c.NAME: f"Feature_name_{i}",
                     api_c.DESCRIPTION: f"Feature {i} description",
                     api_c.STATUS: api_c.STATUS_PENDING,
                     api_c.LATEST_VERSION: today.strftime("%Y.%m.%d"),
@@ -495,6 +495,9 @@ class ModelOverview(SwaggerView):
                 Decisioning(token).get_model_overview,
                 {
                     "model_id": model_id,
+                    "model_version": request.args.get(
+                        api_c.VERSION, default=None
+                    ),
                 },
             )
         else:
@@ -534,7 +537,7 @@ class ModelDriftView(SwaggerView):
             "description": "Model version, if not provided, "
             "it will take the latest.",
             "type": "str",
-            "in": "path",
+            "in": "query",
             "required": False,
             "example": "21.7.31",
         },
@@ -556,9 +559,7 @@ class ModelDriftView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(
-        self, user: dict, model_id: str, model_version: str = None
-    ) -> Tuple[Response, int]:
+    def get(self, user: dict, model_id: str) -> Tuple[Response, int]:
         """Retrieves model drift details.
 
         ---
@@ -568,7 +569,6 @@ class ModelDriftView(SwaggerView):
         Args:
             user (dict): User object.
             model_id (str): Model ID.
-            model_version (str): Model Version.
 
         Returns:
             Tuple[Response, int]: List containing dict of model drift,
@@ -577,13 +577,12 @@ class ModelDriftView(SwaggerView):
         # Dec API only available in stg, all other environments are mocked
         if get_config().ENV_NAME == api_c.STAGING_ENV:
             token = get_token_from_request(request)[0]
-            version_cache_key = model_version if model_version else "current"
             drift_data = Caching.check_and_return_cache(
-                f"features.{model_id}.{version_cache_key}",
+                f"features.{model_id}.{request.args.get(api_c.VERSION, 'current')}",
                 Decisioning(token).get_model_drift,
                 {
                     "model_id": model_id,
-                    "model_version": model_version,
+                    "model_version": request.args.get(api_c.VERSION, None),
                 },
             )
         else:
@@ -618,7 +617,7 @@ class ModelFeaturesView(SwaggerView):
             "description": "Model version, if not provided, "
             "it will take the latest.",
             "type": "str",
-            "in": "path",
+            "in": "query",
             "required": False,
             "example": "21.7.31",
         },
@@ -626,7 +625,7 @@ class ModelFeaturesView(SwaggerView):
             "name": api_c.LIMIT,
             "description": "Limit of features to pull, default is 20.",
             "type": "int",
-            "in": "path",
+            "in": "query",
             "required": False,
             "example": 20,
         },
@@ -650,8 +649,6 @@ class ModelFeaturesView(SwaggerView):
         self,
         user: dict,
         model_id: str,
-        model_version: str = None,
-        limit: int = 20,
     ) -> Tuple[Response, int]:
         """Retrieves model features.
 
@@ -662,32 +659,30 @@ class ModelFeaturesView(SwaggerView):
         Args:
             user (dict): User object.
             model_id (str): Model ID.
-            model_version (str): Model Version.
-            limit (int): Max number of records to be returned.
 
         Returns:
             Tuple[Response, int]: List containing dict of model features,
                 HTTP status code.
         """
+        limit = int(request.args.get(api_c.LIMIT, 20))
 
         if get_config().ENV_NAME == api_c.STAGING_ENV:
             token = get_token_from_request(request)[0]
-            version_cache_key = model_version if model_version else "current"
             features = Caching.check_and_return_cache(
-                f"features.{model_id}.{version_cache_key}",
+                f"features.{model_id}.{request.args.get(api_c.VERSION, 'current')}",
                 Decisioning(token).get_model_features,
                 {
                     "model_id": model_id,
-                    "model_version": model_version,
+                    "model_version": request.args.get(api_c.VERSION, None),
                 },
             )
 
         else:
             features = [
                 {
-                    api_c.ID: f"feature_id_{i}",
-                    api_c.NAME: f"feature_name_{i}",
-                    api_c.DESCRIPTION: f"Feature {1} description",
+                    api_c.ID: f"Feature_id_{i}",
+                    api_c.NAME: f"Feature_name_{i}",
+                    api_c.DESCRIPTION: f"Feature {i} description",
                     api_c.RECORDS_NOT_NULL: uniform(60, 95),
                     api_c.FEATURE_IMPORTANCE: uniform(1, 99),
                     api_c.MEAN: uniform(1, 99),
@@ -697,7 +692,7 @@ class ModelFeaturesView(SwaggerView):
                     api_c.LCUV: uniform(1, 99),
                     api_c.MCUV: uniform(1, 99),
                 }
-                for i in range(25)
+                for i in range(50)
             ]
 
         return HuxResponse.OK(
@@ -720,7 +715,7 @@ class ModelImportanceFeaturesView(SwaggerView):
             "description": "Model version, if not provided, "
             "it will take the latest.",
             "type": "str",
-            "in": "path",
+            "in": "query",
             "required": False,
             "example": "21.7.31",
         },
@@ -728,7 +723,7 @@ class ModelImportanceFeaturesView(SwaggerView):
             "name": api_c.LIMIT,
             "description": "Limit of features to pull, default is 20.",
             "type": "int",
-            "in": "path",
+            "in": "query",
             "required": False,
             "example": 20,
         },
@@ -750,8 +745,6 @@ class ModelImportanceFeaturesView(SwaggerView):
         self,
         user: dict,
         model_id: str,
-        model_version: str = None,
-        limit: int = 20,
     ) -> Tuple[Response, int]:
         """Retrieves top model features sorted by score.
 
@@ -762,16 +755,16 @@ class ModelImportanceFeaturesView(SwaggerView):
         Args:
             user (dict): User object.
             model_id (str): Model ID.
-            model_version (str): Model Version.
-            limit (int): Limit of features to return, default is 20.
 
         Returns:
             Tuple[Response, int]: List containing dict of model features,
                 HTTP status code.
         """
+        limit = int(request.args.get(api_c.LIMIT, 20))
+        model_version = request.args.get(api_c.VERSION, None)
+
         if get_config().ENV_NAME == api_c.STAGING_ENV:
             token = get_token_from_request(request)[0]
-            features = Decisioning(token).get_model_drift(model_id)
             version_cache_key = model_version if model_version else "current"
             features = Caching.check_and_return_cache(
                 f"features.{model_id}.{version_cache_key}",
@@ -882,12 +875,15 @@ class ModelLiftView(SwaggerView):
         # Dec API only available in stg, all other environments are mocked
         if get_config().ENV_NAME == api_c.STAGING_ENV:
             token = get_token_from_request(request)[0]
+            model_version = (
+                request.args.get(api_c.VERSION)
+                if request.args.get(api_c.VERSION)
+                else None
+            )
             lift_data = Caching.check_and_return_cache(
                 f"lift.{model_id}",
                 Decisioning(token).get_model_lift,
-                {
-                    "model_id": model_id,
-                },
+                {"model_id": model_id, "model_version": model_version},
             )
         else:
             lift_data = [

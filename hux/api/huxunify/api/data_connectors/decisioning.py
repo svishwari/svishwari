@@ -108,7 +108,6 @@ class Decisioning:
         """
         models = []
         model_ids = self.get_all_model_ids()
-
         for model_id in model_ids:
             model_info = self.get_model_info(model_id)
 
@@ -134,16 +133,17 @@ class Decisioning:
 
         return models
 
-    def get_model_overview(self, model_id: str) -> dict:
+    def get_model_overview(self, model_id: str, model_version: str) -> dict:
         """Get the feature importance for a model
 
         Args:
             model_id (str): ID of the model.
 
+
         Returns:
             list: feature importance statistics for the model.
         """
-        model_info = self.get_model_info(model_id)
+        model_info = self.get_model_info(model_id, model_version)
         rmse = model_info.model_metrics.get("rmse", None)
 
         return {
@@ -226,12 +226,15 @@ class Decisioning:
         return feature_history
 
     # TODO HUS-2969
-    # pylint: disable=no-self-use
-    def get_model_pipeline_performance(self, model_id: str) -> dict:
+    # pylint: disable=no-self-use, unused-argument
+    def get_model_pipeline_performance(
+        self, model_id: str, model_version: str
+    ) -> dict:
         """Get the model performance of a model.
 
         Args:
             model_id (str): ID of the model.
+            model_version (str): Version of the model.
 
         Returns:
             dict: pipeline performance statistics.
@@ -267,17 +270,18 @@ class Decisioning:
             },
         }
 
-    def get_model_lift(self, model_id: str) -> list:
+    def get_model_lift(self, model_id: str, model_version: str) -> list:
         """Get the lift statics of a model.
 
         Args:
             model_id (str): ID of the model.
+            model_version (str): Version of the model.
 
         Returns:
             list: lift statistics.
         """
         lift_stats = []
-        model_info = self.get_model_info(model_id)
+        model_info = self.get_model_info(model_id, model_version)
 
         for lift_info in model_info.lift_chart:
             lift_stats.append(
