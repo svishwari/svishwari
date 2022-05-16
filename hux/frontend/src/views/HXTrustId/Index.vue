@@ -254,11 +254,7 @@
                   </div>
                 </template>
               </data-cards>
-              <div
-                v-if="
-                  getSelectedSegment && getSelectedSegment.segments.length < 5
-                "
-              >
+              <div v-if="getSelectedSegment && segmentCount < 5">
                 <v-list class="add-segment no-data-width" :height="22">
                   <v-list-item @click="filterToggle()">
                     <hux-icon
@@ -364,6 +360,7 @@ export default {
       switchSegment: true,
       multipleSegments: false,
       onlyDefault: false,
+      segmentCount: 0,
       switchLabel: [
         {
           condition: true,
@@ -374,7 +371,7 @@ export default {
           label: "OFF",
         },
       ],
-      borderColorArr: [
+      withDefaultborderColorArr: [
         {
           color: "primary",
           variant: "darken1",
@@ -394,6 +391,32 @@ export default {
         {
           color: "secondary",
           variant: "darken1",
+        },
+        {
+          color: "secondary",
+          variant: "lighten2",
+        },
+      ],
+      borderColorArr: [
+        {
+          color: "primary",
+          variant: "lighten4",
+        },
+        {
+          color: "primary",
+          variant: "lighten6",
+        },
+        {
+          color: "info",
+          variant: "base",
+        },
+        {
+          color: "secondary",
+          variant: "darken1",
+        },
+        {
+          color: "secondary",
+          variant: "lighten2",
         },
       ],
       colColorArr: {
@@ -505,8 +528,11 @@ export default {
             x.attributes.forEach((item) => {
               segment[item.attribute_type] = item.attribute_score
             })
-
-            segment.colors = this.borderColorArr[index]
+            if (this.onlyDefault) {
+              segment.colors = this.withDefaultborderColorArr[index]
+            } else {
+              segment.colors = this.borderColorArr[index]
+            }
             return segment
           })
         : []
@@ -585,12 +611,18 @@ export default {
       }
     },
     applyDefaultSegmentChanges() {
+      this.segmentCount = 0
       this.multipleSegments = this.getSelectedSegment.segments.some(
         (data) => !data.default
       )
       this.onlyDefault = this.getSelectedSegment.segments.some(
         (data) => data.default
       )
+      this.getSelectedSegment.segments.forEach((element) => {
+        if (!element.default) {
+          this.segmentCount++
+        }
+      })
     },
     getSelectedData(value) {
       this.selectedSegment = value
@@ -692,7 +724,7 @@ export default {
 .add-segment {
   height: 60px !important;
   display: inline-table;
-  background: var(--v-white-base);
+  background: var(--v-primary-lighten1);
   border: 1px solid var(--v-black-lighten2);
   border-radius: 5px;
 }
