@@ -247,7 +247,6 @@ class TestUsers(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsInstance(response.json(), list)
 
     def test_user_seen_notifications(self):
         """Test user seen notifications."""
