@@ -5,7 +5,7 @@ import pytest
 import requests
 
 
-class TestBasicAppChecks(TestCase):
+class TestCoreAppChecks(TestCase):
     """API application basic checks test class."""
 
     SWAGGER_UI = "ui"
