@@ -220,6 +220,19 @@
               false-color="var(--v-black-lighten4)"
             />
           </div>
+          <div v-if="header.value == 'last_delivered'" class="text-body-1">
+            <time-stamp
+              :value="
+                tableData != ''
+                  ? item[tableData]['last_delivered']
+                    ? item[tableData]['last_delivered']
+                    : '-'
+                  : item['last_delivered']
+                  ? item['last_delivered']
+                  : '-'
+              "
+            />
+          </div>
         </td>
       </template>
     </hux-data-table>

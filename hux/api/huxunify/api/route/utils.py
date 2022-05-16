@@ -2,7 +2,7 @@
 # pylint: disable=too-many-lines
 import statistics
 from collections import defaultdict, namedtuple
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 import re
 from itertools import groupby
 from pathlib import Path
@@ -27,9 +27,6 @@ from huxunifylib.util.general.logging import logger
 from huxunifylib.database.audit_management import create_audience_audit
 from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.util.client import db_client_factory
-from huxunifylib.database.cdp_data_source_management import (
-    get_all_data_sources,
-)
 from huxunifylib.database import (
     constants as db_c,
 )
@@ -108,8 +105,12 @@ def check_mongo_connection() -> Tuple[bool, str]:
     """
 
     try:
-        # test finding documents
-        get_all_data_sources(get_db_client())
+        # test finding documents, call directly to see errors.
+        _ = list(
+            get_db_client()[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.CDP_DATA_SOURCES_COLLECTION
+            ].find({})
+        )
         return True, "Mongo available."
     # pylint: disable=broad-except
     except Exception:
@@ -567,13 +568,17 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     )
 
     # check if the user is in the database
+    logger.info("Getting database client.")
     database = get_db_client()
+    logger.info("Successfully got database client.")
+
     user = get_user(database, user_info[api_c.OKTA_ID_SUB])
 
     if user is None:
         # since a valid okta_id is extracted from the okta issuer, use the user
         # info and create a new user if no corresponding user record matching
         # the okta_id is found in DB
+        logger.info("Setting user in database.")
         user = set_user(
             database=database,
             okta_id=user_info[api_c.OKTA_ID_SUB],
@@ -581,6 +586,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             display_name=user_info[api_c.NAME],
             role=user_info.get(api_c.ROLE, db_c.USER_ROLE_VIEWER),
         )
+        logger.info("Successfully set user in database.")
 
         # return NOT_FOUND if user is still none
         if user is None:
@@ -667,9 +673,16 @@ def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
         if match_rate_data.get(delivery.get(api_c.DELIVERY_PLATFORM_TYPE)):
             # Always ensure the latest successful
             # delivery is considered.
-            if delivery.get(db_c.UPDATE_TIME) > match_rate_data[
+            prev_update_time = match_rate_data[
                 delivery.get(api_c.DELIVERY_PLATFORM_TYPE)
-            ].get(api_c.AUDIENCE_LAST_DELIVERY, date.min):
+            ].get(api_c.AUDIENCE_LAST_DELIVERY)
+
+            prev_update_time = (
+                prev_update_time
+                if isinstance(prev_update_time, datetime)
+                else datetime.min
+            )
+            if delivery.get(db_c.UPDATE_TIME) > prev_update_time:
                 match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
                     api_c.AUDIENCE_LAST_DELIVERY: delivery.get(
                         db_c.UPDATE_TIME
@@ -1455,24 +1468,29 @@ async def build_notification_recipients_and_send_email(
 
 
 def populate_trust_id_segments(
-    database: DatabaseClient, custom_segments: list
+    database: DatabaseClient, custom_segments: list, add_default: bool = True
 ) -> list:
     """Function to populate Trust ID Segment data.
     Args:
         database (DatabaseClient): A database client.
         custom_segments(list): List of user specific segments data.
+        add_default (Optional, bool): Flag to add All Customers.
     Returns:
         list: Filled segments data with survey responses.
     """
 
+    segments_data = []
     # Set default segment without any filters
-    segments_data = [
-        {
-            api_c.SEGMENT_NAME: "Default segment",
-            api_c.SEGMENT_FILTERS: [],
-            api_c.SURVEY_RESPONSES: get_survey_responses(database=database),
-        }
-    ]
+    if add_default:
+        segments_data.append(
+            {
+                api_c.SEGMENT_NAME: "All Customers",
+                api_c.SEGMENT_FILTERS: [],
+                api_c.SURVEY_RESPONSES: get_survey_responses(
+                    database=database
+                ),
+            }
+        )
 
     for seg in custom_segments:
         survey_response = get_survey_responses(

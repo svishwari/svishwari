@@ -30,15 +30,15 @@ class TestDataSources(TestCase):
             headers=pytest.HEADERS,
         )
 
-        # test success
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsInstance(response.json(), list)
-        self.assertEqual(len(response.json()), 1)
-
         # add the crud object to pytest for cleaning after
         pytest.CRUD_OBJECTS += [
             Crud(self.COLLECTION, response.json()[0]["id"])
         ]
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), list)
+        self.assertEqual(len(response.json()), 1)
 
     def test_delete_data_source(self):
         """Test deleting a data source."""
@@ -182,12 +182,17 @@ class TestDataSources(TestCase):
             headers=pytest.HEADERS,
         )
 
+        data_source_id_to_update = create_response.json()[0]["id"]
+
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [
+            Crud(self.COLLECTION, data_source_id_to_update)
+        ]
+
         # test create success
         self.assertEqual(HTTPStatus.OK, create_response.status_code)
         self.assertIsInstance(create_response.json(), list)
         self.assertEqual(len(create_response.json()), 1)
-
-        data_source_id_to_update = create_response.json()[0]["id"]
 
         # set up the request patch to update the data source created above
         update_response = requests.patch(
@@ -207,8 +212,3 @@ class TestDataSources(TestCase):
             data_source_id_to_update, update_response.json()[0]["id"]
         )
         self.assertEqual("Pending", update_response.json()[0]["status"])
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [
-            Crud(self.COLLECTION, data_source_id_to_update)
-        ]

@@ -51,7 +51,7 @@
       <template #field:name="row">
         <span
           v-if="row.item.is_lookalike"
-          class="d-flex align-items-center"
+          class="d-flex align-items-center cursor-pointer"
           @click="openAudieneDetailDrawer(row)"
           ><icon type="lookalike" :size="24" class="mr-1" /><span
             class="body-1"
@@ -60,7 +60,7 @@
         >
         <span
           v-else
-          class="not-lookalike-color body-1"
+          class="not-lookalike-color body-1 cursor-pointer"
           @click="openAudieneDetailDrawer(row)"
           >{{ row.value }}</span
         >

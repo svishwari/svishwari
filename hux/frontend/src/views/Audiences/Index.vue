@@ -119,7 +119,7 @@
                   data-e2e="audiencename"
                   has-favorite
                   :is-favorite="isUserFavorite(item, 'audiences')"
-                  class="text-body-1"
+                  class="text-body-1 name-cell"
                   :show-star="!item.is_lookalike"
                   :nudge-top="audienceList.length - 1 == index ? '70' : ''"
                   @actionFavorite="handleActionFavorite(item, 'audiences')"
@@ -538,7 +538,7 @@ export default {
           id: 4,
           text: "Attributes",
           value: "filters",
-          width: "362px",
+          width: "380px",
         },
         {
           id: 5,
@@ -721,6 +721,7 @@ export default {
                     key: att,
                     name: attr[1][optionKey][att]["name"],
                     category: attr[0],
+                    optionName: attr[1][optionKey].name,
                   })
                 }
               })
@@ -729,6 +730,7 @@ export default {
                 key: optionKey,
                 name: attr[1][optionKey]["name"],
                 category: attr[0],
+                optionName: attr[1][optionKey].name,
               })
             }
           })
@@ -1040,5 +1042,8 @@ export default {
   max-height: 0 !important;
   min-height: 100% !important;
   min-width: 100% !important;
+}
+.name-cell {
+  margin-bottom: -15px !important;
 }
 </style>

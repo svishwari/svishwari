@@ -52,12 +52,12 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
+
         # test success
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, response.json()["id"])]
 
     def test_get_engagements(self):
         """Test get all engagements."""
@@ -100,11 +100,13 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
-
-        engagement_id = create_response.json()["id"]
 
         # get the engagement by id for further validation
         fetch_response = requests.get(
@@ -116,9 +118,6 @@ class TestEngagements(TestCase):
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
         self.assertIsInstance(fetch_response.json(), dict)
         self.assertEqual(engagement_id, fetch_response.json()["id"])
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
 
     def test_update_engagement(self):
         """Test updating an engagement."""
@@ -150,11 +149,13 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
-
-        engagement_id = create_response.json()["id"]
 
         # test engagement name and description as created
         self.assertEqual(engagement_name, create_response.json()["name"])
@@ -199,9 +200,6 @@ class TestEngagements(TestCase):
             updated_engagement_desc, update_response.json()["description"]
         )
 
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
-
     def test_delete_engagement(self):
         """Test deleting an engagement."""
 
@@ -227,11 +225,13 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
-
-        engagement_id = create_response.json()["id"]
 
         delete_response = requests.delete(
             f"{pytest.API_URL}/{self.ENGAGEMENTS}/{engagement_id}",
@@ -249,9 +249,6 @@ class TestEngagements(TestCase):
 
         # test success
         self.assertEqual(HTTPStatus.NOT_FOUND, fetch_response.status_code)
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
 
     def test_add_audience_to_an_engagement(self):
         """Test adding an audience to an engagement."""
@@ -278,12 +275,14 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
         self.assertEqual(len(create_response.json()["audiences"]), 1)
-
-        engagement_id = create_response.json()["id"]
 
         # get the last audience from get all audiences to add to an engagement
         audience_id_to_add = requests.get(
@@ -332,9 +331,6 @@ class TestEngagements(TestCase):
         self.assertEqual(engagement_id, fetch_response.json()["id"])
         self.assertEqual(len(fetch_response.json()["audiences"]), 2)
 
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
-
     def test_delete_audience_from_an_engagement(self):
         """Test deleting an audience from an engagement."""
 
@@ -375,12 +371,14 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
         self.assertEqual(len(create_response.json()["audiences"]), 2)
-
-        engagement_id = create_response.json()["id"]
 
         delete_audience_response = requests.delete(
             f"{pytest.API_URL}/{self.ENGAGEMENTS}/{engagement_id}/audiences",
@@ -407,9 +405,6 @@ class TestEngagements(TestCase):
         self.assertEqual(engagement_id, fetch_response.json()["id"])
         self.assertEqual(len(fetch_response.json()["audiences"]), 1)
 
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
-
     def test_add_destination_to_an_engagement_audience(self):
         """Test adding a destination to an engagement audience."""
 
@@ -435,6 +430,10 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
@@ -442,8 +441,6 @@ class TestEngagements(TestCase):
         self.assertEqual(
             len(create_response.json()["audiences"][0]["destinations"]), 1
         )
-
-        engagement_id = create_response.json()["id"]
 
         # get the last destination from get all destination to add to an
         # engagement audience
@@ -470,9 +467,6 @@ class TestEngagements(TestCase):
             ),
             2,
         )
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
 
     def test_delete_destination_from_an_engagement_audience(self):
         """Test deleting a destination to an engagement audience."""
@@ -509,6 +503,10 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
@@ -516,8 +514,6 @@ class TestEngagements(TestCase):
         self.assertEqual(
             len(create_response.json()["audiences"][0]["destinations"]), 2
         )
-
-        engagement_id = create_response.json()["id"]
 
         delete_destination_response = requests.delete(
             f"{pytest.API_URL}/{self.ENGAGEMENTS}/{engagement_id}"
@@ -546,9 +542,6 @@ class TestEngagements(TestCase):
             len(fetch_response.json()["audiences"][0]["destinations"]), 1
         )
 
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
-
     def test_get_engagement_email_performance_metrics(self):
         """Test get engagement email performance metrics."""
 
@@ -574,11 +567,13 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
-
-        engagement_id = create_response.json()["id"]
 
         # get the engagement email performance metrics for further validation
         get_email_metrics_response = requests.get(
@@ -593,9 +588,6 @@ class TestEngagements(TestCase):
         self.assertTrue(
             get_email_metrics_response.json()["audience_performance"]
         )
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
 
     def test_download_engagement_email_performance_metrics(self):
         """Test download engagement email performance metrics."""
@@ -622,11 +614,13 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
-
-        engagement_id = create_response.json()["id"]
 
         # get the engagement email performance metrics for further validation
         download_email_metrics_response = requests.get(
@@ -643,9 +637,6 @@ class TestEngagements(TestCase):
             "application/zip",
             download_email_metrics_response.headers["content-type"],
         )
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
 
     def test_get_engagement_display_ads_performance_metrics(self):
         """Test get engagement display ads performance metrics."""
@@ -672,11 +663,13 @@ class TestEngagements(TestCase):
             headers=pytest.HEADERS,
         )
 
+        engagement_id = create_response.json()["id"]
+        # add the crud object to pytest for cleaning after
+        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
+
         # test engagement created successfully
         self.assertEqual(HTTPStatus.CREATED, create_response.status_code)
         self.assertIsInstance(create_response.json(), dict)
-
-        engagement_id = create_response.json()["id"]
 
         # get the engagement email performance metrics for further validation
         get_display_ads_metrics_response = requests.get(
@@ -693,9 +686,6 @@ class TestEngagements(TestCase):
         self.assertTrue(
             get_display_ads_metrics_response.json()["audience_performance"]
         )
-
-        # add the crud object to pytest for cleaning after
-        pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, engagement_id)]
 
     def get_engagement_audience_facebook_destination_id(
         self,

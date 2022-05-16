@@ -40,6 +40,9 @@
           :coming-soon="false"
           :logo-option="true"
           :interactable="config.status == 'active'"
+          :top-right-adjustment="
+            config.status != 'active' ? 'ml-8 mt-3 mr-8' : 'mt-3 mr-8'
+          "
           height="225"
           width="255"
           class="mr-12 model-desc-card"
@@ -48,7 +51,7 @@
           <template slot="top">
             <status
               :icon-size="18"
-              :status="config.status"
+              :status="config.status != 'active' ? 'none' : 'active'"
               collapsed
               class="d-flex float-left"
               data-e2e="model-status"
@@ -87,6 +90,9 @@
           :coming-soon="false"
           :logo-option="true"
           :interactable="config.status == 'active'"
+          :top-right-adjustment="
+            config.status != 'active' ? 'ml-8 mt-3 mr-8' : 'mt-3 mr-8'
+          "
           height="225"
           width="255"
           class="mr-12 model-desc-card"
@@ -95,7 +101,7 @@
           <template slot="top">
             <status
               :icon-size="18"
-              :status="config.status"
+              :status="config.status != 'active' ? 'none' : 'active'"
               collapsed
               class="d-flex float-left"
               data-e2e="model-status"

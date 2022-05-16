@@ -1,6 +1,5 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for the User API."""
-import datetime
 import random
 from http import HTTPStatus
 from typing import Tuple
@@ -444,7 +443,7 @@ class UserView(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self, user: dict
     ) -> Tuple[list, int]:  # pylint: disable=no-self-use
@@ -497,6 +496,7 @@ class UserPatchView(SwaggerView):
             "example": {
                 db_c.USER_ROLE: "viewer",
                 db_c.USER_DISPLAY_NAME: "new_display_name",
+                db_c.USER_DEMO_CONFIG: api_c.USER_DEMO_CONFIG_SAMPLE,
             },
         },
     ]
@@ -563,7 +563,6 @@ class UserPatchView(SwaggerView):
                 **body,
                 **{
                     db_c.UPDATED_BY: user[api_c.USER_NAME],
-                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
             },
         )

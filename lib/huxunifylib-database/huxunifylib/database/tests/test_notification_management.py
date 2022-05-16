@@ -57,7 +57,7 @@ class NotificationManagementTest(TestCase):
 
         self.assertIsNotNone(notification)
         self.assertIn(db_c.ID, notification)
-        self.assertIn(db_c.NOTIFICATION_FIELD_CREATED, notification)
+        self.assertIn(db_c.NOTIFICATION_FIELD_CREATE_TIME, notification)
         self.assertEqual(
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             notification[db_c.NOTIFICATION_FIELD_TYPE],
@@ -92,7 +92,7 @@ class NotificationManagementTest(TestCase):
 
         self.assertIsNotNone(notification)
         self.assertIn(db_c.ID, notification)
-        self.assertIn(db_c.NOTIFICATION_FIELD_CREATED, notification)
+        self.assertIn(db_c.NOTIFICATION_FIELD_CREATE_TIME, notification)
         self.assertEqual(
             db_c.NOTIFICATION_TYPE_SUCCESS,
             notification[db_c.NOTIFICATION_FIELD_TYPE],
@@ -128,7 +128,7 @@ class NotificationManagementTest(TestCase):
 
         self.assertIsNotNone(notification)
         self.assertIn(db_c.ID, notification)
-        self.assertIn(db_c.NOTIFICATION_FIELD_CREATED, notification)
+        self.assertIn(db_c.NOTIFICATION_FIELD_CREATE_TIME, notification)
         self.assertEqual(
             db_c.NOTIFICATION_TYPE_CRITICAL,
             notification[db_c.NOTIFICATION_FIELD_TYPE],
@@ -218,7 +218,7 @@ class NotificationManagementTest(TestCase):
         for notification in notifications["notifications"]:
             self.assertEqual(
                 datetime.utcnow().date(),
-                notification.get(db_c.NOTIFICATION_FIELD_CREATED).date(),
+                notification.get(db_c.NOTIFICATION_FIELD_CREATE_TIME).date(),
             )
 
     def test_get_notifications(self):

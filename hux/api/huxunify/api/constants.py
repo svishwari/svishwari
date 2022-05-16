@@ -71,6 +71,10 @@ AZURE_STORAGE_CONNECTION_STRING = "AZURE_STORAGE_CONNECTION_STRING"
 AZURE_STORAGE_CONTAINER_NAME = "AZURE_STORAGE_CONTAINER_NAME"
 AZURE_STORAGE_BLOB_NAME = "AZURE_STORAGE_BLOB_NAME"
 AZURE_KEY_VAULT_NAME = "AZURE_KEY_VAULT_NAME"
+AZURE_TENANT_ID = "AZURE_TENANT_ID"
+AZURE_CLIENT_ID = "AZURE_CLIENT_ID"
+AZURE_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
+AZURE = "azure"
 
 # ORCH ROUTER PARAMS FOR OKTA
 UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
@@ -966,12 +970,16 @@ USER_EMAIL_ADDRESS = "email_address"
 USER_ACCESS_LEVEL = "access_level"
 USER_PII_ACCESS = "pii_access"
 USER_DESCRIPTION = "USER API"
+USER_DEMO_MODE = "demo_mode"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
 RESET = "reset"
+INDUSTRY = "industry"
+TARGET = "target"
+TRACK = "track"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -1707,10 +1715,20 @@ ALERT_SAMPLE_RESPONSE = {
         },
     }
 }
+USER_DEMO_CONFIG_SAMPLE = {
+    USER_DEMO_MODE: True,
+    INDUSTRY: "Healthcare",
+    DESCRIPTION: "Health Care Industry",
+    TARGET: "Patients",
+    TRACK: "Prescriptions",
+}
 
 # Trust ID
 TRUST_ID_ENDPOINT = "/trust_id"
 TRUST_ID_TAG = "trust-id"
+DEFAULT = "default"
+DEFAULT_TRUST_SEGMENT = "All Customers"
+MAX_SEGMENTS_ALLOWED = 5
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"
@@ -1947,6 +1965,7 @@ PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY = {
     "open_rate": 0,
     "clicks": 0,
     "conversions": 0,
+    "click_through_rate": 0.23,
     "click_to_open_rate": 0,
     "unique_clicks": 0,
     "unique_opens": 0,

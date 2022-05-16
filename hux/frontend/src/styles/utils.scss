@@ -249,6 +249,12 @@
   position: relative;
 }
 
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 $path--rel: "../../assets/images";
 
 @mixin no-data-frame-bg($link) {

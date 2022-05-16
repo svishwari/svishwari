@@ -10,11 +10,11 @@
         <tooltip>
           <template #label-content>
             <span class="text-subtitle-1">
-              {{ entity.overAllRate | Percentage }}
+              {{ entity.overAllRate | Percentage | Empty }}
             </span>
           </template>
           <template #hover-content>
-            {{ entity.overAllRate | Percentage }}
+            {{ entity.overAllRate | Percentage | Empty }}
           </template>
         </tooltip>
       </template>
