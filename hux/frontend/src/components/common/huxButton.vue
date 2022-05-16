@@ -4,7 +4,12 @@
     :disabled="isDisabled"
     :outlined="isOutlined"
     :tile="isTile"
-    :class="[buttonSize, { 'box-shadow-25': boxShadow }, 'text-button']"
+    :class="[
+      sidePadding,
+      buttonSize,
+      { 'box-shadow-25': boxShadow },
+      'text-button',
+    ]"
     :color="variant"
     :width="width"
     :height="height"
@@ -123,6 +128,11 @@ export default {
       type: String,
       required: false,
       default: "ml-2 mr-2",
+    },
+    sidePadding: {
+      type: String,
+      required: false,
+      default: "pr-6 pl-6",
     },
   },
   data() {

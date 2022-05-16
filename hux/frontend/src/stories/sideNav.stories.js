@@ -3,22 +3,11 @@ import SideNav from "../components/SideMenu.vue"
 export default {
   component: SideNav,
   title: "NewComponents/SideNav",
-
-  argTypes: {
-    toggle: { control: 'boolean' },
-  }, 
-
-  args: {
-    toggle: "true",
-  },
 }
 
-const Template = (args, { argTypes }) => ({
+export const mySideNav = () => ({
   components: { SideNav },
-  props: Object.keys(argTypes),
   template: `
-    <side-nav :toggle="$props"></side-nav>
+    <side-nav :toggle="true"></side-nav>
   `,
 })
-
-export const Temp = Template.bind({})

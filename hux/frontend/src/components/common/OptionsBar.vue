@@ -10,7 +10,13 @@
     <hux-button v-if="buttonText">{{ buttonText }}</hux-button>
     <template v-if="icons">
       <div class="ml-1 mr-3 icon-wrap">
-        <icon v-for="i in icons" v-bind:key="i" :type="i" :size="iconSize" class="ml-1 mr-1"/>
+        <icon
+          v-for="i in icons"
+          v-bind:key="i"
+          :type="i"
+          :size="iconSize"
+          class="ml-1 mr-1"
+        />
       </div>
     </template>
     <search v-if="searchBar" />

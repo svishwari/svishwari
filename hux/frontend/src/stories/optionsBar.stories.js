@@ -5,18 +5,19 @@ export default {
   title: "NewComponents/OptionsBar",
 
   argTypes: {
-    height: { control: 'number' },
-    buttonText: { control: 'text' },
-    numicons: { control: 'number' },
-    icons: { control: 'text' },
-    searchBar: { control: 'boolean' },
+    height: { control: "number" },
+    buttonText: { control: "text" },
+    numicons: { control: "number" },
+    searchBar: { control: "boolean" },
+    padding: { table: { disable: 'true' } },
+    heightChanges: { table: { disable: 'true' } },
   },
 
   args: {
-    buttonText: "Main CTA",
+    buttonText: "Button",
     icons: ["add", "add", "add"],
     searchBar: "true",
-  }
+  },
 }
 
 const Template = (args, { argTypes }) => ({
@@ -26,4 +27,4 @@ const Template = (args, { argTypes }) => ({
   <options-bar v-bind="$props"/>`,
 })
 
-export const OptionBar = Template.bind({})
+export const optionsBar = Template.bind({})
