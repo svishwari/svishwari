@@ -14,7 +14,7 @@ import { dataFeeds, dataFeedDetails } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import audienceHistogramData from "./factories/audienceHistogramData.js"
 import featureData from "./factories/featureData.json"
-import { requestedUser, someTickets } from "./factories/user.js"
+import { user, requestedUser, someTickets } from "./factories/user.js"
 import audienceCSVData from "./factories/audienceCSVData"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
@@ -95,6 +95,7 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
   server.get("users/requested_users", () => requestedUser)
+  server.patch("/users", (data) => user)
   server.get("users/tickets", () => someTickets())
   server.put("/user/preferences", (schema, request) => {
     const id = request.params.id

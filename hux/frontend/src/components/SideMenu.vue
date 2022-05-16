@@ -26,15 +26,16 @@
           <div class="pl-4 client py-2 mb-2" v-on="on">
             <span class="d-flex align-center justify-space-between">
               <span class="d-flex align-center black--text text-h4">
+
+                <div  v-if="isDemoMode"  class="dot mr-2">
+                  <logo :type="client.logo" :size="20" />
+                </div>
                 <logo
-                  v-if="!isDemoMode"
+                 v-else
                   :type="client.logo"
                   :size="24"
                   class="mr-2"
                 />
-                <div v-else class="dot mr-2">
-                  <logo :type="client.logo" :size="20" />
-                </div>
                 {{ client.name }}
               </span>
               <span class="mr-3">
@@ -208,6 +209,7 @@ export default {
     },
 
     isDemoMode() {
+      console.log(this.demoConfiguration?.demo_mode)
       return this.demoConfiguration?.demo_mode
     },
 
@@ -289,8 +291,10 @@ export default {
     },
     updateClientInfo() {
       if (this.isDemoMode) {
-        this.client.name = `${this.demoConfiguration.industry} Client`
-        this.client.logo = this.demoConfiguration?.industry.toLowerCase()
+        this.client = {
+          name: `${this.demoConfiguration.industry} Client`,
+          logo: this.demoConfiguration?.industry.toLowerCase()
+        }
       }
     },
     async setDemoConfiguration() {

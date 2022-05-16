@@ -203,9 +203,9 @@ export default {
       this.finalSelection[item] = value.name
     },
     isDisabled() {
-      return this.finalSelection.retailOptions !== "Select" &&
+      return (this.finalSelection.retailOptions !== "Select" &&
         this.finalSelection.customerOptions !== "Select" &&
-        this.finalSelection.conversionOptions !== "Select"
+        this.finalSelection.conversionOptions !== "Select") || !this.showConfiguration
         ? false
         : true
     },
