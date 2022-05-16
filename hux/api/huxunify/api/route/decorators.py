@@ -232,7 +232,6 @@ def requires_access_policy(
                 and api_c.AccessLevel(user.get(db_c.USER_ROLE))
                 in api_c.USER_ROLE_ALL
             ):
-
                 user[api_c.USER_NAME] = user.get(db_c.USER_DISPLAY_NAME, None)
                 user[api_c.USER_PII_ACCESS] = user.get(
                     db_c.USER_PII_ACCESS, False
