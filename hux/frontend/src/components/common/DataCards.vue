@@ -107,7 +107,10 @@
               </v-col>
             </v-row>
           </v-card>
-          <v-divider v-if="item.default && multipleSegments" class="mt-6 mb-6" />
+          <v-divider
+            v-if="item.default && multipleSegments"
+            class="mt-6 mb-6"
+          />
         </div>
       </template>
       <!-- empty slot -->

@@ -129,7 +129,7 @@
                 card-class="py-5 pa-4"
                 :items="getSegmentTableData"
                 :fields="getSegmentTableHeaders"
-                :multipleSegments="multipleSegments"
+                :multiple-segments="multipleSegments"
               >
                 <template
                   v-for="header in getSegmentTableHeaders"
@@ -555,7 +555,9 @@ export default {
     this.segmentComparisonLoading = true
     try {
       await this.getOverview()
-      await this.getTrustIdComparison()
+      await this.getTrustIdComparison({
+        defaultValue: true,
+      })
       await this.getSegmentData()
       await this.getTrustIdAttribute()
       await this.applyDefaultSegmentChanges()
@@ -599,7 +601,15 @@ export default {
       this.isFilterToggled = !this.isFilterToggled
     },
     toggleDefaultSwitch(event) {
-      console.log("default event", event)
+      // console.log("default event", event)
+      this.loading = true
+      this.getOverview()
+      this.getTrustIdComparison({
+        defaultValue: event,
+      })
+      this.getTrustIdAttribute()
+      this.$refs.comparisonChart.initializeComparisonChart()
+      this.loading = false
     },
     async addSegment(event) {
       this.loading = true
@@ -621,7 +631,9 @@ export default {
         if (response.length > 0) {
           this.loading = true
           this.getOverview()
-          this.getTrustIdComparison()
+          this.getTrustIdComparison({
+            defaultValue: true,
+          })
           this.getTrustIdAttribute()
           this.$refs.comparisonChart.initializeComparisonChart()
           this.setAlert({

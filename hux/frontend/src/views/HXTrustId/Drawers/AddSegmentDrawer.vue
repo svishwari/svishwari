@@ -8,8 +8,8 @@
     submit-button-width="79"
     submit-button="Add"
     :style="{ transition: '0.5s', height: viewHeight }"
-    :customValidation="true"
-    :enableApply="setEnableApply"
+    :custom-validation="true"
+    :enable-apply="setEnableApply"
     @clear="clear"
     @apply="apply"
     @close="close"
@@ -149,7 +149,10 @@ export default {
       this.segmentDataObj = {}
     },
     checkboxChange(keyType) {
-      if (!Array.isArray(this.segmentDataObj[keyType]) && !this.segmentDataObj[keyType]) {
+      if (
+        !Array.isArray(this.segmentDataObj[keyType]) &&
+        !this.segmentDataObj[keyType]
+      ) {
         delete this.segmentDataObj[keyType]
       } else {
         if (this.segmentDataObj[keyType].length == 0) {
