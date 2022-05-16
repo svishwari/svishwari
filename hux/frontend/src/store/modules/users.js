@@ -181,7 +181,9 @@ const actions = {
 
   async updateDemoConfig({ commit }, payload) {
     try {
-      const response = await api.users.updateDemoConfig({demo_config: payload})
+      const response = await api.users.updateDemoConfig({
+        demo_config: payload,
+      })
       if (response) {
         handleSuccess("Demo Configuration Saved Successfully", response.status)
       }

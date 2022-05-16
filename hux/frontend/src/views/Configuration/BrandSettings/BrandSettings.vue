@@ -205,7 +205,8 @@ export default {
     isDisabled() {
       return (this.finalSelection.retailOptions !== "Select" &&
         this.finalSelection.customerOptions !== "Select" &&
-        this.finalSelection.conversionOptions !== "Select") || !this.showConfiguration
+        this.finalSelection.conversionOptions !== "Select") ||
+        !this.showConfiguration
         ? false
         : true
     },
