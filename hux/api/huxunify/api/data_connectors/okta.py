@@ -34,7 +34,8 @@ def check_okta_connection() -> Tuple[bool, str]:
             logger.info("OKTA is available.")
             return True, "OKTA available."
         logger.error(
-            f"OKTA is unavailable, returned a {response.status_code} response."
+            "OKTA is unavailable, returned a %s response.",
+            {response.status_code},
         )
         return (
             False,

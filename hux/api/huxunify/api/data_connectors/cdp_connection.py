@@ -39,7 +39,7 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
             logger.info("CDP is available.")
             return True, "CDP connections available."
         logger.error(
-            f"CDP is unavailable, returned a {response.status_code} response."
+            "CDP is unavailable, returned a %s response.", response.status_code
         )
         return (
             False,

@@ -119,7 +119,8 @@ class Tecton:
                 logger.info("Tecton is available.")
                 return True, "Tecton available."
             logger.error(
-                f"Tecton is unavailable, returned a {response.status_code} response."
+                "Tecton is unavailable, returned a %s response.",
+                response.status_code,
             )
             return (
                 False,
