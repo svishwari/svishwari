@@ -106,14 +106,13 @@
                       "
                       >Compare segments to all customers</span
                     >
-
                     <hux-switch
                       v-model="switchSegment"
                       false-color="var(--v-black-lighten4)"
                       :width="'60px'"
                       :is-disabled="
-                        (!multipleSegments && onlyDefault) ||
-                        (multipleSegments && onlyDefault)
+                        (multipleSegments && onlyDefault) ||
+                        (multipleSegments && !onlyDefault)
                           ? false
                           : true
                       "
@@ -633,7 +632,6 @@ export default {
       this.isFilterToggled = !this.isFilterToggled
     },
     toggleDefaultSwitch(event) {
-      // console.log("default event", event)
       this.loading = true
       this.getOverview()
       this.getTrustIdComparison({
