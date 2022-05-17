@@ -218,6 +218,7 @@
               v-model="item['replace_audience']"
               :switch-labels="switchLabels"
               false-color="var(--v-black-lighten4)"
+              @change="handleChange($event, section.id, section, item.id)"
             />
           </div>
           <div v-if="header.value == 'last_delivered'" class="text-body-1">
@@ -273,6 +274,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -370,7 +372,20 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      replaceAudience: "audiences/replaceAudienceToggle",
+    }),
     formatText: formatText,
+    handleChange(event, engagementID, audienceID, destinationID) {
+      const data = {
+        engagement_id: engagementID,
+        audience_id: audienceID,
+        destination_id: destinationID,
+        value: event,
+      }
+      console.log(data)
+      // this.replaceAudience(data)
+    },
   },
 }
 </script>

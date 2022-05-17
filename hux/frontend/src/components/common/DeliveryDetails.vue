@@ -151,6 +151,7 @@
                 v-model="item['replace_audience']"
                 :switch-labels="switchLabels"
                 false-color="var(--v-black-lighten4)"
+                @change="handleChange($event, section.id, audience.id, item.id)"
               />
             </div>
           </td>
@@ -369,6 +370,7 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       setAlert: "alerts/setAlert",
       updateReplace: "engagements/updateReplace",
+      replaceAudience: "audiences/replaceAudienceToggle",
     }),
     async deliverAll(engagement) {
       await this.deliverAudience({
@@ -449,6 +451,15 @@ export default {
         type: "pending",
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
+    },
+    handleChange(event, engagementID, audienceID, destinationID) {
+      const data = {
+        engagement_id: engagementID,
+        audience_id: audienceID,
+        destination_id: destinationID,
+        value: event,
+      }
+      this.replaceAudience(data)
     },
   },
 }
