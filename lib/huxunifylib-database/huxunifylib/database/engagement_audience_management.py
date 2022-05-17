@@ -191,6 +191,73 @@ def set_engagement_audience_destination_schedule(
     )
 
 
+def set_replace_audience_flag(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    replace_audience: bool,
+    user_name: str,
+) -> dict:
+    """Method for toggling replace_audience flag
+
+    Args:
+        database(DatabaseClient): A database client
+        engagement_id(ObjectId):  MongoDB ID of the engagement.
+        audience_id(ObjectId): MongoDB ID of the audience.
+        destination_id(ObjectId): MongoDB ID of the destination.
+        replace_audience(bool): Audience replacement flag.
+        user_name(str): User name
+
+    Returns:
+        dict: Updated Engagement object
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    # get the engagement doc
+    engagement_doc = collection.find_one(
+        {
+            db_c.ID: engagement_id,
+            "audiences.id": audience_id,
+            "audiences.destinations.id": destination_id,
+        }
+    )
+    if not engagement_doc:
+        return {}
+
+    # Workaround cause DocumentDB does not support nested DB updates.
+    change = False
+    for audience in engagement_doc.get(db_c.AUDIENCES, []):
+        if audience.get(db_c.OBJECT_ID) != audience_id:
+            continue
+
+        for destination in audience.get(db_c.DESTINATIONS, []):
+            if destination.get(db_c.OBJECT_ID) != destination_id:
+                continue
+
+            destination[db_c.REPLACE_AUDIENCE] = replace_audience
+
+        engagement_doc.update(
+            {db_c.UPDATE_TIME: datetime.now(), db_c.UPDATED_BY: user_name}
+        )
+        change = True
+
+    # no changes, simply return.
+    if not change:
+        return {}
+
+    return collection.find_one_and_update(
+        {
+            db_c.ID: engagement_id,
+        },
+        {"$set": engagement_doc},
+        upsert=True,
+        return_document=pymongo.ReturnDocument.AFTER,
+    )
+
+
 @retry(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
@@ -348,7 +415,6 @@ def align_audience_engagement_deliveries(
     # process each audience delivery job
     matched_delivery_jobs = []
     for delivery_job in audience_delivery_jobs:
-
         # match the delivery platform, otherwise set to unknown.
         matched_delivery_platform = delivery_platform_dict.get(
             delivery_job[db_c.DELIVERY_PLATFORM_ID],
