@@ -290,7 +290,7 @@ export default {
           logo: this.demoConfiguration?.industry.toLowerCase(),
         }
       } else {
-          this.client = {
+        this.client = {
           name: "Retail Client",
           logo: "client",
         }
@@ -436,11 +436,11 @@ export default {
   padding-top: 2px !important;
 }
 .ellipsis {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 14ch;
-      display: inline-block;
-      width: 28ch;
-      white-space: nowrap;
-    }
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 14ch;
+  display: inline-block;
+  width: 28ch;
+  white-space: nowrap;
+}
 </style>
