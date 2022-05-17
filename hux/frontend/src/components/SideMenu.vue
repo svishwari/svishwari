@@ -30,7 +30,7 @@
                   <logo :type="client.logo" :size="20" />
                 </div>
                 <logo v-else :type="client.logo" :size="24" class="mr-2" />
-                {{ client.name }}
+                <span class="ellipsis">{{ client.name }}</span>
               </span>
               <span class="mr-3">
                 <icon
@@ -286,8 +286,13 @@ export default {
     updateClientInfo() {
       if (this.isDemoMode) {
         this.client = {
-          name: `${this.demoConfiguration.industry} Client`,
+          name: `${this.demoConfiguration.industry} demo`,
           logo: this.demoConfiguration?.industry.toLowerCase(),
+        }
+      } else {
+          this.client = {
+          name: "Retail Client",
+          logo: "client",
         }
       }
     },
@@ -430,4 +435,12 @@ export default {
   text-align: -webkit-center;
   padding-top: 2px !important;
 }
+.ellipsis {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 14ch;
+      display: inline-block;
+      width: 28ch;
+      white-space: nowrap;
+    }
 </style>

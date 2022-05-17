@@ -95,7 +95,11 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
   server.get("users/requested_users", () => requestedUser)
-  server.patch("/users", () => user)
+  server.patch("/users", (schema, request) => {
+    let requestData = JSON.parse(request.requestBody)
+    user.demo_config = requestData.demo_config
+    return user
+  })
   server.get("users/tickets", () => someTickets())
   server.put("/user/preferences", (schema, request) => {
     const id = request.params.id

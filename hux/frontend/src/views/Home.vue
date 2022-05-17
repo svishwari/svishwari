@@ -315,7 +315,7 @@ export default {
       totalCustomersChartErrorState: false,
       notificationsTableErrorState: false,
       showDemoHeader: false,
-      demo_icon: "automotive",
+      demo_icon: "",
     }
   },
 
@@ -390,6 +390,9 @@ export default {
       )
       if (this.demoConfiguration?.demo_mode) {
         this.getCurrentConfiguration()
+      } else {
+        this.showDemoHeader = false
+        this.demo_icon = ""
       }
     },
     formatText: formatText,

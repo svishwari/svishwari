@@ -68,7 +68,7 @@ export const user = {
   },
   demo_config: {
     demo_mode: true,
-    industry: "Automotive",
+    industry: "Healthcare",
     description: "Pharmaceutical",
     target: "Physicians",
     track: "Sales",
