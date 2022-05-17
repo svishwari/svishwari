@@ -203,7 +203,6 @@ export default {
     },
 
     isDemoMode() {
-      console.log(this.demoConfiguration?.demo_mode)
       return this.demoConfiguration?.demo_mode
     },
 
