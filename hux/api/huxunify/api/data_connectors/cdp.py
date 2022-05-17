@@ -59,7 +59,9 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         )
 
         if response.status_code == 200:
+            logger.info("CDM is unavailable.")
             return True, "CDM available."
+        logger.error("CDM is unavailable, returned a non-200 response.")
         return (
             False,
             f"Received status code: {response.status_code}, "
@@ -68,7 +70,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        logger.error("CDM Health Check failed with %s.", repr(exception))
+        logger.exception("CDM Health Check failed.")
         return False, getattr(exception, "message", repr(exception))
 
 

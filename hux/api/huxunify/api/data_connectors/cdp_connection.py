@@ -36,7 +36,9 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
             timeout=5,
         )
         if response.status_code == 200:
+            logger.info("CDP is available.")
             return True, "CDP connections available."
+        logger.error("CDP is unavailable, returned a non-200 response.")
         return (
             False,
             f"Received status code: {response.status_code}, "
@@ -45,9 +47,7 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        logger.error(
-            "CDP Connections Health Check failed with %s.", repr(exception)
-        )
+        logger.exception("CDP Connections Health Check failed.")
         return getattr(exception, "code", repr(exception)), getattr(
             exception, "message", repr(exception)
         )

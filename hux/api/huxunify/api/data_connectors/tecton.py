@@ -116,7 +116,9 @@ class Tecton:
                 headers=self.headers,
             )
             if response.status_code == 200:
+                logger.info("Tecton is available.")
                 return True, "Tecton available."
+            logger.error("Tecton is unavailable, returned a non-200 response.")
             return (
                 False,
                 f"Received status code: {response.status_code}, "
@@ -125,6 +127,7 @@ class Tecton:
 
         except Exception as exception:  # pylint: disable=broad-except
             # report the generic error message
+            logger.exception("Tecton Health Check failed.")
             return False, getattr(exception, "message", repr(exception))
 
     @staticmethod
