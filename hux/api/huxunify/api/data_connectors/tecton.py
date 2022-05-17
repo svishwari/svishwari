@@ -118,7 +118,7 @@ class Tecton:
             if response.status_code == 200:
                 logger.info("Tecton is available.")
                 return True, "Tecton available."
-            logger.error("Tecton is unavailable, returned a non-200 response.")
+            logger.error("Tecton is unavailable, returned a {response.status_code} response.")
             return (
                 False,
                 f"Received status code: {response.status_code}, "
