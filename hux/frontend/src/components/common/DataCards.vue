@@ -75,41 +75,44 @@
         </v-row>
 
         <!-- row -->
-        <v-card
-          v-for="(item, index) in Object.values(props.items)"
-          :key="index"
-          :class="{
-            'bordered-card': bordered,
-            'mt-0': index == 0,
-          }"
-          class="data-card my-3 text-body-1 alignment"
-          :style="
-            bordered
-              ? item.colors
-                ? style(item.colors.color, item.colors.variant)
-                : style()
-              : ''
-          "
-        >
-          <v-row align="center" no-gutters>
-            <v-col v-for="field in fields" :key="field.key" :cols="field.col">
-              <div :class="[cardClass, { center: field.center }]">
-                <!-- cell slot -->
-                <slot
-                  :name="`field:${field.key}`"
-                  :value="item[field.key]"
-                  :item="item"
-                  :index="index"
-                >
-                  <!-- default cell -->
-                  <template>{{ item[field.key] }}</template>
-                </slot>
-              </div>
-            </v-col>
-          </v-row>
-        </v-card>
+        <div v-for="(item, index) in Object.values(props.items)" :key="index">
+          <v-card
+            :class="{
+              'bordered-card': bordered,
+              'mt-0': index == 0,
+            }"
+            class="data-card my-3 text-body-1 alignment"
+            :style="
+              bordered
+                ? item.colors
+                  ? style(item.colors.color, item.colors.variant)
+                  : style()
+                : ''
+            "
+          >
+            <v-row align="center" no-gutters>
+              <v-col v-for="field in fields" :key="field.key" :cols="field.col">
+                <div :class="[cardClass, { center: field.center }]">
+                  <!-- cell slot -->
+                  <slot
+                    :name="`field:${field.key}`"
+                    :value="item[field.key]"
+                    :item="item"
+                    :index="index"
+                  >
+                    <!-- default cell -->
+                    <template>{{ item[field.key] }}</template>
+                  </slot>
+                </div>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-divider
+            v-if="item.default && multipleSegments"
+            class="mt-6 mb-6"
+          />
+        </div>
       </template>
-
       <!-- empty slot -->
       <template #no-data>
         <v-alert color="primary" class="empty-card">
@@ -173,6 +176,11 @@ export default {
       type: String,
       required: false,
       default: "",
+    },
+    multipleSegments: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 

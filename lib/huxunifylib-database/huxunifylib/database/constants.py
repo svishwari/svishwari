@@ -315,6 +315,8 @@ AUDIENCE_STATUS_PAUSED = "Paused"
 
 AUDIENCE_NAME_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
+REPLACE_AUDIENCE = "replace_audience"
+
 DELIVERIES = "deliveries"
 DELIVERY_PLATFORM_ID = "delivery_platform_id"
 DELIVERY_PLATFORM_CONTACT_LIST = "contact_list"
