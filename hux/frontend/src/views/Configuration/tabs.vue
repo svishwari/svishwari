@@ -13,7 +13,7 @@
         </v-tab>
         <v-tab
           key="team"
-          class="text-h3 black--text text--lighten-4"
+          class="mr-3 text-h3 black--text text--lighten-4"
           data-e2e="teamMembers"
         >
           Team members
