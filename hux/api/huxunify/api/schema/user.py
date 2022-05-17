@@ -185,3 +185,9 @@ class RequestedUserSchema(Schema):
     created = DateTimeWithZ(required=True)
     updated = DateTimeWithZ(required=True)
     key = Str(example="ABC-123", required=True)
+
+
+class RBACMatrixSchema(Schema):
+    """RBAC Matrix Schema"""
+
+    components = Dict(required=True)
