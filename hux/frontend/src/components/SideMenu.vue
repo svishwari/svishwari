@@ -285,7 +285,7 @@ export default {
     updateClientInfo() {
       if (this.isDemoMode) {
         this.client = {
-          name: `${this.demoConfiguration.industry} demo`,
+          name: `${this.demoConfiguration.industry} Client`,
           logo: this.demoConfiguration?.industry.toLowerCase(),
         }
       } else {
