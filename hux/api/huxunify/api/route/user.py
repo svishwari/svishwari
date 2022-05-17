@@ -579,10 +579,7 @@ class UserPatchView(SwaggerView):
             )
 
         # update the document
-        return (
-            UserSchema().dump(updated_user),
-            HuxResponse.OK,
-        )
+        return HuxResponse.OK(data=updated_user, data_schema=UserSchema())
 
 
 @add_view_to_blueprint(
