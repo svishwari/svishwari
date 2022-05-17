@@ -22,7 +22,7 @@
           >
             <tooltip v-if="field.tooltip">
               <template #label-content>
-                <div class="px-4 py-2 alignLabel">
+                <div class="px-4 py-2">
                   <span class="text-body-2 black--text text--lighten-4">
                     {{ field.label }}
                     <v-btn
@@ -50,7 +50,7 @@
                 {{ field.tooltip }}
               </template>
             </tooltip>
-            <div v-else class="px-4 py-2 alignLabel">
+            <div v-else class="px-4 py-2">
               <span class="text-body-2 black--text text--lighten-4">
                 {{ field.label }}
                 <v-btn
