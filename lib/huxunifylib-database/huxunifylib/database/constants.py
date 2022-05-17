@@ -315,6 +315,8 @@ AUDIENCE_STATUS_PAUSED = "Paused"
 
 AUDIENCE_NAME_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
+REPLACE_AUDIENCE = "replace_audience"
+
 DELIVERIES = "deliveries"
 DELIVERY_PLATFORM_ID = "delivery_platform_id"
 DELIVERY_PLATFORM_CONTACT_LIST = "contact_list"
@@ -397,6 +399,7 @@ USER_LAST_LOGIN = "last_login"
 USER_PROFILE_PHOTO = "profile_photo"
 USER_LOGIN_COUNT = "login_count"
 USER_DASHBOARD_CONFIGURATION = "dashboard_configuration"
+USER_DEMO_CONFIG = "demo_config"
 USER_ROLE_ADMIN = "admin"
 USER_ROLE_EDITOR = "editor"
 USER_ROLE_VIEWER = "viewer"
@@ -463,7 +466,7 @@ NOTIFICATION_TYPES = [
 ]
 NOTIFICATION_FIELD_TYPE = "type"
 NOTIFICATION_FIELD_DESCRIPTION = "description"
-NOTIFICATION_FIELD_CREATED = "created"
+NOTIFICATION_FIELD_CREATE_TIME = "create_time"
 NOTIFICATION_FIELD_CATEGORY = "category"
 NOTIFICATION_FIELD_USERNAME = "username"
 

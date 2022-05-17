@@ -314,7 +314,7 @@
                   >
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
-                      :standalone-data="audience.standalone_deliveries"
+                      :lookalikeable="lookalikeableAudience"
                       @openCreateLookalike="lookalikePageRedirect()"
                     />
                   </div>
@@ -393,6 +393,7 @@
       v-model="selectedDestinations"
       close-on-action
       :toggle="showSelectDestinationsDrawer"
+      :engagement-id="engagementId"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
       @onAddDestination="triggerAttachDestination($event)"
@@ -630,12 +631,8 @@ export default {
       return this.showAdvertising ? this.advertisingHeight : "400px"
     },
 
-    showLookalike() {
-      return !this.is_lookalike &&
-        this.isLookalikable &&
-        this.isLookalikable != "Disabled"
-        ? true
-        : false
+    lookalikeableAudience() {
+      return this.isLookalikable && this.isLookalikable == "Active"
     },
     breadcrumbItems() {
       const items = [
@@ -1116,11 +1113,13 @@ export default {
       await this.loadAudienceInsights()
     },
     async triggerRemoveDestination(event) {
+      console.log("event", event.destination)
       this.deleteActionData = {
+        engagementId: event.destination.engagementId,
         audienceId: this.audienceId,
         data: { id: event.destination.id },
       }
-      await this.detachAudienceDestination(this.deleteActionData)
+      await this.removeAudienceDestination(this.deleteActionData)
 
       await this.loadAudienceInsights()
     },

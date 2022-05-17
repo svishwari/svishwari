@@ -1,6 +1,5 @@
 # pylint: disable=no-self-use,unused-argument,too-many-lines
 """Paths for the User API."""
-import datetime
 import random
 from http import HTTPStatus
 from typing import Tuple
@@ -499,6 +498,7 @@ class UserPatchView(SwaggerView):
             "example": {
                 db_c.USER_ROLE: "viewer",
                 db_c.USER_DISPLAY_NAME: "new_display_name",
+                db_c.USER_DEMO_CONFIG: api_c.USER_DEMO_CONFIG_SAMPLE,
             },
         },
     ]
@@ -565,7 +565,6 @@ class UserPatchView(SwaggerView):
                 **body,
                 **{
                     db_c.UPDATED_BY: user[api_c.USER_NAME],
-                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
             },
         )

@@ -45,7 +45,7 @@ export default {
     minWidth: {
       type: [String, Number],
       required: false,
-      default: undefined,
+      default: "auto",
     },
     nudgeRight: {
       type: [String, Number],

@@ -167,7 +167,7 @@
 
                   <i-d-r-matching-trend
                     :map-data="matchingTrends"
-                    class="ml-10 mr-10 mt-2 mb-15"
+                    class="ml-2 mr-0 mt-2 mb-15"
                   />
                 </span>
 

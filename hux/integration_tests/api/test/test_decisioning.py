@@ -12,6 +12,25 @@ class TestModels(TestCase):
     MODELS = "models"
     COLLECTION = "models"
 
+    def setUp(self) -> None:
+        """Setup resources before each test."""
+
+        get_models_response = requests.get(
+            f"{pytest.API_URL}/{self.MODELS}",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, get_models_response.status_code)
+        self.assertIsInstance(get_models_response.json(), list)
+
+        # get the model id for propensity to open model
+        self.propensity_to_open_model_id = [
+            model["id"]
+            for model in get_models_response.json()
+            if "id" in model and model["id"] == "Propensity_positive_open"
+        ][0]
+
     def test_create_and_delete_model(self):
         """Test creating and deleting a model."""
 
@@ -121,34 +140,13 @@ class TestModels(TestCase):
         self.assertEqual(HTTPStatus.OK, delete_response.status_code)
         self.assertIsInstance(delete_response.json(), dict)
 
-    def test_get_model_by_id_pipeline_performance(self):
-        """Test get model by ID."""
+    def test_get_model_pipeline_performance(self):
+        """Test get model's pipeline performance."""
 
-        # create a test model to fetch by ID
-        create_response = requests.post(
-            f"{pytest.API_URL}/{self.MODELS}",
-            json=[
-                {
-                    "type": "model",
-                    "name": f"E2E test_decisioning Integration Test-"
-                    f"{int(time() * 1000)}",
-                    "id": "9a44c346ba034ac8a699ae0ab3314003",
-                    "status": "requested",
-                }
-            ],
-            headers=pytest.HEADERS,
-        )
-
-        # test model created successfully
-        self.assertEqual(HTTPStatus.OK, create_response.status_code)
-        self.assertIsInstance(create_response.json(), list)
-        self.assertEqual(len(create_response.json()), 1)
-
-        model_id = create_response.json()[0]["id"]
-
-        # get the model by id
+        # get the pipeline-performance of model
         fetch_response = requests.get(
-            f"{pytest.API_URL}/{self.MODELS}/{model_id}/pipeline-performance",
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.propensity_to_open_model_id}/pipeline-performance",
             headers=pytest.HEADERS,
         )
 
@@ -157,3 +155,87 @@ class TestModels(TestCase):
         self.assertIsInstance(fetch_response.json(), dict)
         self.assertIsNotNone(fetch_response.json()["training"])
         self.assertIsNotNone(fetch_response.json()["scoring"])
+
+    def test_get_model_feature_importance(self):
+        """Test get model's feature importance."""
+
+        # get the feature-importance of model
+        fetch_response = requests.get(
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.propensity_to_open_model_id}/feature-importance",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
+        self.assertIsInstance(fetch_response.json(), list)
+
+    def test_get_model_version_history(self):
+        """Test get model's version history."""
+
+        # get the version-history of model
+        fetch_response = requests.get(
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.propensity_to_open_model_id}/version-history",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
+        self.assertIsInstance(fetch_response.json(), list)
+
+    def test_get_model_overview(self):
+        """Test get model's overview."""
+
+        # get the overview of model
+        fetch_response = requests.get(
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.propensity_to_open_model_id}/overview",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
+        self.assertIsInstance(fetch_response.json(), dict)
+
+    def test_get_model_features(self):
+        """Test get model's features."""
+
+        # get the features of model
+        fetch_response = requests.get(
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.propensity_to_open_model_id}/features",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
+        self.assertIsInstance(fetch_response.json(), list)
+
+    def test_get_model_drift(self):
+        """Test get model's drift."""
+
+        # get the drift of model
+        fetch_response = requests.get(
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.propensity_to_open_model_id}/drift",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
+        self.assertIsInstance(fetch_response.json(), list)
+
+    def test_get_model_lift(self):
+        """Test get model's lift."""
+
+        # get the lift of model
+        fetch_response = requests.get(
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.propensity_to_open_model_id}/lift",
+            headers=pytest.HEADERS,
+        )
+
+        # test success
+        self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
+        self.assertIsInstance(fetch_response.json(), list)
