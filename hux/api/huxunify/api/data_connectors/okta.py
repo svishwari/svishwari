@@ -33,7 +33,9 @@ def check_okta_connection() -> Tuple[bool, str]:
         if response.status_code == 200:
             logger.info("OKTA is available.")
             return True, "OKTA available."
-        logger.error(f"OKTA is unavailable, returned a {response.status_code} response.")
+        logger.error(
+            f"OKTA is unavailable, returned a {response.status_code} response."
+        )
         return (
             False,
             f"Received status code: {response.status_code}, "
