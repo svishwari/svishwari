@@ -1446,6 +1446,20 @@ SAMPLE_NAVIGATION_SETTINGS = {
                 }
             ],
         },
+        {
+            db_c.CONFIGURATION_FIELD_NAME: "Insights",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_CHILDREN: [
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Customers",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Email Deliverability",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+            ],
+        },
     ]
 }
 
