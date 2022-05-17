@@ -61,7 +61,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         if response.status_code == 200:
             logger.info("CDM is unavailable.")
             return True, "CDM available."
-        logger.error("CDM is unavailable, returned a {response.status_code} response.")
+        logger.error(f"CDM is unavailable, returned a {response.status_code} response.")
         return (
             False,
             f"Received status code: {response.status_code}, "
