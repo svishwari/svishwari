@@ -56,7 +56,7 @@
                 :label="currentIndustrySelection"
                 :selected="currentIndustrySelection"
                 :show-hover="false"
-                :items="categoryOptions['industryOptions']"
+                :items="configOptions['industryOptions']"
                 min-width="320"
                 @on-select="onSelectMenuItem"
               />
@@ -75,7 +75,7 @@
                   :selected="finalSelection[option.key]"
                   :show-hover="false"
                   :items="
-                    categoryOptions[option.key][
+                    configOptions[option.key][
                       currentIndustrySelection.toLowerCase()
                     ]
                   "
@@ -114,7 +114,7 @@ import HuxSwitch from "@/components/common/Switch.vue"
 import HuxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import HuxDropdown from "@/components/common/HuxDropdown.vue"
-import categories from "./demo_config_options.json"
+import industryOptions from "./demo_config_options.json"
 
 export default {
   name: "BrandSettings",
@@ -152,7 +152,7 @@ export default {
           key: "conversionOptions",
         },
       ],
-      categoryOptions: categories,
+      configOptions: industryOptions,
       enableSelection: false,
       industrySelected: false,
       showSubCategories: false,
