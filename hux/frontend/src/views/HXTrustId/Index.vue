@@ -772,4 +772,7 @@ export default {
 .toggle-main-div {
   float: right;
 }
+::v-deep .alignLabel {
+  text-align: center;
+}
 </style>
