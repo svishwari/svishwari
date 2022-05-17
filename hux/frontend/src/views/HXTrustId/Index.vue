@@ -113,9 +113,9 @@
                       :width="'60px'"
                       :is-disabled="
                         (!multipleSegments && onlyDefault) ||
-                        (multipleSegments && !onlyDefault)
-                          ? true
-                          : false
+                        (multipleSegments && onlyDefault)
+                          ? false
+                          : true
                       "
                       :switch-labels="switchLabel"
                       @change="toggleDefaultSwitch($event)"
