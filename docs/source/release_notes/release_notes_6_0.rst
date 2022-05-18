@@ -35,7 +35,7 @@ New Features & Updates
 - Remove a requested model
 - Introduction of model categories
 - Version history enhancement
-	- User can click on a model version history and see past information of a particular model
+    - User can click on a model version history and see past information of a particular model
 
 *****
 Fixes
@@ -52,21 +52,21 @@ All features that belong to orchestration including destinations, audiences, and
 New Features & Updates
 **********************
 - Destination enhancements
-	- Remove a connected (Active) destination
-	- Ability to request a destination
-	- Additional destination options
-	- Destination categories
-	- Open a destination via a URL
+    - Remove a connected (Active) destination
+    - Ability to request a destination
+    - Additional destination options
+    - Destination categories
+    - Open a destination via a URL
 - Engagement enhancements
-	- Ability to remove an engagement
-	- Ability to filter engagements
-	- Delivery schedule: Select a time range and specific time for when you want audiences to be delivered automatically
+    - Ability to remove an engagement
+    - Ability to filter engagements
+    - Delivery schedule: Select a time range and specific time for when you want audiences to be delivered automatically
 - Audience enhancements
-	- Ability to remove an audience
-	- Ability for standalone deliveries (i.e. the delivery of an audience without being part of an engagement)
+    - Ability to remove an audience
+    - Ability for standalone deliveries (i.e. the delivery of an audience without being part of an engagement)
 - Updates to customer overview dashboard
 - Segment playground: Allowing the ability to play with your customer data before creating an audience
-	- Ability to segment by customer events
+    - Ability to segment by customer events
 
 Other Updates
 -------------
@@ -76,22 +76,22 @@ Additional updates across the platform that do not belong to a specific module.
 New Features & Updates
 **********************
 - Contact us: Available from the top navigation under the "?" icon
-	- Submit feedback
-	-  Contact / Email us
-	-  Submit a bug
+    - Submit feedback
+    - Contact / Email us
+    - Submit a bug
 - Ability to track any created issues from the UI under "My Issues" and auto-create a JIRA ticket
 - Configuration: Located in the left hand navigation. This area contains insights into who has access to a client as well as what is configured
-	-  Requesting a team member
-	-  View teammembers
-	-  Access levels for users (Admin, View-only, and Edit)
-	-  View the configuration of a particular client's modules and solutions
-	-  Control who can and cannot see PII data
+    - Requesting a team member
+    - View team members
+    - Access levels for users (Admin, View-only, and Edit)
+    - View the configuration of a particular client's modules and solutions
+    - Control who can and cannot see PII data
 - Backend support for multi-tenancy
 - Enhancements to alerts
-	-  Filtering
-	-  Setting up email notifications for alerts
+    - Filtering
+    - Setting up email notifications for alerts
 - New Solutions
-	-  Email Deliverability Dashboard
+    - Email Deliverability Dashboard
 - Add "Need Help?" Section on homepage
 
 *****
