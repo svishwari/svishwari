@@ -7,7 +7,7 @@ from typing import Tuple
 from bson import ObjectId
 from connexion.exceptions import ProblemException
 from dateutil.parser import parse, ParserError
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -17,7 +17,7 @@ from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
     update_user,
-    get_user,
+    get_user, delete_user,
 )
 from huxunifylib.database.data_management import get_constant
 from huxunify.api.config import get_config
@@ -1034,3 +1034,50 @@ class UsersRBACMatrix(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/<okta_id>",
+    "UsersRBACMatrix",
+)
+class DeleteUser(SwaggerView):
+    """User RBAC Matrix Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Value indicating success.",
+        },
+        HTTPStatus.NO_CONTENT.value: {
+            "schema": {},
+        },
+        HTTPStatus.INTERNAL_SERVER_ERROR.value: {
+            "schema": "Failed to delete the user.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels([api_c.ADMIN_LEVEL])
+    def delete(self, okta_id: str, user: dict) -> Tuple[Response, int]:
+        """Deletes a user from the database.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            okta_id (str): okta ID of the user to be deleted.
+            user (dict): user object.
+
+        Returns:
+            Tuple[Response, int]: message dict, HTTP status code.
+        """
+
+        database = get_db_client()
+
+        if delete_user(database, okta_id):
+            return HuxResponse.NO_CONTENT()
+
+        return HuxResponse.INTERNAL_SERVER_ERROR("Failed to delete this user.")

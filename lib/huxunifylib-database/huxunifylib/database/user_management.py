@@ -237,7 +237,8 @@ def delete_user(
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
-        return collection.delete_one({db_c.OKTA_ID: okta_id}).deleted_count > 0
+        collection.delete_one({db_c.OKTA_ID: okta_id})
+        return True
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
