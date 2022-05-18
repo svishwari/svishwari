@@ -218,7 +218,15 @@
               v-model="item['replace_audience']"
               :switch-labels="switchLabels"
               false-color="var(--v-black-lighten4)"
-              @change="handleChange($event, section.id, section, item.id)"
+              @change="
+                handleChange(
+                  $event,
+                  section.id,
+                  section[audienceKey],
+                  item[tableData].name,
+                  item.id
+                )
+              "
             />
           </div>
           <div v-if="header.value == 'last_delivered'" class="text-body-1">
@@ -376,15 +384,23 @@ export default {
       replaceAudience: "audiences/replaceAudienceToggle",
     }),
     formatText: formatText,
-    handleChange(event, engagementID, audienceID, destinationID) {
+    handleChange(
+      event,
+      engagementID,
+      audiencesList,
+      audienceName,
+      destinationID
+    ) {
+      const audienceID = audiencesList.filter(
+        (item) => item.name == audienceName
+      )[0].id
       const data = {
         engagement_id: engagementID,
         audience_id: audienceID,
         destination_id: destinationID,
         value: event,
       }
-      console.log(data)
-      // this.replaceAudience(data)
+      this.replaceAudience(data)
     },
   },
 }
