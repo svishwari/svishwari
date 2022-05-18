@@ -1,0 +1,3 @@
+cypress.env.**
+**/coverage
+**/.nyc_output
