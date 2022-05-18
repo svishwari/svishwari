@@ -11,7 +11,7 @@ Welcome to HUX Unified Solution's documentation!
    :caption: Contents:
 
    getting_started
-   release_notes
+   release_notes/release_notes
    modules
 
 Indices and tables

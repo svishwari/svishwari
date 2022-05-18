@@ -219,9 +219,9 @@ export default [
     segment_type: "capability attributes",
     segments: [
       {
-        segment_name: "Segment 1",
+        segment_name: "All Customer",
         segment_filters: [],
-        default: false,
+        default: true,
         attributes: [
           {
             attribute_type: "capability",
