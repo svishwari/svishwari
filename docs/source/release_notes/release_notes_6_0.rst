@@ -47,11 +47,6 @@ This is a quick overview of high level changes.
 New Features
 -------------
 
-This is a quick overview of high level changes.
-
-New Features
--------------
-
 * List item
 * List item
 * List item
