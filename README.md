@@ -44,6 +44,9 @@ Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.
 
 Note: To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN).
 
+## Security Applications
+WhiteSource https://deloitte.whitesourcesoftware.com
+
 ## Introduction (Project Justice League)
 Create a unified project platform.
 ![image](https://user-images.githubusercontent.com/20735170/114725970-303d1a80-9cfa-11eb-870f-e36d0588b8a3.png)
