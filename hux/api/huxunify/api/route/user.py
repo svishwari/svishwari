@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use,disable=unused-argument
+# pylint: disable=no-self-use,unused-argument,too-many-lines
 """Paths for the User API."""
 import random
 from http import HTTPStatus
@@ -19,6 +19,7 @@ from huxunifylib.database.user_management import (
     update_user,
     get_user,
 )
+from huxunifylib.database.data_management import get_constant
 from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
@@ -46,6 +47,7 @@ from huxunify.api.schema.user import (
     TicketGetSchema,
     NewUserRequest,
     RequestedUserSchema,
+    RBACMatrixSchema,
 )
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -577,10 +579,7 @@ class UserPatchView(SwaggerView):
             )
 
         # update the document
-        return (
-            UserSchema().dump(updated_user),
-            HTTPStatus.OK,
-        )
+        return HuxResponse.OK(data=updated_user, data_schema=UserSchema())
 
 
 @add_view_to_blueprint(
@@ -975,6 +974,62 @@ class UsersRequested(SwaggerView):
                 RequestedUserSchema().dump(
                     filter_team_member_requests(jira_issues),
                     many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/{api_c.RBAC_MATRIX}",
+    "UsersRBACMatrix",
+)
+class UsersRBACMatrix(SwaggerView):
+    """User RBAC Matrix Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Retrieve RBAC Matrix.",
+            "schema": {"type": "array", "items": RBACMatrixSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get RBAC Matrix."
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
+        """Retrieves RBAC matrix for users.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: dict of requested users, HTTP status code.
+        """
+
+        database = get_db_client()
+
+        matrix = get_constant(
+            database,
+            api_c.RBAC_MATRIX,
+        )
+
+        return (
+            jsonify(
+                RBACMatrixSchema().dump(
+                    matrix[api_c.VALUE],
                 )
             ),
             HTTPStatus.OK,

@@ -631,12 +631,13 @@ export default {
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
     },
-    toggleDefaultSwitch(event) {
+    async toggleDefaultSwitch(event) {
       this.loading = true
       this.getOverview()
-      this.getTrustIdComparison({
+      await this.getTrustIdComparison({
         defaultValue: event,
       })
+      this.applyDefaultSegmentChanges()
       this.getTrustIdAttribute()
       this.$refs.comparisonChart.initializeComparisonChart()
       this.loading = false

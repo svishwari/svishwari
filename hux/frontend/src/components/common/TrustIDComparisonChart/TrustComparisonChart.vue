@@ -188,9 +188,7 @@ export default {
     },
 
     hasDefaultSegment() {
-      return this.sourceData.some(
-        (data) => data.segment_name == "All Customers"
-      )
+      return this.sourceData.some((data) => data.default)
     },
   },
 }

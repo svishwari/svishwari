@@ -158,17 +158,48 @@ class ConfigurationsNavigation(SwaggerView):
                 "$in": [db_c.CONFIGURATION_TYPE_NAVIGATION_SETTINGS]
             }
         }
+
         nav_settings = collection_management.get_documents(
             get_db_client(),
             db_c.CONFIGURATIONS_COLLECTION,
             query_filter=query_filter,
         )
+
+        nav_settings_doc = nav_settings[db_c.DOCUMENTS][0]
+
+        # check if demo config is set up for the user to modify the side navbar
+        # values accordingly
+        if (
+            user
+            and db_c.USER_DEMO_CONFIG in user
+            and (user[db_c.USER_DEMO_CONFIG]).get(api_c.USER_DEMO_MODE, False)
+        ):
+            insights_nav_setting = next(
+                (
+                    insights_setting_child
+                    for nav_setting in nav_settings_doc[
+                        db_c.CONFIGURATION_FIELD_SETTINGS
+                    ]
+                    if nav_setting[db_c.CONFIGURATION_FIELD_NAME]
+                    == api_c.INSIGHTS.title()
+                    for insights_setting_child in nav_setting[
+                        db_c.CONFIGURATION_FIELD_CHILDREN
+                    ]
+                    if insights_setting_child[db_c.CONFIGURATION_FIELD_NAME]
+                    == api_c.CUSTOMERS_TAG.title()
+                ),
+                None,
+            )
+
+            # set the configuration name value with that of the target audience
+            # name set as the user's demo config
+            if insights_nav_setting is not None:
+                insights_nav_setting[db_c.CONFIGURATION_FIELD_NAME] = user[
+                    db_c.USER_DEMO_CONFIG
+                ].get(api_c.TARGET, api_c.CUSTOMERS_TAG.title())
+
         return (
-            jsonify(
-                NavigationSettingsSchema().dump(
-                    nav_settings[db_c.DOCUMENTS][0]
-                )
-            ),
+            jsonify(NavigationSettingsSchema().dump(nav_settings_doc)),
             HTTPStatus.OK.value,
         )
 

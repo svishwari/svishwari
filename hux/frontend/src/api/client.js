@@ -48,6 +48,9 @@ client["users"].getRequestedUsers = () => {
 client["users"].tickets = () => {
   return http.get("users/tickets")
 }
+client["users"].updateDemoConfig = (data) => {
+  return http.patch("users", data)
+}
 //#endregion
 
 //#region Configurations
