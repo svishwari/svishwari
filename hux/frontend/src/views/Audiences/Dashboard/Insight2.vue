@@ -431,6 +431,7 @@
       :audience-id="audienceId"
       :toggle="showDeliveryHistoryDrawer"
       data-e2e="delivery-history-drawer"
+      class="delivery-history-drawer-audience"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
 
@@ -1289,6 +1290,9 @@ export default {
       margin: 0;
       list-style-type: none;
     }
+  }
+  .delivery-history-drawer-audience {
+    width: 665px !important;
   }
   .audience-summary {
     padding: 10px 15px;

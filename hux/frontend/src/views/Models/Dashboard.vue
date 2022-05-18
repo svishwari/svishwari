@@ -747,6 +747,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .model-dashboard-wrap {
+  .tabs-item {
+    overflow: hidden !important;
+  }
   .model-dashboard__card {
     height: 80px;
     border: 1px solid var(--v-black-lighten2);
