@@ -675,3 +675,20 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertEqual(
             doc[db_c.AUDIENCE_STATUS], db_c.AUDIENCE_STATUS_DELIVERING
         )
+
+    def test_set_replace_audience_flag_standalone_audience(self):
+        """Test set_replace_audience flag_standalone_audience method"""
+
+        self._setup_ingestion_succeeded_and_audience()
+
+        audience_doc = am.set_replace_audience_flag_standalone_audience(
+            database=self.database,
+            audience_id=self.audience_doc[db_c.ID],
+            destination_id=self.destination[db_c.ID],
+            replace_audience=True,
+            user_name="Test User",
+        )
+
+        for destination in audience_doc[db_c.DESTINATIONS]:
+            if destination[db_c.OBJECT_ID] == self.destination[db_c.ID]:
+                self.assertTrue(destination[db_c.REPLACE_AUDIENCE])
