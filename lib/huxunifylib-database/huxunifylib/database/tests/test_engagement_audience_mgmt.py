@@ -440,7 +440,7 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
 
     def test_set_replace_audience_flag(self):
         """Test set_replace_audience flag method"""
-        engagement_doc = eam.set_replace_audience_flag(
+        engagement_doc = eam.set_replace_audience_flag_engaged_audience(
             database=self.database,
             engagement_id=self.engagement_id,
             audience_id=self.audience_id,

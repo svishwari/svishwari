@@ -13,6 +13,9 @@ from huxunifylib.database import (
     constants as db_c,
     delivery_platform_management,
 )
+from huxunifylib.database.audience_management import (
+    set_replace_audience_flag_standalone_audience,
+)
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
 )
@@ -22,7 +25,7 @@ from huxunifylib.database.engagement_management import (
 from huxunifylib.database.engagement_audience_management import (
     set_engagement_audience_destination_schedule,
     set_engagement_audience_schedule,
-    set_replace_audience_flag,
+    set_replace_audience_flag_engaged_audience,
 )
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.orchestration_management import (
@@ -243,7 +246,7 @@ class EngagementDeliverDestinationView(SwaggerView):
         )
 
         # Toggle replace audience flag in engaged-audience-destination
-        set_replace_audience_flag(
+        set_replace_audience_flag_engaged_audience(
             database=database,
             engagement_id=engagement_id,
             audience_id=audience_id,
@@ -528,6 +531,14 @@ class AudienceDeliverView(SwaggerView):
                 ],
             },
         },
+        {
+            "name": db_c.REPLACE_AUDIENCE,
+            "description": "Audience Replace Flag",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "example": False,
+        },
     ]
 
     responses = {
@@ -565,6 +576,7 @@ class AudienceDeliverView(SwaggerView):
         """
 
         request_data = request.get_json()
+        replace_audience = request.args.get(db_c.REPLACE_AUDIENCE)
 
         # validate fields
         if api_c.DESTINATIONS not in request_data:
@@ -592,6 +604,19 @@ class AudienceDeliverView(SwaggerView):
 
         database = get_db_client()
 
+        if replace_audience:
+            replace_audience = (
+                Validation.validate_bool(replace_audience)
+                if replace_audience
+                else False
+            )
+            set_replace_audience_flag_standalone_audience(
+                database=database,
+                audience_id=audience_id,
+                destination_id=destination_ids[0],
+                replace_audience=replace_audience,
+                user_name=user[db_c.USER_DISPLAY_NAME],
+            )
         # run the async function for each of the destination_id from the passed
         # in destination_ids list
         for destination_id in destination_ids:

@@ -332,6 +332,7 @@ def get_engagements_summary(
                         "is_ad_platform": "$audiences.destinations.is_ad_platform",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "link": "$audiences.destinations.link",
+                        "replace_audience": "$audiences.destinations.replace_audience",
                         "category": "$audiences.destinations.category",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "data_added": {
