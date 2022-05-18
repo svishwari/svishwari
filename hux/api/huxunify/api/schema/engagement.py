@@ -527,6 +527,7 @@ class EngagementDestinationAudienceSchema(Schema):
     is_lookalike = fields.Boolean(default=False)
     size = fields.Integer(default=0)
     latest_delivery = fields.Nested(LatestDeliverySchema)
+    replace_audience = fields.Boolean(required=False)
 
 
 class EngagementDestinationSchema(Schema):
