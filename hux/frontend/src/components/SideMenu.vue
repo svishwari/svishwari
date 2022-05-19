@@ -185,7 +185,7 @@ export default {
   data: () => ({
     // TODO: integrate with API endpoint for configuring this in the UI
     client: {
-      name: "Retail Client",
+      name: "Retail Co",
       logo: "client",
     },
     menu: false,
@@ -285,12 +285,12 @@ export default {
     updateClientInfo() {
       if (this.isDemoMode) {
         this.client = {
-          name: `${this.demoConfiguration.industry} Client`,
+          name: `${this.demoConfiguration.industry} Co`,
           logo: this.demoConfiguration?.industry.toLowerCase(),
         }
       } else {
         this.client = {
-          name: "Retail Client",
+          name: "Retail Co",
           logo: "client",
         }
       }

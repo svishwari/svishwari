@@ -23,7 +23,7 @@
           class="text-h3 black--text text--lighten-4"
           data-e2e="teamMembers"
         >
-          Brand Settings
+          Client settings
         </v-tab>
       </div>
     </v-tabs>
