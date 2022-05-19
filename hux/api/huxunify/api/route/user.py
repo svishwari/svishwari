@@ -1043,7 +1043,7 @@ class UsersRBACMatrix(SwaggerView):
     "DeleteUser",
 )
 class DeleteUser(SwaggerView):
-    """User RBAC Matrix Class."""
+    """Delete User Class."""
 
     responses = {
         HTTPStatus.NO_CONTENT.value: {
