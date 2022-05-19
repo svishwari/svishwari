@@ -138,20 +138,19 @@ class Decisioning:
 
         Args:
             model_id (str): ID of the model.
-
+            model_version (str): Version of the model.
 
         Returns:
             list: feature importance statistics for the model.
         """
         model_info = self.get_model_info(model_id, model_version)
-        rmse = model_info.model_metrics.get("rmse", None)
 
         return {
             api_c.MODEL_TYPE: model_info.model_metadata.model_type,
             api_c.MODEL_NAME: model_info.model_metadata.model_name,
             api_c.DESCRIPTION: model_info.model_metadata.description,
             api_c.PERFORMANCE_METRIC: {
-                api_c.RMSE: rmse if rmse else -1.0,
+                api_c.RMSE: model_info.model_metrics.get("rmse", -1),
                 api_c.AUC: model_info.model_metrics["AUC"],
                 api_c.PRECISION: model_info.model_metrics["precision"],
                 api_c.RECALL: model_info.model_metrics["recall"],
