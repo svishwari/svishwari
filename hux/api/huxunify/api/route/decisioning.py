@@ -168,6 +168,15 @@ class ModelsView(SwaggerView):
 
         all_models.sort(key=lambda x: x[api_c.NAME])
 
+        # Filter to remove pendleton models.
+        all_models = list(
+            filter(
+                lambda x: not x.get(api_c.NAME, "")
+                .lower()
+                .__contains__("pendleton"),
+                all_models,
+            )
+        )
         return (
             jsonify(ModelSchema(many=True).dump(all_models)),
             HTTPStatus.OK.value,
