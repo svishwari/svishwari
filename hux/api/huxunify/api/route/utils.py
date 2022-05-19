@@ -729,6 +729,9 @@ def set_destination_category_in_engagement(engagement: dict):
             # build the destination dict nested with corresponding audience
             # and latest delivery data
             audience[api_c.LATEST_DELIVERY] = dest[api_c.LATEST_DELIVERY]
+            audience[db_c.REPLACE_AUDIENCE] = dest.get(
+                db_c.REPLACE_AUDIENCE, False
+            )
             destination = {
                 api_c.ID: dest[api_c.ID],
                 api_c.NAME: dest[api_c.NAME],
@@ -736,6 +739,7 @@ def set_destination_category_in_engagement(engagement: dict):
                 api_c.DESTINATION_TYPE: dest[api_c.DELIVERY_PLATFORM_TYPE],
                 db_c.LINK: dest.get(db_c.LINK),
             }
+
             destination[api_c.DESTINATION_AUDIENCES].append(audience)
             destinations.append(destination)
 

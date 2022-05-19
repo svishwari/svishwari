@@ -43,6 +43,7 @@ def get_all_engagement_audience_destinations(
                 "data_added_destination": {
                     "destination_id": "$audiences.destinations.id",
                     "data_added": "$audiences.destinations.data_added",
+                    "replace_audience": "$audiences.destinations.replace_audience",
                 }
             }
         },
@@ -191,7 +192,7 @@ def set_engagement_audience_destination_schedule(
     )
 
 
-def set_replace_audience_flag(
+def set_replace_audience_flag_engaged_audience(
     database: DatabaseClient,
     engagement_id: ObjectId,
     audience_id: ObjectId,

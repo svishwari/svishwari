@@ -5,7 +5,7 @@
       :key="item.text"
       class="chart-legends mr-6"
     >
-      <span class="legend-items">
+      <span class="legend-items" :class="!showCheckBox ? 'mt-5' : ''">
         <v-checkbox
           v-if="showCheckBox"
           :key="item.text"

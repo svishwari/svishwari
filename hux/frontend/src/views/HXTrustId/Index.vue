@@ -631,12 +631,13 @@ export default {
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
     },
-    toggleDefaultSwitch(event) {
+    async toggleDefaultSwitch(event) {
       this.loading = true
       this.getOverview()
-      this.getTrustIdComparison({
+      await this.getTrustIdComparison({
         defaultValue: event,
       })
+      this.applyDefaultSegmentChanges()
       this.getTrustIdAttribute()
       this.$refs.comparisonChart.initializeComparisonChart()
       this.loading = false
@@ -744,7 +745,6 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 240px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }

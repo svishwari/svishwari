@@ -823,6 +823,17 @@ async def deliver_audience_to_destination(
             user_name,
         )
         return
+    replace_audience = False
+    if destination.get(db_c.IS_AD_PLATFORM):
+        replace_audience = list(
+            map(
+                lambda x: x[db_c.REPLACE_AUDIENCE],
+                filter(
+                    lambda x: (x[db_c.OBJECT_ID] == destination_id),
+                    audience[db_c.DESTINATIONS],
+                ),
+            )
+        )[0]
 
     batch_destination = get_destination_config(
         database=database,
@@ -830,6 +841,7 @@ async def deliver_audience_to_destination(
         destination=destination,
         engagement_id=db_c.ZERO_OBJECT_ID,
         username=user_name,
+        replace_audience=replace_audience,
     )
     batch_destination.register()
     batch_destination.submit()
