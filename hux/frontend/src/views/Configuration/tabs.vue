@@ -35,7 +35,7 @@
         <team-members />
       </v-tab-item>
       <v-tab-item key="brand_settings">
-        <brand-settings />
+        <client-settings />
       </v-tab-item>
     </v-tabs-items>
   </div>
@@ -46,11 +46,11 @@ import { mapGetters } from "vuex"
 
 import ModuleSolutions from "../Configuration/ModuleSolutions/ModuleSolutions.vue"
 import TeamMembers from "../Configuration/TeamMembers/TeamMembers.vue"
-import BrandSettings from "../Configuration/BrandSettings/BrandSettings.vue"
+import ClientSettings from "../Configuration/ClientSettings/ClientSettings.vue"
 
 export default {
   name: "ConfigTabs",
-  components: { ModuleSolutions, TeamMembers, BrandSettings },
+  components: { ModuleSolutions, TeamMembers, ClientSettings },
   data() {
     return {
       tabOption: 0,
