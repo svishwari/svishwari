@@ -21,7 +21,7 @@ class Decisioning:
             api_client=api_client.ApiClient(
                 configuration=config,
                 header_name="Authorization",
-                header_value=f"Bearer {token}",
+                header_value={token},
             )
         )
 

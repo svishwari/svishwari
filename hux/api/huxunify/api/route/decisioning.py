@@ -22,7 +22,6 @@ from huxunifylib.database import constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.decisioning import Decisioning
-from huxunify.api.data_connectors.okta import get_token_from_request
 
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -109,7 +108,7 @@ class ModelsView(SwaggerView):
                 HTTP status code.
         """
         if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = get_token_from_request(request)[0]
+            token = request.headers.get("authorizationden")
             all_models = Caching.check_and_return_cache(
                 "all_models.info",
                 Decisioning(token).get_all_models,
@@ -397,7 +396,7 @@ class ModelVersionHistoryView(SwaggerView):
         """
         # Dec API only available in stg, all other environments are mocked
         if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = get_token_from_request(request)[0]
+            token = request.headers.get("authorizationden")
             version_history = Caching.check_and_return_cache(
                 f"model_version_history.{model_id}",
                 Decisioning(token).get_model_version_history,
@@ -489,7 +488,7 @@ class ModelOverview(SwaggerView):
 
         # Dec API only available in stg, all other environments are mocked
         if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = get_token_from_request(request)[0]
+            token = request.headers.get("authorizationden")
             model_overview = Caching.check_and_return_cache(
                 f"model_overview.{model_id}",
                 Decisioning(token).get_model_overview,
@@ -576,7 +575,7 @@ class ModelDriftView(SwaggerView):
         """
         # Dec API only available in stg, all other environments are mocked
         if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = get_token_from_request(request)[0]
+            token = request.headers.get("authorizationden")
             drift_data = Caching.check_and_return_cache(
                 f"features.{model_id}.{request.args.get(api_c.VERSION, 'current')}",
                 Decisioning(token).get_model_drift,
@@ -667,7 +666,7 @@ class ModelFeaturesView(SwaggerView):
         limit = int(request.args.get(api_c.LIMIT, 20))
 
         if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = get_token_from_request(request)[0]
+            token = request.headers.get("authorizationden")
             features = Caching.check_and_return_cache(
                 f"features.{model_id}.{request.args.get(api_c.VERSION, 'current')}",
                 Decisioning(token).get_model_features,
@@ -764,7 +763,7 @@ class ModelImportanceFeaturesView(SwaggerView):
         model_version = request.args.get(api_c.VERSION, None)
 
         if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = get_token_from_request(request)[0]
+            token = request.headers.get("authorizationden")
             version_cache_key = model_version if model_version else "current"
             features = Caching.check_and_return_cache(
                 f"features.{model_id}.{version_cache_key}",
@@ -874,7 +873,7 @@ class ModelLiftView(SwaggerView):
 
         # Dec API only available in stg, all other environments are mocked
         if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = get_token_from_request(request)[0]
+            token = request.headers.get("authorizationden")
             model_version = (
                 request.args.get(api_c.VERSION)
                 if request.args.get(api_c.VERSION)
