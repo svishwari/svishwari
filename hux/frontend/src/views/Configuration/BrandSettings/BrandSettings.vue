@@ -5,9 +5,7 @@
         <v-card class="rounded-lg box-shadow-5 mt-3">
           <div class="px-6 py-5">
             <div class="pb-1 d-flex justify-space-between">
-              <div class="black--text text-h3">
-                Industry
-              </div>
+              <div class="black--text text-h3">Industry</div>
             </div>
             <div class="black--text text-h6 d-flex mt-4">
               <h3 class="text-body-1">Demo mode</h3>
