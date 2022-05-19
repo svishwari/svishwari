@@ -14,5 +14,4 @@ class ApiSpecTests(RouteTestCase):
         """Test api spec schema"""
         response = self.app.get(f"/{api_c.API_SPEC}")
         self.assertEqual(HTTPStatus.OK, response.status_code)
-
         self.assertFalse(ApiSpecSchema().validate(response.json))

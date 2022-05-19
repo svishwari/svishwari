@@ -17,7 +17,8 @@ from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
     update_user,
-    get_user, delete_user,
+    get_user,
+    delete_user,
 )
 from huxunifylib.database.data_management import get_constant
 from huxunify.api.config import get_config
@@ -1039,20 +1040,17 @@ class UsersRBACMatrix(SwaggerView):
 @add_view_to_blueprint(
     user_bp,
     f"{api_c.USER_ENDPOINT}/<okta_id>",
-    "UsersRBACMatrix",
+    "DeleteUser",
 )
 class DeleteUser(SwaggerView):
     """User RBAC Matrix Class."""
 
     responses = {
-        HTTPStatus.OK.value: {
-            "description": "Value indicating success.",
-        },
         HTTPStatus.NO_CONTENT.value: {
-            "schema": {},
+            "description": "Indicates a successful deletion.",
         },
         HTTPStatus.INTERNAL_SERVER_ERROR.value: {
-            "schema": "Failed to delete the user.",
+            "description": "Indicates a failed deletion.",
         },
     }
     responses.update(AUTH401_RESPONSE)
