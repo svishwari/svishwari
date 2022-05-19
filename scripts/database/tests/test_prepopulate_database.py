@@ -94,7 +94,10 @@ class TestPrepopulateDatabase(TestCase):
 
     def test_empty_collection_creation(self):
         """Test creation of empty collection"""
-        collection_names = [db_c.DELIVERY_JOBS_COLLECTION, db_c.LOOKALIKE_AUDIENCE_COLLECTION]
+        collection_names = [
+            db_c.DELIVERY_JOBS_COLLECTION,
+            db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+        ]
         pd.create_empty_collections(self.database, collection_names)
 
         collections = self.database[
@@ -103,4 +106,3 @@ class TestPrepopulateDatabase(TestCase):
 
         for collection_name in collection_names:
             self.assertIn(collection_name, collections)
-            
