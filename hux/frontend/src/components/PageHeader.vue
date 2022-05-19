@@ -31,10 +31,11 @@
       </div>
     </div>
     <div v-if="showDemoHeader" class="demo-header">
-      <icon
-        :type="`${icon}_header`"
-        :custom-size="{ width: 240, height: 110 }"
-        :enable-custom-size="true"
+      <img
+        :src="require(`@/assets/images/${icon}_header.png`)"
+        alt="Hux"
+        width="130%"
+        height="110"
       />
     </div>
     <div class="page-header--right">
@@ -99,7 +100,6 @@ export default {
 .page-header--wrap {
   border-bottom: 1px solid var(--v-black-lighten3) !important;
   .demo-header {
-    margin-right: -15%;
     height: inherit;
   }
 }
