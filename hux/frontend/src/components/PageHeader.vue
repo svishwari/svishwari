@@ -100,7 +100,7 @@ export default {
   border-bottom: 1px solid var(--v-black-lighten3) !important;
   .demo-header {
     height: inherit;
-    margin-right: 225px
+    margin-right: 225px;
   }
 }
 </style>
