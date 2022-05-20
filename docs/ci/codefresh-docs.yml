@@ -100,10 +100,10 @@ steps:
       - python3 -m tox -r -v
     environment: *pip_common_envs
     scale:
-      pylintCheck:
-        title: 'pylintCheck'
+      pylintcheck:
+        title: 'pylintcheck'
         environment:
-          - TOXENV=pylintCheck
+          - TOXENV=pylintcheck
       linkcheck:
         title: 'linkcheck'
         environment:
