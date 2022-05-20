@@ -31,14 +31,13 @@
       </div>
     </div>
     <div v-if="showDemoHeader" class="demo-header">
-      <img
-        :src="require(`@/assets/images/${icon}_header.png`)"
-        alt="Hux"
-        width="130%"
-        height="110"
+      <icon
+        :type="`${icon}_header_new`"
+        :custom-size="{ width: 240, height: 110 }"
+        :enable-custom-size="true"
       />
     </div>
-    <div class="page-header--right">
+    <div v-if="!showDemoHeader" class="page-header--right">
       <slot name="right"></slot>
     </div>
   </v-card>
@@ -101,6 +100,7 @@ export default {
   border-bottom: 1px solid var(--v-black-lighten3) !important;
   .demo-header {
     height: inherit;
+    margin-right: 225px;
   }
 }
 </style>
