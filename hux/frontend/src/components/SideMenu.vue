@@ -298,7 +298,7 @@ export default {
         }
       }
     },
-     async setDemoConfiguration() {
+    async setDemoConfiguration() {
       await this.getSideBarConfig()
       this.updateClientInfo()
     },
