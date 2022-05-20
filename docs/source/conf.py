@@ -22,13 +22,13 @@ sys.path.insert(0, os.path.abspath("../../hux/api/"))
 
 
 # -- Project information -----------------------------------------------------
+TODAY = date.today()
 
 project = "HUX Unified Solution"
-copyright = "2022, HUX by Deloitte Digital"
+copyright = f"{TODAY.year}, HUX by Deloitte Digital"
 author = "HUX by Deloitte Digital"
 
 # The short X.Y version
-TODAY = date.today()
 first_day_of_the_year = TODAY.replace(month=1, day=1)
 try:
     # Try calculating an "informed" version via number of revisions we've had
