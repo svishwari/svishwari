@@ -11,7 +11,7 @@ huxunify-scripts-ci|[![Codefresh build status]( https://g.codefresh.io/api/badge
 customer-profile-api|[![Codefresh build status](https://g.codefresh.io/api/badges/pipeline/deloittehux/HXP_CDM%2Fcustomer_profile_api_ci?key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ&date=1628594544780)](https://g.codefresh.io/pipelines/edit/new/builds?id=608adc2ade28641bed60176a&pipeline=customer_profile_api_ci&projects=HXP_CDM&projectId=6036b45b3bb11c75ac85caad)| - | - | - |
 argo-cd| - | - |[![ArgoCD health status](https://argocd.hux-unified-dev1.in/applications/unified-ui-huxui-main-use1-hux-unified-dev1?resource=&operation=false)]| - |
 
-## RTD Documentation (latest & greatest)
+## RTD Documentation (most up to date)
 https://docs.hux.deloitte.com/docs/hux-unified/en/develop/
 
 # Environments
