@@ -12,6 +12,9 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
+import subprocess
+from datetime import date
+
 import sys
 import re
 
@@ -20,13 +23,38 @@ sys.path.insert(0, os.path.abspath("../../hux/api/"))
 
 # -- Project information -----------------------------------------------------
 
-project = u"HUX Unified Solution"
-copyright = u"2022, HUX by Deloitte Digital"
-author = u"HUX by Deloitte Digital"
+project = "HUX Unified Solution"
+copyright = "2022, HUX by Deloitte Digital"
+author = "HUX by Deloitte Digital"
 
+# The short X.Y version
+TODAY = date.today()
+first_day_of_the_year = TODAY.replace(month=1, day=1)
+try:
+    # Try calculating an "informed" version via number of revisions we've had
+    # We could use `git rev-list --count` but this makes the numbers smaller...
+    revision = subprocess.run(
+        [
+            "git",
+            "log",
+            "--since",
+            first_day_of_the_year.isoformat(),
+            "--pretty=%H",
+        ],
+        check=True,
+        stdout=subprocess.PIPE,
+    ).stdout.count(b"\n")
+except (FileNotFoundError, subprocess.CalledProcessError):
+    # Fall back to just the date if something went wrong.
+    version = TODAY.strftime("v%Y.%m.%d")
+else:
+    version = f"v{TODAY.year}.{revision}"
 # The full version, including alpha/beta/rc tags
-release = "1.0.0"
+release = version
 
+rtd_version = os.environ.get("READTHEDOCS_VERSION")
+if not rtd_version:
+    rtd_version = "latest"
 
 # -- General configuration ---------------------------------------------------
 
