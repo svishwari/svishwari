@@ -66,7 +66,7 @@ Fixes
 
 Solutions
 -------------
-Thi sis a new area that was introduced as part of 6.0 release. LOREM IPSUM. 
+Thi sis a new area that was introduced as part of 6.0 release. LOREM IPSUM.
 
 **********************
 New Features & Updates
