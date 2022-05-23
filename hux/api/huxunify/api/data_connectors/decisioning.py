@@ -1,10 +1,14 @@
 """This module holds the decisioning class that connects
 to the decisioning metrics API"""
 from datetime import datetime
+from pprint import pprint
 from typing import Tuple
 
+from flask import jsonify
 from huxmodelclient import api_client, configuration
 from huxmodelclient.api import DefaultApi as dec_client
+
+from huxunify.api.schema.model import FeatureSchema, ModelSchema
 from huxunifylib.database import constants as db_c
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
@@ -16,12 +20,13 @@ class Decisioning:
 
     def __init__(self, token: str):
         self.token = token
-        config = configuration.Configuration(host=get_config().DECISIONING_URL)
+        # config = configuration.Configuration(host=get_config().DECISIONING_URL)
+        config = configuration.Configuration(host="https://hux-model-api-dec.decisioning-pendleton.in")
         self.decisioning_client = dec_client(
             api_client=api_client.ApiClient(
                 configuration=config,
                 header_name="Authorization",
-                header_value={token},
+                header_value=token,
             )
         )
 
@@ -121,8 +126,8 @@ class Decisioning:
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
                     api_c.PREDICTION_WINDOW: model_info.model_metadata.prediction_days,
-                    api_c.FULCRUM_DATE: model_info.model_metadata.fulcrum_date,
-                    api_c.LAST_TRAINED: model_info.scheduled_date,
+                    api_c.FULCRUM_DATE: datetime.strptime(model_info.model_metadata.fulcrum_date, "%Y-%M-%d"),
+                    api_c.LAST_TRAINED: datetime.strptime(model_info.scheduled_date, "%Y-%M-%d"),
                     api_c.TYPE: model_info.model_metadata.model_type.lower(),
                     api_c.CATEGORY: model_info.model_metadata.model_type.lower(),
                     api_c.PAST_VERSION_COUNT: model_info.past_version_count,
@@ -326,3 +331,11 @@ class Decisioning:
             )
 
         return drift_data
+
+
+if __name__ == "__main__":
+    token = "Bearer eyJraWQiOiJoTjFIeDl6ZGVyZWVDbmRlU2dfWGZjRzJtZDhIZGFVYUk4MkRKRFltV0dZIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVhNjB6ZjFpMm1OakhzSzJwNyIsIm5hbWUiOiJKaW0gTWNNYWhvbiIsImVtYWlsIjoiamltY21haG9uQGRlbG9pdHRlLmNvbSIsInZlciI6MSwiaXNzIjoiaHR0cHM6Ly9kZWxvaXR0ZWRpZ2l0YWwtbXMub2t0YS5jb20iLCJhdWQiOiIwb2FiZWxjMGh5Z3BteDRPVDJwNyIsImlhdCI6MTY1MzMzMzAzMiwiZXhwIjoxNjUzMzM2NjMyLCJqdGkiOiJJRC5sRWh3Nk12UkhXcUhaaUFlei1WRmZ4ZHNHZVE1STZqeXpJZVk1V3ptUi1FIiwiYW1yIjpbIm1mYSIsInN3ayIsInB3ZCJdLCJpZHAiOiIwb2FmZHVzNGhyM01pRGZ0QjJwNiIsIm5vbmNlIjoid3lwMXNqR2NsSFJzUUFpbE92WElLZ2ZIN2JqdTd3TnJMZjZZMnphZ25YemQxNDFFTHpabmNjcVFWVVg1aElNdiIsInByZWZlcnJlZF91c2VybmFtZSI6ImppbWNtYWhvbkBkZWxvaXR0ZS5jb20iLCJhdXRoX3RpbWUiOjE2NTMzMzI4MjIsImF0X2hhc2giOiJLRFh5R3NocXB2NDJFRmJDOHFsUVhRIn0.fVro8DBYTy5QoKsfvMv5czXzlOOQkxxP1mQc3HSrYH0pwC2Se03h3vpjRTrMCa6oxGN090ZL1P-n5iqU7sdOO7DSpCIOFFAloFCZ7PbNYN8q_CnJjni6t9uoXuff9nNDQxueivuAI5PQxg8cQB3ICG55EZRCB0gSxC0IYS5tt99kO76XcQLgZPxet6CxC9tH69d4xos8hcs-hq2AsY57Nom7fua8k6rOaRROo8KRazFFvLSUGQfAATGP0QZVgQdHqRacA6yRTixoB8WEe6LiYgOvRYV9Kxqa5jxJ8NgOE0zVqqbXAJ50kPezdEYAY5yNAxcxlPWxe3F_K_MsVvhCig"
+    print(Decisioning(token).get_model_drift("model-Propensity_ctg_tk_blanket-v5-dev"))
+    # all_models = Decisioning(token).get_all_model_ids()
+    # for model in all_models:
+    #     print(ModelSchema().dump(model, many=False))

@@ -4,7 +4,7 @@ from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, Float, Nested, Bool, List
 
 from huxunifylib.database import constants as db_c
-from huxunify.api.schema.custom_schemas import DateTimeWithZ
+from huxunify.api.schema.custom_schemas import DateTimeWithZ, RoundedFloat
 from huxunify.api import constants as api_c
 
 
@@ -17,11 +17,11 @@ class ModelSchema(Schema):
     status = Str()
     latest_version = Str()
     past_version_count = Int()
-    last_trained = DateTimeWithZ()
+    last_trained = DateTimeWithZ(allow_none=True)
     owner = Str()
     lookback_window = Int()
     prediction_window = Int()
-    fulcrum_date = DateTimeWithZ()
+    fulcrum_date = DateTimeWithZ(allow_none=True)
     type = Str()
     category = Str()
     is_enabled = Bool(attribute=db_c.ENABLED, required=False)
@@ -58,6 +58,7 @@ class FeatureSchema(Schema):
     unique_values = Int()
     lcuv = Str()
     mcuv = Str()
+    score = RoundedFloat(default=None)
 
 
 class ModelLiftSchema(Schema):
