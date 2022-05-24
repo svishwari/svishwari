@@ -40,7 +40,7 @@
               class="pa-6"
             >
               <h3 class="text-h3 black--text text--darken-4">
-                Total customers
+                Total Hux IDs
                 <span class="text-body-1 black--text text--lighten-4">
                   (last 9 months)
                 </span>

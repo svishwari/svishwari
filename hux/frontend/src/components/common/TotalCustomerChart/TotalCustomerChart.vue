@@ -27,7 +27,7 @@
               :stroke="colorCodes[currentData.index].base"
               :variant="colorCodes[currentData.index].variant"
             />
-            <span class="text-label">Total customers</span>
+            <span class="text-label">Total Hux IDs</span>
           </div>
           <div class="value-section">
             {{ currentData.totalCustomers | Numeric(true, false, false) }}
@@ -39,7 +39,7 @@
               :stroke="colorCodes[currentData.index].base"
               :variant="colorCodes[currentData.index].variant"
             />
-            <span class="text-label">New customers added</span>
+            <span class="text-label">New Hux IDs added</span>
           </div>
           <div class="value-section">
             {{ currentData.addedCustomers | Numeric(true, false, false) }}
@@ -52,7 +52,7 @@
               stroke="black"
               variant="lighten4"
             />
-            <span class="text-label">Customers left</span>
+            <span class="text-label">Hux IDs left</span>
           </div>
           <div class="value-section">
             <span v-if="currentData.leftCustomers > 0">-</span>
