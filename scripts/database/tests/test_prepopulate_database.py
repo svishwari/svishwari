@@ -5,6 +5,7 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
+from huxunifylib.database.collection_management import get_documents
 from huxunifylib.database.delivery_platform_management import (
     get_all_delivery_platforms,
 )
@@ -106,3 +107,7 @@ class TestPrepopulateDatabase(TestCase):
 
         for collection_name in collection_names:
             self.assertIn(collection_name, collections)
+
+        for collection_name in collection_names:
+            documents = get_documents(self.database, collection_name)
+            self.assertEqual(0, documents["total_records"])
