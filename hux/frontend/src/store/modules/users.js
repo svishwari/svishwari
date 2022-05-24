@@ -141,7 +141,7 @@ const actions = {
     }
   },
 
-  async updatePIIAccess(_, payload) {
+  async updateUser(_, payload) {
     try {
       const result = await api.users.batchUpdate(payload)
       return result

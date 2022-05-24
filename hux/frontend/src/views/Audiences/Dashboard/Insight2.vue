@@ -1114,7 +1114,6 @@ export default {
       await this.loadAudienceInsights()
     },
     async triggerRemoveDestination(event) {
-      console.log("event", event.destination)
       this.deleteActionData = {
         engagementId: event.destination.engagementId,
         audienceId: this.audienceId,
