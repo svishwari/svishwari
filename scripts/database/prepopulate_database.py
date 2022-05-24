@@ -1274,13 +1274,9 @@ def create_empty_collections(
         database (MongoClient): MongoDB Client
         collection_names (list): List of collection names to create
     """
-    _ = [
-        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(
-            collection_name
-        )
-        for collection_name in collection_names
-    ]
-    logging.info("Pre-populate empty collections complete.")
+    for collection_name in collection_names:
+        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(collection_name)
+        logging.info("Empty collection %s created.", collection_name)
 
 
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
