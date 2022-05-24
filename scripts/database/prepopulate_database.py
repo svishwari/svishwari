@@ -1275,7 +1275,9 @@ def create_empty_collections(
         collection_names (list): List of collection names to create
     """
     for collection_name in collection_names:
-        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(collection_name)
+        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(
+            collection_name
+        )
         logging.info("Empty collection %s created.", collection_name)
 
 
