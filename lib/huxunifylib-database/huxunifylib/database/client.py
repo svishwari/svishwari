@@ -34,7 +34,10 @@ class DatabaseClient:
                 connecting to MongoDB (optional).
             ssl_flag (Optional(bool)): SSL flag for database
                 connecting to MongoDB (optional).
+            tls_cert_key_file (Optional(str)): TLS Client certificates.
+
         """
+
         self._connection_string = connection_string
         self._host = host
         self._port = port
