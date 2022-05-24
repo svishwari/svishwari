@@ -34,7 +34,7 @@
       <img
         :src="require(`@/assets/images/${icon}_header.png`)"
         alt="Hux"
-        width='100%'
+        width="100%"
         height="200%"
         class="d-flex mr-10"
       />
