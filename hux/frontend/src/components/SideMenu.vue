@@ -225,6 +225,9 @@ export default {
   async mounted() {
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
+  },
+
+  updated() {
     this.getCurrentConfiguration()
   },
 

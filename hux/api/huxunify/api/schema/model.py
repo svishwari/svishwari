@@ -5,7 +5,7 @@ from marshmallow.fields import Str, Int, Float, Nested, Dict, Bool, List
 from marshmallow.validate import OneOf
 
 from huxunifylib.database import constants as db_c
-from huxunify.api.schema.custom_schemas import DateTimeWithZ
+from huxunify.api.schema.custom_schemas import DateTimeWithZ, RoundedFloat
 from huxunify.api import constants as api_c
 
 
@@ -59,6 +59,7 @@ class FeatureSchema(Schema):
     unique_values = Int()
     lcuv = Str()
     mcuv = Str()
+    score = RoundedFloat()
 
 
 class ModelLiftSchema(Schema):
