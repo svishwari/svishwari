@@ -11,7 +11,8 @@ stages:
   - git
   - set_env
   - cache_deps
-  - tox
+  - tox_docs_validation
+  - tox_lint_validation
 
 steps:
 
@@ -52,10 +53,13 @@ steps:
       - python3 -m pip install -r requirements.txt
     environment: *pip_common_envs
 
-  ToxDocs:
-    stage: tox
-    title: "Tox - Sphinx documentation and validation"
-    description: "Run sphinx validation tests using tox"
+# Below tox stages are split into multiple considering the memory it consumes
+# to run all the checks in parallel as part of a single stage
+
+  ToxDocsStage1:
+    stage: tox_docs_validation
+    title: "Tox - Sphinx docs checks and validation"
+    description: "Run sphinx docs checks validation using tox"
     image: readthedocs/build:6.0
     working_directory: '${{CF_REPO_NAME}}/docs'
     commands:
@@ -81,6 +85,25 @@ steps:
         title: 'doctest'
         environment:
           - TOXENV=doctest
+    fail_fast: false
+
+  ToxDocsStage2:
+    stage: tox_lint_validation
+    title: "Tox - Sphinx docs linting validation"
+    description: "Run sphinx docs linting validation using tox"
+    image: readthedocs/build:6.0
+    working_directory: '${{CF_REPO_NAME}}/docs'
+    commands:
+      - export PYENV_VERSION=$RTD_PYTHON_VERSION_37
+      - python3 -m pip install -U pip
+      - python3 -m pip install tox
+      - python3 -m tox -r -v
+    environment: *pip_common_envs
+    scale:
+      pylintcheck:
+        title: 'pylintcheck'
+        environment:
+          - TOXENV=pylintcheck
       linkcheck:
         title: 'linkcheck'
         environment:
