@@ -65,16 +65,19 @@ class Config:
     MONGO_SSL_CERT = str(
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
     )
-    # TODO Remove when we have separate configs for environments.
+    AZURE_MONGO_TLS_CLIENT_KEY = str(
+        Path(__file__).parent.parent.joinpath("mongodb-azure.pem")
+    )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
         api_c.PORT: MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: MONGO_DB_PASSWORD,
+        api_c.SSL_CERT_PATH: MONGO_SSL_CERT,
     }
-    if CLOUD_PROVIDER != api_c.AZURE:
-        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
+    if CLOUD_PROVIDER == api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
 
     # OKTA CONFIGURATION
     OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
@@ -171,10 +174,10 @@ class DevelopmentConfig(Config):
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
+        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
-
-    if Config.CLOUD_PROVIDER != api_c.AZURE:
-        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
+    if Config.CLOUD_PROVIDER == api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = Config.AZURE_MONGO_TLS_CLIENT_KEY
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
