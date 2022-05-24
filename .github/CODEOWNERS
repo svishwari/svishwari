@@ -2,17 +2,20 @@
 hux/ @snaragana-deloitte
 
 # UI processes
-hux/frontend/ @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74 @shahlakhani-deloitte @soumya-pb @risheek-deloitte @dcl-deloitte
-hux/integration_tests/frontend @Abdullah-Azad @rahgoel @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74 @shahlakhani-deloitte @soumya-pb @risheek-deloitte @dcl-deloitte
+hux/frontend/ @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74 @shahlakhani-deloitte @soumya-pb @risheek-deloitte @dcl-deloitte
+hux/integration_tests/frontend @sach9993 @svishwari @sameerksingh1236 @shubhamkumar74 @shahlakhani-deloitte @soumya-pb @risheek-deloitte @dcl-deloitte
 
-# api processes
-hux/api/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel @svishwari
-hux/integration_tests/api @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel @svishwari
-hux/api/load_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @rahgoel @svishwari
+# API processes
+hux/api/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @svishwari
+hux/integration_tests/api @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @svishwari
+hux/api/load_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @svishwari
 
 # CI/CD processes
 *codefresh.yml @pfleetwood1 @JyotiSingh7 @dcl-deloitte
 
 # huxunifylib-database
-scripts/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @skondalraj-deloitte @rahgoel @svishwari
-lib/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @sairajput-deloitte @rmahato-deloitte @skondalraj-deloitte @shashaagrawal-deloitte @rahgoel @svishwari
+scripts/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @skondalraj-deloitte @svishwari
+lib/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @sairajput-deloitte @rmahato-deloitte @skondalraj-deloitte @shashaagrawal-deloitte @svishwari
+
+# docs - Documentation processes
+docs/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @risheek-deloitte @skondalraj-deloitte @snaragana-deloitte @rebbradleydeloitte @kitani-deloitte

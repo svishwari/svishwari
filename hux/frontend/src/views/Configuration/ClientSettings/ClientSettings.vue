@@ -5,18 +5,7 @@
         <v-card class="rounded-lg box-shadow-5 mt-3">
           <div class="px-6 py-5">
             <div class="pb-1 d-flex justify-space-between">
-              <div class="black--text text-h3">
-                Customize this client’s brand
-              </div>
-            </div>
-            <div class="black--text text-body-1 mt-4">
-              Customize this client’s look and feel based on the industry you
-              select. This will update the client’s name, homepage, copy, and
-              iconography.
-            </div>
-            <div class="black--text text-body-1">
-              Note: This will only update the look and feel for you, not for all
-              team members.
+              <div class="black--text text-h3">Industry</div>
             </div>
             <div class="black--text text-h6 d-flex mt-4">
               <h3 class="text-body-1">Demo mode</h3>

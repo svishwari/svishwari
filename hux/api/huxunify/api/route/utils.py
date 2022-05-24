@@ -111,9 +111,11 @@ def check_mongo_connection() -> Tuple[bool, str]:
                 db_c.CDP_DATA_SOURCES_COLLECTION
             ].find({})
         )
+        logger.info("Mongo is available")
         return True, "Mongo available."
     # pylint: disable=broad-except
     except Exception:
+        logger.exception("Mongo Health Check failed.")
         return False, "Mongo not available."
 
 
