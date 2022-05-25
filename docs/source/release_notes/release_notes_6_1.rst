@@ -13,20 +13,8 @@ This and extension of the Hux 6.0 release, which is focused on making our techno
 - Integrated environments and test with real data; validating the platform is operational end-to-end
 - We can use real customer data to characterize and powerfully differentiate the needs and values of individual or segments of consumers
 - Improve our performance across all endpoints
+- Integration of TrustID
 
-Data Management
----------------
-All features that belong to decisioning including IDR, Data sources, and data source monitoring.
-
-**********************
-New Features & Updates
-**********************
-- Lorem ipsum
-
-*****
-Fixes
-*****
-- Lorem ipsum
 
 Decisioning
 -----------
@@ -35,12 +23,9 @@ All features that belong to decisioning including models and model monitoring.
 **********************
 New Features & Updates
 **********************
-- Lorem ipsum
+- Pipeline monitoring: Gain insights about a model scores, runs, and failures
+- Enhancements to features table with more realistic data
 
-*****
-Fixes
-*****
-- Lorem ipsum
 
 Orchestration
 -------------
@@ -49,26 +34,32 @@ All features that belong to orchestration including destinations, audiences, and
 **********************
 New Features & Updates
 **********************
-- Lorem ipsum
+- Audience Replacement: Ability for a user to choose to have an audience auto-replaced in a destination
+- Ability to create lookalike audiences as a single delivery (standalone delivery)
+- Event segmentation
 
 *****
 Fixes
 *****
-- Lorem ipsum
+- Improving performance for Lookalike audience
+
 
 Solutions
--------------
-Thi sis a new area that was introduced as part of 6.0 release. LOREM IPSUM.
+----------
+This is a new area that was introduced as part of the 6.0 release. These are solutions and assets, outside of Hux, that have been introduced part of the Hux UI.
 
 **********************
 New Features & Updates
 **********************
-- Lorem ipsum
+- TrustID: Understand your customer's trust scores based off survey data
 
 *****
 Fixes
 *****
-- Lorem ipsum
+- Email Deliverability
+     - Error and empty states
+     - Open rate hover enhancements
+
 
 Other Updates
 -------------
@@ -77,15 +68,28 @@ Additional updates across the platform that do not belong to a specific module.
 **********************
 New Features & Updates
 **********************
-- Lorem ipsum
+- Configuration enhancements
+     - Ability to enable demo mode and customize branding for a particular client industry and user
+     - Ability for an admin to remove a user
+     - Ability for an admin to edit a user's access level
+- General bug fixes
+- Release enhancements to RC1
 
 *****
 Fixes
 *****
-- Lorem ipsum
+- Permission enhancements: Elimination of CTAs based on user access level
+     - Clean up of alerting based off access level
+- DAST reports vulnerability
+- Health checks and logging
+
 
 In Progress
 -----------
 These are items that the team are currently working on adding into the UI that were not able to be completed as part of this release.
 
-- Lorem ipsum
+- Enhancements to our development process
+     - Building out of reusable components to increase speed and efficiency in development
+- Azure deployment
+- Discovery on deploying UI without CDP (CDP lite)
+- Enhancements to segmentation
