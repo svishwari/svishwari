@@ -216,6 +216,8 @@ class BaseDestinationBatchJob:
             BaseDestinationBatchJob: Subclass of BaseDestinationBatchJob.
         """
 
+        DeprecationWarning("This class has been deprecated.")
+
         provider = config.CLOUD_PROVIDER.lower()
         subclass_map = {
             subclass.provider.lower(): subclass
@@ -690,6 +692,7 @@ def get_destination_config(
         replace_audience,
         engagement_id,
         destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
+        db_c.AUDIENCE_STATUS_DELIVERING,
     )
 
     # get the configuration values
@@ -835,20 +838,20 @@ async def deliver_audience_to_destination(
             )
         )[0]
 
-    batch_destination = get_destination_config(
-        database=database,
-        audience_id=audience_id,
-        destination=destination,
-        engagement_id=db_c.ZERO_OBJECT_ID,
-        username=user_name,
-        replace_audience=replace_audience,
+    delivery_job_id = str(
+        create_delivery_job(
+            database=database,
+            audience_id=audience_id,
+            destination=destination,
+            engagement_id=db_c.ZERO_OBJECT_ID,
+            username=user_name,
+            replace_audience=replace_audience,
+        )
     )
-    batch_destination.register()
-    batch_destination.submit()
 
     logger.info(
         "Successfully created delivery job %s.",
-        batch_destination.audience_delivery_job_id,
+        delivery_job_id,
     )
 
     # create notification
@@ -862,3 +865,97 @@ async def deliver_audience_to_destination(
         db_c.NOTIFICATION_CATEGORY_DELIVERY,
         user_name,
     )
+
+
+def create_delivery_job(
+    database: MongoClient,
+    audience_id: ObjectId,
+    destination: dict,
+    engagement_id: ObjectId,
+    username: str,
+    replace_audience: bool = False,
+) -> ObjectId:
+    """Create a delivery job with Pending status.
+
+    Args:
+        database (MongoClient): The mongo database client.
+        audience_id (ObjectId): The ID of the audience.
+        destination (dict): Destination object.
+        engagement_id (ObjectId): The ID of the engagement.
+        username (str): Username of user requesting to get the destination
+            config.
+        replace_audience(bool): Audience replacement flag
+
+    Returns:
+        ObjectId: Delivery Job ID.
+
+    Raises:
+        FailedDestinationDependencyError: Failed to connect to a destination.
+    """
+
+    destination_id = (
+        destination[db_c.OBJECT_ID]
+        if db_c.OBJECT_ID in destination
+        else destination[db_c.ID]
+    )
+
+    delivery_platform = get_delivery_platform(
+        database,
+        destination_id,
+    )
+
+    if not delivery_platform:
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_CRITICAL,
+            (
+                f'"Can not fetch destination {destination_id}" because '
+                f"the destination does not exist."
+            ),
+            db_c.NOTIFICATION_CATEGORY_DESTINATIONS,
+            username,
+        )
+        raise FailedDestinationDependencyError(
+            destination_id, HTTPStatus.NOT_FOUND
+        )
+
+    # validate destination status first.
+    if (
+        delivery_platform.get(db_c.DELIVERY_PLATFORM_STATUS)
+        != db_c.STATUS_SUCCEEDED
+    ):
+        logger.error(
+            "%s authentication failed.", delivery_platform.get(db_c.NAME)
+        )
+        raise FailedDestinationDependencyError(
+            delivery_platform[api_c.NAME], HTTPStatus.FAILED_DEPENDENCY
+        )
+
+    audience_delivery_job = set_delivery_job(
+        database,
+        audience_id,
+        destination_id,
+        [],
+        username,
+        replace_audience,
+        engagement_id,
+        destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
+        db_c.PENDING,
+    )
+
+    # update the engagement latest delivery job
+    try:
+        add_delivery_job(
+            database,
+            engagement_id,
+            audience_id,
+            destination_id,
+            audience_delivery_job[db_c.ID],
+        )
+    except TypeError as exc:
+        # mongomock does not support array_filters
+        # but pymongo 3.6, MongoDB, and DocumentDB do.
+        # log error, but keep process going.
+        logger.error(exc)
+
+    return audience_delivery_job[db_c.ID]
