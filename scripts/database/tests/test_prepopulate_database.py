@@ -105,6 +105,7 @@ class TestPrepopulateDatabase(TestCase):
             db_c.DATA_MANAGEMENT_DATABASE
         ].list_collection_names()
 
+        self.assertTrue(collections)
         for collection_name in collection_names:
             self.assertIn(collection_name, collections)
 
