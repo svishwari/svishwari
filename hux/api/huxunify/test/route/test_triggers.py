@@ -21,7 +21,9 @@ class TestTriggersRoute(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         # mock get db client from delivery
         mock.patch(
@@ -47,7 +49,9 @@ class TestTriggersRoute(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertDictEqual({api_c.DELIVERIES: {api_c.PENDING_JOBS: 0}}, response.json)
+        self.assertDictEqual(
+            {api_c.DELIVERIES: {api_c.PENDING_JOBS: 0}}, response.json
+        )
 
     def test_delivery_pending_jobs(self):
         """Test delivery of pending jobs endpoint"""
