@@ -50,7 +50,7 @@ class TestTriggersRoute(TestCase):
         self.assertDictEqual({api_c.DELIVERIES: {api_c.PENDING_JOBS: 0}}, response.json)
 
     def test_delivery_pending_jobs(self):
-        """Test delivery of pending jobs jobs endpoint"""
+        """Test delivery of pending jobs endpoint"""
 
         with mock.patch(
             "huxunify.api.route.triggers.get_documents",
