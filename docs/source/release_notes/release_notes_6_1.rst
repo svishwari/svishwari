@@ -5,8 +5,6 @@
 Release date:
 TBD
 
-
-
 Release Overview
 -----------------
 This and extension of the Hux 6.0 release, which is focused on making our technology stack operationally real. This includes the following goals:
@@ -15,8 +13,6 @@ This and extension of the Hux 6.0 release, which is focused on making our techno
 - Integrated environments and test with real data; validating the platform is operational end-to-end
 - We can use real customer data to characterize and powerfully differentiate the needs and values of individual or segments of consumers
 - Improve our performance across all endpoints
-
-
 
 Data Management
 ---------------
@@ -32,8 +28,6 @@ Fixes
 *****
 - Lorem ipsum
 
-
-
 Decisioning
 -----------
 All features that belong to decisioning including models and model monitoring.
@@ -47,8 +41,6 @@ New Features & Updates
 Fixes
 *****
 - Lorem ipsum
-
-
 
 Orchestration
 -------------
@@ -78,8 +70,6 @@ Fixes
 *****
 - Lorem ipsum
 
-
-
 Other Updates
 -------------
 Additional updates across the platform that do not belong to a specific module.
@@ -93,8 +83,6 @@ New Features & Updates
 Fixes
 *****
 - Lorem ipsum
-
-
 
 In Progress
 -----------
