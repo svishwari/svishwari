@@ -13,7 +13,6 @@ from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
 
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
@@ -1081,8 +1080,9 @@ class DeleteUser(SwaggerView):
         if delete_user(database, user_id=ObjectId(user_id)):
             if deleted_user:
                 logger.info(
-                    f"{user[db_c.USER_NAME]} deleted the user "
-                    f"{deleted_user[db_c.USER_DISPLAY_NAME]}."
+                    "%s deleted the user %s.",
+                    user[db_c.USER_NAME],
+                    deleted_user[db_c.USER_DISPLAY_NAME],
                 )
             return HuxResponse.NO_CONTENT()
 
