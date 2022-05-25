@@ -633,9 +633,7 @@ class CourierTest(TestCase):
         )
         self.assertTrue(delivery_jobs)
         self.assertEqual(1, len(delivery_jobs))
-        self.assertEqual(
-            db_c.AUDIENCE_STATUS_DELIVERING, delivery_jobs[0][db_c.STATUS]
-        )
+        self.assertEqual(db_c.PENDING, delivery_jobs[0][db_c.STATUS])
 
         # validate notification created
         notifications = get_notifications(
