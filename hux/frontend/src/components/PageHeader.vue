@@ -32,11 +32,11 @@
     </div>
     <div v-if="showDemoHeader" class="demo-header">
       <img
-        :src="require(`@/assets/images/${icon}_header.png`)"
+        :src="require(`@/assets/images/${icon}.png`)"
         alt="Hux"
+        height="300%"
         width="100%"
-        height="200%"
-        class="d-flex mr-10"
+        class="header-image"
       />
     </div>
     <div v-if="!showDemoHeader" class="page-header--right">
@@ -101,10 +101,13 @@ export default {
 .page-header--wrap {
   border-bottom: 1px solid var(--v-black-lighten3) !important;
   .demo-header {
-    width: 36%;
+    width: 35%;
     height: inherit;
     margin-right: 219px;
     overflow: hidden;
+    .header-image {
+      margin-top: -12%;
+    }
   }
 }
 </style>
