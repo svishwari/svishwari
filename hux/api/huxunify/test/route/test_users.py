@@ -733,11 +733,14 @@ class TestUserRoutes(RouteTestCase):
         """Test deleting a user."""
 
         response = self.app.delete(
-            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{self.user_info[db_c.OKTA_ID]}",
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{self.user_info[db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(
+            get_user(self.database, okta_id=self.user_info[db_c.ID])
+        )
 
     def test_delete_dne_user(self):
         """Test deleting a user."""
@@ -750,3 +753,4 @@ class TestUserRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(get_user(self.database, user_id=user_id))

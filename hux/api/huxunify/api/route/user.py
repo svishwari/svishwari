@@ -13,6 +13,7 @@ from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
@@ -1039,7 +1040,7 @@ class UsersRBACMatrix(SwaggerView):
 
 @add_view_to_blueprint(
     user_bp,
-    f"{api_c.USER_ENDPOINT}/<okta_id>",
+    f"{api_c.USER_ENDPOINT}/<user_id>",
     "DeleteUser",
 )
 class DeleteUser(SwaggerView):
@@ -1058,7 +1059,7 @@ class DeleteUser(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels([api_c.ADMIN_LEVEL])
-    def delete(self, okta_id: str, user: dict) -> Tuple[Response, int]:
+    def delete(self, user_id: str, user: dict) -> Tuple[Response, int]:
         """Deletes a user from the database.
 
         ---
@@ -1066,7 +1067,7 @@ class DeleteUser(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            okta_id (str): okta ID of the user to be deleted.
+            user_id (str): user ID of the user to be deleted.
             user (dict): user object.
 
         Returns:
@@ -1075,7 +1076,14 @@ class DeleteUser(SwaggerView):
 
         database = get_db_client()
 
-        if delete_user(database, okta_id):
+        deleted_user = get_user(database, user_id=ObjectId(user_id))
+
+        if delete_user(database, user_id=ObjectId(user_id)):
+            if deleted_user:
+                logger.info(
+                    f"{user[db_c.USER_NAME]} deleted the user "
+                    f"{deleted_user[db_c.USER_DISPLAY_NAME]}."
+                )
             return HuxResponse.NO_CONTENT()
 
         return HuxResponse.INTERNAL_SERVER_ERROR("Failed to delete this user.")
