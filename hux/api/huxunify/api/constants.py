@@ -977,6 +977,7 @@ FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
 RESET = "reset"
+RBAC_MATRIX = "rbac_matrix"
 INDUSTRY = "industry"
 TARGET = "target"
 TRACK = "track"
@@ -1446,6 +1447,20 @@ SAMPLE_NAVIGATION_SETTINGS = {
                 }
             ],
         },
+        {
+            db_c.CONFIGURATION_FIELD_NAME: "Insights",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_CHILDREN: [
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Customers",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Email Deliverability",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+            ],
+        },
     ]
 }
 
@@ -1726,6 +1741,9 @@ USER_DEMO_CONFIG_SAMPLE = {
 # Trust ID
 TRUST_ID_ENDPOINT = "/trust_id"
 TRUST_ID_TAG = "trust-id"
+DEFAULT = "default"
+DEFAULT_TRUST_SEGMENT = "All Customers"
+MAX_SEGMENTS_ALLOWED = 5
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"

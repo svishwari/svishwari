@@ -14,6 +14,7 @@ const state = {
     bugsReported: [],
     pii_access: false,
     alerts: {},
+    demo_config: {},
   },
   users: [],
   requestedUsers: [],
@@ -177,6 +178,21 @@ const actions = {
       throw error
     }
   },
+
+  async updateDemoConfig({ commit }, payload) {
+    try {
+      const response = await api.users.updateDemoConfig({
+        demo_config: payload,
+      })
+      if (response) {
+        handleSuccess("Demo Configuration Saved Successfully", response.status)
+      }
+      commit("setApplicationUserProfile", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 const getters = {
@@ -205,6 +221,8 @@ const getters = {
   getAllTickets: (state) => state.tickets,
 
   getUserAlerts: (state) => state.userProfile.alerts,
+
+  getDemoConfiguration: (state) => state.userProfile.demo_config,
 }
 export default {
   namespaced,

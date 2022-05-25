@@ -1369,12 +1369,12 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         # set the delivery job
         doc = dpm.set_delivery_job(
-            self.database,
-            self.source_audience_doc[db_c.ID],
-            self.delivery_platform_doc[db_c.ID],
-            self.generic_campaigns,
-            self.test_user,
-            engagement_id,
+            database=self.database,
+            audience_id=self.source_audience_doc[db_c.ID],
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_platform_generic_campaigns=self.generic_campaigns,
+            username=self.test_user,
+            engagement_id=engagement_id,
         )
 
         self.assertIsNotNone(doc)
@@ -1405,13 +1405,13 @@ class TestDeliveryPlatform(unittest.TestCase):
         # set the delivery job
         # pylint: disable=E1121
         doc = dpm.set_delivery_job(
-            self.database,
-            self.source_audience_doc[db_c.ID],
-            self.delivery_platform_doc[db_c.ID],
-            self.generic_campaigns,
-            self.test_user,
-            engagement_id,
-            delivery_config,
+            database=self.database,
+            audience_id=self.source_audience_doc[db_c.ID],
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_platform_generic_campaigns=self.generic_campaigns,
+            username=self.test_user,
+            engagement_id=engagement_id,
+            delivery_platform_config=delivery_config,
         )
 
         self.assertIsNotNone(doc)
@@ -1448,12 +1448,12 @@ class TestDeliveryPlatform(unittest.TestCase):
 
             # set the delivery job
             doc = dpm.set_delivery_job(
-                self.database,
-                self.source_audience_doc[db_c.ID],
-                destination[db_c.ID],
-                self.generic_campaigns,
-                self.test_user,
-                engagement_id,
+                database=self.database,
+                audience_id=self.source_audience_doc[db_c.ID],
+                delivery_platform_id=destination[db_c.ID],
+                delivery_platform_generic_campaigns=self.generic_campaigns,
+                username=self.test_user,
+                engagement_id=engagement_id,
             )
 
             self.assertIsNotNone(doc)
@@ -1479,12 +1479,12 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         # set delivery job
         doc = dpm.set_delivery_job(
-            self.database,
-            self.source_audience_doc[db_c.ID],
-            self.delivery_platform_doc[db_c.ID],
-            self.generic_campaigns,
-            self.test_user,
-            engagement_id,
+            database=self.database,
+            audience_id=self.source_audience_doc[db_c.ID],
+            delivery_platform_id=self.delivery_platform_doc[db_c.ID],
+            delivery_platform_generic_campaigns=self.generic_campaigns,
+            username=self.test_user,
+            engagement_id=engagement_id,
         )
 
         self.assertIsNotNone(doc)
@@ -1529,12 +1529,12 @@ class TestDeliveryPlatform(unittest.TestCase):
 
             # set delivery job
             doc = dpm.set_delivery_job(
-                self.database,
-                self.source_audience_doc[db_c.ID],
-                destination[db_c.ID],
-                self.generic_campaigns,
-                self.test_user,
-                engagement_id,
+                database=self.database,
+                audience_id=self.source_audience_doc[db_c.ID],
+                delivery_platform_id=destination[db_c.ID],
+                delivery_platform_generic_campaigns=self.generic_campaigns,
+                username=self.test_user,
+                engagement_id=engagement_id,
             )
 
             self.assertIsNotNone(doc)

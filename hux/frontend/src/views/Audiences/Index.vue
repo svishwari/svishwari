@@ -86,7 +86,7 @@
           sort-column="update_time"
           sort-desc="false"
           data-e2e="audience-table"
-          class="big-table"
+          class="big-table white"
           :enable-lazy-load="enableLazyLoad"
           view-height="calc(100vh - 253px)"
           @bottomScrollEvent="intersected"

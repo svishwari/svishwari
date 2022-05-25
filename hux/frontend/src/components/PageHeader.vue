@@ -13,9 +13,9 @@
       <div class="d-flex">
         <icon
           v-if="icon"
-          :type="icon"
+          :type="showDemoHeader ? `${icon}_logo` : icon"
           class="pr-1"
-          :size="20"
+          :size="showDemoHeader ? 40 : 20"
           color="black"
           variant="darken4"
         />
@@ -30,7 +30,16 @@
         <slot name="left"></slot>
       </div>
     </div>
-    <div class="page-header--right">
+    <div v-if="showDemoHeader" class="demo-header">
+      <img
+        :src="require(`@/assets/images/${icon}_header.png`)"
+        alt="Hux"
+        width="100%"
+        height="200%"
+        class="d-flex mr-10"
+      />
+    </div>
+    <div v-if="!showDemoHeader" class="page-header--right">
       <slot name="right"></slot>
     </div>
   </v-card>
@@ -48,17 +57,14 @@ export default {
       type: String,
       required: false,
     },
-
     title: {
       type: String,
       required: false,
     },
-
     bgColor: {
       required: false,
       default: "white",
     },
-
     headerHeight: {
       type: [Number, String],
       required: false,
@@ -72,17 +78,20 @@ export default {
       type: String,
       required: false,
     },
-
     headerPadding: {
       type: String,
       required: false,
       default: "px-8",
     },
-
     headerHeightChanges: {
       type: String,
       required: false,
       default: "py-5",
+    },
+    showDemoHeader: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 }
@@ -91,5 +100,11 @@ export default {
 <style lang="scss" scoped>
 .page-header--wrap {
   border-bottom: 1px solid var(--v-black-lighten3) !important;
+  .demo-header {
+    width: 36%;
+    height: inherit;
+    margin-right: 219px;
+    overflow: hidden;
+  }
 }
 </style>

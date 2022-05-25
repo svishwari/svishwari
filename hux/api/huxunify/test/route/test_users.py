@@ -14,6 +14,7 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import get_user
+from huxunifylib.database.data_management import set_constant
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_user_favorites
@@ -74,6 +75,39 @@ class TestUserRoutes(RouteTestCase):
         self.user_info = get_user(
             self.database,
             okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],
+        )
+
+        # write rbac matrix database
+        set_constant(
+            self.database,
+            "rbac_matrix",
+            {
+                "components": {
+                    "alerts": {
+                        "label": "Alerts",
+                        "actions": [
+                            {
+                                "type": "get_all",
+                                "admin": True,
+                                "editor": True,
+                                "viewer": True,
+                            },
+                            {
+                                "type": "get_one",
+                                "admin": True,
+                                "editor": True,
+                                "viewer": True,
+                            },
+                            {
+                                "type": "delete",
+                                "admin": True,
+                                "editor": False,
+                                "viewer": False,
+                            },
+                        ],
+                    },
+                }
+            },
         )
 
     def test_adding_engagement_to_favorite(self):
@@ -684,3 +718,13 @@ class TestUserRoutes(RouteTestCase):
         self.assertEqual(
             "No user requests found.", response.json.get(api_c.MESSAGE)
         )
+
+    def test_get_rbac_matrix(self):
+        """Test getting rbac matrix"""
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.RBAC_MATRIX}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsNotNone(response.json["components"]["alerts"])
+        self.assertIsNotNone(response.json["components"]["alerts"]["actions"])
