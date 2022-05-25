@@ -692,7 +692,6 @@ def get_destination_config(
         replace_audience,
         engagement_id,
         destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
-        db_c.AUDIENCE_STATUS_DELIVERING,
     )
 
     # get the configuration values
