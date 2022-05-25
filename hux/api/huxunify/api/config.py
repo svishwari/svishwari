@@ -147,8 +147,7 @@ class Config:
         api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder"
     )
 
-    # TODO JIM CHANGE BACK
-    ENV_NAME = config(api_c.ENVIRONMENT_NAME, default=api_c.STAGING_ENV)
+    ENV_NAME = config(api_c.ENVIRONMENT_NAME, default="")
 
 
 class ProductionConfig(Config):
