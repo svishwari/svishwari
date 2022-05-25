@@ -48,6 +48,9 @@ client["users"].getRequestedUsers = () => {
 client["users"].tickets = () => {
   return http.get("users/tickets")
 }
+client["users"].updateDemoConfig = (data) => {
+  return http.patch("users", data)
+}
 //#endregion
 
 //#region Configurations
@@ -517,8 +520,8 @@ client["trustId"].trustIdOverview = () => {
   return http.get("trust_id/overview")
 }
 
-client["trustId"].getComparison = () => {
-  return http.get("/trust_id/comparison")
+client["trustId"].getComparison = (defaultValue) => {
+  return http.get(`/trust_id/comparison?default=${defaultValue}`)
 }
 client["trustId"].getAttributes = () => {
   return http.get("/trust_id/attributes")

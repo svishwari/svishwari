@@ -312,7 +312,7 @@ class NotificationsSearch(SwaggerView):
         if batch_size == 5:
             latest_notification_time = max(
                 [
-                    notification[db_c.NOTIFICATION_FIELD_CREATED]
+                    notification[db_c.NOTIFICATION_FIELD_CREATE_TIME]
                     for notification in notifications[api_c.NOTIFICATIONS_TAG]
                 ]
             )
@@ -321,7 +321,7 @@ class NotificationsSearch(SwaggerView):
                 or user.get(db_c.LAST_SEEN_ALERT_TIME)
                 < latest_notification_time
             ):
-                update_user(
+                user = update_user(
                     database=get_db_client(),
                     okta_id=user[db_c.OKTA_ID],
                     update_doc={
@@ -330,11 +330,12 @@ class NotificationsSearch(SwaggerView):
                     },
                 )
         else:
-            update_user(
+            user = update_user(
                 database=get_db_client(),
                 okta_id=user[db_c.OKTA_ID],
                 update_doc={db_c.SEEN_NOTIFICATIONS: True},
             )
+
         notifications.update(
             {db_c.SEEN_NOTIFICATIONS: user[db_c.SEEN_NOTIFICATIONS]}
         )
@@ -413,7 +414,7 @@ class NotificationStream(SwaggerView):
                 notifications_dict = notification_management.get_notifications(
                     database,
                     {
-                        db_c.NOTIFICATION_FIELD_CREATED: {
+                        db_c.NOTIFICATION_FIELD_CREATE_TIME: {
                             "$gt": previous_time
                         },
                         db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -421,7 +422,7 @@ class NotificationStream(SwaggerView):
                             "$regex": "^Successfully delivered audience"
                         },
                     },
-                    [(db_c.NOTIFICATION_FIELD_CREATED, -1)],
+                    [(db_c.NOTIFICATION_FIELD_CREATE_TIME, -1)],
                 )
 
                 # run async function to prepare notifications to be sent as

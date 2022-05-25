@@ -85,6 +85,7 @@ class DeliveriesSchema(Schema):
     delivery_schedule = fields.String()
     next_delivery = DateTimeWithZ()
     link = fields.String()
+    replace_audience = fields.Boolean()
 
 
 class EngagementDeliverySchema(EngagementGetSchema):

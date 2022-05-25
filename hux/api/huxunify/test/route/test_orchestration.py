@@ -209,12 +209,12 @@ class OrchestrationRouteTest(RouteTestCase):
 
         self.delivery_jobs = [
             set_delivery_job(
-                self.database,
-                self.audiences[0][db_c.ID],
-                self.destinations[0][db_c.ID],
-                [],
-                self.user_name,
-                ObjectId(engagement_id),
+                database=self.database,
+                audience_id=self.audiences[0][db_c.ID],
+                delivery_platform_id=self.destinations[0][db_c.ID],
+                delivery_platform_generic_campaigns=[],
+                username=self.user_name,
+                engagement_id=ObjectId(engagement_id),
             )
             for engagement_id in self.engagement_ids
         ]
@@ -234,12 +234,12 @@ class OrchestrationRouteTest(RouteTestCase):
 
         self.standalone_delivery_jobs = [
             set_delivery_job(
-                self.database,
-                self.audiences[0][db_c.ID],
-                destination[db_c.ID],
-                [],
-                self.user_name,
-                db_c.ZERO_OBJECT_ID,
+                database=self.database,
+                audience_id=self.audiences[0][db_c.ID],
+                delivery_platform_id=destination[db_c.ID],
+                delivery_platform_generic_campaigns=[],
+                username=self.user_name,
+                engagement_id=db_c.ZERO_OBJECT_ID,
             )
             for destination in self.destinations
         ]
@@ -300,6 +300,10 @@ class OrchestrationRouteTest(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
+            json=t_c.EVENT_TYPES_RESPONSE,
         )
         self.request_mocker.start()
 
@@ -466,6 +470,10 @@ class OrchestrationRouteTest(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
+            json=t_c.EVENT_TYPES_RESPONSE,
+        )
         self.request_mocker.start()
 
         audience_post = {
@@ -515,6 +523,10 @@ class OrchestrationRouteTest(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
+            json=t_c.EVENT_TYPES_RESPONSE,
         )
         self.request_mocker.start()
 
@@ -594,6 +606,10 @@ class OrchestrationRouteTest(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
+            json=t_c.EVENT_TYPES_RESPONSE,
         )
         self.request_mocker.start()
 

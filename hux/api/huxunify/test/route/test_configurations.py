@@ -9,6 +9,7 @@ from huxunifylib.database import (
 )
 from huxunifylib.database.user_management import (
     set_user,
+    update_user,
 )
 import huxunify.test.constants as t_c
 from huxunify.api.schema.configurations import (
@@ -81,9 +82,11 @@ class ConfigurationsTests(RouteTestCase):
             )
 
         navigation_settings = {
-            "name": "Navigation Settings",
-            "type": "navigation_settings",
-            "settings": api_c.SAMPLE_NAVIGATION_SETTINGS["settings"],
+            db_c.CONFIGURATION_FIELD_NAME: "Navigation Settings",
+            db_c.CONFIGURATION_FIELD_TYPE: db_c.CONFIGURATION_TYPE_NAVIGATION_SETTINGS,
+            db_c.CONFIGURATION_FIELD_SETTINGS: api_c.SAMPLE_NAVIGATION_SETTINGS[
+                db_c.CONFIGURATION_FIELD_SETTINGS
+            ],
         }
         cmg.create_document(
             self.database,
@@ -129,7 +132,7 @@ class ConfigurationsTests(RouteTestCase):
         self.assertEqual(response.json[0][api_c.TYPE], "module")
 
     def test_success_get_configurations_navigation(self):
-        """Test get configurations."""
+        """Test get navigation configuration."""
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/navigation",
@@ -149,6 +152,76 @@ class ConfigurationsTests(RouteTestCase):
         self.assertTrue(
             response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.ENABLED]
         )
+
+    def test_success_get_navigation_healthcare_user_demo_config(self):
+        """Test get navigation configuration for user set with healthcare
+        demo config."""
+
+        # update the user with alert configurations
+        update_user(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            update_doc={
+                **{db_c.USER_DEMO_CONFIG: api_c.USER_DEMO_CONFIG_SAMPLE},
+                **{
+                    db_c.UPDATED_BY: self.user_doc[db_c.USER_DISPLAY_NAME],
+                },
+            },
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/navigation",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
+        insights_nav_setting_names = [
+            insights_nav_setting[db_c.CONFIGURATION_FIELD_NAME]
+            for nav_setting in response.json[db_c.CONFIGURATION_FIELD_SETTINGS]
+            if nav_setting[db_c.CONFIGURATION_FIELD_NAME]
+            == api_c.INSIGHTS.title()
+            for insights_nav_setting in nav_setting[
+                db_c.CONFIGURATION_FIELD_CHILDREN
+            ]
+        ]
+        self.assertIn("Patients", insights_nav_setting_names)
+        self.assertNotIn("Customers", insights_nav_setting_names)
+
+    def test_success_get_navigation_default_user_demo_config(self):
+        """Test get navigation configuration for user set with no demo
+        config."""
+
+        # update the user with alert configurations
+        update_user(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            update_doc={
+                **{db_c.USER_DEMO_CONFIG: {api_c.USER_DEMO_MODE: False}},
+                **{
+                    db_c.UPDATED_BY: self.user_doc[db_c.USER_DISPLAY_NAME],
+                },
+            },
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/navigation",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
+        insights_nav_setting_names = [
+            insights_nav_setting[db_c.CONFIGURATION_FIELD_NAME]
+            for nav_setting in response.json[db_c.CONFIGURATION_FIELD_SETTINGS]
+            if nav_setting[db_c.CONFIGURATION_FIELD_NAME]
+            == api_c.INSIGHTS.title()
+            for insights_nav_setting in nav_setting[
+                db_c.CONFIGURATION_FIELD_CHILDREN
+            ]
+        ]
+        self.assertIn("Customers", insights_nav_setting_names)
+        self.assertNotIn("Patients", insights_nav_setting_names)
 
     def test_success_put_configurations_navigation(self):
         """Test get configurations."""
@@ -173,12 +246,12 @@ class ConfigurationsTests(RouteTestCase):
             response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.ENABLED]
         )
         self.assertFalse(
-            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["children"][0][
-                api_c.ENABLED
-            ]
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][
+                db_c.CONFIGURATION_FIELD_CHILDREN
+            ][0][api_c.ENABLED]
         )
         self.assertTrue(
-            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0]["children"][1][
-                api_c.ENABLED
-            ]
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][
+                db_c.CONFIGURATION_FIELD_CHILDREN
+            ][1][api_c.ENABLED]
         )

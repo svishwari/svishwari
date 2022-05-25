@@ -85,18 +85,50 @@
                   </v-card>
                 </v-col>
               </v-row>
-              <link-dropdown
-                v-if="getSegment.length > 0"
-                :data-list="getSegment"
-                :width="245"
-                @onselect="getSelectedData"
-              ></link-dropdown>
+              <v-row cl>
+                <v-col md="8">
+                  <link-dropdown
+                    v-if="getSegment.length > 0"
+                    :data-list="getSegment"
+                    :width="245"
+                    @onselect="getSelectedData"
+                  ></link-dropdown>
+                </v-col>
+                <v-col md="4">
+                  <div class="d-flex toggle-main-div">
+                    <span
+                      class="
+                        mr-5
+                        toggle-content
+                        text-body-1
+                        black--text
+                        text--base
+                      "
+                      >Compare segments to all customers</span
+                    >
+                    <hux-switch
+                      v-model="switchSegment"
+                      false-color="var(--v-black-lighten4)"
+                      :width="'60px'"
+                      :is-disabled="
+                        (multipleSegments && onlyDefault) ||
+                        (multipleSegments && !onlyDefault)
+                          ? false
+                          : true
+                      "
+                      :switch-labels="switchLabel"
+                      @change="toggleDefaultSwitch($event)"
+                    />
+                  </div>
+                </v-col>
+              </v-row>
               <data-cards
                 v-if="getSegmentTableData.length > 0"
                 bordered
                 card-class="py-5 pa-4"
                 :items="getSegmentTableData"
                 :fields="getSegmentTableHeaders"
+                :multiple-segments="multipleSegments"
               >
                 <template
                   v-for="header in getSegmentTableHeaders"
@@ -206,7 +238,8 @@
                   <div
                     v-if="
                       getSelectedSegment &&
-                      getSelectedSegment.segments.length > 1
+                      getSelectedSegment.segments.length > 1 &&
+                      !row.item.default
                     "
                     class="d-flex align-center justify-end mr-2"
                   >
@@ -220,11 +253,7 @@
                   </div>
                 </template>
               </data-cards>
-              <div
-                v-if="
-                  getSelectedSegment && getSelectedSegment.segments.length < 5
-                "
-              >
+              <div v-if="getSelectedSegment && segmentCount < 5">
                 <v-list class="add-segment no-data-width" :height="22">
                   <v-list-item @click="filterToggle()">
                     <hux-icon
@@ -299,6 +328,7 @@ import RhombusNumber from "@/components/common/RhombusNumber.vue"
 import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
+import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
   name: "HXTrustID",
@@ -315,6 +345,7 @@ export default {
     TrustIdAttributes,
     HuxIcon,
     AddSegmentDrawer,
+    HuxSwitch,
   },
   data() {
     return {
@@ -325,7 +356,21 @@ export default {
       isFilterToggled: false,
       segmentLength: 1,
       addSegments: [],
-      borderColorArr: [
+      switchSegment: true,
+      multipleSegments: false,
+      onlyDefault: false,
+      segmentCount: 0,
+      switchLabel: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
+        },
+      ],
+      withDefaultborderColorArr: [
         {
           color: "primary",
           variant: "darken1",
@@ -345,6 +390,32 @@ export default {
         {
           color: "secondary",
           variant: "darken1",
+        },
+        {
+          color: "secondary",
+          variant: "lighten2",
+        },
+      ],
+      borderColorArr: [
+        {
+          color: "primary",
+          variant: "lighten4",
+        },
+        {
+          color: "primary",
+          variant: "lighten6",
+        },
+        {
+          color: "info",
+          variant: "base",
+        },
+        {
+          color: "secondary",
+          variant: "darken1",
+        },
+        {
+          color: "secondary",
+          variant: "lighten2",
         },
       ],
       colColorArr: {
@@ -430,6 +501,7 @@ export default {
         timely_issue_resolution:
           "Resolves issues in an adequate and timely manner",
       },
+      disableToggle: false,
     }
   },
   computed: {
@@ -449,14 +521,17 @@ export default {
             let segment = {
               segment_name: x.segment_name,
               segment_filters: x.segment_filters,
+              default: x.default,
             }
 
             x.attributes.forEach((item) => {
               segment[item.attribute_type] = item.attribute_score
             })
-
-            segment.colors = this.borderColorArr[index]
-
+            if (this.onlyDefault) {
+              segment.colors = this.withDefaultborderColorArr[index]
+            } else {
+              segment.colors = this.borderColorArr[index]
+            }
             return segment
           })
         : []
@@ -505,9 +580,12 @@ export default {
     this.segmentComparisonLoading = true
     try {
       await this.getOverview()
-      await this.getTrustIdComparison()
+      await this.getTrustIdComparison({
+        defaultValue: true,
+      })
       await this.getSegmentData()
       await this.getTrustIdAttribute()
+      await this.applyDefaultSegmentChanges()
     } finally {
       this.loading = false
       this.segmentComparisonLoading = false
@@ -531,12 +609,38 @@ export default {
         return aggregateAgeFilters(filters)
       }
     },
+    applyDefaultSegmentChanges() {
+      this.segmentCount = 0
+      this.multipleSegments = this.getSelectedSegment.segments.some(
+        (data) => !data.default
+      )
+      this.onlyDefault = this.getSelectedSegment.segments.some(
+        (data) => data.default
+      )
+      this.getSelectedSegment.segments.forEach((element) => {
+        if (!element.default) {
+          this.segmentCount++
+        }
+      })
+    },
     getSelectedData(value) {
       this.selectedSegment = value
+      this.applyDefaultSegmentChanges()
     },
     formatText: formatText,
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
+    },
+    async toggleDefaultSwitch(event) {
+      this.loading = true
+      this.getOverview()
+      await this.getTrustIdComparison({
+        defaultValue: event,
+      })
+      this.applyDefaultSegmentChanges()
+      this.getTrustIdAttribute()
+      this.$refs.comparisonChart.initializeComparisonChart()
+      this.loading = false
     },
     async addSegment(event) {
       this.loading = true
@@ -558,7 +662,9 @@ export default {
         if (response.length > 0) {
           this.loading = true
           this.getOverview()
-          this.getTrustIdComparison()
+          this.getTrustIdComparison({
+            defaultValue: true,
+          })
           this.getTrustIdAttribute()
           this.$refs.comparisonChart.initializeComparisonChart()
           this.setAlert({
@@ -617,7 +723,7 @@ export default {
 .add-segment {
   height: 60px !important;
   display: inline-table;
-  background: var(--v-white-base);
+  background: var(--v-primary-lighten1);
   border: 1px solid var(--v-black-lighten2);
   border-radius: 5px;
 }
@@ -660,5 +766,11 @@ export default {
   height: 60px;
   align-items: center;
   display: flex;
+}
+.toggle-content {
+  margin-top: 18px;
+}
+.toggle-main-div {
+  float: right;
 }
 </style>

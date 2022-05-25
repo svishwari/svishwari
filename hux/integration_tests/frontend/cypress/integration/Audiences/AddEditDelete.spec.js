@@ -85,7 +85,7 @@ describe("Orchestration > Audience > Add, Edit and Delete Audience", () => {
         cy.wait(5000)
 
         // Edit audience name
-        cy.get(selector.audience.editAudienceName).eq(0).type(` edited`)
+        cy.get(selector.audience.editAudienceName).eq(0).type(" edited")
 
         // Waiting for fetch the response
         // eslint-disable-next-line cypress/no-unnecessary-waiting

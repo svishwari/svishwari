@@ -1,4 +1,3 @@
-# build the test environment
 FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
 FROM huxhub.repo.mgnt.in/locustio/locust AS locust
 
@@ -12,7 +11,10 @@ COPY . /app/hux/load_tests
 RUN pip install pip --upgrade
 
 # install pipenv
+RUN pip install python-dotenv
 RUN pip install locust
+RUN pip install pyperclip
+RUN pip install requests
 
 # run the locust load test application
 EXPOSE 8089

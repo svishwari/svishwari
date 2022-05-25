@@ -30,7 +30,7 @@ describe("Orchestration > Engagement > Edit Engagement", () => {
     // Edit engagement description
     cy.get(selector.engagement.enagagementDescription)
       .eq(0)
-      .type(`E2E test edited engagement`)
+      .type("E2E test edited engagement")
 
     cy.contains("Update").click()
     cy.contains("Yes, edit")

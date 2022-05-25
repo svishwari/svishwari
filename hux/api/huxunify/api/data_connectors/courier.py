@@ -624,6 +624,7 @@ def get_destination_config(
     destination: dict,
     engagement_id: ObjectId,
     username: str,
+    replace_audience: bool = False,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
@@ -634,6 +635,7 @@ def get_destination_config(
         engagement_id (ObjectId): The ID of the engagement.
         username (str): Username of user requesting to get the destination
             config.
+        replace_audience(bool): Audience replacement flag
 
     Returns:
         DestinationBatchJob: Destination batch job object.
@@ -685,6 +687,7 @@ def get_destination_config(
         destination_id,
         [],
         username,
+        replace_audience,
         engagement_id,
         destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
     )
@@ -820,6 +823,17 @@ async def deliver_audience_to_destination(
             user_name,
         )
         return
+    replace_audience = False
+    if destination.get(db_c.IS_AD_PLATFORM):
+        replace_audience = list(
+            map(
+                lambda x: x[db_c.REPLACE_AUDIENCE],
+                filter(
+                    lambda x: (x[db_c.OBJECT_ID] == destination_id),
+                    audience[db_c.DESTINATIONS],
+                ),
+            )
+        )[0]
 
     batch_destination = get_destination_config(
         database=database,
@@ -827,6 +841,7 @@ async def deliver_audience_to_destination(
         destination=destination,
         engagement_id=db_c.ZERO_OBJECT_ID,
         username=user_name,
+        replace_audience=replace_audience,
     )
     batch_destination.register()
     batch_destination.submit()

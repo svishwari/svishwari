@@ -49,9 +49,9 @@ const actions = {
       throw error
     }
   },
-  async getTrustIdComparison({ commit }) {
+  async getTrustIdComparison({ commit }, { defaultValue }) {
     try {
-      const response = await api.trustId.getComparison()
+      const response = await api.trustId.getComparison(defaultValue)
       commit("SET_SEGMENT_COMPARISON", response.data)
     } catch (error) {
       handleError(error)

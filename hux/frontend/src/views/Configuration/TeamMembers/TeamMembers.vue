@@ -13,6 +13,7 @@
               <v-btn
                 text
                 min-width="80"
+                :ripple="false"
                 :disabled="getRole != 'admin'"
                 class="
                   d-flex
@@ -21,7 +22,7 @@
                   text-decoration-none
                   pl-0
                   pr-0
-                  idr-link
+                  team-member-request-button
                   text-body-1
                   mt-n2
                   mr-1
@@ -351,5 +352,10 @@ export default {
 .requested-tag {
   height: 20px;
   width: 80px;
+}
+.team-member-request-button {
+  &::before {
+    background-color: transparent;
+  }
 }
 </style>

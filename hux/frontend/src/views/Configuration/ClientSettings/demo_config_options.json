@@ -1,0 +1,121 @@
+{
+  "industryOptions": [
+    {
+      "name": "Healthcare"
+    },
+    {
+      "name": "Retail"
+    },
+    {
+      "name": "Hospitality"
+    },
+    {
+      "name": "Automotive"
+    }
+  ],
+  "retailOptions": {
+    "healthcare": [
+      {
+        "name": "Pharmaceutical"
+      },
+      {
+        "name": "Healthcare provider"
+      }
+    ],
+    "retail": [
+      {
+        "name": "Retailers"
+      }
+    ],
+    "hospitality": [
+      {
+        "name": "Hoteliers"
+      }
+    ],
+    "automotive": [
+      {
+        "name": "Auto Manufacturers"
+      },
+      {
+        "name": "Dealers"
+      }
+    ]
+  },
+  "customerOptions": {
+    "healthcare": [
+      {
+        "name": "Patients"
+      },
+      {
+        "name": "Physicians"
+      },
+      {
+        "name": "Prescribers"
+      }
+    ],
+    "retail": [
+      {
+        "name": "Customers"
+      }
+    ],
+    "hospitality": [
+      {
+        "name": "Travelers"
+      },
+      {
+        "name": "Bookers"
+      },
+      {
+        "name": "Guests"
+      }
+    ],
+    "automotive": [
+      {
+        "name": "Shoppers"
+      },
+      {
+        "name": "Owners"
+      }
+    ]
+  },
+  "conversionOptions": {
+    "healthcare": [
+      {
+        "name": "Sales"
+      },
+      {
+        "name": "Prescriptions"
+      }
+    ],
+    "retail": [
+      {
+        "name": "Conversions"
+      },
+      {
+        "name": "Purchases"
+      },
+      {
+        "name": "Sales"
+      }
+    ],
+    "hospitality": [
+      {
+        "name": "Bookings"
+      },
+      {
+        "name": "Purchases"
+      }
+    ],
+    "automotive": [
+      {
+        "name": "Sales"
+      },
+      {
+        "name": "Leads"
+      },
+      {
+        "name": "Purchases"
+      }
+    ]
+  }
+}
