@@ -16,7 +16,8 @@ UNSECURED_ROUTES = [
     "/health-check",
     "/swagger/<path:filename>",
     "/static/<path:filename>",
-    f"/api/v1/{api_c.TRIGGERS_TAG}/{api_c.DELIVERIES}" f"/{api_c.PENDING_JOBS}",
+    f"/api/v1/{api_c.TRIGGERS_TAG}/{api_c.DELIVERIES}" 
+    f"/{api_c.PENDING_JOBS}",
 ]
 
 
@@ -33,7 +34,9 @@ class OktaTest(TestCase):
         self.routes = list(create_app().url_map.iter_rules())
 
     @requests_mock.Mocker()
-    def test_secured_all_endpoints_invalid_response(self, request_mocker: Mocker):
+    def test_secured_all_endpoints_invalid_response(
+        self, request_mocker: Mocker
+    ):
         """Test all endpoints with a mocked invalid response.
 
         Args:
@@ -58,7 +61,9 @@ class OktaTest(TestCase):
             self.assertEqual(400, result.status_code)
 
     @requests_mock.Mocker()
-    def test_secured_all_endpoints_invalid_header(self, request_mocker: Mocker):
+    def test_secured_all_endpoints_invalid_header(
+        self, request_mocker: Mocker
+    ):
         """Test all endpoints with a mocked invalid header.
 
         Args:
@@ -83,7 +88,9 @@ class OktaTest(TestCase):
             self.assertEqual(401, result.status_code)
 
     @requests_mock.Mocker()
-    def test_secured_all_endpoints_valid_header_bad_token(self, request_mocker: Mocker):
+    def test_secured_all_endpoints_valid_header_bad_token(
+        self, request_mocker: Mocker
+    ):
         """Test all endpoints with a mocked valid header, bad token.
 
         Args:
@@ -116,7 +123,9 @@ class OktaTest(TestCase):
         """
 
         # setup the request mock post
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE)
+        request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.VALID_INTROSPECTION_RESPONSE
+        )
         mock_header = {"Authorization": "Bearer 123456765"}
 
         # get config and set to disable deliveries to False.
