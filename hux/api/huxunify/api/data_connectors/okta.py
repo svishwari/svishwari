@@ -211,7 +211,7 @@ def get_env_okta_user_bearer_token() -> Union[str, None]:
         context = ssl.create_default_context(cafile=certifi.where())
 
         # open the url, and force the redirect
-        with urllib.request.urlopen(req, context=context) as redirect:
+        with urllib.request.urlopen(req, context=context) as redirect:  # nosec
             # grab the token using a regex
             matches = re.findall(token_regex, str(redirect.geturl()))
             token = matches[0] if matches else None
