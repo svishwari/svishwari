@@ -761,6 +761,7 @@ class AudienceGetView(SwaggerView):
             lookalike[db_c.AUDIENCE_FILTERS] = lookalike[
                 db_c.LOOKALIKE_SOURCE_AUD_FILTERS
             ]
+            lookalike[db_c.SIZE] = lookalike[db_c.LOOKALIKE_SOURCE_AUD_SIZE]
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
             lookalike[api_c.MATCH_RATE] = 0
             # check and set if source/seed audience this lookalike audience is
