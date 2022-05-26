@@ -6,6 +6,7 @@ global:
   DEPLOY_REPO: hux-unified-deploy
   CHART_PATH: k8s/charts
   APP_REPO: hux-unified
+  SUB_REPO: hux/api
 
 ci:
   pull_request:

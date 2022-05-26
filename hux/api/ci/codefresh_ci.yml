@@ -66,7 +66,7 @@ steps:
     title: Set environment variables
     type: freestyle
     image: huxhub.repo.mgnt.in/yq
-    working_directory: "${{CF_REPO_NAME}}/hux/api/ci"
+    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}/ci"
     commands:
       # Set Global vars
       - yq r $VARS_FILE 'global' | sed -e 's/:\ /=/g' >> ${{CF_VOLUME_PATH}}/env_vars_to_export
@@ -87,7 +87,7 @@ steps:
     type: "build"
     image_name: "${{APP_NAME}}"
     working_directory: '${{CF_REPO_NAME}}'
-    dockerfile: 'hux/api/Dockerfile'
+    dockerfile: '${{SUB_REPO}}/Dockerfile'
     tag: '${{DOCKER_TAG}}'
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
@@ -96,7 +96,7 @@ steps:
     stage: tox_parallel
     title: "Tox Pylint and Coverage checks."
     image: huxhub.repo.mgnt.in/tox-ci
-    working_directory: '${{CF_REPO_NAME}}/hux/api'
+    working_directory: '${{CF_REPO_NAME}}/${{SUB_REPO}}'
     description: "run tests using tox"
     commands:
       - tox -e ${TOXENV} -- --skip-model-generate
@@ -115,7 +115,7 @@ steps:
     stage: tox_api_unittests
     title: "Tox - Style and Unittests"
     image: huxhub.repo.mgnt.in/tox-ci
-    working_directory: '${{CF_REPO_NAME}}/hux/api'
+    working_directory: '${{CF_REPO_NAME}}/${{SUB_REPO}}'
     description: "run tests using tox"
     commands:
       - tox -e ${TOXENV} -- --skip-model-generate
@@ -152,6 +152,7 @@ steps:
       - >-
         codefresh run Hux_Unified_Solution/unified_solution_api_cd -d -t 'dev_deploy'
         -b 'main'
+        --variable SUB_REPO="${{SUB_REPO}}"
         --variable COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
         --variable COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}"
         --variable DOCKER_TAG=${{DOCKER_TAG}}
