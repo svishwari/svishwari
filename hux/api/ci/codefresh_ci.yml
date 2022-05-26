@@ -66,7 +66,7 @@ steps:
     title: Set environment variables
     type: freestyle
     image: huxhub.repo.mgnt.in/yq
-    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}/ci"
+    working_directory: "${{CF_REPO_NAME}}/hux/api/ci"
     commands:
       # Set Global vars
       - yq r $VARS_FILE 'global' | sed -e 's/:\ /=/g' >> ${{CF_VOLUME_PATH}}/env_vars_to_export
