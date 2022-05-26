@@ -511,7 +511,7 @@ class ModelOverview(SwaggerView):
             today = datetime.now()
             model_overview = [
                 {
-                    api_c.MODEL_TYPE: choice(["binary", "classification"]),
+                    api_c.MODEL_TYPE: "classification",
                     api_c.MODEL_NAME: f"Propensity_to_{choice(['purchase', 'open', 'view'])}",
                     api_c.DESCRIPTION: "Likelihood of this action to occur.",
                     api_c.PERFORMANCE_METRIC: {
@@ -610,7 +610,7 @@ class ModelDriftView(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<model_id>/features",
+    f"{api_c.MODELS_ENDPOINT}/<model_id>",
     "ModelFeaturesView",
 )
 class ModelFeaturesView(SwaggerView):

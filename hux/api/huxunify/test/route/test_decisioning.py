@@ -69,7 +69,7 @@ class DecisioningTests(RouteTestCase):
         )
 
     def test_success_get_models_with_status(self):
-        """Test get models from Tecton with status."""
+        """Test get models with status."""
 
         get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
@@ -83,6 +83,7 @@ class DecisioningTests(RouteTestCase):
         self.assertTrue(
             t_c.validate_schema(ModelSchema(), response.json, True)
         )
+        self.assertEqual(len(response.json), 11)
 
     def test_success_request_model(self):
         """Test requesting a model."""
@@ -368,6 +369,7 @@ class DecisioningTests(RouteTestCase):
         self.assertTrue(
             t_c.validate_schema(FeatureSchema(), response.json, True)
         )
+        self.assertEqual(20, len(response.json))
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(settings.load_profile("hypothesis_setting_profile"))

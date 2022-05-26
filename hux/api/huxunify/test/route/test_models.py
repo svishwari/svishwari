@@ -6,7 +6,11 @@ from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import collection_management, constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
-from huxunify.api.schema.model import ModelDriftSchema, ModelVersionSchema
+from huxunify.api.schema.model import (
+    ModelDriftSchema,
+    ModelVersionSchema,
+    ModelSchema,
+)
 
 MOCK_MODEL_RESPONSE = {
     "results": [
@@ -75,7 +79,7 @@ class TestModelRoutes(RouteTestCase):
         )
 
     def test_get_all_models(self):
-        """Test get all models from Tecton."""
+        """Test get all models."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -90,9 +94,12 @@ class TestModelRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(ModelSchema(), response.json, True)
+        )
 
     def test_retrieve_version_history_for_model(self):
-        """Test get version history for a model from Tecton."""
+        """Test get version history for a model."""
 
         # mock the version history
         self.request_mocker.stop()
@@ -110,14 +117,9 @@ class TestModelRoutes(RouteTestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(ModelVersionSchema(many=True).dump(response.json))
-        # self.assertTrue(response.json)
-        # self.assertEqual(len(response.json), 3)
-        # self.assertEqual(response.json[0][api_c.STATUS], api_c.STATUS_ACTIVE)
-        # self.assertEqual(response.json[0][api_c.VERSION], "21.11.14")
-        # self.assertEqual(response.json[-1][api_c.VERSION], "21.10.12")
 
     def test_retrieve_drift_details_for_model(self):
-        """Test get drift details for a model from Tecton."""
+        """Test get drift details for a model."""
 
         # mock the drift data.
         self.request_mocker.stop()

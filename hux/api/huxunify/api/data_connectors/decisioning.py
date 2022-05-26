@@ -17,10 +17,11 @@ class Decisioning:
 
     def __init__(self, token: str):
         self.token = token
-        config = configuration.Configuration(host=get_config().DECISIONING_URL)
         self.decisioning_client = dec_client(
             api_client=api_client.ApiClient(
-                configuration=config,
+                configuration=configuration.Configuration(
+                    host=get_config().DECISIONING_URL
+                ),
                 header_name="Authorization",
                 header_value=token,
             )
@@ -193,6 +194,7 @@ class Decisioning:
                     api_c.UNIQUE_VALUES: None,
                     api_c.LCUV: None,
                     api_c.MCUV: None,
+                    api_c.SCORE: None,
                 }
             )
 
