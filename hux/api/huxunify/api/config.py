@@ -22,17 +22,11 @@ class Config:
     CLOUD_PROVIDER = config(api_c.CLOUD_PROVIDER, default="")
 
     # Azure Config
-    AZURE_BATCH_ACCOUNT_NAME = config(
-        api_c.AZURE_BATCH_ACCOUNT_NAME, default=""
-    )
+    AZURE_BATCH_ACCOUNT_NAME = config(api_c.AZURE_BATCH_ACCOUNT_NAME, default="")
     AZURE_BATCH_ACCOUNT_KEY = config(api_c.AZURE_BATCH_ACCOUNT_KEY, default="")
     AZURE_BATCH_ACCOUNT_URL = config(api_c.AZURE_BATCH_ACCOUNT_URL, default="")
-    AZURE_STORAGE_ACCOUNT_NAME = config(
-        api_c.AZURE_STORAGE_ACCOUNT_NAME, default=""
-    )
-    AZURE_STORAGE_ACCOUNT_KEY = config(
-        api_c.AZURE_STORAGE_ACCOUNT_KEY, default=""
-    )
+    AZURE_STORAGE_ACCOUNT_NAME = config(api_c.AZURE_STORAGE_ACCOUNT_NAME, default="")
+    AZURE_STORAGE_ACCOUNT_KEY = config(api_c.AZURE_STORAGE_ACCOUNT_KEY, default="")
     AZURE_STORAGE_BLOB_NAME = config(api_c.AZURE_STORAGE_BLOB_NAME, default="")
     AZURE_STORAGE_CONNECTION_STRING = config(
         api_c.AZURE_STORAGE_CONNECTION_STRING, default=""
@@ -48,15 +42,11 @@ class Config:
     # AWS_CONFIG
     AWS_REGION = config(api_c.AWS_REGION, default="")
     S3_DATASET_BUCKET = config(api_c.AWS_S3_BUCKET_CONST, default="")
-    DISABLE_DELIVERIES = config(
-        api_c.DISABLE_DELIVERIES, default=False, cast=bool
-    )
+    DISABLE_DELIVERIES = config(api_c.DISABLE_DELIVERIES, default=False, cast=bool)
     MOCK_TECTON = config(api_c.MOCK_TECTON, default=True, cast=bool)
 
     # MONGO CONFIG
-    MONGO_CONNECTION_STRING = config(
-        api_c.MONGO_CONNECTION_STRING, default=None
-    )
+    MONGO_CONNECTION_STRING = config(api_c.MONGO_CONNECTION_STRING, default=None)
     MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")
     MONGO_DB_PORT = config(api_c.MONGO_DB_PORT, default=27017, cast=int)
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
@@ -80,8 +70,11 @@ class Config:
         MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
 
     # OKTA CONFIGURATION
-    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
     OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
+    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
+    OKTA_REDIRECT_URI = config(api_c.OKTA_REDIRECT_URI, default="")
+    OKTA_TEST_USER_NAME = config(api_c.OKTA_TEST_USER_NAME, default="")
+    OKTA_TEST_USER_PW = config(api_c.OKTA_TEST_USER_PW, default="")
 
     # TECTON
     TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")
@@ -104,9 +97,7 @@ class Config:
     AUDIENCE_ROUTER_EXECUTION_ROLE_ARN = config(
         api_c.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST, default=""
     )
-    AUDIENCE_ROUTER_IMAGE = config(
-        api_c.AUDIENCE_ROUTER_IMAGE_CONST, default=""
-    )
+    AUDIENCE_ROUTER_IMAGE = config(api_c.AUDIENCE_ROUTER_IMAGE_CONST, default="")
     AUDIENCE_ROUTER_JOB_QUEUE = config(
         api_c.AUDIENCE_ROUTER_JOB_QUEUE_CONST, default=""
     )
@@ -129,13 +120,9 @@ class Config:
     )
 
     # Preserve ordering in json
-    JSON_SORT_KEYS = config(
-        api_c.JSON_SORT_KEYS_CONST, default=False, cast=bool
-    )
+    JSON_SORT_KEYS = config(api_c.JSON_SORT_KEYS_CONST, default=False, cast=bool)
 
-    TEST_AUTH_OVERRIDE = config(
-        api_c.TEST_AUTH_OVERRIDE, default=False, cast=bool
-    )
+    TEST_AUTH_OVERRIDE = config(api_c.TEST_AUTH_OVERRIDE, default=False, cast=bool)
 
     DISABLE_SCHEDULED_DELIVERIES = config(
         api_c.DISABLE_SCHEDULED_DELIVERIES, default=True, cast=bool
@@ -147,9 +134,7 @@ class Config:
     DEFAULT_OKTA_GROUP_NAME = config(
         api_c.DEFAULT_OKTA_GROUP_NAME, default="team-unified--base"
     )
-    DEFAULT_OKTA_APP = config(
-        api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder"
-    )
+    DEFAULT_OKTA_APP = config(api_c.DEFAULT_OKTA_APP, default="HUX Audience Builder")
 
     ENV_NAME = config(api_c.ENVIRONMENT_NAME, default="")
 
