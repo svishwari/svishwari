@@ -1,0 +1,31 @@
+global:
+  APP_NAME: unified-ui
+  DEV_REGISTRY: unified-docker-dev-local
+  STG_REGISTRY: unified-docker-dev-local  # Currently dev and stg deployment are having same image, can be updated if requirement changes later.
+  PROD_REGISTRY: unified-docker-prod-local
+  DEPLOY_REPO: hux-unified-deploy
+  CHART_PATH: k8s/charts
+  APP_REPO: hux-unified
+  SUB_REPO: hux/frontend
+  PORT: 80
+  BUILD_STORYBOOK: true
+  OKTA_ISSUER: https://deloittedigital-ms.okta.com
+  OKTA_CLIENT_ID: 0oab1i3ldgYyRvk5r2p7
+  API_URL: https://unified-api-dev.main.use1.hux-unified-dev1.in
+
+ci:
+  pull_request:
+
+  main_commit:
+
+cd:
+  main_commit:
+
+delivery:
+  aws1:
+    DEV_VALUES: values-huxui-main-use1-unified-dev1.yaml
+    STG_VALUES: values-huxui-main-use1-unified-stg1.yaml
+    RC_VALUES: values-huxui-main-use1-unified-rc1.yaml
+
+  azure1:
+    DEV_VALUES: values-huxui-main-use2-unified-husdev2.yaml
