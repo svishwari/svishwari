@@ -698,7 +698,7 @@ class ModelFeaturesView(SwaggerView):
                     api_c.UNIQUE_VALUES: uniform(1000, 3000),
                     api_c.LCUV: uniform(1, 99),
                     api_c.MCUV: uniform(1, 99),
-                    api_c.SCORE: uniform(1, 99)
+                    api_c.SCORE: uniform(1, 99),
                 }
                 for i in range(50)
             ]
