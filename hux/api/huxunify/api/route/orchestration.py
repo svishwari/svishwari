@@ -610,41 +610,57 @@ class AudienceView(SwaggerView):
                 query_filter,
                 {db_c.DELETED: 0},
             )
-            lookalikes = (
-                []
+
+            # get total lookalike audiences count to add it to response for
+            # pagination request
+            lookalikes_count = (
+                0
                 if lookalikes is None
-                else lookalikes.get(db_c.DOCUMENTS, [])
+                else lookalikes.get(api_c.TOTAL_RECORDS, 0)
             )
 
-            # get the facebook delivery platform for lookalikes
-            facebook_destination = (
-                destination_management.get_delivery_platform_by_type(
-                    database, db_c.DELIVERY_PLATFORM_FACEBOOK
+            # query for lookalike audiences only if required number of regular
+            # audiences are not fetched based on the batch offset values passed
+            # in the request
+            if fetch_lookalike_audiences:
+                lookalikes = (
+                    []
+                    if lookalikes is None
+                    else lookalikes.get(db_c.DOCUMENTS, [])
                 )
-            )
 
-            # set the is_lookalike property to True so UI knows it is a lookalike.
-            for lookalike in lookalikes:
-                lookalike[api_c.LOOKALIKEABLE] = False
-                lookalike[api_c.IS_LOOKALIKE] = True
-
-                lookalike[db_c.STATUS] = lookalike.get(
-                    db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
-                )
-                lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
-                    db_c.CREATE_TIME
-                ]
-                lookalike[db_c.DESTINATIONS] = (
-                    [facebook_destination] if facebook_destination else []
-                )
-                lookalike[api_c.FAVORITE] = bool(
-                    lookalike[db_c.ID] in favorite_lookalike_audiences
-                )
-                if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
-                    # rename the key
-                    lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
-                        db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                # get the facebook delivery platform for lookalikes
+                facebook_destination = (
+                    destination_management.get_delivery_platform_by_type(
+                        database, db_c.DELIVERY_PLATFORM_FACEBOOK
                     )
+                )
+
+                for lookalike in lookalikes:
+                    lookalike = {
+                        **lookalike,
+                        api_c.LOOKALIKEABLE: False,
+                        api_c.IS_LOOKALIKE: True,
+                        db_c.STATUS: lookalike.get(
+                            db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
+                        ),
+                        db_c.AUDIENCE_LAST_DELIVERED: lookalike[
+                            db_c.CREATE_TIME
+                        ],
+                        db_c.DESTINATIONS: (
+                            [facebook_destination]
+                            if facebook_destination
+                            else []
+                        ),
+                        api_c.FAVORITE: bool(
+                            lookalike[db_c.ID] in favorite_lookalike_audiences
+                        ),
+                    }
+                    if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
+                        # rename the key
+                        lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
+                            db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                        )
 
                     # add the built lookalike dict to the list of audiences to
                     # be returned
@@ -876,6 +892,11 @@ class AudienceGetView(SwaggerView):
                 destination = destination_management.get_delivery_platform(
                     database, lookalike_audience.get(db_c.DELIVERY_PLATFORM_ID)
                 )
+                if not destination:
+                    logger.warning(
+                        "Destination %s could not be found.",
+                        destination.get(api_c.ID),
+                    )
                 lookalike_audience[
                     db_c.DELIVERY_PLATFORM_TYPE
                 ] = destination.get(db_c.DELIVERY_PLATFORM_TYPE)

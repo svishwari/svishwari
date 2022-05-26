@@ -1,9 +1,7 @@
 """Purpose of this module is to park schedule modules for delivery schedule."""
 import asyncio
 from datetime import datetime
-
 from pymongo import MongoClient
-
 from huxunifylib.database import constants as db_c, collection_management
 from huxunifylib.database.cache_management import create_cache_entry
 from huxunifylib.database.collection_management import get_documents
@@ -257,7 +255,10 @@ async def delivery_destination(
         ]:
             continue
         batch_destination = get_destination_config(
-            database, *pair, engagement[db_c.ID]
+            database,
+            *pair,
+            engagement[db_c.ID],
+            username=engagement[db_c.UPDATED_BY],
         )
         batch_destination.register()
         batch_destination.submit()
