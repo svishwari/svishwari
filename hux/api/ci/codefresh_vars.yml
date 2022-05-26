@@ -1,0 +1,25 @@
+global:
+  APP_NAME: unified-api
+  DEV_REGISTRY: unified-docker-dev-local
+  STG_REGISTRY: unified-docker-dev-local  # Currently dev and stg deployment are having same image, can be updated if requirement changes later.
+  PROD_REGISTRY: unified-docker-prod-local
+  DEPLOY_REPO: hux-unified-deploy
+  CHART_PATH: k8s/charts
+  APP_REPO: hux-unified
+
+ci:
+  pull_request:
+
+  main_commit:
+
+cd:
+  main_commit:
+
+delivery:
+  aws1:
+    DEV_VALUES: values-huxui-main-use1-unified-dev1.yaml
+    STG_VALUES: values-huxui-main-use1-unified-stg1.yaml
+    RC_VALUES: values-huxui-main-use1-unified-rc1.yaml
+
+  azure1:
+    DEV_VALUES: values-huxui-main-use2-unified-husdev2.yaml

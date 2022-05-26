@@ -1,0 +1,113 @@
+version: '1.0'
+
+stages:
+  - prepare
+  - app_repo
+  - deploy_repo
+  - set_vars
+  - dev_deploy
+  - stg_deploy
+  - push
+
+steps:
+  GetTriggerName:
+    stage: prepare
+    title: get trigger name using id from spec yaml
+    type: deloittehux/get-trigger-name
+
+  CloneAppRepo:
+    stage: app_repo
+    title: Cloning application repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}'
+
+  SetGlobalVars:
+    stage: app_repo
+    title: Set environment variables
+    type: freestyle
+    image: huxhub.repo.mgnt.in/yq
+    working_directory: "${{CF_REPO_NAME}}/hux/api/ci"
+    commands:
+      # Set Global vars
+      - yq r $VARS_FILE 'global' | sed -e 's/:\ /=/g' >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+    environment:
+      - VARS_FILE=codefresh_vars.yml
+
+  CloneDeployRepo:
+    stage: deploy_repo
+    title: Cloning deploy repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{DEPLOY_REPO}}'
+    revision: 'main'
+
+  ChangeManifest:
+    stage: dev_deploy
+    title: Update image tag
+    image: 'huxhub.repo.mgnt.in/yq'
+    working_directory: '${{DEPLOY_REPO}}/${{APP_NAME}}/${{CHART_PATH}}/'
+    commands:
+      - echo ${{DOCKER_TAG}}
+      - for values in $(yq r $VARS_FILE 'delivery.*.DEV_VALUES');
+        do yq w -i $values image.tag ${{DOCKER_TAG}};
+        echo $VARS_FILE;
+        echo $values;
+        done
+    environment:
+      - VARS_FILE=${{CF_VOLUME_PATH}}/${{APP_REPO}}/ci/codefresh_vars.yml
+    when:
+      condition:
+        all:
+          variableSet: '"${{TRIGGER_NAME}}" == "dev_deploy"'
+
+  Get_Version_From_Git:
+    stage: stg_deploy
+    title: Get promote version and update
+    image: 'huxhub.repo.mgnt.in/yq'
+    working_directory: '${{DEPLOY_REPO}}/${{APP_NAME}}/${{CHART_PATH}}/'
+    commands:
+      - export PROMOTE_ENV=$(echo $TRIGGER_NAME | sed -e 's/_promote//g')
+      - echo $PROMOTE_ENV
+      - yq r $VARS_FILE "delivery.$PROMOTE_ENV" | sed -e 's/:\ /=/g'
+      - export $(yq r $VARS_FILE "delivery.$PROMOTE_ENV" | sed -e 's/:\ /=/g')
+      - echo $STG_VALUES
+      - export PROMOTE_REVISION=$(yq r $DEV_VALUES 'image.tag')
+      - echo $PROMOTE_REVISION
+      - cf_export COMMIT_MESSAGE="Promote to stg"
+      - cf_export COMMIT_AUTHOR="codefresh"
+      - cf_export PROMOTE_REVISION=$PROMOTE_REVISION
+      ## Update Manifest
+      - yq w -i $STG_VALUES image.tag $PROMOTE_REVISION
+    environment:
+      - VARS_FILE=${{CF_VOLUME_PATH}}/${{APP_REPO}}/ci/codefresh_vars.yml
+    when:
+      condition:
+        all:
+          triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
+          
+  Artifact_Copy:
+    stage: stg_deploy
+    title: Copy Artifactory artifact to higher environment
+    type: deloittehux/jfrog-artifact-copy
+    arguments:
+      APP_NAME: '${{APP_NAME}}'
+      LOWER_REVISION: '${{PROMOTE_REVISION}}/'
+      UPPER_REVISION: '${{PROMOTE_REVISION}}/'
+      LOWER_REPO: '${{DEV_REGISTRY}}'
+      UPPER_REPO: '${{STG_REGISTRY}}'
+    when:
+      condition:
+        all:
+          triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
+
+  commit_and_push:
+    stage: commit
+    title: Commit manifest
+    type: git-commit
+    arguments:
+      repo: '${{CF_REPO_OWNER}}/${{DEPLOY_REPO}}'
+      git: DeloitteHux_github
+      working_directory: '${{CF_VOLUME_PATH}}/${{DEPLOY_REPO}}'
+      commit_message: '${{COMMIT_MESSAGE}}'
+      git_user_name: '${{COMMIT_AUTHOR}}'
+      allow_empty: true
