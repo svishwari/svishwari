@@ -10,13 +10,19 @@ The global section of the codefresh_vars.yml would be in the following format.
 
 ```
 global:
-  APP_NAME: customer-application
-  DEV_REGISTRY: cdm-docker-dev-local
-  STG_REGISTRY: cdm-docker-qa-local
-  PROD_REGISTRY: cdm-docker-prod-local
-  DEPLOY_REPO: hxp-ms-deploy
+  APP_NAME: unified-ui
+  DEV_REGISTRY: unified-docker-dev-local
+  STG_REGISTRY: unified-docker-dev-local  # Currently dev and stg deployment are having same image, can be updated if requirement changes later.
+  PROD_REGISTRY: unified-docker-prod-local
+  DEPLOY_REPO: hux-unified-deploy
   CHART_PATH: k8s/charts
-  APP_REPO: hxp-customer-application
+  APP_REPO: hux-unified
+  SUB_REPO: hux/frontend
+  PORT: 80
+  BUILD_STORYBOOK: true
+  OKTA_ISSUER: https://deloittedigital-ms.okta.com
+  OKTA_CLIENT_ID: 0oab1i3ldgYyRvk5r2p7
+  API_URL: https://unified-api-dev.main.use1.hux-unified-dev1.in
 ```
 
 The step including the `yq` command would look like the below:
