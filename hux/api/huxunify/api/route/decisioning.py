@@ -610,13 +610,12 @@ class ModelDriftView(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<model_id>",
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/features",
     "ModelFeaturesView",
 )
 class ModelFeaturesView(SwaggerView):
     """Model Features Class."""
 
-    # talked to Mukesh, we need version
     parameters = [
         api_c.MODEL_ID_PARAMS[0],
         {
