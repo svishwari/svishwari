@@ -1,4 +1,5 @@
-"""Purpose of this file is for holding methods to query and pull data from OKTA.
+"""Purpose of this file is for holding methods to query and pull data from
+OKTA.
 """
 import json
 import re
@@ -80,7 +81,9 @@ def introspect_token(access_token: str) -> dict:
 
     # check if a valid token
     if "active" in payload and not payload["active"]:
-        logger.warning("Failure during introspection of token, not an active user.")
+        logger.warning(
+            "Failure during introspection of token, not an active user."
+        )
         return None
 
     # extract user info
@@ -132,14 +135,18 @@ def get_token_from_request(flask_request: request) -> tuple:
     # get the auth token
     auth_header = flask_request.headers.get("Authorization", None)
     if not auth_header:
-        logger.error("Auth header not obtained while trying to get token from request.")
+        logger.error(
+            "Auth header not obtained while trying to get token from request."
+        )
         # no authorization header, return a generic 401.
         return api_c.INVALID_AUTH_HEADER, 401
 
     # split the header
     parts = auth_header.split()
     if parts[0] != "Bearer" or len(parts) != 2:
-        logger.error("Invalid auth header while trying to get token from request.")
+        logger.error(
+            "Invalid auth header while trying to get token from request."
+        )
         # user submitted an invalid authorization header.
         # return a generic 401
         return api_c.INVALID_AUTH_HEADER, 401
@@ -212,7 +219,8 @@ def get_env_okta_user_bearer_token() -> Union[str, None]:
             return token
     except Exception as exc:
         logger.error(
-            "Failed to get env okta user access bearer token with %s.", repr(exc)
+            "Failed to get env okta user access bearer token with %s.",
+            repr(exc),
         )
 
     return None
