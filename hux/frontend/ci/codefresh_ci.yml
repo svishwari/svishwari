@@ -1,4 +1,4 @@
-## DEPRECATED: Will be replaced by codefresh_ci.yml
+# This is the CI pipeline for Unified Solution UI
 
 version: "1.0"
 
@@ -54,14 +54,17 @@ steps:
         only:
           - /^app.*/i
 
-  set_env:
+  set_global_vars:
     stage: set_env
-    title: "Set environment variables."
+    title: Set environment variables
     type: freestyle
-    image: huxhub.repo.mgnt.in/alpine
-    working_directory: "${{CF_REPO_NAME}}"
+    image: huxhub.repo.mgnt.in/yq
+    working_directory: "${{CF_REPO_NAME}}/hux/frontend/ci"
     commands:
-      - cat ./hux/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+      # Set Global vars
+      - yq r $VARS_FILE 'global' | sed -e 's/:\ /=/g' >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+    environment:
+      - VARS_FILE=codefresh_vars.yml
 
   test_image:
     stage: tests
@@ -69,7 +72,7 @@ steps:
     type: build
     working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
     dockerfile: Dockerfile
-    image_name: ${{BUILD_NAME}}
+    image_name: ${{APP_NAME}}
     # tag: ${{DOCKER_TAG}}
     target: test
     no_cache: false
@@ -106,7 +109,7 @@ steps:
     type: build
     working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
     dockerfile: Dockerfile
-    image_name: ${{BUILD_NAME}}
+    image_name: ${{APP_NAME}}
     tag: ${{DOCKER_TAG}}
     target: release
     no_cache: false
@@ -122,9 +125,9 @@ steps:
     title: "Publish artifact and codefresh build info to Artifactory."
     type: deloittehux/jfrog-docker-publish
     arguments:
-      BUILD_NAME: "${{BUILD_NAME}}"
+      BUILD_NAME: "${{APP_NAME}}"
       BUILD_NUMBER: "${{DOCKER_TAG}}"
-      JFROG_REGISTRY: "${{JFROG_REGISTRY}}"
+      JFROG_REGISTRY: "${{DEV_REGISTRY}}"
       BUILD_TAG: "${{DOCKER_TAG}}"
     when:
       branch:
@@ -141,12 +144,13 @@ steps:
     image: huxhub.repo.mgnt.in/codefresh/cli:latest
     commands:
       - >-
-        codefresh run Hux_Unified_Solution/unified_solution_cd -d -t
-        DeloitteHux/hux-unified-deploy -b 'main' --variable
-        DOCKER_TAG=${{DOCKER_TAG}} --variable FILE_NAME="${{FILE_NAME}}"
-        --variable APP_NAME="${{BUILD_NAME}}" --variable
-        COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
-        COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
+        codefresh run Hux_Unified_Solution/unified_solution_cd -d -t 'dev_deploy'
+        -b 'develop'
+        --variable SUB_REPO="${{SUB_REPO}}"
+        --variable COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}"
+        --variable COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
+        --variable DOCKER_TAG=${{DOCKER_TAG}}
+        --variable CI_REVISION="${{CF_BRANCH}}"
     when:
       branch:
         only:

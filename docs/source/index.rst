@@ -13,6 +13,7 @@ Welcome to HUX Unified Solution's documentation!
    getting_started
    release_notes/release_notes
    modules
+   data_management
 
 Indices and tables
 ==================

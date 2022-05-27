@@ -1,5 +1,6 @@
-# pylint: skip-file
-# Configuration file for the Sphinx documentation builder.
+# pylint: disable=C0103,W0622
+"""Configuration file for the Sphinx documentation builder.
+"""
 #
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
@@ -142,7 +143,16 @@ linkcheck_timeout = 30  # seconds
 linkcheck_workers = 30  # threads
 
 
-def entire_domain(host):
+def entire_domain(host: str) -> str:
+    """Used by internal function to get the entire domain value.
+
+    Args:
+        host (str): The host name.
+
+    Returns:
+        str: the entire domain name.
+    """
+
     return r"http.?://" + re.escape(host) + r"($|/.*)"
 
 
