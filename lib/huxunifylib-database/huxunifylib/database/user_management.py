@@ -728,6 +728,7 @@ def get_user_applications(
                 },
             }
         },
+        {"$match": {"is_added": True}},
     ]
 
     try:
