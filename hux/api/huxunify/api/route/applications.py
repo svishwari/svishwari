@@ -277,7 +277,7 @@ class ApplicationsPatchView(SwaggerView):
             "in": "body",
             "type": "object",
             "description": "Input Application's fields to edit.",
-            "example": {api_c.URL: "URL_Link", db_c.ADDED: True},
+            "example": {api_c.URL: "URL_Link", api_c.IS_ADDED: True},
         },
     ]
 
@@ -343,7 +343,7 @@ class ApplicationsPatchView(SwaggerView):
             okta_id=user[db_c.OKTA_ID],
             application_id=ObjectId(application_id),
             url=new_application.get(api_c.URL),
-            is_added=new_application.get(db_c.ADDED, True),
+            is_added=new_application.get(api_c.IS_ADDED, True),
         )
 
         logger.info(
