@@ -17,6 +17,7 @@ from huxunify.api.data_connectors.scheduler import (
     run_scheduled_deliveries,
     run_scheduled_destination_checks,
     run_scheduled_tecton_feature_cache,
+    run_scheduled_customer_profile_audience_count,
 )
 from huxunify.api.route.utils import get_db_client
 
@@ -154,6 +155,14 @@ def create_app() -> Flask:
             func=run_scheduled_tecton_feature_cache,
             trigger="cron",
             hour=0,
+            timezone=pytz.timezone("US/Eastern"),
+            args=[get_db_client()],
+        )
+        scheduler.add_job(
+            id="update_customer_profile_audience_size",
+            func=run_scheduled_customer_profile_audience_count,
+            trigger="cron",
+            hour=1,
             timezone=pytz.timezone("US/Eastern"),
             args=[get_db_client()],
         )
