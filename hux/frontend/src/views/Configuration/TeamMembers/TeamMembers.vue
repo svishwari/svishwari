@@ -67,40 +67,95 @@
                   </template>
 
                   <template v-else-if="col.value === 'display_name'">
-                    <span
-                      class="ellipsis mt-1 d-inline"
-                      :class="
-                        getRequestedMembers.findIndex(
-                          (x) => x.email == item['email']
-                        ) != -1
-                          ? 'requested'
-                          : ''
-                      "
-                    >
-                      {{ item[col.value] }}
+                    <span class="menu-wrap">
+                      <span>
+                        <span
+                          class="ellipsis mt-1 d-inline"
+                          :class="
+                            getRequestedMembers.findIndex(
+                              (x) => x.email == item['email']
+                            ) != -1
+                              ? 'requested'
+                              : ''
+                          "
+                        >
+                          {{ item[col.value] }}
+                        </span>
+                        <v-chip
+                          v-if="item['email'] == getCurrentUserEmail"
+                          small
+                          class="mr-2 my-2 text-subtitle-2 you-tag pl-2"
+                          text-color="white"
+                          color="yellow"
+                        >
+                          You
+                        </v-chip>
+                        <v-chip
+                          v-if="
+                            getRequestedMembers.findIndex(
+                              (x) => x.email == item['email']
+                            ) != -1
+                          "
+                          small
+                          class="
+                            ml-1
+                            mr-2
+                            my-2
+                            text-subtitle-2
+                            requested-tag
+                            pl-2
+                          "
+                          text-color="white"
+                          color="grey"
+                        >
+                          Requested
+                        </v-chip>
+                      </span>
+
+                      <v-spacer> </v-spacer>
+                      <span
+                        class="
+                          action-icon
+                          font-weight-light
+                          float-right
+                          d-none
+                          menu-activator
+                        "
+                      >
+                        <v-menu
+                          v-model="openMenu[item.id]"
+                          class="menu-wrapper"
+                          bottom
+                          offset-y
+                        >
+                          <template #activator="{ on, attrs }">
+                            <v-icon
+                              v-bind="attrs"
+                              class="mr-2 more-action"
+                              color="primary"
+                              v-on="on"
+                              @click.prevent
+                            >
+                              mdi-dots-vertical
+                            </v-icon>
+                          </template>
+                          <v-list class="menu-list-wrapper">
+                            <v-list-item-group>
+                              <v-list-item
+                                v-for="option in options"
+                                :key="option.id"
+                                :disabled="!option.active"
+                                @click="option['onClick'](item)"
+                              >
+                                <v-list-item-title v-if="!option.menu">
+                                  {{ option.title }}
+                                </v-list-item-title>
+                              </v-list-item>
+                            </v-list-item-group>
+                          </v-list>
+                        </v-menu>
+                      </span>
                     </span>
-                    <v-chip
-                      v-if="item['email'] == getCurrentUserEmail"
-                      small
-                      class="mr-2 my-2 text-subtitle-2 you-tag pl-2"
-                      text-color="white"
-                      color="yellow"
-                    >
-                      You
-                    </v-chip>
-                    <v-chip
-                      v-if="
-                        getRequestedMembers.findIndex(
-                          (x) => x.email == item['email']
-                        ) != -1
-                      "
-                      small
-                      class="ml-1 mr-2 my-2 text-subtitle-2 requested-tag pl-2"
-                      text-color="white"
-                      color="grey"
-                    >
-                      Requested
-                    </v-chip>
                   </template>
 
                   <template v-else-if="col.value === 'pii_access'">
@@ -159,6 +214,36 @@
       @onToggle="(val) => (teamMemberDrawer = val)"
       @onAdd="toggleTeamMemberRequestDrawer()"
     />
+    <edit-team-member-drawer
+      :toggle="editTeamMember"
+      :data="editTeamMemberObj"
+      class="z-index-high"
+      @onToggle="(val) => (editTeamMember = val)"
+      @onDelete="
+        deleteTeamMemberObj = editTeamMemberObj
+        deleteTeamMember = true
+      "
+      @onEdit="toggleEditTeamMemberDrawer()"
+    />
+    <confirm-modal
+      v-model="deleteTeamMember"
+      icon="sad-face"
+      type="error"
+      title="You are about to remove"
+      :sub-title="`${
+        deleteTeamMemberObj.display_name
+          ? deleteTeamMemberObj.display_name.split(' ')[0]
+          : ''
+      } from ${
+        demoConfiguration.demo_mode ? demoConfiguration.industry : 'Retail'
+      } Client`"
+      right-btn-text="Yes, remove user"
+      data-e2e="remove-team-member-confirmation"
+      body="Are you sure you want to remove this person? Removing this person from this team will require you to request them again so that they can regain access to this client."
+      @onCancel="deleteTeamMember = !deleteTeamMember"
+      @onConfirm="deleteTeamMember()"
+    >
+    </confirm-modal>
   </div>
 </template>
 
@@ -170,6 +255,8 @@ import HuxSwitch from "@/components/common/Switch.vue"
 import { mapActions, mapGetters } from "vuex"
 import Icon from "@/components/common/Icon.vue"
 import TeamMemberRequestDrawer from "./TeamMemberRequestDrawer.vue"
+import EditTeamMemberDrawer from "./EditTeamMemberDrawer.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
 
 export default {
   name: "TeamMembers",
@@ -180,6 +267,8 @@ export default {
     HuxSwitch,
     Icon,
     TeamMemberRequestDrawer,
+    EditTeamMemberDrawer,
+    ConfirmModal,
   },
   data() {
     return {
@@ -232,7 +321,30 @@ export default {
         },
       ],
       teamMemberDrawer: false,
+      editTeamMember: false,
+      editTeamMemberObj: {},
       loadingAllUsers: false,
+      deleteTeamMember: false,
+      deleteTeamMemberObj: {},
+      options: [
+        {
+          title: "Edit",
+          active: true,
+          onClick: (item) => {
+            this.editTeamMember = true
+            this.editTeamMemberObj = item
+          },
+        },
+        {
+          title: "Remove",
+          active: true,
+          onClick: (item) => {
+            this.deleteTeamMember = true
+            this.deleteTeamMemberObj = item
+          },
+        },
+      ],
+      openMenu: {},
     }
   },
   computed: {
@@ -241,6 +353,7 @@ export default {
       getRequestedMembers: "users/getRequestedUsers",
       getCurrentUserEmail: "users/getEmailAddress",
       getRole: "users/getCurrentUserRole",
+      demoConfiguration: "users/getDemoConfiguration",
     }),
     isDataExist() {
       return this.getTeamMembers.length > 0
@@ -251,6 +364,14 @@ export default {
         : this.getTeamMembers
     },
   },
+
+  watch: {
+    // To reset the value of the openMenu
+    openMenu(newValue) {
+      if (!newValue) this.openMenu = {}
+    },
+  },
+
   async mounted() {
     this.loadingAllUsers = true
     try {
@@ -262,7 +383,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      updateUser: "users/updatePIIAccess",
+      updateUser: "users/updateUser",
       existingUsers: "users/getUsers",
       requestUsers: "users/getRequestedUsers",
     }),
@@ -322,6 +443,14 @@ export default {
       td {
         height: 60px !important;
       }
+      td:nth-child(2) {
+        &:hover,
+        &:focus {
+          .action-icon {
+            display: block !important;
+          }
+        }
+      }
     }
     .ellipsis {
       overflow: hidden;
@@ -357,5 +486,12 @@ export default {
   &::before {
     background-color: transparent;
   }
+}
+.menu-wrap {
+  display: flex;
+  align-items: center;
+}
+.v-menu__content .v-list-item.theme--light {
+  min-height: 32px !important;
 }
 </style>

@@ -630,6 +630,7 @@ ALLOWED_FIELDS = {
         ICON,
         ACCESS_LEVEL,
     ],
+    AUDIENCES_COLLECTION: [SIZE],
 }
 
 # Allowed collections

@@ -133,6 +133,7 @@ class OrchestrationRouteTest(RouteTestCase):
                 api_c.DESTINATION_IDS: [
                     {db_c.OBJECT_ID: d[db_c.ID]} for d in self.destinations
                 ],
+                db_c.SIZE: 3329,
             },
             {
                 db_c.AUDIENCE_NAME: "Test Audience No Destinations",
