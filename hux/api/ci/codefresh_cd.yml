@@ -54,7 +54,7 @@ steps:
         echo $values;
         done
     environment:
-      - VARS_FILE=${{CF_VOLUME_PATH}}/${{APP_REPO}}/ci/codefresh_vars.yml
+      - VARS_FILE=${{CF_VOLUME_PATH}}/${{APP_REPO}}/${{SUB_REPO}}/ci/codefresh_vars.yml
     when:
       condition:
         all:
@@ -84,7 +84,7 @@ steps:
       condition:
         all:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
-          
+
   Artifact_Copy:
     stage: stg_deploy
     title: Copy Artifactory artifact to higher environment

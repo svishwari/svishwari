@@ -145,9 +145,10 @@ steps:
     commands:
       - >-
         codefresh run Hux_Unified_Solution/unified_solution_cd -d -t 'dev_deploy'
-        -b 'main'
+        -b 'develop'
         --variable SUB_REPO="${{SUB_REPO}}"
         --variable COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}"
+        --variable COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
         --variable DOCKER_TAG=${{DOCKER_TAG}}
         --variable CI_REVISION="${{CF_BRANCH}}"
     when:
