@@ -114,7 +114,7 @@ class ApplicationGetView(SwaggerView):
         )
 
         user_application_ids = {
-            app.get(api_c.ID, ""): app.get(db_c.ADDED, True)
+            app.get(api_c.ID, ""): app.get(db_c.ADDED, False)
             for app in user.get(db_c.USER_APPLICATIONS, [])
         }
 
