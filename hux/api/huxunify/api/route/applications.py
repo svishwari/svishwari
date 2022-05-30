@@ -113,11 +113,10 @@ class ApplicationGetView(SwaggerView):
             else False
         )
 
-        user_application_ids = (
-            [i[api_c.ID] for i in user[db_c.USER_APPLICATIONS]]
-            if db_c.USER_APPLICATIONS in user
-            else []
-        )
+        user_application_ids = {
+            app.get(api_c.ID, ""): app.get(db_c.ADDED, True)
+            for app in user.get(db_c.USER_APPLICATIONS, [])
+        }
 
         # Return the applications user has already added
         if user_added:
@@ -142,7 +141,9 @@ class ApplicationGetView(SwaggerView):
             ).get(db_c.DOCUMENTS)
 
             for app in applications:
-                app[api_c.IS_ADDED] = app[db_c.ID] in user_application_ids
+                app[api_c.IS_ADDED] = user_application_ids.get(
+                    app[db_c.ID], False
+                )
 
         return (
             jsonify(ApplicationsGETSchema(many=True).dump(applications)),
