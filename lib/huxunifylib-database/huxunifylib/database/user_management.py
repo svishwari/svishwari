@@ -160,12 +160,15 @@ def set_user(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
+def get_user(
+    database: DatabaseClient, okta_id: str = None, user_id: ObjectId = None
+) -> Union[dict, None]:
     """A function to get a user.
 
     Args:
         database (DatabaseClient): A database client.
         okta_id (str): id derived from okta authentication.
+        user_id (ObjectId): id of the user.
 
     Returns:
         Union[dict, None]: MongoDB document for a user.
@@ -174,7 +177,10 @@ def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
-        return collection.find_one({db_c.OKTA_ID: okta_id})
+        if okta_id:
+            return collection.find_one({db_c.OKTA_ID: okta_id})
+        if user_id:
+            return collection.find_one({db_c.ID: user_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -222,13 +228,15 @@ def get_all_users(
 )
 def delete_user(
     database: DatabaseClient,
-    okta_id: str,
+    okta_id: str = None,
+    user_id: ObjectId = None,
 ) -> bool:
     """A function to delete a user.
 
     Args:
         database (DatabaseClient): A database client.
         okta_id (str): Okta ID of the user.
+        user_id (ObjectId): id of the user.
 
     Returns:
         bool: A flag indicating successful deletion.
@@ -237,7 +245,12 @@ def delete_user(
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
-        return collection.delete_one({db_c.OKTA_ID: okta_id}).deleted_count > 0
+        if okta_id:
+            collection.delete_one({db_c.OKTA_ID: okta_id})
+            return True
+        if user_id:
+            collection.delete_one({db_c.ID: user_id})
+            return True
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -715,6 +728,7 @@ def get_user_applications(
                 },
             }
         },
+        {"$match": {"is_added": True}},
     ]
 
     try:

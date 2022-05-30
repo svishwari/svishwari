@@ -7,7 +7,7 @@ from typing import Tuple
 from bson import ObjectId
 from connexion.exceptions import ProblemException
 from dateutil.parser import parse, ParserError
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -18,6 +18,7 @@ from huxunifylib.database.user_management import (
     get_all_users,
     update_user,
     get_user,
+    delete_user,
 )
 from huxunifylib.database.data_management import get_constant
 from huxunify.api.config import get_config
@@ -1034,3 +1035,55 @@ class UsersRBACMatrix(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/<user_id>",
+    "DeleteUser",
+)
+class DeleteUser(SwaggerView):
+    """Delete User Class."""
+
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "description": "Indicates a successful deletion.",
+        },
+        HTTPStatus.INTERNAL_SERVER_ERROR.value: {
+            "description": "Indicates a failed deletion.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels([api_c.ADMIN_LEVEL])
+    def delete(self, user_id: str, user: dict) -> Tuple[Response, int]:
+        """Deletes a user from the database.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_id (str): user ID of the user to be deleted.
+            user (dict): user object.
+
+        Returns:
+            Tuple[Response, int]: message dict, HTTP status code.
+        """
+
+        database = get_db_client()
+
+        deleted_user = get_user(database, user_id=ObjectId(user_id))
+
+        if delete_user(database, user_id=ObjectId(user_id)):
+            if deleted_user:
+                logger.info(
+                    "%s deleted the user %s.",
+                    user[db_c.USER_NAME],
+                    deleted_user[db_c.USER_DISPLAY_NAME],
+                )
+            return HuxResponse.NO_CONTENT()
+
+        return HuxResponse.INTERNAL_SERVER_ERROR("Failed to delete this user.")

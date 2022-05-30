@@ -147,7 +147,7 @@ class TestUserRoutes(RouteTestCase):
         self.assertEqual(api_c.OPERATION_SUCCESS, response.json.get("message"))
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
-    def test_adding_DNE_audience_to_favorite(self):
+    def test_adding_dne_audience_to_favorite(self):
         """Tests adding invalid audience as a user favorite.
         Testing by sending audience_id not in DB, here using engagement ID.
         """
@@ -174,7 +174,7 @@ class TestUserRoutes(RouteTestCase):
         )
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_deleting_DNE_audience_from_favorite(self):
+    def test_deleting_dne_audience_from_favorite(self):
         """Tests deleting DNE audience as a user favorite."""
 
         audience_id = ObjectId()
@@ -728,3 +728,29 @@ class TestUserRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsNotNone(response.json["components"]["alerts"])
         self.assertIsNotNone(response.json["components"]["alerts"]["actions"])
+
+    def test_delete_user(self):
+        """Test deleting a user."""
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{self.user_info[db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(
+            get_user(self.database, okta_id=self.user_info[db_c.ID])
+        )
+
+    def test_delete_dne_user(self):
+        """Test deleting a user."""
+
+        user_id = ObjectId()
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{user_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(get_user(self.database, user_id=user_id))

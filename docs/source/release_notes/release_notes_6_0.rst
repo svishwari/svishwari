@@ -14,7 +14,6 @@ This Hux 6.0 release was focused on making our technology stack operationally re
 - We can use real customer data to characterize and powerfully differentiate the needs and values of individual or segments of consumers
 - Improve our performance across all endpoints
 
-
 Data Management
 ---------------
 All features that belong to decisioning including IDR, Data sources, and data source monitoring.
