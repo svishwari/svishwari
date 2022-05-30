@@ -325,7 +325,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "insight_iq",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your customer profiles"
-        " with our collection of third party data to have a deeper understanding of your customers.",
+        " with our collection of third party data to "
+        "have a deeper understanding of your customers.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
