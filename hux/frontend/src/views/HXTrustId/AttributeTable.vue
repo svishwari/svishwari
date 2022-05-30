@@ -211,7 +211,7 @@ export default {
       Object.entries(rating).map((item) => {
         let obj = {
           label: item[0],
-          value: parseFloat((item[1].percentage * 100).toFixed(2)),
+          value: Math.round(parseFloat((item[1].percentage * 100).toFixed(2))),
         }
         results.push(obj)
       })

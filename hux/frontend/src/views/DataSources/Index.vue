@@ -8,7 +8,7 @@
               <breadcrumb :items="breadcrumbs" />
             </div>
             <div class="text-subtitle-1 font-weight-regular mt-1">
-              Gain visibility into the customer data that is collected from
+              Gain visibility into the consumer data that is collected from
               online, offline, and 3rd party channels.
             </div>
           </template>

@@ -126,7 +126,7 @@ export default {
           subtitle: "",
           icon: "targetsize",
           titleTooltip:
-            "Current number of customers who fit the selected attributes.",
+            "Current number of consumers who fit the selected attributes.",
           tooltipWidth: "231",
         },
         countries: { title: "Countries", subtitle: "", icon: "countries" },

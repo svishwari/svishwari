@@ -108,9 +108,14 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
-        this.toolTipStyle.left = this.currentData.invertPosition
-          ? "-360px"
-          : "-228px"
+        if (this.currentData.invertPosition) {
+          this.toolTipStyle.left =
+            this.currentData.color == "#0076A8"
+              ? "-378px"
+              : "-360px"
+        } else this.toolTipStyle.left = "-228px"
+
+        console.log(this.currentData)
       }
     },
     sizeHandler() {

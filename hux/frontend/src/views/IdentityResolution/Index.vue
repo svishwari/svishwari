@@ -16,7 +16,7 @@
         </div>
         <div class="text-subtitle-1 font-weight-regular">
           Monitor the ingestion and integration of all relevant data sources as
-          we create a single, persistent identifier of each customer.
+          we create a single, persistent identifier of each consumer.
         </div>
       </template>
       <template #right>

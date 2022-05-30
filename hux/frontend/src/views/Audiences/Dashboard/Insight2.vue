@@ -608,7 +608,7 @@ export default {
           subtitle: "",
           icon: "targetsize",
           titleTooltip:
-            "Current number of customers who fit the selected attributes.",
+            "Current number of consumers who fit the selected attributes.",
           tooltipWidth: "231",
         },
         age: { title: "Age range", subtitle: "", icon: "birth" },
