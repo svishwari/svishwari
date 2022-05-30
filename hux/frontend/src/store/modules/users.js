@@ -144,7 +144,21 @@ const actions = {
   async updateUser(_, payload) {
     try {
       const result = await api.users.batchUpdate(payload)
-      return result
+      if (result) {
+        handleSuccess("User updated successfully!!!", result.status)
+      }
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async deleteUser(_, id) {
+    try {
+      const result = await api.users.delete(id)
+      if (result) {
+        handleSuccess("User deleted successfully!!!", result.status)
+      }
     } catch (error) {
       handleError(error)
       throw error

@@ -241,7 +241,7 @@
       data-e2e="remove-team-member-confirmation"
       body="Are you sure you want to remove this person? Removing this person from this team will require you to request them again so that they can regain access to this client."
       @onCancel="deleteTeamMember = !deleteTeamMember"
-      @onConfirm="deleteTeamMember()"
+      @onConfirm="deleteTeamMemberFunc(deleteTeamMemberObj.id)"
     >
     </confirm-modal>
   </div>
@@ -386,6 +386,7 @@ export default {
       updateUser: "users/updateUser",
       existingUsers: "users/getUsers",
       requestUsers: "users/getRequestedUsers",
+      deleteUsers: "users/deleteUser",
     }),
     toggleTeamMemberRequestDrawer() {
       this.teamMemberDrawer = !this.teamMemberDrawer
@@ -415,6 +416,11 @@ export default {
         id: userDetails.id,
         pii_access: value,
       })
+    },
+    async deleteTeamMemberFunc(id) {
+      await this.deleteUsers(id)
+      this.deleteTeamMember = !this.deleteTeamMember
+      this.existingUsers()
     },
   },
 }
