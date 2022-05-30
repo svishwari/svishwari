@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,unused-argument
+# pylint: disable=too-many-lines,unused-argument,too-many-locals
 """Paths for Orchestration API."""
 import asyncio
 import re
@@ -86,6 +86,7 @@ from huxunify.api.route.utils import (
     get_user_favorites,
     convert_unique_city_filter,
     match_rate_data_for_audience,
+    convert_filters_for_events,
 )
 
 # setup the orchestration blueprint
@@ -454,12 +455,6 @@ class AudienceView(SwaggerView):
             batch_size > 0 and len(audiences) < batch_size
         )
 
-        # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
-        # # get customer sizes
-        # customer_size_dict = get_customers_count_async(
-        #     token_response[0], audiences
-        # )
-
         # get the x number of last deliveries to provide per audience
         delivery_limit = (
             validation.validate_integer(request.args.get(api_c.DELIVERIES))
@@ -766,6 +761,7 @@ class AudienceGetView(SwaggerView):
             lookalike[db_c.AUDIENCE_FILTERS] = lookalike[
                 db_c.LOOKALIKE_SOURCE_AUD_FILTERS
             ]
+            lookalike[db_c.SIZE] = lookalike[db_c.LOOKALIKE_SOURCE_AUD_SIZE]
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
             lookalike[api_c.MATCH_RATE] = 0
             # check and set if source/seed audience this lookalike audience is
@@ -874,13 +870,10 @@ class AudienceGetView(SwaggerView):
             else []
         )
 
-        # Add insights, size.
+        # add insights
         audience[api_c.AUDIENCE_INSIGHTS] = get_customers_overview(
             token_response[0],
             {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
-        )
-        audience[api_c.SIZE] = audience[api_c.AUDIENCE_INSIGHTS].get(
-            api_c.TOTAL_CUSTOMERS, 0
         )
 
         # query DB and populate lookalike audiences in audience dict only if
@@ -1228,6 +1221,15 @@ class AudiencePostView(SwaggerView):
         audience_filters = convert_unique_city_filter(
             {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
         )
+
+        # Fetch events from CDM. Check cache first.
+        event_types = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.EVENTS}",
+            get_customer_event_types,
+            {"token": token_response[0]},
+        )
+
+        convert_filters_for_events(audience_filters, event_types)
         # get live audience size
         customers = get_customers_overview(
             token_response[0],

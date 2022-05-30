@@ -1,4 +1,4 @@
-"""This file holds the integration tests for notifications"""
+"""This file holds the integration tests for notifications."""
 from http import HTTPStatus
 from unittest import TestCase
 import pytest
@@ -7,13 +7,13 @@ from conftest import Crud
 
 
 class TestNotifications(TestCase):
-    """Notifications tests class"""
+    """Notifications tests class."""
 
     NOTIFICATIONS = "notifications"
     COLLECTION = "notifications"
 
     def test_distinct_users(self) -> None:
-        """Test GET /notifications/users"""
+        """Test GET /notifications/users."""
 
         response = requests.get(
             f"{pytest.API_URL}/{self.NOTIFICATIONS}/users",
@@ -21,9 +21,10 @@ class TestNotifications(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), list)
 
     def test_create_notification(self) -> None:
-        """Test create a notification"""
+        """Test create a notification."""
 
         response = requests.post(
             f"{pytest.API_URL}/{self.NOTIFICATIONS}",
@@ -37,10 +38,23 @@ class TestNotifications(TestCase):
 
         notification_id = response.json()["id"]
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, notification_id)]
+
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertIsInstance(response.json(), dict)
+
+    def test_get_notifications(self) -> None:
+        """Test get notifications."""
+
+        response = requests.get(
+            f"{pytest.API_URL}/{self.NOTIFICATIONS}",
+            headers=pytest.HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
     def test_get_notification(self) -> None:
-        """Test get a notification"""
+        """Test get a notification."""
 
         response = requests.post(
             f"{pytest.API_URL}/{self.NOTIFICATIONS}",
@@ -54,7 +68,9 @@ class TestNotifications(TestCase):
 
         notification_id = response.json()["id"]
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, notification_id)]
+
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
         response = requests.get(
             f"{pytest.API_URL}/{self.NOTIFICATIONS}/{notification_id}",
@@ -62,9 +78,10 @@ class TestNotifications(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
     def test_delete_notification(self) -> None:
-        """Test delete a notification"""
+        """Test delete a notification."""
 
         # create a notification that will be deleted
         response = requests.post(
@@ -79,7 +96,9 @@ class TestNotifications(TestCase):
 
         notification_id = response.json()["id"]
         pytest.CRUD_OBJECTS += [Crud(self.COLLECTION, notification_id)]
+
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertIsInstance(response.json(), dict)
 
         response = requests.delete(
             f"{pytest.API_URL}/{self.NOTIFICATIONS}/{notification_id}",

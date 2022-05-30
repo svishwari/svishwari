@@ -400,7 +400,7 @@ export function endMinDateGenerator() {
  * @returns {string} formatted date
  */
 export function formatDateToLocal(date) {
-  let res = dayjs(date).local().format("DD/MM/YYYY hh:mm a zzz")
+  let res = dayjs(date).local().format("MM/DD/YYYY hh:mm a zzz")
   let timezone = res.split("m ")[1]
   timezone = timezone.split(" ")
   let tz = ""

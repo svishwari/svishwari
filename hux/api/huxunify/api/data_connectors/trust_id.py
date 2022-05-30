@@ -243,6 +243,10 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
         composite_factor_scores[api_c.SEGMENTS].append(
             {
                 api_c.SEGMENT_NAME: segment_data[api_c.SEGMENT_NAME],
+                api_c.DEFAULT: bool(
+                    segment_data.get(api_c.SEGMENT_NAME)
+                    == api_c.DEFAULT_TRUST_SEGMENT
+                ),
                 api_c.SEGMENT_FILTERS: segment_data[api_c.SEGMENT_FILTERS],
                 api_c.ATTRIBUTES: [
                     {
@@ -281,6 +285,9 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
             factor_comparison_data[api_c.SEGMENTS].append(
                 {
                     api_c.SEGMENT_NAME: segment_name,
+                    api_c.DEFAULT: bool(
+                        segment_name == api_c.DEFAULT_TRUST_SEGMENT
+                    ),
                     api_c.SEGMENT_FILTERS: [
                         segment[api_c.SEGMENT_FILTERS]
                         for segment in data_by_segment

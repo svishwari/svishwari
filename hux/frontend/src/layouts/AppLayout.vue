@@ -1,8 +1,9 @@
 <template>
   <v-app>
     <nav-bar @toggleSidebarMenu="toggleSidebar"></nav-bar>
-    <side-menu :toggle="toggleMini"></side-menu>
+    <side-menu v-if="!clientPanel" :toggle="toggleMini"></side-menu>
     <div
+      v-if="!clientPanel"
       class="toggle-menu"
       :style="{ 'margin-left': marginLeft }"
       @click="toggleSidebar()"
@@ -58,6 +59,10 @@ export default {
 
     marginLeft() {
       return this.toggleMini ? "77px" : "207px"
+    },
+
+    clientPanel() {
+      return this.$route.name == "ClientPanel"
     },
   },
   watch: {

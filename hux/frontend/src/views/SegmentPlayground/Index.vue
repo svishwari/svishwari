@@ -569,6 +569,7 @@ export default {
 
 <style lang="scss" scoped>
 .playground-outermost-wrap {
+  height: calc(100vh - 150px) !important;
   .playground-wrap {
     ::v-deep .container {
       padding: 0px 24px !important;
@@ -632,9 +633,11 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 240px);
-  overflow-y: auto !important;
+  overflow-y: hidden !important;
   overflow-x: hidden !important;
+  .container {
+    height: calc(100vh - 260px);
+  }
 }
 .zi-100 {
   z-index: 100;

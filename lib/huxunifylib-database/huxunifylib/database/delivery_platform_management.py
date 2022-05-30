@@ -1095,8 +1095,10 @@ def set_delivery_job(
     delivery_platform_id: ObjectId,
     delivery_platform_generic_campaigns: list,
     username: str,
+    replace_audience: bool = False,
     engagement_id: ObjectId = None,
     delivery_platform_config: dict = None,
+    status=db_c.AUDIENCE_STATUS_DELIVERING,
 ) -> Union[dict, None]:
     """A function to set an audience delivery job.
 
@@ -1106,9 +1108,11 @@ def set_delivery_job(
         delivery_platform_id (ObjectId): Delivery platform ID.
         delivery_platform_generic_campaigns (list): generic campaign IDs.
         username (str): Username of user requesting to deliver an audience.
+        replace_audience(bool): Audience replacement flag
         engagement_id (ObjectId): Engagement ID.
         delivery_platform_config (dict): the delivery platform config
             object that holds the data extensions.
+        status (str): Delivery job status.
 
     Returns:
         Union[dict, None]: Delivery job configuration.
@@ -1143,7 +1147,7 @@ def set_delivery_job(
         db_c.AUDIENCE_ID: audience_id,
         db_c.CREATE_TIME: curr_time,
         db_c.UPDATE_TIME: curr_time,
-        db_c.JOB_STATUS: db_c.AUDIENCE_STATUS_DELIVERING,
+        db_c.JOB_STATUS: status,
         db_c.DELIVERY_PLATFORM_ID: delivery_platform_id,
         db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
             delivery_platform_generic_campaigns
@@ -1151,6 +1155,7 @@ def set_delivery_job(
         db_c.DELETED: False,
         db_c.DELIVERY_PLATFORM_AUD_SIZE: 0,
         db_c.USERNAME: username,
+        db_c.REPLACE_AUDIENCE: replace_audience,
     }
     if engagement_id is not None:
         doc[db_c.ENGAGEMENT_ID] = engagement_id

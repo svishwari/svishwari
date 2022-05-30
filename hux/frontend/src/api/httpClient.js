@@ -11,13 +11,16 @@ const httpClient = axios.create({
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
+    "Cache-Control": "no-cache",
   },
 })
 
 if (process.env.NODE_ENV !== "test") {
   httpClient.interceptors.request.use(async (config) => {
     const accessToken = await Vue.prototype.$auth.getAccessToken()
+    const idToken = await Vue.prototype.$auth.getIdToken()
     config.headers.Authorization = `Bearer ${accessToken}`
+    config.headers.AuthorizationDen = `Bearer ${idToken}`
     return config
   })
 }

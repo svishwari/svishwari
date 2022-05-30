@@ -32,7 +32,7 @@
           :style="{ width: minWidth + 'px !important' }"
           @click="openMenu = true"
         >
-          <tooltip>
+          <tooltip v-if="showHover">
             <template #label-content>
               <logo
                 v-if="dropIcon"
@@ -48,6 +48,9 @@
               {{ isSubMenu ? item.name : optionSelected["name"] || label }}
             </template>
           </tooltip>
+          <span v-else class="text-ellipsis text-width">{{
+            isSubMenu ? item.name : optionSelected["name"] || label
+          }}</span>
         </huxButton>
       </template>
       <v-list>
@@ -137,6 +140,11 @@ export default {
       type: String,
       required: false,
       default: "",
+    },
+    showHover: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   data: function () {

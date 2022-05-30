@@ -6,6 +6,8 @@
           :title="`Welcome back, ${fullName}!`"
           class="header-section"
           :header-height="110"
+          :icon="demo_icon"
+          :show-demo-header="showDemoHeader"
           data-e2e="welcome-banner"
         >
           <template #left>
@@ -312,6 +314,8 @@ export default {
       notificationId: null,
       totalCustomersChartErrorState: false,
       notificationsTableErrorState: false,
+      showDemoHeader: false,
+      demo_icon: "",
     }
   },
 
@@ -321,6 +325,7 @@ export default {
       lastName: "users/getLastName",
       totalCustomers: "customers/totalCustomers",
       notifications: "notifications/latest5",
+      demoConfiguration: "users/getDemoConfiguration",
     }),
 
     fullName() {
@@ -335,6 +340,7 @@ export default {
     this.$store.commit("notifications/RESET_ALL")
   },
   mounted() {
+    this.demoConfigChangeTracker()
     this.loadTotalCustomers()
     this.loadNotifications()
   },
@@ -373,6 +379,21 @@ export default {
       this.notificationId = notificationId
       await this.getNotificationByID(notificationId)
       this.alertDrawer = !this.alertDrawer
+    },
+    getCurrentConfiguration() {
+      this.showDemoHeader = true
+      this.demo_icon = this.demoConfiguration.industry.toLowerCase()
+    },
+    demoConfigChangeTracker() {
+      this.$root.$on("update-config-settings", () =>
+        this.getCurrentConfiguration()
+      )
+      if (this.demoConfiguration?.demo_mode) {
+        this.getCurrentConfiguration()
+      } else {
+        this.showDemoHeader = false
+        this.demo_icon = ""
+      }
     },
     formatText: formatText,
   },

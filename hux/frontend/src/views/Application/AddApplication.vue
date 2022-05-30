@@ -405,6 +405,8 @@ export default {
 
         this.newAppDetails = {
           url: application.url,
+          category: application.category,
+          name: application.name,
         }
         this.customApp = false
       }
@@ -414,14 +416,7 @@ export default {
 
     async add() {
       try {
-        if (!this.selectedApplicationId) {
-          await this.createApplication(this.newAppDetails)
-        } else if (this.selectedApplicationId) {
-          await this.updateApplication({
-            id: this.selectedApplicationId,
-            data: this.newAppDetails,
-          })
-        }
+        await this.createApplication(this.newAppDetails)
         this.flagForModal = true
         this.$router.back()
       } catch (error) {

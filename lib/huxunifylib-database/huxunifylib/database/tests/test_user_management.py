@@ -510,6 +510,33 @@ class TestUserManagement(unittest.TestCase):
         )
         self.assertTrue(user_applications[0].get("is_added"))
 
+    def test_soft_delete_user_applications(self):
+        """Test soft delete user applications"""
+
+        application_id = ObjectId()
+
+        um.add_applications_to_users(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            application_id=application_id,
+            url="https://www.test1.com",
+        )
+
+        # Soft Delete.
+        um.update_user_applications(
+            database=self.database,
+            okta_id=self.user_doc[db_c.OKTA_ID],
+            application_id=application_id,
+            is_added=False,
+        )
+
+        user_applications = um.get_user_applications(
+            database=self.database, okta_id=self.user_doc[db_c.OKTA_ID]
+        )
+
+        # Ensure user applications are empty.
+        self.assertFalse(user_applications)
+
     def test_add_user_trust_id_segments(self):
         """Test add trust id segment to user"""
         segment = {"segment_name": "Test Segment", "segment_filters": []}

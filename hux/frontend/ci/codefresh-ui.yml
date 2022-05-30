@@ -1,3 +1,5 @@
+## DEPRECATED: Will be replaced by codefresh_ci.yml
+
 version: "1.0"
 
 stages:

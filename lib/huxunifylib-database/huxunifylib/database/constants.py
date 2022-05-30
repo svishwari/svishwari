@@ -315,6 +315,8 @@ AUDIENCE_STATUS_PAUSED = "Paused"
 
 AUDIENCE_NAME_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
+REPLACE_AUDIENCE = "replace_audience"
+
 DELIVERIES = "deliveries"
 DELIVERY_PLATFORM_ID = "delivery_platform_id"
 DELIVERY_PLATFORM_CONTACT_LIST = "contact_list"
@@ -397,6 +399,7 @@ USER_LAST_LOGIN = "last_login"
 USER_PROFILE_PHOTO = "profile_photo"
 USER_LOGIN_COUNT = "login_count"
 USER_DASHBOARD_CONFIGURATION = "dashboard_configuration"
+USER_DEMO_CONFIG = "demo_config"
 USER_ROLE_ADMIN = "admin"
 USER_ROLE_EDITOR = "editor"
 USER_ROLE_VIEWER = "viewer"
@@ -627,6 +630,7 @@ ALLOWED_FIELDS = {
         ICON,
         ACCESS_LEVEL,
     ],
+    AUDIENCES_COLLECTION: [SIZE],
 }
 
 # Allowed collections
@@ -641,6 +645,7 @@ ALLOWED_COLLECTIONS = [
     CLIENT_PROJECTS_COLLECTION,
     DELIVERABILITY_METRICS_COLLECTION,
     SURVEY_METRICS_COLLECTION,
+    DELIVERY_JOBS_COLLECTION,
 ]
 
 # 30 minutes.
