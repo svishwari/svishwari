@@ -6,7 +6,7 @@ stages:
   - deploy_repo
   - set_vars
   - dev_deploy
-  - stg_deploy
+  - rc1_deploy
   - push
 
 steps:
@@ -48,7 +48,14 @@ steps:
     working_directory: '${{DEPLOY_REPO}}/${{APP_NAME}}/${{CHART_PATH}}/'
     commands:
       - echo ${{DOCKER_TAG}}
+      # Update manifests for DEV environment deployment
       - for values in $(yq r $VARS_FILE 'delivery.*.DEV_VALUES');
+        do yq w -i $values image.tag ${{DOCKER_TAG}};
+        echo $VARS_FILE;
+        echo $values;
+        done
+      # Update manifests for STG environment deployment
+      - for values in $(yq r $VARS_FILE 'delivery.*.STG_VALUES');
         do yq w -i $values image.tag ${{DOCKER_TAG}};
         echo $VARS_FILE;
         echo $values;
@@ -61,7 +68,7 @@ steps:
           variableSet: '"${{TRIGGER_NAME}}" == "dev_deploy"'
 
   Get_Version_From_Git:
-    stage: stg_deploy
+    stage: rc1_deploy
     title: Get promote version and update
     image: 'huxhub.repo.mgnt.in/yq'
     working_directory: '${{DEPLOY_REPO}}/${{APP_NAME}}/${{CHART_PATH}}/'
@@ -70,31 +77,31 @@ steps:
       - echo $PROMOTE_ENV
       - yq r $VARS_FILE "delivery.$PROMOTE_ENV" | sed -e 's/:\ /=/g'
       - export $(yq r $VARS_FILE "delivery.$PROMOTE_ENV" | sed -e 's/:\ /=/g')
-      - echo $STG_VALUES
+      - echo $RC_VALUES
       - export PROMOTE_REVISION=$(yq r $DEV_VALUES 'image.tag')
       - echo $PROMOTE_REVISION
-      - cf_export COMMIT_MESSAGE="Promote to stg"
+      - cf_export COMMIT_MESSAGE="Promote to rc1"
       - cf_export COMMIT_AUTHOR="codefresh"
       - cf_export PROMOTE_REVISION=$PROMOTE_REVISION
-      ## Update Manifest
-      - yq w -i $STG_VALUES image.tag $PROMOTE_REVISION
+      ## Update Manifest for RC1 deployment
+      - yq w -i $RC_VALUES image.tag ${{DOCKER_TAG}}
     environment:
-      - VARS_FILE=${{CF_VOLUME_PATH}}/${{APP_REPO}}/ci/codefresh_vars.yml
+      - VARS_FILE=${{CF_VOLUME_PATH}}/${{APP_REPO}}/${{SUB_REPO}}/ci/codefresh_vars.yml
     when:
       condition:
         all:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
 
   Artifact_Copy:
-    stage: stg_deploy
+    stage: rc1_deploy
     title: Copy Artifactory artifact to higher environment
     type: deloittehux/jfrog-artifact-copy
     arguments:
       APP_NAME: '${{APP_NAME}}'
       LOWER_REVISION: '${{PROMOTE_REVISION}}/'
-      UPPER_REVISION: '${{PROMOTE_REVISION}}/'
+      UPPER_REVISION: '${{DOCKER_TAG}}/'
       LOWER_REPO: '${{DEV_REGISTRY}}'
-      UPPER_REPO: '${{STG_REGISTRY}}'
+      UPPER_REPO: '${{PROD_REGISTRY}}'
     when:
       condition:
         all:
