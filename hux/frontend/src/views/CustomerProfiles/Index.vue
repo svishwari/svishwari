@@ -219,8 +219,8 @@
                       </template>
                       <template #subtitle>
                         <div class="text-body-2 mt-2">
-                          Total Hux IDs size chart will appear here once
-                          Hux IDs data is available.
+                          Total Hux IDs size chart will appear here once Hux IDs
+                          data is available.
                         </div>
                       </template>
                     </empty-page>
@@ -308,8 +308,8 @@
                       </template>
                       <template #subtitle>
                         <div class="text-body-2 black--text text--base mt-2">
-                          Spend chart will appear here once consumer
-                          data is available.
+                          Spend chart will appear here once consumer data is
+                          available.
                         </div>
                       </template>
                     </empty-page>
@@ -709,9 +709,8 @@ export default {
     },
     setConfiguredBreadcrumb() {
       if (this.demoConfiguration) {
-          this.items[0].text = `${"All "+this.demoConfiguration.target}`
-      } else 
-      this.items[0].text = "All Customers"
+        this.items[0].text = `${"All " + this.demoConfiguration.target}`
+      } else this.items[0].text = "All Customers"
     },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {

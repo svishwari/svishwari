@@ -110,9 +110,7 @@ export default {
         this.currentData = arg[1]
         if (this.currentData.invertPosition) {
           this.toolTipStyle.left =
-            this.currentData.color == "#0076A8"
-              ? "-378px"
-              : "-360px"
+            this.currentData.color == "#0076A8" ? "-378px" : "-360px"
         } else this.toolTipStyle.left = "-228px"
 
         console.log(this.currentData)

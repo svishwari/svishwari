@@ -13,7 +13,7 @@
           <template #left>
             <p class="text-subtitle-1 font-weight-regular mb-0">
               Hux is here to help you make better, faster decisions to improve
-              your {{configLabel}} experiences.
+              your {{ configLabel }} experiences.
               <a
                 class="text-decoration-none"
                 href="https://resources.deloitte.com/sites/consulting/offerings/customer-marketing/advertising-marketing-commerce/Pages/Hux-by-Deloitte-Digital.aspx"
@@ -338,7 +338,7 @@ export default {
 
     configLabel() {
       return this.demoConfiguration.target.toLowerCase()
-    }
+    },
   },
   beforeCreate() {
     this.$store.commit("notifications/RESET_ALL")

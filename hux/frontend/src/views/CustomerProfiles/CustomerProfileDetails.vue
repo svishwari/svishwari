@@ -305,9 +305,8 @@ export default {
     },
     setConfiguredBreadcrumb() {
       if (this.demoConfiguration) {
-          this.items[0].text = `${"All "+this.demoConfiguration.target}`
-      } else 
-      this.items[0].text = "All Customers"
+        this.items[0].text = `${"All " + this.demoConfiguration.target}`
+      } else this.items[0].text = "All Customers"
     },
   },
 }
