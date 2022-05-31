@@ -139,6 +139,8 @@ SOURCE_ID = "source_id"
 
 TICKETS = "tickets"
 
+TRAINED_DATE = "trained_date"
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
