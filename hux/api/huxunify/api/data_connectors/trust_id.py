@@ -148,6 +148,9 @@ def get_trust_id_attributes(survey_responses: list) -> list:
     """
     trust_id_attributes = []
 
+    if not survey_responses:
+        return trust_id_attributes
+
     attribute_aggregated_values = aggregate_attributes(survey_responses)
 
     for factor_name, values in survey_responses[0][db_c.FACTORS].items():
