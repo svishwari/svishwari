@@ -1265,6 +1265,22 @@ def drop_collections(database: MongoClient) -> None:
         logging.info("Dropped the %s collection.", collection)
 
 
+def create_empty_collections(
+    database: MongoClient, collection_names: list
+) -> None:
+    """Create empty collections
+
+    Args:
+        database (MongoClient): MongoDB Client
+        collection_names (list): List of collection names to create
+    """
+    for collection_name in collection_names:
+        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(
+            collection_name
+        )
+        logging.info("Empty collection %s created.", collection_name)
+
+
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
     """Inserting Data Sources into Data Sources Collection.
 
@@ -1461,4 +1477,9 @@ if __name__ == "__main__":
     insert_client_projects(db_client, client_projects_list)
     insert_applications(db_client, applications_constants)
     insert_constants(db_client, [rbac_matrix])
+    collections_to_create = [
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+        db_c.DELIVERY_JOBS_COLLECTION,
+    ]
+    create_empty_collections(db_client, collections_to_create)
     logging.info("Pre-populate database procedure complete.")
