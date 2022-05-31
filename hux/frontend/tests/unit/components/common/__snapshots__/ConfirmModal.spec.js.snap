@@ -12,8 +12,8 @@ exports[`Tests Confirm Modal Confirm modal displays icon content 1`] = `
       </div>
     </div>
     <div class="confirm-modal-footer">
-      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2" sidepadding="pr-6 pl-6" class="btn-border box-shadow-none"><span class="primary--text">Nevermind!</span></huxbutton-stub>
-      <huxbutton-stub variant="primary" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2" sidepadding="pr-6 pl-6">
+      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="mx-2" sidepadding="px-6" class="btn-border box-shadow-none"><span class="primary--text">Nevermind!</span></huxbutton-stub>
+      <huxbutton-stub variant="primary" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="mx-2" sidepadding="px-6">
         Add
       </huxbutton-stub>
     </div>
@@ -42,8 +42,8 @@ exports[`Tests Confirm Modal Confirm modal displays props content 1`] = `
       </div>
     </div>
     <div class="confirm-modal-footer">
-      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2" sidepadding="pr-6 pl-6" class="btn-border box-shadow-none"><span class="primary--text">Nevermind!</span></huxbutton-stub>
-      <huxbutton-stub variant="primary" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2" sidepadding="pr-6 pl-6">
+      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="mx-2" sidepadding="px-6" class="btn-border box-shadow-none"><span class="primary--text">Nevermind!</span></huxbutton-stub>
+      <huxbutton-stub variant="primary" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="mx-2" sidepadding="px-6">
         Button prop
       </huxbutton-stub>
     </div>
