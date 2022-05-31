@@ -47,7 +47,9 @@ class ModelSchema(Schema):
             model.get(api_c.NAME), model.get(api_c.DESCRIPTION)
         )
 
-        model[api_c.NAME] = replaced_dict.get(api_c.NAME, model.get(api_c.NAME))
+        model[api_c.NAME] = replaced_dict.get(
+            api_c.NAME, model.get(api_c.NAME)
+        )
         model[api_c.DESCRIPTION] = replaced_dict.get(
             api_c.DESCRIPTION, model.get(api_c.DESCRIPTION)
         )
@@ -87,7 +89,9 @@ class ModelVersionSchema(Schema):
             model.get(api_c.NAME), model.get(api_c.DESCRIPTION)
         )
 
-        model[api_c.NAME] = replaced_dict.get(api_c.NAME, model.get(api_c.NAME))
+        model[api_c.NAME] = replaced_dict.get(
+            api_c.NAME, model.get(api_c.NAME)
+        )
         model[api_c.DESCRIPTION] = replaced_dict.get(
             api_c.DESCRIPTION, model.get(api_c.DESCRIPTION)
         )
@@ -252,7 +256,9 @@ class ModelPipelinePerformanceSchema(Schema):
     scoring = Nested(ModelPipelineRunDataSchema)
 
 
-def replace_customer_in_model_data(model_name: str, model_description: str) -> dict:
+def replace_customer_in_model_data(
+    model_name: str, model_description: str
+) -> dict:
     """Function to replace the words "customer" and "customers" to "consumer"
     and "consumers" respectively regardless of case sensitivity in a model name
     and description.
