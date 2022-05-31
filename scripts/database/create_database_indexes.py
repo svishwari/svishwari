@@ -87,13 +87,13 @@ index_constants = [
     (
         db_c.DATA_MANAGEMENT_DATABASE,
         db_c.NOTIFICATIONS_COLLECTION,
-        [(db_c.NOTIFICATION_FIELD_CREATED, DESCENDING)],
+        [(db_c.NOTIFICATION_FIELD_CREATE_TIME, DESCENDING)],
     ),
     (
         db_c.DATA_MANAGEMENT_DATABASE,
         db_c.NOTIFICATIONS_COLLECTION,
         [
-            (db_c.NOTIFICATION_FIELD_CREATED, DESCENDING),
+            (db_c.NOTIFICATION_FIELD_CREATE_TIME, DESCENDING),
             (db_c.ID, ASCENDING),
         ],
     ),
@@ -101,7 +101,7 @@ index_constants = [
         db_c.DATA_MANAGEMENT_DATABASE,
         db_c.NOTIFICATIONS_COLLECTION,
         [
-            (db_c.NOTIFICATION_FIELD_CREATED, DESCENDING),
+            (db_c.NOTIFICATION_FIELD_CREATE_TIME, DESCENDING),
             (db_c.ID, DESCENDING),
         ],
     ),

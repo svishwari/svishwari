@@ -21,6 +21,7 @@ USERNAME = "username"
 PASSWORD = "password"
 CONNECTION_STRING = "connection_string"
 SSL_CERT_PATH = "ssl_cert_path"
+TLS_CERT_KEY = "tls_cert_key_file"
 MONGO_DB_HOST = "MONGO_DB_HOST"
 MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
@@ -28,6 +29,9 @@ MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
 MONGO_CONNECTION_STRING = "MONGO_CONNECTION_STRING"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
+OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
+OKTA_TEST_USER_NAME = "OKTA_TEST_USER_NAME"
+OKTA_TEST_USER_PW = "OKTA_TEST_USER_PW"
 RETURN_EMPTY_AUDIENCE_FILE = "RETURN_EMPTY_AUDIENCE_FILE"
 JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
 CDP_SERVICE = "CDP_SERVICE"
@@ -71,6 +75,10 @@ AZURE_STORAGE_CONNECTION_STRING = "AZURE_STORAGE_CONNECTION_STRING"
 AZURE_STORAGE_CONTAINER_NAME = "AZURE_STORAGE_CONTAINER_NAME"
 AZURE_STORAGE_BLOB_NAME = "AZURE_STORAGE_BLOB_NAME"
 AZURE_KEY_VAULT_NAME = "AZURE_KEY_VAULT_NAME"
+AZURE_TENANT_ID = "AZURE_TENANT_ID"
+AZURE_CLIENT_ID = "AZURE_CLIENT_ID"
+AZURE_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
+AZURE = "azure"
 
 # ORCH ROUTER PARAMS FOR OKTA
 UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
@@ -752,6 +760,8 @@ ENGAGEMENT_TAG = "engagements"
 DELIVERY_TAG = "delivery"
 DELIVER = "deliver"
 DELIVERY_HISTORY = "delivery-history"
+PENDING_JOBS = "pending-jobs"
+TRIGGERS_TAG = "triggers"
 CAMPAIGNS = "campaigns"
 AD_SET_ID = "ad_set_id"
 AD_SET_NAME = "ad_set_name"
@@ -890,9 +900,6 @@ AUTHORIZATION = "Authorization"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
-OKTA_TEST_USER_NAME = "OKTA_TEST_USER_NAME"
-OKTA_TEST_USER_PW = "OKTA_TEST_USER_PW"
-OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
 OKTA_USER_ID = "user_id"
 OKTA_UID = "uid"
 OKTA_ID_SUB = "sub"
@@ -966,12 +973,17 @@ USER_EMAIL_ADDRESS = "email_address"
 USER_ACCESS_LEVEL = "access_level"
 USER_PII_ACCESS = "pii_access"
 USER_DESCRIPTION = "USER API"
+USER_DEMO_MODE = "demo_mode"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
 RESET = "reset"
+RBAC_MATRIX = "rbac_matrix"
+INDUSTRY = "industry"
+TARGET = "target"
+TRACK = "track"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -1438,6 +1450,20 @@ SAMPLE_NAVIGATION_SETTINGS = {
                 }
             ],
         },
+        {
+            db_c.CONFIGURATION_FIELD_NAME: "Insights",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_CHILDREN: [
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Customers",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Email Deliverability",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+            ],
+        },
     ]
 }
 
@@ -1707,10 +1733,20 @@ ALERT_SAMPLE_RESPONSE = {
         },
     }
 }
+USER_DEMO_CONFIG_SAMPLE = {
+    USER_DEMO_MODE: True,
+    INDUSTRY: "Healthcare",
+    DESCRIPTION: "Health Care Industry",
+    TARGET: "Patients",
+    TRACK: "Prescriptions",
+}
 
 # Trust ID
 TRUST_ID_ENDPOINT = "/trust_id"
 TRUST_ID_TAG = "trust-id"
+DEFAULT = "default"
+DEFAULT_TRUST_SEGMENT = "All Customers"
+MAX_SEGMENTS_ALLOWED = 5
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"
@@ -1947,6 +1983,7 @@ PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY = {
     "open_rate": 0,
     "clicks": 0,
     "conversions": 0,
+    "click_through_rate": 0.23,
     "click_to_open_rate": 0,
     "unique_clicks": 0,
     "unique_opens": 0,

@@ -32,6 +32,7 @@ from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
     populate_trust_id_segments,
+    Validation as validation,
 )
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
@@ -167,6 +168,17 @@ class TrustIdAttributes(SwaggerView):
 class TrustIdAttributeComparison(SwaggerView):
     """Trust ID comparison data fetch Class."""
 
+    parameters = [
+        {
+            "name": api_c.DEFAULT,
+            "description": "Flag for returning default segment.",
+            "in": "query",
+            "type": "boolean",
+            "required": False,
+            "default": True,
+            "example": "False",
+        }
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Trust ID comparison data",
@@ -197,13 +209,18 @@ class TrustIdAttributeComparison(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
+        add_default = validation.validate_bool(
+            request.args.get(api_c.DEFAULT, "true")
+        )
 
         custom_segments = get_user_trust_id_segments(
             database=get_db_client(), okta_id=user[db_c.OKTA_ID]
         )
 
         segments_data = populate_trust_id_segments(
-            database=get_db_client(), custom_segments=custom_segments
+            database=get_db_client(),
+            custom_segments=custom_segments,
+            add_default=add_default,
         )
 
         return HuxResponse.OK(
@@ -321,7 +338,7 @@ class TrustIdAddSegment(SwaggerView):
         # Return the trust id segments for user
         segments = get_user_trust_id_segments(database, user[db_c.OKTA_ID])
 
-        if len(segments) >= 4:
+        if len(segments) >= api_c.MAX_SEGMENTS_ALLOWED:
             return HuxResponse.FORBIDDEN(
                 message="Threshold of maximum segments reached."
             )

@@ -16,6 +16,8 @@ UNSECURED_ROUTES = [
     "/health-check",
     "/swagger/<path:filename>",
     "/static/<path:filename>",
+    f"/api/v1/{api_c.TRIGGERS_TAG}/{api_c.DELIVERIES}"
+    f"/{api_c.PENDING_JOBS}",
 ]
 
 

@@ -59,7 +59,11 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         )
 
         if response.status_code == 200:
+            logger.info("CDM is unavailable.")
             return True, "CDM available."
+        logger.error(
+            "CDM is unavailable, returned a %s response.", response.status_code
+        )
         return (
             False,
             f"Received status code: {response.status_code}, "
@@ -68,7 +72,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        logger.error("CDM Health Check failed with %s.", repr(exception))
+        logger.exception("CDM Health Check failed.")
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -1445,8 +1449,6 @@ def get_histogram_data(token: str, field_name: str) -> list:
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/counts/by-float-field",
         json={
-            "start_date": "2021-06-19",
-            "end_date": "2021-12-26",
             "filters": [],
             "field_name": field_name,
             "result_group_size": api_c.HISTOGRAM_GROUP_SIZE,
@@ -1489,8 +1491,6 @@ def get_age_histogram_data(token: str):
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-age",
         json={
-            "start_date": "2021-06-19",
-            "end_date": "2021-12-26",
             "filters": [],
         },
         headers={

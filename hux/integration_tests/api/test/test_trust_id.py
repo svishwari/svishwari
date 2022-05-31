@@ -77,9 +77,9 @@ class TestTrustId(TestCase):
                 "segment_name": segment_name,
                 "segment_filters": [
                     {
-                        "type": "age",
-                        "description": "Age",
-                        "values": ["18-20 years", "21-24 years"],
+                        "type": "gender",
+                        "description": "Gender",
+                        "values": ["Female", "Male"],
                     }
                 ],
             },

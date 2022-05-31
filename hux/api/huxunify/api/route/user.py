@@ -1,6 +1,5 @@
-# pylint: disable=no-self-use,disable=unused-argument
+# pylint: disable=no-self-use,unused-argument,too-many-lines
 """Paths for the User API."""
-import datetime
 import random
 from http import HTTPStatus
 from typing import Tuple
@@ -8,7 +7,7 @@ from typing import Tuple
 from bson import ObjectId
 from connexion.exceptions import ProblemException
 from dateutil.parser import parse, ParserError
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -19,7 +18,9 @@ from huxunifylib.database.user_management import (
     get_all_users,
     update_user,
     get_user,
+    delete_user,
 )
+from huxunifylib.database.data_management import get_constant
 from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
@@ -47,6 +48,7 @@ from huxunify.api.schema.user import (
     TicketGetSchema,
     NewUserRequest,
     RequestedUserSchema,
+    RBACMatrixSchema,
 )
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -444,7 +446,7 @@ class UserView(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self, user: dict
     ) -> Tuple[list, int]:  # pylint: disable=no-self-use
@@ -497,6 +499,7 @@ class UserPatchView(SwaggerView):
             "example": {
                 db_c.USER_ROLE: "viewer",
                 db_c.USER_DISPLAY_NAME: "new_display_name",
+                db_c.USER_DEMO_CONFIG: api_c.USER_DEMO_CONFIG_SAMPLE,
             },
         },
     ]
@@ -563,7 +566,6 @@ class UserPatchView(SwaggerView):
                 **body,
                 **{
                     db_c.UPDATED_BY: user[api_c.USER_NAME],
-                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
             },
         )
@@ -578,10 +580,7 @@ class UserPatchView(SwaggerView):
             )
 
         # update the document
-        return (
-            UserSchema().dump(updated_user),
-            HTTPStatus.OK,
-        )
+        return HuxResponse.OK(data=updated_user, data_schema=UserSchema())
 
 
 @add_view_to_blueprint(
@@ -980,3 +979,111 @@ class UsersRequested(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/{api_c.RBAC_MATRIX}",
+    "UsersRBACMatrix",
+)
+class UsersRBACMatrix(SwaggerView):
+    """User RBAC Matrix Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Retrieve RBAC Matrix.",
+            "schema": {"type": "array", "items": RBACMatrixSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get RBAC Matrix."
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
+        """Retrieves RBAC matrix for users.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: dict of requested users, HTTP status code.
+        """
+
+        database = get_db_client()
+
+        matrix = get_constant(
+            database,
+            api_c.RBAC_MATRIX,
+        )
+
+        return (
+            jsonify(
+                RBACMatrixSchema().dump(
+                    matrix[api_c.VALUE],
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/<user_id>",
+    "DeleteUser",
+)
+class DeleteUser(SwaggerView):
+    """Delete User Class."""
+
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "description": "Indicates a successful deletion.",
+        },
+        HTTPStatus.INTERNAL_SERVER_ERROR.value: {
+            "description": "Indicates a failed deletion.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @requires_access_levels([api_c.ADMIN_LEVEL])
+    def delete(self, user_id: str, user: dict) -> Tuple[Response, int]:
+        """Deletes a user from the database.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_id (str): user ID of the user to be deleted.
+            user (dict): user object.
+
+        Returns:
+            Tuple[Response, int]: message dict, HTTP status code.
+        """
+
+        database = get_db_client()
+
+        deleted_user = get_user(database, user_id=ObjectId(user_id))
+
+        if delete_user(database, user_id=ObjectId(user_id)):
+            if deleted_user:
+                logger.info(
+                    "%s deleted the user %s.",
+                    user[db_c.USER_NAME],
+                    deleted_user[db_c.USER_DISPLAY_NAME],
+                )
+            return HuxResponse.NO_CONTENT()
+
+        return HuxResponse.INTERNAL_SERVER_ERROR("Failed to delete this user.")

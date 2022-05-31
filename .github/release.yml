@@ -1,0 +1,17 @@
+# .github/release.yml
+
+changelog:
+  categories:
+    - title: Application Changes- app.vX.X.X e.g-app.v6.0.1
+      labels:
+        - API
+        - UX/UI
+        - API_INT_TESTS
+        - UI_INT_TESTS
+        - DOCUMENTATION
+    - title: huxunifylib-db Changes- lib.vX.X.X e.g-lib.v0.1.89
+      labels:
+        - DB
+    - title: Other Changes
+      labels:
+        - "*"

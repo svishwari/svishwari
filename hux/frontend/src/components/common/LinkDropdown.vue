@@ -4,12 +4,13 @@
       Segments by
     </label>
     <v-select
+      ref="dropdownValues"
       v-model="getDefaultSelected"
       class="hux-select"
       item-text="name"
       item-value="last"
       :items="dataItems"
-      :style="`max-width: ${width}px`"
+      :style="`max-width: ${dropdownWidth}px`"
       :menu-props="{
         offsetY: true,
         nudgeBottom: '5px',
@@ -36,9 +37,12 @@ export default {
       default: 141,
     },
   },
-  data: () => ({
-    dataItems: [],
-  }),
+  data() {
+    return {
+      dataItems: [],
+      dropdownWidth: this.width,
+    }
+  },
   computed: {
     getDefaultSelected: {
       get() {
@@ -62,6 +66,20 @@ export default {
   methods: {
     onSelect(selectedValue) {
       this.$emit("onselect", selectedValue)
+      this.dropdownWidth = this.width
+      this.$nextTick(() => {
+        this.dropdownWidth = this.findOptionWidth(
+          this.$refs.dropdownValues.$el,
+          5
+        )
+      })
+    },
+    findOptionWidth(option, num) {
+      if (num == 0 || !option?.childNodes[0]) {
+        return option?.clientWidth + 50 || 245
+      } else {
+        return this.findOptionWidth(option.childNodes[0], num - 1)
+      }
     },
   },
 }
@@ -76,20 +94,23 @@ export default {
       .v-input__slot {
         .v-select__slot {
           .v-select__selections {
-            background-image: linear-gradient(
-              to right,
-              var(--v-primary-base) 40%,
-              rgba(255, 255, 255, 0) 20%
-            );
-            background-position: bottom;
-            background-size: 4px 1px;
-            background-repeat: repeat-x;
+            margin-bottom: -7px !important;
             .v-select__selection {
+              background-image: linear-gradient(
+                to right,
+                var(--v-primary-base) 40%,
+                rgba(255, 255, 255, 0) 20%
+              );
+              padding-bottom: 7px !important;
+              background-position: bottom;
+              background-size: 4px 1px;
+              background-repeat: repeat-x;
               color: var(--v-primary-base) !important;
-              padding-bottom: 1px;
             }
           }
           .v-input__append-inner {
+            position: relative;
+            right: 20px !important;
             .v-input__icon {
               .v-icon {
                 color: var(--v-primary-base) !important;

@@ -26,8 +26,11 @@
           <div class="pl-4 client py-2 mb-2" v-on="on">
             <span class="d-flex align-center justify-space-between">
               <span class="d-flex align-center black--text text-h4">
-                <logo :type="client.logo" :size="24" class="mr-2" />
-                {{ client.name }}
+                <div v-if="isDemoMode" class="dot mr-2">
+                  <logo :type="client.logo" :size="20" />
+                </div>
+                <logo v-else :type="client.logo" :size="24" class="mr-2" />
+                <span class="ellipsis">{{ client.name }}</span>
               </span>
               <span class="mr-3">
                 <icon
@@ -182,7 +185,7 @@ export default {
   data: () => ({
     // TODO: integrate with API endpoint for configuring this in the UI
     client: {
-      name: "Retail Client",
+      name: "Retail Co",
       logo: "client",
     },
     menu: false,
@@ -192,10 +195,15 @@ export default {
   computed: {
     ...mapGetters({
       sideBarItems: "configuration/sideBarConfigs",
+      demoConfiguration: "users/getDemoConfiguration",
     }),
 
     isMini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
+    },
+
+    isDemoMode() {
+      return this.demoConfiguration?.demo_mode
     },
 
     iconSize() {
@@ -216,8 +224,11 @@ export default {
 
   async mounted() {
     await this.getSideBarConfig()
-    console.log(this.sideBarItems)
     this.trustidRoute(this.$route.name)
+  },
+
+  updated() {
+    this.getCurrentConfiguration()
   },
 
   methods: {
@@ -245,7 +256,7 @@ export default {
 
     checkColored(title) {
       if (
-        this.sideBarItems.length > 0 &&
+        this.sideBarItems?.length > 0 &&
         ["HX TrustID", "HXTrustID"].includes(title)
       ) {
         this.sideBarItems
@@ -258,7 +269,7 @@ export default {
     },
 
     trustidRoute(title) {
-      if (this.sideBarItems.length > 0 && !this.checkColored(title)) {
+      if (this.sideBarItems?.length > 0 && !this.checkColored(title)) {
         this.sideBarItems
           .find((elem) => elem.name == "Insights")
           .children.find((item) => item.name == "HX TrustID").icon =
@@ -273,6 +284,29 @@ export default {
     },
     onMouseLeave() {
       this.trustidRoute(this.$route.name)
+    },
+    updateClientInfo() {
+      if (this.isDemoMode) {
+        this.client = {
+          name: `${this.demoConfiguration.industry} Co`,
+          logo: this.demoConfiguration?.industry.toLowerCase(),
+        }
+      } else {
+        this.client = {
+          name: "Retail Co",
+          logo: "client",
+        }
+      }
+    },
+    async setDemoConfiguration() {
+      await this.getSideBarConfig()
+      this.updateClientInfo()
+    },
+    getCurrentConfiguration() {
+      this.$root.$on("update-config-settings", () =>
+        this.setDemoConfiguration()
+      )
+      this.updateClientInfo()
     },
   },
 }
@@ -392,5 +426,23 @@ export default {
   font-size: 6px;
   left: -4px;
   top: -8px;
+}
+.dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--black-lighten2);
+  @extend .box-shadow-1;
+  background: var(--v-white-base);
+  text-align: -webkit-center;
+  padding-top: 2px !important;
+}
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 14ch;
+  display: inline-block;
+  width: 28ch;
+  white-space: nowrap;
 }
 </style>

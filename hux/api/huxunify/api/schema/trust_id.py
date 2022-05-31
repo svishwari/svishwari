@@ -1,7 +1,7 @@
 """Purpose of this file is to house trust ID schemas."""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import List, Integer, Nested, Str, Float
+from marshmallow.fields import List, Integer, Nested, Str, Float, Boolean
 from marshmallow.validate import Range, OneOf
 
 from huxunify.api import constants as api_c
@@ -132,6 +132,7 @@ class TrustIdSegmentSchema(Schema):
         ordered = True
 
     segment_name = Str(required=True, example="Segment 1")
+    default = Boolean(default=False)
     segment_filters = List(Nested(SegmentFilterSchema), default=[])
     attributes = List(Nested(AttributeScoreOverviewSchema), required=True)
 

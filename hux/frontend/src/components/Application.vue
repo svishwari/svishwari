@@ -96,7 +96,7 @@
                       class="d-none delete-button"
                       @click="app.onDelete && app.onDelete()"
                     >
-                      <icon :size="18" type="delete-button" />
+                      <icon :size="18" type="delete-button" color="darkD" />
                     </span>
                   </v-list-item>
                 </span>
