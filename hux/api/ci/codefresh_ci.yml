@@ -153,7 +153,7 @@ steps:
     image: codefresh/cli:latest
     commands:
       - >-
-        codefresh run Hux_Unified_Solution/unified_solution_cd -d -t "${{DEPLOY_ENV}}"
+        codefresh run Hux_Unified_Solution/unified_solution_api_cd -d -t "${{DEPLOY_ENV}}"
         -b "${{CF_BRANCH}}"
         --variable SUB_REPO="${{SUB_REPO}}"
         --variable COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
