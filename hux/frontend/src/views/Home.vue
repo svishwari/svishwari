@@ -337,7 +337,9 @@ export default {
     },
 
     configLabel() {
-      return this.demoConfiguration?.demo_mode ? this.demoConfiguration.target.toLowerCase() : "customers"
+      return this.demoConfiguration?.demo_mode
+        ? this.demoConfiguration.target.toLowerCase()
+        : "customers"
     },
   },
   beforeCreate() {
