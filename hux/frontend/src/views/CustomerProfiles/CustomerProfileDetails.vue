@@ -54,7 +54,7 @@
             >
               <v-card-title class="py-5 pl-6 d-flex justify-space-between">
                 <h3 class="text-h3 black--text text--darken-4 mt-n2">
-                  Customer events
+                  Events
                   <span class="text-body-1 black--text text--lighten-4">
                     (All time)
                   </span>
@@ -118,7 +118,7 @@
                     {{
                       customerEventsError
                         ? "Events chart is currently unavailable"
-                        : "No customer events to show"
+                        : "No events to show"
                     }}
                   </div>
                 </template>
@@ -127,7 +127,7 @@
                     {{
                       customerEventsError
                         ? "Our team is working hard to fix it. Please be patient and try again soon!"
-                        : "Customer events will appear here once customer data finishes to upload. Please check back later."
+                        : "Consumer events will appear here once consumer data finishes to upload. Please check back later."
                     }}
                   </div>
                 </template>
@@ -219,6 +219,7 @@ export default {
     ...mapGetters({
       customer: "customers/single",
       events: "customers/getEvents",
+      demoConfiguration: "users/getDemoConfiguration",
     }),
 
     id() {
@@ -264,13 +265,12 @@ export default {
 
   async mounted() {
     this.loading = true
+    this.setConfiguredBreadcrumb()
     try {
       await this.getCustomer(this.id)
+      this.getCustomerEvent()
     } catch (error) {
       this.customerError = true
-    }
-    try {
-      this.getCustomerEvent()
     } finally {
       this.loading = false
     }
@@ -302,6 +302,11 @@ export default {
     },
     toggleCustomerEventsDrawer() {
       this.customerEventsDrawer = !this.customerEventsDrawer
+    },
+    setConfiguredBreadcrumb() {
+      if (this.demoConfiguration) {
+        this.items[0].text = `${"All " + this.demoConfiguration.target}`
+      } else this.items[0].text = "All Customers"
     },
   },
 }

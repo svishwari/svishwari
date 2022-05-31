@@ -7,7 +7,7 @@
             <breadcrumb :items="breadcrumbs" />
           </div>
           <div class="text-subtitle-1 font-weight-regular mt-1">
-            Decide where to route your customer data to for advertising,
+            Decide where to route your consumer data to for advertising,
             marketing, reporting, and more.
           </div>
         </template>
