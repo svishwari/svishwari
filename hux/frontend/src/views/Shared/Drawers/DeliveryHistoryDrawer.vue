@@ -229,7 +229,7 @@ export default {
           text: "Target size",
           width: "20%",
           hoverTooltip:
-            "Size of the customer list when it was last delivered to a destination.",
+            "Size of the consumer list when it was last delivered to a destination.",
         },
         {
           value: "match_rate",

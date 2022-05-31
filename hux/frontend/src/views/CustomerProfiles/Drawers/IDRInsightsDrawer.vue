@@ -162,7 +162,7 @@ export default {
           metricType: "",
           result: "",
           toolTipText:
-            "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
+            "Represents a First Name, Last Name and Address combination, used to identify a consumer that lives at an address.",
         },
         {
           metric: "Household IDs",
