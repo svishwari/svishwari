@@ -1,69 +1,73 @@
 <template>
-  <v-dialog v-model="localModal" :width="width">
+  <v-dialog v-model="localModal" :width="width" max-width="952">
     <template #activator="{ on, attrs }">
       <slot name="activator" v-bind="attrs" v-on="on"></slot>
     </template>
     <template #default>
-      <div class="confirm-modal-wrapper">
-        <div class="confirm-modal-body px-6">
+      <div class="modal-wrapper">
+        <div class="modal-body">
           <slot name="icon">
             <icon
               v-if="icon"
               :type="icon"
               :color="localIconColor"
               :size="iconSize"
+              class="mb-7"
             />
           </slot>
           <slot name="title">
-            <div v-if="title" class="black--text text--darken-4 text-h2 pt-3">
+            <div v-if="title" class="black--text text--darken-4 text-h2 mb-6">
               {{ title }}
             </div>
           </slot>
-          <slot name="sub-title">
+          <slot name="body">
             <div
-              v-if="subTitle"
-              class="black--text text--darken-4 text-h2 mt-n2"
+              v-if="body"
+              class="
+                black--text
+                text--darken-4 text-body-1
+                font-weight-regular
+                mb-8
+              "
             >
-              {{ subTitle }}
+              {{ body }}
             </div>
           </slot>
-          <div class="body-slot mx-7">
-            <slot name="body">
-              <div
-                v-if="body"
-                class="
-                  black--text
-                  text--darken-4 text-subtitle-1
-                  pt-6
-                  font-weight-regular
-                "
-                v-html="body"
-              ></div>
-            </slot>
-          </div>
         </div>
-        <div class="confirm-modal-footer">
+        <div class="modal-footer">
           <slot name="footer">
             <huxButton
+              v-if="showCancel"
               size="large"
               variant="white"
               height="40"
-              is-tile
-              class="btn-border box-shadow-none"
-              :class="{ invisible: !showLeftButton }"
+              width="88"
+              :style="{ float: 'left' }"
+              class="mr-2 btn-border box-shadow-none"
               @click="onCancel()"
             >
-              <span class="primary--text">{{ leftBtnText }}</span>
+              <span class="primary--text">{{ cancelBtnText }}</span>
             </huxButton>
             <huxButton
+              v-if="showBack"
+              size="large"
+              variant="white"
+              height="40"
+              class="btn-border box-shadow-none"
+              :style="{ float: 'left' }"
+              @click="onBack()"
+            >
+              <span class="primary--text">{{ backBtnText }}</span>
+            </huxButton>
+            <huxButton
+              v-if="showConfirm"
               size="large"
               :variant="type"
               height="40"
-              is-tile
-              :is-disabled="isDisabled"
-              @click="onConfirm()"
+              :style="{ float: 'right' }"
+              @click="onSubmit()"
             >
-              {{ rightBtnText }}
+              <span>{{ confirmBtnText }}</span>
             </huxButton>
           </slot>
         </div>
@@ -74,9 +78,9 @@
 
 <script>
 import huxButton from "@/components/common/huxButton"
-import Icon from "@/components/common/Icon.vue"
+import Icon from "../../components/common/Icon.vue"
 export default {
-  name: "ConfirmModal",
+  name: "Modal",
 
   components: {
     huxButton,
@@ -84,6 +88,11 @@ export default {
   },
 
   props: {
+    title: {
+      type: String,
+      required: false,
+    },
+
     icon: {
       type: String,
       required: false,
@@ -93,10 +102,11 @@ export default {
       type: String,
       required: false,
     },
+
     iconSize: {
       type: [Number, String],
       required: false,
-      default: 42,
+      default: 40,
     },
 
     type: {
@@ -105,31 +115,27 @@ export default {
       default: "primary",
     },
 
-    title: {
-      type: String,
-      required: false,
-    },
-
-    subTitle: {
-      type: String,
-      required: false,
-    },
-
     body: {
       type: String,
       required: false,
     },
 
-    leftBtnText: {
+    cancelBtnText: {
       type: String,
       required: false,
-      default: "Nevermind!",
+      default: "Cancel",
     },
 
-    rightBtnText: {
+    backBtnText: {
       type: String,
       required: false,
-      default: "Add",
+      default: "Back",
+    },
+
+    confirmBtnText: {
+      type: String,
+      required: false,
+      default: "Submit",
     },
 
     value: {
@@ -141,7 +147,7 @@ export default {
     width: {
       type: Number,
       required: false,
-      default: 600,
+      default: 552,
     },
 
     isDisabled: {
@@ -150,13 +156,25 @@ export default {
       default: false,
     },
 
-    showLeftButton: {
+    showBack: {
       type: Boolean,
       required: false,
-      default: true,
+      default: false,
+    },
+
+    showConfirm: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    showCancel: {
+      type: Boolean,
+      required: false,
+      dafault: false,
     },
   },
-  emits: ["on-cancel", "on-confirm"],
+
   data() {
     return {
       localModal: this.value,
@@ -189,29 +207,32 @@ export default {
     onCancel: function () {
       this.$emit("onCancel")
     },
-    onConfirm: function () {
-      this.$emit("onConfirm")
+    onBack: function () {
+      this.$emit("onBack")
+    },
+    onSubmit: function () {
+      this.$emit("onSubmit")
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.confirm-modal-wrapper {
+.modal-wrapper {
   background: var(--v-white-base);
   text-align: center;
-  padding-top: 42px;
-  .confirm-modal-footer {
+  padding-top: 48px;
+  .modal-body {
+    margin-right: 24px;
+    margin-left: 24px;
+  }
+  .modal-footer {
     border-top: 1px solid var(--v-black-lighten3);
-    margin-top: 36px;
-    display: flex;
+    display: flow-root;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 28px;
+    padding: 16px 24px;
     background: var(--v-primary-lighten1);
   }
-}
-.invisible {
-  visibility: hidden;
 }
 </style>

@@ -127,12 +127,12 @@ export default {
     iconClass: {
       type: String,
       required: false,
-      default: "ml-2 mr-2",
+      default: "mx-2",
     },
     sidePadding: {
       type: String,
       required: false,
-      default: "pr-6 pl-6",
+      default: "px-6",
     },
   },
   data() {

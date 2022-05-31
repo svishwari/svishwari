@@ -1,5 +1,5 @@
-import Modal from "../components/common/ConfirmModal.vue"
-import HuxButton from "../components/common/huxButton.vue"
+import Modal from "./Modal.vue"
+import HuxButton from "@/components/common/huxButton.vue"
 import { action } from "@storybook/addon-actions"
 
 export default {
