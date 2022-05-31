@@ -211,7 +211,13 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
     segment_data_by_factors = defaultdict(dict)
     overview_data = {}
 
+    # To check if no data in survey responses.
+    all_empty_survey_responses = True
+
     for segment_data in data_by_segment:
+        if segment_data[api_c.SURVEY_RESPONSES]:
+            all_empty_survey_responses = False
+
         attributes_data = get_trust_id_attributes(
             segment_data[api_c.SURVEY_RESPONSES]
         )
@@ -236,6 +242,9 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
                     if x[api_c.FACTOR_NAME] == factor_name
                 ]
             )
+    # Return empty list if no data is present.
+    if all_empty_survey_responses:
+        return []
 
     composite_factor_scores = {
         api_c.SEGMENT_TYPE: api_c.SEGMENT_TYPES[0],
