@@ -55,7 +55,7 @@ steps:
       branch:
         only:
           - /^app.*/i
-          - /^release-[\d].*/i
+          # - /^release-[\d].*/i
 
   set_global_vars:
     stage: set_env
@@ -138,7 +138,7 @@ steps:
           - main
           - develop
           # - /^release-[\d].*/i
-          # - /^app.*/i
+          - /^app.*/i
 
   deployment:
     stage: argo_deploy
@@ -158,5 +158,5 @@ steps:
         only:
           - main
           - develop
-          - /^release-[\d].*/i
+          # - /^release-[\d].*/i
           - /^app.*/i
