@@ -1,4 +1,4 @@
-import HuxButton from "../components/common/huxButton.vue"
+import HuxButton from "./huxButton2.vue"
 
 export default {
   component: HuxButton,
@@ -11,13 +11,13 @@ export default {
         type: "text",
       },
     },
-    variant: { control: "color" },
+    variant: { type: "select", options: ["default", "secondary", "danger"] },
     click: { action: "clicked" },
   },
 
   args: {
-    variant: "primary",
-    isTile: true,
+    variant: "primary darken-1",
+    isTile: false,
     icon: "mdi-plus",
     iconPosition: "left",
     default: "CTA",

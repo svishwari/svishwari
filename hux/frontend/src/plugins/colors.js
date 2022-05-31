@@ -5,17 +5,19 @@ import white from "./colors/white"
 
 export default {
   ...blue,
+  primarybackgroundcolor: "#F9FAFB",
   inactiveButton: "#ECECEC",
   borderBase: "#E2EAEC",
-  linesHeavy: "#D0D0CE",
-  lightGray: "#4F4F4F",
+  linesHeavy: "#DDDDDD",
+  darkGray: "#757B7B",
+  darkerGray: "#53565A",
   darkD: "#1E1E1E",
   ...teal,
   ...yellow,
   ...white,
   info: "#E3E48D",
-  error: "#DA291C",
-  warning: "#ED8B00",
+  error: "#D72B25",
+  warning: "#F29F05",
   pink: "#F03BC8",
   gradientSliderColors: [
     "#ec5b54",

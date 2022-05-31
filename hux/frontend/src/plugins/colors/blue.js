@@ -7,7 +7,7 @@ export default {
   chart4: "#396286",
   blueD: "#00A3E0",
   chart2: "#0C9DDB",
-  medBlueD: "#0076A8",
+  medBlueD: "#007CB0",
   darkBlue: "#005587",
   blue: "#012169",
   // Additional Colors
@@ -23,4 +23,5 @@ export default {
   lagoonBlue: "#037E8E",
   pantoneBlue: "#0076A8",
   tealBlue: "#396286",
+  cyanBlue: "#62B5E5",
 }

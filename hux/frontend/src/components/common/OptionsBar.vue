@@ -12,7 +12,7 @@
       <div class="ml-1 mr-3 icon-wrap">
         <icon
           v-for="i in icons"
-          v-bind:key="i"
+          :key="i"
           :type="i"
           :size="iconSize"
           class="ml-1 mr-1"

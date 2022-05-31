@@ -9,8 +9,8 @@ export default {
     buttonText: { control: "text" },
     numicons: { control: "number" },
     searchBar: { control: "boolean" },
-    padding: { table: { disable: 'true' } },
-    heightChanges: { table: { disable: 'true' } },
+    padding: { table: { disable: "true" } },
+    heightChanges: { table: { disable: "true" } },
   },
 
   args: {

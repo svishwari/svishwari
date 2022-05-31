@@ -16,12 +16,15 @@ export default {
     darken4: colors.oceanBlue,
     darken5: colors.curiousBlue,
     darken6: colors.lagoonBlue,
+    darken7: colors.pantoneBlue,
   },
   black: {
+    lighten6: colors.primarybackgroundcolor,
     lighten1: colors.inactiveButton,
     lighten2: colors.borderBase,
     lighten3: colors.linesHeavy,
-    lighten4: colors.lightGray,
+    lighten5: colors.darkGray,
+    lighten4: colors.darkerGray,
     base: colors.darkD,
   },
   success: {
@@ -30,6 +33,7 @@ export default {
     base: colors.greenD,
   },
   secondary: {
+    lighten4: colors.cyanBlue,
     lighten2: colors.adriaticHaze,
     lighten1: colors.lightTealD,
     base: colors.tealD,
@@ -38,6 +42,7 @@ export default {
     lighten3: colors.tealAquaSquezze,
   },
   yellow: {
+    lighten2: colors.mustard,
     lighten1: colors.yellow5,
     base: colors.yellow,
     darken1: colors.earlsGreen,

@@ -6,22 +6,22 @@ export default {
   title: "NewComponents/Banner",
 
   argTypes: {
-    label: { control: {type: "text"} },
-    type: { 
+    label: { control: { type: "text" } },
+    type: {
       options: ["success", "info", "warning", "error"],
-      control: { type: "select" }
+      control: { type: "select" },
     },
-    size: { 
+    size: {
       options: ["small", "large"],
-      control: { type: "select" }
+      control: { type: "select" },
     },
     outlined: {
-      control: { type: 'boolean' },
+      control: { type: "boolean" },
     },
   },
 
   args: {
-    label: "This is a banner."
+    label: "This is a banner.",
   },
 
   parameters: {

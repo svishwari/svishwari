@@ -1,5 +1,10 @@
 <template>
-  <v-text-field label="Search" solo class="mt-6" background-color="#F9FAFB"></v-text-field>
+  <v-text-field
+    label="Search"
+    solo
+    class="mt-6"
+    background-color="#F9FAFB"
+  ></v-text-field>
 </template>
 
 <script>

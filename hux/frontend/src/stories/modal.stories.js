@@ -32,7 +32,6 @@ export default {
     showConfirm: { control: "boolean" },
     showCancel: { control: "boolean" },
     iconSize: { control: "number" },
-    value: { table: { disable: true } },
   },
 
   args: {
