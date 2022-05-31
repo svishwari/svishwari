@@ -112,8 +112,6 @@ export default {
           this.toolTipStyle.left =
             this.currentData.color == "#0076A8" ? "-378px" : "-360px"
         } else this.toolTipStyle.left = "-228px"
-
-        console.log(this.currentData)
       }
     },
     sizeHandler() {
