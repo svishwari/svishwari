@@ -46,6 +46,7 @@ steps:
     image: huxhub.repo.mgnt.in/alpine
     commands:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
+      - cf_export DEPLOY_ENV='dev_deploy'
 
 # Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
 
@@ -56,10 +57,12 @@ steps:
     image: huxhub.repo.mgnt.in/alpine
     commands:
       - cf_export DOCKER_TAG=${{CF_BRANCH}}
+      - cf_export DEPLOY_ENV='aws1_promote'
     when:
       branch:
         only:
           - /^app.*/i
+          - /^release-[\d].*/i
 
   set_global_vars:
     stage: set_env
@@ -140,8 +143,8 @@ steps:
         only:
           - main
           - develop
-          - /^release-[\d].*/i
-          - /^app.*/i
+          # - /^release-[\d].*/i
+          # - /^app.*/i
 
   deployment:
     stage: argo-deploy
@@ -150,14 +153,12 @@ steps:
     image: codefresh/cli:latest
     commands:
       - >-
-        codefresh run Hux_Unified_Solution/unified_solution_cd -d -t 'dev_deploy'
-        -b 'develop'
+        codefresh run Hux_Unified_Solution/unified_solution_api_cd -d -t "${{DEPLOY_ENV}}"
+        -b "${{CF_BRANCH}}"
         --variable SUB_REPO="${{SUB_REPO}}"
         --variable COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
         --variable COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}"
         --variable DOCKER_TAG=${{DOCKER_TAG}}
-        --variable CI_REVISION="${{CF_BRANCH}}"
-
     when:
       branch:
         only:
