@@ -87,6 +87,7 @@ steps:
       condition:
         all:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
+          CheckNotaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == false'
 
   Artifact_Copy_to_Stg:
     stage: stg_deploy
@@ -102,7 +103,8 @@ steps:
       condition:
         all:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
-  
+          CheckNotaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == false'
+
   Get_Version_From_Git_for_RC1_deploy:
     stage: rc1_deploy
     title: Get promote version and update
@@ -129,7 +131,7 @@ steps:
       condition:
         all:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
-          CheckVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app", true)'
+          CheckVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == true'
 
   Artifact_Copy_to_Prod:
     stage: rc1_deploy
@@ -145,7 +147,7 @@ steps:
       condition:
         all:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
-          CheckVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app", true)'
+          CheckVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == true'
 
   commit_and_push:
     stage: commit
