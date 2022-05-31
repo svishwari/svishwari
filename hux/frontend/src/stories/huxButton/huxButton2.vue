@@ -188,6 +188,11 @@ export default {
 $btn-active-opacity: 0 !important;
 $btn-hover-opacity: 0 !important;
 
+::v-deep.v-btn.v-btn--disabled.v-btn--has-bg {
+  background-color: var(--v-black-lighten5) !important;
+  color: var(--v-white-base) !important;
+}
+
 ::v-deep.theme--light.v-btn.v-btn--disabled .v-icon {
   color: var(--v-black-lighten3) !important;
 }
