@@ -708,7 +708,7 @@ export default {
       this.loadingSpendChart = false
     },
     setConfiguredBreadcrumb() {
-      if (this.demoConfiguration) {
+      if (this.demoConfiguration?.demo_mode) {
         this.items[0].text = `${"All " + this.demoConfiguration.target}`
       } else this.items[0].text = "All Customers"
     },
