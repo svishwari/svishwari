@@ -3,17 +3,17 @@
 ===
 
 Release date:
-TBD
+June 3, 2022
 
 Release Overview
 -----------------
 This and extension of the Hux 6.0 release, which is focused on making our technology stack operationally real. This includes the following goals:
 
-- We can easily connect a wide range of customer data types
 - Integrated environments and test with real data; validating the platform is operational end-to-end
-- We can use real customer data to characterize and powerfully differentiate the needs and values of individual or segments of consumers
+- We can now use real customer data to characterize and powerfully differentiate the needs and values of individual or segments of consumers
 - Improve our performance across all endpoints
 - Integration of TrustID
+- Azure deployment 
 
 
 Decisioning
@@ -42,6 +42,7 @@ New Features & Updates
 Fixes
 *****
 - Improving performance for Lookalike audience
+- Audience response time improvement
 
 
 Solutions
