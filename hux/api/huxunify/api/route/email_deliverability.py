@@ -111,7 +111,7 @@ class EmailDeliverabilityOverview(SwaggerView):
         delivered_open_rate_overview = (
             get_performance_metrics_deliverability_data(
                 database=database,
-                domains=[domains[0]],
+                domains=[domain_name],
                 start_date=datetime.datetime.strptime(
                     start_date, api_c.DEFAULT_DATE_FORMAT
                 ),
@@ -208,7 +208,7 @@ class EmailDeliverabilityDomains(SwaggerView):
     tags = [api_c.MEASUREMENT_TAG]
 
     # pylint: disable=too-many-locals
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves email deliverability domains data.

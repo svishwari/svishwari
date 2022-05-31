@@ -35,9 +35,7 @@ def get_domain_wise_inbox_percentage_data(
         {
             # To ensure only data with correct format is fetched
             "$match": {
-                "deliverability_metrics.domain_inbox_percentage": {
-                    "$type": "double"
-                }
+                "deliverability_metrics.domain_inbox_percentage": {"$type": "double"}
             }
         },
         {"$sort": {"create_time": -1}},
@@ -115,9 +113,7 @@ def get_overall_inbox_rate(database: MongoClient) -> Union[float, None]:
     pipeline = [
         {
             "$match": {
-                "deliverability_metrics.domain_inbox_percentage": {
-                    "$type": "double"
-                }
+                "deliverability_metrics.domain_inbox_percentage": {"$type": "double"}
             }
         },
         {
@@ -139,6 +135,11 @@ def get_overall_inbox_rate(database: MongoClient) -> Union[float, None]:
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+    except IndexError:
+        logging.info(
+            "No data found in %s collection.", db_c.DELIVERABILITY_METRICS_COLLECTION
+        )
+        return 0
 
     return None
 
@@ -281,11 +282,7 @@ def get_deliverability_data_performance_metrics(
             {
                 "$match": {
                     "$or": [
-                        {
-                            "performance_metrics.from_addr": {
-                                "$regex": f".*@{domain}$"
-                            }
-                        }
+                        {"performance_metrics.from_addr": {"$regex": f".*@{domain}$"}}
                         for domain in domains
                     ]
                 }
@@ -305,21 +302,13 @@ def get_deliverability_data_performance_metrics(
                 "$group": {
                     "_id": "$domain_name",
                     "sent": {"$sum": "$deliverability_metrics.sent"},
-                    "soft_bounces": {
-                        "$sum": "$deliverability_metrics.soft_bounces"
-                    },
-                    "hard_bounces": {
-                        "$sum": "$deliverability_metrics.hard_bounces"
-                    },
+                    "soft_bounces": {"$sum": "$deliverability_metrics.soft_bounces"},
+                    "hard_bounces": {"$sum": "$deliverability_metrics.hard_bounces"},
                     "bounces": {"$sum": "$deliverability_metrics.bounces"},
                     "opens": {"$sum": "$deliverability_metrics.opens"},
                     "clicks": {"$sum": "$deliverability_metrics.clicks"},
-                    "complaints": {
-                        "$sum": "$deliverability_metrics.complaints"
-                    },
-                    "unsubscribes": {
-                        "$sum": "$deliverability_metrics.unsubscribes"
-                    },
+                    "complaints": {"$sum": "$deliverability_metrics.complaints"},
+                    "unsubscribes": {"$sum": "$deliverability_metrics.unsubscribes"},
                 }
             },
             {
@@ -406,11 +395,7 @@ def get_campaign_aggregated_sent_count(
             {
                 "$match": {
                     "$or": [
-                        {
-                            "performance_metrics.from_addr": {
-                                "$regex": f".*@{domain}$"
-                            }
-                        }
+                        {"performance_metrics.from_addr": {"$regex": f".*@{domain}$"}}
                         for domain in domains
                     ]
                 }
