@@ -23,11 +23,11 @@ export default {
     lighten7: colors.lightbackground,
     lighten1: colors.inactiveButton,
     lighten2: colors.borderBase,
-    lighten8: colors.lightGray,
+    lighten8: colors.Gray31,
     lighten3: colors.linesHeavy,
     lighten5: colors.darkGray,
     lighten6: colors.darkerGray,
-    lighten4: colors.Gray31,
+    lighten4: colors.lightGray,
     base: colors.darkD,
   },
   success: {
