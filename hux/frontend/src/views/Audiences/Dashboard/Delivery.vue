@@ -17,7 +17,7 @@
         This audience is not part of an engagement. Add it to an engagement
         below.
       </div>
-      <div v-else class="pl-0 pt-0 pr-0 pb-0">
+      <div v-else class="pl-0 pt-0 pr-0 overflow-auto pb-0">
         <delivery-details
           v-for="item in availableRelationships"
           :key="item.id"

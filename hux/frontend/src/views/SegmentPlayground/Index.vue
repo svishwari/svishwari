@@ -576,10 +576,14 @@ export default {
     }
     .segment-wrap {
       .attributes {
+        max-height: calc(100vh - 260px) !important;
+        overflow-y: auto;
         flex: 0 0 66.63934426%;
         width: 66.63934426%;
       }
       .overviews {
+        max-height: calc(100vh - 260px) !important;
+        overflow-y: auto;
         flex: 0 0 33.360655737704918%;
         width: 33.360655737704918%;
         @extend .border-start;
