@@ -438,9 +438,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         self.assertEqual(4, len(engagement_deliveries))
         self.assertListEqual(audience_ids, list(engagement_deliveries.keys()))
 
-    def test_set_replace_audience_flag(self):
-        """Test set_replace_audience flag method"""
-        engagement_doc = eam.set_replace_audience_flag(
+    def test_set_replace_audience_flag_engaged_audience(self):
+        """Test set_replace_audience flag_engaged_audience method"""
+        engagement_doc = eam.set_replace_audience_flag_engaged_audience(
             database=self.database,
             engagement_id=self.engagement_id,
             audience_id=self.audience_id,

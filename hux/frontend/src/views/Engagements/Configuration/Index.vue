@@ -16,7 +16,7 @@
         <tooltip>
           <template #label-content>
             <div @click="openModal()">
-              <icon size="23" type="delete-button" />
+              <icon size="23" type="delete-button" color="darkD" />
             </div>
           </template>
           <template #hover-content>

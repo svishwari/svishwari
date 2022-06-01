@@ -4,5 +4,7 @@ logs
 cypress.env.**
 **/cypress/screenshots
 **/cypress/videos
+**/coverage
+**/.nyc_output
 
 yarn.lock

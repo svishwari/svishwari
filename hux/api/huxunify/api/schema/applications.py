@@ -38,4 +38,4 @@ class ApplicationsPatchSchema(Schema):
     """Applications Patch Schema"""
 
     url = Str()
-    added = Boolean(default=True)
+    is_added = Boolean(default=True)

@@ -1,7 +1,13 @@
-"""Purpose of this file is for holding methods to query and pull data from OKTA.
+"""Purpose of this file is for holding methods to query and pull data from
+OKTA.
 """
-from typing import Tuple
+import json
+import re
+import ssl
+import urllib
+from typing import Tuple, Union
 
+import certifi
 import requests
 from flask import request
 from huxunifylib.util.general.logging import logger
@@ -31,7 +37,12 @@ def check_okta_connection() -> Tuple[bool, str]:
         )
 
         if response.status_code == 200:
+            logger.info("OKTA is available.")
             return True, "OKTA available."
+        logger.error(
+            "OKTA is unavailable, returned a %s response.",
+            {response.status_code},
+        )
         return (
             False,
             f"Received status code: {response.status_code}, "
@@ -40,6 +51,7 @@ def check_okta_connection() -> Tuple[bool, str]:
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
+        logger.exception("OKTA Health Check failed.")
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -140,3 +152,75 @@ def get_token_from_request(flask_request: request) -> tuple:
         return api_c.INVALID_AUTH_HEADER, 401
 
     return parts[1], 200
+
+
+# pylint:disable=broad-except,too-many-locals
+def get_env_okta_user_bearer_token() -> Union[str, None]:
+    """Get the access bearer token of the current environment's okta user.
+
+    Returns:
+        str: access bearer token of the current environment's okta user.
+    """
+
+    try:
+        # get config
+        config = get_config()
+
+        headers = {
+            "content-type": "application/json",
+        }
+        token_regex = r"access_token=(.*)&token_type"
+
+        okta_org_url = config.OKTA_ISSUER
+        okta_client_id = config.OKTA_CLIENT_ID
+        okta_redirect_uri = config.OKTA_REDIRECT_URI
+        env_okta_user = config.OKTA_TEST_USER_NAME
+        env_okta_user_pw = config.OKTA_TEST_USER_PW
+
+        # call the auth url to get the session token
+        response = requests.post(
+            f"{okta_org_url}/api/v1/authn",
+            headers=headers,
+            data=json.dumps(
+                {
+                    "username": env_okta_user,
+                    "password": str(env_okta_user_pw),
+                    "options": {
+                        "warnBeforePasswordExpired": True,
+                        "multiOptionalFactorEnroll": False,
+                    },
+                }
+            ),
+        )
+        response.raise_for_status()
+        session_token = response.json().get("sessionToken")
+
+        # build the authorize url
+        authorize_url = (
+            f"{okta_org_url}/oauth2/v1/authorize?sessionToken={session_token}"
+            f"&client_id={okta_client_id}&scope=openid+profile+email"
+            f"&response_type=token&response_mode=fragment&nonce=staticNonce"
+            f"&redirect_uri={okta_redirect_uri}&state=staticState"
+        )
+
+        # grab the authorize url via get
+        req = urllib.request.Request(authorize_url)
+
+        # build a context with certificate to pass in as context argument for
+        # urlopen request function below
+        context = ssl.create_default_context(cafile=certifi.where())
+
+        # open the url, and force the redirect
+        with urllib.request.urlopen(req, context=context) as redirect:  # nosec
+            # grab the token using a regex
+            matches = re.findall(token_regex, str(redirect.geturl()))
+            token = matches[0] if matches else None
+
+            return token
+    except Exception as exc:
+        logger.error(
+            "Failed to get env okta user access bearer token with %s.",
+            repr(exc),
+        )
+
+    return None

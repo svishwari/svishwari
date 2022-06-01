@@ -6,7 +6,7 @@
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Segment your customers into audiences based on your customer data and
+          Segment your consumers into audiences based on your customer data and
           model scores.
         </div>
       </template>
@@ -86,7 +86,7 @@
           sort-column="update_time"
           sort-desc="false"
           data-e2e="audience-table"
-          class="big-table"
+          class="big-table white"
           :enable-lazy-load="enableLazyLoad"
           view-height="calc(100vh - 253px)"
           @bottomScrollEvent="intersected"
@@ -531,7 +531,7 @@ export default {
           value: "size",
           width: "112px",
           hoverTooltip:
-            "Current number of customers who fit the selected attributes.",
+            "Current number of consumers who fit the selected attributes.",
           tooltipWidth: "231px",
         },
         {

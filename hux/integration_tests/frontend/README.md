@@ -155,3 +155,49 @@ docker run -it --ipc=host -v $CYPRESS_LOGS -v $CYPRESS_DEV ui-integration-tests 
 
 These are useful for debugging runs locally, where you can view the tests'
 output logs, screenshots and videos directly.
+
+## Generate code coverage report with Cypress
+
+To generate the code coverage report, follow the following steps:
+
+1. Instrumentalize our code for frontend folder by adding a plugin for this in babl.config.js in frontend folder.
+   plugins: ['babel-plugin-istanbul']
+
+2. Configure our cypress tests to handle code coverage whenever a test is run. First install the package for this.
+
+```sh
+npm install -D @cypress/code-coverage
+```
+
+Then add the code below to your supportFile
+
+```
+import '@cypress/code-coverage/support'
+```
+
+Then add the code below to your pluginsFile.
+
+```
+module.exports = (on, config) => {
+  require('@cypress/code-coverage/task')(on, config)
+  // include any other plugin code...
+
+  // It's IMPORTANT to return the config object
+  // with any changed environment variables
+  return config
+}
+```
+
+3. Finally to generate the report, run cypress E2E tests on particular module/section, please refer to the below code.
+
+```sh
+yarn test --config baseUrl=http://localhost:8080 --spec 'cypress/integration/<module>/*.*'
+```
+
+Or run all the tests in headless mode using the code below.
+
+```sh
+yarn test --config baseUrl=http://localhost:8080
+```
+
+Open hux\integration_tests\frontend\coverage\lcov-report\index.html in browser to see the code coverage report.

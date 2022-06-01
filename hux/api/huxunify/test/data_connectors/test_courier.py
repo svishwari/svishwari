@@ -40,6 +40,7 @@ from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
     get_okta_test_user_creds,
     get_destination_config,
+    create_delivery_job,
     get_audience_destination_pairs,
     deliver_audience_to_destination,
     BaseDestinationBatchJob,
@@ -633,9 +634,7 @@ class CourierTest(TestCase):
         )
         self.assertTrue(delivery_jobs)
         self.assertEqual(1, len(delivery_jobs))
-        self.assertEqual(
-            db_c.AUDIENCE_STATUS_DELIVERING, delivery_jobs[0][db_c.STATUS]
-        )
+        self.assertEqual(db_c.PENDING, delivery_jobs[0][db_c.STATUS])
 
         # validate notification created
         notifications = get_notifications(
@@ -696,3 +695,35 @@ class CourierTest(TestCase):
             audience_delivery_job_id,
             destination_batch_job.audience_delivery_job_id,
         )
+
+    def test_creating_delivery_job(self):
+        """Test creating a delivery job."""
+
+        delivery_route = get_audience_destination_pairs(
+            self.engagement[db_c.AUDIENCES]
+        )
+        self.assertTrue(delivery_route)
+
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        request_mocker.start()
+
+        for pair in delivery_route:
+
+            delivery_job_id = create_delivery_job(
+                self.database,
+                *pair,
+                self.engagement[db_c.ID],
+                username=self.test_user,
+            )
+
+            self.assertIsInstance(delivery_job_id, ObjectId)
+
+            # validate the audience delivery job id exists
+            audience_delivery_status = get_delivery_job_status(
+                self.database, delivery_job_id
+            )
+            self.assertEqual(audience_delivery_status, db_c.PENDING)

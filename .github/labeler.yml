@@ -1,10 +1,10 @@
 
-# Add 'API' label to any change within the hux/api files within source dir
+# Add 'API' label to any change within the hux/api/ files within source dir
 API:
 - hux/api/*
 - hux/api/**/*
 
-# Add 'UX/UI' label to any change to files within the hux/frontend files within source dir
+# Add 'UX/UI' label to any change to files within the hux/frontend/ files within source dir
 UX/UI:
 - hux/frontend/*
 - hux/frontend/**/*
@@ -14,12 +14,17 @@ DB:
 - lib/*
 - lib/**/*
 
-# Add 'API_INT_TESTS' label to any change to lib/ files within the source dir
+# Add 'API_INT_TESTS' label to any change to hux/integration_tests/api/ files within the source dir
 API_INT_TESTS:
 - hux/integration_tests/api/*
 - hux/integration_tests/api/**/*
 
-# Add 'UI_INT_TESTS' label to any change to lib/ files within the source dir
+# Add 'UI_INT_TESTS' label to any change to hux/integration_tests/frontend/ files within the source dir
 UI_INT_TESTS:
 - hux/integration_tests/frontend/*
 - hux/integration_tests/frontend/**/*
+
+# Add 'DOCUMENTATION' label to any change to docs/ files within the source dir
+DOCUMENTATION:
+- docs/*
+- docs/**/*

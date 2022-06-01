@@ -56,6 +56,7 @@ class JiraConnection:
                     }
                 },
             )
+            logger.info("Jira is available.")
             return True, "Jira available"
 
         except JIRAError as jira_error:

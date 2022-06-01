@@ -2,7 +2,7 @@
   <div class="add-data-source--wrap">
     <drawer v-model="localDrawer" @onClose="closeAddModel">
       <template #header-left>
-        <breadcrumb :items="breadcrumbs" class="pl-2" />
+        <breadcrumb :items="breadcrumbs" class="pl-2 add-model-header" />
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
@@ -32,7 +32,7 @@
         </div>
       </template>
       <template #default>
-        <div class="ma-3">
+        <div class="ma-3 mb-6">
           <div class="mb-7">
             <div
               v-for="(item, key) in enabledModels"
@@ -61,7 +61,7 @@
           </div>
 
           <v-divider
-            class="mb-2"
+            class="pb-3"
             style="border-color: var(--v-black-lighten2)"
           />
           <div
@@ -272,6 +272,11 @@ export default {
 <style lang="scss">
 // this is a temporary fix, this figma design need to be synced with other drawer design.
 .add-data-source--wrap {
+  .add-model-header {
+    .title-up {
+      top: -1px !important;
+    }
+  }
   .drawer-content.contentPadding {
     .card-horizontal-disabled {
       @extend .box-shadow-1;

@@ -111,7 +111,7 @@ export default {
           title: "Size",
           format: "relative",
           helpText:
-            "Current number of customers who fit the selected attributes.",
+            "Current number of consumers who fit the selected attributes.",
           helpWidth: 232,
         },
         {

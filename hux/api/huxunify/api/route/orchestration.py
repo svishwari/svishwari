@@ -455,12 +455,6 @@ class AudienceView(SwaggerView):
             batch_size > 0 and len(audiences) < batch_size
         )
 
-        # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
-        # # get customer sizes
-        # customer_size_dict = get_customers_count_async(
-        #     token_response[0], audiences
-        # )
-
         # get the x number of last deliveries to provide per audience
         delivery_limit = (
             validation.validate_integer(request.args.get(api_c.DELIVERIES))
@@ -767,6 +761,7 @@ class AudienceGetView(SwaggerView):
             lookalike[db_c.AUDIENCE_FILTERS] = lookalike[
                 db_c.LOOKALIKE_SOURCE_AUD_FILTERS
             ]
+            lookalike[db_c.SIZE] = lookalike[db_c.LOOKALIKE_SOURCE_AUD_SIZE]
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
             lookalike[api_c.MATCH_RATE] = 0
             # check and set if source/seed audience this lookalike audience is
@@ -875,13 +870,10 @@ class AudienceGetView(SwaggerView):
             else []
         )
 
-        # Add insights, size.
+        # add insights
         audience[api_c.AUDIENCE_INSIGHTS] = get_customers_overview(
             token_response[0],
             {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
-        )
-        audience[api_c.SIZE] = audience[api_c.AUDIENCE_INSIGHTS].get(
-            api_c.TOTAL_CUSTOMERS, 0
         )
 
         # query DB and populate lookalike audiences in audience dict only if
