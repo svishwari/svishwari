@@ -391,9 +391,9 @@ export default {
       audienceName,
       destinationID
     ) {
-      const audienceID = audiencesList.filter(
+      const audienceID = audiencesList.find(
         (item) => item.name == audienceName
-      )[0].id
+      ).id
       const data = {
         engagement_id: engagementID,
         audience_id: audienceID,
