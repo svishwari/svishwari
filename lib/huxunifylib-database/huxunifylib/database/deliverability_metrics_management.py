@@ -139,6 +139,12 @@ def get_overall_inbox_rate(database: MongoClient) -> Union[float, None]:
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+    except IndexError:
+        logging.info(
+            "No data found in %s collection.",
+            db_c.DELIVERABILITY_METRICS_COLLECTION,
+        )
+        return 0
 
     return None
 
