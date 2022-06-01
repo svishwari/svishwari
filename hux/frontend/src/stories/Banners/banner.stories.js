@@ -1,9 +1,9 @@
-import Banner from "../components/common/Banner.vue"
+import Banner from "./Banner.vue"
 
 export default {
   component: Banner,
 
-  title: "NewComponents/Banner",
+  title: "Design System/Banners",
 
   argTypes: {
     label: { control: { type: "text" } },
@@ -15,6 +15,8 @@ export default {
       options: ["small", "large"],
       control: { type: "select" },
     },
+    height: {control: { type: "number" } },
+    width: { control: { type: "number" } },
     outlined: {
       control: { type: "boolean" },
     },
