@@ -13,7 +13,7 @@ This and extension of the Hux 6.0 release, which is focused on making our techno
 - We can now use real customer data to characterize and powerfully differentiate the needs and values of individual or segments of consumers
 - Improve our performance across all endpoints
 - Integration of TrustID
-- Azure deployment 
+- Azure deployment
 
 
 Decisioning
