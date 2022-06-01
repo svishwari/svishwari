@@ -238,7 +238,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Monitor data quality "
         "throughout ingestion and create a peristent"
-        " identifier and profile for every customer",
+        " identifier and profile for every consumer",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -249,17 +249,17 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Track performance of "
         "decisioning models and reveal actionable"
-        " customer insights.",
+        " consumer insights.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Customer Insights",
+        db_c.CONFIGURATION_FIELD_NAME: "Consumer Insights",
         db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "A 360 degree view of "
-        "each customer, understanding not only their needs and "
+        "each consumer, understanding not only their needs and "
         "preferences, but also the person behind the data.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
@@ -271,7 +271,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Seamlessly route audiences to"
         " an activation channel of choice to deliver a personalized"
-        " experience for existing and new customers.",
+        " experience for existing and new consumers.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -313,8 +313,8 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_NAME: "Experience data platform",
         db_c.CONFIGURATION_FIELD_ICON: "experience_data_platform",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Brings voice of the customer "
-        "to make improvements to your customer "
+        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Brings voice of the consumer "
+        "to make improvements to your consumer "
         "experience at an individual and macro level.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
@@ -324,9 +324,9 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_NAME: "Insight IQ",
         db_c.CONFIGURATION_FIELD_ICON: "insight_iq",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your customer profiles"
+        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your consumer profiles"
         " with this collections of data sources at"
-        " the individual level enabling an enhanced customer experience.",
+        " the individual level enabling an enhanced consumer experience.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -346,7 +346,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ICON: "trust_id",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain "
-        "visibility, monitor and  engage with their customers "
+        "visibility, monitor and  engage with their consumers "
         "based on AI – generated experienced based metrics.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
@@ -358,7 +358,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to"
         " optimize the creation, placement, and timing of online "
-        "content to increase customer acquisition.",
+        "content to increase consumer acquisition.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
