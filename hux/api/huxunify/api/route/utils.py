@@ -1507,7 +1507,9 @@ def populate_trust_id_segments(
             {
                 api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
                 api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
-                api_c.SURVEY_RESPONSES: survey_response if survey_response else [],
+                api_c.SURVEY_RESPONSES: survey_response
+                if survey_response
+                else [],
             }
         )
     return segments_data

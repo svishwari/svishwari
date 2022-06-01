@@ -268,7 +268,9 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
             }
         )
         if segment_data[api_c.SURVEY_RESPONSES]:
-            composite_factor_scores[api_c.SEGMENTS][-1][api_c.ATTRIBUTES].insert(
+            composite_factor_scores[api_c.SEGMENTS][-1][
+                api_c.ATTRIBUTES
+            ].insert(
                 0,
                 {
                     api_c.ATTRIBUTE_TYPE: "trust_id",
@@ -316,7 +318,9 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
                             ],
                         }
                         for x in data
-                    ] if data else [],
+                    ]
+                    if data
+                    else [],
                 }
             )
             for factor_data in composite_factor_scores[api_c.SEGMENTS]:
