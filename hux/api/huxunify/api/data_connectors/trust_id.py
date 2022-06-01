@@ -212,11 +212,11 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
     overview_data = {}
 
     # To check if no data in survey responses.
-    all_empty_survey_responses = True
+    # all_empty_survey_responses = True
 
     for segment_data in data_by_segment:
-        if segment_data[api_c.SURVEY_RESPONSES]:
-            all_empty_survey_responses = False
+        # if segment_data[api_c.SURVEY_RESPONSES]:
+        #     all_empty_survey_responses = False
 
         attributes_data = get_trust_id_attributes(
             segment_data[api_c.SURVEY_RESPONSES]
@@ -243,8 +243,8 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
                 ]
             )
     # Return empty list if no data is present.
-    if all_empty_survey_responses:
-        return []
+    # if all_empty_survey_responses:
+    #     return []
 
     composite_factor_scores = {
         api_c.SEGMENT_TYPE: api_c.SEGMENT_TYPES[0],
@@ -323,22 +323,23 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
                             ],
                         }
                         for x in data
-                    ],
+                    ] if data else [],
                 }
             )
             for factor_data in composite_factor_scores[api_c.SEGMENTS]:
                 if factor_data[api_c.SEGMENT_NAME] != segment_name:
                     continue
-                factor_comparison_data[api_c.SEGMENTS][-1][
-                    api_c.ATTRIBUTES
-                ].insert(
-                    0,
-                    [
-                        x
-                        for x in factor_data[api_c.ATTRIBUTES]
-                        if x[api_c.ATTRIBUTE_TYPE] == factor_name
-                    ][0],
-                )
+                if data:
+                    factor_comparison_data[api_c.SEGMENTS][-1][
+                        api_c.ATTRIBUTES
+                    ].insert(
+                        0,
+                        [
+                            x
+                            for x in factor_data[api_c.ATTRIBUTES]
+                            if x[api_c.ATTRIBUTE_TYPE] == factor_name
+                        ][0],
+                    )
 
         trust_id_comparison_data.append(factor_comparison_data)
     trust_id_comparison_data.insert(0, composite_factor_scores)
