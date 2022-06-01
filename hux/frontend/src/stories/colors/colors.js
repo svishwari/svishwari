@@ -8,7 +8,7 @@ export default {
     {
       title: "Light background",
       hex: "#F9FAFB",
-      class: "black-lighten6",
+      class: "black-lighten7",
     },
     {
       title: "Grey 1",
@@ -18,7 +18,7 @@ export default {
     {
       title: "Grey 2",
       hex: "#DDDDDD",
-      class: "black-lighten3",
+      class: "black-lighten8",
     },
     {
       title: "Grey 3",
@@ -28,7 +28,7 @@ export default {
     {
       title: "Grey 4",
       hex: "#53565A",
-      class: "black-lighten4",
+      class: "black-lighten6",
     },
     {
       title: "Grey 5 (Black)",
@@ -38,7 +38,7 @@ export default {
     {
       title: "Blue 1 (Active)",
       hex: "#007CB0",
-      class: "primary-darken1",
+      class: "primary-lighten7",
     },
     {
       title: "Blue 2 (Selected)",
@@ -48,22 +48,22 @@ export default {
     {
       title: "Green",
       hex: "#26890D",
-      class: "success-base",
+      class: "success-darken1",
     },
     {
       title: "Red",
       hex: "#D72B25",
-      class: "error-base",
+      class: "error-lighten1",
     },
     {
       title: "Orange",
       hex: "#F29F05",
-      class: "warning-base",
+      class: "warning-lighten1",
     },
     {
       title: "Yellow",
       hex: "#FFDE49",
-      class: "yellow-base",
+      class: "yellow-lighten3",
     },
   ],
   charts: [

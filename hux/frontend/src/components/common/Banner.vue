@@ -4,9 +4,9 @@
     text
     dismissible
     :outlined="outlined"
-    :height="size == 'large' ? 72 : 40"
-    :width="size == 'large' ? 1216 : 710"
-    :class="size == 'large' ? 'pt-6' : 'pb-10'"
+    :height="Height"
+    :width="Width"
+    :class="classValue"
     class="pl-8 pr-8"
   >
     <span class="alert-label">{{ label }}</span>
@@ -37,12 +37,23 @@ export default {
       default: false,
     },
   },
+  computed: {
+    eight() {
+      return this.size == "large" ? 72 : 40
+    },
+    width() {
+      return this.size == "large" ? 1216 : 710
+    },
+    classValue() {
+      return this.size == "large" ? "pt-6" : "pb-10"
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .alert-label {
-  color: black;
+  color: var(--v-black-base);
   font-weight: bold;
 }
 </style>

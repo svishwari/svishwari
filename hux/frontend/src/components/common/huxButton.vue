@@ -4,12 +4,7 @@
     :disabled="isDisabled"
     :outlined="isOutlined"
     :tile="isTile"
-    :class="[
-      sidePadding,
-      buttonSize,
-      { 'box-shadow-25': boxShadow },
-      'text-button',
-    ]"
+    :class="[buttonSize, { 'box-shadow-25': boxShadow }, 'text-button']"
     :color="variant"
     :width="width"
     :height="height"
@@ -128,11 +123,6 @@ export default {
       type: String,
       required: false,
       default: "mx-2",
-    },
-    sidePadding: {
-      type: String,
-      required: false,
-      default: "px-6",
     },
   },
   data() {

@@ -1,7 +1,7 @@
-import Drawer from "../components/common/Drawer.vue"
-import HuxButton from "../components/common/huxButton.vue"
+import Drawer from "./Drawer2.vue"
+import HuxButton from "@/components/common/huxButton.vue"
 import { action } from "@storybook/addon-actions"
-import Icon from "../components/common/Icon.vue"
+import Icon from "@/components/common/Icon.vue"
 
 export default {
   component: Drawer,

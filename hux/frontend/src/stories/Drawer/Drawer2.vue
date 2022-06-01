@@ -45,9 +45,8 @@
 
     <v-footer
       v-if="hasFooterSlots"
-      class="drawer-footer d-flex justify-space-between align-center px-6 py-5"
+      class="drawer-footer d-flex justify-space-between align-center px-6 py-4"
       absolute
-      padless
       color="white"
       elevation="5"
     >
@@ -116,7 +115,7 @@ export default {
     headerHeight: {
       type: String,
       required: false,
-      default: "70",
+      default: "72",
     },
   },
 
@@ -171,8 +170,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$drawer-header-height: 70px;
-$drawer-footer-height: 80px;
+$drawer-header-height: 72px;
+$drawer-footer-height: 72px;
 $drawer-data-table-padding: 9px 25px;
 
 ::v-deep .v-navigation-drawer__content {
@@ -192,6 +191,7 @@ $drawer-data-table-padding: 9px 25px;
 .drawer-content {
   height: calc(100% - #{$drawer-header-height + $drawer-footer-height});
   overflow-y: auto;
+  border-bottom: 1px solid var(--v-black-lighten3) !important;
 }
 .drawer-content-without-footer {
   height: calc(100% - #{$drawer-header-height});
