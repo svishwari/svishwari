@@ -5,7 +5,6 @@
 import dayjs from "dayjs"
 import store from "@/store/index.js"
 import { capitalize } from "lodash"
-import access from "./store/RBAC"
 
 /**
  * Forms the title for the page.
@@ -485,7 +484,16 @@ export function aggregateAgeFilters(filters) {
   return [...numericFilters, ...stringFilters]
 }
 
+/**
+ * Returns based on role which api user can access
+ *
+ * @param {string} screen - current screen user is trying to open
+ * @param {string} action - action user is trying to take
+ * @returns {boolean} if user can take this action on this screen
+ */
 export function getAccess(screen, action) {
-  let role = store.getters["users/getCurrentUserRole"]
-  return access[role][screen][action]
+  let role = "viewer" //store.getters["users/getCurrentUserRole"]
+  let matrix = store.getters["users/getRbacMatrix"]
+  console.log(matrix)
+  return matrix[screen]["actions"].find((item) => item.type == action)[role]
 }

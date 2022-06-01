@@ -62,7 +62,7 @@
           </template>
 
           <template slot="right">
-            <span v-if="getAccess('audiences', 'create')">
+            <span v-if="getAccess('audience', 'create')">
               <router-link
                 :to="{ name: 'SegmentPlayground' }"
                 class="text-decoration-none"
@@ -334,7 +334,7 @@
           </template>
           <template #button>
             <span
-              v-if="finalFilterApplied <= 0 && getAccess('audiences', 'create')"
+              v-if="finalFilterApplied <= 0 && getAccess('audience', 'create')"
             >
               <router-link
                 :to="{ name: 'SegmentPlayground' }"
