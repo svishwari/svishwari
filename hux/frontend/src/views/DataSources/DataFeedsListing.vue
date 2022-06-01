@@ -384,7 +384,7 @@
           v-else-if="!loading && hasDataFeeds == 0"
           class="empty-error-card mx-7"
         >
-          <v-row class="data-feed-frame py-14">
+          <v-row class="data-feed-frame my-1 py-16">
             <empty-page
               v-if="!datafeedErrorState"
               type="lift-table-empty"
@@ -526,17 +526,17 @@ export default {
         {
           text: "Sub-status",
           value: "sub_status",
-          width: "125",
+          width: "140",
         },
         {
           text: "Records received",
           value: "records_received",
-          width: "146",
+          width: "170",
         },
         {
           text: "Records processed",
           value: "records_processed",
-          width: "162",
+          width: "170",
         },
         {
           text: "% of records processed",
@@ -551,7 +551,7 @@ export default {
         {
           text: `Last processed start time (${this.selected_time})`,
           value: "last_processed_start",
-          width: "216",
+          width: "260",
         },
       ]
     },
@@ -790,6 +790,8 @@ export default {
   margin-top: 1px;
   .hux-data-table {
     ::v-deep table {
+      width: 1675px !important;
+      min-width: 100% !important;
       .data-feed-name {
         @extend .text-ellipsis;
         max-width: 25ch;

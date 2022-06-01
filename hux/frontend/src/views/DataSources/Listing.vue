@@ -112,7 +112,7 @@
       class="empty-error-card mx-7"
       data-e2e="datasource-datafeeds-table"
     >
-      <v-row class="data-feed-frame py-14">
+      <v-row class="data-feed-frame my-1 py-16">
         <empty-page
           v-if="!datafeedErrorState"
           type="lift-table-empty"
