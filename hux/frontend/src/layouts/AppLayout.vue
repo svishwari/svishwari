@@ -18,7 +18,13 @@
       />
     </div>
     <v-main>
-      <v-container fluid ma-0 pa-0 class="views-container">
+      <v-container
+        v-if="!infoModal && !noAccess()"
+        fluid
+        ma-0
+        pa-0
+        class="views-container"
+      >
         <slot />
       </v-container>
     </v-main>
@@ -51,10 +57,12 @@ export default {
   data: () => ({
     toggleMini: false,
     infoModal: false,
+    noaccess: false,
   }),
   computed: {
     ...mapGetters({
       alerts: "alerts/list",
+      getUserRole: "users/getCurrentUserRole",
     }),
 
     marginLeft() {
@@ -77,6 +85,18 @@ export default {
   methods: {
     toggleSidebar() {
       this.toggleMini = !this.toggleMini
+    },
+    noAccess() {
+      if (
+        this.getUserRole != "admin" &&
+        this.$route.name == "DestinationConfiguration"
+      ) {
+        this.infoModal = !this.noaccess
+        this.noaccess = true
+      } else {
+        this.noaccess = false
+      }
+      return this.noaccess
     },
   },
 }
