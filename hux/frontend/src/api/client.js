@@ -406,8 +406,7 @@ client["audiences"].histogram = (field, model) => {
 }
 
 client["audiences"].replaceAudience = (data) => {
-  let url = `/engagements/${data.engagement_id}/audience/${data.audience_id}/destination/${data.destination_id}/deliver`
-  return http.post(url, data.value)
+  return http.post(`/engagements/${data.engagement_id}/audience/${data.audience_id}/destination/${data.destination_id}/deliver`, data.value)
 }
 //#endregion
 
