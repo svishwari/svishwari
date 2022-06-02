@@ -75,9 +75,7 @@
                       </span>
                     </v-card-title>
                     <trust-comparison-chart
-                      v-if="
-                        !segmentComparisonLoading && segmentScores.length > 0
-                      "
+                      v-if="segmentScores.length > 0"
                       ref="comparisonChart"
                       :segment-scores="segmentScores"
                       data-e2e="trust-comparison-chart"
