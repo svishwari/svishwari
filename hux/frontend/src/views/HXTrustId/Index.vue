@@ -82,6 +82,34 @@
                       :segment-scores="segmentScores"
                       data-e2e="trust-comparison-chart"
                     />
+                    <div v-else>
+                      <empty-page
+                        class="pt-16"
+                        :type="
+                          getEmptyType ? 'no-customer-data' : 'error-on-screens'
+                        "
+                        :size="50"
+                      >
+                        <template #title>
+                          <div class="title-no-notification">
+                            {{
+                              getEmptyType
+                                ? "No Hux Trust ID scores to show"
+                                : "Hux Trust ID scores chart currently unavailable"
+                            }}
+                          </div>
+                        </template>
+                        <template #subtitle>
+                          <div class="des-no-notification">
+                            {{
+                              getEmptyType
+                                ? "Trust ID scores chart will display when data has been uploaded. Please check back later."
+                                : "Our team is working hard to fix it. Please be patient and try again soon!"
+                            }}
+                          </div>
+                        </template>
+                      </empty-page>
+                    </div>
                   </v-card>
                 </v-col>
               </v-row>
@@ -122,137 +150,164 @@
                   </div>
                 </v-col>
               </v-row>
-              <data-cards
-                v-if="getSegmentTableData.length > 0"
-                bordered
-                card-class="py-5 pa-4"
-                :items="getSegmentTableData"
-                :fields="getSegmentTableHeaders"
-                :multiple-segments="multipleSegments"
-              >
-                <template
-                  v-for="header in getSegmentTableHeaders"
-                  #[`field:${header.key}`]="row"
+              <div>
+                <data-cards
+                  v-if="getSegmentTableData.length > 0"
+                  bordered
+                  card-class="py-5 pa-4"
+                  :items="getSegmentTableData"
+                  :fields="getSegmentTableHeaders"
+                  :multiple-segments="multipleSegments"
                 >
-                  <rhombus-number
-                    v-if="
-                      !['segment_name', 'segment_filters', 'colors'].includes(
-                        header.key
-                      )
-                    "
-                    :key="header.key"
-                    :value="row.value"
-                    :text-color="row.value < 0 ? 'error--text' : 'black--text'"
-                    :border-image="header.key == 'trust_id'"
-                    :color="
-                      colColorArr[header.key] && colColorArr[header.key].stroke
-                    "
-                    :variant="
-                      colColorArr[header.key] && colColorArr[header.key].variant
-                    "
-                  ></rhombus-number>
-
-                  <span
-                    v-else-if="header.key == 'segment_filters'"
-                    :key="header.key"
+                  <template
+                    v-for="header in getSegmentTableHeaders"
+                    #[`field:${header.key}`]="row"
                   >
-                    <span v-if="row.value.length != 0">
-                      <span
-                        v-for="(filter, filterIndex) in row.value"
-                        :key="filterIndex"
-                      >
-                        <tooltip v-if="filterIndex < 4">
+                    <rhombus-number
+                      v-if="!includesSegmentHeaders(header.key)"
+                      :key="header.key"
+                      :value="row.value"
+                      :text-color="
+                        row.value < 0 ? 'error--text' : 'black--text'
+                      "
+                      :border-image="header.key == 'trust_id'"
+                      :color="
+                        colColorArr[header.key] &&
+                        colColorArr[header.key].stroke
+                      "
+                      :variant="
+                        colColorArr[header.key] &&
+                        colColorArr[header.key].variant
+                      "
+                    ></rhombus-number>
+
+                    <span
+                      v-else-if="header.key == 'segment_filters'"
+                      :key="header.key"
+                    >
+                      <span v-if="row.value.length != 0">
+                        <span
+                          v-for="(filter, filterIndex) in row.value"
+                          :key="filterIndex"
+                        >
+                          <tooltip v-if="filterIndex < 4">
+                            <template #label-content>
+                              <v-chip
+                                v-if="filterIndex < 4"
+                                small
+                                class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                                text-color="primary"
+                                color="var(--v-primary-lighten3)"
+                              >
+                                {{ filter.description }}
+                              </v-chip>
+                            </template>
+                            <template #hover-content>
+                              <span
+                                v-if="filterIndex < 4"
+                                class="text-body-2 black--text text--darken-4"
+                              >
+                                <div
+                                  v-for="(
+                                    filterValue, filterValueIndex
+                                  ) in pillHoverData(
+                                    filter.values,
+                                    filter.type
+                                  )"
+                                  :key="filterValueIndex"
+                                >
+                                  <span
+                                    v-bind.prop="formatInnerHTML(filterValue)"
+                                  />
+                                  <br />
+                                </div>
+                              </span>
+                            </template>
+                          </tooltip>
+                        </span>
+                        <tooltip>
                           <template #label-content>
-                            <v-chip
-                              v-if="filterIndex < 4"
-                              small
-                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                              text-color="primary"
-                              color="var(--v-primary-lighten3)"
+                            <span
+                              v-if="row.value.length > 4"
+                              class="text-subtitle-2 primary--text"
                             >
-                              {{ filter.description }}
-                            </v-chip>
+                              +{{ row.value.length - 4 }}
+                            </span>
                           </template>
                           <template #hover-content>
                             <span
-                              v-if="filterIndex < 4"
-                              class="text-body-2 black--text text--darken-4"
+                              v-for="(filter, filterIndex) in row.value"
+                              :key="filterIndex"
                             >
-                              <div
-                                v-for="(
-                                  filterValue, filterValueIndex
-                                ) in pillHoverData(filter.values, filter.type)"
-                                :key="filterValueIndex"
+                              <v-chip
+                                v-if="filterIndex >= 4"
+                                small
+                                class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                                text-color="primary"
+                                color="var(--v-primary-lighten3)"
                               >
-                                <span
-                                  v-bind.prop="formatInnerHTML(filterValue)"
-                                />
-                                <br />
-                              </div>
+                                {{ filter.description }}
+                              </v-chip>
+                              <br v-if="filterIndex >= 4" />
                             </span>
                           </template>
                         </tooltip>
                       </span>
-                      <tooltip>
-                        <template #label-content>
-                          <span
-                            v-if="row.value.length > 4"
-                            class="text-subtitle-2 primary--text"
-                          >
-                            +{{ row.value.length - 4 }}
-                          </span>
-                        </template>
-                        <template #hover-content>
-                          <span
-                            v-for="(filter, filterIndex) in row.value"
-                            :key="filterIndex"
-                          >
-                            <v-chip
-                              v-if="filterIndex >= 4"
-                              small
-                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                              text-color="primary"
-                              color="var(--v-primary-lighten3)"
-                            >
-                              {{ filter.description }}
-                            </v-chip>
-                            <br v-if="filterIndex >= 4" />
-                          </span>
-                        </template>
-                      </tooltip>
+                      <span v-else>
+                        <v-chip
+                          small
+                          class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                          text-color="primary"
+                          color="var(--v-primary-lighten3)"
+                        >
+                          All customers
+                        </v-chip>
+                      </span>
                     </span>
-                    <span v-else>
-                      <v-chip
-                        small
-                        class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                        text-color="primary"
-                        color="var(--v-primary-lighten3)"
-                      >
-                        All customers
-                      </v-chip>
-                    </span>
-                  </span>
-                </template>
+                  </template>
 
-                <template #field:delete="row">
-                  <div
-                    v-if="
-                      getSelectedSegment &&
-                      getSelectedSegment.segments.length > 1 &&
-                      !row.item.default
+                  <template #field:delete="row">
+                    <div
+                      v-if="
+                        getSelectedSegment &&
+                        getSelectedSegment.segments.length > 1 &&
+                        !row.item.default
+                      "
+                      class="d-flex align-center justify-end mr-2"
+                    >
+                      <hux-icon
+                        type="trash"
+                        class="cursor-pointer"
+                        :size="18"
+                        color="black"
+                        @click.native="removeSegment(row.item)"
+                      />
+                    </div>
+                  </template>
+                </data-cards>
+                <v-card v-else class="pb-12 box-shadow-5" height="250">
+                  <empty-page
+                    class="pt-16"
+                    :type="
+                      getSegmentTableData.length == 0
+                        ? 'no-customer-data'
+                        : 'error-on-screens'
                     "
-                    class="d-flex align-center justify-end mr-2"
+                    :size="50"
                   >
-                    <hux-icon
-                      type="trash"
-                      class="cursor-pointer"
-                      :size="18"
-                      color="black"
-                      @click.native="removeSegment(row.item)"
-                    />
-                  </div>
-                </template>
-              </data-cards>
+                    <template #title>
+                      <div class="title-no-notification">
+                        {{ segmentTableTitle() }}
+                      </div>
+                    </template>
+                    <template #subtitle>
+                      <div class="des-no-notification">
+                        {{ segmentTableDescription() }}
+                      </div>
+                    </template>
+                  </empty-page>
+                </v-card>
+              </div>
               <div v-if="getSelectedSegment && segmentCount < 5">
                 <v-list class="add-segment no-data-width" :height="22">
                   <v-list-item @click="filterToggle()">
@@ -294,7 +349,32 @@
               </div>
             </v-tab-item>
             <v-tab-item key="attributes" class="tab-item">
-              <trust-id-attributes :data="attributeData.data" />
+              <trust-id-attributes
+                v-if="attributeData.data.length > 0"
+                :data="attributeData.data"
+              />
+              <v-card v-else class="pb-12 box-shadow-5" height="250">
+                <empty-page
+                  class="pt-16"
+                  :type="
+                    attributeData.data.length == 0
+                      ? 'no-customer-data'
+                      : 'error-on-screens'
+                  "
+                  :size="50"
+                >
+                  <template #title>
+                    <div class="title-no-notification">
+                      {{ attributeTableTitle() }}
+                    </div>
+                  </template>
+                  <template #subtitle>
+                    <div class="des-no-notification">
+                      {{ attributeTableDescription() }}
+                    </div>
+                  </template>
+                </empty-page>
+              </v-card>
             </v-tab-item>
           </v-tabs-items>
         </div>
@@ -329,6 +409,7 @@ import TrustIdAttributes from "./AttributeTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import HuxSwitch from "@/components/common/Switch.vue"
+import EmptyPage from "../../components/common/EmptyPage.vue"
 
 export default {
   name: "HXTrustID",
@@ -346,6 +427,7 @@ export default {
     HuxIcon,
     AddSegmentDrawer,
     HuxSwitch,
+    EmptyPage,
   },
   data() {
     return {
@@ -573,6 +655,40 @@ export default {
       return this.segmentScores.find(
         (x) => x.segment_type == this.selectedSegment?.toLowerCase()
       )
+    },
+
+    getEmptyType() {
+      return !this.segmentComparisonLoading && this.segmentScores.length == 0
+    },
+
+    includesSegmentHeaders(segmentTitle) {
+      return ["segment_name", "segment_filters", "colors"].includes(
+        segmentTitle
+      )
+    },
+
+    segmentTableTitle() {
+      return this.getSegmentTableData.length == 0
+        ? "No segments to show"
+        : "Segments currently unavailable"
+    },
+
+    segmentTableDescription() {
+      return this.getSegmentTableData.length == 0
+        ? "Segments will display when data has been uploaded. Please check back later."
+        : "Our team is working hard to fix it. Please be patient and try again soon!"
+    },
+
+    attributeTableTitle() {
+      return this.attributeData.data.length == 0
+        ? "No attributes to show"
+        : "Attributes currently unavailable"
+    },
+
+    attributeTableDescription() {
+      return this.attributeData.data.length == 0
+        ? "Attributes will display when data has been uploaded. Please check back later."
+        : "Our team is working hard to fix it. Please be patient and try again soon!"
     },
   },
   async mounted() {
