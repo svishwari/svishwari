@@ -31,7 +31,7 @@
       body="You do not have the permission to perform this action. Please reach out to your Admin for access."
       :show-left-button="false"
       right-btn-text="Close"
-      @onConfirm="infoModal = !infoModal"
+      @onConfirm="infoModal = false"
     >
     </confirm-modal>
   </v-app>
@@ -51,7 +51,6 @@ export default {
   data: () => ({
     toggleMini: false,
     infoModal: false,
-    noaccess: false,
   }),
   computed: {
     ...mapGetters({
@@ -68,7 +67,7 @@ export default {
     },
 
     showContainer() {
-      return !this.infoModal && !this.noAccess()
+      return this.hasAccess()
     },
   },
   watch: {
@@ -84,17 +83,16 @@ export default {
     toggleSidebar() {
       this.toggleMini = !this.toggleMini
     },
-    noAccess() {
+    hasAccess() {
       if (
         this.getUserRole != "admin" &&
         this.$route.name == "DestinationConfiguration"
       ) {
-        this.infoModal = !this.noaccess
-        this.noaccess = true
+        this.infoModal = true
+        return false
       } else {
-        this.noaccess = false
+        return true
       }
-      return this.noaccess
     },
   },
 }
