@@ -582,8 +582,7 @@ export default {
         width: 66.63934426%;
       }
       .overviews {
-        max-height: calc(100vh - 260px) !important;
-        overflow-y: auto;
+        @extend .attributes;
         flex: 0 0 33.360655737704918%;
         width: 33.360655737704918%;
         @extend .border-start;

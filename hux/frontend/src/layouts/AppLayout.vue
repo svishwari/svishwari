@@ -18,13 +18,7 @@
       />
     </div>
     <v-main>
-      <v-container
-        v-if="!infoModal && !noAccess()"
-        fluid
-        ma-0
-        pa-0
-        class="views-container"
-      >
+      <v-container v-if="showContainer" fluid ma-0 pa-0 class="views-container">
         <slot />
       </v-container>
     </v-main>
@@ -71,6 +65,10 @@ export default {
 
     clientPanel() {
       return this.$route.name == "ClientPanel"
+    },
+
+    showContainer() {
+      return !this.infoModal && !this.noAccess()
     },
   },
   watch: {
