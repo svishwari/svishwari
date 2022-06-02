@@ -104,7 +104,7 @@
                         black--text
                         text--base
                       "
-                      >Compare segments to all consumers</span
+                      >Compare segments to all customers</span
                     >
                     <hux-switch
                       v-model="switchSegment"

@@ -160,12 +160,15 @@ export default {
             let attr_data = data.attributes.find(
               (el) => el.attribute_type == attr
             )
-            currentAttribute = attr_data.attribute_name
+            if (attr_data) {
+            currentAttribute = attr_data?.attribute_name
             segmentAttrScore.push({
               value: attr_data.attribute_score,
               color: data.color,
               segmentName: data.segment_name,
             })
+            }
+
           })
           this.chartSourceData.push({
             id: attr,
@@ -179,12 +182,14 @@ export default {
     setLegendsData() {
       this.legendsData = []
       for (let [index, segment] of this.sourceData.entries()) {
+        if (segment.attributes.length > 0) {
         this.legendsData.push({
           color: this.colors[this.hasDefaultSegment() ? index : index + 1],
           checked: true,
           disabled: false,
           text: segment.segment_name,
         })
+        }
       }
     },
 
