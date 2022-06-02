@@ -13,7 +13,7 @@
           <template #left>
             <p class="text-subtitle-1 font-weight-regular mb-0">
               Hux is here to help you make better, faster decisions to improve
-              your customer experiences.
+              your {{ configLabel }} experiences.
               <a
                 class="text-decoration-none"
                 href="https://resources.deloitte.com/sites/consulting/offerings/customer-marketing/advertising-marketing-commerce/Pages/Hux-by-Deloitte-Digital.aspx"
@@ -40,7 +40,7 @@
               class="pa-6"
             >
               <h3 class="text-h3 black--text text--darken-4">
-                Total customers
+                Total Hux IDs
                 <span class="text-body-1 black--text text--lighten-4">
                   (last 9 months)
                 </span>
@@ -75,7 +75,7 @@
                 </template>
                 <template #subtitle>
                   <div>
-                    Total customer chart will appear here once Customer data is
+                    Total Hux IDs chart will appear here once Hux IDs data is
                     available.
                   </div>
                 </template>
@@ -87,7 +87,7 @@
                 :size="50"
               >
                 <template #title>
-                  <div>Total customer chart is currently unavailable</div>
+                  <div>Total Hux IDs chart is currently unavailable</div>
                 </template>
                 <template #subtitle>
                   <div>
@@ -334,6 +334,12 @@ export default {
 
     numNotifications() {
       return this.notifications ? this.notifications.length : 0
+    },
+
+    configLabel() {
+      return this.demoConfiguration?.demo_mode
+        ? this.demoConfiguration.target.toLowerCase()
+        : "customers"
     },
   },
   beforeCreate() {

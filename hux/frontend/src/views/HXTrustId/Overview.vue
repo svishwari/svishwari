@@ -1,6 +1,6 @@
 <template>
   <div class="white overview-card pa-6 pt-4">
-    <div class="text-h3">HX TrustID scores for all customers</div>
+    <div class="text-h3">HX TrustID scores for all consumers</div>
     <div class="d-flex justify-start">
       <div class="mr-4">
         <tooltip max-width="256px">

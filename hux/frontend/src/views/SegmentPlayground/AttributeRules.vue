@@ -46,7 +46,7 @@
             text--darken-4 text-body-2
           "
         >
-          <span class="mr-2">Include customers that match &nbsp;</span>
+          <span class="mr-2">Include consumers that match &nbsp;</span>
           <hux-switch
             v-model="rule.operand"
             :is-disabled="readMode ? true : false"
