@@ -321,12 +321,12 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Insight IQ",
+        db_c.CONFIGURATION_FIELD_NAME: "InSightIQ",
         db_c.CONFIGURATION_FIELD_ICON: "insight_iq",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your consumer profiles"
-        " with this collections of data sources at"
-        " the individual level enabling an enhanced consumer experience.",
+        " with our collection of third party data to "
+        "have a deeper understanding of your consumers.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -342,7 +342,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Trust ID",
+        db_c.CONFIGURATION_FIELD_NAME: "HX Trust ID",
         db_c.CONFIGURATION_FIELD_ICON: "trust_id",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain "
@@ -353,7 +353,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Search AI",
+        db_c.CONFIGURATION_FIELD_NAME: "Search.AI",
         db_c.CONFIGURATION_FIELD_ICON: "search_ai",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to"
