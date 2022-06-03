@@ -190,6 +190,7 @@ export default {
     },
     menu: false,
     prevItem: null,
+    isBrodcasterOn: true,
   }),
 
   computed: {
@@ -225,6 +226,7 @@ export default {
   async mounted() {
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
+
   },
 
   updated() {
@@ -303,9 +305,12 @@ export default {
       this.updateClientInfo()
     },
     getCurrentConfiguration() {
-      this.$root.$on("update-config-settings", () =>
+      if (this.isBrodcasterOn) {
+       this.$root.$on("update-config-settings", () =>
         this.setDemoConfiguration()
       )
+      }
+      this.isBrodcasterOn = false
       this.updateClientInfo()
     },
   },
