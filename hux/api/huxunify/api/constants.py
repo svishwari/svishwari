@@ -1428,38 +1428,46 @@ SAMPLE_NAVIGATION_SETTINGS = {
     db_c.CONFIGURATION_FIELD_SETTINGS: [
         {
             db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+            db_c.CONFIGURATION_FIELD_LABEL: "Data Management",
             db_c.CONFIGURATION_FIELD_ENABLED: True,
             db_c.CONFIGURATION_FIELD_CHILDREN: [
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Data Sources",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Identity Resolution",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
             ],
         },
         {
             db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+            db_c.CONFIGURATION_FIELD_LABEL: "Decisioning",
             db_c.CONFIGURATION_FIELD_ENABLED: True,
             db_c.CONFIGURATION_FIELD_CHILDREN: [
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Models",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Models",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 }
             ],
         },
         {
             db_c.CONFIGURATION_FIELD_NAME: "Insights",
+            db_c.CONFIGURATION_FIELD_LABEL: "Insights",
             db_c.CONFIGURATION_FIELD_ENABLED: True,
             db_c.CONFIGURATION_FIELD_CHILDREN: [
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Customers",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Customers",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Email Deliverability",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Email Deliverability",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
             ],
