@@ -452,12 +452,12 @@ export default {
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
     },
-    handleChange(event, engagementID, audienceID, destinationID) {
+    handleChange(...args) {
       const data = {
-        engagement_id: engagementID,
-        audience_id: audienceID,
-        destination_id: destinationID,
-        value: event,
+        engagement_id: args[1],
+        audience_id: args[2],
+        destination_id: args[3],
+        value: args[0],
       }
       this.replaceAudience(data)
     },
