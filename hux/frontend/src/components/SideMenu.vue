@@ -226,7 +226,6 @@ export default {
   async mounted() {
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
-
   },
 
   updated() {
@@ -306,9 +305,9 @@ export default {
     },
     getCurrentConfiguration() {
       if (this.isBrodcasterOn) {
-       this.$root.$on("update-config-settings", () =>
-        this.setDemoConfiguration()
-      )
+        this.$root.$on("update-config-settings", () =>
+          this.setDemoConfiguration()
+        )
       }
       this.isBrodcasterOn = false
       this.updateClientInfo()
