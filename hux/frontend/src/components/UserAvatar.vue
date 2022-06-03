@@ -4,8 +4,8 @@
       <span
         class="d-flex cursor-pointer mr-6 d-flex align-center user-avatar"
         data-e2e="profile-dropdown"
-        v-on="on"
         :class="{ 'menu-active': menu }"
+        v-on="on"
       >
         <v-avatar
           class="mr-2"

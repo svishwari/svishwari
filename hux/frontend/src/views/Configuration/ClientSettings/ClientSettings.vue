@@ -50,8 +50,8 @@
                 @on-select="onSelectMenuItem"
               />
             </div>
-            <div v-if="showSubCategories" class="divider-class mt-1"></div>
-            <div v-if="showSubCategories" class="black--text text-h6 mt-4">
+            <div v-if="showSubCategories" class="divider-class mt-2"></div>
+            <div v-if="showSubCategories" class="black--text text-h6 mt-6">
               <div
                 v-for="option in labelOptions"
                 :key="option.key"
@@ -209,12 +209,12 @@ export default {
     },
     isDisabled() {
       return this.showConfiguration &&
-          this.isConfigurationUpdated &&
-          this.finalSelection.retailOptions !== "Select" &&
-          this.finalSelection.customerOptions !== "Select" &&
-          this.finalSelection.conversionOptions !== "Select"
-          ? false
-          : true
+        this.isConfigurationUpdated &&
+        this.finalSelection.retailOptions !== "Select" &&
+        this.finalSelection.customerOptions !== "Select" &&
+        this.finalSelection.conversionOptions !== "Select"
+        ? false
+        : true
     },
     async updatedConfigSettings() {
       this.updateCurrentConfiguration()
@@ -267,6 +267,18 @@ export default {
     button {
       margin-top: 0px !important;
       margin-left: 0px !important;
+    }
+  }
+  ::v-deep .rounded-lg {
+    .hux-dropdown {
+      button {
+        .v-btn__content {
+          .text-ellipsis {
+            position: relative;
+            bottom: 2px !important;
+          }
+        }
+      }
     }
   }
   .divider-class {

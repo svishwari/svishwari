@@ -16,6 +16,7 @@
           :panel-list-items="panelListItems"
           header="Segment Playground user guide"
           :right-position="!isEdit ? '0rem' : '5rem'"
+          max-height="calc(100vh - 363px)"
         />
         <v-menu
           v-if="isEdit"
