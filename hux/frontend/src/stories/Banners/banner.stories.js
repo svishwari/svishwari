@@ -15,7 +15,7 @@ export default {
       options: ["small", "large"],
       control: { type: "select" },
     },
-    height: {control: { type: "number" } },
+    height: { control: { type: "number" } },
     width: { control: { type: "number" } },
     outlined: {
       control: { type: "boolean" },
@@ -44,4 +44,4 @@ const Template = (args, { argTypes }) => ({
   `,
 })
 
-export const myBanner = Template.bind({})
+export const Default = Template.bind({})

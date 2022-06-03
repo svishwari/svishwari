@@ -8,12 +8,18 @@
     :width="getWidth"
     class="pl-8 pr-8 banner-padding"
   >
+    <template #prepend>
+      <icon :type="getIcon" :size="24" :color="type" class="mr-2" />
+    </template>
+    <template #close="{ toggle }">
+      <icon type="cross" :size="8" color="black" class="mr-2" @click="toggle" />
+    </template>
     <div class="banner-label" :style="cssVars">{{ label }}</div>
   </v-alert>
 </template>
 
 <script>
-import Icon from '../icons/Icon2.vue'
+import Icon from "../icons/Icon2.vue"
 export default {
   name: "Banner",
   components: { Icon },
@@ -48,14 +54,32 @@ export default {
   },
   computed: {
     getHeight() {
-      return this.height ? this.height : (this.size == "large" ? 72 : 40)
+      return this.height ? this.height : this.size == "large" ? 72 : 40
     },
     getWidth() {
-      return this.width ? this.width : (this.size == "large" ? 1216 : 710)
+      return this.width ? this.width : this.size == "large" ? 1216 : 710
     },
     cssVars() {
-      return { width: this.getWidth - 140 + 'px' }
-    }
+      return { width: this.getWidth - 104 + "px" }
+    },
+    getIcon() {
+      let iconToRet = ""
+      switch (this.type) {
+        case "warning":
+          iconToRet = "exclamation_outline"
+          break
+        case "success":
+          iconToRet = "success"
+          break
+        case "error":
+          iconToRet = "sad-face"
+          break
+        default:
+          iconToRet = "success"
+          break
+      }
+      return iconToRet
+    },
   },
 }
 </script>
