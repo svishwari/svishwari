@@ -384,21 +384,15 @@ export default {
       replaceAudience: "audiences/replaceAudienceToggle",
     }),
     formatText: formatText,
-    handleChange(
-      event,
-      engagementID,
-      audiencesList,
-      audienceName,
-      destinationID
-    ) {
-      const audienceID = audiencesList.find(
-        (item) => item.name == audienceName
+    handleChange(...args) {
+      const audienceID = args[2].find(
+        (item) => item.name == args[3]
       ).id
       const data = {
-        engagement_id: engagementID,
+        engagement_id: args[1],
         audience_id: audienceID,
-        destination_id: destinationID,
-        value: event,
+        destination_id: args[4],
+        value: args[0],
       }
       this.replaceAudience(data)
     },
