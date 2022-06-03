@@ -36,6 +36,7 @@ RETURN_EMPTY_AUDIENCE_FILE = "RETURN_EMPTY_AUDIENCE_FILE"
 JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
 CDP_SERVICE = "CDP_SERVICE"
 CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
+DECISIONING_URL = "DECISIONING_URL"
 TECTON_API_KEY = "TECTON_API_KEY"
 TECTON_API = "TECTON_API"
 MOCK_TECTON = "MOCK_TECTON"
@@ -1074,6 +1075,7 @@ LATEST_VERSION = "latest_version"
 VERSION = "version"
 FULCRUM_DATE = "fulcrum_date"
 LAST_TRAINED = "last_trained"
+TRAINED_DATE = "trained_date"
 LOOKBACK_WINDOW = "lookback_window"
 PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
@@ -1085,7 +1087,7 @@ MIN = "min"
 MAX = "max"
 LCUV = "lcuv"
 MCUV = "mcuv"
-UNIQUE_VALUE = "unique_value"
+UNIQUE_VALUES = "unique_value"
 RECORDS_NOT_NULL = "records_not_null"
 POPULARITY = "popularity"
 BUCKET = "bucket"
@@ -1252,7 +1254,7 @@ PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
         MIN: random.uniform(1.0, 3.0),
         MAX: random.uniform(3.0, 7.0),
         FEATURE_SERVICE: PURCHASE,
-        UNIQUE_VALUE: random.randint(1, 100),
+        UNIQUE_VALUES: random.randint(1, 100),
         LCUV: random.choice(["Women", "Gasoline", "Clothing", "Cars"]),
         MCUV: random.choice(["Men", "Water", "Grocery", "Home accesories"]),
     }

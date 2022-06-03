@@ -43,6 +43,7 @@ azure-mgmt-batch = {version="==16.0.0", index="pypi"}
 azure-keyvault-secrets = {version="==4.3.0", index="pypi"}
 azure-identity = {version="==1.7.1", index="pypi"}
 Flask-Limiter = {version="==2.4.0", index="pypi"}
+huxmodelclient = "==0.4.2"
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
