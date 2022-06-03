@@ -7,7 +7,7 @@ from bson import ObjectId
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
-    ModelDashboardSchema,
+    ModelOverviewSchema,
 )
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
@@ -95,7 +95,7 @@ class TestModelSchema(TestCase):
             ),
         )
 
-        response = ModelDashboardSchema().dump(doc)
+        response = ModelOverviewSchema().dump(doc)
 
         self.assertTrue(re.search("Consumer", response[api_c.MODEL_NAME]))
         self.assertFalse(re.search("Customer", response[api_c.MODEL_NAME]))
