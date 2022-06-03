@@ -385,9 +385,7 @@ export default {
     }),
     formatText: formatText,
     handleChange(...args) {
-      const audienceID = args[2].find(
-        (item) => item.name == args[3]
-      ).id
+      const audienceID = args[2].find((item) => item.name == args[3]).id
       const data = {
         engagement_id: args[1],
         audience_id: audienceID,
