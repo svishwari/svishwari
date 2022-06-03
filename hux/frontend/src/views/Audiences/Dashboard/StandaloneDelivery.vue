@@ -253,7 +253,7 @@ export default {
           value: "size",
           width: "20%",
           hoverTooltip:
-            "Average order value for all customers (known and anyonymous) for all time.",
+            "Average order value for all consumers (known and anyonymous) for all time.",
         },
         {
           text: "Last delivery",

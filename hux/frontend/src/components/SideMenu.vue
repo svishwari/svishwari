@@ -4,7 +4,7 @@
     floating
     :permanent="true"
     :mini-variant.sync="isMini"
-    mini-variant-width="90"
+    mini-variant-width="72"
     width="220"
     class="side-nav-bar"
   >
@@ -15,24 +15,23 @@
         class="d-flex ma-6"
         data-e2e="click-outside"
       />
-      <v-menu
-        v-if="!isMini"
-        v-model="menu"
-        content-class="ml-n3"
-        close-on-click
-        offset-y
-      >
+      <v-menu v-model="menu" content-class="ml-n3" close-on-click offset-y>
         <template #activator="{ on }">
           <div class="pl-4 client py-2 mb-2" v-on="on">
             <span class="d-flex align-center justify-space-between">
               <span class="d-flex align-center black--text text-h4">
-                <div v-if="isDemoMode" class="dot mr-2">
-                  <logo :type="client.logo" :size="20" />
+                <div v-if="isDemoMode" :class="isMini ? 'dotMini' : 'dot mr-2'">
+                  <logo :type="client.logo" :size="isMini ? 40 : 20" />
                 </div>
-                <logo v-else :type="client.logo" :size="24" class="mr-2" />
-                <span class="ellipsis">{{ client.name }}</span>
+                <logo
+                  v-else
+                  :type="client.logo"
+                  :size="isMini ? 40 : 24"
+                  :class="isMini ? '' : 'ml-1 mr-2'"
+                />
+                <span v-if="!isMini" class="ellipsis">{{ client.name }}</span>
               </span>
-              <span class="mr-3">
+              <span v-if="!isMini" class="mr-3">
                 <icon
                   type="chevron-down"
                   :size="14"
@@ -185,7 +184,7 @@ export default {
   data: () => ({
     // TODO: integrate with API endpoint for configuring this in the UI
     client: {
-      name: "Retail Client",
+      name: "Retail Co",
       logo: "client",
     },
     menu: false,
@@ -225,6 +224,9 @@ export default {
   async mounted() {
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
+  },
+
+  updated() {
     this.getCurrentConfiguration()
   },
 
@@ -285,12 +287,12 @@ export default {
     updateClientInfo() {
       if (this.isDemoMode) {
         this.client = {
-          name: `${this.demoConfiguration.industry} Client`,
+          name: `${this.demoConfiguration.industry} Co`,
           logo: this.demoConfiguration?.industry.toLowerCase(),
         }
       } else {
         this.client = {
-          name: "Retail Client",
+          name: "Retail Co",
           logo: "client",
         }
       }
@@ -433,6 +435,11 @@ export default {
   background: var(--v-white-base);
   text-align: -webkit-center;
   padding-top: 2px !important;
+}
+.dotMini {
+  @extend .dot;
+  width: 40px;
+  height: 40px;
 }
 .ellipsis {
   overflow: hidden;

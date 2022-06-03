@@ -54,9 +54,9 @@ from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.courier import (
-    get_destination_config,
     get_audience_destination_pairs,
     deliver_audience_to_destination,
+    create_delivery_job,
 )
 
 delivery_bp = Blueprint("/", import_name=__name__)
@@ -210,21 +210,24 @@ class EngagementDeliverDestinationView(SwaggerView):
                 destination_id,
             ]:
                 continue
-            batch_destination = get_destination_config(
-                database,
-                audience_id=pair[0],
-                destination=pair[1],
-                engagement_id=engagement_id,
-                username=user[api_c.USER_NAME],
-                replace_audience=Validation.validate_bool(replace_audience)
-                if replace_audience
-                else pair[1].get(db_c.REPLACE_AUDIENCE, False),
-            )
-            batch_destination.register()
-            batch_destination.submit()
+
             delivery_job_ids.append(
-                str(batch_destination.audience_delivery_job_id)
+                str(
+                    create_delivery_job(
+                        database,
+                        audience_id=pair[0],
+                        destination=pair[1],
+                        engagement_id=engagement_id,
+                        username=user[api_c.USER_NAME],
+                        replace_audience=Validation.validate_bool(
+                            replace_audience
+                        )
+                        if replace_audience
+                        else pair[1].get(db_c.REPLACE_AUDIENCE, False),
+                    )
+                )
             )
+
         logger.info(
             "User with username %s successfully created delivery jobs %s.",
             user[api_c.USER_NAME],
@@ -342,20 +345,19 @@ class EngagementDeliverAudienceView(SwaggerView):
         ):
             if pair[0] != audience_id:
                 continue
-            batch_destination = get_destination_config(
-                database=database,
-                audience_id=pair[0],
-                destination=pair[1],
-                engagement_id=engagement_id,
-                username=user[api_c.USER_NAME],
-                replace_audience=pair[1].get(db_c.REPLACE_AUDIENCE)
-                if pair[1].get(db_c.REPLACE_AUDIENCE)
-                else False,
-            )
-            batch_destination.register()
-            batch_destination.submit()
             delivery_job_ids.append(
-                str(batch_destination.audience_delivery_job_id)
+                str(
+                    create_delivery_job(
+                        database,
+                        audience_id=pair[0],
+                        destination=pair[1],
+                        engagement_id=engagement_id,
+                        username=user[api_c.USER_NAME],
+                        replace_audience=pair[1].get(db_c.REPLACE_AUDIENCE)
+                        if pair[1].get(db_c.REPLACE_AUDIENCE)
+                        else False,
+                    )
+                )
             )
         # create notification
         logger.info(
@@ -477,13 +479,15 @@ class EngagementDeliverView(SwaggerView):
                 continue
             if audiences and pair[0] in audiences:
                 continue
-            batch_destination = get_destination_config(
-                database, *pair, engagement_id, username=user[api_c.USER_NAME]
-            )
-            batch_destination.register()
-            batch_destination.submit()
             delivery_job_ids.append(
-                str(batch_destination.audience_delivery_job_id)
+                str(
+                    create_delivery_job(
+                        database,
+                        *pair,
+                        engagement_id,
+                        username=user[api_c.USER_NAME],
+                    )
+                )
             )
         # create notification
         create_notification(

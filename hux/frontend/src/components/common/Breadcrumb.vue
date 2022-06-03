@@ -87,6 +87,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .breadcrumb {
+  cursor: text;
   ::v-deep .v-breadcrumbs__divider {
     padding: 0;
   }

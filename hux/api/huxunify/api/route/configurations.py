@@ -19,6 +19,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     requires_access_levels,
 )
+from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import get_db_client
 from huxunify.api import constants as api_c
 
@@ -198,9 +199,8 @@ class ConfigurationsNavigation(SwaggerView):
                     db_c.USER_DEMO_CONFIG
                 ].get(api_c.TARGET, api_c.CUSTOMERS_TAG.title())
 
-        return (
-            jsonify(NavigationSettingsSchema().dump(nav_settings_doc)),
-            HTTPStatus.OK.value,
+        return HuxResponse.OK(
+            data=nav_settings_doc, data_schema=NavigationSettingsSchema()
         )
 
 

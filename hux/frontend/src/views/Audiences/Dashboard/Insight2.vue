@@ -431,6 +431,7 @@
       :audience-id="audienceId"
       :toggle="showDeliveryHistoryDrawer"
       data-e2e="delivery-history-drawer"
+      class="delivery-history-drawer-audience"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
 
@@ -607,7 +608,7 @@ export default {
           subtitle: "",
           icon: "targetsize",
           titleTooltip:
-            "Current number of customers who fit the selected attributes.",
+            "Current number of consumers who fit the selected attributes.",
           tooltipWidth: "231",
         },
         age: { title: "Age range", subtitle: "", icon: "birth" },
@@ -1113,7 +1114,6 @@ export default {
       await this.loadAudienceInsights()
     },
     async triggerRemoveDestination(event) {
-      console.log("event", event.destination)
       this.deleteActionData = {
         engagementId: event.destination.engagementId,
         audienceId: this.audienceId,
@@ -1289,6 +1289,9 @@ export default {
       margin: 0;
       list-style-type: none;
     }
+  }
+  .delivery-history-drawer-audience {
+    width: 665px !important;
   }
   .audience-summary {
     padding: 10px 15px;
