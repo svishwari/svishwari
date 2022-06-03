@@ -468,13 +468,13 @@ export default {
       isFilterToggled: false,
       numFiltersSelected: 1,
       api_params: {
-        start_date: new Date(),
-        end_date: new Date(),
+        start_date: null,
+        end_date: null,
         status: [],
         type: null,
         name: null,
       },
-      selected_time: "Today",
+      selected_time: "All time",
     }
   },
 
@@ -758,25 +758,25 @@ export default {
     },
 
     setDefaultData() {
-      let today_date = new Date()
-      let getStartDate = new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate()
-      )
-      let getEndDate = new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate()
-      )
-      this.api_params.start_date = this.$options.filters.Date(
-        getStartDate,
-        "YYYY-MM-DD"
-      )
-      this.api_params.end_date = this.$options.filters.Date(
-        getEndDate,
-        "YYYY-MM-DD"
-      )
+      // let today_date = new Date()
+      // let getStartDate = new Date(
+      //   today_date.getFullYear(),
+      //   today_date.getMonth(),
+      //   today_date.getDate()
+      // )
+      // let getEndDate = new Date(
+      //   today_date.getFullYear(),
+      //   today_date.getMonth(),
+      //   today_date.getDate()
+      // )
+      // this.api_params.start_date = this.$options.filters.Date(
+      //   getStartDate,
+      //   "YYYY-MM-DD"
+      // )
+      // this.api_params.end_date = this.$options.filters.Date(
+      //   getEndDate,
+      //   "YYYY-MM-DD"
+      // )
       this.api_params.type = this.selectedDataSource?.type
       this.api_params.name = this.dataSourceFeedName
     },

@@ -1,7 +1,7 @@
 <template>
   <drawer v-model="localToggle" :width="600" :loading="loading">
     <template #header-left>
-      <div class="d-flex align-center">
+      <div class="d-flex align-center pl-2">
         <icon type="team-member-drawer" :size="32" class="mr-3" />
         <h3 class="text-h2">Edit {{ data.display_name }}</h3>
       </div>
@@ -120,12 +120,12 @@
         </v-row>
         <v-row>
           <v-col class="pa-0 del-text">
-            <v-btn class="remove-button" @click="$emit('onDelete')">
+            <v-btn class="remove-button px-0" @click="$emit('onDelete')">
               <hux-icon
                 type="delete-button"
                 :size="18"
                 color="error"
-                class="mx-4"
+                class="mr-4"
               />
               <span class="text-body-1 error--text">
                 Remove this user from this team
@@ -332,6 +332,7 @@ export default {
 .del-text {
   display: flex;
   margin-top: 68px;
+  margin-left: 12px;
   align-items: center;
 }
 .remove-button {
