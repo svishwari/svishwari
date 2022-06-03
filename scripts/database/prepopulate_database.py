@@ -238,7 +238,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Monitor data quality "
         "throughout ingestion and create a peristent"
-        " identifier and profile for every consumer",
+        " identifier and profile for every consumer.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
