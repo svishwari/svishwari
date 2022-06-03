@@ -1353,15 +1353,25 @@ TEST_NAVIGATION_SETTINGS = {
             "name": "Data Management",
             "label": "Data Management",
             "children": [
-                {"name": "Data Sources", "label": "Data Sources", "enabled": False},
-                {"name": "Identity Resolution", "label": "Identity Resolution", "enabled": True},
+                {
+                    "name": "Data Sources",
+                    "label": "Data Sources",
+                    "enabled": False,
+                },
+                {
+                    "name": "Identity Resolution",
+                    "label": "Identity Resolution",
+                    "enabled": True,
+                },
             ],
         },
         {
             "enabled": True,
             "name": "Decisioning",
             "label": "Decisioning",
-            "children": [{"name": "Models", "label": "Models", "enabled": True}],
+            "children": [
+                {"name": "Models", "label": "Models", "enabled": True}
+            ],
         },
     ]
 }
