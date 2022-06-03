@@ -14,6 +14,7 @@ Welcome to HUX Unified Solution's documentation!
    release_notes/release_notes
    modules
    data_management
+   trust_id
 
 Indices and tables
 ==================

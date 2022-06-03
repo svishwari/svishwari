@@ -25,7 +25,7 @@
           </div>
           <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
             Measure the factors of trust, predict how trust sentiment will
-            impact customer &amp; employee behaviors, and identify actions to
+            impact consumer &amp; employee behaviors, and identify actions to
             (re)build trust.
           </div>
         </template>
@@ -104,7 +104,7 @@
                         black--text
                         text--base
                       "
-                      >Compare segments to all customers</span
+                      >Compare segments to all consumers</span
                     >
                     <hux-switch
                       v-model="switchSegment"
@@ -462,7 +462,7 @@ export default {
       tooltips: {
         trust_id: "TrustID is scored on a scale between -100 to 100",
         humanity:
-          "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
+          "Humanity is demonstrating empathy and kindness towards consumers, and treating everyone fairly. It is scored on a scale between -100 to 100",
         transparency:
           "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
         reliability:
