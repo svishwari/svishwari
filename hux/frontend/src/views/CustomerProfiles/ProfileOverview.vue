@@ -144,7 +144,7 @@ export default {
       return [
         {
           id: 1,
-          title: "Customer length",
+          title: "Active since",
           value: this.profile["since"],
           format: "date-relative",
           e2e: "customer-length",
@@ -156,7 +156,7 @@ export default {
           value: this.profile["match_confidence"],
           format: this.profile["match_confidence"] ? "slider" : "date-relative",
           hoverTooltip:
-            "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
+            "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given consumer.",
           e2e: "match-confidence",
           width: "175",
         },
@@ -169,7 +169,7 @@ export default {
           value: dayjs().subtract(this.profile["conversion_time"], "month"),
           format: "date-relative",
           hoverTooltip:
-            "The average time customer takes to convert to a purchase.",
+            "The average time consumer takes to convert to a purchase.",
           e2e: "conversion-time",
           width: "160",
         },

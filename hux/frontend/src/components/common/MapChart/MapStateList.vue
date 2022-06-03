@@ -108,7 +108,7 @@ export default {
           value: "avg_spend",
           width: "30%",
           hoverTooltip:
-            "Average order value for all customers (known and anyonymous) for all time.",
+            "Average order value for all consumers (known and anyonymous) for all time.",
         },
         {
           text: "Population %",

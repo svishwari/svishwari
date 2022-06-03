@@ -108,9 +108,9 @@ export default {
   data() {
     return {
       localDrawer: this.value,
-      selectedToday: true,
+      selectedToday: false,
       selectedYesterday: false,
-      selectedTimeType: null,
+      selectedTimeType: "All time",
       selectedStatus: [],
       time: [
         {
@@ -173,9 +173,9 @@ export default {
   },
   methods: {
     clearFilter() {
-      this.selectedToday = true
+      this.selectedToday = false
       this.selectedYesterday = false
-      this.selectedTimeType = null
+      this.selectedTimeType = "All time"
       this.selectedStatus = []
     },
     apply() {
