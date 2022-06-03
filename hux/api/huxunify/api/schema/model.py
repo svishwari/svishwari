@@ -1,6 +1,7 @@
-"""Schemas for the Model Object"""
-
+"""Schemas for the Model Object."""
+import re
 from flask_marshmallow import Schema
+from marshmallow import post_dump
 from marshmallow.fields import Str, Int, Float, Nested, Bool, List
 
 from huxunifylib.database import constants as db_c
@@ -11,7 +12,7 @@ from huxunify.api import constants as api_c
 class ModelSchema(Schema):
     """Model Schema"""
 
-    id = Str()
+    id = Str(attribute=db_c.ID)
     name = Str(required=True)
     description = Str()
     status = Str()
@@ -27,6 +28,33 @@ class ModelSchema(Schema):
     is_enabled = Bool(attribute=db_c.ENABLED, required=False)
     is_added = Bool(attribute=db_c.ADDED, required=False)
 
+    # pylint: disable=no-self-use
+    # pylint: disable=unused-argument
+    @post_dump
+    def post_serialize(self, model: dict, many: bool = False) -> dict:
+        """Process the schema before serializing.
+
+        Args:
+            model (dict): The model object.
+            many (bool): If there are many to process.
+
+        Returns:
+            dict: Returns model object.
+        """
+
+        replaced_dict = replace_customer_in_model_data(
+            model.get(api_c.NAME), model.get(api_c.DESCRIPTION)
+        )
+
+        model[api_c.NAME] = replaced_dict.get(
+            api_c.NAME, model.get(api_c.NAME)
+        )
+        model[api_c.DESCRIPTION] = replaced_dict.get(
+            api_c.DESCRIPTION, model.get(api_c.DESCRIPTION)
+        )
+
+        return model
+
 
 class ModelVersionSchema(Schema):
     """Model Version Schema"""
@@ -41,6 +69,33 @@ class ModelVersionSchema(Schema):
     lookback_window = Int()
     prediction_window = Int()
     fulcrum_date = DateTimeWithZ()
+
+    # pylint: disable=no-self-use
+    # pylint: disable=unused-argument
+    @post_dump
+    def post_serialize(self, model: dict, many: bool = False) -> dict:
+        """Process the schema before serializing.
+
+        Args:
+            model (dict): The model object.
+            many (bool): If there are many to process.
+
+        Returns:
+            dict: Returns model object.
+        """
+
+        replaced_dict = replace_customer_in_model_data(
+            model.get(api_c.NAME), model.get(api_c.DESCRIPTION)
+        )
+
+        model[api_c.NAME] = replaced_dict.get(
+            api_c.NAME, model.get(api_c.NAME)
+        )
+        model[api_c.DESCRIPTION] = replaced_dict.get(
+            api_c.DESCRIPTION, model.get(api_c.DESCRIPTION)
+        )
+
+        return model
 
 
 class FeatureSchema(Schema):
@@ -105,6 +160,33 @@ class ModelOverviewSchema(Schema):
     description = Str()
     performance_metric = Nested(PerformanceMetricSchema)
 
+    # pylint: disable=no-self-use
+    # pylint: disable=unused-argument
+    @post_dump
+    def post_serialize(self, model: dict, many: bool = False) -> dict:
+        """Process the schema before serializing.
+
+        Args:
+            model (dict): The model object.
+            many (bool): If there are many to process.
+
+        Returns:
+            dict: Returns model object.
+        """
+
+        replaced_dict = replace_customer_in_model_data(
+            model.get(api_c.MODEL_NAME), model.get(api_c.DESCRIPTION)
+        )
+
+        model[api_c.MODEL_NAME] = replaced_dict.get(
+            api_c.NAME, model.get(api_c.MODEL_NAME)
+        )
+        model[api_c.DESCRIPTION] = replaced_dict.get(
+            api_c.DESCRIPTION, model.get(api_c.DESCRIPTION)
+        )
+
+        return model
+
 
 class ModelRequestPostSchema(Schema):
     """Model Request Post Schema"""
@@ -141,3 +223,37 @@ class ModelPipelinePerformanceSchema(Schema):
 
     training = Nested(ModelPipelineRunDataSchema)
     scoring = Nested(ModelPipelineRunDataSchema)
+
+
+def replace_customer_in_model_data(
+    model_name: str, model_description: str
+) -> dict:
+    """Function to replace the words "customer" and "customers" to "consumer"
+    and "consumers" respectively regardless of case sensitivity in a model name
+    and description.
+
+    Args:
+        model_name (str): The model name.
+        model_description (str): The model description.
+
+    Returns:
+        dict: Returns the replaced model name and description as a dict.
+    """
+
+    # replace all occurrences of word "customer" to "consumer" in name and
+    # description field regardless of case sensitiveness
+    match_replacements = {"customer": "consumer", "Customer": "Consumer"}
+    pattern_regex = re.compile("|".join(match_replacements.keys()))
+
+    return_dict = {}
+
+    if model_name:
+        return_dict[api_c.NAME] = pattern_regex.sub(
+            lambda x: match_replacements[x.group(0)], model_name
+        )
+    if model_description:
+        return_dict[api_c.DESCRIPTION] = pattern_regex.sub(
+            lambda x: match_replacements[x.group(0)], model_description
+        )
+
+    return return_dict

@@ -5,6 +5,7 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
+from huxunifylib.database.collection_management import get_documents
 from huxunifylib.database.delivery_platform_management import (
     get_all_delivery_platforms,
 )
@@ -91,3 +92,23 @@ class TestPrepopulateDatabase(TestCase):
             self.assertIn(x["name"], list_delivery_platform_names)
             for x in delivery_platforms
         ]
+
+    def test_empty_collection_creation(self):
+        """Test creation of empty collection"""
+        collection_names = [
+            db_c.DELIVERY_JOBS_COLLECTION,
+            db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+        ]
+        pd.create_empty_collections(self.database, collection_names)
+
+        collections = self.database[
+            db_c.DATA_MANAGEMENT_DATABASE
+        ].list_collection_names()
+
+        self.assertTrue(collections)
+        for collection_name in collection_names:
+            self.assertIn(collection_name, collections)
+
+        for collection_name in collection_names:
+            documents = get_documents(self.database, collection_name)
+            self.assertEqual(0, documents["total_records"])

@@ -9,7 +9,7 @@
         :class="piiaccess ? 'py-3 d-flex justify-space-between' : 'py-5'"
         data-e2e="customer-insights"
       >
-        <h3 class="text-h3">Customer insights</h3>
+        <h3 class="text-h3">Insights</h3>
         <tooltip v-if="!piiaccess" position-top>
           <icon type="ds_lock_special" :size="17" color="black" class="ml-2" />
           <template #tooltip>

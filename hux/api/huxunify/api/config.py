@@ -80,8 +80,11 @@ class Config:
         MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
 
     # OKTA CONFIGURATION
-    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
     OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
+    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
+    OKTA_REDIRECT_URI = config(api_c.OKTA_REDIRECT_URI, default="")
+    OKTA_TEST_USER_NAME = config(api_c.OKTA_TEST_USER_NAME, default="")
+    OKTA_TEST_USER_PW = config(api_c.OKTA_TEST_USER_PW, default="")
 
     # DECISIONING CONFIGURATION
     DECISIONING_URL = config(api_c.DECISIONING_URL, default="")

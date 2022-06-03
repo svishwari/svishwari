@@ -624,8 +624,7 @@ export default {
       this.confirmDialog.title = "Edit"
       this.confirmDialog.icon = "edit"
       this.confirmDialog.type = "error"
-      this.confirmDialog.subtitle =
-        "Are you sure you want to edit this engagement?"
+      this.confirmDialog.subtitle = `${this.engagementList.name}?`
       this.confirmDialog.btnText = "Yes, edit"
       this.confirmDialog.leftBtnText = "Cancel"
       this.confirmDialog.body = `Are you sure you want to edit this engagement? <br>

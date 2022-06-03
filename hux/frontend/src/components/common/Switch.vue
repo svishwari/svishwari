@@ -64,7 +64,7 @@ export default {
     },
     operandLabel() {
       return this.switchLabels.filter(
-        (label) => label.condition === this.value
+        (label) => label.condition == this.value
       )[0].label
     },
     cssProps() {

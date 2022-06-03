@@ -111,7 +111,7 @@ class EmailDeliverabilityOverview(SwaggerView):
         delivered_open_rate_overview = (
             get_performance_metrics_deliverability_data(
                 database=database,
-                domains=[domains[0]],
+                domains=[domain_name],
                 start_date=datetime.datetime.strptime(
                     start_date, api_c.DEFAULT_DATE_FORMAT
                 ),
