@@ -157,7 +157,7 @@
           data-e2e="request"
           @click="editTeamMember()"
         >
-          Request
+          Save changes
         </hux-button>
       </div>
     </template>
