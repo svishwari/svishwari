@@ -21,7 +21,7 @@ class TestModelSchema(TestCase):
         """Test ModelSchema."""
 
         doc = dict(
-            _id=str(ObjectId()),
+            id=str(ObjectId()),
             name="Customer Lifetime Value",
             is_enabled=True,
             type=db_c.MODEL_TYPE_REGRESSION,
