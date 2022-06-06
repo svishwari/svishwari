@@ -167,7 +167,6 @@ export default {
       existingDemoConfiguration: "users/getDemoConfiguration",
     }),
     isConfigurationUpdated() {
-      console.log(this.initialSelection, this.finalSelection)
       return (
         this.initialDemoMode != this.showConfiguration ||
         this.initialIndustrySelection != this.currentIndustrySelection ||
