@@ -106,7 +106,7 @@ steps:
           CheckNotaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == false'
 
   Get_Version_From_Git_for_RC1_deploy:
-    stage: stg_deploy
+    stage: rc1_deploy
     title: Get promote version and update rc1 manifest
     image: 'huxhub.repo.mgnt.in/yq'
     working_directory: '${{DEPLOY_REPO}}/${{APP_NAME}}/${{CHART_PATH}}/'
@@ -135,7 +135,7 @@ steps:
           CheckNotaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == true'
 
   Artifact_Copy_to_RC1:
-    stage: stg_deploy
+    stage: rc1_deploy
     title: Copy Artifactory artifact to rc1 environment
     type: deloittehux/jfrog-artifact-copy
     arguments:
