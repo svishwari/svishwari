@@ -61,9 +61,9 @@ steps:
         all:
           variableSet: '"${{TRIGGER_NAME}}" == "dev_deploy"'
 
-  Get_Version_From_Git_for_Stg_deploy:
+  Get_ImageTag_From_Git_for_Stg_deploy:
     stage: stg_deploy
-    title: Get promote version and update
+    title: Get promote version and update stg manifest
     image: 'huxhub.repo.mgnt.in/yq'
     working_directory: '${{DEPLOY_REPO}}/${{APP_NAME}}/${{CHART_PATH}}/'
     commands:
@@ -105,25 +105,50 @@ steps:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
           CheckNotaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == false'
 
-  ChangeManifest_RC1:
-    stage: rc1_deploy
-    title: Update image tag for rc1 values file
+  Get_Version_From_Git_for_RC1_deploy:
+    stage: stg_deploy
+    title: Get promote version and update rc1 manifest
     image: 'huxhub.repo.mgnt.in/yq'
     working_directory: '${{DEPLOY_REPO}}/${{APP_NAME}}/${{CHART_PATH}}/'
     commands:
+      - export PROMOTE_ENV=$(echo $TRIGGER_NAME | sed -e 's/_promote//g')
+      - echo $PROMOTE_ENV
       - echo ${{DOCKER_TAG}}
-      - for values in $(yq r $VARS_FILE 'delivery.*.RC_VALUES');
-        do yq w -i $values image.tag ${{DOCKER_TAG}};
-        echo $VARS_FILE;
-        echo $values;
-        done
+      - yq r $VARS_FILE "delivery.$PROMOTE_ENV" | sed -e 's/:\ /=/g'
+      - export $(yq r $VARS_FILE "delivery.$PROMOTE_ENV" | sed -e 's/:\ /=/g')
+      - echo $RC_VALUES
+      - export PROMOTE_REVISION=$(yq r $STG_VALUES 'image.tag')
+      - echo $PROMOTE_REVISION
+      - cf_export COMMIT_MESSAGE="Promote to rc1"
+      - cf_export COMMIT_AUTHOR="codefresh"
+      - cf_export PROMOTE_REVISION=$PROMOTE_REVISION
+      - cf_export PROD_REGISTRY=${{PROD_REGISTRY}}
+      - cf_export STG_REGISTRY=${{STG_REGISTRY}}
+      ## Update Manifest
+      - yq w -i $RC_VALUES image.tag ${{DOCKER_TAG}}
     environment:
       - VARS_FILE=${{CF_VOLUME_PATH}}/${{APP_REPO}}/${{SUB_REPO}}/ci/codefresh_vars.yml
     when:
       condition:
         all:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
-          CheckVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == true'
+          CheckNotaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == true'
+
+  Artifact_Copy_to_RC1:
+    stage: stg_deploy
+    title: Copy Artifactory artifact to rc1 environment
+    type: deloittehux/jfrog-artifact-copy
+    arguments:
+      APP_NAME: ${{APP_NAME}}
+      LOWER_REVISION: ${{PROMOTE_REVISION}} 
+      UPPER_REVISION: ${{DOCKER_TAG}}
+      UPPER_REPO: ${{PROD_REGISTRY}}
+      LOWER_REPO: ${{STG_REGISTRY}}
+    when:
+      condition:
+        all:
+          triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
+          CheckNotaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == true'
 
   commit_and_push:
     stage: commit

@@ -122,6 +122,10 @@ steps:
       - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
       - OKTA_ISSUER=${{OKTA_ISSUER}}
       - BUILD_STORYBOOK=${{BUILD_STORYBOOK}}
+    when:
+      branch:
+        ignore:
+          - /^app.*/i
 
   publish_to_artifactory:
     stage: artifactory
@@ -138,7 +142,7 @@ steps:
           - main
           - develop
           # - /^release-[\d].*/i
-          - /^app.*/i
+          # - /^app.*/i
 
   deployment:
     stage: argo_deploy
