@@ -238,7 +238,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Monitor data quality "
         "throughout ingestion and create a peristent"
-        " identifier and profile for every consumer",
+        " identifier and profile for every consumer.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -321,12 +321,12 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Insight IQ",
+        db_c.CONFIGURATION_FIELD_NAME: "InSightIQ",
         db_c.CONFIGURATION_FIELD_ICON: "insight_iq",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your consumer profiles"
-        " with this collections of data sources at"
-        " the individual level enabling an enhanced consumer experience.",
+        " with our collection of third party data to "
+        "have a deeper understanding of your consumers.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -342,7 +342,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Trust ID",
+        db_c.CONFIGURATION_FIELD_NAME: "HX Trust ID",
         db_c.CONFIGURATION_FIELD_ICON: "trust_id",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain "
@@ -353,7 +353,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Search AI",
+        db_c.CONFIGURATION_FIELD_NAME: "Search.AI",
         db_c.CONFIGURATION_FIELD_ICON: "search_ai",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to"
@@ -380,25 +380,30 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_SETTINGS: [
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Home",
+                db_c.CONFIGURATION_FIELD_LABEL: "Home",
                 db_c.CONFIGURATION_FIELD_ICON: "home",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Configuration",
+                db_c.CONFIGURATION_FIELD_LABEL: "Configuration",
                 db_c.CONFIGURATION_FIELD_ICON: "configuration",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+                db_c.CONFIGURATION_FIELD_LABEL: "Data Management",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Data Sources",
                         db_c.CONFIGURATION_FIELD_ICON: "datasource",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Identity Resolution",
                         db_c.CONFIGURATION_FIELD_ICON: "identity-resolution",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
@@ -406,10 +411,12 @@ configurations_constants = [
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+                db_c.CONFIGURATION_FIELD_LABEL: "Decisioning",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Models",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Models",
                         db_c.CONFIGURATION_FIELD_ICON: "models",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     }
@@ -417,25 +424,30 @@ configurations_constants = [
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Orchestration",
+                db_c.CONFIGURATION_FIELD_LABEL: "Orchestration",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Destinations",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Destinations",
                         db_c.CONFIGURATION_FIELD_ICON: "multiple_map_pins",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Segment Playground",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Segment Playground",
                         db_c.CONFIGURATION_FIELD_ICON: "playground",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Audiences",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Audiences",
                         db_c.CONFIGURATION_FIELD_ICON: "audiences",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Engagements",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Engagements",
                         db_c.CONFIGURATION_FIELD_ICON: "speaker_up",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
@@ -443,21 +455,25 @@ configurations_constants = [
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Insights",
+                db_c.CONFIGURATION_FIELD_LABEL: "Insights",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Customers",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Customers",
                         db_c.CONFIGURATION_FIELD_ICON: "customer-profiles",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "HX TrustID",
+                        db_c.CONFIGURATION_FIELD_LABEL: "HX TrustID",
                         db_c.CONFIGURATION_FIELD_ICON: "hx-trustid",
                         db_c.CONFIGURATION_FIELD_SUPERSCRIPT: "TM",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Email Deliverability",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Email Deliverability",
                         db_c.CONFIGURATION_FIELD_ICON: "email_deliverability",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },

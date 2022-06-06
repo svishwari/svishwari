@@ -117,12 +117,13 @@
           v-if="!datafeedErrorState"
           type="lift-table-empty"
           :size="50"
+          class="pt-6"
         >
           <template #title>
-            <div class="h2">No data feeds to show</div>
+            <div class="h2 mb-4">No data feeds to show</div>
           </template>
           <template #subtitle>
-            <div class="body-2">
+            <div class="body-2 pb-4">
               Data feeds will appear here once they have been properly ingested
               and stored in the correct data warehouse location.
             </div>
@@ -354,5 +355,6 @@ export default {
 .data-feed-frame {
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
+  background-size: 90% 60%;
 }
 </style>

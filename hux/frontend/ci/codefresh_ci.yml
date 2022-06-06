@@ -55,7 +55,7 @@ steps:
       branch:
         only:
           - /^app.*/i
-          - /^release-[\d].*/i
+          # - /^release-[\d].*/i
 
   set_global_vars:
     stage: set_env
@@ -122,6 +122,10 @@ steps:
       - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
       - OKTA_ISSUER=${{OKTA_ISSUER}}
       - BUILD_STORYBOOK=${{BUILD_STORYBOOK}}
+    when:
+      branch:
+        ignore:
+          - /^app.*/i
 
   publish_to_artifactory:
     stage: artifactory
@@ -158,5 +162,5 @@ steps:
         only:
           - main
           - develop
-          - /^release-[\d].*/i
+          # - /^release-[\d].*/i
           - /^app.*/i

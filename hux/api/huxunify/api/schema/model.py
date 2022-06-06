@@ -2,8 +2,7 @@
 import re
 from flask_marshmallow import Schema
 from marshmallow import post_dump
-from marshmallow.fields import Str, Int, Float, Nested, Dict, Bool, List
-from marshmallow.validate import OneOf
+from marshmallow.fields import Str, Int, Float, Nested, Bool, List
 
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.custom_schemas import DateTimeWithZ, RoundedFloat
@@ -13,17 +12,17 @@ from huxunify.api import constants as api_c
 class ModelSchema(Schema):
     """Model Schema"""
 
-    id = Str(attribute=db_c.ID)
+    id = Str()
     name = Str(required=True)
     description = Str()
     status = Str()
     latest_version = Str()
     past_version_count = Int()
-    last_trained = DateTimeWithZ()
+    last_trained = DateTimeWithZ(allow_none=True)
     owner = Str()
     lookback_window = Int()
     prediction_window = Int()
-    fulcrum_date = DateTimeWithZ()
+    fulcrum_date = DateTimeWithZ(allow_none=True)
     type = Str()
     category = Str()
     is_enabled = Bool(attribute=db_c.ENABLED, required=False)
@@ -114,7 +113,7 @@ class FeatureSchema(Schema):
     unique_values = Int()
     lcuv = Str()
     mcuv = Str()
-    score = RoundedFloat()
+    score = RoundedFloat(default=None)
 
 
 class ModelLiftSchema(Schema):
@@ -153,14 +152,13 @@ class PerformanceMetricSchema(Schema):
     current_version = Str(example="3.1.2")
 
 
-class ModelDashboardSchema(Schema):
+class ModelOverviewSchema(Schema):
     """Model Dashboard Schema"""
 
     model_type = Str()
     model_name = Str()
     description = Str()
     performance_metric = Nested(PerformanceMetricSchema)
-    shap_data = Dict()
 
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
@@ -200,35 +198,6 @@ class ModelRequestPostSchema(Schema):
         validate=lambda x: x.lower() in [api_c.REQUESTED.lower()],
         required=True,
     )
-
-
-class ModelUpdatePatchSchema(Schema):
-    """Model Update Patch Schema"""
-
-    id = Str(required=True)
-    name = Str(required=True)
-    type = Str()
-    status = Str(
-        validate=lambda x: x.lower()
-        in [api_c.REQUESTED.lower(), api_c.STATUS_ACTIVE.lower()],
-        allow_none=True,
-    )
-    category = Str(
-        validate=OneOf(
-            [
-                db_c.MODEL_CATEGORY_EMAIL,
-                db_c.MODEL_CATEGORY_SALES_FORECASTING,
-                db_c.MODEL_CATEGORY_WEB,
-                db_c.MODEL_CATEGORY_RETENTION,
-                db_c.MODEL_CATEGORY_TRUST_ID,
-                db_c.MODEL_CATEGORY_UNCATEGORIZED,
-            ]
-        ),
-        required=False,
-        allow_none=True,
-    )
-    description = Str(required=False)
-    is_added = Bool(attribute=db_c.ADDED, required=False)
 
 
 class ModelPipelineRunDurationSchema(Schema):
