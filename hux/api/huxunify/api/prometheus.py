@@ -98,6 +98,7 @@ class Connections(Enum):
     OKTA = "hux_unified_okta_connection_health"
     DB = "hux_unified_db_connection_health"
     TECTON = "hux_unified_tecton_connection_health"
+    DECISIONING = "hux_unified_decisioning_connection_health"
 
 
 def record_health_status(connection: Connections) -> object:
