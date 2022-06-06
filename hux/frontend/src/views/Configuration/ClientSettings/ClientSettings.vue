@@ -50,8 +50,8 @@
                 @on-select="onSelectMenuItem"
               />
             </div>
-            <div v-if="showSubCategories" class="divider-class mt-1"></div>
-            <div v-if="showSubCategories" class="black--text text-h6 mt-4">
+            <div v-if="showSubCategories" class="divider-class mt-2"></div>
+            <div v-if="showSubCategories" class="black--text text-h6 mt-6">
               <div
                 v-for="option in labelOptions"
                 :key="option.key"
@@ -97,6 +97,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import { isEqual } from "lodash"
 import Icon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import HuxSwitch from "@/components/common/Switch.vue"
@@ -146,8 +147,15 @@ export default {
       industrySelected: false,
       showSubCategories: false,
       showConfiguration: false,
+      initialDemoMode: false,
       currentIndustrySelection: "Select",
+      initialIndustrySelection: "Select",
       finalSelection: {
+        retailOptions: "Select",
+        customerOptions: "Select",
+        conversionOptions: "Select",
+      },
+      initialSelection: {
         retailOptions: "Select",
         customerOptions: "Select",
         conversionOptions: "Select",
@@ -158,6 +166,13 @@ export default {
     ...mapGetters({
       existingDemoConfiguration: "users/getDemoConfiguration",
     }),
+    isConfigurationUpdated() {
+      return (
+        this.initialDemoMode != this.showConfiguration ||
+        this.initialIndustrySelection != this.currentIndustrySelection ||
+        !isEqual(this.initialSelection, this.finalSelection)
+      )
+    },
   },
   mounted() {
     if (this.existingDemoConfiguration) {
@@ -192,14 +207,16 @@ export default {
       this.finalSelection[item] = value.name
     },
     isDisabled() {
-      return (this.finalSelection.retailOptions !== "Select" &&
+      return this.showConfiguration &&
+        this.isConfigurationUpdated &&
+        this.finalSelection.retailOptions !== "Select" &&
         this.finalSelection.customerOptions !== "Select" &&
-        this.finalSelection.conversionOptions !== "Select") ||
-        !this.showConfiguration
+        this.finalSelection.conversionOptions !== "Select"
         ? false
         : true
     },
     async updatedConfigSettings() {
+      this.updateCurrentConfiguration()
       await this.updateDemoConfig({
         demo_mode: this.showConfiguration,
         industry: this.currentIndustrySelection,
@@ -221,6 +238,18 @@ export default {
           conversionOptions: this.existingDemoConfiguration.track,
         }
       }
+      this.updateCurrentConfiguration()
+    },
+    updateCurrentConfiguration() {
+      this.initialDemoMode = this.showConfiguration
+      if (this.showConfiguration) {
+        this.initialIndustrySelection = this.currentIndustrySelection
+        this.initialSelection = {
+          retailOptions: this.finalSelection.retailOptions,
+          customerOptions: this.finalSelection.customerOptions,
+          conversionOptions: this.finalSelection.conversionOptions,
+        }
+      }
     },
   },
 }
@@ -237,6 +266,18 @@ export default {
     button {
       margin-top: 0px !important;
       margin-left: 0px !important;
+    }
+  }
+  ::v-deep .rounded-lg {
+    .hux-dropdown {
+      button {
+        .v-btn__content {
+          .text-ellipsis {
+            position: relative;
+            bottom: 2px !important;
+          }
+        }
+      }
     }
   }
   .divider-class {

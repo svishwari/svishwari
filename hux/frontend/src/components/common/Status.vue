@@ -54,7 +54,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -122,7 +122,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -165,7 +165,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -244,7 +244,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -278,7 +278,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -312,7 +312,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -346,7 +346,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -380,7 +380,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -414,7 +414,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -453,7 +453,7 @@
       </template>
       <div
         v-if="showLabel"
-        class="px-4 py-2 white d-flex flex-column text-body-1"
+        class="px-4 py-2 white d-flex flex-column text-body-2"
       >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">

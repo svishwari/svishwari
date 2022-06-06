@@ -46,13 +46,14 @@
             text--darken-4 text-body-2
           "
         >
-          <span class="mr-2">Include consumers that match &nbsp;</span>
+          <span class="mr-2 mb-2">Include consumers that match &nbsp;</span>
           <hux-switch
             v-model="rule.operand"
             :is-disabled="readMode ? true : false"
+            class="mt-2 pt-0"
             @input="triggerSizingForRule(rule)"
           />
-          of the following:
+          <span class="mb-2"> of the following: </span>
         </div>
         <v-col
           v-for="(condition, ixcondition) in rule.conditions"
@@ -63,7 +64,7 @@
             <div
               :class="readMode ? 'readmode-condition-card' : 'condition-card'"
             >
-              <div class="condition-container pl-2 d-fles pr-6">
+              <div class="condition-container px-4 d-fles">
                 <div class="condition-items pr-5">
                   <hux-dropdown
                     :selected="condition.attribute"
@@ -167,7 +168,7 @@
           </div>
         </v-col>
         <div class="add-wrap">
-          <div class="pa-0 pt-2 flex-fill new-attribute">
+          <div class="pa-0 flex-fill new-attribute">
             <div class="add-section pa-5 text-body-1 primary--text">
               <span
                 class="cursor-pointer"
@@ -179,7 +180,7 @@
               </span>
             </div>
           </div>
-          <div class="pr-0 pt-2 pl-2 flex-right">
+          <div class="pr-0 pl-2 flex-right">
             <div class="condition-summary">
               <span class="title text-h5">Size</span>
               <span v-if="loadingOverAllSize" class="pt-2">
@@ -191,7 +192,7 @@
             </div>
           </div>
         </div>
-        <div v-if="index != lastIndex" class="col-12 seperator mt-5 mb-1 px-0">
+        <div v-if="index != lastIndex" class="col-12 seperator mt-4 mb-1 px-0">
           <hr class="black lighten-2" />
           <v-chip
             small
