@@ -119,6 +119,11 @@ export default {
           value: "last_delivered",
           width: "15%",
         },
+        {
+          text: "Replace",
+          value: "replace",
+          width: "15%",
+        },
       ],
     }
   },
