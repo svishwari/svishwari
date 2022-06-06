@@ -171,7 +171,7 @@ export default {
 }
 ::v-deep .descriptive-card .description {
   -webkit-box-orient: vertical !important;
-  -webkit-line-clamp: 5 !important;
+  -webkit-line-clamp: 4 !important;
   overflow: hidden !important;
   display: -webkit-box !important;
 }

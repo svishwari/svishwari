@@ -12,7 +12,10 @@
       @editAudience="(data) => editAudience(data)"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div v-if="audience && audience.is_lookalike === true" class="pa-8">
+    <div
+      v-if="audience && audience.is_lookalike"
+      class="pa-8 audience-container"
+    >
       <audience-lookalike-dashboard
         :audience-data="audience"
         :applied-filters="appliedFilters"
@@ -21,7 +24,7 @@
         @onRefresh="refresh()"
       />
     </div>
-    <div v-else v-cloak class="pa-8">
+    <div v-else v-cloak class="pa-8 audience-container">
       <v-card class="overview-card pt-5 pb-6 pl-6 pr-6 box-shadow-5">
         <v-card-title class="d-flex justify-space-between pa-0 pr-2">
           <h3 class="text-h3 mb-2">Audience overview</h3>
@@ -84,7 +87,7 @@
             :grow="i === 0 ? 2 : 1"
             :title="item.title"
             :icon="item.icon"
-            :height="80"
+            :height="75"
             :interactable="item.action ? true : false"
             :title-tooltip="item.titleTooltip"
             max-width="170"
@@ -110,7 +113,7 @@
           <metric-card
             class="mr-3"
             title="Gender"
-            :height="80"
+            :height="75"
             max-width="220"
             :interactable="false"
           >
@@ -160,7 +163,7 @@
             v-if="Object.keys(appliedFilters).length > 0"
             class="audience-summary"
             :title="'Attributes'"
-            :height="80"
+            :height="75"
           >
             <template #extra-item>
               <div class="container pl-0 pt-2">
@@ -205,7 +208,7 @@
           </metric-card>
         </div>
       </v-card>
-      <v-tabs v-model="tabOption" class="mt-8">
+      <v-tabs v-model="tabOption" class="mt-6">
         <v-tabs-slider color="primary"></v-tabs-slider>
         <div class="d-flex">
           <v-tab
@@ -1275,6 +1278,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .audience-insight-wrap {
+  .audience-container {
+    max-height: calc(100vh - 142px);
+    overflow-y: auto;
+  }
   .position-relative {
     position: relative;
   }
@@ -1282,6 +1289,16 @@ export default {
     position: absolute;
     top: -7px;
     right: 6px;
+  }
+  ::v-deep.metric-card-wrapper {
+    padding: 16px 15px !important;
+    .w-100 {
+      .flex-grow-1 {
+        .subtitle-slot {
+          margin-top: 0px !important;
+        }
+      }
+    }
   }
   .container {
     ul {
@@ -1335,6 +1352,7 @@ export default {
   }
 
   .tabs-item {
+    overflow: hidden !important;
     .delivery-tab {
       .digital-adv {
         height: auto !important;
