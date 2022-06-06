@@ -9,11 +9,7 @@ export default {
     title: { control: { type: "text" } },
     size: {
       defaultValue: "small",
-      options: [
-        "small",
-        "medium",
-        "large",
-      ],
+      options: ["small", "medium", "large"],
       control: {
         type: "select",
       },
@@ -23,14 +19,11 @@ export default {
     },
     cardBody: {
       defaultValue: "empty",
-      options: [
-        "empty",
-        "error",
-      ],
+      options: ["empty", "error"],
       control: {
         type: "select",
       },
-    }
+    },
   },
   args: {
     title: "Card Title",

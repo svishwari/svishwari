@@ -1,6 +1,5 @@
 import LargeMetricCard from "./LargeMetricCard.vue"
 import CardStat from "@/components/common/Cards/Stat"
-import Status from "@/components/common/Status"
 import AllIcons from "@/stories/icons/Icons"
 export default {
   component: LargeMetricCard,
@@ -20,28 +19,10 @@ export default {
     actionMenu: {
       control: { type: "boolean" },
     },
-    comingSoon: { control: { type: "boolean" } },
-    height: {
-      control: { type: "text" },
-    },
-    width: {
-      control: { type: "text" },
-    },
-    dotOption: {
-      control: { type: "text" },
-    },
     logoOption: {
       control: { type: "boolean" },
     },
-    interactable: {
-      control: { type: "boolean" },
-      iconColor: {
-        control: { type: "text" },
-      },
-    },
-    top: { table: { disable: true } },
-    "action-menu-options": { table: { disable: true } },
-    default: { table: { disable: true } },
+    pill: { control: { type: "text" } },
   },
   args: {
     icon: "model",
@@ -49,13 +30,11 @@ export default {
     description: "Descriptive text for the model item chosen above",
     disabled: false,
     actionMenu: false,
-    comingSoon: false,
-    height: "255",
-    width: "280",
-    dotOption: "Activate",
     logoOption: false,
-    interactable: false,
     iconColor: "Primary",
+    actionMenu: true,
+    status: "Active",
+    pill: "Hungry",
   },
   parameters: {
     design: {
@@ -66,7 +45,7 @@ export default {
 }
 
 const Template = (args, { argTypes }) => ({
-  components: { LargeMetricCard, CardStat, Status },
+  components: { LargeMetricCard, CardStat },
   props: Object.keys(argTypes),
   data() {
     return {
@@ -83,20 +62,11 @@ const Template = (args, { argTypes }) => ({
   template: `
     <div>
     <large-metric-card
-    v-bind="$props"
-    v-on="$props"
-  >
-    <template slot="top">
-      <status
-        :icon-size="18"
-        :status="model.status"
-        collapsed
-        class="d-flex float-left"
-      />
-    </template>
-
-    <template slot="default">
-      <v-row no-gutters class="mt-4">
+      v-bind="$props"
+      v-on="$props"
+    >
+    <template slot="body">
+      <v-row no-gutters>
         <v-col cols="5">
           <card-stat
             label="Version"

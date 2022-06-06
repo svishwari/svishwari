@@ -1,39 +1,37 @@
 <template>
   <v-card
-    :outlined="disabled"
-    class="descriptive-card align-center text-center rounded-lg card-space mb-6"
-    :class="[
-      disabled ? 'in-active' : '',
-      interactable ? 'interactable' : 'non-interactable',
-    ]"
-    :height="height"
-    :width="width"
-    :to="to"
+    :disabled="disabled"
+    class="descriptive-card align-center text-center rounded-lg card-space mb-4"
+    :width="getWidth"
   >
-    <div v-if="$slots.top" class="card-status pa-3 pb-0">
-      <slot name="top" />
-      <v-menu close-on-click>
-        <template #activator="{ on, attrs }">
-          <v-icon
-            v-if="actionMenu"
-            class="d-flex float-right"
-            v-bind="attrs"
-            color="primary"
-            v-on="on"
-          >
-            mdi-dots-vertical
-          </v-icon>
-        </template>
-        <div class="black--text text-darken-4 cursor-pointer white">
-          <slot name="action-menu-options"></slot>
-        </div>
-      </v-menu>
-      <div v-if="comingSoon" class="coming-soon d-flex float-right mt-n4">
-        Coming soon!
+    <div class="pa-4 pb-6">
+      <div v-if="status">
+        <status
+          :icon-size="16"
+          :status="status"
+          collapsed
+          class="d-flex float-left"
+        />
+      </div>
+      <div v-if="actionMenu">
+        <v-menu close-on-click>
+          <template #activator="{ on, attrs }">
+            <v-icon
+              class="d-flex float-right"
+              v-bind="attrs"
+              color="primary"
+              v-on="on"
+            >
+              mdi-dots-vertical
+            </v-icon>
+          </template>
+          <div class="black--text text-darken-4 cursor-pointer white">
+            <slot name="action-menu-options"></slot>
+          </div>
+        </v-menu>
       </div>
     </div>
-
-    <div v-if="icon" class="d-flex justify-center" :class="topRightAdjustment">
+    <div v-if="icon" class="d-flex justify-center">
       <div class="dot" :style="{ padding: logoBoxPadding }">
         <logo
           v-if="logoOption"
@@ -52,63 +50,19 @@
         />
       </div>
     </div>
-
-    <tooltip
-      v-if="!noDescription"
-      nudge-right="100px"
-      min-width="auto !important"
-    >
-      <template #label-content>
-        <div
-          class="text-h4 px-6 pb-3 pt-2 text-ellipsis d-block title text-h4"
-          :class="disabled || !interactable ? 'black--text' : 'primary--text'"
-          :style="{ 'padding-top': !icon ? '56px' : null }"
-          data-e2e="card-title"
-        >
-          {{ title }}
-        </div>
-      </template>
-      <template #hover-content>
-        <span class="black--text text-body-2">{{ title }}</span>
-      </template>
-    </tooltip>
-
-    <template v-else>
+    <v-card class="pt-4">
       <div
-        class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title"
-        :class="disabled || !interactable ? 'black--text' : 'primary--text'"
-        :style="{ 'padding-top': !icon ? '56px' : null }"
-        data-e2e="card-title"
+        :class="description || $slots.body ? '' : 'pa-4'"
+        class="text-h3"
       >
         {{ title }}
       </div>
-    </template>
-
-    <tooltip
-      v-if="!noDescription"
-      nudge-right="100px"
-      min-width="auto !important"
-    >
-      <template #label-content>
-        <div
-          class="px-3 d-block description text-body-2 black--text"
-          :style="{
-            'padding-top': !icon ? '22px' : null,
-            height: descriptionHeight,
-          }"
-          data-e2e="card-description"
-        >
-          {{ description }}
-        </div>
-      </template>
-      <template #hover-content>
-        <span class="black--text text-body-2">{{ description }}</span>
-      </template>
-    </tooltip>
-
-    <div v-if="$slots.default" class="px-3 pt-2">
-      <slot />
-    </div>
+      <v-chip v-if="pill" disabled>{{ pill }}</v-chip>
+      <div v-if="description" class="pt-2" :class="$slots.body ? '' : 'pa-4' ">{{ description }}</div>
+      <div v-if="$slots.body" class="pa-4 pt-2">
+        <slot name="body"></slot>
+      </div>
+    </v-card>
   </v-card>
 </template>
 
@@ -116,6 +70,7 @@
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
+import Status from "@/components/common/Status"
 
 export default {
   name: "DescriptiveCard",
@@ -124,6 +79,7 @@ export default {
     Icon,
     Tooltip,
     Logo,
+    Status,
   },
 
   props: {
@@ -141,43 +97,10 @@ export default {
       required: false,
       default: "Descriptive text for the model item chosen above",
     },
-    noDescription: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
     actionMenu: {
       type: Boolean,
       required: false,
       default: false,
-    },
-    comingSoon: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    height: {
-      type: [Number, String],
-      required: true,
-    },
-    width: {
-      type: [Number, String],
-      required: true,
-    },
-    to: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
-    dotOption: {
-      type: String,
-      required: false,
-      default: "Activate",
     },
     logoOption: {
       type: Boolean,
@@ -188,11 +111,6 @@ export default {
       type: String,
       required: false,
       default: "Primary",
-    },
-    interactable: {
-      type: Boolean,
-      required: false,
-      default: false,
     },
     descriptionHeight: {
       type: String,
@@ -213,6 +131,30 @@ export default {
       type: String,
       required: false,
       default: "mt-3 mr-8",
+    },
+    size: {
+      type: String,
+      required: false,
+      default: "small",
+    },
+    status: {
+      type: String,
+      required: false,
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    pill: {
+      type: String,
+      required: false,
+    }
+  },
+
+  computed: {
+    getWidth() {
+      return this.size == "small" ? 270 : 368
     },
   },
 }

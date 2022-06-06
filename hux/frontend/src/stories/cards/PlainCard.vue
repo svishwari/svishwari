@@ -1,8 +1,5 @@
 <template>
-  <v-card
-    class="pa-6 pt-5"
-    :width="getWidth"
-  >
+  <v-card class="pa-6 pt-5" :width="getWidth">
     <div class="mb-4 card-header">
       <h4>{{ title }}</h4>
       <slot name="call-to-action"></slot>
@@ -25,10 +22,10 @@ export default {
       default: "small",
     },
   },
-  
+
   computed: {
     getWidth() {
-      return this.size == "small" ? 368 : (this.size == "medium" ? 564 : 1152)
+      return this.size == "small" ? 368 : this.size == "medium" ? 564 : 1152
     },
   },
 }
