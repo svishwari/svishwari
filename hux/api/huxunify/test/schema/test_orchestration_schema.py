@@ -105,7 +105,7 @@ class OrchestrationSchemaTest(TestCase):
         self.assertFalse(AudienceGetSchema().validate(doc))
 
     def test_successful_get_lookalike_audience_schema(self) -> None:
-        """Test Successful AudienceGetSchema."""
+        """Test Successful LookalikeAudienceGetSchema."""
 
         doc = {
             api_c.ID: "5f5f7262997acad4bac4384a",
