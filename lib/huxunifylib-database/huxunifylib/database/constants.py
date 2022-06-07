@@ -295,7 +295,7 @@ AUDIENCE_FILTER_AGGREGATOR_ALL = "all"
 AUDIENCE_CUSTOMER_LIST = "customer_list"
 ATTRIBUTE = "attribute"
 ATTRIBUTE_FILTER_FIELD = "filters.section_filters.field"
-INDUSTRY_TAG_FIELD = "tags.industry"
+INDUSTRY_TAG_FIELD = f"tags.{INDUSTRY}"
 WORKED_BY = "worked_by"
 # Audience types
 CUSTOM_AUDIENCE = "custom_audience"
