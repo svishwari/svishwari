@@ -51,14 +51,13 @@
       </div>
     </div>
     <v-card class="pt-4">
-      <div
-        :class="description || $slots.body ? '' : 'pa-4'"
-        class="text-h3"
-      >
+      <div :class="description || $slots.body ? '' : 'pa-4'" class="text-h3">
         {{ title }}
       </div>
       <v-chip v-if="pill" disabled>{{ pill }}</v-chip>
-      <div v-if="description" class="pt-2" :class="$slots.body ? '' : 'pa-4' ">{{ description }}</div>
+      <div v-if="description" class="pt-2" :class="$slots.body ? '' : 'pa-4'">
+        {{ description }}
+      </div>
       <div v-if="$slots.body" class="pa-4 pt-2">
         <slot name="body"></slot>
       </div>
@@ -149,7 +148,7 @@ export default {
     pill: {
       type: String,
       required: false,
-    }
+    },
   },
 
   computed: {

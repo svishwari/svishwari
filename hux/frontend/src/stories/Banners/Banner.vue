@@ -11,7 +11,7 @@
     <template #prepend>
       <icon :type="getIcon" :size="24" :color="type" class="mr-2" />
     </template>
-    <template #close="{ toggle }">
+    <template #close>
       <icon type="cross" :size="8" color="black" class="mr-2" @click="toggle" />
     </template>
     <div class="banner-label" :style="cssVars">{{ label }}</div>
@@ -52,6 +52,7 @@ export default {
       default: false,
     },
   },
+
   computed: {
     getHeight() {
       return this.height ? this.height : this.size == "large" ? 72 : 40
@@ -80,6 +81,10 @@ export default {
       }
       return iconToRet
     },
+  },
+
+  methods: {
+    closeAlert() {},
   },
 }
 </script>
