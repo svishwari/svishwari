@@ -38,7 +38,7 @@
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
           <overview v-if="!loading" :data="trustIdOverview" />
-          <v-tabs v-model="tabOption" class="mt-8">
+          <v-tabs v-model="tabOption" class="mt-4">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
               <v-tab
