@@ -38,10 +38,10 @@ export default {
     },
   },
   computed: {
-    eight() {
+    Height() {
       return this.size == "large" ? 72 : 40
     },
-    width() {
+    Width() {
       return this.size == "large" ? 1216 : 710
     },
     classValue() {

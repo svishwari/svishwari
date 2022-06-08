@@ -127,7 +127,6 @@
                   v-model="item['replace_audience']"
                   :switch-labels="switchLabels"
                   false-color="var(--v-black-lighten4)"
-                  @change="handleChange($event, section, item)"
                 />
               </div>
             </td>
@@ -253,7 +252,7 @@ export default {
           value: "size",
           width: "20%",
           hoverTooltip:
-            "Average order value for all customers (known and anyonymous) for all time.",
+            "Average order value for all consumers (known and anyonymous) for all time.",
         },
         {
           text: "Last delivery",

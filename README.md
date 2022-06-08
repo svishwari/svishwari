@@ -44,6 +44,11 @@ Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.
 
 Note: To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN).
 
+## CDM Snowflake Environments
+
+CDMDEV1: https://cdmdev1.east-us-2.azure.snowflakecomputing.com/console <br>
+CDMSTG1: https://deloittehux-cdmstg1.snowflakecomputing.com/console
+
 ## Security Applications
 WhiteSource https://deloitte.whitesourcesoftware.com
 

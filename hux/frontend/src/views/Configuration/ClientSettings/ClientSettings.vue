@@ -50,8 +50,8 @@
                 @on-select="onSelectMenuItem"
               />
             </div>
-            <div v-if="showSubCategories" class="divider-class mt-1"></div>
-            <div v-if="showSubCategories" class="black--text text-h6 mt-4">
+            <div v-if="showSubCategories" class="divider-class mt-2"></div>
+            <div v-if="showSubCategories" class="black--text text-h6 mt-6">
               <div
                 v-for="option in labelOptions"
                 :key="option.key"
@@ -85,7 +85,7 @@
           is-tile
           variant="primary base"
           data-e2e="action-audience"
-          :is-disabled="isDisabled()"
+          :is-disabled="isPrePopulate || isDisabled()"
           @click="updatedConfigSettings"
         >
           Update
@@ -146,6 +146,7 @@ export default {
       industrySelected: false,
       showSubCategories: false,
       showConfiguration: false,
+      isPrePopulate: true,
       currentIndustrySelection: "Select",
       finalSelection: {
         retailOptions: "Select",
@@ -187,17 +188,20 @@ export default {
         customerOptions: "Select",
         conversionOptions: "Select",
       }
+      this.isPrePopulate = false
     },
     onSelectSubMenuItem(value, item) {
       this.finalSelection[item] = value.name
+      this.isPrePopulate = false
     },
     isDisabled() {
-      return (this.finalSelection.retailOptions !== "Select" &&
-        this.finalSelection.customerOptions !== "Select" &&
-        this.finalSelection.conversionOptions !== "Select") ||
-        !this.showConfiguration
-        ? false
-        : true
+      if (this.showConfiguration) {
+        return this.finalSelection.retailOptions !== "Select" &&
+          this.finalSelection.customerOptions !== "Select" &&
+          this.finalSelection.conversionOptions !== "Select"
+          ? false
+          : true
+      } else return false
     },
     async updatedConfigSettings() {
       await this.updateDemoConfig({
@@ -237,6 +241,18 @@ export default {
     button {
       margin-top: 0px !important;
       margin-left: 0px !important;
+    }
+  }
+  ::v-deep .rounded-lg {
+    .hux-dropdown {
+      button {
+        .v-btn__content {
+          .text-ellipsis {
+            position: relative;
+            bottom: 2px !important;
+          }
+        }
+      }
     }
   }
   .divider-class {

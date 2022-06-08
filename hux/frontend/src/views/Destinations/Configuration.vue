@@ -1,5 +1,5 @@
 <template>
-  <page class="white" max-width="912px">
+  <page class="white add-destination-container" max-width="912px">
     <div class="mb-10">
       <h4 class="text-h1 black--text text--darken-4">Add a destination</h4>
       <p class="text-body-1 black--text text--darken-4">
@@ -11,7 +11,7 @@
       Select a destination
     </label>
 
-    <div class="d-flex align-center mb-3">
+    <div class="d-flex align-center mb-2">
       <template v-if="!(selectedDestination || selectedDestinationNotListed)">
         <v-btn
           text
@@ -44,11 +44,11 @@
           Destination not on list
         </template>
         <template v-else>
-          <logo :type="selectedDestination.type" />
+          <logo :type="selectedDestination.type" :size="26" />
           <span class="pl-2">{{ selectedDestination.name }}</span>
         </template>
         <a
-          class="pl-4 text-body-2 mt-1"
+          class="pl-6 text-body-2 mt-1"
           color="primary"
           @click="toggleDrawer()"
         >
@@ -155,7 +155,15 @@
       <v-alert
         outlined
         tile
-        class="yellow lighten-1 black--border border--lighten-2 black--text"
+        class="
+          pa-3
+          pl-2
+          yellow
+          lighten-1
+          black--border
+          border--lighten-2
+          black--text
+        "
       >
         <div class="d-flex justify-space-between">
           <div class="mr-3">
@@ -171,7 +179,7 @@
       </v-alert>
 
       <v-row class="firstRow">
-        <v-col cols="8">
+        <v-col cols="8" class="pt-5">
           <text-field
             v-model="requestDetails['contact_email']"
             label-text="Your contact email"
@@ -198,8 +206,8 @@
         </v-col>
       </v-row>
 
-      <v-row class="thirdRow">
-        <v-col cols="8">
+      <v-row class="thirdRow mb-0 mt-3">
+        <v-col cols="8" class="py-6">
           <label class="text-h5 mb-0">
             Did the Client request to have this destination available?
           </label>
@@ -224,7 +232,7 @@
       </v-row>
 
       <v-row class="fourthRow">
-        <v-col cols="8">
+        <v-col cols="8" class="pt-5">
           <label class="text-h5 mb-0">
             Does the Client have an account for this destination?
           </label>
@@ -249,7 +257,7 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12" class="textAreaDiv">
+        <v-col cols="12" class="textAreaDiv pt-6">
           <div
             class="
               primary
@@ -701,6 +709,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.add-destination-container {
+  height: calc(100vh - 150px) !important;
+  overflow: auto;
+  ::v-deep .container {
+    padding-bottom: 37px !important;
+    margin-bottom: 24px !important;
+    height: auto !important;
+    overflow: hidden !important;
+  }
+}
 .firstRow {
   height: 80px;
 }

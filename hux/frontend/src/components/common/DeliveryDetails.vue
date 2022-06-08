@@ -151,6 +151,7 @@
                 v-model="item['replace_audience']"
                 :switch-labels="switchLabels"
                 false-color="var(--v-black-lighten4)"
+                @change="handleChange($event, section.id, audience.id, item.id)"
               />
             </div>
           </td>
@@ -302,7 +303,7 @@ export default {
           value: "size",
           width: "15%",
           hoverTooltip:
-            "Average order value for all customers (known and anyonymous) for all time.",
+            "Average order value for all consumers (known and anyonymous) for all time.",
           tooltipWidth: "201px",
         },
         {
@@ -369,6 +370,7 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       setAlert: "alerts/setAlert",
       updateReplace: "engagements/updateReplace",
+      replaceAudience: "audiences/replaceAudienceToggle",
     }),
     async deliverAll(engagement) {
       await this.deliverAudience({
@@ -449,6 +451,15 @@ export default {
         type: "pending",
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
+    },
+    handleChange(...args) {
+      const data = {
+        engagement_id: args[1],
+        audience_id: args[2],
+        destination_id: args[3],
+        value: args[0],
+      }
+      this.replaceAudience(data)
     },
   },
 }

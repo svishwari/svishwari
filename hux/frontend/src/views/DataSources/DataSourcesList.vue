@@ -18,7 +18,7 @@
           :logo-option="true"
           :dot-option="'Remove'"
           class="mr-12 model-desc-card"
-          height="225"
+          height="222"
           width="255"
           data-e2e="dataSourcesList"
           :to="
@@ -176,6 +176,14 @@ export default {
       ::v-deep i {
         font-size: 17px;
       }
+    }
+  }
+  ::v-deep.descriptive-card {
+    .title {
+      padding-bottom: 4px !important;
+    }
+    .px-3.pt-2 {
+      padding-top: 24px !important;
     }
   }
 }

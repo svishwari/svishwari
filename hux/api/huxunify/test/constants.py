@@ -139,6 +139,8 @@ SOURCE_ID = "source_id"
 
 TICKETS = "tickets"
 
+TRAINED_DATE = "trained_date"
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
@@ -1349,15 +1351,27 @@ TEST_NAVIGATION_SETTINGS = {
         {
             "enabled": True,
             "name": "Data Management",
+            "label": "Data Management",
             "children": [
-                {"name": "Data Sources", "enabled": False},
-                {"name": "Identity Resolution", "enabled": True},
+                {
+                    "name": "Data Sources",
+                    "label": "Data Sources",
+                    "enabled": False,
+                },
+                {
+                    "name": "Identity Resolution",
+                    "label": "Identity Resolution",
+                    "enabled": True,
+                },
             ],
         },
         {
             "enabled": True,
             "name": "Decisioning",
-            "children": [{"name": "Models", "enabled": True}],
+            "label": "Decisioning",
+            "children": [
+                {"name": "Models", "label": "Models", "enabled": True}
+            ],
         },
     ]
 }

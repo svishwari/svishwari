@@ -1,6 +1,6 @@
 <template>
   <v-card class="rounded-lg card-style delivery-overview mt-4" flat>
-    <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-5">
+    <v-card-title class="d-flex justify-space-between pb-4 pl-6 pt-5">
       <slot name="title-left"></slot>
       <slot name="title-right"></slot>
     </v-card-title>
@@ -28,7 +28,7 @@
           :section-type="sectionType"
           :destination-menu-items="destinationActions"
           data-e2e="status-list"
-          class="mb-4"
+          class="mb-2"
           :audience="audienceData"
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
