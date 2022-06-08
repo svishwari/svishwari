@@ -659,8 +659,6 @@ export default {
       return !this.segmentComparisonLoading && this.segmentScores.length == 0
     },
 
-
-
     segmentTableTitle() {
       return this.getSegmentTableData.length == 0
         ? "No segments to show"
