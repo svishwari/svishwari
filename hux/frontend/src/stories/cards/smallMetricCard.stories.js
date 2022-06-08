@@ -14,23 +14,9 @@ export default {
       },
     },
     title: { control: { type: "text" } },
-    size: {
-      defaultValue: "small",
-      options: ["small", "medium", "large"],
-      control: {
-        type: "select",
-      },
-    },
-    actionMenu: {
-      control: { type: "boolean" },
-    },
-    cardBody: {
-      defaultValue: "empty",
-      options: ["empty", "error"],
-      control: {
-        type: "select",
-      },
-    },
+    tooltipContent: { control: { type: "text" } },
+    cardBodyText: { control: { type: "text" } },
+    isError: { control: { type: "boolean" } },
   },
   args: {
     title: "Card Title",
@@ -52,22 +38,8 @@ const Template = (args, { argTypes }) => ({
   template: `
     <div>
       <small-metric-card v-bind="$props">
-        <template #body>
-          <div v-if="$props.cardBody == 'empty'">Empty content</div>
-          <empty-page
-            v-else
-            type="error-on-screens"
-            :size="40"
-          >
-            <template #title>
-              <div>Unavailable</div>
-            </template>
-            <template #subtitle>
-              <div>
-                Our team is working hard to fix it. Please be patient and try again soon!
-              </div>
-            </template>
-          </empty-page>
+        <template #body v-if="$props.cardBodyText">
+          <div>{{ $props.cardBodyText }}</div>
         </template>
       </small-metric-card>
     </div>`,
