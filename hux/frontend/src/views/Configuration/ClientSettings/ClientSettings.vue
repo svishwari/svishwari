@@ -196,10 +196,9 @@ export default {
     },
     isDisabled() {
       if (this.showConfiguration) {
-        return (this.finalSelection.retailOptions !== "Select" &&
+        return this.finalSelection.retailOptions !== "Select" &&
           this.finalSelection.customerOptions !== "Select" &&
-          this.finalSelection.conversionOptions !== "Select") ||
-          !this.showConfiguration
+          this.finalSelection.conversionOptions !== "Select"
           ? false
           : true
       } else return false
