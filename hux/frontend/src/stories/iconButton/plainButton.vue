@@ -83,7 +83,6 @@ export default {
   methods: {
     onClick: function () {
       this.selected = !this.selected
-      console.log(this.selected)
       this.$emit("click")
     },
   },
