@@ -121,7 +121,7 @@ class ModelsView(SwaggerView):
                     api_c.ID: f"Feature_id_{i}",
                     api_c.NAME: f"Feature_name_{i}",
                     api_c.DESCRIPTION: f"Feature {i} description",
-                    api_c.STATUS: api_c.STATUS_PENDING,
+                    api_c.STATUS: api_c.STATUS_ACTIVE,
                     api_c.LATEST_VERSION: today.strftime("%Y.%m.%d"),
                     api_c.OWNER: "Susan Miller",
                     api_c.LOOKBACK_WINDOW: 365,
