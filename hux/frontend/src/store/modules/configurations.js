@@ -48,13 +48,13 @@ const actions = {
         if (!element.children) {
           element = {
             ...element,
-            ...sideMenuOptions[element.name.toLowerCase().replaceAll(" ", "")],
+            ...sideMenuOptions[element.label.toLowerCase().replaceAll(" ", "")],
           }
         } else {
           element.children = element.children.map((ele) => {
             ele = {
               ...ele,
-              ...sideMenuOptions[ele.name.toLowerCase().replaceAll(" ", "")],
+              ...sideMenuOptions[ele.label.toLowerCase().replaceAll(" ", "")],
             }
             return ele
           })

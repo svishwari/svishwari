@@ -180,6 +180,8 @@ export default {
     ::v-deep .metric-card-wrapper {
       border: 0 !important;
       .titleColor {
+        display: flex;
+        text-align: center;
         svg {
           padding-top: 0 !important;
           width: 24px !important;

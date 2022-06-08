@@ -111,12 +111,17 @@ export default {
           value: "size",
           width: "15%",
           hoverTooltip:
-            "Average order value for all customers (known and anyonymous) for all time.",
+            "Average order value for all consumers (known and anyonymous) for all time.",
           tooltipWidth: "201px",
         },
         {
           text: "Last Delivery",
           value: "last_delivered",
+          width: "15%",
+        },
+        {
+          text: "Replace",
+          value: "replace",
           width: "15%",
         },
       ],
@@ -250,7 +255,7 @@ export default {
   },
   methods: {
     fetchKey(obj, key) {
-      return obj && !isNaN(obj[key]) ? obj[key] : "-"
+      return obj && obj[key] ? obj[key] : "-"
     },
   },
 }

@@ -120,6 +120,8 @@ export const engagement = {
               name: `Audience for ${faker.company.companyName()}`,
               size: () =>
                 faker.datatype.number({ min: 10000000, max: 999999999 }),
+              is_ad_platform: faker.datatype.boolean(),
+              replace_audience: false,
             },
             {
               id: `${faker.datatype.number({ min: 1, max: 10 })}`,
@@ -145,6 +147,8 @@ export const engagement = {
               name: `Audience for ${faker.company.companyName()}`,
               size: () =>
                 faker.datatype.number({ min: 10000000, max: 999999999 }),
+              is_ad_platform: faker.datatype.boolean(),
+              replace_audience: false,
             },
           ],
           id: `${faker.datatype.number({ min: 1, max: 10 })}`,
@@ -183,6 +187,8 @@ export const engagement = {
               name: `Audience for ${faker.company.companyName()}`,
               size: () =>
                 faker.datatype.number({ min: 10000000, max: 999999999 }),
+              is_ad_platform: faker.datatype.boolean(),
+              replace_audience: false,
             },
             {
               id: `${faker.datatype.number({ min: 1, max: 10 })}`,
@@ -208,6 +214,8 @@ export const engagement = {
               name: `Audience for ${faker.company.companyName()}`,
               size: () =>
                 faker.datatype.number({ min: 10000000, max: 999999999 }),
+              is_ad_platform: faker.datatype.boolean(),
+              replace_audience: false,
             },
           ],
           id: `${faker.datatype.number({ min: 1, max: 10 })}`,

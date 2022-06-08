@@ -34,7 +34,7 @@
       <template #default>
         <div class="mx-3 mt-4 mb-6">
           <div class="ma-3 mb-7">
-            <div class="body-2">Data sources</div>
+            <div class="body-2 pt-1">Data sources</div>
             <card-horizontal
               v-for="dataSource in enabledDataSources"
               :key="dataSource.id"
@@ -43,7 +43,7 @@
               :is-added="dataSource.is_added"
               :is-available="dataSource.is_enabled"
               :is-already-added="dataSource.is_added"
-              class="my-3 body-1"
+              class="my-2 body-1"
               data-e2e="dataSourcesAddList"
               :requested-button="dataSource.status !== 'Active'"
             />
@@ -74,7 +74,7 @@
               "
               :is-available="dataSource.is_enabled"
               :is-already-added="dataSource.is_added"
-              class="my-3 body-1"
+              class="my-2 body-1"
               :requested-button="dataSource.status !== 'Active'"
               data-e2e="dataSourcesRequestList"
               @click="onDataSourceClick(dataSource.id)"

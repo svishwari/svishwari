@@ -6,7 +6,7 @@
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Segment your customers into audiences based on your customer data and
+          Segment your consumers into audiences based on your consumer data and
           model scores.
         </div>
       </template>
@@ -531,7 +531,7 @@ export default {
           value: "size",
           width: "112px",
           hoverTooltip:
-            "Current number of customers who fit the selected attributes.",
+            "Current number of consumers who fit the selected attributes.",
           tooltipWidth: "231px",
         },
         {

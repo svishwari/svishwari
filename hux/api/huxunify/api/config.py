@@ -86,6 +86,9 @@ class Config:
     OKTA_TEST_USER_NAME = config(api_c.OKTA_TEST_USER_NAME, default="")
     OKTA_TEST_USER_PW = config(api_c.OKTA_TEST_USER_PW, default="")
 
+    # DECISIONING CONFIGURATION
+    DECISIONING_URL = config(api_c.DECISIONING_URL, default="")
+
     # TECTON
     TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")
     TECTON_API = config("TECTON_API", default="")
@@ -216,6 +219,9 @@ class PyTestConfig(Config):
     JIRA_USER_EMAIL = "sh@fake.com"
     JIRA_API_KEY = "fake-jira-key"
     JIRA_SERVER = "https://fake.fake.jira.fake"
+
+    # DECIOSIONING CONFIGURATION
+    DECISIONING_URL = "https://fake.fake.decisioning.fake"
 
     # TECTON CONFIGURATION
     TECTON_API_KEY = "fake-key"

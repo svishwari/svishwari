@@ -6,7 +6,7 @@
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Start making meaningful connections with current and future customers
+          Start making meaningful connections with current and future consumers
           by targeting intelligent audiences while staying organized.
         </div>
       </template>

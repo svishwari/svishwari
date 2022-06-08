@@ -1503,14 +1503,15 @@ def populate_trust_id_segments(
             database=database,
             filters=seg[api_c.SEGMENT_FILTERS],
         )
-        if survey_response:
-            segments_data.append(
-                {
-                    api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
-                    api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
-                    api_c.SURVEY_RESPONSES: survey_response,
-                }
-            )
+        segments_data.append(
+            {
+                api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
+                api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
+                api_c.SURVEY_RESPONSES: survey_response
+                if survey_response
+                else [],
+            }
+        )
     return segments_data
 
 

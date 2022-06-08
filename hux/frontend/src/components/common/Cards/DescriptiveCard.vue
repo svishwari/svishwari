@@ -267,7 +267,7 @@ export default {
   }
   .description {
     -webkit-box-orient: vertical !important;
-    -webkit-line-clamp: 2 !important;
+    -webkit-line-clamp: 2;
     overflow: hidden !important;
     display: -webkit-box !important;
   }
