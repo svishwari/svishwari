@@ -21,20 +21,23 @@
       </div>
     </template>
     <template v-slot:close="{ toggle }">
-      <icon type="close-remove" class="cursor-pointer" size="10" @click.native="toggle()" />
+      <icon
+        type="close-remove"
+        class="cursor-pointer"
+        size="10"
+        @click.native="toggle()"
+      />
     </template>
   </v-alert>
 </template>
 
 <script>
 import Icon from "../icons/Icon2.vue"
-import Button from "../huxButton/huxButton2.vue"
 
 export default {
   name: "Banner",
   components: {
     Icon,
-    Button,
   },
   props: {
     label: {

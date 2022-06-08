@@ -16,7 +16,10 @@
         <slot name="default"></slot>
       </span>
     </template>
-    <div class="px-4 py-2 tooltip-hover text-body-2 box-shadow-15-8" :style="style">
+    <div
+      class="px-4 py-2 tooltip-hover text-body-2 box-shadow-15-8"
+      :style="style"
+    >
       <slot name="hover-content"></slot>
       <slot name="tooltip"></slot>
     </div>
@@ -77,7 +80,8 @@ export default {
     style() {
       let style = {}
       if (this.color) style.color = `var(--v-${this.color})`
-      if (this.backgroundColor) style.background = `var(--v-${this.backgroundColor})`
+      if (this.backgroundColor)
+        style.background = `var(--v-${this.backgroundColor})`
       return style
     },
   },
