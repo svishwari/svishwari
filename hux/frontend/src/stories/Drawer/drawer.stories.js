@@ -1,50 +1,31 @@
 import Drawer from "./Drawer2.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 import { action } from "@storybook/addon-actions"
-import Icon from "@/components/common/Icon.vue"
+import AllIcons from "../icons/Icons"
 
 export default {
   component: Drawer,
-  title: "NewComponents/Drawer",
+  title: "Design System/Drawer",
   argTypes: {
-    toRight: {
-      control: { type: "boolean" },
-    },
     width: {
       control: { type: "number" },
     },
-    expandedWidth: {
-      table: { disable: true },
-    },
-    expandable: {
-      control: { type: "boolean" },
-    },
-    disableTransition: {
-      control: { type: "boolean" },
-    },
-    contentPadding: {
-      control: { type: "text" },
-    },
-    contentHeaderPadding: {
-      control: { type: "text" },
-    },
-    headerHeight: {
-      control: { type: "text" },
-    },
     loading: { table: { disable: true } },
-    "header-right": { table: { disable: true } },
-    "header-left": { table: { disable: true } },
-    default: { table: { disable: true } },
-    value: { table: { disable: true } },
-    "footer-left": { table: { disable: true } },
-    "footer-right": { table: { disable: true } },
-    input: { table: { disable: true } },
-    onClose: { table: { disable: true } },
-    iconToggle: { table: { disable: true } },
+    title: { control: { type: "text" } },
+    iconType: {
+      defaultValue: "mapping",
+      options: AllIcons,
+      control: {
+        type: "select",
+      },
+    },
   },
   args: {
     loading: false,
     width: 400,
+    title: "Title",
+    primaryButtons: 0,
+    textField: "x results"
   },
   parameters: {
     design: {
@@ -55,7 +36,7 @@ export default {
 }
 
 const Template = (args, { argTypes }) => ({
-  components: { Drawer, HuxButton, Icon },
+  components: { Drawer, HuxButton },
   props: Object.keys(argTypes),
   methods: {
     onCancel: action("onCancel"),
@@ -80,13 +61,6 @@ const Template = (args, { argTypes }) => ({
       v-on="$props"
       @onClose="onClose()"
     >
-      <template #header-left>
-        <div class="pt-2">
-          <icon v-if="icon" type="add" size="38"/>
-          <h3 style="float: right" class="icon ? mt-1 : mb-2">{{title}}</h3>
-        </div>
-      </template>
-
       <template #default>
         <div class="body-1 pa-4">
           Some content
@@ -135,9 +109,4 @@ const Template = (args, { argTypes }) => ({
 })
 
 export const drawer = Template.bind({})
-drawer.args = {
-  title: "Title",
-  primaryButtons: 1,
-  textField: "x results",
-  icon: true,
-}
+

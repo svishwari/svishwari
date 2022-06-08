@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer
     v-model="localDrawer"
-    :right="toRight"
+    right
     :style="transition"
     :width="drawerWidth"
     app
@@ -15,18 +15,12 @@
       :height="headerHeight"
     >
       <v-toolbar-title :class="contentHeaderPadding">
-        <slot name="header-left"></slot>
+        <div class="pt-2">
+          <icon v-if="iconType" :type="iconType" :size="38" color="primary" />
+          <h2 style="float: right" :class="iconType ? 'mt-1' : 'mb-2'">{{ title }}</h2>
+        </div>
         <slot name="header-right"></slot>
       </v-toolbar-title>
-      <template v-if="expandable">
-        <v-icon
-          color="primary"
-          class="cursor-pointer px-6 ml-auto"
-          @click="onExpandIconClick"
-        >
-          {{ expanded ? "mdi-arrow-collapse" : "mdi-arrow-expand" }}
-        </v-icon>
-      </template>
     </v-toolbar>
 
     <slot name="loading">
@@ -57,15 +51,12 @@
 </template>
 
 <script>
+import icon from "../icons/Icon2.vue"
+
 export default {
   name: "Drawer",
+  components: { icon },
   props: {
-    toRight: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-
     value: {
       type: Boolean,
       required: true,
@@ -116,6 +107,14 @@ export default {
       type: String,
       required: false,
       default: "72",
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    iconType: {
+      type: String,
+      required: false,
     },
   },
 
@@ -192,6 +191,7 @@ $drawer-data-table-padding: 9px 25px;
   height: calc(100% - #{$drawer-header-height + $drawer-footer-height});
   overflow-y: auto;
   border-bottom: 1px solid var(--v-black-lighten3) !important;
+  padding: 16px;
 }
 .drawer-content-without-footer {
   height: calc(100% - #{$drawer-header-height});
