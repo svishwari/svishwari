@@ -732,7 +732,6 @@ export default {
       })
     },
     includesSegmentHeaders(segmentTitle) {
-      console.log(segmentTitle)
       return ["segment_name", "segment_filters", "colors"].includes(
         segmentTitle
       )
