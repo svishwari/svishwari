@@ -332,7 +332,7 @@ class IDROverview(SwaggerView):
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use,too-many-locals,unused-variable
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[dict, int]:
@@ -348,29 +348,37 @@ class IDROverview(SwaggerView):
         Returns:
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
-        token_response = get_token_from_request(request)
+        current_env = get_config().ENV_NAME
 
         # default to five years lookup to find the event date range.
         start_date, end_date = get_start_end_dates(request, 60)
         Validation.validate_date_range(start_date, end_date)
 
+        cache_key = f"{api_c.IDR_TAG}.{start_date}.{end_date}"
+
+        # if current_env == "RC1":
+        requested_start_date = start_date
+        requested_end_date = end_date
+        start_date = datetime.strftime(
+            datetime.utcnow().date() - relativedelta(months=60),
+            api_c.DEFAULT_DATE_FORMAT,
+        )
+        end_date = datetime.strftime(
+            datetime.utcnow().date(),
+            api_c.DEFAULT_DATE_FORMAT,
+        )
+
         # check if cache entry
         database = get_db_client()
         idr_overviews = get_cache_entry(
             database,
-            f"{api_c.IDR_TAG}.{start_date}.{end_date}",
+            cache_key,
         )
         if not idr_overviews:
             token_response = get_token_from_request(request)
 
             # TODO - when the CDP endpoint for getting the max and min date range
             #  is available, we will call that instead of iterating all events to get them.
-            # get IDR overview
-            idr_overview = get_identity_overview(
-                token_response[0],
-                {api_c.START_DATE: start_date, api_c.END_DATE: end_date},
-            )
-
             # get date range from IDR matching trends.
             trend_data = get_idr_matching_trends(
                 token_response[0],
@@ -379,21 +387,38 @@ class IDROverview(SwaggerView):
             )
 
             # TODO Only for demo purpose remove after actual data integration
-            if get_config().ENV_NAME == "RC1":
-                end_date = datetime.utcnow() - relativedelta(days=1)
-                delta_days = (
-                    end_date - max([data[api_c.DAY] for data in trend_data])
-                ).days
-                for data in trend_data:
-                    data[api_c.DAY] = data[api_c.DAY] + relativedelta(
-                        days=delta_days
-                    )
-                idr_overview[api_c.UPDATED] = end_date
+            # if current_env == "RC1":
+            end_date = datetime.utcnow() - relativedelta(days=1)
+            latest_data_date = max([data[api_c.DAY] for data in trend_data])
+            delta_days = (end_date - latest_data_date).days
+            for data in trend_data:
+                data[api_c.DAY] = data[api_c.DAY] + relativedelta(
+                    days=delta_days
+                )
+            requested_data = [
+                data
+                for data in trend_data
+                if datetime.strptime(
+                    requested_start_date, api_c.DEFAULT_DATE_FORMAT
+                )
+                <= data[api_c.DAY]
+                <= datetime.strptime(
+                    requested_end_date, api_c.DEFAULT_DATE_FORMAT
+                )
+            ]
+            idr_overview[api_c.UPDATED] = requested_end_date
+            trend_data = requested_data
+
+            # get IDR overview
+            idr_overview = get_identity_overview(
+                token_response[0],
+                {api_c.START_DATE: start_date, api_c.END_DATE: end_date},
+            )
 
             # cache
             create_cache_entry(
                 database,
-                f"{api_c.IDR_TAG}.{start_date}.{end_date}",
+                cache_key,
                 {
                     api_c.OVERVIEW: idr_overview,
                     api_c.MATCHING_TRENDS: trend_data,

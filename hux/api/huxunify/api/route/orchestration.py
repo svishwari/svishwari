@@ -1809,7 +1809,7 @@ class SetLookalikeAudience(SwaggerView):
             logger.error("Audience %s not found.", body[api_c.AUDIENCE_ID])
             return HuxResponse.NOT_FOUND(api_c.AUDIENCE_NOT_FOUND)
 
-        # TODO: Update desination handling when more lookalikable
+        # TODO: Update destination handling when more lookalikable
         #  destinations are available and param accepted from request
         destination = destination_management.get_delivery_platform_by_type(
             database, db_c.DELIVERY_PLATFORM_FACEBOOK
