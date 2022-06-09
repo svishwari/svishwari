@@ -659,12 +659,6 @@ export default {
       return !this.segmentComparisonLoading && this.segmentScores.length == 0
     },
 
-    includesSegmentHeaders(segmentTitle) {
-      return ["segment_name", "segment_filters", "colors"].includes(
-        segmentTitle
-      )
-    },
-
     segmentTableTitle() {
       return this.getSegmentTableData.length == 0
         ? "No segments to show"
@@ -736,6 +730,11 @@ export default {
           this.segmentCount++
         }
       })
+    },
+    includesSegmentHeaders(segmentTitle) {
+      return ["segment_name", "segment_filters", "colors"].includes(
+        segmentTitle
+      )
     },
     getSelectedData(value) {
       this.selectedSegment = value
