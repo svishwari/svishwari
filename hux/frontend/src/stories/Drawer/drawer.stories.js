@@ -1,5 +1,5 @@
 import Drawer from "./Drawer2.vue"
-import HuxButton from "@/components/common/huxButton.vue"
+import HuxButton from "../huxButton/huxButton2.vue"
 import { action } from "@storybook/addon-actions"
 import AllIcons from "../icons/Icons"
 
@@ -19,13 +19,14 @@ export default {
         type: "select",
       },
     },
+    secondaryButtonText: { control: { type: "text" } },
+    primaryButtonText: { control: { type: "text" } },
+    footerTextField: { control: { type: "text" } },
   },
   args: {
     loading: false,
     width: 400,
     title: "Title",
-    primaryButtons: 0,
-    textField: "x results"
   },
   parameters: {
     design: {
@@ -62,46 +63,8 @@ const Template = (args, { argTypes }) => ({
       @onClose="onClose()"
     >
       <template #default>
-        <div class="body-1 pa-4">
+        <div class="body-1 pa-6">
           Some content
-        </div>
-      </template>
-
-      <template #footer-left>
-        <div>
-          <hux-button
-            size="large"
-            tile
-            variant="white"
-            class="btn-border box-shadow-none"
-            @click="onCancel()"
-          >
-            <span class="primary--text">Cancel &amp; back</span>
-          </hux-button>
-          <span v-if="textField && primaryButtons" class="ml-6">{{textField}}</span>
-        </div>
-      </template>
-
-      <template #footer-right>
-        <div>
-          <span v-if="textField && !primaryButtons">{{textField}}</span>
-          <hux-button
-            v-if="primaryButtons == 2"
-            tile
-            variant="white"
-            class="mr-2 btn-border box-shadow-none"
-            @click="onCreate()"
-          >
-            <span class="primary--text">Create &amp; add</span>
-          </hux-button>
-          <hux-button
-            v-if="primaryButtons > 0"
-            tile
-            color="primary"
-            @click="onCreate()"
-          >
-            Active
-          </hux-button>
         </div>
       </template>
     </drawer>

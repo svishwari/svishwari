@@ -11,16 +11,16 @@
   >
     <v-toolbar
       width="100%"
-      class="drawer-header no-shadow border-bottom"
+      class="drawer-header no-shadow border-bottom pl-2 pr-2"
       :height="headerHeight"
     >
-      <v-toolbar-title :class="contentHeaderPadding">
-        <div class="pt-2">
-          <icon v-if="iconType" :type="iconType" :size="38" color="primary" />
-          <h2 style="float: right" :class="iconType ? 'mt-1' : 'mb-2'">{{ title }}</h2>
-        </div>
-        <slot name="header-right"></slot>
+      <v-toolbar-title class="title-wrap">
+        <icon v-if="iconType" :type="iconType" size="38" color="primary" />
+        <span class="text-h2">{{ title }}</span>
+        <v-spacer></v-spacer>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <slot name="header-right"></slot>
     </v-toolbar>
 
     <slot name="loading">
@@ -29,33 +29,49 @@
 
     <div
       class="drawer-content"
-      :class="{
-        contentPadding,
-        'drawer-content-without-footer': !hasFooterSlots,
-      }"
     >
       <slot></slot>
     </div>
 
     <v-footer
-      v-if="hasFooterSlots"
       class="drawer-footer d-flex justify-space-between align-center px-6 py-4"
       absolute
       color="white"
       elevation="5"
     >
-      <slot name="footer-left"></slot>
-      <slot name="footer-right"></slot>
+      <div>
+        <hux-button
+          size="large"
+          tile
+          variant="secondary"
+          class="btn-border box-shadow-none"
+          @click="localDrawer = !localDrawer"
+        >
+          {{ secondaryButtonText }}
+        </hux-button>
+        <span v-if="footerTextField && primaryButtonText" class="ml-2">{{ footerTextField }}</span>
+      </div>
+      <div>
+        <span v-if="footerTextField && !primaryButtonText">{{ footerTextField }}</span>
+        <hux-button
+          v-if="primaryButtonText"
+          tile
+          color="primary"
+        >
+          {{ primaryButtonText }}
+        </hux-button>
+      </div>
     </v-footer>
   </v-navigation-drawer>
 </template>
 
 <script>
 import icon from "../icons/Icon2.vue"
+import huxButton from "../huxButton/huxButton2.vue"
 
 export default {
   name: "Drawer",
-  components: { icon },
+  components: { icon, huxButton },
   props: {
     value: {
       type: Boolean,
@@ -92,17 +108,6 @@ export default {
       required: false,
       default: false,
     },
-
-    contentPadding: {
-      type: String,
-      required: false,
-      default: "pa-2",
-    },
-
-    contentHeaderPadding: {
-      type: String,
-      required: false,
-    },
     headerHeight: {
       type: String,
       required: false,
@@ -114,6 +119,19 @@ export default {
     },
     iconType: {
       type: String,
+      required: false,
+    },
+    secondaryButtonText: {
+      type: String,
+      required: false,
+      default: "Close",
+    },
+    primaryButtonText: {
+      type: String,
+      required: false,
+    },
+    footerTextField: {
+      type: String, 
       required: false,
     },
   },
@@ -191,7 +209,6 @@ $drawer-data-table-padding: 9px 25px;
   height: calc(100% - #{$drawer-header-height + $drawer-footer-height});
   overflow-y: auto;
   border-bottom: 1px solid var(--v-black-lighten3) !important;
-  padding: 16px;
 }
 .drawer-content-without-footer {
   height: calc(100% - #{$drawer-header-height});
@@ -219,5 +236,10 @@ $drawer-data-table-padding: 9px 25px;
       }
     }
   }
+}
+.title-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>
