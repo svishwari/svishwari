@@ -36,7 +36,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "hospitality"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
@@ -46,7 +46,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "hospitality", "automotive"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
@@ -57,7 +57,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "hospitality", "automotive"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
@@ -68,7 +68,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "hospitality", "automotive"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
@@ -79,14 +79,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [
-                "healthcare",
-                "retail",
-                "hospitality",
-                "automotive",
-            ]
-        },
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
@@ -97,7 +90,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "automotive"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
@@ -108,7 +101,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "automotive"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -119,14 +112,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [
-                "healthcare",
-                "retail",
-                "hospitality",
-                "automotive",
-            ]
-        },
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -137,14 +123,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [
-                "healthcare",
-                "retail",
-                "hospitality",
-                "automotive",
-            ]
-        },
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -155,14 +134,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [
-                "healthcare",
-                "retail",
-                "hospitality",
-                "automotive",
-            ]
-        },
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -173,14 +145,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [
-                "healthcare",
-                "retail",
-                "hospitality",
-                "automotive",
-            ]
-        },
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -191,14 +156,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [
-                "healthcare",
-                "retail",
-                "hospitality",
-                "automotive",
-            ]
-        },
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_RETENTION,
@@ -209,14 +167,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [
-                "healthcare",
-                "retail",
-                "hospitality",
-                "automotive",
-            ]
-        },
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
@@ -227,7 +178,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "automotive"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
@@ -238,7 +189,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "automotive"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
@@ -248,7 +199,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "hospitality", "automotive"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_UNCATEGORIZED,
@@ -258,7 +209,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: ["retail", "hospitality", "automotive"]},
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: "Retention",
@@ -276,14 +227,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [
-                "healthcare",
-                "retail",
-                "hospitality",
-                "automotive",
-            ]
-        },
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: "Retention",
@@ -301,14 +245,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [
-                "healthcare",
-                "retail",
-                "hospitality",
-                "automotive",
-            ]
-        },
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
 ]
 
@@ -1353,9 +1290,7 @@ def drop_collections(database: MongoClient) -> None:
     # pylint: disable=eval-used
     if not eval(os.environ.get("DROP_ALL_COLLECTIONS", default="False")):
         collections_to_drop = [
-            x
-            for x in collections_to_drop
-            if x not in db_c.RESTRICTED_COLLECTIONS
+            x for x in collections_to_drop if x not in db_c.RESTRICTED_COLLECTIONS
         ]
 
     for collection in collections_to_drop:
@@ -1363,9 +1298,7 @@ def drop_collections(database: MongoClient) -> None:
         logging.info("Dropped the %s collection.", collection)
 
 
-def create_empty_collections(
-    database: MongoClient, collection_names: list
-) -> None:
+def create_empty_collections(database: MongoClient, collection_names: list) -> None:
     """Create empty collections
 
     Args:
@@ -1373,9 +1306,7 @@ def create_empty_collections(
         collection_names (list): List of collection names to create
     """
     for collection_name in collection_names:
-        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(
-            collection_name
-        )
+        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(collection_name)
         logging.info("Empty collection %s created.", collection_name)
 
 
@@ -1399,15 +1330,11 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
             source_type=data_source[db_c.DATA_SOURCE_TYPE],
             status=data_source[db_c.STATUS],
         )[db_c.ID]
-        logging.info(
-            "Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id
-        )
+        logging.info("Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id)
     logging.info("Pre-populate data sources complete.")
 
 
-def insert_delivery_platforms(
-    database: MongoClient, delivery_platforms: list
-) -> None:
+def insert_delivery_platforms(database: MongoClient, delivery_platforms: list) -> None:
     """Insertion of Delivery Platforms Collection.
 
     Args:
@@ -1485,9 +1412,7 @@ def insert_models(database: MongoClient, models: list) -> None:
     logging.info("Pre-populate models complete.")
 
 
-def insert_client_projects(
-    database: MongoClient, client_projects: list
-) -> None:
+def insert_client_projects(database: MongoClient, client_projects: list) -> None:
     """Insert data into client_projects collection.
 
     Args:
