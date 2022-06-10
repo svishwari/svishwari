@@ -1,4 +1,4 @@
-"""This module contains database defines"""
+"""This module contains database defines."""
 
 # General Defines
 from bson import ObjectId
