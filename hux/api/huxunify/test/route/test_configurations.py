@@ -114,8 +114,8 @@ class ConfigurationsTests(RouteTestCase):
             sorted([x[api_c.NAME] for x in self.configurations]),
         )
 
-    def test_success_get_models_with_status(self):
-        """Test get models from Tecton with status."""
+    def test_success_get_configurations_modules_with_status(self):
+        """Test get configurations modules with status."""
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}"
@@ -142,9 +142,7 @@ class ConfigurationsTests(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
-        self.assertTrue(
-            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME]
-        )
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME])
         self.assertEqual(
             response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME],
             "Data Management",
@@ -179,11 +177,8 @@ class ConfigurationsTests(RouteTestCase):
         insights_nav_setting_names = [
             insights_nav_setting[db_c.CONFIGURATION_FIELD_NAME]
             for nav_setting in response.json[db_c.CONFIGURATION_FIELD_SETTINGS]
-            if nav_setting[db_c.CONFIGURATION_FIELD_NAME]
-            == api_c.INSIGHTS.title()
-            for insights_nav_setting in nav_setting[
-                db_c.CONFIGURATION_FIELD_CHILDREN
-            ]
+            if nav_setting[db_c.CONFIGURATION_FIELD_NAME] == api_c.INSIGHTS.title()
+            for insights_nav_setting in nav_setting[db_c.CONFIGURATION_FIELD_CHILDREN]
         ]
         self.assertIn("Patients", insights_nav_setting_names)
         self.assertNotIn("Customers", insights_nav_setting_names)
@@ -214,11 +209,8 @@ class ConfigurationsTests(RouteTestCase):
         insights_nav_setting_names = [
             insights_nav_setting[db_c.CONFIGURATION_FIELD_NAME]
             for nav_setting in response.json[db_c.CONFIGURATION_FIELD_SETTINGS]
-            if nav_setting[db_c.CONFIGURATION_FIELD_NAME]
-            == api_c.INSIGHTS.title()
-            for insights_nav_setting in nav_setting[
-                db_c.CONFIGURATION_FIELD_CHILDREN
-            ]
+            if nav_setting[db_c.CONFIGURATION_FIELD_NAME] == api_c.INSIGHTS.title()
+            for insights_nav_setting in nav_setting[db_c.CONFIGURATION_FIELD_CHILDREN]
         ]
         self.assertIn("Customers", insights_nav_setting_names)
         self.assertNotIn("Patients", insights_nav_setting_names)
@@ -235,9 +227,7 @@ class ConfigurationsTests(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
-        self.assertTrue(
-            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME]
-        )
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME])
         self.assertEqual(
             response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME],
             "Data Management",

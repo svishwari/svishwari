@@ -51,8 +51,10 @@ class Decisioning:
         Returns:
             dict: model info dictionary.
         """
-        model_infos = self.decisioning_client.get_model_info_api_v1alpha1_models_model_id_get(
-            model_id
+        model_infos = (
+            self.decisioning_client.get_model_info_api_v1alpha1_models_model_id_get(
+                model_id
+            )
         )
         desired_info = None
         if model_version:
@@ -63,9 +65,7 @@ class Decisioning:
         if not desired_info:
             desired_info = max(
                 model_infos,
-                key=lambda info: datetime.strptime(
-                    info.scheduled_date, "%Y-%m-%d"
-                ),
+                key=lambda info: datetime.strptime(info.scheduled_date, "%Y-%m-%d"),
             )
         desired_info.past_version_count = len(model_infos)
         return desired_info
@@ -134,6 +134,9 @@ class Decisioning:
                     api_c.PAST_VERSION_COUNT: model_info.past_version_count,
                     db_c.ENABLED: True,
                     db_c.ADDED: True,
+                    api_c.TAGS: api_c.MODEL_NAME_TAGS_MAP.get(
+                        model_info.model_metadata.model_name, None
+                    ),
                 }
             )
 
@@ -164,9 +167,7 @@ class Decisioning:
             },
         }
 
-    def get_model_features(
-        self, model_id: str, model_version: str = None
-    ) -> list:
+    def get_model_features(self, model_id: str, model_version: str = None) -> list:
         """Get the features for a model.
 
         Args:
@@ -233,9 +234,7 @@ class Decisioning:
 
     # TODO HUS-2969
     # pylint: disable=no-self-use, unused-argument
-    def get_model_pipeline_performance(
-        self, model_id: str, model_version: str
-    ) -> dict:
+    def get_model_pipeline_performance(self, model_id: str, model_version: str) -> dict:
         """Get the model performance of a model.
 
         Args:
@@ -307,9 +306,7 @@ class Decisioning:
         return lift_stats
 
     # pylint: disable=unused-argument
-    def get_model_drift(
-        self, model_id: str, model_version: str = None
-    ) -> list:
+    def get_model_drift(self, model_id: str, model_version: str = None) -> list:
         """Get the drift statics of a model.
 
         Args:

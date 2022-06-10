@@ -1,7 +1,7 @@
 # pylint: disable=too-many-lines,unused-argument
 """Purpose of this script is for housing the
 decision routes for the API"""
-from random import uniform, randint, choice
+from random import uniform, randint, choice, sample
 from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple
@@ -9,6 +9,8 @@ from typing import Tuple
 from flask import Blueprint, jsonify, request, Response
 from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
+from marshmallow import INCLUDE
+
 from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
@@ -77,7 +79,17 @@ class ModelsView(SwaggerView):
             "description": "Model status.",
             "example": "Requested",
             "required": False,
-        }
+        },
+        {
+            "name": api_c.INDUSTRY_TAG,
+            "description": "Only return models matching the industry tag",
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "required": False,
+            "example": "retail",
+        },
     ]
 
     responses = {
@@ -107,6 +119,7 @@ class ModelsView(SwaggerView):
             Tuple[Response, int]: list containing dict of models,
                 HTTP status code.
         """
+
         if get_config().ENV_NAME == api_c.STAGING_ENV:
             token = request.headers.get("authorizationden")
             all_models = Caching.check_and_return_cache(
@@ -126,22 +139,22 @@ class ModelsView(SwaggerView):
                     api_c.OWNER: "Susan Miller",
                     api_c.LOOKBACK_WINDOW: 365,
                     api_c.PREDICTION_WINDOW: 365,
-                    api_c.FULCRUM_DATE: datetime(
-                        today.year, today.month, today.day
-                    ),
-                    api_c.LAST_TRAINED: datetime(
-                        today.year, today.month, today.day
-                    ),
+                    api_c.FULCRUM_DATE: datetime(today.year, today.month, today.day),
+                    api_c.LAST_TRAINED: datetime(today.year, today.month, today.day),
                     api_c.TYPE: choice(["binary", "classification"]),
                     api_c.CATEGORY: choice(["binary", "classification"]),
                     api_c.PAST_VERSION_COUNT: uniform(8, 12),
                     "is_enabled": True,
                     "is_added": True,
+                    api_c.TAGS: dict(
+                        industry=sample(
+                            ["healthcare", "retail", "hospitality", "automotive"], 2
+                        )
+                    ),
                 }
                 for i in range(11)
             ]
 
-        all_models.sort(key=lambda x: x[api_c.NAME])
         all_models = list(
             filter(
                 lambda model: not model.get(api_c.NAME, "")
@@ -150,6 +163,31 @@ class ModelsView(SwaggerView):
                 all_models,
             )
         )
+
+        # get the optional industry tag filter query param as a list
+        industry_tag_list = [
+            industry_tag.lower()
+            for industry_tag in request.args.getlist(api_c.INDUSTRY_TAG)
+        ]
+
+        # filter the models based on industry tags if query param industry_tag
+        # is part of request payload
+        if industry_tag_list:
+            filtered_models = []
+
+            for model in all_models:
+                for industry_tag in industry_tag_list:
+                    if industry_tag in model.get(api_c.TAGS, dict()).get(
+                        api_c.INDUSTRY, dict()
+                    ):
+                        filtered_models.append(model)
+                        break
+                else:
+                    continue
+
+            all_models = filtered_models
+
+        all_models.sort(key=lambda x: x[api_c.NAME])
 
         return HuxResponse.OK(data=all_models, data_schema=ModelSchema())
 
@@ -214,7 +252,7 @@ class RequestModel(SwaggerView):
             Tuple[dict, int]: Model Requested, HTTP status code.
         """
         models = ModelRequestPostSchema().load(
-            request.get_json(), unknown=True, many=True
+            request.get_json(), unknown=INCLUDE, many=True
         )
         database = get_db_client()
 
@@ -258,8 +296,7 @@ class RequestModel(SwaggerView):
             notification_management.create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
-                f'Model requested "{model[db_c.NAME]}" '
-                f"by {user[api_c.USER_NAME]}.",
+                f'Model requested "{model[db_c.NAME]}" ' f"by {user[api_c.USER_NAME]}.",
                 db_c.NOTIFICATION_CATEGORY_MODELS,
                 user[api_c.USER_NAME],
             )
@@ -426,16 +463,12 @@ class ModelVersionHistoryView(SwaggerView):
                     api_c.OWNER: "Susan Miller",
                     api_c.LOOKBACK_WINDOW: 90,
                     api_c.PREDICTION_WINDOW: 7,
-                    api_c.FULCRUM_DATE: datetime(
-                        today.year, today.month, today.day
-                    ),
+                    api_c.FULCRUM_DATE: datetime(today.year, today.month, today.day),
                 }
                 for i in range(10)
             ]
 
-        return HuxResponse.OK(
-            data=version_history, data_schema=ModelVersionSchema()
-        )
+        return HuxResponse.OK(data=version_history, data_schema=ModelVersionSchema())
 
 
 @add_view_to_blueprint(
@@ -502,9 +535,7 @@ class ModelOverview(SwaggerView):
                 Decisioning(token).get_model_overview,
                 {
                     "model_id": model_id,
-                    "model_version": request.args.get(
-                        api_c.VERSION, default=None
-                    ),
+                    "model_version": request.args.get(api_c.VERSION, default=None),
                 },
             )
         else:
@@ -524,9 +555,7 @@ class ModelOverview(SwaggerView):
                 }
             ]
 
-        return HuxResponse.OK(
-            data=model_overview, data_schema=ModelOverviewSchema()
-        )
+        return HuxResponse.OK(data=model_overview, data_schema=ModelOverviewSchema())
 
 
 @add_view_to_blueprint(
@@ -597,9 +626,7 @@ class ModelDriftView(SwaggerView):
             drift_data = [
                 {
                     api_c.DRIFT: round(uniform(0.8, 1), 2),
-                    api_c.RUN_DATE: datetime(
-                        today.year, today.month, today.day
-                    )
+                    api_c.RUN_DATE: datetime(today.year, today.month, today.day)
                     + timedelta(i),
                 }
                 for i in range(10)
@@ -702,9 +729,7 @@ class ModelFeaturesView(SwaggerView):
                 for i in range(50)
             ]
 
-        return HuxResponse.OK(
-            data=features[:limit], data_schema=FeatureSchema()
-        )
+        return HuxResponse.OK(data=features[:limit], data_schema=FeatureSchema())
 
 
 @add_view_to_blueprint(
@@ -819,9 +844,7 @@ class ModelImportanceFeaturesView(SwaggerView):
         # sort the top features before serving them out
         features.sort(key=lambda x: x[api_c.SCORE], reverse=True)
 
-        return HuxResponse.OK(
-            data=features[:limit], data_schema=FeatureSchema()
-        )
+        return HuxResponse.OK(data=features[:limit], data_schema=FeatureSchema())
 
 
 @add_view_to_blueprint(
