@@ -411,6 +411,10 @@ client["audiences"].replaceAudience = (data) => {
     data.value
   )
 }
+
+client["audiences"].update = (audienceId, payload) => {
+  return http.put(`/audiences/${audienceId}`, payload)
+}
 //#endregion
 
 //#region Notifications
