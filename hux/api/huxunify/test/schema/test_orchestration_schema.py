@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use
-"""Purpose of this file is to test the orchestration schemas"""
+"""Purpose of this file is to test the orchestration schemas."""
 import random
 from unittest import TestCase
 from datetime import datetime

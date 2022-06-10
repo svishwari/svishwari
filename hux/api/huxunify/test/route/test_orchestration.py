@@ -1,5 +1,5 @@
 # pylint: disable=too-many-lines
-"""Purpose of this file is to house all tests related to orchestration"""
+"""Purpose of this file is to house all tests related to orchestration."""
 from http import HTTPStatus
 from unittest import mock
 from bson import ObjectId
