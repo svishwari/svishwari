@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use
-"""Purpose of this file is to test the orchestration schemas."""
+"""Purpose of this file is to test the orchestration schemas"""
 import random
 from unittest import TestCase
 from datetime import datetime
@@ -228,7 +228,10 @@ class OrchestrationSchemaTest(TestCase):
 
         # test to ensure all deliveries are the same and they are set.
         self.assertTrue(
-            all([x[db_c.DELIVERY_PLATFORM_ID] for x in deliveries] + [destination_id])
+            all(
+                [x[db_c.DELIVERY_PLATFORM_ID] for x in deliveries]
+                + [destination_id]
+            )
         )
 
     def test_engagement_delivery_history_schema(self) -> None:
@@ -273,7 +276,9 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        self.assertFalse(EngagementDeliveryHistorySchema().validate(delivery_history))
+        self.assertFalse(
+            EngagementDeliveryHistorySchema().validate(delivery_history)
+        )
 
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
@@ -345,7 +350,9 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        self.assertFalse(AudienceDeliveryHistorySchema().validate(delivery_history))
+        self.assertFalse(
+            AudienceDeliveryHistorySchema().validate(delivery_history)
+        )
 
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
