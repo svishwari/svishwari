@@ -100,7 +100,7 @@ class DecisioningTests(RouteTestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?"
-            f"{api_c.INDUSTRY_TAG}=healthcare&{api_c.INDUSTRY_TAG}=retail",
+            f"{api_c.INDUSTRY_TAG}={api_c.HEALTHCARE}&{api_c.INDUSTRY_TAG}={api_c.RETAIL}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -115,7 +115,7 @@ class DecisioningTests(RouteTestCase):
             # request payload is present in response
             self.assertTrue(
                 any(
-                    industry_tag in ["healthcare", "retail"]
+                    industry_tag in [api_c.HEALTHCARE, api_c.RETAIL]
                     for industry_tag in model[api_c.TAGS][api_c.INDUSTRY]
                 )
             )

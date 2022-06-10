@@ -86,7 +86,7 @@ class ModelsView(SwaggerView):
             "items": {"type": "string"},
             "collectionFormat": "multi",
             "required": False,
-            "example": "retail",
+            "example": api_c.RETAIL,
         },
     ]
 
@@ -150,12 +150,7 @@ class ModelsView(SwaggerView):
                     "is_added": True,
                     api_c.TAGS: dict(
                         industry=sample(
-                            [
-                                "healthcare",
-                                "retail",
-                                "hospitality",
-                                "automotive",
-                            ],
+                            api_c.ALL_INDUSTRY_TYPES,
                             2,
                         )
                     ),

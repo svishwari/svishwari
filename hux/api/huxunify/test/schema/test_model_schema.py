@@ -30,7 +30,7 @@ class TestModelSchema(TestCase):
             added=False,
             status=api_c.STATUS_PENDING,
             category="Sales forecasting",
-            tags={api_c.INDUSTRY: ["healthcare", "retail"]},
+            tags={api_c.INDUSTRY: [api_c.HEALTHCARE, api_c.RETAIL]},
         )
 
         response = ModelSchema().dump(doc)
