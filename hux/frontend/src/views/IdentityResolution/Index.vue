@@ -481,7 +481,8 @@ $headerOffsetY: 70px;
   .matching-trend-chart-frame {
     background-image: url("../../assets/images/no-matching-trend-chart-frame.png");
     background-position: center;
-    background-size: 90% 100%;
+    background-size: 95% 100%;
+    max-height: 335px !important;
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div ref="emptyState" class="empty-state-wrap">
-    <div class="ml-9">
+    <div class="ml-6">
       <div v-for="index in boxCount" :key="index" class="box"></div>
     </div>
     <div class="text-center">
