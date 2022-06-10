@@ -1,4 +1,4 @@
-"""Purpose of this file is to house all tests related to decisioning."""
+"""Purpose of this file is to house all tests related to decisioning"""
 import json
 from http import HTTPStatus
 from unittest import mock
@@ -38,9 +38,12 @@ class DecisioningTests(RouteTestCase):
         self.tecton = Tecton()
 
         # define relative paths used for mocking calls.
-        self.models_rel_path = "huxunify.api.data_connectors.tecton.Tecton.get_models"
+        self.models_rel_path = (
+            "huxunify.api.data_connectors.tecton.Tecton.get_models"
+        )
         self.versions_rel_path = (
-            "huxunify.api.data_connectors." "tecton.Tecton.get_model_version_history"
+            "huxunify.api.data_connectors."
+            "tecton.Tecton.get_model_version_history"
         )
 
         # mock get_db_client()
@@ -61,7 +64,9 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(ModelSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(ModelSchema(), response.json, True)
+        )
 
     def test_success_get_models_with_status(self):
         """Test get models with status."""
@@ -76,10 +81,15 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(ModelSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(ModelSchema(), response.json, True)
+        )
         self.assertTrue(all(api_c.STATUS in model for model in response.json))
         self.assertTrue(
-            all(model[api_c.STATUS] == api_c.STATUS_ACTIVE for model in response.json)
+            all(
+                model[api_c.STATUS] == api_c.STATUS_ACTIVE
+                for model in response.json
+            )
         )
 
     def test_success_get_models_with_model_tags_filter(self):
@@ -95,7 +105,9 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(ModelSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(ModelSchema(), response.json, True)
+        )
         for model in response.json:
             self.assertIn(api_c.TAGS, model)
             self.assertIn(api_c.INDUSTRY, model[api_c.TAGS])
@@ -212,7 +224,9 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual({api_c.MESSAGE: api_c.OPERATION_SUCCESS}, response.json)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, response.json
+        )
 
     def test_remove_model_failure_invalid_model_id(self):
         """Test removing requested models from Unified DB with invalid model id."""
@@ -288,7 +302,9 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(ModelVersionSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(ModelVersionSchema(), response.json, True)
+        )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(settings.load_profile("hypothesis_setting_profile"))
@@ -300,7 +316,9 @@ class DecisioningTests(RouteTestCase):
         """
 
         get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        get_model_version_mock.return_value = (
+            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        )
 
         # mock the features response
         self.request_mocker.stop()
@@ -311,12 +329,15 @@ class DecisioningTests(RouteTestCase):
         self.request_mocker.start()
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/" f"{api_c.DRIFT}",
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
+            f"{api_c.DRIFT}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(ModelDriftSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(ModelDriftSchema(), response.json, True)
+        )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(settings.load_profile("hypothesis_setting_profile"))
@@ -328,7 +349,9 @@ class DecisioningTests(RouteTestCase):
         """
 
         get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        get_model_version_mock.return_value = (
+            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        )
 
         # mock the features response
         self.request_mocker.stop()
@@ -345,7 +368,9 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(FeatureSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(FeatureSchema(), response.json, True)
+        )
 
     @given(model_id=st.integers(min_value=1, max_value=2))
     @settings(settings.load_profile("hypothesis_setting_profile"))
@@ -357,7 +382,9 @@ class DecisioningTests(RouteTestCase):
         """
 
         get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        get_model_version_mock.return_value = (
+            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        )
 
         # mock the features response
         self.request_mocker.stop()
@@ -374,7 +401,9 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(FeatureSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(FeatureSchema(), response.json, True)
+        )
         self.assertEqual(20, len(response.json))
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
@@ -387,7 +416,9 @@ class DecisioningTests(RouteTestCase):
         """
 
         get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        get_model_version_mock.return_value = (
+            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        )
 
         # mock the features response
         self.request_mocker.stop()
@@ -404,11 +435,15 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(FeatureSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(FeatureSchema(), response.json, True)
+        )
 
     @given(model_id=st.integers(min_value=1, max_value=2))
     @settings(settings.load_profile("hypothesis_setting_profile"))
-    def test_get_model_feature_importance_negative_score(self, model_id: int) -> None:
+    def test_get_model_feature_importance_negative_score(
+        self, model_id: int
+    ) -> None:
         """Test get model feature importance negative score in response.
 
         Args:
@@ -416,7 +451,9 @@ class DecisioningTests(RouteTestCase):
         """
 
         get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        get_model_version_mock.return_value = (
+            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        )
 
         # mock the features response
         self.request_mocker.stop()
@@ -433,8 +470,12 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(FeatureSchema(), response.json, True))
-        self.assertTrue(all((feature[api_c.SCORE] < 0 for feature in response.json)))
+        self.assertTrue(
+            t_c.validate_schema(FeatureSchema(), response.json, True)
+        )
+        self.assertTrue(
+            all((feature[api_c.SCORE] < 0 for feature in response.json))
+        )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     def test_get_performance_pipeline(self, model_id: str):
@@ -452,5 +493,7 @@ class DecisioningTests(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertTrue(
-            t_c.validate_schema(ModelPipelinePerformanceSchema(), response.json)
+            t_c.validate_schema(
+                ModelPipelinePerformanceSchema(), response.json
+            )
         )

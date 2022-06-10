@@ -1,4 +1,4 @@
-"""Model Schema Tests."""
+"""Model Schema Tests"""
 import re
 from datetime import datetime
 from unittest import TestCase
@@ -69,7 +69,9 @@ class TestModelSchema(TestCase):
         self.assertTrue(re.search("Consumer", response[api_c.NAME]))
         self.assertFalse(re.search("Customer", response[api_c.NAME]))
         self.assertEqual(response[api_c.VERSION], doc[api_c.CURRENT_VERSION])
-        self.assertEqual(response[api_c.LOOKBACK_WINDOW], doc[api_c.LOOKBACK_WINDOW])
+        self.assertEqual(
+            response[api_c.LOOKBACK_WINDOW], doc[api_c.LOOKBACK_WINDOW]
+        )
         self.assertEqual(
             response[api_c.PREDICTION_WINDOW], doc[api_c.PREDICTION_WINDOW]
         )

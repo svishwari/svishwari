@@ -1,5 +1,5 @@
 # pylint: disable=invalid-name,line-too-long,too-many-lines
-"""Purpose of this file is housing shared components for tests."""
+"""Purpose of this file is housing shared components for tests"""
 from datetime import datetime
 import time
 from http import HTTPStatus
@@ -108,11 +108,15 @@ CONTRACTS_DIR = "contracts"
 CDP_CUSTOMERS_CONTRACTS_DIR = "cdp_customers"
 CDP_CONNECTIONS_CONTRACTS_DIR = "cdp_connections"
 TECTON_CONTRACTS_DIR = "tecton"
-CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = "/customer-profiles/insights/count-by-state"
+CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
+    "/customer-profiles/insights/count-by-state"
+)
 CDP_CUSTOMER_PROFILES_AUDIENCE_COUNT = "/customer-profiles/audience/count"
 CDP_CUSTOMER_PROFILE_BASE_ENDPOINT = "/customer-profiles/"
 CUSTOMER_PROFILE_COUNT_BY_DAY = "/customer-profiles/insights/count-by-day"
-CUSTOMER_PROFILE_SPENDING_BY_MONTH = "/customer-profiles/insights/spending-by-month"
+CUSTOMER_PROFILE_SPENDING_BY_MONTH = (
+    "/customer-profiles/insights/spending-by-month"
+)
 CUSTOMER_PROFILE_CITY_LTVS = "/customer-profiles/insights/city-ltvs"
 CDP_CONNECTIONS_DATA_SOURCES_ENDPOINT = "/connections/datasources"
 CDP_CONNECTIONS_DATA_SOURCE_DATA_FEEDS_ENDPOINT = (
@@ -1014,7 +1018,9 @@ CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE = {
 
 CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE = {
     "code": 200,
-    "body": [{api_c.NAME: "Test Country", api_c.SIZE: 1234, api_c.LTV: 324.45}],
+    "body": [
+        {api_c.NAME: "Test Country", api_c.SIZE: 1234, api_c.LTV: 324.45}
+    ],
     "message": "ok",
 }
 
@@ -1365,7 +1371,9 @@ TEST_NAVIGATION_SETTINGS = {
             "enabled": True,
             "name": "Decisioning",
             "label": "Decisioning",
-            "children": [{"name": "Models", "label": "Models", "enabled": True}],
+            "children": [
+                {"name": "Models", "label": "Models", "enabled": True}
+            ],
         },
     ]
 }
