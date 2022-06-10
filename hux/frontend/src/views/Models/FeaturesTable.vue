@@ -1,49 +1,59 @@
 <template>
-  <hux-data-table
-    :columns="columns"
-    :data-items="data"
-    :sort-column="sortColumn"
-    :sort-desc="sortDesc"
-  >
+  <hux-data-table :columns="columns" :data-items="data" :sort-column="sortColumn" :sort-desc="sortDesc">
     <template #row-item="{ item }">
-      <td
-        v-for="col in columns"
-        :key="col.value"
-        class="black--text text-body-1"
-      >
+      <td v-for="col in columns" :key="col.value" class="col-overflow black--text text-body-1">
         <template v-if="col.value === 'name'">
           <tooltip>
             <template slot="label-content">
               <span class="ellipsis mt-1">
-                {{ item[col.value] }}
+                {{ item[col.value] | Empty('-') }}
               </span>
             </template>
             <template slot="hover-content">
-              {{ item[col.value] }}
+              {{ item[col.value] | Empty('-') }}
             </template>
           </tooltip>
         </template>
 
-        <div v-else-if="col.value === 'status'" class="text-body-2">
-          <status
-            :status="item[col.value]"
-            :show-label="true"
-            class="d-flex"
-            :icon-size="17"
-          />
-        </div>
-
-        <template v-else-if="col.value === 'created_by'">
-          <avatar :name="item[col.value]" />
+        <template v-else-if="col.value === 'description'">
+          <tooltip>
+            <template slot="label-content">
+              <span class="ellipsis mt-1">
+                {{ item[col.value] | Empty('-') }}
+              </span>
+            </template>
+            <template slot="hover-content">
+              {{ item[col.value] | Empty('-') }}
+            </template>
+          </tooltip>
         </template>
 
-        <template
-          v-else-if="
-            col.value === 'feature_service' || 'data_source' || 'popularity'
-          "
-        >
+        <!-- <template v-else-if="col.value === 'feature_type'">
+          {{ item[col.value] | Empty('-') }}
+        </template> -->
+
+        <template v-else-if="col.value === 'records_not_null'">
+          {{ item[col.value] | Empty('-') }}
+        </template>
+
+        <!-- <template v-else-if="col.value === 'feature_importance'">
+          {{ item[col.value] | Empty('-') }}
+        </template> -->
+
+        <template v-else-if="col.value === 'mean' || 'min' || 'max'">
+          {{ fixDecimalPlace(item[col.value]) }}
+        </template>
+
+        <!-- <template v-else-if="col.value === 'unique_values'">
+          {{ item[col.value] | Empty('-') }}
+        </template> -->
+
+        <template v-else-if="
+          col.value === 'lcuv' || 'mcuv'
+        ">
           {{ item[col.value] }}
         </template>
+
       </td>
     </template>
   </hux-data-table>
@@ -76,36 +86,66 @@ export default {
     return {
       columns: [
         {
-          text: "Name of feature",
+          text: "Feature name",
           value: "name",
           width: "285px",
         },
         {
-          text: "Feature service",
-          value: "feature_service",
-          width: "197px",
+          text: "Description",
+          value: "description",
+          width: "320px",
         },
+        // {
+        //   text: "Feature type",
+        //   value: "feature_type",
+        //   width: "210px",
+        // },
         {
-          text: "Data source",
-          value: "data_source",
+          text: "Records not null",
+          value: "records_not_null",
+          width: "150px",
+        },
+
+        // {
+        //   text: "Feature importance",
+        //   value: "feature_importance",
+        //   width: "150px",
+        // },
+        {
+          text: "Mean",
+          value: "mean",
           width: "150px",
         },
         {
-          text: "Status",
-          value: "status",
-          width: "157px",
+          text: "Min",
+          value: "min",
+          width: "150px",
         },
         {
-          text: "Popularity",
-          value: "popularity",
+          text: "Max",
+          value: "max",
           width: "150px",
+        },
+        //  {
+        //   text: "Unique values",
+        //   value: "unique_values",
+        //   width: "150px",
+        //   hoverTooltip:
+        //     "Number of unique values.",
+        // },
+        {
+          text: "LCUV",
+          value: "lcuv",
+          width: "210px",
           hoverTooltip:
-            "The number of times this feature is used across all active models.",
+            "Least common unique value.",
         },
         {
-          text: "Created by",
-          value: "created_by",
-          width: "110px",
+          text: "MCUV",
+          value: "mcuv",
+          width: "210px",
+          hoverTooltip:
+            "Most common unique value",
         },
       ],
 
@@ -114,6 +154,15 @@ export default {
       sortDesc: true,
     }
   },
+  methods: {
+    fixDecimalPlace(data) {
+      if (typeof (data) !== 'string' || typeof (data) !== 'boolean') {
+        return Math.round(data * 10) / 10
+      } else {
+        return data
+      }
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -128,11 +177,13 @@ export default {
         }
       }
     }
+
     tr {
       td {
         height: 60px !important;
       }
     }
+
     .ellipsis {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -141,8 +192,15 @@ export default {
       width: 28ch;
       white-space: nowrap;
     }
+
     border-radius: 12px 12px 0px 0px;
     overflow: hidden;
+  }
+
+  .col-overflow {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 }
 </style>
