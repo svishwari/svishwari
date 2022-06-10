@@ -228,7 +228,7 @@
         <hux-filters-drawer
           :is-toggled="isFilterToggled"
           :count="numFiltersSelected"
-          :enable-apply="setEnableApply"
+          :enable-apply="true"
           content-height="300px"
           @clear="resetFilters"
           @apply="applyFilters"

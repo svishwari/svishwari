@@ -1,77 +1,87 @@
 <template>
-  <hux-data-table :columns="columns" :data-items="data" :sort-column="sortColumn" :sort-desc="sortDesc">
+  <hux-data-table
+    :columns="columns"
+    :data-items="data"
+    :sort-column="sortColumn"
+    :sort-desc="sortDesc"
+  >
     <template #row-item="{ item }">
-      <td v-for="col in columns" :key="col.value" class="col-overflow black--text text-body-1">
+      <td
+        v-for="col in columns"
+        :key="col.value"
+        class="black--text text-body-1"
+      >
         <template v-if="col.value === 'name'">
           <tooltip>
             <template slot="label-content">
               <span class="ellipsis mt-1">
-                {{ item[col.value] | Empty('-') }}
+                {{ item[col.value] | Empty("-") }}
               </span>
             </template>
             <template slot="hover-content">
-              {{ item[col.value] | Empty('-') }}
+              {{ item[col.value] | Empty("-") }}
             </template>
           </tooltip>
         </template>
 
-        <template v-else-if="col.value === 'description'">
+        <template v-else-if="col.value === 'description'" class="col-overflow">
           <tooltip>
             <template slot="label-content">
               <span class="ellipsis mt-1">
-                {{ item[col.value] | Empty('-') }}
+                {{ item[col.value] | Empty("-") }}
               </span>
             </template>
             <template slot="hover-content">
-              {{ item[col.value] | Empty('-') }}
+              {{ item[col.value] | Empty("-") }}
             </template>
           </tooltip>
         </template>
+        <!-- // need after backend is updated -->
 
         <!-- <template v-else-if="col.value === 'feature_type'">
           {{ item[col.value] | Empty('-') }}
         </template> -->
 
         <template v-else-if="col.value === 'records_not_null'">
-          {{ item[col.value] | Empty('-') }}
+          {{ removeDecimal(item[col.value]) | Empty("-") }}
         </template>
+        <!-- // need after backend is updated -->
 
         <!-- <template v-else-if="col.value === 'feature_importance'">
           {{ item[col.value] | Empty('-') }}
         </template> -->
 
-        <template v-else-if="col.value === 'mean' || 'min' || 'max'">
-          {{ fixDecimalPlace(item[col.value]) }}
+        <template
+          v-else-if="
+            col.value === 'mean' || col.value === 'min' || col.value === 'max'
+          "
+        >
+          {{ fixDecimalPlace(item[col.value]) | Empty("-") }}
         </template>
+
+        <!-- // need after backend is updated -->
 
         <!-- <template v-else-if="col.value === 'unique_values'">
           {{ item[col.value] | Empty('-') }}
         </template> -->
 
-        <template v-else-if="
-          col.value === 'lcuv' || 'mcuv'
-        ">
+        <template v-else-if="col.value === 'lcuv' || col.value === 'mcuv'">
           {{ item[col.value] }}
         </template>
-
       </td>
     </template>
   </hux-data-table>
 </template>
 
 <script>
-import Avatar from "@/components/common/Avatar.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
-import Status from "@/components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "FeaturesTable",
 
   components: {
-    Avatar,
     HuxDataTable,
-    Status,
     Tooltip,
   },
 
@@ -95,6 +105,8 @@ export default {
           value: "description",
           width: "320px",
         },
+        // need after backend is updated
+
         // {
         //   text: "Feature type",
         //   value: "feature_type",
@@ -103,13 +115,14 @@ export default {
         {
           text: "Records not null",
           value: "records_not_null",
-          width: "150px",
+          width: "180px",
         },
+        // need after backend is updated
 
         // {
         //   text: "Feature importance",
         //   value: "feature_importance",
-        //   width: "150px",
+        //   width: "180px",
         // },
         {
           text: "Mean",
@@ -126,10 +139,11 @@ export default {
           value: "max",
           width: "150px",
         },
+        // need after backend is updated
         //  {
         //   text: "Unique values",
         //   value: "unique_values",
-        //   width: "150px",
+        //   width: "180px",
         //   hoverTooltip:
         //     "Number of unique values.",
         // },
@@ -137,15 +151,13 @@ export default {
           text: "LCUV",
           value: "lcuv",
           width: "210px",
-          hoverTooltip:
-            "Least common unique value.",
+          hoverTooltip: "Least common unique value.",
         },
         {
           text: "MCUV",
           value: "mcuv",
           width: "210px",
-          hoverTooltip:
-            "Most common unique value",
+          hoverTooltip: "Most common unique value",
         },
       ],
 
@@ -156,13 +168,17 @@ export default {
   },
   methods: {
     fixDecimalPlace(data) {
-      if (typeof (data) !== 'string' || typeof (data) !== 'boolean') {
+      if (typeof data !== "string" || typeof data !== "boolean") {
         return Math.round(data * 10) / 10
       } else {
         return data
       }
-    }
-  }
+    },
+    // will remove once backend is updated
+    removeDecimal(data) {
+      return Math.floor(data) + "%"
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>

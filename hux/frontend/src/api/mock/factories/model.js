@@ -14,11 +14,10 @@ const modelFeatures = (modelId = 1) => {
     id: modelId,
     lcuv: "Gasoline",
     min: 82.45722715331505,
-    score: 89.27,
     mean: 42.53482405491205,
     max: 46.83699250118915,
     records_not_null: 88.32269510609497,
-    mcuv: "Home accessories"
+    mcuv: "Home accessories",
   }
 }
 
