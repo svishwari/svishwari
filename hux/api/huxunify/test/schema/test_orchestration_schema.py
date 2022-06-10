@@ -61,7 +61,7 @@ class OrchestrationSchemaTest(TestCase):
                     }
                 ]
             },
-            api_c.TAGS: {api_c.INDUSTRY: ["healthcare"]},
+            api_c.TAGS: {api_c.INDUSTRY: [api_c.HEALTHCARE]},
         }
 
         self.assertFalse(AudienceGetSchema().validate(doc))
@@ -99,7 +99,7 @@ class OrchestrationSchemaTest(TestCase):
             db_c.UPDATE_TIME: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
-            api_c.TAGS: {api_c.INDUSTRY: ["hospitality"]},
+            api_c.TAGS: {api_c.INDUSTRY: [api_c.HOSPITALITY]},
         }
 
         self.assertFalse(AudienceGetSchema().validate(doc))
@@ -125,7 +125,7 @@ class OrchestrationSchemaTest(TestCase):
             db_c.UPDATED_BY: "User",
             db_c.FAVORITE: True,
             db_c.STATUS: "Delivered",
-            api_c.TAGS: {api_c.INDUSTRY: ["healthcare", "retail"]},
+            api_c.TAGS: {api_c.INDUSTRY: [api_c.HEALTHCARE, api_c.RETAIL]},
         }
 
         self.assertFalse(LookalikeAudienceGetSchema().validate(doc))
@@ -228,10 +228,7 @@ class OrchestrationSchemaTest(TestCase):
 
         # test to ensure all deliveries are the same and they are set.
         self.assertTrue(
-            all(
-                [x[db_c.DELIVERY_PLATFORM_ID] for x in deliveries]
-                + [destination_id]
-            )
+            all([x[db_c.DELIVERY_PLATFORM_ID] for x in deliveries] + [destination_id])
         )
 
     def test_engagement_delivery_history_schema(self) -> None:
@@ -276,9 +273,7 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        self.assertFalse(
-            EngagementDeliveryHistorySchema().validate(delivery_history)
-        )
+        self.assertFalse(EngagementDeliveryHistorySchema().validate(delivery_history))
 
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
@@ -350,9 +345,7 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        self.assertFalse(
-            AudienceDeliveryHistorySchema().validate(delivery_history)
-        )
+        self.assertFalse(AudienceDeliveryHistorySchema().validate(delivery_history))
 
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
