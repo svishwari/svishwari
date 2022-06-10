@@ -1,4 +1,4 @@
-"""Purpose of this file is to house all tests related to decisioning"""
+"""Purpose of this file is to house all tests related to decisioning."""
 import json
 from http import HTTPStatus
 from unittest import mock

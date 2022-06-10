@@ -1,4 +1,4 @@
-"""Purpose of this file is to house all tests related to configurations"""
+"""Purpose of this file is to house all tests related to configurations."""
 from unittest import mock
 from http import HTTPStatus
 

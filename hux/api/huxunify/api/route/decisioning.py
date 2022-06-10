@@ -1,6 +1,5 @@
 # pylint: disable=too-many-lines,unused-argument
-"""Purpose of this script is for housing the
-decision routes for the API"""
+"""Purpose of this script is for housing the decision routes for the API."""
 from random import uniform, randint, choice, sample
 from datetime import datetime, timedelta
 from http import HTTPStatus

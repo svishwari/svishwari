@@ -1,4 +1,4 @@
-"""Model Schema Tests"""
+"""Model Schema Tests."""
 import re
 from datetime import datetime
 from unittest import TestCase

@@ -1,4 +1,4 @@
-"""Schemas for the Model Object"""
+"""Schemas for the Model Object."""
 import re
 from flask_marshmallow import Schema
 from marshmallow import post_dump
