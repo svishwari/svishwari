@@ -339,9 +339,9 @@ export default {
           if (obj.delivery_platform_id == deliveryId) {
             return { ...obj, replace_audience: val }
           }
+          return obj
         }
       )
-      console.log(this.audienceId)
       try {
         this.updateAudience({
           id: this.audienceId,
