@@ -151,7 +151,7 @@
                 v-model="item['replace_audience']"
                 :switch-labels="switchLabels"
                 false-color="var(--v-black-lighten4)"
-                @change="handleChange($event, section.id, audience.id, item.id)"
+                @change="handleChange(section.id, item.id, $event)"
               />
             </div>
           </td>
@@ -371,6 +371,7 @@ export default {
       setAlert: "alerts/setAlert",
       updateReplace: "engagements/updateReplace",
       replaceAudience: "audiences/replaceAudienceToggle",
+      updateAudience: "audiences/update",
     }),
     async deliverAll(engagement) {
       await this.deliverAudience({
@@ -454,12 +455,37 @@ export default {
     },
     handleChange(...args) {
       const data = {
-        engagement_id: args[1],
-        audience_id: args[2],
-        destination_id: args[3],
-        value: args[0],
+        engagement_id: args[0],
+        audience_id: this.audienceId,
+        destination_id: args[1],
+        value: args[2],
       }
-      this.replaceAudience(data)
+      let updatedEngagements = this.audience.engagements.map((obj) => {
+        if (obj.id == args[0]) {
+          return {
+            ...obj,
+            deliveries: obj.deliveries.map((del) => {
+              if (del.delivery_platform_id == args[1]) {
+                return { ...del, replace_audience: args[2] }
+              }
+              return del
+            }),
+          }
+        }
+        return obj
+      })
+
+      try {
+        this.updateAudience({
+          id: this.audienceId,
+          payload: {
+            engagements: updatedEngagements,
+          },
+        })
+        this.replaceAudience(data)
+      } catch (error) {
+        console.log(error)
+      }
     },
   },
 }
