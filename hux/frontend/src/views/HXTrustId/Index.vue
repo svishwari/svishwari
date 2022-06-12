@@ -807,6 +807,9 @@ export default {
 <style lang="scss" scoped>
 .v-application {
   .hx-trust-id-wrapper {
+    ::v-deep .container {
+      padding-top: 0px !important;
+    }
     ::v-deep .v-breadcrumbs {
       li {
         font-family: Open Sans Light;
@@ -871,7 +874,6 @@ export default {
   overflow-x: hidden !important;
 }
 .segment-drawer {
-  margin-top: -30px;
   margin-right: -30px;
 }
 ::v-deep .hux-filters-drawer {

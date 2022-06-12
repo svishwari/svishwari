@@ -87,7 +87,14 @@
       <v-row class="mt-0">
         <v-col md="6">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.sent &&
+                domainChartData.sent.data.length > 0
+              "
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Sent</h3>
             </v-card-title>
             <domain-overview-chart
@@ -135,7 +142,14 @@
         </v-col>
         <v-col md="6">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.deliveredRate &&
+                domainChartData.deliveredRate.data.length > 0
+              "
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Delivered rate</h3>
             </v-card-title>
             <domain-overview-chart
@@ -187,7 +201,14 @@
       <v-row>
         <v-col md="6">
           <v-card class="rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.openRate &&
+                domainChartData.openRate.data.length > 0
+              "
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Open rate</h3>
             </v-card-title>
             <domain-overview-chart
@@ -236,7 +257,14 @@
         </v-col>
         <v-col md="6">
           <v-card class="rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.clickRate &&
+                domainChartData.clickRate.data.length > 0
+              "
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Click rate</h3>
             </v-card-title>
             <domain-overview-chart
@@ -288,7 +316,14 @@
       <v-row>
         <v-col md="6">
           <v-card class="rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.unsubscribeRate &&
+                domainChartData.unsubscribeRate.data.length > 0
+              "
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Unsubscribe rate</h3>
             </v-card-title>
             <domain-overview-chart
@@ -337,7 +372,14 @@
         </v-col>
         <v-col md="6">
           <v-card class="rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="
+                !emailDomainErrorState &&
+                domainChartData.complaintsRate &&
+                domainChartData.complaintsRate.data.length > 0
+              "
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Complaints rate</h3>
             </v-card-title>
             <domain-overview-chart
@@ -538,13 +580,13 @@ export default {
 }
 .content-section {
   margin-top: 110px;
-  ::v-deep .error-empty-spacing {
-    &.empty-page {
-      .text-center {
-        position: relative;
-        bottom: 40px !important;
-      }
-    }
-  }
+  // ::v-deep .error-empty-spacing {
+  //   &.empty-page {
+  //     .text-center {
+  //       position: relative;
+  //       bottom: 40px !important;
+  //     }
+  //   }
+  // }
 }
 </style>
