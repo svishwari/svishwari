@@ -184,7 +184,7 @@
               <empty-page
                 v-if="!notificationsTableErrorState"
                 type="lift-table-empty"
-                class="pt-5"
+                class="pt-7"
                 :size="50"
               >
                 <template #title>
@@ -199,7 +199,7 @@
               </empty-page>
               <empty-page
                 v-else
-                class="pt-5"
+                class="pt-7"
                 type="error-on-screens"
                 :size="50"
               >
@@ -435,7 +435,7 @@ export default {
 
 .notifications-table-frame {
   background-image: url("../assets/images/no-lift-chart-frame.png");
-  background-position: bottom;
+  background-position: center;
   background-size: 93% 87%;
 }
 

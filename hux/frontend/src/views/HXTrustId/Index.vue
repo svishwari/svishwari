@@ -38,7 +38,7 @@
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
           <overview v-if="!loading" :data="trustIdOverview" />
-          <v-tabs v-model="tabOption" class="mt-8">
+          <v-tabs v-model="tabOption" class="mt-4">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
               <v-tab
@@ -659,12 +659,6 @@ export default {
       return !this.segmentComparisonLoading && this.segmentScores.length == 0
     },
 
-    includesSegmentHeaders(segmentTitle) {
-      return ["segment_name", "segment_filters", "colors"].includes(
-        segmentTitle
-      )
-    },
-
     segmentTableTitle() {
       return this.getSegmentTableData.length == 0
         ? "No segments to show"
@@ -736,6 +730,11 @@ export default {
           this.segmentCount++
         }
       })
+    },
+    includesSegmentHeaders(segmentTitle) {
+      return ["segment_name", "segment_filters", "colors"].includes(
+        segmentTitle
+      )
     },
     getSelectedData(value) {
       this.selectedSegment = value
