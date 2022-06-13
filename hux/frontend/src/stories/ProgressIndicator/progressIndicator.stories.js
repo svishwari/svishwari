@@ -27,7 +27,8 @@ export default {
 const Template = (args, { argTypes }) => ({
   components: { ProgressIndicator },
   props: Object.keys(argTypes),
-  template: '<progress-indicator v-bind="$props" />',
+  template: `
+  <progress-indicator v-bind="$props"/>`,
 })
 
 export const progressIndicator = Template.bind({})
