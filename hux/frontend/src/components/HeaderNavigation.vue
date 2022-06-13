@@ -44,7 +44,7 @@
       <v-list>
         <v-list-item>
           <v-list-item-title
-            class="font-weight-semi-bold text-h6 black--text mb-1"
+            class="font-weight-semi-bold subtitle-1 black--text mt-2 mb-3"
           >
             Create / Add
           </v-list-item-title>
@@ -126,7 +126,7 @@ export default {
 <style lang="scss" scoped>
 .v-menu__content {
   margin-left: 126px;
-  top: 70px !important;
+  top: 75px !important;
   .v-list {
     .v-list-item {
       min-height: 32px !important;

@@ -62,7 +62,7 @@ steps:
       branch:
         only:
           - /^app.*/i
-          - /^release-[\d].*/i
+          # - /^release-[\d].*/i
 
   set_global_vars:
     stage: set_env
@@ -83,6 +83,10 @@ steps:
     arguments:
       JFROG_API_KEY: '${{JFROG_API_KEY}}'
       JFROG_USERNAME: '${{JFROG_USERNAME}}'
+    when:
+      branch:
+        ignore:
+          - /^app.*/i
 
   build_image:
     stage: "docker"
@@ -94,6 +98,10 @@ steps:
     tag: '${{DOCKER_TAG}}'
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
+    when:
+      branch:
+        ignore:
+          - /^app.*/i
 
   Tox_Tests:
     stage: tox_parallel
@@ -164,5 +172,5 @@ steps:
         only:
           - main
           - develop
-          - /^release-[\d].*/i
+          # - /^release-[\d].*/i
           - /^app.*/i

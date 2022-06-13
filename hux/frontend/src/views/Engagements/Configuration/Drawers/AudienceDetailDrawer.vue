@@ -7,7 +7,7 @@
     @onClose="closeDrawer()"
   >
     <template #header-left>
-      <h3 class="text-h2">{{ audienceData && audienceData.name }}</h3>
+      <h3 class="pl-2 text-h2">{{ audienceData && audienceData.name }}</h3>
     </template>
 
     <template #default>
@@ -198,6 +198,11 @@ export default {
 .audience-detail-drawer-wrapper {
   ::v-deep .add-wrap {
     .new-attribute {
+      visibility: hidden !important;
+    }
+  }
+  ::v-deep .attribute-rule {
+    .seperator {
       visibility: hidden !important;
     }
   }

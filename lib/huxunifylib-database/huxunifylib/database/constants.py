@@ -266,6 +266,7 @@ STATS_COVERAGE = "coverage"
 STATS_BREAKDOWN = "breakdown"
 
 DATA_COUNT = "count"
+INDUSTRY = "industry"
 
 AUDIENCE_ID = "audience_id"
 AUDIENCE_NAME = "name"
@@ -300,6 +301,7 @@ CUSTOM_AUDIENCE = "custom_audience"
 CUSTOM_AUDIENCE_STR = "Custom Audience"
 WIN_BACK_AUDIENCE = "win_back_audience"
 WIN_BACK_AUDIENCE_STR = "Win-back Audience"
+TAGS = "tags"
 
 AUDIENCE_TYPE = "audience_type"
 AUDIENCE_TYPE_NAME = "name"
@@ -677,3 +679,9 @@ RESTRICTED_COLLECTIONS = [
     INGESTION_JOBS_COLLECTION,
     USER_COLLECTION,
 ]
+
+HEALTHCARE = "healthcare"
+RETAIL = "retail"
+HOSPITALITY = "hospitality"
+AUTOMOTIVE = "automotive"
+ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]

@@ -4,6 +4,7 @@
       <span
         class="d-flex cursor-pointer mr-6 d-flex align-center user-avatar"
         data-e2e="profile-dropdown"
+        :class="{ 'menu-active': menu }"
         v-on="on"
       >
         <v-avatar
@@ -100,22 +101,21 @@ export default {
 </script>
 <style lang="scss" scoped>
 .user-avatar {
-  .v-avatar {
-    &:hover,
-    &.menu-active {
+  &:hover,
+  &.menu-active {
+    .v-avatar {
       ::v-deep svg {
         path:first-child {
           fill: var(--v-success-base) !important;
         }
       }
     }
+    .arrow-icon {
+      fill: var(--v-primary-lighten6);
+    }
   }
   .arrow-icon {
     fill: var(--v-black-base);
-    &:hover,
-    &.menu-active {
-      fill: var(--v-primary-lighten6);
-    }
   }
 }
 .v-menu__content {

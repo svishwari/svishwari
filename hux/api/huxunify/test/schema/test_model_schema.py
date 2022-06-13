@@ -21,7 +21,7 @@ class TestModelSchema(TestCase):
         """Test ModelSchema."""
 
         doc = dict(
-            _id=str(ObjectId()),
+            id=str(ObjectId()),
             name="Customer Lifetime Value",
             is_enabled=True,
             type=db_c.MODEL_TYPE_REGRESSION,
@@ -30,6 +30,7 @@ class TestModelSchema(TestCase):
             added=False,
             status=api_c.STATUS_PENDING,
             category="Sales forecasting",
+            tags={api_c.INDUSTRY: [api_c.HEALTHCARE, api_c.RETAIL]},
         )
 
         response = ModelSchema().dump(doc)
@@ -43,6 +44,8 @@ class TestModelSchema(TestCase):
         self.assertEqual(response[api_c.CATEGORY], doc[api_c.CATEGORY])
         self.assertEqual(response[api_c.STATUS], doc[api_c.STATUS])
         self.assertEqual(response[api_c.IS_ADDED], doc[db_c.ADDED])
+        self.assertIn(api_c.TAGS, response)
+        self.assertIsInstance(response[api_c.TAGS], dict)
 
     def test_model_version_schema(self):
         """Test ModelVersionSchema."""

@@ -58,6 +58,9 @@
           :title="model.name"
           :logo-option="true"
           :description="model.description"
+          :top-right-adjustment="
+            model.status != 'active' ? 'ml-8 mt-3 mr-8' : 'mt-3 mr-8'
+          "
           data-e2e="model-item"
           :disabled="model.status !== 'Active'"
           :interactable="model.status == 'Active' ? true : false"

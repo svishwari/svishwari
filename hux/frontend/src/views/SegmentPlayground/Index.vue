@@ -16,6 +16,7 @@
           :panel-list-items="panelListItems"
           header="Segment Playground user guide"
           :right-position="!isEdit ? '0rem' : '5rem'"
+          max-height="calc(100vh - 363px)"
         />
         <v-menu
           v-if="isEdit"
@@ -576,12 +577,15 @@ export default {
     }
     .segment-wrap {
       .attributes {
-        flex: 0 0 66.63934426%;
-        width: 66.63934426%;
+        max-height: calc(100vh - 260px) !important;
+        overflow-y: auto;
+        flex: 0 0 66.64%;
+        width: 66.64%;
       }
       .overviews {
-        flex: 0 0 33.360655737704918%;
-        width: 33.360655737704918%;
+        @extend .attributes;
+        flex: 0 0 33.36%;
+        width: 33.36%;
         @extend .border-start;
         border-color: var(--v-black-lighten3);
       }

@@ -1,12 +1,12 @@
 <template>
-  <div class="audiences-wrap">
+  <div class="audiences-wrap white">
     <page-header class="py-5" :header-height="110">
       <template #left>
         <div>
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Segment your consumers into audiences based on your customer data and
+          Segment your consumers into audiences based on your consumer data and
           model scores.
         </div>
       </template>
@@ -1027,6 +1027,7 @@ export default {
   height: 60vh !important;
   background-image: url("../../assets/images/no-alert-frame.png");
   background-position: center;
+  background-size: 96% 86%;
 }
 
 //to overwrite the classes

@@ -218,6 +218,23 @@
                 : "—" | Percentage
             }}
           </div>
+          <div v-if="header.value == 'replace'" class="text-body-1">
+            <hux-switch
+              v-if="item['is_ad_platform']"
+              v-model="item['replace_audience']"
+              :switch-labels="switchLabels"
+              false-color="var(--v-black-lighten4)"
+              @change="
+                handleChange(
+                  $event,
+                  section.id,
+                  section[audienceKey],
+                  item[tableData].name,
+                  item.id
+                )
+              "
+            />
+          </div>
           <div v-if="header.value == 'last_delivered'" class="text-body-1">
             <time-stamp
               :value="
@@ -259,7 +276,7 @@
           </template>
           <template #hover-content>
             <div class="py-2 white d-flex flex-column">
-              <span> Add a audience to this engagement </span>
+              <span> Add a audience to this engagement</span>
             </div>
           </template>
         </tooltip>
@@ -276,6 +293,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -284,6 +302,7 @@ import Status from "@/components/common/Status.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import { formatText, getAccess } from "@/utils.js"
+import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
   name: "DeliveryTable",
@@ -295,6 +314,7 @@ export default {
     Status,
     Size,
     TimeStamp,
+    HuxSwitch,
   },
   props: {
     section: {
@@ -332,6 +352,16 @@ export default {
   data() {
     return {
       openMenu: {},
+      switchLabels: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
+        },
+      ],
     }
   },
   computed: {
@@ -361,8 +391,21 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      replaceAudience: "audiences/replaceAudienceToggle",
+    }),
     formatText: formatText,
     getAccess: getAccess,
+    handleChange(...args) {
+      const audienceID = args[2].find((item) => item.name == args[3]).id
+      const data = {
+        engagement_id: args[1],
+        audience_id: audienceID,
+        destination_id: args[4],
+        value: args[0],
+      }
+      this.replaceAudience(data)
+    },
   },
 }
 </script>

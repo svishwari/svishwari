@@ -24,7 +24,9 @@
       </template>
       <v-list>
         <v-list-item>
-          <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
+          <v-list-item-title
+            class="font-weight-semi-bold text-subtitle-1 black--text mt-2 mb-3"
+          >
             Help
           </v-list-item-title>
         </v-list-item>
@@ -143,7 +145,7 @@ export default {
 
 <style lang="scss" scoped>
 .v-menu__content {
-  top: 70px !important;
+  top: 75px !important;
   margin-left: 16px !important;
   .v-list {
     .v-list-item {

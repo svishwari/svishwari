@@ -26,7 +26,9 @@
     </template>
     <v-list class="alert-menu-main">
       <v-list-item>
-        <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
+        <v-list-item-title
+          class="font-weight-semi-bold text-subtitle-1 black--text mt-2 mb-3"
+        >
           <span v-if="mostRecentNotifications.length > 0">
             Most recent alerts
           </span>
@@ -172,7 +174,7 @@ export default {
 }
 .v-menu__content {
   margin-left: 70px !important;
-  top: 70px !important;
+  top: 75px !important;
   overflow-y: hidden !important;
   .alert-menu-main {
     width: 296px !important;

@@ -128,7 +128,6 @@
                   v-model="item['replace_audience']"
                   :switch-labels="switchLabels"
                   false-color="var(--v-black-lighten4)"
-                  @change="handleChange($event, section, item)"
                 />
               </div>
             </td>
