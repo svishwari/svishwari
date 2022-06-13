@@ -149,7 +149,7 @@ INPUT_FILE = "input_file"
 UNIQUE_ID = "unique_id"
 INPUT = "input"
 TEXT = "text"
-EVENTS = "events"
+EVENT = "event"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"

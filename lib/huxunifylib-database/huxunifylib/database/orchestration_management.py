@@ -306,6 +306,18 @@ def build_get_audiences_query_filter(
                 }
                 for attribute in filters.get(db_c.ATTRIBUTE)
             ]
+        if filters.get(db_c.EVENT):
+            query_filter["$and"].extend(
+                [
+                    {
+                        db_c.EVENTS_FILTER_FIELD: {
+                            "$regex": rf"^{event_name}$",
+                            "$options": "i",
+                        }
+                    }
+                    for event_name in filters.get(db_c.EVENT)
+                ]
+            )
 
     if audience_ids is not None:
         query_filter[db_c.ID] = {"$in": audience_ids}
