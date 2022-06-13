@@ -338,6 +338,16 @@ class AudienceView(SwaggerView):
             "example": "age",
         },
         {
+            "name": api_c.EVENTS,
+            "description": "Only return audiences matching the selected filters",
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "required": False,
+            "example": "created",
+        },
+        {
             "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
             "in": "query",
             "type": "string",
@@ -410,10 +420,14 @@ class AudienceView(SwaggerView):
             filter_dict[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
         attribute_list = request.args.getlist(api_c.ATTRIBUTE)
+        events_list = request.args.getlist(api_c.EVENTS)
         # set the attribute_list to filter_dict only if it is populated and
         # validation is successful
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
+
+        if events_list:
+            filter_dict[api_c.ATTRIBUTE][api_c.EVENTS] = events_list
 
         batch_size = validation.validate_integer(
             value=request.args.get(
