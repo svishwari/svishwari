@@ -3,7 +3,7 @@ import Banner from "./Banner.vue"
 export default {
   component: Banner,
 
-  title: "Design System/Banners",
+  title: "NewComponents/Banners",
 
   argTypes: {
     label: { control: { type: "text" } },

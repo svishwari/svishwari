@@ -5,7 +5,7 @@ import AllIcons from "../icons/Icons"
 
 export default {
   component: Drawer,
-  title: "Design System/Drawer",
+  title: "NewComponents/Drawer",
   argTypes: {
     width: {
       control: { type: "number" },
@@ -72,4 +72,3 @@ const Template = (args, { argTypes }) => ({
 })
 
 export const drawer = Template.bind({})
-

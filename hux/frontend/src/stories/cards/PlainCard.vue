@@ -1,8 +1,11 @@
 <template>
-  <v-card class="pa-6 pt-5" :width="getWidth">
-    <div class="mb-4 card-header">
-      <h4>{{ title }}</h4>
-      <slot name="call-to-action"></slot>
+  <v-card class="pa-6" :width="getWidth">
+    <div class="mb-4">
+      <div class="card-header" :class="$slots.filters ? 'mb-2' : ''">
+        <h4>{{ title }}</h4>
+        <slot name="call-to-action"></slot>
+      </div>
+      <slot name="filters" class="filters-bar"></slot>
     </div>
     <slot name="body"></slot>
   </v-card>
@@ -36,5 +39,9 @@ export default {
   display: flex;
   justify-content: space-between;
   height: 24px;
+}
+.filters-bar {
+  padding-left: -24px;
+  padding-right: -24px;
 }
 </style>

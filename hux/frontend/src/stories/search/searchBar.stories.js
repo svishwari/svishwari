@@ -4,11 +4,11 @@ export default {
   component: SearchBar,
   title: "Design System/Search",
   argTypes: {
-    placeholderText: { control: { type: 'text' } },
+    placeholderText: { control: { type: "text" } },
   },
 }
 
-const Template = (args, {argTypes}) => ({
+const Template = (args, { argTypes }) => ({
   components: { SearchBar },
   props: Object.keys(argTypes),
   template: `

@@ -27,9 +27,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </slot>
 
-    <div
-      class="drawer-content"
-    >
+    <div class="drawer-content">
       <slot></slot>
     </div>
 
@@ -49,15 +47,15 @@
         >
           {{ secondaryButtonText }}
         </hux-button>
-        <span v-if="footerTextField && primaryButtonText" class="ml-2">{{ footerTextField }}</span>
+        <span v-if="footerTextField && primaryButtonText" class="ml-2">{{
+          footerTextField
+        }}</span>
       </div>
       <div>
-        <span v-if="footerTextField && !primaryButtonText">{{ footerTextField }}</span>
-        <hux-button
-          v-if="primaryButtonText"
-          tile
-          color="primary"
-        >
+        <span v-if="footerTextField && !primaryButtonText">{{
+          footerTextField
+        }}</span>
+        <hux-button v-if="primaryButtonText" tile color="primary">
           {{ primaryButtonText }}
         </hux-button>
       </div>
@@ -131,7 +129,7 @@ export default {
       required: false,
     },
     footerTextField: {
-      type: String, 
+      type: String,
       required: false,
     },
   },

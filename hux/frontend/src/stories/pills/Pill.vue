@@ -5,7 +5,8 @@
     class="text-subtitle-2"
     :close="removable"
     close-icon="mdi-close"
-    @click="dropdownClicked()"
+    @click="pillClicked()"
+    @click:close="pillClicked()"
   >
     <tooltip v-if="hover">
       <template #label-content>{{ label }}</template>
@@ -79,9 +80,11 @@ export default {
     getClass(color) {
       return `var(--v-${color})`
     },
-    dropdownClicked() {
+    pillClicked() {
       if (this.dropdown) {
         this.showMenu = !this.showMenu
+      } else if (this.removable) {
+        this.$emit("close")
       }
     },
   },

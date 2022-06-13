@@ -4,7 +4,7 @@ import EmptyPage from "@/components/common/EmptyPage"
 
 export default {
   component: PlainCard,
-  title: "Design System/Cards",
+  title: "NewComponents/Cards",
   argTypes: {
     title: { control: { type: "text" } },
     size: {

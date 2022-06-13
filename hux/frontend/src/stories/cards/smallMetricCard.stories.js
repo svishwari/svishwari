@@ -5,7 +5,7 @@ import AllIcons from "@/stories/icons/Icons"
 
 export default {
   component: SmallMetricCard,
-  title: "Design System/Cards",
+  title: "NewComponents/Cards",
   argTypes: {
     icon: {
       options: AllIcons,

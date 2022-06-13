@@ -8,13 +8,13 @@
     clearable
   >
     <template #prepend-inner>
-    <icon type="help" size="40" color="primary" class="pa-2"/>
+      <icon type="help" size="40" color="primary" class="pa-2" />
     </template>
   </v-text-field>
 </template>
 
 <script>
-import Icon from '../icons/Icon2.vue'
+import Icon from "../icons/Icon2.vue"
 export default {
   components: { Icon },
   name: "Search",
@@ -22,20 +22,20 @@ export default {
     placeholderText: {
       type: String,
       required: false,
-      default: "Search..."
-    }
-  }
+      default: "Search...",
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
-  ::v-deep .v-input__control {
-    max-height: 60px;
-    .v-input__slot {
-      margin-bottom: 0px;
-    }
-    .v-text-field__details {
-      margin-bottom: 0px;
-    }
+::v-deep .v-input__control {
+  max-height: 60px;
+  .v-input__slot {
+    margin-bottom: 0px;
   }
+  .v-text-field__details {
+    margin-bottom: 0px;
+  }
+}
 </style>

@@ -3,7 +3,7 @@ import CardStat from "@/components/common/Cards/Stat"
 import AllIcons from "@/stories/icons/Icons"
 export default {
   component: LargeMetricCard,
-  title: "Design System/Cards",
+  title: "NewComponents/Cards",
   argTypes: {
     icon: {
       options: AllIcons,

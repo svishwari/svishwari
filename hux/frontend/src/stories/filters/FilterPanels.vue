@@ -1,21 +1,26 @@
 <template>
   <v-expansion-panels>
-    <v-expansion-panel
-      v-for="(item,i) in filterOptions"
-      :key="i"
-    >
+    <v-expansion-panel v-for="(item, i) in filterOptions" :key="i">
       <v-expansion-panel-header hide-actions>
         <v-checkbox prepend-icon="$expand">
-          <template #label><span class="text-body-1">{{ item.name }}</span></template>
+          <template #label
+            ><span class="text-body-1">{{ item.name }}</span></template
+          >
         </v-checkbox>
         <v-spacer />
         <span class="panel-count">1</span>
       </v-expansion-panel-header>
       <v-expansion-panel-content>
         <v-list>
-          <v-list-item v-for="(subItem, j) in item.options" :key="j" class="list-items">
+          <v-list-item
+            v-for="(subItem, j) in item.options"
+            :key="j"
+            class="list-items"
+          >
             <v-checkbox>
-              <template #label><span class="text-body-1">{{ subItem }}</span></template>
+              <template #label
+                ><span class="text-body-1">{{ subItem }}</span></template
+              >
             </v-checkbox>
           </v-list-item>
         </v-list>
@@ -35,7 +40,7 @@ export default {
   props: {
     filterOptions: {
       type: Array,
-      required: true, 
+      required: true,
     },
   },
 }

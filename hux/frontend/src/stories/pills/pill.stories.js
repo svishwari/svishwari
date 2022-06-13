@@ -2,7 +2,7 @@ import Pill from "./Pill.vue"
 
 export default {
   component: Pill,
-  title: "Design System/Pills",
+  title: "NewComponents/Pills",
   argTypes: {
     label: { control: { type: "text" } },
     removable: { control: { type: "boolean" } },
