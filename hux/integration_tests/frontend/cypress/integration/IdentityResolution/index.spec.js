@@ -41,5 +41,14 @@ describe("Data management > Identity resolution", () => {
     // toggle stitched panel open/closed
     cy.get(selector.idr.stitched).click()
     cy.get(selector.idr.stitched).click()
+     // eslint-disable-next-line cypress/no-unnecessary-waiting
+     cy.wait(1000)
+    //click ouside to close the drawer
+    cy.get(selector.idr.exitDrawer).click()
+    cy.get(selector.idr.idrfilterToggle).click()
+    cy.get(selector.idr.selectDate).click()
+    cy.get('.hux-select')
+    cy.log(cy.get('.v-list-item').first().click())
+
   })
 })

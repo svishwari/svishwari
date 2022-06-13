@@ -20,7 +20,7 @@
         </div>
       </template>
       <template #right>
-        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn icon data-e2e="idrFilterToggle" @click.native="isFilterToggled = !isFilterToggled">
           <icon
             type="filter"
             :size="27"
@@ -228,7 +228,7 @@
         <hux-filters-drawer
           :is-toggled="isFilterToggled"
           :count="numFiltersSelected"
-          :enable-apply="setEnableApply"
+          :enable-apply="true"
           content-height="300px"
           @clear="resetFilters"
           @apply="applyFilters"
@@ -264,6 +264,7 @@
                 label-year="End year"
                 :min="filterStartDate"
                 :max="maxDate"
+                 data-e2e="selectDateIcon"
               />
             </hux-filter-panel>
           </hux-filter-panels>

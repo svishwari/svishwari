@@ -25,6 +25,7 @@
               height="24"
               class="primary--text"
               :disabled="!Boolean(count) || disableClear"
+               data-e2e="clearFilter"
               @click="$emit('clear')"
             >
               Clear
@@ -54,6 +55,7 @@
                 box-shadow-none
               "
               width="91"
+              data-e2e="closeFilter"
               @click="$emit('close')"
             >
               Close
@@ -68,7 +70,9 @@
                   ? !Boolean(count) && !enableApply
                   : !enableApply
               "
+               data-e2e="applyFilter"
               @click="$emit('apply')"
+              
             >
               {{ submitButton }}
             </hux-button>
