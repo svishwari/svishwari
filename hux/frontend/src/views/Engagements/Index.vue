@@ -1,5 +1,5 @@
 <template>
-  <div class="engagements-wrap">
+  <div class="engagements-wrap white">
     <page-header class="py-5" :header-height="110">
       <template #left>
         <div>
@@ -1488,8 +1488,8 @@ export default {
           tr {
             td:first-child {
               width: 300px;
-              position: fixed;
-              margin-left: 220px;
+              position: relative;
+              margin-left: 0px;
               display: block;
               background-color: var(--v-primary-lighten1);
             }
@@ -1535,6 +1535,7 @@ export default {
   height: 60vh !important;
   background-image: url("../../assets/images/no-alert-frame.png");
   background-position: center;
+  background-size: 96% 86%;
 }
 
 //to overwrite the classes

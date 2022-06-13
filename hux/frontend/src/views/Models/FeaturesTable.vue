@@ -15,33 +15,57 @@
           <tooltip>
             <template slot="label-content">
               <span class="ellipsis mt-1">
-                {{ item[col.value] }}
+                {{ item[col.value] | Empty("-") }}
               </span>
             </template>
             <template slot="hover-content">
-              {{ item[col.value] }}
+              {{ item[col.value] | Empty("-") }}
             </template>
           </tooltip>
         </template>
 
-        <div v-else-if="col.value === 'status'" class="text-body-2">
-          <status
-            :status="item[col.value]"
-            :show-label="true"
-            class="d-flex"
-            :icon-size="17"
-          />
-        </div>
-
-        <template v-else-if="col.value === 'created_by'">
-          <avatar :name="item[col.value]" />
+        <template v-else-if="col.value === 'description'" class="col-overflow">
+          <tooltip>
+            <template slot="label-content">
+              <span class="ellipsis mt-1">
+                {{ item[col.value] | Empty("-") }}
+              </span>
+            </template>
+            <template slot="hover-content">
+              {{ item[col.value] | Empty("-") }}
+            </template>
+          </tooltip>
         </template>
+        <!-- // need after backend is updated -->
+
+        <!-- <template v-else-if="col.value === 'feature_type'">
+          {{ item[col.value] | Empty('-') }}
+        </template> -->
+
+        <template v-else-if="col.value === 'records_not_null'">
+          {{ removeDecimal(item[col.value]) | Empty("-") }}
+        </template>
+        <!-- // need after backend is updated -->
+
+        <!-- <template v-else-if="col.value === 'feature_importance'">
+          {{ item[col.value] | Empty('-') }}
+        </template> -->
 
         <template
           v-else-if="
-            col.value === 'feature_service' || 'data_source' || 'popularity'
+            col.value === 'mean' || col.value === 'min' || col.value === 'max'
           "
         >
+          {{ fixDecimalPlace(item[col.value]) | Empty("-") }}
+        </template>
+
+        <!-- // need after backend is updated -->
+
+        <!-- <template v-else-if="col.value === 'unique_values'">
+          {{ item[col.value] | Empty('-') }}
+        </template> -->
+
+        <template v-else-if="col.value === 'lcuv' || col.value === 'mcuv'">
           {{ item[col.value] }}
         </template>
       </td>
@@ -50,18 +74,14 @@
 </template>
 
 <script>
-import Avatar from "@/components/common/Avatar.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
-import Status from "@/components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "FeaturesTable",
 
   components: {
-    Avatar,
     HuxDataTable,
-    Status,
     Tooltip,
   },
 
@@ -76,36 +96,68 @@ export default {
     return {
       columns: [
         {
-          text: "Name of feature",
+          text: "Feature name",
           value: "name",
           width: "285px",
         },
         {
-          text: "Feature service",
-          value: "feature_service",
-          width: "197px",
+          text: "Description",
+          value: "description",
+          width: "320px",
         },
+        // need after backend is updated
+
+        // {
+        //   text: "Feature type",
+        //   value: "feature_type",
+        //   width: "210px",
+        // },
         {
-          text: "Data source",
-          value: "data_source",
+          text: "Records not null",
+          value: "records_not_null",
+          width: "180px",
+        },
+        // need after backend is updated
+
+        // {
+        //   text: "Feature importance",
+        //   value: "feature_importance",
+        //   width: "180px",
+        // },
+        {
+          text: "Mean",
+          value: "mean",
           width: "150px",
         },
         {
-          text: "Status",
-          value: "status",
-          width: "157px",
-        },
-        {
-          text: "Popularity",
-          value: "popularity",
+          text: "Min",
+          value: "min",
           width: "150px",
-          hoverTooltip:
-            "The number of times this feature is used across all active models.",
         },
         {
-          text: "Created by",
-          value: "created_by",
-          width: "110px",
+          text: "Max",
+          value: "max",
+          width: "150px",
+        },
+        // need after backend is updated
+        //  {
+        //   text: "Unique values",
+        //   value: "unique_values",
+        //   width: "180px",
+        //   hoverTooltip:
+        //     "Number of unique values.",
+        // },
+        {
+          text: "LCUV",
+          value: "lcuv",
+          width: "210px",
+          hoverTooltip: "Least common unique value.",
+        },
+        {
+          text: "MCUV",
+          value: "mcuv",
+          width: "210px",
+          hoverTooltip: "Most common unique value",
         },
       ],
 
@@ -113,6 +165,15 @@ export default {
 
       sortDesc: true,
     }
+  },
+  methods: {
+    fixDecimalPlace(data) {
+      return Math.round(data * 10) / 10
+    },
+    // will remove once backend is updated
+    removeDecimal(data) {
+      return Math.floor(data) + "%"
+    },
   },
 }
 </script>
@@ -128,11 +189,13 @@ export default {
         }
       }
     }
+
     tr {
       td {
         height: 60px !important;
       }
     }
+
     .ellipsis {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -141,8 +204,15 @@ export default {
       width: 28ch;
       white-space: nowrap;
     }
+
     border-radius: 12px 12px 0px 0px;
     overflow: hidden;
+  }
+
+  .col-overflow {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 }
 </style>

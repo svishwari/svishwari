@@ -47,5 +47,3 @@ information can be found on hovering over the progress stack bar.
 
 .. image:: static/img/trust_id/attributes.png
     :width: 900
-
-

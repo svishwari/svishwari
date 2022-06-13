@@ -2038,3 +2038,20 @@ RETAIL = "retail"
 HOSPITALITY = "hospitality"
 AUTOMOTIVE = "automotive"
 ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+
+MODEL_NAME_TAGS_MAP = {
+    "Lifetime Value": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Purchase": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Unsubscribe": dict(industry=[RETAIL, HOSPITALITY]),
+    "Propensity to Churn": dict(industry=ALL_INDUSTRY_TYPES),
+    "Product Portfolio Marketing": dict(
+        industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
+    "Product Recommendation": dict(industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]),
+    "Product Return": dict(industry=[RETAIL, AUTOMOTIVE]),
+    "Promotion Attributable Analysis": dict(
+        industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
+    "Sales Forecasting model": dict(industry=ALL_INDUSTRY_TYPES),
+    "Uplift Model": dict(industry=ALL_INDUSTRY_TYPES),
+}

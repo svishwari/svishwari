@@ -1,5 +1,5 @@
 <template>
-  <div class="audiences-wrap">
+  <div class="audiences-wrap white">
     <page-header class="py-5" :header-height="110">
       <template #left>
         <div>
@@ -1020,6 +1020,7 @@ export default {
   height: 60vh !important;
   background-image: url("../../assets/images/no-alert-frame.png");
   background-position: center;
+  background-size: 96% 86%;
 }
 
 //to overwrite the classes
