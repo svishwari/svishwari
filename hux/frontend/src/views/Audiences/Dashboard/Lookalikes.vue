@@ -42,6 +42,7 @@
         </v-card>
       </div>
       <v-list
+        v-if="getAccess('audience', 'create_lookalike')"
         dense
         class="add-lookalike add-lookalike-width mx-6 mb-6"
         :height="22"
@@ -98,7 +99,11 @@
             Create a lookalike audience in an advertising platform by clicking
             “+ A lookalike” below.
           </div>
-          <v-list class="add-lookalike no-data-width" :height="22">
+          <v-list
+            v-if="getAccess('audience', 'create_lookalike')"
+            class="add-lookalike no-data-width"
+            :height="22"
+          >
             <v-list-item>
               <hux-icon
                 type="plus"
@@ -130,6 +135,7 @@ import Logo from "@/components/common/Logo.vue"
 import Icon from "@/components/common/Icon.vue"
 import MetricCard from "@/components/common/MetricCard"
 import Size from "@/components/common/huxTable/Size.vue"
+import { getAccess } from "@/utils"
 
 export default {
   name: "Lookalikes",
@@ -150,6 +156,9 @@ export default {
     isDataExists() {
       return this.lookalikeData.length > 0 ? true : false
     },
+  },
+  methods: {
+    getAccess: getAccess,
   },
 }
 </script>

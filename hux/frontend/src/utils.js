@@ -494,6 +494,5 @@ export function aggregateAgeFilters(filters) {
 export function getAccess(screen, action) {
   let role = "viewer" //store.getters["users/getCurrentUserRole"]
   let matrix = store.getters["users/getRbacMatrix"]
-  console.log(matrix)
   return matrix[screen]["actions"].find((item) => item.type == action)[role]
 }

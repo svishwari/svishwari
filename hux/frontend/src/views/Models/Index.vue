@@ -26,6 +26,7 @@
       </template>
       <template #right>
         <huxButton
+          v-if="getAccess('models', 'request_one')"
           variant="primary"
           size="large"
           is-tile
@@ -198,6 +199,8 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "../../components/common/Icon.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import ModelConfiguration from "@/views/Models/Drawers/Configuration"
+import { getAccess } from "@/utils"
+
 export default {
   name: "Models",
   components: {
@@ -311,6 +314,7 @@ export default {
       await this.deleteModal(this.selectedModal)
       this.refreshScreen()
     },
+    getAccess: getAccess,
   },
 }
 </script>

@@ -157,7 +157,12 @@
         </template>
       </hux-data-table>
 
-      <v-list dense class="add-list" :height="52">
+      <v-list
+        v-if="getAccess('engagements', 'add_destination_to_engagement')"
+        dense
+        class="add-list"
+        :height="52"
+      >
         <v-list-item @click="$emit('onAddDestination', section)">
           <tooltip>
             <template #label-content>
@@ -207,6 +212,7 @@ import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import HuxSwitch from "@/components/common/Switch.vue"
+import { getAccess } from "@/utils"
 
 export default {
   name: "DeliveryDetails",
@@ -272,6 +278,7 @@ export default {
         {
           id: 1,
           title: "Deliver now",
+          isHidden: !this.getAccess("delivery", "deliver"),
           active: false,
         },
         { id: 2, title: "Add a destination", active: true },
@@ -280,7 +287,12 @@ export default {
         { id: 5, title: "Remove audience", active: true },
       ],
       destinationMenuOptions: [
-        { id: 1, title: "Deliver now", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Open destination", active: false },
         { id: 4, title: "Remove destination", active: true },
       ],
@@ -435,7 +447,12 @@ export default {
       }
       return [
         { ...createLookaLikeOption },
-        { id: 2, title: "Deliver now", active: true },
+        {
+          id: 2,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Edit delivery schedule", active: true },
         { id: 4, title: "Pause delivery", active: false },
         { id: 5, title: "Open destination", active: false },
@@ -450,6 +467,7 @@ export default {
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
     },
+    getAccess: getAccess,
   },
 }
 </script>

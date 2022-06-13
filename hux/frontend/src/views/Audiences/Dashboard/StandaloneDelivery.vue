@@ -20,6 +20,7 @@
       </div>
       <v-spacer> </v-spacer>
       <div
+        v-if="getAccess('delivery', 'deliver')"
         :class="{
           'black--text text--lighten-3 disabled':
             audience.standalone_deliveries &&
@@ -134,7 +135,12 @@
           </template>
         </hux-data-table>
 
-        <v-list dense class="add-list list-border" :height="52">
+        <v-list
+          v-if="getAccess('engagements', 'add_destination_to_engagement')"
+          dense
+          class="add-list list-border"
+          :height="52"
+        >
           <v-list-item @click="$emit('onAddStandaloneDestination', audience)">
             <tooltip>
               <template #label-content>
@@ -173,7 +179,12 @@
         <div class="mb-1">
           This audience has no standalone deliveries. Add a destination below.
         </div>
-        <v-list dense class="add-list" :height="52">
+        <v-list
+          v-if="getAccess('engagements', 'add_destination_to_engagement')"
+          dense
+          class="add-list"
+          :height="52"
+        >
           <v-list-item
             class="px-0"
             @click="$emit('onAddStandaloneDestination', audience)"
@@ -213,6 +224,7 @@ import Logo from "@/components/common/Logo.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip"
 import HuxSwitch from "@/components/common/Switch.vue"
+import { getAccess } from "@/utils"
 
 export default {
   name: "StandaloneDelivery",
@@ -267,7 +279,12 @@ export default {
         },
       ],
       destinationMenuOptions: [
-        { id: 1, title: "Deliver now", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Open destination", active: true },
         { id: 4, title: "Remove destination", active: true },
       ],
@@ -332,6 +349,7 @@ export default {
           "All standalone destination, has started delivering as a standalone deliveries",
       })
     },
+    getAccess: getAccess,
   },
 }
 </script>

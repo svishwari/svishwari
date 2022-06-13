@@ -796,6 +796,7 @@ export default {
         {
           title: "Edit audience",
           isDisabled: false,
+          isHidden: !this.getAccess("audience", "update_one"),
           onClick: () => {
             this.openEditModal(audience)
           },
@@ -815,6 +816,7 @@ export default {
         {
           title: "Delete audience",
           isDisabled: false,
+          isHidden: !this.getAccess("audience", "delete_one"),
           onClick: () => {
             this.openModal(audience)
           },

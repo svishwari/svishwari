@@ -38,6 +38,7 @@
             <span class="d-flex align-center">Edit destination URL </span>
           </div>
           <div
+            v-if="getAccess('destinations', 'delete')"
             class="px-4 py-2 white d-flex flex-column text-body-1"
             data-e2e="destination-list-remove"
             @click="openModal(destination)"
@@ -175,6 +176,7 @@ import HuxEmpty from "@/components/common/screens/Empty"
 import Error from "@/components/common/screens/Error"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
+import { getAccess } from "@/utils.js"
 
 export default {
   name: "DestinationsList",
@@ -285,6 +287,7 @@ export default {
       this.inputText = null
       this.enableConfirm = false
     },
+    getAccess: getAccess,
   },
 }
 </script>
