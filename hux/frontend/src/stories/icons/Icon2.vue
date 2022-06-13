@@ -66,6 +66,18 @@ export default {
       required: false,
       default: false,
     },
+
+    borderColor: {
+      type: String,
+      required: false,
+      default: "black",
+    },
+
+    borderVariant: {
+      type: String,
+      required: false,
+      default: "base",
+    },
   },
 
   computed: {
@@ -73,7 +85,9 @@ export default {
       let style = {}
       if (this.outline) {
         style["border-width"] = parseInt(this.size) < 20 ? "0.5px" : "1px"
-        style["border-color"] = "black"
+        style[
+          "border-color"
+        ] = `var(--v-${this.borderColor}-${this.borderVariant})`
         style["border-style"] = "solid"
         style["border-radius"] = `${parseInt(this.size) / 2}px`
       }

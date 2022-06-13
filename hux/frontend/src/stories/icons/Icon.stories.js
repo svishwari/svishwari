@@ -58,6 +58,30 @@ export default {
         type: "select",
       },
     },
+    borderColor: {
+      defaultValue: "primary",
+      options: [
+        "primary",
+        "secondary",
+        "black",
+        "success",
+        "yellow",
+        "info",
+        "warning",
+        "white",
+        "error",
+      ],
+      control: {
+        type: "select",
+      },
+    },
+    borderVariant: {
+      defaultValue: "base",
+      options: ["lighten1", "lighten2", "lighten3"],
+      control: {
+        type: "select",
+      },
+    },
     outline: {
       defaultValue: false,
       control: {
