@@ -168,11 +168,7 @@ export default {
   },
   methods: {
     fixDecimalPlace(data) {
-      if (typeof data !== "string" || typeof data !== "boolean") {
-        return Math.round(data * 10) / 10
-      } else {
-        return data
-      }
+      return Math.round(data * 10) / 10
     },
     // will remove once backend is updated
     removeDecimal(data) {
