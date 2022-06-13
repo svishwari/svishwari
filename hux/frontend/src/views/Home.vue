@@ -67,7 +67,7 @@
               <empty-page
                 v-if="!totalCustomersChartErrorState"
                 type="model-features-empty"
-                class="pt-5"
+                class="pt-5 mb-n3"
                 :size="50"
               >
                 <template #title>
@@ -435,7 +435,7 @@ export default {
 
 .notifications-table-frame {
   background-image: url("../assets/images/no-lift-chart-frame.png");
-  background-position: center;
+  background-position: 50% 60%;
   background-size: 93% 87%;
 }
 
