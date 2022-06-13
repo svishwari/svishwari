@@ -1,5 +1,5 @@
 <template>
-  <div class="white overview-card pa-6 pt-4">
+  <div class="white overview-card pa-6 pt-4 mt-7">
     <div v-if="data">
       <div class="text-h3">HX TrustID scores for all customers</div>
       <div class="d-flex justify-start">

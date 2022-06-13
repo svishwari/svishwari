@@ -85,7 +85,7 @@
           is-tile
           variant="primary base"
           data-e2e="action-audience"
-          :is-disabled="isDisabled()"
+          :is-disabled="isPrePopulate || isDisabled()"
           @click="updatedConfigSettings"
         >
           Update
@@ -97,7 +97,6 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import { isEqual } from "lodash"
 import Icon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import HuxSwitch from "@/components/common/Switch.vue"
@@ -147,15 +146,9 @@ export default {
       industrySelected: false,
       showSubCategories: false,
       showConfiguration: false,
-      initialDemoMode: false,
+      isPrePopulate: true,
       currentIndustrySelection: "Select",
-      initialIndustrySelection: "Select",
       finalSelection: {
-        retailOptions: "Select",
-        customerOptions: "Select",
-        conversionOptions: "Select",
-      },
-      initialSelection: {
         retailOptions: "Select",
         customerOptions: "Select",
         conversionOptions: "Select",
@@ -166,13 +159,6 @@ export default {
     ...mapGetters({
       existingDemoConfiguration: "users/getDemoConfiguration",
     }),
-    isConfigurationUpdated() {
-      return (
-        this.initialDemoMode != this.showConfiguration ||
-        this.initialIndustrySelection != this.currentIndustrySelection ||
-        !isEqual(this.initialSelection, this.finalSelection)
-      )
-    },
   },
   mounted() {
     if (this.existingDemoConfiguration) {
@@ -202,21 +188,22 @@ export default {
         customerOptions: "Select",
         conversionOptions: "Select",
       }
+      this.isPrePopulate = false
     },
     onSelectSubMenuItem(value, item) {
       this.finalSelection[item] = value.name
+      this.isPrePopulate = false
     },
     isDisabled() {
-      return this.showConfiguration &&
-        this.isConfigurationUpdated &&
-        this.finalSelection.retailOptions !== "Select" &&
-        this.finalSelection.customerOptions !== "Select" &&
-        this.finalSelection.conversionOptions !== "Select"
-        ? false
-        : true
+      if (this.showConfiguration) {
+        return this.finalSelection.retailOptions !== "Select" &&
+          this.finalSelection.customerOptions !== "Select" &&
+          this.finalSelection.conversionOptions !== "Select"
+          ? false
+          : true
+      } else return false
     },
     async updatedConfigSettings() {
-      this.updateCurrentConfiguration()
       await this.updateDemoConfig({
         demo_mode: this.showConfiguration,
         industry: this.currentIndustrySelection,
@@ -236,18 +223,6 @@ export default {
           retailOptions: this.existingDemoConfiguration.description,
           customerOptions: this.existingDemoConfiguration.target,
           conversionOptions: this.existingDemoConfiguration.track,
-        }
-      }
-      this.updateCurrentConfiguration()
-    },
-    updateCurrentConfiguration() {
-      this.initialDemoMode = this.showConfiguration
-      if (this.showConfiguration) {
-        this.initialIndustrySelection = this.currentIndustrySelection
-        this.initialSelection = {
-          retailOptions: this.finalSelection.retailOptions,
-          customerOptions: this.finalSelection.customerOptions,
-          conversionOptions: this.finalSelection.conversionOptions,
         }
       }
     },

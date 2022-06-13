@@ -32,6 +32,14 @@ const getters = {
         status: feature.status,
         popularity: feature.popularity,
         created_by: feature.created_by,
+        description: feature.description,
+        lcuv: feature.lcuv,
+        min: feature.min,
+        score: feature.score,
+        mean: feature.mean,
+        max: feature.max,
+        records_not_null: feature.records_not_null,
+        mcuv: feature.mcuv,
       }
     })
   },

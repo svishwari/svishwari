@@ -38,7 +38,7 @@
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
           <overview v-if="!loading" :data="trustIdOverview" />
-          <v-tabs v-model="tabOption" class="mt-8">
+          <v-tabs v-model="tabOption" class="mt-4">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
               <v-tab
@@ -130,7 +130,7 @@
                         black--text
                         text--base
                       "
-                      >Compare segments to all consumers</span
+                      >Compare segments to all customers</span
                     >
                     <hux-switch
                       v-model="switchSegment"
@@ -273,13 +273,18 @@
                       "
                       class="d-flex align-center justify-end mr-2"
                     >
-                      <hux-icon
-                        type="trash"
-                        class="cursor-pointer"
-                        :size="18"
-                        color="black"
-                        @click.native="removeSegment(row.item)"
-                      />
+                      <tooltip max-width="90" nudge-right="-20">
+                        <template #label-content>
+                          <hux-icon
+                            type="trash"
+                            class="cursor-pointer"
+                            :size="18"
+                            color="black"
+                            @click.native="removeSegment(row.item)"
+                          />
+                        </template>
+                        <template #hover-content> Delete segment </template>
+                      </tooltip>
                     </div>
                   </template>
                 </data-cards>
@@ -659,12 +664,6 @@ export default {
       return !this.segmentComparisonLoading && this.segmentScores.length == 0
     },
 
-    includesSegmentHeaders(segmentTitle) {
-      return ["segment_name", "segment_filters", "colors"].includes(
-        segmentTitle
-      )
-    },
-
     segmentTableTitle() {
       return this.getSegmentTableData.length == 0
         ? "No segments to show"
@@ -737,6 +736,11 @@ export default {
         }
       })
     },
+    includesSegmentHeaders(segmentTitle) {
+      return ["segment_name", "segment_filters", "colors"].includes(
+        segmentTitle
+      )
+    },
     getSelectedData(value) {
       this.selectedSegment = value
       this.applyDefaultSegmentChanges()
@@ -803,6 +807,9 @@ export default {
 <style lang="scss" scoped>
 .v-application {
   .hx-trust-id-wrapper {
+    ::v-deep .container {
+      padding-top: 0px !important;
+    }
     ::v-deep .v-breadcrumbs {
       li {
         font-family: Open Sans Light;
@@ -840,6 +847,9 @@ export default {
   background: var(--v-primary-lighten1);
   border: 1px solid var(--v-black-lighten2);
   border-radius: 5px;
+  .v-list-item--link:before {
+    background-color: transparent !important;
+  }
 }
 .no-data-width {
   width: 100%;
@@ -864,7 +874,6 @@ export default {
   overflow-x: hidden !important;
 }
 .segment-drawer {
-  margin-top: -30px;
   margin-right: -30px;
 }
 ::v-deep .hux-filters-drawer {

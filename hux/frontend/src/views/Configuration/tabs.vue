@@ -35,7 +35,7 @@
         <team-members />
       </v-tab-item>
       <v-tab-item key="brand_settings">
-        <client-settings />
+        <client-settings v-if="tabOption == 2" />
       </v-tab-item>
     </v-tabs-items>
   </div>
