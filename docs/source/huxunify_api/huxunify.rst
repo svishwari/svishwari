@@ -1,9 +1,8 @@
-huxunify package
-================
+huxunify Packages
+=================
 
 Module contents
 ---------------
-
 .. automodule:: huxunify
    :members:
    :undoc-members:
@@ -11,15 +10,13 @@ Module contents
 
 Subpackages
 -----------
-
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    huxunify.api
 
 Submodules
 ----------
-
 huxunify.app module
 -------------------
 
