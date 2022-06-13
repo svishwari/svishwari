@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="map-card-wrapper mt-3 rounded-lg card-shadow pa-6"
+    class="map-card-wrapper mt-3 rounded-lg card-shadow pa-6 pt-4"
     height="400"
   >
     <v-card-title class="d-flex justify-space-between pa-0">
@@ -36,7 +36,7 @@
       </div>
       <div v-if="!showMapView && data.geo" class="pt-2">
         <map-state-list
-          v-if="!loadingGeoOverview"
+          v-if="!loading"
           :map-data="data.geo"
           :configuration-data="configurationData"
           :header-config="headerConfig"
@@ -83,6 +83,8 @@ export default {
 
 <style lang="scss" scoped>
 .toggle-options {
+  position: relative;
+  bottom: 6px !important;
   .v-btn {
     background: none;
     border: none;

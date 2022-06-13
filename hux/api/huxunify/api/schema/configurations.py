@@ -1,7 +1,7 @@
 """Schemas for the Configurations Object"""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Boolean, Nested, List, Dict
+from marshmallow.fields import Str, Boolean, Nested, List
 
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
@@ -24,12 +24,19 @@ class ConfigurationsSchema(Schema):
     updated_by = Str(attribute=db_c.UPDATED_BY, allow_none=True)
 
 
-class NavigationSettings(Schema):
-    """Navigation Setting"""
+class ChildNavigationSetting(Schema):
+    """Child navigation setting"""
 
     name = Str()
+    label = Str()
     enabled = Boolean()
-    children = List(Dict())
+    icon = Str()
+
+
+class NavigationSettings(ChildNavigationSetting):
+    """Navigation Setting"""
+
+    children = List(Nested(ChildNavigationSetting))
 
 
 class NavigationSettingsSchema(Schema):

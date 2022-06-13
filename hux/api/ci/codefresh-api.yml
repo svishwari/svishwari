@@ -1,3 +1,5 @@
+## DEPRECATED: Will be replaced by codefresh_ci.yml
+
 # This is the CI pipeline for Unified Solution API
 
 version: "1.0"

@@ -31,6 +31,7 @@ AGE = "age"
 MIN = "min"
 MAX = "max"
 LINK = "link"
+USERNAME = "username"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
@@ -58,6 +59,7 @@ CLIENT_PROJECTS_COLLECTION = "client_projects"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 MODELS_COLLECTION = "models"
+SURVEY_METRICS_COLLECTION = "survey_metrics"
 
 CONSTANT_NAME = "constant"
 CONSTANT_KEY = "key"
@@ -186,6 +188,8 @@ UPDATED_BY = "updated_by"
 JOB_START_TIME = "start_time"
 JOB_END_TIME = "end_time"
 JOB_ID = "ingestion_job_id"
+INSERT_STATUS = "insert_status"
+INSERTED_IDS = "inserted_ids"
 
 # category constants
 CATEGORY = "category"
@@ -242,6 +246,17 @@ S_TYPE_MOBILE_DEVICE_ID = "mobile_device_id"
 S_TYPE_PHONE_NUMBER = "phone_number"
 S_TYPE_POSTAL_CODE = "postal_code"
 S_TYPE_STATE_OR_PROVINCE = "state_or_province"
+S_TYPE_SURVEY_CUSTOMER_ID = "customer_id"
+
+# Trust Id Survey Constants
+SURVEY_ID = "survey_id"
+SURVEY_RESPONSES = "responses"
+SURVEY_RESPONSE_DATE = "response_date"
+TRUST_ID_SEGMENTS = "trust_id_segments"
+SEGMENT_NAME = "segment_name"
+FACTORS = "factors"
+ATTRIBUTES = "attributes"
+
 
 DESTINATION_COLUMN = "destination_column"
 TRANSFORMER = "transformer"
@@ -300,6 +315,8 @@ AUDIENCE_STATUS_PAUSED = "Paused"
 
 AUDIENCE_NAME_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
+REPLACE_AUDIENCE = "replace_audience"
+
 DELIVERIES = "deliveries"
 DELIVERY_PLATFORM_ID = "delivery_platform_id"
 DELIVERY_PLATFORM_CONTACT_LIST = "contact_list"
@@ -330,6 +347,7 @@ DELIVERY_PLATFORM_MAILCHIMP = "mailchimp"
 DELIVERY_PLATFORM_LIVERAMP = "liveramp"
 DELIVERY_PLATFORM_PINTEREST = "pinterest"
 DELIVERY_PLATFORM_THE_TRADEDESK = "the_trade_desk"
+DELIVERY_PLATFORM_TRUST_ID = "trust_id"
 DELIVERY_PLATFORM_TWITTER = DATA_SOURCE_PLATFORM_TWITTER
 DELIVERY_PLATFORM_GOOGLE_DV360 = "google_dv360"
 DELIVERY_PLATFORM_SFCC = "salesforce_commerce_cloud"
@@ -381,6 +399,7 @@ USER_LAST_LOGIN = "last_login"
 USER_PROFILE_PHOTO = "profile_photo"
 USER_LOGIN_COUNT = "login_count"
 USER_DASHBOARD_CONFIGURATION = "dashboard_configuration"
+USER_DEMO_CONFIG = "demo_config"
 USER_ROLE_ADMIN = "admin"
 USER_ROLE_EDITOR = "editor"
 USER_ROLE_VIEWER = "viewer"
@@ -388,6 +407,8 @@ USER_ROLES = [USER_ROLE_ADMIN, USER_ROLE_EDITOR, USER_ROLE_VIEWER]
 COMPONENT_ID = "component_id"
 COMPONENT_NAME = "component_name"
 USER_PII_ACCESS = "pii_access"
+SEEN_NOTIFICATIONS = "seen_notifications"
+LAST_SEEN_ALERT_TIME = "last_seen_alert_time"
 
 CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"
@@ -445,15 +466,11 @@ NOTIFICATION_TYPES = [
 ]
 NOTIFICATION_FIELD_TYPE = "type"
 NOTIFICATION_FIELD_DESCRIPTION = "description"
-NOTIFICATION_FIELD_CREATED = "created"
+NOTIFICATION_FIELD_CREATE_TIME = "create_time"
 NOTIFICATION_FIELD_CATEGORY = "category"
-NOTIFICATION_CATEGORY_FLDR = "Feedback Loop Data Router"
-NOTIFICATION_CATEGORY_CPDR = "Campaign Performance Data Router"
-NOTIFICATION_CATEGORY_DR = "Deliverability Router"
 NOTIFICATION_FIELD_USERNAME = "username"
 
-NOTIFICATION_CATEGORY_DATA_SOURCES = "data sources"
-NOTIFICATION_CATEGORY_IDR = "identity resolution"
+NOTIFICATION_CATEGORY_DATA_SOURCES = "data_sources"
 NOTIFICATION_CATEGORY_MODELS = "models"
 NOTIFICATION_CATEGORY_DESTINATIONS = "destinations"
 NOTIFICATION_CATEGORY_DELIVERY = "delivery"
@@ -462,7 +479,6 @@ NOTIFICATION_CATEGORY_ENGAGEMENTS = "engagements"
 
 NOTIFICATION_CATEGORIES = [
     NOTIFICATION_CATEGORY_DATA_SOURCES,
-    NOTIFICATION_CATEGORY_IDR,
     NOTIFICATION_CATEGORY_MODELS,
     NOTIFICATION_CATEGORY_DESTINATIONS,
     NOTIFICATION_CATEGORY_DELIVERY,
@@ -476,7 +492,9 @@ NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 
 # Configuration constants
 CONFIGURATION_FIELD_NAME = "name"
+CONFIGURATION_FIELD_LABEL = "label"
 CONFIGURATION_FIELD_ICON = "icon"
+CONFIGURATION_FIELD_SUPERSCRIPT = "superscript"
 CONFIGURATION_FIELD_TYPE = "type"
 CONFIGURATION_FIELD_DESCRIPTION = "description"
 CONFIGURATION_FIELD_STATUS = "status"
@@ -613,6 +631,7 @@ ALLOWED_FIELDS = {
         ICON,
         ACCESS_LEVEL,
     ],
+    AUDIENCES_COLLECTION: [SIZE],
 }
 
 # Allowed collections
@@ -626,6 +645,8 @@ ALLOWED_COLLECTIONS = [
     APPLICATIONS_COLLECTION,
     CLIENT_PROJECTS_COLLECTION,
     DELIVERABILITY_METRICS_COLLECTION,
+    SURVEY_METRICS_COLLECTION,
+    DELIVERY_JOBS_COLLECTION,
 ]
 
 # 30 minutes.

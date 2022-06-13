@@ -32,8 +32,14 @@
           :style="{ width: minWidth + 'px !important' }"
           @click="openMenu = true"
         >
-          <tooltip>
+          <tooltip v-if="showHover">
             <template #label-content>
+              <logo
+                v-if="dropIcon"
+                :type="dropIcon"
+                class="mr-2 mt-1"
+                :size="20"
+              ></logo>
               <span class="text-ellipsis text-width">{{
                 isSubMenu ? item.name : optionSelected["name"] || label
               }}</span>
@@ -42,6 +48,9 @@
               {{ isSubMenu ? item.name : optionSelected["name"] || label }}
             </template>
           </tooltip>
+          <span v-else class="text-ellipsis text-width">{{
+            isSubMenu ? item.name : optionSelected["name"] || label
+          }}</span>
         </huxButton>
       </template>
       <v-list>
@@ -79,7 +88,6 @@
                   >mdi-check</v-icon
                 >
                 <logo v-if="item.type" :type="item.type" :size="20"></logo>
-                &nbsp;
                 <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
                 <icon v-if="item.modelIcon" type="model" :size="21" />
                 {{ item.name }}
@@ -126,6 +134,16 @@ export default {
       type: String,
       required: false,
       default: "200",
+    },
+    dropIcon: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    showHover: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   data: function () {

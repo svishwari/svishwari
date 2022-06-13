@@ -9,8 +9,8 @@
           <icon
             type="filter"
             :size="27"
-            :color="numFiltersSelected > 0 ? 'primary' : 'black'"
-            :variant="numFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+            :color="isFilterToggled ? 'primary' : 'black'"
+            :variant="isFilterToggled ? 'lighten6' : 'darken4'"
           />
           <v-badge
             v-if="numFiltersSelected > 0"
@@ -384,7 +384,7 @@
           v-else-if="!loading && hasDataFeeds == 0"
           class="empty-error-card mx-7"
         >
-          <v-row class="data-feed-frame py-14">
+          <v-row class="data-feed-frame my-1 py-16">
             <empty-page
               v-if="!datafeedErrorState"
               type="lift-table-empty"
@@ -468,13 +468,13 @@ export default {
       isFilterToggled: false,
       numFiltersSelected: 1,
       api_params: {
-        start_date: new Date(),
-        end_date: new Date(),
+        start_date: null,
+        end_date: null,
         status: [],
         type: null,
         name: null,
       },
-      selected_time: "Today",
+      selected_time: "All time",
     }
   },
 
@@ -526,17 +526,17 @@ export default {
         {
           text: "Sub-status",
           value: "sub_status",
-          width: "125",
+          width: "140",
         },
         {
           text: "Records received",
           value: "records_received",
-          width: "146",
+          width: "170",
         },
         {
           text: "Records processed",
           value: "records_processed",
-          width: "162",
+          width: "170",
         },
         {
           text: "% of records processed",
@@ -551,7 +551,7 @@ export default {
         {
           text: `Last processed start time (${this.selected_time})`,
           value: "last_processed_start",
-          width: "216",
+          width: "260",
         },
       ]
     },
@@ -758,25 +758,25 @@ export default {
     },
 
     setDefaultData() {
-      let today_date = new Date()
-      let getStartDate = new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate()
-      )
-      let getEndDate = new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate()
-      )
-      this.api_params.start_date = this.$options.filters.Date(
-        getStartDate,
-        "YYYY-MM-DD"
-      )
-      this.api_params.end_date = this.$options.filters.Date(
-        getEndDate,
-        "YYYY-MM-DD"
-      )
+      // let today_date = new Date()
+      // let getStartDate = new Date(
+      //   today_date.getFullYear(),
+      //   today_date.getMonth(),
+      //   today_date.getDate()
+      // )
+      // let getEndDate = new Date(
+      //   today_date.getFullYear(),
+      //   today_date.getMonth(),
+      //   today_date.getDate()
+      // )
+      // this.api_params.start_date = this.$options.filters.Date(
+      //   getStartDate,
+      //   "YYYY-MM-DD"
+      // )
+      // this.api_params.end_date = this.$options.filters.Date(
+      //   getEndDate,
+      //   "YYYY-MM-DD"
+      // )
       this.api_params.type = this.selectedDataSource?.type
       this.api_params.name = this.dataSourceFeedName
     },
@@ -790,6 +790,8 @@ export default {
   margin-top: 1px;
   .hux-data-table {
     ::v-deep table {
+      width: 1675px !important;
+      min-width: 100% !important;
       .data-feed-name {
         @extend .text-ellipsis;
         max-width: 25ch;

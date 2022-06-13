@@ -2,7 +2,7 @@
 # pylint: disable=too-many-lines
 import logging
 import datetime
-from typing import Union
+from typing import Union, Optional
 
 from bson import ObjectId
 import pymongo
@@ -11,7 +11,7 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.utils import name_exists
+from huxunifylib.database.utils import name_exists, get_collection_count
 
 
 # pylint: disable=too-many-arguments
@@ -27,7 +27,7 @@ def set_engagement(
     user_name: str,
     delivery_schedule: dict = None,
     deleted: bool = False,
-) -> ObjectId:
+) -> Optional[ObjectId]:
     """A function to create an engagement.
 
     Args:
@@ -109,6 +109,8 @@ def get_engagements_summary(
     database: DatabaseClient,
     engagement_ids: list = None,
     query_filter: Union[dict, None] = None,
+    batch_size: int = 0,
+    batch_number: int = 1,
     platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> Union[list, None]:
     """A function to get all engagements summary with all nested lookups.
@@ -117,7 +119,10 @@ def get_engagements_summary(
         database (DatabaseClient): A database client.
         engagement_ids (list): Optional engagement id filter list.
         query_filter (Union[dict, None]): Mongo filter Query.
+        batch_size (int): Number of engagements per batch.
+        batch_number (int): Number of engagements batch to be returned.
         platform (str, Optional): Underlying DB of the Mongo DB API.
+
     Returns:
         Union[list, None]: List of all engagement documents.
     """
@@ -126,21 +131,14 @@ def get_engagements_summary(
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
-    match_statement = {db_c.DELETED: False}
-    if engagement_ids is not None:
-        match_statement[db_c.ID] = {"$in": engagement_ids}
-
-    if query_filter:
-        if db_c.WORKED_BY in query_filter:
-            match_statement["$or"] = [
-                {db_c.CREATED_BY: query_filter.get(db_c.WORKED_BY)},
-                {db_c.UPDATED_BY: query_filter.get(db_c.WORKED_BY)},
-            ]
-
     pipeline = [
         # filter out the deleted engagements
-        {"$match": match_statement},
-        # unwind the audiences object so we can do the nested joins.
+        {
+            "$match": build_get_engagements_query_filter(
+                query_filter, engagement_ids
+            )
+        },
+        # unwind the audiences object so that we can do the nested joins
         {
             "$unwind": {
                 "path": "$audiences",
@@ -223,6 +221,9 @@ def get_engagements_summary(
                         "$audiences.filters",
                         "$audiences.source_audience_filters",
                     ]
+                },
+                "audiences.audience_delivery_schedule": {
+                    "$ifNull": ["$audiences.delivery_schedule", ""]
                 },
                 "audiences.destinations": {
                     "$cond": [
@@ -313,6 +314,7 @@ def get_engagements_summary(
                     "audience_id": "$audiences.id",
                     "audience_size": "$audiences.size",
                     "filters": "$audiences.filters",
+                    "audience_delivery_schedule": "$audiences.audience_delivery_schedule",
                     "audience_created_by": "$audiences.created_by",
                     "audience_updated_by": "$audiences.updated_by",
                     "audience_update_time": "$audiences.update_time",
@@ -330,6 +332,7 @@ def get_engagements_summary(
                         "is_ad_platform": "$audiences.destinations.is_ad_platform",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "link": "$audiences.destinations.link",
+                        "replace_audience": "$audiences.destinations.replace_audience",
                         "category": "$audiences.destinations.category",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "data_added": {
@@ -380,6 +383,7 @@ def get_engagements_summary(
                         "name": "$_id.audience_name",
                         "size": "$_id.audience_size",
                         "filters": "$_id.filters",
+                        "audience_delivery_schedule": "$_id.audience_delivery_schedule",
                         "created_by": "$_id.audience_created_by",
                         "updated_by": "$_id.audience_updated_by",
                         "update_time": "$_id.audience_update_time",
@@ -437,12 +441,74 @@ def get_engagements_summary(
             }
         }
 
+    skips = batch_size * (batch_number - 1)
+
+    batch_offset_pipeline = []
+    if skips > 0:
+        batch_offset_pipeline.append({"$skip": skips})
+    if batch_size > 0:
+        batch_offset_pipeline.append({"$limit": batch_size})
+
+    pipeline += batch_offset_pipeline
+
     try:
         return list(collection.aggregate(pipeline))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
     return None
+
+
+def build_get_engagements_query_filter(
+    filters: dict = None, engagement_ids: list = None
+) -> dict:
+    """A function to retrieve count of engagements documents.
+
+    Args:
+        filters (dict, Optional): A dict of filters to be applied on the
+            audience.
+        engagement_ids (list, Optional): A list of audience IDs.
+
+    Returns:
+        dict: Query filter dict.
+    """
+
+    query_filter = {db_c.DELETED: False}
+
+    if filters and (db_c.WORKED_BY in filters):
+        query_filter["$or"] = [
+            {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
+            {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
+        ]
+
+    if engagement_ids is not None:
+        query_filter[db_c.ID] = {"$in": engagement_ids}
+
+    return query_filter
+
+
+def get_engagements_count(
+    database: DatabaseClient, filters: dict = None, engagement_ids: list = None
+) -> int:
+    """A function to retrieve count of engagements documents.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filters (Union[dict[Tuple], None]): Mongo filter query.
+        engagement_ids (list, Optional): A list of audience IDs.
+
+    Returns:
+        int: Count of audiences documents.
+    """
+
+    return get_collection_count(
+        database,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.ENGAGEMENTS_COLLECTION,
+        build_get_engagements_query_filter(
+            filters=filters, engagement_ids=engagement_ids
+        ),
+    )
 
 
 @retry(

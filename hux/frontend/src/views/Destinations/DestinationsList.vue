@@ -14,6 +14,7 @@
         :coming-soon="false"
         :logo-option="true"
         :interactable="false"
+        logo-box-padding="8px"
         height="225"
         width="255"
         class="mr-12 model-desc-card"
@@ -29,20 +30,22 @@
           />
         </template>
         <template slot="action-menu-options">
-          <div
-            class="px-4 py-2 white d-flex flex-column text-body-1"
-            data-e2e="destination-list-remove"
-            @click="openEditModal(destination)"
-          >
-            <span class="d-flex align-center">Edit destination URL </span>
-          </div>
-          <div
-            class="px-4 py-2 white d-flex flex-column text-body-1"
-            data-e2e="destination-list-remove"
-            @click="openModal(destination)"
-          >
-            <span class="d-flex align-center"> Remove </span>
-          </div>
+          <v-list class="py-0">
+            <v-list-item
+              class="text-body-1 action-menu-item"
+              data-e2e="destination-list-remove"
+              @click="openEditModal(destination)"
+            >
+              Edit destination URL
+            </v-list-item>
+            <v-list-item
+              class="text-body-1 action-menu-item"
+              data-e2e="destination-list-remove"
+              @click="openModal(destination)"
+            >
+              Remove
+            </v-list-item>
+          </v-list>
         </template>
       </descriptive-card>
     </template>
@@ -141,17 +144,17 @@
       v-model="editConfirmModal"
       right-btn-text="Save changes"
       left-btn-text="Nevermind!"
+      :is-disabled="newURL === ''"
       @onCancel="editConfirmModal = false"
       @onConfirm="updateDestinationURL()"
     >
       <template #body>
         <div class="mx-4">
-          <icon type="edit" :size="38" />
+          <icon type="edit" :size="42" color="primary" variant="lighten6" />
           <div class="text-h2 mb-4">Editing destination URL</div>
           <text-field
             v-model="newURL"
             label-text="Edit destination URL"
-            :is-disabled="newURL === ''"
             placeholder="Destination URL"
             class="pt-5"
             height="40"
@@ -166,7 +169,6 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 import sortBy from "lodash/sortBy"
-
 import ConfirmModal from "@/components/common/ConfirmModal"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import Status from "@/components/common/Status"
@@ -318,5 +320,9 @@ export default {
 }
 ::v-deep circle {
   stroke: rgb(255, 255, 255) !important;
+}
+.action-menu-item {
+  min-height: 32px !important;
+  min-width: 180px !important;
 }
 </style>

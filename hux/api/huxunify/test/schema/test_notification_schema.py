@@ -20,17 +20,17 @@ class TestNotificationSchema(TestCase):
             _id=str(ObjectId()),
             type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description="Successfully delivered",
-            created=current_time,
+            create_time=current_time,
             category=api_c.DELIVERY_TAG,
         )
 
         res = NotificationSchema().dump(doc)
 
         self.assertEqual(
-            res["notification_type"], doc[db_c.NOTIFICATION_FIELD_TYPE].title()
+            res[api_c.NOTIFICATION_TYPE], doc[db_c.NOTIFICATION_FIELD_TYPE]
         )
         self.assertEqual(
             res[db_c.NOTIFICATION_FIELD_CATEGORY],
-            doc[db_c.NOTIFICATION_FIELD_CATEGORY].title(),
+            doc[db_c.NOTIFICATION_FIELD_CATEGORY],
         )
-        self.assertIsInstance(res[db_c.NOTIFICATION_FIELD_CREATED], str)
+        self.assertIsInstance(res[db_c.NOTIFICATION_FIELD_CREATE_TIME], str)

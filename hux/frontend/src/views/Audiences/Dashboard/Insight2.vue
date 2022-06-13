@@ -12,7 +12,10 @@
       @editAudience="(data) => editAudience(data)"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div v-if="audience && audience.is_lookalike === true" class="pa-8">
+    <div
+      v-if="audience && audience.is_lookalike"
+      class="pa-8 audience-container"
+    >
       <audience-lookalike-dashboard
         :audience-data="audience"
         :applied-filters="appliedFilters"
@@ -21,7 +24,7 @@
         @onRefresh="refresh()"
       />
     </div>
-    <div v-else v-cloak class="pa-8">
+    <div v-else v-cloak class="pa-8 audience-container">
       <v-card class="overview-card pt-5 pb-6 pl-6 pr-6 box-shadow-5">
         <v-card-title class="d-flex justify-space-between pa-0 pr-2">
           <h3 class="text-h3 mb-2">Audience overview</h3>
@@ -30,14 +33,17 @@
               v-if="audience && !audience.is_lookalike"
               :disabled="relatedEngagements.length == 0"
               text
-              color="primary"
+              :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
               class="body-1 ml-n3 mt-n2"
               data-e2e="delivery-history"
               @click="openDeliveryHistoryDrawer()"
             >
               <icon
                 class="mr-1"
-                type="history"
+                :class="relatedEngagements.length == 0 ? 'icon_grey' : ''"
+                :type="
+                  relatedEngagements.length == 0 ? 'history_grey' : 'history'
+                "
                 :size="24"
                 :color="relatedEngagements.length == 0 ? 'black' : 'primary'"
                 :variant="relatedEngagements.length == 0 ? 'lighten3' : 'base'"
@@ -81,7 +87,7 @@
             :grow="i === 0 ? 2 : 1"
             :title="item.title"
             :icon="item.icon"
-            :height="80"
+            :height="75"
             :interactable="item.action ? true : false"
             :title-tooltip="item.titleTooltip"
             max-width="170"
@@ -107,7 +113,7 @@
           <metric-card
             class="mr-3"
             title="Gender"
-            :height="80"
+            :height="75"
             max-width="220"
             :interactable="false"
           >
@@ -157,7 +163,7 @@
             v-if="Object.keys(appliedFilters).length > 0"
             class="audience-summary"
             :title="'Attributes'"
-            :height="80"
+            :height="75"
           >
             <template #extra-item>
               <div class="container pl-0 pt-2">
@@ -202,7 +208,7 @@
           </metric-card>
         </div>
       </v-card>
-      <v-tabs v-model="tabOption" class="tabs-group mt-8">
+      <v-tabs v-model="tabOption" class="mt-6">
         <v-tabs-slider color="primary"></v-tabs-slider>
         <div class="d-flex">
           <v-tab
@@ -275,11 +281,7 @@
                   'float-right': !showAdvertising,
                 }"
                 :style="{
-                  height:
-                    showAdvertising &&
-                    audienceData.lookalike_audiences.length > 0
-                      ? advertisingHeight
-                      : '380px',
+                  height: collapsibleBarHeight,
                 }"
                 @click="toggleAd()"
               >
@@ -297,7 +299,7 @@
                   Digital advertising
                 </v-card-title>
                 <v-card-text v-if="showAdvertising">
-                  <div class="match-rates mx-2 my-1">
+                  <div class="mx-2 my-1">
                     <matchrate
                       :match-rate="
                         audienceData.digital_advertising &&
@@ -308,9 +310,14 @@
                       data-e2e="audience-matchrates"
                     />
                   </div>
-                  <div ref="advertisingcard" class="lookalikes mx-2 my-6">
+                  <div
+                    ref="advertisingcard"
+                    class="lookalikes mx-2 my-6"
+                    data-e2e="lookalike-audiences"
+                  >
                     <lookalikes
                       :lookalike-data="audienceData.lookalike_audiences"
+                      :lookalikeable="lookalikeableAudience"
                       @openCreateLookalike="lookalikePageRedirect()"
                     />
                   </div>
@@ -389,6 +396,7 @@
       v-model="selectedDestinations"
       close-on-action
       :toggle="showSelectDestinationsDrawer"
+      :engagement-id="engagementId"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
       @onAddDestination="triggerAttachDestination($event)"
@@ -426,11 +434,12 @@
       :audience-id="audienceId"
       :toggle="showDeliveryHistoryDrawer"
       data-e2e="delivery-history-drawer"
+      class="delivery-history-drawer-audience"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
 
     <download-audience-drawer
-      :value="toggleDownloadAudienceDrawer"
+      :audience-data="audience"
       :toggle="toggleDownloadAudienceDrawer"
       @onToggle="(isToggled) => (toggleDownloadAudienceDrawer = isToggled)"
     />
@@ -530,28 +539,6 @@ export default {
           size: 12,
         },
       ],
-      downloadOptions: [
-        {
-          id: "c2b0bf2d9d48",
-          name: ".csv",
-          type: "amazon_ads",
-          title: "Amazon Advertising CSV",
-          icon: "amazon-outline",
-        },
-        {
-          id: "5e112c22f1b1",
-          name: ".csv",
-          type: "google_ads",
-          title: "Google Ads CSV",
-          icon: "google-ads-outline",
-        },
-        {
-          id: "2349d4353b9f",
-          title: "Generic CSV",
-          name: ".csv",
-          type: "generic_ads",
-        },
-      ],
       loading: false,
       loadingRelationships: false,
       loadingDemographics: true,
@@ -624,7 +611,7 @@ export default {
           subtitle: "",
           icon: "targetsize",
           titleTooltip:
-            "Current number of customers who fit the selected attributes.",
+            "Current number of consumers who fit the selected attributes.",
           tooltipWidth: "231",
         },
         age: { title: "Age range", subtitle: "", icon: "birth" },
@@ -644,12 +631,12 @@ export default {
       })
     },
 
-    showLookalike() {
-      return !this.is_lookalike &&
-        this.isLookalikable &&
-        this.isLookalikable != "Disabled"
-        ? true
-        : false
+    collapsibleBarHeight() {
+      return this.showAdvertising ? this.advertisingHeight : "400px"
+    },
+
+    lookalikeableAudience() {
+      return this.isLookalikable && this.isLookalikable == "Active"
     },
     breadcrumbItems() {
       const items = [
@@ -750,8 +737,10 @@ export default {
       this.$refs.advertisingcard.parentElement.parentElement
     ) {
       this.advertisingHeight =
-        this.$refs.advertisingcard.parentElement.parentElement.clientHeight +
-        21 +
+        parseInt(
+          this.$refs.advertisingcard.parentElement.parentElement.clientHeight
+        ) +
+        this.audienceData.lookalike_audiences.length * 4 +
         "px"
     }
   },
@@ -766,8 +755,9 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
+      attachEngagementAudienceDestination:
+        "engagements/attachEngagementAudienceDestination",
       getDemographics: "audiences/getDemographics",
-      downloadAudienceData: "audiences/fetchAudienceData",
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
       getEngagementById: "engagements/get",
@@ -775,6 +765,7 @@ export default {
       markFavorite: "users/markFavorite",
       detachStandaloneDestination: "audiences/removeStandaloneDestination",
       updateLookalikeAudience: "audiences/updateLookalike",
+      removeAudienceDestination: "engagements/detachDestinationAudi",
     }),
     formatInnerHTML: formatInnerHTML,
     attributeOptions() {
@@ -822,6 +813,7 @@ export default {
     },
     addStandaloneDestination() {
       this.closeAllDrawers()
+      this.engagementId = null
       this.showSelectDestinationsDrawer = true
     },
     async deliverEngagement(event) {
@@ -895,7 +887,7 @@ export default {
           this.triggerAttachEngagement(this.deleteActionData)
           break
         case "remove-destination":
-          await this.detachAudienceDestination(this.deleteActionData)
+          await this.removeAudienceDestination(this.deleteActionData)
           break
         case "remove audience":
           await this.deleteAudience({ id: this.audience.id })
@@ -1109,18 +1101,28 @@ export default {
     },
     async triggerAttachDestination(event) {
       const payload = event.destination
-      await this.attachAudienceDestination({
-        audienceId: this.audienceId,
-        data: payload,
-      })
+      if (this.engagementId) {
+        await this.attachEngagementAudienceDestination({
+          engagementId: this.engagementId,
+          audienceId: this.audienceId,
+          data: payload,
+        })
+      } else {
+        // for standalone deliveries
+        await this.attachAudienceDestination({
+          audienceId: this.audienceId,
+          data: payload,
+        })
+      }
       await this.loadAudienceInsights()
     },
     async triggerRemoveDestination(event) {
       this.deleteActionData = {
+        engagementId: event.destination.engagementId,
         audienceId: this.audienceId,
         data: { id: event.destination.id },
       }
-      await this.detachAudienceDestination(this.deleteActionData)
+      await this.removeAudienceDestination(this.deleteActionData)
 
       await this.loadAudienceInsights()
     },
@@ -1147,9 +1149,9 @@ export default {
           engagementId: event.data.id,
           data: payload,
         })
-        // this.$router.push({
-        //   name: "AudienceUpdate",
-        // })
+        this.selectedEngagements = this.selectedEngagements.filter(
+          (eng) => eng.id !== event.data.id
+        )
         this.refresh()
         this.refreshEntity()
       }
@@ -1221,7 +1223,8 @@ export default {
       this.confirmDialog.icon = "edit"
       this.confirmDialog.subtitle = data.name
       this.confirmDialog.type = "error"
-      this.confirmDialog.body = "Are you sure you want to edit this audience?"
+      this.confirmDialog.body = `Are you sure you want to edit this audience? <br>
+        By changing this audience, all related engagements must be re-delivered.`
       this.confirmDialog.actionType = "edit audience"
     },
     favoriteAudience(data) {
@@ -1267,7 +1270,7 @@ export default {
     lookalikePageRedirect() {
       this.$router.push({
         name: "LookalikeAudiences",
-        params: { id: this.audience.source_id },
+        params: { id: this.audienceId },
       })
     },
   },
@@ -1275,6 +1278,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .audience-insight-wrap {
+  .audience-container {
+    max-height: calc(100vh - 142px);
+    overflow-y: auto;
+  }
   .position-relative {
     position: relative;
   }
@@ -1283,12 +1290,25 @@ export default {
     top: -7px;
     right: 6px;
   }
+  ::v-deep.metric-card-wrapper {
+    padding: 16px 15px !important;
+    .w-100 {
+      .flex-grow-1 {
+        .subtitle-slot {
+          margin-top: 0px !important;
+        }
+      }
+    }
+  }
   .container {
     ul {
       padding: 0;
       margin: 0;
       list-style-type: none;
     }
+  }
+  .delivery-history-drawer-audience {
+    width: 665px !important;
   }
   .audience-summary {
     padding: 10px 15px;
@@ -1331,14 +1351,11 @@ export default {
     background: transparent !important;
   }
 
-  .tabs-group {
-  }
   .tabs-item {
+    overflow: hidden !important;
     .delivery-tab {
       .digital-adv {
         height: auto !important;
-        .match-rates {
-        }
         .lookalikes {
           border-radius: 12px !important;
         }
@@ -1445,5 +1462,11 @@ export default {
   .v-tabs-slider-wrapper
   .v-tabs-slider {
   margin-top: 2px !important;
+}
+.icon_grey {
+  margin-top: 10px;
+}
+::v-deep .v-card--link .v-chip {
+  cursor: auto !important;
 }
 </style>

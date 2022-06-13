@@ -7,14 +7,17 @@ Welcome to HUX Unified Solution's documentation!
 ================================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
+   getting_started
+   release_notes/release_notes
    modules
+   data_management
+   trust_id
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`

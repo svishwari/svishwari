@@ -1,5 +1,6 @@
 """Module to park all performance metrics components"""
 import csv
+import copy
 from datetime import datetime
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from huxunifylib.database.delivery_platform_management import (
     get_performance_metrics_by_engagement_details,
     get_delivery_jobs_using_metadata,
 )
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import (
@@ -73,6 +75,7 @@ def group_engagement_performance_metrics(
     performance_metrics: list,
     target_destinations: list,
     metrics_type: str,
+    username: str,
 ) -> dict:
     """Group performance metrics for engagement
 
@@ -82,6 +85,7 @@ def group_engagement_performance_metrics(
         performance_metrics (list): List of performance metrics.
         target_destinations (list): List of target destinations.
         metrics_type (str): Type of performance metrics.
+        username (str): Username
 
     Returns:
         dict: Grouped performance metrics.
@@ -148,6 +152,21 @@ def group_engagement_performance_metrics(
                 )
             )
 
+            if not delivery_platform:
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_CRITICAL,
+                    (
+                        (
+                            f'"Can not fetch destination {destination_id}" because '
+                            f"the destination does not exist."
+                        ),
+                    ),
+                    db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
+                    username,
+                )
+                continue
+
             #  Group performance metrics for the destination
             destination_metrics = update_metrics(
                 destination_id,
@@ -182,6 +201,7 @@ def get_performance_metrics(
     engagement: object,
     engagement_id: str,
     ad_type: str,
+    username: str,
 ) -> dict:
     """Gets performance metrics for engagement
 
@@ -190,6 +210,7 @@ def get_performance_metrics(
         engagement (object): Engagement object
         engagement_id (str): Id of engagement
         ad_type (str): Advertisement type
+        username (str): Username
 
     Returns:
         dict: Email Performance metrics of an engagement
@@ -240,7 +261,144 @@ def get_performance_metrics(
         performance_metrics,
         [destination.get(db_c.ID)],
         ad_type,
+        username,
     )
+    final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
+
+    return final_metric
+
+
+def get_performance_metrics_stub(
+    database: MongoClient,
+    engagement: object,
+    engagement_id: str,
+    ad_type: str,
+) -> dict:
+    """Gets stub performance metrics for engagement
+
+    Args:
+        database (MongoClient): Mongoclient instance
+        engagement (object): Engagement object
+        engagement_id (str): Id of engagement
+        ad_type (str): Advertisement type
+
+    Returns:
+        dict: Email Performance metrics of an engagement
+    """
+
+    if ad_type == api_c.DISPLAY_ADS:
+        destination_types = [db_c.DELIVERY_PLATFORM_FACEBOOK]
+        stub_data = api_c.PERFORMANCE_METRIC_DISPLAY_STUB
+    else:
+        destination_types = [
+            db_c.DELIVERY_PLATFORM_SFMC,
+            db_c.DELIVERY_PLATFORM_SENDGRID,
+        ]
+        stub_data = api_c.PERFORMANCE_METRIC_EMAIL_STUB
+
+    delivery_jobs = get_delivery_jobs_using_metadata(
+        database, engagement_id=ObjectId(engagement_id)
+    )
+
+    delivery_job_destinations = [
+        x[db_c.DELIVERY_PLATFORM_ID] for x in delivery_jobs
+    ]
+    # Get all destinations that are related to Email metrics
+    destination_ids = []
+    for destination_type in destination_types:
+        destination = (
+            delivery_platform_management.get_delivery_platform_by_type(
+                database, destination_type
+            )
+        )
+        if (
+            destination is not None
+            and destination[db_c.ID] in delivery_job_destinations
+        ):
+            matches = [
+                x
+                for x in delivery_jobs
+                if destination[db_c.ID] == x[db_c.DELIVERY_PLATFORM_ID]
+            ]
+            for match in matches:
+                if match[api_c.STATUS] == api_c.STATUS_DELIVERED:
+                    destination_ids.append(destination[db_c.ID])
+                    break
+
+    if not destination_ids and ad_type == api_c.DISPLAY_ADS:
+        stub_data = api_c.PERFORMANCE_METRIC_DISPLAY_STUB_NO_DELIVERY
+
+    if not destination_ids and ad_type == api_c.EMAIL:
+        stub_data = api_c.PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY
+
+    # Group all the performance metrics for the engagement
+    final_metric = {api_c.SUMMARY: stub_data}
+    final_metric.update(
+        {api_c.ID: str(engagement_id), api_c.NAME: engagement.get(api_c.NAME)}
+    )
+    audience_metrics_list = []
+    # For each audience in engagement.audience
+    for eng_audience in engagement.get(api_c.AUDIENCES):
+        audience = orchestration_management.get_audience(
+            database, eng_audience.get(api_c.ID)
+        )
+        if audience is None:
+            logger.warning(
+                "Audience not found, ignoring performance metrics for it. "
+                "audience_id=%s, engagement_id=%s",
+                eng_audience.get(api_c.ID),
+                engagement.get(db_c.ID),
+            )
+            continue
+
+        #  Group performance metrics for the audience
+        audience_metrics = copy.deepcopy(stub_data)
+        audience_metrics.update(
+            {
+                api_c.ID: str(audience.get(db_c.ID)),
+                api_c.NAME: audience.get(db_c.NAME),
+            }
+        )
+
+        # Get metrics grouped by audience.destination
+        audience_destination_metrics_list = []
+        for audience_destination in eng_audience.get(api_c.DESTINATIONS):
+            destination_id = audience_destination.get(api_c.ID)
+            if destination_id is None or destination_id not in destination_ids:
+                logger.warning(
+                    "Invalid destination encountered, ignoring performance metrics for it. "
+                    "destination_id=%s, audience_id=%s, engagement_id=%s",
+                    destination_id,
+                    eng_audience.get(api_c.ID),
+                    engagement.get(db_c.ID),
+                )
+                continue
+
+            # get delivery platform
+            delivery_platform = (
+                delivery_platform_management.get_delivery_platform(
+                    database, destination_id
+                )
+            )
+
+            #  Group performance metrics for the destination
+            destination_metrics = copy.deepcopy(stub_data)
+            destination_metrics[
+                api_c.DELIVERY_PLATFORM_TYPE
+            ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
+            destination_metrics.update(
+                {
+                    api_c.ID: str(delivery_platform.get(db_c.ID)),
+                    api_c.NAME: delivery_platform.get(db_c.NAME),
+                }
+            )
+
+            audience_destination_metrics_list.append(destination_metrics)
+        audience_metrics[
+            api_c.DESTINATIONS
+        ] = audience_destination_metrics_list
+        audience_metrics_list.append(audience_metrics)
+
     final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
 
     return final_metric

@@ -21,6 +21,7 @@ USERNAME = "username"
 PASSWORD = "password"
 CONNECTION_STRING = "connection_string"
 SSL_CERT_PATH = "ssl_cert_path"
+TLS_CERT_KEY = "tls_cert_key_file"
 MONGO_DB_HOST = "MONGO_DB_HOST"
 MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
@@ -28,10 +29,14 @@ MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
 MONGO_CONNECTION_STRING = "MONGO_CONNECTION_STRING"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
+OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
+OKTA_TEST_USER_NAME = "OKTA_TEST_USER_NAME"
+OKTA_TEST_USER_PW = "OKTA_TEST_USER_PW"
 RETURN_EMPTY_AUDIENCE_FILE = "RETURN_EMPTY_AUDIENCE_FILE"
 JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
 CDP_SERVICE = "CDP_SERVICE"
 CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
+DECISIONING_URL = "DECISIONING_URL"
 TECTON_API_KEY = "TECTON_API_KEY"
 TECTON_API = "TECTON_API"
 MOCK_TECTON = "MOCK_TECTON"
@@ -67,9 +72,14 @@ AZURE_BATCH_ACCOUNT_KEY = "AZURE_BATCH_ACCOUNT_KEY"
 AZURE_BATCH_ACCOUNT_URL = "AZURE_BATCH_ACCOUNT_URL"
 AZURE_STORAGE_ACCOUNT_NAME = "AZURE_STORAGE_ACCOUNT_NAME"
 AZURE_STORAGE_ACCOUNT_KEY = "AZURE_STORAGE_ACCOUNT_KEY"
+AZURE_STORAGE_CONNECTION_STRING = "AZURE_STORAGE_CONNECTION_STRING"
 AZURE_STORAGE_CONTAINER_NAME = "AZURE_STORAGE_CONTAINER_NAME"
 AZURE_STORAGE_BLOB_NAME = "AZURE_STORAGE_BLOB_NAME"
 AZURE_KEY_VAULT_NAME = "AZURE_KEY_VAULT_NAME"
+AZURE_TENANT_ID = "AZURE_TENANT_ID"
+AZURE_CLIENT_ID = "AZURE_CLIENT_ID"
+AZURE_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
+AZURE = "azure"
 
 # ORCH ROUTER PARAMS FOR OKTA
 UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
@@ -137,6 +147,9 @@ FIELDS = "fields"
 STATUSES = "statuses"
 INPUT_FILE = "input_file"
 UNIQUE_ID = "unique_id"
+INPUT = "input"
+TEXT = "text"
+EVENTS = "events"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -234,6 +247,7 @@ DELIVERY_JOB_CRON = "0 * * * *"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
+UNSET = "unset"
 DIGITAL_ADVERTISING = "digital_advertising"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
@@ -380,6 +394,7 @@ STATUS_WEIGHTS = {
     db_c.STATUS_FAILED: 0,
 }
 # Download Audience Fields
+DOWNLOAD_TYPES = "download_types"
 DOWNLOAD_TYPE = "download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
@@ -746,15 +761,19 @@ ENGAGEMENT_TAG = "engagements"
 DELIVERY_TAG = "delivery"
 DELIVER = "deliver"
 DELIVERY_HISTORY = "delivery-history"
+PENDING_JOBS = "pending-jobs"
+TRIGGERS_TAG = "triggers"
 CAMPAIGNS = "campaigns"
 AD_SET_ID = "ad_set_id"
 AD_SET_NAME = "ad_set_name"
 DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
+AUDIENCE_DELIVERY_SCHEDULE = "audience_delivery_schedule"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
 MY_ENGAGEMENTS = "my_engagements"
+ENGAGEMENTS_DEFAULT_BATCH_SIZE = 0
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -882,9 +901,6 @@ AUTHORIZATION = "Authorization"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
-OKTA_TEST_USER_NAME = "OKTA_TEST_USER_NAME"
-OKTA_TEST_USER_PW = "OKTA_TEST_USER_PW"
-OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
 OKTA_USER_ID = "user_id"
 OKTA_UID = "uid"
 OKTA_ID_SUB = "sub"
@@ -897,6 +913,12 @@ ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
 EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
 USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
+
+USER_DISPLAY_ROLES = {
+    db_c.USER_ROLE_ADMIN: "Admin",
+    db_c.USER_ROLE_EDITOR: "Edit",
+    db_c.USER_ROLE_VIEWER: "View-Only",
+}
 
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
@@ -918,6 +940,8 @@ INSIGHTS = "insights"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
+AUDIENCE_FILTER_RANGE = "range"
+AUDIENCE_FILTER_NOT_RANGE = "not_range"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_LAST_DELIVERY = "last_delivery"
 AUDIENCE_ENGAGEMENTS = "engagements"
@@ -931,6 +955,8 @@ LOOKALIKE = "lookalike"
 LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
+ATTRIBUTES = "attributes"
+AUDIENCES_DEFAULT_BATCH_SIZE = 0
 
 PARAM_STORE_PREFIX = "unified"
 SECRET_STORAGE_ERROR_MSG = (
@@ -948,11 +974,17 @@ USER_EMAIL_ADDRESS = "email_address"
 USER_ACCESS_LEVEL = "access_level"
 USER_PII_ACCESS = "pii_access"
 USER_DESCRIPTION = "USER API"
+USER_DEMO_MODE = "demo_mode"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
+RESET = "reset"
+RBAC_MATRIX = "rbac_matrix"
+INDUSTRY = "industry"
+TARGET = "target"
+TRACK = "track"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -1043,11 +1075,20 @@ LATEST_VERSION = "latest_version"
 VERSION = "version"
 FULCRUM_DATE = "fulcrum_date"
 LAST_TRAINED = "last_trained"
+TRAINED_DATE = "trained_date"
 LOOKBACK_WINDOW = "lookback_window"
 PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
 FEATURE_SERVICE = "feature_service"
 DATA_SOURCE = "data_source"
+FEATURE_TYPE = "feature_type"
+MEAN = "mean"
+MIN = "min"
+MAX = "max"
+LCUV = "lcuv"
+MCUV = "mcuv"
+UNIQUE_VALUES = "unique_value"
+RECORDS_NOT_NULL = "records_not_null"
 POPULARITY = "popularity"
 BUCKET = "bucket"
 PREDICTED_VALUE = "predicted_value"
@@ -1105,16 +1146,11 @@ NOTIFICATIONS_TAG = "notifications"
 NOTIFICATION_ID = "notification_id"
 NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
+NOTIFICATION_EMAIL_RECIPIENTS = "recipients"
+NOTIFICATION_EMAIL_ALERT_CATEGORY = "alert_category"
+NOTIFICATION_EMAIL_ALERT_TYPE = "alert_type"
+NOTIFICATION_EMAIL_ALERT_DESCRIPTION = "alert_description"
 
-NOTIFICATION_CATEGORIES = [
-    ENGAGEMENT_TAG,
-    DELIVERY_TAG,
-    ORCHESTRATION_TAG,
-    DESTINATIONS_TAG,
-    CDP_DATA_SOURCES_TAG,
-    CUSTOMERS_TAG,
-    MODELS,
-]
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
@@ -1133,6 +1169,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
+IDR_INSIGHTS = "idr_insights"
 DATA_FEEDS = "data_feeds"
 TIMESTAMP = "timestamp"
 STITCHED = "stitched"
@@ -1185,26 +1222,6 @@ DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
 
-# health check prometheus metric constants
-MONGO_CONNECTION_HEALTH = "mongo_connection_health"
-TECTON_CONNECTION_HEALTH = "tecton_connection_health"
-OKTA_CONNECTION_HEALTH = "okta_connection_health"
-CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
-CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
-    "cdm_connection_service_connection_health"
-)
-JIRA_CONNECTION_HEALTH = "jira_connection_health"
-
-# AWS health metrics constants
-AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
-AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
-AWS_S3_CONNECTION_HEALTH = "aws_s3_connection_health"
-AWS_EVENTS_CONNECTION_HEALTH = "aws_events_connection_health"
-
-# AZURE health metrics constants
-AZURE_BATCH_CONNECTION_HEALTH = "azure_batch_connection_health"
-AZURE_BLOB_CONNECTION_HEALTH = "azure_blob_connection_health"
-
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
@@ -1230,20 +1247,16 @@ PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
                 f"2m-COGS-cnt-{i}",
             ]
         ),
+        FEATURE_TYPE: random.choice(["Numerical", "Categorial"]),
+        RECORDS_NOT_NULL: str(random.randint(1, 100)) + "%",
+        FEATURE_IMPORTANCE: random.randint(1, 3),
+        MEAN: random.uniform(1.0, 4.0),
+        MIN: random.uniform(1.0, 3.0),
+        MAX: random.uniform(3.0, 7.0),
         FEATURE_SERVICE: PURCHASE,
-        DATA_SOURCE: random.choice(
-            ["Buyers", "Retail", "Promotion", "Email", "Ecommerce"]
-        ),
-        CREATED_BY: random.choice(["Susan Miller", "Jack Miller"]),
-        STATUS: random.choice(
-            [
-                STATUS_PENDING,
-                STATUS_ACTIVE,
-                STATUS_STOPPED,
-            ]
-        ),
-        POPULARITY: random.randint(1, 3),
-        SCORE: round(random.uniform(0.5, 2.9), 4),
+        UNIQUE_VALUES: random.randint(1, 100),
+        LCUV: random.choice(["Women", "Gasoline", "Clothing", "Cars"]),
+        MCUV: random.choice(["Men", "Water", "Grocery", "Home accesories"]),
     }
     for i in range(50)
 ]
@@ -1417,26 +1430,48 @@ SAMPLE_NAVIGATION_SETTINGS = {
     db_c.CONFIGURATION_FIELD_SETTINGS: [
         {
             db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+            db_c.CONFIGURATION_FIELD_LABEL: "Data Management",
             db_c.CONFIGURATION_FIELD_ENABLED: True,
             db_c.CONFIGURATION_FIELD_CHILDREN: [
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Data Sources",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Identity Resolution",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
             ],
         },
         {
             db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+            db_c.CONFIGURATION_FIELD_LABEL: "Decisioning",
             db_c.CONFIGURATION_FIELD_ENABLED: True,
             db_c.CONFIGURATION_FIELD_CHILDREN: [
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Models",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Models",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 }
+            ],
+        },
+        {
+            db_c.CONFIGURATION_FIELD_NAME: "Insights",
+            db_c.CONFIGURATION_FIELD_LABEL: "Insights",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_CHILDREN: [
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Customers",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Customers",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
+                {
+                    db_c.CONFIGURATION_FIELD_NAME: "Email Deliverability",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Email Deliverability",
+                    db_c.CONFIGURATION_FIELD_ENABLED: True,
+                },
             ],
         },
     ]
@@ -1455,6 +1490,10 @@ CLIENT_PROJECTS_ENDPOINT = "/client-projects"
 
 # Histogram data stub.
 VALUES = "values"
+VALUE_FROM = "value_from"
+VALUE_TO = "value_to"
+HISTOGRAM_GROUP_SIZE = 10
+
 # TODO Remove once we have data from CDP
 AUDIENCE_RULES_HISTOGRAM_DATA = {
     MODEL: {
@@ -1549,9 +1588,9 @@ AUDIENCE_RULES_HISTOGRAM_DATA = {
     "age": {
         "name": "Age",
         "type": "range",
-        "min": 18,
-        "max": 79,
-        "steps": 5,
+        "min": 0,
+        "max": 120,
+        "steps": 1,
         "values": [
             (18, 15129),
             (23, 17236),
@@ -1648,6 +1687,7 @@ BOUNCES = "bounces"
 HARD_BOUNCES = "hard_bounces"
 OPENS = "opens"
 CLICKS = "clicks"
+FILL_EMPTY_DATES = "fill_empty_dates"
 # TODO Remove once email deliverability data is available.
 
 DOMAIN_1 = "domain_1"
@@ -1664,79 +1704,196 @@ SENDING_DOMAINS_OVERVIEW_STUB = [
 ]
 
 ALERT_SAMPLE_RESPONSE = {
-    DATA_MANAGEMENT: {
-        DATASOURCES: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+    ALERTS: {
+        DATA_MANAGEMENT: {
+            DATA_SOURCES: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
         },
-        IDENTITY_RESOLUTION: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        DECISIONING: {
+            MODELS: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
         },
-    },
-    DECISIONING: {
-        MODELS: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
+        ORCHESTRATION_TAG: {
+            DESTINATIONS: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
+            AUDIENCE_ENGAGEMENTS: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
+            AUDIENCES: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: False,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
+            DELIVERY_TAG: {
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
+                db_c.NOTIFICATION_TYPE_SUCCESS: True,
+                db_c.NOTIFICATION_TYPE_CRITICAL: False,
+            },
         },
-    },
-    ORCHESTRATION_TAG: {
-        DESTINATIONS: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-        AUDIENCE_ENGAGEMENTS: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-        AUDIENCES: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-        DELIVERY_TAG: {
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL: True,
-            db_c.NOTIFICATION_TYPE_SUCCESS: False,
-            db_c.NOTIFICATION_TYPE_CRITICAL: False,
-        },
-    },
+    }
+}
+USER_DEMO_CONFIG_SAMPLE = {
+    USER_DEMO_MODE: True,
+    INDUSTRY: "Healthcare",
+    DESCRIPTION: "Health Care Industry",
+    TARGET: "Patients",
+    TRACK: "Prescriptions",
 }
 
 # Trust ID
 TRUST_ID_ENDPOINT = "/trust_id"
+TRUST_ID_TAG = "trust-id"
+DEFAULT = "default"
+DEFAULT_TRUST_SEGMENT = "All Customers"
+MAX_SEGMENTS_ALLOWED = 5
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"
 HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
-LIST_OF_SIGNALS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
-
-ALLOWED_FILTERS = "allowed_filters"
+LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+SEGMENT_TYPE = "segment_type"
+SEGMENTS = "segments"
+SEGMENT_TYPES = [
+    "composite & factor scores",
+    "humanity attributes",
+    "reliability attributes",
+    "capability attributes",
+    "transparency attributes",
+]
+SEGMENT_NAME = "segment_name"
+SEGMENT_FILTERS = "segment_filters"
+SURVEY_RESPONSES = "survey_responses"
+TRUST_ID_SCORE = "trust_id_score"
 TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
 SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
 ATTRIBUTE_SCORES = "attribute_scores"
 NAME_OF_SIGNAL = "name_of_signal"
+ATTRIBUTE_TYPE = "attribute_type"
+ATTRIBUTE_NAME = "attribute_name"
 ATTRIBUTE_SCORE = "attribute_score"
 ATTRIBUTE_DESCRIPTION = "attribute_description"
 OCCUPATION = "occupation"
 CUSTOMER_TYPE = "customer_type"
 OPTIONS = "options"
-MIN = "min"
-MAX = "max"
 OVERALL_CUSTOMER_RATING = "overall_customer_rating"
 RATING = "rating"
 AGREE = "agree"
 NEUTRAL = "neutral"
 DISAGREE = "disagree"
-SIGNAL_NAME = "signal_name"
-SIGNAL_SCORE = "signal_score"
+FACTORS = "factors"
+FACTOR_NAME = "factor_name"
+FACTOR_SCORE = "factor_score"
+FACTOR_DESCRIPTION = "factor_description"
 CUSTOMER_ATTRIBUTE_RATINGS = "customer_attribute_ratings"
+RATING_MAP = {
+    "-1": DISAGREE,
+    "0": NEUTRAL,
+    "1": AGREE,
+}
+FACTOR_DESCRIPTION_MAP = {
+    HUMANITY: (
+        "Humanity is demonstrating empathy and kindness towards "
+        "customers, and treating everyone fairly. It is scored "
+        "on a scale between -100 to 100"
+    ),
+    TRANSPARENCY: (
+        "Transparency is openly sharing all information, motives, and "
+        "choices in straightforward and plain language. It is scored "
+        "on a scale between -100 to 100"
+    ),
+    RELIABILITY: (
+        "Reliability is consistently and dependably delivering on "
+        "promises. It is scored on a scale between -100 to 100"
+    ),
+    CAPABILITY: (
+        "Capability is creating quality products, services, and/or "
+        "experiences. It is scored on a scale between -100 to 100"
+    ),
+}
+
+ATTRIBUTE_DESCRIPTION_TYPE_MAP = {
+    "products are good quality, accessible and safe to use": {
+        TYPE: "product_quality",
+        NAME: "Product quality",
+    },
+    "prices of products, services, and experiences are good value for money": {
+        TYPE: "good_value",
+        NAME: "Good value",
+    },
+    "employees and leadership are competent and understand how to respond to my needs": {
+        TYPE: "competent_leaders_employees",
+        NAME: "Competent leaders & employees",
+    },
+    "creates long term solutions and improvements that work well for me": {
+        TYPE: "long_term_solutions_improvements",
+        NAME: "Long-term solutions & improvements",
+    },
+    (
+        "customer support team quickly resolves issues with my safety, security, "
+        "and satisfaction top of mind"
+    ): {
+        TYPE: "quickly_resolves_issues",
+        NAME: "Quickly Resolves Issues",
+    },
+    "values & respects everyone, regardless of background, identity or beliefs": {
+        TYPE: "values_respects_everyone",
+        NAME: "Values & respects everyone",
+    },
+    "values the good of society and the environment, not just profit": {
+        TYPE: "values_society_environment",
+        NAME: "Values society & environment",
+    },
+    "takes care of employees": {
+        TYPE: "takes_care_of_employees",
+        NAME: "Takes care of employees",
+    },
+    "can be counted on to improve the quality of their products and services": {
+        TYPE: "continuous_product_improvement",
+        NAME: "Continuous product improvement",
+    },
+    "consistently delivers products, services, and experiences with quality": {
+        TYPE: "consistent_quality",
+        NAME: "Consistent quality",
+    },
+    "facilitates digital interactions that run smoothly and work when needed": {
+        TYPE: "smooth_digital_interactions",
+        NAME: "Smooth digital interactions",
+    },
+    "resolves issues in an adequate and timely manner": {
+        TYPE: "timely_issue_resolution",
+        NAME: "Timely issue resolution",
+    },
+    "marketing and communications are accurate and honest": {
+        TYPE: "honesty_marketing_comms",
+        NAME: "Honesty marketing & comms",
+    },
+    "is upfront about how they make and spend money from our interactions": {
+        TYPE: "upfront_on_how_they_make_money",
+        NAME: "Upfront on how they make money",
+    },
+    "how and why my data is used is communicated in plain and easy to understand language": {
+        TYPE: "plain_language_data_policy",
+        NAME: "Plain language data policy",
+    },
+    "is clear and upfront about fees and costs of products, services and experiences": {
+        TYPE: "clear_fees_costs",
+        NAME: "Clear fees & costs",
+    },
+}
+
 # TODO Remove STUB once data is available
 
 TRUST_ID_ATTRIBUTE_STUB = {
@@ -1793,3 +1950,83 @@ TRUST_ID_SUPPORTED_FILTERS_STUB = [
         ],
     },
 ]
+
+PERFORMANCE_METRIC_EMAIL_STUB = {
+    "sent": 2045,
+    "hard_bounces": 197,
+    "hard_bounces_rate": 0,
+    "delivered": 1578,
+    "delivered_rate": 0,
+    "open": 0,
+    "open_rate": 0,
+    "clicks": 719,
+    "conversions": 0,
+    "click_through_rate": 0.23,
+    "click_to_open_rate": 0,
+    "unique_clicks": 704,
+    "unique_opens": 937,
+    "unsubscribe": 0,
+    "unsubscribe_rate": 0,
+}
+
+PERFORMANCE_METRIC_DISPLAY_STUB = {
+    "spend": 100,
+    "reach": 300,
+    "impressions": 239,
+    "conversions": 188,
+    "clicks": 55,
+    "frequency": 10,
+    "cost_per_thousand_impressions": 434,
+    "click_through_rate": 0.23,
+    "cost_per_action": 7.56,
+    "cost_per_click": 9.67,
+    "engagement_rate": 0.23,
+}
+
+PERFORMANCE_METRIC_EMAIL_STUB_NO_DELIVERY = {
+    "sent": 0,
+    "hard_bounces": 0,
+    "hard_bounces_rate": 0,
+    "delivered": 0,
+    "delivered_rate": 0,
+    "open": 0,
+    "open_rate": 0,
+    "clicks": 0,
+    "conversions": 0,
+    "click_through_rate": 0.23,
+    "click_to_open_rate": 0,
+    "unique_clicks": 0,
+    "unique_opens": 0,
+    "unsubscribe": 0,
+    "unsubscribe_rate": 0,
+}
+
+PERFORMANCE_METRIC_DISPLAY_STUB_NO_DELIVERY = {
+    "spend": 0,
+    "reach": 0,
+    "impressions": 0,
+    "conversions": 0,
+    "clicks": 0,
+    "frequency": 0,
+    "cost_per_thousand_impressions": 0,
+    "click_through_rate": 0,
+    "cost_per_action": 0,
+    "cost_per_click": 0,
+    "engagement_rate": 0,
+}
+
+APPLICATION_CATEGORIES = [
+    "Modeling",
+    "Reporting",
+    "Data Processing",
+    "Data Storage",
+    "Monitoring",
+    "Uncategorized",
+]
+
+SEGMENT_TYPE_MAP = {
+    CAPABILITY: "capability attributes",
+    HUMANITY: "humanity attributes",
+    RELIABILITY: "reliability attributes",
+    TRANSPARENCY: "transparency attributes",
+}

@@ -49,13 +49,21 @@
       ]"
     >
       <template #field:name="row">
-        <span v-if="row.item.is_lookalike" class="d-flex align-items-center"
+        <span
+          v-if="row.item.is_lookalike"
+          class="d-flex align-items-center cursor-pointer"
+          @click="openAudieneDetailDrawer(row)"
           ><icon type="lookalike" :size="24" class="mr-1" /><span
             class="body-1"
             >{{ row.value }}</span
           ></span
         >
-        <span v-else class="not-lookalike-color body-1">{{ row.value }}</span>
+        <span
+          v-else
+          class="not-lookalike-color body-1 cursor-pointer"
+          @click="openAudieneDetailDrawer(row)"
+          >{{ row.value }}</span
+        >
       </template>
 
       <template #field:size="row">
@@ -132,7 +140,12 @@
       <template #field:manage="row">
         <div class="d-flex align-center justify-end">
           <div @click="removeAudience(row.item)">
-            <icon size="19" type="delete-button" />
+            <icon
+              class="cursor-pointer"
+              size="19"
+              type="delete-button"
+              color="darkD"
+            />
           </div>
         </div>
       </template>
@@ -195,11 +208,11 @@
         @onClick="changeSchedule(true)"
       />
     </div>
-    <div v-if="isRecurringFlag" class="delivery-background px-4 pt-4 pb-6">
+    <div v-if="isRecurringFlag" class="delivery-background px-6 pt-5 pb-6">
       <v-row class="delivery-schedule mt-6 ml-n2">
         <div>
           <span
-            class="date-picker-label black--text text--darken-4 text-caption"
+            class="date-picker-label black--text text--darken-4 text-body-2"
           >
             Start date
           </span>
@@ -210,10 +223,16 @@
             @on-date-select="onStartDateSelect"
           />
         </div>
-        <icon class="mx-2" type="arrow" :size="28" color="black-lighten3" />
+        <icon
+          class="mx-2 arrow-margin"
+          type="arrow"
+          :size="19"
+          color="primary"
+          variant="lighten6"
+        />
         <div>
           <span
-            class="date-picker-label black--text text--darken-4 text-caption"
+            class="date-picker-label black--text text--darken-4 text-body-2"
           >
             End date
           </span>
@@ -232,6 +251,7 @@
           v-model="localSchedule"
           :start-date="selectedStartDate"
           :end-date="selectedEndDate"
+          colon-sign
         />
       </v-row>
     </div>
@@ -329,6 +349,14 @@
       @onBack="openSelectDestinationsDrawer"
     />
 
+    <audience-detail-drawer
+      v-if="value.audiences"
+      ref="audienceDetailDrawer"
+      v-model="value.audiences[selectedAudienceId]"
+      :toggle="showAddAudienceDetailDrawer"
+      @onToggle="(val) => (showAddAudienceDetailDrawer = val)"
+    />
+
     <confirm-modal
       v-model="showUpdateModal"
       icon="alert-edit"
@@ -337,7 +365,7 @@
       :sub-title="`${value.name}?`"
       left-btn-text="Cancel"
       right-btn-text="Yes, edit"
-      body="Are you sure you want to edit this engagement?
+      body="Are you sure you want to edit this engagement? <br>
 By changing the engagement, you may need to reschedule the delivery time and it will impact all associated audiences and destinations."
       @onCancel="showUpdateModal = false"
       @onConfirm="restoreEngagement()"
@@ -363,6 +391,7 @@ import Icon from "@/components/common/Icon.vue"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
 import PlainCard from "@/components/common/Cards/PlainCard.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import AudienceDetailDrawer from "@/views/Engagements/Configuration/Drawers/AudienceDetailDrawer.vue"
 import { deliverySchedule } from "@/utils"
 
 export default {
@@ -385,6 +414,7 @@ export default {
     huxButton,
     PlainCard,
     ConfirmModal,
+    AudienceDetailDrawer,
   },
 
   props: {
@@ -414,6 +444,7 @@ export default {
       dontShowModal: false,
       isRecurringFlag: false,
       showUpdateModal: false,
+      showAddAudienceDetailDrawer: false,
     }
   },
 
@@ -455,7 +486,13 @@ export default {
           this.localSchedule &&
           this.localSchedule.periodicity == "Monthly"
         ) {
-          recurringConfig["day_of_month"] = [this.localSchedule.monthlyDayDate]
+          recurringConfig["monthly_period_items"] = [
+            this.localSchedule.monthlyPeriod,
+          ]
+          recurringConfig["day_of_month"] =
+            this.localSchedule.monthlyPeriod === "Day"
+              ? this.localSchedule.monthlyDayDate
+              : this.localSchedule.monthlyDay
         }
         requestPayload["delivery_schedule"] = {
           start_date:
@@ -535,6 +572,13 @@ export default {
       updateEngagement: "engagements/updateEngagement",
     }),
 
+    openAudieneDetailDrawer(audience) {
+      this.closeAllDrawers()
+      this.$refs.audienceDetailDrawer.fetchAudienceDetails(audience.item.id)
+      this.selectedAudienceId = audience.item.id
+      this.showAddAudienceDetailDrawer = true
+    },
+
     resetSchedule() {
       this.localSchedule = JSON.parse(JSON.stringify(deliverySchedule()))
     },
@@ -558,6 +602,7 @@ export default {
       this.showAddAudiencesDrawer = false
       this.showSelectDestinationsDrawer = false
       this.showDataExtensionDrawer = false
+      this.showAddAudienceDetailDrawer = false
     },
 
     scrollToTop() {
@@ -729,10 +774,17 @@ export default {
     margin-top: -30px;
     color: var(--v-black-lighten3) !important;
   }
+  ::v-deep .edit-schedule-wrapper {
+    .d-flex:nth-child(2) {
+      .ml-1 {
+        margin-top: 18px !important;
+      }
+    }
+  }
 }
 .date-picker-label {
   position: absolute;
-  margin-top: -30px;
+  margin-top: -26px;
   margin-left: 8px;
 }
 .form-steps {
@@ -765,8 +817,11 @@ export default {
 .border-card {
   border: solid 1px var(--v-primary-lighten6);
 }
+.arrow-margin {
+  margin-top: 2px;
+}
 .delivery-background {
-  width: 612px;
+  width: 632px;
   border: solid 1px var(--v-black-lighten2);
   background: #f9fafb;
   position: relative;

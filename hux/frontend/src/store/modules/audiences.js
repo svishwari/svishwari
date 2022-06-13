@@ -1,6 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
-import { handleError } from "@/utils"
+import { handleError, handleSuccess } from "@/utils"
 import rules from "../../api/mock/factories/rules.json"
 
 const namespaced = true
@@ -14,6 +14,8 @@ const NEW_AUDIENCE = {
 
 const state = {
   audiences: [],
+
+  total: 0,
 
   newAudience: NEW_AUDIENCE,
 
@@ -55,17 +57,22 @@ const getters = {
   geoCountries: (state) => state.geoCountries,
 
   geoStates: (state) => state.geoStates,
+
+  total: (state) => state.total,
 }
 
 const mutations = {
   SET_ALL(state, items) {
-    state.audiences = []
     let getAudience = items.sort(function (a, b) {
       return a.name === b.name ? 0 : a.name < b.name ? -1 : 1
     })
     getAudience.forEach((item) => {
       Vue.set(state.audiences, item.id, item)
     })
+  },
+
+  SET_TOTAL(state, item) {
+    Vue.set(state, "total", item)
   },
 
   SET_ONE(state, item) {
@@ -139,37 +146,42 @@ const mutations = {
   UPDATE_LOOKALIKE(state, data) {
     Vue.set(state.audiences[data.id], "name", data.name)
   },
+
+  RESET_ALL(state) {
+    Vue.set(state, "audiences", [])
+  },
 }
 
 const actions = {
-  async getAll(
-    { commit },
-    {
-      lookalikeable = false,
-      deliveries = 2,
-      favorites = false,
-      worked_by = false,
-      attribute = [],
-    }
-  ) {
+  async getAll({ commit }, batchDetails) {
     try {
+      if (!batchDetails?.isLazyLoad) {
+        commit("RESET_ALL")
+      }
+
       const response = await api.audiences.getAudiences({
-        lookalikeable: lookalikeable,
-        deliveries: deliveries,
-        favorites: favorites,
-        worked_by: worked_by,
-        attribute: attribute,
+        lookalikeable: batchDetails ? batchDetails.lookalikeable : false,
+        deliveries: batchDetails ? batchDetails.deliveries : 2,
+        favorites: batchDetails ? batchDetails.favorites : false,
+        worked_by: batchDetails ? batchDetails.worked_by : false,
+        attribute: batchDetails ? batchDetails.attribute : [],
+        batch_number: batchDetails ? batchDetails.batch_number : 1,
+        batch_size: batchDetails ? batchDetails.batch_size : 0,
       })
-      commit("SET_ALL", response.data)
+      commit("SET_ALL", response.data.audiences)
+      commit("SET_TOTAL", response.data.total_records)
     } catch (error) {
       handleError(error)
       throw error
     }
   },
 
-  async fetchAudienceData(_, { id, type }) {
+  async downloadAudienceData(_, { id, type }) {
     try {
       const response = await api.audiences.downloadAudience(id, type)
+      if (response.status == 200 || response.status == 201) {
+        handleSuccess("Audience data downloaded successfully", response.status)
+      }
       return response
     } catch (error) {
       handleError(error)
@@ -279,6 +291,9 @@ const actions = {
         response = await api.audiences.createAndDeliver(audience)
       } else {
         response = await api.audiences.create(audience)
+        if (response.status == 201) {
+          handleSuccess("Audience successfully created", response.status)
+        }
       }
       commit("SET_ONE", response.data)
       return response.data
@@ -291,6 +306,9 @@ const actions = {
     try {
       const response = await api.audiences.update(id, payload)
       commit("SET_ONE", response.data)
+      if (response.status == 200) {
+        handleSuccess("Audience successfully updated", response.status)
+      }
       return response.data
     } catch (error) {
       handleError(error)
@@ -479,6 +497,15 @@ const actions = {
     try {
       const response = await api.audiences.histogram(field, model)
       return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async replaceAudienceToggle(_, data) {
+    try {
+      await api.audiences.replaceAudience(data)
     } catch (error) {
       handleError(error)
       throw error

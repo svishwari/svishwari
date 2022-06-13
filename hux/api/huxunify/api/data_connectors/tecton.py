@@ -25,9 +25,7 @@ from huxunify.api.schema.model import (
     ModelDriftSchema,
     ModelLiftSchema,
 )
-from huxunify.api.prometheus import (
-    record_health_status_metric,
-)
+from huxunify.api.prometheus import record_health_status, Connections
 
 
 class TectonService:
@@ -93,6 +91,7 @@ class Tecton:
         self.headers: str = config.TECTON_API_HEADERS
         self.feature_service: TectonService = TectonService
 
+    @record_health_status(Connections.TECTON)
     def check_tecton_connection(self) -> Tuple[bool, str]:
         """Validate the tecton connection in the health check.
 
@@ -116,20 +115,22 @@ class Tecton:
                 ),
                 headers=self.headers,
             )
-
-            record_health_status_metric(
-                api_c.TECTON_CONNECTION_HEALTH, response.status_code == 200
-            )
             if response.status_code == 200:
+                logger.info("Tecton is available.")
                 return True, "Tecton available."
+            logger.error(
+                "Tecton is unavailable, returned a %s response.",
+                response.status_code,
+            )
             return (
                 False,
-                f"Tecton not available. Received: {response.status_code}",
+                f"Received status code: {response.status_code}, "
+                f"Received message: {response.json()}",
             )
 
         except Exception as exception:  # pylint: disable=broad-except
             # report the generic error message
-            record_health_status_metric(api_c.TECTON_CONNECTION_HEALTH, False)
+            logger.exception("Tecton Health Check failed.")
             return False, getattr(exception, "message", repr(exception))
 
     @staticmethod
@@ -761,6 +762,7 @@ class TectonMockConnector(Tecton):
         super().__init__(config)
         self.feature_service: TectonMockService = TectonMockService
 
+    # pylint: disable=arguments-differ
     def map_model_response(self, response: dict) -> List[dict]:
         """Map model response to a usable dict.
         Args:

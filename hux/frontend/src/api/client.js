@@ -48,11 +48,18 @@ client["users"].getRequestedUsers = () => {
 client["users"].tickets = () => {
   return http.get("users/tickets")
 }
+client["users"].updateDemoConfig = (data) => {
+  return http.patch("users", data)
+}
 //#endregion
 
 //#region Configurations
 client["configurations"].getModules = () => {
   return http.get("/configurations/modules")
+}
+
+client["configurations"].getSideBarConfig = () => {
+  return http.get("/configurations/navigation")
 }
 //#endregion
 
@@ -143,7 +150,7 @@ client["destinations"].updateDestination = (id, data) => {
 //#endregion
 
 //#region Engagement custom endpoints
-client["engagements"].allFiltered = (data) => {
+client["engagements"].getEngagements = (data) => {
   let URLData = []
   for (const property in data) {
     let formURL = property + "=" + data[property]
@@ -165,13 +172,36 @@ client["engagements"].attachDestination = (audienceId, data) => {
   return http.post(`/audiences/${audienceId}/destinations`, data)
 }
 
+client["engagements"].attachAudienceDestination = (
+  engagementId,
+  audienceId,
+  data
+) => {
+  return http.post(
+    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
+    data
+  )
+}
+client["engagements"].detachDestinationOfAudience = (
+  engagementId,
+  audienceId,
+  data
+) => {
+  // NOTE: The Hux API supports post data for a DELETE request method.
+  // Typically, this isn't RESTful so Mirage does not support this, hence this check
+  return http.delete(
+    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
+    { data: data }
+  )
+}
+
 client["engagements"].detachDestination = (audienceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
-    return http.delete(`/audience/${audienceId}/destinations`, { data: data })
+    return http.delete(`/audiences/${audienceId}/destinations`, { data: data })
   } else {
-    return http.delete(`/audience/${audienceId}/destinations/${data.id}`)
+    return http.delete(`/audiences/${audienceId}/destinations/${data.id}`)
   }
 }
 
@@ -206,6 +236,11 @@ client["engagements"].deliverAudienceDestination = (
   data
 ) => {
   const endpoint = `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}/deliver`
+  return http.post(endpoint, data)
+}
+
+client["engagements"].editDeliveryAudience = (resourceId, audienceId, data) => {
+  const endpoint = `/engagements/${resourceId}/audience/${audienceId}/schedule`
   return http.post(endpoint, data)
 }
 
@@ -317,8 +352,8 @@ client["audiences"].getAudiences = (data) => {
   return http.get(`/audiences?${newURLFormat}`)
 }
 
-client["audiences"].downloadAudience = (audienceId, fileType) => {
-  return http.get(`/audiences/${audienceId}/${fileType}`, {
+client["audiences"].downloadAudience = (audienceId, query) => {
+  return http.get(`/audiences/${audienceId}/download?${query}`, {
     timeout: 0,
     responseType: "blob",
   })
@@ -332,9 +367,9 @@ client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
-client["audiences"].create = (resourceId, data) => {
-  return http.post("/lookalike-audiences", data)
-}
+// client["audiences"].create = (resourceId, data) => {
+//   return http.post("/lookalike-audiences", data)
+// }
 
 client["audiences"].deliveries = (resourceId, query) => {
   return http.get(`/audiences/${resourceId}/delivery-history?${query}`)
@@ -368,6 +403,13 @@ client["audiences"].histogram = (field, model) => {
     url = url + `?model_name=${model}`
   }
   return http.get(url)
+}
+
+client["audiences"].replaceAudience = (data) => {
+  return http.post(
+    `/engagements/${data.engagement_id}/audience/${data.audience_id}/destination/${data.destination_id}/deliver`,
+    data.value
+  )
 }
 //#endregion
 
@@ -478,6 +520,29 @@ client["emailDeliverability"].emailDomain = () => {
 
 client["emailDeliverability"].getOverview = () => {
   return http.get("/email_deliverability/overview")
+}
+
+//#region trustId
+client["trustId"].trustIdOverview = () => {
+  return http.get("trust_id/overview")
+}
+
+client["trustId"].getComparison = (defaultValue) => {
+  return http.get(`/trust_id/comparison?default=${defaultValue}`)
+}
+client["trustId"].getAttributes = () => {
+  return http.get("/trust_id/attributes")
+}
+
+client["trustId"].getSegments = () => {
+  return http.get("/trust_id/user_filters")
+}
+
+client["trustId"].addSegment = (data) => {
+  return http.post("trust_id/segment", data)
+}
+client["trustId"].removeSegmentData = ({ segment_name }) => {
+  return http.delete(`/trust_id/segment?segment_name=${segment_name}`)
 }
 
 export default client

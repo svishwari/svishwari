@@ -6,9 +6,9 @@ from typing import Union
 import mongomock
 import pandas as pd
 import huxunifylib.database.audience_management as am
+import huxunifylib.database.orchestration_management as om
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as db_c
-from huxunifylib.database import delete_util
 from huxunifylib.database.client import DatabaseClient
 
 
@@ -281,7 +281,7 @@ class TestAudienceManagement(unittest.TestCase):
         self._setup_ingestion_succeeded_and_audience()
 
         # count of audiences documents after soft deletion
-        success_flag = delete_util.delete_audience(
+        success_flag = om.delete_audience(
             self.database, self.audience_doc[db_c.ID]
         )
         self.assertTrue(success_flag)

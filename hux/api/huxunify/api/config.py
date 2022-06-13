@@ -34,10 +34,16 @@ class Config:
         api_c.AZURE_STORAGE_ACCOUNT_KEY, default=""
     )
     AZURE_STORAGE_BLOB_NAME = config(api_c.AZURE_STORAGE_BLOB_NAME, default="")
+    AZURE_STORAGE_CONNECTION_STRING = config(
+        api_c.AZURE_STORAGE_CONNECTION_STRING, default=""
+    )
     AZURE_STORAGE_CONTAINER_NAME = config(
         api_c.AZURE_STORAGE_CONTAINER_NAME, default=""
     )
     AZURE_KEY_VAULT_NAME = config(api_c.AZURE_KEY_VAULT_NAME, default="")
+    AZURE_TENANT_ID = config(api_c.AZURE_TENANT_ID, default="")
+    AZURE_CLIENT_ID = config(api_c.AZURE_CLIENT_ID, default="")
+    AZURE_CLIENT_SECRET = config(api_c.AZURE_CLIENT_SECRET, default="")
 
     # AWS_CONFIG
     AWS_REGION = config(api_c.AWS_REGION, default="")
@@ -59,7 +65,9 @@ class Config:
     MONGO_SSL_CERT = str(
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
     )
-
+    AZURE_MONGO_TLS_CLIENT_KEY = str(
+        Path(__file__).parent.parent.joinpath("mongodb-azure.pem")
+    )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
@@ -68,10 +76,18 @@ class Config:
         api_c.PASSWORD: MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: MONGO_SSL_CERT,
     }
+    if CLOUD_PROVIDER == api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
 
     # OKTA CONFIGURATION
-    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
     OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
+    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
+    OKTA_REDIRECT_URI = config(api_c.OKTA_REDIRECT_URI, default="")
+    OKTA_TEST_USER_NAME = config(api_c.OKTA_TEST_USER_NAME, default="")
+    OKTA_TEST_USER_PW = config(api_c.OKTA_TEST_USER_PW, default="")
+
+    # DECISIONING CONFIGURATION
+    DECISIONING_URL = config(api_c.DECISIONING_URL, default="")
 
     # TECTON
     TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")
@@ -156,6 +172,8 @@ class DevelopmentConfig(Config):
 
     FLASK_ENV = api_c.DEVELOPMENT_MODE
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
+
+    # TODO Remove when we have separate configs for environments.
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
         api_c.HOST: Config.MONGO_DB_HOST,
@@ -164,6 +182,8 @@ class DevelopmentConfig(Config):
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
+    if Config.CLOUD_PROVIDER == api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = Config.AZURE_MONGO_TLS_CLIENT_KEY
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
@@ -199,6 +219,9 @@ class PyTestConfig(Config):
     JIRA_USER_EMAIL = "sh@fake.com"
     JIRA_API_KEY = "fake-jira-key"
     JIRA_SERVER = "https://fake.fake.jira.fake"
+
+    # DECIOSIONING CONFIGURATION
+    DECISIONING_URL = "https://fake.fake.decisioning.fake"
 
     # TECTON CONFIGURATION
     TECTON_API_KEY = "fake-key"

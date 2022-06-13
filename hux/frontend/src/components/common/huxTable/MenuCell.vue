@@ -18,7 +18,7 @@
         class="text-decoration-none menu-link"
         append
       >
-        <tooltip>
+        <tooltip :nudge-top="nudgeTop">
           <template slot="label-content">
             <span class="primary--text ellipsis menu-value" :class="labelClass">
               {{ value }}
@@ -212,6 +212,11 @@ export default Vue.extend({
       type: Boolean,
       required: false,
       default: true,
+    },
+    nudgeTop: {
+      type: [String, Number],
+      required: false,
+      default: 0,
     },
   },
 

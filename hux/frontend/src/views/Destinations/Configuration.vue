@@ -1,5 +1,5 @@
 <template>
-  <page class="white" max-width="912px">
+  <page class="white add-destination-container" max-width="912px">
     <div class="mb-10">
       <h4 class="text-h1 black--text text--darken-4">Add a destination</h4>
       <p class="text-body-1 black--text text--darken-4">
@@ -11,31 +11,31 @@
       Select a destination
     </label>
 
-    <div class="d-flex align-center mb-3">
+    <div class="d-flex align-center mb-2">
       <template v-if="!(selectedDestination || selectedDestinationNotListed)">
-        <hux-icon
-          type="plus"
-          :size="16"
-          color="primary"
-          class="mr-4"
-          @click.native="toggleDrawer()"
-        />
-        <hux-icon
-          type="destination"
-          :size="32"
-          color="primary"
-          class="mr-2 box-shadow-25"
-          :style="{ 'border-radius': '50%' }"
-          @click.native="toggleDrawer()"
-        />
         <v-btn
           text
           min-width="7rem"
-          height="2rem"
+          height="3rem"
           class="primary--text text-body-1"
           data-e2e="drawerToggle"
           @click.native="toggleDrawer()"
         >
+          <hux-icon
+            type="plus"
+            :size="16"
+            color="primary"
+            class="mr-4"
+            @click.native="toggleDrawer()"
+          />
+          <hux-icon
+            type="destination"
+            :size="32"
+            color="primary"
+            class="mr-2 box-shadow-25"
+            :style="{ 'border-radius': '50%' }"
+            @click.native="toggleDrawer()"
+          />
           Destination
         </v-btn>
       </template>
@@ -44,11 +44,11 @@
           Destination not on list
         </template>
         <template v-else>
-          <logo :type="selectedDestination.type" />
+          <logo :type="selectedDestination.type" :size="26" />
           <span class="pl-2">{{ selectedDestination.name }}</span>
         </template>
         <a
-          class="pl-4 text-body-2 mt-1"
+          class="pl-6 text-body-2 mt-1"
           color="primary"
           @click="toggleDrawer()"
         >
@@ -155,7 +155,15 @@
       <v-alert
         outlined
         tile
-        class="yellow lighten-1 black--border border--lighten-2 black--text"
+        class="
+          pa-3
+          pl-2
+          yellow
+          lighten-1
+          black--border
+          border--lighten-2
+          black--text
+        "
       >
         <div class="d-flex justify-space-between">
           <div class="mr-3">
@@ -171,7 +179,7 @@
       </v-alert>
 
       <v-row class="firstRow">
-        <v-col cols="8">
+        <v-col cols="8" class="pt-5">
           <text-field
             v-model="requestDetails['contact_email']"
             label-text="Your contact email"
@@ -198,8 +206,8 @@
         </v-col>
       </v-row>
 
-      <v-row class="thirdRow">
-        <v-col cols="8">
+      <v-row class="thirdRow mb-0 mt-3">
+        <v-col cols="8" class="py-6">
           <label class="text-h5 mb-0">
             Did the Client request to have this destination available?
           </label>
@@ -224,7 +232,7 @@
       </v-row>
 
       <v-row class="fourthRow">
-        <v-col cols="8">
+        <v-col cols="8" class="pt-5">
           <label class="text-h5 mb-0">
             Does the Client have an account for this destination?
           </label>
@@ -249,7 +257,7 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12" class="textAreaDiv">
+        <v-col cols="12" class="textAreaDiv pt-6">
           <div
             class="
               primary
@@ -326,7 +334,7 @@
     <drawer v-model="drawer">
       <template #header-left>
         <div class="d-flex align-center">
-          <hux-icon type="map" :size="32" class="mr-3" />
+          <hux-icon type="map" :size="32" class="ml-2 mr-3" />
           <h2 class="text-h2 pr-2 black--text text--lighten-4">
             Select a destination
           </h2>
@@ -340,7 +348,7 @@
         </div>
       </template>
       <template #default>
-        <div class="ma-3 font-weight-light px-6">
+        <div class="ma-3 font-weight-light px-3 pb-1">
           <div
             v-for="(value, category, index) in groupByCategory(
               enabledDestinations
@@ -382,7 +390,7 @@
               :key="destination.id"
               :title="destination.name"
               :icon="destination.type"
-              :is-added="destination.is_added"
+              :is-added="destination.is_added || isSelected(destination.id)"
               requested-button
               :is-available="destination.is_enabled"
               :is-already-added="destination.is_added"
@@ -701,6 +709,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.add-destination-container {
+  height: calc(100vh - 150px) !important;
+  overflow: auto;
+  ::v-deep .container {
+    padding-bottom: 37px !important;
+    margin-bottom: 24px !important;
+    height: auto !important;
+    overflow: hidden !important;
+  }
+}
 .firstRow {
   height: 80px;
 }

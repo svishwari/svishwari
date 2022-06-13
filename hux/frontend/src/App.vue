@@ -36,6 +36,4 @@ body {
 :root {
   --animate-delay: 0.1s;
 }
-@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
 </style>

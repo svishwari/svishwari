@@ -8,7 +8,11 @@
 
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading && hasDataFeeds" class="datasource-datafeeds-table">
+    <v-row
+      v-if="!loading && hasDataFeeds"
+      class="datasource-datafeeds-table"
+      data-e2e="datasource-datafeeds-table"
+    >
       <hux-data-table
         sort-desc
         :columns="columns"
@@ -24,7 +28,7 @@
                 :status="item[column.value]"
                 :show-label="true"
                 class="data-feed-status d-flex"
-                :icon-size="item[column.value] == 'Failed' ? '15' : '18'"
+                :icon-size="item[column.value] == 'Failed' ? 15 : 18"
               />
             </div>
             <tooltip
@@ -106,18 +110,20 @@
     <v-card
       v-else-if="!loading && hasDataFeeds == 0"
       class="empty-error-card mx-7"
+      data-e2e="datasource-datafeeds-table"
     >
-      <v-row class="data-feed-frame py-14">
+      <v-row class="data-feed-frame my-1 py-16">
         <empty-page
           v-if="!datafeedErrorState"
           type="lift-table-empty"
           :size="50"
+          class="pt-6"
         >
           <template #title>
-            <div class="h2">No data feeds to show</div>
+            <div class="h2 mb-4">No data feeds to show</div>
           </template>
           <template #subtitle>
-            <div class="body-2">
+            <div class="body-2 pb-4">
               Data feeds will appear here once they have been properly ingested
               and stored in the correct data warehouse location.
             </div>
@@ -176,27 +182,27 @@ export default {
         {
           text: "Data feed",
           value: "name",
-          width: "170",
+          width: "120",
         },
         {
           text: "Status",
           value: "status",
-          width: "84",
+          width: "100",
         },
         {
           text: "Records received",
           value: "records_received",
-          width: "125",
+          width: "110",
         },
         {
           text: "Records processed",
           value: "records_processed",
-          width: "132",
+          width: "100",
         },
         {
           text: "% of records processed",
           value: "records_processed_percentage",
-          width: "150",
+          width: "110",
         },
         {
           text: "30 day avg",
@@ -307,6 +313,7 @@ export default {
   margin-top: 1px;
   ::v-deep .hux-data-table {
     table {
+      table-layout: initial;
       .data-feed-name {
         @extend .text-ellipsis;
         max-width: 25ch;
@@ -320,15 +327,16 @@ export default {
       }
       tr {
         td {
+          padding-left: 42px !important;
           height: 60px;
+          white-space: nowrap;
+          text-overflow: ellipsis !important;
+          &:last-child {
+            padding-right: 30px !important;
+          }
         }
       }
       tbody {
-        tr {
-          td {
-            padding-left: 42px;
-          }
-        }
         tr:last-child {
           td {
             border-bottom: 1px solid var(--v-black-lighten3) !important;
@@ -347,5 +355,6 @@ export default {
 .data-feed-frame {
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
+  background-size: 90% 60%;
 }
 </style>

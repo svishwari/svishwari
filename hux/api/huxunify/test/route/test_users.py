@@ -14,6 +14,7 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import get_user
+from huxunifylib.database.data_management import set_constant
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_user_favorites
@@ -76,6 +77,39 @@ class TestUserRoutes(RouteTestCase):
             okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],
         )
 
+        # write rbac matrix database
+        set_constant(
+            self.database,
+            "rbac_matrix",
+            {
+                "components": {
+                    "alerts": {
+                        "label": "Alerts",
+                        "actions": [
+                            {
+                                "type": "get_all",
+                                "admin": True,
+                                "editor": True,
+                                "viewer": True,
+                            },
+                            {
+                                "type": "get_one",
+                                "admin": True,
+                                "editor": True,
+                                "viewer": True,
+                            },
+                            {
+                                "type": "delete",
+                                "admin": True,
+                                "editor": False,
+                                "viewer": False,
+                            },
+                        ],
+                    },
+                }
+            },
+        )
+
     def test_adding_engagement_to_favorite(self):
         """Tests adding engagement as a user favorite."""
 
@@ -92,8 +126,8 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.json.get("message"), api_c.OPERATION_SUCCESS)
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(api_c.OPERATION_SUCCESS, response.json.get("message"))
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
     def test_adding_audience_to_favorite(self):
         """Tests adding audience as a user favorite."""
@@ -110,21 +144,21 @@ class TestUserRoutes(RouteTestCase):
             endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(response.json.get("message"), api_c.OPERATION_SUCCESS)
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(api_c.OPERATION_SUCCESS, response.json.get("message"))
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
-    def test_adding_invalid_audience_to_favorite(self):
+    def test_adding_dne_audience_to_favorite(self):
         """Tests adding invalid audience as a user favorite.
         Testing by sending audience_id not in DB, here using engagement ID.
         """
 
-        invalid_audience_id = ObjectId()
+        audience_id = ObjectId()
 
         endpoint = (
             f"{t_c.BASE_ENDPOINT}"
             f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
-            f"{invalid_audience_id}/"
+            f"{audience_id}/"
             f"{api_c.FAVORITE}"
         )
 
@@ -133,13 +167,31 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         expected_response_message = (
-            f"The ID <{invalid_audience_id}> does "
-            f"not exist in the database!"
+            f"The ID <{audience_id}> does " f"not exist in the database!"
         )
         self.assertEqual(
-            response.json.get("message"), expected_response_message
+            expected_response_message, response.json.get("message")
         )
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_deleting_dne_audience_from_favorite(self):
+        """Tests deleting DNE audience as a user favorite."""
+
+        audience_id = ObjectId()
+
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
+            f"{db_c.AUDIENCES}/"
+            f"{audience_id}/"
+            f"{api_c.FAVORITE}"
+        )
+
+        response = self.app.delete(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_deleting_audience_from_favorite(self):
         """Tests deleting/un-favorite an audience."""
@@ -163,8 +215,8 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.json.get("message"), api_c.OPERATION_SUCCESS)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(api_c.OPERATION_SUCCESS, response.json.get("message"))
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_deleting_audience_not_in_favorite(self):
         """Tests deleting/un-favorite an audience not in favorites."""
@@ -186,7 +238,7 @@ class TestUserRoutes(RouteTestCase):
             f"{self.audience_id} not part of user " f"favorites"
         )
         self.assertEqual(
-            response.json.get("message"), expected_response_message
+            expected_response_message, response.json.get("message")
         )
 
     def test_get_user_profile_success(self):
@@ -213,8 +265,30 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         t_c.validate_schema(UserSchema(), response.json, True)
+
+    def test_get_seen_notifications(self):
+        """Tests get seen notifications of a user"""
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/seen_notifications"
+        )
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        reset_endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/"
+            f"seen_notifications?{api_c.RESET}=true"
+        )
+        reset_response = self.app.get(
+            reset_endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(reset_response.status_code, HTTPStatus.OK)
 
     def test_get_user_profile_bad_request_failure(self):
         """Test 400 response of getting user profile using Okta ID."""
@@ -644,3 +718,39 @@ class TestUserRoutes(RouteTestCase):
         self.assertEqual(
             "No user requests found.", response.json.get(api_c.MESSAGE)
         )
+
+    def test_get_rbac_matrix(self):
+        """Test getting rbac matrix"""
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.RBAC_MATRIX}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsNotNone(response.json["components"]["alerts"])
+        self.assertIsNotNone(response.json["components"]["alerts"]["actions"])
+
+    def test_delete_user(self):
+        """Test deleting a user."""
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{self.user_info[db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(
+            get_user(self.database, okta_id=self.user_info[db_c.ID])
+        )
+
+    def test_delete_dne_user(self):
+        """Test deleting a user."""
+
+        user_id = ObjectId()
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{user_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(get_user(self.database, user_id=user_id))

@@ -4,6 +4,7 @@
       <span
         class="d-flex cursor-pointer mr-6 d-flex align-center user-avatar"
         data-e2e="profile-dropdown"
+        :class="{ 'menu-active': menu }"
         v-on="on"
       >
         <v-avatar
@@ -30,11 +31,14 @@
         <v-avatar class="mr-2" size="45">
           <icon type="user_avatar" :size="45" color="white" />
         </v-avatar>
-        <v-list-item-title
-          class="black--text font-weight-bold d-flex flex-column"
-        >
-          <span>{{ firstName }} {{ lastName }}</span>
-        </v-list-item-title>
+        <div>
+          <v-list-item-title
+            class="black--text font-weight-bold d-flex flex-column"
+          >
+            <span>{{ firstName }} {{ lastName }}</span>
+          </v-list-item-title>
+          <v-list-item-subtitle> {{ capitalize(role) }} </v-list-item-subtitle>
+        </div>
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_password">
         <v-list-item-title class="text-body-1 black--text">
@@ -78,6 +82,7 @@ export default {
     ...mapGetters({
       firstName: "users/getFirstname",
       lastName: "users/getLastName",
+      role: "users/getCurrentUserRole",
     }),
     initials() {
       return this.firstName[0] + this.lastName[0]
@@ -87,27 +92,30 @@ export default {
     initiateLogout() {
       this.$auth.logout()
     },
+
+    capitalize(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1)
+    },
   },
 }
 </script>
 <style lang="scss" scoped>
 .user-avatar {
-  .v-avatar {
-    &:hover,
-    &.menu-active {
+  &:hover,
+  &.menu-active {
+    .v-avatar {
       ::v-deep svg {
         path:first-child {
           fill: var(--v-success-base) !important;
         }
       }
     }
+    .arrow-icon {
+      fill: var(--v-primary-lighten6);
+    }
   }
   .arrow-icon {
     fill: var(--v-black-base);
-    &:hover,
-    &.menu-active {
-      fill: var(--v-primary-lighten6);
-    }
   }
 }
 .v-menu__content {

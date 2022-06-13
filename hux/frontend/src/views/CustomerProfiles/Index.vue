@@ -6,7 +6,7 @@
           <breadcrumb :items="items" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Hux’s omni-view of your entire customer base to help you better
+          Hux’s omni-view of your entire consumer base to help you better
           understand how to create a personalized experience.
         </div>
       </template>
@@ -20,10 +20,10 @@
       v-if="!loading"
       class="flex-grow-1 flex-shrink-1 mw-100 content-section"
     >
-      <div v-if="overviewListItems != 0" class="padding-30">
+      <div v-if="overviewListItems.length != 0" class="padding-30">
         <v-card class="card-style pa-5">
           <div class="d-flex justify-space-between">
-            <h5 class="text-h3 mb-1">Customer overview</h5>
+            <h5 class="text-h3 mb-1">Overview</h5>
             <v-btn
               text
               min-width="80"
@@ -168,7 +168,7 @@
               data-e2e="customer-list-tab"
               @click="loadCustomersList = true"
             >
-              Customer list
+              List View
             </v-tab>
           </div>
         </v-tabs>
@@ -190,7 +190,7 @@
                       v-if="!loadingCustomerChart && totalCustomers.length != 0"
                       class="d-flex"
                     >
-                      <h3 class="text-h3">Total customers</h3>
+                      <h3 class="text-h3">Total Hux IDs</h3>
                       <span class="text-body-1 time-frame">
                         &nbsp;({{ timeFrameLabel }})
                       </span>
@@ -214,13 +214,13 @@
                     >
                       <template #title>
                         <div class="title-no-notification">
-                          No customer data to show
+                          No consumer data to show
                         </div>
                       </template>
                       <template #subtitle>
                         <div class="text-body-2 mt-2">
-                          Total customer size chart will appear here once
-                          customer data is available.
+                          Total Hux IDs size chart will appear here once Hux IDs
+                          data is available.
                         </div>
                       </template>
                     </empty-page>
@@ -232,7 +232,7 @@
                     >
                       <template #title>
                         <div class="title-no-notification">
-                          Customers insights are currently unavailable
+                          Insights are currently unavailable
                         </div>
                       </template>
                       <template #subtitle>
@@ -262,7 +262,7 @@
                       "
                       class="d-flex"
                     >
-                      <h3 class="text-h3">Total customer spend</h3>
+                      <h3 class="text-h3">Total spend</h3>
                       <tooltip position-top>
                         <template #label-content>
                           <icon
@@ -274,7 +274,7 @@
                           />
                         </template>
                         <template #hover-content>
-                          Total order value for all customers (known and
+                          Total order value for all consumers (known and
                           anyonymous) over time.
                         </template>
                       </tooltip>
@@ -303,13 +303,13 @@
                     >
                       <template #title>
                         <div class="title-no-notification">
-                          No customer data to show
+                          No spend data to show
                         </div>
                       </template>
                       <template #subtitle>
                         <div class="text-body-2 black--text text--base mt-2">
-                          Customer spend chart will appear here once customer
-                          data is available.
+                          Spend chart will appear here once consumer data is
+                          available.
                         </div>
                       </template>
                     </empty-page>
@@ -321,7 +321,7 @@
                     >
                       <template #title>
                         <div class="title-no-notification">
-                          Customer spend chart is currently unavailable
+                          Spend chart is currently unavailable
                         </div>
                       </template>
                       <template #subtitle>
@@ -337,10 +337,7 @@
             </v-row>
             <v-row class="mt-2 mb-4">
               <v-col md="12">
-                <v-card
-                  class="mt-3 rounded-lg box-shadow-5 tab-card-3"
-                  height="395"
-                >
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="395">
                   <v-row>
                     <v-progress-linear
                       v-if="loadingGeoOverview"
@@ -413,12 +410,12 @@
                       >
                         <template #title>
                           <div class="title-no-notification">
-                            No customer data to show
+                            No consumer data to show
                           </div>
                         </template>
                         <template #subtitle>
                           <div class="text-body-2 black--text text--base mt-2">
-                            Customer list will appear here once customer data is
+                            List view will appear here once consumer data is
                             available.
                           </div>
                         </template>
@@ -464,11 +461,11 @@
           :size="50"
         >
           <template #title>
-            <div class="title-no-notification">No customer data</div>
+            <div class="title-no-notification">No consumer data</div>
           </template>
           <template #subtitle>
             <div class="text-body-2 black--text text--base mt-2">
-              Your list of customers will appear here once your customer data is
+              Your list of consumers will appear here once your consumer data is
               available.
             </div>
           </template>
@@ -548,11 +545,11 @@ export default {
       timeFrameLabel: "last 6 months",
       overviewListItems: [
         {
-          title: "Customers",
+          title: "Hux IDs",
           subtitle: "",
           icon: "customer-no",
           toolTipText:
-            "Total number of unique Hux IDs generated to represent a customer.",
+            "Total number of unique Hux IDs generated to represent a consumer.",
           value: "",
         },
         {
@@ -650,16 +647,18 @@ export default {
       totalCustomerSpend: "customers/totalCustomerSpend",
       customersGeoOverview: "customers/geoOverview",
       demographicsData: "customers/demographics",
+      demoConfiguration: "users/getDemoConfiguration",
     }),
   },
-  async mounted() {
+  mounted() {
     this.loading = true
     try {
-      await this.getOverview()
+      this.getOverview()
       this.mapOverviewData()
       this.fetchTotalCustomers()
       this.fetchCustomerSpend()
       this.fetchGeoOverview()
+      this.setConfiguredBreadcrumb()
     } finally {
       this.loading = false
     }
@@ -672,6 +671,15 @@ export default {
       getCustomerSpend: "customers/getCustomerSpend",
       getDemographics: "customers/getDemographics",
     }),
+    async fetchOverview() {
+      this.loadingOverview = true
+      try {
+        await this.getOverview()
+      } catch (error) {
+        this.overviewError = true
+      }
+      this.loadingOverview = false
+    },
     async fetchGeoOverview() {
       this.loadingGeoOverview = true
       try {
@@ -698,6 +706,11 @@ export default {
         this.CustomerSpendError = true
       }
       this.loadingSpendChart = false
+    },
+    setConfiguredBreadcrumb() {
+      if (this.demoConfiguration?.demo_mode) {
+        this.items[0].text = `${"All " + this.demoConfiguration.target}`
+      } else this.items[0].text = "All Customers"
     },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {

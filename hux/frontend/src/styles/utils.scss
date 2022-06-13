@@ -243,3 +243,21 @@
 .ta-center {
   text-align: center !important;
 }
+
+.superscript {
+  font-weight: bold;
+  position: relative;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+$path--rel: "../../assets/images";
+
+@mixin no-data-frame-bg($link) {
+  background-image: url("#{$path--rel}/#{$link}");
+  background-position: center;
+}

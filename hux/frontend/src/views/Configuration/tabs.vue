@@ -13,10 +13,17 @@
         </v-tab>
         <v-tab
           key="team"
-          class="text-h3 black--text text--lighten-4"
+          class="mr-3 text-h3 black--text text--lighten-4"
           data-e2e="teamMembers"
         >
           Team members
+        </v-tab>
+        <v-tab
+          key="team"
+          class="text-h3 black--text text--lighten-4"
+          data-e2e="teamMembers"
+        >
+          Client settings
         </v-tab>
       </div>
     </v-tabs>
@@ -27,6 +34,9 @@
       <v-tab-item key="team">
         <team-members />
       </v-tab-item>
+      <v-tab-item key="brand_settings">
+        <client-settings v-if="tabOption == 2" />
+      </v-tab-item>
     </v-tabs-items>
   </div>
 </template>
@@ -36,10 +46,11 @@ import { mapGetters } from "vuex"
 
 import ModuleSolutions from "../Configuration/ModuleSolutions/ModuleSolutions.vue"
 import TeamMembers from "../Configuration/TeamMembers/TeamMembers.vue"
+import ClientSettings from "../Configuration/ClientSettings/ClientSettings.vue"
 
 export default {
   name: "ConfigTabs",
-  components: { ModuleSolutions, TeamMembers },
+  components: { ModuleSolutions, TeamMembers, ClientSettings },
   data() {
     return {
       tabOption: 0,

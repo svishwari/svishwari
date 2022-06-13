@@ -87,13 +87,13 @@ index_constants = [
     (
         db_c.DATA_MANAGEMENT_DATABASE,
         db_c.NOTIFICATIONS_COLLECTION,
-        [(db_c.NOTIFICATION_FIELD_CREATED, DESCENDING)],
+        [(db_c.NOTIFICATION_FIELD_CREATE_TIME, DESCENDING)],
     ),
     (
         db_c.DATA_MANAGEMENT_DATABASE,
         db_c.NOTIFICATIONS_COLLECTION,
         [
-            (db_c.NOTIFICATION_FIELD_CREATED, DESCENDING),
+            (db_c.NOTIFICATION_FIELD_CREATE_TIME, DESCENDING),
             (db_c.ID, ASCENDING),
         ],
     ),
@@ -101,7 +101,7 @@ index_constants = [
         db_c.DATA_MANAGEMENT_DATABASE,
         db_c.NOTIFICATIONS_COLLECTION,
         [
-            (db_c.NOTIFICATION_FIELD_CREATED, DESCENDING),
+            (db_c.NOTIFICATION_FIELD_CREATE_TIME, DESCENDING),
             (db_c.ID, DESCENDING),
         ],
     ),
@@ -124,6 +124,14 @@ index_constants = [
         db_c.DATA_MANAGEMENT_DATABASE,
         db_c.AUDIENCES_COLLECTION,
         [(db_c.NAME, DESCENDING)],
+    ),
+    (
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.SURVEY_METRICS_COLLECTION,
+        [
+            (db_c.SURVEY_ID, ASCENDING),
+            (db_c.S_TYPE_SURVEY_CUSTOMER_ID, ASCENDING),
+        ],
     ),
 ]
 

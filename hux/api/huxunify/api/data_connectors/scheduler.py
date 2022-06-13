@@ -1,8 +1,8 @@
-"""Purpose of this module is to park schedule modules for delivery schedule"""
+"""Purpose of this module is to park schedule modules for delivery schedule."""
 import asyncio
 from datetime import datetime
 from pymongo import MongoClient
-from huxunifylib.database import constants as db_c
+from huxunifylib.database import constants as db_c, collection_management
 from huxunifylib.database.cache_management import create_cache_entry
 from huxunifylib.database.collection_management import get_documents
 from huxunifylib.database.notification_management import create_notification
@@ -13,12 +13,17 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     get_all_delivery_platforms,
 )
-from huxunifylib.database.orchestration_management import get_audience
+from huxunifylib.database.orchestration_management import (
+    get_audience,
+    get_all_audiences,
+)
 from huxunifylib.connectors.util.selector import (
     get_delivery_platform_connector,
 )
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.cdp import get_customers_count_async
+from huxunify.api.data_connectors.okta import get_env_okta_user_bearer_token
 from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import get_next_schedule
 from huxunify.api.data_connectors.courier import (
@@ -250,7 +255,10 @@ async def delivery_destination(
         ]:
             continue
         batch_destination = get_destination_config(
-            database, *pair, engagement[db_c.ID]
+            database,
+            *pair,
+            engagement[db_c.ID],
+            username=engagement[db_c.UPDATED_BY],
         )
         batch_destination.register()
         batch_destination.submit()
@@ -305,9 +313,7 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
                 if not isinstance(destination, dict):
                     continue
                 delivery_schedule = (
-                    destination.get(api_c.DELIVERY_SCHEDULE)
-                    if destination.get(api_c.DELIVERY_SCHEDULE)
-                    else audience.get(api_c.DELIVERY_SCHEDULE)
+                    audience.get(api_c.DELIVERY_SCHEDULE)
                     if audience.get(api_c.DELIVERY_SCHEDULE)
                     else engagement.get(api_c.DELIVERY_SCHEDULE)
                 )
@@ -315,9 +321,7 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
                 if not delivery_schedule:
                     continue
 
-                if destination.get(api_c.DELIVERY_SCHEDULE):
-                    schedule_cron = generate_cron(delivery_schedule)
-                elif delivery_schedule.get(api_c.SCHEDULE_CRON):
+                if delivery_schedule.get(api_c.SCHEDULE_CRON):
                     schedule_cron = delivery_schedule[api_c.SCHEDULE_CRON]
                 else:
                     schedule_cron = generate_cron(
@@ -444,3 +448,45 @@ def run_scheduled_tecton_feature_cache(database: MongoClient) -> None:
             cache_model_features(database, model[api_c.ID])
         )
         loop.run_until_complete(task)
+
+
+def run_scheduled_customer_profile_audience_count(
+    database: MongoClient,
+) -> None:
+    """Function to run scheduled customer profile audience count refresh.
+
+    Args:
+        database (MongoClient): The mongo database client.
+    """
+
+    # get the current environment's okta user bearer token
+    okta_access_token = get_env_okta_user_bearer_token()
+
+    if okta_access_token:
+        # get all audiences from audiences collection
+        audiences = get_all_audiences(database=database)
+
+        # get the cdp customers count for each of the audiences using async
+        # method
+        audience_size_dict = get_customers_count_async(
+            okta_access_token, audiences
+        )
+
+        # iterate through each audience to update the size of the corresponding
+        # audience in audiences collection
+        for audience in audiences:
+            collection_management.update_document(
+                database=database,
+                collection=db_c.AUDIENCES_COLLECTION,
+                document_id=audience[db_c.ID],
+                update_doc={
+                    db_c.SIZE: audience_size_dict.get(audience[db_c.ID])
+                },
+                username=audience[db_c.UPDATED_BY],
+            )
+    else:
+        logger.error(
+            "Failed to run scheduled customer profile audience count for each "
+            "audience since failed to obtain get env okta user access bearer "
+            "token."
+        )

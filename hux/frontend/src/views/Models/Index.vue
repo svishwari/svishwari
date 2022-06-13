@@ -57,6 +57,9 @@
           :title="model.name"
           :logo-option="true"
           :description="model.description"
+          :top-right-adjustment="
+            model.status != 'active' ? 'ml-8 mt-3 mr-8' : 'mt-3 mr-8'
+          "
           data-e2e="model-item"
           :disabled="model.status !== 'Active'"
           :interactable="model.status == 'Active' ? true : false"
@@ -150,6 +153,7 @@
         :icon-size="50"
         title="Models are currently unavailable"
         subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+        class="models-error-height"
       >
       </error>
     </v-row>
@@ -333,8 +337,20 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 210px);
+  height: calc(100vh - 252px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
+}
+.models-error-height {
+  height: 280px !important;
+}
+::v-deep .title-up {
+  position: relative;
+  top: -4px;
+}
+::v-deep .descriptive-card .description {
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  height: 35px !important;
 }
 </style>

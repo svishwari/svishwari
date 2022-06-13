@@ -111,11 +111,11 @@
                   <v-list class="menu-list-wrapper">
                     <v-list-item-group>
                       <v-list-item
-                        v-for="option in sectionActions"
+                        v-for="option in destinationActions"
                         :key="option.id"
                         :disabled="!option.active"
                         @click="
-                          $emit('onSectionAction', {
+                          $emit('onDestinationAction', {
                             target: option,
                             data: item,
                             parent: section,
@@ -144,6 +144,15 @@
             </div>
             <div v-if="header.value == 'next_delivery'" class="text-body-1">
               <time-stamp :value="item['next_delivery']" />
+            </div>
+            <div v-if="header.value == 'replace'" class="text-body-1">
+              <hux-switch
+                v-if="item['is_ad_platform']"
+                v-model="item['replace_audience']"
+                :switch-labels="switchLabels"
+                false-color="var(--v-black-lighten4)"
+                @change="handleChange($event, section.id, audience.id, item.id)"
+              />
             </div>
           </td>
         </template>
@@ -198,6 +207,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxIcon from "@/components/common/Icon.vue"
+import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
   name: "DeliveryDetails",
@@ -210,6 +220,7 @@ export default {
     TimeStamp,
     Size,
     HuxIcon,
+    HuxSwitch,
   },
 
   props: {
@@ -280,25 +291,40 @@ export default {
         {
           text: "Destination",
           value: "name",
-          width: "35%",
+          width: "25%",
         },
         {
           text: "Status",
           value: "status",
-          width: "25%",
+          width: "15%",
         },
         {
           text: "Target size",
           value: "size",
           width: "15%",
           hoverTooltip:
-            "Average order value for all customers (known and anyonymous) for all time.",
+            "Average order value for all consumers (known and anyonymous) for all time.",
           tooltipWidth: "201px",
         },
         {
           text: "Last delivery",
           value: "next_delivery",
           width: "25%",
+        },
+        {
+          text: "Replace",
+          value: "replace",
+          width: "20%",
+        },
+      ],
+      switchLabels: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
         },
       ],
     }
@@ -343,6 +369,8 @@ export default {
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       setAlert: "alerts/setAlert",
+      updateReplace: "engagements/updateReplace",
+      replaceAudience: "audiences/replaceAudienceToggle",
     }),
     async deliverAll(engagement) {
       await this.deliverAudience({
@@ -423,6 +451,15 @@ export default {
         type: "pending",
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
+    },
+    handleChange(...args) {
+      const data = {
+        engagement_id: args[1],
+        audience_id: args[2],
+        destination_id: args[3],
+        value: args[0],
+      }
+      this.replaceAudience(data)
     },
   },
 }

@@ -16,6 +16,7 @@ import alerts from "@/store/modules/alerts"
 import configuration from "@/store/modules/configurations"
 import application from "@/store/modules/application"
 import emailDeliverability from "@/store/modules/emailDeliverability"
+import trustId from "@/store/modules/trustId"
 
 Vue.use(Vuex)
 
@@ -40,6 +41,7 @@ export default new Vuex.Store({
     configuration,
     application,
     emailDeliverability,
+    trustId,
   },
 
   strict: debug,

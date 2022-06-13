@@ -7,7 +7,8 @@
           :key="dataSource.id"
           :icon="dataSource.type"
           :title="dataSource.name"
-          :logo-size="45"
+          :logo-size="60"
+          :logo-box-padding="'10px'"
           :description="dataSource.category"
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active'"
@@ -16,8 +17,8 @@
           :icon-color="true"
           :logo-option="true"
           :dot-option="'Remove'"
-          class="mr-10 model-desc-card"
-          height="225"
+          class="mr-12 model-desc-card"
+          height="222"
           width="255"
           data-e2e="dataSourcesList"
           :to="
@@ -175,6 +176,14 @@ export default {
       ::v-deep i {
         font-size: 17px;
       }
+    }
+  }
+  ::v-deep.descriptive-card {
+    .title {
+      padding-bottom: 4px !important;
+    }
+    .px-3.pt-2 {
+      padding-top: 24px !important;
     }
   }
 }

@@ -4,7 +4,7 @@
     floating
     :permanent="true"
     :mini-variant.sync="isMini"
-    mini-variant-width="90"
+    mini-variant-width="72"
     width="220"
     class="side-nav-bar"
   >
@@ -15,21 +15,23 @@
         class="d-flex ma-6"
         data-e2e="click-outside"
       />
-      <v-menu
-        v-if="!isMini"
-        v-model="menu"
-        content-class="ml-n3"
-        close-on-click
-        offset-y
-      >
+      <v-menu v-model="menu" content-class="ml-n3" close-on-click offset-y>
         <template #activator="{ on }">
           <div class="pl-4 client py-2 mb-2" v-on="on">
             <span class="d-flex align-center justify-space-between">
               <span class="d-flex align-center black--text text-h4">
-                <logo :type="client.logo" :size="24" class="mr-2" />
-                {{ client.name }}
+                <div v-if="isDemoMode" :class="isMini ? 'dotMini' : 'dot mr-2'">
+                  <logo :type="client.logo" :size="isMini ? 40 : 20" />
+                </div>
+                <logo
+                  v-else
+                  :type="client.logo"
+                  :size="isMini ? 40 : 24"
+                  :class="isMini ? '' : 'ml-1 mr-2'"
+                />
+                <span v-if="!isMini" class="ellipsis">{{ client.name }}</span>
               </span>
-              <span class="mr-3">
+              <span v-if="!isMini" class="mr-3">
                 <icon
                   type="chevron-down"
                   :size="14"
@@ -59,17 +61,20 @@
 
     <v-list
       v-for="item in displayedMenuItems"
-      :key="item.title"
+      :key="item.name"
       color="var(-v--primary-base)"
     >
-      <div v-if="item.label" class="list-group black--text mt-2">
+      <div
+        v-if="item.children && item.children.length > 0"
+        class="list-group black--text mt-2"
+      >
         <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-6">
-          {{ item.label }}
+          {{ item.name }}
         </span>
       </div>
 
       <v-list-item
-        v-if="!item.menu"
+        v-if="!item.children"
         class="pl-6 mr-2"
         :data-e2e="`nav-${item.icon}`"
         :to="item.link"
@@ -81,8 +86,8 @@
           :class="{ 'home-menu-icon ml-0': !isMini, ' mini-home-icon': isMini }"
         >
           <tooltip
-            v-if="item.title"
-            :key="item.title"
+            v-if="item.name"
+            :key="item.name"
             position-top
             color="black-lighten4"
           >
@@ -91,24 +96,26 @@
             </template>
             <template #hover-content>
               <span class="text-h6 error-base--text">
-                {{ item.title }}
+                {{ item.name }}
               </span>
             </template>
           </tooltip>
         </v-list-item-icon>
         <v-list-item-title class="black--text text-h6">
-          {{ item.title }}
+          {{ item.name }}
         </v-list-item-title>
       </v-list-item>
 
-      <div v-if="item.menu">
+      <div v-if="item.children">
         <v-list-item
-          v-for="menu in item.menu"
-          :key="menu.title"
+          v-for="menu in item.children"
+          :key="menu.name"
           class="pl-6 mr-2"
           :data-e2e="`nav-${menu.icon}`"
           :to="menu.link"
           @click="navigate(menu)"
+          @mouseover="onMouseOver(menu)"
+          @mouseleave="onMouseLeave()"
         >
           <v-list-item-icon
             v-if="menu.icon"
@@ -117,7 +124,7 @@
           >
             <tooltip
               v-if="menu.icon"
-              :key="menu.title"
+              :key="menu.name"
               position-top
               color="black"
             >
@@ -126,13 +133,16 @@
               </template>
               <template #hover-content>
                 <span class="black--text text-h6">
-                  {{ menu.title }}
+                  {{ menu.name }}
                 </span>
               </template>
             </tooltip>
           </v-list-item-icon>
           <v-list-item-title class="black--text text-h6">
-            {{ menu.title }}
+            {{ menu.name }}
+            <span v-if="menu.superscript" class="title-superscript">
+              {{ menu.superscript }}
+            </span>
           </v-list-item-title>
         </v-list-item>
       </div>
@@ -156,11 +166,11 @@
 </template>
 
 <script>
-import menuConfig from "@/menuConfig.js"
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
 import * as _ from "lodash"
+import { mapGetters, mapActions } from "vuex"
 
 export default {
   name: "SideMenu",
@@ -174,17 +184,26 @@ export default {
   data: () => ({
     // TODO: integrate with API endpoint for configuring this in the UI
     client: {
-      name: "Client",
+      name: "Retail Co",
       logo: "client",
     },
     menu: false,
-    items: menuConfig.menu,
     prevItem: null,
+    isBrodcasterOn: true,
   }),
 
   computed: {
+    ...mapGetters({
+      sideBarItems: "configuration/sideBarConfigs",
+      demoConfiguration: "users/getDemoConfiguration",
+    }),
+
     isMini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
+    },
+
+    isDemoMode() {
+      return this.demoConfiguration?.demo_mode
     },
 
     iconSize() {
@@ -192,20 +211,38 @@ export default {
     },
 
     displayedMenuItems() {
-      return this.items.filter((x) => {
-        if (x.menu && x.display) {
-          x.menu = x.menu.filter((y) => y.display)
+      return this.sideBarItems.filter((x) => {
+        if (x.children && x.enabled) {
+          x.children = x.children.filter((y) => y.enabled)
           return true
         } else {
-          return x.display
+          return x.enabled
         }
       })
     },
   },
 
+  async mounted() {
+    await this.getSideBarConfig()
+    this.trustidRoute(this.$route.name)
+  },
+
+  updated() {
+    this.getCurrentConfiguration()
+  },
+
   methods: {
+    ...mapActions({
+      getSideBarConfig: "configuration/getSideBarConfig",
+    }),
+
     navigate(item) {
-      if (this.prevItem && this.prevItem.defaultState) {
+      this.trustidRoute(item.name)
+      if (
+        this.prevItem &&
+        this.prevItem.defaultState &&
+        this.prevItem.link.name != item.link.name
+      ) {
         this.$store.replaceState({
           ...this.$store.state,
           [this.prevItem.link.name.charAt(0).toLowerCase() +
@@ -215,6 +252,64 @@ export default {
         })
       }
       this.prevItem = item
+    },
+
+    checkColored(title) {
+      if (
+        this.sideBarItems?.length > 0 &&
+        ["HX TrustID", "HXTrustID"].includes(title)
+      ) {
+        this.sideBarItems
+          .find((elem) => elem.name == "Insights")
+          .children.find((item) => item.name == "HX TrustID").icon =
+          "hx-trustid-colored"
+        return true
+      }
+      return false
+    },
+
+    trustidRoute(title) {
+      if (this.sideBarItems?.length > 0 && !this.checkColored(title)) {
+        this.sideBarItems
+          .find((elem) => elem.name == "Insights")
+          .children.find((item) => item.name == "HX TrustID").icon =
+          "hx-trustid"
+      }
+    },
+
+    onMouseOver(item) {
+      if (item) {
+        this.checkColored(item.name)
+      }
+    },
+    onMouseLeave() {
+      this.trustidRoute(this.$route.name)
+    },
+    updateClientInfo() {
+      if (this.isDemoMode) {
+        this.client = {
+          name: `${this.demoConfiguration.industry} Co`,
+          logo: this.demoConfiguration?.industry.toLowerCase(),
+        }
+      } else {
+        this.client = {
+          name: "Retail Co",
+          logo: "client",
+        }
+      }
+    },
+    async setDemoConfiguration() {
+      await this.getSideBarConfig()
+      this.updateClientInfo()
+    },
+    getCurrentConfiguration() {
+      if (this.isBrodcasterOn) {
+        this.$root.$on("update-config-settings", () =>
+          this.setDemoConfiguration()
+        )
+      }
+      this.isBrodcasterOn = false
+      this.updateClientInfo()
     },
   },
 }
@@ -328,5 +423,34 @@ export default {
 }
 .height-fix {
   min-height: 32px;
+}
+.title-superscript {
+  @extend .superscript;
+  font-size: 6px;
+  left: -4px;
+  top: -8px;
+}
+.dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--black-lighten2);
+  @extend .box-shadow-1;
+  background: var(--v-white-base);
+  text-align: -webkit-center;
+  padding-top: 2px !important;
+}
+.dotMini {
+  @extend .dot;
+  width: 40px;
+  height: 40px;
+}
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 14ch;
+  display: inline-block;
+  width: 28ch;
+  white-space: nowrap;
 }
 </style>

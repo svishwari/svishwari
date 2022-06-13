@@ -37,12 +37,54 @@ VALID_INTROSPECTION_RESPONSE = {
     "client_id": "1234",
     "uid": "00u7acrr5pEmJ09lc2p7",
 }
+VALID_VIEWER_INTROSPECTION_RESPONSE = {
+    "active": True,
+    "scope": "openid email profile",
+    "username": "user1",
+    "exp": 1234,
+    "iat": 12345,
+    "sub": "user1_viewer@deloitte.com",
+    "aud": "sample_aud",
+    "iss": "sample_iss",
+    "jti": "sample_jti",
+    "token_type": "Bearer",
+    "client_id": "1234",
+    "uid": "00u7acrr5pEmJ09lc2p7",
+}
+VALID_EDITOR_INTROSPECTION_RESPONSE = {
+    "active": True,
+    "scope": "openid email profile",
+    "username": "user1",
+    "exp": 1234,
+    "iat": 12345,
+    "sub": "user1_editor@deloitte.com",
+    "aud": "sample_aud",
+    "iss": "sample_iss",
+    "jti": "sample_jti",
+    "token_type": "Bearer",
+    "client_id": "1234",
+    "uid": "00u7acrr5pEmJ09lc2p7",
+}
 INVALID_INTROSPECTION_RESPONSE = {"active": False}
 VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
     api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
     api_c.NAME: "USER 1",
     api_c.ROLE: db_c.USER_ROLE_ADMIN,
+    api_c.USER_PII_ACCESS: True,
+}
+VALID_VIEWER_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
+    api_c.EMAIL: VALID_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
+    api_c.NAME: "VIEWER USER",
+    api_c.ROLE: db_c.USER_ROLE_VIEWER,
+    api_c.USER_PII_ACCESS: True,
+}
+VALID_EDITOR_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: VALID_EDITOR_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
+    api_c.EMAIL: VALID_EDITOR_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
+    api_c.NAME: "EDITOR USER",
+    api_c.ROLE: db_c.USER_ROLE_EDITOR,
     api_c.USER_PII_ACCESS: True,
 }
 # response missing some fields
@@ -97,6 +139,8 @@ SOURCE_ID = "source_id"
 
 TICKETS = "tickets"
 
+TRAINED_DATE = "trained_date"
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
@@ -119,22 +163,20 @@ CDM_HEALTHCHECK_RESPONSE = {
 CUSTOMER_INSIGHT_RESPONSE = {
     "code": 200,
     "body": {
-        "total_records": 20238,
-        "match_rate": 0.05,
-        "total_unique_ids": 14238,
-        "total_unknown_ids": 4515,
-        "total_known_ids": 13620,
-        "total_individual_ids": 313,
-        "total_household_ids": 9927,
         "total_customers": 3329,
         "total_countries": 2,
         "total_us_states": 44,
         "total_cities": 2513,
         "min_age": 18,
         "max_age": 66,
+        "avg_age": 40,
         "gender_women": 42345,
         "gender_men": 52567,
         "gender_other": 6953,
+        "max_ltv_actual": 998.79824,
+        "max_ltv_predicted": 1069.68824,
+        "min_ltv_actual": 0.00072,
+        "min_ltv_predicted": 70.89072,
     },
     "message": "ok",
 }
@@ -142,17 +184,24 @@ CUSTOMER_INSIGHT_RESPONSE = {
 IDENTITY_INSIGHT_RESPONSE = {
     "code": 200,
     "body": {
-        "total_records": 18238,
-        "match_rate": 0.5,
-        "total_unique_ids": 13238,
-        "total_unknown_ids": 3515,
-        "total_known_ids": 11620,
-        "total_individual_ids": 513,
-        "total_household_ids": 9827,
+        "total_records": 273326,
+        "match_rate": 0.87,
+        "total_unique_ids": 49974,
+        "total_anonymous_ids": 6326,
+        "total_address_ids": 1614,
+        "total_individual_ids": 1614,
+        "total_household_ids": 1760,
+        "updated": "2021-12-17T02:50:52.777Z",
     },
     "message": "ok",
 }
-
+EVENT_TYPES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {api_c.TYPE: "traits_analysed", api_c.LABEL: "Traits Analysed"},
+        {api_c.TYPE: "sales_made", api_c.LABEL: "Sales Made"},
+    ],
+}
 CUSTOMER_EVENT_BY_DAY_RESPONSE = {
     "code": 200,
     "body": [
@@ -574,6 +623,15 @@ MOCKED_GENDER_SPENDING_BY_DAY = {
     ],
 }
 
+MOCKED_CUSTOMER_EVENT_TYPES = {
+    "code": 200,
+    "body": [
+        {"type": "viewed_checkout", "label": "Viewed checkout"},
+        {"type": "traits_analysed", "label": "Trait"},
+        {"type": "sales_made", "label": "Sale"},
+    ],
+}
+
 MOCKED_MODEL_PERFORMANCE_LTV = {
     "results": [
         {
@@ -728,7 +786,6 @@ MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
     },
 ]
 
-
 MOCKED_MODEL_PROPENSITY_FEATURES = {
     api_c.RESULTS: [
         {
@@ -737,12 +794,15 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
                 "2021-07-28",
                 "1to2y-COGS-sum",
                 "description",
-                0.1745832178355047,
-                100351.13774108887,
-                17519.624540293255,
-                "Propensity to Unsubscribe",
-                api_c.UNSUBSCRIBE,
-                "21.7.28",
+                "Numeric",
+                "52%",
+                2,
+                2.2,
+                1.8,
+                6.1,
+                40,
+                "Women",
+                "Men",
             ],
             api_c.JOIN_KEYS: ["21.7.28"],
         },
@@ -752,12 +812,15 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
                 "2021-07-29",
                 "1to2y-data_source-orders",
                 "description",
-                0.1745832178355047,
-                100351.13774108887,
-                880.273438,
-                "Propensity to Unsubscribe",
-                api_c.UNSUBSCRIBE,
-                "21.7.29",
+                "Categorial",
+                "52%",
+                3,
+                3.2,
+                1.8,
+                6.1,
+                60,
+                "Women",
+                "Men",
             ],
             api_c.JOIN_KEYS: ["21.7.29"],
         },
@@ -767,12 +830,15 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
                 "2021-07-30",
                 "1to2y-ITEMQTY-avg",
                 "description",
-                0.1745832178355047,
-                100351.13774108887,
-                210.867187,
-                "Propensity to Unsubscribe",
-                api_c.UNSUBSCRIBE,
-                "21.7.30",
+                "Numeric",
+                "52%",
+                2,
+                2.2,
+                1.8,
+                5.1,
+                50,
+                "Women",
+                "Men",
             ],
             api_c.JOIN_KEYS: ["21.7.30"],
         },
@@ -782,12 +848,15 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
                 "2021-07-31",
                 "1to2y-COGS-sum",
                 "description",
-                0.1745832178355047,
-                100351.13774108887,
-                210.867187,
-                "Propensity to Unsubscribe",
-                api_c.UNSUBSCRIBE,
-                "21.7.31",
+                "Categorial",
+                "32%",
+                2,
+                1.2,
+                1.1,
+                4.1,
+                40,
+                "Women",
+                "Men",
             ],
             api_c.JOIN_KEYS: ["21.7.31"],
         },
@@ -1282,15 +1351,27 @@ TEST_NAVIGATION_SETTINGS = {
         {
             "enabled": True,
             "name": "Data Management",
+            "label": "Data Management",
             "children": [
-                {"name": "Data Sources", "enabled": False},
-                {"name": "Identity Resolution", "enabled": True},
+                {
+                    "name": "Data Sources",
+                    "label": "Data Sources",
+                    "enabled": False,
+                },
+                {
+                    "name": "Identity Resolution",
+                    "label": "Identity Resolution",
+                    "enabled": True,
+                },
             ],
         },
         {
             "enabled": True,
             "name": "Decisioning",
-            "children": [{"name": "Models", "enabled": True}],
+            "label": "Decisioning",
+            "children": [
+                {"name": "Models", "label": "Models", "enabled": True}
+            ],
         },
     ]
 }
@@ -1480,6 +1561,302 @@ DATAFEED_FILE_DETAILS_RESPONSE = {
             api_c.THIRTY_DAYS_AVG: 0.94,
         },
     ],
+}
+
+TRUST_ID_SURVEY_RESPONSES = [
+    {
+        "customer_id": "711428396",
+        "response_date": "2021-11-05T00:00:00.000Z",
+        "survey_id": "05cc7a8a1b7c3adaf69384e4320751db",
+        "url": "https://survey.medallia.com/?feedless-wsj-05cc7a8a1b7c3adaf69384e4320751db",
+        "responses": {
+            "VXID": "4190f126905168bea727e2d677e57446bf1c10e5a320d88ef1e5f47ef443f332",
+            "Adobe ID": "1",
+            "Customer Email": "",
+            "startdate": "11:23.0",
+            "Survey Time to Complete (in Minutes)": "",
+            "survey_is_mobile": "Yes",
+            "Banner Indicator": "No",
+            "trustid_brand_unit": "The Wall Street Journal",
+            "Consent Statement": "Yes, I agree to proceed",
+            "Children in Household": "None",
+            "Household Seniors Y/N": "2",
+            "Employment Status": "Employed full-time",
+            "Education": "Undergraduate Degree",
+            "Identifies as LGBTQ+": "No",
+            "Gender": "Female",
+            "Age": "50 to 54 years",
+            "Race and Ethnicity": "White",
+            "Political Outlook": "Lean to the right (i.e. fairly conservative)",
+            "Political_Affliliation": "Right",
+            "Health Conditions": "None of the above",
+            "Other Health Condition": "",
+            "Industry": "",
+            "Household Income": "",
+            "Time": "12824",
+            "StraightLine": "0",
+            "USE": "1",
+            "prospect_with_vxid": "0",
+            "classification": "Existing",
+            "bundle": "Digital Plus",
+            "bundle_hl": "digital",
+            "PercentOpinion": "",
+            "Opinion_Bucket": "0",
+            "TopCategory": "",
+            "TopCategory_HL": "",
+            "Per_Web": "",
+            "Prospect_Temp": "-",
+            "Existing_Class": "Dormant",
+            "VisitsTotal": "0",
+            "activeDays": "0",
+            "VisitsWeb": "0",
+            "VisitsApps": "0",
+            "activeDaysThisWeek": "0",
+            "viewsArts": "0",
+            "viewsBusiness": "0",
+            "viewsCareers": "0",
+            "viewsCSuite": "0",
+            "viewsEconomy": "0",
+            "viewsLife": "0",
+            "viewsMagazine": "0",
+            "viewsMarkets": "0",
+            "viewsNewYork": "0",
+            "viewsPageOne": "0",
+            "viewsPersonalFinance": "0",
+            "viewsPolitics": "0",
+            "viewsPro": "0",
+            "viewsRealEstate": "0",
+            "viewsTech": "0",
+            "viewsUS": "0",
+            "viewsWorld": "0",
+            "viewsOpinion": "0",
+            "mobile": "0",
+            "desktop": "0",
+            "Tenure (days)": "146",
+            "Tenure (months)": "4.8",
+            "channel": "",
+            "recency": "",
+            "freq": "",
+            "factors": {
+                "HUMANITY": {
+                    "attributes": [
+                        {
+                            "description": "Demonstrates empathy and kindness towards me, and treats everyone fairly",
+                            "score": "6",
+                        },
+                        {
+                            "description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
+                            "score": "4",
+                            "rating": "0",
+                        },
+                        {
+                            "description": "Values & respects everyone, regardless of background, identity or beliefs",
+                            "score": "6",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Takes care of employees",
+                            "score": "4",
+                            "rating": "0",
+                        },
+                        {
+                            "description": "values the good of society and the environment, not just profit",
+                            "score": "6",
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "RELIABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Consistently and dependably delivers upon promises it makes",
+                            "score": "6",
+                        },
+                        {
+                            "description": "Facilitates digital interactions that run smoothly and work when needed",
+                            "score": "4",
+                            "rating": "0",
+                        },
+                        {
+                            "description": "Can be counted on to improve the quality of their products and services",
+                            "score": "6",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Consistently delivers products, services, and experiences with quality",
+                            "score": "6",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Resolves issues in an adequate and timely manner",
+                            "score": "4",
+                            "rating": "0",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "TRANSPARENCY": {
+                    "attributes": [
+                        {
+                            "description": "Openly shares all information, motives, and choices in straightforward and plain language",
+                            "score": "6",
+                        },
+                        {
+                            "description": "Marketing and communications are accurate and honest",
+                            "score": "5",
+                            "rating": "0",
+                        },
+                        {
+                            "description": "How and why my data is used is communicated in plain and easy to understand language",
+                            "score": "6",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Is upfront about how they make and spend money from our interactions",
+                            "score": "4",
+                            "rating": "0",
+                        },
+                        {
+                            "description": "Is clear and upfront about fees and costs of products, services and experiences",
+                            "score": "6",
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "CAPABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Creates quality products, services, and/or experiences",
+                            "score": "6",
+                        },
+                        {
+                            "description": "Products are good quality, accessible and safe to use",
+                            "score": "6",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Prices of products, services, and experiences are good value for money",
+                            "score": "6",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Creates long term solutions and improvements that work well for me",
+                            "score": "4",
+                            "rating": "0",
+                        },
+                        {
+                            "description": "Employees and leadership are competent and understand how to respond to my needs",
+                            "score": "4",
+                            "rating": "0",
+                        },
+                    ],
+                    "rating": "1",
+                },
+            },
+        },
+    }
+]
+
+CDP_COUNT_BY_AGE_RESONSE = {
+    "code": 200,
+    "body": [
+        {"age": 18, "customer_count": 973},
+        {"age": 19, "customer_count": 264},
+        {"age": 20, "customer_count": 261},
+        {"age": 21, "customer_count": 317},
+        {"age": 22, "customer_count": 321},
+    ],
+    "message": "ok",
+}
+
+AGE_HISTOGRAM_DATA = [
+    (18, 973),
+    (19, 264),
+    (20, 261),
+    (21, 317),
+    (22, 321),
+]
+
+CDP_COUNT_BY_AGE_RESONSE = {
+    "code": 200,
+    "body": [
+        {"age": 18, "customer_count": 973},
+        {"age": 19, "customer_count": 264},
+        {"age": 20, "customer_count": 261},
+        {"age": 21, "customer_count": 317},
+        {"age": 22, "customer_count": 321},
+    ],
+    "message": "ok",
+}
+
+COUNTS_BY_FLOAT_HISTOGRAM_DATA = [
+    (0.00072, 2158),
+    (49.940596, 2220),
+    (99.880472, 2032),
+]
+
+CDP_COUNTS_BY_FLOAT_RESONSE = {
+    "code": 200,
+    "body": [
+        {"value_from": 0.00072, "value_to": 49.940596, "customer_count": 2158},
+        {
+            "value_from": 49.940596,
+            "value_to": 99.880472,
+            "customer_count": 2220,
+        },
+        {
+            "value_from": 99.880472,
+            "value_to": 149.820348,
+            "customer_count": 2032,
+        },
+    ],
+    "message": "ok",
+}
+
+TRUST_ID_SAMPLE_USER_SEGMENT = [
+    {
+        "segment_name": "Segment",
+        "segment_filters": [
+            {"type": "age", "values": ["50 to 54 years"], "description": "Age"}
+        ],
+    }
+]
+
+TRUST_ID_SAMPLE_HUMANITY_OVERVIEW = {
+    "factor_name": "humanity",
+    "factor_score": 100,
+    "factor_description": "Humanity is demonstrating empathy and kindness "
+    "towards customers, and "
+    "treating everyone fairly. "
+    "It is scored on a scale between -100 to 100",
+    "overall_customer_rating": {
+        "total_customers": 1,
+        "rating": {
+            "disagree": {"count": 0, "percentage": 0.0},
+            "neutral": {"count": 0, "percentage": 0.0},
+            "agree": {"count": 1, "percentage": 1.0},
+        },
+    },
+}
+
+TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE_AGG = {
+    "Takes care of employees": {"neutral": 1, "score": 0}
+}
+
+TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE = {
+    "factor_name": "humanity",
+    "attribute_description": "Takes care of employees",
+    "attribute_score": 0,
+    "overall_customer_rating": {
+        "total_customers": 1,
+        "rating": {
+            "disagree": {"count": 0, "percentage": 0.0},
+            "neutral": {"count": 1, "percentage": 1.0},
+            "agree": {"count": 0, "percentage": 0.0},
+        },
+    },
 }
 
 

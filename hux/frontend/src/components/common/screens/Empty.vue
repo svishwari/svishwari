@@ -1,6 +1,8 @@
 <template>
   <div ref="emptyState" class="empty-state-wrap">
-    <div v-for="index in boxCount" :key="index" class="box"></div>
+    <div class="ml-9">
+      <div v-for="index in boxCount" :key="index" class="box"></div>
+    </div>
     <div class="text-center">
       <icon
         :type="iconType"

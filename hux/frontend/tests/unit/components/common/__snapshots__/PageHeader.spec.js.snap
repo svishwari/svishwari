@@ -4,7 +4,7 @@ exports[`Page Header Page header displays both slots and props content 1`] = `
 <v-card-stub loaderheight="4" tag="div" color="red" height="72" tile="true" flat="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
     <div class="d-flex">
-      <icon-stub type="mdi-plus" size="20" color="black" variant="darken4" fillopacity="1" strokeopacity="1" class="pr-1"></icon-stub>
+      <icon-stub type="mdi-plus" size="20" customsize="[object Object]" color="black" variant="darken4" fillopacity="1" strokeopacity="1" class="pr-1"></icon-stub>
       <div data-e2e="card-title" class="text-h1 black--text">
         Welcome back, User
       </div>
@@ -16,6 +16,7 @@ exports[`Page Header Page header displays both slots and props content 1`] = `
       <div>Left slot</div>
     </div>
   </div>
+  <!---->
   <div class="page-header--right">
     <div>Right slot</div>
   </div>
@@ -26,7 +27,7 @@ exports[`Page Header Page header displays props content 1`] = `
 <v-card-stub loaderheight="4" tag="div" color="red" height="72" tile="true" flat="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
     <div class="d-flex">
-      <icon-stub type="mdi-plus" size="20" color="black" variant="darken4" fillopacity="1" strokeopacity="1" class="pr-1"></icon-stub>
+      <icon-stub type="mdi-plus" size="20" customsize="[object Object]" color="black" variant="darken4" fillopacity="1" strokeopacity="1" class="pr-1"></icon-stub>
       <div data-e2e="card-title" class="text-h1 black--text">
         Welcome back, User
       </div>
@@ -34,6 +35,7 @@ exports[`Page Header Page header displays props content 1`] = `
     <!---->
     <!---->
   </div>
+  <!---->
   <div class="page-header--right"></div>
 </v-card-stub>
 `;
@@ -52,6 +54,7 @@ exports[`Page Header Page header displays slots content 1`] = `
       <div>Left slot</div>
     </div>
   </div>
+  <!---->
   <div class="page-header--right">
     <div>Right slot</div>
   </div>

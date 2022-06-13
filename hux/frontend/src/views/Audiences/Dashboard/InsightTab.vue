@@ -14,7 +14,7 @@
               class="d-flex"
             >
               <h3 class="text-h3">Audience Size</h3>
-              <span class="text-body-1 time-frame">
+              <span class="text-h3 black--text text--lighten-4 time-frame">
                 &nbsp;({{ timeFrameLabel }})
               </span>
             </span>
@@ -90,11 +90,11 @@
                   />
                 </template>
                 <template #hover-content>
-                  Total order value for all customers (known and anyonymous)
+                  Total order value for all consumers (known and anyonymous)
                   over time.
                 </template>
               </tooltip>
-              <span class="text-body-1 time-frame">
+              <span class="text-h3 black--text text--lighten-4 time-frame">
                 &nbsp;({{ timeFrameLabel }})
               </span>
             </span>

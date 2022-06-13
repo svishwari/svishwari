@@ -13,19 +13,14 @@
         "
         class="d-flex align-center"
       >
-        <icon
-          :type="
-            notificationData.notification_type === 'Success'
-              ? 'success_new'
-              : notificationData.notification_type
-          "
-          :size="32"
-          :color="getIconColor(notificationData.notification_type)"
-          :variant="getIconVariant(notificationData.notification_type)"
-          class="d-block mr-2"
+        <status
+          :status="formatText(notificationData.notification_type)"
+          :show-label="false"
+          class="d-flex"
+          :icon-size="32"
         />
         <h3 class="text-h2 ml-1 black--text text--darken-4">
-          Alert ID: {{ notificationData.id }}
+          Alert ID: {{ notificationData.id | Shorten }}
         </h3>
       </div>
     </template>
@@ -49,14 +44,15 @@
 
 <script>
 import { mapGetters } from "vuex"
+import { formatText } from "@/utils"
 import Drawer from "@/components/common/Drawer"
-import Icon from "@/components/common/Icon"
+import Status from "@/components/common/Status.vue"
 
 export default {
   name: "AlertDrawer",
   components: {
     Drawer,
-    Icon,
+    Status,
   },
 
   props: {
@@ -74,6 +70,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
+      notificationData: {},
     }
   },
 
@@ -81,10 +78,6 @@ export default {
     ...mapGetters({
       getSingleNotification: "notifications/single",
     }),
-
-    notificationData() {
-      return this.getSingleNotification(this.notificationId)
-    },
 
     notificationContent() {
       if (this.notificationData) {
@@ -97,18 +90,23 @@ export default {
           },
           {
             id: 2,
-            title: "Category",
-            value: this.notificationData.category,
+            title: "Alert object ID",
+            value: this.notificationData.id,
           },
           {
             id: 3,
-            title: "Date",
-            value: this.formattedDate(this.notificationData.created),
+            title: "Category",
+            value: formatText(this.notificationData.category),
           },
           {
             id: 4,
+            title: "Date",
+            value: this.formattedDate(this.notificationData.create_time),
+          },
+          {
+            id: 5,
             title: "User",
-            value: this.notificationData.username,
+            value: formatText(this.notificationData.username),
             subLabel: null,
           },
         ]
@@ -123,6 +121,7 @@ export default {
     },
     localDrawer: function () {
       this.$emit("input", this.localDrawer)
+      if (this.localDrawer) this.updateNotificationData()
     },
   },
 
@@ -133,21 +132,10 @@ export default {
       }
       return "-"
     },
-    getIconColor(value) {
-      if (value) {
-        return value === "Success"
-          ? "success"
-          : value === "Critical"
-          ? "error"
-          : "primary"
-      }
+    updateNotificationData() {
+      this.notificationData = this.getSingleNotification(this.notificationId)
     },
-
-    getIconVariant(value) {
-      if (value) {
-        return value === "Informational" ? "lighten6" : "base"
-      }
-    },
+    formatText: formatText,
   },
 }
 </script>

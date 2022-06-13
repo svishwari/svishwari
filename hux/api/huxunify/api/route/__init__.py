@@ -15,6 +15,8 @@ from huxunify.api.route.audiences import audience_bp
 from huxunify.api.route.configurations import configurations_bp
 from huxunify.api.route.applications import applications_bp
 from huxunify.api.route.client_projects import client_projects_bp
+from huxunify.api.route.triggers import triggers_bp
+
 
 ROUTES = [
     dest_bp,
@@ -32,4 +34,5 @@ ROUTES = [
     client_projects_bp,
     email_deliverability_bp,
     trust_id_bp,
+    triggers_bp,
 ]

@@ -8,6 +8,9 @@ from bson import ObjectId
 
 import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.delivery_platform_management as dpm
+from huxunifylib.database.audience_management import (
+    set_replace_audience_flag_standalone_audience,
+)
 from huxunifylib.database.user_management import set_user
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -371,6 +374,28 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertEqual(audiences[0][db_c.AUDIENCE_NAME], "Audience1")
         self.assertEqual(audiences[1][db_c.AUDIENCE_NAME], "Audience2")
 
+    def test_get_all_audiences_batch_offset(self):
+        """Test get_all_audiences with batch offset to limit number of records
+        returned."""
+
+        for i in range(17):
+            am.create_audience(
+                self.database,
+                f"New Audience {i}",
+                self.audience_filters,
+                user_name=self.user_name,
+            )
+
+        for i in range(1, 4):
+            audiences = am.get_all_audiences(
+                database=self.database, batch_size=5, batch_number=i
+            )
+            self.assertTrue(audiences)
+            if i < 4:
+                self.assertEqual(len(audiences), 5)
+            else:
+                self.assertEqual(len(audiences), 2)
+
     def test_get_all_audiences_filter(self):
         """Test get_all_audiences with filters."""
         audience_1 = am.create_audience(
@@ -487,6 +512,7 @@ class TestAudienceManagement(unittest.TestCase):
                 audience_doc[db_c.ID],
                 delivery_platform_doc[db_c.ID],
                 [],
+                self.user_name,
             )
 
             # store the audience obj
@@ -558,6 +584,7 @@ class TestAudienceManagement(unittest.TestCase):
                 audience_doc[db_c.ID],
                 delivery_platform_doc[db_c.ID],
                 [],
+                self.user_name,
             )
 
             # store the audience obj
@@ -723,3 +750,45 @@ class TestAudienceManagement(unittest.TestCase):
             delivery_platform_doc[db_c.ID],
             [x[db_c.ID] for x in doc[db_c.DESTINATIONS]],
         )
+
+    def test_set_replace_audience_flag_standalone_audience(self):
+        """Test set_replace_audience flag_standalone_audience method"""
+
+        audience = am.create_audience(
+            self.database,
+            "My Audience",
+            self.audience_filters,
+            self.user_name,
+        )
+        delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            {
+                "facebook_access_token": "path1",
+                "facebook_app_secret": "path2",
+                "facebook_app_id": "path3",
+                "facebook_ad_account_id": "path4",
+            },
+        )
+        destination = {
+            "id": delivery_platform_doc[db_c.ID],
+        }
+        am.append_destination_to_standalone_audience(
+            database=self.database,
+            audience_id=audience[db_c.ID],
+            destination=destination,
+            user_name=self.user_name,
+        )
+
+        audience_doc = set_replace_audience_flag_standalone_audience(
+            database=self.database,
+            audience_id=audience[db_c.ID],
+            destination_id=destination[db_c.OBJECT_ID],
+            replace_audience=True,
+            user_name="Test User",
+        )
+
+        for destination in audience_doc[db_c.DESTINATIONS]:
+            if destination[db_c.OBJECT_ID] == delivery_platform_doc[db_c.ID]:
+                self.assertTrue(destination[db_c.REPLACE_AUDIENCE])

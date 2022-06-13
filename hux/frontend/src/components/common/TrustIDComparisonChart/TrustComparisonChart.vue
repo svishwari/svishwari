@@ -59,7 +59,14 @@ export default {
     return {
       show: false,
       isEmptyState: false,
-      colors: ["#0076A8", "#A0DCFF", "#00A3E0", "#E3E48D", "#007680"],
+      colors: [
+        "#0076A8",
+        "#A0DCFF",
+        "#00A3E0",
+        "#E3E48D",
+        "#007680",
+        "#9DD4CF",
+      ],
       attributes: [
         "trust_id",
         "humanity",
@@ -78,20 +85,33 @@ export default {
       toolTipStyle: TooltipConfiguration.trustIdComparisonChart,
     }
   },
-  mounted() {
-    this.sizeHandler()
-    this.initializeSegmentData()
-    this.processData()
-    this.setLegendsData()
-    new ResizeObserver(this.sizeHandler).observe(
-      this.$refs.trustIdComparisonChart
-    )
+  watch: {
+    segmentScores: function () {
+      this.initializeComparisonChart()
+    },
   },
+  mounted() {
+    this.initializeComparisonChart()
+  },
+
   methods: {
+    initializeComparisonChart() {
+      this.sizeHandler()
+      this.initializeSegmentData()
+      this.processData()
+      this.setLegendsData()
+      new ResizeObserver(this.sizeHandler).observe(
+        this.$refs.trustIdComparisonChart
+      )
+    },
     toolTipDisplay(...arg) {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
+        if (this.currentData.invertPosition) {
+          this.toolTipStyle.left =
+            this.currentData.color == "#0076A8" ? "-378px" : "-360px"
+        } else this.toolTipStyle.left = "-228px"
       }
     },
     sizeHandler() {
@@ -118,10 +138,12 @@ export default {
     initializeSegmentData() {
       if (this.segmentScores) {
         this.sourceData = this.segmentScores.find(
-          (data) => data.segment_filter == "composite & signal scores"
+          (data) => data.segment_type == "composite & factor scores"
         ).segments
         this.sourceData.forEach(
-          (data, index) => (data.color = this.colors[index])
+          (data, index) =>
+            (data.color =
+              this.colors[this.hasDefaultSegment() ? index : index + 1])
         )
       } else {
         this.isEmptyState = true
@@ -138,12 +160,14 @@ export default {
             let attr_data = data.attributes.find(
               (el) => el.attribute_type == attr
             )
-            currentAttribute = attr_data.attribute_name
-            segmentAttrScore.push({
-              value: attr_data.attribute_score,
-              color: data.color,
-              segmentName: data.segment_name,
-            })
+            if (attr_data) {
+              currentAttribute = attr_data?.attribute_name
+              segmentAttrScore.push({
+                value: attr_data.attribute_score,
+                color: data.color,
+                segmentName: data.segment_name,
+              })
+            }
           })
           this.chartSourceData.push({
             id: attr,
@@ -157,13 +181,19 @@ export default {
     setLegendsData() {
       this.legendsData = []
       for (let [index, segment] of this.sourceData.entries()) {
-        this.legendsData.push({
-          color: this.colors[index],
-          checked: true,
-          disabled: false,
-          text: segment.segment_name,
-        })
+        if (segment.attributes.length > 0) {
+          this.legendsData.push({
+            color: this.colors[this.hasDefaultSegment() ? index : index + 1],
+            checked: true,
+            disabled: false,
+            text: segment.segment_name,
+          })
+        }
       }
+    },
+
+    hasDefaultSegment() {
+      return this.sourceData.some((data) => data.default)
     },
   },
 }
@@ -177,7 +207,7 @@ export default {
 }
 .container-chart {
   position: relative;
-  height: 650px;
+  height: 400px;
   padding: 0px !important;
   .value-container {
     margin-top: 2px;

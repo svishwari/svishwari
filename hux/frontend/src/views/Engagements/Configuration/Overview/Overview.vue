@@ -126,12 +126,12 @@ export default {
           subtitle: "",
           icon: "targetsize",
           titleTooltip:
-            "Current number of customers who fit the selected attributes.",
+            "Current number of consumers who fit the selected attributes.",
           tooltipWidth: "231",
         },
-        countries: { title: "Countries", subtitle: "", icon: "birth" },
-        states: { title: "States", subtitle: "", icon: "birth" },
-        cities: { title: "Cities", subtitle: "", icon: "birth" },
+        countries: { title: "Countries", subtitle: "", icon: "countries" },
+        states: { title: "States", subtitle: "", icon: "states" },
+        cities: { title: "Cities", subtitle: "", icon: "cities" },
         age: { title: "Age range", subtitle: "", icon: "birth" },
       }
       const sizeValue = this.insights && this.insights.size

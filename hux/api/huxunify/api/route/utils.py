@@ -1,12 +1,15 @@
 """Purpose of this file is to house route utilities."""
 # pylint: disable=too-many-lines
 import statistics
-from collections import defaultdict
-from datetime import datetime, date
+from collections import defaultdict, namedtuple
+from datetime import datetime, timedelta
 import re
 from itertools import groupby
-from typing import Tuple, Union, Generator
+from pathlib import Path
+from typing import Tuple, Union, Generator, Callable, List
 from http import HTTPStatus
+
+import pandas as pd
 from bson import ObjectId
 
 from dateutil.parser import parse
@@ -21,10 +24,9 @@ from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
 
+from huxunifylib.database.audit_management import create_audience_audit
+from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.util.client import db_client_factory
-from huxunifylib.database.cdp_data_source_management import (
-    get_all_data_sources,
-)
 from huxunifylib.database import (
     constants as db_c,
 )
@@ -40,10 +42,6 @@ from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.tecton import Tecton
-from huxunify.api.data_connectors.aws import (
-    check_aws_ssm,
-    check_aws_batch,
-)
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     get_user_info,
@@ -58,7 +56,7 @@ from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.exceptions import (
     unified_exceptions as ue,
 )
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import record_health_status, Connections
 from huxunify.api.stubbed_data.stub_shap_data import shap_data
 from huxunify.api.schema.user import RequestedUserSchema
 
@@ -72,7 +70,7 @@ def handle_api_exception(exc: Exception, description: str = "") -> None:
         description (str): Exception description.
 
     Returns:
-          None
+          None.
     """
 
     logger.error(
@@ -98,6 +96,7 @@ def get_db_client() -> MongoClient:
     return db_client_factory.get_resource(**get_config().MONGO_DB_CONFIG)
 
 
+@record_health_status(Connections.DB)
 def check_mongo_connection() -> Tuple[bool, str]:
     """Validate mongo DB connection.
 
@@ -106,13 +105,17 @@ def check_mongo_connection() -> Tuple[bool, str]:
     """
 
     try:
-        # test finding documents
-        get_all_data_sources(get_db_client())
-        record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, True)
+        # test finding documents, call directly to see errors.
+        _ = list(
+            get_db_client()[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.CDP_DATA_SOURCES_COLLECTION
+            ].find({})
+        )
+        logger.info("Mongo is available")
         return True, "Mongo available."
     # pylint: disable=broad-except
     except Exception:
-        record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, False)
+        logger.exception("Mongo Health Check failed.")
         return False, "Mongo not available."
 
 
@@ -132,11 +135,9 @@ def get_health_check() -> HealthCheck:
     health.add_check(check_mongo_connection)
     health.add_check(Tecton().check_tecton_connection)
     health.add_check(check_okta_connection)
-    health.add_check(check_aws_ssm)
-    health.add_check(check_aws_batch)
-    # TODO HUS-1200
-    # health.add_check(check_aws_s3)
-    # health.add_check(check_aws_events)
+    health.add_check(CloudClient().health_check_secret_storage)
+    health.add_check(CloudClient().health_check_batch_service)
+    health.add_check(CloudClient().health_check_storage_service)
     health.add_check(check_cdm_api_connection)
     health.add_check(check_cdp_connections_api_connection)
     health.add_check(JiraConnection.check_jira_connection)
@@ -328,17 +329,22 @@ class Validation:
     """Validation class for input parameters"""
 
     @staticmethod
-    def validate_integer(value: str) -> int:
-        """Validates that an integer is valid
+    def validate_integer(
+        value: str, validate_zero_or_greater: bool = False
+    ) -> int:
+        """Validates that an integer is valid.
 
         Args:
             value (str): String value from the caller.
+            validate_zero_or_greater(bool): Boolean value to validate if value
+            is equal to or greater than zero.
 
         Returns:
             int: Result of the integer conversion.
 
         Raises:
-            InputParamsValidationError: Error that is raised if input is invalid.
+            InputParamsValidationError: Error that is raised if input is
+                invalid.
         """
 
         # max_value added to protect snowflake/and other apps that
@@ -346,7 +352,11 @@ class Validation:
         max_value = 2147483647
 
         if value.isdigit():
-            if int(value) <= 0:
+            if validate_zero_or_greater and int(value) < 0:
+                raise ue.InputParamsValidationError(
+                    value, "zero or positive integer"
+                )
+            if not validate_zero_or_greater and int(value) <= 0:
                 raise ue.InputParamsValidationError(value, "positive integer")
             if int(value) > max_value:
                 raise ue.InputParamsValidationError(value, "integer")
@@ -380,14 +390,14 @@ class Validation:
     def validate_date(
         date_string: str, date_format: str = api_c.DEFAULT_DATE_FORMAT
     ) -> datetime:
-        """Validates is a single date is valid
+        """Validates is a single date is valid.
 
         Args:
             date_string (str): Input date string.
             date_format (str): Date string format.
 
         Returns:
-            datetime: datetime object for the string date passed in
+            datetime: datetime object for the string date passed in.
 
         Raises:
             InputParamsValidationError: Error that is raised if input is
@@ -449,13 +459,16 @@ def is_component_favorite(
     okta_user_id: str, component_name: str, component_id: str
 ) -> bool:
     """Checks if component is in favorites of a user.
+
     Args:
         okta_user_id (str): Okta User ID.
         component_name (str): Name of component in user favorite.
         component_id (str): ID of the favorite component.
+
     Returns:
         bool: If component is favorite or not.
     """
+
     user_favorites = get_user(get_db_client(), okta_user_id).get(
         api_c.FAVORITES
     )
@@ -501,7 +514,7 @@ def get_start_end_dates(request: dict, delta: int) -> (str, str):
 def get_user_favorites(
     database: DatabaseClient, user_name: str, component_name: str
 ) -> list:
-    """Get user favorites for a component
+    """Get user favorites for a component.
 
     Args:
         database (DatabaseClient): A database client.
@@ -509,8 +522,9 @@ def get_user_favorites(
         component_name (str): Name of component in user favorite.
 
     Returns:
-        list: List of ids of favorite component
+        list: List of ids of favorite component.
     """
+
     user = get_all_users(database, {db_c.USER_DISPLAY_NAME: user_name})
     if not user:
         return []
@@ -556,13 +570,17 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     )
 
     # check if the user is in the database
+    logger.info("Getting database client.")
     database = get_db_client()
+    logger.info("Successfully got database client.")
+
     user = get_user(database, user_info[api_c.OKTA_ID_SUB])
 
     if user is None:
         # since a valid okta_id is extracted from the okta issuer, use the user
         # info and create a new user if no corresponding user record matching
         # the okta_id is found in DB
+        logger.info("Setting user in database.")
         user = set_user(
             database=database,
             okta_id=user_info[api_c.OKTA_ID_SUB],
@@ -570,6 +588,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             display_name=user_info[api_c.NAME],
             role=user_info.get(api_c.ROLE, db_c.USER_ROLE_VIEWER),
         )
+        logger.info("Successfully set user in database.")
 
         # return NOT_FOUND if user is still none
         if user is None:
@@ -582,15 +601,14 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
 
 def get_required_shap_data(features: list = None) -> dict:
-    """Read in Shap Models Data JSON into a dict
+    """Read in Shap Models Data JSON into a dict.
 
     Args:
         features (list): string list of the features to be returned.
-        If none is passed, all features are returned
+            If none is passed, all features are returned.
 
     Returns:
-        dict: data placed into a dict where the keys are the column names
-
+        dict: data placed into a dict where the keys are the column names.
     """
 
     # return required shap feature data
@@ -602,14 +620,15 @@ def get_required_shap_data(features: list = None) -> dict:
 
 
 def convert_unique_city_filter(request_json: dict) -> dict:
-    """To convert request json to have unique city
+    """To convert request json to have unique city.
 
     Args:
-        request_json (dict): Input audience filter json object
+        request_json (dict): Input audience filter json object.
 
     Returns:
         dict: Converted audience filter.
     """
+
     try:
         for filters in request_json[api_c.AUDIENCE_FILTERS]:
             for item in filters[api_c.AUDIENCE_SECTION_FILTERS]:
@@ -656,9 +675,16 @@ def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
         if match_rate_data.get(delivery.get(api_c.DELIVERY_PLATFORM_TYPE)):
             # Always ensure the latest successful
             # delivery is considered.
-            if delivery.get(db_c.UPDATE_TIME) > match_rate_data[
+            prev_update_time = match_rate_data[
                 delivery.get(api_c.DELIVERY_PLATFORM_TYPE)
-            ].get(api_c.AUDIENCE_LAST_DELIVERY, date.min):
+            ].get(api_c.AUDIENCE_LAST_DELIVERY)
+
+            prev_update_time = (
+                prev_update_time
+                if isinstance(prev_update_time, datetime)
+                else datetime.min
+            )
+            if delivery.get(db_c.UPDATE_TIME) > prev_update_time:
                 match_rate_data[delivery.get(api_c.DELIVERY_PLATFORM_TYPE)] = {
                     api_c.AUDIENCE_LAST_DELIVERY: delivery.get(
                         db_c.UPDATE_TIME
@@ -685,7 +711,7 @@ def set_destination_category_in_engagement(engagement: dict):
     """Set destination_category in engagement dictionary.
 
     Args:
-        engagement (dict): engagement dict to be set with destination_category
+        engagement (dict): engagement dict to be set with destination_category.
     """
 
     # build destination_category object that groups audiences by destinations
@@ -705,6 +731,9 @@ def set_destination_category_in_engagement(engagement: dict):
             # build the destination dict nested with corresponding audience
             # and latest delivery data
             audience[api_c.LATEST_DELIVERY] = dest[api_c.LATEST_DELIVERY]
+            audience[db_c.REPLACE_AUDIENCE] = dest.get(
+                db_c.REPLACE_AUDIENCE, False
+            )
             destination = {
                 api_c.ID: dest[api_c.ID],
                 api_c.NAME: dest[api_c.NAME],
@@ -712,6 +741,7 @@ def set_destination_category_in_engagement(engagement: dict):
                 api_c.DESTINATION_TYPE: dest[api_c.DELIVERY_PLATFORM_TYPE],
                 db_c.LINK: dest.get(db_c.LINK),
             }
+
             destination[api_c.DESTINATION_AUDIENCES].append(audience)
             destinations.append(destination)
 
@@ -826,6 +856,7 @@ def validate_if_resource_owner(
          resource_name (str): Name of the resource.
          resource_id (str): ID of the resource.
          user_name (str): User name of the user.
+
      Returns:
          bool: True if the name of user is the same as created_by.
     """
@@ -949,14 +980,15 @@ def extract_user_request_details_from_issue(
 def group_and_aggregate_datafeed_details_by_date(
     datafeed_details: list,
 ) -> list:
-    """Group and aggregate data feed details by date
+    """Group and aggregate data feed details by date.
 
     Args:
-        datafeed_details (list): list of data feed details to group
+        datafeed_details (list): list of data feed details to group.
 
     Returns:
-        list: List of aggregated and grouped data feed details
+        list: List of aggregated and grouped data feed details.
     """
+
     grouped_datafeed_details = []
 
     grouped_by_date = groupby(
@@ -1057,14 +1089,14 @@ def group_and_aggregate_datafeed_details_by_date(
 def clean_and_aggregate_datafeed_details(
     datafeed_details: list, do_aggregate: bool = False
 ) -> list:
-    """Clean and aggregate datafeed details
+    """Clean and aggregate datafeed details.
 
     Args:
-        datafeed_details (list): List of data feed file details
-        do_aggregate (bool): Flag specifying if aggregation needed
+        datafeed_details (list): List of data feed file details.
+        do_aggregate (bool): Flag specifying if aggregation needed.
 
     Returns:
-        list: list of data feed details
+        list: list of data feed details.
     """
 
     stdev_sample_list = []
@@ -1123,11 +1155,14 @@ def clean_and_aggregate_datafeed_details(
 
 def clean_domain_name_string(domain_name: str) -> str:
     """Cleans strings like abc.com for Marshmallow attribute field.
+
     Args:
         domain_name (str): Name of the domain.
+
     Returns:
         str: Cleaned domain name.
     """
+
     # This is to handle @ present in sfmc data.
     if "@" in domain_name:
         domain_name = domain_name.split("@")[1]
@@ -1136,15 +1171,15 @@ def clean_domain_name_string(domain_name: str) -> str:
 
 
 def parse_seconds_to_duration_string(duration: int):
-    """Convert duration timedelta to HH:MM:SS format
+    """Convert duration timedelta to HH:MM:SS format.
 
     Args:
-        duration (int): Duration in seconds
+        duration (int): Duration in seconds.
 
     Returns:
-        str: duration string
-
+        str: duration string.
     """
+
     seconds = duration % 60
     minutes = (duration // 60) % 60
     hours = duration // (60 * 60)
@@ -1153,12 +1188,15 @@ def parse_seconds_to_duration_string(duration: int):
 
 
 def generate_cache_key_string(data: Union[dict, list]) -> Generator:
-    """Generates cache key strings for dicts and lists
+    """Generates cache key strings for dicts and lists.
+
     Args:
-        data (Union[dict,list]): Input data to get cache key
+        data (Union[dict,list]): Input data to get cache key.
+
     Yields:
-        Generator: String Generator
+        Generator: String Generator.
     """
+
     for item in data:
         if isinstance(item, list):
             generate_cache_key_string(item)
@@ -1184,10 +1222,12 @@ def set_destination_authentication_secrets(
 
     Returns:
         ssm_params (dict): The key to where the parameters are stored.
+
     Raises:
         KeyError: Exception when the key is missing in the object.
         ProblemException: Any exception raised during endpoint execution.
     """
+
     ssm_params = {}
 
     if destination_type not in api_c.DESTINATION_SECRETS:
@@ -1223,3 +1263,311 @@ def set_destination_authentication_secrets(
             ) from exc
 
     return ssm_params
+
+
+def generate_audience_file(
+    data_batches: pd.DataFrame,
+    transform_function: Callable,
+    audience_id: ObjectId,
+    download_type: str,
+    user_name: str,
+    database: DatabaseClient,
+) -> None:
+    """Generates Audience File
+
+    Args:
+        database(DatabaseClient): MongoDB Client
+        user_name(str): User name
+        download_type(str): Download Type selected
+        audience_id(ObjectId): Audience Id
+        data_batches(pd.Dataframe): Data batches retrieved from cdp
+        transform_function(Callable): Transform Function
+
+    Returns:
+
+    """
+    folder_name = "downloadaudiences"
+    audience_file_name = (
+        f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
+        f"_{audience_id}_{download_type}.csv"
+    )
+    with open(
+        Path(__file__).parent.parent.joinpath(folder_name)
+        / audience_file_name,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as csvfile:
+        for dataframe_batch in data_batches:
+            transform_function(dataframe_batch).to_csv(
+                csvfile,
+                mode="a",
+                index=False,
+            )
+
+    logger.info(
+        "Uploading generated %s audience file to %s S3 bucket",
+        audience_file_name,
+        get_config().S3_DATASET_BUCKET,
+    )
+    filename = (
+        Path(__file__).parent.parent.joinpath(folder_name)
+        / audience_file_name,
+    )
+    if CloudClient().upload_file(
+        file_name=str(filename[0]),
+        bucket=get_config().S3_DATASET_BUCKET,
+        object_name=audience_file_name,
+        user_name=user_name,
+        file_type=api_c.AUDIENCE,
+    ):
+        create_audience_audit(
+            database=database,
+            audience_id=audience_id,
+            download_type=download_type,
+            file_name=audience_file_name,
+            user_name=user_name,
+        )
+        logger.info(
+            "Created an audit log for %s audience file creation",
+            audience_file_name,
+        )
+
+
+def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
+    """Method to Convert for Events
+
+    Args:
+        filters (dict): An audience filter
+        event_types(List[dict]): List of event_types
+
+    Returns:
+
+    """
+    for section in filters[api_c.AUDIENCE_FILTERS]:
+        for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
+            if section_filter.get(api_c.AUDIENCE_FILTER_FIELD) in [
+                x[api_c.TYPE] for x in event_types
+            ]:
+                event_name = section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
+                if section_filter.get(api_c.TYPE) == "within_the_last":
+                    is_range = True
+                elif section_filter.get(api_c.TYPE) == "not_within_the_last":
+                    is_range = False
+                else:
+                    break
+                section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
+                section_filter.update({api_c.TYPE: "event"})
+                start_date = (
+                    datetime.utcnow()
+                    - timedelta(
+                        days=int(
+                            section_filter.get(api_c.AUDIENCE_FILTER_VALUE)
+                        )
+                    )
+                ).strftime("%Y-%m-%d")
+                end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                section_filter.update(
+                    {
+                        api_c.VALUE: [
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "event_name",
+                                api_c.TYPE: "equals",
+                                api_c.VALUE: event_name,
+                            },
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "created",
+                                api_c.TYPE: api_c.AUDIENCE_FILTER_RANGE
+                                if is_range
+                                else api_c.AUDIENCE_FILTER_NOT_RANGE,
+                                api_c.VALUE: [start_date, end_date],
+                            },
+                        ]
+                    }
+                )
+
+
+# pylint: disable=unused-variable
+async def build_notification_recipients_and_send_email(
+    database: DatabaseClient, notifications: list, req_env_url_root: str
+):
+    """Get user alert configuration and prepare notifications to send user
+    email.
+
+    Args:
+        database (DatabaseClient): A database client.
+        notifications (list): list of notifications to be prepared for email.
+        req_env_url_root (str): Environment base URL that needs to be passed in
+            to send email function.
+    """
+
+    if not notifications:
+        return
+
+    # get all users with alerts configured
+    users = get_all_users(
+        database=database,
+        filter_dict={db_c.USER_ALERTS: {"$exists": True, "$ne": []}},
+        project_dict={
+            db_c.USER_DISPLAY_NAME: 1,
+            api_c.USER_EMAIL_ADDRESS: 1,
+            db_c.USER_ALERTS: 1,
+        },
+    )
+
+    if not users:
+        return
+
+    # process each notification from the list of fetched notifications
+    for notification in notifications:
+        notification_category = notification[db_c.NOTIFICATION_FIELD_CATEGORY]
+        notification_type = notification[db_c.NOTIFICATION_FIELD_TYPE]
+        notification_description = notification[
+            db_c.NOTIFICATION_FIELD_DESCRIPTION
+        ]
+
+        if (notification_category not in db_c.NOTIFICATION_CATEGORIES) or (
+            notification_type not in db_c.NOTIFICATION_TYPES
+        ):
+            continue
+
+        recipients_list = []
+
+        # process each user document to compare the user's alert configuration
+        # against the notification category and type
+        for user_doc in users:
+            for user_alert_category in user_doc.get(db_c.USER_ALERTS).values():
+                for (
+                    alert_category_key,
+                    alert_category_value,
+                ) in user_alert_category.items():
+                    # break out of the loop to move to next user if category
+                    # of notification matches the user alert category type
+                    if notification_category == alert_category_key:
+                        if alert_category_value.get(notification_type, False):
+                            recipients_list.append(
+                                (
+                                    user_doc.get(api_c.USER_EMAIL_ADDRESS),
+                                    user_doc.get(api_c.DISPLAY_NAME),
+                                )
+                            )
+                        break
+                else:
+                    continue
+                break
+            else:
+                continue
+
+        if not recipients_list:
+            continue
+
+        send_email_dict = {
+            api_c.NOTIFICATION_EMAIL_RECIPIENTS: recipients_list,
+            api_c.NOTIFICATION_EMAIL_ALERT_CATEGORY: notification_category,
+            api_c.NOTIFICATION_EMAIL_ALERT_TYPE: notification_type,
+            api_c.NOTIFICATION_EMAIL_ALERT_DESCRIPTION: notification_description,
+            api_c.URL: req_env_url_root,
+        }
+
+        # TODO: call send email function to actually send an email
+        # send_email(**send_email_dict)
+
+
+def populate_trust_id_segments(
+    database: DatabaseClient, custom_segments: list, add_default: bool = True
+) -> list:
+    """Function to populate Trust ID Segment data.
+    Args:
+        database (DatabaseClient): A database client.
+        custom_segments(list): List of user specific segments data.
+        add_default (Optional, bool): Flag to add All Customers.
+    Returns:
+        list: Filled segments data with survey responses.
+    """
+
+    segments_data = []
+    # Set default segment without any filters
+    if add_default:
+        segments_data.append(
+            {
+                api_c.SEGMENT_NAME: "All Customers",
+                api_c.SEGMENT_FILTERS: [],
+                api_c.SURVEY_RESPONSES: get_survey_responses(
+                    database=database
+                ),
+            }
+        )
+
+    for seg in custom_segments:
+        survey_response = get_survey_responses(
+            database=database,
+            filters=seg[api_c.SEGMENT_FILTERS],
+        )
+        segments_data.append(
+            {
+                api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
+                api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
+                api_c.SURVEY_RESPONSES: survey_response
+                if survey_response
+                else [],
+            }
+        )
+    return segments_data
+
+
+def get_engaged_audience_last_delivery(audience: dict) -> None:
+    """Method for getting last delivery at engagement and engaged audience level
+
+    Args:
+        audience(dict): Engagement Object
+
+    Returns:
+    """
+
+    delivery_times = []
+
+    delivery_times.extend(
+        [
+            destination[api_c.LATEST_DELIVERY][db_c.UPDATE_TIME]
+            for destination in audience[api_c.DESTINATIONS]
+            if destination[api_c.LATEST_DELIVERY].get(api_c.STATUS).lower()
+            == api_c.DELIVERED
+        ]
+    )
+    audience[api_c.AUDIENCE_LAST_DELIVERED] = (
+        max(delivery_times) if delivery_times else None
+    )
+
+
+def convert_cdp_buckets_to_histogram(
+    bucket_data: list, field: str = None
+) -> namedtuple:
+    """Method to convert data from CDP response to histogram format.
+
+    Args:
+         bucket_data (list): Body of CDP count-by response.
+         field (str): Name of field.
+    Returns:
+        Tuple[Union[int, float], Union[int, float], list]: Max, min and
+            converted values list.
+    """
+    CDPHistogramData = namedtuple("CDPHistogramData", "max_val min_val values")
+
+    if field == api_c.AGE:
+        value = api_c.AGE
+        max_val = bucket_data[-1].get(api_c.AGE)
+        min_val = bucket_data[0].get(api_c.AGE)
+
+    else:
+        value = api_c.VALUE_FROM
+        max_val = bucket_data[-1].get(api_c.VALUE_TO)
+        min_val = bucket_data[0].get(api_c.VALUE_FROM)
+
+    return CDPHistogramData(
+        max_val,
+        min_val,
+        [
+            (data.get(value), data.get(api_c.CUSTOMER_COUNT))
+            for data in bucket_data
+        ],
+    )

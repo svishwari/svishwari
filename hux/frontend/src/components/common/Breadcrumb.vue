@@ -40,10 +40,13 @@
         <span
           :class="{
             'black--text': item.disabled,
-            'pl-1 text-h1': true,
+            'pl-1 text-h1 title-up': true,
           }"
         >
           {{ item.text }}
+          <sup class="title-superscript">
+            {{ item.superscript }}
+          </sup>
         </span>
       </v-breadcrumbs-item>
     </template>
@@ -84,6 +87,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .breadcrumb {
+  cursor: text;
   ::v-deep .v-breadcrumbs__divider {
     padding: 0;
   }
@@ -99,5 +103,11 @@ export default {
   .allow-overflow {
     overflow: clip;
   }
+}
+.title-superscript {
+  @extend .superscript;
+  font-size: 8px;
+  left: -8px;
+  top: -18px;
 }
 </style>

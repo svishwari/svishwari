@@ -22,7 +22,7 @@ from huxunifylib.util.general.logging import logger
 from huxunify.api.config import get_config
 from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api import constants as api_c
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import record_health_status, Connections
 
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime(1, 1, 1, 1, 00)
@@ -40,6 +40,7 @@ DATETIME_FIELDS = [
 ]
 
 
+@record_health_status(Connections.CDM_API)
 def check_cdm_api_connection() -> Tuple[bool, str]:
     """Validate the cdm api connection.
 
@@ -56,21 +57,22 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
             f"{config.CDP_SERVICE}/healthcheck",
             timeout=5,
         )
-        record_health_status_metric(
-            api_c.CDM_API_CONNECTION_HEALTH, response.status_code == 200
-        )
 
         if response.status_code == 200:
+            logger.info("CDM is unavailable.")
             return True, "CDM available."
+        logger.error(
+            "CDM is unavailable, returned a %s response.", response.status_code
+        )
         return (
             False,
-            f"CDM not available. Received: {response.status_code}",
+            f"Received status code: {response.status_code}, "
+            f"Received message: {response.json()}",
         )
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        logger.error("CDM Health Check failed with %s.", repr(exception))
-        record_health_status_metric(api_c.CDM_API_CONNECTION_HEALTH, False)
+        logger.exception("CDM Health Check failed.")
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -1387,3 +1389,124 @@ async def get_customers_overview_async(
         return clean_cdm_gender_fields(
             clean_cdm_fields(response_body[api_c.BODY])
         )
+
+
+def get_customer_event_types(token: str) -> list:
+    """Get customer profile event types.
+
+    Args:
+        token (str): OKTA JWT Token.
+
+    Returns:
+        list: Customer profile event types.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    config = get_config()
+
+    logger.info("Getting customer events info from CDP API.")
+    response = requests.get(
+        f"{config.CDP_SERVICE}/customer-profiles/event-types",
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to retrieve Customer Profiles event types, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/event-types",
+            response.status_code,
+        )
+
+    return response.json().get(api_c.BODY)
+
+
+def get_histogram_data(token: str, field_name: str) -> list:
+    """Get aggregated counts data for histogram creation.
+
+    Args:
+        token (str): OKTA JWT Token.
+        field_name (str): Name of the field for which data needs to be fetched.
+
+    Returns:
+        list: Aggregated counts data for the field.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    config = get_config()
+
+    logger.info("Getting data for histogram from CDP API.")
+    # TODO Remove start and end date when CDM supports it.
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/counts/by-float-field",
+        json={
+            "filters": [],
+            "field_name": field_name,
+            "result_group_size": api_c.HISTOGRAM_GROUP_SIZE,
+        },
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to retrieve histogram data %s %s",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/event-types",
+            response.status_code,
+        )
+
+    return response.json().get(api_c.BODY)
+
+
+def get_age_histogram_data(token: str):
+    """Get aggregated age counts data for histogram creation.
+
+    Args:
+        token (str): OKTA JWT Token.
+
+    Returns:
+        list: Aggregated age counts data.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+    config = get_config()
+
+    logger.info("Getting age data for histogram from CDP API.")
+    # TODO Remove start and end date when CDM supports it.
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-age",
+        json={
+            "filters": [],
+        },
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to retrieve histogram data %s %s",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/count-by-age",
+            response.status_code,
+        )
+
+    return response.json().get(api_c.BODY)

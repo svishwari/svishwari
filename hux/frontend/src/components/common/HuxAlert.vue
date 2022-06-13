@@ -126,7 +126,7 @@ export default {
   position: fixed;
   left: 50%;
   transform: translate(-50%, 0);
-  z-index: 99;
+  z-index: 299;
   top: 20px;
 
   .hux-alert-container {

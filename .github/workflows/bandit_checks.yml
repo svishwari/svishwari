@@ -9,7 +9,7 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.7
-      - name: Install Safety
+      - name: Install Bandit
         run: pip install bandit
       - uses: dorny/paths-filter@v2
         id: changes
@@ -17,6 +17,8 @@ jobs:
           filters: |
             api:
               - 'hux/api/huxunify/**'
+            docs:
+              - 'docs/source/conf.py'
             dblib:
               - 'lib/huxunifylib-database/huxunifylib/**'
       - if: steps.changes.outputs.api == 'true'
@@ -25,9 +27,9 @@ jobs:
         # -ii : Only issues with medium or higher level of confidence
         # B105 : hardcoded_password_string, B311: random
         run: bandit -r ./huxunify --exclude ./huxunify/test --skip B105,B311 -ll -ii
+      - if: always() && steps.changes.outputs.docs == 'true'
+        working-directory: docs
+        run: bandit -r ./source/conf.py --skip B105,B311 -ll -ii
       - if: always() && steps.changes.outputs.dblib == 'true'
         working-directory: lib/huxunifylib-database
-        # -ll : Only issues with medium or higher level of severity
-        # -ii : Only issues with medium or higher level of confidence
-        # B105 : hardcoded_password_string, B311: random
         run: bandit -r ./huxunifylib --exclude ./huxunifylib/database/tests --skip B105,B311 -ll -ii

@@ -36,7 +36,7 @@
         </div>
         <div v-if="showAlerts">
           <div class="pb-4 h-77">
-            <tooltip position-top>
+            <tooltip max-width="300px" position-top>
               <template #label-content>
                 Email
                 <icon
@@ -151,10 +151,9 @@ import Icon from "@/components/common/Icon"
 import HuxSwitch from "@/components/common/Switch.vue"
 import TextField from "@/components/common/TextField.vue"
 import { mapActions, mapGetters } from "vuex"
-import { formatText } from "@/utils"
+import { formatText, formatInnerHTML } from "@/utils"
 import Tooltip from "@/components/common/Tooltip.vue"
 import HuxButton from "@/components/common/huxButton.vue"
-import { formatInnerHTML } from "@/utils"
 
 export default {
   name: "AlertConfigureDrawer",
@@ -259,6 +258,8 @@ export default {
               let elem = element.childNodes[0]
               if (index == 0) {
                 elem.style["border-top"] = "none"
+                elem.style["border-top-left-radius"] = "12px"
+                elem.style["border-top-right-radius"] = "12px"
                 elem.style["min-height"] = "30px"
                 elem.style["height"] = "30px"
               }
@@ -630,5 +631,48 @@ export default {
 .header-class {
   border: 1px solid var(--v-black-lighten2);
   border-radius: 12px;
+}
+::v-deep .v-text-field__slot {
+  input {
+    color: var(--v-black-lighten4) !important;
+  }
+}
+::v-deep .v-treeview-node__content {
+  .v-treeview-node__label {
+    span {
+      color: var(--v-black-base) !important;
+    }
+  }
+  .v-treeview-node__append {
+    .v-input {
+      .v-input__control {
+        .v-input__slot {
+          .v-input--selection-controls__input {
+            .v-input--switch__thumb {
+              &:last-child {
+                right: 1px !important;
+                &.primary--text {
+                  right: 0px !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+::v-deep .v-treeview {
+  & > .v-treeview-node {
+    & > .v-treeview-node__root {
+      & > .v-treeview-node__content {
+        & > .v-treeview-node__label {
+          & > span {
+            color: var(--v-black-lighten4) !important;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

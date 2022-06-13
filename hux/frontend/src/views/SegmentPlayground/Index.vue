@@ -1,18 +1,12 @@
 <template>
-  <div
-    :class="
-      !loading && !hasOverview
-        ? 'playground-outermost-wrap white'
-        : 'playground-outermost-wrap'
-    "
-  >
+  <div class="playground-outermost-wrap">
     <page-header :header-height="isEdit ? '70' : '110'" help-icon>
       <template slot="left">
         <div>
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div v-if="!isEdit" class="text-subtitle-1 font-weight-regular mt-1">
-          Get immediate insights by segmenting your customer list based on
+          Get immediate insights by segmenting your consumer list based on
           attributes that you want to explore.
         </div>
       </template>
@@ -22,11 +16,12 @@
           :panel-list-items="panelListItems"
           header="Segment Playground user guide"
           :right-position="!isEdit ? '0rem' : '5rem'"
+          max-height="calc(100vh - 363px)"
         />
         <v-menu
           v-if="isEdit"
           v-model="openMenu"
-          class="menu-wrapper"
+          class="menu-wrapper zi-100"
           bottom
           offset-y
         >
@@ -102,6 +97,7 @@
             ref="filters"
             :rules="audience.attributeRules"
             @loadingOverAllSize="(data) => updateLoad(data)"
+            @attribute-options="(data) => attributeOptions(data)"
           />
         </v-col>
         <v-col class="col-4 overviews pl-6 pr-0 py-6">
@@ -150,7 +146,7 @@
     <v-row v-else-if="!loading && !errorState" class="ma-0 empty-row">
       <empty-page type="no-customer-data" :size="50">
         <template #title>
-          <div class="h2">No customer data to show</div>
+          <div class="h2">No consumer data to show</div>
         </template>
         <template #subtitle>
           <div class="body-2 mt-3">
@@ -159,19 +155,15 @@
         </template>
       </empty-page>
     </v-row>
-    <v-row v-else-if="!loading && errorState" class="ma-0 error-row">
-      <empty-page type="error-on-screens" :size="50">
-        <template #title>
-          <div class="h2">Segment playground is currently unavailable</div>
-        </template>
-        <template #subtitle>
-          <div class="body-2 mt-3">
-            Our team is working hard to fix it. Please be patient and try again
-            soon!
-          </div>
-        </template>
-      </empty-page>
-    </v-row>
+    <div v-else-if="!loading && errorState" class="error-wrap">
+      <error
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Segment playground is currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
+      </error>
+    </div>
     <confirm-modal
       v-model="confirmModal"
       :icon="confirmData.icon"
@@ -245,6 +237,8 @@ import Geography from "./Geography.vue"
 import Overview from "./Overview.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import EmptyPage from "@/components/common/EmptyPage.vue"
+import Error from "@/components/common/screens/Error"
+import { v4 as uuidv4 } from "uuid"
 
 export default {
   name: "SegmentPlayground",
@@ -261,6 +255,7 @@ export default {
     TextField,
     ConfirmModal,
     EmptyPage,
+    Error,
   },
   data() {
     return {
@@ -291,19 +286,19 @@ export default {
         {
           id: 1,
           title: "What is Segment Playground?",
-          text: "<b>Segment Playground </b>allows you to explore and segment your full customer list and enables you to see real time insights.",
+          text: "<b>Segment Playground </b>allows you to explore and segment your full consumer list and enables you to see real time insights.",
           textPart: "",
         },
         {
           id: 2,
           title: "What is segmenting?",
-          text: "<b>Segmenting</b> is the process of filtering your full customer list based on model scores or specific characteristics.",
+          text: "<b>Segmenting</b> is the process of filtering your full consumer list based on model scores or specific characteristics.",
           textPart: "",
         },
         {
           id: 3,
           title: "How do I use Segment Playground?",
-          text: "First click <b>+ Attribute,</b> then select what characteristic you would like to segment your customer list. As you add attributes, the insights on the right hand will update accordingly.",
+          text: "First click <b>+ Attribute,</b> then select what characteristic you would like to segment your consumer list. As you add attributes, the insights on the right hand will update accordingly.",
           textPart:
             "If you want to save this segment as an audience, click on <b >Save this segment as an audience.</b> By doing so you will not only save this segment as an audience, but you will also have the ability to deliver this audience to a 3rd party platform when you are ready OR add it to an engagement.",
         },
@@ -317,9 +312,9 @@ export default {
         {
           id: 5,
           title: "“All” vs “Any”",
-          text: "<b>All</b> means that a customer must match every attribute within the section in order to be included in the segment.",
+          text: "<b>All</b> means that a consumer must match every attribute within the section in order to be included in the segment.",
           textPart:
-            "<b>Any</b> means that a customer must match at least 1 of the attributes within the section in order to be included in the segment.",
+            "<b>Any</b> means that a consumer must match at least 1 of the attributes within the section in order to be included in the segment.",
         },
       ],
       confirmData: {
@@ -395,10 +390,10 @@ export default {
       this.loadingOverview = false
       this.loading = false
     }
-    if (this.audienceId !== "") {
-      const data = this.getAudience(this.audienceId)
-      this.mapAudienceData(data)
-    }
+    // if (this.audienceId !== "") {
+    //   const data = this.getAudience(this.audienceId)
+    //   this.mapAudienceData(data)
+    // }
   },
   methods: {
     ...mapActions({
@@ -516,11 +511,17 @@ export default {
         }
       }
     },
+
+    attributeOptions(data) {
+      this.$refs.filters = data
+      this.mapAudienceData(this.getAudience(this.audienceId))
+    },
+
     mapAudienceData(data) {
       const _audienceObject = JSON.parse(JSON.stringify(data))
       _audienceObject.originalName = _audienceObject.name
       // Mapping the filters of audience.
-      const attributeOptions = this.$refs.filters.attributeOptions()
+      const attributeOptions = this.$refs?.filters.attributeOptions()
       _audienceObject.attributeRules = _audienceObject.filters.map(
         (filter) => ({
           id: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
@@ -533,7 +534,7 @@ export default {
           ),
           operand: filter.section_aggregator === "ALL",
           conditions: filter.section_filters.map((cond) => ({
-            id: Math.floor(Math.random() * 1024).toString(16),
+            id: uuidv4(),
             attribute: cond.field,
             operator: cond.type === "range" ? "" : cond.type,
             text: cond.type !== "range" ? cond.value : "",
@@ -547,12 +548,12 @@ export default {
             cond.attribute,
             attributeOptions
           )
-          let _operators = this.$refs.filters.operatorOptions(cond)
+          let _operators = this.$refs?.filters.operatorOptions(cond)
           cond.operator =
             cond.operator !== "range"
               ? _operators.filter((opt) => opt.key === cond.operator)[0]
               : cond.operator
-          this.$refs.filters.triggerSizing(cond, false)
+          this.$refs?.filters.triggerSizing(cond, false)
         })
       })
       this.$set(this, "audience", _audienceObject)
@@ -560,7 +561,7 @@ export default {
         this.audience.name = ""
       }
       this.$nextTick(function () {
-        this.$refs.filters.getOverallSize()
+        this.$refs?.filters.getOverallSize()
       })
     },
   },
@@ -569,18 +570,22 @@ export default {
 
 <style lang="scss" scoped>
 .playground-outermost-wrap {
+  height: calc(100vh - 150px) !important;
   .playground-wrap {
     ::v-deep .container {
       padding: 0px 24px !important;
     }
     .segment-wrap {
       .attributes {
-        flex: 0 0 66.63934426%;
-        width: 66.63934426%;
+        max-height: calc(100vh - 260px) !important;
+        overflow-y: auto;
+        flex: 0 0 66.64%;
+        width: 66.64%;
       }
       .overviews {
-        flex: 0 0 33.360655737704918%;
-        width: 33.360655737704918%;
+        @extend .attributes;
+        flex: 0 0 33.36%;
+        width: 33.36%;
         @extend .border-start;
         border-color: var(--v-black-lighten3);
       }
@@ -592,6 +597,9 @@ export default {
     }
     .empty-row {
       padding-top: 150px !important;
+    }
+    .error-wrap {
+      padding-right: 60px;
     }
   }
 
@@ -629,8 +637,13 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 200px);
-  overflow-y: auto !important;
+  overflow-y: hidden !important;
   overflow-x: hidden !important;
+  .container {
+    height: calc(100vh - 260px);
+  }
+}
+.zi-100 {
+  z-index: 100;
 }
 </style>

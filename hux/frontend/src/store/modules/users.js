@@ -14,6 +14,7 @@ const state = {
     bugsReported: [],
     pii_access: false,
     alerts: {},
+    demo_config: {},
   },
   users: [],
   requestedUsers: [],
@@ -140,10 +141,24 @@ const actions = {
     }
   },
 
-  async updatePIIAccess(_, payload) {
+  async updateUser(_, payload) {
     try {
       const result = await api.users.batchUpdate(payload)
-      return result
+      if (result) {
+        handleSuccess("User updated successfully!!!", result.status)
+      }
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async deleteUser(_, id) {
+    try {
+      const result = await api.users.delete(id)
+      if (result) {
+        handleSuccess("User deleted successfully!!!", result.status)
+      }
     } catch (error) {
       handleError(error)
       throw error
@@ -153,7 +168,9 @@ const actions = {
   async requestTeamMember(_, payload) {
     try {
       const result = await api.users.requestTeamMember(payload)
-      //dispatch("getRequestedUsers")
+      if (result && result.status == 201) {
+        handleSuccess(result.data.summary, result.status)
+      }
       return result
     } catch (error) {
       handleError(error)
@@ -168,6 +185,21 @@ const actions = {
           "Alerts Configuration Saved Successfully",
           response.status
         )
+      }
+      commit("setApplicationUserProfile", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async updateDemoConfig({ commit }, payload) {
+    try {
+      const response = await api.users.updateDemoConfig({
+        demo_config: payload,
+      })
+      if (response) {
+        handleSuccess("Demo Configuration Saved Successfully", response.status)
       }
       commit("setApplicationUserProfile", response.data)
     } catch (error) {
@@ -203,6 +235,8 @@ const getters = {
   getAllTickets: (state) => state.tickets,
 
   getUserAlerts: (state) => state.userProfile.alerts,
+
+  getDemoConfiguration: (state) => state.userProfile.demo_config,
 }
 export default {
   namespaced,

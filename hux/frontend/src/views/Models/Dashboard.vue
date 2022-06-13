@@ -182,15 +182,22 @@
                     :min-width="152"
                     :height="80"
                     :title="metric"
-                    subtitle="Current version"
+                    :subtitle="
+                      showCurrentVersion ? 'Current version' : 'Past version'
+                    "
                     :high-level="true"
                     :interactable="false"
                     :title-above="true"
+                    :text-color="
+                      showCurrentVersion ? '' : 'var(--v-error-base)'
+                    "
                   >
                     <template #title>
                       <tooltip>
                         <template #label-content>
-                          {{ metric | Empty }}
+                          {{
+                            showCurrentVersion ? metric : versionData | Empty
+                          }}
                         </template>
                         <template #hover-content>
                           <div class="mb-3">
@@ -229,7 +236,7 @@
                 />
                 <v-card-title
                   v-if="modelFeatures.length != 0"
-                  class="chart-style pb-6 pl-5 pt-5"
+                  class="chart-style pb-6 px-6 pt-5"
                 >
                   <span class="black--text text--darken-4 text-h3">
                     Top
@@ -571,6 +578,8 @@ export default {
         "regression",
         "classification",
       ],
+      versionData: null,
+      showCurrentVersion: true,
     }
   },
   computed: {
@@ -664,6 +673,7 @@ export default {
       this.loading = false
       this.fetchFeatures(params)
       this.fetchModelFeatures(params) // Fetch data for Model feature table.
+      this.getVersionLabel(params)
     }
   },
   created() {
@@ -672,11 +682,6 @@ export default {
   destroyed() {
     this.$store.dispatch("models/clearModelValues")
     window.removeEventListener("resize", this.sizeHandler)
-  },
-  updated() {
-    if (this.$refs["decisioning-drift"]) {
-      this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
-    }
   },
   methods: {
     ...mapActions({
@@ -687,6 +692,12 @@ export default {
       getModelFeatures: "models/getModelFeatures", // used for Model feature table.
       getDrift: "models/getDrift",
     }),
+    getVersionLabel(params) {
+      if (params.version) {
+        this.showCurrentVersion = false
+        this.versionData = params.version
+      } else this.showCurrentVersion = true
+    },
     async fetchLift(params) {
       this.loadingLift = true
       try {
@@ -718,7 +729,9 @@ export default {
       this.featuresLoading = false
     },
     sizeHandler() {
-      this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
+      if (this.$refs["decisioning-drift"]) {
+        this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
+      }
     },
     async fetchModelFeatures(params) {
       this.loadingModelFeatures = true
@@ -734,6 +747,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .model-dashboard-wrap {
+  .tabs-item {
+    overflow: hidden !important;
+  }
   .model-dashboard__card {
     height: 80px;
     border: 1px solid var(--v-black-lighten2);

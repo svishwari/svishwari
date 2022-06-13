@@ -112,12 +112,18 @@ export default {
           margin: 0;
           background: transparent;
           width: 100%;
+          overflow-y: hidden !important;
           .okta-sign-in-header {
             display: none;
           }
           .auth-content {
             padding-left: 0;
             border: none;
+            .mfa-verify {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+            }
             .icon {
               visibility: hidden;
             }
@@ -200,8 +206,12 @@ export default {
               }
               .o-form-input-name-password {
                 .password-toggle {
-                  .visibility-16:before,
+                  .visibility-16:before {
+                    content: "\e0c3";
+                    color: var(--v-black-base) !important;
+                  }
                   .visibility-off-16:before {
+                    content: "\e022";
                     color: var(--v-black-base) !important;
                   }
                 }
@@ -250,11 +260,18 @@ export default {
               &.help {
                 box-shadow: none !important;
                 color: var(--v-black-lighten4);
+                &.js-help {
+                  display: none;
+                }
                 &.js-back {
                   position: relative;
                   bottom: 21px !important;
                 }
               }
+            }
+            #help-links-container {
+              margin-top: -15px !important;
+              display: block !important;
             }
           }
         }

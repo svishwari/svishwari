@@ -1,12 +1,14 @@
 import Vue from "vue"
 import api from "@/api/client"
-import { handleError } from "@/utils"
+import { handleError, handleSuccess, handleInfo } from "@/utils"
 import dayjs from "dayjs"
 
 const namespaced = true
 
 const state = {
-  items: {},
+  items: [],
+
+  total: 0,
 
   audiencePerformance: {
     ads: {},
@@ -41,16 +43,21 @@ const getters = {
   campaignMapping: (state) => (id) => {
     return state.campaignMappings[id]
   },
+
+  total: (state) => state.total,
 }
 
 const mutations = {
   SET_ALL(state, items) {
-    state.items = []
     items.forEach((item) => {
       item.audienceList = []
       item.isCurrentRow = false
       Vue.set(state.items, item.id, item)
     })
+  },
+
+  SET_TOTAL(state, item) {
+    Vue.set(state, "total", item)
   },
 
   SET_ONE(state, item) {
@@ -111,29 +118,26 @@ const mutations = {
   REMOVE_ENGAGEMENT(state, id) {
     Vue.delete(state.items, id)
   },
+
+  RESET_ALL(state) {
+    Vue.set(state, "items", [])
+  },
 }
 
 const actions = {
-  async getAll({ commit }) {
+  async getAll({ commit }, batchDetails) {
     try {
-      const response = await api.engagements.all()
-      commit("SET_ALL", response.data)
-    } catch (error) {
-      handleError(error)
-      throw error
-    }
-  },
-
-  async getAllFiltered(
-    { commit },
-    { favorites = false, my_engagements = false }
-  ) {
-    try {
-      const response = await api.engagements.allFiltered({
-        favorites: favorites,
-        my_engagements: my_engagements,
+      if (!batchDetails?.isLazyLoad) {
+        commit("RESET_ALL")
+      }
+      const response = await api.engagements.getEngagements({
+        favorites: batchDetails ? batchDetails.favorites : false,
+        my_engagements: batchDetails ? batchDetails.my_engagements : false,
+        batch_number: batchDetails ? batchDetails.batch_number : 1,
+        batch_size: batchDetails ? batchDetails.batch_size : 0,
       })
-      commit("SET_ALL", response.data)
+      commit("SET_ALL", response.data.engagements)
+      commit("SET_TOTAL", response.data.total_records)
     } catch (error) {
       handleError(error)
       throw error
@@ -188,6 +192,22 @@ const actions = {
     try {
       const payload = requestPayload
       await api.engagements.deliverySchedule(payload)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async deliveryScheduleAudience(_, { engagementId, audienceId, data }) {
+    try {
+      let response = await api.engagements.editDeliveryAudience(
+        engagementId,
+        audienceId,
+        data
+      )
+      if (response.status == 201) {
+        handleSuccess("Audience was successfuly delivered", response.status)
+      }
     } catch (error) {
       handleError(error)
       throw error
@@ -250,7 +270,12 @@ const actions = {
 
   async deliver(_, id) {
     try {
-      await api.engagements.deliver(id)
+      let res = await api.engagements.deliver(id)
+      if (res.status == 200) {
+        handleSuccess("Audiences were successfuly delivered", res.status)
+      } else if (res.status == 206) {
+        handleInfo("Deliveries are currently disabled", res.status)
+      }
     } catch (error) {
       handleError(error)
       throw error
@@ -342,6 +367,21 @@ const actions = {
       throw error
     }
   },
+  async attachEngagementAudienceDestination(
+    _,
+    { engagementId, audienceId, data }
+  ) {
+    try {
+      await api.engagements.attachAudienceDestination(
+        engagementId,
+        audienceId,
+        data
+      )
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
   async detachAudienceDestination(_, { audienceId, data }) {
     try {
       await api.engagements.detachDestination(audienceId, data)
@@ -350,6 +390,20 @@ const actions = {
       throw error
     }
   },
+
+  async detachDestinationAudi(_, { engagementId, audienceId, data }) {
+    try {
+      await api.engagements.detachDestinationOfAudience(
+        engagementId,
+        audienceId,
+        data
+      )
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async saveCampaignMappings(_, { id, audienceId, destinationId, data }) {
     try {
       await api.engagements.updateCampaignMapping(

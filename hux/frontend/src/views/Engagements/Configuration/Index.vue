@@ -1,5 +1,5 @@
 <template>
-  <page class="white">
+  <page class="white edit-engagement-wrap">
     <template #header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
@@ -13,10 +13,10 @@
         </p>
       </div>
       <div class="pt-5 re-align-delete">
-        <tooltip>
+        <tooltip nudge-right="-90" max-width="115">
           <template #label-content>
             <div @click="openModal()">
-              <icon size="23" type="delete-button" />
+              <icon size="23" type="delete-button" color="darkD" />
             </div>
           </template>
           <template #hover-content>
@@ -140,7 +140,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.getAudiences({})
+      await this.getAudiences()
       await this.getDestinations()
       if (this.$route.name === "EngagementUpdate") {
         await this.loadEngagement(this.$route.params.id)
@@ -221,6 +221,14 @@ export default {
   right: 35px;
   &:hover {
     cursor: pointer;
+  }
+}
+.edit-engagement-wrap {
+  height: calc(100vh - 150px) !important;
+  overflow: auto;
+  .container {
+    height: auto !important;
+    overflow: hidden !important;
   }
 }
 </style>

@@ -12,9 +12,10 @@
               :items="[
                 {
                   text: 'HX TrustID',
+                  superscript: 'TM',
                   disabled: true,
                   href: '/hx-trustid',
-                  icon: 'hx-trustid-colored',
+                  icon: 'hx-trustid-header',
                   iconSize: 36,
                   iconColor: 'black',
                   iconColorVariant: 'base',
@@ -23,136 +24,866 @@
             />
           </div>
           <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
-            Measure the signals of trust, predict how trust sentiment will
-            impact customer &nbsp; employee behaviors, and identify actions to
+            Measure the factors of trust, predict how trust sentiment will
+            impact consumer &amp; employee behaviors, and identify actions to
             (re)build trust.
           </div>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
-    <div>
-      <v-tabs v-model="tabOption" class="mt-8">
-        <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
-        <div class="d-flex">
-          <v-tab
-            key="comparison"
-            class="pa-2 mr-3 text-h3"
-            color
-            data-e2e="comparison-tab"
-          >
-            Comparison
-          </v-tab>
-          <v-tab key="attributes" class="text-h3" data-e2e="attributes-tab">
-            Attributes
-          </v-tab>
-        </div>
-      </v-tabs>
-      <v-tabs-items v-model="tabOption" class="mt-2 tabs-item">
-        <v-tab-item key="comparison" class="tab-item">
-          <v-row>
-            <v-col md="12">
-              <v-card
-                class="mt-3 rounded-lg box-shadow-5 tab-card-1"
-                height="365"
+    <template>
+      <div class="d-flex">
+        <div
+          class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
+        >
+          <overview v-if="!loading" :data="trustIdOverview" />
+          <v-tabs v-model="tabOption" class="mt-4">
+            <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
+            <div class="d-flex">
+              <v-tab
+                key="comparison"
+                class="pa-2 mr-3 text-h3"
+                color
+                data-e2e="comparison-tab"
               >
-                <v-progress-linear
-                  v-if="loading"
-                  :active="loading"
-                  :indeterminate="loading"
-                />
-                <v-card-title class="pb-2 pl-6 pt-5">
-                  <span class="d-flex">
-                    <h3 class="text-h3">HX TrustID scores across segments</h3>
+                Comparison
+              </v-tab>
+              <v-tab key="attributes" class="text-h3" data-e2e="attributes-tab">
+                Attributes
+              </v-tab>
+            </div>
+          </v-tabs>
+          <v-tabs-items v-model="tabOption" class="mt-2 tabs-item">
+            <v-tab-item key="comparison" class="tab-item">
+              <v-row>
+                <v-col md="12">
+                  <v-card
+                    class="mt-3 rounded-lg box-shadow-5 tab-card-1"
+                    height="365"
+                  >
+                    <v-progress-linear
+                      v-if="segmentComparisonLoading"
+                      :active="segmentComparisonLoading"
+                      :indeterminate="segmentComparisonLoading"
+                    />
+                    <v-card-title class="pb-2 pl-6 pt-5">
+                      <span class="d-flex">
+                        <h3 class="text-h3">
+                          HX TrustID scores across segments
+                        </h3>
+                      </span>
+                    </v-card-title>
+                    <trust-comparison-chart
+                      v-if="segmentScores.length > 0"
+                      ref="comparisonChart"
+                      :segment-scores="segmentScores"
+                      data-e2e="trust-comparison-chart"
+                    />
+                    <div v-else>
+                      <empty-page
+                        class="pt-16"
+                        :type="
+                          getEmptyType ? 'no-customer-data' : 'error-on-screens'
+                        "
+                        :size="50"
+                      >
+                        <template #title>
+                          <div class="title-no-notification">
+                            {{
+                              getEmptyType
+                                ? "No Hux Trust ID scores to show"
+                                : "Hux Trust ID scores chart currently unavailable"
+                            }}
+                          </div>
+                        </template>
+                        <template #subtitle>
+                          <div class="des-no-notification">
+                            {{
+                              getEmptyType
+                                ? "Trust ID scores chart will display when data has been uploaded. Please check back later."
+                                : "Our team is working hard to fix it. Please be patient and try again soon!"
+                            }}
+                          </div>
+                        </template>
+                      </empty-page>
+                    </div>
+                  </v-card>
+                </v-col>
+              </v-row>
+              <v-row cl>
+                <v-col md="8">
+                  <link-dropdown
+                    v-if="getSegment.length > 0"
+                    :data-list="getSegment"
+                    :width="245"
+                    @onselect="getSelectedData"
+                  ></link-dropdown>
+                </v-col>
+                <v-col md="4">
+                  <div class="d-flex toggle-main-div">
+                    <span
+                      class="
+                        mr-5
+                        toggle-content
+                        text-body-1
+                        black--text
+                        text--base
+                      "
+                      >Compare segments to all customers</span
+                    >
+                    <hux-switch
+                      v-model="switchSegment"
+                      false-color="var(--v-black-lighten4)"
+                      :width="'60px'"
+                      :is-disabled="
+                        (multipleSegments && onlyDefault) ||
+                        (multipleSegments && !onlyDefault)
+                          ? false
+                          : true
+                      "
+                      :switch-labels="switchLabel"
+                      @change="toggleDefaultSwitch($event)"
+                    />
+                  </div>
+                </v-col>
+              </v-row>
+              <div>
+                <data-cards
+                  v-if="getSegmentTableData.length > 0"
+                  bordered
+                  card-class="py-5 pa-4"
+                  :items="getSegmentTableData"
+                  :fields="getSegmentTableHeaders"
+                  :multiple-segments="multipleSegments"
+                >
+                  <template
+                    v-for="header in getSegmentTableHeaders"
+                    #[`field:${header.key}`]="row"
+                  >
+                    <rhombus-number
+                      v-if="!includesSegmentHeaders(header.key)"
+                      :key="header.key"
+                      :value="row.value"
+                      :text-color="
+                        row.value < 0 ? 'error--text' : 'black--text'
+                      "
+                      :border-image="header.key == 'trust_id'"
+                      :color="
+                        colColorArr[header.key] &&
+                        colColorArr[header.key].stroke
+                      "
+                      :variant="
+                        colColorArr[header.key] &&
+                        colColorArr[header.key].variant
+                      "
+                    ></rhombus-number>
+
+                    <span
+                      v-else-if="header.key == 'segment_filters'"
+                      :key="header.key"
+                    >
+                      <span v-if="row.value.length != 0">
+                        <span
+                          v-for="(filter, filterIndex) in row.value"
+                          :key="filterIndex"
+                        >
+                          <tooltip v-if="filterIndex < 4">
+                            <template #label-content>
+                              <v-chip
+                                v-if="filterIndex < 4"
+                                small
+                                class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                                text-color="primary"
+                                color="var(--v-primary-lighten3)"
+                              >
+                                {{ filter.description }}
+                              </v-chip>
+                            </template>
+                            <template #hover-content>
+                              <span
+                                v-if="filterIndex < 4"
+                                class="text-body-2 black--text text--darken-4"
+                              >
+                                <div
+                                  v-for="(
+                                    filterValue, filterValueIndex
+                                  ) in pillHoverData(
+                                    filter.values,
+                                    filter.type
+                                  )"
+                                  :key="filterValueIndex"
+                                >
+                                  <span
+                                    v-bind.prop="formatInnerHTML(filterValue)"
+                                  />
+                                  <br />
+                                </div>
+                              </span>
+                            </template>
+                          </tooltip>
+                        </span>
+                        <tooltip>
+                          <template #label-content>
+                            <span
+                              v-if="row.value.length > 4"
+                              class="text-subtitle-2 primary--text"
+                            >
+                              +{{ row.value.length - 4 }}
+                            </span>
+                          </template>
+                          <template #hover-content>
+                            <span
+                              v-for="(filter, filterIndex) in row.value"
+                              :key="filterIndex"
+                            >
+                              <v-chip
+                                v-if="filterIndex >= 4"
+                                small
+                                class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                                text-color="primary"
+                                color="var(--v-primary-lighten3)"
+                              >
+                                {{ filter.description }}
+                              </v-chip>
+                              <br v-if="filterIndex >= 4" />
+                            </span>
+                          </template>
+                        </tooltip>
+                      </span>
+                      <span v-else>
+                        <v-chip
+                          small
+                          class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                          text-color="primary"
+                          color="var(--v-primary-lighten3)"
+                        >
+                          All customers
+                        </v-chip>
+                      </span>
+                    </span>
+                  </template>
+
+                  <template #field:delete="row">
+                    <div
+                      v-if="
+                        getSelectedSegment &&
+                        getSelectedSegment.segments.length > 1 &&
+                        !row.item.default
+                      "
+                      class="d-flex align-center justify-end mr-2"
+                    >
+                      <hux-icon
+                        type="trash"
+                        class="cursor-pointer"
+                        :size="18"
+                        color="black"
+                        @click.native="removeSegment(row.item)"
+                      />
+                    </div>
+                  </template>
+                </data-cards>
+                <v-card v-else class="pb-12 box-shadow-5" height="250">
+                  <empty-page
+                    class="pt-16"
+                    :type="
+                      getSegmentTableData.length == 0
+                        ? 'no-customer-data'
+                        : 'error-on-screens'
+                    "
+                    :size="50"
+                  >
+                    <template #title>
+                      <div class="title-no-notification">
+                        {{ segmentTableTitle() }}
+                      </div>
+                    </template>
+                    <template #subtitle>
+                      <div class="des-no-notification">
+                        {{ segmentTableDescription() }}
+                      </div>
+                    </template>
+                  </empty-page>
+                </v-card>
+              </div>
+              <div v-if="getSelectedSegment && segmentCount < 5">
+                <v-list class="add-segment no-data-width" :height="22">
+                  <v-list-item @click="filterToggle()">
+                    <hux-icon
+                      type="plus"
+                      :size="16"
+                      color="primary"
+                      class="mr-4 ml-2"
+                    />
+                    <v-btn
+                      text
+                      min-width="7rem"
+                      height="2rem"
+                      class="primary--text text-body-1"
+                    >
+                      New segment to compare
+                    </v-btn>
+                  </v-list-item>
+                </v-list>
+              </div>
+              <div v-else>
+                <v-card class="empty-text">
+                  <hux-icon
+                    type="critical"
+                    :size="21"
+                    color="error"
+                    class="mr-4 ml-6"
+                  />
+                  <span
+                    class="error--text text-subtitle-1 mr-4"
+                    :style="{ fontWeight: 800 }"
+                    >OH NO!</span
+                  >
+                  <span class="text-body-2 error--text"
+                    >You’ve reached the limit for the number of comparisons.
+                    Remove a comparison to add a new one.
                   </span>
-                </v-card-title>
-                <trust-comparison-chart
-                  :segment-scores="segmentScores"
-                  data-e2e="trust-comparison-chart"
-                />
+                </v-card>
+              </div>
+            </v-tab-item>
+            <v-tab-item key="attributes" class="tab-item">
+              <trust-id-attributes
+                v-if="attributeData.data.length > 0"
+                :data="attributeData.data"
+              />
+              <v-card v-else class="pb-12 box-shadow-5" height="250">
+                <empty-page
+                  class="pt-16"
+                  :type="
+                    attributeData.data.length == 0
+                      ? 'no-customer-data'
+                      : 'error-on-screens'
+                  "
+                  :size="50"
+                >
+                  <template #title>
+                    <div class="title-no-notification">
+                      {{ attributeTableTitle() }}
+                    </div>
+                  </template>
+                  <template #subtitle>
+                    <div class="des-no-notification">
+                      {{ attributeTableDescription() }}
+                    </div>
+                  </template>
+                </empty-page>
               </v-card>
-            </v-col>
-          </v-row>
-        </v-tab-item>
-        <v-tab-item key="attributes" class="tab-item"> </v-tab-item>
-      </v-tabs-items>
-    </div>
-    <div>
-      <link-dropdown
-        :data-list="getSegment"
-        @onselect="getSelectedData"
-      ></link-dropdown>
-    </div>
+            </v-tab-item>
+          </v-tabs-items>
+        </div>
+        <div class="ml-auto segment-drawer">
+          <add-segment-drawer
+            ref="filters"
+            v-model="isFilterToggled"
+            view-height="calc(100vh - 210px)"
+            :segment-data="addSegmentData"
+            :segment-length="segmentScores.length"
+            @onSectionAction="addSegment($event)"
+          />
+        </div>
+      </div>
+    </template>
   </page>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
+import Overview from "./Overview.vue"
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import LinkDropdown from "@/components/common/LinkDropdown.vue"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
-import segmentScores from "@/api/mock/fixtures/segmentComparisonScores.js"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
+import DataCards from "@/components/common/DataCards.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+import { formatText, formatInnerHTML, aggregateAgeFilters } from "@/utils"
+import RhombusNumber from "@/components/common/RhombusNumber.vue"
+import TrustIdAttributes from "./AttributeTable.vue"
+import HuxIcon from "@/components/common/Icon.vue"
+import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
+import HuxSwitch from "@/components/common/Switch.vue"
+import EmptyPage from "../../components/common/EmptyPage.vue"
 
 export default {
   name: "HXTrustID",
   components: {
+    Overview,
     Breadcrumb,
     LinkDropdown,
     Page,
     PageHeader,
     TrustComparisonChart,
+    DataCards,
+    Tooltip,
+    RhombusNumber,
+    TrustIdAttributes,
+    HuxIcon,
+    AddSegmentDrawer,
+    HuxSwitch,
+    EmptyPage,
   },
   data() {
     return {
       loading: false,
+      segmentComparisonLoading: false,
       tabOption: 0,
-      segmentScores: segmentScores,
-      selectedSegment: null,
+      selectedSegment: "composite & factor scores",
+      isFilterToggled: false,
+      segmentLength: 1,
+      addSegments: [],
+      switchSegment: true,
+      multipleSegments: false,
+      onlyDefault: false,
+      segmentCount: 0,
+      switchLabel: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
+        },
+      ],
+      withDefaultborderColorArr: [
+        {
+          color: "primary",
+          variant: "darken1",
+        },
+        {
+          color: "primary",
+          variant: "lighten4",
+        },
+        {
+          color: "primary",
+          variant: "lighten6",
+        },
+        {
+          color: "info",
+          variant: "base",
+        },
+        {
+          color: "secondary",
+          variant: "darken1",
+        },
+        {
+          color: "secondary",
+          variant: "lighten2",
+        },
+      ],
+      borderColorArr: [
+        {
+          color: "primary",
+          variant: "lighten4",
+        },
+        {
+          color: "primary",
+          variant: "lighten6",
+        },
+        {
+          color: "info",
+          variant: "base",
+        },
+        {
+          color: "secondary",
+          variant: "darken1",
+        },
+        {
+          color: "secondary",
+          variant: "lighten2",
+        },
+      ],
+      colColorArr: {
+        // Humanity
+        humanity: { stroke: "primary", variant: "darken6" },
+        quickly_resolves_issues: { stroke: "primary", variant: "darken6" },
+        values_respects_everyone: { stroke: "primary", variant: "darken6" },
+        values_society_environment: { stroke: "primary", variant: "darken6" },
+        takes_care_of_employees: { stroke: "primary", variant: "darken6" },
+
+        // Transparency
+        transparency: { stroke: "yellow", variant: "darken1" },
+        honesty_marketing_comms: { stroke: "yellow", variant: "darken1" },
+        upfront_on_how_they_make_money: {
+          stroke: "yellow",
+          variant: "darken1",
+        },
+        plain_language_data_policy: { stroke: "yellow", variant: "darken1" },
+        clear_fees_costs: { stroke: "yellow", variant: "darken1" },
+
+        // Reliability
+        reliability: { stroke: "secondary", variant: "lighten2" },
+        continuous_product_improvement: {
+          stroke: "secondary",
+          variant: "lighten2",
+        },
+        consistent_quality: { stroke: "secondary", variant: "lighten2" },
+        smooth_digital_interactions: {
+          stroke: "secondary",
+          variant: "lighten2",
+        },
+        timely_issue_resolution: { stroke: "secondary", variant: "lighten2" },
+
+        //Capability
+        capability: { stroke: "primary", variant: "darken5" },
+        product_quality: { stroke: "primary", variant: "darken5" },
+        good_value: { stroke: "primary", variant: "darken5" },
+        competent_leaders_employess: { stroke: "primary", variant: "darken5" },
+        long_term_solutions_improvements: {
+          stroke: "primary",
+          variant: "darken5",
+        },
+      },
+      tooltips: {
+        trust_id: "TrustID is scored on a scale between -100 to 100",
+        humanity:
+          "Humanity is demonstrating empathy and kindness towards consumers, and treating everyone fairly. It is scored on a scale between -100 to 100",
+        transparency:
+          "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
+        reliability:
+          "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
+        capability:
+          "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
+        product_quality:
+          "Products are good quality, accessible and safe to use",
+        good_value:
+          "Prices of products, services, and experiences are good value for money",
+        competent_leaders_employess:
+          "Employees and leadership are competent and understand how to respond to needs",
+        long_term_solutions_improvements:
+          "Creates long-term solutions and improvements that work well for me",
+        quickly_resolves_issues:
+          "Quickly resolves issues with safety, security and satisfaction top of mind",
+        values_respects_everyone:
+          "Values and respects everyone, regardless of background, identity or beliefs",
+        values_society_environment:
+          "Values the good of society and the environment, not just profit",
+        takes_care_of_employees: "Takes care of employees",
+        honesty_marketing_comms:
+          "Marketing and communications are accurate and honest",
+        upfront_on_how_they_make_money:
+          "Upfront about how they make and spend money from interactions",
+        plain_language_data_policy:
+          "How and why my data is used is communicated in plain and easy to understand language",
+        clear_fees_costs:
+          "Clear and upfront about fees and costs of products, services and experiences",
+        continuous_product_improvement:
+          "Can be counted on to improve the quality of products and services",
+        consistent_quality:
+          "Consistently delivers products, services and experiences with quality",
+        smooth_digital_interactions:
+          "Facilitates digital interactions that run smoothly and work when needed",
+        timely_issue_resolution:
+          "Resolves issues in an adequate and timely manner",
+      },
+      disableToggle: false,
     }
   },
   computed: {
+    ...mapGetters({
+      segmentScores: "trustId/getSegmentsComparison",
+      trustIdOverview: "trustId/getTrustOverview",
+      addSegmentData: "trustId/getAddSegment",
+      attributeData: "trustId/getTrustAttributes",
+    }),
     getSegment() {
-      return this.segmentScores.map((item) => {
-        return item.segment_filter
+      return this.segmentScores.map((item) => item.segment_type)
+    },
+
+    getSegmentTableData() {
+      return this.getSelectedSegment
+        ? this.getSelectedSegment.segments.map((x, index) => {
+            let segment = {
+              segment_name: x.segment_name,
+              segment_filters: x.segment_filters,
+              default: x.default,
+            }
+
+            x.attributes.forEach((item) => {
+              segment[item.attribute_type] = item.attribute_score
+            })
+            if (this.onlyDefault) {
+              segment.colors = this.withDefaultborderColorArr[index]
+            } else {
+              segment.colors = this.borderColorArr[index]
+            }
+            return segment
+          })
+        : []
+    },
+
+    getSegmentTableHeaders() {
+      let headers = [
+        {
+          key: "segment_name",
+          label: "Segment",
+          col: 2,
+        },
+        {
+          key: "segment_filters",
+          label: "Segment filters",
+          col: 4,
+        },
+      ]
+
+      this.getSelectedSegment.segments[0].attributes.forEach((item) => {
+        headers.push({
+          key: item.attribute_type,
+          label: item.attribute_name,
+          col: 1,
+          tooltip: this.tooltips[item.attribute_type],
+          center: true,
+        })
       })
+
+      headers.push({
+        key: "delete",
+        col: 1,
+      })
+
+      return headers
+    },
+
+    getSelectedSegment() {
+      return this.segmentScores.find(
+        (x) => x.segment_type == this.selectedSegment?.toLowerCase()
+      )
+    },
+
+    getEmptyType() {
+      return !this.segmentComparisonLoading && this.segmentScores.length == 0
+    },
+
+    segmentTableTitle() {
+      return this.getSegmentTableData.length == 0
+        ? "No segments to show"
+        : "Segments currently unavailable"
+    },
+
+    segmentTableDescription() {
+      return this.getSegmentTableData.length == 0
+        ? "Segments will display when data has been uploaded. Please check back later."
+        : "Our team is working hard to fix it. Please be patient and try again soon!"
+    },
+
+    attributeTableTitle() {
+      return this.attributeData.data.length == 0
+        ? "No attributes to show"
+        : "Attributes currently unavailable"
+    },
+
+    attributeTableDescription() {
+      return this.attributeData.data.length == 0
+        ? "Attributes will display when data has been uploaded. Please check back later."
+        : "Our team is working hard to fix it. Please be patient and try again soon!"
     },
   },
+  async mounted() {
+    this.loading = true
+    this.segmentComparisonLoading = true
+    try {
+      await this.getOverview()
+      await this.getTrustIdComparison({
+        defaultValue: true,
+      })
+      await this.getSegmentData()
+      await this.getTrustIdAttribute()
+      await this.applyDefaultSegmentChanges()
+    } finally {
+      this.loading = false
+      this.segmentComparisonLoading = false
+    }
+  },
   methods: {
+    ...mapActions({
+      getOverview: "trustId/getTrustIdOverview",
+      getTrustIdComparison: "trustId/getTrustIdComparison",
+      addNewSegment: "trustId/addSegment",
+      getSegmentData: "trustId/getSegmentData",
+      getTrustIdAttribute: "trustId/getTrustAttributes",
+      deleteSegment: "trustId/removeSegment",
+      setAlert: "alerts/setAlert",
+    }),
+    formatInnerHTML: formatInnerHTML,
+    pillHoverData(filters, type) {
+      if (type !== "age") {
+        return filters
+      } else {
+        return aggregateAgeFilters(filters)
+      }
+    },
+    applyDefaultSegmentChanges() {
+      this.segmentCount = 0
+      this.multipleSegments = this.getSelectedSegment.segments.some(
+        (data) => !data.default
+      )
+      this.onlyDefault = this.getSelectedSegment.segments.some(
+        (data) => data.default
+      )
+      this.getSelectedSegment.segments.forEach((element) => {
+        if (!element.default) {
+          this.segmentCount++
+        }
+      })
+    },
+    includesSegmentHeaders(segmentTitle) {
+      return ["segment_name", "segment_filters", "colors"].includes(
+        segmentTitle
+      )
+    },
     getSelectedData(value) {
       this.selectedSegment = value
+      this.applyDefaultSegmentChanges()
+    },
+    formatText: formatText,
+    filterToggle() {
+      this.isFilterToggled = !this.isFilterToggled
+    },
+    async toggleDefaultSwitch(event) {
+      this.loading = true
+      this.getOverview()
+      await this.getTrustIdComparison({
+        defaultValue: event,
+      })
+      this.applyDefaultSegmentChanges()
+      this.getTrustIdAttribute()
+      this.$refs.comparisonChart.initializeComparisonChart()
+      this.loading = false
+    },
+    async addSegment(event) {
+      this.loading = true
+      try {
+        await this.addNewSegment(event)
+        this.$refs.comparisonChart.initializeComparisonChart()
+      } finally {
+        this.loading = false
+        this.isFilterToggled = !this.isFilterToggled
+        this.$refs.filters.clear()
+      }
+    },
+    async removeSegment(item) {
+      this.loading = true
+      try {
+        let response = await this.deleteSegment({
+          segment_name: item.segment_name,
+        })
+        if (response.length > 0) {
+          this.loading = true
+          this.getOverview()
+          this.getTrustIdComparison({
+            defaultValue: true,
+          })
+          this.getTrustIdAttribute()
+          this.$refs.comparisonChart.initializeComparisonChart()
+          this.setAlert({
+            type: "success",
+            message: `'${item.segment_name}' has been deleted Successfully.`,
+          })
+
+          this.loading = false
+        }
+      } catch (error) {
+        this.loading = false
+        this.setAlert({
+          type: "error",
+          message: `${error.response.data.message}`,
+        })
+      }
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.hx-trust-id-wrapper {
-  ::v-deep .v-breadcrumbs {
-    li {
-      font-family: Open Sans Light;
-      font-size: 28px;
-      font-style: normal;
-      font-weight: 400 !important;
-      line-height: 40px;
-      letter-spacing: 0px;
-      text-align: left;
+.v-application {
+  .hx-trust-id-wrapper {
+    ::v-deep .v-breadcrumbs {
+      li {
+        font-family: Open Sans Light;
+        font-size: 28px;
+        font-style: normal;
+        font-weight: 400 !important;
+        line-height: 40px;
+        letter-spacing: 0px;
+        text-align: left;
+      }
+    }
+    ::v-deep .theme--light.v-tabs {
+      .v-tabs-bar .v-tab:not(.v-tab--active) {
+        color: var(--v-black-lighten4) !important;
+      }
+    }
+    ::v-deep .data-card {
+      .row {
+        .col:nth-child(2) {
+          .pa-4 {
+            padding-top: 22px !important;
+          }
+        }
+      }
+    }
+    .tab-slider {
+      position: absolute;
+      top: 2px;
     }
   }
-
-  ::v-deep .theme--light.v-tabs {
-    .v-tabs-bar .v-tab:not(.v-tab--active) {
-      color: var(--v-black-lighten4) !important;
-    }
-  }
-
-  .tab-slider {
-    position: absolute;
-    top: 2px;
-  }
-
-  .overview-card {
-    border-radius: 12px !important;
-  }
+}
+.add-segment {
+  height: 60px !important;
+  display: inline-table;
+  background: var(--v-primary-lighten1);
+  border: 1px solid var(--v-black-lighten2);
+  border-radius: 5px;
+}
+.no-data-width {
+  width: 100%;
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
+.content-section {
+  height: calc(100vh - 240px);
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+.segment-drawer {
+  margin-top: -30px;
+  margin-right: -30px;
+}
+::v-deep .hux-filters-drawer {
+  width: 320px !important;
+}
+::v-deep .header-height-fix {
+  height: 70px !important;
+}
+::v-deep .wrapper {
+  width: 320px !important;
+}
+.empty-text.empty-text {
+  height: 60px;
+  align-items: center;
+  display: flex;
+}
+.toggle-content {
+  margin-top: 18px;
+}
+.toggle-main-div {
+  float: right;
 }
 </style>

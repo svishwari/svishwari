@@ -85,6 +85,13 @@ export default {
     wrapper: "[data-e2e='issue-table-wrapper']",
   },
 
+  // contact US
+  contactUS: {
+    contactUsOptions: "[data-e2e='contact-us-list']",
+    reportBugSubject: "[data-e2e='report-bug-subject']",
+    reportBugDescription: "[data-e2e='report-bug-description']",
+  },
+
   // configuration
   configuration: {
     moduleSolution: "[data-e2e='moduleSolution']",
@@ -118,6 +125,7 @@ export default {
   pendingStatus: "[data-e2e='model-status-Pending']",
   dataFeedDetailsTable: "[data-e2e='data-feed-details-table']",
   dataFilesWrapper: "[data-e2e='data-files-wrapper']",
+  datasourceDatafeedsTable: "[data-e2e='datasource-datafeeds-table']",
 
   //destinations
   destination: {

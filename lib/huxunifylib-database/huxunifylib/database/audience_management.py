@@ -5,7 +5,7 @@ import time
 import logging
 import datetime
 from collections import defaultdict
-from typing import Tuple, Generator, Union
+from typing import Tuple, Generator, Union, Optional
 import pandas as pd
 from bson import ObjectId
 import pymongo
@@ -112,7 +112,7 @@ def get_ingested_data(
     database: DatabaseClient,
     query: dict,
     batch_size: int = 1000,
-) -> Tuple[pd.DataFrame, ObjectId]:
+) -> Tuple[pd.DataFrame, Optional[ObjectId]]:
     """A function to get ingested data given a query (filters).
 
     Args:
@@ -182,7 +182,7 @@ def get_audience(
     audience_id: ObjectId,
     start_id: ObjectId = None,
     batch_size: int = 1000,
-) -> Tuple[pd.DataFrame, ObjectId]:
+) -> Tuple[pd.DataFrame, Optional[ObjectId]]:
     """A function to get an audience.
 
     Args:
@@ -414,7 +414,7 @@ def get_audience_insights(
 def get_audience_data_source_id(
     database: DatabaseClient,
     audience_id: ObjectId,
-) -> ObjectId:
+) -> Optional[ObjectId]:
     """A function to get data source ID of an audience.
 
     Args:
@@ -1022,3 +1022,59 @@ def update_audience_status_for_delivery(
         ]
 
     return update_audience_doc(database, audience_id, update_dict)
+
+
+def set_replace_audience_flag_standalone_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    replace_audience: bool,
+    user_name: str,
+) -> dict:
+    """Method to toggle replace_audience flag in standalone audience.
+
+    Args:
+        database(DatabaseClient): A database client
+        audience_id(ObjectId): MongoDB ID of the audience.
+        destination_id(ObjectId): MongoDB ID of the destination.
+        replace_audience(bool): Audience replacement flag.
+        user_name(str): User name
+
+    Returns:
+        dict: Updated Audience Object
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
+
+    # get the audience doc
+    audience_doc = collection.find_one(
+        {
+            db_c.ID: audience_id,
+            "destinations.id": destination_id,
+        }
+    )
+    if not audience_doc:
+        return {}
+
+    for destination in audience_doc.get(db_c.DESTINATIONS, []):
+        if destination.get(db_c.OBJECT_ID) != destination_id:
+            continue
+
+        destination[db_c.REPLACE_AUDIENCE] = replace_audience
+
+        audience_doc.update(
+            {
+                db_c.UPDATE_TIME: datetime.datetime.now(),
+                db_c.UPDATED_BY: user_name,
+            }
+        )
+
+    return collection.find_one_and_update(
+        {
+            db_c.ID: audience_id,
+        },
+        {"$set": audience_doc},
+        upsert=True,
+        return_document=pymongo.ReturnDocument.AFTER,
+    )

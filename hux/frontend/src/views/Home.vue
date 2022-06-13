@@ -1,17 +1,19 @@
 <template>
   <div>
-    <hux-page max-width="100%">
+    <hux-page max-width="100%" class="home-page">
       <template #header>
         <hux-page-header
           :title="`Welcome back, ${fullName}!`"
           class="header-section"
           :header-height="110"
+          :icon="demo_icon"
+          :show-demo-header="showDemoHeader"
           data-e2e="welcome-banner"
         >
           <template #left>
             <p class="text-subtitle-1 font-weight-regular mb-0">
               Hux is here to help you make better, faster decisions to improve
-              your customer experiences.
+              your {{ configLabel }} experiences.
               <a
                 class="text-decoration-none"
                 href="https://resources.deloitte.com/sites/consulting/offerings/customer-marketing/advertising-marketing-commerce/Pages/Hux-by-Deloitte-Digital.aspx"
@@ -33,9 +35,12 @@
             class="rounded-lg box-shadow-5"
             :height="totalCustomers.length == 0 ? 280 : 367"
           >
-            <v-card-title v-if="totalCustomers.length != 0" class="pa-6">
+            <v-card-title
+              v-if="totalCustomers.length != 0 && !loadingTotalCustomers"
+              class="pa-6"
+            >
               <h3 class="text-h3 black--text text--darken-4">
-                Total customers
+                Total Hux IDs
                 <span class="text-body-1 black--text text--lighten-4">
                   (last 9 months)
                 </span>
@@ -62,31 +67,30 @@
               <empty-page
                 v-if="!totalCustomersChartErrorState"
                 type="model-features-empty"
+                class="pt-5"
                 :size="50"
               >
                 <template #title>
-                  <div class="title-no-notification">No data to show</div>
+                  <div>No data to show</div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
-                    Total customer chart will appear here once Customer data is
+                  <div>
+                    Total Hux IDs chart will appear here once Hux IDs data is
                     available.
                   </div>
                 </template>
               </empty-page>
               <empty-page
                 v-else
-                class="title-no-notification"
                 type="error-on-screens"
+                class="pt-5"
                 :size="50"
               >
                 <template #title>
-                  <div class="title-no-notification">
-                    Total customer chart is currently unavailable
-                  </div>
+                  <div>Total Hux IDs chart is currently unavailable</div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
+                  <div>
                     Our team is working hard to fix it. Please be patient and
                     try again soon!
                   </div>
@@ -97,14 +101,17 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row class="latest-alert-main">
         <v-col>
           <v-card
             class="rounded-lg box-shadow-5"
             data-e2e="latest-notifications"
             :height="numNotifications == 0 ? 280 : auto"
           >
-            <v-card-title v-if="numNotifications != 0" class="pa-6">
+            <v-card-title
+              v-if="numNotifications != 0 && !loadingNotifications"
+              class="pa-6"
+            >
               <h3 class="text-h3 black--text text--darken-4">Latest alerts</h3>
             </v-card-title>
 
@@ -118,8 +125,8 @@
               v-if="!loadingNotifications && numNotifications != 0"
               :columns="tableColumns"
               :data-items="notifications"
-              class="notifications-table"
-              sort-column="created"
+              class="notifications-table px-6"
+              sort-column="create_time"
               sort-desc
             >
               <template #row-item="{ item }">
@@ -140,15 +147,17 @@
 
                   <template v-if="header.value == 'category'">
                     <hux-tooltip>
-                      {{ item[header.value] }}
-                      <template #tooltip> {{ item[header.value] }} </template>
+                      {{ formatText(item[header.value]) | Empty("-") }}
+                      <template #tooltip>
+                        {{ formatText(item[header.value]) }}
+                      </template>
                     </hux-tooltip>
                   </template>
 
                   <template v-if="header.value == 'notification_type'">
                     <!-- TODO: HUS-1305 update icon -->
                     <hux-status
-                      :status="item['notification_type']"
+                      :status="formatText(item['notification_type'])"
                       :show-label="true"
                       :icon-size="20"
                     />
@@ -161,8 +170,8 @@
                     </hux-tooltip>
                   </template>
 
-                  <template v-if="header.value == 'created'">
-                    <hux-time-stamp :value="item['created']" />
+                  <template v-if="header.value == 'create_time'">
+                    <hux-time-stamp :value="item['create_time']" />
                   </template>
                 </td>
               </template>
@@ -175,13 +184,14 @@
               <empty-page
                 v-if="!notificationsTableErrorState"
                 type="lift-table-empty"
+                class="pt-7"
                 :size="50"
               >
                 <template #title>
-                  <div class="title-no-notification">No data to show</div>
+                  <div>No data to show</div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
+                  <div>
                     Latest alerts table will appear here once you start getting
                     alerts.
                   </div>
@@ -189,17 +199,15 @@
               </empty-page>
               <empty-page
                 v-else
-                class="title-no-notification"
+                class="pt-7"
                 type="error-on-screens"
                 :size="50"
               >
                 <template #title>
-                  <div class="title-no-notification">
-                    Latest alerts table is currently unavailable
-                  </div>
+                  <div>Latest alerts table is currently unavailable</div>
                 </template>
                 <template #subtitle>
-                  <div class="des-no-notification">
+                  <div>
                     Our team is working hard to fix it. Please be patient and
                     try again soon!
                   </div>
@@ -243,7 +251,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-
+import { formatText } from "@/utils"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxPage from "@/components/Page.vue"
 import HuxPageHeader from "@/components/PageHeader.vue"
@@ -298,7 +306,7 @@ export default {
         },
         {
           text: "Time",
-          value: "created",
+          value: "create_time",
           width: "180px",
         },
       ],
@@ -306,6 +314,8 @@ export default {
       notificationId: null,
       totalCustomersChartErrorState: false,
       notificationsTableErrorState: false,
+      showDemoHeader: false,
+      demo_icon: "",
     }
   },
 
@@ -315,6 +325,7 @@ export default {
       lastName: "users/getLastName",
       totalCustomers: "customers/totalCustomers",
       notifications: "notifications/latest5",
+      demoConfiguration: "users/getDemoConfiguration",
     }),
 
     fullName() {
@@ -324,11 +335,18 @@ export default {
     numNotifications() {
       return this.notifications ? this.notifications.length : 0
     },
+
+    configLabel() {
+      return this.demoConfiguration?.demo_mode
+        ? this.demoConfiguration.target.toLowerCase()
+        : "customers"
+    },
   },
   beforeCreate() {
     this.$store.commit("notifications/RESET_ALL")
   },
   mounted() {
+    this.demoConfigChangeTracker()
     this.loadTotalCustomers()
     this.loadNotifications()
   },
@@ -368,6 +386,22 @@ export default {
       await this.getNotificationByID(notificationId)
       this.alertDrawer = !this.alertDrawer
     },
+    getCurrentConfiguration() {
+      this.showDemoHeader = true
+      this.demo_icon = this.demoConfiguration.industry.toLowerCase()
+    },
+    demoConfigChangeTracker() {
+      this.$root.$on("update-config-settings", () =>
+        this.getCurrentConfiguration()
+      )
+      if (this.demoConfiguration?.demo_mode) {
+        this.getCurrentConfiguration()
+      } else {
+        this.showDemoHeader = false
+        this.demo_icon = ""
+      }
+    },
+    formatText: formatText,
   },
 }
 </script>
@@ -379,6 +413,12 @@ export default {
       background: var(--v-primary-lighten2) !important;
       padding: 0px 28px !important;
       height: 32px !important;
+      &:first-child {
+        border-top-left-radius: 12px !important;
+      }
+      &:last-child {
+        border-top-right-radius: 12px !important;
+      }
     }
     td {
       padding: 18px 28px !important;
@@ -389,12 +429,14 @@ export default {
 
 .total-customers-chart-frame {
   background-image: url("../assets/images/no-customers-chart-frame.png");
-  background-position: center;
+  background-position: bottom;
+  background-size: 93% 87%;
 }
 
 .notifications-table-frame {
   background-image: url("../assets/images/no-lift-chart-frame.png");
   background-position: center;
+  background-size: 93% 87%;
 }
 
 .margin-2px-top-3px-bottom {
@@ -404,6 +446,7 @@ export default {
 .help-section {
   background: var(--v-primary-lighten2);
   height: 96px;
+  width: 100%;
 }
 ::-webkit-scrollbar {
   width: 5px;
@@ -427,5 +470,16 @@ export default {
 }
 .chart-card {
   margin-top: 94px;
+}
+::v-deep .v-data-table-header__icon {
+  margin-left: 4px !important;
+}
+::v-deep.home-page {
+  min-height: calc(100vh - 166px);
+  .container {
+    padding-top: 45px !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
 }
 </style>

@@ -52,6 +52,22 @@ export function handleSuccess(message, status) {
 }
 
 /**
+ * Handles an info Message.
+ *
+ * @param {string} message
+ * eslint-disable-next-line jsdoc/require-returns-check
+ * @param {number} status
+ * eslint-disable-next-line jsdoc/require-returns-check
+ */
+export function handleInfo(message, status) {
+  store.dispatch("alerts/setAlert", {
+    message: message,
+    code: status,
+    type: "info",
+  })
+}
+
+/**
  * Get color HEX code
  *
  * @param {*} str string to generate color from
@@ -144,8 +160,8 @@ export function deliverySchedule(schedule = {}) {
     minute: 15,
     period: "AM",
     monthlyPeriod: "Day",
-    monthlyDay: "Day",
-    monthlyDayDate: 1,
+    monthlyDay: ["Day"],
+    monthlyDayDate: [1],
     day_of_week: ["SUN"],
   }
   if (schedule) {
@@ -346,6 +362,16 @@ export function formatText(text) {
 }
 
 /**
+ * Returns the string with space replaced with Underscore & Lower Case
+ *
+ * @param {string} text - string to be formatted
+ * @returns {string} formatted string
+ */
+export function formatRequestText(text) {
+  return text.replaceAll(" ", "_").toLowerCase()
+}
+
+/**
  * Returns grouped month year from GMT time stamp
  *
  * @param {string} date - date to be formatted
@@ -356,13 +382,24 @@ export function formatDate(date) {
 }
 
 /**
+ * Returns minimum date for enddate time picker converted to ISO format string
+ *
+ * @returns {string} formatted HTML
+ */
+export function endMinDateGenerator() {
+  return new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60000
+  ).toISOString()
+}
+
+/**
  * Returns local time zone
  *
  * @param {string} date - date to be formatted
  * @returns {string} formatted date
  */
 export function formatDateToLocal(date) {
-  let res = dayjs(date).local().format("DD/MM/YYYY hh:mm a zzz")
+  let res = dayjs(date).local().format("MM/DD/YYYY hh:mm a zzz")
   let timezone = res.split("m ")[1]
   timezone = timezone.split(" ")
   let tz = ""
@@ -379,4 +416,70 @@ export function formatDateToLocal(date) {
  */
 export function formatInnerHTML(text) {
   return { innerHTML: text }
+}
+
+/**
+ * Returns number converted to string with commas
+ *
+ * @param {string} num - number to be formatted to string
+ * @returns {string} formatted number
+ */
+export function numberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+
+/**
+ * Returns initial and batch count for request
+ *
+ * @param {object} request - request for calculating batch size and count
+ * @returns {Array} array of strings
+ */
+export function getBatchCounts(request) {
+  let currentBatch =
+    request.queryParams.batch_number || request.queryParams.batchNumber
+  let batchSize =
+    request.queryParams.batch_size || request.queryParams.batchSize
+  let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+  let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+  return [initialCount, lastCount]
+}
+
+/**
+ * Returns array of aggregated filters for age type filter only
+ *
+ * @param {object} filters - filters to be aggregated
+ * @returns {Array} array of strings
+ */
+export function aggregateAgeFilters(filters) {
+  if (!filters || filters.length == 0) {
+    return []
+  }
+  let numericFilters = []
+  let stringFilters = []
+  let [aggregatedFilterStart, aggregatedFilterEnd] = filters[0]
+    .split("to")
+    .map((val) => parseInt(val))
+  filters.forEach((filter) => {
+    let [currentFilterStart, currentFilterEnd] = filter
+      .split("to")
+      .map((val) => parseInt(val))
+    if (!currentFilterStart) {
+      stringFilters.push(filter)
+    } else if (
+      currentFilterStart == aggregatedFilterStart ||
+      currentFilterStart == aggregatedFilterEnd + 1
+    ) {
+      aggregatedFilterEnd = currentFilterEnd
+    } else {
+      numericFilters.push(
+        `${aggregatedFilterStart}-${aggregatedFilterEnd} years`
+      )
+      aggregatedFilterStart = currentFilterStart
+      aggregatedFilterEnd = currentFilterEnd
+    }
+  })
+  if (aggregatedFilterStart) {
+    numericFilters.push(`${aggregatedFilterStart}-${aggregatedFilterEnd} years`)
+  }
+  return [...numericFilters, ...stringFilters]
 }

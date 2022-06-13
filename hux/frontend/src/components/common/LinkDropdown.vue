@@ -1,12 +1,21 @@
 <template>
   <div class="hux-select-wrapper">
-    <label class="hux-select-label mt-6 mr-3"> Segments by </label>
+    <label class="hux-select-label mt-4 mr-3 text-body-1 black--text">
+      Segments by
+    </label>
     <v-select
+      ref="dropdownValues"
       v-model="getDefaultSelected"
       class="hux-select"
       item-text="name"
       item-value="last"
       :items="dataItems"
+      :style="`max-width: ${dropdownWidth}px`"
+      :menu-props="{
+        offsetY: true,
+        nudgeBottom: '5px',
+      }"
+      append-icon="mdi-chevron-down"
       @change="onSelect"
     >
     </v-select>
@@ -22,10 +31,18 @@ export default {
       required: true,
       default: () => [],
     },
+    width: {
+      type: [String, Number],
+      required: false,
+      default: 141,
+    },
   },
-  data: () => ({
-    dataItems: [],
-  }),
+  data() {
+    return {
+      dataItems: [],
+      dropdownWidth: this.width,
+    }
+  },
   computed: {
     getDefaultSelected: {
       get() {
@@ -49,6 +66,20 @@ export default {
   methods: {
     onSelect(selectedValue) {
       this.$emit("onselect", selectedValue)
+      this.dropdownWidth = this.width
+      this.$nextTick(() => {
+        this.dropdownWidth = this.findOptionWidth(
+          this.$refs.dropdownValues.$el,
+          5
+        )
+      })
+    },
+    findOptionWidth(option, num) {
+      if (num == 0 || !option?.childNodes[0]) {
+        return option?.clientWidth + 50 || 245
+      } else {
+        return this.findOptionWidth(option.childNodes[0], num - 1)
+      }
     },
   },
 }
@@ -59,17 +90,27 @@ export default {
     float: left;
   }
   .hux-select {
-    width: 195px;
     ::v-deep .v-input__control {
       .v-input__slot {
         .v-select__slot {
           .v-select__selections {
+            margin-bottom: -7px !important;
             .v-select__selection {
-              margin-bottom: 0 !important;
+              background-image: linear-gradient(
+                to right,
+                var(--v-primary-base) 40%,
+                rgba(255, 255, 255, 0) 20%
+              );
+              padding-bottom: 7px !important;
+              background-position: bottom;
+              background-size: 4px 1px;
+              background-repeat: repeat-x;
               color: var(--v-primary-base) !important;
             }
           }
           .v-input__append-inner {
+            position: relative;
+            right: 20px !important;
             .v-input__icon {
               .v-icon {
                 color: var(--v-primary-base) !important;
@@ -79,10 +120,12 @@ export default {
         }
       }
       .v-input__slot:before {
-        border-width: unset !important;
         border-style: none !important;
-        border-color: var(--v-primary-base) !important;
-        border-bottom-style: dotted !important;
+      }
+    }
+    &.v-input--is-focused {
+      &.primary--text {
+        color: transparent !important;
       }
     }
   }
@@ -92,6 +135,9 @@ export default {
   .v-select-list {
     ::v-deep .v-list-item {
       min-height: 32px !important;
+    }
+    ::v-deep .v-list-item.v-list-item--highlighted::before {
+      opacity: 0 !important;
     }
   }
 }

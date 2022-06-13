@@ -1,9 +1,11 @@
 # pylint: disable=no-self-use
-"""Schemas for the Engagements API"""
+"""Schemas for the Engagements API."""
 from datetime import datetime
 from bson import ObjectId
 from flask_marshmallow import Schema
 from marshmallow import fields, validate, pre_load, post_dump
+from marshmallow.fields import Nested, List, Int
+
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
@@ -501,6 +503,9 @@ class EngagementAudienceSchema(Schema):
             }
         ],
     )
+    delivery_schedule = fields.Dict(
+        attribute=api_c.AUDIENCE_DELIVERY_SCHEDULE, required=False
+    )
     destinations = fields.Nested(
         EngagementAudienceDestinationSchema, many=True
     )
@@ -508,6 +513,7 @@ class EngagementAudienceSchema(Schema):
     created_by = fields.String(attribute=db_c.CREATED_BY)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
+    last_delivered = DateTimeWithZ(allow_none=True)
 
 
 class EngagementDestinationAudienceSchema(Schema):
@@ -521,6 +527,7 @@ class EngagementDestinationAudienceSchema(Schema):
     is_lookalike = fields.Boolean(default=False)
     size = fields.Integer(default=0)
     latest_delivery = fields.Nested(LatestDeliverySchema)
+    replace_audience = fields.Boolean(required=False)
 
 
 class EngagementDestinationSchema(Schema):
@@ -590,6 +597,7 @@ class EngagementGetSchema(Schema):
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
     favorite = fields.Boolean(required=False, default=False)
+    last_delivered = DateTimeWithZ(allow_none=True)
 
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
@@ -610,6 +618,13 @@ class EngagementGetSchema(Schema):
             engagement[api_c.DELIVERY_SCHEDULE] = None
 
         return engagement
+
+
+class EngagementsBatchGetSchema(Schema):
+    """Engagements batch schema."""
+
+    total_records = Int(example=1)
+    engagements = List(Nested(EngagementGetSchema))
 
 
 # pylint: disable=too-many-branches,too-many-statements

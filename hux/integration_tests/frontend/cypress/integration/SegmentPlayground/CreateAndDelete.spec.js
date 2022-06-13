@@ -43,10 +43,7 @@ describe("Customer Insights > Segment Playground", () => {
       .type(`E2E test audience ${randomAudienceName}`)
 
     // Click on save audience icon
-    cy.get(".confirm-modal-wrapper")
-      .find("button")
-      .contains("Save")
-      .click({ force: true })
+    cy.get(".confirm-modal-wrapper").find("button").contains("Save")
 
     // Wait for audience to be created
     // eslint-disable-next-line cypress/no-unnecessary-waiting

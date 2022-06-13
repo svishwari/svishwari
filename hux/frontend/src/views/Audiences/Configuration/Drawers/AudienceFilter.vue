@@ -43,7 +43,20 @@
           </div>
           <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
-              v-if="data.category == 'general'"
+              v-if="data.category == 'general' && data.optionName != 'Events'"
+              v-model="selectedAttributes"
+              multiple
+              color="primary lighten-6"
+              class="text--base-1"
+              :label="data.name"
+              :value="data.key"
+            ></v-checkbox>
+          </div>
+          <br />
+          <div class="text-body-1 black--text text--lighten-4 pb-2">EVENTS</div>
+          <div v-for="data in filterOptions" :key="data.key">
+            <v-checkbox
+              v-if="data.category == 'general' && data.optionName == 'Events'"
               v-model="selectedAttributes"
               multiple
               color="primary lighten-6"
@@ -94,6 +107,9 @@ export default {
       selectedFavourite: false,
       selectedAudienceWorkedWith: false,
       enableApply: false,
+      pendingFavorite: false,
+      pendingWorkedWith: false,
+      pendingAttributes: [],
     }
   },
 
@@ -130,15 +146,16 @@ export default {
       this.selectedAudienceWorkedWith = false
     },
     clear() {
-      this.enableApply = true
       this.clearFilter()
-    },
-    clearAndReload() {
-      this.enableApply = false
-      this.clearFilter()
+      this.pendingFavorite = false
+      this.pendingWorkedWith = false
+      this.pendingAttributes = []
       this.apply()
     },
     apply() {
+      this.pendingFavorite = this.selectedFavourite
+      this.pendingWorkedWith = this.selectedAudienceWorkedWith
+      this.pendingAttributes = [...this.selectedAttributes]
       this.$emit("onSectionAction", {
         selectedAttributes: this.selectedAttributes,
         selectedFavourite: this.selectedFavourite,
@@ -151,6 +168,9 @@ export default {
       this.localDrawer = false
     },
     close() {
+      this.selectedFavourite = this.pendingFavorite
+      this.selectedAudienceWorkedWith = this.pendingWorkedWith
+      this.selectedAttributes = [...this.pendingAttributes]
       this.localDrawer = false
     },
     formatText: formatText,
@@ -199,5 +219,8 @@ export default {
   ::v-deep .v-expansion-panel-content__wrap {
     padding: 14px 24px 14px 24px !important;
   }
+}
+::v-deep.hux-filters-drawer .footer {
+  height: 70px !important;
 }
 </style>

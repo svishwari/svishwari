@@ -68,13 +68,15 @@
               <tooltip v-else-if="col.value === 'last_run'">
                 <v-btn
                   text
-                  class="pa-1 text-body-1"
+                  class="pa-1 text-body-1 r-16"
                   height="auto"
                   color="primary"
                   data-e2e="lastrun"
                   @click="openLastRunDrawer(item)"
                 >
-                  {{ item[col.value] | Date("relative") }}
+                  <div class="ml-4 mr-4">
+                    {{ item[col.value] | Date("relative") }}
+                  </div>
                 </v-btn>
                 <template #tooltip>{{ item[col.value] | Date }}</template>
               </tooltip>
@@ -87,7 +89,7 @@
         ></last-run-drawer>
       </v-card-text>
 
-      <v-row v-else class="data-feeds-table-frame py-14">
+      <v-row v-else class="data-feeds-table-frame">
         <empty-page v-if="!isErrorState" type="model-features-empty" :size="50">
           <template #title>
             <div class="title-no-notification">No data to show</div>
@@ -233,19 +235,30 @@ export default {
 
 .hux-data-table {
   ::v-deep table {
+    position: relative;
     .v-data-table-header {
       tr {
         th {
           background: var(--v-primary-lighten2);
           height: 40px !important;
+          top: -30px;
         }
       }
     }
   }
+  ::v-deep .table-overflow {
+    overflow-x: visible !important;
+  }
 }
 
 .data-feeds-table-frame {
+  padding-top: 144px !important;
+  padding-bottom: 144px !important;
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
+  background-size: 90%;
+}
+.r-16 {
+  right: 16px;
 }
 </style>

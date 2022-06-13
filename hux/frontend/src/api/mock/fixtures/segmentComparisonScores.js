@@ -1,10 +1,54 @@
 export default [
   {
-    segment_filter: "composite & signal scores",
+    segment_type: "composite & factor scores",
     segments: [
       {
+        segment_name: "All Customers",
+        segment_filters: [],
+        default: true,
+        attributes: [
+          {
+            attribute_type: "trust_id",
+            attribute_name: "HX TrustID",
+            attribute_score: 73,
+            attribute_description:
+              "TrustID is scored on a scale between -100 to 100",
+          },
+          {
+            attribute_type: "humanity",
+            attribute_name: "Humanity",
+            attribute_score: -20,
+            attribute_description:
+              "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
+          },
+          {
+            attribute_type: "transparency",
+            attribute_name: "Transparency",
+            attribute_score: 71,
+            attribute_description:
+              "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
+          },
+          {
+            attribute_type: "capability",
+            attribute_name: "Capability",
+            attribute_score: 78,
+            attribute_description:
+              "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
+          },
+          {
+            attribute_type: "reliability",
+            attribute_name: "Reliability",
+            attribute_score: 71,
+            attribute_description:
+              "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
+          },
+        ],
+      },
+
+      {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "trust_id",
@@ -45,7 +89,8 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [],
+        segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "trust_id",
@@ -86,7 +131,8 @@ export default [
       },
       {
         segment_name: "Segment 3",
-        attribute_filters: [],
+        segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "trust_id",
@@ -127,7 +173,8 @@ export default [
       },
       {
         segment_name: "Segment 4",
-        attribute_filters: [],
+        segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "trust_id",
@@ -166,55 +213,15 @@ export default [
           },
         ],
       },
-      {
-        segment_name: "Segment 5",
-        attribute_filters: [],
-        attributes: [
-          {
-            attribute_type: "trust_id",
-            attribute_name: "HX TrustID",
-            attribute_score: 11,
-            attribute_description:
-              "TrustID is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "humanity",
-            attribute_name: "Humanity",
-            attribute_score: 92,
-            attribute_description:
-              "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "transparency",
-            attribute_name: "Transparency",
-            attribute_score: 33,
-            attribute_description:
-              "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "capability",
-            attribute_name: "Capability",
-            attribute_score: 81,
-            attribute_description:
-              "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "reliability",
-            attribute_name: "Reliability",
-            attribute_score: 89,
-            attribute_description:
-              "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
-          },
-        ],
-      },
     ],
   },
   {
-    segment_filter: "capability attributes",
+    segment_type: "capability attributes",
     segments: [
       {
-        segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_name: "All Customer",
+        segment_filters: [],
+        default: true,
         attributes: [
           {
             attribute_type: "capability",
@@ -253,70 +260,15 @@ export default [
           },
         ],
       },
-      {
-        segment_name: "Segment 2",
-        attribute_filters: [
-          {
-            age: [
-              {
-                type: "range",
-                value: [18, 55],
-              },
-            ],
-            gender: [
-              {
-                type: "string",
-                value: "women",
-              },
-            ],
-          },
-        ],
-        attributes: [
-          {
-            attribute_type: "capability",
-            attribute_name: "Capability",
-            attribute_score: 68,
-            attribute_description:
-              "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
-          },
-          {
-            attribute_type: "product_quality",
-            attribute_name: "Product quality",
-            attribute_score: 68,
-            attribute_description:
-              "Products are good quality, accessible and safe to use",
-          },
-          {
-            attribute_type: "good_value",
-            attribute_name: "Good value",
-            attribute_score: 68,
-            attribute_description:
-              "Prices of products, services, and experiences are good value for money",
-          },
-          {
-            attribute_type: "competent_leaders_employess",
-            attribute_name: "Competent leaders & employees",
-            attribute_score: 68,
-            attribute_description:
-              "Employees and leadership are competent and understand how to respond to needs",
-          },
-          {
-            attribute_type: "long_term_solutions_improvements",
-            attribute_name: "Long-term solutions & improvements",
-            attribute_score: 68,
-            attribute_description:
-              "Creates long-term solutions and improvements that work well for me",
-          },
-        ],
-      },
     ],
   },
   {
-    segment_filter: "humanity attributes",
+    segment_type: "humanity attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "humanity",
@@ -356,7 +308,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [
+        segment_filters: [
           {
             age: [
               {
@@ -372,6 +324,7 @@ export default [
             ],
           },
         ],
+        default: false,
         attributes: [
           {
             attribute_type: "humanity",
@@ -412,11 +365,12 @@ export default [
     ],
   },
   {
-    segment_filter: "transparency attributes",
+    segment_type: "transparency attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "transparency",
@@ -457,7 +411,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [
+        segment_filters: [
           {
             age: [
               {
@@ -473,6 +427,7 @@ export default [
             ],
           },
         ],
+        default: false,
         attributes: [
           {
             attribute_type: "transparency",
@@ -514,11 +469,12 @@ export default [
     ],
   },
   {
-    segment_filter: "reliability attributes",
+    segment_type: "reliability attributes",
     segments: [
       {
         segment_name: "Segment 1",
-        attribute_filters: [],
+        segment_filters: [],
+        default: false,
         attributes: [
           {
             attribute_type: "reliability",
@@ -559,7 +515,7 @@ export default [
       },
       {
         segment_name: "Segment 2",
-        attribute_filters: [
+        segment_filters: [
           {
             age: [
               {
@@ -575,6 +531,7 @@ export default [
             ],
           },
         ],
+        default: false,
         attributes: [
           {
             attribute_type: "reliability",

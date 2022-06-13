@@ -4,10 +4,11 @@
       class="header"
       :disabled="disabled"
       :hide-actions="hideActions"
+      @click="headerclick = !headerclick"
     >
       <h4
         :class="
-          count == 0
+          count == 0 && !headerclick
             ? 'text-body-1 black--text'
             : 'text-body-1 primary--text text--lighten-6'
         "
@@ -16,7 +17,9 @@
         <span v-if="count" class="ml-1">({{ count }})</span>
       </h4>
       <template #actions>
-        <v-icon :color="count == 0 ? 'black' : 'blue'"> $expand </v-icon>
+        <v-icon :color="count == 0 && !headerclick ? 'black' : 'blue'">
+          $expand
+        </v-icon>
       </template>
     </v-expansion-panel-header>
 
@@ -52,6 +55,11 @@ export default defineComponent({
       default: false,
     },
   },
+  data() {
+    return {
+      headerclick: false,
+    }
+  },
 })
 </script>
 
@@ -63,6 +71,7 @@ $headerHeight: 40px;
     height: $headerHeight;
     padding: 0 $padding;
     border-top: 1px solid var(--v-black-lighten2);
+    cursor: unset;
   }
   &:last-child {
     .header {

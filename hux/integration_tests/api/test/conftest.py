@@ -11,6 +11,9 @@ from pymongo import MongoClient
 from get_okta_token import OktaOIDC
 
 
+# change log level from WARNING to INFO and initialise logger for conftest
+logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger(__name__)
 # ENV VARS
 OKTA_PARAM_DICT = {
     "org_url": getenv("OKTA_ISSUER"),
@@ -22,22 +25,32 @@ OKTA_PARAM_DICT = {
 }
 MONGO_DB_CONFIG = {
     "host": getenv("MONGO_DB_HOST"),
-    "port": 27017,
+    "port": int(getenv("MONGO_DB_PORT")),
     "w": 1,
     "username": getenv("MONGO_DB_USERNAME"),
     "password": getenv("MONGO_DB_PASSWORD"),
     "ssl": True,
-    "ssl_ca_certs": str(
+    "tlsCAFile": str(
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
     ),
 }
 ACCESS_TOKEN = "ACCESS_TOKEN"
 DATABASE = "data_management"
-TAVERN_TEST_API_VERSION = "TAVERN_TEST_API_VERSION"
-TAVERN_TEST_HOST = "TAVERN_TEST_HOST"
+INT_TEST_API_VERSION = "INT_TEST_API_VERSION"
+INT_TEST_HOST = "INT_TEST_HOST"
 AUTHORIZATION = "Authorization"
 BEARER = "Bearer"
 ID = "_id"
+CLEAN_UP_COLLECTIONS_DICT = {
+    "applications": "created_by",
+    "audiences": "created_by",
+    "client_projects": "created_by",
+    "configurations": "created_by",
+    "delivery_jobs": "username",
+    "engagements": "created_by",
+    "lookalike_audiences": "created_by",
+    "notifications": "username",
+}
 
 
 # Declaring Crud namedtuple()
@@ -55,9 +68,8 @@ def pytest_configure(config: Config):
 
     # set global IDs
     pytest.CRUD_OBJECTS = []
-    pytest.API_URL = (
-        f"{getenv(TAVERN_TEST_HOST)}/" f"{getenv(TAVERN_TEST_API_VERSION)}"
-    )
+    pytest.APP_URL = getenv(INT_TEST_HOST)
+    pytest.API_URL = f"{getenv(INT_TEST_HOST)}/{getenv(INT_TEST_API_VERSION)}"
     pytest.DB_CLIENT = MongoClient(**MONGO_DB_CONFIG)[DATABASE]
 
     try:
@@ -73,7 +85,7 @@ def pytest_configure(config: Config):
         pass
 
 
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument, disable=broad-except
 def pytest_unconfigure(config):
     """Override the pytest plugin. This hook is called for every plugin and
         initial conftest file after command line options have been parsed.
@@ -86,7 +98,7 @@ def pytest_unconfigure(config):
     crud_obj: Crud
     for crud_obj in pytest.CRUD_OBJECTS:
         try:
-            logging.info(
+            LOGGER.info(
                 "Cleaning Object ID %s for %s.",
                 crud_obj.id,
                 crud_obj.collection,
@@ -94,16 +106,50 @@ def pytest_unconfigure(config):
             pytest.DB_CLIENT[crud_obj.collection].delete_one(
                 {ID: ObjectId(crud_obj.id)}
             )
-            logging.info(
-                "Cleaning Object ID %s for %s. complete.",
+            LOGGER.info(
+                "Cleaning Object ID %s for %s complete.",
                 crud_obj.id,
                 crud_obj.collection,
             )
-        # pylint: disable=broad-except
         except BaseException as exception:
-            logging.error(
+            LOGGER.error(
                 "Cleaning Object ID %s for %s failed: %s.",
                 crud_obj.id,
                 crud_obj.collection,
+                str(exception),
+            )
+
+    # clean stranded documents created by integration tests in various
+    # collections
+    int_test_user_name = getenv("INT_TEST_USER_NAME")
+    LOGGER.info("Integration test user's user name: %s", int_test_user_name)
+
+    for (
+        collection_name,
+        collection_field,
+    ) in CLEAN_UP_COLLECTIONS_DICT.items():
+        try:
+            LOGGER.info(
+                "Cleaning up left out documents in collection %s using field "
+                "%s start.",
+                collection_name,
+                collection_field,
+            )
+            deleted_count = (
+                pytest.DB_CLIENT[collection_name]
+                .delete_many({collection_field: int_test_user_name})
+                .deleted_count
+            )
+            LOGGER.info(
+                "Cleaning up left out documents in collection %s using field "
+                "%s complete. Deleted documents count: %s.",
+                collection_name,
+                collection_field,
+                deleted_count,
+            )
+        except BaseException as exception:
+            LOGGER.error(
+                "Cleaning stranded documents from collection %s failed: %s.",
+                collection_name,
                 str(exception),
             )

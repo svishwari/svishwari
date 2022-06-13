@@ -16,7 +16,14 @@
     <v-icon size="16" class="mr-9 nav-icon" @click="$router.go()">
       mdi-refresh
     </v-icon>
-    <v-menu v-model="menu" :min-width="200" left offset-y close-on-click>
+    <v-menu
+      v-if="!clientPanel"
+      v-model="menu"
+      :min-width="200"
+      left
+      offset-y
+      close-on-click
+    >
       <template #activator="{ on }">
         <span class="d-flex cursor-pointer mr-4" data-e2e="addicon" v-on="on">
           <tooltip :z-index="99">
@@ -37,7 +44,7 @@
       <v-list>
         <v-list-item>
           <v-list-item-title
-            class="font-weight-semi-bold text-h6 black--text mb-1"
+            class="font-weight-semi-bold subtitle-1 black--text mt-2 mb-3"
           >
             Create / Add
           </v-list-item-title>
@@ -54,8 +61,8 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <application />
-    <notification />
+    <application v-if="!clientPanel" />
+    <notification v-if="!clientPanel" />
     <help />
   </div>
 </template>
@@ -94,6 +101,9 @@ export default {
       let newFormate = formate.replace(" at", ",")
       return newFormate
     },
+    clientPanel() {
+      return this.$route.name == "ClientPanel"
+    },
   },
   methods: {
     routerRedirect(path) {
@@ -116,7 +126,7 @@ export default {
 <style lang="scss" scoped>
 .v-menu__content {
   margin-left: 126px;
-  top: 70px !important;
+  top: 75px !important;
   .v-list {
     .v-list-item {
       min-height: 32px !important;

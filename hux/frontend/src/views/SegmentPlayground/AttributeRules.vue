@@ -4,7 +4,7 @@
       <strong
         v-if="enableTitle"
         :class="{
-          'text-h5 black--text text--darken-4 mb-2 d-block': true,
+          'text-body-1 black--text text--darken-4 mb-2 d-block': true,
           '': applyCaptionStyle,
         }"
       >
@@ -46,13 +46,14 @@
             text--darken-4 text-body-2
           "
         >
-          <span class="mr-2">Include customers that match &nbsp;</span>
+          <span class="mr-2 mb-2">Include consumers that match &nbsp;</span>
           <hux-switch
             v-model="rule.operand"
             :is-disabled="readMode ? true : false"
+            class="mt-2 pt-0"
             @input="triggerSizingForRule(rule)"
           />
-          of the following:
+          <span class="mb-2"> of the following: </span>
         </div>
         <v-col
           v-for="(condition, ixcondition) in rule.conditions"
@@ -63,7 +64,7 @@
             <div
               :class="readMode ? 'readmode-condition-card' : 'condition-card'"
             >
-              <div class="condition-container pl-2 d-fles pr-6">
+              <div class="condition-container px-4 d-fles">
                 <div class="condition-items pr-5">
                   <hux-dropdown
                     :selected="condition.attribute"
@@ -86,10 +87,17 @@
                     "
                     v-model="condition.text"
                     class="item-text-field"
-                    :placeholder="getPlaceHolderText(condition)"
+                    placeholder="Enter value"
                     required
                     @blur="triggerSizing(condition)"
                   />
+                  <span
+                    v-if="
+                      condition.operator && condition.attribute.type === 'text'
+                    "
+                    class="ml-2 text-body-1"
+                    >Days</span
+                  >
                   <hux-autocomplete
                     v-if="
                       condition.operator && condition.attribute.type === 'list'
@@ -120,7 +128,7 @@
                     />
                     <hux-slider
                       v-model="condition.range"
-                      :read-only="false"
+                      :read-only="readMode ? true : false"
                       :min="condition.attribute.min"
                       :max="condition.attribute.max"
                       :step="condition.attribute.steps"
@@ -160,7 +168,7 @@
           </div>
         </v-col>
         <div class="add-wrap">
-          <div class="pa-0 pt-2 flex-fill new-attribute">
+          <div class="pa-0 flex-fill new-attribute">
             <div class="add-section pa-5 text-body-1 primary--text">
               <span
                 class="cursor-pointer"
@@ -172,7 +180,7 @@
               </span>
             </div>
           </div>
-          <div class="pr-0 pt-2 pl-2 flex-right">
+          <div class="pr-0 pl-2 flex-right">
             <div class="condition-summary">
               <span class="title text-h5">Size</span>
               <span v-if="loadingOverAllSize" class="pt-2">
@@ -184,7 +192,7 @@
             </div>
           </div>
         </div>
-        <div v-if="index != lastIndex" class="col-12 seperator mt-5 mb-1 px-0">
+        <div v-if="index != lastIndex" class="col-12 seperator mt-4 mb-1 px-0">
           <hr class="black lighten-2" />
           <v-chip
             small
@@ -202,10 +210,10 @@
         <v-chip
           small
           class="mx-2 my-1 text-body-1 cursor-pointer"
-          text-color="primary"
-          color="black lighten-2"
+          :text-color="readMode ? 'white' : 'primary'"
+          :color="readMode ? 'black lighten-3' : 'primary lighten-3'"
           :ripple="false"
-          @click.native="addNewSection()"
+          @click.native="!readMode && addNewSection()"
         >
           <tooltip>
             <template #label-content> + </template>
@@ -229,6 +237,7 @@ import TextField from "../../components/common/TextField.vue"
 import Icon from "@/components/common/Icon"
 import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
+import { v4 as uuidv4 } from "uuid"
 
 const NEW_RULE_SECTION = {
   id: "",
@@ -299,10 +308,23 @@ export default {
   computed: {
     ...mapGetters({
       ruleAttributes: "audiences/audiencesRules",
+      overviewData: "customers/overview",
     }),
 
     lastIndex() {
       return this.rules.length - 1
+    },
+
+    ifRouteSegmentPlayground() {
+      return this.$route.name === "SegmentPlayground"
+    },
+
+    updateHistoArr() {
+      return this.notHistogramKeys.concat(
+        Object.keys(this.ruleAttributes.rule_attributes.general.events).filter(
+          (x) => x != "name"
+        )
+      )
     },
   },
   async mounted() {
@@ -310,6 +332,12 @@ export default {
     this.chartDimensions.height = 26
     await this.getAudiencesRules()
     this.updateSizes()
+    if (this.ifRouteSegmentPlayground) {
+      this.overAllSize = this.overviewData.total_customers
+    }
+    this.notHistogramKeys = this.updateHistoArr
+
+    this.$emit("attribute-options", this)
   },
 
   created() {
@@ -347,8 +375,7 @@ export default {
 
     isTextORSelect(condition) {
       return condition.attribute
-        ? condition.attribute.type === "text" ||
-            condition.attribute.type === "list"
+        ? ["text", "list"].includes(condition.attribute.type)
         : false
     },
     /**
@@ -382,7 +409,8 @@ export default {
               if (hasSubOptins.length > 0) {
                 _subOption["menu"] = hasSubOptins.map((key) => {
                   const subOption = _subOption[key]
-                  subOption["key"] = subOption.name
+                  subOption["key"] =
+                    _subOption.key == "events" ? key : subOption.name
                   return subOption
                 })
               }
@@ -401,6 +429,13 @@ export default {
     },
     listOptions(condition) {
       if (condition.attribute.key === "City") {
+        // if (this.currenCitytData.length == 0) {
+        //   this.selectedValue = "City"
+        //   this.autoSearchFunc(condition.text)
+        // }
+        // condition.text = this.currenCitytData.find(
+        //   (item) => Object.values(item)[0].split(",")[0] == condition.text
+        // )
         return this.currenCitytData
       } else if (condition.attribute.key === "Zip") {
         return this.currentData
@@ -417,6 +452,17 @@ export default {
         return Object.keys(this.ruleAttributes.text_operators)
           .map((key) => {
             if (key.includes("equal")) {
+              return {
+                key: key,
+                name: this.ruleAttributes.text_operators[key],
+              }
+            }
+          })
+          .filter(Boolean)
+      } else if (condition.attribute.type === "text") {
+        return Object.keys(this.ruleAttributes.text_operators)
+          .map((key) => {
+            if (key.includes("within_the_last")) {
               return {
                 key: key,
                 name: this.ruleAttributes.text_operators[key],
@@ -503,11 +549,13 @@ export default {
             value = this.rules[i].conditions[j].text
             type = this.rules[i].conditions[j].operator.key
           }
-          attributeRulesArray.push({
-            field: this.rules[i].conditions[j].attribute.key,
-            type: type,
-            value: value,
-          })
+          if (value) {
+            attributeRulesArray.push({
+              field: this.rules[i].conditions[j].attribute.key,
+              type: type,
+              value: value,
+            })
+          }
         }
         let sectionObject = {
           section_aggregator: aggregatorOperand,
@@ -563,7 +611,7 @@ export default {
     },
     addNewCondition(id) {
       const newCondition = JSON.parse(JSON.stringify(NEW_CONDITION))
-      newCondition.id = Math.floor(Math.random() * 1024).toString(16)
+      newCondition.id = uuidv4()
       const sectionFound = this.rules.filter((rule) => rule.id === id)
       if (sectionFound.length > 0) sectionFound[0].conditions.push(newCondition)
     },
@@ -592,7 +640,7 @@ export default {
     },
     addNewSection() {
       const newSection = JSON.parse(JSON.stringify(NEW_RULE_SECTION))
-      newSection.id = Math.floor(Math.random() * 1024).toString(16)
+      newSection.id = uuidv4()
       this.rules.push(newSection)
       this.addNewCondition(newSection.id)
     },
@@ -744,6 +792,9 @@ export default {
               .v-slider__track-container {
                 width: 101%;
               }
+            }
+            ::v-deep .v-input__control .v-input__slot .v-slider__thumb {
+              border: none !important;
             }
           }
         }

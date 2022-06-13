@@ -43,6 +43,7 @@ def get_all_engagement_audience_destinations(
                 "data_added_destination": {
                     "destination_id": "$audiences.destinations.id",
                     "data_added": "$audiences.destinations.data_added",
+                    "replace_audience": "$audiences.destinations.replace_audience",
                 }
             }
         },
@@ -130,6 +131,7 @@ def set_engagement_audience_destination_schedule(
         cron_expression (str): CRON expression of the delivery schedule.
         user_name (str): Name of the user updating the engagement.
         unset (bool): Option to remove the cron expression object.
+
     Returns:
         list: updated engagement objects
     """
@@ -176,6 +178,149 @@ def set_engagement_audience_destination_schedule(
         return {}
 
     # replace_one
+    collection.replace_one(
+        {
+            db_c.ID: engagement_id,
+        },
+        engagement_doc,
+    )
+
+    return collection.find_one(
+        {
+            db_c.ID: engagement_id,
+        }
+    )
+
+
+def set_replace_audience_flag_engaged_audience(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    replace_audience: bool,
+    user_name: str,
+) -> dict:
+    """Method for toggling replace_audience flag
+
+    Args:
+        database(DatabaseClient): A database client
+        engagement_id(ObjectId):  MongoDB ID of the engagement.
+        audience_id(ObjectId): MongoDB ID of the audience.
+        destination_id(ObjectId): MongoDB ID of the destination.
+        replace_audience(bool): Audience replacement flag.
+        user_name(str): User name
+
+    Returns:
+        dict: Updated Engagement object
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    # get the engagement doc
+    engagement_doc = collection.find_one(
+        {
+            db_c.ID: engagement_id,
+            "audiences.id": audience_id,
+            "audiences.destinations.id": destination_id,
+        }
+    )
+    if not engagement_doc:
+        return {}
+
+    # Workaround cause DocumentDB does not support nested DB updates.
+    change = False
+    for audience in engagement_doc.get(db_c.AUDIENCES, []):
+        if audience.get(db_c.OBJECT_ID) != audience_id:
+            continue
+
+        for destination in audience.get(db_c.DESTINATIONS, []):
+            if destination.get(db_c.OBJECT_ID) != destination_id:
+                continue
+
+            destination[db_c.REPLACE_AUDIENCE] = replace_audience
+
+        engagement_doc.update(
+            {db_c.UPDATE_TIME: datetime.now(), db_c.UPDATED_BY: user_name}
+        )
+        change = True
+
+    # no changes, simply return.
+    if not change:
+        return {}
+
+    return collection.find_one_and_update(
+        {
+            db_c.ID: engagement_id,
+        },
+        {"$set": engagement_doc},
+        upsert=True,
+        return_document=pymongo.ReturnDocument.AFTER,
+    )
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_engagement_audience_schedule(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    delivery_schedule: dict,
+    user_name: str,
+    unset: bool = False,
+) -> Union[dict, None]:
+    """A function to set the engagement audience delivery schedule.
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): MongoDB ID of the engagement.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        delivery_schedule (dict): Dict object containing delivery_schedule.
+        user_name (str): Name of the user updating the engagement.
+        unset (bool): Option to remove the delivery schedule object.
+
+    Returns:
+        dict: Updated engagement object.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    # get the engagement doc
+    engagement_doc = collection.find_one(
+        {
+            db_c.ID: engagement_id,
+            "audiences.id": audience_id,
+        }
+    )
+
+    if not engagement_doc:
+        return None
+
+    # workaround cause DocumentDB does not support nested DB updates
+    for audience in engagement_doc.get(db_c.AUDIENCES, []):
+        if audience.get(db_c.OBJECT_ID) != audience_id:
+            continue
+
+        if unset:
+            audience.pop(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, None)
+        else:
+            # set the delivery schedule
+            audience[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = delivery_schedule
+
+        engagement_doc[db_c.UPDATE_TIME] = datetime.utcnow()
+        engagement_doc[db_c.UPDATED_BY] = user_name
+        # break out of the loop as soon as the single audience is found
+        # to be updated.
+        break
+    # no changes, simply return empty dict
+    else:
+        return {}
+
+    # replace one
     collection.replace_one(
         {
             db_c.ID: engagement_id,
@@ -271,7 +416,6 @@ def align_audience_engagement_deliveries(
     # process each audience delivery job
     matched_delivery_jobs = []
     for delivery_job in audience_delivery_jobs:
-
         # match the delivery platform, otherwise set to unknown.
         matched_delivery_platform = delivery_platform_dict.get(
             delivery_job[db_c.DELIVERY_PLATFORM_ID],

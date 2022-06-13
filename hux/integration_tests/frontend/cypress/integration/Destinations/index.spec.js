@@ -50,40 +50,9 @@ describe("Orchestration > Destinations", () => {
 
     // find a addable destination from the drawer
     cy.get(selector.destination.drawerToggle).click()
-    cy.get(selector.destination.destinationsList)
-      .contains(/\bAdd\b/g)
-      .as("addableDestinations")
+    cy.get(selector.destination.destinationsList).contains(/\bAdd\b/g)
 
-    cy.get("@addableDestinations")
-      .its("length")
-      .then((addableDestinations) => {
-        //if a destination can be added, try to add it
-        if (addableDestinations > 0) {
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(2000)
-          cy.get("@addableDestinations").eq(0).click()
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(2000)
-
-          // configure destination details
-          cy.get(selector.destination.destinationConfigDetails)
-            .get("input")
-            .each(($el, index) => {
-              if (index < 5) {
-                cy.wrap($el).type("123456")
-              }
-            })
-          cy.get(selector.destination.validateDestination).click()
-          cy.get(selector.destination.footer).contains("Cancel").click()
-          cy.location("pathname").should("eq", route.destinations)
-        }
-      })
-
-    // click on plus-sign for requesting a destination
-    cy.get(selector.destination.addDestination).click()
-    cy.location("pathname").should("eq", route.addDestinations)
-
-    cy.get(selector.destination.drawerToggle).click()
+    // find a requestable destination from the drawer
     cy.get(selector.destination.requestableDestinationsList)
       .contains(/\bRequest\b/g)
       .as("requestableDestinations")

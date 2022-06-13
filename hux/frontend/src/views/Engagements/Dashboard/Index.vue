@@ -102,10 +102,11 @@
 
     <edit-delivery-schedule
       v-model="editDeliveryDrawer"
-      :schedule="currentSchedule"
       :audience-id="selectedAudienceId"
-      :destination="scheduleDestination"
+      :audience-name="selectedAudienceName"
+      :current-schedule="scheduleAudience"
       :engagement-id="engagementId"
+      @onToggle="(val) => (editDeliveryDrawer = val)"
       @onUpdate="refreshEntity()"
     />
 
@@ -170,6 +171,7 @@ export default {
       ],
       // Drawer Data Props
       selectedAudiences: {},
+      selectedAudienceName: null,
       showSelectAudiencesDrawer: false,
       showAddAudiencesDrawer: false,
       showSelectDestinationsDrawer: false,
@@ -180,7 +182,7 @@ export default {
       // Edit Schedule data props
       showConfirmModal: false,
       editDeliveryDrawer: false,
-      scheduleDestination: {
+      scheduleAudience: {
         name: null,
         delivery_platform_type: null,
         id: null,
@@ -499,6 +501,25 @@ export default {
           this.refreshEntity()
           break
 
+        case "edit delivery schedule":
+          this.confirmDialog.icon = "edit"
+          this.confirmDialog.type = "primary"
+          this.confirmDialog.subtitle = ""
+          this.confirmDialog.actionType = "edit-schedule"
+          this.confirmDialog.title = "You are about to edit delivery schedule."
+          this.confirmDialog.btnText = "Yes, edit delivery schedule"
+          this.confirmDialog.leftBtnText = "Cancel"
+          this.confirmDialog.body =
+            "This will override the default delivery schedule for this audience. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+          this.showConfirmModal = true
+          this.selectedAudienceId = event.data.id
+          this.selectedAudienceName = event.data.name
+          this.scheduleAudience =
+            "delivery_schedule" in event.data
+              ? event.data.delivery_schedule
+              : {}
+          break
+
         case "remove audience":
           this.showConfirmModal = true
           this.confirmDialog.actionType = "remove-audience"
@@ -507,6 +528,7 @@ export default {
           this.confirmDialog.type = "error"
           this.confirmDialog.subtitle = event.data.name
           this.confirmDialog.btnText = "Yes, remove audience"
+          this.confirmDialog.leftBtnText = "Nevermind!"
           this.confirmDialog.body =
             "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement."
           this.deleteActionData = event.data
@@ -533,20 +555,6 @@ export default {
               message: "Destination link is not available",
             })
           }
-          break
-        case "edit delivery schedule":
-          this.confirmDialog.icon = "edit"
-          this.confirmDialog.type = "primary"
-          this.confirmDialog.subtitle = ""
-          this.confirmDialog.actionType = "edit-schedule"
-          this.confirmDialog.title = "You are about to edit delivery schedule."
-          this.confirmDialog.btnText = "Yes, edit delivery schedule"
-          this.confirmDialog.leftBtnText = "Cancel"
-          this.confirmDialog.body =
-            "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
-          this.showConfirmModal = true
-          this.scheduleDestination = event.data
-          this.currentSchedule = event.data["delivery_schedule"]
           break
         case "remove destination":
           this.confirmDialog.actionType = "remove-destination"
@@ -616,13 +624,11 @@ export default {
       this.confirmDialog.title = "Edit"
       this.confirmDialog.icon = "edit"
       this.confirmDialog.type = "error"
-      this.confirmDialog.subtitle =
-        "Are you sure you want to edit this engagement?"
+      this.confirmDialog.subtitle = `${this.engagementList.name}?`
       this.confirmDialog.btnText = "Yes, edit"
       this.confirmDialog.leftBtnText = "Cancel"
-      this.confirmDialog.body =
-        "Are you sure you want to edit this engagement?\
-By changing the engagement, you may need to reschedule the delivery time and it will impact all associated audiences and destinations."
+      this.confirmDialog.body = `Are you sure you want to edit this engagement? <br>
+By changing the engagement, you may need to reschedule the delivery time and it will impact all associated audiences and destinations.`
     },
     async removeEngagement(data) {
       this.showConfirmModal = true
@@ -632,9 +638,8 @@ By changing the engagement, you may need to reschedule the delivery time and it 
       this.confirmDialog.type = "error"
       this.confirmDialog.subtitle = data.name
       this.confirmDialog.btnText = "Yes, delete engagement"
-      this.confirmDialog.body =
-        "Are you sure you want to delete this Engagement?\
-By deleting this engagement you will not be able to recover it and it may impact any associated destinations."
+      this.confirmDialog.body = `Are you sure you want to delete this Engagement? <br>
+By deleting this engagement you will not be able to recover it and it may impact any associated destinations.`
       this.deleteActionData = data
     },
 
@@ -701,6 +706,8 @@ By making it inactive all audiences that are part of this engagement will have t
     border-radius: 5px;
   }
   .inner-wrap {
+    overflow: auto;
+    max-height: calc(100vh - 142px) !important;
     .summary-wrap {
       flex-wrap: wrap;
       .metric-card-wrapper {

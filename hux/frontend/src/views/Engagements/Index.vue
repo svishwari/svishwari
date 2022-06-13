@@ -6,7 +6,7 @@
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Start making meaningful connections with current and future customers
+          Start making meaningful connections with current and future consumers
           by targeting intelligent audiences while staying organized.
         </div>
       </template>
@@ -16,16 +16,12 @@
             type="filter"
             :size="27"
             :color="
-              isEmptyError
-                ? 'black'
-                : finalFilterApplied > 0
-                ? 'primary'
-                : 'black'
+              isEmptyError ? 'black' : isFilterToggled ? 'primary' : 'black'
             "
             :variant="
               isEmptyError
                 ? 'lighten3'
-                : finalFilterApplied > 0
+                : isFilterToggled
                 ? 'lighten6'
                 : 'darken4'
             "
@@ -77,7 +73,7 @@
                 size="large"
                 is-custom-icon
                 class="ma-2 font-weight-regular no-shadow mr-0 caption"
-                is-tilehux
+                is-tile
                 :is-disabled="isEmptyError"
                 height="40"
               >
@@ -86,7 +82,7 @@
             </router-link>
           </template>
         </page-header>
-        <hux-data-table
+        <hux-lazy-data-table
           v-if="!loading && rowData.length > 0"
           :columns="columnDefs"
           :data-items="rowData"
@@ -96,6 +92,8 @@
           nested
           data-e2e="engagement-table"
           class="big-table"
+          :enable-lazy-load="enableLazyLoad"
+          @bottomScrollEvent="intersected"
         >
           <template #item-row="{ item, expandFunc, isExpanded }">
             <tr :class="{ 'expanded-row': isExpanded }">
@@ -164,7 +162,7 @@
                         <logo
                           class="mr-1"
                           :type="destination.delivery_platform_type"
-                          :size="18"
+                          :size="24"
                         />
                       </template>
                       <template #hover-content>
@@ -257,12 +255,13 @@
                         This engagement was delivered manually on
                         {{
                           item["last_delivered"]
-                            | Date("MMM D, YYYY [at] h:mm A")
+                            | Date("MMMM D, YYYY [at] h:mm A")
                             | Empty
                         }}
                       </span>
                       <hux-delivery-text
                         v-else
+                        class="text-body-2"
                         :schedule="
                           item[header.value] ? item[header.value].schedule : {}
                         "
@@ -314,7 +313,10 @@
               >
                 <template #item-row="{ item, expandFunc, isExpanded }">
                   <tr :class="{ 'expanded-row': isExpanded }">
-                    <td :style="{ width: expandedHeaders[0].width }"></td>
+                    <td
+                      :style="{ width: expandedHeaders[0].width }"
+                      class="expanded-row-cover"
+                    ></td>
                     <td
                       v-for="header in getAudienceHeaders(subHeaders)"
                       :key="header.value"
@@ -326,9 +328,6 @@
                       <div v-if="header.value == 'name'">
                         <menu-cell
                           :value="item[header.value]"
-                          :menu-options="
-                            getAudienceActionItems(item, parentItem.id)
-                          "
                           route-name="AudienceInsight"
                           :route-param="item['id']"
                           :data="item"
@@ -586,7 +585,7 @@
               </hux-data-table>
             </td>
           </template>
-        </hux-data-table>
+        </hux-lazy-data-table>
 
         <look-alike-audience
           ref="lookalikeWorkflow"
@@ -660,24 +659,18 @@
         </empty-page>
       </div>
 
-      <empty-page
+      <div
         v-if="!loading && rowData.length == 0 && isEmptyError"
-        class="unavailable-engagement"
-        type="error-on-screens"
-        :size="50"
+        class="error-wrap"
       >
-        <template #title>
-          <div class="title-no-notification">
-            Engagements are currently unavailable
-          </div>
-        </template>
-        <template #subtitle>
-          <div class="des-no-notification">
-            Our team is working hard to fix it. Please be patient and try again
-            soon!
-          </div>
-        </template>
-      </empty-page>
+        <error
+          icon-type="error-on-screens"
+          :icon-size="50"
+          title="Engagements are currently unavailable"
+          subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+        >
+        </error>
+      </div>
 
       <div class="ml-auto">
         <engagement-filter
@@ -818,11 +811,12 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
-import EmptyPage from "@/components/common/EmptyPage"
+import Error from "@/components/common/screens/Error"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Icon from "@/components/common/Icon"
 import huxButton from "@/components/common/huxButton"
-import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
+import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue"
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Avatar from "../../components/common/Avatar.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
@@ -833,6 +827,7 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
 import EngagementFilter from "./Configuration/Drawers/EngagementFilter.vue"
+import EmptyPage from "@/components/common/EmptyPage"
 
 export default {
   name: "Engagements",
@@ -841,7 +836,8 @@ export default {
     Breadcrumb,
     Icon,
     huxButton,
-    EmptyPage,
+    Error,
+    HuxLazyDataTable,
     HuxDataTable,
     Avatar,
     TimeStamp,
@@ -853,6 +849,7 @@ export default {
     ConfirmModal,
     HuxDeliveryText,
     EngagementFilter,
+    EmptyPage,
   },
   data() {
     return {
@@ -879,6 +876,9 @@ export default {
       manualDeliverySchedule: "Manual",
       numFiltersSelected: 0,
       finalFilterApplied: 0,
+      enableLazyLoad: false,
+      lastBatch: 0,
+      batchDetails: {},
       columnDefs: [
         {
           text: "Engagement name",
@@ -948,6 +948,7 @@ export default {
       engagementData: "engagements/list",
       audiencesData: "audiences/audience",
       userFavorites: "users/favorites",
+      totalEngagements: "engagements/total",
     }),
     audience(id) {
       return this.audiencesData(id)
@@ -1013,7 +1014,9 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.getAllEngagements()
+      this.setDefaultBatch()
+      await this.fetchEngagementsByBatch()
+      this.calculateLastBatch()
     } catch (error) {
       this.isEmptyError = true
     } finally {
@@ -1024,7 +1027,6 @@ export default {
   methods: {
     ...mapActions({
       getAllEngagements: "engagements/getAll",
-      getAllFilteredEngagements: "engagements/getAllFiltered",
       updateAudienceList: "engagements/updateAudienceList",
       updateEngagement: "engagements/updateEngagement",
       detachAudience: "engagements/detachAudience",
@@ -1033,6 +1035,32 @@ export default {
       clearFavorite: "users/clearFavorite",
       deleteEngagement: "engagements/remove",
     }),
+
+    setDefaultBatch() {
+      this.batchDetails.batch_size = 25
+      this.batchDetails.batch_number = 1
+      this.batchDetails.favorites = false
+      this.batchDetails.my_engagements = false
+    },
+
+    intersected() {
+      if (this.batchDetails.batch_number <= this.lastBatch) {
+        this.batchDetails.isLazyLoad = true
+        this.enableLazyLoad = true
+        this.fetchEngagementsByBatch()
+      } else {
+        this.enableLazyLoad = false
+      }
+    },
+    async fetchEngagementsByBatch() {
+      await this.getAllEngagements(this.batchDetails)
+      this.batchDetails.batch_number++
+    },
+    calculateLastBatch() {
+      this.lastBatch = Math.ceil(
+        this.totalEngagements / this.batchDetails.batch_size
+      )
+    },
 
     clearFilter() {
       this.$refs.filters.clearAndReload()
@@ -1045,11 +1073,12 @@ export default {
     async applyFilter(params) {
       this.loading = true
       this.finalFilterApplied = params.filterApplied
+      this.setDefaultBatch()
+      this.batchDetails.favorites = params.selectedFavourite
+      this.batchDetails.my_engagements = params.selectedEngagementsWorkedWith
       try {
-        await this.getAllFilteredEngagements({
-          favorites: params.selectedFavourite,
-          my_engagements: params.selectedEngagementsWorkedWith,
-        })
+        await this.fetchEngagementsByBatch()
+        this.calculateLastBatch()
       } catch (error) {
         this.isEmptyError = true
         this.clearFilter()
@@ -1103,7 +1132,8 @@ export default {
       await this.updateEngagement(payload)
       this.loading = true
       try {
-        await this.getAllEngagements()
+        this.setDefaultBatch()
+        await this.fetchEngagementsByBatch()
       } catch (error) {
         this.isEmptyError = true
       } finally {
@@ -1141,7 +1171,8 @@ export default {
           engagementId: this.selectedEngagementId,
           data: removePayload,
         })
-        await this.getAllEngagements()
+        this.setDefaultBatch()
+        await this.fetchEngagementsByBatch()
       } catch (error) {
         this.isEmptyError = true
       } finally {
@@ -1300,7 +1331,7 @@ export default {
 
 <style lang="scss" scoped>
 .engagements-wrap {
-  background: var(--v-white-base);
+  background: var(--v-primary-lighten1);
   ::v-deep .menu-cell-wrapper {
     .action-icon {
       .fav-action {
@@ -1452,6 +1483,19 @@ export default {
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }
+      ::v-deep .v-data-table {
+        .v-data-table__wrapper {
+          tr {
+            td:first-child {
+              width: 300px;
+              position: fixed;
+              margin-left: 220px;
+              display: block;
+              background-color: var(--v-primary-lighten1);
+            }
+          }
+        }
+      }
     }
   }
   ::v-deep .hux-data-table.expanded-table {
@@ -1459,6 +1503,13 @@ export default {
       box-shadow: inset 0px 10px 10px -4px #d0d0ce !important;
       .child-row {
         border-right: none;
+      }
+      .expanded-row-cover {
+        width: 300px;
+        position: fixed;
+        margin-left: 220px;
+        display: block;
+        background-color: var(--v-primary-lighten1);
       }
     }
     td:nth-child(1) {

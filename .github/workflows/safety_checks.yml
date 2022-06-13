@@ -17,16 +17,26 @@ jobs:
           filters: |
             api:
               - 'hux/api/huxunify/**'
+            docs:
+              - 'docs/source/conf.py'
             dblib:
               - 'lib/huxunifylib-database/huxunifylib/**'
             scripts:
               - 'scripts/database/**'
+            api_int_tests:
+              - 'hux/integration_tests/api/**'
       - if: steps.changes.outputs.api == 'true'
         working-directory: hux/api
+        run: safety check
+      - if: always() && steps.changes.outputs.docs == 'true'
+        working-directory: docs
         run: safety check
       - if: always() && steps.changes.outputs.dblib == 'true'
         working-directory: lib/huxunifylib-database
         run: safety check
       - if: always() && steps.changes.outputs.scripts == 'true'
         working-directory: scripts
+        run: safety check
+      - if: always() && steps.changes.outputs.api_int_tests == 'true'
+        working-directory: hux/integration_tests/api
         run: safety check

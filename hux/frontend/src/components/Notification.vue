@@ -14,7 +14,7 @@
               <icon
                 data-e2e="notification-bell"
                 class="mx-2 my-2 nav-icon"
-                type="bell-notification"
+                :type="seenNotifications ? 'bell' : 'bell-notification'"
                 :size="24"
                 :class="{ 'active-icon': batchDetails.menu }"
               />
@@ -26,7 +26,9 @@
     </template>
     <v-list class="alert-menu-main">
       <v-list-item>
-        <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
+        <v-list-item-title
+          class="font-weight-semi-bold text-subtitle-1 black--text mt-2 mb-3"
+        >
           <span v-if="mostRecentNotifications.length > 0">
             Most recent alerts
           </span>
@@ -43,7 +45,7 @@
             <v-list-item-title class="text-h6 black--text list-main">
               <div class="d-flex text-caption">
                 <status
-                  :status="data.notification_type"
+                  :status="formatText(data.notification_type)"
                   :show-label="false"
                   :icon-size="21"
                 />
@@ -59,7 +61,7 @@
                     </template>
                   </tooltip>
                   <div class="text-body-2 black--text">
-                    <time-stamp :value="data.created" />
+                    <time-stamp :value="data.create_time" />
                   </div>
                 </div>
               </div>
@@ -87,6 +89,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { orderBy } from "lodash"
+import { formatText } from "@/utils"
 import Status from "./common/Status.vue"
 import Tooltip from "./common/Tooltip.vue"
 import TimeStamp from "./common/huxTable/TimeStamp.vue"
@@ -112,25 +115,39 @@ export default {
   },
   computed: {
     ...mapGetters({
+      alerts: "alerts/list",
       notifications: "notifications/latest5",
+      seenNotifications: "notifications/seenNotifications",
     }),
     mostRecentNotifications() {
-      return orderBy(this.notifications, "created", "desc").slice(
+      return orderBy(this.notifications, "create_time", "desc").slice(
         0,
         this.batchDetails.batch_size
       )
     },
   },
+  watch: {
+    alerts() {
+      if (this.alerts.length > 0 && this.alerts[0].code == 503) {
+        this.$router.push({ name: "ServiceError" })
+      }
+    },
+    $route() {
+      this.getLatestNotifications()
+    },
+  },
   async mounted() {
-    this.$root.$on("refresh-notifications", async () => {
-      await this.getAllNotifications(this.batchDetails)
-    })
+    this.$root.$on("refresh-notifications", this.getLatestNotifications())
     await this.getAllNotifications(this.batchDetails)
   },
   methods: {
     ...mapActions({
       getAllNotifications: "notifications/getAll",
     }),
+    formatText: formatText,
+    async getLatestNotifications() {
+      await this.getAllNotifications(this.batchDetails)
+    },
   },
 }
 </script>
@@ -157,7 +174,7 @@ export default {
 }
 .v-menu__content {
   margin-left: 70px !important;
-  top: 70px !important;
+  top: 75px !important;
   overflow-y: hidden !important;
   .alert-menu-main {
     width: 296px !important;

@@ -1,5 +1,6 @@
 """Module for AWS cloud operations"""
 import logging
+from pathlib import PurePath
 from typing import Tuple
 from enum import Enum
 
@@ -11,6 +12,7 @@ from huxunify.api.data_connectors.cloud.cloud_client import (
 )
 from huxunify.api.config import get_config, Config
 import huxunify.api.constants as api_c
+from huxunify.api.prometheus import record_health_status, Connections
 
 
 class ClientType(Enum):
@@ -117,9 +119,37 @@ class AWSClient(CloudClient):
             **kwargs (dict): function keyword arguments.
 
         Returns:
-
+            bool: indication that upload was successful.
         """
-        raise NotImplementedError()
+        bucket = self.config.S3_DATASET_BUCKET
+        object_name = PurePath(file_name).name
+
+        # If S3 object_name was not specified, use file_name
+
+        extraargs = {
+            "Metadata": {
+                api_c.CREATED_BY: user_name if user_name else "",
+                api_c.TYPE: file_type if file_type else "",
+            }
+        }
+        logging.info("Uploading %s file to AWS bucket %s", file_name, bucket)
+        try:
+            # Upload the file
+            s3_client = self.get_aws_client(ClientType.S3)
+            _ = s3_client.upload_file(
+                file_name, bucket, object_name, extraargs
+            )
+
+        except ClientError as exception:
+            logging.error(
+                "Failed to upload file %s to %s : %s",
+                file_name,
+                bucket,
+                exception,
+            )
+            return False
+        logging.info("Uploaded %s file to %s", file_name, bucket)
+        return True
 
     def download_file(self, file_name: str, user_name: str, **kwargs) -> bool:
         """Download a file from AWS S3.
@@ -132,7 +162,23 @@ class AWSClient(CloudClient):
         Returns:
             bool: indication that download was successful.
         """
-        raise NotImplementedError()
+        bucket = self.config.S3_DATASET_BUCKET
+
+        logging.info("Downloading %s file from %s", file_name, bucket)
+        try:
+            s3_client = self.get_aws_client(ClientType.S3)
+            with open(file_name, "wb") as output_file:
+                s3_client.download_fileobj(bucket, file_name, output_file)
+        except ClientError as exception:
+            logging.error(
+                "Failed to download file object %s from %s : %s",
+                file_name,
+                bucket,
+                exception,
+            )
+            return False
+        logging.info("Downloaded %s file from %s", file_name, bucket)
+        return True
 
     def __check_aws_health_connection(
         self, client: ClientType, client_method: str, method_args: dict
@@ -156,7 +202,7 @@ class AWSClient(CloudClient):
                 return True, f"{client.value} available."
             return (
                 False,
-                f"{client.value} unavailable. Received: "
+                f"{client.value} unavailable. Received status code: "
                 f"{resp['ResponseMetadata']['HTTPStatusCode']}",
             )
         except Exception as exception:  # pylint: disable=broad-except
@@ -167,6 +213,7 @@ class AWSClient(CloudClient):
                 f"{getattr(exception, 'message', repr(exception))}",
             )
 
+    @record_health_status(Connections.BATCH_SERVICE)
     def health_check_batch_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS batch service.
 
@@ -179,6 +226,7 @@ class AWSClient(CloudClient):
             method_args={"jobId": "test", "reason": "test"},
         )
 
+    @record_health_status(Connections.STORAGE_SERVICE)
     def health_check_storage_service(self) -> Tuple[bool, str]:
         """Checks the health of the AWS storage service.
 
@@ -191,6 +239,7 @@ class AWSClient(CloudClient):
             method_args={api_c.AWS_BUCKET: self.config.S3_DATASET_BUCKET},
         )
 
+    @record_health_status(Connections.SECRET_STORAGE_SERVICE)
     def health_check_secret_storage(self) -> Tuple[bool, str]:
         """Checks the health of the Azure key vault.
 

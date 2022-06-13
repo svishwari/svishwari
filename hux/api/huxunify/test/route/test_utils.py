@@ -5,10 +5,12 @@ from unittest import TestCase, mock
 
 import mongomock
 from bson import ObjectId
+
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database.client import DatabaseClient
 from hypothesis import given, strategies as st
 
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.exceptions.unified_exceptions import (
     InputParamsValidationError,
@@ -23,6 +25,8 @@ from huxunify.api.route.utils import (
     check_mongo_connection,
     get_health_check,
     filter_team_member_requests,
+    convert_filters_for_events,
+    convert_cdp_buckets_to_histogram,
 )
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
@@ -91,6 +95,27 @@ class TestRouteUtils(TestCase):
 
     def test_health_check(self):
         """Test health check."""
+
+        for subclass in CloudClient.__subclasses__():
+            # mock get_store_value of cloud secret store
+            mock.patch.object(
+                subclass,
+                "health_check_batch_service",
+                return_value=(True, "Batch service available"),
+            ).start()
+
+            mock.patch.object(
+                subclass,
+                "health_check_storage_service",
+                return_value=(True, "Storage service available"),
+            ).start()
+
+            mock.patch.object(
+                subclass,
+                "health_check_secret_storage",
+                return_value=(True, "Secret storage available"),
+            ).start()
+
         mock.patch(
             "huxunify.api.route.utils.check_mongo_connection",
             return_value=(True, "Mongo available"),
@@ -111,14 +136,6 @@ class TestRouteUtils(TestCase):
         mock.patch(
             "huxunify.api.route.utils.check_cdp_connections_api_connection",
             return_value=(True, "CDP connections available."),
-        ).start()
-        mock.patch(
-            "huxunify.api.route.utils.check_aws_ssm",
-            return_value=(True, "AWS SSM available"),
-        ).start()
-        mock.patch(
-            "huxunify.api.route.utils.check_aws_batch",
-            return_value=(True, "AWS Batch available"),
         ).start()
         mock.patch(
             "huxunify.api.route.utils.JiraConnection.check_jira_connection",
@@ -177,6 +194,7 @@ class TestRouteUtils(TestCase):
 
         Validation.validate_integer("1")
         Validation.validate_integer("12345")
+        Validation.validate_integer(value="0", validate_zero_or_greater=True)
 
     def test_validate_boolean(self):
         """Tests the Validation class static method validate_boolean."""
@@ -370,4 +388,89 @@ class TestRouteUtils(TestCase):
         self.assertIn(
             api_c.STATE_IN_PROGRESS,
             [request.get(api_c.STATUS) for request in filtered_requests],
+        )
+
+    def test_convert_filters_for_events(self):
+        """Test convert_filters_for_events method."""
+
+        event_filters = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {
+                            "field": "traits_analysed",
+                            "type": "within_the_last",
+                            "value": "12",
+                        }
+                    ],
+                }
+            ]
+        }
+
+        event_types = [
+            {api_c.TYPE: "traits_analysed", api_c.LABEL: "Traits Analysed"},
+            {api_c.TYPE: "sales_made", api_c.LABEL: "Sales Made"},
+        ]
+
+        expected_filters = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {
+                            "field": "event",
+                            "type": "event",
+                            "value": [
+                                {
+                                    "field": "event_name",
+                                    "type": "equals",
+                                    "value": "traits_analysed",
+                                },
+                                {
+                                    "field": "created",
+                                    "type": "range",
+                                    "value": [
+                                        (
+                                            datetime.utcnow()
+                                            - timedelta(days=12)
+                                        ).strftime("%Y-%m-%d"),
+                                        datetime.utcnow().strftime("%Y-%m-%d"),
+                                    ],
+                                },
+                            ],
+                        }
+                    ],
+                }
+            ]
+        }
+        convert_filters_for_events(event_filters, event_types)
+        self.assertEqual(
+            event_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+            expected_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+        )
+
+    def test_convert_cdp_age_bucket_to_histogram(self):
+        """Test for convert_cdp_buckets_to_histogram method for age field."""
+
+        bucket_age_data = t_c.CDP_COUNT_BY_AGE_RESONSE.get(api_c.BODY, [])
+        histogram_data = convert_cdp_buckets_to_histogram(
+            bucket_data=bucket_age_data, field=api_c.AGE
+        )
+
+        self.assertEqual(t_c.AGE_HISTOGRAM_DATA, histogram_data.values)
+
+    def test_convert_cdp_bucket_data_to_histogram(self):
+        """Test for convert_cdp_buckets_to_histogram method."""
+
+        bucket_data = t_c.CDP_COUNTS_BY_FLOAT_RESONSE.get(api_c.BODY, [])
+        histogram_data = convert_cdp_buckets_to_histogram(
+            bucket_data=bucket_data
+        )
+        self.assertEqual(
+            t_c.COUNTS_BY_FLOAT_HISTOGRAM_DATA, histogram_data.values
         )

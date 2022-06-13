@@ -1,8 +1,10 @@
-"""Schemas for the Orchestration API"""
+"""Schemas for the Orchestration API."""
 import datetime
 
 from flask_marshmallow import Schema
 from marshmallow import fields, validate
+from marshmallow.fields import List, Nested, Int
+
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
@@ -62,6 +64,7 @@ class AudienceDeliverySchema(Schema):
         required=True, validate=validate_object_id
     )
     link = fields.String()
+    is_ad_platform = fields.Bool()
 
 
 class DeliveriesSchema(Schema):
@@ -82,6 +85,7 @@ class DeliveriesSchema(Schema):
     delivery_schedule = fields.String()
     next_delivery = DateTimeWithZ()
     link = fields.String()
+    replace_audience = fields.Boolean()
 
 
 class EngagementDeliverySchema(EngagementGetSchema):
@@ -182,6 +186,13 @@ class AudienceGetSchema(Schema):
     match_rate = fields.Float(default=0)
     favorite = fields.Boolean(default=False)
     digital_advertising = fields.Nested(DigitAdvertising, allow_none=True)
+
+
+class AudiencesBatchGetSchema(Schema):
+    """Audiences batch schema."""
+
+    total_records = Int(example=1)
+    audiences = List(Nested(AudienceGetSchema))
 
 
 class CityIncomeInsightsSchema(Schema):

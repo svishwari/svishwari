@@ -9,8 +9,8 @@
           <icon
             type="filter"
             :size="27"
-            :color="finalFilterApplied > 0 ? 'primary' : 'black'"
-            :variant="finalFilterApplied > 0 ? 'lighten6' : 'darken4'"
+            :color="isFilterToggled ? 'primary' : 'black'"
+            :variant="isFilterToggled ? 'lighten6' : 'darken4'"
           />
           <v-badge
             v-if="finalFilterApplied > 0"
@@ -33,7 +33,11 @@
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
-        <page-header class="top-bar mb-3" :header-height="71">
+        <page-header
+          v-if="!isEmptyError"
+          class="top-bar mb-3"
+          :header-height="70"
+        >
           <template #left>
             <v-btn disabled icon color="black">
               <icon type="search" :size="20" color="black" variant="lighten3" />
@@ -64,12 +68,15 @@
           v-if="notificationData.length > 0 && !loading"
           class="pb-7 pl-3 white"
         >
-          <hux-data-table
+          <hux-lazy-data-table
             :columns="columnDefs"
             :data-items="notificationData"
-            sort-column="created"
+            sort-column="create_time"
             sort-desc
             class="big-table"
+            :enable-lazy-load="enableLazyLoad"
+            view-height="calc(100vh - 230px)"
+            @bottomScrollEvent="intersected"
           >
             <template #row-item="{ item }">
               <td
@@ -85,48 +92,42 @@
               >
                 <div v-if="header.value == 'id'">
                   <a @click="toggleDrawer(item[header.value])"
-                    >{{ item[header.value] | Empty("-") }}
+                    >{{ item[header.value] | Shorten | Empty("-") }}
                   </a>
                 </div>
 
                 <div v-if="header.value == 'category'">
-                  {{ item[header.value] | Empty("-") }}
+                  {{ formatText(item[header.value]) | Empty("-") }}
                 </div>
 
                 <div v-if="header.value == 'notification_type'" class="d-flex">
-                  <icon
-                    :type="
-                      item['notification_type'] === 'Success'
-                        ? 'success_new'
-                        : item['notification_type']
-                    "
-                    :size="18"
-                    :color="getIconColor(item['notification_type'])"
-                    :variant="getVariantColor(item['notification_type'])"
-                    class="d-block mr-1"
+                  <status
+                    :status="formatText(item['notification_type'])"
+                    :show-label="false"
+                    class="d-flex"
+                    :icon-size="18"
                   />
-                  {{ item["notification_type"] | Empty("-") }}
+                  {{ formatText(item["notification_type"]) | Empty("-") }}
                 </div>
 
-                <tooltip v-if="header.value == 'description'" position-top>
+                <tooltip v-if="header.value == 'description'" max-width="47%">
                   <template #label-content>
                     <span>{{ item[header.value] }}</span>
                   </template>
                   <template #hover-content>
-                    <div class="text--body-1 pb-2">Description</div>
                     {{ item[header.value] | Empty("-") }}
                   </template>
                 </tooltip>
 
-                <div v-if="header.value == 'created'">
-                  <time-stamp :value="item['created']" />
+                <div v-if="header.value == 'create_time'">
+                  <time-stamp :value="item['create_time']" />
                 </div>
               </td>
             </template>
-          </hux-data-table>
+          </hux-lazy-data-table>
         </v-row>
         <v-row
-          v-if="notificationData.length == 0 && !loading"
+          v-if="notificationData.length == 0 && !isEmptyError && !loading"
           class="background-empty"
         >
           <empty-page type="no-alerts" :size="50">
@@ -155,11 +156,7 @@
           </empty-page>
         </v-row>
         <v-row
-          v-if="
-            notificationData.length > 0 &&
-            notificationData.length <= 0 &&
-            !loading
-          "
+          v-if="notificationData.length == 0 && isEmptyError && !loading"
           class="d-flex justify-center align-center"
         >
           <error
@@ -171,12 +168,6 @@
           </error>
         </v-row>
         <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
-        <v-divider v-if="enableLazyLoad" class="hr-divider"></v-divider>
-        <v-progress-linear v-if="enableLazyLoad" active indeterminate />
-        <observer
-          v-if="notifications.length"
-          @intersect="intersected"
-        ></observer>
       </div>
       <div class="ml-auto">
         <alert-filter-drawer
@@ -197,19 +188,20 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import { formatRequestText, formatText } from "@/utils"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
+import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import Observer from "@/components/common/Observer"
 import Icon from "@/components/common/Icon"
 import AlertFilterDrawer from "./AlertFilter"
 import AlertDrawer from "./Drawer/AlertDrawer"
 import EmptyPage from "@/components/common/EmptyPage"
 import Error from "@/components/common/screens/Error"
 import AlertConfigureDrawer from "./Drawer/AlertConfigure.vue"
+import Status from "@/components/common/Status.vue"
 
 export default {
   name: "AlertsAndNotifications",
@@ -217,15 +209,15 @@ export default {
     PageHeader,
     Breadcrumb,
     huxButton,
-    HuxDataTable,
+    HuxLazyDataTable,
     TimeStamp,
     Tooltip,
-    Observer,
     Icon,
     AlertFilterDrawer,
     AlertDrawer,
     EmptyPage,
     Error,
+    Status,
     AlertConfigureDrawer,
   },
   data() {
@@ -253,12 +245,12 @@ export default {
         {
           text: "Alert ID",
           value: "id",
-          width: "260",
+          width: "150",
         },
         {
           text: "Category",
           value: "category",
-          width: "240px",
+          width: "200px",
         },
         {
           text: "Type",
@@ -272,11 +264,11 @@ export default {
         },
         {
           text: "Time",
-          value: "created",
-          width: "220px",
+          value: "create_time",
+          width: "200px",
         },
       ],
-      sortColumn: "created",
+      sortColumn: "create_time",
       sortDesc: true,
       loading: false,
       enableLazyLoad: false,
@@ -284,6 +276,7 @@ export default {
       batchDetails: {},
       isFilterToggled: false,
       isAlertsToggled: false,
+      isEmptyError: false,
       notificationId: null,
       numFiltersSelected: 0,
       finalFilterApplied: 1,
@@ -315,11 +308,13 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getUserData()
     try {
       this.setDefaultData()
+      await this.getUserData()
       await this.fetchNotificationsByBatch()
       this.calculateLastBatch()
+    } catch (error) {
+      this.isEmptyError = true
     } finally {
       this.loading = false
     }
@@ -376,20 +371,6 @@ export default {
     toggleAlertDrawer() {
       this.isAlertsToggled = !this.isAlertsToggled
     },
-    getIconColor(value) {
-      if (value) {
-        return value === "Success"
-          ? "success"
-          : value === "Critical"
-          ? "error"
-          : "primary"
-      }
-    },
-    getVariantColor(value) {
-      if (value) {
-        return value === "Informational" ? "lighten6" : "base"
-      }
-    },
     setDefaultData() {
       let today_date = new Date()
       let getStartDate = new Date(
@@ -418,6 +399,7 @@ export default {
       this.finalFilterApplied = data.filterApplied
       this.isFilterToggled = true
       this.enableLazyLoad = false
+      this.isEmptyError = false
       this.loading = true
       try {
         let today_date = new Date()
@@ -429,19 +411,22 @@ export default {
         this.batchDetails.batch_size = 25
         this.batchDetails.batch_number = 1
         this.batchDetails.isLazyLoad = false
-        if (data.selctedAlertType.length !== 0) {
-          this.batchDetails.notification_types =
-            data.selctedAlertType.toString()
+        if (data.selectedAlertType.length !== 0) {
+          this.batchDetails.notification_types = formatRequestText(
+            data.selectedAlertType.toString()
+          )
         } else {
           delete this.batchDetails.notification_types
         }
-        if (data.selctedCategory.length !== 0) {
-          this.batchDetails.category = data.selctedCategory.toString()
+        if (data.selectedCategory.length !== 0) {
+          this.batchDetails.category = formatRequestText(
+            data.selectedCategory.toString()
+          )
         } else {
           delete this.batchDetails.category
         }
-        if (data.selctedUsers.length !== 0) {
-          this.batchDetails.users = data.selctedUsers.toString()
+        if (data.selectedUsers.length !== 0) {
+          this.batchDetails.users = data.selectedUsers.toString()
         } else {
           delete this.batchDetails.users
         }
@@ -475,12 +460,13 @@ export default {
       await this.getUsersNoti()
       this.getAllUsers = this.getUsers
     },
+    formatText: formatText,
   },
 }
 </script>
 <style lang="scss" scoped>
 .notification-wrap {
-  background: white;
+  background: var(--v-white-base);
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }

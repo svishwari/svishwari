@@ -42,14 +42,8 @@
         </span>
         <div
           v-else
-          class="
-            d-flex
-            align-center
-            text-body-2
-            black--text
-            text--lighten-4
-            pb-1
-          "
+          class="d-flex align-center text-body-2 pb-1"
+          :style="{ color: textColor ? textColor : 'var(--v-black-lighten-4)' }"
         >
           {{ title }}
           <tooltip position-top :max-width="tooltipWidth">
@@ -70,7 +64,7 @@
 
         <slot name="extra-item"></slot>
 
-        <div class="subtitle-slot">
+        <div class="subtitle-slot mt-1">
           <span
             class="text-caption"
             :class="{
@@ -93,10 +87,13 @@
       <div class="flex-grow-1" :class="{ 'align-center': highLevel }">
         <div class="subtitle-slot">
           <span
-            class="text-body-2 black--text text--lighten-4"
+            class="text-body-2"
             :class="{
               'no-click': !interactable,
               'flex-grow-1 align-center': highLevel,
+            }"
+            :style="{
+              color: textColor ? textColor : 'var(--v-black-lighten-4)',
             }"
           >
             {{ subtitle }}
@@ -110,9 +107,10 @@
           v-if="!titleTooltip"
           class="text-subtitle-1"
           :class="[
-            interactable ? 'primary--text ' : 'black--text text--lighten-4 ',
+            interactable ? 'primary--text ' : '',
             highLevel ? 'highlevel-title-above' : '',
           ]"
+          :style="{ color: textColor ? textColor : 'var(--v-black-lighten-4)' }"
         >
           <span v-if="highLevel">
             <slot name="title"></slot>
@@ -225,6 +223,11 @@ export default {
     titleIcon: {
       type: [String],
       required: false,
+    },
+    textColor: {
+      type: String,
+      required: false,
+      default: undefined,
     },
   },
 }

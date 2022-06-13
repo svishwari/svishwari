@@ -1,12 +1,12 @@
 <template>
-  <div class="audiences-wrap white">
+  <div class="audiences-wrap">
     <page-header class="py-5" :header-height="110">
       <template #left>
         <div>
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Segment your customers into audiences based on your customer data and
+          Segment your consumers into audiences based on your consumer data and
           model scores.
         </div>
       </template>
@@ -19,11 +19,11 @@
           <icon
             type="filter"
             :size="27"
-            :color="finalFilterApplied > 0 ? 'primary' : 'black'"
+            :color="isFilterToggled > 0 ? 'primary' : 'black'"
             :variant="
               showError
                 ? 'lighten3'
-                : finalFilterApplied > 0
+                : isFilterToggled > 0
                 ? 'lighten6'
                 : 'darken4'
             "
@@ -79,17 +79,19 @@
             </router-link>
           </template>
         </page-header>
-        <hux-data-table
+        <hux-lazy-data-table
           v-if="!loading && audienceList.length > 0"
           :columns="columnDefs"
           :data-items="audienceList"
-          view-height="calc(100vh - 253px)"
           sort-column="update_time"
           sort-desc="false"
           data-e2e="audience-table"
-          class="big-table"
+          class="big-table white"
+          :enable-lazy-load="enableLazyLoad"
+          view-height="calc(100vh - 253px)"
+          @bottomScrollEvent="intersected"
         >
-          <template #row-item="{ item }">
+          <template #row-item="{ item, index }">
             <td
               v-for="header in columnDefs"
               :key="header.value"
@@ -117,8 +119,9 @@
                   data-e2e="audiencename"
                   has-favorite
                   :is-favorite="isUserFavorite(item, 'audiences')"
-                  class="text-body-1"
+                  class="text-body-1 name-cell"
                   :show-star="!item.is_lookalike"
+                  :nudge-top="audienceList.length - 1 == index ? '70' : ''"
                   @actionFavorite="handleActionFavorite(item, 'audiences')"
                 />
               </div>
@@ -204,7 +207,6 @@
                           :key="destination.id"
                           class="mr-1"
                           :type="destination.type"
-                          :size="18"
                         />
                       </template>
                       <template #hover-content>
@@ -234,7 +236,6 @@
                               :key="extraDestination.id"
                               class="mr-4"
                               :type="extraDestination.type"
-                              :size="18"
                             />
                             <span>{{ extraDestination.name }}</span>
                           </div>
@@ -293,7 +294,7 @@
               </div>
             </td>
           </template>
-        </hux-data-table>
+        </hux-lazy-data-table>
 
         <look-alike-audience
           ref="lookalikeWorkflow"
@@ -460,7 +461,7 @@ import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue"
 import Avatar from "@/components/common/Avatar.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
@@ -482,7 +483,7 @@ export default {
     Breadcrumb,
     huxButton,
     EmptyPage,
-    HuxDataTable,
+    HuxLazyDataTable,
     Avatar,
     Size,
     TimeStamp,
@@ -530,14 +531,14 @@ export default {
           value: "size",
           width: "112px",
           hoverTooltip:
-            "Current number of customers who fit the selected attributes.",
+            "Current number of consumers who fit the selected attributes.",
           tooltipWidth: "231px",
         },
         {
           id: 4,
           text: "Attributes",
           value: "filters",
-          width: "362px",
+          width: "380px",
         },
         {
           id: 5,
@@ -582,6 +583,9 @@ export default {
       confirmModal: false,
       confirmSubtitle: "",
       isFilterToggled: false,
+      enableLazyLoad: false,
+      lastBatch: 0,
+      batchDetails: {},
     }
   },
   computed: {
@@ -589,6 +593,7 @@ export default {
       rowData: "audiences/list",
       userFavorites: "users/favorites",
       ruleAttributes: "audiences/audiencesRules",
+      totalAudiences: "audiences/total",
     }),
     audienceList() {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
@@ -630,8 +635,10 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.getAllAudiences({})
+      this.setDefaultBatch()
+      await this.fetchAudienceByBatch()
       await this.getAudiencesRules()
+      this.calculateLastBatch()
     } catch (error) {
       this.showError = true
     } finally {
@@ -646,6 +653,36 @@ export default {
       deleteAudience: "audiences/remove",
       getAudiencesRules: "audiences/fetchConstants",
     }),
+
+    setDefaultBatch() {
+      this.batchDetails.batch_size = 25
+      this.batchDetails.batch_number = 1
+      this.batchDetails.isLazyLoad = false
+      this.batchDetails.lookalikeable = false
+      this.batchDetails.favorites = false
+      this.batchDetails.worked_by = false
+      this.batchDetails.attribute = []
+      this.batchDetails.deliveries = 2
+    },
+
+    intersected() {
+      if (this.batchDetails.batch_number <= this.lastBatch) {
+        this.batchDetails.isLazyLoad = true
+        this.enableLazyLoad = true
+        this.fetchAudienceByBatch()
+      } else {
+        this.enableLazyLoad = false
+      }
+    },
+    async fetchAudienceByBatch() {
+      await this.getAllAudiences(this.batchDetails)
+      this.batchDetails.batch_number++
+    },
+    calculateLastBatch() {
+      this.lastBatch = Math.ceil(
+        this.totalAudiences / this.batchDetails.batch_size
+      )
+    },
 
     async confirmEdit() {
       this.confirmEditModal = false
@@ -684,6 +721,7 @@ export default {
                     key: att,
                     name: attr[1][optionKey][att]["name"],
                     category: attr[0],
+                    optionName: attr[1][optionKey].name,
                   })
                 }
               })
@@ -692,6 +730,7 @@ export default {
                 key: optionKey,
                 name: attr[1][optionKey]["name"],
                 category: attr[0],
+                optionName: attr[1][optionKey].name,
               })
             }
           })
@@ -848,13 +887,14 @@ export default {
     },
 
     async applyFilter(params) {
-      this.finalFilterApplied = params.filterApplied
       this.loading = true
-      await this.getAllAudiences({
-        favorites: params.selectedFavourite,
-        worked_by: params.selectedAudienceWorkedWith,
-        attribute: params.selectedAttributes,
-      })
+      this.finalFilterApplied = params.filterApplied
+      this.setDefaultBatch()
+      this.batchDetails.favorites = params.selectedFavourite
+      this.batchDetails.worked_by = params.selectedAudienceWorkedWith
+      this.batchDetails.attribute = params.selectedAttributes
+      await this.fetchAudienceByBatch()
+      this.calculateLastBatch()
       this.loading = false
     },
     formatText: formatText,
@@ -982,11 +1022,6 @@ export default {
   background-position: center;
 }
 
-.error-wrap {
-  margin-top: 40px;
-  width: 100%;
-}
-
 //to overwrite the classes
 
 .title-no-engagement {
@@ -1007,5 +1042,8 @@ export default {
   max-height: 0 !important;
   min-height: 100% !important;
   min-width: 100% !important;
+}
+.name-cell {
+  margin-bottom: -15px !important;
 }
 </style>

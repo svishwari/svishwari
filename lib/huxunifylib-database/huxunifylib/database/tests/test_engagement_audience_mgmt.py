@@ -43,18 +43,8 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
             db_c.STATUS_SUCCEEDED,
         )
 
-    def test_set_destination_cron_expression(self):
-        """Test setting the destination cron expression.
-
-        Args:
-
-        Returns:
-
-        """
-        # manually create the engagement
-        audience_id = ObjectId()
-        destination_id = ObjectId()
-        engagement_id = (
+        self.audience_id = ObjectId()
+        self.engagement_id = (
             self.database[db_c.DATA_MANAGEMENT_DATABASE][
                 db_c.ENGAGEMENTS_COLLECTION
             ]
@@ -70,11 +60,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
                     "status": "Active",
                     "audiences": [
                         {
-                            "id": audience_id,
+                            "id": self.audience_id,
                             "destinations": [
-                                {
-                                    "id": destination_id,
-                                }
+                                {"id": self.destination[db_c.ID]}
                             ],
                         }
                     ],
@@ -83,8 +71,17 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
             .inserted_id
         )
 
+    def test_set_destination_cron_expression(self):
+        """Test setting the destination cron expression.
+
+        Args:
+
+        Returns:
+
+        """
+
         # get the engagement first
-        engagement = em.get_engagement(self.database, engagement_id)
+        engagement = em.get_engagement(self.database, self.engagement_id)
 
         # test to ensure the field is not set
         self.assertNotIn(
@@ -96,15 +93,15 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         cron_expression = "15 23 ? * 1/2 *"
         eam.set_engagement_audience_destination_schedule(
             self.database,
-            engagement_id,
-            audience_id,
-            destination_id,
+            self.engagement_id,
+            self.audience_id,
+            self.destination[db_c.ID],
             cron_expression,
             "joe smith",
         )
 
         # grab the engagement again
-        engagement = em.get_engagement(self.database, engagement_id)
+        engagement = em.get_engagement(self.database, self.engagement_id)
 
         # test to ensure it was set
         self.assertIn(
@@ -126,51 +123,20 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         Returns:
 
         """
-        # manually create the engagement
-        audience_id = ObjectId()
-        destination_id = ObjectId()
-        engagement_id = (
-            self.database[db_c.DATA_MANAGEMENT_DATABASE][
-                db_c.ENGAGEMENTS_COLLECTION
-            ]
-            .insert_one(
-                {
-                    "name": "arkells 2",
-                    "description": "",
-                    "create_time": datetime.utcnow(),
-                    "created_by": "Douglas Long",
-                    "updated_by": "",
-                    "update_time": datetime.utcnow(),
-                    "deleted": False,
-                    "status": "Active",
-                    "audiences": [
-                        {
-                            "id": audience_id,
-                            "destinations": [
-                                {
-                                    "id": destination_id,
-                                }
-                            ],
-                        }
-                    ],
-                }
-            )
-            .inserted_id
-        )
 
         # set the cron expression
         cron_expression = "15 23 ? * 1/2 *"
         eam.set_engagement_audience_destination_schedule(
             self.database,
-            engagement_id,
-            audience_id,
-            destination_id,
+            self.engagement_id,
+            self.audience_id,
+            self.destination[db_c.ID],
             cron_expression,
             "joe smith",
         )
 
         # grab the engagement again
-        engagement = em.get_engagement(self.database, engagement_id)
+        engagement = em.get_engagement(self.database, self.engagement_id)
 
         # test to ensure it was set
         self.assertEqual(
@@ -183,21 +149,154 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         # now remove it
         eam.set_engagement_audience_destination_schedule(
             self.database,
-            engagement_id,
-            audience_id,
-            destination_id,
+            self.engagement_id,
+            self.audience_id,
+            self.destination[db_c.ID],
             cron_expression,
             "joe smith",
             unset=True,
         )
 
         # grab the engagement again
-        engagement = em.get_engagement(self.database, engagement_id)
+        engagement = em.get_engagement(self.database, self.engagement_id)
 
         # test to ensure it was removed
         self.assertNotIn(
             db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
             engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0],
+        )
+
+    def test_set_engagement_audience_delivery_schedule(self):
+        """Test setting the delivery schedule of an audience in an
+        engagement."""
+        # attach another audience to engagement
+        engagement = em.append_audiences_to_engagement(
+            database=self.database,
+            engagement_id=self.engagement_id,
+            user_name="Test User",
+            audiences=[
+                {
+                    db_c.OBJECT_ID: ObjectId(),
+                    db_c.DESTINATIONS: self.destination,
+                }
+            ],
+        )
+
+        # test to ensure the field is not set
+        self.assertNotIn(
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][0],
+        )
+        self.assertNotIn(
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][1],
+        )
+
+        # set the delivery schedule into the first audience in the engagement
+        delivery_schedule = {
+            "schedule": {
+                "periodicity": "Daily",
+                "every": 1,
+                "hour": 12,
+                "minute": 15,
+                "period": "AM",
+            },
+            "start_date": "2022-03-02T00:00:00.000Z",
+            "end_date": "2022-04-02T00:00:00.000Z",
+        }
+        eam.set_engagement_audience_schedule(
+            self.database,
+            self.engagement_id,
+            self.audience_id,
+            delivery_schedule,
+            "joe smith",
+        )
+
+        # grab the engagement again
+        engagement = em.get_engagement(self.database, self.engagement_id)
+
+        # test to ensure that delivery_schedule is set only against the first
+        # audience in the engagement
+        self.assertIn(
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][0],
+        )
+        self.assertNotIn(
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][1],
+        )
+
+    def test_remove_engagement_audience_delivery_schedule(self):
+        """Test removing the delivery schedule of an audience in an
+        engagement."""
+        # attach another audience to engagement
+        _ = em.append_audiences_to_engagement(
+            database=self.database,
+            engagement_id=self.engagement_id,
+            user_name="Test User",
+            audiences=[
+                {
+                    db_c.OBJECT_ID: ObjectId(),
+                    db_c.DESTINATIONS: self.destination,
+                }
+            ],
+        )
+
+        # set the delivery schedule into the first audience in the engagement
+        delivery_schedule = {
+            "schedule": {
+                "periodicity": "Daily",
+                "every": 1,
+                "hour": 12,
+                "minute": 15,
+                "period": "AM",
+            },
+            "start_date": "2022-03-02T00:00:00.000Z",
+            "end_date": "2022-04-02T00:00:00.000Z",
+        }
+
+        eam.set_engagement_audience_schedule(
+            self.database,
+            self.engagement_id,
+            self.audience_id,
+            delivery_schedule,
+            "joe smith",
+        )
+
+        # get the engagement first
+        engagement = em.get_engagement(self.database, self.engagement_id)
+
+        # test to ensure that delivery_schedule is set only against the first
+        # audience in the engagement
+        self.assertIn(
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][0],
+        )
+        self.assertNotIn(
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][1],
+        )
+
+        eam.set_engagement_audience_schedule(
+            self.database,
+            self.engagement_id,
+            self.audience_id,
+            delivery_schedule,
+            "joe smith",
+            unset=True,
+        )
+
+        # grab the engagement again
+        engagement = em.get_engagement(self.database, self.engagement_id)
+
+        # test to ensure the field is unset
+        self.assertNotIn(
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][0],
+        )
+        self.assertNotIn(
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][1],
         )
 
     def generate_audience_delivery_jobs(self, index=0) -> dict:
@@ -230,11 +329,12 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
 
         # create delivery job
         dpm.set_delivery_job(
-            self.database,
-            audience[db_c.ID],
-            self.destination[db_c.ID],
-            [],
-            engagement_id,
+            database=self.database,
+            audience_id=audience[db_c.ID],
+            delivery_platform_id=self.destination[db_c.ID],
+            delivery_platform_generic_campaigns=[],
+            username=self.user_name,
+            engagement_id=engagement_id,
         )
 
         return audience
@@ -337,3 +437,21 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         self.assertTrue(engagement_deliveries)
         self.assertEqual(4, len(engagement_deliveries))
         self.assertListEqual(audience_ids, list(engagement_deliveries.keys()))
+
+    def test_set_replace_audience_flag_engaged_audience(self):
+        """Test set_replace_audience flag_engaged_audience method"""
+        engagement_doc = eam.set_replace_audience_flag_engaged_audience(
+            database=self.database,
+            engagement_id=self.engagement_id,
+            audience_id=self.audience_id,
+            destination_id=self.destination[db_c.ID],
+            replace_audience=True,
+            user_name="Test User",
+        )
+        for audience in engagement_doc[db_c.AUDIENCES]:
+            for destination in audience[db_c.DESTINATIONS]:
+                if (
+                    destination[db_c.OBJECT_ID] == self.destination[db_c.ID]
+                    and audience[db_c.OBJECT_ID] == self.audience_id
+                ):
+                    self.assertTrue(destination[db_c.REPLACE_AUDIENCE])

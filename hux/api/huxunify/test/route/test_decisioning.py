@@ -3,12 +3,12 @@ import json
 from http import HTTPStatus
 from unittest import mock
 
-from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.collection_management import create_document
 from hypothesis import given, settings, strategies as st
 
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
@@ -17,7 +17,7 @@ from huxunify.api.schema.model import (
     ModelDriftSchema,
 )
 from huxunify.test import constants as t_c
-from huxunify.api.data_connectors.tecton import Tecton
+from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 
 
 # Allow 30 secs per hypothesis example (deadline is specified in milliseconds)
@@ -68,13 +68,8 @@ class DecisioningTests(RouteTestCase):
             t_c.validate_schema(ModelSchema(), response.json, True)
         )
 
-        self.assertEqual(
-            [x[api_c.NAME] for x in response.json],
-            sorted([x[api_c.NAME] for x in t_c.MOCKED_MODEL_RESPONSE]),
-        )
-
     def test_success_get_models_with_status(self):
-        """Test get models from Tecton with status."""
+        """Test get models with status."""
 
         get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
@@ -88,11 +83,7 @@ class DecisioningTests(RouteTestCase):
         self.assertTrue(
             t_c.validate_schema(ModelSchema(), response.json, True)
         )
-
-        self.assertListEqual(
-            [x[api_c.NAME] for x in response.json],
-            ["Model1", "Model2"],
-        )
+        self.assertEqual(len(response.json), 11)
 
     def test_success_request_model(self):
         """Test requesting a model."""
@@ -250,7 +241,7 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(ModelVersionSchema(many=True).dump(response))
+        self.assertTrue(ModelVersionSchema(many=True).dump(response.json))
 
     @given(model_id=st.integers(min_value=100, max_value=1000))
     @settings(settings.load_profile("hypothesis_setting_profile"))
@@ -274,10 +265,11 @@ class DecisioningTests(RouteTestCase):
             f"{api_c.MODELS_VERSION_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
         )
-        if model_id in t_c.SUPPORTED_MODELS:
-            self.assertEqual(HTTPStatus.OK, response.status_code)
-        else:
-            self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(ModelVersionSchema(), response.json, True)
+        )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(settings.load_profile("hypothesis_setting_profile"))
@@ -377,9 +369,7 @@ class DecisioningTests(RouteTestCase):
         self.assertTrue(
             t_c.validate_schema(FeatureSchema(), response.json, True)
         )
-        self.assertTrue(
-            all((feature[api_c.SCORE] < 0 for feature in response.json))
-        )
+        self.assertEqual(20, len(response.json))
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(settings.load_profile("hypothesis_setting_profile"))

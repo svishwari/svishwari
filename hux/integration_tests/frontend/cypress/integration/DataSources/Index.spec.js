@@ -22,17 +22,14 @@ describe("Data Management > Data Sources", () => {
           return false
         }
       })
-      cy.get("button").contains("Request 1 data source").click()
+      cy.get("button").contains("Request 1 data source")
+      cy.get("button").contains("Cancel").click()
       cy.location("pathname").should("eq", route.dataSources)
 
-      // TODO: improve waiting for the data source list to load
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1000)
+      cy.wait(4000)
 
-      // make sure that number of data sources have increased by 1
-      cy.get(selector.datasources)
-        .its("length")
-        .should("eq", $elem.length + 1)
+      cy.get(selector.datasources).its("length").should("eq", $elem.length)
 
       cy.get(selector.pendingStatus)
         .eq(0)
@@ -42,7 +39,9 @@ describe("Data Management > Data Sources", () => {
       cy.get(selector.removeDataSourceConfirmation)
         .get("button")
         .contains("Yes, remove it")
-        .eq(0)
+      cy.get(selector.removeDataSourceConfirmation)
+        .get("button")
+        .contains("Nevermind")
         .click()
 
       cy.get(selector.engagement.exitDrawer).click()
@@ -75,17 +74,19 @@ describe("Data Management > Data Sources", () => {
     cy.get(selector.datasources).eq(0).click()
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
-    cy.get(".datasource-datafeeds-table").should("exist")
-
-    cy.get(".data-feed-name").eq(0).click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
-    cy.get(selector.dataFilesWrapper).then((elem) => {
-      if (elem.find(".datasource-datafeeds-details-table").length > 0) {
-        cy.get(selector.dataFeedDetailsTable).should("exist")
-      } else {
-        cy.wrap(elem.find(".empty-error-card")).should("exist")
+    cy.wait(4000)
+    cy.get(selector.datasourceDatafeedsTable).then((datafeeds) => {
+      if (datafeeds.find(".data-feed-name").length > 0) {
+        datafeeds.find(".data-feed-name").eq(0).click()
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(4000)
+        cy.get(selector.dataFilesWrapper).then((elem) => {
+          if (elem.find(".datasource-datafeeds-details-table").length > 0) {
+            cy.get(selector.dataFeedDetailsTable).should("exist")
+          } else {
+            cy.wrap(elem.find(".empty-error-card")).should("exist")
+          }
+        })
       }
     })
   })
