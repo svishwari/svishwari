@@ -205,7 +205,7 @@
                     v-else-if="
                       !loadingCustomerChart && totalCustomers.length == 0
                     "
-                    class="model-features-frame py-14 mt-4"
+                    class="model-features-frame py-14"
                   >
                     <empty-page
                       v-if="totalCustomers.length == 0 && !totalCustomerError"
@@ -292,7 +292,7 @@
                     v-else-if="
                       !loadingSpendChart && totalCustomerSpend.length == 0
                     "
-                    class="drift-chart-frame py-14 mt-4"
+                    class="drift-chart-frame py-14"
                   >
                     <empty-page
                       v-if="
@@ -399,7 +399,7 @@
                         !loadingGeoOverview && customersGeoOverview.length == 0
                       "
                       md="12"
-                      class="py-14 mt-14"
+                      class="py-14 map-feature-chart-frame"
                     >
                       <empty-page
                         v-if="
@@ -859,10 +859,20 @@ export default {
 .model-features-frame {
   background-image: url("../../assets/images/no-barchart-frame.png");
   background-position: center;
+  background-size: 90% 90%;
+  height: 335px;
 }
 .drift-chart-frame {
   background-image: url("../../assets/images/no-drift-chart-frame.png");
   background-position: center;
+  background-size: 90% 90%;
+  height: 335px;
+}
+.map-feature-chart-frame {
+  background-image: url("../../assets/images/no-customers-chart-frame.png");
+  background-position: 50% 63%;
+  background-size: 94% 90%;
+  height: 380px;
 }
 .list-frame {
   background-image: url("../../assets/images/no-lift-chart-frame.png");

@@ -228,7 +228,7 @@
         <hux-filters-drawer
           :is-toggled="isFilterToggled"
           :count="numFiltersSelected"
-          :enable-apply="setEnableApply"
+          :enable-apply="true"
           content-height="300px"
           @clear="resetFilters"
           @apply="applyFilters"
@@ -481,7 +481,8 @@ $headerOffsetY: 70px;
   .matching-trend-chart-frame {
     background-image: url("../../assets/images/no-matching-trend-chart-frame.png");
     background-position: center;
-    background-size: 90% 100%;
+    background-size: 95% 100%;
+    max-height: 335px !important;
   }
 }
 

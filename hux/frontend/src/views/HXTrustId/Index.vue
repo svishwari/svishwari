@@ -273,13 +273,18 @@
                       "
                       class="d-flex align-center justify-end mr-2"
                     >
-                      <hux-icon
-                        type="trash"
-                        class="cursor-pointer"
-                        :size="18"
-                        color="black"
-                        @click.native="removeSegment(row.item)"
-                      />
+                      <tooltip max-width="90" nudge-right="-20">
+                        <template #label-content>
+                          <hux-icon
+                            type="trash"
+                            class="cursor-pointer"
+                            :size="18"
+                            color="black"
+                            @click.native="removeSegment(row.item)"
+                          />
+                        </template>
+                        <template #hover-content> Delete segment </template>
+                      </tooltip>
                     </div>
                   </template>
                 </data-cards>
@@ -802,6 +807,9 @@ export default {
 <style lang="scss" scoped>
 .v-application {
   .hx-trust-id-wrapper {
+    ::v-deep .container {
+      padding-top: 0px !important;
+    }
     ::v-deep .v-breadcrumbs {
       li {
         font-family: Open Sans Light;
@@ -839,6 +847,9 @@ export default {
   background: var(--v-primary-lighten1);
   border: 1px solid var(--v-black-lighten2);
   border-radius: 5px;
+  .v-list-item--link:before {
+    background-color: transparent !important;
+  }
 }
 .no-data-width {
   width: 100%;
@@ -863,7 +874,6 @@ export default {
   overflow-x: hidden !important;
 }
 .segment-drawer {
-  margin-top: -30px;
   margin-right: -30px;
 }
 ::v-deep .hux-filters-drawer {

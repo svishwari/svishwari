@@ -61,6 +61,7 @@
           </div>
 
           <v-divider
+            v-if="showDivider"
             class="pb-3"
             style="border-color: var(--v-black-lighten2)"
           />
@@ -158,6 +159,10 @@ export default {
     modelsBtnText() {
       let count = this.selectedModelIds.length
       return `Request ${count} model${count > 1 ? "s" : ""}`
+    },
+
+    showDivider() {
+      return this.enabledModels && Object.keys(this.enabledModels).length > 0
     },
 
     enabledModels() {
