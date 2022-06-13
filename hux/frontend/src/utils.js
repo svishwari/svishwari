@@ -492,7 +492,7 @@ export function aggregateAgeFilters(filters) {
  * @returns {boolean} if user can take this action on this screen
  */
 export function getAccess(screen, action) {
-  let role = "viewer" //store.getters["users/getCurrentUserRole"]
+  let role = store.getters["users/getCurrentUserRole"]
   let matrix = store.getters["users/getRbacMatrix"]
   return matrix[screen]["actions"].find((item) => item.type == action)[role]
 }
