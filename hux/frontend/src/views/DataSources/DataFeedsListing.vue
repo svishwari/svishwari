@@ -8,6 +8,7 @@
         <v-btn
           icon
           data-e2e="filesTableFilter"
+          v-if="getAccess('data_source', 'update_list_of_data_sources')"
           @click.native="isFilterToggled = !isFilterToggled"
         >
           <icon
@@ -431,6 +432,7 @@
       </div>
       <div class="ml-auto">
         <data-feeds-table-filter
+          v-if="getAccess('data_source', 'update_list_of_data_sources')"
           v-model="isFilterToggled"
           @onSectionAction="applyFilter"
         />
@@ -452,6 +454,7 @@ import EmptyPage from "@/components/common/EmptyPage.vue"
 import { formatDate, formatDateToLocal } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
 import DataFeedsTableFilter from "./DataFeedsTableFilter.vue"
+import { getAccess } from "../../utils"
 
 export default {
   name: "DataSourceFeedsListing",
@@ -789,6 +792,7 @@ export default {
     },
 
     formatDateToLocal: formatDateToLocal,
+    getAccess: getAccess,
   },
 }
 </script>
