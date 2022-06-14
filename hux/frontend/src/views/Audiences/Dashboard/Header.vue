@@ -23,7 +23,10 @@
         <tooltip position-bottom>
           <template #label-content>
             <span
-              v-if="audienceData.is_lookalike === true"
+              v-if="
+                audienceData.is_lookalike === true &&
+                getAccess('audience', 'edit_lookalike')
+              "
               @click="openLookalikeEditModal()"
             >
               <icon
@@ -33,7 +36,10 @@
                 color="black-darken4"
               />
             </span>
-            <span v-else @click="initiateEdit()">
+            <span
+              v-else-if="getAccess('audience', 'update_one')"
+              @click="initiateEdit()"
+            >
               <icon
                 type="pencil"
                 :size="18"
@@ -68,11 +74,17 @@
               <v-list-item @click="favoriteAudience()">
                 {{ audienceData.favorite ? "Unfavorite" : "Favorite" }}
               </v-list-item>
-              <v-list-item @click="initiateDelete()">
+              <v-list-item
+                v-if="getAccess('audience', 'delete_one')"
+                @click="initiateDelete()"
+              >
                 Delete audience
               </v-list-item>
               <v-list-item
-                v-if="!audienceData.is_lookalike"
+                v-if="
+                  !audienceData.is_lookalike &&
+                  getAccess('audience', 'download')
+                "
                 @click="openDownloadDrawer()"
               >
                 Download as
@@ -90,6 +102,7 @@ import PageHeader from "@/components/PageHeader.vue"
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import Icon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import { getAccess } from "../../../utils"
 
 export default {
   name: "DashboardHeader",
@@ -132,6 +145,7 @@ export default {
     initiateEdit() {
       this.$emit("editAudience", this.audienceData)
     },
+    getAccess: getAccess,
   },
 }
 </script>

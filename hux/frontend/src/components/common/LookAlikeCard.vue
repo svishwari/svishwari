@@ -15,6 +15,7 @@
     >
       <span>Lookalikes</span>
       <v-btn
+        v-if="getAccess('audience', 'create_lookalike')"
         :disabled="!isActive"
         text
         color="primary"
@@ -103,6 +104,8 @@
 <script>
 import Icon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import { getAccess } from "@/utils.js"
+
 export default {
   name: "LookAlikeCard",
   components: {
@@ -131,6 +134,7 @@ export default {
     onCreateLookalike: function () {
       this.$emit("createLookalike")
     },
+    getAccess: getAccess,
   },
 }
 </script>

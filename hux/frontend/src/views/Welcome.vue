@@ -62,6 +62,7 @@ export default {
         const redirect = sessionStorage.getItem("appRedirect")
         sessionStorage.removeItem("appRedirect")
         this.$store.dispatch("users/getUserProfile")
+        this.$store.dispatch("users/getAccessMetrics")
         this.$router.replace(
           redirect || {
             name: "Home",

@@ -39,6 +39,7 @@
               Edit destination URL
             </v-list-item>
             <v-list-item
+              v-if="getAccess('destinations', 'delete')"
               class="text-body-1 action-menu-item"
               data-e2e="destination-list-remove"
               @click="openModal(destination)"
@@ -177,6 +178,7 @@ import HuxEmpty from "@/components/common/screens/Empty"
 import Error from "@/components/common/screens/Error"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
+import { getAccess } from "@/utils.js"
 
 export default {
   name: "DestinationsList",
@@ -287,6 +289,7 @@ export default {
       this.inputText = null
       this.enableConfirm = false
     },
+    getAccess: getAccess,
   },
 }
 </script>

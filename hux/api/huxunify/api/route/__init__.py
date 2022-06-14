@@ -1,4 +1,4 @@
-"""Purpose of this sub-folder is to store all route logic"""
+"""Purpose of this sub-folder is to store all route logic."""
 
 from huxunify.api.route.destination import dest_bp
 from huxunify.api.route.email_deliverability import email_deliverability_bp

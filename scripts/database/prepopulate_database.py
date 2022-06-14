@@ -36,6 +36,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
@@ -45,6 +46,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
@@ -55,6 +59,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
@@ -65,6 +72,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
@@ -75,6 +85,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
@@ -85,6 +96,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
@@ -95,6 +107,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -105,6 +118,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -115,6 +129,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -125,6 +140,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -135,6 +151,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -145,6 +162,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_RETENTION,
@@ -155,6 +173,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
@@ -165,6 +184,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
@@ -175,6 +195,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
@@ -184,6 +205,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_UNCATEGORIZED,
@@ -193,6 +217,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: "Retention",
@@ -210,6 +237,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: "Retention",
@@ -227,6 +255,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
 ]
 

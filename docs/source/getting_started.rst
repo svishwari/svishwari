@@ -1,6 +1,6 @@
-=============================================
-Getting Started with the HUX-Unified Platform
-=============================================
+======================================
+Getting Started - HUX-Unified Platform
+======================================
 
 This page is intended to help access the HUX Platform and its relevant applications like the backend API and frontend UI.
 

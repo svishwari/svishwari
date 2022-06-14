@@ -96,7 +96,7 @@
           </v-row>
           <v-row
             v-else-if="numIssues == 0 && !loading && !handleErrorStateIssues"
-            class="background-empty"
+            class="background-empty ma-7 mt-4 card-style"
           >
             <empty-page type="no-alerts" :size="50">
               <template #title>
@@ -286,9 +286,11 @@ export default {
   padding-left: 32px !important;
 }
 .background-empty {
-  height: 70vh !important;
-  background-image: url("../assets/images/no-alert-frame.png");
+  height: 50vh;
+  max-height: 280px !important;
+  background-image: url("../assets/images/no-lift-chart-frame.png");
   background-position: center;
+  background-size: 93% 87%;
 }
 
 ::v-deep .empty-page {
