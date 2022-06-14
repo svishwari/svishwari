@@ -250,6 +250,13 @@ export default {
     lastrun: "[data-e2e='lastrun']",
     pinning: "[data-e2e='tab-pinning']",
     stitched: "[data-e2e='tab-stitched']",
+    exitDrawer: "[data-e2e='click-outside']",
+    idrfilterToggle: "[data-e2e='idrFilterToggle']",
+    selectDate: "[data-e2e='selectDateIcon']",
+    selectFilterValue: "[data-e2e='select-value']",
+    applyIdrFilter: "[data-e2e='applyFilter']",
+    closeIdrFilter: "[data-e2e='closeFilter']",
+    clearIdrFilter: "[data-e2e='clearFilter']",
   },
   // notification
   notification: {
