@@ -255,8 +255,8 @@ export default {
     selectDate: "[data-e2e='selectDateIcon']",
     selectFilterValue: "[data-e2e='select-value']",
     applyIdrFilter: "[data-e2e='applyFilter']",
-    closeIdrFilter: "[data-e2e='closeFilter']", 
-    clearIdrFilter: "[data-e2e='clearFilter']"
+    closeIdrFilter: "[data-e2e='closeFilter']",
+    clearIdrFilter: "[data-e2e='clearFilter']",
   },
   // notification
   notification: {

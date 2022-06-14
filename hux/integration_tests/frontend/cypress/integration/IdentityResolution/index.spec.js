@@ -48,7 +48,7 @@ describe("Data management > Identity resolution", () => {
     if (cy.get(selector.idr.datafeed).its("length").should("gt", 0)) {
       cy.get(selector.idr.idrfilterToggle).click()
       cy.get(selector.idr.selectDate).click()
-      cy.get('.hux-select')
+      cy.get(".hux-select")
       cy.get('[role="listbox"]').children().eq(0).click()
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(500)
@@ -62,6 +62,5 @@ describe("Data management > Identity resolution", () => {
       cy.wait(2000)
       cy.get(selector.idr.closeIdrFilter).click()
     }
-
   })
 })
