@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import { getAccess } from "@/utils"
 import DeliveryDetails from "./DeliveryDetails.vue"
 
 export default {
@@ -104,13 +105,22 @@ export default {
     return {
       engagementMenuOptions: [
         { id: 1, title: "View delivery history", active: false },
-        { id: 2, title: "Deliver all", active: true },
+        {
+          id: 2,
+          title: "Deliver all",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Add a destination", active: true },
         { id: 5, title: "ps.history", active: false },
       ],
       destinationMenuOptions: [
-        { id: 1, title: "Deliver now", active: true },
-        { id: 3, title: "Edit delivery schedule", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 6, title: "Remove destination", active: true },
       ],
       audienceMenuOptions: [
@@ -118,6 +128,7 @@ export default {
           id: 1,
           title: "Deliver now",
           active: false,
+          isHidden: !this.getAccess("delivery", "deliver"),
         },
         { id: 2, title: "Add a destination", active: true },
         { id: 3, title: "Create lookalike", active: false },
@@ -132,14 +143,17 @@ export default {
     },
     sectionActions() {
       return this.sectionType === "engagement"
-        ? this.engagementMenuOptions
-        : this.destinationMenuOptions
+        ? this.engagementMenuOptions.filter((x) => !x.isHidden)
+        : this.destinationMenuOptions.filter((x) => !x.isHidden)
     },
     destinationActions() {
       return this.sectionType === "engagement"
-        ? this.destinationMenuOptions
+        ? this.destinationMenuOptions.filter((x) => !x.isHidden)
         : []
     },
+  },
+  methods: {
+    getAccess: getAccess,
   },
 }
 </script>

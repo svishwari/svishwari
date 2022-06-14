@@ -87,15 +87,11 @@
       <v-row class="mt-0">
         <v-col md="6">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title v-if="isErrorOrEmpty('sent')" class="pb-2 pl-6 pt-5">
               <h3 class="text-h3">Sent</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="
-                !emailDomainErrorState &&
-                domainChartData.sent &&
-                domainChartData.sent.data.length > 0
-              "
+              v-if="isErrorOrEmpty('sent')"
               :chart-data="domainChartData.sent.data"
               :chart-type="domainChartData.sent.type"
               data-e2e="sent-domain-chart"
@@ -135,15 +131,14 @@
         </v-col>
         <v-col md="6">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="isErrorOrEmpty('deliveredRate')"
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Delivered rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="
-                !emailDomainErrorState &&
-                domainChartData.deliveredRate &&
-                domainChartData.deliveredRate.data.length > 0
-              "
+              v-if="isErrorOrEmpty('deliveredRate')"
               :chart-data="domainChartData.deliveredRate.data"
               :chart-type="domainChartData.deliveredRate.type"
               data-e2e="delivered-rate-domain-chart"
@@ -187,15 +182,14 @@
       <v-row>
         <v-col md="6">
           <v-card class="rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="isErrorOrEmpty('openRate')"
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Open rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="
-                !emailDomainErrorState &&
-                domainChartData.openRate &&
-                domainChartData.openRate.data.length > 0
-              "
+              v-if="isErrorOrEmpty('openRate')"
               :chart-data="domainChartData.openRate.data"
               :chart-type="domainChartData.openRate.type"
               data-e2e="open-rate-domain-chart"
@@ -236,15 +230,14 @@
         </v-col>
         <v-col md="6">
           <v-card class="rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="isErrorOrEmpty('clickRate')"
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Click rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="
-                !emailDomainErrorState &&
-                domainChartData.clickRate &&
-                domainChartData.clickRate.data.length > 0
-              "
+              v-if="isErrorOrEmpty('clickRate')"
               :chart-data="domainChartData.clickRate.data"
               :chart-type="domainChartData.clickRate.type"
               data-e2e="click-rate-domain-chart"
@@ -288,15 +281,14 @@
       <v-row>
         <v-col md="6">
           <v-card class="rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="isErrorOrEmpty('unsubscribeRate')"
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Unsubscribe rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="
-                !emailDomainErrorState &&
-                domainChartData.unsubscribeRate &&
-                domainChartData.unsubscribeRate.data.length > 0
-              "
+              v-if="isErrorOrEmpty('unsubscribeRate')"
               :chart-data="domainChartData.unsubscribeRate.data"
               :chart-type="domainChartData.unsubscribeRate.type"
               data-e2e="unsubscribe-rate-domain-chart"
@@ -337,15 +329,14 @@
         </v-col>
         <v-col md="6">
           <v-card class="rounded-lg box-shadow-5" height="365">
-            <v-card-title class="pb-2 pl-6 pt-5">
+            <v-card-title
+              v-if="isErrorOrEmpty('complaintsRate')"
+              class="pb-2 pl-6 pt-5"
+            >
               <h3 class="text-h3">Complaints rate</h3>
             </v-card-title>
             <domain-overview-chart
-              v-if="
-                !emailDomainErrorState &&
-                domainChartData.complaintsRate &&
-                domainChartData.complaintsRate.data.length > 0
-              "
+              v-if="isErrorOrEmpty('complaintsRate')"
               :chart-data="domainChartData.complaintsRate.data"
               :chart-type="domainChartData.complaintsRate.type"
               data-e2e="complaints-rate-domain-chart"
@@ -442,6 +433,13 @@ export default {
       getEmailDomain: "emailDeliverability/getDomain",
       getOverviewData: "emailDeliverability/getEmailDeliverabilityOverview",
     }),
+    isErrorOrEmpty(value) {
+      return (
+        !this.emailDomainErrorState &&
+        this.domainChartData[value] &&
+        this.domainChartData[value].data.length > 0
+      )
+    },
     async fetchOverview() {
       this.loading = true
       try {
@@ -538,13 +536,5 @@ export default {
 }
 .content-section {
   margin-top: 110px;
-  ::v-deep .error-empty-spacing {
-    &.empty-page {
-      .text-center {
-        position: relative;
-        bottom: 40px !important;
-      }
-    }
-  }
 }
 </style>

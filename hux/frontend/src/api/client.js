@@ -51,6 +51,9 @@ client["users"].tickets = () => {
 client["users"].updateDemoConfig = (data) => {
   return http.patch("users", data)
 }
+client["users"].accessMatrix = () => {
+  return http.get("users/rbac_matrix")
+}
 //#endregion
 
 //#region Configurations

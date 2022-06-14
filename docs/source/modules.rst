@@ -1,7 +1,7 @@
-huxunify
-========
+API Reference
+=============
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    huxunify_api/huxunify
