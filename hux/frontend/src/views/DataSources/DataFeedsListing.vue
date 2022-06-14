@@ -6,8 +6,8 @@
       </template>
       <template #right>
         <v-btn
-          icon
           v-if="getAccess('data_source', 'update_list_of_data_sources')"
+          icon
           data-e2e="filesTableFilter"
           @click.native="isFilterToggled = !isFilterToggled"
         >
