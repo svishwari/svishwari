@@ -9,12 +9,14 @@
       buttonSize,
       { 'box-shadow-15-4': boxShadow },
       'text-button',
+      variant,
     ]"
     :style="styleObject"
     :color="color"
     :width="width"
     :height="height"
     :icon="iconType"
+    :ripple="false"
     @click="onClick"
   >
     <icon
@@ -155,7 +157,7 @@ export default {
       } else {
         return {
           "--color": this.variant == "secondary" ? "primary darken-1" : "white",
-          "--color-hover": "primary",
+          "--color-hover": "--v-primary-base",
         }
       }
     },
@@ -188,32 +190,83 @@ export default {
 $btn-active-opacity: 0 !important;
 $btn-hover-opacity: 0 !important;
 
+::v-deep .tooltip-subheading {
+  line-height: 20px !important;
+}
+
 ::v-deep.v-btn.v-btn--disabled.v-btn--has-bg {
   background-color: var(--v-black-lighten5) !important;
   color: var(--v-white-base) !important;
 }
 
 ::v-deep.theme--light.v-btn.v-btn--disabled .v-icon {
-  color: var(--v-black-lighten3) !important;
+  color: var(--v-white-base) !important;
 }
 
 .v-application .white {
   border: solid 1px var(--v-black-lighten1) !important;
 }
 
-button {
-  &:hover {
-    @extend .box-shadow-15-8;
-    color: var(--color-hover) !important;
-    ::v-deep.v-btn__content {
-      color: var(--color) !important;
+button.v-btn.text-button {
+  &.primary {
+    &:hover {
+      @extend .box-shadow-15-8;
+      background-color: var(--v-primary-base) !important;
+      border-color: var(--v-primary-base) !important;
+      ::v-deep.v-btn__content {
+        color: var(--color) !important;
+      }
+    }
+    &:active {
+      @extend .box-shadow-none;
+      background-color: var(--v-primary-base) !important;
+      border-color: var(--v-primary-base) !important;
+      ::v-deep.v-btn__content {
+        color: var(--color) !important;
+      }
     }
   }
-  &:active {
-    @extend .box-shadow-none;
-    color: var(--color-hover) !important;
-    ::v-deep.v-btn__content {
-      color: var(--color) !important;
+  &.secondary {
+    background-color: var(--v-white-base) !important;
+    border-color: var(--v-primary-base) !important;
+    &:hover {
+      @extend .box-shadow-15-8;
+      background-color: var(--v-white-base) !important;
+      border-color: var(--v-primary-base) !important;
+      ::v-deep.v-btn__content {
+        color: var(--v-primary-base) !important;
+      }
+    }
+    &:active {
+      @extend .box-shadow-none;
+      background-color: var(--v-primary-base) !important;
+      border-color: var(--v-primary-base) !important;
+      ::v-deep.v-btn__content {
+        color: var(--v-white-base) !important;
+      }
+    }
+    &.v-btn--disabled {
+      border: 0px !important;
+      background-color: var(--v-black-lighten5) !important;
+      color: var(--v-white-base) !important;
+    }
+  }
+  &.danger {
+    &:hover {
+      @extend .box-shadow-15-8;
+      background-color: var(--v-white-base) !important;
+      border-color: transparent !important;
+      ::v-deep.v-btn__content {
+        color: var(--v-error-lighten1) !important;
+      }
+    }
+    &:active {
+      @extend .box-shadow-none;
+      background-color: var(--v-white-base) !important;
+      border: 0.5px solid var(--v-error-lighten1) !important;
+      ::v-deep.v-btn__content {
+        color: var(--v-error-lighten1) !important;
+      }
     }
   }
 }
