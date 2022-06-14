@@ -1,13 +1,14 @@
 # pylint: disable=too-many-lines,unused-argument
-"""Purpose of this script is for housing the
-decision routes for the API"""
-from random import uniform, randint, choice
+"""Purpose of this script is for housing the decision routes for the API."""
+from random import uniform, randint, choice, sample
 from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple
 
 from flask import Blueprint, jsonify, request, Response
 from flasgger import SwaggerView
+from marshmallow import INCLUDE
+
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database.cache_management import (
     create_cache_entry,
@@ -22,7 +23,6 @@ from huxunifylib.database import constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.decisioning import Decisioning
-
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -77,7 +77,17 @@ class ModelsView(SwaggerView):
             "description": "Model status.",
             "example": "Requested",
             "required": False,
-        }
+        },
+        {
+            "name": api_c.INDUSTRY_TAG,
+            "description": "Only return models matching the industry tag",
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "required": False,
+            "example": api_c.RETAIL,
+        },
     ]
 
     responses = {
@@ -107,6 +117,7 @@ class ModelsView(SwaggerView):
             Tuple[Response, int]: list containing dict of models,
                 HTTP status code.
         """
+
         if get_config().ENV_NAME == api_c.STAGING_ENV:
             token = request.headers.get("authorizationden")
             all_models = Caching.check_and_return_cache(
@@ -137,11 +148,16 @@ class ModelsView(SwaggerView):
                     api_c.PAST_VERSION_COUNT: uniform(8, 12),
                     "is_enabled": True,
                     "is_added": True,
+                    api_c.TAGS: dict(
+                        industry=sample(
+                            api_c.ALL_INDUSTRY_TYPES,
+                            2,
+                        )
+                    ),
                 }
                 for i in range(11)
             ]
 
-        all_models.sort(key=lambda x: x[api_c.NAME])
         all_models = list(
             filter(
                 lambda model: not model.get(api_c.NAME, "")
@@ -150,6 +166,31 @@ class ModelsView(SwaggerView):
                 all_models,
             )
         )
+
+        # get the optional industry tag filter query param as a list
+        industry_tag_list = [
+            industry_tag.lower()
+            for industry_tag in request.args.getlist(api_c.INDUSTRY_TAG)
+        ]
+
+        # filter the models based on industry tags if query param industry_tag
+        # is part of request payload
+        if industry_tag_list:
+            filtered_models = []
+
+            for model in all_models:
+                for industry_tag in industry_tag_list:
+                    if industry_tag in model.get(api_c.TAGS, {}).get(
+                        api_c.INDUSTRY, {}
+                    ):
+                        filtered_models.append(model)
+                        break
+                else:
+                    continue
+
+            all_models = filtered_models
+
+        all_models.sort(key=lambda x: x[api_c.NAME])
 
         return HuxResponse.OK(data=all_models, data_schema=ModelSchema())
 
@@ -214,7 +255,7 @@ class RequestModel(SwaggerView):
             Tuple[dict, int]: Model Requested, HTTP status code.
         """
         models = ModelRequestPostSchema().load(
-            request.get_json(), unknown=True, many=True
+            request.get_json(), unknown=INCLUDE, many=True
         )
         database = get_db_client()
 
