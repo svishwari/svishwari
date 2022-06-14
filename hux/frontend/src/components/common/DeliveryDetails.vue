@@ -460,32 +460,31 @@ export default {
         destination_id: args[1],
         value: args[2],
       }
-      let updatedEngagements = this.audience.engagements.map((obj) => {
-        if (obj.id == args[0]) {
-          return {
-            ...obj,
-            deliveries: obj.deliveries.map((del) => {
-              if (del.delivery_platform_id == args[1]) {
-                return { ...del, replace_audience: args[2] }
-              }
-              return del
-            }),
+      let updatedEngagements = []
+      if (this.audience.engagements) {
+        updatedEngagements = this.audience.engagements.map((obj) => {
+          if (obj && obj.id == args[0]) {
+            return {
+              ...obj,
+              deliveries: obj.deliveries ? obj.deliveries.map((del) => {
+                if (del.delivery_platform_id == args[1]) {
+                  return { ...del, replace_audience: args[2] }
+                }
+                return del
+              }) : [],
+            }
           }
-        }
-        return obj
-      })
-
-      try {
-        this.updateAudience({
-          id: this.audienceId,
-          payload: {
-            engagements: updatedEngagements,
-          },
+          return obj
         })
-        this.replaceAudience(data)
-      } catch (error) {
-        console.log(error)
       }
+      this.updateAudience({
+        id: this.audienceId,
+        payload: {
+          engagements: updatedEngagements,
+        },
+      })
+      this.replaceAudience(data)
+      
     },
   },
 }

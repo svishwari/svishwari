@@ -342,20 +342,16 @@ export default {
           return obj
         }
       )
-      try {
-        this.updateAudience({
-          id: this.audienceId,
-          payload: {
-            standalone_deliveries: updatedStandaloneDeliveries,
-          },
-        })
-        this.deliverStandaloneAudience({
-          id: this.audienceId,
-          payload: { destinations: [{ id: deliveryId }] },
-        })
-      } catch (error) {
-        console.log(error)
-      }
+      this.updateAudience({
+        id: this.audienceId,
+        payload: {
+          standalone_deliveries: updatedStandaloneDeliveries,
+        },
+      })
+      this.deliverStandaloneAudience({
+        id: this.audienceId,
+        payload: { destinations: [{ id: deliveryId }] },
+      })
     },
   },
 }
