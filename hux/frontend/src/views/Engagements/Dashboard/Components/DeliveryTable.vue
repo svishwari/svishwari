@@ -422,17 +422,13 @@ export default {
           return obj
         }
       )
-      try {
-        this.updateAudience({
-          id: audienceID,
-          payload: {
-            engagements: updatedEngagements,
-          },
-        })
-        this.replaceAudience(data)
-      } catch (error) {
-        console.log(error)
-      }
+      this.updateAudience({
+        id: audienceID,
+        payload: {
+          engagements: updatedEngagements,
+        },
+      })
+      this.replaceAudience(data)
     },
   },
 }
