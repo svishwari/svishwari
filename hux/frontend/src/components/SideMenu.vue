@@ -190,7 +190,7 @@ export default {
     menu: false,
     prevItem: null,
     isBrodcasterOn: true,
-    navigationItems : [],
+    navigationItems: [],
   }),
 
   computed: {
@@ -308,11 +308,10 @@ export default {
     getCurrentConfiguration() {
       if (this.isBrodcasterOn) {
         this.$root.$on("update-config-settings", () => {
-          this.setDemoConfiguration() 
+          this.setDemoConfiguration()
           this.updateClientInfo()
           this.isBrodcasterOn = false
-        }
-        )   
+        })
       }
     },
   },
