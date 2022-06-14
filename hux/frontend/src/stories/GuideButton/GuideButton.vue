@@ -8,10 +8,14 @@
       class="drop-menu-div"
     >
       <template #menuActivator="activatorVal">
-        <span v-if="!activatorVal.activatorVal">
-          <icon :type="'FAB_circle_bulb'" :size="56" />
+        <span v-if="!activatorVal.activatorVal" class="square-and-bulb">
+          <div class="guide-square"></div>
+          <icon class="guide-bulb" type="guide_bulb" :size="40" />
         </span>
-        <span v-else><icon type="FAB_circle_cross" :size="56" /></span>
+        <span v-else>
+          <div class="guide-square-active"></div>
+          <icon class="guide-cross" type="close-remove" :size="25" />
+        </span>
       </template>
       <template #menuHeader>
         <div class="header-menu d-flex text-body-1 pt-5 pb-5 pr-4 pl-4">
@@ -62,7 +66,7 @@
 </template>
 
 <script>
-import Icon from "@/components/common/Icon"
+import Icon from "../icons/Icon2"
 import DropMenu from "@/components/common/DropMenu"
 import { formatInnerHTML } from "@/utils"
 
@@ -99,6 +103,49 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.square-and-bulb {
+  &:hover {
+    .guide-square {
+      transform: rotate(45deg);
+    }
+  }
+}
+.guide-square {
+  @extend .box-shadow-15-16;
+  position: relative;
+  top: 48px;
+  width: 56px;
+  height: 56px;
+  background-color: var(--v-yellow-lighten3);
+  border-radius: 3px;
+  border: 1px solid var(--v-white-base);
+  ::before {
+    content: "";
+    display: block;
+    width: 50%;
+    padding-bottom: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    border: solid 400px rgba(31, 44, 122, 0.5);
+    border-radius: 50%;
+  }
+}
+.guide-square-active {
+  @extend .guide-square;
+  top: 32px !important;
+  background-color: var(--v-white-base);
+}
+.guide-bulb {
+  z-index: 9;
+  position: relative;
+}
+.guide-cross {
+  bottom: 8px;
+  position: relative;
+}
 .icon-bulb {
   position: absolute;
   bottom: -2.5rem;
@@ -109,6 +156,7 @@ export default {
   z-index: 1;
 }
 .guide-button {
+  top: 165px !important;
   .header-menu {
     background: var(--v-yellow-lighten1);
     .header-text {
