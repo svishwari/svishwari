@@ -350,7 +350,6 @@ export default {
           "All standalone destination, has started delivering as a standalone deliveries",
       })
     },
-<<<<<<< HEAD
     kickoffReplace(deliveryId, val) {
       let updatedStandaloneDeliveries = this.audience.standalone_deliveries.map(
         (obj) => {
@@ -371,9 +370,7 @@ export default {
         payload: { destinations: [{ id: deliveryId }] },
       })
     },
-=======
     getAccess: getAccess,
->>>>>>> develop
   },
 }
 </script>
