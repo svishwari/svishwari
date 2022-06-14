@@ -392,6 +392,8 @@ export default {
   },
   methods: {
     ...mapActions({
+      getAudience: "audiences/getAudienceById",
+      updateAudience: "audiences/update",
       replaceAudience: "audiences/replaceAudienceToggle",
     }),
     formatText: formatText,
@@ -404,6 +406,28 @@ export default {
         destination_id: args[4],
         value: args[0],
       }
+      let updatedEngagements = this.getAudience(audienceID).engagements.map(
+        (obj) => {
+          if (obj.id == args[0]) {
+            return {
+              ...obj,
+              deliveries: obj.deliveries.map((del) => {
+                if (del.delivery_platform_id == args[1]) {
+                  return { ...del, replace_audience: args[2] }
+                }
+                return del
+              }),
+            }
+          }
+          return obj
+        }
+      )
+      this.updateAudience({
+        id: audienceID,
+        payload: {
+          engagements: updatedEngagements,
+        },
+      })
       this.replaceAudience(data)
     },
   },
