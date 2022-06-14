@@ -7,8 +7,12 @@
           <v-list-item-content>
             <div>
               <div class="list-title">Content</div>
-              <hux-button class="list-button" variant="secondary"
-                >Button</hux-button
+              <hux-button
+                class="list-button"
+                variant="secondary"
+                :icon="buttonText == `Selected` ? 'mdi-check' : ''"
+                @click="handleClick()"
+                >{{ buttonText }}</hux-button
               >
             </div>
           </v-list-item-content>
@@ -24,11 +28,21 @@ import HuxButton from "../huxButton/huxButton2.vue"
 export default {
   name: "HuxList",
   components: { HuxButton },
+  data() {
+    return {
+      buttonText: "Request",
+    }
+  },
   props: {
     numListItems: {
       type: [String, Number],
       required: false,
       default: 4,
+    },
+  },
+  methods: {
+    handleClick() {
+      this.buttonText = "Selected"
     },
   },
 }
