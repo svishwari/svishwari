@@ -67,7 +67,6 @@
 
 <script>
 import Icon from "@/components/common/Icon"
-import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
 import Status from "@/components/common/Status"
 
@@ -76,7 +75,6 @@ export default {
 
   components: {
     Icon,
-    Tooltip,
     Logo,
     Status,
   },

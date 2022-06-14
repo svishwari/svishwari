@@ -32,7 +32,6 @@ export default {
     actionMenu: false,
     logoOption: false,
     iconColor: "Primary",
-    actionMenu: true,
     status: "Active",
     pill: "Hungry",
   },
