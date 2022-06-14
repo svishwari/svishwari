@@ -13,11 +13,13 @@
       <hux-filter-panels>
         <hux-filter-panel
           title="Time"
+          data-e2e="dataFeedsFiltersTimePanel"
           :count="getTimeCount"
           :expanded="getTimeCount > 0 ? [0] : []"
         >
           <v-checkbox
             v-model="selectedToday"
+            data-e2e="dataFeedsFiltersTimePanelToday"
             color="primary lighten-6"
             class="text--base-1 pb-1"
             label="Today"
@@ -25,6 +27,7 @@
           ></v-checkbox>
           <v-checkbox
             v-model="selectedYesterday"
+            data-e2e="dataFeedsFiltersTimePanelYesterday"
             color="primary lighten-6"
             class="text--base-1 pb-2"
             label="Yesterday"
@@ -45,6 +48,7 @@
         </hux-filter-panel>
         <hux-filter-panel
           title="Status"
+          data-e2e="dataFeedsFiltersStatusPanel"
           :count="selectedStatus.length"
           :expanded="selectedStatus.length > 0 ? [1] : []"
         >
@@ -188,10 +192,10 @@ export default {
       })
       this.localDrawer = false
     },
-    cancel() {
-      this.clearFilter()
-      this.localDrawer = false
-    },
+    // cancel() {
+    //   this.clearFilter()
+    //   this.localDrawer = false
+    // },
     close() {
       this.localDrawer = false
     },

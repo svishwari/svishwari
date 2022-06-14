@@ -40,7 +40,7 @@
         <v-tab key="model" class="pa-2 mr-3 text-h3" color>
           Model performance
         </v-tab>
-        <v-tab key="pipeline" class="text-h3" data-e2e="insights-tab">
+        <v-tab key="pipeline" class="text-h3" data-e2e="pipeline-performance">
           Pipeline performance
         </v-tab>
       </div>

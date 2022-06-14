@@ -24,6 +24,7 @@
               min-width="50"
               height="24"
               class="primary--text"
+              data-e2e="clearFilter"
               :disabled="!Boolean(count) || disableClear"
               @click="$emit('clear')"
             >
@@ -54,6 +55,7 @@
                 box-shadow-none
               "
               width="91"
+              data-e2e="closeFilter"
               @click="$emit('close')"
             >
               Close
@@ -62,6 +64,7 @@
               is-tile
               color="primary"
               class="text-button ml-auto"
+              data-e2e="applyFilter"
               :width="submitButtonWidth"
               :is-disabled="
                 !customValidation

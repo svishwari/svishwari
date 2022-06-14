@@ -31,7 +31,7 @@
           is-tile
           height="40"
           class="ma-2 font-weight-regular no-shadow mr-0 caption"
-          data-e2e="addDataSource"
+          data-e2e="addModel"
           @click="toggleDrawer()"
         >
           Request a model
@@ -120,6 +120,7 @@
           <template slot="action-menu-options">
             <div
               class="px-4 py-2 white d-flex flex-column text-h5"
+              data-e2e="remove-model"
               @click="removeModel(model)"
             >
               <span class="d-flex align-center"> Remove </span>
@@ -239,9 +240,9 @@ export default {
     ...mapGetters({
       models: "models/list",
     }),
-    hasModels() {
-      return this.models.length ? Object.entries(this.models[0]).length : false
-    },
+    // hasModels() {
+    //   return this.models.length ? Object.entries(this.models[0]).length : false
+    // },
     addedModels() {
       const actives = this.models
         .filter((model) => ["Active"].includes(model.status))

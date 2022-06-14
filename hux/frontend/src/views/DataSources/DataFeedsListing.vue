@@ -5,7 +5,11 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn
+          icon
+          data-e2e="filesTableFilter"
+          @click.native="isFilterToggled = !isFilterToggled"
+        >
           <icon
             type="filter"
             :size="27"
@@ -232,7 +236,10 @@
                     >
                       <tooltip v-if="column.value === 'status'">
                         <template #label-content>
-                          <span class="black--text text--darken-4 text-body-1">
+                          <span
+                            data-e2e="filesStatusTooltip"
+                            class="black--text text--darken-4 text-body-1"
+                          >
                             <status
                               :status="item[column.value]"
                               :show-label="true"
@@ -645,9 +652,9 @@ export default {
       return len ? `${formatDate(name)} (${len})` : `${formatDate(name)}`
     },
 
-    totalFiltersSelected(value) {
-      this.numFiltersSelected = value
-    },
+    // totalFiltersSelected(value) {
+    //   this.numFiltersSelected = value
+    // },
 
     async applyFilter(obj) {
       if (obj.selectedToday && obj.selectedYesterday) {

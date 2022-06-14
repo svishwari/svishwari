@@ -283,18 +283,18 @@ export default {
       getDataFeeds: "dataSources/getDataFeeds",
       getDataSource: "dataSources/getDataSource",
     }),
-    changeStatus(status) {
-      switch (status) {
-        case "Pending":
-          return "Incomplete"
+    // changeStatus(status) {
+    //   switch (status) {
+    //     case "Pending":
+    //       return "Incomplete"
 
-        case "Active":
-          return "Complete"
+    //     case "Active":
+    //       return "Complete"
 
-        default:
-          return "Failed"
-      }
-    },
+    //     default:
+    //       return "Failed"
+    //   }
+    // },
     getDataFeedDetailsFunc(item) {
       this.$router.push({
         name: "DataSourceFeedsListing",
