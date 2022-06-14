@@ -243,9 +243,6 @@ export default {
     ...mapGetters({
       models: "models/list",
     }),
-    // hasModels() {
-    //   return this.models.length ? Object.entries(this.models[0]).length : false
-    // },
     addedModels() {
       const actives = this.models
         .filter((model) => ["Active"].includes(model.status))

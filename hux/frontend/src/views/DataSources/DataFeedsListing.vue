@@ -655,10 +655,6 @@ export default {
       return len ? `${formatDate(name)} (${len})` : `${formatDate(name)}`
     },
 
-    // totalFiltersSelected(value) {
-    //   this.numFiltersSelected = value
-    // },
-
     async applyFilter(obj) {
       if (obj.selectedToday && obj.selectedYesterday) {
         const today = new Date()

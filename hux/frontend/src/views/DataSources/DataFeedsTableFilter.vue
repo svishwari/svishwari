@@ -192,10 +192,6 @@ export default {
       })
       this.localDrawer = false
     },
-    // cancel() {
-    //   this.clearFilter()
-    //   this.localDrawer = false
-    // },
     close() {
       this.localDrawer = false
     },
