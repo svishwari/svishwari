@@ -64,7 +64,7 @@ import HuxButton from "../huxButton/huxButton2.vue"
 import Pill from "../pills/Pill.vue"
 
 export default {
-  name: "Card Filter",
+  name: "CardFilter",
   components: { PlainCard, IconButton, HuxButton, Pill },
   data() {
     return {

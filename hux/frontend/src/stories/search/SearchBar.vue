@@ -16,8 +16,8 @@
 <script>
 import Icon from "../icons/Icon2.vue"
 export default {
-  components: { Icon },
   name: "Search",
+  components: { Icon },
   props: {
     placeholderText: {
       type: String,

@@ -6,7 +6,7 @@
         <icon-button :raised="false" variant="secondary">Clear all</icon-button>
       </template>
       <template #default>
-        <filter-panels :filterOptions="filterOptions"></filter-panels>
+        <filter-panels :filter-options="filterOptions"></filter-panels>
       </template>
       <template #footer-left>
         <hux-button @click="toggleDrawer = !toggleDrawer">Close</hux-button>
@@ -22,19 +22,19 @@ import huxButton from "../huxButton/huxButton2.vue"
 import IconButton from "../iconButton/plainButton.vue"
 
 export default {
-  name: "Filter Drawer",
+  name: "FilterDrawer",
   components: { drawer, huxButton, FilterPanels, IconButton },
-  data() {
-    return {
-      toggleDrawer: false,
-    }
-  },
   props: {
     filterOptions: {
       type: Array,
       required: true,
       default: () => [],
     },
+  },
+  data() {
+    return {
+      toggleDrawer: false,
+    }
   },
 }
 </script>

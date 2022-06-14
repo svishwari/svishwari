@@ -31,17 +31,17 @@
 
 <script>
 export default {
-  name: "Filter Panel",
-  data() {
-    return {
-      selected: [],
-    }
-  },
+  name: "FilterPanel",
   props: {
     filterOptions: {
       type: Array,
       required: true,
     },
+  },
+  data() {
+    return {
+      selected: [],
+    }
   },
 }
 </script>
