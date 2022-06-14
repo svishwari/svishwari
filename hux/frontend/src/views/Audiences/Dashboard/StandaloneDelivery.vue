@@ -128,6 +128,7 @@
                   v-model="item['replace_audience']"
                   :switch-labels="switchLabels"
                   false-color="var(--v-black-lighten4)"
+                  @change="kickoffReplace(item['delivery_platform_id'], $event)"
                 />
               </div>
             </td>
@@ -308,6 +309,7 @@ export default {
     ...mapActions({
       deliverStandaloneAudience: "audiences/deliverStandaloneAudience",
       setAlert: "alerts/setAlert",
+      updateAudience: "audiences/update",
     }),
     async standaloneOptions(option, data) {
       switch (option.title.toLowerCase()) {
@@ -346,6 +348,26 @@ export default {
         type: "pending",
         message:
           "All standalone destination, has started delivering as a standalone deliveries",
+      })
+    },
+    kickoffReplace(deliveryId, val) {
+      let updatedStandaloneDeliveries = this.audience.standalone_deliveries.map(
+        (obj) => {
+          if (obj.delivery_platform_id == deliveryId) {
+            return { ...obj, replace_audience: val }
+          }
+          return obj
+        }
+      )
+      this.updateAudience({
+        id: this.audienceId,
+        payload: {
+          standalone_deliveries: updatedStandaloneDeliveries,
+        },
+      })
+      this.deliverStandaloneAudience({
+        id: this.audienceId,
+        payload: { destinations: [{ id: deliveryId }] },
       })
     },
     getAccess: getAccess,
