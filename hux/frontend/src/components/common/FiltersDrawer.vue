@@ -26,7 +26,6 @@
               class="primary--text"
               data-e2e="clearFilter"
               :disabled="!Boolean(count) || disableClear"
-              data-e2e="clearFilter"
               @click="$emit('clear')"
             >
               Clear
@@ -72,7 +71,6 @@
                   ? !Boolean(count) && !enableApply
                   : !enableApply
               "
-              data-e2e="applyFilter"
               @click="$emit('apply')"
             >
               {{ submitButton }}

@@ -587,7 +587,6 @@ export default {
       model: "models/overview",
       modelDetails: "models/single",
       lift: "models/lift",
-      features: "models/features",
       modelDashboardFeatures: "models/modelFeatures",
       drift: "models/drift",
     }),
@@ -615,7 +614,9 @@ export default {
       return data
     },
     modelFeatures() {
-      return this.features ? this.features.slice(0, 20) : []
+      return this.modelDashboardFeatures
+        ? this.modelDashboardFeatures.slice(0, 20)
+        : []
     },
     // This will be used while integration of Model feature table.
     dashboardFeature() {
@@ -671,7 +672,6 @@ export default {
       this.fetchLift(params)
       this.fetchDrift(params)
       this.loading = false
-      this.fetchFeatures(params)
       this.fetchModelFeatures(params) // Fetch data for Model feature table.
       this.getVersionLabel(params)
     }
@@ -688,7 +688,6 @@ export default {
       getOverview: "models/getOverview",
       getModels: "models/getAll",
       getLift: "models/getLift",
-      getFeatures: "models/getFeatures",
       getModelFeatures: "models/getModelFeatures", // used for Model feature table.
       getDrift: "models/getDrift",
     }),

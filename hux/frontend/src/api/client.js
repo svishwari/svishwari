@@ -447,12 +447,6 @@ client["models"].overview = (id, version) => {
   else return http.get(`/models/${id}/overview`)
 }
 
-client["models"].features = (id, version) => {
-  if (version)
-    return http.get(`/models/${id}/feature-importance?version=${version}`)
-  else return http.get(`/models/${id}/feature-importance`)
-}
-
 client["models"].versionHistory = (id) => {
   return http.get(`/models/${id}/version-history`)
 }
