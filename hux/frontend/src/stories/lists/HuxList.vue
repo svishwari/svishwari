@@ -7,7 +7,9 @@
           <v-list-item-content>
             <div>
               <div class="list-title">Content</div>
-              <hux-button class="list-button" variant="secondary">Button</hux-button>
+              <hux-button class="list-button" variant="secondary"
+                >Button</hux-button
+              >
             </div>
           </v-list-item-content>
         </v-list-item>
@@ -27,8 +29,8 @@ export default {
       type: [String, Number],
       required: false,
       default: 4,
-    }
-  }
+    },
+  },
 }
 </script>
 
