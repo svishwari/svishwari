@@ -653,8 +653,7 @@ export default {
   mounted() {
     this.loading = true
     try {
-      this.getOverview()
-      this.mapOverviewData()
+      this.fetchOverview()
       this.fetchTotalCustomers()
       this.fetchCustomerSpend()
       this.fetchGeoOverview()
@@ -675,6 +674,7 @@ export default {
       this.loadingOverview = true
       try {
         await this.getOverview()
+        this.mapOverviewData()
       } catch (error) {
         this.overviewError = true
       }

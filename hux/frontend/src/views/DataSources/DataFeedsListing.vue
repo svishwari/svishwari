@@ -8,6 +8,7 @@
         <v-btn
           v-if="getAccess('data_source', 'update_list_of_data_sources')"
           icon
+          data-e2e="filesTableFilter"
           @click.native="isFilterToggled = !isFilterToggled"
         >
           <icon
@@ -236,7 +237,10 @@
                     >
                       <tooltip v-if="column.value === 'status'">
                         <template #label-content>
-                          <span class="black--text text--darken-4 text-body-1">
+                          <span
+                            data-e2e="filesStatusTooltip"
+                            class="black--text text--darken-4 text-body-1"
+                          >
                             <status
                               :status="item[column.value]"
                               :show-label="true"
@@ -649,10 +653,6 @@ export default {
     },
     formatDate(name, len) {
       return len ? `${formatDate(name)} (${len})` : `${formatDate(name)}`
-    },
-
-    totalFiltersSelected(value) {
-      this.numFiltersSelected = value
     },
 
     async applyFilter(obj) {

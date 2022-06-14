@@ -24,8 +24,8 @@
               min-width="50"
               height="24"
               class="primary--text"
-              :disabled="!Boolean(count) || disableClear"
               data-e2e="clearFilter"
+              :disabled="!Boolean(count) || disableClear"
               @click="$emit('clear')"
             >
               Clear
@@ -64,13 +64,13 @@
               is-tile
               color="primary"
               class="text-button ml-auto"
+              data-e2e="applyFilter"
               :width="submitButtonWidth"
               :is-disabled="
                 !customValidation
                   ? !Boolean(count) && !enableApply
                   : !enableApply
               "
-              data-e2e="applyFilter"
               @click="$emit('apply')"
             >
               {{ submitButton }}

@@ -112,22 +112,7 @@ const actions = {
       } else {
         response = await api.models.overview(model.id)
       }
-      commit("SET_OVERVIEW", response.data)
-    } catch (error) {
-      handleError(error)
-      throw error
-    }
-  },
-
-  async getFeatures({ commit }, model) {
-    try {
-      let response
-      if (model.version) {
-        response = await api.models.features(model.id, model.version)
-      } else {
-        response = await api.models.features(model.id)
-      }
-      commit("SET_FEATURES", response.data)
+      commit("SET_OVERVIEW", response.data[0])
     } catch (error) {
       handleError(error)
       throw error
