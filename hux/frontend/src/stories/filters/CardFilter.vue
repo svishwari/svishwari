@@ -15,10 +15,25 @@
       <template #filters>
         <v-container v-if="toggleFilter" class="filter-options">
           <v-row>
-            <hux-button :is-tile="true" variant="secondary" @click="addFilter('Filter 1')">Filter1</hux-button>
-            <hux-button :is-tile="true" variant="secondary" @click="addFilter('Filter 2')">Filter2</hux-button>
+            <hux-button
+              :is-tile="true"
+              variant="secondary"
+              @click="addFilter('Filter 1')"
+              >Filter1</hux-button
+            >
+            <hux-button
+              :is-tile="true"
+              variant="secondary"
+              @click="addFilter('Filter 2')"
+              >Filter2</hux-button
+            >
             <v-spacer />
-            <hux-button :is-tile="true" variant="secondary" @click="clearFilters()">Clear all</hux-button>
+            <hux-button
+              :is-tile="true"
+              variant="secondary"
+              @click="clearFilters()"
+              >Clear all</hux-button
+            >
           </v-row>
           <v-row v-if="filtersAdded.length > 0">
             <pill
