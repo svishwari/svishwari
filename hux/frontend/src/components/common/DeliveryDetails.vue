@@ -466,12 +466,14 @@ export default {
           if (obj && obj.id == args[0]) {
             return {
               ...obj,
-              deliveries: obj.deliveries ? obj.deliveries.map((del) => {
-                if (del.delivery_platform_id == args[1]) {
-                  return { ...del, replace_audience: args[2] }
-                }
-                return del
-              }) : [],
+              deliveries: obj.deliveries
+                ? obj.deliveries.map((del) => {
+                    if (del.delivery_platform_id == args[1]) {
+                      return { ...del, replace_audience: args[2] }
+                    }
+                    return del
+                  })
+                : [],
             }
           }
           return obj
@@ -484,7 +486,6 @@ export default {
         },
       })
       this.replaceAudience(data)
-      
     },
   },
 }
