@@ -1,65 +1,25 @@
 <template>
   <div>
-    <div v-for="i in numListItems" :key="i" class="list-card">
-      <div class="pl-4 pt-2">Label</div>
-      <v-card>
-        <v-list-item>
-          <v-list-item-content>
-            <div>
-              <div class="list-title">Content</div>
-              <hux-button
-                class="list-button"
-                variant="secondary"
-                :icon="buttonText == `Selected` ? 'mdi-check' : ''"
-                @click="handleClick()"
-                >{{ buttonText }}</hux-button
-              >
-            </div>
-          </v-list-item-content>
-        </v-list-item>
-      </v-card>
-    </div>
+    <multi-select-list-item :disabled="disabled"></multi-select-list-item>
+    <small-list-item />
+    <form-list-item />
   </div>
 </template>
 
 <script>
-import HuxButton from "../huxButton/huxButton2.vue"
+import MultiSelectListItem from "./MultiSelectListItem.vue"
+import SmallListItem from "./SmallListItem.vue"
+import FormListItem from "./FormListItem.vue"
 
 export default {
   name: "HuxList",
-  components: { HuxButton },
-  data() {
-    return {
-      buttonText: "Request",
-    }
-  },
+  components: { MultiSelectListItem, SmallListItem, FormListItem },
   props: {
-    numListItems: {
-      type: [String, Number],
+    disabled: {
+      type: Boolean,
       required: false,
-      default: 4,
-    },
-  },
-  methods: {
-    handleClick() {
-      this.buttonText = "Selected"
+      default: false,
     },
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.list-card {
-  width: 552px;
-  justify-content: center;
-  margin: 8px;
-}
-.list-title {
-  float: left;
-  height: 40px;
-  padding-top: 12px;
-}
-.list-button {
-  float: right;
-}
-</style>

@@ -1,9 +1,9 @@
-import HuxList from "./HuxList.vue"
+import PageHeader from "./PageHeader.vue"
 
 export default {
-  component: HuxList,
+  component: PageHeader,
 
-  title: "NewComponents/List",
+  title: "NewComponents/PageHeader",
 
   argTypes: {
     disabled: { control: { type: "boolean" } },
@@ -18,11 +18,11 @@ export default {
 }
 
 const Template = (args, { argTypes }) => ({
-  components: { HuxList },
+  components: { PageHeader },
   props: Object.keys(argTypes),
   template: `
-    <hux-list v-bind="$props"></hux-list>
+    <page-header />
   `,
 })
 
-export const DefaultList = Template.bind({})
+export const DefaultHeader = Template.bind({})
