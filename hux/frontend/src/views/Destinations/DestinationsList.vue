@@ -30,20 +30,23 @@
           />
         </template>
         <template slot="action-menu-options">
-          <div
-            class="px-4 py-2 white d-flex flex-column text-body-1"
-            data-e2e="destination-list-remove"
-            @click="openEditModal(destination)"
-          >
-            <span class="d-flex align-center">Edit destination URL </span>
-          </div>
-          <div
-            class="px-4 py-2 white d-flex flex-column text-body-1"
-            data-e2e="destination-list-remove"
-            @click="openModal(destination)"
-          >
-            <span class="d-flex align-center"> Remove </span>
-          </div>
+          <v-list class="py-0">
+            <v-list-item
+              class="text-body-1 action-menu-item"
+              data-e2e="destination-list-remove"
+              @click="openEditModal(destination)"
+            >
+              Edit destination URL
+            </v-list-item>
+            <v-list-item
+              v-if="getAccess('destinations', 'delete')"
+              class="text-body-1 action-menu-item"
+              data-e2e="destination-list-remove"
+              @click="openModal(destination)"
+            >
+              Remove
+            </v-list-item>
+          </v-list>
         </template>
       </descriptive-card>
     </template>
@@ -175,6 +178,7 @@ import HuxEmpty from "@/components/common/screens/Empty"
 import Error from "@/components/common/screens/Error"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
+import { getAccess } from "@/utils.js"
 
 export default {
   name: "DestinationsList",
@@ -285,6 +289,7 @@ export default {
       this.inputText = null
       this.enableConfirm = false
     },
+    getAccess: getAccess,
   },
 }
 </script>
@@ -318,5 +323,9 @@ export default {
 }
 ::v-deep circle {
   stroke: rgb(255, 255, 255) !important;
+}
+.action-menu-item {
+  min-height: 32px !important;
+  min-width: 180px !important;
 }
 </style>

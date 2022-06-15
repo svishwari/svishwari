@@ -22,7 +22,7 @@
         </div>
       </template>
       <template #menuBody>
-        <div class="tips-menu-body">
+        <div class="tips-menu-body" :style="{ 'max-height': maxHeight }">
           <v-expansion-panels v-model="panel" multiple>
             <v-expansion-panel v-for="(data, i) in panelListItems" :key="i">
               <v-expansion-panel-header>
@@ -86,6 +86,11 @@ export default {
       type: String,
       required: false,
     },
+    maxHeight: {
+      type: String,
+      required: false,
+      default: "calc(100vh - 283px)",
+    },
   },
   data() {
     return {
@@ -122,6 +127,7 @@ export default {
     }
   }
   .tips-menu-body {
+    overflow-y: auto;
     .icon-left {
       margin-top: 2px !important;
       margin-right: 10px !important;

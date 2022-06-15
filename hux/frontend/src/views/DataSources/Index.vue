@@ -8,7 +8,7 @@
               <breadcrumb :items="breadcrumbs" />
             </div>
             <div class="text-subtitle-1 font-weight-regular mt-1">
-              Gain visibility into the customer data that is collected from
+              Gain visibility into the consumer data that is collected from
               online, offline, and 3rd party channels.
             </div>
           </template>
@@ -23,6 +23,7 @@
 
           <template #right>
             <huxButton
+              v-if="getAccess('data_source', 'request_existing')"
               button-text="Request a data source"
               variant="primary"
               size="large"
@@ -101,6 +102,7 @@ import HuxEmpty from "@/components/common/screens/Empty"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 import Icon from "@/components/common/Icon"
 import EmptyPage from "@/components/common/EmptyPage"
+import { getAccess } from "../../utils"
 
 export default {
   name: "DataSources",
@@ -177,6 +179,7 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer
     },
+    getAccess: getAccess,
   },
 }
 </script>

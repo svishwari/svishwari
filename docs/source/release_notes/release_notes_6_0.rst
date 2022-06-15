@@ -8,6 +8,7 @@ May 5, 2022
 Release Overview
 -----------------
 This Hux 6.0 release was focused on making our technology stack operationally real. This includes the following goals:
+
 - We can easily connect a wide range of customer data types
 - Integrated environments and test with real data; validating the platform is operational end-to-end
 - We can use real customer data to characterize and powerfully differentiate the needs and values of individual or segments of consumers

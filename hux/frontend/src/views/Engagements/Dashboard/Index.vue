@@ -624,8 +624,7 @@ export default {
       this.confirmDialog.title = "Edit"
       this.confirmDialog.icon = "edit"
       this.confirmDialog.type = "error"
-      this.confirmDialog.subtitle =
-        "Are you sure you want to edit this engagement?"
+      this.confirmDialog.subtitle = `${this.engagementList.name}?`
       this.confirmDialog.btnText = "Yes, edit"
       this.confirmDialog.leftBtnText = "Cancel"
       this.confirmDialog.body = `Are you sure you want to edit this engagement? <br>
@@ -707,6 +706,8 @@ By making it inactive all audiences that are part of this engagement will have t
     border-radius: 5px;
   }
   .inner-wrap {
+    overflow: auto;
+    max-height: calc(100vh - 142px) !important;
     .summary-wrap {
       flex-wrap: wrap;
       .metric-card-wrapper {

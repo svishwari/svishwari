@@ -148,6 +148,9 @@ def get_trust_id_attributes(survey_responses: list) -> list:
     """
     trust_id_attributes = []
 
+    if not survey_responses:
+        return trust_id_attributes
+
     attribute_aggregated_values = aggregate_attributes(survey_responses)
 
     for factor_name, values in survey_responses[0][db_c.FACTORS].items():
@@ -209,6 +212,7 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
     overview_data = {}
 
     for segment_data in data_by_segment:
+
         attributes_data = get_trust_id_attributes(
             segment_data[api_c.SURVEY_RESPONSES]
         )
@@ -263,17 +267,20 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
                 ],
             }
         )
-        composite_factor_scores[api_c.SEGMENTS][-1][api_c.ATTRIBUTES].insert(
-            0,
-            {
-                api_c.ATTRIBUTE_TYPE: "trust_id",
-                api_c.ATTRIBUTE_NAME: "HX TrustID",
-                api_c.ATTRIBUTE_DESCRIPTION: "TrustID is scored on a scale between -100 to 100",
-                api_c.ATTRIBUTE_SCORE: overview_data[
-                    segment_data[api_c.SEGMENT_NAME]
-                ][api_c.TRUST_ID_SCORE],
-            },
-        )
+        if segment_data[api_c.SURVEY_RESPONSES]:
+            composite_factor_scores[api_c.SEGMENTS][-1][
+                api_c.ATTRIBUTES
+            ].insert(
+                0,
+                {
+                    api_c.ATTRIBUTE_TYPE: "trust_id",
+                    api_c.ATTRIBUTE_NAME: "HX TrustID",
+                    api_c.ATTRIBUTE_DESCRIPTION: "TrustID is scored on a scale between -100 to 100",
+                    api_c.ATTRIBUTE_SCORE: overview_data[
+                        segment_data[api_c.SEGMENT_NAME]
+                    ][api_c.TRUST_ID_SCORE],
+                },
+            )
 
     trust_id_comparison_data = []
     for factor_name, data_by_factor in segment_data_by_factors.items():
@@ -311,22 +318,25 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
                             ],
                         }
                         for x in data
-                    ],
+                    ]
+                    if data
+                    else [],
                 }
             )
             for factor_data in composite_factor_scores[api_c.SEGMENTS]:
                 if factor_data[api_c.SEGMENT_NAME] != segment_name:
                     continue
-                factor_comparison_data[api_c.SEGMENTS][-1][
-                    api_c.ATTRIBUTES
-                ].insert(
-                    0,
-                    [
-                        x
-                        for x in factor_data[api_c.ATTRIBUTES]
-                        if x[api_c.ATTRIBUTE_TYPE] == factor_name
-                    ][0],
-                )
+                if data:
+                    factor_comparison_data[api_c.SEGMENTS][-1][
+                        api_c.ATTRIBUTES
+                    ].insert(
+                        0,
+                        [
+                            x
+                            for x in factor_data[api_c.ATTRIBUTES]
+                            if x[api_c.ATTRIBUTE_TYPE] == factor_name
+                        ][0],
+                    )
 
         trust_id_comparison_data.append(factor_comparison_data)
     trust_id_comparison_data.insert(0, composite_factor_scores)

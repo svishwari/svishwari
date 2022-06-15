@@ -11,8 +11,8 @@ huxunify-scripts-ci|[![Codefresh build status]( https://g.codefresh.io/api/badge
 customer-profile-api|[![Codefresh build status](https://g.codefresh.io/api/badges/pipeline/deloittehux/HXP_CDM%2Fcustomer_profile_api_ci?key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ&date=1628594544780)](https://g.codefresh.io/pipelines/edit/new/builds?id=608adc2ade28641bed60176a&pipeline=customer_profile_api_ci&projects=HXP_CDM&projectId=6036b45b3bb11c75ac85caad)| - | - | - |
 argo-cd| - | - |[![ArgoCD health status](https://argocd.hux-unified-dev1.in/applications/unified-ui-huxui-main-use1-hux-unified-dev1?resource=&operation=false)]| - |
 
-## Documentation (Coming Soon)
-https://docs.hux.deloitte.com/docs/hux-unified/en/latest/
+## RTD Documentation (most up to date)
+https://docs.hux.deloitte.com/docs/hux-unified/en/develop/
 
 # Environments
 Hux unified solutions and other dependent environment URLs
@@ -43,6 +43,11 @@ Grafana|[https://grafana.hux-husdev2.in/login](https://grafana.hux-husdev2.in/lo
 Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.hux-husdev2.in/graph)| - | - | - |
 
 Note: To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN).
+
+## CDM Snowflake Environments
+
+CDMDEV1: https://cdmdev1.east-us-2.azure.snowflakecomputing.com/console <br>
+CDMSTG1: https://deloittehux-cdmstg1.snowflakecomputing.com/console
 
 ## Security Applications
 WhiteSource https://deloitte.whitesourcesoftware.com

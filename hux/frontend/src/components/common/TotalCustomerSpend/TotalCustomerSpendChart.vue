@@ -17,7 +17,7 @@
         <div class="text-body-2 black--text text--darken-4 caption">
           <div class="spend-count mb-1 text-h5">
             <span class="dots"></span>
-            <span>Total customer spend</span>
+            <span>Total spend</span>
           </div>
           <div class="value-container">
             ${{ currentData.spend | Numeric(true, false, false) }}

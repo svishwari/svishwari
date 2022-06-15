@@ -109,6 +109,12 @@
                   <tooltip>
                     <template #label-content>
                       <div
+                        v-if="
+                          getAccess(
+                            'engagements',
+                            'add_destination_to_engagement'
+                          )
+                        "
                         class="d-flex align-items-center ml-2"
                         data-e2e="add-destination"
                         @click="
@@ -212,6 +218,23 @@
                 : "—" | Percentage
             }}
           </div>
+          <div v-if="header.value == 'replace'" class="text-body-1">
+            <hux-switch
+              v-if="item['is_ad_platform']"
+              v-model="item['replace_audience']"
+              :switch-labels="switchLabels"
+              false-color="var(--v-black-lighten4)"
+              @change="
+                handleChange(
+                  $event,
+                  section.id,
+                  section[audienceKey],
+                  item[tableData].name,
+                  item.id
+                )
+              "
+            />
+          </div>
           <div v-if="header.value == 'last_delivered'" class="text-body-1">
             <time-stamp
               :value="
@@ -229,7 +252,12 @@
       </template>
     </hux-data-table>
 
-    <v-list dense class="add-list audience-block" :height="45">
+    <v-list
+      v-if="getAccess('engagements', 'add_audience_to_engagement')"
+      dense
+      class="add-list audience-block"
+      :height="45"
+    >
       <v-list-item @click="$emit('triggerSelectAudience', $event)">
         <tooltip>
           <template #label-content>
@@ -248,7 +276,7 @@
           </template>
           <template #hover-content>
             <div class="py-2 white d-flex flex-column">
-              <span> Add a audience to this engagement </span>
+              <span> Add a audience to this engagement</span>
             </div>
           </template>
         </tooltip>
@@ -265,6 +293,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -272,7 +301,8 @@ import Logo from "@/components/common/Logo.vue"
 import Status from "@/components/common/Status.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
-import { formatText } from "@/utils.js"
+import { formatText, getAccess } from "@/utils.js"
+import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
   name: "DeliveryTable",
@@ -284,6 +314,7 @@ export default {
     Status,
     Size,
     TimeStamp,
+    HuxSwitch,
   },
   props: {
     section: {
@@ -321,13 +352,23 @@ export default {
   data() {
     return {
       openMenu: {},
+      switchLabels: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
+        },
+      ],
     }
   },
   computed: {
     sectionActions() {
       return this.sectionType === "engagement"
-        ? this.engagementMenuOptions
-        : this.audienceMenuOptions
+        ? this.engagementMenuOptions.filter((x) => !x.isHidden)
+        : this.audienceMenuOptions.filter((x) => !x.isHidden)
     },
     buttonActions() {
       this.audienceMenuOptions.forEach((element) => {
@@ -350,7 +391,45 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      getAudience: "audiences/getAudienceById",
+      updateAudience: "audiences/update",
+      replaceAudience: "audiences/replaceAudienceToggle",
+    }),
     formatText: formatText,
+    getAccess: getAccess,
+    handleChange(...args) {
+      const audienceID = args[2].find((item) => item.name == args[3]).id
+      const data = {
+        engagement_id: args[1],
+        audience_id: audienceID,
+        destination_id: args[4],
+        value: args[0],
+      }
+      let updatedEngagements = this.getAudience(audienceID).engagements.map(
+        (obj) => {
+          if (obj.id == args[0]) {
+            return {
+              ...obj,
+              deliveries: obj.deliveries.map((del) => {
+                if (del.delivery_platform_id == args[1]) {
+                  return { ...del, replace_audience: args[2] }
+                }
+                return del
+              }),
+            }
+          }
+          return obj
+        }
+      )
+      this.updateAudience({
+        id: audienceID,
+        payload: {
+          engagements: updatedEngagements,
+        },
+      })
+      this.replaceAudience(data)
+    },
   },
 }
 </script>

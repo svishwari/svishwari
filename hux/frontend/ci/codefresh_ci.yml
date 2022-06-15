@@ -1,0 +1,166 @@
+# This is the CI pipeline for Unified Solution UI
+
+version: "1.0"
+
+stages:
+  - prepare
+  - git
+  - build_tag
+  - set_env
+  - tests
+  - build_app
+  - artifactory
+  - argo_deploy
+
+steps:
+  prepare_build_details:
+    stage: prepare
+    title: "Preparing build details."
+    type: parallel
+    steps:
+      get_trigger_name:
+        stage: prepare
+        title: get trigger name using id from spec yaml
+        type: deloittehux/get-trigger-name
+      build_number:
+        stage: prepare
+        title: Bump default BUILD_NUMBER annotation
+        type: bump-build-number
+
+  clone_repository:
+    stage: git
+    title: "Cloning ${{CF_REPO_NAME}} repository."
+    type: git-clone
+    repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
+    revision: "${{CF_BRANCH}}"
+
+  number_tag:
+    stage: build_tag
+    description: "Set docker tag from build number."
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
+      - cf_export DEPLOY_ENV='dev_deploy'
+
+  version_tag:
+    stage: build_tag
+    description: "Set docker tag based Git tag."
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BRANCH}}
+      - cf_export DEPLOY_ENV='aws1_promote'
+    when:
+      branch:
+        only:
+          - /^app.*/i
+          # - /^release-[\d].*/i
+
+  set_global_vars:
+    stage: set_env
+    title: Set environment variables
+    type: freestyle
+    image: huxhub.repo.mgnt.in/yq
+    working_directory: "${{CF_REPO_NAME}}/hux/frontend/ci"
+    commands:
+      # Set Global vars
+      - yq r $VARS_FILE 'global' | sed -e 's/:\ /=/g' >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+    environment:
+      - VARS_FILE=codefresh_vars.yml
+
+  test_image:
+    stage: tests
+    title: "Building test image."
+    type: build
+    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
+    dockerfile: Dockerfile
+    image_name: ${{APP_NAME}}
+    # tag: ${{DOCKER_TAG}}
+    target: test
+    no_cache: false
+    no_cf_cache: false
+
+  tests:
+    stage: tests
+    title: "Running test steps."
+    type: parallel
+    steps:
+      lint:
+        title: "Running lint."
+        image: ${{test_image}}
+        working_directory: /app
+        commands:
+          - yarn lint
+      style:
+        title: "Running style."
+        image: ${{test_image}}
+        working_directory: /app
+        commands:
+          - yarn style
+      unit_tests:
+        stage: tests
+        title: "Running unit tests."
+        image: ${{test_image}}
+        working_directory: /app
+        commands:
+          - yarn test
+
+  app_image:
+    stage: build_app
+    title: "Building application image."
+    type: build
+    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
+    dockerfile: Dockerfile
+    image_name: ${{APP_NAME}}
+    tag: ${{DOCKER_TAG}}
+    target: release
+    no_cache: false
+    no_cf_cache: false
+    build_arguments:
+      - API_URL=${{API_URL}}
+      - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
+      - OKTA_ISSUER=${{OKTA_ISSUER}}
+      - BUILD_STORYBOOK=${{BUILD_STORYBOOK}}
+    when:
+      branch:
+        ignore:
+          - /^app.*/i
+
+  publish_to_artifactory:
+    stage: artifactory
+    title: "Publish artifact and codefresh build info to Artifactory."
+    type: deloittehux/jfrog-docker-publish
+    arguments:
+      BUILD_NAME: "${{APP_NAME}}"
+      BUILD_NUMBER: "${{DOCKER_TAG}}"
+      JFROG_REGISTRY: "${{DEV_REGISTRY}}"
+      BUILD_TAG: "${{DOCKER_TAG}}"
+    when:
+      branch:
+        only:
+          - main
+          - develop
+          # - /^release-[\d].*/i
+          # - /^app.*/i
+
+  deployment:
+    stage: argo_deploy
+    description: "Deploy the application."
+    type: freestyle
+    image: huxhub.repo.mgnt.in/codefresh/cli:latest
+    commands:
+      - >-
+        codefresh run Hux_Unified_Solution/unified_solution_ui_cd -d -t "${{DEPLOY_ENV}}"
+        -b "${{CF_BRANCH}}"
+        --variable SUB_REPO="${{SUB_REPO}}"
+        --variable COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}"
+        --variable COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
+        --variable DOCKER_TAG=${{DOCKER_TAG}}
+    when:
+      branch:
+        only:
+          - main
+          - develop
+          # - /^release-[\d].*/i
+          - /^app.*/i

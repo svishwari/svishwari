@@ -21,6 +21,7 @@ USERNAME = "username"
 PASSWORD = "password"
 CONNECTION_STRING = "connection_string"
 SSL_CERT_PATH = "ssl_cert_path"
+TLS_CERT_KEY = "tls_cert_key_file"
 MONGO_DB_HOST = "MONGO_DB_HOST"
 MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
@@ -28,10 +29,14 @@ MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
 MONGO_CONNECTION_STRING = "MONGO_CONNECTION_STRING"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
+OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
+OKTA_TEST_USER_NAME = "OKTA_TEST_USER_NAME"
+OKTA_TEST_USER_PW = "OKTA_TEST_USER_PW"
 RETURN_EMPTY_AUDIENCE_FILE = "RETURN_EMPTY_AUDIENCE_FILE"
 JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
 CDP_SERVICE = "CDP_SERVICE"
 CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
+DECISIONING_URL = "DECISIONING_URL"
 TECTON_API_KEY = "TECTON_API_KEY"
 TECTON_API = "TECTON_API"
 MOCK_TECTON = "MOCK_TECTON"
@@ -756,6 +761,8 @@ ENGAGEMENT_TAG = "engagements"
 DELIVERY_TAG = "delivery"
 DELIVER = "deliver"
 DELIVERY_HISTORY = "delivery-history"
+PENDING_JOBS = "pending-jobs"
+TRIGGERS_TAG = "triggers"
 CAMPAIGNS = "campaigns"
 AD_SET_ID = "ad_set_id"
 AD_SET_NAME = "ad_set_name"
@@ -894,9 +901,6 @@ AUTHORIZATION = "Authorization"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
-OKTA_TEST_USER_NAME = "OKTA_TEST_USER_NAME"
-OKTA_TEST_USER_PW = "OKTA_TEST_USER_PW"
-OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
 OKTA_USER_ID = "user_id"
 OKTA_UID = "uid"
 OKTA_ID_SUB = "sub"
@@ -953,6 +957,8 @@ WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
 ATTRIBUTES = "attributes"
 AUDIENCES_DEFAULT_BATCH_SIZE = 0
+TAGS = "tags"
+INDUSTRY_TAG = "industry_tag"
 
 PARAM_STORE_PREFIX = "unified"
 SECRET_STORAGE_ERROR_MSG = (
@@ -1071,6 +1077,7 @@ LATEST_VERSION = "latest_version"
 VERSION = "version"
 FULCRUM_DATE = "fulcrum_date"
 LAST_TRAINED = "last_trained"
+TRAINED_DATE = "trained_date"
 LOOKBACK_WINDOW = "lookback_window"
 PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
@@ -1082,7 +1089,7 @@ MIN = "min"
 MAX = "max"
 LCUV = "lcuv"
 MCUV = "mcuv"
-UNIQUE_VALUE = "unique_value"
+UNIQUE_VALUES = "unique_value"
 RECORDS_NOT_NULL = "records_not_null"
 POPULARITY = "popularity"
 BUCKET = "bucket"
@@ -1249,7 +1256,7 @@ PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
         MIN: random.uniform(1.0, 3.0),
         MAX: random.uniform(3.0, 7.0),
         FEATURE_SERVICE: PURCHASE,
-        UNIQUE_VALUE: random.randint(1, 100),
+        UNIQUE_VALUES: random.randint(1, 100),
         LCUV: random.choice(["Women", "Gasoline", "Clothing", "Cars"]),
         MCUV: random.choice(["Men", "Water", "Grocery", "Home accesories"]),
     }
@@ -1425,38 +1432,46 @@ SAMPLE_NAVIGATION_SETTINGS = {
     db_c.CONFIGURATION_FIELD_SETTINGS: [
         {
             db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+            db_c.CONFIGURATION_FIELD_LABEL: "Data Management",
             db_c.CONFIGURATION_FIELD_ENABLED: True,
             db_c.CONFIGURATION_FIELD_CHILDREN: [
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Data Sources",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Identity Resolution",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
             ],
         },
         {
             db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+            db_c.CONFIGURATION_FIELD_LABEL: "Decisioning",
             db_c.CONFIGURATION_FIELD_ENABLED: True,
             db_c.CONFIGURATION_FIELD_CHILDREN: [
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Models",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Models",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 }
             ],
         },
         {
             db_c.CONFIGURATION_FIELD_NAME: "Insights",
+            db_c.CONFIGURATION_FIELD_LABEL: "Insights",
             db_c.CONFIGURATION_FIELD_ENABLED: True,
             db_c.CONFIGURATION_FIELD_CHILDREN: [
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Customers",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Customers",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
                 {
                     db_c.CONFIGURATION_FIELD_NAME: "Email Deliverability",
+                    db_c.CONFIGURATION_FIELD_LABEL: "Email Deliverability",
                     db_c.CONFIGURATION_FIELD_ENABLED: True,
                 },
             ],
@@ -2016,4 +2031,27 @@ SEGMENT_TYPE_MAP = {
     HUMANITY: "humanity attributes",
     RELIABILITY: "reliability attributes",
     TRANSPARENCY: "transparency attributes",
+}
+
+HEALTHCARE = "healthcare"
+RETAIL = "retail"
+HOSPITALITY = "hospitality"
+AUTOMOTIVE = "automotive"
+ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+
+MODEL_NAME_TAGS_MAP = {
+    "Lifetime Value": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Purchase": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Unsubscribe": dict(industry=[RETAIL, HOSPITALITY]),
+    "Propensity to Churn": dict(industry=ALL_INDUSTRY_TYPES),
+    "Product Portfolio Marketing": dict(
+        industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
+    "Product Recommendation": dict(industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]),
+    "Product Return": dict(industry=[RETAIL, AUTOMOTIVE]),
+    "Promotion Attributable Analysis": dict(
+        industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
+    "Sales Forecasting model": dict(industry=ALL_INDUSTRY_TYPES),
+    "Uplift Model": dict(industry=ALL_INDUSTRY_TYPES),
 }

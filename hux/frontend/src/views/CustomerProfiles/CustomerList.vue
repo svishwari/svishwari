@@ -63,7 +63,7 @@
     </span>
     <div
       v-else-if="!loadingCustomersList && customers.length == 0"
-      class="list-frame py-14 mt-4"
+      class="list-frame py-14"
     >
       <empty-page
         v-if="customers.length == 0 && !errorCustomerList"
@@ -267,6 +267,7 @@ export default {
 .list-frame {
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
+  background-size: 100% 100%;
 }
 .title-no-notification {
   font-size: 24px !important;

@@ -255,8 +255,8 @@ export default {
   padding-top: 144px !important;
   padding-bottom: 144px !important;
   background-image: url("../../assets/images/no-lift-chart-frame.png");
-  background-position: center;
-  background-size: 90%;
+  background-position: 50% 58%;
+  background-size: 95% 85%;
 }
 .r-16 {
   right: 16px;

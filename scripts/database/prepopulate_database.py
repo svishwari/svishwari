@@ -36,6 +36,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
@@ -45,6 +46,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
@@ -55,6 +59,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
@@ -65,6 +72,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
@@ -75,6 +85,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
@@ -85,6 +96,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
@@ -95,6 +107,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -105,6 +118,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -115,6 +129,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -125,6 +140,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -135,6 +151,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
@@ -145,6 +162,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_RETENTION,
@@ -155,6 +173,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
@@ -165,6 +184,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
@@ -175,6 +195,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
@@ -184,6 +205,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: db_c.MODEL_CATEGORY_UNCATEGORIZED,
@@ -193,6 +217,9 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {
+            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
+        },
     },
     {
         db_c.CATEGORY: "Retention",
@@ -210,6 +237,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
     {
         db_c.CATEGORY: "Retention",
@@ -227,6 +255,7 @@ models_list = [
         db_c.STATUS: db_c.PENDING,
         db_c.ADDED: False,
         db_c.ENABLED: True,
+        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
     },
 ]
 
@@ -238,7 +267,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Monitor data quality "
         "throughout ingestion and create a peristent"
-        " identifier and profile for every customer",
+        " identifier and profile for every consumer.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -249,17 +278,17 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Track performance of "
         "decisioning models and reveal actionable"
-        " customer insights.",
+        " consumer insights.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Customer Insights",
+        db_c.CONFIGURATION_FIELD_NAME: "Consumer Insights",
         db_c.CONFIGURATION_FIELD_ICON: "uncategorised",
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "A 360 degree view of "
-        "each customer, understanding not only their needs and "
+        "each consumer, understanding not only their needs and "
         "preferences, but also the person behind the data.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
@@ -271,7 +300,7 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_TYPE: "module",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Seamlessly route audiences to"
         " an activation channel of choice to deliver a personalized"
-        " experience for existing and new customers.",
+        " experience for existing and new consumers.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -313,20 +342,20 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_NAME: "Experience data platform",
         db_c.CONFIGURATION_FIELD_ICON: "experience_data_platform",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Brings voice of the customer "
-        "to make improvements to your customer "
+        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Brings voice of the consumer "
+        "to make improvements to your consumer "
         "experience at an individual and macro level.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Insight IQ",
+        db_c.CONFIGURATION_FIELD_NAME: "InSightIQ",
         db_c.CONFIGURATION_FIELD_ICON: "insight_iq",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your customer profiles"
-        " with this collections of data sources at"
-        " the individual level enabling an enhanced customer experience.",
+        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your consumer profiles"
+        " with our collection of third party data to "
+        "have a deeper understanding of your consumers.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -342,23 +371,23 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Trust ID",
+        db_c.CONFIGURATION_FIELD_NAME: "HX Trust ID",
         db_c.CONFIGURATION_FIELD_ICON: "trust_id",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain "
-        "visibility, monitor and  engage with their customers "
+        "visibility, monitor and  engage with their consumers "
         "based on AI – generated experienced based metrics.",
         db_c.CONFIGURATION_FIELD_STATUS: "active",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME: "Search AI",
+        db_c.CONFIGURATION_FIELD_NAME: "Search.AI",
         db_c.CONFIGURATION_FIELD_ICON: "search_ai",
         db_c.CONFIGURATION_FIELD_TYPE: "business_solution",
         db_c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to"
         " optimize the creation, placement, and timing of online "
-        "content to increase customer acquisition.",
+        "content to increase consumer acquisition.",
         db_c.CONFIGURATION_FIELD_STATUS: "pending",
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -380,25 +409,30 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_SETTINGS: [
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Home",
+                db_c.CONFIGURATION_FIELD_LABEL: "Home",
                 db_c.CONFIGURATION_FIELD_ICON: "home",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Configuration",
+                db_c.CONFIGURATION_FIELD_LABEL: "Configuration",
                 db_c.CONFIGURATION_FIELD_ICON: "configuration",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Data Management",
+                db_c.CONFIGURATION_FIELD_LABEL: "Data Management",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Data Sources",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Data Sources",
                         db_c.CONFIGURATION_FIELD_ICON: "datasource",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Identity Resolution",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Identity Resolution",
                         db_c.CONFIGURATION_FIELD_ICON: "identity-resolution",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
@@ -406,10 +440,12 @@ configurations_constants = [
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Decisioning",
+                db_c.CONFIGURATION_FIELD_LABEL: "Decisioning",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Models",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Models",
                         db_c.CONFIGURATION_FIELD_ICON: "models",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     }
@@ -417,25 +453,30 @@ configurations_constants = [
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Orchestration",
+                db_c.CONFIGURATION_FIELD_LABEL: "Orchestration",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Destinations",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Destinations",
                         db_c.CONFIGURATION_FIELD_ICON: "multiple_map_pins",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Segment Playground",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Segment Playground",
                         db_c.CONFIGURATION_FIELD_ICON: "playground",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Audiences",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Audiences",
                         db_c.CONFIGURATION_FIELD_ICON: "audiences",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Engagements",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Engagements",
                         db_c.CONFIGURATION_FIELD_ICON: "speaker_up",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
@@ -443,21 +484,25 @@ configurations_constants = [
             },
             {
                 db_c.CONFIGURATION_FIELD_NAME: "Insights",
+                db_c.CONFIGURATION_FIELD_LABEL: "Insights",
                 db_c.CONFIGURATION_FIELD_ENABLED: True,
                 db_c.CONFIGURATION_FIELD_CHILDREN: [
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Customers",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Customers",
                         db_c.CONFIGURATION_FIELD_ICON: "customer-profiles",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "HX TrustID",
+                        db_c.CONFIGURATION_FIELD_LABEL: "HX TrustID",
                         db_c.CONFIGURATION_FIELD_ICON: "hx-trustid",
                         db_c.CONFIGURATION_FIELD_SUPERSCRIPT: "TM",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
                     {
                         db_c.CONFIGURATION_FIELD_NAME: "Email Deliverability",
+                        db_c.CONFIGURATION_FIELD_LABEL: "Email Deliverability",
                         db_c.CONFIGURATION_FIELD_ICON: "email_deliverability",
                         db_c.CONFIGURATION_FIELD_ENABLED: True,
                     },
@@ -1265,6 +1310,22 @@ def drop_collections(database: MongoClient) -> None:
         logging.info("Dropped the %s collection.", collection)
 
 
+def create_empty_collections(
+    database: MongoClient, collection_names: list
+) -> None:
+    """Create empty collections
+
+    Args:
+        database (MongoClient): MongoDB Client
+        collection_names (list): List of collection names to create
+    """
+    for collection_name in collection_names:
+        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(
+            collection_name
+        )
+        logging.info("Empty collection %s created.", collection_name)
+
+
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
     """Inserting Data Sources into Data Sources Collection.
 
@@ -1461,4 +1522,9 @@ if __name__ == "__main__":
     insert_client_projects(db_client, client_projects_list)
     insert_applications(db_client, applications_constants)
     insert_constants(db_client, [rbac_matrix])
+    collections_to_create = [
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+        db_c.DELIVERY_JOBS_COLLECTION,
+    ]
+    create_empty_collections(db_client, collections_to_create)
     logging.info("Pre-populate database procedure complete.")

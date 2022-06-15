@@ -68,19 +68,15 @@ class DecisioningTests(RouteTestCase):
             t_c.validate_schema(ModelSchema(), response.json, True)
         )
 
-        self.assertEqual(
-            [x[api_c.NAME] for x in response.json],
-            sorted([x[api_c.NAME] for x in t_c.MOCKED_MODEL_RESPONSE]),
-        )
-
     def test_success_get_models_with_status(self):
-        """Test get models from Tecton with status."""
+        """Test get models with status."""
 
         get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?{api_c.STATUS}=success",
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?"
+            f"{api_c.STATUS}={api_c.STATUS_ACTIVE}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -88,11 +84,41 @@ class DecisioningTests(RouteTestCase):
         self.assertTrue(
             t_c.validate_schema(ModelSchema(), response.json, True)
         )
-
-        self.assertListEqual(
-            [x[api_c.NAME] for x in response.json],
-            ["Model1", "Model2"],
+        self.assertTrue(all(api_c.STATUS in model for model in response.json))
+        self.assertTrue(
+            all(
+                model[api_c.STATUS] == api_c.STATUS_ACTIVE
+                for model in response.json
+            )
         )
+
+    def test_success_get_models_with_model_tags_filter(self):
+        """Test get models with model tags filter."""
+
+        get_models_mock = mock.patch(self.models_rel_path).start()
+        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?"
+            f"{api_c.INDUSTRY_TAG}={api_c.HEALTHCARE}&{api_c.INDUSTRY_TAG}={api_c.RETAIL}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(ModelSchema(), response.json, True)
+        )
+        for model in response.json:
+            self.assertIn(api_c.TAGS, model)
+            self.assertIn(api_c.INDUSTRY, model[api_c.TAGS])
+            # validate that at lease one of the industry tags sent as part of
+            # request payload is present in response
+            self.assertTrue(
+                any(
+                    industry_tag in [api_c.HEALTHCARE, api_c.RETAIL]
+                    for industry_tag in model[api_c.TAGS][api_c.INDUSTRY]
+                )
+            )
 
     def test_success_request_model(self):
         """Test requesting a model."""
@@ -274,10 +300,11 @@ class DecisioningTests(RouteTestCase):
             f"{api_c.MODELS_VERSION_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
         )
-        if model_id in t_c.SUPPORTED_MODELS:
-            self.assertEqual(HTTPStatus.OK, response.status_code)
-        else:
-            self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(ModelVersionSchema(), response.json, True)
+        )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(settings.load_profile("hypothesis_setting_profile"))
@@ -377,9 +404,7 @@ class DecisioningTests(RouteTestCase):
         self.assertTrue(
             t_c.validate_schema(FeatureSchema(), response.json, True)
         )
-        self.assertTrue(
-            all((feature[api_c.SCORE] < 0 for feature in response.json))
-        )
+        self.assertEqual(20, len(response.json))
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(settings.load_profile("hypothesis_setting_profile"))
