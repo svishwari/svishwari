@@ -139,7 +139,7 @@ class AudienceGetSchema(Schema):
     source = fields.Dict(
         attribute=db_c.AUDIENCE_SOURCE,
         example={
-            db_c.AUDIENCE_SOURCE_TYPE: "s3",
+            db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_AMAZONS3,
             db_c.AUDIENCE_SOURCE_KEY: "bucket-name",
             db_c.AUDIENCE_SOURCE_BUCKET: "file location",
         },

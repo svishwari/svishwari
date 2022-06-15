@@ -19,8 +19,6 @@ from huxunifylib.connectors import (
     FacebookConnector,
 )
 
-from huxunify.api.config import get_config
-from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunifylib.database.user_management import (
     delete_favorite_from_all_users,
 )
@@ -35,6 +33,8 @@ from huxunifylib.database import (
     collection_management as cm,
 )
 
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
+from huxunify.api.config import get_config
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api.schema.orchestration import (
@@ -2081,7 +2081,7 @@ class DeleteAudienceView(SwaggerView):
 @add_view_to_blueprint(
     orchestration_bp,
     f"{api_c.AUDIENCE_ENDPOINT}/upload",
-    "AudiencePostView",
+    "AudienceS3UploadPostView",
 )
 class AudienceS3UploadPostView(SwaggerView):
     """Audience S3 Upload Post view class."""
@@ -2197,12 +2197,12 @@ class AudienceS3UploadPostView(SwaggerView):
             file_type=api_c.AUDIENCE_UPLOAD,
         ):
             logger.error(
-                "Could not load fileinto S3.",
+                "Could not load file into S3.",
             )
             return HuxResponse.BAD_REQUEST("File can not be uploaded.")
 
         source = {
-            db_c.AUDIENCE_SOURCE_TYPE: api_c.AWS_S3_NAME,
+            db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_AMAZONS3,
             db_c.AUDIENCE_SOURCE_BUCKET: get_config().S3_DATASET_BUCKET,
             db_c.AUDIENCE_SOURCE_KEY: audience_file,
         }
