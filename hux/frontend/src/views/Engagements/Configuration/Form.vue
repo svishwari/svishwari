@@ -140,7 +140,12 @@
       <template #field:manage="row">
         <div class="d-flex align-center justify-end">
           <div @click="removeAudience(row.item)">
-            <icon size="19" type="delete-button" color="darkD" />
+            <icon
+              class="cursor-pointer"
+              size="19"
+              type="delete-button"
+              color="darkD"
+            />
           </div>
         </div>
       </template>

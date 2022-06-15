@@ -12,6 +12,12 @@ const modelFeatures = (modelId = 1) => {
     data_source: "Ecommerce",
     status: faker.random.arrayElement(["Active", "Delivering", "Stopped"]),
     id: modelId,
+    lcuv: "Gasoline",
+    min: 82.45722715331505,
+    mean: 42.53482405491205,
+    max: 46.83699250118915,
+    records_not_null: 88.32269510609497,
+    mcuv: "Home accessories",
   }
 }
 

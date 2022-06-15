@@ -2,7 +2,7 @@
   <drawer v-model="localToggle" :width="600" :loading="loading">
     <template #header-left>
       <div class="d-flex align-center">
-        <icon type="team-member-drawer" :size="32" class="mr-3" />
+        <icon type="team-member-drawer" :size="32" class="mr-3 ml-2" />
         <h3 class="text-h2">Request a team member to add</h3>
       </div>
     </template>
@@ -23,7 +23,7 @@
             ></text-field>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="mt-2">
           <v-col class="py-0">
             <span class="body-2 adjust-label">Last name</span>
             <text-field
@@ -34,7 +34,7 @@
             ></text-field>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="mt-2">
           <v-col class="py-0">
             <span class="body-2 adjust-label">Email</span>
             <text-field
@@ -117,7 +117,7 @@
             </div>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="mt-1">
           <v-col class="py-0 mt-7">
             <span class="body-2 adjust-label">Reason for request</span>
             <v-textarea
