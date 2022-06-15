@@ -897,15 +897,29 @@ class AudienceGetView(SwaggerView):
         )
 
         # add insights
-        audience[api_c.AUDIENCE_INSIGHTS] = get_customers_overview(
-            token_response[0],
-            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+        audience[api_c.AUDIENCE_INSIGHTS] = Caching.check_and_return_cache(
+            {
+                api_c.ENDPOINT: f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+                **{
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
+                },
+            },
+            get_customers_overview,
+            {
+                api_c.AUTHENTICATION_TOKEN: token_response[0],
+                api_c.AUDIENCE_FILTERS: {
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
+                },
+            },
         )
 
         # query DB and populate lookalike audiences in audience dict only if
         # the audience is not a lookalike audience since lookalike audience
         # cannot have lookalike audiences of its own
-
         audience[api_c.LOOKALIKE_AUDIENCES] = (
             destination_management.get_all_delivery_platform_lookalike_audiences(
                 database, {db_c.LOOKALIKE_SOURCE_AUD_ID: audience_id}

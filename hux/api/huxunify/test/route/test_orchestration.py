@@ -675,6 +675,9 @@ class OrchestrationRouteTest(RouteTestCase):
         self.assertIn(api_c.DESTINATIONS, audience)
         self.assertEqual(len(audience[api_c.DESTINATIONS]), 2)
 
+        self.assertIn(api_c.AUDIENCE_INSIGHTS, audience)
+        self.assertIsInstance(audience[api_c.AUDIENCE_INSIGHTS], dict)
+
         # validate the facebook destination in the audience is set to
         # "Not delivered"
         for engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
