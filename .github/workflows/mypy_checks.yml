@@ -11,8 +11,6 @@ jobs:
           python-version: 3.7
       - name: Install Pipenv
         run: pip install pipenv
-      - name: Install Mypy
-        run: pipenv install mypy
       - uses: dorny/paths-filter@v2
         id: changes
         with:
