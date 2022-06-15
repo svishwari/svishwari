@@ -65,20 +65,29 @@ class Config:
     MONGO_SSL_CERT = str(
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
     )
-    # TODO Remove when we have separate configs for environments.
+    AZURE_MONGO_TLS_CLIENT_KEY = str(
+        Path(__file__).parent.parent.joinpath("mongodb-azure.pem")
+    )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
         api_c.PORT: MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: MONGO_DB_PASSWORD,
+        api_c.SSL_CERT_PATH: MONGO_SSL_CERT,
     }
-    if CLOUD_PROVIDER != api_c.AZURE:
-        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
+    if CLOUD_PROVIDER == api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
 
     # OKTA CONFIGURATION
-    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
     OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
+    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
+    OKTA_REDIRECT_URI = config(api_c.OKTA_REDIRECT_URI, default="")
+    OKTA_TEST_USER_NAME = config(api_c.OKTA_TEST_USER_NAME, default="")
+    OKTA_TEST_USER_PW = config(api_c.OKTA_TEST_USER_PW, default="")
+
+    # DECISIONING CONFIGURATION
+    DECISIONING_URL = config(api_c.DECISIONING_URL, default="")
 
     # TECTON
     TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")
@@ -171,10 +180,10 @@ class DevelopmentConfig(Config):
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
+        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
-
-    if Config.CLOUD_PROVIDER != api_c.AZURE:
-        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
+    if Config.CLOUD_PROVIDER == api_c.AZURE:
+        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = Config.AZURE_MONGO_TLS_CLIENT_KEY
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
@@ -210,6 +219,9 @@ class PyTestConfig(Config):
     JIRA_USER_EMAIL = "sh@fake.com"
     JIRA_API_KEY = "fake-jira-key"
     JIRA_SERVER = "https://fake.fake.jira.fake"
+
+    # DECIOSIONING CONFIGURATION
+    DECISIONING_URL = "https://fake.fake.decisioning.fake"
 
     # TECTON CONFIGURATION
     TECTON_API_KEY = "fake-key"

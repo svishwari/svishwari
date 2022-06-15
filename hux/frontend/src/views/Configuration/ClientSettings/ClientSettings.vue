@@ -5,18 +5,7 @@
         <v-card class="rounded-lg box-shadow-5 mt-3">
           <div class="px-6 py-5">
             <div class="pb-1 d-flex justify-space-between">
-              <div class="black--text text-h3">
-                Customize this client’s brand
-              </div>
-            </div>
-            <div class="black--text text-body-1 mt-4">
-              Customize this client’s look and feel based on the industry you
-              select. This will update the client’s name, homepage, copy, and
-              iconography.
-            </div>
-            <div class="black--text text-body-1">
-              Note: This will only update the look and feel for you, not for all
-              team members.
+              <div class="black--text text-h3">Industry</div>
             </div>
             <div class="black--text text-h6 d-flex mt-4">
               <h3 class="text-body-1">Demo mode</h3>
@@ -61,8 +50,8 @@
                 @on-select="onSelectMenuItem"
               />
             </div>
-            <div v-if="showSubCategories" class="divider-class mt-1"></div>
-            <div v-if="showSubCategories" class="black--text text-h6 mt-4">
+            <div v-if="showSubCategories" class="divider-class mt-2"></div>
+            <div v-if="showSubCategories" class="black--text text-h6 mt-6">
               <div
                 v-for="option in labelOptions"
                 :key="option.key"
@@ -96,7 +85,7 @@
           is-tile
           variant="primary base"
           data-e2e="action-audience"
-          :is-disabled="isDisabled()"
+          :is-disabled="isPrePopulate || isDisabled()"
           @click="updatedConfigSettings"
         >
           Update
@@ -157,6 +146,7 @@ export default {
       industrySelected: false,
       showSubCategories: false,
       showConfiguration: false,
+      isPrePopulate: true,
       currentIndustrySelection: "Select",
       finalSelection: {
         retailOptions: "Select",
@@ -198,17 +188,20 @@ export default {
         customerOptions: "Select",
         conversionOptions: "Select",
       }
+      this.isPrePopulate = false
     },
     onSelectSubMenuItem(value, item) {
       this.finalSelection[item] = value.name
+      this.isPrePopulate = false
     },
     isDisabled() {
-      return (this.finalSelection.retailOptions !== "Select" &&
-        this.finalSelection.customerOptions !== "Select" &&
-        this.finalSelection.conversionOptions !== "Select") ||
-        !this.showConfiguration
-        ? false
-        : true
+      if (this.showConfiguration) {
+        return this.finalSelection.retailOptions !== "Select" &&
+          this.finalSelection.customerOptions !== "Select" &&
+          this.finalSelection.conversionOptions !== "Select"
+          ? false
+          : true
+      } else return false
     },
     async updatedConfigSettings() {
       await this.updateDemoConfig({
@@ -248,6 +241,18 @@ export default {
     button {
       margin-top: 0px !important;
       margin-left: 0px !important;
+    }
+  }
+  ::v-deep .rounded-lg {
+    .hux-dropdown {
+      button {
+        .v-btn__content {
+          .text-ellipsis {
+            position: relative;
+            bottom: 2px !important;
+          }
+        }
+      }
     }
   }
   .divider-class {

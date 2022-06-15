@@ -1,12 +1,12 @@
 <template>
-  <div class="engagements-wrap">
+  <div class="engagements-wrap white">
     <page-header class="py-5" :header-height="110">
       <template #left>
         <div>
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Start making meaningful connections with current and future customers
+          Start making meaningful connections with current and future consumers
           by targeting intelligent audiences while staying organized.
         </div>
       </template>
@@ -61,6 +61,7 @@
 
           <template #right>
             <router-link
+              v-if="getAccess('engagements', 'create_one')"
               :disabled="isEmptyError"
               :event="!isEmptyError ? 'click' : ''"
               :to="{ name: 'EngagementConfiguration' }"
@@ -624,6 +625,7 @@
           <template #button>
             <span v-if="finalFilterApplied <= 0">
               <router-link
+                v-if="getAccess('engagements', 'create_one')"
                 :to="{ name: 'EngagementConfiguration' }"
                 class="text-decoration-none"
                 append
@@ -828,6 +830,7 @@ import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
 import EngagementFilter from "./Configuration/Drawers/EngagementFilter.vue"
 import EmptyPage from "@/components/common/EmptyPage"
+import { getAccess } from "@/utils"
 
 export default {
   name: "Engagements",
@@ -1243,6 +1246,7 @@ export default {
         {
           title: "Edit engagement",
           isDisabled: false,
+          isHidden: !this.getAccess("engagements", "update_one"),
           onClick: () => {
             this.openEditModal(engagement)
           },
@@ -1259,6 +1263,7 @@ export default {
         {
           title: "Delete engagement",
           isDisabled: false,
+          isHidden: !this.getAccess("engagements", "delete_one"),
           onClick: () => {
             this.openModal(engagement)
           },
@@ -1325,6 +1330,7 @@ export default {
         params: { id: id },
       })
     },
+    getAccess: getAccess,
   },
 }
 </script>
@@ -1488,8 +1494,8 @@ export default {
           tr {
             td:first-child {
               width: 300px;
-              position: fixed;
-              margin-left: 220px;
+              position: relative;
+              margin-left: 0px;
               display: block;
               background-color: var(--v-primary-lighten1);
             }
@@ -1535,6 +1541,7 @@ export default {
   height: 60vh !important;
   background-image: url("../../assets/images/no-alert-frame.png");
   background-position: center;
+  background-size: 96% 86%;
 }
 
 //to overwrite the classes

@@ -42,7 +42,10 @@
             >Audiences ({{ data.audiences.length }})</span
           >
         </h3>
-        <div class="d-flex align-center">
+        <div
+          v-if="getAccess('delivery', 'deliver')"
+          class="d-flex align-center"
+        >
           <v-btn
             text
             color="primary"
@@ -76,6 +79,7 @@
           to this engagement first.
         </div>
         <hux-button
+          v-if="getAccess('engagements', 'add_audience_to_engagement')"
           variant="primary base"
           icon-color="white"
           icon-variant="base"
@@ -98,6 +102,7 @@ import HuxButton from "@/components/common/huxButton"
 import OverviewMetricCards from "./Components/OverviewMetricCards.vue"
 import DeliveryTable from "./Components/DeliveryTable.vue"
 import { mapGetters } from "vuex"
+import { getAccess } from "@/utils"
 
 export default {
   name: "Overview",
@@ -136,7 +141,7 @@ export default {
           value: "size",
           width: "15%",
           hoverTooltip:
-            "Average order value for all customers (known and anyonymous) for all time.",
+            "Average order value for all consumers (known and anyonymous) for all time.",
           tooltipWidth: "201px",
         },
         {
@@ -151,11 +156,37 @@ export default {
         },
       ],
       audienceMenuOptions: [
-        { id: 1, title: "Deliver now", active: true },
-        { id: 2, title: "Create lookalike", active: true },
-        { id: 3, title: "Add a destination", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
+        {
+          id: 2,
+          title: "Create lookalike",
+          active: true,
+          isHidden: !this.getAccess("audience", "create_lookalike"),
+        },
+        {
+          id: 3,
+          title: "Add a destination",
+          active: true,
+          isHidden: !this.getAccess(
+            "engagements",
+            "add_destination_to_engagement"
+          ),
+        },
         { id: 4, title: "Edit delivery schedule", active: true },
-        { id: 5, title: "Remove audience", active: true },
+        {
+          id: 5,
+          title: "Remove audience",
+          active: true,
+          isHidden: !this.getAccess(
+            "engagements",
+            "remove_audience_from_engagement"
+          ),
+        },
       ],
     }
   },
@@ -218,6 +249,7 @@ export default {
       }
       return options
     },
+    getAccess: getAccess,
   },
 }
 </script>

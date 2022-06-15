@@ -6,7 +6,7 @@
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div v-if="!isEdit" class="text-subtitle-1 font-weight-regular mt-1">
-          Get immediate insights by segmenting your customer list based on
+          Get immediate insights by segmenting your consumer list based on
           attributes that you want to explore.
         </div>
       </template>
@@ -16,6 +16,7 @@
           :panel-list-items="panelListItems"
           header="Segment Playground user guide"
           :right-position="!isEdit ? '0rem' : '5rem'"
+          max-height="calc(100vh - 363px)"
         />
         <v-menu
           v-if="isEdit"
@@ -145,7 +146,7 @@
     <v-row v-else-if="!loading && !errorState" class="ma-0 empty-row">
       <empty-page type="no-customer-data" :size="50">
         <template #title>
-          <div class="h2">No customer data to show</div>
+          <div class="h2">No consumer data to show</div>
         </template>
         <template #subtitle>
           <div class="body-2 mt-3">
@@ -285,19 +286,19 @@ export default {
         {
           id: 1,
           title: "What is Segment Playground?",
-          text: "<b>Segment Playground </b>allows you to explore and segment your full customer list and enables you to see real time insights.",
+          text: "<b>Segment Playground </b>allows you to explore and segment your full consumer list and enables you to see real time insights.",
           textPart: "",
         },
         {
           id: 2,
           title: "What is segmenting?",
-          text: "<b>Segmenting</b> is the process of filtering your full customer list based on model scores or specific characteristics.",
+          text: "<b>Segmenting</b> is the process of filtering your full consumer list based on model scores or specific characteristics.",
           textPart: "",
         },
         {
           id: 3,
           title: "How do I use Segment Playground?",
-          text: "First click <b>+ Attribute,</b> then select what characteristic you would like to segment your customer list. As you add attributes, the insights on the right hand will update accordingly.",
+          text: "First click <b>+ Attribute,</b> then select what characteristic you would like to segment your consumer list. As you add attributes, the insights on the right hand will update accordingly.",
           textPart:
             "If you want to save this segment as an audience, click on <b >Save this segment as an audience.</b> By doing so you will not only save this segment as an audience, but you will also have the ability to deliver this audience to a 3rd party platform when you are ready OR add it to an engagement.",
         },
@@ -311,9 +312,9 @@ export default {
         {
           id: 5,
           title: "“All” vs “Any”",
-          text: "<b>All</b> means that a customer must match every attribute within the section in order to be included in the segment.",
+          text: "<b>All</b> means that a consumer must match every attribute within the section in order to be included in the segment.",
           textPart:
-            "<b>Any</b> means that a customer must match at least 1 of the attributes within the section in order to be included in the segment.",
+            "<b>Any</b> means that a consumer must match at least 1 of the attributes within the section in order to be included in the segment.",
         },
       ],
       confirmData: {
@@ -569,18 +570,22 @@ export default {
 
 <style lang="scss" scoped>
 .playground-outermost-wrap {
+  height: calc(100vh - 150px) !important;
   .playground-wrap {
     ::v-deep .container {
       padding: 0px 24px !important;
     }
     .segment-wrap {
       .attributes {
-        flex: 0 0 66.63934426%;
-        width: 66.63934426%;
+        max-height: calc(100vh - 260px) !important;
+        overflow-y: auto;
+        flex: 0 0 66.64%;
+        width: 66.64%;
       }
       .overviews {
-        flex: 0 0 33.360655737704918%;
-        width: 33.360655737704918%;
+        @extend .attributes;
+        flex: 0 0 33.36%;
+        width: 33.36%;
         @extend .border-start;
         border-color: var(--v-black-lighten3);
       }
@@ -632,9 +637,11 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 240px);
-  overflow-y: auto !important;
+  overflow-y: hidden !important;
   overflow-x: hidden !important;
+  .container {
+    height: calc(100vh - 260px);
+  }
 }
 .zi-100 {
   z-index: 100;

@@ -310,6 +310,52 @@ class ApplicationsTests(RouteTestCase):
             patch_request_body.get(api_c.URL), response.json.get(api_c.URL)
         )
 
+    def test_applications_patch_endpoint_soft_delete(self):
+        """Test patch soft delete"""
+
+        patch_request_body = {api_c.URL: "NEW_URL_Link", api_c.IS_ADDED: False}
+
+        application = self.applications[0]
+
+        applications_request = {
+            api_c.CATEGORY: application.get(api_c.CATEGORY),
+            api_c.NAME: application.get(api_c.NAME),
+            api_c.URL: "URL_Link",
+        }
+        # Create the application ensuring it is added to the user collection.
+        self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=applications_request,
+        )
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}/"
+            f"{self.applications[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+            json=patch_request_body,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(ApplicationsGETSchema().validate(response.json))
+        self.assertEqual(
+            str(self.applications[0][db_c.ID]), response.json.get(api_c.ID)
+        )
+        self.assertEqual(
+            patch_request_body.get(api_c.URL), response.json.get(api_c.URL)
+        )
+
+        # Ensure no applications are returned as it is soft deleted.
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.APPLICATIONS_ENDPOINT}",
+            query_string={api_c.USER: True},
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(
+            api_c.EMPTY_USER_APPLICATION_RESPONSE,
+            response.json.get(api_c.MESSAGE),
+        )
+
     def test_applications_patch_endpoint_empty_body(self):
         """Test patch with empty request body"""
 

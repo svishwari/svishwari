@@ -258,6 +258,7 @@ import Logo from "./Logo.vue"
 import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import Tooltip from "./Tooltip.vue"
+import { getAccess } from "@/utils"
 
 export default {
   name: "StatusList",
@@ -308,13 +309,23 @@ export default {
       lookALikeAllowedEntries: ["Facebook"],
       engagementMenuOptions: [
         { id: 1, title: "View delivery history", active: false },
-        { id: 2, title: "Deliver all", active: false },
+        {
+          id: 2,
+          title: "Deliver all",
+          active: false,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Add a destination", active: false },
         { id: 5, title: "Remove engagement", active: false },
       ],
       destinationMenuOptions: [
         { id: 2, title: "Create lookalike", active: false },
-        { id: 1, title: "Deliver now", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Edit delivery schedule", active: true },
         { id: 4, title: "Pause delivery", active: false },
         { id: 5, title: "Open destination", active: false },
@@ -325,6 +336,7 @@ export default {
           id: 1,
           title: "Deliver now",
           active: false,
+          isHidden: !this.getAccess("delivery", "deliver"),
         },
         { id: 2, title: "Add a destination", active: true },
         { id: 3, title: "Create lookalike", active: false },
@@ -509,13 +521,19 @@ export default {
       }
       return [
         { ...createLookaLikeOption },
-        { id: 2, title: "Deliver now", active: true },
+        {
+          id: 2,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Edit delivery schedule", active: true },
         { id: 4, title: "Pause delivery", active: false },
         { id: 5, title: "Open destination", active: false },
         { id: 6, title: "Remove destination", active: true },
       ]
     },
+    getAccess: getAccess,
   },
 }
 </script>

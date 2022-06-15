@@ -18,7 +18,7 @@
           :logo-option="true"
           :dot-option="'Remove'"
           class="mr-12 model-desc-card"
-          height="225"
+          height="222"
           width="255"
           data-e2e="dataSourcesList"
           :to="
@@ -45,6 +45,7 @@
           </template>
           <template slot="action-menu-options">
             <div
+              v-if="getAccess('data_source', 'delete_one')"
               class="px-4 py-2 white d-flex flex-column text-h5"
               :data-e2e="`data-source-list-${dataSource.status}-remove`"
               @click="openModal(dataSource)"
@@ -105,6 +106,7 @@ import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import sortBy from "lodash/sortBy"
+import { getAccess } from "../../utils"
 
 export default {
   name: "DataSourcesList",
@@ -159,6 +161,7 @@ export default {
       })
       this.confirmModal = false
     },
+    getAccess: getAccess,
   },
 }
 </script>
@@ -176,6 +179,14 @@ export default {
       ::v-deep i {
         font-size: 17px;
       }
+    }
+  }
+  ::v-deep.descriptive-card {
+    .title {
+      padding-bottom: 4px !important;
+    }
+    .px-3.pt-2 {
+      padding-top: 24px !important;
     }
   }
 }

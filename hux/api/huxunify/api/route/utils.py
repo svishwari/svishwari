@@ -111,9 +111,11 @@ def check_mongo_connection() -> Tuple[bool, str]:
                 db_c.CDP_DATA_SOURCES_COLLECTION
             ].find({})
         )
+        logger.info("Mongo is available")
         return True, "Mongo available."
     # pylint: disable=broad-except
     except Exception:
+        logger.exception("Mongo Health Check failed.")
         return False, "Mongo not available."
 
 
@@ -1501,14 +1503,15 @@ def populate_trust_id_segments(
             database=database,
             filters=seg[api_c.SEGMENT_FILTERS],
         )
-        if survey_response:
-            segments_data.append(
-                {
-                    api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
-                    api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
-                    api_c.SURVEY_RESPONSES: survey_response,
-                }
-            )
+        segments_data.append(
+            {
+                api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
+                api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
+                api_c.SURVEY_RESPONSES: survey_response
+                if survey_response
+                else [],
+            }
+        )
     return segments_data
 
 

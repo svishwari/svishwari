@@ -31,13 +31,15 @@
       </div>
     </div>
     <div v-if="showDemoHeader" class="demo-header">
-      <icon
-        :type="`${icon}_header`"
-        :custom-size="{ width: 240, height: 110 }"
-        :enable-custom-size="true"
+      <img
+        :src="require(`@/assets/images/${icon}.png`)"
+        alt="Hux"
+        height="auto"
+        width="100%"
+        class="header-image"
       />
     </div>
-    <div class="page-header--right">
+    <div v-if="!showDemoHeader" class="page-header--right">
       <slot name="right"></slot>
     </div>
   </v-card>
@@ -99,8 +101,13 @@ export default {
 .page-header--wrap {
   border-bottom: 1px solid var(--v-black-lighten3) !important;
   .demo-header {
-    margin-right: -15%;
+    width: 35%;
     height: inherit;
+    margin-right: 219px;
+    overflow: hidden;
+    .header-image {
+      margin-top: -12%;
+    }
   }
 }
 </style>

@@ -41,5 +41,26 @@ describe("Data management > Identity resolution", () => {
     // toggle stitched panel open/closed
     cy.get(selector.idr.stitched).click()
     cy.get(selector.idr.stitched).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    //click ouside to close the drawer
+    cy.get(selector.idr.exitDrawer).click()
+    if (cy.get(selector.idr.datafeed).its("length").should("gt", 0)) {
+      cy.get(selector.idr.idrfilterToggle).click()
+      cy.get(selector.idr.selectDate).click()
+      cy.get(".hux-select")
+      cy.get('[role="listbox"]').children().eq(0).click()
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(500)
+      cy.get(selector.idr.applyIdrFilter).click()
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000)
+      cy.get(selector.idr.closeIdrFilter).click()
+      cy.get(selector.idr.idrfilterToggle).click()
+      cy.get(selector.idr.clearIdrFilter).click()
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(2000)
+      cy.get(selector.idr.closeIdrFilter).click()
+    }
   })
 })

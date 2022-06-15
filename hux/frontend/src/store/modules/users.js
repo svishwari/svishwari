@@ -19,6 +19,7 @@ const state = {
   users: [],
   requestedUsers: [],
   tickets: [],
+  accessMatrix: {},
 }
 
 const mutations = {
@@ -56,6 +57,10 @@ const mutations = {
 
   setAllRequestedUsers(state, requestedUsers) {
     Vue.set(state, "requestedUsers", requestedUsers)
+  },
+
+  setApplicationAccessMatrix(state, accesses) {
+    Vue.set(state, "accessMatrix", accesses)
   },
 }
 
@@ -141,10 +146,24 @@ const actions = {
     }
   },
 
-  async updatePIIAccess(_, payload) {
+  async updateUser(_, payload) {
     try {
       const result = await api.users.batchUpdate(payload)
-      return result
+      if (result) {
+        handleSuccess("User updated successfully!!!", result.status)
+      }
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async deleteUser(_, id) {
+    try {
+      const result = await api.users.delete(id)
+      if (result) {
+        handleSuccess("User deleted successfully!!!", result.status)
+      }
     } catch (error) {
       handleError(error)
       throw error
@@ -193,6 +212,16 @@ const actions = {
       throw error
     }
   },
+
+  async getAccessMetrics({ commit }) {
+    try {
+      const response = await api.users.accessMatrix()
+      commit("setApplicationAccessMatrix", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 const getters = {
@@ -223,6 +252,8 @@ const getters = {
   getUserAlerts: (state) => state.userProfile.alerts,
 
   getDemoConfiguration: (state) => state.userProfile.demo_config,
+
+  getRbacMatrix: (state) => state.accessMatrix.components,
 }
 export default {
   namespaced,

@@ -90,7 +90,7 @@
                   />
                 </template>
                 <template #hover-content>
-                  Total order value for all customers (known and anyonymous)
+                  Total order value for all consumers (known and anyonymous)
                   over time.
                 </template>
               </tooltip>

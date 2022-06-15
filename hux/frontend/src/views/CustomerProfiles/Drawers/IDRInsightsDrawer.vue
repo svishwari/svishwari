@@ -162,7 +162,7 @@ export default {
           metricType: "",
           result: "",
           toolTipText:
-            "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
+            "Represents a First Name, Last Name and Address combination, used to identify a consumer that lives at an address.",
         },
         {
           metric: "Household IDs",
@@ -203,22 +203,24 @@ export default {
 
   methods: {
     mapIDRItems() {
-      this.idrItems[0].result = this.idrData.updated
-      this.idrItems[0].metricType = "date"
-      this.idrItems[1].result = this.idrData.total_records
-      this.idrItems[1].metricType = "numeric"
-      this.idrItems[2].result = this.idrData.match_rate
-      this.idrItems[2].metricType = "percentage"
-      this.idrItems[3].result = this.idrData.total_unique_ids
-      this.idrItems[3].metricType = "numeric"
-      this.idrItems[4].result = this.idrData.total_anonymous_ids
-      this.idrItems[4].metricType = "numeric"
-      this.idrItems[5].result = this.idrData.total_individual_ids
-      this.idrItems[5].metricType = "numeric"
-      this.idrItems[6].result = this.idrData.total_household_ids
-      this.idrItems[6].metricType = "numeric"
-      this.idrItems[7].result = this.idrData.total_address_ids
-      this.idrItems[7].metricType = "numeric"
+      if (this.idrData) {
+        this.idrItems[0].result = this.idrData.updated
+        this.idrItems[0].metricType = "date"
+        this.idrItems[1].result = this.idrData.total_records
+        this.idrItems[1].metricType = "numeric"
+        this.idrItems[2].result = this.idrData.match_rate
+        this.idrItems[2].metricType = "percentage"
+        this.idrItems[3].result = this.idrData.total_unique_ids
+        this.idrItems[3].metricType = "numeric"
+        this.idrItems[4].result = this.idrData.total_anonymous_ids
+        this.idrItems[4].metricType = "numeric"
+        this.idrItems[5].result = this.idrData.total_individual_ids
+        this.idrItems[5].metricType = "numeric"
+        this.idrItems[6].result = this.idrData.total_household_ids
+        this.idrItems[6].metricType = "numeric"
+        this.idrItems[7].result = this.idrData.total_address_ids
+        this.idrItems[7].metricType = "numeric"
+      }
     },
   },
 }

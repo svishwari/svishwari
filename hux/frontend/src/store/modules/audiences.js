@@ -502,6 +502,15 @@ const actions = {
       throw error
     }
   },
+
+  async replaceAudienceToggle(_, data) {
+    try {
+      await api.audiences.replaceAudience(data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 export default {

@@ -114,8 +114,8 @@ class ConfigurationsTests(RouteTestCase):
             sorted([x[api_c.NAME] for x in self.configurations]),
         )
 
-    def test_success_get_models_with_status(self):
-        """Test get models from Tecton with status."""
+    def test_success_get_configurations_modules_with_status(self):
+        """Test get configurations modules with status."""
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}"

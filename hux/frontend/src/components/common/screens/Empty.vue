@@ -1,6 +1,6 @@
 <template>
-  <div ref="emptyState" class="empty-state-wrap">
-    <div class="ml-9">
+  <div ref="emptyState" class="empty-state-wrap pa-14">
+    <div class="ml-6">
       <div v-for="index in boxCount" :key="index" class="box"></div>
     </div>
     <div class="text-center">
@@ -72,7 +72,6 @@ export default {
 .empty-state-wrap {
   height: 464px;
   overflow: hidden;
-  padding: 36px 30px 36px 30px;
   position: relative;
   .text-center {
     margin: 0;

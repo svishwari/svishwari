@@ -26,7 +26,7 @@ OKTA_TEST_USER_PW=<OKTA_TEST_USER_NAME_PASSWORD_VALUE> # Can be found in 1passwo
 MONGO_DB_HOST=<MONGO_DB_HOST_OF_TEST_ENV>
 MONGO_DB_PORT=27017
 MONGO_DB_USERNAME=read_write_user
-MONGO_DB_PASSWORD=-<MONGO_DB_PASSWORD_VALUE> # Can be found in 1password against the Mongo username of corresponding Mongo host
+MONGO_DB_PASSWORD=<MONGO_DB_PASSWORD_VALUE> # Can be found in 1password against the Mongo username of corresponding Mongo host
 INT_TEST_HOST=<INT_TEST_HOST_URL> # For instance, https://unified-api-dev.main.use1.hux-unified-dev1.in for DEV1
 INT_TEST_API_VERSION=api/v1 # API version of the backend API application
 ```

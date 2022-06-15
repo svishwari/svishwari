@@ -5,7 +5,12 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn
+          v-if="getAccess('data_source', 'update_list_of_data_sources')"
+          icon
+          data-e2e="filesTableFilter"
+          @click.native="isFilterToggled = !isFilterToggled"
+        >
           <icon
             type="filter"
             :size="27"
@@ -232,7 +237,10 @@
                     >
                       <tooltip v-if="column.value === 'status'">
                         <template #label-content>
-                          <span class="black--text text--darken-4 text-body-1">
+                          <span
+                            data-e2e="filesStatusTooltip"
+                            class="black--text text--darken-4 text-body-1"
+                          >
                             <status
                               :status="item[column.value]"
                               :show-label="true"
@@ -384,7 +392,7 @@
           v-else-if="!loading && hasDataFeeds == 0"
           class="empty-error-card mx-7"
         >
-          <v-row class="data-feed-frame py-14">
+          <v-row class="data-feed-frame my-1 py-16">
             <empty-page
               v-if="!datafeedErrorState"
               type="lift-table-empty"
@@ -424,6 +432,7 @@
       </div>
       <div class="ml-auto">
         <data-feeds-table-filter
+          v-if="getAccess('data_source', 'update_list_of_data_sources')"
           v-model="isFilterToggled"
           @onSectionAction="applyFilter"
         />
@@ -445,6 +454,7 @@ import EmptyPage from "@/components/common/EmptyPage.vue"
 import { formatDate, formatDateToLocal } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
 import DataFeedsTableFilter from "./DataFeedsTableFilter.vue"
+import { getAccess } from "../../utils"
 
 export default {
   name: "DataSourceFeedsListing",
@@ -468,13 +478,13 @@ export default {
       isFilterToggled: false,
       numFiltersSelected: 1,
       api_params: {
-        start_date: new Date(),
-        end_date: new Date(),
+        start_date: null,
+        end_date: null,
         status: [],
         type: null,
         name: null,
       },
-      selected_time: "Today",
+      selected_time: "All time",
     }
   },
 
@@ -526,17 +536,17 @@ export default {
         {
           text: "Sub-status",
           value: "sub_status",
-          width: "125",
+          width: "140",
         },
         {
           text: "Records received",
           value: "records_received",
-          width: "146",
+          width: "170",
         },
         {
           text: "Records processed",
           value: "records_processed",
-          width: "162",
+          width: "170",
         },
         {
           text: "% of records processed",
@@ -551,7 +561,7 @@ export default {
         {
           text: `Last processed start time (${this.selected_time})`,
           value: "last_processed_start",
-          width: "216",
+          width: "260",
         },
       ]
     },
@@ -643,10 +653,6 @@ export default {
     },
     formatDate(name, len) {
       return len ? `${formatDate(name)} (${len})` : `${formatDate(name)}`
-    },
-
-    totalFiltersSelected(value) {
-      this.numFiltersSelected = value
     },
 
     async applyFilter(obj) {
@@ -758,30 +764,31 @@ export default {
     },
 
     setDefaultData() {
-      let today_date = new Date()
-      let getStartDate = new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate()
-      )
-      let getEndDate = new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate()
-      )
-      this.api_params.start_date = this.$options.filters.Date(
-        getStartDate,
-        "YYYY-MM-DD"
-      )
-      this.api_params.end_date = this.$options.filters.Date(
-        getEndDate,
-        "YYYY-MM-DD"
-      )
+      // let today_date = new Date()
+      // let getStartDate = new Date(
+      //   today_date.getFullYear(),
+      //   today_date.getMonth(),
+      //   today_date.getDate()
+      // )
+      // let getEndDate = new Date(
+      //   today_date.getFullYear(),
+      //   today_date.getMonth(),
+      //   today_date.getDate()
+      // )
+      // this.api_params.start_date = this.$options.filters.Date(
+      //   getStartDate,
+      //   "YYYY-MM-DD"
+      // )
+      // this.api_params.end_date = this.$options.filters.Date(
+      //   getEndDate,
+      //   "YYYY-MM-DD"
+      // )
       this.api_params.type = this.selectedDataSource?.type
       this.api_params.name = this.dataSourceFeedName
     },
 
     formatDateToLocal: formatDateToLocal,
+    getAccess: getAccess,
   },
 }
 </script>
@@ -790,6 +797,8 @@ export default {
   margin-top: 1px;
   .hux-data-table {
     ::v-deep table {
+      width: 1675px !important;
+      min-width: 100% !important;
       .data-feed-name {
         @extend .text-ellipsis;
         max-width: 25ch;

@@ -18,7 +18,7 @@
       />
     </div>
     <v-main>
-      <v-container fluid ma-0 pa-0 class="views-container">
+      <v-container v-if="showContainer" fluid ma-0 pa-0 class="views-container">
         <slot />
       </v-container>
     </v-main>
@@ -31,7 +31,7 @@
       body="You do not have the permission to perform this action. Please reach out to your Admin for access."
       :show-left-button="false"
       right-btn-text="Close"
-      @onConfirm="infoModal = !infoModal"
+      @onConfirm="infoModal = false"
     >
     </confirm-modal>
   </v-app>
@@ -55,6 +55,7 @@ export default {
   computed: {
     ...mapGetters({
       alerts: "alerts/list",
+      getUserRole: "users/getCurrentUserRole",
     }),
 
     marginLeft() {
@@ -63,6 +64,10 @@ export default {
 
     clientPanel() {
       return this.$route.name == "ClientPanel"
+    },
+
+    showContainer() {
+      return this.hasAccess()
     },
   },
   watch: {
@@ -77,6 +82,17 @@ export default {
   methods: {
     toggleSidebar() {
       this.toggleMini = !this.toggleMini
+    },
+    hasAccess() {
+      if (
+        this.getUserRole != "admin" &&
+        this.$route.name == "DestinationConfiguration"
+      ) {
+        this.infoModal = true
+        return false
+      } else {
+        return true
+      }
     },
   },
 }

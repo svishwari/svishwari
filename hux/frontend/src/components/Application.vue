@@ -96,7 +96,7 @@
                       class="d-none delete-button"
                       @click="app.onDelete && app.onDelete()"
                     >
-                      <icon :size="18" type="delete-button" />
+                      <icon :size="18" type="delete-button" color="darkD" />
                     </span>
                   </v-list-item>
                 </span>
@@ -229,7 +229,7 @@ export default {
 
 <style lang="scss" scoped>
 .v-menu__content {
-  top: 70px !important;
+  top: 75px !important;
   margin-left: 8px !important;
   .v-list {
     .v-list-item {
