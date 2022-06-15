@@ -61,9 +61,13 @@ def configure_flask(flask_app: Flask) -> None:
     # setup the environment config
     try:
         if flask_app.config["ENV"] == api_c.PRODUCTION_MODE:
-            flask_app.config.from_object("huxunify.api.config.ProductionConfig")
+            flask_app.config.from_object(
+                "huxunify.api.config.ProductionConfig"
+            )
         elif flask_app.config["ENV"] == api_c.DEVELOPMENT_MODE:
-            flask_app.config.from_object("huxunify.api.config.DevelopmentConfig")
+            flask_app.config.from_object(
+                "huxunify.api.config.DevelopmentConfig"
+            )
         else:
             # use http by default for local testing.
             SWAGGER_CONFIG["schemes"].insert(0, "http")
