@@ -28,8 +28,8 @@ class Caching:
 
         Returns:
             Union [list,dict]: Data to be retrieved
-
         """
+
         database = get_db_client()
         data = get_cache_entry(database, cache_key)
 
