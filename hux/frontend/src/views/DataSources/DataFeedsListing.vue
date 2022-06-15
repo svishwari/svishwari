@@ -5,7 +5,12 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn
+          v-if="getAccess('data_source', 'update_list_of_data_sources')"
+          icon
+          data-e2e="filesTableFilter"
+          @click.native="isFilterToggled = !isFilterToggled"
+        >
           <icon
             type="filter"
             :size="27"
@@ -232,7 +237,10 @@
                     >
                       <tooltip v-if="column.value === 'status'">
                         <template #label-content>
-                          <span class="black--text text--darken-4 text-body-1">
+                          <span
+                            data-e2e="filesStatusTooltip"
+                            class="black--text text--darken-4 text-body-1"
+                          >
                             <status
                               :status="item[column.value]"
                               :show-label="true"
@@ -424,6 +432,7 @@
       </div>
       <div class="ml-auto">
         <data-feeds-table-filter
+          v-if="getAccess('data_source', 'update_list_of_data_sources')"
           v-model="isFilterToggled"
           @onSectionAction="applyFilter"
         />
@@ -445,6 +454,7 @@ import EmptyPage from "@/components/common/EmptyPage.vue"
 import { formatDate, formatDateToLocal } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
 import DataFeedsTableFilter from "./DataFeedsTableFilter.vue"
+import { getAccess } from "../../utils"
 
 export default {
   name: "DataSourceFeedsListing",
@@ -645,10 +655,6 @@ export default {
       return len ? `${formatDate(name)} (${len})` : `${formatDate(name)}`
     },
 
-    totalFiltersSelected(value) {
-      this.numFiltersSelected = value
-    },
-
     async applyFilter(obj) {
       if (obj.selectedToday && obj.selectedYesterday) {
         const today = new Date()
@@ -782,6 +788,7 @@ export default {
     },
 
     formatDateToLocal: formatDateToLocal,
+    getAccess: getAccess,
   },
 }
 </script>

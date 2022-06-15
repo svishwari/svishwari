@@ -28,6 +28,7 @@
           >
             <tooltip v-if="header.value == 'version'" nudge-right="25">
               <span
+                data-e2e="previous-versions"
                 class="cell text-body-1 ml-2 primary--text cursor-pointer"
                 :class="[item.current ? 'font-weight-bold' : '']"
                 @click="navigateToVersion(item)"

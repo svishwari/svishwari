@@ -19,6 +19,7 @@ const state = {
   users: [],
   requestedUsers: [],
   tickets: [],
+  accessMatrix: {},
 }
 
 const mutations = {
@@ -56,6 +57,10 @@ const mutations = {
 
   setAllRequestedUsers(state, requestedUsers) {
     Vue.set(state, "requestedUsers", requestedUsers)
+  },
+
+  setApplicationAccessMatrix(state, accesses) {
+    Vue.set(state, "accessMatrix", accesses)
   },
 }
 
@@ -207,6 +212,16 @@ const actions = {
       throw error
     }
   },
+
+  async getAccessMetrics({ commit }) {
+    try {
+      const response = await api.users.accessMatrix()
+      commit("setApplicationAccessMatrix", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 const getters = {
@@ -237,6 +252,8 @@ const getters = {
   getUserAlerts: (state) => state.userProfile.alerts,
 
   getDemoConfiguration: (state) => state.userProfile.demo_config,
+
+  getRbacMatrix: (state) => state.accessMatrix.components,
 }
 export default {
   namespaced,
