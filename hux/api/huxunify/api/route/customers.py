@@ -356,17 +356,17 @@ class IDROverview(SwaggerView):
 
         cache_key = f"{api_c.IDR_TAG}.{start_date}.{end_date}"
 
-        # if current_env == "RC1":
-        requested_start_date = start_date
-        requested_end_date = end_date
-        start_date = datetime.strftime(
-            datetime.utcnow().date() - relativedelta(months=60),
-            api_c.DEFAULT_DATE_FORMAT,
-        )
-        end_date = datetime.strftime(
-            datetime.utcnow().date(),
-            api_c.DEFAULT_DATE_FORMAT,
-        )
+        if current_env == "RC1":
+            requested_start_date = start_date
+            requested_end_date = end_date
+            start_date = datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=60),
+                api_c.DEFAULT_DATE_FORMAT,
+            )
+            end_date = datetime.strftime(
+                datetime.utcnow().date(),
+                api_c.DEFAULT_DATE_FORMAT,
+            )
 
         # check if cache entry
         database = get_db_client()
@@ -387,27 +387,27 @@ class IDROverview(SwaggerView):
             )
 
             # TODO Only for demo purpose remove after actual data integration
-            # if current_env == "RC1":
-            end_date = datetime.utcnow() - relativedelta(days=1)
-            latest_data_date = max([data[api_c.DAY] for data in trend_data])
-            delta_days = (end_date - latest_data_date).days
-            for data in trend_data:
-                data[api_c.DAY] = data[api_c.DAY] + relativedelta(
-                    days=delta_days
-                )
-            requested_data = [
-                data
-                for data in trend_data
-                if datetime.strptime(
-                    requested_start_date, api_c.DEFAULT_DATE_FORMAT
-                )
-                <= data[api_c.DAY]
-                <= datetime.strptime(
-                    requested_end_date, api_c.DEFAULT_DATE_FORMAT
-                )
-            ]
-            idr_overview[api_c.UPDATED] = requested_end_date
-            trend_data = requested_data
+            if current_env == "RC1":
+                end_date = datetime.utcnow() - relativedelta(days=1)
+                latest_data_date = max([data[api_c.DAY] for data in trend_data])
+                delta_days = (end_date - latest_data_date).days
+                for data in trend_data:
+                    data[api_c.DAY] = data[api_c.DAY] + relativedelta(
+                        days=delta_days
+                    )
+                requested_data = [
+                    data
+                    for data in trend_data
+                    if datetime.strptime(
+                        requested_start_date, api_c.DEFAULT_DATE_FORMAT
+                    )
+                    <= data[api_c.DAY]
+                    <= datetime.strptime(
+                        requested_end_date, api_c.DEFAULT_DATE_FORMAT
+                    )
+                ]
+                # idr_overview[api_c.UPDATED] = requested_end_date
+                trend_data = requested_data
 
             # get IDR overview
             idr_overview = get_identity_overview(
