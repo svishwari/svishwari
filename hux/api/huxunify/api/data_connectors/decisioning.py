@@ -10,6 +10,7 @@ from huxunifylib.database import constants as db_c
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.prometheus import record_health_status, Connections
+from huxunify.api.data_connectors.den_stub import DenStubClient
 
 # pylint: disable=redefined-outer-name
 class Decisioning:
@@ -17,14 +18,18 @@ class Decisioning:
 
     def __init__(self, token: str):
         self.token = token
-        self.decisioning_client = dec_client(
-            api_client=api_client.ApiClient(
-                configuration=configuration.Configuration(
-                    host=get_config().DECISIONING_URL
-                ),
-                header_name="Authorization",
-                header_value=token,
+        self.decisioning_client = (
+            dec_client(
+                api_client=api_client.ApiClient(
+                    configuration=configuration.Configuration(
+                        host=get_config().DECISIONING_URL
+                    ),
+                    header_name="Authorization",
+                    header_value=token,
+                )
             )
+            if get_config().ENV_NAME == api_c.STAGING_ENV
+            else DenStubClient()
         )
 
     def get_all_model_ids(self) -> list:
