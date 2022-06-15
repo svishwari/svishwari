@@ -24,7 +24,9 @@
       </template>
       <v-list>
         <v-list-item>
-          <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
+          <v-list-item-title
+            class="font-weight-semi-bold text-subtitle-1 black--text mt-2 mb-3"
+          >
             Help
           </v-list-item-title>
         </v-list-item>
@@ -34,6 +36,22 @@
             class="text-body-1 black--text view-all text-decoration-none"
           >
             My issues
+          </a>
+        </v-list-item>
+        <v-list-item class="v-list-item--link" data-e2e="myIssues">
+          <a
+            href="https://docs.hux.deloitte.com/docs/hux-unified/en/develop/index.html"
+            class="text-body-1 black--text view-all text-decoration-none"
+          >
+            Documentation
+          </a>
+        </v-list-item>
+        <v-list-item class="v-list-item--link" data-e2e="myIssues">
+          <a
+            href="https://becurious.edcast.eu/teams/hux-learning-portal#"
+            class="text-body-1 black--text view-all text-decoration-none"
+          >
+            CURA training
           </a>
         </v-list-item>
         <v-list-item
@@ -143,7 +161,7 @@ export default {
 
 <style lang="scss" scoped>
 .v-menu__content {
-  top: 70px !important;
+  top: 75px !important;
   margin-left: 16px !important;
   .v-list {
     .v-list-item {

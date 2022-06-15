@@ -1,26 +1,33 @@
 export default {
   settings: [
     {
+      icon: "home",
       enabled: true,
+      label: "Home",
       name: "Home",
     },
     {
+      icon: "configuration",
       enabled: true,
+      label: "Configuration",
       name: "Configuration",
     },
     {
       enabled: true,
       name: "Data Management",
+
       children: [
         {
-          name: "Data Sources",
-          icon: "datasource",
           enabled: true,
+          label: "Data Sources",
+          icon: "datasource",
+          name: "Data Sources",
         },
         {
-          name: "Identity Resolution",
-          icon: "identity-resolution",
           enabled: true,
+          label: "Identity Resolution",
+          icon: "identity-resolution",
+          name: "Identity Resolution",
         },
       ],
     },
@@ -29,9 +36,10 @@ export default {
       name: "Decisioning",
       children: [
         {
-          name: "Models",
-          icon: "models",
           enabled: true,
+          label: "Models",
+          icon: "models",
+          name: "Models",
         },
       ],
     },
@@ -40,24 +48,28 @@ export default {
       name: "Orchestration",
       children: [
         {
-          name: "Destinations",
+          enabled: true,
+          label: "Destinations",
           icon: "multiple_map_pins",
-          enabled: true,
+          name: "Destinations",
         },
         {
-          name: "Segment Playground",
+          enabled: true,
+          label: "Segment Playground",
           icon: "playground",
-          enabled: true,
+          name: "Segment Playground",
         },
         {
-          name: "Audiences",
+          enabled: true,
+          label: "Audiences",
           icon: "audiences",
-          enabled: true,
+          name: "Audiences",
         },
         {
-          name: "Engagements",
-          icon: "speaker_up",
           enabled: true,
+          label: "Engagements",
+          icon: "speaker_up",
+          name: "Engagements",
         },
       ],
     },
@@ -66,20 +78,23 @@ export default {
       name: "Insights",
       children: [
         {
-          name: "Customers",
-          icon: "customer-profiles",
           enabled: true,
+          label: "Customers",
+          icon: "customer-profiles",
+          name: "Customers",
         },
         {
           name: "HX TrustID",
           icon: "hx-trustid",
           superscript: "TM",
+          label: "HX TrustID",
           enabled: true,
         },
         {
-          name: "Email Deliverability",
-          icon: "email_deliverability",
           enabled: true,
+          label: "Email Deliverability",
+          icon: "email_deliverability",
+          name: "Email Deliverability",
         },
       ],
     },

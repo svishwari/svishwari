@@ -7,7 +7,7 @@
           type="timestamp"
           color="black"
           variant="lighten4"
-          :size="14"
+          :size="13"
           class="mr-1"
         />
         <span class="body-2 black--text text--lighten-4">
@@ -36,7 +36,7 @@
           />
           <tooltip v-else-if="card.format !== 'multiple'">
             <template #label-content>
-              <span class="black--text text-subtitle-1 mt-1 pb-0 d-block">
+              <span class="black--text text-subtitle-1 mt-0 pb-0 d-block">
                 <span v-if="card.format == 'relative'">
                   {{ getValue(card.title) | Numeric(true, false, true) }}
                 </span>
@@ -53,7 +53,7 @@
           </tooltip>
           <span
             v-else-if="card.format == 'multiple'"
-            class="black--text text-subtitle-1 mt-1 pb-0 d-block"
+            class="black--text text-subtitle-1 mt-0 pb-0 d-block"
           >
             <span
               v-for="gender in getValue(card.title)"

@@ -189,6 +189,8 @@ export default {
     },
     menu: false,
     prevItem: null,
+    isBrodcasterOn: true,
+    navigationItems: [],
   }),
 
   computed: {
@@ -210,7 +212,7 @@ export default {
     },
 
     displayedMenuItems() {
-      return this.sideBarItems.filter((x) => {
+      return this.navigationItems.filter((x) => {
         if (x.children && x.enabled) {
           x.children = x.children.filter((y) => y.enabled)
           return true
@@ -224,6 +226,7 @@ export default {
   async mounted() {
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
+    this.navigationItems = this.sideBarItems
   },
 
   updated() {
@@ -255,10 +258,10 @@ export default {
 
     checkColored(title) {
       if (
-        this.sideBarItems?.length > 0 &&
+        this.navigationItems?.length > 0 &&
         ["HX TrustID", "HXTrustID"].includes(title)
       ) {
-        this.sideBarItems
+        this.navigationItems
           .find((elem) => elem.name == "Insights")
           .children.find((item) => item.name == "HX TrustID").icon =
           "hx-trustid-colored"
@@ -268,8 +271,8 @@ export default {
     },
 
     trustidRoute(title) {
-      if (this.sideBarItems?.length > 0 && !this.checkColored(title)) {
-        this.sideBarItems
+      if (this.navigationItems?.length > 0 && !this.checkColored(title)) {
+        this.navigationItems
           .find((elem) => elem.name == "Insights")
           .children.find((item) => item.name == "HX TrustID").icon =
           "hx-trustid"
@@ -299,13 +302,17 @@ export default {
     },
     async setDemoConfiguration() {
       await this.getSideBarConfig()
-      this.updateClientInfo()
+      this.navigationItems = []
+      this.navigationItems = this.sideBarItems
     },
     getCurrentConfiguration() {
-      this.$root.$on("update-config-settings", () =>
-        this.setDemoConfiguration()
-      )
-      this.updateClientInfo()
+      if (this.isBrodcasterOn) {
+        this.$root.$on("update-config-settings", () => {
+          this.setDemoConfiguration()
+          this.updateClientInfo()
+          this.isBrodcasterOn = false
+        })
+      }
     },
   },
 }

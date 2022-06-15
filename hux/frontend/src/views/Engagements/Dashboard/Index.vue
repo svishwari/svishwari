@@ -706,6 +706,8 @@ By making it inactive all audiences that are part of this engagement will have t
     border-radius: 5px;
   }
   .inner-wrap {
+    overflow: auto;
+    max-height: calc(100vh - 142px) !important;
     .summary-wrap {
       flex-wrap: wrap;
       .metric-card-wrapper {

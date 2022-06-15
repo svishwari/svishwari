@@ -9,6 +9,12 @@ from huxunify.api.schema.custom_schemas import DateTimeWithZ, RoundedFloat
 from huxunify.api import constants as api_c
 
 
+class ModelTagsSchema(Schema):
+    """Model tags schema class"""
+
+    industry = List(Str)
+
+
 class ModelSchema(Schema):
     """Model Schema"""
 
@@ -27,6 +33,7 @@ class ModelSchema(Schema):
     category = Str()
     is_enabled = Bool(attribute=db_c.ENABLED, required=False)
     is_added = Bool(attribute=db_c.ADDED, required=False)
+    tags = Nested(ModelTagsSchema, required=False)
 
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument

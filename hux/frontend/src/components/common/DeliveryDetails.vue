@@ -151,13 +151,19 @@
                 v-model="item['replace_audience']"
                 :switch-labels="switchLabels"
                 false-color="var(--v-black-lighten4)"
+                @change="handleChange(section.id, item.id, $event)"
               />
             </div>
           </td>
         </template>
       </hux-data-table>
 
-      <v-list dense class="add-list" :height="52">
+      <v-list
+        v-if="getAccess('engagements', 'add_destination_to_engagement')"
+        dense
+        class="add-list"
+        :height="52"
+      >
         <v-list-item @click="$emit('onAddDestination', section)">
           <tooltip>
             <template #label-content>
@@ -207,6 +213,7 @@ import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import HuxSwitch from "@/components/common/Switch.vue"
+import { getAccess } from "@/utils"
 
 export default {
   name: "DeliveryDetails",
@@ -272,6 +279,7 @@ export default {
         {
           id: 1,
           title: "Deliver now",
+          isHidden: !this.getAccess("delivery", "deliver"),
           active: false,
         },
         { id: 2, title: "Add a destination", active: true },
@@ -280,7 +288,12 @@ export default {
         { id: 5, title: "Remove audience", active: true },
       ],
       destinationMenuOptions: [
-        { id: 1, title: "Deliver now", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Open destination", active: false },
         { id: 4, title: "Remove destination", active: true },
       ],
@@ -369,6 +382,8 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       setAlert: "alerts/setAlert",
       updateReplace: "engagements/updateReplace",
+      replaceAudience: "audiences/replaceAudienceToggle",
+      updateAudience: "audiences/update",
     }),
     async deliverAll(engagement) {
       await this.deliverAudience({
@@ -435,7 +450,12 @@ export default {
       }
       return [
         { ...createLookaLikeOption },
-        { id: 2, title: "Deliver now", active: true },
+        {
+          id: 2,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Edit delivery schedule", active: true },
         { id: 4, title: "Pause delivery", active: false },
         { id: 5, title: "Open destination", active: false },
@@ -449,6 +469,41 @@ export default {
         type: "pending",
         message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
       })
+    },
+    getAccess: getAccess,
+    handleChange(...args) {
+      const data = {
+        engagement_id: args[0],
+        audience_id: this.audienceId,
+        destination_id: args[1],
+        value: args[2],
+      }
+      let updatedEngagements = []
+      if (this.audience.engagements) {
+        updatedEngagements = this.audience.engagements.map((obj) => {
+          if (obj && obj.id == args[0]) {
+            return {
+              ...obj,
+              deliveries: obj.deliveries
+                ? obj.deliveries.map((del) => {
+                    if (del.delivery_platform_id == args[1]) {
+                      return { ...del, replace_audience: args[2] }
+                    }
+                    return del
+                  })
+                : [],
+            }
+          }
+          return obj
+        })
+      }
+      this.updateAudience({
+        id: this.audienceId,
+        payload: {
+          engagements: updatedEngagements,
+        },
+      })
+      this.replaceAudience(data)
     },
   },
 }

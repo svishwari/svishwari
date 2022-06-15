@@ -59,7 +59,7 @@
             <icon v-else type="fav_blank" :size="18" color="" />
           </v-btn>
           <v-menu
-            v-if="menuOptions.length > 0"
+            v-if="getMenuOptions.length > 0"
             v-model="openMenu"
             class="menu-wrapper"
             bottom
@@ -80,7 +80,7 @@
             <v-list class="list-wrapper">
               <v-list-item-group>
                 <v-list-item
-                  v-for="(item, index) in menuOptions"
+                  v-for="(item, index) in getMenuOptions"
                   :key="index"
                   :disabled="item.isDisabled"
                 >
@@ -234,6 +234,9 @@ export default Vue.extend({
             params: { id: this.routeParam },
           }
         : null
+    },
+    getMenuOptions() {
+      return this.menuOptions.filter((x) => !x.isHidden)
     },
   },
 

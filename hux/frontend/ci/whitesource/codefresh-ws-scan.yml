@@ -68,6 +68,7 @@ steps:
          echo "projectName=$PROJECTNAME";
          echo "projectVersion=$PROJECTVERSION";
          echo "### Programming Language Specific Settings ###";
+         echo "npm.resolveDependencies=true";
          echo "npm.runPreStep=true";
          } 
          >> $CONFIG_FILE
