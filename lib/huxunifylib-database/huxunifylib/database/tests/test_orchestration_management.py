@@ -300,7 +300,7 @@ class TestAudienceManagement(unittest.TestCase):
             "My Audience",
             self.audience_filters,
             self.user_name,
-            self.destination_ids,
+            destination_ids=self.destination_ids,
         )
         doc = am.get_audience(self.database, set_audience[db_c.ID])
 
@@ -318,7 +318,7 @@ class TestAudienceManagement(unittest.TestCase):
             "My Audience",
             self.audience_filters,
             self.user_name,
-            self.destination_ids,
+            destination_ids=self.destination_ids,
         )
         doc = am.get_audience(self.database, set_audience[db_c.ID])
 
@@ -643,11 +643,11 @@ class TestAudienceManagement(unittest.TestCase):
                 f"Audience for Destination Removal {i}",
                 self.audience_filters,
                 self.user_name,
-                list(
+                destination_ids=list(
                     {db_c.OBJECT_ID: destination_id}
                     for destination_id in self.destination_ids
                 ),
-                100 + i,
+                size=100 + i,
             )
 
         # test to ensure that destination to be removed is linked to audiences
