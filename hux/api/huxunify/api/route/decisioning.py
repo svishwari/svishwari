@@ -1,7 +1,6 @@
 # pylint: disable=too-many-lines,unused-argument
 """Purpose of this script is for housing the decision routes for the API."""
-from random import uniform, randint, choice, sample
-from datetime import datetime, timedelta
+from random import sample
 from http import HTTPStatus
 from typing import Tuple
 
@@ -10,17 +9,12 @@ from flasgger import SwaggerView
 from marshmallow import INCLUDE
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.database.cache_management import (
-    create_cache_entry,
-    get_cache_entry,
-)
 from huxunifylib.database import (
     collection_management,
     notification_management,
 )
 from huxunifylib.database import constants as db_c
 
-from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.decisioning import Decisioning
 from huxunify.api.route.decorators import (
@@ -44,7 +38,6 @@ from huxunify.api.schema.model import (
     ModelPipelinePerformanceSchema,
 )
 from huxunify.api.schema.configurations import ConfigurationsSchema
-from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
@@ -117,46 +110,12 @@ class ModelsView(SwaggerView):
             Tuple[Response, int]: list containing dict of models,
                 HTTP status code.
         """
-
-        if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = request.headers.get("authorizationden")
-            all_models = Caching.check_and_return_cache(
-                "all_models.info",
-                Decisioning(token).get_all_models,
-                {},
-            )
-        else:
-            today = datetime.now()
-            all_models = [
-                {
-                    api_c.ID: f"Feature_id_{i}",
-                    api_c.NAME: f"Feature_name_{i}",
-                    api_c.DESCRIPTION: f"Feature {i} description",
-                    api_c.STATUS: api_c.STATUS_ACTIVE,
-                    api_c.LATEST_VERSION: today.strftime("%Y.%m.%d"),
-                    api_c.OWNER: "Susan Miller",
-                    api_c.LOOKBACK_WINDOW: 365,
-                    api_c.PREDICTION_WINDOW: 365,
-                    api_c.FULCRUM_DATE: datetime(
-                        today.year, today.month, today.day
-                    ),
-                    api_c.LAST_TRAINED: datetime(
-                        today.year, today.month, today.day
-                    ),
-                    api_c.TYPE: choice(["binary", "classification"]),
-                    api_c.CATEGORY: choice(["binary", "classification"]),
-                    api_c.PAST_VERSION_COUNT: uniform(8, 12),
-                    "is_enabled": True,
-                    "is_added": True,
-                    api_c.TAGS: dict(
-                        industry=sample(
-                            api_c.ALL_INDUSTRY_TYPES,
-                            2,
-                        )
-                    ),
-                }
-                for i in range(11)
-            ]
+        token = request.headers.get("authorizationden")
+        all_models = Caching.check_and_return_cache(
+            "all_models.info",
+            Decisioning(token).get_all_models,
+            {},
+        )
 
         all_models = list(
             filter(
@@ -166,6 +125,16 @@ class ModelsView(SwaggerView):
                 all_models,
             )
         )
+
+        # add tags to the response
+        for model in all_models:
+            if model.get(api_c.TAGS) is None:
+                model[api_c.TAGS] = dict(
+                    industry=sample(
+                        api_c.ALL_INDUSTRY_TYPES,
+                        2,
+                    )
+                )
 
         # get the optional industry tag filter query param as a list
         industry_tag_list = [
@@ -444,36 +413,14 @@ class ModelVersionHistoryView(SwaggerView):
                 HTTP status code.
         """
         # Dec API only available in stg, all other environments are mocked
-        if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = request.headers.get("authorizationden")
-            version_history = Caching.check_and_return_cache(
-                f"model_version_history.{model_id}",
-                Decisioning(token).get_model_version_history,
-                {
-                    "model_id": model_id,
-                },
-            )
-        else:
-            today = datetime.now()
-            version_history = [
-                {
-                    api_c.ID: model_id,
-                    api_c.NAME: "Propensity to Purchase",
-                    api_c.DESCRIPTION: "Propensity of a customer making "
-                    "a purchase after receiving an email.",
-                    api_c.STATUS: api_c.STATUS_ACTIVE,
-                    api_c.VERSION: f"{today.strftime('%Y.%m.%d')}{i}",
-                    api_c.TRAINED_DATE: today,
-                    api_c.OWNER: "Susan Miller",
-                    api_c.LOOKBACK_WINDOW: 90,
-                    api_c.PREDICTION_WINDOW: 7,
-                    api_c.FULCRUM_DATE: datetime(
-                        today.year, today.month, today.day
-                    ),
-                }
-                for i in range(10)
-            ]
-
+        token = request.headers.get("authorizationden")
+        version_history = Caching.check_and_return_cache(
+            f"model_version_history.{model_id}",
+            Decisioning(token).get_model_version_history,
+            {
+                "model_id": model_id,
+            },
+        )
         return HuxResponse.OK(
             data=version_history, data_schema=ModelVersionSchema()
         )
@@ -536,35 +483,15 @@ class ModelOverview(SwaggerView):
         """
 
         # Dec API only available in stg, all other environments are mocked
-        if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = request.headers.get("authorizationden")
-            model_overview = Caching.check_and_return_cache(
-                f"model_overview.{model_id}",
-                Decisioning(token).get_model_overview,
-                {
-                    "model_id": model_id,
-                    "model_version": request.args.get(
-                        api_c.VERSION, default=None
-                    ),
-                },
-            )
-        else:
-            today = datetime.now()
-            model_overview = [
-                {
-                    api_c.MODEL_TYPE: "classification",
-                    api_c.MODEL_NAME: f"Propensity_to_{choice(['purchase', 'open', 'view'])}",
-                    api_c.DESCRIPTION: "Likelihood of this action to occur.",
-                    api_c.PERFORMANCE_METRIC: {
-                        api_c.RMSE: -1,
-                        api_c.AUC: uniform(0.01, 0.99),
-                        api_c.PRECISION: uniform(0.01, 0.99),
-                        api_c.RECALL: uniform(0.01, 0.99),
-                        api_c.CURRENT_VERSION: today.strftime("%Y.%m.%d"),
-                    },
-                }
-            ]
-
+        token = request.headers.get("authorizationden")
+        model_overview = Caching.check_and_return_cache(
+            f"model_overview.{model_id}",
+            Decisioning(token).get_model_overview,
+            {
+                "model_id": model_id,
+                "model_version": request.args.get(api_c.VERSION, default=None),
+            },
+        )
         return HuxResponse.OK(
             data=model_overview, data_schema=ModelOverviewSchema()
         )
@@ -622,30 +549,16 @@ class ModelDriftView(SwaggerView):
             Tuple[Response, int]: List containing dict of model drift,
                 HTTP status code.
         """
-        # Dec API only available in stg, all other environments are mocked
-        if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = request.headers.get("authorizationden")
-            drift_data = Caching.check_and_return_cache(
-                f"drift.{model_id}.{request.args.get(api_c.VERSION, 'current')}",
-                Decisioning(token).get_model_drift,
-                {
-                    "model_id": model_id,
-                    "model_version": request.args.get(api_c.VERSION, None),
-                },
-            )
-        else:
-            today = datetime.now()
-            drift_data = [
-                {
-                    api_c.DRIFT: round(uniform(0.8, 1), 2),
-                    api_c.RUN_DATE: datetime(
-                        today.year, today.month, today.day
-                    )
-                    + timedelta(i),
-                }
-                for i in range(10)
-            ]
 
+        token = request.headers.get("authorizationden")
+        drift_data = Caching.check_and_return_cache(
+            f"drift.{model_id}.{request.args.get(api_c.VERSION, 'current')}",
+            Decisioning(token).get_model_drift,
+            {
+                "model_id": model_id,
+                "model_version": request.args.get(api_c.VERSION, None),
+            },
+        )
         return HuxResponse.OK(data=drift_data, data_schema=ModelDriftSchema())
 
 
@@ -713,36 +626,15 @@ class ModelFeaturesView(SwaggerView):
         """
         limit = int(request.args.get(api_c.LIMIT, 20))
 
-        if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = request.headers.get("authorizationden")
-            features = Caching.check_and_return_cache(
-                f"features.{model_id}.{request.args.get(api_c.VERSION, 'current')}",
-                Decisioning(token).get_model_features,
-                {
-                    "model_id": model_id,
-                    "model_version": request.args.get(api_c.VERSION, None),
-                },
-            )
-
-        else:
-            features = [
-                {
-                    api_c.ID: f"Feature_id_{i}",
-                    api_c.NAME: f"Feature_name_{i}",
-                    api_c.DESCRIPTION: f"Feature {i} description",
-                    api_c.RECORDS_NOT_NULL: uniform(60, 95),
-                    api_c.FEATURE_IMPORTANCE: uniform(1, 99),
-                    api_c.MEAN: uniform(1, 99),
-                    api_c.MIN: uniform(1, 99),
-                    api_c.MAX: uniform(1, 99),
-                    api_c.UNIQUE_VALUES: uniform(1000, 3000),
-                    api_c.LCUV: uniform(1, 99),
-                    api_c.MCUV: uniform(1, 99),
-                    api_c.SCORE: uniform(1, 99),
-                }
-                for i in range(50)
-            ]
-
+        token = request.headers.get("authorizationden")
+        features = Caching.check_and_return_cache(
+            f"features.{model_id}.{request.args.get(api_c.VERSION, 'current')}",
+            Decisioning(token).get_model_features,
+            {
+                "model_id": model_id,
+                "model_version": request.args.get(api_c.VERSION, None),
+            },
+        )
         return HuxResponse.OK(
             data=features[:limit], data_schema=FeatureSchema()
         )
@@ -808,61 +700,19 @@ class ModelImportanceFeaturesView(SwaggerView):
             Tuple[Response, int]: List containing dict of model features,
                 HTTP status code.
         """
-        limit = int(request.args.get(api_c.LIMIT, 20))
         model_version = request.args.get(api_c.VERSION, None)
 
-        if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = request.headers.get("authorizationden")
-            version_cache_key = model_version if model_version else "current"
-            features = Caching.check_and_return_cache(
-                f"features.{model_id}.{version_cache_key}",
-                Decisioning(token).get_model_features,
-                {
-                    "model_id": model_id,
-                    "model_version": model_version,
-                },
-            )
-
-            return HuxResponse.OK(data=features, data_schema=FeatureSchema())
-
-        tecton = Tecton()
-
-        model_versions = (
-            [{api_c.CURRENT_VERSION: model_version}]
-            if model_version
-            else tecton.get_model_version_history(model_id)
+        token = request.headers.get("authorizationden")
+        version_cache_key = model_version if model_version else "current"
+        features = Caching.check_and_return_cache(
+            f"features.{model_id}.{version_cache_key}",
+            Decisioning(token).get_model_features,
+            {
+                "model_id": model_id,
+                "model_version": model_version,
+            },
         )
-
-        if not model_versions:
-            return jsonify([]), HTTPStatus.NOT_FOUND
-
-        database = get_db_client()
-        for version in model_versions:
-            current_version = version.get(api_c.CURRENT_VERSION)
-
-            # check cache first
-            features = get_cache_entry(
-                database, f"features.{model_id}.{current_version}"
-            )
-            if features:
-                break
-
-            # if no cache, grab from Tecton and cache after.
-            features = tecton.get_model_features(model_id, current_version)
-            if features:
-                create_cache_entry(
-                    database,
-                    f"features.{model_id}.{current_version}",
-                    features,
-                )
-                break
-
-        # sort the top features before serving them out
-        features.sort(key=lambda x: x[api_c.SCORE], reverse=True)
-
-        return HuxResponse.OK(
-            data=features[:limit], data_schema=FeatureSchema()
-        )
+        return HuxResponse.OK(data=features, data_schema=FeatureSchema())
 
 
 @add_view_to_blueprint(
@@ -921,34 +771,17 @@ class ModelLiftView(SwaggerView):
         """
 
         # Dec API only available in stg, all other environments are mocked
-        if get_config().ENV_NAME == api_c.STAGING_ENV:
-            token = request.headers.get("authorizationden")
-            model_version = (
-                request.args.get(api_c.VERSION)
-                if request.args.get(api_c.VERSION)
-                else None
-            )
-            lift_data = Caching.check_and_return_cache(
-                f"lift.{model_id}",
-                Decisioning(token).get_model_lift,
-                {"model_id": model_id, "model_version": model_version},
-            )
-        else:
-            lift_data = [
-                {
-                    api_c.BUCKET: 10 * i,
-                    api_c.PREDICTED_VALUE: randint(1000, 5000),
-                    api_c.ACTUAL_VALUE: randint(1000, 5000),
-                    api_c.PROFILE_COUNT: randint(1000, 100000),
-                    api_c.PREDICTED_RATE: uniform(0.01, 0.3),
-                    api_c.ACTUAL_RATE: uniform(0.01, 0.3),
-                    api_c.PREDICTED_LIFT: uniform(1, 5),
-                    api_c.ACTUAL_LIFT: uniform(1, 5),
-                    api_c.PROFILE_SIZE_PERCENT: uniform(10, 60),
-                }
-                for i in range(1, 11)
-            ]
-
+        token = request.headers.get("authorizationden")
+        model_version = (
+            request.args.get(api_c.VERSION)
+            if request.args.get(api_c.VERSION)
+            else None
+        )
+        lift_data = Caching.check_and_return_cache(
+            f"lift.{model_id}",
+            Decisioning(token).get_model_lift,
+            {"model_id": model_id, "model_version": model_version},
+        )
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
         return HuxResponse.OK(data=lift_data, data_schema=ModelLiftSchema())
 
