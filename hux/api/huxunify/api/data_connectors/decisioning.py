@@ -25,7 +25,7 @@ class DenStubClient:
     """class used to simulate the den stub client."""
 
     def get_models_api_v1alpha1_models_get(self) -> DotNotationDict:
-        """get models simulation
+        """get models simulation.
 
         Returns
             DotNotationDict: model dictionary.
@@ -44,14 +44,11 @@ class DenStubClient:
             DotNotationDict: model info dictionary.
         """
 
-        # get model
-        model_info = den_stub.MODEL_INFO_RESPONSE.get(model_id, {})
-
         # convert to an attr dict.
         model_infos = []
 
-        # loop each model
-        for model in model_info:
+        # loop each model info object.
+        for model in den_stub.MODEL_INFO_RESPONSE.get(model_id, []):
 
             # convert model to dot notation dict
             model = DotNotationDict(model)
