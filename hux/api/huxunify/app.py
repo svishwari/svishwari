@@ -18,6 +18,7 @@ from huxunify.api.data_connectors.scheduler import (
     run_scheduled_destination_checks,
     run_scheduled_tecton_feature_cache,
     run_scheduled_customer_profile_audience_count,
+    run_scheduled_customer_overview_audience_insights,
 )
 from huxunify.api.route.utils import get_db_client
 
@@ -60,13 +61,9 @@ def configure_flask(flask_app: Flask) -> None:
     # setup the environment config
     try:
         if flask_app.config["ENV"] == api_c.PRODUCTION_MODE:
-            flask_app.config.from_object(
-                "huxunify.api.config.ProductionConfig"
-            )
+            flask_app.config.from_object("huxunify.api.config.ProductionConfig")
         elif flask_app.config["ENV"] == api_c.DEVELOPMENT_MODE:
-            flask_app.config.from_object(
-                "huxunify.api.config.DevelopmentConfig"
-            )
+            flask_app.config.from_object("huxunify.api.config.DevelopmentConfig")
         else:
             # use http by default for local testing.
             SWAGGER_CONFIG["schemes"].insert(0, "http")
@@ -158,6 +155,14 @@ def create_app() -> Flask:
             func=run_scheduled_customer_profile_audience_count,
             trigger="cron",
             hour=1,
+            timezone=pytz.timezone("US/Eastern"),
+            args=[get_db_client()],
+        )
+        scheduler.add_job(
+            id="cache_customer_overview_audience_insights",
+            func=run_scheduled_customer_overview_audience_insights,
+            trigger="cron",
+            hour=2,
             timezone=pytz.timezone("US/Eastern"),
             args=[get_db_client()],
         )

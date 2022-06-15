@@ -22,12 +22,12 @@ class Caching:
     ) -> Union[list, dict]:
         """Checks for cache to return or creates an entry
         Args:
-            cache_key(dict,str): Cache key
-            method(Callable): Method to retrieve data if there is no cache
-            keyword_arguments(dict): Keyword arguments for method
+            cache_key (dict, str): Cache key
+            method (Callable): Method to retrieve data if there is no cache
+            keyword_arguments (dict): Keyword arguments for method
 
         Returns:
-            Union[list,dict]: Data to be retrieved
+            Union [list,dict]: Data to be retrieved
 
         """
         database = get_db_client()
