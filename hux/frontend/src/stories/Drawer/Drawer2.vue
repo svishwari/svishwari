@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer
     v-model="localDrawer"
-    :right="toRight"
+    right
     :style="transition"
     :width="drawerWidth"
     app
@@ -11,61 +11,66 @@
   >
     <v-toolbar
       width="100%"
-      class="drawer-header no-shadow border-bottom"
+      class="drawer-header no-shadow border-bottom pl-2 pr-2"
       :height="headerHeight"
     >
-      <v-toolbar-title :class="contentHeaderPadding">
-        <slot name="header-left"></slot>
-        <slot name="header-right"></slot>
+      <v-toolbar-title class="title-wrap">
+        <icon v-if="iconType" :type="iconType" size="38" color="primary" />
+        <span class="text-h2">{{ title }}</span>
+        <v-spacer></v-spacer>
       </v-toolbar-title>
-      <template v-if="expandable">
-        <v-icon
-          color="primary"
-          class="cursor-pointer px-6 ml-auto"
-          @click="onExpandIconClick"
-        >
-          {{ expanded ? "mdi-arrow-collapse" : "mdi-arrow-expand" }}
-        </v-icon>
-      </template>
+      <v-spacer></v-spacer>
+      <slot name="header-right"></slot>
     </v-toolbar>
 
     <slot name="loading">
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </slot>
 
-    <div
-      class="drawer-content"
-      :class="{
-        contentPadding,
-        'drawer-content-without-footer': !hasFooterSlots,
-      }"
-    >
+    <div class="drawer-content">
       <slot></slot>
     </div>
 
     <v-footer
-      v-if="hasFooterSlots"
       class="drawer-footer d-flex justify-space-between align-center px-6 py-4"
       absolute
       color="white"
       elevation="5"
     >
-      <slot name="footer-left"></slot>
-      <slot name="footer-right"></slot>
+      <div>
+        <hux-button
+          size="large"
+          tile
+          variant="secondary"
+          class="btn-border box-shadow-none"
+          @click="localDrawer = !localDrawer"
+        >
+          {{ secondaryButtonText }}
+        </hux-button>
+        <span v-if="footerTextField && primaryButtonText" class="ml-2">{{
+          footerTextField
+        }}</span>
+      </div>
+      <div>
+        <span v-if="footerTextField && !primaryButtonText">{{
+          footerTextField
+        }}</span>
+        <hux-button v-if="primaryButtonText" tile color="primary">
+          {{ primaryButtonText }}
+        </hux-button>
+      </div>
     </v-footer>
   </v-navigation-drawer>
 </template>
 
 <script>
+import icon from "../icons/Icon2.vue"
+import huxButton from "../huxButton/huxButton2.vue"
+
 export default {
   name: "Drawer",
+  components: { icon, huxButton },
   props: {
-    toRight: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-
     value: {
       type: Boolean,
       required: true,
@@ -101,21 +106,31 @@ export default {
       required: false,
       default: false,
     },
-
-    contentPadding: {
-      type: String,
-      required: false,
-      default: "pa-2",
-    },
-
-    contentHeaderPadding: {
-      type: String,
-      required: false,
-    },
     headerHeight: {
       type: String,
       required: false,
       default: "72",
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    iconType: {
+      type: String,
+      required: false,
+    },
+    secondaryButtonText: {
+      type: String,
+      required: false,
+      default: "Close",
+    },
+    primaryButtonText: {
+      type: String,
+      required: false,
+    },
+    footerTextField: {
+      type: String,
+      required: false,
     },
   },
 
@@ -219,5 +234,10 @@ $drawer-data-table-padding: 9px 25px;
       }
     }
   }
+}
+.title-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>
