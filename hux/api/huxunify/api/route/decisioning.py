@@ -133,6 +133,16 @@ class ModelsView(SwaggerView):
             )
         )
 
+        # add tags to the response
+        for model in all_models:
+            if model.get(api_c.TAGS) is None:
+                model[api_c.TAGS] = dict(
+                    industry=sample(
+                        api_c.ALL_INDUSTRY_TYPES,
+                        2,
+                    )
+                )
+
         # get the optional industry tag filter query param as a list
         industry_tag_list = [
             industry_tag.lower()

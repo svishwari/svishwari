@@ -21,6 +21,26 @@ class DotNotationDict(dict):
     __delattr__ = dict.__delitem__
 
 
+def convert_model_to_dot_notation(model_info) -> DotNotationDict:
+    """Convert a model to dot notation to simulate the DEN response.
+
+    Args:
+        model_info (dict): input model dict.
+
+    Returns:
+       DotNotationDict: converted model den object.
+    """
+    # convert model to dot notation dict
+    model = DotNotationDict(model_info)
+    model.model_metadata = DotNotationDict(model.model_metadata)
+    model.model_metrics = DotNotationDict(model.model_metrics)
+    model.important_features = [
+        DotNotationDict(x) for x in model.important_features
+    ]
+    model.lift_chart = [DotNotationDict(x) for x in model.lift_chart]
+    return model
+
+
 class DenStubClient:
     """class used to simulate the den stub client."""
 
@@ -45,21 +65,10 @@ class DenStubClient:
         """
 
         # convert to an attr dict.
-        model_infos = []
-
-        # loop each model info object.
-        for model in den_stub.MODEL_INFO_RESPONSE.get(model_id, []):
-
-            # convert model to dot notation dict
-            model = DotNotationDict(model)
-            model.model_metadata = DotNotationDict(model.model_metadata)
-            model.model_metrics = DotNotationDict(model.model_metrics)
-            model.important_features = [
-                DotNotationDict(x) for x in model.important_features
-            ]
-            model.lift_chart = [DotNotationDict(x) for x in model.lift_chart]
-            model_infos.append(model)
-        return model_infos
+        return [
+            convert_model_to_dot_notation(x)
+            for x in den_stub.MODEL_INFO_RESPONSE.get(model_id, [])
+        ]
 
 
 # pylint: disable=redefined-outer-name
@@ -173,7 +182,7 @@ class Decisioning:
                     api_c.ID: model_id,
                     api_c.NAME: model_info.model_metadata.model_name,
                     api_c.DESCRIPTION: model_info.model_metadata.description,
-                    api_c.STATUS: model_info.model_metadata.status.lower(),
+                    api_c.STATUS: model_info.model_metadata.status.title(),
                     api_c.LATEST_VERSION: model_info.model_version,
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
