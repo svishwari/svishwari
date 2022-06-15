@@ -30,6 +30,7 @@ def convert_model_to_dot_notation(model_info) -> DotNotationDict:
     Returns:
        DotNotationDict: converted model den object.
     """
+    # pylint: disable=attribute-defined-outside-init
     # convert model to dot notation dict
     model = DotNotationDict(model_info)
     model.model_metadata = DotNotationDict(model.model_metadata)
@@ -44,16 +45,18 @@ def convert_model_to_dot_notation(model_info) -> DotNotationDict:
 class DenStubClient:
     """class used to simulate the den stub client."""
 
-    def get_models_api_v1alpha1_models_get(self) -> DotNotationDict:
+    @staticmethod
+    def get_models_api_v1alpha1_models_get() -> DotNotationDict:
         """get models simulation.
 
-        Returns
+        Returns:
             DotNotationDict: model dictionary.
         """
         return [DotNotationDict(x) for x in den_stub.MODEL_ID_RESPONSE]
 
+    @staticmethod
     def get_model_info_api_v1alpha1_models_model_id_get(
-        self, model_id
+        model_id,
     ) -> DotNotationDict:
         """get the model info data lookup based on model IDs above.
 

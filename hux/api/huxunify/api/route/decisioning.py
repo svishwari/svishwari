@@ -1,7 +1,6 @@
 # pylint: disable=too-many-lines,unused-argument
 """Purpose of this script is for housing the decision routes for the API."""
-from random import uniform, randint, choice, sample
-from datetime import datetime, timedelta
+from random import sample
 from http import HTTPStatus
 from typing import Tuple
 
@@ -10,17 +9,12 @@ from flasgger import SwaggerView
 from marshmallow import INCLUDE
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.database.cache_management import (
-    create_cache_entry,
-    get_cache_entry,
-)
 from huxunifylib.database import (
     collection_management,
     notification_management,
 )
 from huxunifylib.database import constants as db_c
 
-from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.decisioning import Decisioning
 from huxunify.api.route.decorators import (
@@ -44,7 +38,6 @@ from huxunify.api.schema.model import (
     ModelPipelinePerformanceSchema,
 )
 from huxunify.api.schema.configurations import ConfigurationsSchema
-from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,

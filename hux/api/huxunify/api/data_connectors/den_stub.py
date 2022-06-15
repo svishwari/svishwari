@@ -1,8 +1,7 @@
-"""
-Purpose of this file is for housing the DEN Stub model
+# pylint: skip-file
+"""Purpose of this file is for housing the DEN Stub model
 responses for the ENVs where DEN API is not available.
 """
-import datetime
 
 # DEN STUB MODELS FROM 06/14/2022
 MODEL_ID_RESPONSE = [
