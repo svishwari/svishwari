@@ -19,6 +19,12 @@ export default {
     description: "[data-e2e='card-description']",
   },
 
+  filter: {
+    clear: "[data-e2e='clearFilter']",
+    close: "[data-e2e='closeFilter']",
+    apply: "[data-e2e='applyFilter']",
+  },
+
   // side navigation
   nav: {
     // app:
@@ -115,17 +121,32 @@ export default {
   },
 
   // data sources
-  datasources: "[data-e2e='dataSourcesList']",
-  destinations: "[data-e2e='destination-list']",
-  dataSourcesAdd: "[data-e2e='dataSourcesAddList']",
-  dataSourcesRequest: "[data-e2e='dataSourcesRequestList']",
-  addDataSource: "[data-e2e='addDataSource']",
-  pendingDataSourceRemove: "[data-e2e='data-source-list-Pending-remove']",
-  removeDataSourceConfirmation: "[data-e2e='remove-data-source-confirmation']",
-  pendingStatus: "[data-e2e='model-status-Pending']",
-  dataFeedDetailsTable: "[data-e2e='data-feed-details-table']",
-  dataFilesWrapper: "[data-e2e='data-files-wrapper']",
-  datasourceDatafeedsTable: "[data-e2e='datasource-datafeeds-table']",
+  datasource: {
+    datasources: "[data-e2e='dataSourcesList']",
+    destinations: "[data-e2e='destination-list']",
+    dataSourcesAdd: "[data-e2e='dataSourcesAddList']",
+    dataSourcesRequest: "[data-e2e='dataSourcesRequestList']",
+    addDataSource: "[data-e2e='addDataSource']",
+    pendingDataSourceRemove: "[data-e2e='data-source-list-Pending-remove']",
+    removeDataSourceConfirmation:
+      "[data-e2e='remove-data-source-confirmation']",
+    pendingStatus: "[data-e2e='model-status-Pending']",
+    dataFeedDetailsTable: "[data-e2e='data-feed-details-table']",
+    dataFilesWrapper: "[data-e2e='data-files-wrapper']",
+    datasourceDatafeedsTable: "[data-e2e='datasource-datafeeds-table']",
+    datasourceFilesTableFilter: "[data-e2e='filesTableFilter']",
+    datasourceFilesTableFilterDrawer: "[data-e2e='dataFeedsFilters']",
+    datasourceFilesTableFilterDrawerStatusPanel:
+      "[data-e2e='dataFeedsFiltersStatusPanel']",
+    datasourceFilesTableFilterDrawerTimePanel:
+      "[data-e2e='dataFeedsFiltersTimePanel']",
+    datasourceFilesTableFilterDrawerTimePanelToday:
+      "[data-e2e='dataFeedsFiltersTimePanelToday']",
+    datasourceFilesTableFilterDrawerTimePanelYesterday:
+      "[data-e2e='dataFeedsFiltersTimePanelYesterday']",
+    datasourceFilesStatus: "[data-e2e='filesStatusTooltip']",
+    datasourceGroupedFilesExpand: "[data-e2e='expand-date-group']",
+  },
 
   //destinations
   destination: {
@@ -156,8 +177,15 @@ export default {
     versionhistorybutton: "[data-e2e='version-history-button']",
     modelDashboardOptions: "[data-e2e='model-dashboard-options']",
     versionhistory: "[data-e2e='version-history']",
+    prevVersion: "[data-e2e='previous-versions']",
     status: "[data-e2e='model-status']",
     activeStatus: "[data-e2e='model-status-Active']",
+    pendingStatus: "[data-e2e='model-status-Requested']",
+    addModel: "[data-e2e='addModel']",
+    requestModels: "[data-e2e='dataSourcesRequestList']",
+    removeModel: "[data-e2e='remove-model']",
+    removeModelConfirmation: "[data-e2e='remove-modal-confirmation']",
+    pipelinePerformanceTab: "[data-e2e='pipeline-performance']",
   },
 
   // engagements
@@ -250,6 +278,13 @@ export default {
     lastrun: "[data-e2e='lastrun']",
     pinning: "[data-e2e='tab-pinning']",
     stitched: "[data-e2e='tab-stitched']",
+    exitDrawer: "[data-e2e='click-outside']",
+    idrfilterToggle: "[data-e2e='idrFilterToggle']",
+    selectDate: "[data-e2e='selectDateIcon']",
+    selectFilterValue: "[data-e2e='select-value']",
+    applyIdrFilter: "[data-e2e='applyFilter']",
+    closeIdrFilter: "[data-e2e='closeFilter']",
+    clearIdrFilter: "[data-e2e='clearFilter']",
   },
   // notification
   notification: {

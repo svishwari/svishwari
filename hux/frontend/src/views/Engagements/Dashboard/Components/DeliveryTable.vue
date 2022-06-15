@@ -109,6 +109,12 @@
                   <tooltip>
                     <template #label-content>
                       <div
+                        v-if="
+                          getAccess(
+                            'engagements',
+                            'add_destination_to_engagement'
+                          )
+                        "
                         class="d-flex align-items-center ml-2"
                         data-e2e="add-destination"
                         @click="
@@ -246,7 +252,12 @@
       </template>
     </hux-data-table>
 
-    <v-list dense class="add-list audience-block" :height="45">
+    <v-list
+      v-if="getAccess('engagements', 'add_audience_to_engagement')"
+      dense
+      class="add-list audience-block"
+      :height="45"
+    >
       <v-list-item @click="$emit('triggerSelectAudience', $event)">
         <tooltip>
           <template #label-content>
@@ -290,7 +301,7 @@ import Logo from "@/components/common/Logo.vue"
 import Status from "@/components/common/Status.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
-import { formatText } from "@/utils.js"
+import { formatText, getAccess } from "@/utils.js"
 import HuxSwitch from "@/components/common/Switch.vue"
 
 export default {
@@ -356,8 +367,8 @@ export default {
   computed: {
     sectionActions() {
       return this.sectionType === "engagement"
-        ? this.engagementMenuOptions
-        : this.audienceMenuOptions
+        ? this.engagementMenuOptions.filter((x) => !x.isHidden)
+        : this.audienceMenuOptions.filter((x) => !x.isHidden)
     },
     buttonActions() {
       this.audienceMenuOptions.forEach((element) => {
@@ -381,9 +392,12 @@ export default {
   },
   methods: {
     ...mapActions({
+      getAudience: "audiences/getAudienceById",
+      updateAudience: "audiences/update",
       replaceAudience: "audiences/replaceAudienceToggle",
     }),
     formatText: formatText,
+    getAccess: getAccess,
     handleChange(...args) {
       const audienceID = args[2].find((item) => item.name == args[3]).id
       const data = {
@@ -392,6 +406,28 @@ export default {
         destination_id: args[4],
         value: args[0],
       }
+      let updatedEngagements = this.getAudience(audienceID).engagements.map(
+        (obj) => {
+          if (obj.id == args[0]) {
+            return {
+              ...obj,
+              deliveries: obj.deliveries.map((del) => {
+                if (del.delivery_platform_id == args[1]) {
+                  return { ...del, replace_audience: args[2] }
+                }
+                return del
+              }),
+            }
+          }
+          return obj
+        }
+      )
+      this.updateAudience({
+        id: audienceID,
+        payload: {
+          engagements: updatedEngagements,
+        },
+      })
       this.replaceAudience(data)
     },
   },

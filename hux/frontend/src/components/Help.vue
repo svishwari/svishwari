@@ -38,6 +38,22 @@
             My issues
           </a>
         </v-list-item>
+        <v-list-item class="v-list-item--link" data-e2e="myIssues">
+          <a
+            href="https://docs.hux.deloitte.com/docs/hux-unified/en/develop/index.html"
+            class="text-body-1 black--text view-all text-decoration-none"
+          >
+            Documentation
+          </a>
+        </v-list-item>
+        <v-list-item class="v-list-item--link" data-e2e="myIssues">
+          <a
+            href="https://becurious.edcast.eu/teams/hux-learning-portal#"
+            class="text-body-1 black--text view-all text-decoration-none"
+          >
+            CURA training
+          </a>
+        </v-list-item>
         <v-list-item
           class="v-list-item--link"
           data-e2e="contactus"

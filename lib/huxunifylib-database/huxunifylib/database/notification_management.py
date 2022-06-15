@@ -24,7 +24,7 @@ def create_notification(
     notification_type: str,
     description: str,
     category: str,
-    username: str = None,
+    username: str,
     platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> Union[dict, None]:
     """A function to create a new notification.
