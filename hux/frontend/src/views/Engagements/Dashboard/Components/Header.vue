@@ -13,7 +13,7 @@
     </template>
     <template #right>
       <div class="d-flex align-center">
-        <tooltip position-bottom>
+        <tooltip v-if="getAccess('engagements', 'update_one')" position-bottom>
           <template #label-content>
             <icon
               type="pencil"
@@ -44,7 +44,10 @@
               <v-list-item @click="favoriteAudience()">
                 {{ engagementData.favorite ? "Unfavorite" : "Favorite" }}
               </v-list-item>
-              <v-list-item @click="openDownloadDrawer()">
+              <v-list-item
+                v-if="getAccess('engagements', 'download_email_metrics')"
+                @click="openDownloadDrawer()"
+              >
                 <tooltip>
                   <template #label-content> Download KPIs as .csv </template>
                   <template #hover-content>
@@ -59,7 +62,10 @@
               >
                 Make inactive
               </v-list-item>
-              <v-list-item @click="initiateDelete()">
+              <v-list-item
+                v-if="getAccess('engagements', 'delete_one')"
+                @click="initiateDelete()"
+              >
                 Delete engagement
               </v-list-item>
             </v-list-item-group>
@@ -75,6 +81,7 @@ import PageHeader from "@/components/PageHeader.vue"
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import Icon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import { getAccess } from "@/utils"
 
 export default {
   name: "DashboardHeader",
@@ -120,6 +127,7 @@ export default {
     editEngagement() {
       this.$emit("editEngagement")
     },
+    getAccess: getAccess,
   },
 }
 </script>

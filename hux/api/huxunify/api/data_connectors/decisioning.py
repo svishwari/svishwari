@@ -1,5 +1,5 @@
-"""This module holds the decisioning class that connects
-to the decisioning metrics API"""
+"""This module holds the decisioning class that connects to the decisioning
+metrics API."""
 from datetime import datetime
 from typing import Tuple
 
@@ -134,6 +134,9 @@ class Decisioning:
                     api_c.PAST_VERSION_COUNT: model_info.past_version_count,
                     db_c.ENABLED: True,
                     db_c.ADDED: True,
+                    api_c.TAGS: api_c.MODEL_NAME_TAGS_MAP.get(
+                        model_info.model_metadata.model_name, None
+                    ),
                 }
             )
 

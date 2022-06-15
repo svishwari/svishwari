@@ -78,7 +78,6 @@
         class="pl-6 mr-2"
         :data-e2e="`nav-${item.icon}`"
         :to="item.link"
-        @click="navigate(item)"
       >
         <v-list-item-icon
           v-if="item.icon"
@@ -113,9 +112,6 @@
           class="pl-6 mr-2"
           :data-e2e="`nav-${menu.icon}`"
           :to="menu.link"
-          @click="navigate(menu)"
-          @mouseover="onMouseOver(menu)"
-          @mouseleave="onMouseLeave()"
         >
           <v-list-item-icon
             v-if="menu.icon"
@@ -169,8 +165,6 @@
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
-import * as _ from "lodash"
-import { mapGetters, mapActions } from "vuex"
 
 export default {
   name: "SideMenu",
@@ -179,6 +173,7 @@ export default {
 
   props: {
     toggle: Boolean,
+    sideBarItems: Array,
   },
 
   data: () => ({
@@ -190,14 +185,18 @@ export default {
     menu: false,
     prevItem: null,
     isBrodcasterOn: true,
-    navigationItems: [],
   }),
 
   computed: {
-    ...mapGetters({
-      sideBarItems: "configuration/sideBarConfigs",
-      demoConfiguration: "users/getDemoConfiguration",
-    }),
+    demoConfiguration() {
+      return {
+        demo_mode: true,
+        industry: "Healthcare",
+        description: "Pharmaceutical",
+        target: "Physicians",
+        track: "Sales",
+      }
+    },
 
     isMini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
@@ -212,107 +211,7 @@ export default {
     },
 
     displayedMenuItems() {
-      return this.navigationItems.filter((x) => {
-        if (x.children && x.enabled) {
-          x.children = x.children.filter((y) => y.enabled)
-          return true
-        } else {
-          return x.enabled
-        }
-      })
-    },
-  },
-
-  async mounted() {
-    await this.getSideBarConfig()
-    this.trustidRoute(this.$route.name)
-    this.navigationItems = this.sideBarItems
-  },
-
-  updated() {
-    this.getCurrentConfiguration()
-  },
-
-  methods: {
-    ...mapActions({
-      getSideBarConfig: "configuration/getSideBarConfig",
-    }),
-
-    navigate(item) {
-      this.trustidRoute(item.name)
-      if (
-        this.prevItem &&
-        this.prevItem.defaultState &&
-        this.prevItem.link.name != item.link.name
-      ) {
-        this.$store.replaceState({
-          ...this.$store.state,
-          [this.prevItem.link.name.charAt(0).toLowerCase() +
-          this.prevItem.link.name.slice(1)]: _.cloneDeep(
-            this.prevItem.defaultState
-          ),
-        })
-      }
-      this.prevItem = item
-    },
-
-    checkColored(title) {
-      if (
-        this.navigationItems?.length > 0 &&
-        ["HX TrustID", "HXTrustID"].includes(title)
-      ) {
-        this.navigationItems
-          .find((elem) => elem.name == "Insights")
-          .children.find((item) => item.name == "HX TrustID").icon =
-          "hx-trustid-colored"
-        return true
-      }
-      return false
-    },
-
-    trustidRoute(title) {
-      if (this.navigationItems?.length > 0 && !this.checkColored(title)) {
-        this.navigationItems
-          .find((elem) => elem.name == "Insights")
-          .children.find((item) => item.name == "HX TrustID").icon =
-          "hx-trustid"
-      }
-    },
-
-    onMouseOver(item) {
-      if (item) {
-        this.checkColored(item.name)
-      }
-    },
-    onMouseLeave() {
-      this.trustidRoute(this.$route.name)
-    },
-    updateClientInfo() {
-      if (this.isDemoMode) {
-        this.client = {
-          name: `${this.demoConfiguration.industry} Co`,
-          logo: this.demoConfiguration?.industry.toLowerCase(),
-        }
-      } else {
-        this.client = {
-          name: "Retail Co",
-          logo: "client",
-        }
-      }
-    },
-    async setDemoConfiguration() {
-      await this.getSideBarConfig()
-      this.navigationItems = []
-      this.navigationItems = this.sideBarItems
-    },
-    getCurrentConfiguration() {
-      if (this.isBrodcasterOn) {
-        this.$root.$on("update-config-settings", () => {
-          this.setDemoConfiguration()
-          this.updateClientInfo()
-          this.isBrodcasterOn = false
-        })
-      }
+      return this.sideBarItems
     },
   },
 }

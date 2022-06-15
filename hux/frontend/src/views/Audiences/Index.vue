@@ -1,5 +1,5 @@
 <template>
-  <div class="audiences-wrap">
+  <div class="audiences-wrap white">
     <page-header class="py-5" :header-height="110">
       <template #left>
         <div>
@@ -62,21 +62,23 @@
           </template>
 
           <template slot="right">
-            <router-link
-              :to="{ name: 'SegmentPlayground' }"
-              class="text-decoration-none"
-              append
-            >
-              <huxButton
-                variant="primary base"
-                size="large"
-                is-tile
-                class="ma-2 font-weight-regular no-shadow mr-0"
-                data-e2e="add-audience"
+            <span v-if="getAccess('audience', 'create')">
+              <router-link
+                :to="{ name: 'SegmentPlayground' }"
+                class="text-decoration-none"
+                append
               >
-                Create an audience
-              </huxButton>
-            </router-link>
+                <huxButton
+                  variant="primary base"
+                  size="large"
+                  is-tile
+                  class="ma-2 font-weight-regular no-shadow mr-0"
+                  data-e2e="add-audience"
+                >
+                  Create an audience
+                </huxButton>
+              </router-link>
+            </span>
           </template>
         </page-header>
         <hux-lazy-data-table
@@ -331,7 +333,9 @@
             </div>
           </template>
           <template #button>
-            <span v-if="finalFilterApplied <= 0">
+            <span
+              v-if="finalFilterApplied <= 0 && getAccess('audience', 'create')"
+            >
               <router-link
                 :to="{ name: 'SegmentPlayground' }"
                 class="text-decoration-none"
@@ -474,7 +478,7 @@ import Logo from "../../components/common/Logo.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import AudienceFilter from "./Configuration/Drawers/AudienceFilter"
 import Error from "@/components/common/screens/Error"
-import { formatText } from "@/utils.js"
+import { formatText, getAccess } from "@/utils.js"
 
 export default {
   name: "Audiences",
@@ -792,6 +796,7 @@ export default {
         {
           title: "Edit audience",
           isDisabled: false,
+          isHidden: !this.getAccess("audience", "update_one"),
           onClick: () => {
             this.openEditModal(audience)
           },
@@ -811,6 +816,7 @@ export default {
         {
           title: "Delete audience",
           isDisabled: false,
+          isHidden: !this.getAccess("audience", "delete_one"),
           onClick: () => {
             this.openModal(audience)
           },
@@ -898,6 +904,7 @@ export default {
       this.loading = false
     },
     formatText: formatText,
+    getAccess: getAccess,
   },
 }
 </script>
@@ -1020,6 +1027,7 @@ export default {
   height: 60vh !important;
   background-image: url("../../assets/images/no-alert-frame.png");
   background-position: center;
+  background-size: 96% 86%;
 }
 
 //to overwrite the classes
