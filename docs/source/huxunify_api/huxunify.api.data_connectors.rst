@@ -56,6 +56,14 @@ huxunify.api.data\_connectors.courier module
    :undoc-members:
    :show-inheritance:
 
+huxunify.api.data\_connectors.decisioning module
+-------------------------------------------
+
+.. automodule:: huxunify.api.data_connectors.decisioning
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 huxunify.api.data\_connectors.email\_deliverability\_metrics module
 -------------------------------------------------------------------
 
