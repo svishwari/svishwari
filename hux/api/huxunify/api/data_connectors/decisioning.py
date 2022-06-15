@@ -10,7 +10,60 @@ from huxunifylib.database import constants as db_c
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.prometheus import record_health_status, Connections
-from huxunify.api.data_connectors.den_stub import DenStubClient
+from huxunify.api.data_connectors import den_stub
+
+
+class DotNotationDict(dict):
+    """dot.notation access to dictionary attributes"""
+
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
+
+
+class DenStubClient:
+    """class used to simulate the den stub client."""
+
+    def get_models_api_v1alpha1_models_get(self) -> DotNotationDict:
+        """get models simulation
+
+        Returns
+            DotNotationDict: model dictionary.
+        """
+        return [DotNotationDict(x) for x in den_stub.MODEL_ID_RESPONSE]
+
+    def get_model_info_api_v1alpha1_models_model_id_get(
+        self, model_id
+    ) -> DotNotationDict:
+        """get the model info data lookup based on model IDs above.
+
+        Args:
+            model_id (str): model id.
+
+        Returns:
+            DotNotationDict: model info dictionary.
+        """
+
+        # get model
+        model_info = den_stub.MODEL_INFO_RESPONSE.get(model_id, {})
+
+        # convert to an attr dict.
+        model_infos = []
+
+        # loop each model
+        for model in model_info:
+
+            # convert model to dot notation dict
+            model = DotNotationDict(model)
+            model.model_metadata = DotNotationDict(model.model_metadata)
+            model.model_metrics = DotNotationDict(model.model_metrics)
+            model.important_features = [
+                DotNotationDict(x) for x in model.important_features
+            ]
+            model.lift_chart = [DotNotationDict(x) for x in model.lift_chart]
+            model_infos.append(model)
+        return model_infos
+
 
 # pylint: disable=redefined-outer-name
 class Decisioning:
@@ -25,7 +78,7 @@ class Decisioning:
                         host=get_config().DECISIONING_URL
                     ),
                     header_name="Authorization",
-                    header_value=token,
+                    header_value=self.token,
                 )
             )
             if get_config().ENV_NAME == api_c.STAGING_ENV
@@ -161,10 +214,14 @@ class Decisioning:
             api_c.MODEL_NAME: model_info.model_metadata.model_name,
             api_c.DESCRIPTION: model_info.model_metadata.description,
             api_c.PERFORMANCE_METRIC: {
-                api_c.RMSE: model_info.model_metrics.get("rmse", -1),
-                api_c.AUC: model_info.model_metrics["AUC"],
-                api_c.PRECISION: model_info.model_metrics["precision"],
-                api_c.RECALL: model_info.model_metrics["recall"],
+                api_c.RMSE: model_info.model_metrics.get(
+                    api_c.RMSE.upper(), -1
+                ),
+                api_c.AUC: model_info.model_metrics.get(api_c.AUC.upper(), -1),
+                api_c.PRECISION: model_info.model_metrics.get(
+                    api_c.PRECISION, -1
+                ),
+                api_c.RECALL: model_info.model_metrics.get(api_c.RECALL, -1),
                 api_c.CURRENT_VERSION: model_info.model_version,
             },
         }
@@ -187,10 +244,10 @@ class Decisioning:
         for feature in model_info.important_features:
             features.append(
                 {
-                    api_c.ID: feature["model_id"],
-                    api_c.NAME: feature["model_name"],
-                    api_c.DESCRIPTION: feature["feature_description"],
-                    api_c.FEATURE_TYPE: feature["model_type"],
+                    api_c.ID: feature[api_c.MODEL_ID],
+                    api_c.NAME: feature[api_c.MODEL_NAME],
+                    api_c.DESCRIPTION: feature[api_c.FEATURE_DESCRIPTION],
+                    api_c.FEATURE_TYPE: feature[api_c.MODEL_TYPE],
                     api_c.RECORDS_NOT_NULL: None,
                     api_c.FEATURE_IMPORTANCE: None,
                     api_c.MEAN: None,
@@ -297,15 +354,15 @@ class Decisioning:
         for lift_info in model_info.lift_chart:
             lift_stats.append(
                 {
-                    api_c.BUCKET: lift_info["bucket"],
-                    api_c.PREDICTED_VALUE: lift_info["predicted"],
-                    api_c.ACTUAL_VALUE: lift_info["actual"],
-                    api_c.PROFILE_COUNT: lift_info["profiles"],
-                    api_c.PREDICTED_RATE: lift_info["rate_predicted"],
-                    api_c.ACTUAL_RATE: lift_info["rate_actual"],
-                    api_c.PREDICTED_LIFT: lift_info["lift_predicted"],
-                    api_c.ACTUAL_LIFT: lift_info["lift_actual"],
-                    api_c.PROFILE_SIZE_PERCENT: lift_info["size_profile"],
+                    api_c.BUCKET: lift_info[api_c.BUCKET],
+                    api_c.PREDICTED_VALUE: lift_info[api_c.PREDICTED],
+                    api_c.ACTUAL_VALUE: lift_info[api_c.ACTUAL],
+                    api_c.PROFILE_COUNT: lift_info[api_c.PROFILES],
+                    api_c.PREDICTED_RATE: lift_info[api_c.RATE_PREDICTED],
+                    api_c.ACTUAL_RATE: lift_info[api_c.RATE_ACTUAL],
+                    api_c.PREDICTED_LIFT: lift_info[api_c.LIFT_PREDICTED],
+                    api_c.ACTUAL_LIFT: lift_info[api_c.LIFT_ACTUAL],
+                    api_c.PROFILE_SIZE_PERCENT: lift_info[api_c.SIZE_PROFILE],
                 }
             )
 
@@ -330,7 +387,9 @@ class Decisioning:
         for model_info in model_infos:
             drift_data.append(
                 {
-                    api_c.DRIFT: model_info.model_metrics["AUC"],
+                    api_c.DRIFT: model_info.model_metrics.get(
+                        api_c.AUC.upper(), -1
+                    ),
                     api_c.RUN_DATE: datetime.strptime(
                         model_info.scheduled_date, "%Y-%m-%d"
                     ),

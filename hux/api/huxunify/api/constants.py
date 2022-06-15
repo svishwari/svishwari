@@ -995,6 +995,15 @@ MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
+FEATURE_DESCRIPTION = "feature_description"
+PREDICTED = "predicted"
+ACTUAL = "actual"
+PROFILES = "profiles"
+SIZE_PROFILE = "size_profile"
+RATE_PREDICTED = "rate_predicted"
+LIFT_PREDICTED = "lift_predicted"
+LIFT_ACTUAL = "lift_actual"
+RATE_ACTUAL = "rate_actual"
 MODEL_ID = "model_id"
 MODEL_SHAP_DATA = "shap_data"
 MODEL_ONE_SHAP_DATA = [
@@ -1635,7 +1644,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
         "total_runs": 15,
         "run_duration": [
             {
-                "status": random.choice(["Success", "Failed"]),
+                "status": "Success",
                 "timestamp": datetime.datetime.now()
                 - datetime.timedelta(days=x),
                 "duration": "12m 41s",
@@ -1651,7 +1660,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
         "total_runs": 10,
         "run_duration": [
             {
-                "status": random.choice(["Success", "Failed"]),
+                "status": "Success",
                 "timestamp": datetime.datetime.now()
                 - datetime.timedelta(days=x),
                 "duration": "12m 41s",

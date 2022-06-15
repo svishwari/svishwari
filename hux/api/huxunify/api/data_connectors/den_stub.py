@@ -63940,12 +63940,3 @@ MODEL_INFO_RESPONSE = {
         },
     ],
 }
-
-
-class DenStubClient:
-    def get_models_api_v1alpha1_models_get(self):
-        return MODEL_ID_RESPONSE
-
-    def get_model_info_api_v1alpha1_models_model_id_get(self, model_id):
-        """get the model info data lookup based on model IDs above."""
-        return MODEL_INFO_RESPONSE.get(model_id, {})
