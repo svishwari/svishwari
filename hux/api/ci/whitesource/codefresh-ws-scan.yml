@@ -68,8 +68,9 @@ steps:
          echo "projectName=$PROJECTNAME";
          echo "projectVersion=$PROJECTVERSION";
          echo "### Programming Language Specific Settings ###";
-         echo "python.ignorePipInstallErrors=false";
-         echo "python.resolveSetupPyFiles=true";
+         echo "python.resolveDependencies=true";
+         echo "python.ignorePipInstallErrors=true";
+         echo "python.resolveSetupFiles=true";
          echo "python.IgnorePipenvInstallErrors=true";
          echo "python.indexUrl=$ARTIFACTORY_PYTHON_READ";
          } 

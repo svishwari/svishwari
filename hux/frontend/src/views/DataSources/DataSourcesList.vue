@@ -45,6 +45,7 @@
           </template>
           <template slot="action-menu-options">
             <div
+              v-if="getAccess('data_source', 'delete_one')"
               class="px-4 py-2 white d-flex flex-column text-h5"
               :data-e2e="`data-source-list-${dataSource.status}-remove`"
               @click="openModal(dataSource)"
@@ -105,6 +106,7 @@ import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import sortBy from "lodash/sortBy"
+import { getAccess } from "../../utils"
 
 export default {
   name: "DataSourcesList",
@@ -159,6 +161,7 @@ export default {
       })
       this.confirmModal = false
     },
+    getAccess: getAccess,
   },
 }
 </script>

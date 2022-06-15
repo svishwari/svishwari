@@ -15,8 +15,9 @@
     outlined
     single-line
     :style="`max-width: ${width}px`"
+    data-e2e="select-value"
   >
-    <template slot="item" slot-scope="data">
+    <template slot="item" slot-scope="data" class="data-div">
       <icon
         type="check-icon"
         size="12"

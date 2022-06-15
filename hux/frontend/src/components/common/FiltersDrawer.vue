@@ -24,6 +24,7 @@
               min-width="50"
               height="24"
               class="primary--text"
+              data-e2e="clearFilter"
               :disabled="!Boolean(count) || disableClear"
               @click="$emit('clear')"
             >
@@ -54,6 +55,7 @@
                 box-shadow-none
               "
               width="91"
+              data-e2e="closeFilter"
               @click="$emit('close')"
             >
               Close
@@ -62,6 +64,7 @@
               is-tile
               color="primary"
               class="text-button ml-auto"
+              data-e2e="applyFilter"
               :width="submitButtonWidth"
               :is-disabled="
                 !customValidation
@@ -153,10 +156,12 @@ $headerHeight: 70px;
 $padding: 20px;
 $width: 300px;
 $zIndex: 4;
+
 .hux-filters-drawer {
   border-left: 1px solid var(--v-black-lighten3) !important;
   width: $width;
   height: 100%;
+
   .wrapper {
     display: flex;
     flex-direction: column;
@@ -191,17 +196,21 @@ $zIndex: 4;
     bottom: 0;
     z-index: $zIndex;
   }
+
   ::-webkit-scrollbar {
     width: 5px;
   }
+
   ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px var(--v-white-base);
     border-radius: 10px;
   }
+
   ::-webkit-scrollbar-thumb {
     background: var(--v-black-lighten3);
     border-radius: 5px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: var(--v-black-lighten3);
   }

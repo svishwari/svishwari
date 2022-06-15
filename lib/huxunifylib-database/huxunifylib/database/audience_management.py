@@ -33,7 +33,7 @@ def create_audience(
     audience_filters: list,
     ingestion_job_id: ObjectId = None,
 ) -> Union[dict, None]:
-    """A function to create and store audience rules.
+    """A function to create and store audience the rules.
 
     Args:
         database (DatabaseClient): A database client. Defaults to None.

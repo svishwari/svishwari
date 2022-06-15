@@ -40,7 +40,9 @@
 </template>
 
 <script>
+import { getAccess } from "../utils"
 import StatusList from "./common/StatusList.vue"
+
 export default {
   name: "DeliveryOverview",
   components: { StatusList },
@@ -70,13 +72,23 @@ export default {
     return {
       engagementMenuOptions: [
         { id: 1, title: "View delivery history", active: false },
-        { id: 2, title: "Deliver all", active: true },
+        {
+          id: 2,
+          title: "Deliver all",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Add a destination", active: true },
         { id: 5, title: "Remove engagement", active: false },
       ],
       destinationMenuOptions: [
         { id: 2, title: "Create lookalike", active: false },
-        { id: 1, title: "Deliver now", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Edit delivery schedule", active: true },
         { id: 4, title: "Pause delivery", active: false },
         { id: 5, title: "Open destination", active: false },
@@ -87,6 +99,7 @@ export default {
           id: 1,
           title: "Deliver now",
           active: false,
+          isHidden: !this.getAccess("delivery", "deliver"),
         },
         { id: 2, title: "Add a destination", active: true },
         { id: 3, title: "Create lookalike", active: false },
@@ -112,6 +125,9 @@ export default {
         ? this.destinationMenuOptions
         : []
     },
+  },
+  methods: {
+    getAccess: getAccess,
   },
 }
 </script>
