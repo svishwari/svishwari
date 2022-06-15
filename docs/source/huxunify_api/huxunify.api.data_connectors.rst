@@ -57,7 +57,7 @@ huxunify.api.data\_connectors.courier module
    :show-inheritance:
 
 huxunify.api.data\_connectors.decisioning module
--------------------------------------------
+------------------------------------------------
 
 .. automodule:: huxunify.api.data_connectors.decisioning
    :members:

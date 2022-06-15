@@ -1,8 +1,8 @@
 Decisioning Connector
-==============
+=====================
 
 Details
--------------
+-------
 
 The Unified solution now retrieves its models and relevant data from Decisioning's Metrics API.
 
