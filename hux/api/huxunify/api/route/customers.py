@@ -389,7 +389,9 @@ class IDROverview(SwaggerView):
             # TODO Only for demo purpose remove after actual data integration
             if current_env == "RC1":
                 end_date = datetime.utcnow() - relativedelta(days=1)
-                latest_data_date = max([data[api_c.DAY] for data in trend_data])
+                latest_data_date = max(
+                    [data[api_c.DAY] for data in trend_data]
+                )
                 delta_days = (end_date - latest_data_date).days
                 for data in trend_data:
                     data[api_c.DAY] = data[api_c.DAY] + relativedelta(
