@@ -39,7 +39,7 @@
           :action-menu="false"
           :coming-soon="false"
           :logo-option="true"
-          :interactable="config.status == 'active'"
+          :interactable="false"
           :top-right-adjustment="
             config.status != 'active' ? 'ml-8 mt-3 mr-8' : 'mt-3 mr-8'
           "
@@ -89,7 +89,7 @@
           :action-menu="false"
           :coming-soon="false"
           :logo-option="true"
-          :interactable="config.status == 'active'"
+          :interactable="false"
           :top-right-adjustment="
             config.status != 'active' ? 'ml-8 mt-3 mr-8' : 'mt-3 mr-8'
           "

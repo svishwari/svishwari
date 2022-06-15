@@ -51,6 +51,9 @@ client["users"].tickets = () => {
 client["users"].updateDemoConfig = (data) => {
   return http.patch("users", data)
 }
+client["users"].accessMatrix = () => {
+  return http.get("users/rbac_matrix")
+}
 //#endregion
 
 //#region Configurations
@@ -411,6 +414,10 @@ client["audiences"].replaceAudience = (data) => {
     data.value
   )
 }
+
+client["audiences"].update = (audienceId, payload) => {
+  return http.put(`/audiences/${audienceId}`, payload)
+}
 //#endregion
 
 //#region Notifications
@@ -442,12 +449,6 @@ client["notifications"].getAllUsers = () => {
 client["models"].overview = (id, version) => {
   if (version) return http.get(`/models/${id}/overview?version=${version}`)
   else return http.get(`/models/${id}/overview`)
-}
-
-client["models"].features = (id, version) => {
-  if (version)
-    return http.get(`/models/${id}/feature-importance?version=${version}`)
-  else return http.get(`/models/${id}/feature-importance`)
 }
 
 client["models"].versionHistory = (id) => {

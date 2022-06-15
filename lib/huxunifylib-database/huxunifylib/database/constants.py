@@ -82,6 +82,7 @@ DATA_SOURCE_FIELD_TYPE = "type"
 DATA_SOURCE_RECENT_JOB_ID = "recent_ingestion_job_id"
 DATA_SOURCE_NON_BREAKDOWN_FIELDS = "non_breakdown_fields"
 
+DATA_SOURCE_PLATFORM_CDP = "cdp"
 DATA_SOURCE_PLATFORM_ODATA = "odata"
 DATA_SOURCE_PLATFORM_REST_API = "rest_api"
 DATA_SOURCE_PLATFORM_APACHE_HIVE = "apache-hive"
@@ -266,6 +267,7 @@ STATS_COVERAGE = "coverage"
 STATS_BREAKDOWN = "breakdown"
 
 DATA_COUNT = "count"
+INDUSTRY = "industry"
 
 AUDIENCE_ID = "audience_id"
 AUDIENCE_NAME = "name"
@@ -304,6 +306,7 @@ CUSTOM_AUDIENCE = "custom_audience"
 CUSTOM_AUDIENCE_STR = "Custom Audience"
 WIN_BACK_AUDIENCE = "win_back_audience"
 WIN_BACK_AUDIENCE_STR = "Win-back Audience"
+TAGS = "tags"
 
 AUDIENCE_TYPE = "audience_type"
 AUDIENCE_TYPE_NAME = "name"
@@ -679,3 +682,9 @@ RESTRICTED_COLLECTIONS = [
     INGESTION_JOBS_COLLECTION,
     USER_COLLECTION,
 ]
+
+HEALTHCARE = "healthcare"
+RETAIL = "retail"
+HOSPITALITY = "hospitality"
+AUTOMOTIVE = "automotive"
+ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]

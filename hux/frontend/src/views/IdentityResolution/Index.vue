@@ -20,7 +20,11 @@
         </div>
       </template>
       <template #right>
-        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn
+          icon
+          data-e2e="idrFilterToggle"
+          @click.native="isFilterToggled = !isFilterToggled"
+        >
           <icon
             type="filter"
             :size="27"
@@ -264,6 +268,7 @@
                 label-year="End year"
                 :min="filterStartDate"
                 :max="maxDate"
+                data-e2e="selectDateIcon"
               />
             </hux-filter-panel>
           </hux-filter-panels>
@@ -481,7 +486,8 @@ $headerOffsetY: 70px;
   .matching-trend-chart-frame {
     background-image: url("../../assets/images/no-matching-trend-chart-frame.png");
     background-position: center;
-    background-size: 90% 100%;
+    background-size: 95% 100%;
+    max-height: 335px !important;
   }
 }
 

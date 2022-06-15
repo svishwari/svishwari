@@ -55,9 +55,27 @@ describe("Decisioning > models", () => {
 
     // should be able to view version history list
     cy.get(selector.models.modelDashboardOptions).find("svg").click()
-    cy.get(selector.models.versionhistorybutton).click({ force: true })
+    // cy.get(selector.models.versionhistorybutton).click()
 
     //validate the history list
-    cy.get(selector.models.versionhistory).its("length").should("gt", 0)
+    cy.get(selector.models.prevVersion).its("length").should("gt", 0)
+    cy.get(selector.models.prevVersion).eq(0).click()
+  })
+
+  it("should be able to view a pipeline performance", () => {
+    cy.location("pathname").should("eq", route.models)
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.get(selector.models.item).its("length").should("gt", 0)
+
+    cy.get(selector.models.activeStatus)
+      .eq(0)
+      .parentsUntil(selector.models.item)
+      .click()
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
+    //should be able to view pipeline performance dashboard
+    cy.get(selector.models.pipelinePerformanceTab).click()
   })
 })

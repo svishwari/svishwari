@@ -396,7 +396,7 @@ MOCKED_MODEL_RESPONSE = [
         api_c.ID: "1",
         api_c.NAME: "Model1",
         api_c.DESCRIPTION: "Test Model",
-        api_c.STATUS: api_c.OPERATION_SUCCESS.lower(),
+        api_c.STATUS: api_c.STATUS_ACTIVE,
         api_c.LATEST_VERSION: "0.1.1",
         api_c.PAST_VERSION_COUNT: 0,
         api_c.LAST_TRAINED: parser.isoparse("2021-06-22T11:33:19.658Z"),
@@ -405,12 +405,13 @@ MOCKED_MODEL_RESPONSE = [
         api_c.PREDICTION_WINDOW: 365,
         api_c.FULCRUM_DATE: parser.isoparse("2021-06-22T11:33:19.658Z"),
         api_c.TYPE: "test",
+        api_c.TAGS: dict(industry=[api_c.HEALTHCARE, api_c.RETAIL]),
     },
     {
         api_c.ID: "2",
         api_c.NAME: "Model2",
         api_c.DESCRIPTION: "Test Model",
-        api_c.STATUS: api_c.OPERATION_SUCCESS.lower(),
+        api_c.STATUS: api_c.STATUS_ACTIVE,
         api_c.LATEST_VERSION: "0.1.1",
         api_c.PAST_VERSION_COUNT: 0,
         api_c.LAST_TRAINED: parser.isoparse("2021-06-22T11:33:19.658Z"),
@@ -419,6 +420,7 @@ MOCKED_MODEL_RESPONSE = [
         api_c.PREDICTION_WINDOW: 365,
         api_c.FULCRUM_DATE: parser.isoparse("2021-06-22T11:33:19.658Z"),
         api_c.TYPE: "other",
+        api_c.TAGS: dict(industry=[api_c.HOSPITALITY, api_c.AUTOMOTIVE]),
     },
 ]
 
