@@ -44,7 +44,9 @@ def create_cache_entry(
             del cache_data[db_c.CREATE_TIME]
             cache_data[db_c.TTL] = expire_after_seconds
 
-        collection.ensure_index(index_field, expireAfterSeconds=expire_after_seconds)
+        collection.ensure_index(
+            index_field, expireAfterSeconds=expire_after_seconds
+        )
         collection.update_one(
             {db_c.CONSTANT_KEY: cache_key},
             {"$set": cache_data},
