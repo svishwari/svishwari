@@ -332,7 +332,7 @@ class IDROverview(SwaggerView):
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
-    # pylint: disable=no-self-use,too-many-locals,unused-variable
+    # pylint: disable=no-self-use,too-many-locals
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[dict, int]:
