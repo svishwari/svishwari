@@ -3,7 +3,10 @@ import asyncio
 from datetime import datetime
 from pymongo import MongoClient
 from huxunifylib.database import constants as db_c, collection_management
-from huxunifylib.database.cache_management import create_cache_entry
+from huxunifylib.database.cache_management import (
+    create_cache_entry,
+    get_cache_entry,
+)
 from huxunifylib.database.collection_management import get_documents
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
@@ -22,7 +25,10 @@ from huxunifylib.connectors.util.selector import (
 )
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.cdp import get_customers_count_async
+from huxunify.api.data_connectors.cdp import (
+    get_customers_count_async,
+    get_customers_overview,
+)
 from huxunify.api.data_connectors.okta import get_env_okta_user_bearer_token
 from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import get_next_schedule
@@ -411,8 +417,8 @@ async def cache_model_features(database: MongoClient, model_id: str) -> None:
     Args:
         database (MongoClient): database client
         model_id (str): model id
-
     """
+
     tecton = Tecton()
     model_versions = tecton.get_model_version_history(model_id)
 
@@ -429,11 +435,10 @@ async def cache_model_features(database: MongoClient, model_id: str) -> None:
 
 
 def run_scheduled_tecton_feature_cache(database: MongoClient) -> None:
-    """function to run scheduled tecton feature cache refresh.
+    """Function to run scheduled tecton feature cache refresh.
 
     Args:
         database (MongoClient): The mongo database client.
-
     """
 
     # set the event loop
@@ -489,4 +494,91 @@ def run_scheduled_customer_profile_audience_count(
             "Failed to run scheduled customer profile audience count for each "
             "audience since failed to obtain get env okta user access bearer "
             "token."
+        )
+
+
+async def cache_customer_overview_audience_insights(
+    database: MongoClient, okta_access_token: str, audience_filters: dict
+) -> None:
+    """Fetch and cache customer overview audience insights for the audience
+    filters.
+
+    Args:
+        database (MongoClient): The mongo database client.
+        okta_access_token (str): OKTA JWT Token.
+        audience_filters (dict): Audience filters of an audience.
+    """
+
+    data = get_customers_overview(
+        token=okta_access_token,
+        filters={api_c.AUDIENCE_FILTERS: audience_filters},
+    )
+
+    cache_key = {
+        api_c.ENDPOINT: f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+        **{api_c.AUDIENCE_FILTERS: audience_filters},
+    }
+
+    create_cache_entry(
+        database=database,
+        cache_key=cache_key,
+        cache_value=data,
+    )
+
+
+def run_scheduled_customer_overview_audience_insights(
+    database: MongoClient,
+) -> None:
+    """Function to run scheduled customer overview audience insights cache
+    refresh.
+
+    Args:
+        database (MongoClient): The mongo database client.
+    """
+
+    # get the current environment's okta user bearer token
+    okta_access_token = get_env_okta_user_bearer_token()
+
+    if okta_access_token:
+        # set the event loop
+        asyncio.set_event_loop(asyncio.SelectorEventLoop())
+        loop = asyncio.get_event_loop()
+
+        # get all audiences from audiences collection
+        audiences = get_all_audiences(database=database)
+
+        # iterate through the audiences to refresh the cache for customer
+        # overview audience insights for each unique type of filters in each
+        # audience document of audiences collection
+        for audience in audiences:
+            cache_key = {
+                api_c.ENDPOINT: f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+                **{
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
+                },
+            }
+
+            # check if cache data for matching key is not expired and present
+            # in DB before proceeding further to cache new data
+            cache_data = get_cache_entry(
+                database=database, cache_key=cache_key
+            )
+
+            if not cache_data:
+                # fire and forget task
+                task = loop.create_task(
+                    cache_customer_overview_audience_insights(
+                        database,
+                        okta_access_token,
+                        audience.get(api_c.AUDIENCE_FILTERS, None),
+                    )
+                )
+                loop.run_until_complete(task)
+    else:
+        logger.error(
+            "Failed to run scheduled customer overview audience insights cache"
+            " refresh for each since failed to obtain get env okta user access"
+            " bearer token."
         )

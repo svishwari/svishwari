@@ -255,6 +255,7 @@ export default {
         id: 1,
         title: "Create lookalike",
         active: false,
+        isHidden: !this.getAccess("audience", "create_lookalike"),
       }
       if (delivery.name === "Facebook") {
         ;(createLookaLikeOption["active"] = true),
@@ -272,10 +273,23 @@ export default {
           active: true,
           isHidden: !this.getAccess("delivery", "deliver"),
         },
-        { id: 3, title: "Edit delivery schedule", active: true },
+        {
+          id: 3,
+          title: "Edit delivery schedule",
+          active: true,
+          isHidden: !this.getAccess("delivery", "schedule_delivery"),
+        },
         { id: 4, title: "Pause delivery", active: false },
         { id: 5, title: "Open destination", active: false },
-        { id: 6, title: "Remove destination", active: true },
+        {
+          id: 6,
+          title: "Remove destination",
+          active: true,
+          isHidden: !this.getAccess(
+            "engagements",
+            "remove_destination_from_engagement"
+          ),
+        },
       ]
     },
     dataPendingMessage(event) {

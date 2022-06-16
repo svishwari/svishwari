@@ -21,6 +21,7 @@
           <div class="black--text text-body-1">Extension type</div>
           <div class="d-flex align-center mt-2">
             <div
+              v-if="getAccess('destinations', 'create_data_extensions')"
               class="cursor-pointer px-10 py-4 text-center mr-6 rounded-lg"
               :class="[isActive ? 'active' : 'box-shadow-1']"
               @click="toggleClass($event)"
@@ -207,6 +208,8 @@ import Logo from "@/components/common/Logo"
 import TextField from "@/components/common/TextField"
 import Icon from "@/components/common/Icon"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import { getAccess } from "@/utils"
+
 export default {
   name: "DestinationDataExtensionDrawer",
 
@@ -380,6 +383,7 @@ export default {
       this.resetForm()
       this.$emit("onBack")
     },
+    getAccess: getAccess,
   },
 }
 </script>
