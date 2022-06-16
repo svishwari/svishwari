@@ -5,7 +5,11 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-btn  data-e2e="alertFilterToggle" icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn
+          data-e2e="alertFilterToggle"
+          icon
+          @click.native="isFilterToggled = !isFilterToggled"
+        >
           <icon
             type="filter"
             :size="27"
@@ -24,7 +28,12 @@
             bordered
           />
         </v-btn>
-        <v-btn  data-e2e="alertConfigureToggle"  icon class="ml-5" @click.native="toggleAlertConfigure()">
+        <v-btn
+          data-e2e="alertConfigureToggle"
+          icon
+          class="ml-5"
+          @click.native="toggleAlertConfigure()"
+        >
           <icon type="setting-gear" :size="27" color="black" />
         </v-btn>
       </template>
@@ -89,11 +98,12 @@
                   'primary--text': header.fixed,
                 }"
                 class="col-overflow text-body-1"
-                
                 :style="{ width: header.width, left: 0 }"
               >
                 <div v-if="header.value == 'id'">
-                  <a data-e2e="alert-id-click" @click="toggleDrawer(item[header.value])"
+                  <a
+                    data-e2e="alert-id-click"
+                    @click="toggleDrawer(item[header.value])"
                     >{{ item[header.value] | Shorten | Empty("-") }}
                   </a>
                 </div>

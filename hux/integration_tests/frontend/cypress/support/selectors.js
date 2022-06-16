@@ -304,9 +304,7 @@ export default {
     alertConfigureSave: "[data-e2e='save']",
     alertConfigureCancel: "[data-e2e='cancelConfigure']",
     alertConfigureMainSwitch: "[data-e2e='mainSwitch']",
-    individualSwitch: "[data-e2e='individualSwitch']"
-    
-    
+    individualSwitch: "[data-e2e='individualSwitch']",
   },
   audience: {
     audienceFilterToggle: "[data-e2e='audienceFilterToggle']",
