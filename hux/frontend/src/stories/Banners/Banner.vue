@@ -6,13 +6,20 @@
     :outlined="outlined"
     :height="getHeight"
     :width="getWidth"
-    class="pl-8 pr-8 banner-padding"
+    class="banner-container px-8"
+    :class="size == 'small' ? 'py-2' : 'py-6'"
   >
     <template #prepend>
       <icon :type="getIcon" :size="24" :color="type" class="mr-2" />
     </template>
     <template #close>
-      <icon type="cross" :size="8" color="black" class="mr-2" @click="toggle" />
+      <icon
+        type="cross"
+        :size="10"
+        color="black"
+        class="mr-2"
+        @click="toggle"
+      />
     </template>
     <div class="banner-label" :style="cssVars">{{ label }}</div>
   </v-alert>
@@ -90,9 +97,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.banner-padding {
+.banner-container {
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 .banner-label {
   color: var(--v-black-base);
