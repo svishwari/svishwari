@@ -299,33 +299,6 @@ class TectonTest(TestCase):
 
         self.assertTrue(model_features)
 
-    @requests_mock.Mocker()
-    def test_get_model_features_negative_score_success(
-        self, request_mocker: Mocker
-    ) -> None:
-        """Test get features for a model.
-
-        Args:
-            request_mocker (Mocker): request mocker object.
-        """
-
-        # setup the request mock post
-        request_mocker.post(
-            self.tecton.service,
-            text=json.dumps(
-                t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
-                default=json_util.default,
-            ),
-            headers=self.tecton.headers,
-        )
-
-        model_features = self.tecton.get_model_features("1", "21.7.30")
-
-        self.assertTrue(model_features)
-        self.assertTrue(
-            all((feature[api_c.SCORE] < 0 for feature in model_features))
-        )
-
     def test_lift_chart(self):
         """Test getting lift charts for a model."""
 

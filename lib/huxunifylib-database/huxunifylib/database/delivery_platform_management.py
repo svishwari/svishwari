@@ -788,6 +788,9 @@ def create_delivery_platform_lookalike_audience(
         db_c.STATUS: status,
     }
 
+    if db_c.TAGS in source_audience:
+        doc[db_c.TAGS] = source_audience[db_c.TAGS]
+
     try:
         inserted_id = collection.insert_one(doc).inserted_id
 
