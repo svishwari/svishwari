@@ -2,9 +2,9 @@
   <div class="ma-2">
     <slot name="default">
       <div class="pl-2">Header</div>
-      <v-card class="small-list-card"> 
-        Content 
-        <icon type="cross" size="15" color="primary" class="close-icon"/>
+      <v-card class="small-list-card">
+        Content
+        <icon type="cross" size="15" color="primary" class="close-icon" />
       </v-card>
     </slot>
   </div>

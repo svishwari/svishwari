@@ -1,61 +1,78 @@
 <template>
-  <div class="header-container">
-    <v-row>
-      <div>
-        <icon type="abandoned_cart" size="38" class="header-icon"></icon>
-        <div class="header-title text-h1">Title</div>
-        <icon type="fav_blank" size="18" class="ml-2"></icon>
-        <div class="header-right">
-          <div class="action-menu">
-            <icon type="fav_blank" size="18" class="ml-2"></icon>
-            <icon type="fav_blank" size="18" class="ml-2"></icon>
-            <icon type="fav_blank" size="18" class="ml-2"></icon>
-          </div>
-          <hux-button class="header-button">Active</hux-button>
-        </div>
+  <v-container class="header-container">
+    <v-row class="header-title" :class="description ? '' : 'pb-4'">
+      <div class="title-left text-h1">
+        <icon :type="iconType" :size="38" class="mr-2" color="primary"></icon>
+        <span class="mr-2">{{ title }}</span>
+        <icon
+          v-if="$slots.breadcrumbs"
+          type="arrow"
+          :size="18"
+          color="primary"
+          class="mr-2"
+        ></icon>
+        <slot name="breadcrumbs" />
+      </div>
+      <v-spacer />
+      <div class="title-right">
+        <slot name="call-to-action" />
       </div>
     </v-row>
-    <v-row>
-      <div>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lolestie feugiat morbi enim, vel a non fermentum nam.
-      </div>
+    <v-row
+      v-if="description"
+      class="header-description text-body-1"
+      align="center"
+    >
+      {{ description }}
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script>
 import Icon from "../icons/Icon2.vue"
-import HuxButton from "../huxButton/huxButton2.vue"
 export default {
   name: "PageHeader",
-  components: { Icon, HuxButton },
+  components: { Icon },
+  props: {
+    iconType: {
+      type: String,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+      default: "Title",
+    },
+    description: {
+      type: String,
+      required: false,
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .header-container {
-  padding: 32px;
-  border: 1px solid gray;
-}
-.header-title {
-  display: inline-block;
-  margin-left: 8px;
-}
-.header-icon {
-  float: left;
-}
-.header-right {
-  position: relative;
-  float: right;
-  margin-left: 1110px;
-  .action-menu {
-    margin-top: 13px;
-    float: left;
+  background-color: lightblue;
+
+  .header-title {
+    height: 72px;
+    padding: 16px 32px 8px;
   }
-  .header-button {
-    margin-top: 2px;
-    margin-left: 20px;
-    float: right;
+
+  .title-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .title-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-description {
+    height: 32px;
+    padding: 0px 32px 16px;
   }
 }
 </style>
