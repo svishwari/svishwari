@@ -238,9 +238,7 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                     db_c.UPDATE_TIME: job.get(
                         db_c.UPDATE_TIME, job[db_c.CREATE_TIME]
                     ),
-                    db_c.DELIVERY_PLATFORM_ID: job.get(
-                        db_c.DELIVERY_PLATFORM_ID
-                    ),
+                    db_c.OBJECT_ID: job.get(db_c.DELIVERY_PLATFORM_ID),
                     db_c.IS_AD_PLATFORM: destination_dict.get(
                         job.get(db_c.DELIVERY_PLATFORM_ID)
                     ).get(db_c.IS_AD_PLATFORM),
@@ -250,30 +248,36 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 }
             )
 
-    _ = [
+    # loop each destination ID
+    for destination_id in destination_ids:
+        # validate that the destination ID is not already in the standalone deliveries
+        if destination_id in [
+            y.get(db_c.DELIVERY_PLATFORM_ID) for y in standalone_deliveries
+        ]:
+            continue
+
+        if destination_id not in destination_dict:
+            continue
+
+        # grab the destination
+        destination = destination_dict[destination_id]
+
+        # append the stand-alone destination to the list
         standalone_deliveries.append(
             {
-                db_c.METRICS_DELIVERY_PLATFORM_NAME: destination_dict.get(
-                    x
-                ).get(api_c.NAME),
-                api_c.DELIVERY_PLATFORM_TYPE: destination_dict.get(x).get(
+                db_c.METRICS_DELIVERY_PLATFORM_NAME: destination.get(
+                    api_c.NAME
+                ),
+                api_c.DELIVERY_PLATFORM_TYPE: destination.get(
                     api_c.DELIVERY_PLATFORM_TYPE
                 ),
                 api_c.STATUS: api_c.STATUS_NOT_DELIVERED,
                 api_c.SIZE: 0,
-                db_c.DELIVERY_PLATFORM_ID: x,
-                db_c.LINK: destination_dict.get(x).get(db_c.LINK),
-                db_c.IS_AD_PLATFORM: destination_dict.get(
-                    destination_dict.get(db_c.DELIVERY_PLATFORM_ID)
-                ).get(db_c.IS_AD_PLATFORM),
+                db_c.DELIVERY_PLATFORM_ID: destination_id,
+                db_c.LINK: destination.get(db_c.LINK),
+                db_c.IS_AD_PLATFORM: destination.get(db_c.IS_AD_PLATFORM),
             }
         )
-        for x in destination_ids
-        if x
-        not in [
-            y.get(db_c.DELIVERY_PLATFORM_ID) for y in standalone_deliveries
-        ]
-    ]
 
     return list(
         {
@@ -1023,10 +1027,10 @@ class AudienceGetView(SwaggerView):
                 else None,
                 api_c.AUDIENCE_STANDALONE_DELIVERIES: standalone_deliveries,
                 api_c.FAVORITE: is_component_favorite(
-                    user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
+                    user, api_c.AUDIENCES, str(audience_id)
                 )
                 or is_component_favorite(
-                    user[db_c.OKTA_ID], api_c.LOOKALIKE, str(audience_id)
+                    user, api_c.LOOKALIKE, str(audience_id)
                 ),
             }
         )
