@@ -115,11 +115,21 @@ describe("Notifications", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
     cy.get(selector.notification.individualSwitch).eq(1).click()
-
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     cy.get(selector.notification.alertConfigureSave).click()
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.notification.alertConfigureToggle).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.notification.individualSwitch).eq(1).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.get(selector.notification.alertConfigureSave).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
     cy.get(selector.notification.alertConfigureToggle).click()
 
