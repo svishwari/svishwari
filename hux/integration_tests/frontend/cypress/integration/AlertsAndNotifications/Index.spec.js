@@ -27,9 +27,105 @@ describe("Notifications", () => {
     // route in notification screen
     cy.location("pathname").should("eq", route.notifications)
     // scroll down for lazy loading
-    cy.scrollTo("bottom", { duration: 1000 }, { ensureScrollable: false })
+    cy.get('.table-overflow').scrollTo("bottom", { ensureScrollable: true })
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+
+    cy.get(selector.notification.alertIdClick).eq(1).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
+    cy.get(selector.notification.exitDrawer).click()
+    cy.get(selector.notification.alertFilterToggle).click()
+    cy.get(selector.notification.alertFilters).contains("Alert type").click()
+    cy.get(selector.notification.alertFilters)
+      .contains("Success")
+      .click({ force: true })
+    //clear all checkboxes and close the drawer
+    // cy.get(selector.audience.audienceFilters).contains("Clear").click()
+    cy.get(selector.notification.applyAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.get(selector.notification.closeAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.get(selector.notification.alertFilterToggle).click()
+    cy.get(selector.notification.clearAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.get(selector.notification.closeAlertFilter).click()
+    cy.get(selector.notification.alertFilterToggle).click()
+    cy.get(selector.notification.alertFilters).contains("Time(1)").click()
+    cy.get(selector.notification.alertFilters)
+      .contains("Today")
+      .click({ force: true })
+    cy.get(selector.notification.applyAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.get(selector.notification.closeAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.get(selector.notification.alertFilterToggle).click()
+    cy.get(selector.notification.alertFilters).contains("Time(1)").click()
+    cy.get(selector.notification.alertFilters)
+      .contains("All time")
+      .click({ force: true })
+    cy.get(selector.notification.applyAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.get(selector.notification.closeAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.get(selector.notification.alertFilterToggle).click()
+    cy.get(selector.notification.alertFilters).contains("Time(1)").click()
+    cy.get(selector.notification.alertFilters)
+      .contains("Last month")
+      .click({ force: true })
+    cy.get(selector.notification.applyAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.get(selector.notification.closeAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.get(selector.notification.alertFilterToggle).click()
+    cy.get(selector.notification.clearAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.get(selector.notification.closeAlertFilter).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.get(selector.notification.alertConfigureToggle).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.notification.alertConfigureMainSwitch).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.get(selector.notification.alertConfigureSave).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.notification.alertConfigureToggle).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.notification.alertConfigureMainSwitch).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.get(selector.notification.alertConfigureSave).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.notification.alertConfigureToggle).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.notification.individualSwitch).eq(1).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.get(selector.notification.alertConfigureSave).click()
+    cy.wait(1000)
+    cy.get(selector.notification.alertConfigureToggle).click()
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.notification.alertConfigureCancel).click()
+    // cy.get(selector.notification.exitDrawer).click()
     // click on the return to previous page button
     cy.get(selector.notification.notificationReturnButton).click()
   })
