@@ -8,14 +8,16 @@
       class="drop-menu-div"
     >
       <template #menuActivator="activatorVal">
-        <span v-if="!activatorVal.activatorVal" class="square-and-bulb">
-          <div class="guide-square"></div>
-          <icon class="guide-bulb" type="guide_bulb" :size="40" />
-        </span>
-        <span v-else>
-          <div class="guide-square-active"></div>
-          <icon class="guide-cross" type="close-remove" :size="25" />
-        </span>
+        <div class="guide-container">
+          <span v-if="!activatorVal.activatorVal" class="square-and-bulb">
+            <div class="guide-square"></div>
+            <icon class="guide-bulb" type="guide_bulb" :size="40" />
+          </span>
+          <span v-else>
+            <div class="guide-square-active"></div>
+            <icon class="guide-cross" type="close-remove" :size="25" />
+          </span>
+        </div>
       </template>
       <template #menuHeader>
         <div class="header-menu d-flex text-body-1 pt-5 pb-5 pr-4 pl-4">
@@ -103,6 +105,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.guide-container {
+  position: relative;
+  bottom: 8px !important;
+}
 .square-and-bulb {
   &:hover {
     .guide-square {
