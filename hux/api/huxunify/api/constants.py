@@ -2050,10 +2050,21 @@ AUTOMOTIVE = "automotive"
 ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
 
 MODEL_NAME_TAGS_MAP = {
-    "Lifetime Value": dict(industry=ALL_INDUSTRY_TYPES),
+    "LTV": dict(industry=ALL_INDUSTRY_TYPES),
     "Propensity to Purchase": dict(industry=ALL_INDUSTRY_TYPES),
     "Propensity to Unsubscribe": dict(industry=[RETAIL, HOSPITALITY]),
     "Propensity to Churn": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity Type Cancelled": dict(industry=[RETAIL, HOSPITALITY]),
+    "Propensity Type Transaction": dict(industry=[RETAIL, HOSPITALITY]),
+    "Propensity to Click": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Open": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to place web order": dict(industry=[RETAIL]),
+    "Propensity to view blanket products": dict(industry=[RETAIL]),
+    "Propensity to view jacket products": dict(industry=[RETAIL]),
+    "Propensity to view men’s products": dict(industry=[RETAIL]),
+    "Propensity to view shirt products": dict(industry=[RETAIL]),
+    "Propensity to view women’s products": dict(industry=[RETAIL]),
+    "Propensity to view wool products": dict(industry=[RETAIL]),
     "Product Portfolio Marketing": dict(
         industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
     ),
