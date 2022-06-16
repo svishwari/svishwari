@@ -112,7 +112,6 @@ const actions = {
       } else {
         response = await api.models.overview(model.id)
       }
-      debugger
       commit("SET_OVERVIEW", response.data)
     } catch (error) {
       handleError(error)
