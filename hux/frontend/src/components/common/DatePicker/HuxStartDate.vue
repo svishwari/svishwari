@@ -158,11 +158,7 @@ export default {
       table {
         border-collapse: collapse;
         thead {
-          tr {
-            td {
-              color: var(--v-black-base) !important;
-            }
-          }
+          border-bottom: 1px solid var(--v-black-lighten3);
         }
       }
       .v-btn--active {
