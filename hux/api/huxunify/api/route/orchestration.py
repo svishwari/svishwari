@@ -263,9 +263,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 api_c.SIZE: 0,
                 db_c.DELIVERY_PLATFORM_ID: x,
                 db_c.LINK: destination_dict.get(x).get(db_c.LINK),
-                db_c.IS_AD_PLATFORM: destination_dict.get(
-                    destination_dict.get(db_c.DELIVERY_PLATFORM_ID)
-                ).get(db_c.IS_AD_PLATFORM),
+                db_c.IS_AD_PLATFORM: destination_dict.get(x).get(
+                    db_c.IS_AD_PLATFORM
+                ),
             }
         )
         for x in destination_ids
@@ -1023,10 +1023,10 @@ class AudienceGetView(SwaggerView):
                 else None,
                 api_c.AUDIENCE_STANDALONE_DELIVERIES: standalone_deliveries,
                 api_c.FAVORITE: is_component_favorite(
-                    user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
+                    user, api_c.AUDIENCES, str(audience_id)
                 )
                 or is_component_favorite(
-                    user[db_c.OKTA_ID], api_c.LOOKALIKE, str(audience_id)
+                    user, api_c.LOOKALIKE, str(audience_id)
                 ),
             }
         )
