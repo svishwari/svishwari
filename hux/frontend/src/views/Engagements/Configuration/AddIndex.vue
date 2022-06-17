@@ -335,35 +335,41 @@ export default {
 </script>
 <style lang="scss" scoped>
 .add-eng-wrap {
-  .steps-wrap {
-    display: flex;
-    align-items: center;
-    .step-circle {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      text-align: center;
-      vertical-align: middle;
-      line-height: 32px;
-      &.active {
-        border: 1px solid var(--v-success-base);
-        color: var(--v-success-base);
+  height: calc(100vh - 150px) !important;
+  overflow: auto !important;
+  ::v-deep .container {
+    height: auto !important;
+    overflow-y: hidden !important;
+    .steps-wrap {
+      display: flex;
+      align-items: center;
+      .step-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 32px;
+        &.active {
+          border: 1px solid var(--v-success-base);
+          color: var(--v-success-base);
+        }
+        &.in-active {
+          border: 1px solid var(--v-black-lighten2);
+          color: var(--v-black-lighten2);
+        }
       }
-      &.in-active {
-        border: 1px solid var(--v-black-lighten2);
-        color: var(--v-black-lighten2);
+      .step-done {
+        margin-top: -3px;
+      }
+      .ruler {
+        width: 40px;
+        border-top: 1px dashed var(--v-success-base);
       }
     }
-    .step-done {
-      margin-top: -3px;
+    .add-eng-step-title {
+      margin-top: 28px;
     }
-    .ruler {
-      width: 40px;
-      border-top: 1px dashed var(--v-success-base);
-    }
-  }
-  .add-eng-step-title {
-    margin-top: 28px;
   }
 }
 </style>
