@@ -1,7 +1,7 @@
+# pylint: disable=too-many-lines
 """This module enables functionality related to
 orchestration(audience/engagement) management.
 """
-
 import logging
 import datetime
 from typing import Union
@@ -28,6 +28,7 @@ def create_audience(
     user_name: str,
     destination_ids: list = None,
     size: int = 0,
+    audience_tags: Union[dict, None] = None,
 ) -> Union[dict, None]:
     """A function to create an audience.
 
@@ -40,6 +41,8 @@ def create_audience(
         destination_ids (list): List of destination/delivery platform ids
             attached to the audience.
         size (int): audience size.
+        audience_tags (dict): A dict of different type of tags that the
+            audience can be tagged with.
 
     Returns:
         Union[list, None]: MongoDB audience doc.
@@ -76,6 +79,9 @@ def create_audience(
         db_c.DELETED: False,
         db_c.SIZE: size,
     }
+
+    if audience_tags is not None:
+        audience_doc[db_c.TAGS] = audience_tags
 
     try:
         audience_id = collection.insert_one(audience_doc).inserted_id
@@ -263,9 +269,7 @@ def get_all_audiences(
             )
 
         return list(
-            collection.find(find_filters, {db_c.DELETED: 0})
-            .skip(skips)
-            .limit(batch_size)
+            collection.find(find_filters).skip(skips).limit(batch_size)
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -290,22 +294,53 @@ def build_get_audiences_query_filter(
     if not filters:
         query_filter = {db_c.DELETED: False}
     else:
-        query_filter = {}
+        query_filter = {"$and": [{db_c.DELETED: False}]}
+
         if filters.get(db_c.WORKED_BY):
-            query_filter["$or"] = [
-                {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
-                {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
-            ]
-        if filters.get(db_c.ATTRIBUTE):
-            query_filter["$and"] = [
-                {
-                    db_c.ATTRIBUTE_FILTER_FIELD: {
-                        "$regex": rf"^{attribute}$",
-                        "$options": "i",
+            query_filter["$and"].extend(
+                [
+                    {
+                        "$or": [
+                            {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
+                            {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
+                        ]
                     }
-                }
-                for attribute in filters.get(db_c.ATTRIBUTE)
-            ]
+                ]
+            )
+
+        if filters.get(db_c.ATTRIBUTE):
+            query_filter["$and"].extend(
+                [
+                    {
+                        "$and": [
+                            {
+                                db_c.ATTRIBUTE_FILTER_FIELD: {
+                                    "$regex": rf"^{attribute}$",
+                                    "$options": "i",
+                                }
+                            }
+                            for attribute in filters.get(db_c.ATTRIBUTE)
+                        ]
+                    }
+                ]
+            )
+
+        if filters.get(db_c.INDUSTRY_TAG):
+            query_filter["$and"].extend(
+                [
+                    {
+                        "$or": [
+                            {
+                                db_c.INDUSTRY_TAG_FIELD: {
+                                    "$regex": rf"^{industry_tag}$",
+                                    "$options": "i",
+                                }
+                            }
+                            for industry_tag in filters.get(db_c.INDUSTRY_TAG)
+                        ]
+                    }
+                ]
+            )
 
     if audience_ids is not None:
         query_filter[db_c.ID] = {"$in": audience_ids}
@@ -324,6 +359,7 @@ def update_audience(
     name: str = None,
     audience_filters: list = None,
     destination_ids: list = None,
+    audience_tags: Union[dict, None] = None,
 ) -> Union[dict, None]:
     """A function to update an audience.
 
@@ -336,6 +372,8 @@ def update_audience(
             These are aggregated using "OR".
         destination_ids (list): List of destination/delivery platform
             ids attached to the audience.
+        audience_tags (dict): A dict of different type of tags that the
+            audience can be tagged with.
 
     Returns:
         Union[dict, None]: Updated audience configuration dict.
@@ -346,6 +384,7 @@ def update_audience(
         DuplicateName: Error if an audience with the same name exists already.
         TypeError: Error if user_name is not a string.
     """
+
     if not isinstance(user_name, str):
         raise TypeError("user_name must be a string")
     am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
@@ -380,6 +419,8 @@ def update_audience(
         updated_audience_doc[db_c.AUDIENCE_FILTERS] = audience_filters
     if destination_ids is not None:
         updated_audience_doc[db_c.DESTINATIONS] = destination_ids
+    if audience_tags is not None:
+        updated_audience_doc[db_c.TAGS] = audience_tags
     if user_name:
         updated_audience_doc[db_c.UPDATED_BY] = user_name
     updated_audience_doc[db_c.UPDATE_TIME] = curr_time
@@ -406,6 +447,7 @@ def update_lookalike_audience(
     audience_id: ObjectId,
     name: str = None,
     user_name: str = None,
+    audience_tags: Union[dict, None] = None,
 ) -> Union[dict, None]:
     """A function to update an audience.
 
@@ -414,6 +456,8 @@ def update_lookalike_audience(
         audience_id (ObjectId): MongoDB ID of the audience.
         name (str): New audience name.
         user_name (str): Name of the user creating/updating the audience.
+        audience_tags (dict): A dict of different type of tags that the
+            audience can be tagged with.
 
     Returns:
         Union[dict, None]: Updated audience configuration dict.
@@ -450,6 +494,8 @@ def update_lookalike_audience(
     updated_audience_doc = audience_doc
     if name is not None:
         updated_audience_doc[db_c.AUDIENCE_NAME] = name
+    if audience_tags is not None:
+        updated_audience_doc[db_c.TAGS] = audience_tags
     if user_name:
         updated_audience_doc[db_c.UPDATED_BY] = user_name
     updated_audience_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()

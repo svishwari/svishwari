@@ -26,12 +26,13 @@
       </template>
       <template #right>
         <huxButton
+          v-if="getAccess('models', 'request_one')"
           variant="primary"
           size="large"
           is-tile
           height="40"
           class="ma-2 font-weight-regular no-shadow mr-0 caption"
-          data-e2e="addDataSource"
+          data-e2e="addModel"
           @click="toggleDrawer()"
         >
           Request a model
@@ -120,6 +121,7 @@
           <template slot="action-menu-options">
             <div
               class="px-4 py-2 white d-flex flex-column text-h5"
+              data-e2e="remove-model"
               @click="removeModel(model)"
             >
               <span class="d-flex align-center"> Remove </span>
@@ -201,6 +203,8 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "../../components/common/Icon.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import ModelConfiguration from "@/views/Models/Drawers/Configuration"
+import { getAccess } from "@/utils"
+
 export default {
   name: "Models",
   components: {
@@ -239,9 +243,6 @@ export default {
     ...mapGetters({
       models: "models/list",
     }),
-    hasModels() {
-      return this.models.length ? Object.entries(this.models[0]).length : false
-    },
     addedModels() {
       const actives = this.models
         .filter((model) => ["Active"].includes(model.status))
@@ -314,6 +315,7 @@ export default {
       await this.deleteModal(this.selectedModal)
       this.refreshScreen()
     },
+    getAccess: getAccess,
   },
 }
 </script>

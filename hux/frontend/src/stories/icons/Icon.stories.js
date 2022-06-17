@@ -1,4 +1,4 @@
-import Icon from "@/components/common/Icon"
+import Icon from "./Icon2"
 import AllIcons from "./Icons"
 
 const BasicTemplate = (args, { argTypes }) => ({
@@ -51,11 +51,41 @@ export default {
         type: "select",
       },
     },
-    varia: {
+    variant: {
       defaultValue: "base",
       options: ["lighten1", "lighten2", "lighten3"],
       control: {
         type: "select",
+      },
+    },
+    borderColor: {
+      defaultValue: "primary",
+      options: [
+        "primary",
+        "secondary",
+        "black",
+        "success",
+        "yellow",
+        "info",
+        "warning",
+        "white",
+        "error",
+      ],
+      control: {
+        type: "select",
+      },
+    },
+    borderVariant: {
+      defaultValue: "base",
+      options: ["lighten1", "lighten2", "lighten3"],
+      control: {
+        type: "select",
+      },
+    },
+    outline: {
+      defaultValue: false,
+      control: {
+        type: "boolean",
       },
     },
   },

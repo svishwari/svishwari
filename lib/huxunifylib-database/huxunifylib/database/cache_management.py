@@ -61,16 +61,16 @@ def create_cache_entry(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_cache_entry(
-    database: DatabaseClient, cache_key: str
+    database: DatabaseClient, cache_key: Union[dict, str]
 ) -> Union[dict, None]:
     """A function that creates a new cache entry.
 
     Args:
         database (DatabaseClient): A database client.
-        cache_key (str): name of the cache key.
+        cache_key (dict, str): name of the cache key.
 
     Returns:
-        Union[dict, None]: MongoDB document for a cache entry.
+        Union [dict, None]: mongoDB document for a cache entry.
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.CACHE_COLLECTION]

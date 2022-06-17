@@ -5,7 +5,11 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn
+          data-e2e="alertFilterToggle"
+          icon
+          @click.native="isFilterToggled = !isFilterToggled"
+        >
           <icon
             type="filter"
             :size="27"
@@ -24,7 +28,12 @@
             bordered
           />
         </v-btn>
-        <v-btn icon class="ml-5" @click.native="toggleAlertConfigure()">
+        <v-btn
+          data-e2e="alertConfigureToggle"
+          icon
+          class="ml-5"
+          @click.native="toggleAlertConfigure()"
+        >
           <icon type="setting-gear" :size="27" color="black" />
         </v-btn>
       </template>
@@ -75,6 +84,7 @@
             sort-desc
             class="big-table"
             :enable-lazy-load="enableLazyLoad"
+            data-e2e="alert-table"
             view-height="calc(100vh - 230px)"
             @bottomScrollEvent="intersected"
           >
@@ -91,7 +101,9 @@
                 :style="{ width: header.width, left: 0 }"
               >
                 <div v-if="header.value == 'id'">
-                  <a @click="toggleDrawer(item[header.value])"
+                  <a
+                    data-e2e="alert-id-click"
+                    @click="toggleDrawer(item[header.value])"
                     >{{ item[header.value] | Shorten | Empty("-") }}
                   </a>
                 </div>

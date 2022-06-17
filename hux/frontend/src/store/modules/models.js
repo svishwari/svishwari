@@ -119,21 +119,6 @@ const actions = {
     }
   },
 
-  async getFeatures({ commit }, model) {
-    try {
-      let response
-      if (model.version) {
-        response = await api.models.features(model.id, model.version)
-      } else {
-        response = await api.models.features(model.id)
-      }
-      commit("SET_FEATURES", response.data)
-    } catch (error) {
-      handleError(error)
-      throw error
-    }
-  },
-
   async getHistory({ commit }, modelId) {
     try {
       const response = await api.models.versionHistory(modelId)

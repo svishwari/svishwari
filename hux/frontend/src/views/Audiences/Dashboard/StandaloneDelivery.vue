@@ -20,6 +20,7 @@
       </div>
       <v-spacer> </v-spacer>
       <div
+        v-if="getAccess('delivery', 'deliver')"
         :class="{
           'black--text text--lighten-3 disabled':
             audience.standalone_deliveries &&
@@ -93,7 +94,9 @@
                     <v-list class="menu-list-wrapper">
                       <v-list-item-group>
                         <v-list-item
-                          v-for="option in destinationMenuOptions"
+                          v-for="option in destinationMenuOptions.filter(
+                            (x) => !x.isHidden
+                          )"
                           :key="option.id"
                           :disabled="!option.active"
                           @click="standaloneOptions(option, item)"
@@ -127,13 +130,19 @@
                   v-model="item['replace_audience']"
                   :switch-labels="switchLabels"
                   false-color="var(--v-black-lighten4)"
+                  @change="kickoffReplace(item['delivery_platform_id'], $event)"
                 />
               </div>
             </td>
           </template>
         </hux-data-table>
 
-        <v-list dense class="add-list list-border" :height="52">
+        <v-list
+          v-if="getAccess('engagements', 'add_destination_to_engagement')"
+          dense
+          class="add-list list-border"
+          :height="52"
+        >
           <v-list-item @click="$emit('onAddStandaloneDestination', audience)">
             <tooltip>
               <template #label-content>
@@ -172,7 +181,12 @@
         <div class="mb-1">
           This audience has no standalone deliveries. Add a destination below.
         </div>
-        <v-list dense class="add-list" :height="52">
+        <v-list
+          v-if="getAccess('engagements', 'add_destination_to_engagement')"
+          dense
+          class="add-list"
+          :height="52"
+        >
           <v-list-item
             class="px-0"
             @click="$emit('onAddStandaloneDestination', audience)"
@@ -212,6 +226,7 @@ import Logo from "@/components/common/Logo.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip"
 import HuxSwitch from "@/components/common/Switch.vue"
+import { getAccess } from "@/utils"
 
 export default {
   name: "StandaloneDelivery",
@@ -266,9 +281,22 @@ export default {
         },
       ],
       destinationMenuOptions: [
-        { id: 1, title: "Deliver now", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: true,
+          isHidden: !this.getAccess("delivery", "deliver"),
+        },
         { id: 3, title: "Open destination", active: true },
-        { id: 4, title: "Remove destination", active: true },
+        {
+          id: 4,
+          title: "Remove destination",
+          active: true,
+          isHidden: !this.getAccess(
+            "engagements",
+            "remove_destination_from_engagement"
+          ),
+        },
       ],
       switchLabels: [
         {
@@ -291,6 +319,7 @@ export default {
     ...mapActions({
       deliverStandaloneAudience: "audiences/deliverStandaloneAudience",
       setAlert: "alerts/setAlert",
+      updateAudience: "audiences/update",
     }),
     async standaloneOptions(option, data) {
       switch (option.title.toLowerCase()) {
@@ -331,6 +360,27 @@ export default {
           "All standalone destination, has started delivering as a standalone deliveries",
       })
     },
+    kickoffReplace(deliveryId, val) {
+      let updatedStandaloneDeliveries = this.audience.standalone_deliveries.map(
+        (obj) => {
+          if (obj.delivery_platform_id == deliveryId) {
+            return { ...obj, replace_audience: val }
+          }
+          return obj
+        }
+      )
+      this.updateAudience({
+        id: this.audienceId,
+        payload: {
+          standalone_deliveries: updatedStandaloneDeliveries,
+        },
+      })
+      this.deliverStandaloneAudience({
+        id: this.audienceId,
+        payload: { destinations: [{ id: deliveryId }] },
+      })
+    },
+    getAccess: getAccess,
   },
 }
 </script>

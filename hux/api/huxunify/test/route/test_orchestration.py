@@ -134,6 +134,9 @@ class OrchestrationRouteTest(RouteTestCase):
                     {db_c.OBJECT_ID: d[db_c.ID]} for d in self.destinations
                 ],
                 db_c.SIZE: 3329,
+                "audience_tags": {
+                    api_c.INDUSTRY: [api_c.HEALTHCARE, api_c.RETAIL]
+                },
             },
             {
                 db_c.AUDIENCE_NAME: "Test Audience No Destinations",
@@ -150,6 +153,7 @@ class OrchestrationRouteTest(RouteTestCase):
                     }
                 ],
                 api_c.USER_NAME: self.user_name,
+                "audience_tags": {api_c.INDUSTRY: [api_c.HOSPITALITY]},
             },
         ]
 
@@ -322,6 +326,7 @@ class OrchestrationRouteTest(RouteTestCase):
                     ],
                 }
             ],
+            api_c.TAGS: {api_c.INDUSTRY: [api_c.HEALTHCARE]},
             api_c.DESTINATIONS: [
                 {api_c.ID: str(d[db_c.ID])} for d in self.destinations
             ],
@@ -332,14 +337,18 @@ class OrchestrationRouteTest(RouteTestCase):
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
         )
+
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(
             audience_post[api_c.AUDIENCE_NAME],
             response.json[api_c.AUDIENCE_NAME],
         )
-
         self.assertIsNotNone(
             response.json.get(api_c.DESTINATIONS)[0].get(db_c.DATA_ADDED)
+        )
+        self.assertIn(api_c.TAGS, response.json)
+        self.assertEqual(
+            response.json[db_c.TAGS], {db_c.INDUSTRY: [api_c.HEALTHCARE]}
         )
 
         # validate audience in db
@@ -666,6 +675,9 @@ class OrchestrationRouteTest(RouteTestCase):
         self.assertIn(api_c.DESTINATIONS, audience)
         self.assertEqual(len(audience[api_c.DESTINATIONS]), 2)
 
+        self.assertIn(api_c.AUDIENCE_INSIGHTS, audience)
+        self.assertIsInstance(audience[api_c.AUDIENCE_INSIGHTS], dict)
+
         # validate the facebook destination in the audience is set to
         # "Not delivered"
         for engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
@@ -935,6 +947,12 @@ class OrchestrationRouteTest(RouteTestCase):
     def test_update_audience(self):
         """Test update an audience."""
 
+        self.assertIn(api_c.TAGS, self.audiences[0])
+        self.assertEqual(
+            self.audiences[0][api_c.TAGS],
+            {api_c.INDUSTRY: [api_c.HEALTHCARE, api_c.RETAIL]},
+        )
+
         new_name = "New Test Audience"
 
         response = self.app.put(
@@ -956,11 +974,16 @@ class OrchestrationRouteTest(RouteTestCase):
                 ],
                 api_c.DESTINATIONS: [],
                 api_c.ENGAGEMENT_IDS: self.engagement_ids,
+                api_c.TAGS: {api_c.INDUSTRY: [api_c.HOSPITALITY]},
             },
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(new_name, response.json[db_c.AUDIENCE_NAME])
+        self.assertIn(api_c.TAGS, response.json)
+        self.assertEqual(
+            response.json[api_c.TAGS], {api_c.INDUSTRY: [api_c.HOSPITALITY]}
+        )
 
         # test the audience was appended to engagements
         audience_engagements = get_audience_insights(
@@ -1521,7 +1544,8 @@ class OrchestrationRouteTest(RouteTestCase):
 
         response = self.app.get(
             f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&"
-            f"{api_c.WORKED_BY}=True&{api_c.ATTRIBUTE}={api_c.GENDER}",
+            f"{api_c.WORKED_BY}=True&{api_c.ATTRIBUTE}={api_c.GENDER}&"
+            f"{api_c.INDUSTRY_TAG}={api_c.HEALTHCARE}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -1535,6 +1559,14 @@ class OrchestrationRouteTest(RouteTestCase):
         )
         self.assertEqual(
             str(self.lookalike_audience_doc[db_c.ID]), audiences[1][api_c.ID]
+        )
+        self.assertIn(api_c.TAGS, audiences[0])
+        self.assertIn(
+            api_c.HEALTHCARE, audiences[0][api_c.TAGS][api_c.INDUSTRY]
+        )
+        self.assertIn(api_c.TAGS, audiences[1])
+        self.assertIn(
+            api_c.HEALTHCARE, audiences[1][api_c.TAGS][api_c.INDUSTRY]
         )
 
     def test_get_audiences_with_batch_offset(self):
@@ -1601,6 +1633,12 @@ class OrchestrationRouteTest(RouteTestCase):
         """Test edit lookalike audience"""
 
         lookalike_audience_id = str(self.lookalike_audience_doc[db_c.ID])
+        self.assertIn(api_c.TAGS, self.lookalike_audience_doc)
+        self.assertEqual(
+            self.lookalike_audience_doc[api_c.TAGS],
+            {api_c.INDUSTRY: [api_c.HEALTHCARE, api_c.RETAIL]},
+        )
+
         new_name = "Lookalike Audience New Name"
 
         response = self.app.put(
@@ -1608,11 +1646,16 @@ class OrchestrationRouteTest(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
             json={
                 api_c.NAME: new_name,
+                api_c.TAGS: {api_c.INDUSTRY: [api_c.HOSPITALITY]},
             },
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(new_name, response.json[db_c.NAME])
+        self.assertIn(api_c.TAGS, response.json)
+        self.assertEqual(
+            response.json[api_c.TAGS], {api_c.INDUSTRY: [api_c.HOSPITALITY]}
+        )
 
     def test_create_audience_with_no_ad_platform(self):
         """Test create audience with no ad_platform destination."""

@@ -456,12 +456,12 @@ class Validation:
 
 
 def is_component_favorite(
-    okta_user_id: str, component_name: str, component_id: str
+    user: dict, component_name: str, component_id: str
 ) -> bool:
     """Checks if component is in favorites of a user.
 
     Args:
-        okta_user_id (str): Okta User ID.
+        user (dict): User dict.
         component_name (str): Name of component in user favorite.
         component_id (str): ID of the favorite component.
 
@@ -469,9 +469,7 @@ def is_component_favorite(
         bool: If component is favorite or not.
     """
 
-    user_favorites = get_user(get_db_client(), okta_user_id).get(
-        api_c.FAVORITES
-    )
+    user_favorites = user.get(api_c.FAVORITES, {})
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name, [])

@@ -142,7 +142,9 @@
                           <v-list class="menu-list-wrapper">
                             <v-list-item-group>
                               <v-list-item
-                                v-for="option in options"
+                                v-for="option in options.filter(
+                                  (x) => !x.isHidden
+                                )"
                                 :key="option.id"
                                 :disabled="!option.active"
                                 @click="option['onClick'](item)"
@@ -257,6 +259,7 @@ import Icon from "@/components/common/Icon.vue"
 import TeamMemberRequestDrawer from "./TeamMemberRequestDrawer.vue"
 import EditTeamMemberDrawer from "./EditTeamMemberDrawer.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import { getAccess } from "@/utils"
 
 export default {
   name: "TeamMembers",
@@ -334,6 +337,7 @@ export default {
             this.editTeamMember = true
             this.editTeamMemberObj = item
           },
+          isHidden: !this.getAccess("user", "update_one"),
         },
         {
           title: "Remove",
@@ -422,6 +426,7 @@ export default {
       this.deleteTeamMember = !this.deleteTeamMember
       this.existingUsers()
     },
+    getAccess: getAccess,
   },
 }
 </script>

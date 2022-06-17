@@ -61,6 +61,7 @@
 
           <template #right>
             <router-link
+              v-if="getAccess('engagements', 'create_one')"
               :disabled="isEmptyError"
               :event="!isEmptyError ? 'click' : ''"
               :to="{ name: 'EngagementConfiguration' }"
@@ -624,6 +625,7 @@
           <template #button>
             <span v-if="finalFilterApplied <= 0">
               <router-link
+                v-if="getAccess('engagements', 'create_one')"
                 :to="{ name: 'EngagementConfiguration' }"
                 class="text-decoration-none"
                 append
@@ -828,6 +830,7 @@ import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
 import EngagementFilter from "./Configuration/Drawers/EngagementFilter.vue"
 import EmptyPage from "@/components/common/EmptyPage"
+import { getAccess } from "@/utils"
 
 export default {
   name: "Engagements",
@@ -1243,6 +1246,7 @@ export default {
         {
           title: "Edit engagement",
           isDisabled: false,
+          isHidden: !this.getAccess("engagements", "update_one"),
           onClick: () => {
             this.openEditModal(engagement)
           },
@@ -1259,6 +1263,7 @@ export default {
         {
           title: "Delete engagement",
           isDisabled: false,
+          isHidden: !this.getAccess("engagements", "delete_one"),
           onClick: () => {
             this.openModal(engagement)
           },
@@ -1325,6 +1330,7 @@ export default {
         params: { id: id },
       })
     },
+    getAccess: getAccess,
   },
 }
 </script>
