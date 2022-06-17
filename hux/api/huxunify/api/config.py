@@ -198,6 +198,10 @@ class DevelopmentConfig(Config):
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
 
+    if config(api_c.ENVIRONMENT_NAME, default="") == "LILDEV":
+        del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
+        del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
+
     TEST_AUTH_OVERRIDE = False
 
 
