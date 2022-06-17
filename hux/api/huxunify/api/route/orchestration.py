@@ -607,43 +607,62 @@ class AudienceView(SwaggerView):
         # lookalike audiences can not be lookalikeable
         if not lookalikeable:
             # get all lookalikes and append to the audience list
-            query_filter = {db_c.DELETED: False}
-            if request.args.get(api_c.FAVORITES) and validation.validate_bool(
-                request.args.get(api_c.FAVORITES)
-            ):
-                query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
+            query_filter = {"$and": [{db_c.DELETED: False}]}
 
             if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
                 request.args.get(api_c.WORKED_BY)
             ):
-                query_filter.update(
-                    {
-                        "$or": [
-                            {db_c.CREATED_BY: user[api_c.USER_NAME]},
-                            {db_c.UPDATED_BY: user[api_c.USER_NAME]},
-                        ]
-                    }
+                query_filter["$and"].extend(
+                    [
+                        {
+                            "$or": [
+                                {db_c.CREATED_BY: user[api_c.USER_NAME]},
+                                {db_c.UPDATED_BY: user[api_c.USER_NAME]},
+                            ]
+                        }
+                    ]
                 )
 
             if attribute_list:
-                query_filter["$and"] = [
-                    {
-                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
-                            "$regex": re.compile(rf"^{attribute}$(?i)")
+                query_filter["$and"].extend(
+                    [
+                        {
+                            "$and": [
+                                {
+                                    db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                                        "$regex": re.compile(
+                                            rf"^{attribute}$(?i)"
+                                        )
+                                    }
+                                }
+                                for attribute in attribute_list
+                            ]
                         }
-                    }
-                    for attribute in attribute_list
-                ]
+                    ]
+                )
 
             if industry_tag_list:
-                query_filter["$or"] = [
-                    {
-                        db_c.INDUSTRY_TAG_FIELD: {
-                            "$regex": re.compile(rf"^{industry_tag}$(?i)")
+                query_filter["$and"].extend(
+                    [
+                        {
+                            "$or": [
+                                {
+                                    db_c.INDUSTRY_TAG_FIELD: {
+                                        "$regex": re.compile(
+                                            rf"^{industry_tag}$(?i)"
+                                        )
+                                    }
+                                }
+                                for industry_tag in industry_tag_list
+                            ]
                         }
-                    }
-                    for industry_tag in industry_tag_list
-                ]
+                    ]
+                )
+
+            if request.args.get(api_c.FAVORITES) and validation.validate_bool(
+                request.args.get(api_c.FAVORITES)
+            ):
+                query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
 
             lookalikes = cm.get_documents(
                 database,

@@ -31,6 +31,7 @@
             width="57px"
             :switch-labels="switchLabelFullAlerts"
             class="w-53"
+            data-e2e="mainSwitch"
             @change="toggleMainSwitch($event)"
           />
         </div>
@@ -87,6 +88,7 @@
                   :width="item.show ? '80px' : '100px'"
                   :switch-labels="switchLabel"
                   :class="item.show ? 'w-75' : 'w-97'"
+                  data-e2e="individualSwitch"
                   @change="toggleIndividualSwitch($event, item)"
                 />
               </template>
@@ -124,6 +126,7 @@
         size="large"
         :is-tile="true"
         class="mr-2 btn-border box-shadow-none"
+        data-e2e="cancelConfigure"
         @click="closeDrawer"
       >
         <span class="primary--text">Cancel</span>

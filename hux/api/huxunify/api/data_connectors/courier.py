@@ -831,11 +831,13 @@ async def deliver_audience_to_destination(
             map(
                 lambda x: x[db_c.REPLACE_AUDIENCE],
                 filter(
-                    lambda x: (x[db_c.OBJECT_ID] == destination_id),
+                    lambda x: (x[db_c.OBJECT_ID] == destination_id)
+                    and db_c.REPLACE_AUDIENCE in x,
                     audience[db_c.DESTINATIONS],
                 ),
             )
-        )[0]
+        )
+        replace_audience = replace_audience[0] if replace_audience else None
 
     delivery_job_id = str(
         create_delivery_job(
