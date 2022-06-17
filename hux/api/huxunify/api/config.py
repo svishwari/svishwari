@@ -51,7 +51,6 @@ class Config:
     DISABLE_DELIVERIES = config(
         api_c.DISABLE_DELIVERIES, default=False, cast=bool
     )
-    MOCK_TECTON = config(api_c.MOCK_TECTON, default=True, cast=bool)
 
     # MONGO CONFIG
     MONGO_CONNECTION_STRING = config(
@@ -97,14 +96,6 @@ class Config:
 
     # DECISIONING CONFIGURATION
     DECISIONING_URL = config(api_c.DECISIONING_URL, default="")
-
-    # TECTON
-    TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")
-    TECTON_API = config("TECTON_API", default="")
-    TECTON_API_HEADERS = {
-        "Authorization": f"Tecton-key {TECTON_API_KEY}",
-    }
-    TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
 
     # JIRA
     JIRA_PROJECT_KEY = config(api_c.JIRA_PROJECT_KEY, default="")
@@ -221,7 +212,6 @@ class PyTestConfig(Config):
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
-    MOCK_TECTON = False
 
     # OKTA CONFIGURATION
     OKTA_CLIENT_ID = "test-client-id"
@@ -235,14 +225,6 @@ class PyTestConfig(Config):
 
     # DECIOSIONING CONFIGURATION
     DECISIONING_URL = "https://fake.fake.decisioning.fake"
-
-    # TECTON CONFIGURATION
-    TECTON_API_KEY = "fake-key"
-    TECTON_API = "https://fake.fake.com"
-    TECTON_API_HEADERS = {
-        "Authorization": f"Tecton-key {TECTON_API_KEY}",
-    }
-    TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
 
     # CDP CONFIGURATION
     CDP_SERVICE = "https://fake.fake.com"

@@ -107,7 +107,6 @@ CDP_CONNECTIONS = "CDP_CONNECTIONS"
 CONTRACTS_DIR = "contracts"
 CDP_CUSTOMERS_CONTRACTS_DIR = "cdp_customers"
 CDP_CONNECTIONS_CONTRACTS_DIR = "cdp_connections"
-TECTON_CONTRACTS_DIR = "tecton"
 CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
     "/customer-profiles/insights/count-by-state"
 )

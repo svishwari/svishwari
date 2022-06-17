@@ -2,7 +2,7 @@
 
 
 class IntegratedAPIEndpointException(Exception):
-    """Exception due to Integration APIs like CDP/Tecton."""
+    """Exception due to Integration APIs like CDP."""
 
     exception_message = ""
 
