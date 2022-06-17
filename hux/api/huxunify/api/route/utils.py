@@ -41,7 +41,6 @@ from huxunifylib.database.client import DatabaseClient
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     get_user_info,
@@ -133,7 +132,6 @@ def get_health_check() -> HealthCheck:
 
     # add health checks
     health.add_check(check_mongo_connection)
-    health.add_check(Tecton().check_tecton_connection)
     health.add_check(check_okta_connection)
     health.add_check(CloudClient().health_check_secret_storage)
     health.add_check(CloudClient().health_check_batch_service)

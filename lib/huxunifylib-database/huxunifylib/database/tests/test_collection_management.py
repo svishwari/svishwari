@@ -23,7 +23,7 @@ class ConfigurationCollectionManagementTest(TestCase):
         configurations = [
             {
                 "type": "model",
-                "name": "Tecton model 1",
+                "name": "model 1",
                 "status": "Requested",
                 "enabled": True,
             },
@@ -55,7 +55,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
                 "type": "model",
-                "name": "Tecton model 2",
+                "name": "model 2",
                 "status": "Requested",
             },
         )
@@ -68,7 +68,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
                 "type": "model",
-                "name": "Tecton model 3",
+                "name": "model 3",
                 "status": "Requested",
             },
             username="test_user",
@@ -81,7 +81,7 @@ class ConfigurationCollectionManagementTest(TestCase):
         """Test update document"""
         update_doc = {
             "type": "model",
-            "name": "Tecton model 1",
+            "name": "model 1",
             "status": "Active",
             "enabled": True,
         }
@@ -159,7 +159,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
                 "type": "model",
-                "name": "Tecton model 2",
+                "name": "model 2",
                 "status": "Requested",
             },
         )
@@ -198,7 +198,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
                 "type": "model",
-                "name": "Tecton model 2",
+                "name": "model 2",
                 "status": "Requested",
             },
         )
@@ -234,7 +234,7 @@ class ModelsCollectionManagementTest(TestCase):
 
         models = [
             {
-                db_c.NAME: "Tecton model 1",
+                db_c.NAME: "model 1",
                 db_c.TYPE: "Classification",
                 db_c.CATEGORY: "Email",
                 db_c.MODEL_DESCRIPTION: "Test model 1",
@@ -244,7 +244,7 @@ class ModelsCollectionManagementTest(TestCase):
                 db_c.ADDED: False,
             },
             {
-                db_c.NAME: "Tecton model 2",
+                db_c.NAME: "model 2",
                 db_c.TYPE: "Regression",
                 db_c.CATEGORY: "Trust",
                 db_c.MODEL_DESCRIPTION: "Test model 2",
@@ -269,7 +269,7 @@ class ModelsCollectionManagementTest(TestCase):
         """Test creating a configuration document."""
 
         model_doc = {
-            db_c.NAME: "Tecton model create",
+            db_c.NAME: "model create",
             db_c.TYPE: "Test",
             db_c.CATEGORY: "Functionality Testing",
             db_c.MODEL_DESCRIPTION: "Test model creation",
@@ -290,7 +290,7 @@ class ModelsCollectionManagementTest(TestCase):
         self.assertEqual(model_doc[db_c.MODEL_ID], model[db_c.MODEL_ID])
 
         model_doc = {
-            db_c.NAME: "Tecton model create 2",
+            db_c.NAME: "model create 2",
             db_c.TYPE: "Test",
             db_c.CATEGORY: "Functionality Testing 2",
             db_c.MODEL_DESCRIPTION: "Test model creation",
@@ -314,7 +314,7 @@ class ModelsCollectionManagementTest(TestCase):
         """Test update document"""
         update_doc = {
             db_c.TYPE: "Classification",
-            db_c.NAME: "Updated tecton model",
+            db_c.NAME: "Updated model",
             db_c.STATUS: db_c.ACTIVE,
             db_c.ENABLED: True,
         }

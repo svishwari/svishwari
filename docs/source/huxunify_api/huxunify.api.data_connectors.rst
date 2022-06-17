@@ -96,14 +96,6 @@ huxunify.api.data\_connectors.scheduler module
    :undoc-members:
    :show-inheritance:
 
-huxunify.api.data\_connectors.tecton module
--------------------------------------------
-
-.. automodule:: huxunify.api.data_connectors.tecton
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 huxunify.api.data\_connectors.trust\_id module
 ----------------------------------------------
 

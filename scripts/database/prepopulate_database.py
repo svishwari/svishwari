@@ -613,13 +613,6 @@ applications_constants = [
         db_c.ENABLED: True,
     },
     {
-        db_c.NAME: "Tecton",
-        db_c.CATEGORY: "Modelling",
-        db_c.TYPE: "tecton",
-        db_c.ICON: "default.ico",
-        db_c.ENABLED: True,
-    },
-    {
         db_c.NAME: "Grafana",
         db_c.CATEGORY: "Monitoring",
         db_c.TYPE: "grafana",
