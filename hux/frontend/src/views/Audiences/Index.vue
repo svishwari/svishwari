@@ -624,7 +624,7 @@ export default {
           audience.filters.forEach((item) => {
             item.section_filters.forEach((obj) => {
               let nameObj = this.attributeOptions().find(
-                (item) => item.key == obj?.field.toLowerCase()
+                (item) => item.key == obj.field ? obj.field.toLowerCase() : null
               )
               if (nameObj) {
                 filterTagsObj[audience.name].add(nameObj.name)
