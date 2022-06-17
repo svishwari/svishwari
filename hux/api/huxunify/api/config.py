@@ -63,10 +63,16 @@ class Config:
     MONGO_DB_PASSWORD = config(api_c.MONGO_DB_PASSWORD, default="")
     # grab the SSL cert path
     MONGO_SSL_CERT = str(
-        Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
+        Path(__file__).parent.parent.joinpath(
+            config(
+                api_c.SSL_CERT_FILE_NAME, default="rds-combined-ca-bundle.pem"
+            )
+        )
     )
     AZURE_MONGO_TLS_CLIENT_KEY = str(
-        Path(__file__).parent.parent.joinpath("mongodb-azure.pem")
+        Path(__file__).parent.parent.joinpath(
+            config(api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem")
+        )
     )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
@@ -78,6 +84,9 @@ class Config:
     }
     if CLOUD_PROVIDER == api_c.AZURE:
         MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
+    if config(api_c.ENVIRONMENT_NAME, default="") == "LILDEV":
+        del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
+        del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
     # OKTA CONFIGURATION
     OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
@@ -188,6 +197,10 @@ class DevelopmentConfig(Config):
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
+
+    if config(api_c.ENVIRONMENT_NAME, default="") == "LILDEV":
+        del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
+        del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
     TEST_AUTH_OVERRIDE = False
 

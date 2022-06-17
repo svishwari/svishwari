@@ -122,7 +122,7 @@ export default {
     iconClass: {
       type: String,
       required: false,
-      default: "ml-2 mr-2",
+      default: "mx-2",
     },
   },
   data() {
