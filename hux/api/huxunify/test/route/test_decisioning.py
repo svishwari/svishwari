@@ -368,36 +368,6 @@ class DecisioningTests(RouteTestCase):
             t_c.validate_schema(FeatureSchema(), response.json, True)
         )
 
-    @given(model_id=st.sampled_from(t_c.DEN_API_SUPPORT_MODELS))
-    @settings(settings.load_profile("hypothesis_setting_profile"))
-    def test_get_model_feature_importance_success(self, model_id: str) -> None:
-        """Test get model feature importance success.
-
-        Args:
-            model_id (str): Model ID.
-        """
-
-        # mock get version history.
-        mock.patch(
-            "huxunify.api.data_connectors.decisioning.Decisioning.get_model_info_history",
-            return_value=[
-                convert_model_to_dot_notation(
-                    t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE_PROPENSITY[0]
-                )
-            ],
-        ).start()
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
-            f"{api_c.FEATURE_IMPORTANCE}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            t_c.validate_schema(FeatureSchema(), response.json, True)
-        )
-
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     def test_get_performance_pipeline(self, model_id: str):
         """Test get model performance pipeline.

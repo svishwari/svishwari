@@ -186,7 +186,7 @@ class Decisioning:
                     api_c.NAME: model_info.model_metadata.model_name,
                     api_c.DESCRIPTION: model_info.model_metadata.description,
                     api_c.STATUS: model_info.model_metadata.status.title(),
-                    api_c.LATEST_VERSION: model_info.model_version,
+                    api_c.LATEST_VERSION: model_info.model_metrics.version_number,
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
                     api_c.PREDICTION_WINDOW: model_info.model_metadata.prediction_days,
@@ -234,7 +234,7 @@ class Decisioning:
                     api_c.PRECISION, -1
                 ),
                 api_c.RECALL: model_info.model_metrics.get(api_c.RECALL, -1),
-                api_c.CURRENT_VERSION: model_info.model_version,
+                api_c.CURRENT_VERSION: model_info.model_metrics.version_number,
             },
         }
 
@@ -257,7 +257,8 @@ class Decisioning:
             features.append(
                 {
                     api_c.ID: feature[api_c.MODEL_ID],
-                    api_c.NAME: feature[api_c.MODEL_NAME],
+                    # make the feature name unique
+                    api_c.NAME: f"{feature[api_c.MODEL_NAME]}-{feature.rank}",
                     api_c.DESCRIPTION: feature[api_c.FEATURE_DESCRIPTION],
                     api_c.FEATURE_TYPE: feature[api_c.MODEL_TYPE],
                     api_c.RECORDS_NOT_NULL: 0,
@@ -268,7 +269,7 @@ class Decisioning:
                     api_c.UNIQUE_VALUES: 1,
                     api_c.LCUV: "",
                     api_c.MCUV: "",
-                    api_c.SCORE: 0,
+                    api_c.SCORE: feature.lift,
                 }
             )
 
@@ -294,7 +295,7 @@ class Decisioning:
                     api_c.NAME: model_info.model_metadata.model_name,
                     api_c.DESCRIPTION: model_info.model_metadata.description,
                     api_c.STATUS: model_info.model_metadata.status,
-                    api_c.VERSION: model_info.model_version,
+                    api_c.CURRENT_VERSION: model_info.model_metrics.version_number,
                     api_c.LAST_TRAINED: model_info.scheduled_date,
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
@@ -397,11 +398,15 @@ class Decisioning:
         drift_data = []
 
         for model_info in model_infos:
+            # get metric based on model type
+            metric_type = (
+                api_c.AUC.upper()
+                if api_c.AUC.upper() in model_info.model_metrics
+                else api_c.RMSE.upper()
+            )
             drift_data.append(
                 {
-                    api_c.DRIFT: model_info.model_metrics.get(
-                        api_c.AUC.upper(), -1
-                    ),
+                    api_c.DRIFT: model_info.model_metrics.get(metric_type, -1),
                     api_c.RUN_DATE: datetime.strptime(
                         model_info.scheduled_date, "%Y-%m-%d"
                     ),

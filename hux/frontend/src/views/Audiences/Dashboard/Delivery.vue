@@ -104,21 +104,52 @@ export default {
           active: true,
           isHidden: !this.getAccess("delivery", "deliver"),
         },
-        { id: 3, title: "Add a destination", active: true },
-        { id: 5, title: "Remove engagement", active: false },
+        {
+          id: 3,
+          title: "Add a destination",
+          active: true,
+          isHidden: !this.getAccess(
+            "engagements",
+            "add_destination_to_engagement"
+          ),
+        },
+        {
+          id: 5,
+          title: "Remove engagement",
+          active: false,
+          isHidden: !this.getAccess("engagements", "delete_one"),
+        },
       ],
       destinationMenuOptions: [
-        { id: 2, title: "Create lookalike", active: false },
+        {
+          id: 2,
+          title: "Create lookalike",
+          active: false,
+          isHidden: !this.getAccess("audience", "create_lookalike"),
+        },
         {
           id: 1,
           title: "Deliver now",
           active: true,
           isHidden: !this.getAccess("delivery", "deliver"),
         },
-        { id: 3, title: "Edit delivery schedule", active: true },
+        {
+          id: 3,
+          title: "Edit delivery schedule",
+          active: true,
+          isHidden: !this.getAccess("delivery", "schedule_delivery"),
+        },
         { id: 4, title: "Pause delivery", active: false },
         { id: 5, title: "Open destination", active: false },
-        { id: 6, title: "Remove destination", active: false },
+        {
+          id: 6,
+          title: "Remove destination",
+          active: false,
+          isHidden: !this.getAccess(
+            "engagements",
+            "remove_destination_from_engagement"
+          ),
+        },
       ],
       audienceMenuOptions: [
         {
@@ -127,10 +158,31 @@ export default {
           active: false,
           isHidden: !this.getAccess("delivery", "deliver"),
         },
-        { id: 2, title: "Add a destination", active: true },
-        { id: 3, title: "Create lookalike", active: false },
+        {
+          id: 2,
+          title: "Add a destination",
+          active: true,
+          isHidden: !this.getAccess(
+            "engagements",
+            "add_destination_to_engagement"
+          ),
+        },
+        {
+          id: 3,
+          title: "Create lookalike",
+          active: false,
+          isHidden: !this.getAccess("audience", "create_lookalike"),
+        },
         { id: 4, title: "Pause all delivery", active: false },
-        { id: 5, title: "Remove audience", active: true },
+        {
+          id: 5,
+          title: "Remove audience",
+          active: true,
+          isHidden: !this.getAccess(
+            "engagements",
+            "remove_audience_from_engagement"
+          ),
+        },
       ],
     }
   },
@@ -140,12 +192,12 @@ export default {
     },
     sectionActions() {
       return this.sectionType === "engagement"
-        ? this.engagementMenuOptions
-        : this.audienceMenuOptions
+        ? this.engagementMenuOptions.filter((x) => !x.isHidden)
+        : this.audienceMenuOptions.filter((x) => !x.isHidden)
     },
     destinationActions() {
       return this.sectionType === "engagement"
-        ? this.destinationMenuOptions
+        ? this.destinationMenuOptions.filter((x) => !x.isHidden)
         : []
     },
   },

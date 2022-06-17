@@ -366,44 +366,6 @@ class CourierTest(TestCase):
                 audience_delivery_status, db_c.AUDIENCE_STATUS_DELIVERING
             )
 
-    def test_destination_register_job(self):
-        """Test destination batch register job."""
-
-        delivery_route = get_audience_destination_pairs(
-            self.engagement[db_c.AUDIENCES]
-        )
-        self.assertTrue(delivery_route)
-
-        # walk the delivery route
-        for pair in delivery_route:
-            batch_destination = get_destination_config(
-                self.database,
-                *pair,
-                self.engagement[db_c.ID],
-                username=self.test_user,
-            )
-
-            batch_destination.aws_envs[
-                AudienceRouterConfig.BATCH_SIZE.name
-            ] = 1000
-            batch_destination.aws_envs[api_c.AUDIENCE_ROUTER_STUB_TEST] = 1
-            self.assertIsNotNone(batch_destination)
-
-            # Register job
-            return_value = {
-                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}
-            }
-            with mock.patch.object(
-                AWSBatchConnector,
-                "register_job",
-                return_value=return_value,
-            ):
-                batch_destination.register()
-
-            self.assertEqual(
-                batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING
-            )
-
     def test_destination_submit_job(self):
         """Test destination batch submit job."""
 

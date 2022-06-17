@@ -4,6 +4,7 @@
     :count="filterLength"
     content-height="262px"
     :disable-clear="filterLength === 1 && selectedTimeType === 'Last week'"
+    data-e2e="alertFilters"
     @clear="clearAndReload"
     @apply="apply"
     @close="close"

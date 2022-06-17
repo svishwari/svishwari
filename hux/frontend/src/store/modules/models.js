@@ -112,7 +112,7 @@ const actions = {
       } else {
         response = await api.models.overview(model.id)
       }
-      commit("SET_OVERVIEW", response.data[0])
+      commit("SET_OVERVIEW", response.data)
     } catch (error) {
       handleError(error)
       throw error

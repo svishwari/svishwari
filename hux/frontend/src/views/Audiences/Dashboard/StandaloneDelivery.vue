@@ -94,7 +94,9 @@
                     <v-list class="menu-list-wrapper">
                       <v-list-item-group>
                         <v-list-item
-                          v-for="option in destinationMenuOptions"
+                          v-for="option in destinationMenuOptions.filter(
+                            (x) => !x.isHidden
+                          )"
                           :key="option.id"
                           :disabled="!option.active"
                           @click="standaloneOptions(option, item)"
@@ -286,7 +288,15 @@ export default {
           isHidden: !this.getAccess("delivery", "deliver"),
         },
         { id: 3, title: "Open destination", active: true },
-        { id: 4, title: "Remove destination", active: true },
+        {
+          id: 4,
+          title: "Remove destination",
+          active: true,
+          isHidden: !this.getAccess(
+            "engagements",
+            "remove_destination_from_engagement"
+          ),
+        },
       ],
       switchLabels: [
         {

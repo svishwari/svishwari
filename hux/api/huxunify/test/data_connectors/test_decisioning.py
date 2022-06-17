@@ -308,7 +308,7 @@ class TectonTest(TestCase):
             return_value=t_c.MOCKED_MODEL_LIFT_CHART,
         ).start()
 
-        lift_data = self.tecton.get_model_lift_async(1)
+        lift_data = self.tecton.get_model_lift_async(1, "5")
 
         self.assertTrue(lift_data)
 
