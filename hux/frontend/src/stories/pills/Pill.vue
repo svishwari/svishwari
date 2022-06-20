@@ -8,10 +8,10 @@
     @click="pillClicked()"
     @click:close="pillClicked()"
   >
-    <tooltip v-if="hover">
+    <tooltip v-if="hover" nudge-right="-40" nudge-top="-10">
       <template #label-content>{{ label }}</template>
       <template #hover-content>
-        <span class="text-body-4">{{ hover }}</span>
+        <div>{{ hover }}</div>
       </template>
     </tooltip>
     <div v-else>

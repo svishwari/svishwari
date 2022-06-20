@@ -7,7 +7,9 @@ export default {
 
   argTypes: {},
 
-  args: {},
+  args: {
+    items: ["web", "shopping", "videos", "images", "news"],
+  },
 
   parameters: {
     design: {
