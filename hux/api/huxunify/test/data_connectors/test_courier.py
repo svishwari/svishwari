@@ -472,7 +472,9 @@ class CourierTest(TestCase):
             for secret in api_c.DESTINATION_SECRETS[
                 destination[db_c.DELIVERY_PLATFORM_TYPE]
             ][api_c.AWS_SSM_NAME]:
-                self.assertEqual(auth[secret.upper().replace("-", "_")], simulated_secret)
+                self.assertEqual(
+                    auth[secret.upper().replace("-", "_")], simulated_secret
+                )
 
     def test_run_scheduled_delivery(self):
         """Test run scheduled delivery for an audience in an engagement."""
