@@ -435,7 +435,6 @@ class AudienceView(SwaggerView):
         # validation is successful
         if events_list:
             filter_dict[db_c.EVENT] = events_list
-            attribute_list.append(db_c.EVENT)
 
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
