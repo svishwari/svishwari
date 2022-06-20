@@ -1,6 +1,6 @@
 <template>
   <v-alert
-    :type="type"
+    :color="bgColor"
     text
     dismissible
     :outlined="outlined"
@@ -10,7 +10,7 @@
     :class="size == 'small' ? 'py-2' : 'py-6'"
   >
     <template #prepend>
-      <icon :type="getIcon" :size="24" :color="type" class="mr-2" />
+      <icon :type="type" :size="24" class="mr-2" />
     </template>
     <template #close>
       <icon
@@ -70,23 +70,24 @@ export default {
     cssVars() {
       return { width: this.getWidth - 104 + "px" }
     },
-    getIcon() {
-      let iconToRet = ""
+    bgColor() {
       switch (this.type) {
+        case "positive":
+          return "var(--v-success-darken1)"
+
+        case "negative":
+          return "var(--v-error-lighten1)"
+
         case "warning":
-          iconToRet = "exclamation_outline"
-          break
-        case "success":
-          iconToRet = "success"
-          break
-        case "error":
-          iconToRet = "sad-face"
-          break
+          return "var(--v-warning-lighten1)"
+
+        case "guiding":
+          return "var(--v-yellow-lighten3)"
+
         default:
-          iconToRet = "success"
-          break
+          // informative
+          return "var(--v-yellow-lighten3)"
       }
-      return iconToRet
     },
   },
 
