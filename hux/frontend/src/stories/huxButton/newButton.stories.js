@@ -9,20 +9,19 @@ export default {
 
   argTypes: {
     textOnly: { control: { type: "boolean" } },
-    icon: { 
+    icon: {
       control: { type: "select" },
-      options: AllIcons, 
+      options: AllIcons,
     },
-    color: { 
+    color: {
       control: { type: "select" },
-      options: AllColors, 
+      options: AllColors,
     },
     outlined: { control: { type: "boolean" } },
+    disabled: { control: { type: "boolean" } },
   },
 
-  args: {
-    
-  },
+  args: {},
 
   parameters: {
     design: {

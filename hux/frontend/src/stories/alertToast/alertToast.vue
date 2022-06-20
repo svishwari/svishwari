@@ -1,13 +1,12 @@
 <template>
   <v-alert
-    :color="Type"
+    :color="type"
     text
     dismissible
-    close-icon=""
     :outlined="true"
     height="56"
     width="842"
-    class="pb-10 px-8 alert-centered"
+    class="px-8 alert-centered"
   >
     <template #prepend>
       <icon :type="type" size="24" class="mr-2" />

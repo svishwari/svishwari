@@ -1,10 +1,30 @@
 <template>
-  <v-btn :text="textOnly" class="px-6" :color="getClass(color)" :outlined="outlined" @click="onClick">
+  <v-btn
+    :text="textOnly"
+    class="px-6"
+    :outlined="outlined"
+    :disabled="disabled"
+    @click="onClick"
+    :style="{
+      color: `${getTxtColor(
+        disabled ? 'black-lighten5' : danger ? 'error-lighten1' : color
+      )} !important`,
+      backgroundColor: `${getBtnColor(
+        disabled ? 'black-lighten5' : danger ? 'error-lighten1' : color
+      )} !important`,
+    }"
+  >
     <div class="button-content text-button">
-      <icon v-if="icon" :type="icon" size="15" :color="iconColor" class="mr-2"/>
+      <icon
+        v-if="icon"
+        :type="icon"
+        size="15"
+        :color="iconColor"
+        class="mr-2"
+      />
       <slot name="default" />
     </div>
-  </v-btn>  
+  </v-btn>
 </template>
 
 <script>
@@ -39,13 +59,28 @@ export default {
       required: false,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    danger: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   methods: {
     onClick: function () {
       this.$emit("click")
     },
-    getClass(color) {
-      return `var(--v-${color})`
+    getTxtColor(color) {
+      if (this.outlined || this.textOnly) return `var(--v-${color})`
+      else return `var(--v-white-base)`
+    },
+    getBtnColor(color) {
+      if (this.outlined || this.textOnly) return `var(--v-white-base)`
+      else return `var(--v-${color})`
     },
   },
 }

@@ -28,10 +28,7 @@
               >Filter2</hux-button
             >
             <v-spacer />
-            <hux-button
-              text-only
-              variant="primary"
-              @click="clearFilters()"
+            <hux-button text-only variant="primary" @click="clearFilters()"
               >Clear all</hux-button
             >
           </v-row>
