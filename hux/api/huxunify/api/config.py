@@ -51,7 +51,6 @@ class Config:
     DISABLE_DELIVERIES = config(
         api_c.DISABLE_DELIVERIES, default=False, cast=bool
     )
-    MOCK_TECTON = config(api_c.MOCK_TECTON, default=True, cast=bool)
 
     # MONGO CONFIG
     MONGO_CONNECTION_STRING = config(
@@ -63,10 +62,16 @@ class Config:
     MONGO_DB_PASSWORD = config(api_c.MONGO_DB_PASSWORD, default="")
     # grab the SSL cert path
     MONGO_SSL_CERT = str(
-        Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
+        Path(__file__).parent.parent.joinpath(
+            config(
+                api_c.SSL_CERT_FILE_NAME, default="rds-combined-ca-bundle.pem"
+            )
+        )
     )
     AZURE_MONGO_TLS_CLIENT_KEY = str(
-        Path(__file__).parent.parent.joinpath("mongodb-azure.pem")
+        Path(__file__).parent.parent.joinpath(
+            config(api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem")
+        )
     )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
@@ -78,6 +83,9 @@ class Config:
     }
     if CLOUD_PROVIDER == api_c.AZURE:
         MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
+    if config(api_c.ENVIRONMENT_NAME, default="") == "LILDEV":
+        del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
+        del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
     # OKTA CONFIGURATION
     OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
@@ -88,14 +96,6 @@ class Config:
 
     # DECISIONING CONFIGURATION
     DECISIONING_URL = config(api_c.DECISIONING_URL, default="")
-
-    # TECTON
-    TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")
-    TECTON_API = config("TECTON_API", default="")
-    TECTON_API_HEADERS = {
-        "Authorization": f"Tecton-key {TECTON_API_KEY}",
-    }
-    TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
 
     # JIRA
     JIRA_PROJECT_KEY = config(api_c.JIRA_PROJECT_KEY, default="")
@@ -189,6 +189,10 @@ class DevelopmentConfig(Config):
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
 
+    if config(api_c.ENVIRONMENT_NAME, default="") == "LILDEV":
+        del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
+        del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
+
     TEST_AUTH_OVERRIDE = False
 
 
@@ -208,7 +212,6 @@ class PyTestConfig(Config):
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
-    MOCK_TECTON = False
 
     # OKTA CONFIGURATION
     OKTA_CLIENT_ID = "test-client-id"
@@ -222,14 +225,6 @@ class PyTestConfig(Config):
 
     # DECIOSIONING CONFIGURATION
     DECISIONING_URL = "https://fake.fake.decisioning.fake"
-
-    # TECTON CONFIGURATION
-    TECTON_API_KEY = "fake-key"
-    TECTON_API = "https://fake.fake.com"
-    TECTON_API_HEADERS = {
-        "Authorization": f"Tecton-key {TECTON_API_KEY}",
-    }
-    TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
 
     # CDP CONFIGURATION
     CDP_SERVICE = "https://fake.fake.com"

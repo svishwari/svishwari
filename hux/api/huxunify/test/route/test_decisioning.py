@@ -8,7 +8,6 @@ from huxunifylib.database.collection_management import create_document
 from hypothesis import given, settings, strategies as st
 
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
@@ -38,17 +37,6 @@ class DecisioningTests(RouteTestCase):
 
         super().setUp()
 
-        self.tecton = Tecton()
-
-        # define relative paths used for mocking calls.
-        self.models_rel_path = (
-            "huxunify.api.data_connectors.tecton.Tecton.get_models"
-        )
-        self.versions_rel_path = (
-            "huxunify.api.data_connectors."
-            "tecton.Tecton.get_model_version_history"
-        )
-
         mock.patch(
             "huxunify.api.data_connectors.cache.get_db_client",
             return_value=self.database,
@@ -61,10 +49,7 @@ class DecisioningTests(RouteTestCase):
         ).start()
 
     def test_success_get_models(self):
-        """Test get models from Tecton."""
-
-        get_models_mock = mock.patch(self.models_rel_path).start()
-        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
+        """Test get models."""
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
@@ -147,9 +132,6 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-
-        get_models_mock = mock.patch(self.models_rel_path).start()
-        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
     def test_success_request_model_duplicate(self):
         """Test requesting a model."""

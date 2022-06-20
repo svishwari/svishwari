@@ -11,7 +11,6 @@ from huxunifylib.database.client import DatabaseClient
 from hypothesis import given, strategies as st
 
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
-from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.exceptions.unified_exceptions import (
     InputParamsValidationError,
 )
@@ -119,11 +118,6 @@ class TestRouteUtils(TestCase):
         mock.patch(
             "huxunify.api.route.utils.check_mongo_connection",
             return_value=(True, "Mongo available"),
-        ).start()
-        mock.patch.object(
-            Tecton,
-            "check_tecton_connection",
-            return_value=(True, "Tecton available."),
         ).start()
         mock.patch(
             "huxunify.api.route.utils.check_okta_connection",
