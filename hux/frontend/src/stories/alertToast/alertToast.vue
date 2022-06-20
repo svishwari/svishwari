@@ -1,6 +1,6 @@
 <template>
   <v-alert
-    :color="type"
+    :color="bgColor"
     text
     dismissible
     :outlined="true"
@@ -58,7 +58,7 @@ export default {
     alertToast: true,
   }),
   computed: {
-    Type() {
+    bgColor() {
       switch (this.type) {
         case "positive":
           return "var(--v-success-darken1)"
