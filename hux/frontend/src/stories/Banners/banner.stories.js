@@ -17,6 +17,9 @@ export default {
     },
     height: { control: { type: "number" } },
     width: { control: { type: "number" } },
+    outlined: {
+      control: { type: "boolean" },
+    },
   },
 
   args: {
