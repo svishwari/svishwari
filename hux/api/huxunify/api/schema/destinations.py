@@ -276,6 +276,7 @@ class FacebookAuthConstants(Schema):
         ordered = True
 
     facebook_ad_account_id = fields.Dict(
+        attribute=api_c.FACEBOOK_AD_ACCOUNT_ID,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -286,6 +287,7 @@ class FacebookAuthConstants(Schema):
         },
     )
     facebook_app_id = fields.Dict(
+        attribute=api_c.FACEBOOK_APP_ID,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -296,6 +298,7 @@ class FacebookAuthConstants(Schema):
         },
     )
     facebook_app_secret = fields.Dict(
+        attribute=api_c.FACEBOOK_APP_SECRET,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -306,6 +309,7 @@ class FacebookAuthConstants(Schema):
         },
     )
     facebook_access_token = fields.Dict(
+        attribute=api_c.FACEBOOK_ACCESS_TOKEN,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -321,18 +325,22 @@ class FacebookAuthCredsSchema(Schema):
     """Facebook Auth Credentials schema class"""
 
     facebook_ad_account_id = fields.String(
+        data_key=api_c.FACEBOOK_AD_ACCOUNT_ID,
         required=True,
         example="MkU3Ojgwm",
     )
     facebook_app_id = fields.String(
+        data_key=api_c.FACEBOOK_APP_ID,
         required=True,
         example="717bdOQqZO99",
     )
     facebook_app_secret = fields.String(
+        data_key=api_c.FACEBOOK_APP_SECRET,
         required=True,
         example="2951925002021888",
     )
     facebook_access_token = fields.String(
+        data_key=api_c.FACEBOOK_ACCESS_TOKEN,
         required=True,
         example="111333777",
     )
@@ -347,6 +355,7 @@ class SFMCAuthConstants(Schema):
         ordered = True
 
     sfmc_account_id = fields.Dict(
+        attribute=api_c.SFMC_ACCOUNT_ID,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -357,6 +366,7 @@ class SFMCAuthConstants(Schema):
         },
     )
     sfmc_auth_base_uri = fields.Dict(
+        attribute=api_c.SFMC_AUTH_BASE_URI,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -367,6 +377,7 @@ class SFMCAuthConstants(Schema):
         },
     )
     sfmc_client_id = fields.Dict(
+        attribute=api_c.SFMC_CLIENT_ID,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -377,6 +388,7 @@ class SFMCAuthConstants(Schema):
         },
     )
     sfmc_client_secret = fields.Dict(
+        attribute=api_c.SFMC_CLIENT_SECRET,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -387,6 +399,7 @@ class SFMCAuthConstants(Schema):
         },
     )
     sfmc_rest_base_uri = fields.Dict(
+        attribute=api_c.SFMC_REST_BASE_URI,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -397,6 +410,7 @@ class SFMCAuthConstants(Schema):
         },
     )
     sfmc_soap_base_uri = fields.Dict(
+        attribute=api_c.SFMC_SOAP_BASE_URI,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -412,26 +426,32 @@ class SFMCAuthCredsSchema(Schema):
     """SFMC Auth Credentials schema class"""
 
     sfmc_account_id = fields.String(
+        data_key=api_c.SFMC_ACCOUNT_ID,
         required=True,
         example="7329755",
     )
     sfmc_auth_base_uri = fields.String(
+        attribute=api_c.SFMC_AUTH_BASE_URI,
         required=True,
         example="https://gsafkhljwhp6798.auth.marketingcloudapis.com/",
     )
     sfmc_client_id = fields.String(
+        attribute=api_c.SFMC_CLIENT_ID,
         required=True,
         example="e488010196d046f5a8b1b80ba6100899",
     )
     sfmc_client_secret = fields.String(
+        attribute=api_c.SFMC_CLIENT_SECRET,
         required=True,
         example="4d2c582ab302437c80721c0ec46a30f2",
     )
     sfmc_rest_base_uri = fields.String(
+        attribute=api_c.SFMC_REST_BASE_URI,
         required=True,
         example="https://535cf647a34-7950b5a4.rest.marketingcloudapis.com/",
     )
     sfmc_soap_base_uri = fields.String(
+        attribute=api_c.SFMC_SOAP_BASE_URI,
         required=True,
         example="https://55c5487a374-723ab5a6.soap.marketingcloudapis.com/",
     )
@@ -441,6 +461,7 @@ class SendgridAuthCredsSchema(Schema):
     """Sendgrid Auth Credentials schema class"""
 
     sendgrid_auth_token = fields.String(
+        data_key=api_c.SENDGRID_AUTH_TOKEN,
         required=True,
         validate=must_not_be_blank,
         example="wue812x2813eyqshjsdbw",
@@ -456,6 +477,7 @@ class SendgridAuthConstants(Schema):
         ordered = True
 
     sendgrid_auth_token = fields.Dict(
+        attribute=api_c.SENDGRID_AUTH_TOKEN,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -471,26 +493,31 @@ class GoogleAdsAuthCredsSchema(Schema):
     """Google Ads Auth Credentials schema class"""
 
     google_developer_token = fields.String(
+        data_key=api_c.GOOGLE_DEVELOPER_TOKEN,
         required=True,
         validate=must_not_be_blank,
         example="dZ%z4Mt4UY=7L6?jSanGsS",
     )
     google_refresh_token = fields.String(
+        data_key=api_c.GOOGLE_REFRESH_TOKEN,
         required=True,
         validate=must_not_be_blank,
         example="Z8BOWqt^PKVVNl&uOoQcL7",
     )
     google_client_customer_id = fields.String(
+        data_key=api_c.GOOGLE_CLIENT_CUSTOMER_ID,
         required=True,
         validate=must_not_be_blank,
         example="527-056-0438",
     )
     google_client_id = fields.String(
+        data_key=api_c.GOOGLE_CLIENT_ID,
         required=True,
         validate=must_not_be_blank,
         example="ChM263kbF!f.apps.googleusercontent.com",
     )
     google_client_secret = fields.String(
+        data_key=api_c.GOOGLE_CLIENT_SECRET,
         required=True,
         validate=must_not_be_blank,
         example="Gbh+@gUzVc658Ry=6kgw@_Bx",
@@ -506,6 +533,7 @@ class GoogleAdsAuthConstants(Schema):
         ordered = True
 
     google_developer_token = fields.Dict(
+        attribute=api_c.GOOGLE_DEVELOPER_TOKEN,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -516,6 +544,7 @@ class GoogleAdsAuthConstants(Schema):
         },
     )
     google_refresh_token = fields.Dict(
+        attribute=api_c.GOOGLE_REFRESH_TOKEN,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -526,6 +555,7 @@ class GoogleAdsAuthConstants(Schema):
         },
     )
     google_client_customer_id = fields.Dict(
+        attribute=api_c.GOOGLE_CLIENT_CUSTOMER_ID,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -536,6 +566,7 @@ class GoogleAdsAuthConstants(Schema):
         },
     )
     google_client_id = fields.Dict(
+        attribute=api_c.GOOGLE_CLIENT_ID,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -546,6 +577,7 @@ class GoogleAdsAuthConstants(Schema):
         },
     )
     google_client_secret = fields.Dict(
+        attribute=api_c.GOOGLE_CLIENT_SECRET,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -561,21 +593,25 @@ class QualtricsAuthCredsSchema(Schema):
     """Qualtrics Auth Credentials schema class"""
 
     qualtrics_api_token = fields.String(
+        data_key=api_c.QUALTRICS_API_TOKEN,
         required=True,
         validate=must_not_be_blank,
         example="wue812x2813eyqshjsdbw",
     )
     qualtrics_data_center = fields.String(
+        data_key=api_c.QUALTRICS_DATA_CENTER,
         required=True,
         validate=must_not_be_blank,
         example="feiwygfewyfgiuqef",
     )
     qualtrics_owner_id = fields.String(
+        data_key=api_c.QUALTRICS_OWNER_ID,
         required=True,
         validate=must_not_be_blank,
         example="kjeahfhb81322132qef",
     )
     qualtrics_directory_id = fields.String(
+        data_key=api_c.QUALTRICS_DIRECTORY_ID,
         required=True,
         validate=must_not_be_blank,
         example="qwjdqwu73176432nfkd",
@@ -591,6 +627,7 @@ class QualtricsAuthConstants(Schema):
         ordered = True
 
     qualtrics_api_token = fields.Dict(
+        attribute=api_c.QUALTRICS_API_TOKEN,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -602,6 +639,7 @@ class QualtricsAuthConstants(Schema):
     )
 
     qualtrics_data_center = fields.Dict(
+        attribute=api_c.QUALTRICS_DATA_CENTER,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -613,6 +651,7 @@ class QualtricsAuthConstants(Schema):
     )
 
     qualtrics_owner_id = fields.Dict(
+        attribute=api_c.QUALTRICS_OWNER_ID,
         required=True,
         validate=must_not_be_blank,
         example={
@@ -624,6 +663,7 @@ class QualtricsAuthConstants(Schema):
     )
 
     qualtrics_directory_id = fields.Dict(
+        attribute=api_c.QUALTRICS_DIRECTORY_ID,
         required=True,
         validate=must_not_be_blank,
         example={
