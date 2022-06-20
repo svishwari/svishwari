@@ -17,19 +17,19 @@
 
 <script>
 export default {
-  name: "Tabs Container",
+  name: "TabsContainer",
   components: {},
-  data() {
-    return {
-      tab: null,
-    }
-  },
   props: {
     items: {
       type: Array,
       required: true,
       default: () => ["web", "shopping", "videos", "images", "news"],
     },
+  },
+  data() {
+    return {
+      tab: null,
+    }
   },
 }
 </script>

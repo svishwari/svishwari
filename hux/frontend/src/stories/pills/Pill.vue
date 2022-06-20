@@ -28,7 +28,9 @@
           />
         </template>
         <slot name="dropdown">
-          <v-list class="dropdown-content"><v-list-item>hi</v-list-item></v-list>
+          <v-list class="dropdown-content"
+            ><v-list-item>hi</v-list-item></v-list
+          >
         </slot>
       </v-menu>
     </div>

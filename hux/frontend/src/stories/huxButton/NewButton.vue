@@ -4,7 +4,6 @@
     class="px-6"
     :outlined="outlined"
     :disabled="disabled"
-    @click="onClick"
     :style="{
       color: `${getTxtColor(
         disabled ? 'black-lighten5' : danger ? 'error-lighten1' : color
@@ -13,6 +12,7 @@
         disabled ? 'black-lighten5' : danger ? 'error-lighten1' : color
       )} !important`,
     }"
+    @click="onClick"
   >
     <div class="button-content text-button">
       <icon
@@ -76,10 +76,10 @@ export default {
     },
     getTxtColor(color) {
       if (this.outlined || this.textOnly) return `var(--v-${color})`
-      else return `var(--v-white-base)`
+      else return "var(--v-white-base)"
     },
     getBtnColor(color) {
-      if (this.outlined || this.textOnly) return `var(--v-white-base)`
+      if (this.outlined || this.textOnly) return "var(--v-white-base)"
       else return `var(--v-${color})`
     },
   },

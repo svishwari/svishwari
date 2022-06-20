@@ -9,7 +9,7 @@
             <hux-button
               class="list-button"
               :variant="disabled ? '' : 'secondary'"
-              :isDisabled="disabled"
+              :is-disabled="disabled"
               :icon="selected ? 'check-icon' : ''"
               @click="handleClick()"
             >
