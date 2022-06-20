@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tabs v-model="tab" height="32" >
+    <v-tabs v-model="tab" height="32">
       <v-tab v-for="item in items" :key="item" class="text-body-1">
         {{ item }}
       </v-tab>
