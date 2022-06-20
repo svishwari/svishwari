@@ -16,19 +16,20 @@
     </tooltip>
     <div v-else>
       {{ label }}
-      <v-menu v-if="dropdown">
+      <v-menu v-if="dropdown" v-model="showMenu">
         <template #activator="{ on }">
           <icon
             right
-            :type="showMenu ? 'chevron-down' : 'chevron-down'"
+            :type="showMenu ? 'mdi-chevron-up' : 'chevron-down'"
             :color="darkText ? 'black' : 'white'"
             size="12"
             class="pt-1"
             :on="on"
           />
         </template>
-        <div>test</div>
-        <div>test2</div>
+        <slot name="dropdown">
+          <v-list class="dropdown-content"><v-list-item>hi</v-list-item></v-list>
+        </slot>
       </v-menu>
     </div>
   </v-chip>
@@ -90,3 +91,12 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.dropdown-content {
+  padding: 0px;
+  position: relative;
+  top: 30px;
+  right: 30px;
+}
+</style>
