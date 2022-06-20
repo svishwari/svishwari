@@ -75,7 +75,7 @@
 
       <v-list-item
         v-if="!item.children"
-        class="pl-6 mr-2"
+        class="pl-6"
         :data-e2e="`nav-${item.icon}`"
         :to="item.link"
         @click="navigate(item)"
@@ -104,13 +104,22 @@
         <v-list-item-title class="black--text text-h6">
           {{ item.name }}
         </v-list-item-title>
+
+        <v-list-item-icon v-if="getError(item)" class="ma-0 alignment">
+          <status
+            status="Critical"
+            :show-label="false"
+            class="d-flex my-3"
+            :icon-size="12"
+          />
+        </v-list-item-icon>
       </v-list-item>
 
       <div v-if="item.children">
         <v-list-item
           v-for="menu in item.children"
           :key="menu.name"
-          class="pl-6 mr-2"
+          class="pl-6"
           :data-e2e="`nav-${menu.icon}`"
           :to="menu.link"
           @click="navigate(menu)"
@@ -144,6 +153,14 @@
               {{ menu.superscript }}
             </span>
           </v-list-item-title>
+          <v-list-item-icon v-if="getError(menu)" class="ma-0 alignment">
+            <status
+              status="Critical"
+              :show-label="false"
+              class="d-flex my-3"
+              :icon-size="12"
+            />
+          </v-list-item-icon>
         </v-list-item>
       </div>
     </v-list>
@@ -171,11 +188,13 @@ import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
 import * as _ from "lodash"
 import { mapGetters, mapActions } from "vuex"
+import { formatText } from "@/utils"
+import Status from "./common/Status.vue"
 
 export default {
   name: "SideMenu",
 
-  components: { Icon, Tooltip, Logo },
+  components: { Icon, Tooltip, Logo, Status },
 
   props: {
     toggle: Boolean,
@@ -197,6 +216,8 @@ export default {
     ...mapGetters({
       sideBarItems: "configuration/sideBarConfigs",
       demoConfiguration: "users/getDemoConfiguration",
+      seenNotification: "notifications/seenNotifications",
+      allAlerts: "notifications/list",
     }),
 
     isMini() {
@@ -313,6 +334,17 @@ export default {
           this.isBrodcasterOn = false
         })
       }
+    },
+    formatText: formatText,
+    getError(item) {
+      return (
+        !this.seenNotification &&
+        this.allAlerts.find(
+          (x) =>
+            this.formatText(x.category).toLowerCase() ==
+              item.name.toLowerCase() && x.notification_type == "critical"
+        )
+      )
     },
   },
 }
@@ -455,5 +487,11 @@ export default {
   display: inline-block;
   width: 28ch;
   white-space: nowrap;
+}
+
+.alignment {
+  align-self: center;
+  position: absolute;
+  right: 3px;
 }
 </style>
