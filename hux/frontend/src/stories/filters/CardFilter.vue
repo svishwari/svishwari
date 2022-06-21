@@ -16,22 +16,19 @@
         <v-container v-if="toggleFilter" class="filter-options">
           <v-row>
             <hux-button
-              :is-tile="true"
-              variant="secondary"
+              text-only
+              variant="primary"
               @click="addFilter('Filter 1')"
               >Filter1</hux-button
             >
             <hux-button
-              :is-tile="true"
-              variant="secondary"
+              text-only
+              variant="primary"
               @click="addFilter('Filter 2')"
               >Filter2</hux-button
             >
             <v-spacer />
-            <hux-button
-              :is-tile="true"
-              variant="secondary"
-              @click="clearFilters()"
+            <hux-button text-only variant="primary" @click="clearFilters()"
               >Clear all</hux-button
             >
           </v-row>
@@ -60,7 +57,7 @@
 <script>
 import PlainCard from "../cards/PlainCard.vue"
 import IconButton from "../iconButton/plainButton.vue"
-import HuxButton from "../huxButton/huxButton2.vue"
+import HuxButton from "../huxButton/NewButton.vue"
 import Pill from "../pills/Pill.vue"
 
 export default {
