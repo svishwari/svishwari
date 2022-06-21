@@ -467,9 +467,43 @@
                         </tooltip>
                       </div>
                       <div v-if="header.value == 'delivery_schedule'">
-                        <tooltip>
-                          <template #label-content> - </template>
-                          <template #hover-content> - </template>
+                        <tooltip :max-width="280">
+                          <template #label-content>
+                            {{ item[header.value] | DeliverySchedule }}
+                          </template>
+                          <template #hover-content>
+                            <span
+                              v-if="
+                                !item[header.value] || item[header.value] === {}
+                              "
+                            >
+                              This audience was delivered manually on
+                              {{
+                                item["last_delivered"]
+                                  | Date("MMMM D, YYYY [at] h:mm A")
+                                  | Empty
+                              }}
+                            </span>
+                            <hux-delivery-text
+                              v-else
+                              class="text-body-2"
+                              :schedule="
+                                item[header.value]
+                                  ? item[header.value].schedule
+                                  : {}
+                              "
+                              :start-date="
+                                item[header.value]
+                                  ? item[header.value].start_date
+                                  : ''
+                              "
+                              :end-date="
+                                item[header.value]
+                                  ? item[header.value].end_date
+                                  : ''
+                              "
+                            />
+                          </template>
                         </tooltip>
                       </div>
                       <div

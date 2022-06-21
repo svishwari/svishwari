@@ -38,7 +38,7 @@
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
           <overview v-if="!loading" :data="trustIdOverview" />
-          <v-tabs v-model="tabOption" class="mt-4">
+          <v-tabs v-if="!loading" v-model="tabOption" class="mt-4">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
               <v-tab
@@ -54,7 +54,11 @@
               </v-tab>
             </div>
           </v-tabs>
-          <v-tabs-items v-model="tabOption" class="mt-2 tabs-item">
+          <v-tabs-items
+            v-if="!loading"
+            v-model="tabOption"
+            class="mt-2 tabs-item"
+          >
             <v-tab-item key="comparison" class="tab-item">
               <v-row>
                 <v-col md="12">
@@ -67,7 +71,10 @@
                       :active="segmentComparisonLoading"
                       :indeterminate="segmentComparisonLoading"
                     />
-                    <v-card-title class="pb-2 pl-6 pt-5">
+                    <v-card-title
+                      v-if="segmentScores && segmentScores.length > 0"
+                      class="pb-2 pl-6 pt-5"
+                    >
                       <span class="d-flex">
                         <h3 class="text-h3">
                           HX TrustID scores across segments
@@ -80,7 +87,7 @@
                       :segment-scores="segmentScores"
                       data-e2e="trust-comparison-chart"
                     />
-                    <div v-else>
+                    <div v-else class="pt-11">
                       <empty-page
                         class="pt-16"
                         :type="
@@ -288,24 +295,24 @@
                     </div>
                   </template>
                 </data-cards>
-                <v-card v-else class="pb-12 box-shadow-5" height="250">
+                <v-card v-else class="box-shadow-5" height="250">
                   <empty-page
-                    class="pt-16"
+                    class="py-8"
                     :type="
-                      getSegmentTableData.length == 0
-                        ? 'no-customer-data'
-                        : 'error-on-screens'
+                      segmentErrorState
+                        ? 'error-on-screens'
+                        : 'no-customer-data'
                     "
                     :size="50"
                   >
                     <template #title>
                       <div class="title-no-notification">
-                        {{ segmentTableTitle() }}
+                        {{ segmentTableTitle }}
                       </div>
                     </template>
                     <template #subtitle>
                       <div class="des-no-notification">
-                        {{ segmentTableDescription() }}
+                        {{ segmentTableDescription }}
                       </div>
                     </template>
                   </empty-page>
@@ -331,7 +338,7 @@
                   </v-list-item>
                 </v-list>
               </div>
-              <div v-else>
+              <div v-else-if="getSelectedSegment">
                 <v-card class="empty-text">
                   <hux-icon
                     type="critical"
@@ -353,27 +360,32 @@
             </v-tab-item>
             <v-tab-item key="attributes" class="tab-item">
               <trust-id-attributes
-                v-if="attributeData.data.length > 0"
+                v-if="
+                  !attributeErrorState &&
+                  attributeData &&
+                  attributeData.data &&
+                  attributeData.data.length > 0
+                "
                 :data="attributeData.data"
               />
               <v-card v-else class="pb-12 box-shadow-5" height="250">
                 <empty-page
                   class="pt-16"
                   :type="
-                    attributeData.data.length == 0
-                      ? 'no-customer-data'
-                      : 'error-on-screens'
+                    attributeErrorState
+                      ? 'error-on-screens'
+                      : 'no-customer-data'
                   "
                   :size="50"
                 >
                   <template #title>
                     <div class="title-no-notification">
-                      {{ attributeTableTitle() }}
+                      {{ attributeTableTitle }}
                     </div>
                   </template>
                   <template #subtitle>
                     <div class="des-no-notification">
-                      {{ attributeTableDescription() }}
+                      {{ attributeTableDescription }}
                     </div>
                   </template>
                 </empty-page>
@@ -587,6 +599,9 @@ export default {
           "Resolves issues in an adequate and timely manner",
       },
       disableToggle: false,
+      comparisonErrorState: false,
+      segmentErrorState: false,
+      attributeErrorState: false,
     }
   },
   computed: {
@@ -661,45 +676,42 @@ export default {
     },
 
     getEmptyType() {
-      return !this.segmentComparisonLoading && this.segmentScores.length == 0
+      return !this.segmentComparisonLoading && !this.comparisonErrorState
     },
 
     segmentTableTitle() {
-      return this.getSegmentTableData.length == 0
-        ? "No segments to show"
-        : "Segments currently unavailable"
+      return this.segmentErrorState
+        ? "Segments currently unavailable"
+        : "No segments to show"
     },
 
     segmentTableDescription() {
-      return this.getSegmentTableData.length == 0
-        ? "Segments will display when data has been uploaded. Please check back later."
-        : "Our team is working hard to fix it. Please be patient and try again soon!"
+      return this.segmentErrorState
+        ? "Our team is working hard to fix it. Please be patient and try again soon!"
+        : "Segments will display when data has been uploaded. Please check back later."
     },
 
     attributeTableTitle() {
-      return this.attributeData.data.length == 0
-        ? "No attributes to show"
-        : "Attributes currently unavailable"
+      return this.attributeErrorState
+        ? "Attributes currently unavailable"
+        : "No attributes to show"
     },
 
     attributeTableDescription() {
-      return this.attributeData.data.length == 0
-        ? "Attributes will display when data has been uploaded. Please check back later."
-        : "Our team is working hard to fix it. Please be patient and try again soon!"
+      return this.attributeErrorState
+        ? "Our team is working hard to fix it. Please be patient and try again soon!"
+        : "Attributes will display when data has been uploaded. Please check back later."
     },
   },
   async mounted() {
     this.loading = true
     this.segmentComparisonLoading = true
     try {
-      await this.getOverview()
-      await this.getTrustIdComparison({
-        defaultValue: true,
-      })
-      await this.getSegmentData()
-      await this.getTrustIdAttribute()
-      await this.applyDefaultSegmentChanges()
+      this.getOverview()
     } finally {
+      this.fetchComparisonData()
+      this.fetchSegmentData()
+      this.fetchAttributeData()
       this.loading = false
       this.segmentComparisonLoading = false
     }
@@ -714,6 +726,32 @@ export default {
       deleteSegment: "trustId/removeSegment",
       setAlert: "alerts/setAlert",
     }),
+    async fetchComparisonData() {
+      try {
+        await this.getTrustIdComparison({
+          defaultValue: true,
+        })
+      } catch (error) {
+        this.comparisonErrorState = true
+      } finally {
+        this.applyDefaultSegmentChanges()
+        this.segmentComparisonLoading = false
+      }
+    },
+    async fetchSegmentData() {
+      try {
+        await this.getSegmentData()
+      } catch (error) {
+        this.segmentErrorState = true
+      }
+    },
+    async fetchAttributeData() {
+      try {
+        await this.getTrustIdAttribute()
+      } catch (error) {
+        this.attributeErrorState = true
+      }
+    },
     formatInnerHTML: formatInnerHTML,
     pillHoverData(filters, type) {
       if (type !== "age") {
@@ -809,6 +847,7 @@ export default {
   .hx-trust-id-wrapper {
     ::v-deep .container {
       padding-top: 0px !important;
+      padding-bottom: 0px !important;
     }
     ::v-deep .v-breadcrumbs {
       li {
@@ -869,7 +908,7 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 240px);
+  height: calc(100vh - 210px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
