@@ -194,15 +194,15 @@ export default {
           (d) => `translate(${this.xMargin + xScale(d) + this.itemWidth / 2},0)`
         )
 
-
-        d3Select
-        .selectAll(".yAxis-alternate .tick")
-        .each(function (d) {
-          if (d == 0) {
+      d3Select.selectAll(".yAxis-alternate .tick").each(function (d) {
+        if (d == 0) {
           d3Select
-            .select(this).select("line").style("stroke", "#E2EAEC").attr("stroke-width", "1.5")
-          }
-        })
+            .select(this)
+            .select("line")
+            .style("stroke", "#E2EAEC")
+            .attr("stroke-width", "1.5")
+        }
+      })
 
       // Adding vertical Label
       svg
