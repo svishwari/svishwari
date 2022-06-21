@@ -90,7 +90,7 @@ class Decisioning:
                     header_value=self.token,
                 )
             )
-            if get_config().ENV_NAME == api_c.STAGING_ENV
+            if get_config().ENV_NAME in [api_c.STAGING_ENV, api_c.LILDEV_ENV]
             else DenStubClient()
         )
 
