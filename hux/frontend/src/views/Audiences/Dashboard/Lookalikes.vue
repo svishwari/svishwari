@@ -187,6 +187,8 @@ export default {
     background: var(--v-primary-lighten1);
     border-radius: 5px !important;
     ::v-deep .metric-card-wrapper {
+      padding-left: 24px !important;
+      padding-right: 24px !important;
       border: 0 !important;
       .titleColor {
         display: flex;

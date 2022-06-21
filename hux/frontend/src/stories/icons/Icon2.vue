@@ -1,6 +1,6 @@
 <template>
   <svg-as-component
-    :src="`assets/icons/${type}`"
+    :src="`assets/newIcons/${type}`"
     :width="size"
     :height="size"
     :color="color"

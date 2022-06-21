@@ -8,7 +8,7 @@ export default {
   argTypes: {
     label: { control: { type: "text" } },
     type: {
-      options: ["success", "info", "warning", "error"],
+      options: ["positive", "guiding", "warning", "negative"],
       control: { type: "select" },
     },
     size: {

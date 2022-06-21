@@ -49,7 +49,11 @@ DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
 DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
 DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
 ENVIRONMENT_NAME = "ENVIRONMENT_NAME"
+
+# PLEASE NOTE - these are only here because DEN API
+# is only available in a couple environments.
 STAGING_ENV = "STG1"
+LILDEV_ENV = "LILDEV"
 
 # AWS constants
 AWS_REGION = "AWS_REGION"
@@ -996,6 +1000,7 @@ MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
+VERSION_NUMBER = "version_number"
 FEATURE_DESCRIPTION = "feature_description"
 PREDICTED = "predicted"
 ACTUAL = "actual"

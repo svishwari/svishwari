@@ -120,7 +120,7 @@
             <template #subtitle-extended>
               <tooltip>
                 <template #label-content>
-                  <div class="men mr-1">
+                  <div class="men mr-1 font-weight-semi-bold">
                     M: {{ audienceInsights.gender_men | Percentage | Empty }}
                   </div>
                 </template>
@@ -133,7 +133,7 @@
 
               <tooltip>
                 <template #label-content>
-                  <div class="women mx-1">
+                  <div class="women mx-1 font-weight-semi-bold">
                     W: {{ audienceInsights.gender_women | Percentage | Empty }}
                   </div>
                 </template>
@@ -146,7 +146,7 @@
 
               <tooltip>
                 <template #label-content>
-                  <div class="other mx-1">
+                  <div class="other mx-1 font-weight-semi-bold">
                     O: {{ audienceInsights.gender_other | Percentage | Empty }}
                   </div>
                 </template>
