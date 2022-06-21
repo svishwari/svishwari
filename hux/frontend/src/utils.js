@@ -5,7 +5,6 @@
 import dayjs from "dayjs"
 import store from "@/store/index.js"
 import { capitalize } from "lodash"
-import RBACMatrix from "@/api/mock/fixtures/RBACMatrix.js"
 
 /**
  * Forms the title for the page.
@@ -493,7 +492,7 @@ export function aggregateAgeFilters(filters) {
  * @returns {boolean} if user can take this action on this screen
  */
 export function getAccess(screen, action) {
-  let role = "admin" //store.getters["users/getCurrentUserRole"]
-  let matrix = RBACMatrix.components //store.getters["users/getRbacMatrix"]
+  let role = store.getters["users/getCurrentUserRole"]
+  let matrix = store.getters["users/getRbacMatrix"]
   return matrix[screen]["actions"].find((item) => item.type == action)[role]
 }
