@@ -1,4 +1,4 @@
-import Logo from "@/components/common/Logo"
+import Logo from "./Logo.vue"
 import AllLogos from "./Logos"
 
 const BasicTemplate = (args, { argTypes }) => ({

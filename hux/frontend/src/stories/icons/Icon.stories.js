@@ -22,7 +22,7 @@ export default {
   decorators: [() => ({ template: "<story/>" })],
   argTypes: {
     type: {
-      defaultValue: "mapping",
+      defaultValue: "audiences",
       options: AllIcons,
       control: {
         type: "select",

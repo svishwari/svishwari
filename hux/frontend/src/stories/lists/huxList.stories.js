@@ -6,7 +6,7 @@ export default {
   title: "NewComponents/List",
 
   argTypes: {
-    numListItems: { control: { type: "number" } },
+    disabled: { control: { type: "boolean" } },
   },
 
   parameters: {
