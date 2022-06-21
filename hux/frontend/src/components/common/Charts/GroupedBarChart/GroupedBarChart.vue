@@ -157,10 +157,10 @@ export default {
         .append("g")
         .classed("yAxis-alternate", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(5).tickFormat(""))
+        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(5))
         .attr("stroke-width", "0.5")
         .attr("stroke-opacity", "1")
-        .style("font-size", "12px")
+        .style("font-size", "0.1px")
 
       // setting grid lines stroke color
       d3Select
@@ -193,6 +193,16 @@ export default {
           "transform",
           (d) => `translate(${this.xMargin + xScale(d) + this.itemWidth / 2},0)`
         )
+
+
+        d3Select
+        .selectAll(".yAxis-alternate .tick")
+        .each(function (d) {
+          if (d == 0) {
+          d3Select
+            .select(this).select("line").style("stroke", "#E2EAEC").attr("stroke-width", "1.5")
+          }
+        })
 
       // Adding vertical Label
       svg
