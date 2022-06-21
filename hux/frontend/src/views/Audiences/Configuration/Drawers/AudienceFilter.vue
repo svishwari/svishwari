@@ -57,7 +57,7 @@
           <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
               v-if="data.category == 'general' && data.optionName == 'Events'"
-              v-model="selectedAttributes"
+              v-model="selectedEvents"
               multiple
               color="primary lighten-6"
               class="text--base-1"
@@ -104,19 +104,26 @@ export default {
     return {
       localDrawer: this.value,
       selectedAttributes: [],
+      selectedEvents: [],
       selectedFavourite: false,
       selectedAudienceWorkedWith: false,
       enableApply: false,
       pendingFavorite: false,
       pendingWorkedWith: false,
       pendingAttributes: [],
+      pendingEvents: [],
     }
   },
 
   computed: {
     filterLength() {
       let count = 0
-      count = this.selectedAttributes.length
+      if (this.selectedEvents.length > 0) {
+        count = this.selectedAttributes.length + this.selectedEvents.length
+      } else {
+        count = this.selectedAttributes.length
+      }
+
       if (this.selectedFavourite) count++
       if (this.selectedAudienceWorkedWith) count++
       this.$emit("selected-filters", count)
@@ -142,6 +149,7 @@ export default {
     },
     clearFilter() {
       this.selectedAttributes = []
+      this.selectedEvents = []
       this.selectedFavourite = false
       this.selectedAudienceWorkedWith = false
     },
@@ -150,14 +158,17 @@ export default {
       this.pendingFavorite = false
       this.pendingWorkedWith = false
       this.pendingAttributes = []
+      this.pendingEvents = []
       this.apply()
     },
     apply() {
       this.pendingFavorite = this.selectedFavourite
       this.pendingWorkedWith = this.selectedAudienceWorkedWith
       this.pendingAttributes = [...this.selectedAttributes]
+      this.pendingEvents = [...this.selectedEvents]
       this.$emit("onSectionAction", {
         selectedAttributes: this.selectedAttributes,
+        selectedEvents: this.selectedEvents,
         selectedFavourite: this.selectedFavourite,
         selectedAudienceWorkedWith: this.selectedAudienceWorkedWith,
         filterApplied: this.filterLength,
@@ -171,6 +182,7 @@ export default {
       this.selectedFavourite = this.pendingFavorite
       this.selectedAudienceWorkedWith = this.pendingWorkedWith
       this.selectedAttributes = [...this.pendingAttributes]
+      this.selectedEvents = [...this.pendingEvents]
       this.localDrawer = false
     },
     formatText: formatText,
@@ -182,29 +194,36 @@ export default {
   margin-top: 0px !important;
   padding-top: 0px !important;
 }
+
 ::v-deep.v-input--selection-controls.v-input {
   flex: 1 1 auto !important;
 }
+
 ::v-deep.input__slot {
   margin: 0px !important;
 }
+
 ::v-deep .v-input--selection-controls .v-input__slot {
   margin-bottom: 0px !important;
 }
+
 ::v-deep.theme--light .v-messages {
   min-height: 6px !important;
   color: var(--v-black-base);
 }
+
 .clear-btn {
   padding-left: 7.9rem !important;
   padding-top: 10px;
   padding-right: 0px !important;
 }
+
 .withoutExpansion {
   height: 34px;
   align-items: center;
   margin-top: 6px !important;
 }
+
 ::v-deep.theme--light .v-label {
   font-size: 16px;
   font-weight: 400;
@@ -212,14 +231,17 @@ export default {
   letter-spacing: 0;
   color: var(--v-black-base);
 }
+
 .checkboxFavorite {
   border-bottom: 1px solid var(--v-black-lighten2);
 }
+
 .filter-body {
   ::v-deep .v-expansion-panel-content__wrap {
     padding: 14px 24px 14px 24px !important;
   }
 }
+
 ::v-deep.hux-filters-drawer .footer {
   height: 70px !important;
 }
