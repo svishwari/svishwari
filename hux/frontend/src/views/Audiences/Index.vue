@@ -666,6 +666,7 @@ export default {
       this.batchDetails.favorites = false
       this.batchDetails.worked_by = false
       this.batchDetails.attribute = []
+      this.batchDetails.events = []
       this.batchDetails.deliveries = 2
     },
 
@@ -899,6 +900,7 @@ export default {
       this.batchDetails.favorites = params.selectedFavourite
       this.batchDetails.worked_by = params.selectedAudienceWorkedWith
       this.batchDetails.attribute = params.selectedAttributes
+      this.batchDetails.events = params.selectedEvents
       await this.fetchAudienceByBatch()
       this.calculateLastBatch()
       this.loading = false
@@ -914,20 +916,25 @@ export default {
     .fav-action {
       display: none;
     }
+
     .more-action {
       display: none;
     }
   }
+
   .top-bar {
     margin-top: 1px;
+
     .v-icon--disabled {
       color: var(--v-black-lighten3) !important;
       font-size: 24px;
     }
+
     .text--refresh {
       margin-right: 10px;
     }
   }
+
   // This CSS is to avoid conflict with Tooltip component.
   ::v-deep .destination-ico {
     span {
@@ -935,8 +942,10 @@ export default {
       align-items: center;
     }
   }
+
   .hux-data-table {
     margin-top: 1px;
+
     ::v-deep table {
       .v-data-table-header {
         th:nth-child(1) {
@@ -947,38 +956,47 @@ export default {
           overflow-y: visible;
           overflow-x: visible;
         }
+
         border-radius: 12px 12px 0px 0px;
       }
+
       tr {
         td:nth-child(1) {
           position: sticky;
           left: 0;
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }
+
         &:hover {
           td:nth-child(1) {
             z-index: 1 !important;
             background: var(--v-primary-lighten2) !important;
             box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+
             .menu-cell-wrapper .action-icon {
               .fav-action {
                 display: block;
               }
+
               .more-action {
                 display: block;
               }
             }
           }
+
           background: var(--v-primary-lighten2) !important;
           box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+
           td.fixed-column {
             z-index: 2 !important;
             background: var(--v-primary-lighten2) !important;
             box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
           }
         }
+
         td.fixed-column {
           z-index: 1 !important;
+
           &:hover {
             z-index: 2 !important;
             background: var(--v-primary-lighten2) !important;
@@ -994,6 +1012,7 @@ export default {
           font-size: 16px;
         }
       }
+
       tbody {
         tr:last-child {
           td {
@@ -1003,19 +1022,24 @@ export default {
       }
     }
   }
+
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
   }
+
   .icon-border {
     cursor: default !important;
   }
+
   .v-chip.v-size--small {
     height: 20px;
   }
 }
+
 .radio-div {
   margin-top: -11px !important;
 }
+
 .filter_col {
   height: 59px !important;
   overflow: auto;
@@ -1039,6 +1063,7 @@ export default {
   letter-spacing: 0 !important;
   color: var(--v-black-base);
 }
+
 .des-no-engagement {
   font-size: 14px !important;
   line-height: 16px !important;
@@ -1046,11 +1071,13 @@ export default {
   letter-spacing: 0 !important;
   color: var(--v-black-base);
 }
+
 ::v-deep .empty-page {
   max-height: 0 !important;
   min-height: 100% !important;
   min-width: 100% !important;
 }
+
 .name-cell {
   margin-bottom: -15px !important;
 }

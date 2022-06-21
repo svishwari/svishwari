@@ -39,9 +39,6 @@ JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
 CDP_SERVICE = "CDP_SERVICE"
 CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
 DECISIONING_URL = "DECISIONING_URL"
-TECTON_API_KEY = "TECTON_API_KEY"
-TECTON_API = "TECTON_API"
-MOCK_TECTON = "MOCK_TECTON"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
 DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
@@ -992,7 +989,6 @@ TARGET = "target"
 TRACK = "track"
 
 # Models
-# TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
 MODEL = "model"
 MODELS = "models"
@@ -1115,14 +1111,6 @@ ACTUAL_LIFT = "actual_lift"
 PROFILE_SIZE_PERCENT = "profile_size_percent"
 RUN_DATE = "run_date"
 DRIFT = "drift"
-REGRESSION_MODELS = [LTV]
-CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
-# todo: remove in the future when we remove tecton.
-TEMP_MODELS_TYPE_MAPPING = {
-    "propensity_positive_click": UNSUBSCRIBE,
-    "propensity_positive_open": UNSUBSCRIBE,
-    "propensity_positive_unsub": UNSUBSCRIBE,
-}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
