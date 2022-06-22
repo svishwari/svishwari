@@ -24,3 +24,6 @@ delivery:
 
   azure1:
     DEV_VALUES: values-huxui-main-use2-unified-husdev2.yaml
+
+  lildev:
+    DEV_VALUES: values-huxui-main-use2-unified-lildev.yaml

@@ -83,7 +83,7 @@ class Config:
     }
     if CLOUD_PROVIDER == api_c.AZURE:
         MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
-    if config(api_c.ENVIRONMENT_NAME, default="") == "LILDEV":
+    if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
         del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
         del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
@@ -189,7 +189,7 @@ class DevelopmentConfig(Config):
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
 
-    if config(api_c.ENVIRONMENT_NAME, default="") == "LILDEV":
+    if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
         del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
         del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
