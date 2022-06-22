@@ -11,7 +11,7 @@
     @close="close"
   >
     <div class="filter-body">
-      <hux-filter-panels :expanded="selectedAttributes.length > 0 ? [0] : []">
+      <hux-filter-panels :expanded="panelExpansion">
         <v-checkbox
           v-model="selectedFavourite"
           color="primary lighten-6"
@@ -24,7 +24,7 @@
           class="text--base-1 px-5 withoutExpansion"
           label="Audiences I’ve worked on"
         ></v-checkbox>
-        <hux-filter-panel title="Attributes" :count="selectedAttributes.length">
+        <hux-filter-panel title="Attributes" :count="selectedAttributes.length + selectedEvents.length">
           <div class="text-body-1 black--text text--lighten-4 pb-2">MODELS</div>
           <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
@@ -58,6 +58,19 @@
             <v-checkbox
               v-if="data.category == 'general' && data.optionName == 'Events'"
               v-model="selectedEvents"
+              multiple
+              color="primary lighten-6"
+              class="text--base-1"
+              :label="data.name"
+              :value="data.key"
+            ></v-checkbox>
+          </div>
+        </hux-filter-panel>
+		<hux-filter-panel title="Industry" :count="selectedTags.length">
+          <div v-for="data in filterOptions" :key="data.key">
+            <v-checkbox
+              v-if="data.category == 'industry' && data.optionName == 'Tags'"
+              v-model="selectedTags"
               multiple
               color="primary lighten-6"
               class="text--base-1"
@@ -112,18 +125,15 @@ export default {
       pendingWorkedWith: false,
       pendingAttributes: [],
       pendingEvents: [],
+	  selectedTags: [],
+	  pendingTags: [],
     }
   },
 
   computed: {
     filterLength() {
       let count = 0
-      if (this.selectedEvents.length > 0) {
-        count = this.selectedAttributes.length + this.selectedEvents.length
-      } else {
-        count = this.selectedAttributes.length
-      }
-
+      count = this.selectedAttributes.length + this.selectedTags.length + this.selectedEvents.length
       if (this.selectedFavourite) count++
       if (this.selectedAudienceWorkedWith) count++
       this.$emit("selected-filters", count)
@@ -150,6 +160,7 @@ export default {
     clearFilter() {
       this.selectedAttributes = []
       this.selectedEvents = []
+	  this.selectedTags = []
       this.selectedFavourite = false
       this.selectedAudienceWorkedWith = false
     },
@@ -159,6 +170,7 @@ export default {
       this.pendingWorkedWith = false
       this.pendingAttributes = []
       this.pendingEvents = []
+	  this.pendingTags = []
       this.apply()
     },
     apply() {
@@ -166,13 +178,25 @@ export default {
       this.pendingWorkedWith = this.selectedAudienceWorkedWith
       this.pendingAttributes = [...this.selectedAttributes]
       this.pendingEvents = [...this.selectedEvents]
+	  this.pendingTags = [...this.selectedTags]
       this.$emit("onSectionAction", {
         selectedAttributes: this.selectedAttributes,
         selectedEvents: this.selectedEvents,
+		selectedTags: this.selectedTags,
         selectedFavourite: this.selectedFavourite,
         selectedAudienceWorkedWith: this.selectedAudienceWorkedWith,
         filterApplied: this.filterLength,
       })
+    },
+	panelExpansion() {
+      let panelIndex = []
+      if (this.selectedAttributes.length > 0) {
+        panelIndex = [0]
+      }
+      if (this.selectedTags.length > 0) {
+        panelIndex = [1]
+      }
+      return panelIndex
     },
     cancel() {
       this.clearFilter()
@@ -183,6 +207,7 @@ export default {
       this.selectedAudienceWorkedWith = this.pendingWorkedWith
       this.selectedAttributes = [...this.pendingAttributes]
       this.selectedEvents = [...this.pendingEvents]
+	  this.selectedTags = this.pendingTags
       this.localDrawer = false
     },
     formatText: formatText,

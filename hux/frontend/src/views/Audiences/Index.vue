@@ -581,6 +581,7 @@ export default {
           width: "182",
         },
       ],
+      industryTags: ["retail", "healthcare", "hospitality", "automotive"],
       loading: false,
       selectedAudience: null,
       showLookAlikeDrawer: false,
@@ -622,6 +623,7 @@ export default {
         if (audience.filters) {
           filterTagsObj[audience.name] = new Set()
           audience.filters.forEach((item) => {
+
             item.section_filters.forEach((obj) => {
               let nameObj = this.attributeOptions().find(
                 (item) => item.key == obj.field.toLowerCase()
@@ -667,6 +669,7 @@ export default {
       this.batchDetails.worked_by = false
       this.batchDetails.attribute = []
       this.batchDetails.events = []
+      this.batchDetails.tags = []
       this.batchDetails.deliveries = 2
     },
 
@@ -740,6 +743,15 @@ export default {
             }
           })
         })
+
+        for (let tags of this.industryTags) {
+          options.push({
+                key: tags,
+                name: formatText(tags),
+                category: "industry",
+                optionName: "Tags",
+              })
+        }
       }
       return options
     },
@@ -901,6 +913,7 @@ export default {
       this.batchDetails.worked_by = params.selectedAudienceWorkedWith
       this.batchDetails.attribute = params.selectedAttributes
       this.batchDetails.events = params.selectedEvents
+      this.batchDetails.tags = params.selectedTags
       await this.fetchAudienceByBatch()
       this.calculateLastBatch()
       this.loading = false
