@@ -15,7 +15,12 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
 
     // click on customer list tab
     cy.get(selector.customerProfile.customerListTab).click()
-
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    // scroll down for lazy loading
+    cy.get(".content-section").scrollTo("bottom", { ensureScrollable: true })
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
     // select first customer in list
     cy.get(selector.customerProfile.customerID).first().click()
 
