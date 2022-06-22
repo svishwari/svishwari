@@ -224,6 +224,7 @@ export default {
   },
 
   async mounted() {
+    this.updateClientInfo()
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
     this.navigationItems = this.sideBarItems
