@@ -1,4 +1,4 @@
-"""Test Module for Prepopulate Database Script"""
+"""Test Module for Pre-populate Database Script."""
 from unittest import TestCase, mock
 import mongomock
 from huxunifylib.database import constants as db_c
@@ -85,7 +85,9 @@ class TestPrepopulateDatabase(TestCase):
         pd.insert_delivery_platforms(self.database, delivery_platforms)
 
         list_delivery_platforms = get_all_delivery_platforms(self.database)
-        list_delivery_platform_names = [x["name"] for x in list_delivery_platforms]
+        list_delivery_platform_names = [
+            x["name"] for x in list_delivery_platforms
+        ]
         _ = [
             self.assertIn(x["name"], list_delivery_platform_names)
             for x in delivery_platforms
