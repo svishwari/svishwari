@@ -398,6 +398,18 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     ),
                 )
 
+
+                # Sending Notification
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_CRITICAL,
+                    (
+                        f'Destination {destination[api_c.NAME]} connection got error'
+                    ),
+                    db_c.NOTIFICATION_CATEGORY_AUDIENCES,
+                    api_c.UNIFIED_OKTA_TEST_USER_NAME,
+                )
+
                 destination_management.update_delivery_platform(
                     database=database,
                     delivery_platform_id=destination[db_c.ID],
@@ -405,7 +417,7 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     delivery_platform_type=destination[
                         db_c.DELIVERY_PLATFORM_TYPE
                     ],
-                    enabled=False,
+                    status=api_c.STATUS_ERROR,
                     deleted=True,
                 )
 
