@@ -16,13 +16,10 @@ def get_mongo_client() -> MongoClient:
 
     # Get details on MongoDB configuration.
     host = os.environ.get("MONGO_DB_HOST")
-    port = (
-        int(os.environ["MONGO_DB_PORT"])
-        if "MONGO_DB_PORT" in os.environ
-        else None
-    )
+    port = int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
     user_name = os.environ.get("MONGO_DB_USERNAME")
     password = os.environ.get("MONGO_DB_PASSWORD")
+    cloud_provider = os.environ.get("CLOUD_PROVIDER")
     use_ssl = host not in ["localhost", None]
 
     mongo_config = dict(
@@ -39,5 +36,10 @@ def get_mongo_client() -> MongoClient:
         mongo_config["ssl_ca_certs"] = str(
             Path(__file__).parent.joinpath("rds-combined-ca-bundle.pem")
         )
+
+        if cloud_provider.lower() == "azure":
+            mongo_config["tls_cert_key_file"] = str(
+                Path(__file__).parent.joinpath("mongodb-azure.pem")
+            )
 
     return MongoClient(**mongo_config)

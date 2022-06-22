@@ -25,240 +25,6 @@ from database.share import get_mongo_client
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
 
-# Models List
-models_list = [
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Unsubscribe",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to unsubscribe"
-        " from an email marketing list.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Open",
-        db_c.MODEL_DESCRIPTION: " Propensity for a customer to open an email.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Click",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to click "
-        "on a link in an email.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
-        db_c.TYPE: db_c.MODEL_TYPE_UNKNOWN,
-        db_c.NAME: "Email Content Optimization",
-        db_c.MODEL_DESCRIPTION: "Alter email content to optimize "
-        "email campaign performance.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
-        db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
-        db_c.NAME: "Customer Lifetime Value",
-        db_c.MODEL_DESCRIPTION: "Predicting the lifetime value of a "
-        "customer over a defined time range.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
-        db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
-        db_c.NAME: "Predicted Sales Per Customer",
-        db_c.MODEL_DESCRIPTION: "Predicting sales for a customer over a "
-        "defined time range.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
-        db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
-        db_c.NAME: "Predicted Sales Per Store",
-        db_c.MODEL_DESCRIPTION: "Predicting sales for a store over a "
-        "defined time range.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Capability Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral capability score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Trust Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral trust score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Humanity Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral humanity score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Reliability Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral reliability score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Transparency Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral transparency score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_RETENTION,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Churn",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to leave a service "
-        "over a defined time range.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Purchase Product Category",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web purchase"
-        " in a particular product category.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Visit Product Category",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web visit"
-        " in a particular product category.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Visit Website",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to visit a website.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_UNCATEGORIZED,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Segmentation",
-        db_c.MODEL_DESCRIPTION: "Segment a set of customers.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: "Retention",
-        db_c.TYPE: "churn",
-        db_c.NAME: "Propensity to churn",
-        db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-        "churn in a future time window.",
-        db_c.VERSION: "21.11.22",
-        db_c.FULCRUM: "2021-11-22",
-        db_c.LOOKBACK_DAYS: 120,
-        db_c.PREDICTION_DAYS: 30,
-        db_c.OWNER: "decisioning",
-        db_c.OWNER_EMAIL: "huxdecisiong",
-        db_c.DATE_TRAINED: "2021-11-22",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: "Retention",
-        db_c.TYPE: "Purchase",
-        db_c.NAME: "Propensity to purchase",
-        db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-        "purchase in a future time window.",
-        db_c.VERSION: "21.10.7",
-        db_c.FULCRUM: "2021-10-07",
-        db_c.LOOKBACK_DAYS: 90,
-        db_c.PREDICTION_DAYS: 14,
-        db_c.OWNER: "decisioning",
-        db_c.OWNER_EMAIL: "huxdecisiong",
-        db_c.DATE_TRAINED: "2021-10-07",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-]
-
 # Configurations List
 configurations_constants = [
     {
@@ -1267,6 +1033,26 @@ rbac_matrix = {
     },
 }
 
+empty_collections_to_create = [
+    db_c.AUDIENCE_CUSTOMERS_COLLECTION,
+    db_c.AUDIENCE_INSIGHTS_COLLECTION,
+    db_c.AUDIENCES_COLLECTION,
+    db_c.AUDIENCE_AUDIT_COLLECTION,
+    db_c.CACHE_COLLECTION,
+    db_c.CAMPAIGN_ACTIVITY_COLLECTION,
+    db_c.DELIVERABILITY_METRICS_COLLECTION,
+    db_c.DELIVERY_JOBS_COLLECTION,
+    db_c.ENGAGEMENTS_COLLECTION,
+    db_c.INGESTED_DATA_COLLECTION,
+    db_c.INGESTED_DATA_STATS_COLLECTION,
+    db_c.INGESTION_JOBS_COLLECTION,
+    db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+    db_c.NOTIFICATIONS_COLLECTION,
+    db_c.PERFORMANCE_METRICS_COLLECTION,
+    db_c.SURVEY_METRICS_COLLECTION,
+    db_c.USER_COLLECTION,
+]
+
 
 def drop_collections(database: MongoClient) -> None:
     """Drop collections for writing.
@@ -1293,9 +1079,7 @@ def drop_collections(database: MongoClient) -> None:
     # pylint: disable=eval-used
     if not eval(os.environ.get("DROP_ALL_COLLECTIONS", default="False")):
         collections_to_drop = [
-            x
-            for x in collections_to_drop
-            if x not in db_c.RESTRICTED_COLLECTIONS
+            x for x in collections_to_drop if x not in db_c.RESTRICTED_COLLECTIONS
         ]
 
     for collection in collections_to_drop:
@@ -1303,20 +1087,25 @@ def drop_collections(database: MongoClient) -> None:
         logging.info("Dropped the %s collection.", collection)
 
 
-def create_empty_collections(
-    database: MongoClient, collection_names: list
-) -> None:
-    """Create empty collections
+def create_empty_collections(mongo_client: MongoClient, collection_names: list) -> None:
+    """Create empty collections.
 
     Args:
-        database (MongoClient): MongoDB Client
-        collection_names (list): List of collection names to create
+        mongo_client (MongoClient): MongoDB Client.
+        collection_names (list): List of collection names to create.
     """
+
+    database = mongo_client[db_c.DATA_MANAGEMENT_DATABASE]
+
+    # get the list of collection names currently present in DB
+    db_collection_names = database.list_collection_names()
+
     for collection_name in collection_names:
-        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(
-            collection_name
-        )
-        logging.info("Empty collection %s created.", collection_name)
+        # create a new empty collection only if the collection does not already
+        # exist in db
+        if collection_name not in db_collection_names:
+            database.create_collection(collection_name)
+            logging.info("Empty collection %s created.", collection_name)
 
 
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
@@ -1339,15 +1128,11 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
             source_type=data_source[db_c.DATA_SOURCE_TYPE],
             status=data_source[db_c.STATUS],
         )[db_c.ID]
-        logging.info(
-            "Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id
-        )
+        logging.info("Added %s, %s.", data_source[db_c.DATA_SOURCE_NAME], result_id)
     logging.info("Pre-populate data sources complete.")
 
 
-def insert_delivery_platforms(
-    database: MongoClient, delivery_platforms: list
-) -> None:
+def insert_delivery_platforms(database: MongoClient, delivery_platforms: list) -> None:
     """Insertion of Delivery Platforms Collection.
 
     Args:
@@ -1409,25 +1194,7 @@ def insert_configurations(database: MongoClient, configurations: list) -> None:
     logging.info("Pre-populated configurations.")
 
 
-def insert_models(database: MongoClient, models: list) -> None:
-    """Insert data into models collection
-
-    Args:
-        database (MongoClient): MongoDB Client.
-        models (List): List of Model Objects.
-    """
-    logging.info("Pre-populating models.")
-
-    for model in models:
-        model_id = create_document(database, db_c.MODELS_COLLECTION, model)
-        logging.info("Added %s, %s.", model[db_c.NAME], model_id)
-
-    logging.info("Pre-populate models complete.")
-
-
-def insert_client_projects(
-    database: MongoClient, client_projects: list
-) -> None:
+def insert_client_projects(database: MongoClient, client_projects: list) -> None:
     """Insert data into client_projects collection.
 
     Args:
@@ -1511,13 +1278,9 @@ if __name__ == "__main__":
     insert_data_sources(db_client, DATA_SOURCES_LIST)
     insert_delivery_platforms(db_client, DELIVERY_PLATFORM_LIST)
     insert_configurations(db_client, configurations_constants)
-    insert_models(db_client, models_list)
     insert_client_projects(db_client, client_projects_list)
     insert_applications(db_client, applications_constants)
     insert_constants(db_client, [rbac_matrix])
-    collections_to_create = [
-        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
-        db_c.DELIVERY_JOBS_COLLECTION,
-    ]
-    create_empty_collections(db_client, collections_to_create)
+    # create required empty collection for all the other collections
+    create_empty_collections(db_client, empty_collections_to_create)
     logging.info("Pre-populate database procedure complete.")
