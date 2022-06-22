@@ -2,14 +2,14 @@
   <v-container class="header-container">
     <v-row class="header-title" :class="description ? '' : 'pb-4'">
       <div class="title-left text-h1">
-        <icon :type="iconType" :size="38" class="mr-2" color="primary"></icon>
+        <icon :type="iconType" :size="38" color="primary" class="mr-2"></icon>
         <span class="mr-2">{{ title }}</span>
         <icon
           v-if="$slots.breadcrumbs"
-          type="arrow"
+          type="Dropdown - right"
           :size="18"
-          color="primary"
-          class="mr-2"
+          color="black"
+          class="mr-2 mt-1"
         ></icon>
         <slot name="breadcrumbs" />
       </div>
@@ -53,7 +53,7 @@ export default {
 
 <style lang="scss" scoped>
 .header-container {
-  background-color: lightblue;
+  border: 1px solid grey;
 
   .header-title {
     height: 72px;
