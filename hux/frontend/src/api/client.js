@@ -339,7 +339,6 @@ client["audiences"].getAudiences = (data) => {
   let newURLFormat
   let URLString
   for (const property in data) {
-    console.log(data[property])
     if (
       property == "attribute" ||
       property == "events" ||

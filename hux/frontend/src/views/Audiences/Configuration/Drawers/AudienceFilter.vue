@@ -196,7 +196,10 @@ export default {
     },
     panelExpansion() {
       let panelIndex = []
-      if (this.selectedAttributes.length > 0) {
+      if (
+        this.selectedAttributes.length > 0 ||
+        this.selectedEvents.length > 0
+      ) {
         panelIndex = [0]
       }
       if (this.selectedTags.length > 0) {
