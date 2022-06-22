@@ -431,27 +431,27 @@ class SFMCAuthCredsSchema(Schema):
         example="7329755",
     )
     sfmc_auth_base_uri = fields.String(
-        attribute=api_c.SFMC_AUTH_BASE_URI,
+        data_key=api_c.SFMC_AUTH_BASE_URI,
         required=True,
         example="https://gsafkhljwhp6798.auth.marketingcloudapis.com/",
     )
     sfmc_client_id = fields.String(
-        attribute=api_c.SFMC_CLIENT_ID,
+        data_key=api_c.SFMC_CLIENT_ID,
         required=True,
         example="e488010196d046f5a8b1b80ba6100899",
     )
     sfmc_client_secret = fields.String(
-        attribute=api_c.SFMC_CLIENT_SECRET,
+        data_key=api_c.SFMC_CLIENT_SECRET,
         required=True,
         example="4d2c582ab302437c80721c0ec46a30f2",
     )
     sfmc_rest_base_uri = fields.String(
-        attribute=api_c.SFMC_REST_BASE_URI,
+        data_key=api_c.SFMC_REST_BASE_URI,
         required=True,
         example="https://535cf647a34-7950b5a4.rest.marketingcloudapis.com/",
     )
     sfmc_soap_base_uri = fields.String(
-        attribute=api_c.SFMC_SOAP_BASE_URI,
+        data_key=api_c.SFMC_SOAP_BASE_URI,
         required=True,
         example="https://55c5487a374-723ab5a6.soap.marketingcloudapis.com/",
     )
