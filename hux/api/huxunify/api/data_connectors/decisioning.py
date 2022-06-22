@@ -189,8 +189,7 @@ class Decisioning:
             for model_id in model_ids
         ]
         futures, _ = await asyncio.wait(tasks)
-        model_infos = [future.result() for future in futures]
-        return model_infos
+        return [future.result() for future in futures]
 
     def get_all_models(self) -> list:
         """Gets a list of all models
