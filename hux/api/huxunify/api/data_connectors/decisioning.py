@@ -260,11 +260,11 @@ class Decisioning:
         for feature in model_info.important_features:
             features.append(
                 {
-                    api_c.ID: feature[api_c.MODEL_ID],
+                    api_c.ID: feature.get(api_c.MODEL_ID),
                     # make the feature name unique
-                    api_c.NAME: f"{feature[api_c.MODEL_NAME]}-{feature[api_c.RANK]}",
-                    api_c.DESCRIPTION: feature[api_c.FEATURE_DESCRIPTION],
-                    api_c.FEATURE_TYPE: feature[api_c.MODEL_TYPE],
+                    api_c.NAME: f"{feature[api_c.MODEL_NAME]}-{feature.get(api_c.RANK)}",
+                    api_c.DESCRIPTION: feature.get(api_c.FEATURE_DESCRIPTION),
+                    api_c.FEATURE_TYPE: feature.get(api_c.MODEL_TYPE),
                     api_c.RECORDS_NOT_NULL: 0,
                     api_c.FEATURE_IMPORTANCE: 1,
                     api_c.MEAN: 0,
@@ -273,7 +273,7 @@ class Decisioning:
                     api_c.UNIQUE_VALUES: 1,
                     api_c.LCUV: "",
                     api_c.MCUV: "",
-                    api_c.SCORE: feature[api_c.LIFT],
+                    api_c.SCORE: feature.get(api_c.LIFT),
                 }
             )
 
