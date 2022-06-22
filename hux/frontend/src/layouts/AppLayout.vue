@@ -59,7 +59,7 @@ export default {
     }),
 
     marginLeft() {
-      return this.toggleMini ? "77px" : "207px"
+      return this.toggleMini ? "60px" : "207px"
     },
 
     clientPanel() {

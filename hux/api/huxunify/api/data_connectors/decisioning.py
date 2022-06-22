@@ -90,7 +90,7 @@ class Decisioning:
                     header_value=self.token,
                 )
             )
-            if get_config().ENV_NAME == api_c.STAGING_ENV
+            if get_config().ENV_NAME in [api_c.STAGING_ENV, api_c.LILDEV_ENV]
             else DenStubClient()
         )
 
@@ -124,7 +124,7 @@ class Decisioning:
         desired_info = None
         if model_version:
             for info in model_infos:
-                if info.model_metrics["version_number"] == model_version:
+                if info.model_metrics[api_c.VERSION_NUMBER] == model_version:
                     desired_info = info
                     break
         if not desired_info:
@@ -186,7 +186,9 @@ class Decisioning:
                     api_c.NAME: model_info.model_metadata.model_name,
                     api_c.DESCRIPTION: model_info.model_metadata.description,
                     api_c.STATUS: model_info.model_metadata.status.title(),
-                    api_c.LATEST_VERSION: model_info.model_metrics.version_number,
+                    api_c.LATEST_VERSION: model_info.model_metrics[
+                        api_c.VERSION_NUMBER
+                    ],
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
                     api_c.PREDICTION_WINDOW: model_info.model_metadata.prediction_days,
@@ -234,7 +236,9 @@ class Decisioning:
                     api_c.PRECISION, -1
                 ),
                 api_c.RECALL: model_info.model_metrics.get(api_c.RECALL, -1),
-                api_c.CURRENT_VERSION: model_info.model_metrics.version_number,
+                api_c.CURRENT_VERSION: model_info.model_metrics[
+                    api_c.VERSION_NUMBER
+                ],
             },
         }
 
@@ -295,7 +299,9 @@ class Decisioning:
                     api_c.NAME: model_info.model_metadata.model_name,
                     api_c.DESCRIPTION: model_info.model_metadata.description,
                     api_c.STATUS: model_info.model_metadata.status,
-                    api_c.CURRENT_VERSION: model_info.model_metrics.version_number,
+                    api_c.CURRENT_VERSION: model_info.model_metrics[
+                        api_c.VERSION_NUMBER
+                    ],
                     api_c.LAST_TRAINED: model_info.scheduled_date,
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
