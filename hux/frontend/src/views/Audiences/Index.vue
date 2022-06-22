@@ -623,7 +623,6 @@ export default {
         if (audience.filters) {
           filterTagsObj[audience.name] = new Set()
           audience.filters.forEach((item) => {
-
             item.section_filters.forEach((obj) => {
               let nameObj = this.attributeOptions().find(
                 (item) => item.key == obj.field.toLowerCase()
@@ -746,11 +745,11 @@ export default {
 
         for (let tags of this.industryTags) {
           options.push({
-                key: tags,
-                name: formatText(tags),
-                category: "industry",
-                optionName: "Tags",
-              })
+            key: tags,
+            name: formatText(tags),
+            category: "industry",
+            optionName: "Tags",
+          })
         }
       }
       return options

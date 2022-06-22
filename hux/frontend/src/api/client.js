@@ -340,13 +340,16 @@ client["audiences"].getAudiences = (data) => {
   let URLString
   for (const property in data) {
     console.log(data[property])
-    if (property == "attribute" || property == "events" || property == "industry_tag") {
+    if (
+      property == "attribute" ||
+      property == "events" ||
+      property == "industry_tag"
+    ) {
       for (const attribute in data[property]) {
         let formURL = property + "=" + data[property][attribute]
         URLData.push(formURL)
       }
-    }
-     else {
+    } else {
       let formURL = property + "=" + data[property]
       URLData.push(formURL)
     }
