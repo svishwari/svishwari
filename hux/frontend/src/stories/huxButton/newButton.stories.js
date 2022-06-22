@@ -8,17 +8,16 @@ export default {
   title: "NewComponents/NewButton",
 
   argTypes: {
-    textOnly: { control: { type: "boolean" } },
     icon: {
       control: { type: "select" },
       options: AllIcons,
     },
-    color: {
-      control: { type: "select" },
-      options: AllColors,
-    },
-    outlined: { control: { type: "boolean" } },
     disabled: { control: { type: "boolean" } },
+    danger: { control: { type: "boolean" } },
+    variant: {
+      control: { type: "select" },
+      options: ["primary", "secondary"],
+    },
   },
 
   args: {},
