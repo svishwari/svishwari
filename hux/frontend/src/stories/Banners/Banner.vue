@@ -1,6 +1,6 @@
 <template>
   <v-alert
-    :color="bgColor"
+    :color="'var(--v-' + iconColor + ')'"
     text
     dismissible
     :outlined="outlined"
@@ -10,16 +10,22 @@
     :class="size == 'small' ? 'py-2' : 'py-6'"
   >
     <template #prepend>
-      <icon :type="type" :size="24" class="mr-2" />
+      <icon
+        :type="type"
+        :size="24"
+        :color="
+          type == 'Checkmark' || type == 'Error'
+            ? 'white-base'
+            : 'black-lighten6'
+        "
+        :bg-color="iconColor"
+        :border-color="iconColor"
+        outline
+        class="mr-2"
+      />
     </template>
     <template #close>
-      <icon
-        type="cross"
-        :size="10"
-        color="black"
-        class="mr-2"
-        @click="toggle"
-      />
+      <icon type="Close & Remove" :size="12" color="black" @click="toggle" />
     </template>
     <div class="banner-label" :style="cssVars">{{ label }}</div>
   </v-alert>
@@ -38,7 +44,7 @@ export default {
     type: {
       type: String,
       required: false,
-      default: "warning",
+      default: "Guide",
     },
     size: {
       type: String,
@@ -70,23 +76,24 @@ export default {
     cssVars() {
       return { width: this.getWidth - 104 + "px" }
     },
-    bgColor() {
+
+    iconColor() {
       switch (this.type) {
-        case "positive":
-          return "var(--v-success-darken1)"
+        case "Checkmark":
+          return "success-darken1"
 
-        case "negative":
-          return "var(--v-error-lighten1)"
+        case "Error":
+          return "error-lighten1"
 
-        case "warning":
-          return "var(--v-warning-lighten1)"
+        case "Error & Warning":
+          return "warning-lighten1"
 
-        case "guiding":
-          return "var(--v-yellow-lighten3)"
+        case "Guide":
+          return "yellow-lighten3"
 
         default:
           // informative
-          return "var(--v-yellow-lighten3)"
+          return "yellow-lighten3"
       }
     },
   },
