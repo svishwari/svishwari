@@ -920,61 +920,61 @@ export default {
         {
           text: "Engagement name",
           value: "name",
-          width: "300px",
+          width: "17%",
           class: "sticky-header",
         },
         {
           text: "Audiences",
           value: "audiences",
-          width: "180px",
+          width: "10%",
           class: "sticky-header",
         },
         {
           text: "Destinations",
           value: "destinations",
-          width: "150px",
+          width: "10%",
           class: "sticky-header",
         },
         {
           text: "Status",
           value: "status",
-          width: "160px",
+          width: "15%",
           class: "sticky-header",
         },
         {
           text: "Last delivered",
           value: "last_delivered",
-          width: "140px",
+          width: "8%",
           class: "sticky-header",
         },
         {
           text: "Delivery schedule",
           value: "delivery_schedule",
-          width: "200px",
+          width: "11%",
           class: "sticky-header",
         },
         {
           text: "Last updated",
           value: "update_time",
-          width: "200px",
+          width: "11%",
           class: "sticky-header",
         },
         {
           text: "Last updated by",
           value: "updated_by",
-          width: "141px",
+          width: "8%",
           class: "sticky-header",
         },
         {
           text: "Created",
           value: "create_time",
-          width: "200px",
+          width: "11%",
           class: "sticky-header",
         },
         {
           text: "Created by",
           value: "created_by",
-          width: "140px",
+          width: "8%",
           class: "sticky-header",
         },
       ],
@@ -1196,7 +1196,7 @@ export default {
       }
     },
     getAudienceHeaders(headers) {
-      headers[0].width = "180px"
+      headers[0].width = "10%"
       return headers
     },
     async removeAudience() {
@@ -1527,7 +1527,7 @@ export default {
         .v-data-table__wrapper {
           tr {
             td:first-child {
-              width: 300px;
+              width: 100% !important;
               position: relative;
               margin-left: 0px;
               display: block;
@@ -1545,19 +1545,46 @@ export default {
         border-right: none;
       }
       .expanded-row-cover {
-        width: 300px;
+        width: 100% !important;
         position: fixed;
         margin-left: 220px;
         display: block;
         background-color: var(--v-primary-lighten1);
+      }
+      td:nth-child(2) {
+        width: 9.2% !important;
+      }
+      td:nth-child(3) {
+        width: 9.2% !important;
+      }
+      td:nth-child(4) {
+        width: 13.7% !important;
+      }
+      td:nth-child(5) {
+        width: 7.3% !important;
+      }
+      td:nth-child(6) {
+        width: 10.1% !important;
+      }
+      td:nth-child(7) {
+        width: 10.1% !important;
+      }
+      td:nth-child(8) {
+        width: 7.3% !important;
+      }
+      td:nth-child(9) {
+        width: 10.2% !important;
+      }
+      td:nth-child(10) {
+        width: 7.3% !important;
       }
     }
     td:nth-child(1) {
       background: none;
     }
     .ellipsis {
-      width: 17ch;
-      max-width: 17ch;
+      width: 13ch;
+      max-width: 13ch;
     }
   }
   ::v-deep .menu-cell-wrapper :hover .action-icon {

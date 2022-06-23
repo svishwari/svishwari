@@ -360,12 +360,7 @@
             </v-tab-item>
             <v-tab-item key="attributes" class="tab-item">
               <trust-id-attributes
-                v-if="
-                  !attributeErrorState &&
-                  attributeData &&
-                  attributeData.data &&
-                  attributeData.data.length > 0
-                "
+                v-if="showAttributes"
                 :data="attributeData.data"
               />
               <v-card v-else class="pb-12 box-shadow-5" height="250">
@@ -679,6 +674,15 @@ export default {
       return !this.segmentComparisonLoading && !this.comparisonErrorState
     },
 
+    showAttributes() {
+      return (
+        !this.attributeErrorState &&
+        this.attributeData &&
+        this.attributeData.data &&
+        this.attributeData.data.length > 0
+      )
+    },
+
     segmentTableTitle() {
       return this.segmentErrorState
         ? "Segments currently unavailable"
@@ -703,7 +707,7 @@ export default {
         : "Attributes will display when data has been uploaded. Please check back later."
     },
   },
-  async mounted() {
+  mounted() {
     this.loading = true
     this.segmentComparisonLoading = true
     try {
