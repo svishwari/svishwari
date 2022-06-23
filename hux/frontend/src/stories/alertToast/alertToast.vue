@@ -12,9 +12,13 @@
       <icon
         :type="type"
         :size="24"
-        :color="type == 'Guide' || type == 'Error & Warning'? 'black-lighten6' :'white-base'"
-        :bgColor="bgColor"
-        :borderColor="bgColor"
+        :color="
+          type == 'Guide' || type == 'Error & Warning'
+            ? 'black-lighten6'
+            : 'white-base'
+        "
+        :bg-color="bgColor"
+        :border-color="bgColor"
         outline
         class="mr-2"
       />

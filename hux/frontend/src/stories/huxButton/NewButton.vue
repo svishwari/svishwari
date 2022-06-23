@@ -5,9 +5,22 @@
       :outlined="variant == 'secondary'"
       :disabled="disabled"
       :style="{
-        color: 'var(--v-' + (variant == 'secondary' ? (hover ? getHoverColor() : getColor()) : 'white-base') 
-        + ') !important',
-        backgroundColor: 'var(--v-' + (variant == 'secondary' ? 'white-base' : (hover ? getHoverColor() : getColor())) + ') !important',
+        color:
+          'var(--v-' +
+          (variant == 'secondary'
+            ? hover
+              ? getHoverColor()
+              : getColor()
+            : 'white-base') +
+          ') !important',
+        backgroundColor:
+          'var(--v-' +
+          (variant == 'secondary'
+            ? 'white-base'
+            : hover
+            ? getHoverColor()
+            : getColor()) +
+          ') !important',
       }"
       @click="onClick"
     >
@@ -52,22 +65,22 @@ export default {
     variant: {
       type: String,
       required: false,
-      default: "primary"
-    }
+      default: "primary",
+    },
   },
   methods: {
     onClick: function () {
       this.$emit("click")
     },
     getColor() {
-      if (this.disabled) return 'black-lighten5'
-      if (this.danger) return 'error-lighten1'
-      return 'primary-lighten7'
+      if (this.disabled) return "black-lighten5"
+      if (this.danger) return "error-lighten1"
+      return "primary-lighten7"
     },
     getHoverColor() {
-      if (!this.disabled && !this.danger) return 'primary-base'
+      if (!this.disabled && !this.danger) return "primary-base"
       return this.getColor()
-    }
+    },
   },
 }
 </script>

@@ -13,9 +13,13 @@
       <icon
         :type="type"
         :size="24"
-        :color="type == 'Checkmark' || type == 'Error' ? 'white-base' : 'black-lighten6'"
-        :bgColor="iconColor"
-        :borderColor="iconColor"
+        :color="
+          type == 'Checkmark' || type == 'Error'
+            ? 'white-base'
+            : 'black-lighten6'
+        "
+        :bg-color="iconColor"
+        :border-color="iconColor"
         outline
         class="mr-2"
       />

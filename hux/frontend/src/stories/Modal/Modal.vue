@@ -11,7 +11,7 @@
               v-if="icon"
               :type="icon"
               :color="iconColor"
-              :borderColor="iconColor"
+              :border-color="iconColor"
               outline
               :size="38"
               class="mb-7"

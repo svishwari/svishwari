@@ -15,7 +15,7 @@
               class="guide-bulb"
               type="Guide"
               color="black-base"
-              bgColor="yellow-lighten3"
+              bg-color="yellow-lighten3"
               outline
               border-color="white-base"
               :size="40"

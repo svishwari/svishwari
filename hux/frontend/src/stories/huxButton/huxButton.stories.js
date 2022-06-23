@@ -14,7 +14,7 @@ export default {
     },
     variant: { type: "select", options: ["default", "secondary", "danger"] },
     click: { action: "clicked" },
-    icon: {options: allIcons, control: {type: "select"}},
+    icon: { options: allIcons, control: { type: "select" } },
   },
 
   args: {

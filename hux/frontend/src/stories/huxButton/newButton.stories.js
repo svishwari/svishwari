@@ -1,6 +1,5 @@
 import NewButton from "./NewButton.vue"
 import AllIcons from "../icons/Icons"
-import AllColors from "../colors/allColors"
 
 export default {
   component: NewButton,
