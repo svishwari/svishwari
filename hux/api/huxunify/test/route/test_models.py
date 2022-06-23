@@ -1,4 +1,5 @@
 """Purpose of this file is to house all the models API tests."""
+import asyncio
 from unittest import mock
 from http import HTTPStatus
 
@@ -89,10 +90,15 @@ class TestModelRoutes(RouteTestCase):
     def test_get_all_models(self):
         """Test get all models."""
 
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
         )
+
+        loop.close()
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
