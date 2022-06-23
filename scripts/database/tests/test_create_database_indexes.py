@@ -31,9 +31,9 @@ class TestCreateDBIndexes(TestCase):
             ),
         ]
         cdi.set_indexes(self.database, index_list)
-        ingestion_jobs_collection = self.database[db_c.DATA_MANAGEMENT_DATABASE][
-            db_c.INGESTION_JOBS_COLLECTION
-        ]
+        ingestion_jobs_collection = self.database[
+            db_c.DATA_MANAGEMENT_DATABASE
+        ][db_c.INGESTION_JOBS_COLLECTION]
         self.assertTrue(ingestion_jobs_collection.index_information())
 
     def test_add_unique_compound_index(self):
