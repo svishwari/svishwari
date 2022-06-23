@@ -447,18 +447,18 @@ GENERIC_ADS_DEFAULT_COLUMNS = [
 ]
 
 # Facebook connector defines
-FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
-FACEBOOK_APP_ID = "facebook_app_id"
-FACEBOOK_APP_SECRET = "facebook_app_secret"
-FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
+FACEBOOK_AD_ACCOUNT_ID = "facebook-ad-account-id"
+FACEBOOK_APP_ID = "facebook-app-id"
+FACEBOOK_APP_SECRET = "facebook-app-secret"
+FACEBOOK_ACCESS_TOKEN = "facebook-access-token"
 
 # SFMC connector defines
-SFMC_CLIENT_ID = "sfmc_client_id"
-SFMC_CLIENT_SECRET = "sfmc_client_secret"
-SFMC_ACCOUNT_ID = "sfmc_account_id"
-SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
-SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
-SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
+SFMC_CLIENT_ID = "sfmc-client-id"
+SFMC_CLIENT_SECRET = "sfmc-client-secret"
+SFMC_ACCOUNT_ID = "sfmc-account-id"
+SFMC_AUTH_BASE_URI = "sfmc-auth-base-uri"
+SFMC_REST_BASE_URI = "sfmc-rest-base-uri"
+SFMC_SOAP_BASE_URI = "sfmc-soap-base-uri"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
 SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION = "campaign_activity_data_extension"
@@ -466,20 +466,20 @@ SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
 
 # Sendgrid connector defines
-SENDGRID_AUTH_TOKEN = "sendgrid_auth_token"
+SENDGRID_AUTH_TOKEN = "sendgrid-auth-token"
 
 # Qualtrics connector defines
-QUALTRICS_API_TOKEN = "qualtrics_api_token"
-QUALTRICS_DATA_CENTER = "qualtrics_data_center"
-QUALTRICS_OWNER_ID = "qualtrics_owner_id"
-QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
+QUALTRICS_API_TOKEN = "qualtrics-api_token"
+QUALTRICS_DATA_CENTER = "qualtrics-data-center"
+QUALTRICS_OWNER_ID = "qualtrics-owner-id"
+QUALTRICS_DIRECTORY_ID = "qualtrics-directory-id"
 
 # google ads connector defines
-GOOGLE_DEVELOPER_TOKEN = "google_developer_token"
-GOOGLE_REFRESH_TOKEN = "google_refresh_token"
-GOOGLE_CLIENT_CUSTOMER_ID = "google_client_customer_id"
-GOOGLE_CLIENT_ID = "google_client_id"
-GOOGLE_CLIENT_SECRET = "google_client_secret"
+GOOGLE_DEVELOPER_TOKEN = "google-developer-token"
+GOOGLE_REFRESH_TOKEN = "google-refresh-token"
+GOOGLE_CLIENT_CUSTOMER_ID = "google-client-customer-id"
+GOOGLE_CLIENT_ID = "google-client-id"
+GOOGLE_CLIENT_SECRET = "google-client-secret"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -672,12 +672,8 @@ BSON_INVALID_ID = (
     f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
-FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE = (
-    "Failed connecting to dependent API."
-)
-FAILED_DEPENDENCY_ERROR_MESSAGE = (
-    "Failed to obtain data from dependent API endpoint."
-)
+FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE = "Failed connecting to dependent API."
+FAILED_DEPENDENCY_ERROR_MESSAGE = "Failed to obtain data from dependent API endpoint."
 EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE = (
     "Returned empty object from dependent API endpoint."
 )
@@ -685,12 +681,8 @@ EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE = (
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 DUPLICATE_NAME = "Name already exists."
 SFMC_CONFIGURATION_MISSING = "SFMC data extension config object missing."
-PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
-    "Performance metrics data extension not assigned."
-)
-CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED = (
-    "Campaign activity data extension not assigned."
-)
+PERFORMANCE_METRIC_DE_NOT_ASSIGNED = "Performance metrics data extension not assigned."
+CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED = "Campaign activity data extension not assigned."
 SAME_PERFORMANCE_CAMPAIGN_ERROR = (
     "Performance metric and Campaign activity cannot be same"
 )
@@ -708,9 +700,7 @@ DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 ZERO_AUDIENCE_SIZE = "Sum of Audience(s) is zero"
 ENGAGEMENT_NO_AUDIENCES = "Engagement has no audiences."
-AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = (
-    "Audience not attached to the engagement."
-)
+AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = "Audience not attached to the engagement."
 DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
@@ -1170,9 +1160,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     "filters": [
         {
             "section_aggregator": "ALL",
-            "section_filters": [
-                {"field": "country", "type": "equals", "value": "US"}
-            ],
+            "section_filters": [{"field": "country", "type": "equals", "value": "US"}],
         }
     ]
 }
@@ -1311,8 +1299,7 @@ MODELS_STUB = [
         CATEGORY: "Email",
         TYPE: "Classification",
         NAME: "Propensity to Click",
-        DESCRIPTION: "Propensity for a customer to click "
-        "on a link in an email.",
+        DESCRIPTION: "Propensity for a customer to click " "on a link in an email.",
         ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1320,8 +1307,7 @@ MODELS_STUB = [
         CATEGORY: "Email",
         TYPE: "Unknown",
         NAME: "Email Content Optimization",
-        DESCRIPTION: "Alter email content to optimize "
-        "email campaign performance.",
+        DESCRIPTION: "Alter email content to optimize " "email campaign performance.",
         ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1383,8 +1369,7 @@ MODELS_STUB = [
         CATEGORY: "Sales forecasting",
         TYPE: "Regression",
         NAME: "Predicted Sales Per Customer",
-        DESCRIPTION: "Predicting sales for a customer over a "
-        "defined time range.",
+        DESCRIPTION: "Predicting sales for a customer over a " "defined time range.",
         ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1392,8 +1377,7 @@ MODELS_STUB = [
         CATEGORY: "Sales forecasting",
         TYPE: "Regression",
         NAME: "Predicted Sales Per Store",
-        DESCRIPTION: "Predicting sales for a store over a "
-        "defined time range.",
+        DESCRIPTION: "Predicting sales for a store over a " "defined time range.",
         ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
@@ -1486,6 +1470,35 @@ SAMPLE_NAVIGATION_SETTINGS = {
             ],
         },
     ]
+}
+SAMPLE_RBAC_MATRIX_SETTINGS = {
+    db_c.CONFIGURATION_FIELD_SETTINGS: {
+        db_c.COMPONENTS: {
+            db_c.ALERTS: {
+                db_c.CONFIGURATION_FIELD_LABEL: "Alerts",
+                db_c.ACTIONS: [
+                    {
+                        db_c.TYPE: "get_all",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: True,
+                        db_c.USER_ROLE_VIEWER: True,
+                    },
+                    {
+                        db_c.TYPE: "get_one",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: True,
+                        db_c.USER_ROLE_VIEWER: True,
+                    },
+                    {
+                        db_c.TYPE: "delete",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: False,
+                        db_c.USER_ROLE_VIEWER: False,
+                    },
+                ],
+            }
+        }
+    }
 }
 
 # Applications
@@ -1647,8 +1660,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
         "run_duration": [
             {
                 "status": "Success",
-                "timestamp": datetime.datetime.now()
-                - datetime.timedelta(days=x),
+                "timestamp": datetime.datetime.now() - datetime.timedelta(days=x),
                 "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
@@ -1663,8 +1675,7 @@ MODEL_PIPELINE_PERFORMANCE_STUB = {
         "run_duration": [
             {
                 "status": "Success",
-                "timestamp": datetime.datetime.now()
-                - datetime.timedelta(days=x),
+                "timestamp": datetime.datetime.now() - datetime.timedelta(days=x),
                 "duration": "12m 41s",
                 "label": f"{x} run of last 10",
             }
@@ -2064,14 +2075,10 @@ MODEL_NAME_TAGS_MAP = {
     "Propensity to view shirt products": dict(industry=[RETAIL]),
     "Propensity to view women’s products": dict(industry=[RETAIL]),
     "Propensity to view wool products": dict(industry=[RETAIL]),
-    "Product Portfolio Marketing": dict(
-        industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
-    ),
+    "Product Portfolio Marketing": dict(industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]),
     "Product Recommendation": dict(industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]),
     "Product Return": dict(industry=[RETAIL, AUTOMOTIVE]),
-    "Promotion Attributable Analysis": dict(
-        industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
-    ),
+    "Promotion Attributable Analysis": dict(industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]),
     "Sales Forecasting model": dict(industry=ALL_INDUSTRY_TYPES),
     "Uplift Model": dict(industry=ALL_INDUSTRY_TYPES),
 }

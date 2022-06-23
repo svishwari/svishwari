@@ -69,10 +69,10 @@ class CourierTest(TestCase):
 
         # Set delivery platform
         self.auth_details_facebook = {
-            "facebook_access_token": "path1",
-            "facebook_app_secret": "path2",
-            "facebook_app_id": "path3",
-            "facebook_ad_account_id": "path4",
+            api_c.FACEBOOK_ACCESS_TOKEN: "path1",
+            api_c.FACEBOOK_APP_SECRET: "path2",
+            api_c.FACEBOOK_APP_ID: "path3",
+            api_c.FACEBOOK_AD_ACCOUNT_ID: "path4",
         }
 
         # create the list of destinations
@@ -472,7 +472,9 @@ class CourierTest(TestCase):
             for secret in api_c.DESTINATION_SECRETS[
                 destination[db_c.DELIVERY_PLATFORM_TYPE]
             ][api_c.AWS_SSM_NAME]:
-                self.assertEqual(auth[secret.upper()], simulated_secret)
+                self.assertEqual(
+                    auth[secret.upper().replace("-", "_")], simulated_secret
+                )
 
     def test_run_scheduled_delivery(self):
         """Test run scheduled delivery for an audience in an engagement."""
