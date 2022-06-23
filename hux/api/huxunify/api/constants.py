@@ -49,7 +49,11 @@ DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
 DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
 DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
 ENVIRONMENT_NAME = "ENVIRONMENT_NAME"
+
+# PLEASE NOTE - these are only here because DEN API
+# is only available in a couple environments.
 STAGING_ENV = "STG1"
+LILDEV_ENV = "LILDEV"
 
 # AWS constants
 AWS_REGION = "AWS_REGION"
@@ -441,18 +445,18 @@ GENERIC_ADS_DEFAULT_COLUMNS = [
 ]
 
 # Facebook connector defines
-FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
-FACEBOOK_APP_ID = "facebook_app_id"
-FACEBOOK_APP_SECRET = "facebook_app_secret"
-FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
+FACEBOOK_AD_ACCOUNT_ID = "facebook-ad-account-id"
+FACEBOOK_APP_ID = "facebook-app-id"
+FACEBOOK_APP_SECRET = "facebook-app-secret"
+FACEBOOK_ACCESS_TOKEN = "facebook-access-token"
 
 # SFMC connector defines
-SFMC_CLIENT_ID = "sfmc_client_id"
-SFMC_CLIENT_SECRET = "sfmc_client_secret"
-SFMC_ACCOUNT_ID = "sfmc_account_id"
-SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
-SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
-SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
+SFMC_CLIENT_ID = "sfmc-client-id"
+SFMC_CLIENT_SECRET = "sfmc-client-secret"
+SFMC_ACCOUNT_ID = "sfmc-account-id"
+SFMC_AUTH_BASE_URI = "sfmc-auth-base-uri"
+SFMC_REST_BASE_URI = "sfmc-rest-base-uri"
+SFMC_SOAP_BASE_URI = "sfmc-soap-base-uri"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
 SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION = "campaign_activity_data_extension"
@@ -460,20 +464,20 @@ SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
 
 # Sendgrid connector defines
-SENDGRID_AUTH_TOKEN = "sendgrid_auth_token"
+SENDGRID_AUTH_TOKEN = "sendgrid-auth-token"
 
 # Qualtrics connector defines
-QUALTRICS_API_TOKEN = "qualtrics_api_token"
-QUALTRICS_DATA_CENTER = "qualtrics_data_center"
-QUALTRICS_OWNER_ID = "qualtrics_owner_id"
-QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
+QUALTRICS_API_TOKEN = "qualtrics-api_token"
+QUALTRICS_DATA_CENTER = "qualtrics-data-center"
+QUALTRICS_OWNER_ID = "qualtrics-owner-id"
+QUALTRICS_DIRECTORY_ID = "qualtrics-directory-id"
 
 # google ads connector defines
-GOOGLE_DEVELOPER_TOKEN = "google_developer_token"
-GOOGLE_REFRESH_TOKEN = "google_refresh_token"
-GOOGLE_CLIENT_CUSTOMER_ID = "google_client_customer_id"
-GOOGLE_CLIENT_ID = "google_client_id"
-GOOGLE_CLIENT_SECRET = "google_client_secret"
+GOOGLE_DEVELOPER_TOKEN = "google-developer-token"
+GOOGLE_REFRESH_TOKEN = "google-refresh-token"
+GOOGLE_CLIENT_CUSTOMER_ID = "google-client-customer-id"
+GOOGLE_CLIENT_ID = "google-client-id"
+GOOGLE_CLIENT_SECRET = "google-client-secret"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -994,14 +998,17 @@ MODEL = "model"
 MODELS = "models"
 MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
+RANK = "rank"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
+VERSION_NUMBER = "version_number"
 FEATURE_DESCRIPTION = "feature_description"
 PREDICTED = "predicted"
 ACTUAL = "actual"
 PROFILES = "profiles"
 SIZE_PROFILE = "size_profile"
 RATE_PREDICTED = "rate_predicted"
+LIFT = "lift"
 LIFT_PREDICTED = "lift_predicted"
 LIFT_ACTUAL = "lift_actual"
 RATE_ACTUAL = "rate_actual"

@@ -68,6 +68,8 @@ export default {
     totalCustomersChart: "[data-e2e='total-customers-chart']",
     latestNotifications: "[data-e2e='latest-notifications']",
     allNotificationsLink: "[data-e2e='all-notifications-link']",
+    homeAlertIdClick: "[data-e2e='home-alert-id-click']",
+    demoScriptClick: "[data-e2e='demo-script-click']",
   },
 
   //client
@@ -268,6 +270,7 @@ export default {
     eventsDrawerButton: "[data-e2e='eventsDrawerButton']",
     customerEventRow: "[data-e2e='customerEventRow']",
     customerEventchart: "[data-e2e='customer-event-chart']",
+    customerIdrDrawer: "[data-e2e='idr-drawer-customer']",
   },
 
   //IDR

@@ -139,6 +139,7 @@
                     <a
                       href="javascript:void(0)"
                       class="text-body-1 text-decoration-none"
+                      data-e2e="home-alert-id-click"
                       @click="openAlertDrawer(item[header.value])"
                     >
                       {{ item[header.value] | Shorten }}
@@ -238,6 +239,7 @@
           href="https://resources.deloitte.com/:f:/s/GTMMarketingServices/EtcSxrQDnWVBqco8JSGIP5QBvhIO-gKp7OdlHHAEvBscOw?e=to9cdJ"
           target="_blank"
           class="text-decoration-none"
+          data-e2e="demo-script-click"
         >
           <span class="primary--text cursor-pointer">
             Click here to access demo scripts, videos, FAQs, and more.
