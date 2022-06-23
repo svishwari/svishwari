@@ -139,8 +139,10 @@
                 <size :value="item[header.value]" />
               </div>
               <div v-if="header.value == 'tags'">
-                 <div
-                  v-if="item[header.value] && item[header.value].industry.length > 0"
+                <div
+                  v-if="
+                    item[header.value] && item[header.value].industry.length > 0
+                  "
                   class="d-flex align-center"
                 >
                   <div class="d-flex align-center destination-ico">
@@ -149,11 +151,7 @@
                       :key="`${item.id}-${tag}`"
                     >
                       <template #label-content>
-                            <logo
-                              :key="tag"
-                              class="mr-1"
-                              :type="`${tag}_logo`"
-                            />
+                        <logo :key="tag" class="mr-1" :type="`${tag}_logo`" />
                       </template>
                       <template #hover-content>
                         <span>{{ formatText(tag) }}</span>

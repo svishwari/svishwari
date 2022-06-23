@@ -198,6 +198,6 @@ export const audience = {
     },
   ],
   tags: {
-    industry: ["automotive", "healthcare", "hospitality", "retail"]
+    industry: ["automotive", "healthcare", "hospitality", "retail"],
   },
 }

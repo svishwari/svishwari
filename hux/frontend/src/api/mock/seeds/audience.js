@@ -31,7 +31,7 @@ const multipleSectionFiltersAudience = {
   },
   destinations: [],
   tags: {
-    industry: ["automotive", "healthcare"]
+    industry: ["automotive", "healthcare"],
   },
   filters: [
     {
