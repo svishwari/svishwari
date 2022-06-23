@@ -152,7 +152,9 @@ class TestUserRoutes(RouteTestCase):
         expected_response_message = (
             f"The ID <{audience_id}> does " f"not exist in the database!"
         )
-        self.assertEqual(expected_response_message, response.json.get("message"))
+        self.assertEqual(
+            expected_response_message, response.json.get("message")
+        )
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_deleting_dne_audience_from_favorite(self):
@@ -215,8 +217,12 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        expected_response_message = f"{self.audience_id} not part of user " f"favorites"
-        self.assertEqual(expected_response_message, response.json.get("message"))
+        expected_response_message = (
+            f"{self.audience_id} not part of user " f"favorites"
+        )
+        self.assertEqual(
+            expected_response_message, response.json.get("message")
+        )
 
     def test_get_user_profile_success(self):
         """Test success response of getting user profile using Okta ID."""
@@ -247,7 +253,9 @@ class TestUserRoutes(RouteTestCase):
 
     def test_get_seen_notifications(self):
         """Tests get seen notifications of a user"""
-        endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/seen_notifications"
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/seen_notifications"
+        )
 
         response = self.app.get(
             endpoint,
@@ -390,7 +398,9 @@ class TestUserRoutes(RouteTestCase):
 
     def test_get_user_favorites_user_does_not_exist(self):
         """Test getting user favorites with a user that does not exist."""
-        self.assertFalse(get_user_favorites(self.database, None, db_c.ENGAGEMENTS))
+        self.assertFalse(
+            get_user_favorites(self.database, None, db_c.ENGAGEMENTS)
+        )
 
     @mock.patch("huxunify.api.route.user.JiraConnection")
     def test_create_jira_issue(self, mock_jira: MagicMock):
@@ -563,9 +573,9 @@ class TestUserRoutes(RouteTestCase):
 
         # get the user again and validate that the alerts are empty.
         self.assertFalse(
-            get_user(self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB])[
-                db_c.USER_ALERTS
-            ]
+            get_user(
+                self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB]
+            )[db_c.USER_ALERTS]
         )
 
     @mock.patch("huxunify.api.route.user.JiraConnection")
@@ -616,7 +626,9 @@ class TestUserRoutes(RouteTestCase):
 
         mock_jira_instance = mock_jira.return_value
         mock_jira_instance.check_jira_connection.return_value = True
-        mock_jira_instance.search_jira_issues.return_value = empty_jira_response
+        mock_jira_instance.search_jira_issues.return_value = (
+            empty_jira_response
+        )
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{t_c.TICKETS}",
@@ -677,14 +689,18 @@ class TestUserRoutes(RouteTestCase):
 
         mock_jira_instance = mock_jira.return_value
         mock_jira_instance.check_jira_connection.return_value = True
-        mock_jira_instance.search_jira_issues.return_value = empty_issue_jira_response
+        mock_jira_instance.search_jira_issues.return_value = (
+            empty_issue_jira_response
+        )
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.REQUESTED_USERS}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual("No user requests found.", response.json.get(api_c.MESSAGE))
+        self.assertEqual(
+            "No user requests found.", response.json.get(api_c.MESSAGE)
+        )
 
     def test_get_rbac_matrix(self):
         """Test get user RBAC matrix."""
@@ -697,7 +713,9 @@ class TestUserRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json, dict)
         self.assertDictEqual(
-            self.rbac_matrix_config_settings[db_c.CONFIGURATION_FIELD_SETTINGS],
+            self.rbac_matrix_config_settings[
+                db_c.CONFIGURATION_FIELD_SETTINGS
+            ],
             response.json,
         )
 
@@ -710,7 +728,9 @@ class TestUserRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
-        self.assertIsNone(get_user(self.database, okta_id=self.user_info[db_c.ID]))
+        self.assertIsNone(
+            get_user(self.database, okta_id=self.user_info[db_c.ID])
+        )
 
     def test_delete_dne_user(self):
         """Test deleting a user."""
