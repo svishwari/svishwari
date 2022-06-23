@@ -1485,6 +1485,35 @@ SAMPLE_NAVIGATION_SETTINGS = {
         },
     ]
 }
+SAMPLE_RBAC_MATRIX_SETTINGS = {
+    db_c.CONFIGURATION_FIELD_SETTINGS: {
+        db_c.COMPONENTS: {
+            db_c.ALERTS: {
+                db_c.CONFIGURATION_FIELD_LABEL: "Alerts",
+                db_c.ACTIONS: [
+                    {
+                        db_c.TYPE: "get_all",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: True,
+                        db_c.USER_ROLE_VIEWER: True,
+                    },
+                    {
+                        db_c.TYPE: "get_one",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: True,
+                        db_c.USER_ROLE_VIEWER: True,
+                    },
+                    {
+                        db_c.TYPE: "delete",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: False,
+                        db_c.USER_ROLE_VIEWER: False,
+                    },
+                ],
+            }
+        }
+    }
+}
 
 # Applications
 APPLICATIONS_TAG = "applications"
