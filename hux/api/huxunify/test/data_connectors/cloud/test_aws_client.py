@@ -30,7 +30,7 @@ class AWSClientTests(TestCase):
     @mock_ssm
     def test_get_secret(self):
         """Test get secret."""
-        secret_key = "some_secret"
+        secret_key = "some-secret"
         secret_val = "MY SECRET"
         ssm_client = boto3.client("ssm", region_name=self.config.AWS_REGION)
         ssm_client.put_parameter(
@@ -44,7 +44,7 @@ class AWSClientTests(TestCase):
     @mock_ssm
     def test_set_secret(self):
         """Test set secret."""
-        secret_key = "some_secret"
+        secret_key = "some-secret"
         secret_val = "MY SECRET"
         self.aws_client.set_secret(secret_key, secret_val)
         self.assertEqual(secret_val, self.aws_client.get_secret(secret_key))
