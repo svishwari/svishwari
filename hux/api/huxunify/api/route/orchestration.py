@@ -263,9 +263,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 api_c.SIZE: 0,
                 db_c.DELIVERY_PLATFORM_ID: x,
                 db_c.LINK: destination_dict.get(x).get(db_c.LINK),
-                db_c.IS_AD_PLATFORM: destination_dict.get(
-                    destination_dict.get(db_c.DELIVERY_PLATFORM_ID)
-                ).get(db_c.IS_AD_PLATFORM),
+                db_c.IS_AD_PLATFORM: destination_dict.get(x).get(
+                    db_c.IS_AD_PLATFORM
+                ),
             }
         )
         for x in destination_ids
@@ -336,6 +336,16 @@ class AudienceView(SwaggerView):
             "collectionFormat": "multi",
             "required": False,
             "example": "age",
+        },
+        {
+            "name": api_c.EVENTS,
+            "description": "Only return audiences matching the selected filters",
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "required": False,
+            "example": "created",
         },
         {
             "name": api_c.INDUSTRY_TAG,
@@ -420,8 +430,12 @@ class AudienceView(SwaggerView):
             filter_dict[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
         attribute_list = request.args.getlist(api_c.ATTRIBUTE)
+        events_list = request.args.getlist(api_c.EVENTS)
         # set the attribute_list to filter_dict only if it is populated and
         # validation is successful
+        if events_list:
+            filter_dict[db_c.EVENT] = events_list
+
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
 
@@ -592,43 +606,62 @@ class AudienceView(SwaggerView):
         # lookalike audiences can not be lookalikeable
         if not lookalikeable:
             # get all lookalikes and append to the audience list
-            query_filter = {db_c.DELETED: False}
-            if request.args.get(api_c.FAVORITES) and validation.validate_bool(
-                request.args.get(api_c.FAVORITES)
-            ):
-                query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
+            query_filter = {"$and": [{db_c.DELETED: False}]}
 
             if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
                 request.args.get(api_c.WORKED_BY)
             ):
-                query_filter.update(
-                    {
-                        "$or": [
-                            {db_c.CREATED_BY: user[api_c.USER_NAME]},
-                            {db_c.UPDATED_BY: user[api_c.USER_NAME]},
-                        ]
-                    }
+                query_filter["$and"].extend(
+                    [
+                        {
+                            "$or": [
+                                {db_c.CREATED_BY: user[api_c.USER_NAME]},
+                                {db_c.UPDATED_BY: user[api_c.USER_NAME]},
+                            ]
+                        }
+                    ]
                 )
 
             if attribute_list:
-                query_filter["$and"] = [
-                    {
-                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
-                            "$regex": re.compile(rf"^{attribute}$(?i)")
+                query_filter["$and"].extend(
+                    [
+                        {
+                            "$and": [
+                                {
+                                    db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                                        "$regex": re.compile(
+                                            rf"^{attribute}$(?i)"
+                                        )
+                                    }
+                                }
+                                for attribute in attribute_list
+                            ]
                         }
-                    }
-                    for attribute in attribute_list
-                ]
+                    ]
+                )
 
             if industry_tag_list:
-                query_filter["$or"] = [
-                    {
-                        db_c.INDUSTRY_TAG_FIELD: {
-                            "$regex": re.compile(rf"^{industry_tag}$(?i)")
+                query_filter["$and"].extend(
+                    [
+                        {
+                            "$or": [
+                                {
+                                    db_c.INDUSTRY_TAG_FIELD: {
+                                        "$regex": re.compile(
+                                            rf"^{industry_tag}$(?i)"
+                                        )
+                                    }
+                                }
+                                for industry_tag in industry_tag_list
+                            ]
                         }
-                    }
-                    for industry_tag in industry_tag_list
-                ]
+                    ]
+                )
+
+            if request.args.get(api_c.FAVORITES) and validation.validate_bool(
+                request.args.get(api_c.FAVORITES)
+            ):
+                query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
 
             lookalikes = cm.get_documents(
                 database,
@@ -1023,10 +1056,10 @@ class AudienceGetView(SwaggerView):
                 else None,
                 api_c.AUDIENCE_STANDALONE_DELIVERIES: standalone_deliveries,
                 api_c.FAVORITE: is_component_favorite(
-                    user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
+                    user, api_c.AUDIENCES, str(audience_id)
                 )
                 or is_component_favorite(
-                    user[db_c.OKTA_ID], api_c.LOOKALIKE, str(audience_id)
+                    user, api_c.LOOKALIKE, str(audience_id)
                 ),
             }
         )

@@ -269,9 +269,7 @@ def get_all_audiences(
             )
 
         return list(
-            collection.find(find_filters, {db_c.DELETED: 0})
-            .skip(skips)
-            .limit(batch_size)
+            collection.find(find_filters).skip(skips).limit(batch_size)
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -296,32 +294,68 @@ def build_get_audiences_query_filter(
     if not filters:
         query_filter = {db_c.DELETED: False}
     else:
-        query_filter = {}
+        query_filter = {"$and": [{db_c.DELETED: False}]}
+
         if filters.get(db_c.WORKED_BY):
-            query_filter["$or"] = [
-                {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
-                {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
-            ]
+            query_filter["$and"].extend(
+                [
+                    {
+                        "$or": [
+                            {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
+                            {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
+                        ]
+                    }
+                ]
+            )
+
         if filters.get(db_c.ATTRIBUTE):
-            query_filter["$and"] = [
-                {
-                    db_c.ATTRIBUTE_FILTER_FIELD: {
-                        "$regex": rf"^{attribute}$",
-                        "$options": "i",
+            query_filter["$and"].extend(
+                [
+                    {
+                        "$and": [
+                            {
+                                db_c.ATTRIBUTE_FILTER_FIELD: {
+                                    "$regex": rf"^{attribute}$",
+                                    "$options": "i",
+                                }
+                            }
+                            for attribute in filters.get(db_c.ATTRIBUTE)
+                        ]
                     }
-                }
-                for attribute in filters.get(db_c.ATTRIBUTE)
-            ]
+                ]
+            )
+        if filters.get(db_c.EVENT):
+            query_filter["$and"].extend(
+                [
+                    {
+                        "$and": [
+                            {
+                                db_c.EVENTS_FILTER_FIELD: {
+                                    "$regex": rf"^{event_name}$",
+                                    "$options": "i",
+                                }
+                            }
+                            for event_name in filters.get(db_c.EVENT)
+                        ]
+                    }
+                ]
+            )
         if filters.get(db_c.INDUSTRY_TAG):
-            query_filter["$or"] = [
-                {
-                    db_c.INDUSTRY_TAG_FIELD: {
-                        "$regex": rf"^{industry_tag}$",
-                        "$options": "i",
+            query_filter["$and"].extend(
+                [
+                    {
+                        "$or": [
+                            {
+                                db_c.INDUSTRY_TAG_FIELD: {
+                                    "$regex": rf"^{industry_tag}$",
+                                    "$options": "i",
+                                }
+                            }
+                            for industry_tag in filters.get(db_c.INDUSTRY_TAG)
+                        ]
                     }
-                }
-                for industry_tag in filters.get(db_c.INDUSTRY_TAG)
-            ]
+                ]
+            )
 
     if audience_ids is not None:
         query_filter[db_c.ID] = {"$in": audience_ids}

@@ -41,7 +41,6 @@ from huxunifylib.database.client import DatabaseClient
 from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     get_user_info,
@@ -133,7 +132,6 @@ def get_health_check() -> HealthCheck:
 
     # add health checks
     health.add_check(check_mongo_connection)
-    health.add_check(Tecton().check_tecton_connection)
     health.add_check(check_okta_connection)
     health.add_check(CloudClient().health_check_secret_storage)
     health.add_check(CloudClient().health_check_batch_service)
@@ -456,12 +454,12 @@ class Validation:
 
 
 def is_component_favorite(
-    okta_user_id: str, component_name: str, component_id: str
+    user: dict, component_name: str, component_id: str
 ) -> bool:
     """Checks if component is in favorites of a user.
 
     Args:
-        okta_user_id (str): Okta User ID.
+        user (dict): User dict.
         component_name (str): Name of component in user favorite.
         component_id (str): ID of the favorite component.
 
@@ -469,9 +467,7 @@ def is_component_favorite(
         bool: If component is favorite or not.
     """
 
-    user_favorites = get_user(get_db_client(), okta_user_id).get(
-        api_c.FAVORITES
-    )
+    user_favorites = user.get(api_c.FAVORITES, {})
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name, [])
@@ -1248,7 +1244,7 @@ def set_destination_authentication_secrets(
             ssm_params[parameter_name] = secret
             continue
 
-        param_name = f"{api_c.PARAM_STORE_PREFIX}_{parameter_name}"
+        param_name = f"{api_c.PARAM_STORE_PREFIX}-{parameter_name}"
         ssm_params[parameter_name] = param_name
         try:
             CloudClient().set_secret(secret_name=param_name, value=secret)

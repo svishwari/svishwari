@@ -3,6 +3,7 @@ export default {
   tealD: "#00ABAB",
   lightGreenD: "#86BC25",
   greenD: "#43B02A",
+  vividGreen: "#26890D",
   teal6D: "#007680",
   teal7D: "#004F59",
   tealAquaSquezze: "#E6F4F3",

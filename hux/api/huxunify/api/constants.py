@@ -21,7 +21,9 @@ USERNAME = "username"
 PASSWORD = "password"
 CONNECTION_STRING = "connection_string"
 SSL_CERT_PATH = "ssl_cert_path"
+SSL_CERT_FILE_NAME = "SSL_CERT_FILE_NAME"
 TLS_CERT_KEY = "tls_cert_key_file"
+TLS_CERT_KEY_FILE_NAME = "TLS_CERT_KEY_FILE_NAME"
 MONGO_DB_HOST = "MONGO_DB_HOST"
 MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
@@ -37,9 +39,6 @@ JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
 CDP_SERVICE = "CDP_SERVICE"
 CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
 DECISIONING_URL = "DECISIONING_URL"
-TECTON_API_KEY = "TECTON_API_KEY"
-TECTON_API = "TECTON_API"
-MOCK_TECTON = "MOCK_TECTON"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
 DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
@@ -50,7 +49,11 @@ DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
 DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
 DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
 ENVIRONMENT_NAME = "ENVIRONMENT_NAME"
+
+# PLEASE NOTE - these are only here because DEN API
+# is only available in a couple environments.
 STAGING_ENV = "STG1"
+LILDEV_ENV = "LILDEV"
 
 # AWS constants
 AWS_REGION = "AWS_REGION"
@@ -442,18 +445,18 @@ GENERIC_ADS_DEFAULT_COLUMNS = [
 ]
 
 # Facebook connector defines
-FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
-FACEBOOK_APP_ID = "facebook_app_id"
-FACEBOOK_APP_SECRET = "facebook_app_secret"
-FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
+FACEBOOK_AD_ACCOUNT_ID = "facebook-ad-account-id"
+FACEBOOK_APP_ID = "facebook-app-id"
+FACEBOOK_APP_SECRET = "facebook-app-secret"
+FACEBOOK_ACCESS_TOKEN = "facebook-access-token"
 
 # SFMC connector defines
-SFMC_CLIENT_ID = "sfmc_client_id"
-SFMC_CLIENT_SECRET = "sfmc_client_secret"
-SFMC_ACCOUNT_ID = "sfmc_account_id"
-SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
-SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
-SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
+SFMC_CLIENT_ID = "sfmc-client-id"
+SFMC_CLIENT_SECRET = "sfmc-client-secret"
+SFMC_ACCOUNT_ID = "sfmc-account-id"
+SFMC_AUTH_BASE_URI = "sfmc-auth-base-uri"
+SFMC_REST_BASE_URI = "sfmc-rest-base-uri"
+SFMC_SOAP_BASE_URI = "sfmc-soap-base-uri"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
 SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION = "campaign_activity_data_extension"
@@ -461,20 +464,20 @@ SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
 
 # Sendgrid connector defines
-SENDGRID_AUTH_TOKEN = "sendgrid_auth_token"
+SENDGRID_AUTH_TOKEN = "sendgrid-auth-token"
 
 # Qualtrics connector defines
-QUALTRICS_API_TOKEN = "qualtrics_api_token"
-QUALTRICS_DATA_CENTER = "qualtrics_data_center"
-QUALTRICS_OWNER_ID = "qualtrics_owner_id"
-QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
+QUALTRICS_API_TOKEN = "qualtrics-api_token"
+QUALTRICS_DATA_CENTER = "qualtrics-data-center"
+QUALTRICS_OWNER_ID = "qualtrics-owner-id"
+QUALTRICS_DIRECTORY_ID = "qualtrics-directory-id"
 
 # google ads connector defines
-GOOGLE_DEVELOPER_TOKEN = "google_developer_token"
-GOOGLE_REFRESH_TOKEN = "google_refresh_token"
-GOOGLE_CLIENT_CUSTOMER_ID = "google_client_customer_id"
-GOOGLE_CLIENT_ID = "google_client_id"
-GOOGLE_CLIENT_SECRET = "google_client_secret"
+GOOGLE_DEVELOPER_TOKEN = "google-developer-token"
+GOOGLE_REFRESH_TOKEN = "google-refresh-token"
+GOOGLE_CLIENT_CUSTOMER_ID = "google-client-customer-id"
+GOOGLE_CLIENT_ID = "google-client-id"
+GOOGLE_CLIENT_SECRET = "google-client-secret"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -990,20 +993,22 @@ TARGET = "target"
 TRACK = "track"
 
 # Models
-# TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
 MODEL = "model"
 MODELS = "models"
 MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
+RANK = "rank"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
+VERSION_NUMBER = "version_number"
 FEATURE_DESCRIPTION = "feature_description"
 PREDICTED = "predicted"
 ACTUAL = "actual"
 PROFILES = "profiles"
 SIZE_PROFILE = "size_profile"
 RATE_PREDICTED = "rate_predicted"
+LIFT = "lift"
 LIFT_PREDICTED = "lift_predicted"
 LIFT_ACTUAL = "lift_actual"
 RATE_ACTUAL = "rate_actual"
@@ -1113,14 +1118,6 @@ ACTUAL_LIFT = "actual_lift"
 PROFILE_SIZE_PERCENT = "profile_size_percent"
 RUN_DATE = "run_date"
 DRIFT = "drift"
-REGRESSION_MODELS = [LTV]
-CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
-# todo: remove in the future when we remove tecton.
-TEMP_MODELS_TYPE_MAPPING = {
-    "propensity_positive_click": UNSUBSCRIBE,
-    "propensity_positive_open": UNSUBSCRIBE,
-    "propensity_positive_unsub": UNSUBSCRIBE,
-}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
@@ -2050,10 +2047,21 @@ AUTOMOTIVE = "automotive"
 ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
 
 MODEL_NAME_TAGS_MAP = {
-    "Lifetime Value": dict(industry=ALL_INDUSTRY_TYPES),
+    "LTV": dict(industry=ALL_INDUSTRY_TYPES),
     "Propensity to Purchase": dict(industry=ALL_INDUSTRY_TYPES),
     "Propensity to Unsubscribe": dict(industry=[RETAIL, HOSPITALITY]),
     "Propensity to Churn": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity Type Cancelled": dict(industry=[RETAIL, HOSPITALITY]),
+    "Propensity Type Transaction": dict(industry=[RETAIL, HOSPITALITY]),
+    "Propensity to Click": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Open": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to place web order": dict(industry=[RETAIL]),
+    "Propensity to view blanket products": dict(industry=[RETAIL]),
+    "Propensity to view jacket products": dict(industry=[RETAIL]),
+    "Propensity to view men’s products": dict(industry=[RETAIL]),
+    "Propensity to view shirt products": dict(industry=[RETAIL]),
+    "Propensity to view women’s products": dict(industry=[RETAIL]),
+    "Propensity to view wool products": dict(industry=[RETAIL]),
     "Product Portfolio Marketing": dict(
         industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
     ),

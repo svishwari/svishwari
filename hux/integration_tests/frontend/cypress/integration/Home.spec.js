@@ -36,9 +36,12 @@ describe("Home", () => {
     cy.get(selector.home.latestNotifications)
       .find("h3")
       .contains("Latest alerts")
-
+    cy.get(selector.home.homeAlertIdClick).eq(1).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
     cy.get(selector.home.allNotificationsLink)
       .should("have.attr", "href")
       .and("include", route.notifications)
+    cy.get(selector.home.demoScriptClick).click()
   })
 })
