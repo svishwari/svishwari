@@ -179,7 +179,10 @@ def get_data_source_non_breakdown_fields(
     cur_doc = get_data_source(database, data_source_id)
 
     non_breakdown_fields = []
-    if cur_doc is not None and db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc:
+    if (
+        cur_doc is not None
+        and db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc
+    ):
         non_breakdown_fields = cur_doc[db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS]
 
     return non_breakdown_fields
@@ -622,7 +625,9 @@ def set_ingestion_job(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_ingestion_job(database: DatabaseClient, ingestion_job_id: ObjectId) -> dict:
+def get_ingestion_job(
+    database: DatabaseClient, ingestion_job_id: ObjectId
+) -> dict:
     """A function to get an ingestion job.
 
     Args:
@@ -683,7 +688,9 @@ def get_data_source_ingestion_jobs(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def is_data_source_mutable(database: DatabaseClient, data_source_id: ObjectId) -> bool:
+def is_data_source_mutable(
+    database: DatabaseClient, data_source_id: ObjectId
+) -> bool:
     """Determine if a data source us mutable.
 
     Args:
@@ -833,7 +840,10 @@ def get_ingestion_job_data_source_fields(
     if data_source_id is not None:
         data_source_doc = get_data_source(database, data_source_id)
 
-    if data_source_doc is not None and db_c.DATA_SOURCE_FIELDS in data_source_doc:
+    if (
+        data_source_doc is not None
+        and db_c.DATA_SOURCE_FIELDS in data_source_doc
+    ):
         fields_list = data_source_doc[db_c.DATA_SOURCE_FIELDS]
 
     for field_doc in fields_list:
@@ -874,7 +884,10 @@ def get_ingestion_job_custom_fields(
     if data_source_id is not None:
         data_source_doc = get_data_source(database, data_source_id)
 
-    if data_source_doc is not None and db_c.DATA_SOURCE_FIELDS in data_source_doc:
+    if (
+        data_source_doc is not None
+        and db_c.DATA_SOURCE_FIELDS in data_source_doc
+    ):
         fields_list = data_source_doc[db_c.DATA_SOURCE_FIELDS]
 
     for field_doc in fields_list:

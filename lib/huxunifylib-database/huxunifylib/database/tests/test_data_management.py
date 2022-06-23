@@ -96,7 +96,9 @@ class TestDataManagement(unittest.TestCase):
     def test_get_data_source(self):
         """Test get_data_source routine."""
 
-        data_source = dm.get_data_source(self.database, self.data_source_doc[db_c.ID])
+        data_source = dm.get_data_source(
+            self.database, self.data_source_doc[db_c.ID]
+        )
 
         self.assertTrue(data_source is not None)
         self.assertEqual(data_source[db_c.DATA_SOURCE_NAME], "My Data Source")
@@ -202,7 +204,9 @@ class TestDataManagement(unittest.TestCase):
 
         self.assertTrue(doc is not None)
         self.assertTrue(db_c.DATA_SOURCE_LOCATION_DETAILS in doc)
-        self.assertEqual(doc[db_c.DATA_SOURCE_LOCATION_DETAILS], new_location_details)
+        self.assertEqual(
+            doc[db_c.DATA_SOURCE_LOCATION_DETAILS], new_location_details
+        )
 
         # Update data source fields
         new_fields = [
@@ -247,8 +251,12 @@ class TestDataManagement(unittest.TestCase):
         )
 
         self.assertTrue(doc is not None)
-        self.assertEqual(doc[db_c.DATA_SOURCE_NAME], "Updated Data Source name")
-        self.assertEqual(doc[db_c.DATA_SOURCE_TYPE], db_c.DATA_SOURCE_TYPE_FIRST_PARTY)
+        self.assertEqual(
+            doc[db_c.DATA_SOURCE_NAME], "Updated Data Source name"
+        )
+        self.assertEqual(
+            doc[db_c.DATA_SOURCE_TYPE], db_c.DATA_SOURCE_TYPE_FIRST_PARTY
+        )
         self.assertEqual(doc[db_c.DATA_SOURCE_FIELDS], updated_fields)
         self.assertEqual(doc[db_c.DATA_SOURCE_FORMAT], "TSV")
         self.assertEqual(doc[db_c.DATA_SOURCE_LOCATION_TYPE], "S3")
@@ -465,7 +473,9 @@ class TestDataManagement(unittest.TestCase):
 
         for item in cursor:
             self.assertTrue(db_c.INGESTED_DATA in item)
-            self.assertTrue(db_c.S_TYPE_CUSTOMER_ID in item[db_c.INGESTED_DATA])
+            self.assertTrue(
+                db_c.S_TYPE_CUSTOMER_ID in item[db_c.INGESTED_DATA]
+            )
 
     # pylint: disable=R0904,R0915
     @mongomock.patch(servers=(("localhost", 27017),))
@@ -520,15 +530,25 @@ class TestDataManagement(unittest.TestCase):
         self.assertTrue(
             db_c.STATS_BREAKDOWN in stats_doc[db_c.S_TYPE_STATE_OR_PROVINCE]
         )
-        self.assertTrue(db_c.STATS_BREAKDOWN in stats_doc[db_c.S_TYPE_COUNTRY_CODE])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in stats_doc[db_c.S_TYPE_COUNTRY_CODE]
+        )
         self.assertTrue(db_c.STATS_BREAKDOWN in stats_doc[db_c.S_TYPE_GENDER])
-        self.assertTrue(db_c.STATS_BREAKDOWN in stats_doc["custom_field_extra"])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in stats_doc["custom_field_extra"]
+        )
 
-        self.assertTrue(db_c.STATS_BREAKDOWN not in stats_doc[db_c.S_TYPE_FIRST_NAME])
-        self.assertTrue(db_c.STATS_BREAKDOWN not in stats_doc[db_c.S_TYPE_LAST_NAME])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in stats_doc[db_c.S_TYPE_FIRST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in stats_doc[db_c.S_TYPE_LAST_NAME]
+        )
         self.assertTrue(db_c.STATS_BREAKDOWN not in stats_doc["custom_field"])
 
-        doc = dm.get_ingested_data_stats(self.database, self.ingestion_job_doc[db_c.ID])
+        doc = dm.get_ingested_data_stats(
+            self.database, self.ingestion_job_doc[db_c.ID]
+        )
 
         self.assertTrue(doc is not None)
         self.assertTrue(db_c.JOB_ID in doc)
@@ -539,11 +559,15 @@ class TestDataManagement(unittest.TestCase):
         self.assertTrue(db_c.S_TYPE_GENDER in doc)
         self.assertTrue(db_c.STATS_COVERAGE in doc[db_c.S_TYPE_CITY])
         self.assertTrue(db_c.STATS_COVERAGE in doc[db_c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(db_c.STATS_COVERAGE in doc[db_c.S_TYPE_STATE_OR_PROVINCE])
+        self.assertTrue(
+            db_c.STATS_COVERAGE in doc[db_c.S_TYPE_STATE_OR_PROVINCE]
+        )
         self.assertTrue(db_c.STATS_COVERAGE in doc[db_c.S_TYPE_GENDER])
         self.assertTrue(db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_CITY])
         self.assertTrue(db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_STATE_OR_PROVINCE])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_STATE_OR_PROVINCE]
+        )
         self.assertTrue(db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_GENDER])
         self.assertEqual(doc[db_c.DATA_COUNT], 3)
         self.assertEqual(
@@ -599,13 +623,21 @@ class TestDataManagement(unittest.TestCase):
         self.assertTrue(
             db_c.STATS_BREAKDOWN in stats_doc[db_c.S_TYPE_STATE_OR_PROVINCE]
         )
-        self.assertTrue(db_c.STATS_BREAKDOWN in stats_doc[db_c.S_TYPE_COUNTRY_CODE])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in stats_doc[db_c.S_TYPE_COUNTRY_CODE]
+        )
         self.assertTrue(db_c.STATS_BREAKDOWN in stats_doc[db_c.S_TYPE_GENDER])
         self.assertTrue(db_c.STATS_BREAKDOWN in stats_doc["custom_field"])
-        self.assertTrue(db_c.STATS_BREAKDOWN not in stats_doc[db_c.S_TYPE_FIRST_NAME])
-        self.assertTrue(db_c.STATS_BREAKDOWN not in stats_doc[db_c.S_TYPE_LAST_NAME])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in stats_doc[db_c.S_TYPE_FIRST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in stats_doc[db_c.S_TYPE_LAST_NAME]
+        )
 
-        doc = dm.get_ingested_data_stats(self.database, self.ingestion_job_doc[db_c.ID])
+        doc = dm.get_ingested_data_stats(
+            self.database, self.ingestion_job_doc[db_c.ID]
+        )
 
         self.assertTrue(doc is not None)
         self.assertTrue(db_c.JOB_ID in doc)
@@ -616,11 +648,15 @@ class TestDataManagement(unittest.TestCase):
         self.assertTrue(db_c.S_TYPE_GENDER in doc)
         self.assertTrue(db_c.STATS_COVERAGE in doc[db_c.S_TYPE_CITY])
         self.assertTrue(db_c.STATS_COVERAGE in doc[db_c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(db_c.STATS_COVERAGE in doc[db_c.S_TYPE_STATE_OR_PROVINCE])
+        self.assertTrue(
+            db_c.STATS_COVERAGE in doc[db_c.S_TYPE_STATE_OR_PROVINCE]
+        )
         self.assertTrue(db_c.STATS_COVERAGE in doc[db_c.S_TYPE_GENDER])
         self.assertTrue(db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_CITY])
         self.assertTrue(db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_STATE_OR_PROVINCE])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_STATE_OR_PROVINCE]
+        )
         self.assertTrue(db_c.STATS_BREAKDOWN in doc[db_c.S_TYPE_GENDER])
         self.assertEqual(doc[db_c.DATA_COUNT], 5)
         self.assertEqual(
@@ -710,7 +746,9 @@ class TestDataManagement(unittest.TestCase):
         """Test favorite_data_source."""
 
         # Test favorite functions
-        doc = dm.favorite_data_source(self.database, self.data_source_doc[db_c.ID])
+        doc = dm.favorite_data_source(
+            self.database, self.data_source_doc[db_c.ID]
+        )
 
         self.assertTrue(doc is not None)
         self.assertTrue(db_c.FAVORITE in doc)
@@ -720,7 +758,9 @@ class TestDataManagement(unittest.TestCase):
     def unfavorite_data_source(self):
         """Test unfavorite_data_source."""
 
-        doc = dm.unfavorite_data_source(self.database, self.data_source_doc[db_c.ID])
+        doc = dm.unfavorite_data_source(
+            self.database, self.data_source_doc[db_c.ID]
+        )
 
         self.assertTrue(doc is not None)
         self.assertTrue(db_c.FAVORITE in doc)
