@@ -86,7 +86,10 @@ class Config:
         MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
         if CLOUD_PROVIDER == api_c.AZURE:
             MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
+        # TODO: To be removed once LILDEV env has ssl and cert setup
+        #  implementation done
         if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
+            MONGO_DB_CONFIG[api_c.SSL_FLAG] = False
             del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
             del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
