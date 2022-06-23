@@ -138,6 +138,31 @@
               <div v-if="header.value == 'size'">
                 <size :value="item[header.value]" />
               </div>
+              <div v-if="header.value == 'tags'">
+                 <div
+                  v-if="item[header.value] && item[header.value].industry.length > 0"
+                  class="d-flex align-center"
+                >
+                  <div class="d-flex align-center destination-ico">
+                    <tooltip
+                      v-for="tag in item[header.value].industry"
+                      :key="`${item.id}-${tag}`"
+                    >
+                      <template #label-content>
+                            <logo
+                              :key="tag"
+                              class="mr-1"
+                              :type="`${tag}_logo`"
+                            />
+                      </template>
+                      <template #hover-content>
+                        <span>{{ formatText(tag) }}</span>
+                      </template>
+                    </tooltip>
+                  </div>
+                </div>
+                <span v-else>—</span>
+              </div>
               <div v-if="header.value == 'filters'" class="filter_col">
                 <span
                   v-if="
@@ -540,12 +565,18 @@ export default {
         },
         {
           id: 4,
+          text: "Industry",
+          value: "tags",
+          width: "220px",
+        },
+        {
+          id: 5,
           text: "Attributes",
           value: "filters",
           width: "380px",
         },
         {
-          id: 5,
+          id: 6,
           text: "Destinations",
           value: "destinations",
           width: "150px",
@@ -581,7 +612,7 @@ export default {
           width: "182",
         },
       ],
-      industryTags: ["retail", "healthcare", "hospitality", "automotive"],
+      industryTags: ["automotive", "healthcare", "hospitality", "retail"],
       loading: false,
       selectedAudience: null,
       showLookAlikeDrawer: false,
