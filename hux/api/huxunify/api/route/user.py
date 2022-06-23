@@ -13,6 +13,7 @@ from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.collection_management import get_document
 from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
@@ -20,7 +21,6 @@ from huxunifylib.database.user_management import (
     get_user,
     delete_user,
 )
-from huxunifylib.database.data_management import get_constant
 from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
@@ -124,9 +124,7 @@ class UserProfile(SwaggerView):
             # be used in subsequent requests
             access_token = get_token_from_request(request)[0]
 
-            okta_id = introspect_token(access_token).get(
-                api_c.OKTA_USER_ID, None
-            )
+            okta_id = introspect_token(access_token).get(api_c.OKTA_USER_ID, None)
 
             # return unauthorized response if no valid okta_id is fetched by
             # introspecting the access_token
@@ -136,9 +134,7 @@ class UserProfile(SwaggerView):
                     "user %s is not fetched.",
                     user[api_c.USER_NAME],
                 )
-                return {
-                    "message": api_c.AUTH401_ERROR_MESSAGE
-                }, HTTPStatus.UNAUTHORIZED
+                return {"message": api_c.AUTH401_ERROR_MESSAGE}, HTTPStatus.UNAUTHORIZED
 
             # get the user info and the corresponding user document from db
             # from the access_token
@@ -249,11 +245,7 @@ class SeenNotifications(SwaggerView):
                 return HuxResponse.OK(data={db_c.SEEN_NOTIFICATIONS: True})
         user = get_user(database=get_db_client(), okta_id=okta_id)
         return HuxResponse.OK(
-            data={
-                db_c.SEEN_NOTIFICATIONS: user.get(
-                    db_c.SEEN_NOTIFICATIONS, False
-                )
-            }
+            data={db_c.SEEN_NOTIFICATIONS: user.get(db_c.SEEN_NOTIFICATIONS, False)}
         )
 
 
@@ -322,9 +314,7 @@ class AddUserFavorite(SwaggerView):
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
-            return {
-                "message": api_c.INVALID_COMPONENT_NAME
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_COMPONENT_NAME}, HTTPStatus.BAD_REQUEST
 
         component_id = ObjectId(component_id)
 
@@ -337,9 +327,7 @@ class AddUserFavorite(SwaggerView):
         if user_details:
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
 
-        return {
-            "message": f"{str(component_id)} already in favorites."
-        }, HTTPStatus.OK
+        return {"message": f"{str(component_id)} already in favorites."}, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -407,9 +395,7 @@ class DeleteUserFavorite(SwaggerView):
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
-            return {
-                "message": api_c.INVALID_COMPONENT_NAME
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_COMPONENT_NAME}, HTTPStatus.BAD_REQUEST
 
         user_details = manage_user_favorites(
             get_db_client(),
@@ -419,14 +405,10 @@ class DeleteUserFavorite(SwaggerView):
             delete_flag=True,
         )
         if user_details:
-            logger.info(
-                "Successfully deleted user favorite %s.", component_name
-            )
+            logger.info("Successfully deleted user favorite %s.", component_name)
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
-        return {
-            "message": f"{component_id} not part of user favorites"
-        }, HTTPStatus.OK
+        return {"message": f"{component_id} not part of user favorites"}, HTTPStatus.OK
 
 
 @add_view_to_blueprint(user_bp, api_c.USER_ENDPOINT, "UserView")
@@ -438,18 +420,14 @@ class UserView(SwaggerView):
             "description": "List of all Users.",
             "schema": {"type": "array", "items": UserSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get all Users."
-        },
+        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get all Users."},
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(
-        self, user: dict
-    ) -> Tuple[list, int]:  # pylint: disable=no-self-use
+    def get(self, user: dict) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all users.
 
         ---
@@ -544,9 +522,7 @@ class UserPatchView(SwaggerView):
         database = get_db_client()
 
         if api_c.ID in body:
-            userinfo = get_all_users(
-                database, {db_c.ID: ObjectId(body.get(api_c.ID))}
-            )
+            userinfo = get_all_users(database, {db_c.ID: ObjectId(body.get(api_c.ID))})
             del body[api_c.ID]
         else:
             userinfo = get_all_users(
@@ -608,9 +584,7 @@ class CreateTicket(SwaggerView):
             "schema": TicketGetSchema,
             "description": "Details of ticket created in JIRA.",
         },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to report issue."
-        },
+        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to report issue."},
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
@@ -684,9 +658,7 @@ class RequestNewUser(SwaggerView):
             "schema": TicketGetSchema,
             "description": "Details of ticket created in JIRA.",
         },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to request user."
-        },
+        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to request user."},
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
@@ -723,9 +695,7 @@ class RequestNewUser(SwaggerView):
             issue_type=api_c.TASK,
             summary=f"{api_c.NEW_USER_REQUEST_PREFIX} for "
             f"{user_request_details.get(api_c.EMAIL, '')}",
-            description=create_description_for_user_request(
-                **user_request_details
-            ),
+            description=create_description_for_user_request(**user_request_details),
         )
 
         return (
@@ -734,9 +704,7 @@ class RequestNewUser(SwaggerView):
         )
 
 
-@add_view_to_blueprint(
-    user_bp, f"{api_c.USER_ENDPOINT}/tickets", "UserTickets"
-)
+@add_view_to_blueprint(user_bp, f"{api_c.USER_ENDPOINT}/tickets", "UserTickets")
 class UserTickets(SwaggerView):
     """User Tickets Class."""
 
@@ -807,9 +775,7 @@ class UserTickets(SwaggerView):
                     {
                         api_c.ID: ticket.get(api_c.ID),
                         api_c.KEY: ticket.get(api_c.KEY),
-                        api_c.SUMMARY: ticket.get(api_c.FIELDS).get(
-                            api_c.SUMMARY
-                        ),
+                        api_c.SUMMARY: ticket.get(api_c.FIELDS).get(api_c.SUMMARY),
                         api_c.CREATED: parse(
                             ticket.get(api_c.FIELDS).get(api_c.CREATED)
                         ),
@@ -881,9 +847,7 @@ class UserPreferencesView(SwaggerView):
         body = UserPreferencesSchema().load(request.get_json())
 
         if not body:
-            return {
-                api_c.MESSAGE: "No alert body provided."
-            }, HTTPStatus.BAD_REQUEST
+            return {api_c.MESSAGE: "No alert body provided."}, HTTPStatus.BAD_REQUEST
 
         updated_user = update_user(
             get_db_client(),
@@ -916,9 +880,7 @@ class UsersRequested(SwaggerView):
             "description": "Retrieve requested users.",
             "schema": {"type": "array", "items": RequestedUserSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get requested users."
-        },
+        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get requested users."},
         HTTPStatus.NOT_FOUND.value: {
             "schema": NotFoundError,
         },
@@ -992,10 +954,7 @@ class UsersRBACMatrix(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Retrieve RBAC Matrix.",
-            "schema": {"type": "array", "items": RBACMatrixSchema},
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get RBAC Matrix."
+            "schema": RBACMatrixSchema,
         },
         HTTPStatus.NOT_FOUND.value: {
             "schema": NotFoundError,
@@ -1020,20 +979,28 @@ class UsersRBACMatrix(SwaggerView):
             Tuple[dict, int]: dict of requested users, HTTP status code.
         """
 
+        # Fetch rbac matrix settings document from configurations collection
         database = get_db_client()
-
-        matrix = get_constant(
-            database,
-            api_c.RBAC_MATRIX,
+        query_filter = {
+            db_c.CONFIGURATION_FIELD_TYPE: {
+                "$in": [db_c.CONFIGURATION_TYPE_RBAC_MATRIX]
+            }
+        }
+        rbac_matrix = get_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            query_filter=query_filter,
         )
 
-        return (
-            jsonify(
-                RBACMatrixSchema().dump(
-                    matrix[api_c.VALUE],
-                )
-            ),
-            HTTPStatus.OK,
+        if not rbac_matrix:
+            logger.error("RBAC matrix document not found in configurations collection.")
+            return HuxResponse.NOT_FOUND(
+                "RBAC matrix document not found in configurations collection."
+            )
+
+        return HuxResponse.OK(
+            data=rbac_matrix[db_c.CONFIGURATION_FIELD_SETTINGS],
+            data_schema=RBACMatrixSchema(),
         )
 
 

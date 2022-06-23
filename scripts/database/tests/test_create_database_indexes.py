@@ -26,20 +26,15 @@ class TestCreateDBIndexes(TestCase):
         index_list = [
             (
                 db_c.DATA_MANAGEMENT_DATABASE,
-                db_c.CONSTANTS_COLLECTION,
-                [(db_c.CONSTANT_NAME, ASCENDING)],
-            ),
-            (
-                db_c.DATA_MANAGEMENT_DATABASE,
                 db_c.INGESTION_JOBS_COLLECTION,
                 [(db_c.DATA_SOURCE_ID, ASCENDING)],
             ),
         ]
         cdi.set_indexes(self.database, index_list)
-        const_collection = self.database[db_c.DATA_MANAGEMENT_DATABASE][
-            db_c.CONSTANTS_COLLECTION
+        ingestion_jobs_collection = self.database[db_c.DATA_MANAGEMENT_DATABASE][
+            db_c.INGESTION_JOBS_COLLECTION
         ]
-        self.assertTrue(const_collection.index_information())
+        self.assertTrue(ingestion_jobs_collection.index_information())
 
     def test_add_unique_compound_index(self):
         """Unit Test for set Indexes."""

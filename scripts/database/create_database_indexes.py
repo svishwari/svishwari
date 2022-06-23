@@ -28,11 +28,6 @@ logging.basicConfig(level=logging.INFO)
 index_constants = [
     (
         db_c.DATA_MANAGEMENT_DATABASE,
-        db_c.CONSTANTS_COLLECTION,
-        [(db_c.CONSTANT_NAME, ASCENDING)],
-    ),
-    (
-        db_c.DATA_MANAGEMENT_DATABASE,
         db_c.INGESTION_JOBS_COLLECTION,
         [(db_c.DATA_SOURCE_ID, ASCENDING)],
     ),
@@ -167,9 +162,7 @@ def add_unique_compound_index(database: MongoClient) -> None:
         database (MongoClient): MongoDB Client.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.INGESTED_DATA_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.INGESTED_DATA_COLLECTION]
 
     field_str = f"{db_c.INGESTED_DATA}.{db_c.S_TYPE_CUSTOMER_ID}"
     collection.create_index(

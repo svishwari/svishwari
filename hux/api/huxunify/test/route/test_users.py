@@ -8,13 +8,13 @@ import requests_mock
 from bson import ObjectId
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.collection_management import create_document
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import get_user
-from huxunifylib.database.data_management import set_constant
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_user_favorites
@@ -77,37 +77,20 @@ class TestUserRoutes(RouteTestCase):
             okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],
         )
 
-        # write rbac matrix database
-        set_constant(
+        # write rbac matrix to configurations collection in database
+        self.rbac_matrix_config_settings = {
+            db_c.CONFIGURATION_FIELD_NAME: "RBAC Matrix",
+            db_c.CONFIGURATION_FIELD_TYPE: db_c.CONFIGURATION_TYPE_RBAC_MATRIX,
+            db_c.CONFIGURATION_FIELD_DESCRIPTION: "Role Based Access Control Matrix",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_SETTINGS: api_c.SAMPLE_RBAC_MATRIX_SETTINGS[
+                db_c.CONFIGURATION_FIELD_SETTINGS
+            ],
+        }
+        create_document(
             self.database,
-            "rbac_matrix",
-            {
-                "components": {
-                    "alerts": {
-                        "label": "Alerts",
-                        "actions": [
-                            {
-                                "type": "get_all",
-                                "admin": True,
-                                "editor": True,
-                                "viewer": True,
-                            },
-                            {
-                                "type": "get_one",
-                                "admin": True,
-                                "editor": True,
-                                "viewer": True,
-                            },
-                            {
-                                "type": "delete",
-                                "admin": True,
-                                "editor": False,
-                                "viewer": False,
-                            },
-                        ],
-                    },
-                }
-            },
+            db_c.CONFIGURATIONS_COLLECTION,
+            self.rbac_matrix_config_settings,
         )
 
     def test_adding_engagement_to_favorite(self):
@@ -169,9 +152,7 @@ class TestUserRoutes(RouteTestCase):
         expected_response_message = (
             f"The ID <{audience_id}> does " f"not exist in the database!"
         )
-        self.assertEqual(
-            expected_response_message, response.json.get("message")
-        )
+        self.assertEqual(expected_response_message, response.json.get("message"))
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_deleting_dne_audience_from_favorite(self):
@@ -234,12 +215,8 @@ class TestUserRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        expected_response_message = (
-            f"{self.audience_id} not part of user " f"favorites"
-        )
-        self.assertEqual(
-            expected_response_message, response.json.get("message")
-        )
+        expected_response_message = f"{self.audience_id} not part of user " f"favorites"
+        self.assertEqual(expected_response_message, response.json.get("message"))
 
     def test_get_user_profile_success(self):
         """Test success response of getting user profile using Okta ID."""
@@ -270,9 +247,7 @@ class TestUserRoutes(RouteTestCase):
 
     def test_get_seen_notifications(self):
         """Tests get seen notifications of a user"""
-        endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/seen_notifications"
-        )
+        endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/seen_notifications"
 
         response = self.app.get(
             endpoint,
@@ -415,9 +390,7 @@ class TestUserRoutes(RouteTestCase):
 
     def test_get_user_favorites_user_does_not_exist(self):
         """Test getting user favorites with a user that does not exist."""
-        self.assertFalse(
-            get_user_favorites(self.database, None, db_c.ENGAGEMENTS)
-        )
+        self.assertFalse(get_user_favorites(self.database, None, db_c.ENGAGEMENTS))
 
     @mock.patch("huxunify.api.route.user.JiraConnection")
     def test_create_jira_issue(self, mock_jira: MagicMock):
@@ -590,9 +563,9 @@ class TestUserRoutes(RouteTestCase):
 
         # get the user again and validate that the alerts are empty.
         self.assertFalse(
-            get_user(
-                self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB]
-            )[db_c.USER_ALERTS]
+            get_user(self.database, t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB])[
+                db_c.USER_ALERTS
+            ]
         )
 
     @mock.patch("huxunify.api.route.user.JiraConnection")
@@ -643,9 +616,7 @@ class TestUserRoutes(RouteTestCase):
 
         mock_jira_instance = mock_jira.return_value
         mock_jira_instance.check_jira_connection.return_value = True
-        mock_jira_instance.search_jira_issues.return_value = (
-            empty_jira_response
-        )
+        mock_jira_instance.search_jira_issues.return_value = empty_jira_response
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{t_c.TICKETS}",
@@ -706,28 +677,29 @@ class TestUserRoutes(RouteTestCase):
 
         mock_jira_instance = mock_jira.return_value
         mock_jira_instance.check_jira_connection.return_value = True
-        mock_jira_instance.search_jira_issues.return_value = (
-            empty_issue_jira_response
-        )
+        mock_jira_instance.search_jira_issues.return_value = empty_issue_jira_response
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.REQUESTED_USERS}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(
-            "No user requests found.", response.json.get(api_c.MESSAGE)
-        )
+        self.assertEqual("No user requests found.", response.json.get(api_c.MESSAGE))
 
     def test_get_rbac_matrix(self):
-        """Test getting rbac matrix"""
+        """Test get user RBAC matrix."""
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.RBAC_MATRIX}",
             headers=t_c.STANDARD_HEADERS,
         )
+
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsNotNone(response.json["components"]["alerts"])
-        self.assertIsNotNone(response.json["components"]["alerts"]["actions"])
+        self.assertIsInstance(response.json, dict)
+        self.assertDictEqual(
+            self.rbac_matrix_config_settings[db_c.CONFIGURATION_FIELD_SETTINGS],
+            response.json,
+        )
 
     def test_delete_user(self):
         """Test deleting a user."""
@@ -738,9 +710,7 @@ class TestUserRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
-        self.assertIsNone(
-            get_user(self.database, okta_id=self.user_info[db_c.ID])
-        )
+        self.assertIsNone(get_user(self.database, okta_id=self.user_info[db_c.ID]))
 
     def test_delete_dne_user(self):
         """Test deleting a user."""
