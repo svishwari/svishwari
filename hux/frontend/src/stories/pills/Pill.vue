@@ -17,16 +17,17 @@
     <div v-else>
       {{ label }}
       <v-menu v-if="dropdown" v-model="showMenu">
-        <template #activator="{ on }">
+        <template>
           <icon
-            right
             :type="showMenu ? 'Dropdown - up' : 'Dropdown - down'"
-            :color="darkText ? 'black' : 'white'"
-            size="14"
-            :on="on"
+            :size="14"
+            color="white-base"
+            outline
+            border-color="primary-base"
+            bg-color="primary-base"
           />
         </template>
-        <slot name="dropdown">
+        <slot name="dropdown-menu">
           <v-list><v-list-item>hi</v-list-item></v-list>
         </slot>
       </v-menu>
