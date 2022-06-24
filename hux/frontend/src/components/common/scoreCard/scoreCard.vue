@@ -58,7 +58,7 @@ export default {
     value: {
       type: [String, Number],
       required: true,
-      default: 75,
+      default: "—",
     },
     stroke: {
       type: String,

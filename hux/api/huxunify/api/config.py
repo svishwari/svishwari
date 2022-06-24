@@ -60,6 +60,7 @@ class Config:
     MONGO_DB_PORT = config(api_c.MONGO_DB_PORT, default=27017, cast=int)
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_PASSWORD = config(api_c.MONGO_DB_PASSWORD, default="")
+    MONGO_SSL_FLAG = config(api_c.MONGO_DB_USE_SSL, default=True, cast=bool)
     # grab the SSL cert path
     MONGO_SSL_CERT = str(
         Path(__file__).parent.parent.joinpath(
@@ -79,13 +80,18 @@ class Config:
         api_c.PORT: MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: MONGO_DB_PASSWORD,
-        api_c.SSL_CERT_PATH: MONGO_SSL_CERT,
+        api_c.SSL_FLAG: MONGO_SSL_FLAG,
     }
-    if CLOUD_PROVIDER == api_c.AZURE:
-        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
-    if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
-        del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
-        del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
+    if MONGO_SSL_FLAG:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
+        if CLOUD_PROVIDER == api_c.AZURE:
+            MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
+        # TODO: To be removed once LILDEV env has ssl and cert setup
+        #  implementation done
+        if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
+            MONGO_DB_CONFIG[api_c.SSL_FLAG] = False
+            del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
+            del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
     # OKTA CONFIGURATION
     OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
@@ -171,25 +177,29 @@ class DevelopmentConfig(Config):
     """Development Config Object."""
 
     FLASK_ENV = api_c.DEVELOPMENT_MODE
-    MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
 
     # TODO Remove when we have separate configs for environments.
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
         api_c.HOST: Config.MONGO_DB_HOST,
         api_c.PORT: Config.MONGO_DB_PORT,
-        api_c.USERNAME: MONGO_DB_USERNAME,
+        api_c.USERNAME: Config.MONGO_DB_USERNAME,
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
-        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
+        api_c.SSL_FLAG: Config.MONGO_SSL_FLAG,
     }
-    if Config.CLOUD_PROVIDER == api_c.AZURE:
-        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = Config.AZURE_MONGO_TLS_CLIENT_KEY
+    if Config.MONGO_SSL_FLAG:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
+        if Config.CLOUD_PROVIDER == api_c.AZURE:
+            MONGO_DB_CONFIG[
+                api_c.TLS_CERT_KEY
+            ] = Config.AZURE_MONGO_TLS_CLIENT_KEY
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
 
     if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
+        MONGO_DB_CONFIG[api_c.SSL_FLAG] = False
         del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
         del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
@@ -210,8 +220,10 @@ class PyTestConfig(Config):
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
-        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
+        api_c.SSL_FLAG: Config.MONGO_SSL_FLAG,
     }
+    if Config.MONGO_SSL_FLAG:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
 
     # OKTA CONFIGURATION
     OKTA_CLIENT_ID = "test-client-id"

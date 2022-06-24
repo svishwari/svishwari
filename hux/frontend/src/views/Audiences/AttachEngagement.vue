@@ -42,6 +42,7 @@
             </div>
             <div v-else class="ma-1">
               <huxButton
+                v-if="getAccess('engagements', 'create_one')"
                 variant="primary base"
                 icon-color="white"
                 icon-variant="base"
@@ -302,6 +303,7 @@ import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
 import { deliverySchedule } from "@/utils"
+import { getAccess } from "@/utils"
 
 export default {
   name: "AttachEngagement",
@@ -572,6 +574,7 @@ export default {
         this.selectedEndDate = "No end date"
       }
     },
+    getAccess: getAccess,
   },
 }
 </script>

@@ -4,7 +4,7 @@
     header-name="Add segment"
     transition="scale-transition"
     :count="1"
-    content-height="300px"
+    content-height="330px"
     submit-button-width="79"
     submit-button="Add"
     :style="{ transition: '0.5s', height: viewHeight }"

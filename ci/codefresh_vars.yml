@@ -62,6 +62,8 @@ unified-ui:
       VC_FAIL_ON_SEVERITY: "Very High, High"
     files:
       VC_FILETYPE:
+        - js
+        - vue
         - py
         - txt
 

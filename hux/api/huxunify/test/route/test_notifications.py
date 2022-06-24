@@ -4,17 +4,22 @@ import json
 from unittest import mock
 from http import HTTPStatus
 
+from bson import ObjectId
 from dateutil.relativedelta import relativedelta
 
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database.notification_management import (
+    create_notification,
+    delete_notification,
+)
 from huxunifylib.database.user_management import set_user, update_user
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.notifications import NotificationSchema
 
 
+# pylint: disable=too-many-public-methods
 class TestNotificationRoutes(RouteTestCase):
     """Test Notifications class."""
 
@@ -63,6 +68,17 @@ class TestNotificationRoutes(RouteTestCase):
             key=lambda x: x[db_c.NOTIFICATION_FIELD_CREATE_TIME],
             reverse=True,
         )
+
+    def empty_notifications_in_mock_db(self):
+        """Delete all notification documents from notifications collection in
+        mock DB."""
+
+        for notification in self.notifications:
+            delete_notification(
+                database=self.database,
+                notification_id=ObjectId(notification[api_c.ID]),
+                hard_delete=True,
+            )
 
     def test_create_notification(self):
         """Test create notification"""
@@ -125,13 +141,42 @@ class TestNotificationRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json, dict)
         self.assertEqual(len(self.notifications), response.json[api_c.TOTAL])
         self.assertCountEqual(
             self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
         )
 
+    def test_get_notifications_notifications_empty_in_db(self):
+        """Test get notifications when notification collection is empty in
+        DB."""
+
+        self.empty_notifications_in_mock_db()
+
+        params = {
+            api_c.QUERY_PARAMETER_BATCH_SIZE: api_c.DEFAULT_BATCH_SIZE,
+            api_c.QUERY_PARAMETER_SORT_ORDER: db_c.PAGINATION_DESCENDING,
+            api_c.QUERY_PARAMETER_BATCH_NUMBER: api_c.DEFAULT_BATCH_NUMBER,
+        }
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
+            data=params,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsInstance(response.json, dict)
+        # assert total number of notifications in response is 0
+        self.assertEqual(0, response.json[api_c.TOTAL])
+        # assert list of notifications in response is empty
+        self.assertFalse(response.json[api_c.NOTIFICATIONS_TAG])
+        # assert seen_notifications field in response is false
+        self.assertFalse(response.json[db_c.SEEN_NOTIFICATIONS])
+
     def test_get_notification(self):
         """Test get notification."""
+
         notification_id = self.notifications[0][api_c.ID]
 
         response = self.app.get(
@@ -143,6 +188,33 @@ class TestNotificationRoutes(RouteTestCase):
         # assert that the return json body is successfully validated to return
         # an empty dict
         self.assertFalse(NotificationSchema().validate(response.json))
+
+    def test_get_notification_invalid_id(self):
+        """Test get notification with invalid id."""
+
+        invalid_notification_id = str(ObjectId())
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{invalid_notification_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_get_notification_notifications_empty_in_db(self):
+        """Test get notification when notification collection is empty in
+        DB."""
+
+        self.empty_notifications_in_mock_db()
+
+        notification_id = str(ObjectId())
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notification_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_get_notification_with_username(self):
         """Test get notification."""
@@ -165,8 +237,22 @@ class TestNotificationRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(len(response.json), 1)
+        self.assertEqual(len(response.json), 1)
         self.assertIn("test_user", response.json)
+
+    def test_get_notification_users_notifications_empty_in_db(self):
+        """Test get notification users when notification collection is empty in
+        DB."""
+
+        self.empty_notifications_in_mock_db()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{api_c.USERS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(response.json), 0)
 
     def test_get_notifications_default_params(self):
         """Test get notifications failure."""
@@ -357,11 +443,28 @@ class TestNotificationRoutes(RouteTestCase):
     def test_delete_notification_invalid_id(self):
         """Test delete notification API with invalid ID."""
 
-        notification_id = "some_random_id"
+        invalid_notification_id = "some_random_id"
 
         response = self.app.delete(
-            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notification_id}",
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/"
+            f"{invalid_notification_id}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_delete_notification_notifications_empty_in_db(self):
+        """Test delete notification API when notification collection is empty
+        in DB."""
+
+        self.empty_notifications_in_mock_db()
+
+        notification_id = str(ObjectId())
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/"
+            f"{notification_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
