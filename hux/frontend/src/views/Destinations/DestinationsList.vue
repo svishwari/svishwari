@@ -61,6 +61,7 @@
       >
         <template #button>
           <router-link
+            v-if="!showError && getAccess('destinations', 'create_one')"
             :to="{ name: 'DestinationConfiguration' }"
             class="text-decoration-none"
             data-e2e="addDestination"
