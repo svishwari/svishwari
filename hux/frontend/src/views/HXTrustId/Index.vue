@@ -298,11 +298,7 @@
                 <v-card v-else class="box-shadow-5" height="250">
                   <empty-page
                     class="py-8"
-                    :type="
-                      segmentErrorState
-                        ? 'error-on-screens'
-                        : 'no-customer-data'
-                    "
+                    :type="emptyPageIcon(segmentErrorState)"
                     :size="50"
                   >
                     <template #title>
@@ -366,11 +362,7 @@
               <v-card v-else class="pb-12 box-shadow-5" height="250">
                 <empty-page
                   class="pt-16"
-                  :type="
-                    attributeErrorState
-                      ? 'error-on-screens'
-                      : 'no-customer-data'
-                  "
+                  :type="emptyPageIcon(attributeErrorState)"
                   :size="50"
                 >
                   <template #title>
@@ -730,6 +722,9 @@ export default {
       deleteSegment: "trustId/removeSegment",
       setAlert: "alerts/setAlert",
     }),
+    emptyPageIcon(errorState) {
+      return errorState ? "error-on-screens" : "no-customer-data"
+    },
     async fetchComparisonData() {
       try {
         await this.getTrustIdComparison({

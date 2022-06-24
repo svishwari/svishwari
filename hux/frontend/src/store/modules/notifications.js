@@ -74,7 +74,7 @@ const actions = {
           '"'
         )
       })
-      if (batchDetails.batchSize === 5 || batchDetails.batch_size === 5) {
+      if (batchDetails.batchSize === 5) {
         commit("SET_LATEST", response.data)
       } else {
         commit("SET_TOTAL", response.data.total)

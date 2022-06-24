@@ -474,7 +474,7 @@
                           <template #hover-content>
                             <span
                               v-if="
-                                !item[header.value] || item[header.value] === {}
+                                deliveryScheduleNullCheck(item[header.value])
                               "
                             >
                               This audience was delivered manually on
@@ -846,6 +846,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import { isEmpty } from "lodash"
 import PageHeader from "@/components/PageHeader"
 import Error from "@/components/common/screens/Error"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -1072,6 +1073,10 @@ export default {
       clearFavorite: "users/clearFavorite",
       deleteEngagement: "engagements/remove",
     }),
+
+    deliveryScheduleNullCheck(deliveryObject) {
+      return !deliveryObject && isEmpty(deliveryObject)
+    },
 
     setDefaultBatch() {
       this.batchDetails.batch_size = 25
