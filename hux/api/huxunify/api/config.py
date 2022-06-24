@@ -199,6 +199,7 @@ class DevelopmentConfig(Config):
     )
 
     if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
+        MONGO_DB_CONFIG[api_c.SSL_FLAG] = False
         del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
         del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
