@@ -1,4 +1,4 @@
-"""Test Module for Prepopulate Database Script"""
+"""Test Module for Pre-populate Database Script."""
 from unittest import TestCase, mock
 import mongomock
 from huxunifylib.database import constants as db_c
@@ -94,18 +94,37 @@ class TestPrepopulateDatabase(TestCase):
         ]
 
     def test_empty_collection_creation(self):
-        """Test creation of empty collection"""
+        """Test creation of empty collection."""
+
         collection_names = [
+            db_c.AUDIENCE_CUSTOMERS_COLLECTION,
+            db_c.AUDIENCE_INSIGHTS_COLLECTION,
+            db_c.AUDIENCES_COLLECTION,
+            db_c.AUDIENCE_AUDIT_COLLECTION,
+            db_c.CACHE_COLLECTION,
+            db_c.CAMPAIGN_ACTIVITY_COLLECTION,
+            db_c.DELIVERABILITY_METRICS_COLLECTION,
             db_c.DELIVERY_JOBS_COLLECTION,
+            db_c.ENGAGEMENTS_COLLECTION,
+            db_c.INGESTED_DATA_COLLECTION,
+            db_c.INGESTED_DATA_STATS_COLLECTION,
+            db_c.INGESTION_JOBS_COLLECTION,
             db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+            db_c.NOTIFICATIONS_COLLECTION,
+            db_c.PERFORMANCE_METRICS_COLLECTION,
+            db_c.SURVEY_METRICS_COLLECTION,
+            db_c.USER_COLLECTION,
         ]
-        pd.create_empty_collections(self.database, collection_names)
+        pd.create_empty_collections(
+            mongo_client=self.database, collection_names=collection_names
+        )
 
         collections = self.database[
             db_c.DATA_MANAGEMENT_DATABASE
         ].list_collection_names()
 
         self.assertTrue(collections)
+
         for collection_name in collection_names:
             self.assertIn(collection_name, collections)
 

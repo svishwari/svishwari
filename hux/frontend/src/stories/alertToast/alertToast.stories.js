@@ -9,12 +9,12 @@ export default {
     label: { control: { type: "text" } },
     type: {
       options: [
-        "positive",
-        "negative",
-        "informative",
-        "warning",
-        "guiding",
-        "offline",
+        "Checkmark",
+        "Error",
+        "Informative",
+        "Error & Warning",
+        "Guide",
+        "Offline",
       ],
       control: { type: "select" },
     },

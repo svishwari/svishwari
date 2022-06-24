@@ -20,6 +20,7 @@ USER = "user"
 USERNAME = "username"
 PASSWORD = "password"
 CONNECTION_STRING = "connection_string"
+SSL_FLAG = "ssl_flag"
 SSL_CERT_PATH = "ssl_cert_path"
 SSL_CERT_FILE_NAME = "SSL_CERT_FILE_NAME"
 TLS_CERT_KEY = "tls_cert_key_file"
@@ -29,6 +30,7 @@ MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
 MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
 MONGO_CONNECTION_STRING = "MONGO_CONNECTION_STRING"
+MONGO_DB_USE_SSL = "MONGO_DB_USE_SSL"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
 OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
@@ -1484,6 +1486,35 @@ SAMPLE_NAVIGATION_SETTINGS = {
             ],
         },
     ]
+}
+SAMPLE_RBAC_MATRIX_SETTINGS = {
+    db_c.CONFIGURATION_FIELD_SETTINGS: {
+        db_c.COMPONENTS: {
+            db_c.ALERTS: {
+                db_c.CONFIGURATION_FIELD_LABEL: "Alerts",
+                db_c.ACTIONS: [
+                    {
+                        db_c.TYPE: "get_all",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: True,
+                        db_c.USER_ROLE_VIEWER: True,
+                    },
+                    {
+                        db_c.TYPE: "get_one",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: True,
+                        db_c.USER_ROLE_VIEWER: True,
+                    },
+                    {
+                        db_c.TYPE: "delete",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: False,
+                        db_c.USER_ROLE_VIEWER: False,
+                    },
+                ],
+            }
+        }
+    }
 }
 
 # Applications

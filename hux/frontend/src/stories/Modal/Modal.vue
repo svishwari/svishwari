@@ -10,8 +10,10 @@
             <icon
               v-if="icon"
               :type="icon"
-              :color="localIconColor"
-              :size="iconSize"
+              :color="iconColor"
+              :border-color="iconColor"
+              outline
+              :size="38"
               class="mb-7"
             />
           </slot>
@@ -78,7 +80,7 @@
 
 <script>
 import huxButton from "@/components/common/huxButton"
-import Icon from "../../components/common/Icon.vue"
+import Icon from "../icons/Icon2.vue"
 export default {
   name: "Modal",
 
@@ -101,12 +103,7 @@ export default {
     iconColor: {
       type: String,
       required: false,
-    },
-
-    iconSize: {
-      type: [Number, String],
-      required: false,
-      default: 40,
+      default: "primary-base",
     },
 
     type: {
