@@ -16,25 +16,19 @@
         <v-btn
           text
           min-width="7rem"
+          :ripple="false"
           height="3rem"
           class="primary--text text-body-1"
           data-e2e="drawerToggle"
           @click.native="toggleDrawer()"
         >
-          <hux-icon
-            type="plus"
-            :size="16"
-            color="primary"
-            class="mr-4"
-            @click.native="toggleDrawer()"
-          />
+          <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
           <hux-icon
             type="destination"
             :size="32"
             color="primary"
             class="mr-2 box-shadow-25"
             :style="{ 'border-radius': '50%' }"
-            @click.native="toggleDrawer()"
           />
           Destination
         </v-btn>
