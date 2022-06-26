@@ -12,6 +12,7 @@ const defaultAudience = {
           type: "type",
           value: "value",
         },
+        
       ],
     },
   ],
@@ -31,7 +32,7 @@ const multipleSectionFiltersAudience = {
   },
   destinations: [],
   tags: {
-    industry: ["automotive", "healthcare"],
+    industry: ["automotive", "healthcare", "financial_services"],
   },
   filters: [
     {
