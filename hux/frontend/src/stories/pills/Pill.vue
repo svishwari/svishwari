@@ -20,17 +20,14 @@
         <template #activator="{ on }">
           <icon
             right
-            :type="showMenu ? 'mdi-chevron-up' : 'chevron-down'"
+            :type="showMenu ? 'Dropdown - up' : 'Dropdown - down'"
             :color="darkText ? 'black' : 'white'"
-            size="12"
-            class="pt-1"
+            size="14"
             :on="on"
           />
         </template>
         <slot name="dropdown">
-          <v-list class="dropdown-content"
-            ><v-list-item>hi</v-list-item></v-list
-          >
+          <v-list><v-list-item>hi</v-list-item></v-list>
         </slot>
       </v-menu>
     </div>

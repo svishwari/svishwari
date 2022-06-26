@@ -102,7 +102,67 @@ $headings: (
       "line-height": 22px,
       "weight": 400,
       "letter-spacing": 0,
-    )
+    ),
+  "new-h1": (
+    "size": 32px,
+    "line-height": 40px,
+    "weight": 300,
+    "letter-spacing": 0,
+  ),
+  "new-h2": (
+    "size": 28px,
+    "line-height": 40px,
+    "weight": 300,
+    "letter-spacing": 0.25px,
+  ),
+  "new-h3": (
+    "size": 20px,
+    "line-height": 40px,
+    "weight": 700,
+    "letter-spacing": 0.15px,
+  ),
+  "new-h4": (
+    "size": 20px,
+    "line-height": 24px,
+    "weight": 400,
+    "letter-spacing": 0,
+  ),
+  "new-b1": (
+    "size": 16px,
+    "line-height": 24px,
+    "weight": 400,
+    "letter-spacing": 0,
+  ),
+  "new-b2": (
+    "size": 16px,
+    "line-height": 24px,
+    "weight": 600,
+    "letter-spacing": 0,
+  ),
+  "new-b3": (
+    "size": 14px,
+    "line-height": 20px,
+    "weight": 700,
+    "letter-spacing": 0.2px,
+  ),
+  "new-b4": (
+    "size": 14px,
+    "line-height": 20px,
+    "weight": 400,
+    "letter-spacing": 0,
+  ),
+  "new-pills": (
+    "size": 12px,
+    "line-height": 20px,
+    "weight": 700,
+    "letter-spacing": 0,
+  ),
+  "new-secondary-label": (
+    "size": 12px,
+    "line-height": 20px,
+    "weight": 400,
+    "letter-spacing": 0,
+  )
 );
 
 // App

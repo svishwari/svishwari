@@ -28,11 +28,6 @@ logging.basicConfig(level=logging.INFO)
 index_constants = [
     (
         db_c.DATA_MANAGEMENT_DATABASE,
-        db_c.CONSTANTS_COLLECTION,
-        [(db_c.CONSTANT_NAME, ASCENDING)],
-    ),
-    (
-        db_c.DATA_MANAGEMENT_DATABASE,
         db_c.INGESTION_JOBS_COLLECTION,
         [(db_c.DATA_SOURCE_ID, ASCENDING)],
     ),

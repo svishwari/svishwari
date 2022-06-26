@@ -1,30 +1,43 @@
 <template>
-  <v-btn
-    :text="textOnly"
-    class="px-6"
-    :outlined="outlined"
-    :disabled="disabled"
-    :style="{
-      color: `${getTxtColor(
-        disabled ? 'black-lighten5' : danger ? 'error-lighten1' : color
-      )} !important`,
-      backgroundColor: `${getBtnColor(
-        disabled ? 'black-lighten5' : danger ? 'error-lighten1' : color
-      )} !important`,
-    }"
-    @click="onClick"
-  >
-    <div class="button-content text-button">
-      <icon
-        v-if="icon"
-        :type="icon"
-        size="15"
-        :color="iconColor"
-        class="mr-2"
-      />
-      <slot name="default" />
-    </div>
-  </v-btn>
+  <v-hover v-slot="{ hover }">
+    <v-btn
+      class="px-6"
+      :outlined="variant == 'secondary'"
+      :disabled="disabled"
+      :style="{
+        color:
+          'var(--v-' +
+          (variant == 'secondary'
+            ? hover
+              ? getHoverColor()
+              : getColor()
+            : 'white-base') +
+          ') !important',
+        backgroundColor:
+          'var(--v-' +
+          (variant == 'secondary'
+            ? 'white-base'
+            : hover
+            ? getHoverColor()
+            : getColor()) +
+          ') !important',
+      }"
+      @click="onClick"
+    >
+      <div class="button-content text-b3">
+        <icon
+          v-if="icon"
+          :type="icon"
+          size="15"
+          :color="getColor()"
+          outline
+          border-color="white-base"
+          class="mr-2"
+        />
+        <slot name="default" />
+      </div>
+    </v-btn>
+  </v-hover>
 </template>
 
 <script>
@@ -34,30 +47,10 @@ export default {
   name: "NewButton",
   components: { Icon },
   props: {
-    textOnly: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
     icon: {
       type: String,
       required: false,
       default: null,
-    },
-    color: {
-      type: String,
-      required: false,
-      default: "secondary",
-    },
-    iconColor: {
-      type: String,
-      required: false,
-      default: "primary",
-    },
-    outlined: {
-      type: Boolean,
-      required: false,
-      default: false,
     },
     disabled: {
       type: Boolean,
@@ -69,18 +62,24 @@ export default {
       required: false,
       default: false,
     },
+    variant: {
+      type: String,
+      required: false,
+      default: "primary",
+    },
   },
   methods: {
     onClick: function () {
       this.$emit("click")
     },
-    getTxtColor(color) {
-      if (this.outlined || this.textOnly) return `var(--v-${color})`
-      else return "var(--v-white-base)"
+    getColor() {
+      if (this.disabled) return "black-lighten5"
+      if (this.danger) return "error-lighten1"
+      return "primary-lighten7"
     },
-    getBtnColor(color) {
-      if (this.outlined || this.textOnly) return "var(--v-white-base)"
-      else return `var(--v-${color})`
+    getHoverColor() {
+      if (!this.disabled && !this.danger) return "primary-base"
+      return this.getColor()
     },
   },
 }
