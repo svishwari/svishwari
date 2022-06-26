@@ -98,8 +98,8 @@
             </div>
             <div class="tag-section">
               <hux-drop-down-search
-                :min-width="360"
                 v-model="selectedTags"
+                :min-width="360"
                 :min-selection="0"
                 :items="mapIndustryTags"
                 :is-search-enabled="false"
@@ -271,9 +271,9 @@
               Industry
             </div>
             <hux-drop-down-search
+              v-model="selectedTags"
               class="wow"
               :min-width="360"
-              v-model="selectedTags"
               :min-selection="0"
               :items="mapIndustryTags"
               :is-search-enabled="false"

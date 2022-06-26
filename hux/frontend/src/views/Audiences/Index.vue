@@ -151,7 +151,12 @@
                       :key="`${item.id}-${tag}`"
                     >
                       <template #label-content>
-                        <logo :size="18" :key="tag" class="mr-1" :type="`${tag}_logo`" />
+                        <logo
+                          :key="tag"
+                          :size="18"
+                          class="mr-1"
+                          :type="`${tag}_logo`"
+                        />
                       </template>
                       <template #hover-content>
                         <span>{{ formatText(tag) }}</span>
@@ -610,7 +615,13 @@ export default {
           width: "182",
         },
       ],
-      industryTags: ["automotive", "financial_services", "healthcare", "hospitality", "retail"],
+      industryTags: [
+        "automotive",
+        "financial_services",
+        "healthcare",
+        "hospitality",
+        "retail",
+      ],
       loading: false,
       selectedAudience: null,
       showLookAlikeDrawer: false,

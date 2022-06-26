@@ -12,7 +12,6 @@ const defaultAudience = {
           type: "type",
           value: "value",
         },
-        
       ],
     },
   ],
