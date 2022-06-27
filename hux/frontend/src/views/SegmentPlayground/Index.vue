@@ -320,7 +320,7 @@ import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 import EmptyPage from "@/components/common/EmptyPage.vue"
 import Error from "@/components/common/screens/Error"
 import { v4 as uuidv4 } from "uuid"
-import { formatText } from "@/utils.js"
+import { formatText, getIndustryTags } from "@/utils.js"
 
 export default {
   name: "SegmentPlayground",
@@ -348,13 +348,7 @@ export default {
           icon: "playground",
         },
       ],
-      industry_tags: [
-        "automotive",
-        "financial_services",
-        "healthcare",
-        "hospitality",
-        "retail",
-      ],
+      industry_tags: getIndustryTags(),
       selectedTags: [],
       openMenu: false,
       editBreadcrumbs: [

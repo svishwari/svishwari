@@ -506,7 +506,7 @@ import Logo from "../../components/common/Logo.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import AudienceFilter from "./Configuration/Drawers/AudienceFilter"
 import Error from "@/components/common/screens/Error"
-import { formatText, getAccess } from "@/utils.js"
+import { formatText, getAccess, getIndustryTags } from "@/utils.js"
 
 export default {
   name: "Audiences",
@@ -615,13 +615,7 @@ export default {
           width: "182",
         },
       ],
-      industryTags: [
-        "automotive",
-        "financial_services",
-        "healthcare",
-        "hospitality",
-        "retail",
-      ],
+      industryTags: getIndustryTags(),
       loading: false,
       selectedAudience: null,
       showLookAlikeDrawer: false,
