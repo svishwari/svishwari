@@ -75,7 +75,26 @@
               :data-e2e="`model-status-${model.status}`"
             />
           </template>
-
+          <template
+            v-if="model.tags.industry.length > 0 && model.status == 'Active'"
+            slot="top"
+          >
+            <div class="float-right">
+              <tooltip v-for="tags in model.tags.industry" :key="tags">
+                <template #label-content>
+                  <logo
+                    :key="tag"
+                    :size="16"
+                    class="mr-1"
+                    :type="`${tags}_logo`"
+                  />
+                </template>
+                <template #hover-content>
+                  <span>{{ formatText(tags) }}</span>
+                </template>
+              </tooltip>
+            </div>
+          </template>
           <template v-if="model.status == 'Active'" slot="default">
             <v-row no-gutters class="mt-4">
               <v-col cols="5">
@@ -203,7 +222,9 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "../../components/common/Icon.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import ModelConfiguration from "@/views/Models/Drawers/Configuration"
-import { getAccess } from "@/utils"
+import Logo from "@/components/common/Logo.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+import { getAccess, formatText } from "@/utils.js"
 
 export default {
   name: "Models",
@@ -219,6 +240,8 @@ export default {
     Icon,
     ConfirmModal,
     ModelConfiguration,
+    Logo,
+    Tooltip,
   },
   data() {
     return {
@@ -316,6 +339,7 @@ export default {
       this.refreshScreen()
     },
     getAccess: getAccess,
+    formatText: formatText,
   },
 }
 </script>

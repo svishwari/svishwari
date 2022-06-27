@@ -30,6 +30,9 @@ const multipleSectionFiltersAudience = {
     gender_other: 0.25219,
   },
   destinations: [],
+  tags: {
+    industry: ["automotive", "healthcare", "financial_services"],
+  },
   filters: [
     {
       section_aggregator: "ALL",
