@@ -56,7 +56,7 @@ export default {
   past_version_count: 0,
   prediction_window: 60,
   tags: {
-    industry: ["healthcare", "retail"]
+    industry: ["healthcare", "retail"],
   },
   status: () =>
     faker.random.arrayElement([

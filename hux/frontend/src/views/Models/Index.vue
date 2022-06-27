@@ -76,8 +76,8 @@
             />
           </template>
           <template
-            slot="top"
             v-if="model.tags.industry.length > 0 && model.status == 'Active'"
+            slot="top"
           >
             <div class="float-right">
               <tooltip v-for="tags in model.tags.industry" :key="tags">
@@ -222,7 +222,6 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "../../components/common/Icon.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import ModelConfiguration from "@/views/Models/Drawers/Configuration"
-import ModelFilter from "@/views/Models/Drawers/ModelFilter"
 import Logo from "@/components/common/Logo.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import { getAccess, formatText } from "@/utils.js"
@@ -241,7 +240,6 @@ export default {
     Icon,
     ConfirmModal,
     ModelConfiguration,
-    ModelFilter,
     Logo,
     Tooltip,
   },

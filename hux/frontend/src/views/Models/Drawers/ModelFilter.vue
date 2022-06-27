@@ -10,9 +10,14 @@
     @apply="apply"
     @close="close"
   >
-      <div class="filter-body">
+    <div class="filter-body">
       <hux-filter-panels :expanded="[0]">
-      <hux-filter-panel :hide-actions="true" :disabled="true" title="Industry" :count="selectedTags.length">
+        <hux-filter-panel
+          :hide-actions="true"
+          :disabled="true"
+          title="Industry"
+          :count="selectedTags.length"
+        >
           <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
               v-model="selectedTags"
@@ -25,7 +30,7 @@
           </div>
         </hux-filter-panel>
       </hux-filter-panels>
-      </div>
+    </div>
   </hux-filters-drawer>
 </template>
 
@@ -75,7 +80,6 @@ export default {
       this.$emit("selected-filters", count)
       return count
     },
-
   },
   watch: {
     value: function () {
@@ -106,8 +110,8 @@ export default {
       this.localDrawer = false
     },
     close() {
-    this.selectedTags = [...this.pendingTags]
-    this.localDrawer = false
+      this.selectedTags = [...this.pendingTags]
+      this.localDrawer = false
     },
     formatText: formatText,
   },
@@ -152,7 +156,7 @@ export default {
   border-bottom: 1px solid var(--v-black-lighten2);
 }
 .filter-body {
-    width: 100%;
+  width: 100%;
   ::v-deep .v-expansion-panel-content__wrap {
     padding: 14px 24px 14px 24px !important;
   }

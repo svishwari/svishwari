@@ -500,13 +500,8 @@ export function getAccess(screen, action) {
 /**
  * Returns array of industry tags
  *
- * @returns {array} array of strings
+ * @returns {Array} array of strings
  */
- export function getIndustryTags() {
-  return [
-    "automotive",
-    "healthcare",
-    "hospitality",
-    "retail",
-  ]
+export function getIndustryTags() {
+  return ["automotive", "healthcare", "hospitality", "retail"]
 }
