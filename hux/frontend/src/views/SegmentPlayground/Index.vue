@@ -565,7 +565,7 @@ export default {
         tags: {
           industry:
             this.selectedTags.length > 0
-              ? this.selectedTags.map((item) => item.name)
+              ? this.selectedTags.map((item) => item?.name.toLowerCase())
               : [],
         },
       }
