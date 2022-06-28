@@ -25,10 +25,10 @@ class TestModels(TestCase):
         self.assertIsInstance(get_models_response.json(), list)
 
         # get the model id for propensity to open model
-        self.propensity_to_open_model_id = [
+        self.test_model_id = [
             model["id"]
             for model in get_models_response.json()
-            if "id" in model and model["id"] == "Propensity_positive_open"
+            if "id" in model and model["id"] == "LifetimeValue_sum_Price"
         ][0]
 
     def test_create_and_delete_model(self):
@@ -79,9 +79,7 @@ class TestModels(TestCase):
     def test_update_model(self):
         """Test updating a model."""
 
-        model_name = (
-            f"E2E test_decisioning Integration Test-{int(time() * 1000)}"
-        )
+        model_name = f"E2E test_decisioning Integration Test-{int(time() * 1000)}"
 
         # create a test model to update it
         create_response = requests.post(
@@ -146,7 +144,7 @@ class TestModels(TestCase):
         # get the pipeline-performance of model
         fetch_response = requests.get(
             f"{pytest.API_URL}/{self.MODELS}/"
-            f"{self.propensity_to_open_model_id}/pipeline-performance",
+            f"{self.test_model_id}/pipeline-performance",
             headers=pytest.HEADERS,
         )
 
@@ -162,7 +160,7 @@ class TestModels(TestCase):
         # get the feature-importance of model
         fetch_response = requests.get(
             f"{pytest.API_URL}/{self.MODELS}/"
-            f"{self.propensity_to_open_model_id}/feature-importance",
+            f"{self.test_model_id}/feature-importance",
             headers=pytest.HEADERS,
         )
 
@@ -175,8 +173,7 @@ class TestModels(TestCase):
 
         # get the version-history of model
         fetch_response = requests.get(
-            f"{pytest.API_URL}/{self.MODELS}/"
-            f"{self.propensity_to_open_model_id}/version-history",
+            f"{pytest.API_URL}/{self.MODELS}/" f"{self.test_model_id}/version-history",
             headers=pytest.HEADERS,
         )
 
@@ -189,8 +186,7 @@ class TestModels(TestCase):
 
         # get the overview of model
         fetch_response = requests.get(
-            f"{pytest.API_URL}/{self.MODELS}/"
-            f"{self.propensity_to_open_model_id}/overview",
+            f"{pytest.API_URL}/{self.MODELS}/" f"{self.test_model_id}/overview",
             headers=pytest.HEADERS,
         )
 
@@ -203,8 +199,7 @@ class TestModels(TestCase):
 
         # get the features of model
         fetch_response = requests.get(
-            f"{pytest.API_URL}/{self.MODELS}/"
-            f"{self.propensity_to_open_model_id}/features",
+            f"{pytest.API_URL}/{self.MODELS}/" f"{self.test_model_id}/features",
             headers=pytest.HEADERS,
         )
 
@@ -217,8 +212,7 @@ class TestModels(TestCase):
 
         # get the drift of model
         fetch_response = requests.get(
-            f"{pytest.API_URL}/{self.MODELS}/"
-            f"{self.propensity_to_open_model_id}/drift",
+            f"{pytest.API_URL}/{self.MODELS}/" f"{self.test_model_id}/drift",
             headers=pytest.HEADERS,
         )
 
@@ -231,8 +225,7 @@ class TestModels(TestCase):
 
         # get the lift of model
         fetch_response = requests.get(
-            f"{pytest.API_URL}/{self.MODELS}/"
-            f"{self.propensity_to_open_model_id}/lift",
+            f"{pytest.API_URL}/{self.MODELS}/" f"{self.test_model_id}/lift",
             headers=pytest.HEADERS,
         )
 
