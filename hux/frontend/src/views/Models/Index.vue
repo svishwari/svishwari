@@ -182,28 +182,57 @@
           </descriptive-card>
         </v-row>
         <v-row
-          v-else-if="addedModels.length == 0 && !showError"
+          v-else-if="addedModels.length == 0 && !loading && !showError"
           class="background-empty"
         >
-          <hux-empty
-            icon-type="models-empty"
-            :icon-size="50"
-            title="No models to show"
-            subtitle="Models will appear here once they are added or requested."
-          >
-            <template #button>
-              <hux-button
-                variant="primary"
+        <empty-page v-if="finalFilterApplied > 0" type="models-empty" class="empty-models" size="50">
+          <template #title>
+            <div class="title-no-models">No models to show</div>
+          </template>
+          <template #subtitle>
+            <div class="des-no-models mt-3">
+              <span >
+                Currently there are no models available based on your applied
+                filters.
+                <br />
+                Check back later or change your filters.
+              </span>
+            </div>
+          </template>
+          <template #button>
+              <huxButton
+                button-text="Clear filters"
+                variant="primary base"
+                size="large"
+                class="ma-2 font-weight-regular text-button"
                 is-tile
-                width="224"
-                height="40"
-                class="text-button my-4"
-                @click="toggleDrawer()"
+                :height="'40'"
+                @click="clearFilters()"
               >
-                Request a model
-              </hux-button>
+                Clear filters
+              </huxButton>
             </template>
-          </hux-empty>
+        </empty-page>
+        <hux-empty
+        v-else
+        icon-type="models-empty"
+        :icon-size="50"
+        title="No models to show"
+        subtitle="Models will appear here once they are added or requested."
+      >
+        <template #button>
+          <hux-button
+            variant="primary"
+            is-tile
+            width="224"
+            height="40"
+            class="text-button my-4"
+            @click="toggleDrawer()"
+          >
+            Request a model
+          </hux-button>
+        </template>
+      </hux-empty>
         </v-row>
         <v-row v-else class="d-flex justify-center align-center">
           <error
@@ -275,6 +304,7 @@ import ModelConfiguration from "@/views/Models/Drawers/Configuration"
 import Logo from "@/components/common/Logo.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import ModelFilter from "@/views/Models/Drawers/ModelFilter"
+import EmptyPage from "@/components/common/EmptyPage"
 import { getAccess, formatText, getIndustryTags } from "@/utils.js"
 
 export default {
@@ -294,6 +324,7 @@ export default {
     Logo,
     Tooltip,
     ModelFilter,
+    EmptyPage,
   },
   data() {
     return {
@@ -409,6 +440,9 @@ export default {
     filterToggle() {
       this.isFilterToggled = !this.isFilterToggled
     },
+    clearFilters() {
+      this.$refs.filters.clear()
+    },
     filterOptions() {
       let options = []
       for (let tags of this.industryTags) {
@@ -480,5 +514,15 @@ export default {
   padding-left: 24px !important;
   padding-right: 24px !important;
   height: 35px !important;
+}
+
+.empty-models {
+  margin-top: 200px !important;
+}
+
+::v-deep .empty-page {
+  max-height: 0 !important;
+  min-height: 100% !important;
+  min-width: 100% !important;
 }
 </style>
