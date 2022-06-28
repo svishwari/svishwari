@@ -414,7 +414,22 @@ class IDROverview(SwaggerView):
             # get IDR overview
             idr_overview = get_identity_overview(
                 token_response[0],
-                {api_c.START_DATE: start_date, api_c.END_DATE: end_date},
+                {
+                    api_c.START_DATE: datetime.strftime(
+                        datetime.strptime(
+                            requested_start_date, api_c.DEFAULT_DATE_FORMAT
+                        )
+                        - relativedelta(days=delta_days),
+                        api_c.DEFAULT_DATE_FORMAT,
+                    ),
+                    api_c.END_DATE: datetime.strftime(
+                        datetime.strptime(
+                            requested_end_date, api_c.DEFAULT_DATE_FORMAT
+                        )
+                        - relativedelta(days=delta_days),
+                        api_c.DEFAULT_DATE_FORMAT,
+                    ),
+                },
             )
 
             # cache
@@ -734,7 +749,7 @@ class IDRDataFeeds(SwaggerView):
         )
 
         # TODO Only for demo purpose remove after actual data integration
-        if get_config().ENV_NAME == "RC1":
+        if get_config().ENV_NAME == "RC1" and data_feeds:
             end_date = datetime.utcnow() - relativedelta(days=1)
             delta_days = (
                 end_date - max([data[api_c.TIMESTAMP] for data in data_feeds])
