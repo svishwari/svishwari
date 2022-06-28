@@ -28,9 +28,13 @@ class AzureClient(CloudClient):
 
         super().__init__(config)
 
-        self.vault_url = f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
+        self.vault_url = (
+            f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
+        )
         self.storage_container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
-        self.storage_connection_string = self.config.AZURE_STORAGE_CONNECTION_STRING
+        self.storage_connection_string = (
+            self.config.AZURE_STORAGE_CONNECTION_STRING
+        )
 
     def get_secret_client(self) -> SecretClient:
         """Get Azure Secret client.
@@ -74,7 +78,9 @@ class AzureClient(CloudClient):
             # mentioned
             return self.get_secret_client().get_secret(secret_name).value
         except Exception as exc:
-            logging.error("Failed to get %s from Azure key vault.", secret_name)
+            logging.error(
+                "Failed to get %s from Azure key vault.", secret_name
+            )
             raise exc
 
     def set_secret(self, secret_name: str, value: str, **kwargs) -> None:
@@ -125,7 +131,9 @@ class AzureClient(CloudClient):
             container_client = ContainerClient.from_connection_string(
                 connection_string, container_name
             )
-            blob_client = container_client.get_blob_client(Path(file_name).name)
+            blob_client = container_client.get_blob_client(
+                Path(file_name).name
+            )
 
             metadata = {
                 api_c.CREATED_BY: user_name if user_name else "",
@@ -177,7 +185,9 @@ class AzureClient(CloudClient):
             container_client = ContainerClient.from_connection_string(
                 connection_string, container_name
             )
-            blob_client = container_client.get_blob_client(Path(file_name).name)
+            blob_client = container_client.get_blob_client(
+                Path(file_name).name
+            )
 
             with open(file_name, "wb") as file_writer:
                 download_stream = blob_client.download_blob()
