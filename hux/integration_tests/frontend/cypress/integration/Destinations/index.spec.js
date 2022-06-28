@@ -9,11 +9,16 @@ describe("Orchestration > Destinations", () => {
 
   it("should be able to manage destinations", () => {
     cy.location("pathname").should("eq", route.destinations)
-
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
     // validate destinations exist by getting total no. of them
-    cy.get(selector.destinations).its("length").should("be.gt", 0)
+    cy.get(selector.datasource.destinations).its("length").should("be.gt", 0)
 
-    cy.get(selector.destinations).eq(0).get(".mdi-dots-vertical").eq(0).click()
+    cy.get(selector.datasource.destinations)
+      .eq(0)
+      .get(".mdi-dots-vertical")
+      .eq(0)
+      .click()
 
     cy.get(selector.destination.destinationRemove).last().eq(0).click()
     cy.get(selector.destination.destinationRemoveConfirmBody).then(

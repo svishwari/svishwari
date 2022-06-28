@@ -119,6 +119,7 @@ export default {
       togglePii: "[data-e2e='togglePii']",
       requestText: "[data-e2e='requestText']",
       request: "[data-e2e='request']",
+      closeDrawer: "[data-e2e='close-drawer']",
     },
   },
 
@@ -164,6 +165,7 @@ export default {
     destinationRemoveConfirmBody: ".confirm-modal-body",
     removeDestinationText: "[data-e2e='remove-destination-text']",
     cancelRequestDestination: "[data-e2e='cancel-destination-request']",
+    destinationeditUrl: "[data-e2e='destination-edit-url']",
   },
 
   // decisioning

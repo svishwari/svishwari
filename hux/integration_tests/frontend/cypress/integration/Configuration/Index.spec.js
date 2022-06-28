@@ -12,7 +12,7 @@ describe("View configuration", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000)
     // should click on team-members tab
-    cy.get(selector.configuration.teamMembers).click()
+    cy.get(selector.configuration.teamMembers).first().click()
 
     // should verify the columns of the audiences table
     const tableHeaders = ["", "Name", "Email", "Access Level", "PII Access"]
@@ -40,7 +40,12 @@ describe("View configuration", () => {
     cy.get(selector.configuration.teamMemberDrawer.requestText)
       .eq(0)
       .type("New team member")
-
+    // should click on requestbutton
+    cy.get(selector.configuration.teamMemberDrawer.request).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.configuration.teamMemberDrawer.teamMemberRequest).click()
+    cy.get(selector.configuration.teamMemberDrawer.closeDrawer).click()
     // should click on module-solutions tab
     cy.get(selector.configuration.moduleSolution).click()
     // should click & checked on checkbox to show only active items
