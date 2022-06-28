@@ -461,8 +461,8 @@ client["models"].getModels = (data) => {
         let formURL = property + "=" + data[property][attribute]
         URLData.push(formURL)
       }
+    }
   }
-}
   let arrJoin = URLData.join("@")
   URLString = arrJoin.toString()
   newURLFormat = URLString.replace(/@/g, "&")

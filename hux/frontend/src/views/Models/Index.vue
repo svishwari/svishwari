@@ -28,11 +28,7 @@
             :size="27"
             :color="isFilterToggled ? 'primary' : 'black'"
             :variant="
-              showError
-                ? 'lighten3'
-                : isFilterToggled
-                ? 'lighten6'
-                : 'darken4'
+              showError ? 'lighten3' : isFilterToggled ? 'lighten6' : 'darken4'
             "
           />
           <v-badge
@@ -50,174 +46,174 @@
       </template>
     </page-header>
 
-
     <div
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
-        <page-header   class="top-bar" v-if="addedModels.length > 0" :header-height="69">
-      <template #left>
-        <v-btn disabled icon color="black">
-          <icon type="search" :size="20" color="black" variant="lighten3" />
-        </v-btn>
-      </template>
-      <template #right>
-        <huxButton
-          v-if="getAccess('models', 'request_one')"
-          variant="primary"
-          size="large"
-          is-tile
-          height="40"
-          class="ma-2 font-weight-regular no-shadow mr-0 caption"
-          data-e2e="addModel"
-          @click="toggleDrawer()"
+        <page-header
+          v-if="addedModels.length > 0"
+          class="top-bar"
+          :header-height="69"
         >
-          Request a model
-        </huxButton>
-      </template>
-    </page-header>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
+          <template #left>
+            <v-btn disabled icon color="black">
+              <icon type="search" :size="20" color="black" variant="lighten3" />
+            </v-btn>
+          </template>
+          <template #right>
+            <huxButton
+              v-if="getAccess('models', 'request_one')"
+              variant="primary"
+              size="large"
+              is-tile
+              height="40"
+              class="ma-2 font-weight-regular no-shadow mr-0 caption"
+              data-e2e="addModel"
+              @click="toggleDrawer()"
+            >
+              Request a model
+            </huxButton>
+          </template>
+        </page-header>
+        <v-progress-linear :active="loading" :indeterminate="loading" />
         <v-row
           v-if="addedModels.length > 0 && !loading"
           class="padding-30 ma-0 content-section"
         >
-        <descriptive-card
-          v-for="model in addedModels"
-          :key="model.id"
-          :action-menu="model.status !== 'Active'"
-          :coming-soon="false"
-          width="280"
-          height="255"
-          :icon="`model-${getModelType(model)}`"
-          :title="model.name"
-          :logo-option="true"
-          :description="model.description"
-          :top-right-adjustment="
-            model.status != 'active' ? 'ml-8 mt-6 mr-8' : 'mt-3 mr-8'
-          "
-          data-e2e="model-item"
-          :disabled="model.status !== 'Active'"
-          :interactable="model.status == 'Active' ? true : false"
-          @click.native="goToDashboard(model)"
-        >
-          <template slot="top">
-            <status
-              :icon-size="18"
-              :status="model.status || ''"
-              collapsed
-              class="d-flex float-left"
-              :data-e2e="`model-status-${model.status}`"
-            />
-          </template>
-          <template
-            v-if="model.tags.industry.length > 0 && model.status == 'Active'"
-            slot="top"
+          <descriptive-card
+            v-for="model in addedModels"
+            :key="model.id"
+            :action-menu="model.status !== 'Active'"
+            :coming-soon="false"
+            width="280"
+            height="255"
+            :icon="`model-${getModelType(model)}`"
+            :title="model.name"
+            :logo-option="true"
+            :description="model.description"
+            :top-right-adjustment="
+              model.status != 'active' ? 'ml-8 mt-6 mr-8' : 'mt-3 mr-8'
+            "
+            data-e2e="model-item"
+            :disabled="model.status !== 'Active'"
+            :interactable="model.status == 'Active' ? true : false"
+            @click.native="goToDashboard(model)"
           >
-            <div class="float-right">
-              <tooltip v-for="tags in model.tags.industry" :key="tags">
-                <template #label-content>
-                  <logo
-                    :key="tags"
-                    :size="16"
-                    class="mr-1"
-                    :type="`${tags}_logo`"
-                  />
-                </template>
-                <template #hover-content>
-                  <span>{{ formatText(tags) }}</span>
-                </template>
-              </tooltip>
-            </div>
-          </template>
-          <template v-if="model.status == 'Active'" slot="default">
-            <v-row no-gutters class="mt-4">
-              <v-col cols="5">
-                <card-stat
-                  label="Version"
-                  :value="
-                    model.latest_version.length == 10
-                      ? model.latest_version.substring(2)
-                      : model.latest_version | Empty
-                  "
-                  stat-class="border-0"
-                  data-e2e="model-version"
-                >
-                  <div class="mb-3">
-                    Trained date<br />
-                    {{ model.last_trained | Date | Empty }}
-                  </div>
-                  <div class="mb-3">
-                    Fulcrum date<br />
-                    {{ model.fulcrum_date | Date | Empty }}
-                  </div>
-                  <div class="mb-3">
-                    Lookback period (days)<br />
-                    {{ model.lookback_window }}
-                  </div>
-                  <div>
-                    Prediction period (days)<br />
-                    {{ model.prediction_window }}
-                  </div>
-                </card-stat>
-              </v-col>
-              <v-col cols="7">
-                <card-stat
-                  label="Last trained"
-                  :value="model.last_trained | Date('relative') | Empty"
-                  data-e2e="model-last-trained-date"
-                >
-                  {{ model.last_trained | Date | Empty }}
-                </card-stat>
-              </v-col>
-            </v-row>
-          </template>
-          <template slot="action-menu-options">
-            <div
-              class="px-4 py-2 white d-flex flex-column text-h5"
-              data-e2e="remove-model"
-              @click="removeModel(model)"
+            <template slot="top">
+              <status
+                :icon-size="18"
+                :status="model.status || ''"
+                collapsed
+                class="d-flex float-left"
+                :data-e2e="`model-status-${model.status}`"
+              />
+            </template>
+            <template
+              v-if="model.tags.industry.length > 0 && model.status == 'Active'"
+              slot="top"
             >
-              <span class="d-flex align-center"> Remove </span>
-            </div>
-          </template>
-        </descriptive-card>
+              <div class="float-right">
+                <tooltip v-for="tags in model.tags.industry" :key="tags">
+                  <template #label-content>
+                    <logo
+                      :key="tags"
+                      :size="16"
+                      class="mr-1"
+                      :type="`${tags}_logo`"
+                    />
+                  </template>
+                  <template #hover-content>
+                    <span>{{ formatText(tags) }}</span>
+                  </template>
+                </tooltip>
+              </div>
+            </template>
+            <template v-if="model.status == 'Active'" slot="default">
+              <v-row no-gutters class="mt-4">
+                <v-col cols="5">
+                  <card-stat
+                    label="Version"
+                    :value="
+                      model.latest_version.length == 10
+                        ? model.latest_version.substring(2)
+                        : model.latest_version | Empty
+                    "
+                    stat-class="border-0"
+                    data-e2e="model-version"
+                  >
+                    <div class="mb-3">
+                      Trained date<br />
+                      {{ model.last_trained | Date | Empty }}
+                    </div>
+                    <div class="mb-3">
+                      Fulcrum date<br />
+                      {{ model.fulcrum_date | Date | Empty }}
+                    </div>
+                    <div class="mb-3">
+                      Lookback period (days)<br />
+                      {{ model.lookback_window }}
+                    </div>
+                    <div>
+                      Prediction period (days)<br />
+                      {{ model.prediction_window }}
+                    </div>
+                  </card-stat>
+                </v-col>
+                <v-col cols="7">
+                  <card-stat
+                    label="Last trained"
+                    :value="model.last_trained | Date('relative') | Empty"
+                    data-e2e="model-last-trained-date"
+                  >
+                    {{ model.last_trained | Date | Empty }}
+                  </card-stat>
+                </v-col>
+              </v-row>
+            </template>
+            <template slot="action-menu-options">
+              <div
+                class="px-4 py-2 white d-flex flex-column text-h5"
+                data-e2e="remove-model"
+                @click="removeModel(model)"
+              >
+                <span class="d-flex align-center"> Remove </span>
+              </div>
+            </template>
+          </descriptive-card>
         </v-row>
         <v-row
           v-else-if="addedModels.length == 0 && !showError"
           class="background-empty"
         >
-        <hux-empty
-        icon-type="models-empty"
-        :icon-size="50"
-        title="No models to show"
-        subtitle="Models will appear here once they are added or requested."
-      >
-        <template #button>
-          <hux-button
-            variant="primary"
-            is-tile
-            width="224"
-            height="40"
-            class="text-button my-4"
-            @click="toggleDrawer()"
+          <hux-empty
+            icon-type="models-empty"
+            :icon-size="50"
+            title="No models to show"
+            subtitle="Models will appear here once they are added or requested."
           >
-            Request a model
-          </hux-button>
-        </template>
-      </hux-empty>
+            <template #button>
+              <hux-button
+                variant="primary"
+                is-tile
+                width="224"
+                height="40"
+                class="text-button my-4"
+                @click="toggleDrawer()"
+              >
+                Request a model
+              </hux-button>
+            </template>
+          </hux-empty>
         </v-row>
-        <v-row
-         v-else
-          class="d-flex justify-center align-center"
-        >
-      <error
-        icon-type="error-on-screens"
-        :icon-size="50"
-        title="Models are currently unavailable"
-        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-        class="models-error-height"
-      >
-      </error>
+        <v-row v-else class="d-flex justify-center align-center">
+          <error
+            icon-type="error-on-screens"
+            :icon-size="50"
+            title="Models are currently unavailable"
+            subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+            class="models-error-height"
+          >
+          </error>
         </v-row>
         <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
       </div>
@@ -226,36 +222,39 @@
           ref="filters"
           v-model="isFilterToggled"
           :filter-options="filterOptions()"
-          @onSectionAction="applyFilter"
           view-height="calc(100vh - 145px)"
+          @onSectionAction="applyFilter"
         />
-        <model-configuration v-model="drawer" @refresh="reloadWithCloseDrawer()" />
+        <model-configuration
+          v-model="drawer"
+          @refresh="reloadWithCloseDrawer()"
+        />
       </div>
       <confirm-modal
-      v-model="confirmModal"
-      icon="sad-face"
-      type="error"
-      title="You are about to remove"
-      :sub-title="`${selectedModal && selectedModal.name}`"
-      right-btn-text="Yes, remove it"
-      left-btn-text="Nevermind!"
-      data-e2e="remove-modal-confirmation"
-      @onCancel="confirmModal = !confirmModal"
-      @onConfirm="confirmRemoval()"
-    >
-      <template #body>
-        <div
-          class="
-            black--text
-            text--darken-4 text-subtitle-1
-            pt-6
-            font-weight-regular
-          "
-        >
-          Are you sure you want to remove this requested model&#63;
-        </div>
-      </template>
-    </confirm-modal>
+        v-model="confirmModal"
+        icon="sad-face"
+        type="error"
+        title="You are about to remove"
+        :sub-title="`${selectedModal && selectedModal.name}`"
+        right-btn-text="Yes, remove it"
+        left-btn-text="Nevermind!"
+        data-e2e="remove-modal-confirmation"
+        @onCancel="confirmModal = !confirmModal"
+        @onConfirm="confirmRemoval()"
+      >
+        <template #body>
+          <div
+            class="
+              black--text
+              text--darken-4 text-subtitle-1
+              pt-6
+              font-weight-regular
+            "
+          >
+            Are you sure you want to remove this requested model&#63;
+          </div>
+        </template>
+      </confirm-modal>
     </div>
   </div>
 </template>
@@ -402,23 +401,23 @@ export default {
       this.loading = true
       this.finalFilterApplied = params.filterApplied
       let queryParams = {
-        tags: params.selectedTags
+        tags: params.selectedTags,
       }
       await this.getModelsByFilter(queryParams)
       this.loading = false
     },
     filterToggle() {
-        this.isFilterToggled = !this.isFilterToggled
+      this.isFilterToggled = !this.isFilterToggled
     },
     filterOptions() {
       let options = []
       for (let tags of this.industryTags) {
-      options.push({
-                key: tags,
-                name: formatText(tags),
-                category: "industry",
-                optionName: "Tags",
-              })
+        options.push({
+          key: tags,
+          name: formatText(tags),
+          category: "industry",
+          optionName: "Tags",
+        })
       }
       return options
     },
