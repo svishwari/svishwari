@@ -99,33 +99,33 @@ Environments
      - --
 
 .. list-table:: Azure Environments
-   :widths: 12 22 22 22 22
+   :widths: 10 18 18 18 18 18
    :header-rows: 1
 
    * - Component
      - Dev
+     - LILDEV
      - Stage
      - RC1
      - Prod
-     - LILDEV
    * - Hux Unified UI
      - `<https://unified-ui-dev.main.use2.hux-husdev2.in/>`_
-     - --
-     - --
-     - --
      - `<https://unified-ui-dev.main.use2.hux-lildev.in/>`_
+     - --
+     - --
+     - --
    * - Hux Unified API
      - `<https://unified-api-dev.main.use2.hux-husdev2.in/api/v1/ui/>`_
-     - --
-     - --
-     - --
      - `<https://unified-api-dev.main.use2.hux-lildev.in/api/v1/ui/>`_
+     - --
+     - --
+     - --
    * - Argo CD
      - `<https://argocd.hux-husdev2.in/>`_
-     - --
-     - --
-     - --
      - `<https://argocd-uni.hux-lildev.in/>`_
+     - --
+     - --
+     - --
    * - Customer API
      - `<https://customer-profile-api.main.use2.hux-husdev2.in/docs>`_
      - --
