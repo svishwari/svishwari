@@ -51,7 +51,6 @@ class Config:
     DISABLE_DELIVERIES = config(
         api_c.DISABLE_DELIVERIES, default=False, cast=bool
     )
-    MOCK_TECTON = config(api_c.MOCK_TECTON, default=True, cast=bool)
 
     # MONGO CONFIG
     MONGO_CONNECTION_STRING = config(
@@ -61,12 +60,19 @@ class Config:
     MONGO_DB_PORT = config(api_c.MONGO_DB_PORT, default=27017, cast=int)
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_PASSWORD = config(api_c.MONGO_DB_PASSWORD, default="")
+    MONGO_SSL_FLAG = config(api_c.MONGO_DB_USE_SSL, default=True, cast=bool)
     # grab the SSL cert path
     MONGO_SSL_CERT = str(
-        Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
+        Path(__file__).parent.parent.joinpath(
+            config(
+                api_c.SSL_CERT_FILE_NAME, default="rds-combined-ca-bundle.pem"
+            )
+        )
     )
     AZURE_MONGO_TLS_CLIENT_KEY = str(
-        Path(__file__).parent.parent.joinpath("mongodb-azure.pem")
+        Path(__file__).parent.parent.joinpath(
+            config(api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem")
+        )
     )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
@@ -74,10 +80,18 @@ class Config:
         api_c.PORT: MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: MONGO_DB_PASSWORD,
-        api_c.SSL_CERT_PATH: MONGO_SSL_CERT,
+        api_c.SSL_FLAG: MONGO_SSL_FLAG,
     }
-    if CLOUD_PROVIDER == api_c.AZURE:
-        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
+    if MONGO_SSL_FLAG:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
+        if CLOUD_PROVIDER == api_c.AZURE:
+            MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
+        # TODO: To be removed once LILDEV env has ssl and cert setup
+        #  implementation done
+        if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
+            MONGO_DB_CONFIG[api_c.SSL_FLAG] = False
+            del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
+            del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
     # OKTA CONFIGURATION
     OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
@@ -88,14 +102,6 @@ class Config:
 
     # DECISIONING CONFIGURATION
     DECISIONING_URL = config(api_c.DECISIONING_URL, default="")
-
-    # TECTON
-    TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")
-    TECTON_API = config("TECTON_API", default="")
-    TECTON_API_HEADERS = {
-        "Authorization": f"Tecton-key {TECTON_API_KEY}",
-    }
-    TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
 
     # JIRA
     JIRA_PROJECT_KEY = config(api_c.JIRA_PROJECT_KEY, default="")
@@ -171,23 +177,31 @@ class DevelopmentConfig(Config):
     """Development Config Object."""
 
     FLASK_ENV = api_c.DEVELOPMENT_MODE
-    MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
 
     # TODO Remove when we have separate configs for environments.
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
         api_c.HOST: Config.MONGO_DB_HOST,
         api_c.PORT: Config.MONGO_DB_PORT,
-        api_c.USERNAME: MONGO_DB_USERNAME,
+        api_c.USERNAME: Config.MONGO_DB_USERNAME,
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
-        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
+        api_c.SSL_FLAG: Config.MONGO_SSL_FLAG,
     }
-    if Config.CLOUD_PROVIDER == api_c.AZURE:
-        MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = Config.AZURE_MONGO_TLS_CLIENT_KEY
+    if Config.MONGO_SSL_FLAG:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
+        if Config.CLOUD_PROVIDER == api_c.AZURE:
+            MONGO_DB_CONFIG[
+                api_c.TLS_CERT_KEY
+            ] = Config.AZURE_MONGO_TLS_CLIENT_KEY
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
+
+    if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
+        MONGO_DB_CONFIG[api_c.SSL_FLAG] = False
+        del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
+        del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
     TEST_AUTH_OVERRIDE = False
 
@@ -206,9 +220,10 @@ class PyTestConfig(Config):
         api_c.PORT: Config.MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
-        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
+        api_c.SSL_FLAG: Config.MONGO_SSL_FLAG,
     }
-    MOCK_TECTON = False
+    if Config.MONGO_SSL_FLAG:
+        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
 
     # OKTA CONFIGURATION
     OKTA_CLIENT_ID = "test-client-id"
@@ -222,14 +237,6 @@ class PyTestConfig(Config):
 
     # DECIOSIONING CONFIGURATION
     DECISIONING_URL = "https://fake.fake.decisioning.fake"
-
-    # TECTON CONFIGURATION
-    TECTON_API_KEY = "fake-key"
-    TECTON_API = "https://fake.fake.com"
-    TECTON_API_HEADERS = {
-        "Authorization": f"Tecton-key {TECTON_API_KEY}",
-    }
-    TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
 
     # CDP CONFIGURATION
     CDP_SERVICE = "https://fake.fake.com"

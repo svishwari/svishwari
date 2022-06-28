@@ -97,7 +97,6 @@ class Connections(Enum):
     )
     OKTA = "hux_unified_okta_connection_health"
     DB = "hux_unified_db_connection_health"
-    TECTON = "hux_unified_tecton_connection_health"
     DECISIONING = "hux_unified_decisioning_connection_health"
 
 
@@ -167,7 +166,7 @@ def get_routes(app: Flask) -> list:
         routes.append(
             {
                 "url": rule.rule,
-                "filter": f"^{re.sub('<(.*?)>', '[a-zA-Z0-9_]+', rule.rule)}$",
+                "filter": f"^{re.sub('<(.*?)>', '[a-zA-Z0-9_-]+', rule.rule)}$",
                 "methods": rule.methods,
             }
         )

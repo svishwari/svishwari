@@ -1,6 +1,8 @@
 """This module holds the decisioning class that connects to the decisioning
 metrics API."""
+import asyncio
 from datetime import datetime
+from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Tuple
 
 from huxmodelclient import api_client, configuration
@@ -11,6 +13,23 @@ import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.prometheus import record_health_status, Connections
 from huxunify.api.data_connectors import den_stub
+
+
+# pylint: disable=inconsistent-return-statements
+def get_or_create_eventloop() -> asyncio.events:
+    """Gets or creates an event loop.
+
+    Returns:
+        asyncio.events: An event loop.
+    """
+
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError as ex:
+        if "There is no current event loop in thread" in str(ex):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            return asyncio.get_event_loop()
 
 
 class DotNotationDict(dict):
@@ -90,7 +109,7 @@ class Decisioning:
                     header_value=self.token,
                 )
             )
-            if get_config().ENV_NAME == api_c.STAGING_ENV
+            if get_config().ENV_NAME in [api_c.STAGING_ENV, api_c.LILDEV_ENV]
             else DenStubClient()
         )
 
@@ -124,7 +143,7 @@ class Decisioning:
         desired_info = None
         if model_version:
             for info in model_infos:
-                if info.model_metrics["version_number"] == model_version:
+                if info.model_metrics[api_c.VERSION_NUMBER] == model_version:
                     desired_info = info
                     break
         if not desired_info:
@@ -169,6 +188,26 @@ class Decisioning:
 
         return False, "Decisioning Metrics API unavailable"
 
+    async def gather_model_infos(
+        self, model_ids: list, executor: ThreadPoolExecutor
+    ) -> list:
+        """Asynchronously gathers all the model infos for the model_ids provided.
+
+        Args:
+            model_ids (list): list of model_ids.
+            executor (ThreadPoolExecutor): Executor for running async calls.
+
+        Returns:
+            list: list of model info dicts.
+        """
+        loop = get_or_create_eventloop()
+        tasks = [
+            loop.run_in_executor(executor, self.get_model_info, model_id)
+            for model_id in model_ids
+        ]
+        futures, _ = await asyncio.wait(tasks)
+        return [future.result() for future in futures]
+
     def get_all_models(self) -> list:
         """Gets a list of all models
 
@@ -177,16 +216,24 @@ class Decisioning:
         """
         models = []
         model_ids = self.get_all_model_ids()
-        for model_id in model_ids:
-            model_info = self.get_model_info(model_id)
 
+        loop = get_or_create_eventloop()
+        model_infos = loop.run_until_complete(
+            self.gather_model_infos(
+                model_ids, ThreadPoolExecutor(max_workers=10)
+            )
+        )
+
+        for model_info in model_infos:
             models.append(
                 {
-                    api_c.ID: model_id,
+                    api_c.ID: model_info.model_id,
                     api_c.NAME: model_info.model_metadata.model_name,
                     api_c.DESCRIPTION: model_info.model_metadata.description,
                     api_c.STATUS: model_info.model_metadata.status.title(),
-                    api_c.LATEST_VERSION: model_info.model_metrics.version_number,
+                    api_c.LATEST_VERSION: model_info.model_metrics[
+                        api_c.VERSION_NUMBER
+                    ],
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
                     api_c.PREDICTION_WINDOW: model_info.model_metadata.prediction_days,
@@ -234,7 +281,9 @@ class Decisioning:
                     api_c.PRECISION, -1
                 ),
                 api_c.RECALL: model_info.model_metrics.get(api_c.RECALL, -1),
-                api_c.CURRENT_VERSION: model_info.model_metrics.version_number,
+                api_c.CURRENT_VERSION: model_info.model_metrics[
+                    api_c.VERSION_NUMBER
+                ],
             },
         }
 
@@ -256,11 +305,11 @@ class Decisioning:
         for feature in model_info.important_features:
             features.append(
                 {
-                    api_c.ID: feature[api_c.MODEL_ID],
+                    api_c.ID: feature.get(api_c.MODEL_ID),
                     # make the feature name unique
-                    api_c.NAME: f"{feature[api_c.MODEL_NAME]}-{feature.rank}",
-                    api_c.DESCRIPTION: feature[api_c.FEATURE_DESCRIPTION],
-                    api_c.FEATURE_TYPE: feature[api_c.MODEL_TYPE],
+                    api_c.NAME: f"{feature[api_c.MODEL_NAME]}-{feature.get(api_c.RANK)}",
+                    api_c.DESCRIPTION: feature.get(api_c.FEATURE_DESCRIPTION),
+                    api_c.FEATURE_TYPE: feature.get(api_c.MODEL_TYPE),
                     api_c.RECORDS_NOT_NULL: 0,
                     api_c.FEATURE_IMPORTANCE: 1,
                     api_c.MEAN: 0,
@@ -269,7 +318,7 @@ class Decisioning:
                     api_c.UNIQUE_VALUES: 1,
                     api_c.LCUV: "",
                     api_c.MCUV: "",
-                    api_c.SCORE: feature.lift,
+                    api_c.SCORE: feature.get(api_c.LIFT),
                 }
             )
 
@@ -295,7 +344,9 @@ class Decisioning:
                     api_c.NAME: model_info.model_metadata.model_name,
                     api_c.DESCRIPTION: model_info.model_metadata.description,
                     api_c.STATUS: model_info.model_metadata.status,
-                    api_c.CURRENT_VERSION: model_info.model_metrics.version_number,
+                    api_c.CURRENT_VERSION: model_info.model_metrics[
+                        api_c.VERSION_NUMBER
+                    ],
                     api_c.LAST_TRAINED: model_info.scheduled_date,
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,

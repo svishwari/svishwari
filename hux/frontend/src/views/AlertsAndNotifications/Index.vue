@@ -5,7 +5,11 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+        <v-btn
+          data-e2e="alertFilterToggle"
+          icon
+          @click.native="isFilterToggled = !isFilterToggled"
+        >
           <icon
             type="filter"
             :size="27"
@@ -24,7 +28,12 @@
             bordered
           />
         </v-btn>
-        <v-btn icon class="ml-5" @click.native="toggleAlertConfigure()">
+        <v-btn
+          data-e2e="alertConfigureToggle"
+          icon
+          class="ml-5"
+          @click.native="toggleAlertConfigure()"
+        >
           <icon type="setting-gear" :size="27" color="black" />
         </v-btn>
       </template>
@@ -75,6 +84,7 @@
             sort-desc
             class="big-table"
             :enable-lazy-load="enableLazyLoad"
+            data-e2e="alert-table"
             view-height="calc(100vh - 230px)"
             @bottomScrollEvent="intersected"
           >
@@ -91,7 +101,9 @@
                 :style="{ width: header.width, left: 0 }"
               >
                 <div v-if="header.value == 'id'">
-                  <a @click="toggleDrawer(item[header.value])"
+                  <a
+                    data-e2e="alert-id-click"
+                    @click="toggleDrawer(item[header.value])"
                     >{{ item[header.value] | Shorten | Empty("-") }}
                   </a>
                 </div>
@@ -345,7 +357,7 @@ export default {
       this.alertDrawer = !this.alertDrawer
     },
     intersected() {
-      if (this.batchDetails.batch_number <= this.lastBatch) {
+      if (this.batchDetails.batchNumber <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
         this.enableLazyLoad = true
         this.fetchNotificationsByBatch()
@@ -355,14 +367,14 @@ export default {
     },
     async fetchNotificationsByBatch() {
       await this.getAllNotifications(this.batchDetails)
-      this.batchDetails.batch_number++
+      this.batchDetails.batchNumber++
     },
     async getUserData() {
       await this.getUsersNoti()
     },
     calculateLastBatch() {
       this.lastBatch = Math.ceil(
-        this.totalNotifications / this.batchDetails.batch_size
+        this.totalNotifications / this.batchDetails.batchSize
       )
     },
     toggleFilterDrawer() {
@@ -391,8 +403,8 @@ export default {
         getEndDate,
         "YYYY-MM-DD"
       )
-      this.batchDetails.batch_size = 25
-      this.batchDetails.batch_number = 1
+      this.batchDetails.batchSize = 25
+      this.batchDetails.batchNumber = 1
       this.batchDetails.isLazyLoad = false
     },
     async alertfunction(data) {
@@ -408,8 +420,8 @@ export default {
           today_date.getMonth(),
           today_date.getDate()
         )
-        this.batchDetails.batch_size = 25
-        this.batchDetails.batch_number = 1
+        this.batchDetails.batchSize = 25
+        this.batchDetails.batchNumber = 1
         this.batchDetails.isLazyLoad = false
         if (data.selectedAlertType.length !== 0) {
           this.batchDetails.notification_types = formatRequestText(

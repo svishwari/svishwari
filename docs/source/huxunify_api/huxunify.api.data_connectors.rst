@@ -56,6 +56,14 @@ huxunify.api.data\_connectors.courier module
    :undoc-members:
    :show-inheritance:
 
+huxunify.api.data\_connectors.decisioning module
+------------------------------------------------
+
+.. automodule:: huxunify.api.data_connectors.decisioning
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 huxunify.api.data\_connectors.email\_deliverability\_metrics module
 -------------------------------------------------------------------
 
@@ -92,14 +100,6 @@ huxunify.api.data\_connectors.scheduler module
 ----------------------------------------------
 
 .. automodule:: huxunify.api.data_connectors.scheduler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-huxunify.api.data\_connectors.tecton module
--------------------------------------------
-
-.. automodule:: huxunify.api.data_connectors.tecton
    :members:
    :undoc-members:
    :show-inheritance:

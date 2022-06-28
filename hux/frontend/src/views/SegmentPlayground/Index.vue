@@ -92,6 +92,37 @@
               "
               data-e2e="edit-audience-name"
             />
+
+            <div class="black--text text--darken-4 text-h5 text-label mb-1">
+              Industry
+            </div>
+            <div class="tag-section">
+              <hux-drop-down-search
+                v-model="selectedTags"
+                :min-width="360"
+                :min-selection="0"
+                :items="mapIndustryTags"
+                :is-search-enabled="false"
+              >
+                <template #activator>
+                  <div class="mb-8" :min-width="360">
+                    <v-select
+                      dense
+                      readonly
+                      :placeholder="
+                        selectedTags.length > 0
+                          ? `Client industry (${selectedTags.length})`
+                          : 'Select client industry'
+                      "
+                      class="dropdown-select-placeholder"
+                      outlined
+                      background-color="white"
+                      append-icon="mdi-chevron-down"
+                    />
+                  </div>
+                </template>
+              </hux-drop-down-search>
+            </div>
           </div>
           <attribute-rules
             ref="filters"
@@ -200,23 +231,72 @@
           By deleting this audience you will not be able to recover it and it
           may impact any associated engagements.
         </div>
-        <div v-if="!isEdit" class="d-flex align-center justify-center px-7">
-          <text-field
-            v-model="audience.name"
-            placeholder-text="Audience name"
-            height="40"
-            background-color="white"
-            required
-            class="
-              mt-5
-              text-caption
-              black--text
-              text--darken-4
-              input-placeholder
-              w-100
-            "
-            data-e2e="audience-name"
-          />
+        <div
+          v-if="!isEdit"
+          class="d-flex flex-column align-center justify-center px-7 mt-5"
+        >
+          <div class="add-modal" style="width: 496px">
+            <div
+              class="
+                black--text
+                text--darken-4 text-h5 text-left text-label
+                mb-n1
+              "
+            >
+              Audience name
+            </div>
+            <text-field
+              v-model="audience.name"
+              placeholder-text="Enter audience name"
+              height="40"
+              background-color="white"
+              required
+              class="
+                text-caption
+                black--text
+                text--darken-4
+                input-placeholder
+                w-100
+              "
+              data-e2e="audience-name"
+            />
+          </div>
+          <div
+            class="tag-section add-modal mt-n2"
+            style="width: 496px; height: 40px"
+          >
+            <div
+              class="black--text text--darken-4 text-left text-h5 text-label"
+            >
+              Industry
+            </div>
+            <hux-drop-down-search
+              v-model="selectedTags"
+              class="wow"
+              :min-width="360"
+              :min-selection="0"
+              :items="mapIndustryTags"
+              :is-search-enabled="false"
+            >
+              <template #activator>
+                <div :min-width="360" style="height: 44px">
+                  <v-select
+                    dense
+                    readonly
+                    :placeholder="
+                      selectedTags.length > 0
+                        ? `Client industry (${selectedTags.length})`
+                        : 'Select client industry'
+                    "
+                    class="dropdown-select-placeholder"
+                    outlined
+                    background-color="white"
+                    append-icon="mdi-chevron-down"
+                  />
+                </div>
+              </template>
+            </hux-drop-down-search>
+          </div>
         </div>
       </template>
     </confirm-modal>
@@ -236,9 +316,11 @@ import TipsMenu from "@/components/common/TipsMenu.vue"
 import Geography from "./Geography.vue"
 import Overview from "./Overview.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
+import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 import EmptyPage from "@/components/common/EmptyPage.vue"
 import Error from "@/components/common/screens/Error"
 import { v4 as uuidv4 } from "uuid"
+import { formatText, getIndustryTags } from "@/utils.js"
 
 export default {
   name: "SegmentPlayground",
@@ -253,6 +335,7 @@ export default {
     Geography,
     TipsMenu,
     TextField,
+    HuxDropDownSearch,
     ConfirmModal,
     EmptyPage,
     Error,
@@ -265,6 +348,8 @@ export default {
           icon: "playground",
         },
       ],
+      industry_tags: getIndustryTags(),
+      selectedTags: [],
       openMenu: false,
       editBreadcrumbs: [
         {
@@ -340,6 +425,11 @@ export default {
     hasOverview() {
       return this.overview && Object.keys(this.overview).length > 0
     },
+    mapIndustryTags() {
+      return this.industry_tags.map((element) =>
+        this.formatTagsOptions(element)
+      )
+    },
     breadcrumbItems() {
       const items = !this.isEdit ? this.breadcrumbs : this.editBreadcrumbs
       if (this.isEdit && this.audience && this.audience.name) {
@@ -409,6 +499,7 @@ export default {
       this.audienceId = audienceId
       await this.getOverview()
       await this.getAudienceById(audienceId)
+      this.mapAudienceTags()
     },
     updateLoad(data) {
       this.overviewLoading = data
@@ -471,6 +562,12 @@ export default {
       return {
         filters: filtersArray,
         name: this.audience.name,
+        tags: {
+          industry:
+            this.selectedTags.length > 0
+              ? this.selectedTags.map((item) => item?.name.toLowerCase())
+              : [],
+        },
       }
     },
     initiateDelete() {
@@ -515,6 +612,24 @@ export default {
     attributeOptions(data) {
       this.$refs.filters = data
       this.mapAudienceData(this.getAudience(this.audienceId))
+    },
+
+    mapAudienceTags() {
+      let audienceData = JSON.parse(
+        JSON.stringify(this.getAudience(this.audienceId))
+      )
+      let tagsData = audienceData.tags?.industry
+      if (tagsData.length > 0) {
+        tagsData.forEach((item) =>
+          this.selectedTags.push(this.formatTagsOptions(item))
+        )
+      }
+    },
+
+    formatTagsOptions(item) {
+      return {
+        name: formatText(item),
+      }
     },
 
     mapAudienceData(data) {
@@ -564,11 +679,27 @@ export default {
         this.$refs?.filters.getOverallSize()
       })
     },
+    formatText: formatText,
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.dropdown-select-placeholder {
+  ::v-deep .v-input__control {
+    .v-input__slot {
+      fieldset {
+        border-color: var(--v-black-lighten3);
+      }
+      input::placeholder {
+        color: var(--v-black-base);
+      }
+    }
+    .v-text-field__details {
+      display: none;
+    }
+  }
+}
 .playground-outermost-wrap {
   height: calc(100vh - 150px) !important;
   .playground-wrap {
@@ -621,7 +752,18 @@ export default {
   .menuable__content__active {
     z-index: 100 !important;
   }
+
+  ::v-deep .confirm-modal-body {
+    .add-modal {
+      width: 496px !important;
+    }
+  }
+
+  .tag-section {
+    max-width: 360px !important;
+  }
 }
+
 ::-webkit-scrollbar {
   width: 5px;
 }

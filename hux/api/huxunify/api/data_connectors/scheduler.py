@@ -30,7 +30,6 @@ from huxunify.api.data_connectors.cdp import (
     get_customers_overview,
 )
 from huxunify.api.data_connectors.okta import get_env_okta_user_bearer_token
-from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import get_next_schedule
 from huxunify.api.data_connectors.courier import (
     get_destination_config,
@@ -399,6 +398,17 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     ),
                 )
 
+                # Sending Notification
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_CRITICAL,
+                    (
+                        f"Destination {destination[api_c.NAME]} connection got error"
+                    ),
+                    db_c.NOTIFICATION_CATEGORY_AUDIENCES,
+                    api_c.UNIFIED_OKTA_TEST_USER_NAME,
+                )
+
                 destination_management.update_delivery_platform(
                     database=database,
                     delivery_platform_id=destination[db_c.ID],
@@ -406,53 +416,9 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     delivery_platform_type=destination[
                         db_c.DELIVERY_PLATFORM_TYPE
                     ],
-                    enabled=False,
+                    status=api_c.STATUS_ERROR,
                     deleted=True,
                 )
-
-
-async def cache_model_features(database: MongoClient, model_id: str) -> None:
-    """Fetch and cache model features for given model id
-
-    Args:
-        database (MongoClient): database client
-        model_id (str): model id
-    """
-
-    tecton = Tecton()
-    model_versions = tecton.get_model_version_history(model_id)
-
-    for model_version in model_versions:
-        model_features = tecton.get_model_features(
-            model_id, model_version[api_c.CURRENT_VERSION]
-        )
-        if model_features:
-            create_cache_entry(
-                database,
-                f"features.{model_id}.{model_version}",
-                model_features,
-            )
-
-
-def run_scheduled_tecton_feature_cache(database: MongoClient) -> None:
-    """Function to run scheduled tecton feature cache refresh.
-
-    Args:
-        database (MongoClient): The mongo database client.
-    """
-
-    # set the event loop
-    asyncio.set_event_loop(asyncio.SelectorEventLoop())
-    loop = asyncio.get_event_loop()
-
-    all_models = Tecton().get_models()
-
-    for model in all_models:
-        # fire and forget task.
-        task = loop.create_task(
-            cache_model_features(database, model[api_c.ID])
-        )
-        loop.run_until_complete(task)
 
 
 def run_scheduled_customer_profile_audience_count(

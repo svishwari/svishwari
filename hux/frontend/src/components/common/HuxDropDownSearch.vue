@@ -138,7 +138,11 @@ export default {
     },
 
     isItemAdded(item) {
-      return this.value.findIndex((each) => each === item)
+      if (item.name) {
+        return this.value.findIndex((each) => each.name === item.name)
+      } else {
+        return this.value.findIndex((each) => each === item)
+      }
     },
   },
 }

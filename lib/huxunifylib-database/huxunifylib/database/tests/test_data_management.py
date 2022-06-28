@@ -76,66 +76,6 @@ class TestDataManagement(unittest.TestCase):
         )
 
     @mongomock.patch(servers=(("localhost", 27017),))
-    def test_constants(self):
-        """Test constants routines."""
-
-        # Set locations
-        doc1 = dm.set_constant(
-            self.database, db_c.DATA_SOURCE_LOCATIONS, ["S3"]
-        )
-
-        self.assertTrue(doc1 is not None)
-
-        # Set formats
-        doc2 = dm.set_constant(
-            self.database, db_c.DATA_SOURCE_FORMATS, ["CSV", "TSV", "JSON"]
-        )
-
-        self.assertTrue(doc2 is not None)
-
-        # Set possible fields
-        doc3 = dm.set_constant(
-            self.database,
-            db_c.DATA_SOURCE_FIELDS,
-            ["first_name", "last_name", "email"],
-        )
-
-        self.assertTrue(doc3 is not None)
-
-        # Set field name map
-        doc4 = dm.set_constant(
-            self.database, db_c.DATA_SOURCE_FIELD_MAP, {"fn": "first_name"}
-        )
-
-        self.assertTrue(doc4 is not None)
-
-        # Get locations
-        locations = dm.get_constant(self.database, db_c.DATA_SOURCE_LOCATIONS)
-
-        self.assertTrue(db_c.CONSTANT_VALUE in locations)
-        self.assertEqual(locations[db_c.CONSTANT_VALUE], ["S3"])
-
-        # Get formats
-        formats = dm.get_constant(self.database, db_c.DATA_SOURCE_FORMATS)
-
-        self.assertTrue(db_c.CONSTANT_VALUE in formats)
-        self.assertEqual(formats[db_c.CONSTANT_VALUE], ["CSV", "TSV", "JSON"])
-
-        # Get possible fields
-        fields = dm.get_constant(self.database, db_c.DATA_SOURCE_FIELDS)
-
-        self.assertTrue(db_c.CONSTANT_VALUE in fields)
-        self.assertEqual(
-            fields[db_c.CONSTANT_VALUE], ["first_name", "last_name", "email"]
-        )
-
-        # Get field name map
-        field_map = dm.get_constant(self.database, db_c.DATA_SOURCE_FIELD_MAP)
-
-        self.assertTrue(db_c.CONSTANT_VALUE in field_map)
-        self.assertEqual(field_map[db_c.CONSTANT_VALUE], {"fn": "first_name"})
-
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_data_source(self):
         """Test set_data_source routine."""
 

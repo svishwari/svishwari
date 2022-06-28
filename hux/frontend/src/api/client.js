@@ -339,7 +339,11 @@ client["audiences"].getAudiences = (data) => {
   let newURLFormat
   let URLString
   for (const property in data) {
-    if (property == "attribute") {
+    if (
+      property == "attribute" ||
+      property == "events" ||
+      property == "industry_tag"
+    ) {
       for (const attribute in data[property]) {
         let formURL = property + "=" + data[property][attribute]
         URLData.push(formURL)
@@ -349,6 +353,7 @@ client["audiences"].getAudiences = (data) => {
       URLData.push(formURL)
     }
   }
+
   let arrJoin = URLData.join("@")
   URLString = arrJoin.toString()
   newURLFormat = URLString.replace(/@/g, "&")
