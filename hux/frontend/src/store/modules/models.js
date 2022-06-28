@@ -91,6 +91,9 @@ const mutations = {
   SET_ONE_PIPELINE(state, item) {
     state.pipelinePreformance = item
   },
+  RESET_ALL(state) {
+    Vue.set(state, "items", [])
+  },
 }
 
 const actions = {
@@ -103,6 +106,26 @@ const actions = {
       throw error
     }
   },
+
+    async getFilteredModels({ commit }, queryParams = null) {
+      try {
+        if (queryParams.tags.length > 0) {
+          const response = await api.models.getModels({
+            industry_tag: queryParams.tags
+          })
+          commit("RESET_ALL")
+          commit("SET_ALL", response.data)
+
+        } else {
+          const response = await api.models.all()
+          commit("SET_ALL", response.data)
+        }
+      } catch (error) {
+        handleError(error)
+        throw error
+      }
+    },
+  
 
   async getOverview({ commit }, model) {
     try {

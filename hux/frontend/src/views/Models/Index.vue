@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="models-wrap">
     <page-header data-e2e="models-header" :header-height="110">
       <template #left>
         <div>
@@ -17,8 +17,45 @@
           your active models for an effective delivery experience.
         </div>
       </template>
+      <template #right>
+        <v-btn
+          icon
+          data-e2e="audienceFilterToggle"
+          @click.native="filterToggle()"
+        >
+          <icon
+            type="filter"
+            :size="27"
+            :color="isFilterToggled ? 'primary' : 'black'"
+            :variant="
+              showError
+                ? 'lighten3'
+                : isFilterToggled
+                ? 'lighten6'
+                : 'darken4'
+            "
+          />
+          <v-badge
+            v-if="finalFilterApplied > 0"
+            :content="finalFilterApplied"
+            color="white"
+            offset-x="6"
+            offset-y="4"
+            light
+            bottom
+            overlap
+            bordered
+          />
+        </v-btn>
+      </template>
     </page-header>
-    <page-header v-if="addedModels.length > 0" header-height="71">
+
+
+    <div
+      class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
+    >
+      <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+        <page-header   class="top-bar" v-if="addedModels.length > 0" :header-height="69">
       <template #left>
         <v-btn disabled icon color="black">
           <icon type="search" :size="20" color="black" variant="lighten3" />
@@ -40,13 +77,10 @@
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-
-    <v-row
-      v-if="!loading"
-      class="padding-30 ma-0 flex-grow-1 flex-shrink-1 mw-100 content-section"
-      data-e2e="models-list"
-    >
-      <template v-if="addedModels.length > 0">
+        <v-row
+          v-if="addedModels.length > 0 && !loading"
+          class="padding-30 ma-0 content-section"
+        >
         <descriptive-card
           v-for="model in addedModels"
           :key="model.id"
@@ -59,7 +93,7 @@
           :logo-option="true"
           :description="model.description"
           :top-right-adjustment="
-            model.status != 'active' ? 'ml-8 mt-3 mr-8' : 'mt-3 mr-8'
+            model.status != 'active' ? 'ml-8 mt-6 mr-8' : 'mt-3 mr-8'
           "
           data-e2e="model-item"
           :disabled="model.status !== 'Active'"
@@ -83,7 +117,7 @@
               <tooltip v-for="tags in model.tags.industry" :key="tags">
                 <template #label-content>
                   <logo
-                    :key="tag"
+                    :key="tags"
                     :size="16"
                     class="mr-1"
                     :type="`${tags}_logo`"
@@ -147,9 +181,12 @@
             </div>
           </template>
         </descriptive-card>
-      </template>
-      <hux-empty
-        v-else-if="addedModels.length == 0 && !showError"
+        </v-row>
+        <v-row
+          v-else-if="addedModels.length == 0 && !showError"
+          class="background-empty"
+        >
+        <hux-empty
         icon-type="models-empty"
         :icon-size="50"
         title="No models to show"
@@ -168,8 +205,12 @@
           </hux-button>
         </template>
       </hux-empty>
+        </v-row>
+        <v-row
+         v-else
+          class="d-flex justify-center align-center"
+        >
       <error
-        v-else
         icon-type="error-on-screens"
         :icon-size="50"
         title="Models are currently unavailable"
@@ -177,9 +218,20 @@
         class="models-error-height"
       >
       </error>
-    </v-row>
-
-    <confirm-modal
+        </v-row>
+        <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
+      </div>
+      <div class="ml-auto">
+        <model-filter
+          ref="filters"
+          v-model="isFilterToggled"
+          :filter-options="filterOptions()"
+          @onSectionAction="applyFilter"
+          view-height="calc(100vh - 145px)"
+        />
+        <model-configuration v-model="drawer" @refresh="reloadWithCloseDrawer()" />
+      </div>
+      <confirm-modal
       v-model="confirmModal"
       icon="sad-face"
       type="error"
@@ -204,8 +256,7 @@
         </div>
       </template>
     </confirm-modal>
-
-    <model-configuration v-model="drawer" @refresh="reloadWithCloseDrawer()" />
+    </div>
   </div>
 </template>
 
@@ -224,7 +275,8 @@ import ConfirmModal from "@/components/common/ConfirmModal"
 import ModelConfiguration from "@/views/Models/Drawers/Configuration"
 import Logo from "@/components/common/Logo.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import { getAccess, formatText } from "@/utils.js"
+import ModelFilter from "@/views/Models/Drawers/ModelFilter"
+import { getAccess, formatText, getIndustryTags } from "@/utils.js"
 
 export default {
   name: "Models",
@@ -242,6 +294,7 @@ export default {
     ModelConfiguration,
     Logo,
     Tooltip,
+    ModelFilter,
   },
   data() {
     return {
@@ -250,6 +303,9 @@ export default {
       drawer: false,
       confirmModal: false,
       selectedModal: null,
+      isFilterToggled: false,
+      finalFilterApplied: 0,
+      industryTags: getIndustryTags(),
       modelTypes: [
         "purchase",
         "prediction",
@@ -292,6 +348,7 @@ export default {
   methods: {
     ...mapActions({
       getModels: "models/getAll",
+      getModelsByFilter: "models/getFilteredModels",
       deleteModal: "models/remove",
     }),
     goToDashboard(model) {
@@ -316,6 +373,9 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer
     },
+    clearFilters() {
+      this.$refs.filters.clear()
+    },
     async reloadWithCloseDrawer() {
       this.toggleDrawer()
       this.refreshScreen()
@@ -338,6 +398,30 @@ export default {
       await this.deleteModal(this.selectedModal)
       this.refreshScreen()
     },
+    async applyFilter(params) {
+      this.loading = true
+      this.finalFilterApplied = params.filterApplied
+      let queryParams = {
+        tags: params.selectedTags
+      }
+      await this.getModelsByFilter(queryParams)
+      this.loading = false
+    },
+    filterToggle() {
+        this.isFilterToggled = !this.isFilterToggled
+    },
+    filterOptions() {
+      let options = []
+      for (let tags of this.industryTags) {
+      options.push({
+                key: tags,
+                name: formatText(tags),
+                category: "industry",
+                optionName: "Tags",
+              })
+      }
+      return options
+    },
     getAccess: getAccess,
     formatText: formatText,
   },
@@ -345,6 +429,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.models-wrap {
+  background: var(--v-white-base);
+  ::v-deep .menu-cell-wrapper .action-icon {
+    display: none;
+  }
+  .top-bar {
+    margin-top: 1px;
+    .v-icon--disabled {
+      color: var(--v-black-lighten3) !important;
+      font-size: 24px;
+    }
+    .text--refresh {
+      margin-right: 10px;
+    }
+  }
+  ::v-deep .menu-cell-wrapper :hover .action-icon {
+    display: initial;
+  }
+  .icon-border {
+    cursor: default !important;
+  }
+}
 .padding-30 {
   padding: 30px !important;
 }
@@ -363,7 +469,7 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 252px);
+  height: calc(100vh - 250px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }

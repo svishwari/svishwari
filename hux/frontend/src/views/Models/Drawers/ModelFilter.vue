@@ -3,9 +3,9 @@
     :is-toggled="localDrawer"
     :count="filterLength"
     :enable-apply="enableApply"
-    content-height="300px"
+    content-height="280px"
     :style="{ height: viewHeight }"
-    data-e2e="audienceFilters"
+    data-e2e="modelFilters"
     @clear="clear"
     @apply="apply"
     @close="close"
@@ -95,11 +95,12 @@ export default {
     },
     clear() {
       this.clearFilter()
+      this.selectedTags = []
       this.pendingTags = []
       this.apply()
     },
     apply() {
-      this.pendingTags = [...this.selectedTags]
+      this.pendingTags = this.selectedTags
       this.$emit("onSectionAction", {
         selectedTags: this.selectedTags,
         filterApplied: this.filterLength,
@@ -110,7 +111,7 @@ export default {
       this.localDrawer = false
     },
     close() {
-      this.selectedTags = [...this.pendingTags]
+      this.selectedTags = this.pendingTags
       this.localDrawer = false
     },
     formatText: formatText,
