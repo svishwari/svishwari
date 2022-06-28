@@ -55,7 +55,10 @@ Connecting to a AWS VPN and HUX Unified Resources
 *************************************************
 Connecting to Azure VPN and HUX Unified Resources
 *************************************************
-Please refer to this `azure <https://confluence.hux.deloitte.com/display/HUS/Azure+Environment+Access>`_ confluence page for more information about setting up and accessing an HUX environment set up on Azure VPN client.
+- To connect to Azure environments please set up VPN according to the document links found `VPN_Setup <https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN>`_.
+- Instructions to configure OpenVPN client on Windows or Mac systems can be found `OpenVPN <https://confluence.hux.deloitte.com/display/TO/How-to%3A+Configure+the+OpenVPN+Client>`_ on confluence.
+- Please refer to this `azure_env <https://confluence.hux.deloitte.com/display/HUS/Azure+Environment+Access>`_ confluence page for more information about setting up and accessing an HUX environment set up on Azure VPN client.
+- Instructions to access and connect to an Azure environment MongoDB pod outside of k8s can be found `mongodb_pod <https://confluence.hux.deloitte.com/pages/viewpage.action?pageId=107452469>`_ on confluence.
 
 ************
 Environments
@@ -96,26 +99,30 @@ Environments
      - --
 
 .. list-table:: Azure Environments
-   :widths: 12 22 22 22 22
+   :widths: 10 18 18 18 18 18
    :header-rows: 1
 
    * - Component
      - Dev
+     - LILDEV
      - Stage
      - RC1
      - Prod
    * - Hux Unified UI
      - `<https://unified-ui-dev.main.use2.hux-husdev2.in/>`_
+     - `<https://unified-ui-dev.main.use2.hux-lildev.in/>`_
      - --
      - --
      - --
    * - Hux Unified API
      - `<https://unified-api-dev.main.use2.hux-husdev2.in/api/v1/ui/>`_
+     - `<https://unified-api-dev.main.use2.hux-lildev.in/api/v1/ui/>`_
      - --
      - --
      - --
    * - Argo CD
      - `<https://argocd.hux-husdev2.in/>`_
+     - `<https://argocd-uni.hux-lildev.in/>`_
      - --
      - --
      - --
@@ -124,8 +131,10 @@ Environments
      - --
      - --
      - --
+     - --
    * - Connections API
      - `<https://connections-api.main.use2.hux-husdev2.in/docs>`_
+     - --
      - --
      - --
      - --
