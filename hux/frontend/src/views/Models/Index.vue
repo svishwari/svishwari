@@ -446,9 +446,6 @@ export default {
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
   }
-  .icon-border {
-    cursor: default !important;
-  }
 }
 .padding-30 {
   padding: 30px !important;
@@ -468,7 +465,7 @@ export default {
   background: var(--v-black-lighten3);
 }
 .content-section {
-  height: calc(100vh - 250px);
+  height: calc(100vh - 252px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }

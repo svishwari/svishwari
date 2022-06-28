@@ -1,25 +1,28 @@
 {
   "industryOptions": [
     {
-      "name": "Healthcare"
+      "name": "Automotive"
     },
     {
-      "name": "Retail"
+      "name": "Financial"
+    },
+    {
+      "name": "Healthcare"
     },
     {
       "name": "Hospitality"
     },
     {
-      "name": "Automotive"
+      "name": "Retail"
     }
   ],
   "retailOptions": {
     "healthcare": [
       {
-        "name": "Pharmaceutical"
+        "name": "Healthcare provider"
       },
       {
-        "name": "Healthcare provider"
+        "name": "Pharmaceutical Co"
       }
     ],
     "retail": [
@@ -39,10 +42,30 @@
       {
         "name": "Dealers"
       }
+    ],
+    "financial": [
+      {
+        "name": "Bank"
+      },
+      {
+        "name": "Broker"
+      },
+      {
+        "name": "Credit Card Co"
+      },
+      {
+        "name": "Insurance Carrier"
+      },
+      {
+        "name": "Lender"
+      }
     ]
   },
   "customerOptions": {
     "healthcare": [
+      {
+        "name": "Customers"
+      },
       {
         "name": "Patients"
       },
@@ -60,36 +83,65 @@
     ],
     "hospitality": [
       {
-        "name": "Travelers"
+        "name": "Customers"
       },
       {
         "name": "Bookers"
       },
       {
         "name": "Guests"
+      },
+      {
+        "name": "Travelers"
       }
     ],
     "automotive": [
       {
-        "name": "Shoppers"
+        "name": "Customers"
       },
       {
         "name": "Owners"
+      },
+      {
+        "name": "Shoppers"
+      }
+    ],
+    "financial": [
+      {
+        "name": "Borrowers"
+      },
+      {
+        "name": "Clients"
+      },
+      {
+        "name": "Consumers"
+      },
+      {
+        "name": "Customers"
       }
     ]
   },
   "conversionOptions": {
     "healthcare": [
       {
-        "name": "Sales"
+        "name": "Conversions"
+      },
+      {
+        "name": "Leads"
       },
       {
         "name": "Prescriptions"
+      },
+      {
+        "name": "Sales"
       }
     ],
     "retail": [
       {
         "name": "Conversions"
+      },
+      {
+        "name": "Leads"
       },
       {
         "name": "Purchases"
@@ -100,6 +152,9 @@
     ],
     "hospitality": [
       {
+        "name": "Conversions"
+      },
+      {
         "name": "Bookings"
       },
       {
@@ -108,13 +163,36 @@
     ],
     "automotive": [
       {
-        "name": "Sales"
+        "name": "Conversions"
       },
       {
         "name": "Leads"
       },
       {
         "name": "Purchases"
+      },
+      {
+        "name": "Sales"
+      }
+    ],
+    "financial": [
+      {
+        "name": "Accounts"
+      },
+      {
+        "name": "Conversions"
+      },
+      {
+        "name": "Leads"
+      },
+      {
+        "name": "Loans"
+      },
+      {
+        "name": "Mortgages"
+      },
+      {
+        "name": "Sales"
       }
     ]
   }
