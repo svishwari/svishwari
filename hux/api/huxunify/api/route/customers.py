@@ -410,25 +410,27 @@ class IDROverview(SwaggerView):
                 ]
                 # idr_overview[api_c.UPDATED] = requested_end_date
                 trend_data = requested_data
+                start_date = datetime.strftime(
+                    datetime.strptime(
+                        requested_start_date, api_c.DEFAULT_DATE_FORMAT
+                    )
+                    - relativedelta(days=delta_days),
+                    api_c.DEFAULT_DATE_FORMAT,
+                )
+                end_date = datetime.strftime(
+                    datetime.strptime(
+                        requested_end_date, api_c.DEFAULT_DATE_FORMAT
+                    )
+                    - relativedelta(days=delta_days),
+                    api_c.DEFAULT_DATE_FORMAT,
+                )
 
             # get IDR overview
             idr_overview = get_identity_overview(
                 token_response[0],
                 {
-                    api_c.START_DATE: datetime.strftime(
-                        datetime.strptime(
-                            requested_start_date, api_c.DEFAULT_DATE_FORMAT
-                        )
-                        - relativedelta(days=delta_days),
-                        api_c.DEFAULT_DATE_FORMAT,
-                    ),
-                    api_c.END_DATE: datetime.strftime(
-                        datetime.strptime(
-                            requested_end_date, api_c.DEFAULT_DATE_FORMAT
-                        )
-                        - relativedelta(days=delta_days),
-                        api_c.DEFAULT_DATE_FORMAT,
-                    ),
+                    api_c.START_DATE: start_date,
+                    api_c.END_DATE: end_date,
                 },
             )
 
