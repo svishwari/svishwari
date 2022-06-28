@@ -24,6 +24,12 @@ from huxunify.api.schema.customers import (
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
+class AudienceTagsSchema(Schema):
+    """Audience tags schema class"""
+
+    industry = fields.List(fields.String())
+
+
 class LookalikeAudienceGetSchema(Schema):
     """Schema for retrieving the lookalike audience"""
 
@@ -50,6 +56,7 @@ class LookalikeAudienceGetSchema(Schema):
     delivery_platform_link = fields.String(default=None)
     delivery_platform_name = fields.String()
     delivery_platform_type = fields.String()
+    tags = fields.Nested(AudienceTagsSchema, required=False)
 
 
 class AudienceDeliverySchema(Schema):
@@ -140,6 +147,7 @@ class AudienceGetSchema(Schema):
             }
         ],
     )
+    tags = fields.Nested(AudienceTagsSchema, required=False)
 
     destinations = fields.List(fields.Nested(DestinationGetSchema))
     engagements = fields.List(fields.Nested(EngagementDeliverySchema))
@@ -230,6 +238,7 @@ class AudiencePutSchema(Schema):
     )
     engagement_ids = fields.List(fields.String())
     filters = fields.List(fields.Dict())
+    tags = fields.Nested(AudienceTagsSchema, required=False)
 
 
 class AudiencePostSchema(AudiencePutSchema):
@@ -241,6 +250,7 @@ class AudiencePostSchema(AudiencePutSchema):
     )
     engagements = fields.List(fields.String(), required=True)
     filters = fields.List(fields.Dict())
+    tags = fields.Nested(AudienceTagsSchema, required=False)
 
 
 class EngagementDeliveryHistorySchema(Schema):
@@ -305,6 +315,7 @@ class LookalikeAudiencePutSchema(Schema):
     """Schema for editing lookalike audience"""
 
     name = fields.String(required=False)
+    tags = fields.Nested(AudienceTagsSchema, required=False)
 
 
 def is_audience_lookalikeable(audience: dict) -> str:

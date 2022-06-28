@@ -99,7 +99,7 @@ class AWSClient(CloudClient):
                 Name=secret_name,
                 Value=value,
                 Type="SecureString",
-                Overwrite=False,
+                Overwrite=True,
             )
         except ClientError as error:
             logging.error(
