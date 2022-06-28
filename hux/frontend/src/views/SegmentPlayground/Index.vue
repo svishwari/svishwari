@@ -320,7 +320,7 @@ import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 import EmptyPage from "@/components/common/EmptyPage.vue"
 import Error from "@/components/common/screens/Error"
 import { v4 as uuidv4 } from "uuid"
-import { formatText, getIndustryTags } from "@/utils.js"
+import { formatText, getIndustryTags, formatRequestText } from "@/utils.js"
 
 export default {
   name: "SegmentPlayground",
@@ -565,7 +565,7 @@ export default {
         tags: {
           industry:
             this.selectedTags.length > 0
-              ? this.selectedTags.map((item) => item?.name.toLowerCase())
+              ? this.selectedTags.map((item) => formatRequestText(item?.name))
               : [],
         },
       }
