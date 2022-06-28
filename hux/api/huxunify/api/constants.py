@@ -2075,13 +2075,24 @@ HEALTHCARE = "healthcare"
 RETAIL = "retail"
 HOSPITALITY = "hospitality"
 AUTOMOTIVE = "automotive"
-ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+FINANCIAL_SERVICES = "financial_services"
+ALL_INDUSTRY_TYPES = [
+    HEALTHCARE,
+    RETAIL,
+    HOSPITALITY,
+    AUTOMOTIVE,
+    FINANCIAL_SERVICES,
+]
 
 MODEL_NAME_TAGS_MAP = {
     "LTV": dict(industry=ALL_INDUSTRY_TYPES),
-    "Propensity to Purchase": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Purchase": dict(
+        industry=[HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
     "Propensity to Unsubscribe": dict(industry=[RETAIL, HOSPITALITY]),
-    "Propensity to Churn": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Churn": dict(
+        industry=[HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
     "Propensity Type Cancelled": dict(industry=[RETAIL, HOSPITALITY]),
     "Propensity Type Transaction": dict(industry=[RETAIL, HOSPITALITY]),
     "Propensity to Click": dict(industry=ALL_INDUSTRY_TYPES),
@@ -2096,11 +2107,18 @@ MODEL_NAME_TAGS_MAP = {
     "Product Portfolio Marketing": dict(
         industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
     ),
-    "Product Recommendation": dict(industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]),
+    "Product Recommendation System": dict(
+        industry=[RETAIL, HOSPITALITY, AUTOMOTIVE, FINANCIAL_SERVICES]
+    ),
     "Product Return": dict(industry=[RETAIL, AUTOMOTIVE]),
     "Promotion Attributable Analysis": dict(
         industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
     ),
-    "Sales Forecasting model": dict(industry=ALL_INDUSTRY_TYPES),
+    "Sales Forecasting model": dict(
+        industry=[HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
+    "Fraud Payment Detection": dict(industry=[FINANCIAL_SERVICES]),
+    "Loan Default Prediction": dict(industry=[FINANCIAL_SERVICES]),
+    "Personalization": dict(industry=[FINANCIAL_SERVICES]),
     "Uplift Model": dict(industry=ALL_INDUSTRY_TYPES),
 }
