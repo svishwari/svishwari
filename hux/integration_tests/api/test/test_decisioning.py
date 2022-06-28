@@ -79,7 +79,9 @@ class TestModels(TestCase):
     def test_update_model(self):
         """Test updating a model."""
 
-        model_name = f"E2E test_decisioning Integration Test-{int(time() * 1000)}"
+        model_name = (
+            f"E2E test_decisioning Integration Test-{int(time() * 1000)}"
+        )
 
         # create a test model to update it
         create_response = requests.post(
@@ -173,7 +175,8 @@ class TestModels(TestCase):
 
         # get the version-history of model
         fetch_response = requests.get(
-            f"{pytest.API_URL}/{self.MODELS}/" f"{self.test_model_id}/version-history",
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.test_model_id}/version-history",
             headers=pytest.HEADERS,
         )
 
@@ -186,7 +189,8 @@ class TestModels(TestCase):
 
         # get the overview of model
         fetch_response = requests.get(
-            f"{pytest.API_URL}/{self.MODELS}/" f"{self.test_model_id}/overview",
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.test_model_id}/overview",
             headers=pytest.HEADERS,
         )
 
@@ -199,7 +203,8 @@ class TestModels(TestCase):
 
         # get the features of model
         fetch_response = requests.get(
-            f"{pytest.API_URL}/{self.MODELS}/" f"{self.test_model_id}/features",
+            f"{pytest.API_URL}/{self.MODELS}/"
+            f"{self.test_model_id}/features",
             headers=pytest.HEADERS,
         )
 
