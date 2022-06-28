@@ -322,7 +322,6 @@ import Error from "@/components/common/screens/Error"
 import { v4 as uuidv4 } from "uuid"
 import { formatText, getIndustryTags, formatRequestText } from "@/utils.js"
 
-
 export default {
   name: "SegmentPlayground",
   components: {
