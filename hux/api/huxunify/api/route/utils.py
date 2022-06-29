@@ -1244,7 +1244,7 @@ def set_destination_authentication_secrets(
             ssm_params[parameter_name] = secret
             continue
 
-        param_name = f"{api_c.PARAM_STORE_PREFIX}_{parameter_name}"
+        param_name = f"{api_c.PARAM_STORE_PREFIX}-{parameter_name}"
         ssm_params[parameter_name] = param_name
         try:
             CloudClient().set_secret(secret_name=param_name, value=secret)

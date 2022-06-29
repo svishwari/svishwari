@@ -8,27 +8,27 @@
     @click="pillClicked()"
     @click:close="pillClicked()"
   >
-    <tooltip v-if="hover">
+    <tooltip v-if="hover" nudge-right="-40" nudge-top="-10">
       <template #label-content>{{ label }}</template>
       <template #hover-content>
-        <span class="text-body-4">{{ hover }}</span>
+        <div>{{ hover }}</div>
       </template>
     </tooltip>
     <div v-else>
       {{ label }}
-      <v-menu v-if="dropdown">
+      <v-menu v-if="dropdown" v-model="showMenu">
         <template #activator="{ on }">
           <icon
             right
-            :type="showMenu ? 'chevron-down' : 'chevron-down'"
+            :type="showMenu ? 'Dropdown - up' : 'Dropdown - down'"
             :color="darkText ? 'black' : 'white'"
-            size="12"
-            class="pt-1"
+            size="14"
             :on="on"
           />
         </template>
-        <div>test</div>
-        <div>test2</div>
+        <slot name="dropdown">
+          <v-list><v-list-item>hi</v-list-item></v-list>
+        </slot>
       </v-menu>
     </div>
   </v-chip>
@@ -90,3 +90,12 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.dropdown-content {
+  padding: 0px;
+  position: relative;
+  top: 30px;
+  right: 30px;
+}
+</style>

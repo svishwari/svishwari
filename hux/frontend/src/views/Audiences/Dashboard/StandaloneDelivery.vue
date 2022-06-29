@@ -356,8 +356,7 @@ export default {
     dataPendingMesssage() {
       this.setAlert({
         type: "pending",
-        message:
-          "All standalone destination, has started delivering as a standalone deliveries",
+        message: "All standalone deliveries started.",
       })
     },
     kickoffReplace(deliveryId, val) {

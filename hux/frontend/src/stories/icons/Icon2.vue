@@ -1,19 +1,19 @@
 <template>
   <svg-as-component
-    :src="`assets/icons/${type}`"
+    :src="`assets/newIcons/${type}`"
     :width="size"
     :height="size"
     :color="color"
-    :variant="variant"
     :fill-opacity="fillOpacity"
     :stroke="stroke"
     :stroke-opacity="strokeOpacity"
     :style="style"
+    :bg-color="bgColor"
   />
 </template>
 
 <script>
-import svgAsComponent from "@/components/common/SVG.vue"
+import svgAsComponent from "./SVG.vue"
 
 export default {
   name: "Icon",
@@ -37,11 +37,7 @@ export default {
     color: {
       type: String,
       required: false,
-    },
-
-    variant: {
-      type: String,
-      required: false,
+      default: "primary-base",
     },
 
     stroke: {
@@ -70,13 +66,13 @@ export default {
     borderColor: {
       type: String,
       required: false,
-      default: "black",
+      default: "primary-base",
     },
 
-    borderVariant: {
+    bgColor: {
       type: String,
       required: false,
-      default: "base",
+      default: "white-base",
     },
   },
 
@@ -85,9 +81,7 @@ export default {
       let style = {}
       if (this.outline) {
         style["border-width"] = parseInt(this.size) < 20 ? "0.5px" : "1px"
-        style[
-          "border-color"
-        ] = `var(--v-${this.borderColor}-${this.borderVariant})`
+        style["border-color"] = `var(--v-${this.borderColor})`
         style["border-style"] = "solid"
         style["border-radius"] = `${parseInt(this.size) / 2}px`
       }

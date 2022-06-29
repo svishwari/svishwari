@@ -1,18 +1,31 @@
 <template>
   <v-alert
-    :type="type"
+    :color="'var(--v-' + iconColor + ')'"
     text
     dismissible
     :outlined="outlined"
     :height="getHeight"
     :width="getWidth"
-    class="pl-8 pr-8 banner-padding"
+    class="banner-container px-8"
+    :class="size == 'small' ? 'py-2' : 'py-6'"
   >
     <template #prepend>
-      <icon :type="getIcon" :size="24" :color="type" class="mr-2" />
+      <icon
+        :type="type"
+        :size="24"
+        :color="
+          type == 'Checkmark' || type == 'Error'
+            ? 'white-base'
+            : 'black-lighten6'
+        "
+        :bg-color="iconColor"
+        :border-color="iconColor"
+        outline
+        class="mr-2"
+      />
     </template>
     <template #close>
-      <icon type="cross" :size="8" color="black" class="mr-2" @click="toggle" />
+      <icon type="Close & Remove" :size="12" color="black" @click="toggle" />
     </template>
     <div class="banner-label" :style="cssVars">{{ label }}</div>
   </v-alert>
@@ -31,7 +44,7 @@ export default {
     type: {
       type: String,
       required: false,
-      default: "warning",
+      default: "Guide",
     },
     size: {
       type: String,
@@ -63,23 +76,25 @@ export default {
     cssVars() {
       return { width: this.getWidth - 104 + "px" }
     },
-    getIcon() {
-      let iconToRet = ""
+
+    iconColor() {
       switch (this.type) {
-        case "warning":
-          iconToRet = "exclamation_outline"
-          break
-        case "success":
-          iconToRet = "success"
-          break
-        case "error":
-          iconToRet = "sad-face"
-          break
+        case "Checkmark":
+          return "success-darken1"
+
+        case "Error":
+          return "error-lighten1"
+
+        case "Error & Warning":
+          return "warning-lighten1"
+
+        case "Guide":
+          return "yellow-lighten3"
+
         default:
-          iconToRet = "success"
-          break
+          // informative
+          return "yellow-lighten3"
       }
-      return iconToRet
     },
   },
 
@@ -90,9 +105,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.banner-padding {
+.banner-container {
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 .banner-label {
   color: var(--v-black-base);

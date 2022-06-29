@@ -21,7 +21,6 @@ class TestUsers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.test_user = response.json()
-        self.original_alerts = self.test_user["alerts"]
 
     def tearDown(self) -> None:
         """Resets the test user after each test."""
