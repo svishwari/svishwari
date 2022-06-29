@@ -1355,15 +1355,13 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                     is_range = True
                 else:
                     break
-                section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
-                section_filter.update({api_c.TYPE: "event"})
                 if section_filter.get(api_c.TYPE) == "between":
                     start_date = section_filter.get(
                         api_c.AUDIENCE_FILTER_VALUE
-                    )[0].strftime("%Y-%m-%d")
+                    )[0]
                     end_date = section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[
                         1
-                    ].strftime("%Y-%m-%d")
+                    ]
                 else:
                     start_date = (
                         datetime.utcnow()
@@ -1376,6 +1374,8 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                         )
                     ).strftime("%Y-%m-%d")
                     end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
+                section_filter.update({api_c.TYPE: "event"})
                 section_filter.update(
                     {
                         api_c.VALUE: [
