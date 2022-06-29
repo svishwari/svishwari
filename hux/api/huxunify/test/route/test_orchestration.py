@@ -345,7 +345,7 @@ class OrchestrationRouteTest(RouteTestCase):
         )
         self.assertEqual(
             audience_post[db_c.AUDIENCE_SOURCE][db_c.AUDIENCE_SOURCE_TYPE],
-            "cdp",
+            db_c.DATA_SOURCE_PLATFORM_CDP,
         )
         self.assertIsNotNone(
             response.json.get(api_c.DESTINATIONS)[0].get(db_c.DATA_ADDED)
