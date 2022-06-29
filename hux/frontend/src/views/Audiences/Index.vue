@@ -737,7 +737,7 @@ export default {
       this.numFiltersSelected = value
     },
     clearFilters() {
-      this.$refs.filters.clearAndReload()
+      this.$refs.filters.clear()
     },
     initiateClone(audienceId) {
       this.$router.push({
