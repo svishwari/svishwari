@@ -91,6 +91,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.audience_filters,
             user_name=self.user_name,
             size=1450,
+            audience_tags={db_c.INDUSTRY: [db_c.HEALTHCARE, db_c.HOSPITALITY]},
         )
 
         am.create_audience(
@@ -99,6 +100,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.audience_filters,
             user_name=self.user_name,
             size=1500,
+            audience_tags={db_c.INDUSTRY: [db_c.RETAIL]},
         )
 
         return am.get_all_audiences(self.database)
@@ -113,6 +115,7 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertIn(db_c.ID, audience_doc)
         self.assertIn(db_c.SIZE, audience_doc)
         self.assertEqual(audience_doc[db_c.SIZE], 1450)
+        self.assertIn(db_c.TAGS, audience_doc)
 
     def test_get_audience_filter_variant(self):
         """Test get audiences. The filter variant of the function"""
@@ -159,7 +162,7 @@ class TestAudienceManagement(unittest.TestCase):
         audience_doc = am.get_audience(self.database, set_audience[0][db_c.ID])
 
         self.assertIsNotNone(audience_doc)
-        self.assertTrue(db_c.ID in audience_doc)
+        self.assertIn(db_c.ID, audience_doc)
         self.assertIsNotNone(audience_doc[db_c.AUDIENCE_FILTERS])
         self.assertIsNotNone(audience_doc[db_c.AUDIENCE_FILTERS][0])
         self.assertEqual(
@@ -173,6 +176,11 @@ class TestAudienceManagement(unittest.TestCase):
                 db_c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
             ],
             db_c.AUDIENCE_FILTER_AGGREGATOR_ANY,
+        )
+        self.assertIn(db_c.TAGS, audience_doc)
+        self.assertEqual(
+            audience_doc[db_c.TAGS],
+            {db_c.INDUSTRY: [db_c.HEALTHCARE, db_c.HOSPITALITY]},
         )
 
     def test_get_audience_with_user(self):
@@ -197,10 +205,7 @@ class TestAudienceManagement(unittest.TestCase):
         # Update audience name
         new_name = "New name"
         doc = am.update_audience(
-            self.database,
-            audience_doc[db_c.ID],
-            self.user_name,
-            new_name,
+            self.database, audience_doc[db_c.ID], self.user_name, new_name
         )
 
         self.assertTrue(doc is not None)
@@ -243,7 +248,7 @@ class TestAudienceManagement(unittest.TestCase):
                 self.user_name,
             )
 
-    def test_update_audience_filters(self):
+    def test_update_audience_filters_and_tags(self):
         """Test update audience filters."""
 
         set_audience = self._setup_audience()
@@ -259,6 +264,11 @@ class TestAudienceManagement(unittest.TestCase):
             db_c.AUDIENCE_FILTER_AGGREGATOR_ALL,
         )
         self.assertEqual(len(audience_doc[db_c.AUDIENCE_FILTERS]), 2)
+        self.assertIn(db_c.TAGS, audience_doc)
+        self.assertEqual(
+            audience_doc[db_c.TAGS],
+            {db_c.INDUSTRY: [db_c.HEALTHCARE, db_c.HOSPITALITY]},
+        )
 
         # Update audience filters
         new_filters = [
@@ -279,6 +289,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.user_name,
             audience_doc[db_c.AUDIENCE_NAME],
             new_filters,
+            audience_tags={db_c.INDUSTRY: [db_c.RETAIL]},
         )
 
         self.assertTrue(doc is not None)
@@ -291,6 +302,8 @@ class TestAudienceManagement(unittest.TestCase):
             db_c.AUDIENCE_FILTER_AGGREGATOR_ANY,
         )
         self.assertEqual(len(doc[db_c.AUDIENCE_FILTERS]), 1)
+        self.assertIn(db_c.TAGS, doc)
+        self.assertEqual(doc[db_c.TAGS], {db_c.INDUSTRY: [db_c.RETAIL]})
 
     def test_add_audience_with_destination(self):
         """Test add audience with destinations."""
@@ -404,6 +417,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.audience_filters,
             user_name=self.user_name,
             size=1450,
+            audience_tags={db_c.INDUSTRY: [db_c.HEALTHCARE, db_c.HOSPITALITY]},
         )
 
         am.create_audience(
@@ -414,7 +428,7 @@ class TestAudienceManagement(unittest.TestCase):
             size=1500,
         )
 
-        # Attribute filters.
+        # attribute filters
         filters = {db_c.ATTRIBUTE: [db_c.AGE, db_c.S_TYPE_CITY]}
         filtered_audiences = am.get_all_audiences(
             self.database, filters=filters
@@ -443,6 +457,13 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertEqual(
             filtered_audiences[0][db_c.ID], audience_1.get(db_c.ID)
         )
+
+        # industry_tag filters
+        filters = {db_c.INDUSTRY_TAG: [db_c.HEALTHCARE]}
+        filtered_audiences = am.get_all_audiences(
+            self.database, filters=filters
+        )
+        self.assertEqual(len(filtered_audiences), 1)
 
     def test_get_all_audiences_with_users(self):
         """Test get_all_audiences with users."""

@@ -277,6 +277,7 @@ export default {
       reqTeamMember: "users/requestTeamMember",
       getreqMembers: "users/getRequestedUsers",
       existingUsers: "users/getUsers",
+      profile: "users/getUserProfile",
     }),
     formatInnerHTML: formatInnerHTML,
     closeDrawer() {
@@ -297,6 +298,7 @@ export default {
         pii_access: this.pii_access,
         role: this.accessLevelType,
       })
+      this.profile()
       this.closeDrawer()
       this.existingUsers()
     },

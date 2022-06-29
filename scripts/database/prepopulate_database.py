@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """Purpose of this file is for populating the following database documents.
  - data sources
  - destinations (delivery platforms)
@@ -17,247 +18,12 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.collection_management import (
     create_document,
 )
-from huxunifylib.database.data_management import set_constant
 from pymongo import MongoClient
 
 from database.share import get_mongo_client
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
-
-# Models List
-models_list = [
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Unsubscribe",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to unsubscribe"
-        " from an email marketing list.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Open",
-        db_c.MODEL_DESCRIPTION: " Propensity for a customer to open an email.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Click",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to click "
-        "on a link in an email.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_EMAIL,
-        db_c.TYPE: db_c.MODEL_TYPE_UNKNOWN,
-        db_c.NAME: "Email Content Optimization",
-        db_c.MODEL_DESCRIPTION: "Alter email content to optimize "
-        "email campaign performance.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
-        db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
-        db_c.NAME: "Customer Lifetime Value",
-        db_c.MODEL_DESCRIPTION: "Predicting the lifetime value of a "
-        "customer over a defined time range.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
-        db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
-        db_c.NAME: "Predicted Sales Per Customer",
-        db_c.MODEL_DESCRIPTION: "Predicting sales for a customer over a "
-        "defined time range.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_SALES_FORECASTING,
-        db_c.TYPE: db_c.MODEL_TYPE_REGRESSION,
-        db_c.NAME: "Predicted Sales Per Store",
-        db_c.MODEL_DESCRIPTION: "Predicting sales for a store over a "
-        "defined time range.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Capability Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral capability score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Trust Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral trust score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Humanity Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral humanity score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Reliability Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral reliability score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_TRUST_ID,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Transparency Propensity",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral transparency score.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_RETENTION,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Churn",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to leave a service "
-        "over a defined time range.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Purchase Product Category",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web purchase"
-        " in a particular product category.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Visit Product Category",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to make a web visit"
-        " in a particular product category.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: [db_c.RETAIL, db_c.AUTOMOTIVE]},
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_WEB,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Propensity to Visit Website",
-        db_c.MODEL_DESCRIPTION: "Propensity for a customer to visit a website.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: db_c.MODEL_CATEGORY_UNCATEGORIZED,
-        db_c.TYPE: db_c.MODEL_TYPE_CLASSIFICATION,
-        db_c.NAME: "Segmentation",
-        db_c.MODEL_DESCRIPTION: "Segment a set of customers.",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {
-            db_c.INDUSTRY: [db_c.RETAIL, db_c.HOSPITALITY, db_c.AUTOMOTIVE]
-        },
-    },
-    {
-        db_c.CATEGORY: "Retention",
-        db_c.TYPE: "churn",
-        db_c.NAME: "Propensity to churn",
-        db_c.MODEL_DESCRIPTION: "Propensity of a customer to "
-        "churn in a future time window.",
-        db_c.VERSION: "21.11.22",
-        db_c.FULCRUM: "2021-11-22",
-        db_c.LOOKBACK_DAYS: 120,
-        db_c.PREDICTION_DAYS: 30,
-        db_c.OWNER: "decisioning",
-        db_c.OWNER_EMAIL: "huxdecisiong",
-        db_c.DATE_TRAINED: "2021-11-22",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-    {
-        db_c.CATEGORY: "Retention",
-        db_c.TYPE: "Purchase",
-        db_c.NAME: "Propensity to purchase",
-        db_c.MODEL_DESCRIPTION: "Propensity of a customer making a "
-        "purchase in a future time window.",
-        db_c.VERSION: "21.10.7",
-        db_c.FULCRUM: "2021-10-07",
-        db_c.LOOKBACK_DAYS: 90,
-        db_c.PREDICTION_DAYS: 14,
-        db_c.OWNER: "decisioning",
-        db_c.OWNER_EMAIL: "huxdecisiong",
-        db_c.DATE_TRAINED: "2021-10-07",
-        db_c.STATUS: db_c.PENDING,
-        db_c.ADDED: False,
-        db_c.ENABLED: True,
-        db_c.TAGS: {db_c.INDUSTRY: db_c.ALL_INDUSTRY_TYPES},
-    },
-]
 
 # Configurations List
 configurations_constants = [
@@ -510,6 +276,611 @@ configurations_constants = [
             },
         ],
     },
+    # RBAC Matrix constant
+    {
+        db_c.CONFIGURATION_FIELD_NAME: "RBAC Matrix",
+        db_c.CONFIGURATION_FIELD_TYPE: db_c.CONFIGURATION_TYPE_RBAC_MATRIX,
+        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Role Based Access Control Matrix",
+        db_c.CONFIGURATION_FIELD_ENABLED: True,
+        db_c.CONFIGURATION_FIELD_SETTINGS: {
+            db_c.COMPONENTS: {
+                db_c.ALERTS: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Alerts",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "get_all",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "delete",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: False,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                    ],
+                },
+                db_c.DESTINATIONS: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Destinations",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "get_constants",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "validate",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_all",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_data_extensions",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "create_data_extensions",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "set_authentication_credentials",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "request_unsupported_destination",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "create_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "delete",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: False,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                    ],
+                },
+                db_c.AUDIENCE: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Audience",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "get_rules",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "create_lookalike",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "edit_lookalike",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_all",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "create",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_insights",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_countries",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_states",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_cities",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "download",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "update_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "delete_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                    ],
+                },
+                db_c.USER: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "User",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "contact_us",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_profile",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_all",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "update_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: False,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "create_favorite",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "delete_favorite",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                    ],
+                },
+                db_c.DATA_SOURCE: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Data Source",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "get_all",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "request_new",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "delete_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "request_existing",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_datafeeds",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "update_list_of_data_sources",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                    ],
+                },
+                db_c.ENGAGEMENTS: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Engagements",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "get_all",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "create_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_ad_metrics",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_email_metrics",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "download_email_metrics",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "add_destination_to_engagement",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "remove_destination_from_engagement",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "add_audience_to_engagement",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "remove_audience_from_engagement",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "update_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "delete_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                    ],
+                },
+                db_c.MODELS: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Models",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "get_all",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "request_one",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_features",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_versions_history",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_overview",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_top_features",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_drift",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_lift",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                    ],
+                },
+                db_c.CAMPAIGNS: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Campaigns",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "get_list_of_campaigns",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "update_campaign_for_engagement",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_campaign_mappings",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                    ],
+                },
+                db_c.DELIVERY: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Delivery",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "schedule_delivery",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "delete_delivery",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "deliver",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "deliver_audience",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "deliver_engagement",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "get_engagement_history",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_audience_history",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                    ],
+                },
+                db_c.CUSTOMERS: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Customers",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "country_insights",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "revenue_insights",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "state_insights",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "city_insights",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "total_customer_insights",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "demographic_insights",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "customer_data_overview",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "list_of_customers",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "events_for_customer",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_customer_profile",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "filtered_customer_data_overview",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                    ],
+                },
+                db_c.IDR: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "IDR",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "matching_trends",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "get_single_datafeed",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "data_feeds",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "idr_overview",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                    ],
+                },
+                db_c.TRUST_ID: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Trust ID",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "trustid_overview",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "trustid_comparison",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "trustid_attributes",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "trustid_add_segment",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "trustid_user_filters",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                    ],
+                },
+            }
+        },
+    },
 ]
 
 # Client Projects List
@@ -520,7 +891,7 @@ client_projects_list = [
         db_c.DESCRIPTION: "Monamie Project",
         db_c.URL: "https://localhost/monamie",
         db_c.ICON: "default.ico",
-        db_c.ACCESS_LEVEL: "viewer",
+        db_c.ACCESS_LEVEL: db_c.USER_ROLE_VIEWER,
     },
     {
         db_c.NAME: "Creatiff Inc.",
@@ -528,7 +899,7 @@ client_projects_list = [
         db_c.DESCRIPTION: "Creatiff Inc. Project",
         db_c.URL: "https://localhost/creatiff",
         db_c.ICON: "default.ico",
-        db_c.ACCESS_LEVEL: "editor",
+        db_c.ACCESS_LEVEL: db_c.USER_ROLE_EDITOR,
     },
     {
         db_c.NAME: ".am",
@@ -536,7 +907,7 @@ client_projects_list = [
         db_c.DESCRIPTION: ".am Project",
         db_c.URL: "https://localhost/am",
         db_c.ICON: "default.ico",
-        db_c.ACCESS_LEVEL: "admin",
+        db_c.ACCESS_LEVEL: db_c.USER_ROLE_ADMIN,
     },
 ]
 
@@ -613,13 +984,6 @@ applications_constants = [
         db_c.ENABLED: True,
     },
     {
-        db_c.NAME: "Tecton",
-        db_c.CATEGORY: "Modelling",
-        db_c.TYPE: "tecton",
-        db_c.ICON: "default.ico",
-        db_c.ENABLED: True,
-    },
-    {
         db_c.NAME: "Grafana",
         db_c.CATEGORY: "Monitoring",
         db_c.TYPE: "grafana",
@@ -670,609 +1034,25 @@ applications_constants = [
     },
 ]
 
-
-# RBAC Matrix
-rbac_matrix = {
-    "constant": "rbac_matrix",
-    "value": {
-        "components": {
-            "alerts": {
-                "label": "Alerts",
-                "actions": [
-                    {
-                        "type": "get_all",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "delete",
-                        "admin": True,
-                        "editor": False,
-                        "viewer": False,
-                    },
-                ],
-            },
-            "destinations": {
-                "label": "Destinations",
-                "actions": [
-                    {
-                        "type": "get_constants",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "validate",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_all",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_data_extensions",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "create_data_extensions",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "set_authentication_credentials",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "request_unsupported_destination",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "create_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "delete",
-                        "admin": True,
-                        "editor": False,
-                        "viewer": False,
-                    },
-                ],
-            },
-            "audience": {
-                "label": "Audience",
-                "actions": [
-                    {
-                        "type": "get_rules",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "create_lookalike",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "edit_lookalike",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_all",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "create",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_insights",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_countries",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_states",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_cities",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "download",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "update_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "delete_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                ],
-            },
-            "user": {
-                "label": "User",
-                "actions": [
-                    {
-                        "type": "contact_us",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_profile",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_all",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "update_one",
-                        "admin": True,
-                        "editor": False,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "create_favorite",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "delete_favorite",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                ],
-            },
-            "data_source": {
-                "label": "Data Source",
-                "actions": [
-                    {
-                        "type": "get_all",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "request_new",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "delete_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "request_existing",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_datafeeds",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "update_list_of_data_sources",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                ],
-            },
-            "engagements": {
-                "label": "Engagements",
-                "actions": [
-                    {
-                        "type": "get_all",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "create_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_ad_metrics",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_email_metrics",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "download_email_metrics",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "add_destination_to_engagement",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "remove_destination_from_engagement",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "add_audience_to_engagement",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "remove_audience_from_engagement",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "update_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "delete_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                ],
-            },
-            "models": {
-                "label": "Models",
-                "actions": [
-                    {
-                        "type": "get_all",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "request_one",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_features",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_versions_history",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_overview",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_top_features",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_drift",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_lift",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                ],
-            },
-            "campaigns": {
-                "label": "Campaigns",
-                "actions": [
-                    {
-                        "type": "get_list_of_campaigns",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "update_campaign_for_engagement",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_campaign_mappings",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                ],
-            },
-            "delivery": {
-                "label": "Delivery",
-                "actions": [
-                    {
-                        "type": "schedule_delivery",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "delete_delivery",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "deliver",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "deliver_audience",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "deliver_engagement",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": False,
-                    },
-                    {
-                        "type": "get_engagement_history",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_audience_history",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                ],
-            },
-            "customers": {
-                "label": "Customers",
-                "actions": [
-                    {
-                        "type": "country_insights",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "revenue_insights",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "state_insights",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "city_insights",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "total_customer_insights",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "demographic_insights",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "customer_data_overview",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "list_of_customers",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "events_for_customer",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_customer_profile",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "filtered_customer_data_overview",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                ],
-            },
-            "idr": {
-                "label": "IDR",
-                "actions": [
-                    {
-                        "type": "matching_trends",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "get_single_datafeed",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "data_feeds",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "idr_overview",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                ],
-            },
-            "trustid": {
-                "label": "Trust ID",
-                "actions": [
-                    {
-                        "type": "trustid_overview",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "trustid_comparison",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "trustid_attributes",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "trustid_add_segment",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                    {
-                        "type": "trustid_user_filters",
-                        "admin": True,
-                        "editor": True,
-                        "viewer": True,
-                    },
-                ],
-            },
-        }
-    },
-}
+empty_collections_to_create = [
+    db_c.AUDIENCE_CUSTOMERS_COLLECTION,
+    db_c.AUDIENCE_INSIGHTS_COLLECTION,
+    db_c.AUDIENCES_COLLECTION,
+    db_c.AUDIENCE_AUDIT_COLLECTION,
+    db_c.CACHE_COLLECTION,
+    db_c.CAMPAIGN_ACTIVITY_COLLECTION,
+    db_c.DELIVERABILITY_METRICS_COLLECTION,
+    db_c.DELIVERY_JOBS_COLLECTION,
+    db_c.ENGAGEMENTS_COLLECTION,
+    db_c.INGESTED_DATA_COLLECTION,
+    db_c.INGESTED_DATA_STATS_COLLECTION,
+    db_c.INGESTION_JOBS_COLLECTION,
+    db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+    db_c.NOTIFICATIONS_COLLECTION,
+    db_c.PERFORMANCE_METRICS_COLLECTION,
+    db_c.SURVEY_METRICS_COLLECTION,
+    db_c.USER_COLLECTION,
+]
 
 
 def drop_collections(database: MongoClient) -> None:
@@ -1311,19 +1091,26 @@ def drop_collections(database: MongoClient) -> None:
 
 
 def create_empty_collections(
-    database: MongoClient, collection_names: list
+    mongo_client: MongoClient, collection_names: list
 ) -> None:
-    """Create empty collections
+    """Create empty collections.
 
     Args:
-        database (MongoClient): MongoDB Client
-        collection_names (list): List of collection names to create
+        mongo_client (MongoClient): MongoDB Client.
+        collection_names (list): List of collection names to create.
     """
+
+    database = mongo_client[db_c.DATA_MANAGEMENT_DATABASE]
+
+    # get the list of collection names currently present in DB
+    db_collection_names = database.list_collection_names()
+
     for collection_name in collection_names:
-        database[db_c.DATA_MANAGEMENT_DATABASE].create_collection(
-            collection_name
-        )
-        logging.info("Empty collection %s created.", collection_name)
+        # create a new empty collection only if the collection does not already
+        # exist in db
+        if collection_name not in db_collection_names:
+            database.create_collection(collection_name)
+            logging.info("Empty collection %s created.", collection_name)
 
 
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
@@ -1416,22 +1203,6 @@ def insert_configurations(database: MongoClient, configurations: list) -> None:
     logging.info("Pre-populated configurations.")
 
 
-def insert_models(database: MongoClient, models: list) -> None:
-    """Insert data into models collection
-
-    Args:
-        database (MongoClient): MongoDB Client.
-        models (List): List of Model Objects.
-    """
-    logging.info("Pre-populating models.")
-
-    for model in models:
-        model_id = create_document(database, db_c.MODELS_COLLECTION, model)
-        logging.info("Added %s, %s.", model[db_c.NAME], model_id)
-
-    logging.info("Pre-populate models complete.")
-
-
 def insert_client_projects(
     database: MongoClient, client_projects: list
 ) -> None:
@@ -1486,31 +1257,6 @@ def insert_applications(database: MongoClient, applications: list) -> None:
     logging.info("Pre-populate applications complete.")
 
 
-def insert_constants(database: MongoClient, constants: list) -> None:
-    """Insert data into constants collection.
-
-    Args:
-        database (MongoClient): MongoDB Client.
-        constants (List): List of constants.
-    """
-
-    logging.info("Pre-populating constants.")
-
-    for constant in constants:
-        result_id = set_constant(
-            database,
-            constant[db_c.CONSTANT_NAME],
-            constant[db_c.CONSTANT_VALUE],
-        )
-        logging.info(
-            "Added %s, %s.",
-            constant[db_c.CONSTANT_NAME],
-            result_id,
-        )
-
-    logging.info("Pre-populate constants complete.")
-
-
 if __name__ == "__main__":
     # Initiate Data Base client
     db_client = get_mongo_client()
@@ -1518,13 +1264,8 @@ if __name__ == "__main__":
     insert_data_sources(db_client, DATA_SOURCES_LIST)
     insert_delivery_platforms(db_client, DELIVERY_PLATFORM_LIST)
     insert_configurations(db_client, configurations_constants)
-    insert_models(db_client, models_list)
     insert_client_projects(db_client, client_projects_list)
     insert_applications(db_client, applications_constants)
-    insert_constants(db_client, [rbac_matrix])
-    collections_to_create = [
-        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
-        db_c.DELIVERY_JOBS_COLLECTION,
-    ]
-    create_empty_collections(db_client, collections_to_create)
+    # create required empty collection for all the other collections
+    create_empty_collections(db_client, empty_collections_to_create)
     logging.info("Pre-populate database procedure complete.")

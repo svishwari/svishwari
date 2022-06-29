@@ -16,8 +16,8 @@ from huxunify.api.route import ROUTES
 from huxunify.api.data_connectors.scheduler import (
     run_scheduled_deliveries,
     run_scheduled_destination_checks,
-    run_scheduled_tecton_feature_cache,
     run_scheduled_customer_profile_audience_count,
+    run_scheduled_customer_overview_audience_insights,
 )
 from huxunify.api.route.utils import get_db_client
 
@@ -144,20 +144,19 @@ def create_app() -> Flask:
             minute=api_c.DESTINATION_CHECK_CRON,
             args=[get_db_client()],
         )
-        # Schedule caching model features every day at 0000 hours UTC
-        scheduler.add_job(
-            id="cache_tecton_model_features",
-            func=run_scheduled_tecton_feature_cache,
-            trigger="cron",
-            hour=0,
-            timezone=pytz.timezone("US/Eastern"),
-            args=[get_db_client()],
-        )
         scheduler.add_job(
             id="update_customer_profile_audience_size",
             func=run_scheduled_customer_profile_audience_count,
             trigger="cron",
             hour=1,
+            timezone=pytz.timezone("US/Eastern"),
+            args=[get_db_client()],
+        )
+        scheduler.add_job(
+            id="cache_customer_overview_audience_insights",
+            func=run_scheduled_customer_overview_audience_insights,
+            trigger="cron",
+            hour=2,
             timezone=pytz.timezone("US/Eastern"),
             args=[get_db_client()],
         )

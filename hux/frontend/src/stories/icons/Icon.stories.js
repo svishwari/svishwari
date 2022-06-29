@@ -1,5 +1,6 @@
-import Icon from "@/components/common/Icon"
+import Icon from "./Icon2"
 import AllIcons from "./Icons"
+import allColors from "../colors/allColors"
 
 const BasicTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
@@ -22,7 +23,7 @@ export default {
   decorators: [() => ({ template: "<story/>" })],
   argTypes: {
     type: {
-      defaultValue: "mapping",
+      defaultValue: "audiences",
       options: AllIcons,
       control: {
         type: "select",
@@ -36,24 +37,27 @@ export default {
     },
     color: {
       defaultValue: "primary",
-      options: [
-        "primary",
-        "secondary",
-        "black",
-        "success",
-        "yellow",
-        "info",
-        "warning",
-        "white",
-        "error",
-      ],
+      options: allColors,
       control: {
         type: "select",
       },
     },
-    varia: {
-      defaultValue: "base",
-      options: ["lighten1", "lighten2", "lighten3"],
+    borderColor: {
+      defaultValue: "primary",
+      options: allColors,
+      control: {
+        type: "select",
+      },
+    },
+    outline: {
+      defaultValue: false,
+      control: {
+        type: "boolean",
+      },
+    },
+    bgColor: {
+      defaultValue: "primary",
+      options: allColors,
       control: {
         type: "select",
       },

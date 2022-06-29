@@ -12,6 +12,7 @@ Welcome to HUX Unified Solution's documentation!
 
    getting_started
    data_management
+   hux_decisioning
    trust_id
    modules
    release_notes/release_notes

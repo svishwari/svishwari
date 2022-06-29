@@ -206,6 +206,8 @@ class TestCustomers(TestCase):
             f"{pytest.API_URL}/{self.IDR}/datafeeds", headers=pytest.HEADERS
         )
 
+        self.assertEqual(HTTPStatus.OK, datafeeds_response.status_code)
+
         response = requests.get(
             f"{pytest.API_URL}/{self.IDR}/datafeeds/"
             f"{str(datafeeds_response.json()[0]['datafeed_id'])}",

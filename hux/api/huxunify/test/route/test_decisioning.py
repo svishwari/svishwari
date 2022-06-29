@@ -8,13 +8,15 @@ from huxunifylib.database.collection_management import create_document
 from hypothesis import given, settings, strategies as st
 
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
     FeatureSchema,
     ModelPipelinePerformanceSchema,
     ModelDriftSchema,
+)
+from huxunify.api.data_connectors.decisioning import (
+    convert_model_to_dot_notation,
 )
 from huxunify.test import constants as t_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
@@ -35,16 +37,10 @@ class DecisioningTests(RouteTestCase):
 
         super().setUp()
 
-        self.tecton = Tecton()
-
-        # define relative paths used for mocking calls.
-        self.models_rel_path = (
-            "huxunify.api.data_connectors.tecton.Tecton.get_models"
-        )
-        self.versions_rel_path = (
-            "huxunify.api.data_connectors."
-            "tecton.Tecton.get_model_version_history"
-        )
+        mock.patch(
+            "huxunify.api.data_connectors.cache.get_db_client",
+            return_value=self.database,
+        ).start()
 
         # mock get_db_client()
         mock.patch(
@@ -53,10 +49,7 @@ class DecisioningTests(RouteTestCase):
         ).start()
 
     def test_success_get_models(self):
-        """Test get models from Tecton."""
-
-        get_models_mock = mock.patch(self.models_rel_path).start()
-        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
+        """Test get models."""
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
@@ -70,9 +63,6 @@ class DecisioningTests(RouteTestCase):
 
     def test_success_get_models_with_status(self):
         """Test get models with status."""
-
-        get_models_mock = mock.patch(self.models_rel_path).start()
-        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?"
@@ -94,9 +84,6 @@ class DecisioningTests(RouteTestCase):
 
     def test_success_get_models_with_model_tags_filter(self):
         """Test get models with model tags filter."""
-
-        get_models_mock = mock.patch(self.models_rel_path).start()
-        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?"
@@ -145,9 +132,6 @@ class DecisioningTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-
-        get_models_mock = mock.patch(self.models_rel_path).start()
-        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
     def test_success_request_model_duplicate(self):
         """Test requesting a model."""
@@ -253,7 +237,7 @@ class DecisioningTests(RouteTestCase):
             {api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE}, response.json
         )
 
-    @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
+    @given(model_id=st.sampled_from(t_c.DEN_API_SUPPORT_MODELS))
     def test_get_model_version_history_success(self, model_id: str):
         """Test get model version history
 
@@ -261,13 +245,15 @@ class DecisioningTests(RouteTestCase):
             model_id (str): Model ID.
         """
 
-        # mock the version history
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
-            json=t_c.MOCKED_MODEL_VERSION_HISTORY,
-        )
-        self.request_mocker.start()
+        # mock get version history.
+        mock.patch(
+            "huxunify.api.data_connectors.decisioning.Decisioning.get_model_info_history",
+            return_value=[
+                convert_model_to_dot_notation(
+                    t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE_PROPENSITY[0]
+                )
+            ],
+        ).start()
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
@@ -287,13 +273,11 @@ class DecisioningTests(RouteTestCase):
             model_id (int): Model Id.
         """
 
-        # mock the version history
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
-            text=json.dumps({}),
-        )
-        self.request_mocker.start()
+        # mock get version history.
+        mock.patch(
+            "huxunify.api.data_connectors.decisioning.Decisioning.get_model_info_history",
+            return_value=[],
+        ).start()
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
@@ -306,7 +290,7 @@ class DecisioningTests(RouteTestCase):
             t_c.validate_schema(ModelVersionSchema(), response.json, True)
         )
 
-    @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
+    @given(model_id=st.sampled_from(t_c.DEN_API_SUPPORT_MODELS))
     @settings(settings.load_profile("hypothesis_setting_profile"))
     def test_get_model_drift_success(self, model_id: int) -> None:
         """Test get model drift success.
@@ -315,18 +299,15 @@ class DecisioningTests(RouteTestCase):
             model_id (int): Model ID.
         """
 
-        get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = (
-            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
-        )
-
-        # mock the features response
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            self.tecton.service,
-            json=t_c.MOCKED_MODEL_DRIFT,
-        )
-        self.request_mocker.start()
+        # mock get version history.
+        mock.patch(
+            "huxunify.api.data_connectors.decisioning.Decisioning.get_model_info_history",
+            return_value=[
+                convert_model_to_dot_notation(
+                    t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE_PROPENSITY[0]
+                )
+            ],
+        ).start()
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
@@ -339,7 +320,7 @@ class DecisioningTests(RouteTestCase):
             t_c.validate_schema(ModelDriftSchema(), response.json, True)
         )
 
-    @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
+    @given(model_id=st.sampled_from(t_c.DEN_API_SUPPORT_MODELS))
     @settings(settings.load_profile("hypothesis_setting_profile"))
     def test_get_model_features_success(self, model_id: int) -> None:
         """Test get model features success.
@@ -348,18 +329,15 @@ class DecisioningTests(RouteTestCase):
             model_id (int): Model ID.
         """
 
-        get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = (
-            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
-        )
-
-        # mock the features response
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            self.tecton.service,
-            json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES,
-        )
-        self.request_mocker.start()
+        # mock get version history.
+        mock.patch(
+            "huxunify.api.data_connectors.decisioning.Decisioning.get_model_info_history",
+            return_value=[
+                convert_model_to_dot_notation(
+                    t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE_PROPENSITY[0]
+                )
+            ],
+        ).start()
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
@@ -370,111 +348,6 @@ class DecisioningTests(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
             t_c.validate_schema(FeatureSchema(), response.json, True)
-        )
-
-    @given(model_id=st.integers(min_value=1, max_value=2))
-    @settings(settings.load_profile("hypothesis_setting_profile"))
-    def test_get_model_features_negative_score(self, model_id: int) -> None:
-        """Test get model features negative score in response.
-
-        Args:
-            model_id (int): Model ID.
-        """
-
-        get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = (
-            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
-        )
-
-        # mock the features response
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            self.tecton.service,
-            json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
-        )
-        self.request_mocker.start()
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
-            f"{api_c.FEATURES}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            t_c.validate_schema(FeatureSchema(), response.json, True)
-        )
-        self.assertEqual(20, len(response.json))
-
-    @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
-    @settings(settings.load_profile("hypothesis_setting_profile"))
-    def test_get_model_feature_importance_success(self, model_id: str) -> None:
-        """Test get model feature importance success.
-
-        Args:
-            model_id (str): Model ID.
-        """
-
-        get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = (
-            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
-        )
-
-        # mock the features response
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            self.tecton.service,
-            json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES,
-        )
-        self.request_mocker.start()
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
-            f"{api_c.FEATURE_IMPORTANCE}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            t_c.validate_schema(FeatureSchema(), response.json, True)
-        )
-
-    @given(model_id=st.integers(min_value=1, max_value=2))
-    @settings(settings.load_profile("hypothesis_setting_profile"))
-    def test_get_model_feature_importance_negative_score(
-        self, model_id: int
-    ) -> None:
-        """Test get model feature importance negative score in response.
-
-        Args:
-            model_id (int): Model ID.
-        """
-
-        get_model_version_mock = mock.patch(self.versions_rel_path).start()
-        get_model_version_mock.return_value = (
-            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
-        )
-
-        # mock the features response
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            self.tecton.service,
-            json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
-        )
-        self.request_mocker.start()
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
-            f"{api_c.FEATURE_IMPORTANCE}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            t_c.validate_schema(FeatureSchema(), response.json, True)
-        )
-        self.assertTrue(
-            all((feature[api_c.SCORE] < 0 for feature in response.json))
         )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))

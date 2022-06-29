@@ -33,6 +33,7 @@ import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
 import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
 import trustIdAttribute from "@/api/mock/fixtures/trustIdAttribute.js"
 import trustIdComparisonData from "@/api/mock/fixtures/segmentComparisonScores.js"
+import RBACMatrix from "./fixtures/RBACMatrix"
 
 export const defineRoutes = (server) => {
   // Users
@@ -109,6 +110,7 @@ export const defineRoutes = (server) => {
       alerts: requestData.alerts,
     })
   })
+  server.get("users/accessMatrix", () => RBACMatrix)
 
   //client projects
   server.get("/client-projects")

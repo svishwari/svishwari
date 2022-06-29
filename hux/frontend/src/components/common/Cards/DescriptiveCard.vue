@@ -232,7 +232,7 @@ export default {
   &.non-interactable {
     cursor: default;
     &:hover {
-      @extend .box-shadow-none;
+      @extend .box-shadow-5;
     }
   }
 
