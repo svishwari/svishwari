@@ -692,7 +692,7 @@ def get_demographic_by_country(
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
 
-    return get_customer_count_by_state(token, filters)
+    return get_customer_count_by_country(token, filters)
 
 
 def get_customers_insights_count_by_day(
