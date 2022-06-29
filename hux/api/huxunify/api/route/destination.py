@@ -656,6 +656,8 @@ class DestinationValidatePostView(SwaggerView):
 
             logger.error("Could not validate Qualtrics successfully.")
         elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
+            # TODO: Remove setting GOOGLE_USE_PROTO_PLUS as and when the
+            #  connector package handles it
             google_connector = GoogleConnector(
                 auth_details={
                     GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.value: authentication_details.get(
@@ -673,6 +675,7 @@ class DestinationValidatePostView(SwaggerView):
                     GoogleCredentials.GOOGLE_CLIENT_SECRET.value: authentication_details.get(
                         api_c.GOOGLE_CLIENT_SECRET
                     ),
+                    GoogleCredentials.GOOGLE_USE_PROTO_PLUS.value: True,
                 }
             )
             if google_connector.check_connection():
