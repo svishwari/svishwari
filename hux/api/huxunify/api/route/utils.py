@@ -1347,15 +1347,23 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                 x[api_c.TYPE] for x in event_types
             ]:
                 event_name = section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
+                start_date = (
+                        datetime.utcnow()
+                        - timedelta(
+                    days=int(
+                        section_filter.get(
+                            api_c.AUDIENCE_FILTER_VALUE
+                        )[0]
+                    )
+                )
+                ).strftime("%Y-%m-%d")
+                end_date = datetime.utcnow().strftime("%Y-%m-%d")
                 if section_filter.get(api_c.TYPE) == "within_the_last":
                     is_range = True
                 elif section_filter.get(api_c.TYPE) == "not_within_the_last":
                     is_range = False
                 elif section_filter.get(api_c.TYPE) == "between":
                     is_range = True
-                else:
-                    break
-                if section_filter.get(api_c.TYPE) == "between":
                     start_date = section_filter.get(
                         api_c.AUDIENCE_FILTER_VALUE
                     )[0]
@@ -1363,17 +1371,7 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                         1
                     ]
                 else:
-                    start_date = (
-                        datetime.utcnow()
-                        - timedelta(
-                            days=int(
-                                section_filter.get(
-                                    api_c.AUDIENCE_FILTER_VALUE
-                                )[0]
-                            )
-                        )
-                    ).strftime("%Y-%m-%d")
-                    end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                    break
                 section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
                 section_filter.update({api_c.TYPE: "event"})
                 section_filter.update(
