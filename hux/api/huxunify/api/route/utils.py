@@ -1129,6 +1129,7 @@ def clean_and_aggregate_datafeed_details(
             }
         )
         # compute run duration if success or running and end_dt available
+
         if df_detail[api_c.STATUS] in [
             api_c.STATUS_SUCCESS,
             api_c.STATUS_RUNNING,
@@ -1357,16 +1358,22 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                 section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
                 section_filter.update({api_c.TYPE: "event"})
                 if section_filter.get(api_c.TYPE) == "between":
-                    start_date = section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[0].strftime("%Y-%m-%d")
-                    end_date = section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[1].strftime("%Y-%m-%d")
+                    start_date = section_filter.get(
+                        api_c.AUDIENCE_FILTER_VALUE
+                    )[0].strftime("%Y-%m-%d")
+                    end_date = section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[
+                        1
+                    ].strftime("%Y-%m-%d")
                 else:
                     start_date = (
-                            datetime.utcnow()
-                            - timedelta(
-                        days=int(
-                            section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[0]
+                        datetime.utcnow()
+                        - timedelta(
+                            days=int(
+                                section_filter.get(
+                                    api_c.AUDIENCE_FILTER_VALUE
+                                )[0]
+                            )
                         )
-                    )
                     ).strftime("%Y-%m-%d")
                     end_date = datetime.utcnow().strftime("%Y-%m-%d")
                 section_filter.update(
