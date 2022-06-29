@@ -26,14 +26,17 @@ and growth of the customer base.
     :width: 900
 
 Customer Count: Graph represents how and at what rate the customer base changes
+
 .. image:: static/img/customer_insights/customer_count.png
     :width: 500
 
 Customer Spends: Graph shows how the average spend of customers have been in the recent past.
+
 .. image:: static/img/customer_insights/customer_spends.png
     :width: 500
 
 Demographic Distribution: Graph showcases the distribution of customers geographically.
+
 .. image:: static/img/customer_insights/demographic_distribution.png
     :width: 900
 
