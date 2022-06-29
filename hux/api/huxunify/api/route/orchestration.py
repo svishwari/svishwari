@@ -1647,6 +1647,10 @@ class AudienceRules(SwaggerView):
         )
         # filter countries list based on the response
 
+        country_list = []
+        for country in countries:
+            country_list.append({country[api_c.NAME]: country[api_c.NAME]})
+
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
         # list of genders will come from cdm
@@ -1774,7 +1778,7 @@ class AudienceRules(SwaggerView):
                         "country": {
                             "name": "Country",
                             "type": "list",
-                            "options": countries,
+                            "options": country_list,
                         },
                         "state": {
                             "name": "State",
