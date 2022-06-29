@@ -58,6 +58,7 @@
       >
         <template #button>
           <hux-button
+            v-if="getAccess('data_source', 'request_existing')"
             variant="primary"
             is-tile
             width="224"
@@ -65,7 +66,7 @@
             class="text-button my-4"
             @click="toggleDrawer()"
           >
-            Request a data sources
+            Request a data source
           </hux-button>
         </template>
       </hux-empty>

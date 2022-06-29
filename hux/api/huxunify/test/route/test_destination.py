@@ -45,10 +45,10 @@ class TestDestinationRoutes(RouteTestCase):
 
         self.new_auth_details = {
             api_c.AUTHENTICATION_DETAILS: {
-                api_c.FACEBOOK_ACCESS_TOKEN: "fake_fake",
-                api_c.FACEBOOK_APP_SECRET: "fake",
-                api_c.FACEBOOK_APP_ID: "1234",
-                api_c.FACEBOOK_AD_ACCOUNT_ID: "12345678",
+                api_c.FACEBOOK_ACCESS_TOKEN.replace("-", "_"): "fake_fake",
+                api_c.FACEBOOK_APP_SECRET.replace("-", "_"): "fake",
+                api_c.FACEBOOK_APP_ID.replace("-", "_"): "1234",
+                api_c.FACEBOOK_AD_ACCOUNT_ID.replace("-", "_"): "12345678",
             }
         }
 

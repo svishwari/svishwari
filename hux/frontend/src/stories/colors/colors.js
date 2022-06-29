@@ -62,7 +62,7 @@ export default {
     },
     {
       title: "Yellow",
-      hex: "#FFDE49",
+      hex: "#FFD100",
       class: "yellow-lighten3",
     },
   ],

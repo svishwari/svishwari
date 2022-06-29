@@ -15,7 +15,7 @@ class Error(Schema):
 class NotFoundError(Error):
     """The specified resource was not found"""
 
-    code = Int(default=HTTPStatus.NOT_FOUND.value)
+    code = Int(default=HTTPStatus.NOT_FOUND.value, example=404)
     message = Str(default=HTTPStatus.NOT_FOUND.description)
 
 

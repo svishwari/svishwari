@@ -245,6 +245,7 @@ export default {
   },
 
   async mounted() {
+    this.updateClientInfo()
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
     this.navigationItems = this.sideBarItems
@@ -266,13 +267,16 @@ export default {
         this.prevItem.defaultState &&
         this.prevItem.link.name != item.link.name
       ) {
-        this.$store.replaceState({
-          ...this.$store.state,
-          [this.prevItem.link.name.charAt(0).toLowerCase() +
-          this.prevItem.link.name.slice(1)]: _.cloneDeep(
-            this.prevItem.defaultState
-          ),
-        })
+        setTimeout(
+          this.$store.replaceState({
+            ...this.$store.state,
+            [this.prevItem.link.name.charAt(0).toLowerCase() +
+            this.prevItem.link.name.slice(1)]: _.cloneDeep(
+              this.prevItem.defaultState
+            ),
+          }),
+          2000
+        )
       }
       this.prevItem = item
     },

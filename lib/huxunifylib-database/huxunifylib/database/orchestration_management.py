@@ -324,7 +324,22 @@ def build_get_audiences_query_filter(
                     }
                 ]
             )
-
+        if filters.get(db_c.EVENT):
+            query_filter["$and"].extend(
+                [
+                    {
+                        "$and": [
+                            {
+                                db_c.EVENTS_FILTER_FIELD: {
+                                    "$regex": rf"^{event_name}$",
+                                    "$options": "i",
+                                }
+                            }
+                            for event_name in filters.get(db_c.EVENT)
+                        ]
+                    }
+                ]
+            )
         if filters.get(db_c.INDUSTRY_TAG):
             query_filter["$and"].extend(
                 [

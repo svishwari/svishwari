@@ -20,6 +20,7 @@ USER = "user"
 USERNAME = "username"
 PASSWORD = "password"
 CONNECTION_STRING = "connection_string"
+SSL_FLAG = "ssl_flag"
 SSL_CERT_PATH = "ssl_cert_path"
 SSL_CERT_FILE_NAME = "SSL_CERT_FILE_NAME"
 TLS_CERT_KEY = "tls_cert_key_file"
@@ -29,6 +30,7 @@ MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
 MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
 MONGO_CONNECTION_STRING = "MONGO_CONNECTION_STRING"
+MONGO_DB_USE_SSL = "MONGO_DB_USE_SSL"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
 OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
@@ -49,7 +51,11 @@ DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
 DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
 DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
 ENVIRONMENT_NAME = "ENVIRONMENT_NAME"
+
+# PLEASE NOTE - these are only here because DEN API
+# is only available in a couple environments.
 STAGING_ENV = "STG1"
+LILDEV_ENV = "LILDEV"
 
 # AWS constants
 AWS_REGION = "AWS_REGION"
@@ -441,18 +447,18 @@ GENERIC_ADS_DEFAULT_COLUMNS = [
 ]
 
 # Facebook connector defines
-FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
-FACEBOOK_APP_ID = "facebook_app_id"
-FACEBOOK_APP_SECRET = "facebook_app_secret"
-FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
+FACEBOOK_AD_ACCOUNT_ID = "facebook-ad-account-id"
+FACEBOOK_APP_ID = "facebook-app-id"
+FACEBOOK_APP_SECRET = "facebook-app-secret"
+FACEBOOK_ACCESS_TOKEN = "facebook-access-token"
 
 # SFMC connector defines
-SFMC_CLIENT_ID = "sfmc_client_id"
-SFMC_CLIENT_SECRET = "sfmc_client_secret"
-SFMC_ACCOUNT_ID = "sfmc_account_id"
-SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
-SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
-SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
+SFMC_CLIENT_ID = "sfmc-client-id"
+SFMC_CLIENT_SECRET = "sfmc-client-secret"
+SFMC_ACCOUNT_ID = "sfmc-account-id"
+SFMC_AUTH_BASE_URI = "sfmc-auth-base-uri"
+SFMC_REST_BASE_URI = "sfmc-rest-base-uri"
+SFMC_SOAP_BASE_URI = "sfmc-soap-base-uri"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
 SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION = "campaign_activity_data_extension"
@@ -460,20 +466,20 @@ SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
 
 # Sendgrid connector defines
-SENDGRID_AUTH_TOKEN = "sendgrid_auth_token"
+SENDGRID_AUTH_TOKEN = "sendgrid-auth-token"
 
 # Qualtrics connector defines
-QUALTRICS_API_TOKEN = "qualtrics_api_token"
-QUALTRICS_DATA_CENTER = "qualtrics_data_center"
-QUALTRICS_OWNER_ID = "qualtrics_owner_id"
-QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
+QUALTRICS_API_TOKEN = "qualtrics-api_token"
+QUALTRICS_DATA_CENTER = "qualtrics-data-center"
+QUALTRICS_OWNER_ID = "qualtrics-owner-id"
+QUALTRICS_DIRECTORY_ID = "qualtrics-directory-id"
 
 # google ads connector defines
-GOOGLE_DEVELOPER_TOKEN = "google_developer_token"
-GOOGLE_REFRESH_TOKEN = "google_refresh_token"
-GOOGLE_CLIENT_CUSTOMER_ID = "google_client_customer_id"
-GOOGLE_CLIENT_ID = "google_client_id"
-GOOGLE_CLIENT_SECRET = "google_client_secret"
+GOOGLE_DEVELOPER_TOKEN = "google-developer-token"
+GOOGLE_REFRESH_TOKEN = "google-refresh-token"
+GOOGLE_CLIENT_CUSTOMER_ID = "google-client-customer-id"
+GOOGLE_CLIENT_ID = "google-client-id"
+GOOGLE_CLIENT_SECRET = "google-client-secret"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -994,14 +1000,17 @@ MODEL = "model"
 MODELS = "models"
 MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
+RANK = "rank"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
+VERSION_NUMBER = "version_number"
 FEATURE_DESCRIPTION = "feature_description"
 PREDICTED = "predicted"
 ACTUAL = "actual"
 PROFILES = "profiles"
 SIZE_PROFILE = "size_profile"
 RATE_PREDICTED = "rate_predicted"
+LIFT = "lift"
 LIFT_PREDICTED = "lift_predicted"
 LIFT_ACTUAL = "lift_actual"
 RATE_ACTUAL = "rate_actual"
@@ -1477,6 +1486,35 @@ SAMPLE_NAVIGATION_SETTINGS = {
             ],
         },
     ]
+}
+SAMPLE_RBAC_MATRIX_SETTINGS = {
+    db_c.CONFIGURATION_FIELD_SETTINGS: {
+        db_c.COMPONENTS: {
+            db_c.ALERTS: {
+                db_c.CONFIGURATION_FIELD_LABEL: "Alerts",
+                db_c.ACTIONS: [
+                    {
+                        db_c.TYPE: "get_all",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: True,
+                        db_c.USER_ROLE_VIEWER: True,
+                    },
+                    {
+                        db_c.TYPE: "get_one",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: True,
+                        db_c.USER_ROLE_VIEWER: True,
+                    },
+                    {
+                        db_c.TYPE: "delete",
+                        db_c.USER_ROLE_ADMIN: True,
+                        db_c.USER_ROLE_EDITOR: False,
+                        db_c.USER_ROLE_VIEWER: False,
+                    },
+                ],
+            }
+        }
+    }
 }
 
 # Applications
@@ -2037,13 +2075,24 @@ HEALTHCARE = "healthcare"
 RETAIL = "retail"
 HOSPITALITY = "hospitality"
 AUTOMOTIVE = "automotive"
-ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+FINANCIAL_SERVICES = "financial_services"
+ALL_INDUSTRY_TYPES = [
+    HEALTHCARE,
+    RETAIL,
+    HOSPITALITY,
+    AUTOMOTIVE,
+    FINANCIAL_SERVICES,
+]
 
 MODEL_NAME_TAGS_MAP = {
     "LTV": dict(industry=ALL_INDUSTRY_TYPES),
-    "Propensity to Purchase": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Purchase": dict(
+        industry=[HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
     "Propensity to Unsubscribe": dict(industry=[RETAIL, HOSPITALITY]),
-    "Propensity to Churn": dict(industry=ALL_INDUSTRY_TYPES),
+    "Propensity to Churn": dict(
+        industry=[HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
     "Propensity Type Cancelled": dict(industry=[RETAIL, HOSPITALITY]),
     "Propensity Type Transaction": dict(industry=[RETAIL, HOSPITALITY]),
     "Propensity to Click": dict(industry=ALL_INDUSTRY_TYPES),
@@ -2058,11 +2107,18 @@ MODEL_NAME_TAGS_MAP = {
     "Product Portfolio Marketing": dict(
         industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
     ),
-    "Product Recommendation": dict(industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]),
+    "Product Recommendation System": dict(
+        industry=[RETAIL, HOSPITALITY, AUTOMOTIVE, FINANCIAL_SERVICES]
+    ),
     "Product Return": dict(industry=[RETAIL, AUTOMOTIVE]),
     "Promotion Attributable Analysis": dict(
         industry=[RETAIL, HOSPITALITY, AUTOMOTIVE]
     ),
-    "Sales Forecasting model": dict(industry=ALL_INDUSTRY_TYPES),
+    "Sales Forecasting model": dict(
+        industry=[HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+    ),
+    "Fraud Payment Detection": dict(industry=[FINANCIAL_SERVICES]),
+    "Loan Default Prediction": dict(industry=[FINANCIAL_SERVICES]),
+    "Personalization": dict(industry=[FINANCIAL_SERVICES]),
     "Uplift Model": dict(industry=ALL_INDUSTRY_TYPES),
 }

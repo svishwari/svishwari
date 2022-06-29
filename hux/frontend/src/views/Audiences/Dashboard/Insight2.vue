@@ -120,7 +120,7 @@
             <template #subtitle-extended>
               <tooltip>
                 <template #label-content>
-                  <div class="men mr-1">
+                  <div class="men mr-1 font-weight-semi-bold">
                     M: {{ audienceInsights.gender_men | Percentage | Empty }}
                   </div>
                 </template>
@@ -133,7 +133,7 @@
 
               <tooltip>
                 <template #label-content>
-                  <div class="women mx-1">
+                  <div class="women mx-1 font-weight-semi-bold">
                     W: {{ audienceInsights.gender_women | Percentage | Empty }}
                   </div>
                 </template>
@@ -146,7 +146,7 @@
 
               <tooltip>
                 <template #label-content>
-                  <div class="other mx-1">
+                  <div class="other mx-1 font-weight-semi-bold">
                     O: {{ audienceInsights.gender_other | Percentage | Empty }}
                   </div>
                 </template>
@@ -175,32 +175,64 @@
                     :key="filterKey"
                     class="filter-item ma-0 mr-1 d-flex align-center"
                   >
-                    <tooltip
+                    <div
                       v-for="filter in Object.keys(appliedFilters[filterKey])"
                       :key="filter"
                     >
-                      <template #label-content>
-                        <v-chip
-                          v-if="filterIndex < 4"
-                          small
-                          class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                          text-color="primary"
-                          color="var(--v-primary-lighten3)"
+                      <div
+                        v-if="!Array.isArray(appliedFilters[filterKey][filter])"
+                      >
+                        <tooltip>
+                          <template #label-content>
+                            <v-chip
+                              v-if="filterIndex < 4"
+                              small
+                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                              text-color="primary"
+                              color="var(--v-primary-lighten3)"
+                            >
+                              {{ appliedFilters[filterKey][filter].name }}
+                            </v-chip>
+                          </template>
+                          <template #hover-content>
+                            <span
+                              class="text-body-2 black--text text--darken-4"
+                              v-bind.prop="
+                                formatInnerHTML(
+                                  appliedFilters[filterKey][filter].hover
+                                )
+                              "
+                            />
+                          </template>
+                        </tooltip>
+                      </div>
+                      <div v-else>
+                        <tooltip
+                          v-for="eventFilter in appliedFilters[filterKey][
+                            filter
+                          ]"
+                          :key="eventFilter"
                         >
-                          {{ appliedFilters[filterKey][filter].name }}
-                        </v-chip>
-                      </template>
-                      <template #hover-content>
-                        <span
-                          class="text-body-2 black--text text--darken-4"
-                          v-bind.prop="
-                            formatInnerHTML(
-                              appliedFilters[filterKey][filter].hover
-                            )
-                          "
-                        />
-                      </template>
-                    </tooltip>
+                          <template #label-content>
+                            <v-chip
+                              v-if="filterIndex < 4"
+                              small
+                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                              text-color="primary"
+                              color="var(--v-primary-lighten3)"
+                            >
+                              {{ eventFilter.name }}
+                            </v-chip>
+                          </template>
+                          <template #hover-content>
+                            <span
+                              class="text-body-2 black--text text--darken-4"
+                              v-bind.prop="formatInnerHTML(eventFilter.hover)"
+                            />
+                          </template>
+                        </tooltip>
+                      </div>
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -478,6 +510,7 @@ import InsightTab from "@/views/Audiences/Dashboard/InsightTab.vue"
 import DownloadAudienceDrawer from "@/views/Shared/Drawers/DownloadAudienceDrawer.vue"
 import AudienceLookalikeDashboard from "@/views/Audiences/Lookalike/Dashboard.vue"
 import TextField from "@/components/common/TextField"
+import { formatText } from "@/utils.js"
 
 export default {
   name: "AudienceInsight",
@@ -676,9 +709,11 @@ export default {
     appliedFilters() {
       // try {
       let _filters = {}
+      let eventFilters = []
       const attributeOptions = this.attributeOptions()
       if (this.audience && this.audience.filters) {
         this.audience.filters.forEach((section) => {
+          eventFilters = []
           section.section_filters.forEach((sectionFilter) => {
             const model = this.modelInitial.filter(
               (model) =>
@@ -690,6 +725,11 @@ export default {
               key: sectionFilter.field.toLowerCase(),
             })
 
+            let eventObj = this.getEventsOption(sectionFilter)
+
+            if (eventObj) {
+              eventFilters.push(eventObj)
+            }
             const filterObj = {}
             if (ruleFilterObject.length > 0) {
               filterObj["name"] = ruleFilterObject[0]["name"]
@@ -717,6 +757,9 @@ export default {
             }
           })
         })
+        if (eventFilters.length > 0) {
+          _filters["general"].event = eventFilters
+        }
       }
       return _filters
       // } catch (error) {
@@ -768,6 +811,15 @@ export default {
       removeAudienceDestination: "engagements/detachDestinationAudi",
     }),
     formatInnerHTML: formatInnerHTML,
+    getEventsOption(filters) {
+      let eventObj = {}
+      if (filters.field == "event") {
+        ;(eventObj.name = formatText(filters.value[0].value)),
+          (eventObj.key = "event"),
+          (eventObj.hover = `${filters.value[1].value[0]} - ${filters.value[1].value[1]}`)
+        return eventObj
+      } else return undefined
+    },
     attributeOptions() {
       const options = []
       if (this.ruleAttributes && this.ruleAttributes.rule_attributes) {

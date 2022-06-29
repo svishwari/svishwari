@@ -3,7 +3,7 @@
 
 import logging
 import datetime
-from typing import Any, Union, Optional
+from typing import Union, Optional
 import pandas as pd
 from bson import ObjectId
 import pymongo
@@ -18,78 +18,6 @@ from huxunifylib.database.audience_data_management_util import (
     validate_data_source_fields,
     clean_dataframe_types,
 )
-
-
-@retry(
-    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def set_constant(
-    database: DatabaseClient,
-    constant_name: str,
-    constant_value: Any,
-) -> Union[dict, None]:
-    """A function to set a data source constant.
-
-    Args:
-        database (DatabaseClient): A database client.
-        constant_name (str): Name of the constant.
-        constant_value (Any): Value of the constant.
-
-    Returns:
-        Union[dict, None]: MongoDB document.
-    """
-
-    constant_doc = None
-    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[db_c.CONSTANTS_COLLECTION]
-
-    doc = {
-        db_c.CONSTANT_NAME: constant_name,
-        db_c.CONSTANT_VALUE: constant_value,
-    }
-
-    try:
-        constant_doc = collection.find_one_and_update(
-            {db_c.CONSTANT_NAME: constant_name},
-            {"$set": doc},
-            upsert=True,
-            return_document=pymongo.ReturnDocument.AFTER,
-        )
-        collection.create_index([(db_c.CONSTANT_NAME, pymongo.ASCENDING)])
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return constant_doc
-
-
-@retry(
-    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def get_constant(
-    database: DatabaseClient, constant_name: str
-) -> Union[dict, None]:
-    """A function to get a data source constant.
-
-    Args:
-        database (DatabaseClient): A database client.
-        constant_name (str): Name of the constant.
-
-    Returns:
-        Union[dict, None]: The corresponding MongoDB document.
-    """
-
-    doc = None
-    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[db_c.CONSTANTS_COLLECTION]
-
-    try:
-        doc = collection.find_one({db_c.CONSTANT_NAME: constant_name})
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return doc
 
 
 @retry(

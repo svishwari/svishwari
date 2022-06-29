@@ -114,6 +114,11 @@ describe("Data management > Customer Profiles", () => {
 
     cy.get(selector.engagement.exitDrawer).click()
 
+    //IDR drawer click
+    cy.get(selector.customerProfile.customerIdrDrawer).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.engagement.exitDrawer).click()
     // should be able to check if valid response for total customers has received"
     cy.get(selector.customerProfile.totalCustomerchart)
       .its("length")
@@ -133,5 +138,16 @@ describe("Data management > Customer Profiles", () => {
     cy.get(selector.customerProfile.mapStateList)
       .its("length")
       .should("be.gt", 0)
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+
+    // click on customer list tab
+    cy.get(selector.customerProfile.customerListTab).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    // scroll down for lazy loading
+    cy.get(".content-section").scrollTo("bottom", { ensureScrollable: true })
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
   })
 })

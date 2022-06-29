@@ -1,6 +1,8 @@
 import Modal from "./Modal.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 import { action } from "@storybook/addon-actions"
+import allIcons from "../icons/Icons"
+import allColors from "../colors/allColors"
 
 export default {
   component: Modal,
@@ -10,7 +12,7 @@ export default {
   argTypes: {
     title: { control: "text" },
     icon: {
-      options: ["exclamation_outline", "trash_in_circle", "FAB_circle_bulb"],
+      options: allIcons,
       control: { type: "select" },
     },
     type: {
@@ -18,7 +20,7 @@ export default {
       control: { type: "select" },
     },
     iconColor: {
-      options: ["success", "info", "warning", "error"],
+      options: allColors,
       control: { type: "select" },
     },
     body: { control: "text" },
@@ -31,19 +33,17 @@ export default {
     showBack: { control: "boolean" },
     showConfirm: { control: "boolean" },
     showCancel: { control: "boolean" },
-    iconSize: { control: "number" },
   },
 
   args: {
     title: "Header",
-    icon: "exclamation_outline",
-    iconColor: "warning",
+    icon: "Cookie",
+    iconColor: "primary-base",
     type: "warning",
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet suscipit maecenas egestas at sed.",
     showBack: "false",
     showConfirm: "true",
     showCancel: "true",
-    iconSize: 40,
   },
 }
 
