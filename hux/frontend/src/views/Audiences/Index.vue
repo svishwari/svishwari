@@ -658,11 +658,15 @@ export default {
           filterTagsObj[audience.name] = new Set()
           audience.filters.forEach((item) => {
             item.section_filters.forEach((obj) => {
+              let eventObj = this.getEventsOption(obj)
               let nameObj = this.attributeOptions().find((item) =>
                 item.key == obj.field ? obj.field.toLowerCase() : null
               )
               if (nameObj) {
                 filterTagsObj[audience.name].add(nameObj.name)
+              }
+              if (eventObj) {
+                filterTagsObj[audience.name].add(eventObj.name)
               }
             })
           })
@@ -705,7 +709,13 @@ export default {
       this.batchDetails.tags = []
       this.batchDetails.deliveries = 2
     },
-
+    getEventsOption(filters) {
+      let eventObj = {}
+      if (filters.field == "event") {
+        eventObj.name = formatText(filters.value[0].value)
+        return eventObj
+      } else return undefined
+    },
     intersected() {
       if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
