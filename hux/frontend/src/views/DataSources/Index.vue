@@ -58,6 +58,7 @@
       >
         <template #button>
           <hux-button
+            v-if="getAccess('data_source', 'request_existing')"
             variant="primary"
             is-tile
             width="224"
@@ -65,7 +66,7 @@
             class="text-button my-4"
             @click="toggleDrawer()"
           >
-            Request a data sources
+            Request a data source
           </hux-button>
         </template>
       </hux-empty>
@@ -102,7 +103,7 @@ import HuxEmpty from "@/components/common/screens/Empty"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 import Icon from "@/components/common/Icon"
 import EmptyPage from "@/components/common/EmptyPage"
-import { getAccess } from "../../utils"
+import { getAccess } from "@/utils"
 
 export default {
   name: "DataSources",
@@ -215,5 +216,6 @@ export default {
 }
 .content-section {
   margin-top: 180px;
+  height: calc(100vh - 70px);
 }
 </style>

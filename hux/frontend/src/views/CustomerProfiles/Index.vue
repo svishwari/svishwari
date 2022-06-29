@@ -37,6 +37,7 @@
                 idr-link
                 text-body-1
               "
+              data-e2e="idr-drawer-customer"
               @click="toggleIDRInsightsDrawer()"
             >
               <icon

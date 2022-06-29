@@ -197,4 +197,13 @@ export const audience = {
       replace_audience: false,
     },
   ],
+  tags: {
+    industry: [
+      "automotive",
+      "financial_services",
+      "healthcare",
+      "hospitality",
+      "retail",
+    ],
+  },
 }

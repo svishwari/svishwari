@@ -4,7 +4,7 @@
       <div class="text-h3 black--text text--base">Match rates</div>
 
       <v-row class="matchrate-header mt-3 body-2">
-        <v-col cols="12" md="4" class="ml-2">
+        <v-col cols="12" md="4" class="ml-0">
           <v-item> Destination </v-item>
         </v-col>
         <v-col cols="12" md="4" class="ml-n1">
@@ -16,7 +16,7 @@
       <v-row
         v-for="d in matchRate"
         :key="d.destination"
-        class="matchrate-list body-1"
+        class="matchrate-list body-1 mx-0 my-2"
       >
         <v-col cols="12" md="4" class="matchrate-col">
           <v-item>
@@ -99,7 +99,6 @@ export default {
       padding-top: 11px;
       border-radius: 4px;
       display: flex;
-      margin: 8px;
       height: 45px;
       .matchrate-col {
         color: var(--v-black-base) !important;
@@ -110,6 +109,9 @@ export default {
   }
   .no-match-rate {
     background: var(--v-primary-lighten1);
+    ::v-deep .metric-card-wrapper {
+      padding: 16px 0px !important;
+    }
   }
 }
 ::v-deep .titleColor {

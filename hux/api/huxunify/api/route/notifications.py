@@ -219,6 +219,7 @@ class NotificationsSearch(SwaggerView):
         Returns:
             Tuple[Response, int] dict of notifications, HTTP status code.
         """
+
         batch_size = Validation.validate_integer(
             request.args.get(
                 api_c.QUERY_PARAMETER_BATCH_SIZE, str(api_c.DEFAULT_BATCH_SIZE)
@@ -297,8 +298,10 @@ class NotificationsSearch(SwaggerView):
             else pymongo.DESCENDING
         )
 
+        database = get_db_client()
+
         notifications = notification_management.get_notifications_batch(
-            get_db_client(),
+            database,
             batch_size=batch_size,
             sort_order=sort_order,
             batch_number=batch_number,
@@ -310,28 +313,31 @@ class NotificationsSearch(SwaggerView):
         )
 
         if batch_size == 5:
-            latest_notification_time = max(
-                [
-                    notification[db_c.NOTIFICATION_FIELD_CREATE_TIME]
-                    for notification in notifications[api_c.NOTIFICATIONS_TAG]
-                ]
-            )
-            if (
-                user.get(db_c.LAST_SEEN_ALERT_TIME) is None
-                or user.get(db_c.LAST_SEEN_ALERT_TIME)
-                < latest_notification_time
-            ):
-                user = update_user(
-                    database=get_db_client(),
-                    okta_id=user[db_c.OKTA_ID],
-                    update_doc={
-                        db_c.SEEN_NOTIFICATIONS: False,
-                        db_c.LAST_SEEN_ALERT_TIME: latest_notification_time,
-                    },
+            if notifications[api_c.NOTIFICATIONS_TAG]:
+                latest_notification_time = max(
+                    [
+                        notification[db_c.NOTIFICATION_FIELD_CREATE_TIME]
+                        for notification in notifications[
+                            api_c.NOTIFICATIONS_TAG
+                        ]
+                    ]
                 )
+                if (
+                    user.get(db_c.LAST_SEEN_ALERT_TIME) is None
+                    or user.get(db_c.LAST_SEEN_ALERT_TIME)
+                    < latest_notification_time
+                ):
+                    user = update_user(
+                        database=database,
+                        okta_id=user[db_c.OKTA_ID],
+                        update_doc={
+                            db_c.SEEN_NOTIFICATIONS: False,
+                            db_c.LAST_SEEN_ALERT_TIME: latest_notification_time,
+                        },
+                    )
         else:
             user = update_user(
-                database=get_db_client(),
+                database=database,
                 okta_id=user[db_c.OKTA_ID],
                 update_doc={db_c.SEEN_NOTIFICATIONS: True},
             )
@@ -468,6 +474,10 @@ class NotificationSearch(SwaggerView):
         HTTPStatus.OK.value: {
             "description": "Notification Details",
             "schema": NotificationSchema,
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.NOTIFICATION_NOT_FOUND,
+            "schema": NotFoundError,
         },
     }
     responses.update(AUTH401_RESPONSE)

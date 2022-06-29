@@ -8,13 +8,13 @@ import requests_mock
 from bson import ObjectId
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.collection_management import create_document
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import get_user
-from huxunifylib.database.data_management import set_constant
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_user_favorites
@@ -77,37 +77,20 @@ class TestUserRoutes(RouteTestCase):
             okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],
         )
 
-        # write rbac matrix database
-        set_constant(
+        # write rbac matrix to configurations collection in database
+        self.rbac_matrix_config_settings = {
+            db_c.CONFIGURATION_FIELD_NAME: "RBAC Matrix",
+            db_c.CONFIGURATION_FIELD_TYPE: db_c.CONFIGURATION_TYPE_RBAC_MATRIX,
+            db_c.CONFIGURATION_FIELD_DESCRIPTION: "Role Based Access Control Matrix",
+            db_c.CONFIGURATION_FIELD_ENABLED: True,
+            db_c.CONFIGURATION_FIELD_SETTINGS: api_c.SAMPLE_RBAC_MATRIX_SETTINGS[
+                db_c.CONFIGURATION_FIELD_SETTINGS
+            ],
+        }
+        create_document(
             self.database,
-            "rbac_matrix",
-            {
-                "components": {
-                    "alerts": {
-                        "label": "Alerts",
-                        "actions": [
-                            {
-                                "type": "get_all",
-                                "admin": True,
-                                "editor": True,
-                                "viewer": True,
-                            },
-                            {
-                                "type": "get_one",
-                                "admin": True,
-                                "editor": True,
-                                "viewer": True,
-                            },
-                            {
-                                "type": "delete",
-                                "admin": True,
-                                "editor": False,
-                                "viewer": False,
-                            },
-                        ],
-                    },
-                }
-            },
+            db_c.CONFIGURATIONS_COLLECTION,
+            self.rbac_matrix_config_settings,
         )
 
     def test_adding_engagement_to_favorite(self):
@@ -720,14 +703,21 @@ class TestUserRoutes(RouteTestCase):
         )
 
     def test_get_rbac_matrix(self):
-        """Test getting rbac matrix"""
+        """Test get user RBAC matrix."""
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.RBAC_MATRIX}",
             headers=t_c.STANDARD_HEADERS,
         )
+
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsNotNone(response.json["components"]["alerts"])
-        self.assertIsNotNone(response.json["components"]["alerts"]["actions"])
+        self.assertIsInstance(response.json, dict)
+        self.assertDictEqual(
+            self.rbac_matrix_config_settings[
+                db_c.CONFIGURATION_FIELD_SETTINGS
+            ],
+            response.json,
+        )
 
     def test_delete_user(self):
         """Test deleting a user."""

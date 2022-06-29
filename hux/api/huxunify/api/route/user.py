@@ -13,6 +13,7 @@ from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.collection_management import get_document
 from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
@@ -20,7 +21,6 @@ from huxunifylib.database.user_management import (
     get_user,
     delete_user,
 )
-from huxunifylib.database.data_management import get_constant
 from huxunify.api.config import get_config
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
@@ -992,10 +992,7 @@ class UsersRBACMatrix(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Retrieve RBAC Matrix.",
-            "schema": {"type": "array", "items": RBACMatrixSchema},
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get RBAC Matrix."
+            "schema": RBACMatrixSchema,
         },
         HTTPStatus.NOT_FOUND.value: {
             "schema": NotFoundError,
@@ -1020,20 +1017,30 @@ class UsersRBACMatrix(SwaggerView):
             Tuple[dict, int]: dict of requested users, HTTP status code.
         """
 
+        # Fetch rbac matrix settings document from configurations collection
         database = get_db_client()
-
-        matrix = get_constant(
-            database,
-            api_c.RBAC_MATRIX,
+        query_filter = {
+            db_c.CONFIGURATION_FIELD_TYPE: {
+                "$in": [db_c.CONFIGURATION_TYPE_RBAC_MATRIX]
+            }
+        }
+        rbac_matrix = get_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            query_filter=query_filter,
         )
 
-        return (
-            jsonify(
-                RBACMatrixSchema().dump(
-                    matrix[api_c.VALUE],
-                )
-            ),
-            HTTPStatus.OK,
+        if not rbac_matrix:
+            logger.error(
+                "RBAC matrix document not found in configurations collection."
+            )
+            return HuxResponse.NOT_FOUND(
+                "RBAC matrix document not found in configurations collection."
+            )
+
+        return HuxResponse.OK(
+            data=rbac_matrix[db_c.CONFIGURATION_FIELD_SETTINGS],
+            data_schema=RBACMatrixSchema(),
         )
 
 

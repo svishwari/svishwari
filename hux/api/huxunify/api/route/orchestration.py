@@ -264,9 +264,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 api_c.SIZE: 0,
                 db_c.DELIVERY_PLATFORM_ID: x,
                 db_c.LINK: destination_dict.get(x).get(db_c.LINK),
-                db_c.IS_AD_PLATFORM: destination_dict.get(
-                    destination_dict.get(db_c.DELIVERY_PLATFORM_ID)
-                ).get(db_c.IS_AD_PLATFORM),
+                db_c.IS_AD_PLATFORM: destination_dict.get(x).get(
+                    db_c.IS_AD_PLATFORM
+                ),
             }
         )
         for x in destination_ids
@@ -337,6 +337,26 @@ class AudienceView(SwaggerView):
             "collectionFormat": "multi",
             "required": False,
             "example": "age",
+        },
+        {
+            "name": api_c.EVENTS,
+            "description": "Only return audiences matching the selected filters",
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "required": False,
+            "example": "created",
+        },
+        {
+            "name": api_c.INDUSTRY_TAG,
+            "description": "Only return audiences matching the industry tag",
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "required": False,
+            "example": api_c.HEALTHCARE,
         },
         {
             "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
@@ -411,10 +431,20 @@ class AudienceView(SwaggerView):
             filter_dict[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
         attribute_list = request.args.getlist(api_c.ATTRIBUTE)
+        events_list = request.args.getlist(api_c.EVENTS)
         # set the attribute_list to filter_dict only if it is populated and
         # validation is successful
+        if events_list:
+            filter_dict[db_c.EVENT] = events_list
+
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
+
+        industry_tag_list = request.args.getlist(api_c.INDUSTRY_TAG)
+        # set the industry_tag_list to filter_dict only if it is populated and
+        # validation is successful
+        if industry_tag_list:
+            filter_dict[api_c.INDUSTRY_TAG] = industry_tag_list
 
         batch_size = validation.validate_integer(
             value=request.args.get(
@@ -577,33 +607,62 @@ class AudienceView(SwaggerView):
         # lookalike audiences can not be lookalikeable
         if not lookalikeable:
             # get all lookalikes and append to the audience list
-            query_filter = {db_c.DELETED: False}
-            if request.args.get(api_c.FAVORITES) and validation.validate_bool(
-                request.args.get(api_c.FAVORITES)
-            ):
-                query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
+            query_filter = {"$and": [{db_c.DELETED: False}]}
 
             if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
                 request.args.get(api_c.WORKED_BY)
             ):
-                query_filter.update(
-                    {
-                        "$or": [
-                            {db_c.CREATED_BY: user[api_c.USER_NAME]},
-                            {db_c.UPDATED_BY: user[api_c.USER_NAME]},
-                        ]
-                    }
+                query_filter["$and"].extend(
+                    [
+                        {
+                            "$or": [
+                                {db_c.CREATED_BY: user[api_c.USER_NAME]},
+                                {db_c.UPDATED_BY: user[api_c.USER_NAME]},
+                            ]
+                        }
+                    ]
                 )
 
             if attribute_list:
-                query_filter["$and"] = [
-                    {
-                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
-                            "$regex": re.compile(rf"^{attribute}$(?i)")
+                query_filter["$and"].extend(
+                    [
+                        {
+                            "$and": [
+                                {
+                                    db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                                        "$regex": re.compile(
+                                            rf"^{attribute}$(?i)"
+                                        )
+                                    }
+                                }
+                                for attribute in attribute_list
+                            ]
                         }
-                    }
-                    for attribute in attribute_list
-                ]
+                    ]
+                )
+
+            if industry_tag_list:
+                query_filter["$and"].extend(
+                    [
+                        {
+                            "$or": [
+                                {
+                                    db_c.INDUSTRY_TAG_FIELD: {
+                                        "$regex": re.compile(
+                                            rf"^{industry_tag}$(?i)"
+                                        )
+                                    }
+                                }
+                                for industry_tag in industry_tag_list
+                            ]
+                        }
+                    ]
+                )
+
+            if request.args.get(api_c.FAVORITES) and validation.validate_bool(
+                request.args.get(api_c.FAVORITES)
+            ):
+                query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
 
             lookalikes = cm.get_documents(
                 database,
@@ -872,15 +931,29 @@ class AudienceGetView(SwaggerView):
         )
 
         # add insights
-        audience[api_c.AUDIENCE_INSIGHTS] = get_customers_overview(
-            token_response[0],
-            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+        audience[api_c.AUDIENCE_INSIGHTS] = Caching.check_and_return_cache(
+            {
+                api_c.ENDPOINT: f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+                **{
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
+                },
+            },
+            get_customers_overview,
+            {
+                api_c.AUTHENTICATION_TOKEN: token_response[0],
+                api_c.AUDIENCE_FILTERS: {
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
+                },
+            },
         )
 
         # query DB and populate lookalike audiences in audience dict only if
         # the audience is not a lookalike audience since lookalike audience
         # cannot have lookalike audiences of its own
-
         audience[api_c.LOOKALIKE_AUDIENCES] = (
             destination_management.get_all_delivery_platform_lookalike_audiences(
                 database, {db_c.LOOKALIKE_SOURCE_AUD_ID: audience_id}
@@ -984,10 +1057,10 @@ class AudienceGetView(SwaggerView):
                 else None,
                 api_c.AUDIENCE_STANDALONE_DELIVERIES: standalone_deliveries,
                 api_c.FAVORITE: is_component_favorite(
-                    user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
+                    user, api_c.AUDIENCES, str(audience_id)
                 )
                 or is_component_favorite(
-                    user[db_c.OKTA_ID], api_c.LOOKALIKE, str(audience_id)
+                    user, api_c.LOOKALIKE, str(audience_id)
                 ),
             }
         )
@@ -1137,6 +1210,7 @@ class AudiencePostView(SwaggerView):
                         ],
                     }
                 ],
+                api_c.TAGS: {api_c.INDUSTRY: api_c.ALL_INDUSTRY_TYPES},
             },
         },
     ]
@@ -1245,6 +1319,7 @@ class AudiencePostView(SwaggerView):
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
+            audience_tags=body.get(api_c.TAGS, None),
         )
 
         # add notification
@@ -1362,6 +1437,7 @@ class AudiencePutView(SwaggerView):
                         ],
                     }
                 ],
+                api_c.TAGS: {api_c.INDUSTRY: api_c.ALL_INDUSTRY_TYPES},
             },
         },
     ]
@@ -1435,7 +1511,16 @@ class AudiencePutView(SwaggerView):
             if body.get(api_c.AUDIENCE_FILTERS)
             else body.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
+            audience_tags=body.get(api_c.TAGS, None),
             user_name=user[api_c.USER_NAME],
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f'Audience "{audience_doc[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
+            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
+            user[api_c.USER_NAME],
         )
 
         # check if any engagements to add, otherwise return.
@@ -1489,14 +1574,6 @@ class AudiencePutView(SwaggerView):
                     [audience_doc[db_c.ID]],
                 )
                 removed.append(engagement[db_c.ID])
-
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f'Audience "{audience_doc[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
-            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
-            user[api_c.USER_NAME],
-        )
 
         return HuxResponse.OK(
             data=audience_doc, data_schema=AudienceGetSchema()
@@ -1810,7 +1887,7 @@ class SetLookalikeAudience(SwaggerView):
             logger.error("Audience %s not found.", body[api_c.AUDIENCE_ID])
             return HuxResponse.NOT_FOUND(api_c.AUDIENCE_NOT_FOUND)
 
-        # TODO: Update desination handling when more lookalikable
+        # TODO: Update destination handling when more lookalikable
         #  destinations are available and param accepted from request
         destination = destination_management.get_delivery_platform_by_type(
             database, db_c.DELIVERY_PLATFORM_FACEBOOK
@@ -1956,12 +2033,13 @@ class PutLookalikeAudience(SwaggerView):
             "description": "Input Lookalike Audience Parameters.",
             "example": {
                 api_c.NAME: "New Lookalike Audience Name",
+                api_c.TAGS: {api_c.INDUSTRY: api_c.ALL_INDUSTRY_TYPES},
             },
         },
     ]
 
     responses = {
-        HTTPStatus.ACCEPTED.value: {
+        HTTPStatus.OK.value: {
             "schema": LookalikeAudienceGetSchema,
             "description": "Successfully edited lookalike audience.",
         },
@@ -2003,10 +2081,11 @@ class PutLookalikeAudience(SwaggerView):
         database = get_db_client()
 
         update_doc = orchestration_management.update_lookalike_audience(
-            database,
-            ObjectId(audience_id),
-            body[api_c.NAME],
-            user[api_c.USER_NAME],
+            database=database,
+            audience_id=ObjectId(audience_id),
+            name=body.get(api_c.NAME, None),
+            user_name=user[api_c.USER_NAME],
+            audience_tags=body.get(api_c.TAGS, None),
         )
 
         create_notification(

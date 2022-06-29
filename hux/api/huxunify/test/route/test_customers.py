@@ -803,6 +803,11 @@ class TestCustomersOverview(RouteTestCase):
             f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
             json={},
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/id-count-by-day",
+            json={},
+        )
         self.request_mocker.start()
 
         response = self.app.get(

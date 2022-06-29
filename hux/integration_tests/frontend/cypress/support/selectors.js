@@ -68,6 +68,8 @@ export default {
     totalCustomersChart: "[data-e2e='total-customers-chart']",
     latestNotifications: "[data-e2e='latest-notifications']",
     allNotificationsLink: "[data-e2e='all-notifications-link']",
+    homeAlertIdClick: "[data-e2e='home-alert-id-click']",
+    demoScriptClick: "[data-e2e='demo-script-click']",
   },
 
   //client
@@ -268,6 +270,7 @@ export default {
     eventsDrawerButton: "[data-e2e='eventsDrawerButton']",
     customerEventRow: "[data-e2e='customerEventRow']",
     customerEventchart: "[data-e2e='customer-event-chart']",
+    customerIdrDrawer: "[data-e2e='idr-drawer-customer']",
   },
 
   //IDR
@@ -292,6 +295,19 @@ export default {
     notificationReturnButton: "[data-e2e='notification-return']",
     viewAllNotifications: "[data-e2e='notifications-view-all']",
     notificationlistmenu: "[data-e2e='notification-item']",
+    alertIdClick: "[data-e2e='alert-id-click']",
+    exitDrawer: "[data-e2e='click-outside']",
+    alertFilterToggle: "[data-e2e='alertFilterToggle']",
+    alertFilters: "[data-e2e='alertFilters']",
+    alertTable: "[data-e2e='alert-table']",
+    applyAlertFilter: "[data-e2e='applyFilter']",
+    closeAlertFilter: "[data-e2e='closeFilter']",
+    clearAlertFilter: "[data-e2e='clearFilter']",
+    alertConfigureToggle: "[data-e2e='alertConfigureToggle']",
+    alertConfigureSave: "[data-e2e='save']",
+    alertConfigureCancel: "[data-e2e='cancelConfigure']",
+    alertConfigureMainSwitch: "[data-e2e='mainSwitch']",
+    individualSwitch: "[data-e2e='individualSwitch']",
   },
   audience: {
     audienceFilterToggle: "[data-e2e='audienceFilterToggle']",

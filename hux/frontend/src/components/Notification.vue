@@ -106,8 +106,8 @@ export default {
   data() {
     return {
       batchDetails: {
-        batch_size: 5,
-        batch_number: 1,
+        batchSize: 5,
+        batchNumber: 1,
         isLazyLoad: false,
         menu: false,
       },
@@ -122,7 +122,7 @@ export default {
     mostRecentNotifications() {
       return orderBy(this.notifications, "create_time", "desc").slice(
         0,
-        this.batchDetails.batch_size
+        this.batchDetails.batchSize
       )
     },
   },

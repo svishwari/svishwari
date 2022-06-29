@@ -6,7 +6,13 @@
 
     <template #default>
       <div class="pa-6">
-        <v-btn tile color="primary" class="mb-4" @click="$emit('onAdd')">
+        <v-btn
+          v-if="getAccess('audience', 'create')"
+          tile
+          color="primary"
+          class="mb-4"
+          @click="$emit('onAdd')"
+        >
           <span class="text-button">Create a new audience</span>
         </v-btn>
 
@@ -125,6 +131,7 @@ import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import { getAccess } from "@/utils"
 
 export default {
   name: "AudiencesDrawer",
@@ -286,6 +293,7 @@ export default {
         this.loading = false
       }
     },
+    getAccess: getAccess,
   },
 }
 </script>

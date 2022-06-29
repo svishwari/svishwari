@@ -1,0 +1,85 @@
+unified-api:
+  global:
+    APP_NAME: unified-api
+    APP_REPO: hux-unified
+    APP_DIR: hux/api
+    DEV_REGISTRY: unified-docker-dev-local
+    STG_REGISTRY: unified-docker-stg-local
+    PROD_REGISTRY: unified-docker-prod-local
+    DEPLOY_REPO: hux-unified-deploy
+    CHART_PATH: k8s/charts
+
+  delivery:
+    aws1:
+      DEV_VALUES: values-huxui-main-use1-unified-dev1.yaml
+      STG_VALUES: values-huxui-main-use1-unified-stg1.yaml
+      RC_VALUES: values-huxui-main-use1-unified-rc1.yaml
+    azure1:
+      DEV_VALUES: values-huxui-main-use2-unified-husdev2.yaml
+  
+  veracode:
+    scans:
+      VC_APPLICATION_NAME: hux-unified-api
+      VC_DEV_BRANCH: develop
+      VC_SANDBOX: develop-hux-unified-api
+    fail:
+      VC_FAIL_ON_SEVERITY: "Very High, High"
+    files:
+      VC_FILETYPE:
+        - py
+        - txt
+
+unified-ui:
+  global:
+    APP_NAME: unified-ui
+    APP_REPO: hux-unified
+    APP_DIR: hux/frontend
+    DEV_REGISTRY: unified-docker-dev-local
+    STG_REGISTRY: unified-docker-stg-local
+    PROD_REGISTRY: unified-docker-prod-local
+    DEPLOY_REPO: hux-unified-deploy
+    CHART_PATH: k8s/charts
+    PORT: 80
+    BUILD_STORYBOOK: true
+    OKTA_ISSUER: https://deloittedigital-ms.okta.com
+    OKTA_CLIENT_ID: 0oab1i3ldgYyRvk5r2p7
+    API_URL: https://unified-api-dev.main.use1.hux-unified-dev1.in
+
+  delivery:
+    aws1:
+      DEV_VALUES: values-huxui-main-use1-unified-dev1.yaml
+      STG_VALUES: values-huxui-main-use1-unified-stg1.yaml
+      RC_VALUES: values-huxui-main-use1-unified-rc1.yaml
+    azure1:
+      DEV_VALUES: values-huxui-main-use2-unified-husdev2.yaml
+
+  veracode:
+    scans:
+      VC_APPLICATION_NAME: hux-unified-ui
+      VC_DEV_BRANCH: develop
+      VC_SANDBOX: develop-hux-unified-ui
+    fail:
+      VC_FAIL_ON_SEVERITY: "Very High, High"
+    files:
+      VC_FILETYPE:
+        - js
+        - vue
+        - py
+        - txt
+
+unified-lib:
+  global:
+    APP_DIR: lib/huxunifylib-database
+
+  veracode:
+    scans:
+      VC_APPLICATION_NAME: hux-unified-lib
+      VC_DEV_BRANCH: develop
+      VC_SANDBOX: develop-hux-unified-lib
+    fail:
+      VC_FAIL_ON_SEVERITY: "Very High, High"
+    files:
+      VC_FILETYPE:
+        - py
+        - txt
+

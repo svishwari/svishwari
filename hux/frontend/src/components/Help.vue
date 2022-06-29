@@ -41,6 +41,7 @@
         <v-list-item class="v-list-item--link" data-e2e="myIssues">
           <a
             href="https://docs.hux.deloitte.com/docs/hux-unified/en/develop/index.html"
+            target="blank"
             class="text-body-1 black--text view-all text-decoration-none"
           >
             Documentation
@@ -49,6 +50,7 @@
         <v-list-item class="v-list-item--link" data-e2e="myIssues">
           <a
             href="https://becurious.edcast.eu/teams/hux-learning-portal#"
+            target="blank"
             class="text-body-1 black--text view-all text-decoration-none"
           >
             CURA training

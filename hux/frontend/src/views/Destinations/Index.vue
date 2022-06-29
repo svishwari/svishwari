@@ -21,7 +21,7 @@
 
         <template #right>
           <router-link
-            v-if="!showError && getRole == 'admin'"
+            v-if="!showError && getAccess('destinations', 'create_one')"
             :to="{ name: 'DestinationConfiguration' }"
             class="text-decoration-none"
             data-e2e="addDestination"
@@ -58,6 +58,7 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 import Icon from "../../components/common/Icon.vue"
+import { getAccess } from "../../utils"
 
 export default {
   name: "Destinations",
@@ -132,6 +133,7 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer
     },
+    getAccess: getAccess,
   },
 }
 </script>

@@ -12,6 +12,7 @@ from huxunify.api.schema.orchestration import (
     EngagementDeliveryHistorySchema,
     AudienceDeliveryHistorySchema,
     AudienceDeliverySchema,
+    LookalikeAudienceGetSchema,
 )
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
@@ -21,7 +22,7 @@ class OrchestrationSchemaTest(TestCase):
     """Test Orchestration related Schema Classes."""
 
     def test_successful_audience_get_schema(self) -> None:
-        """Test Successful EngagementGetSchema."""
+        """Test Successful AudienceGetSchema."""
 
         doc = {
             api_c.ID: "5f5f7262997acad4bac4384a",
@@ -60,12 +61,13 @@ class OrchestrationSchemaTest(TestCase):
                     }
                 ]
             },
+            api_c.TAGS: {api_c.INDUSTRY: [api_c.HEALTHCARE]},
         }
 
         self.assertFalse(AudienceGetSchema().validate(doc))
 
-    def test_successful_lookalike_audience_get_schema(self) -> None:
-        """Test Successful EngagementGetSchema."""
+    def test_successful_lookalike_get_audience_schema(self) -> None:
+        """Test Successful AudienceGetSchema."""
 
         doc = {
             api_c.ID: "5f5f7262997acad4bac4384a",
@@ -97,9 +99,36 @@ class OrchestrationSchemaTest(TestCase):
             db_c.UPDATE_TIME: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
+            api_c.TAGS: {api_c.INDUSTRY: [api_c.HOSPITALITY]},
         }
 
         self.assertFalse(AudienceGetSchema().validate(doc))
+
+    def test_successful_get_lookalike_audience_schema(self) -> None:
+        """Test Successful LookalikeAudienceGetSchema."""
+
+        doc = {
+            api_c.ID: "5f5f7262997acad4bac4384a",
+            db_c.DELIVERY_PLATFORM_ID: str(bson.ObjectId()),
+            db_c.NAME: "Lookalike Audience 1",
+            db_c.AUDIENCE_ID: str(bson.ObjectId()),
+            "country": "US",
+            "audience_size_percentage": 0.03,
+            db_c.SIZE: 1000,
+            db_c.CREATE_TIME: datetime.strftime(
+                datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
+            ),
+            db_c.UPDATE_TIME: datetime.strftime(
+                datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
+            ),
+            db_c.CREATED_BY: "User",
+            db_c.UPDATED_BY: "User",
+            db_c.FAVORITE: True,
+            db_c.STATUS: "Delivered",
+            api_c.TAGS: {api_c.INDUSTRY: [api_c.HEALTHCARE, api_c.RETAIL]},
+        }
+
+        self.assertFalse(LookalikeAudienceGetSchema().validate(doc))
 
     def test_unsuccessful_audience_get_schema_bad_name(self) -> None:
         """Test unsuccessful AudienceGetSchema."""

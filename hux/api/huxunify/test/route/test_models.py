@@ -1,4 +1,5 @@
 """Purpose of this file is to house all the models API tests."""
+import asyncio
 from unittest import mock
 from http import HTTPStatus
 
@@ -10,6 +11,9 @@ from huxunify.api.schema.model import (
     ModelDriftSchema,
     ModelVersionSchema,
     ModelSchema,
+)
+from huxunify.api.data_connectors.decisioning import (
+    convert_model_to_dot_notation,
 )
 
 MOCK_MODEL_RESPONSE = {
@@ -67,6 +71,11 @@ class TestModelRoutes(RouteTestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch(
+            "huxunify.api.data_connectors.cache.get_db_client",
+            return_value=self.database,
+        ).start()
+
         self.stub_models = collection_management.create_document(
             database=self.database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
@@ -81,17 +90,15 @@ class TestModelRoutes(RouteTestCase):
     def test_get_all_models(self):
         """Test get all models."""
 
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE,
-            json=MOCK_MODEL_RESPONSE,
-        )
-        self.request_mocker.start()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
         )
+
+        loop.close()
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
@@ -101,15 +108,17 @@ class TestModelRoutes(RouteTestCase):
     def test_retrieve_version_history_for_model(self):
         """Test get version history for a model."""
 
-        # mock the version history
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
-            json=t_c.MOCKED_MODEL_VERSION_HISTORY,
-        )
-        self.request_mocker.start()
+        # mock get version history.
+        mock.patch(
+            "huxunify.api.data_connectors.decisioning.Decisioning.get_model_info_history",
+            return_value=[
+                convert_model_to_dot_notation(
+                    t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE_PROPENSITY[0]
+                )
+            ],
+        ).start()
 
-        model_id = "1"
+        model_id = "model-Propensity_Type_Cancelled-v5-dev"
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/version-history",
             headers=t_c.STANDARD_HEADERS,
@@ -121,21 +130,17 @@ class TestModelRoutes(RouteTestCase):
     def test_retrieve_drift_details_for_model(self):
         """Test get drift details for a model."""
 
-        # mock the drift data.
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
-            json=t_c.MOCKED_MODEL_DRIFT,
-        )
-        self.request_mocker.start()
-
         # mock get version history.
         mock.patch(
-            "huxunify.api.route.decisioning.Tecton.get_model_version_history",
-            return_value=t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE,
+            "huxunify.api.data_connectors.decisioning.Decisioning.get_model_info_history",
+            return_value=[
+                convert_model_to_dot_notation(
+                    t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE_PROPENSITY[0]
+                )
+            ],
         ).start()
 
-        model_id = "1"
+        model_id = "model-Propensity_Type_Cancelled-v5-dev"
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/drift",
             headers=t_c.STANDARD_HEADERS,
