@@ -50,7 +50,10 @@ describe("Orchestration > Audiences", () => {
       .click({ force: true })
     cy.get(selector.audience.audienceFilters).contains("Filter (11)")
 
-    //clear all checkboxes and close the drawer
+    //Apply, clear all checkboxes and close the drawer
+    cy.get(selector.audience.audienceFilters).contains("Apply filter").click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
     cy.get(selector.audience.audienceFilters).contains("Clear").click()
     cy.get(selector.audience.audienceFilters).contains("Filter")
 
