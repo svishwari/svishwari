@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-function-args
 """Purpose of this file is to house all tests related to orchestration."""
 from http import HTTPStatus
 from unittest import mock
@@ -344,8 +344,8 @@ class OrchestrationRouteTest(RouteTestCase):
             response.json[api_c.AUDIENCE_NAME],
         )
         self.assertEqual(
-            audience_post[db_c.AUDIENCE_SOURCE][db_c.AUDIENCE_SOURCE_TYPE],
-            db_c.DATA_SOURCE_PLATFORM_CDP,
+            response.json[db_c.AUDIENCE_SOURCE][db_c.AUDIENCE_SOURCE_TYPE],
+            db_c.CDP_DATA_SOURCE_ID,
         )
         self.assertIsNotNone(
             response.json.get(api_c.DESTINATIONS)[0].get(db_c.DATA_ADDED)

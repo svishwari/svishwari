@@ -1,4 +1,5 @@
-# pylint: disable=too-many-lines,unused-argument,too-many-locals
+# pylint: disable=too-many-lines,unused-argument,too-many-locals,
+# too-many-function-args
 """Paths for Orchestration API."""
 import asyncio
 import re
@@ -1317,7 +1318,7 @@ class AudiencePostView(SwaggerView):
             database=database,
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
-            audience_source={db_c.AUDIENCE_SOURCE_TYPE: "cdp"},
+            audience_source={db_c.AUDIENCE_SOURCE_TYPE: db_c.CDP_DATA_SOURCE_ID},
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
