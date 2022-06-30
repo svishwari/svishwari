@@ -15,6 +15,23 @@ from huxunify.api.prometheus import record_health_status, Connections
 from huxunify.api.data_connectors import den_stub
 
 
+# pylint: disable=inconsistent-return-statements
+def get_or_create_eventloop() -> asyncio.events:
+    """Gets or creates an event loop.
+
+    Returns:
+        asyncio.events: An event loop.
+    """
+
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError as ex:
+        if "There is no current event loop in thread" in str(ex):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            return asyncio.get_event_loop()
+
+
 class DotNotationDict(dict):
     """dot.notation access to dictionary attributes"""
 
@@ -183,7 +200,7 @@ class Decisioning:
         Returns:
             list: list of model info dicts.
         """
-        loop = asyncio.get_event_loop()
+        loop = get_or_create_eventloop()
         tasks = [
             loop.run_in_executor(executor, self.get_model_info, model_id)
             for model_id in model_ids
@@ -200,7 +217,7 @@ class Decisioning:
         models = []
         model_ids = self.get_all_model_ids()
 
-        loop = asyncio.get_event_loop()
+        loop = get_or_create_eventloop()
         model_infos = loop.run_until_complete(
             self.gather_model_infos(
                 model_ids, ThreadPoolExecutor(max_workers=10)

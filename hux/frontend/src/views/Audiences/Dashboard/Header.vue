@@ -18,6 +18,7 @@
           :size="18"
           class="cursor-pointer mr-7"
           color="black-darken4"
+          data-e2e="refresh-audience"
           @click.native="$emit('onRefresh')"
         />
         <tooltip position-bottom>
@@ -34,6 +35,7 @@
                 :size="18"
                 class="cursor-pointer mr-7"
                 color="black-darken4"
+                data-e2e="edit-audience"
               />
             </span>
             <span
@@ -45,6 +47,7 @@
                 :size="18"
                 class="cursor-pointer mr-7"
                 color="black-darken4"
+                data-e2e="edit-audience"
               />
             </span>
           </template>
@@ -64,6 +67,7 @@
               class="cursor-pointer mr-7"
               color="black base"
               :class="{ 'd-inline-block': openMenu }"
+              data-e2e="audience-options"
               v-on="on"
             >
               mdi-dots-vertical

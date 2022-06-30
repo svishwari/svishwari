@@ -27,33 +27,42 @@
               class="cell text-ellipsis text-body-1 mt-1"
               append
             >
-              {{ item[header.value] }}
+              <span v-if="item[header.value]">{{ item[header.value] }} </span>
+              <span v-else> - </span>
             </router-link>
             <div
               v-if="header.value == 'last_name'"
               class="cell text-ellipsis text-body-1 mt-1"
               :class="
-                item.last_name.trim() == '++REDACTED++' ? 'blur-text' : ''
+                item.last_name && item.last_name.trim() == '++REDACTED++'
+                  ? 'blur-text'
+                  : ''
               "
             >
               <span v-if="item.last_name">{{ item.last_name }} </span>
+              <span v-else> - </span>
             </div>
             <div
               v-if="header.value == 'first_name'"
               class="cell text-ellipsis text-body-1 mt-1"
               :class="
-                item.first_name.trim() == '++REDACTED++' ? 'blur-text' : ''
+                item.first_name && item.first_name.trim() == '++REDACTED++'
+                  ? 'blur-text'
+                  : ''
               "
             >
               <span v-if="item.first_name"> {{ item.first_name }}</span>
+              <span v-else> - </span>
             </div>
             <div v-if="header.value == 'match_confidence'">
               <hux-slider
+                v-if="item[header.value]"
                 :is-range-slider="false"
                 :value="item[header.value]"
                 :slider-text-color="true"
                 class="match-confidence"
               ></hux-slider>
+              <span v-else> - </span>
             </div>
           </td>
         </template>

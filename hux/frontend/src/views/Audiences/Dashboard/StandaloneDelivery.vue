@@ -69,7 +69,11 @@
               class="text-body-2"
               :style="{ width: header.width }"
             >
-              <div v-if="header.value == 'name'" class="text-body-1">
+              <div
+                v-if="header.value == 'name'"
+                class="text-body-1"
+                data-e2e="standalone-destinations"
+              >
                 <logo
                   :type="item.delivery_platform_type"
                   :size="22"
@@ -130,6 +134,7 @@
                   v-model="item['replace_audience']"
                   :switch-labels="switchLabels"
                   false-color="var(--v-black-lighten4)"
+                  data-e2e="replace-audience"
                   @change="kickoffReplace(item['delivery_platform_id'], $event)"
                 />
               </div>
@@ -143,7 +148,10 @@
           class="add-list list-border"
           :height="52"
         >
-          <v-list-item @click="$emit('onAddStandaloneDestination', audience)">
+          <v-list-item
+            data-e2e="add-standalone-destination"
+            @click="$emit('onAddStandaloneDestination', audience)"
+          >
             <tooltip>
               <template #label-content>
                 <hux-icon
@@ -189,6 +197,7 @@
         >
           <v-list-item
             class="px-0"
+            data-e2e="add-standalone-destination"
             @click="$emit('onAddStandaloneDestination', audience)"
           >
             <hux-icon type="plus" :size="16" color="primary" class="mr-2" />
@@ -356,8 +365,7 @@ export default {
     dataPendingMesssage() {
       this.setAlert({
         type: "pending",
-        message:
-          "All standalone destination, has started delivering as a standalone deliveries",
+        message: "All standalone deliveries started.",
       })
     },
     kickoffReplace(deliveryId, val) {

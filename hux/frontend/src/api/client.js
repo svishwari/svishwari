@@ -339,7 +339,11 @@ client["audiences"].getAudiences = (data) => {
   let newURLFormat
   let URLString
   for (const property in data) {
-    if (property == "attribute" || property == "events") {
+    if (
+      property == "attribute" ||
+      property == "events" ||
+      property == "industry_tag"
+    ) {
       for (const attribute in data[property]) {
         let formURL = property + "=" + data[property][attribute]
         URLData.push(formURL)
@@ -446,6 +450,24 @@ client["notifications"].getAllUsers = () => {
 }
 
 //#endregion
+
+client["models"].getModels = (data) => {
+  let URLData = []
+  let newURLFormat
+  let URLString
+  for (const property in data) {
+    if (property == "industry_tag") {
+      for (const attribute in data[property]) {
+        let formURL = property + "=" + data[property][attribute]
+        URLData.push(formURL)
+      }
+    }
+  }
+  let arrJoin = URLData.join("@")
+  URLString = arrJoin.toString()
+  newURLFormat = URLString.replace(/@/g, "&")
+  return http.get(`/models?${newURLFormat}`)
+}
 
 client["models"].overview = (id, version) => {
   if (version) return http.get(`/models/${id}/overview?version=${version}`)
