@@ -4,7 +4,6 @@
 import time
 import asyncio
 import random
-from collections import defaultdict
 from typing import Tuple, Optional, List
 from datetime import datetime, timezone
 
