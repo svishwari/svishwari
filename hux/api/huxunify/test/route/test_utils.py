@@ -395,7 +395,7 @@ class TestRouteUtils(TestCase):
                         {
                             "field": "traits_analysed",
                             "type": "within_the_last",
-                            "value": "12",
+                            "value": ["12"],
                         }
                     ],
                 }
@@ -430,6 +430,67 @@ class TestRouteUtils(TestCase):
                                             - timedelta(days=12)
                                         ).strftime("%Y-%m-%d"),
                                         datetime.utcnow().strftime("%Y-%m-%d"),
+                                    ],
+                                },
+                            ],
+                        }
+                    ],
+                }
+            ]
+        }
+        convert_filters_for_events(event_filters, event_types)
+        self.assertEqual(
+            event_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+            expected_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+        )
+
+    def test_convert_filters_for_events_between(self):
+        """Test convert_filters_for_events method with between."""
+
+        event_filters = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {
+                            "field": "traits_analysed",
+                            "type": "between",
+                            "value": ["2021-10-10", "2022-03-05"],
+                        }
+                    ],
+                }
+            ]
+        }
+
+        event_types = [
+            {api_c.TYPE: "traits_analysed", api_c.LABEL: "Traits Analysed"},
+            {api_c.TYPE: "sales_made", api_c.LABEL: "Sales Made"},
+        ]
+
+        expected_filters = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {
+                            "field": "event",
+                            "type": "event",
+                            "value": [
+                                {
+                                    "field": "event_name",
+                                    "type": "equals",
+                                    "value": "traits_analysed",
+                                },
+                                {
+                                    "field": "created",
+                                    "type": "range",
+                                    "value": [
+                                        "2021-10-10",
+                                        "2022-03-05",
                                     ],
                                 },
                             ],
