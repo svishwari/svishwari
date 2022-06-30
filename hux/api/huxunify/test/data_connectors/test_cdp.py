@@ -286,7 +286,7 @@ class CDPTest(TestCase):
         self.request_mocker.start()
 
         countries = set(
-            data[api_c.NAME]
+            data[api_c.COUNTRY]
             for data in t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE[
                 api_c.BODY
             ]
@@ -297,8 +297,8 @@ class CDPTest(TestCase):
         self.assertTrue(customer_insights_by_country)
         self.assertEqual(len(countries), len(customer_insights_by_country))
         for record in customer_insights_by_country:
-            self.assertIn(api_c.NAME, record)
-            self.assertIn(record[api_c.NAME], countries)
+            self.assertIn(api_c.COUNTRY, record)
+            self.assertIn(record[api_c.COUNTRY], countries)
             self.assertIn(api_c.SIZE, record)
             self.assertIn(api_c.LTV, record)
 
@@ -341,10 +341,10 @@ class CDPTest(TestCase):
         )
 
         self.assertTrue(customer_insights_by_country)
-        self.assertIn(api_c.NAME, customer_insights_by_country[0])
+        self.assertIn(api_c.COUNTRY, customer_insights_by_country[0])
         self.assertEqual(
             expected_response[api_c.BODY][0][api_c.COUNTRY],
-            customer_insights_by_country[0][api_c.NAME],
+            customer_insights_by_country[0][api_c.COUNTRY],
         )
         self.assertIn(api_c.SIZE, customer_insights_by_country[0])
         self.assertEqual(
