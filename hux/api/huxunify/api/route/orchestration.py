@@ -59,6 +59,7 @@ from huxunify.api.data_connectors.cdp import (
     get_spending_by_gender_async,
     get_customers_overview_async,
     get_customer_event_types,
+    get_customer_count_by_country,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.cache import Caching
@@ -1644,6 +1645,20 @@ class AudienceRules(SwaggerView):
                 api_c.TYPE: api_c.TEXT,
             }
 
+        # Fetch countries from CDM. Check cache first.
+        countries = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.COUNTRIES}",
+            get_customer_count_by_country,
+            {"token": token_response[0]},
+        )
+        # filter countries list based on the response
+
+        country_list = []
+        for country in countries:
+            country_list.append(
+                {country[api_c.COUNTRY]: country[api_c.COUNTRY]}
+            )
+
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
         # list of genders will come from cdm
@@ -1771,7 +1786,7 @@ class AudienceRules(SwaggerView):
                         "country": {
                             "name": "Country",
                             "type": "list",
-                            "options": [{"US": "USA"}],
+                            "options": country_list,
                         },
                         "state": {
                             "name": "State",
