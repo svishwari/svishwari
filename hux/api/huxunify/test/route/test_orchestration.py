@@ -283,8 +283,7 @@ class OrchestrationRouteTest(RouteTestCase):
             json=t_c.MOCKED_CUSTOMER_EVENT_TYPES,
         )
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
-            f"/count-by-country",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
@@ -1006,8 +1005,7 @@ class OrchestrationRouteTest(RouteTestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
-            f"/count-by-country",
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
@@ -1085,8 +1083,7 @@ class OrchestrationRouteTest(RouteTestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
-            f"/count-by-country",
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
@@ -1154,8 +1151,7 @@ class OrchestrationRouteTest(RouteTestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
-            f"/count-by-country",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
@@ -1321,8 +1317,7 @@ class OrchestrationRouteTest(RouteTestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
-            f"/count-by-country",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
@@ -1756,8 +1751,7 @@ class OrchestrationRouteTest(RouteTestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
-            f"/count-by-country",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
@@ -1850,8 +1844,7 @@ class OrchestrationRouteTest(RouteTestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights"
-            f"/count-by-country",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
