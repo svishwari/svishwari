@@ -1649,7 +1649,9 @@ class AudienceRules(SwaggerView):
 
         country_list = []
         for country in countries:
-            country_list.append({country[api_c.NAME]: country[api_c.NAME]})
+            country_list.append(
+                {country[api_c.COUNTRY]: country[api_c.COUNTRY]}
+            )
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically

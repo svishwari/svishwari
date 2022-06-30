@@ -622,7 +622,7 @@ def get_customer_count_by_country(
     config = get_config()
     logger.info("Retrieving demographic insights by country.")
     response = requests.post(
-        f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-country",
+        f"{config.CDP_SERVICE}/customer-profiles/countries",
         json=filters if filters else {},
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
@@ -636,7 +636,7 @@ def get_customer_count_by_country(
             response.text,
         )
         raise iae.FailedAPIDependencyError(
-            f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-country",
+            f"{config.CDP_SERVICE}/customer-profiles/countries",
             response.status_code,
         )
 
