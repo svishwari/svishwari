@@ -45,13 +45,17 @@
         </v-btn>
       </template>
     </page-header>
-
+    <v-progress-linear
+      v-if="loading"
+      :active="loading"
+      :indeterminate="loading"
+    />
     <div
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
         <page-header
-          v-if="addedModels.length > 0"
+          v-if="addedModels.length > 0 && !loading"
           class="top-bar"
           :header-height="69"
         >
@@ -75,7 +79,6 @@
             </huxButton>
           </template>
         </page-header>
-        <v-progress-linear :active="loading" :indeterminate="loading" />
         <v-row
           v-if="addedModels.length > 0 && !loading"
           class="padding-30 ma-0 content-section"
@@ -239,7 +242,10 @@
             </template>
           </hux-empty>
         </v-row>
-        <v-row v-else class="d-flex justify-center align-center">
+        <v-row
+          v-if="addedModels.length == 0 && !loading && showError"
+          class="d-flex justify-center align-center"
+        >
           <error
             icon-type="error-on-screens"
             :icon-size="50"
@@ -249,6 +255,7 @@
           >
           </error>
         </v-row>
+        <v-row v-else class="d-flex justify-center align-center"> </v-row>
         <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
       </div>
       <div class="ml-auto">
