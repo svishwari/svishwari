@@ -440,8 +440,8 @@ class AudienceInsightsTest(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
-            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
 

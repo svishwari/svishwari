@@ -497,3 +497,18 @@ export function getAccess(screen, action) {
   let matrix = RBACMatrix.components //store.getters["users/getRbacMatrix"]
   return matrix[screen]["actions"].find((item) => item.type == action)[role]
 }
+
+/**
+ * Returns array of industry tags
+ *
+ * @returns {Array} array of strings
+ */
+export function getIndustryTags() {
+  return [
+    "automotive",
+    "financial_services",
+    "healthcare",
+    "hospitality",
+    "retail",
+  ]
+}

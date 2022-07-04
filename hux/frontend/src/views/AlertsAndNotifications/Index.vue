@@ -357,7 +357,7 @@ export default {
       this.alertDrawer = !this.alertDrawer
     },
     intersected() {
-      if (this.batchDetails.batch_number <= this.lastBatch) {
+      if (this.batchDetails.batchNumber <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
         this.enableLazyLoad = true
         this.fetchNotificationsByBatch()
@@ -367,14 +367,14 @@ export default {
     },
     async fetchNotificationsByBatch() {
       await this.getAllNotifications(this.batchDetails)
-      this.batchDetails.batch_number++
+      this.batchDetails.batchNumber++
     },
     async getUserData() {
       await this.getUsersNoti()
     },
     calculateLastBatch() {
       this.lastBatch = Math.ceil(
-        this.totalNotifications / this.batchDetails.batch_size
+        this.totalNotifications / this.batchDetails.batchSize
       )
     },
     toggleFilterDrawer() {
@@ -403,8 +403,8 @@ export default {
         getEndDate,
         "YYYY-MM-DD"
       )
-      this.batchDetails.batch_size = 25
-      this.batchDetails.batch_number = 1
+      this.batchDetails.batchSize = 25
+      this.batchDetails.batchNumber = 1
       this.batchDetails.isLazyLoad = false
     },
     async alertfunction(data) {
@@ -420,8 +420,8 @@ export default {
           today_date.getMonth(),
           today_date.getDate()
         )
-        this.batchDetails.batch_size = 25
-        this.batchDetails.batch_number = 1
+        this.batchDetails.batchSize = 25
+        this.batchDetails.batchNumber = 1
         this.batchDetails.isLazyLoad = false
         if (data.selectedAlertType.length !== 0) {
           this.batchDetails.notification_types = formatRequestText(

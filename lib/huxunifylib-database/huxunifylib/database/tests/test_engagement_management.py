@@ -30,7 +30,12 @@ class TestEngagementManagement(unittest.TestCase):
 
         # setup the audience
         self.audience = om.create_audience(
-            self.database, "all", [], self.user_name, [], 184
+            self.database,
+            "all",
+            [],
+            self.user_name,
+            destination_ids=[],
+            size=184,
         )
 
         self.audience[db_c.OBJECT_ID] = self.audience[db_c.ID]

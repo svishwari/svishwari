@@ -263,7 +263,7 @@ class AzureClient(CloudClient):
             Tuple[bool, str]: Returns bool for health status and message.
         """
 
-        secret_name = "<secret name here>"
+        secret_name = "unifieddb-rw"
 
         try:
             self.get_secret_client().get_secret(secret_name)

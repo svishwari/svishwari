@@ -166,6 +166,7 @@ const actions = {
         worked_by: batchDetails ? batchDetails.worked_by : false,
         attribute: batchDetails ? batchDetails.attribute : [],
         events: batchDetails ? batchDetails.events : [],
+        industry_tag: batchDetails ? batchDetails.tags : [],
         batch_number: batchDetails ? batchDetails.batch_number : 1,
         batch_size: batchDetails ? batchDetails.batch_size : 0,
       })

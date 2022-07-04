@@ -72,8 +72,8 @@
                 append
                 >{{ audience.source_name }}
               </router-link>
-              <span>,&nbsp;to see insights.</span></template
-            >
+              <span>,&nbsp;to see insights.</span>
+            </template>
           </metric-card>
         </div>
         <div
@@ -175,32 +175,64 @@
                     :key="filterKey"
                     class="filter-item ma-0 mr-1 d-flex align-center"
                   >
-                    <tooltip
+                    <div
                       v-for="filter in Object.keys(appliedFilters[filterKey])"
                       :key="filter"
                     >
-                      <template #label-content>
-                        <v-chip
-                          v-if="filterIndex < 4"
-                          small
-                          class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                          text-color="primary"
-                          color="var(--v-primary-lighten3)"
+                      <div
+                        v-if="!Array.isArray(appliedFilters[filterKey][filter])"
+                      >
+                        <tooltip>
+                          <template #label-content>
+                            <v-chip
+                              v-if="filterIndex < 4"
+                              small
+                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                              text-color="primary"
+                              color="var(--v-primary-lighten3)"
+                            >
+                              {{ appliedFilters[filterKey][filter].name }}
+                            </v-chip>
+                          </template>
+                          <template #hover-content>
+                            <span
+                              class="text-body-2 black--text text--darken-4"
+                              v-bind.prop="
+                                formatInnerHTML(
+                                  appliedFilters[filterKey][filter].hover
+                                )
+                              "
+                            />
+                          </template>
+                        </tooltip>
+                      </div>
+                      <div v-else>
+                        <tooltip
+                          v-for="eventFilter in appliedFilters[filterKey][
+                            filter
+                          ]"
+                          :key="eventFilter"
                         >
-                          {{ appliedFilters[filterKey][filter].name }}
-                        </v-chip>
-                      </template>
-                      <template #hover-content>
-                        <span
-                          class="text-body-2 black--text text--darken-4"
-                          v-bind.prop="
-                            formatInnerHTML(
-                              appliedFilters[filterKey][filter].hover
-                            )
-                          "
-                        />
-                      </template>
-                    </tooltip>
+                          <template #label-content>
+                            <v-chip
+                              v-if="filterIndex < 4"
+                              small
+                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                              text-color="primary"
+                              color="var(--v-primary-lighten3)"
+                            >
+                              {{ eventFilter.name }}
+                            </v-chip>
+                          </template>
+                          <template #hover-content>
+                            <span
+                              class="text-body-2 black--text text--darken-4"
+                              v-bind.prop="formatInnerHTML(eventFilter.hover)"
+                            />
+                          </template>
+                        </tooltip>
+                      </div>
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -478,6 +510,7 @@ import InsightTab from "@/views/Audiences/Dashboard/InsightTab.vue"
 import DownloadAudienceDrawer from "@/views/Shared/Drawers/DownloadAudienceDrawer.vue"
 import AudienceLookalikeDashboard from "@/views/Audiences/Lookalike/Dashboard.vue"
 import TextField from "@/components/common/TextField"
+import { formatText } from "@/utils.js"
 
 export default {
   name: "AudienceInsight",
@@ -676,9 +709,11 @@ export default {
     appliedFilters() {
       // try {
       let _filters = {}
+      let eventFilters = []
       const attributeOptions = this.attributeOptions()
       if (this.audience && this.audience.filters) {
         this.audience.filters.forEach((section) => {
+          eventFilters = []
           section.section_filters.forEach((sectionFilter) => {
             const model = this.modelInitial.filter(
               (model) =>
@@ -690,6 +725,11 @@ export default {
               key: sectionFilter.field.toLowerCase(),
             })
 
+            let eventObj = this.getEventsOption(sectionFilter)
+
+            if (eventObj) {
+              eventFilters.push(eventObj)
+            }
             const filterObj = {}
             if (ruleFilterObject.length > 0) {
               filterObj["name"] = ruleFilterObject[0]["name"]
@@ -717,6 +757,9 @@ export default {
             }
           })
         })
+        if (eventFilters.length > 0) {
+          _filters["general"].event = eventFilters
+        }
       }
       return _filters
       // } catch (error) {
@@ -768,6 +811,21 @@ export default {
       removeAudienceDestination: "engagements/detachDestinationAudi",
     }),
     formatInnerHTML: formatInnerHTML,
+    getEventsOption(filters) {
+      let eventObj = {}
+      if (filters.field == "event") {
+        ;(eventObj.name = formatText(filters.value[0].value)),
+          (eventObj.key = "event"),
+          (eventObj.hover = `${this.$options.filters.Date(
+            filters.value[1].value[0],
+            "MM/DD/YYYY"
+          )} - ${this.$options.filters.Date(
+            filters.value[1].value[1],
+            "MM/DD/YYYY"
+          )}`)
+        return eventObj
+      } else return undefined
+    },
     attributeOptions() {
       const options = []
       if (this.ruleAttributes && this.ruleAttributes.rule_attributes) {
@@ -1282,16 +1340,20 @@ export default {
     max-height: calc(100vh - 142px);
     overflow-y: auto;
   }
+
   .position-relative {
     position: relative;
   }
+
   .position-absolute {
     position: absolute;
     top: -7px;
     right: 6px;
   }
+
   ::v-deep.metric-card-wrapper {
     padding: 16px 15px !important;
+
     .w-100 {
       .flex-grow-1 {
         .subtitle-slot {
@@ -1300,6 +1362,7 @@ export default {
       }
     }
   }
+
   .container {
     ul {
       padding: 0;
@@ -1307,12 +1370,15 @@ export default {
       list-style-type: none;
     }
   }
+
   .delivery-history-drawer-audience {
     width: 665px !important;
   }
+
   .audience-summary {
     padding: 10px 15px;
   }
+
   .container {
     .filter-list {
       .filter-item {
@@ -1320,12 +1386,14 @@ export default {
         height: auto;
         float: left;
         margin-left: 2%;
+
         span {
           .filter-title {
             &::after {
               content: ",\00a0";
             }
           }
+
           &:last-child {
             .filter-title {
               &::after {
@@ -1338,6 +1406,7 @@ export default {
       }
     }
   }
+
   .blue-grey {
     border-width: 2px;
     border-style: solid;
@@ -1353,17 +1422,21 @@ export default {
 
   .tabs-item {
     overflow: hidden !important;
+
     .delivery-tab {
       .digital-adv {
         height: auto !important;
+
         .lookalikes {
           border-radius: 12px !important;
         }
       }
+
       .empty-adv {
         padding-top: 73px;
         padding-left: 16px;
         padding-right: 16px;
+
         .background-empty {
           background-image: url("../../../assets/images/lookalike_unavailable.png") !important;
           background-size: cover !important;
@@ -1372,12 +1445,15 @@ export default {
     }
   }
 }
+
 .icon-border {
   cursor: default;
 }
+
 .original-audience {
   background: var(--v-white-base) !important;
 }
+
 .font-audience-text {
   font-family: Open Sans;
   font-style: normal;
@@ -1385,13 +1461,16 @@ export default {
   font-size: 14px;
   line-height: 19px;
 }
+
 .original-audience-text {
   @extend .font-audience-text;
   color: var(--v-primary-base) !important;
 }
+
 ::v-deep .v-snack__wrapper {
   max-width: 1300px !important;
 }
+
 .font-lookalike {
   font-family: Open Sans;
   font-style: normal;
@@ -1405,13 +1484,16 @@ export default {
   font-size: 14px;
   color: var(--v-grey-base) !important;
 }
+
 .headingOverviewCard {
   @extend .font-lookalike;
   font-size: 15px !important;
 }
+
 .no-background {
   background: transparent;
 }
+
 .colorLink {
   color: var(--v-primary-base) !important;
 }
@@ -1423,19 +1505,23 @@ export default {
   float: left;
   position: relative;
   display: flex;
+
   &.open {
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
     background-color: var(--v-primary-lighten2) !important;
+
     .bar-text {
       display: none;
     }
   }
+
   &.close {
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
     background-color: var(--v-primary-base) !important;
   }
+
   .bar-text {
     writing-mode: vertical-rl;
     transform: scale(-1);
@@ -1443,18 +1529,22 @@ export default {
     position: absolute;
     top: 6%;
   }
+
   .collapse-icon {
     margin: 0;
     position: absolute;
     top: 50%;
   }
 }
+
 .overview-card {
   border-radius: 12px !important;
 }
+
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
   color: var(--v-black-lighten4) !important;
 }
+
 ::v-deep
   .v-tabs
   .v-tabs-bar
@@ -1463,9 +1553,11 @@ export default {
   .v-tabs-slider {
   margin-top: 2px !important;
 }
+
 .icon_grey {
   margin-top: 10px;
 }
+
 ::v-deep .v-card--link .v-chip {
   cursor: auto !important;
 }

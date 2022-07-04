@@ -22,7 +22,7 @@ export default {
   args: {
     breadcrumbs: false,
     callToAction: false,
-    iconType: "map",
+    iconType: "Icon Placeholder",
   },
 
   parameters: {
@@ -40,9 +40,9 @@ const Template = (args, { argTypes }) => ({
     <page-header v-bind="$props">
       <template #breadcrumbs v-if="$props.breadcrumbs">
         <span>adding</span>
-        <icon type="arrow" size="18" color="primary" class="ml-2 mr-2" />
+        <icon type="Dropdown - right" size="18" color="primary" class="ml-2 mr-2 mt-1" />
         <span>some</span>
-        <icon type="arrow" size="18" color="primary" class="ml-2 mr-2" />
+        <icon type="Dropdown - right" size="18" color="primary" class="ml-2 mr-2 mt-1" />
         <span>breadcrumbs</span>
       </template>
       <template #call-to-action v-if="$props.callToAction">

@@ -717,8 +717,8 @@ class TestCustomersOverview(RouteTestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
-            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
 
         self.request_mocker.start()
@@ -803,6 +803,11 @@ class TestCustomersOverview(RouteTestCase):
             f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
             json={},
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/id-count-by-day",
+            json={},
+        )
         self.request_mocker.start()
 
         response = self.app.get(
@@ -869,7 +874,7 @@ class TestCustomersOverview(RouteTestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/countries",
             json={},
         )
 

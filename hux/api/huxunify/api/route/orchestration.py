@@ -1,4 +1,5 @@
-# pylint: disable=too-many-lines,unused-argument,too-many-locals
+# pylint: disable=too-many-lines,unused-argument,too-many-locals,
+# too-many-function-args
 """Paths for Orchestration API."""
 import asyncio
 import re
@@ -22,6 +23,7 @@ from huxunifylib.connectors import (
 from huxunifylib.database.user_management import (
     delete_favorite_from_all_users,
 )
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.delete_util import delete_lookalike_audience
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
@@ -31,8 +33,9 @@ from huxunifylib.database import (
     engagement_audience_management as eam,
     collection_management as cm,
 )
-import huxunifylib.database.constants as db_c
 
+from huxunify.api.data_connectors.cloud.cloud_client import CloudClient
+from huxunify.api.config import get_config
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api.schema.orchestration import (
@@ -56,6 +59,7 @@ from huxunify.api.data_connectors.cdp import (
     get_spending_by_gender_async,
     get_customers_overview_async,
     get_customer_event_types,
+    get_customer_count_by_country,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.cache import Caching
@@ -1315,6 +1319,9 @@ class AudiencePostView(SwaggerView):
             database=database,
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
+            audience_source={
+                db_c.AUDIENCE_SOURCE_TYPE: db_c.CDP_DATA_SOURCE_ID
+            },
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
@@ -1638,6 +1645,20 @@ class AudienceRules(SwaggerView):
                 api_c.TYPE: api_c.TEXT,
             }
 
+        # Fetch countries from CDM. Check cache first.
+        countries = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.COUNTRIES}",
+            get_customer_count_by_country,
+            {"token": token_response[0]},
+        )
+        # filter countries list based on the response
+
+        country_list = []
+        for country in countries:
+            country_list.append(
+                {country[api_c.COUNTRY]: country[api_c.COUNTRY]}
+            )
+
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
         # list of genders will come from cdm
@@ -1765,7 +1786,7 @@ class AudienceRules(SwaggerView):
                         "country": {
                             "name": "Country",
                             "type": "list",
-                            "options": [{"US": "USA"}],
+                            "options": country_list,
                         },
                         "state": {
                             "name": "State",
@@ -1878,7 +1899,7 @@ class SetLookalikeAudience(SwaggerView):
             logger.error("Audience %s not found.", body[api_c.AUDIENCE_ID])
             return HuxResponse.NOT_FOUND(api_c.AUDIENCE_NOT_FOUND)
 
-        # TODO: Update desination handling when more lookalikable
+        # TODO: Update destination handling when more lookalikable
         #  destinations are available and param accepted from request
         destination = destination_management.get_delivery_platform_by_type(
             database, db_c.DELIVERY_PLATFORM_FACEBOOK
@@ -2237,3 +2258,216 @@ class DeleteAudienceView(SwaggerView):
         )
 
         return HuxResponse.NO_CONTENT()
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.AUDIENCE_ENDPOINT}/upload",
+    "AudienceS3UploadPostView",
+)
+class AudienceS3UploadPostView(SwaggerView):
+    """Audience S3 Upload Post view class."""
+
+    parameters = [
+        {
+            "name": api_c.DELIVER,
+            "description": "Create and Deliver",
+            "in": "query",
+            "type": "boolean",
+            "required": "false",
+            "default": "false",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Audience body.",
+            "example": {
+                api_c.AUDIENCE_NAME: "My Audience",
+                api_c.DESTINATIONS: [
+                    {
+                        api_c.ID: "60b9601a6021710aa146df2f",
+                        db_c.DELIVERY_PLATFORM_CONFIG: {
+                            db_c.DATA_EXTENSION_NAME: "Deloitte SFMC Ext"
+                        },
+                    }
+                ],
+                api_c.AUDIENCE_ENGAGEMENTS: [
+                    "60d0dc9bfa9ba04689906f7b",
+                ],
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": AudienceGetSchema,
+            "description": "Audience created.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create audience.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-branches
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, user: dict) -> Tuple[Response, int]:
+        """Creates a new audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[Response, int]: Created audience, HTTP status code.
+        """
+
+        body = AudiencePostSchema().load(request.get_json(), partial=True)
+
+        # validate destinations
+        database = get_db_client()
+        if db_c.DESTINATIONS in body:
+            # validate list of dict objects
+            for destination in body[api_c.DESTINATIONS]:
+                # validate object id
+                # map to an object ID field
+                # validate the destination object exists.
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
+                destination[db_c.DATA_ADDED] = datetime.utcnow()
+
+                if not destination_management.get_delivery_platform(
+                    get_db_client(), destination[db_c.OBJECT_ID]
+                ):
+                    logger.error(
+                        "Could not find destination with id %s.",
+                        destination[db_c.OBJECT_ID],
+                    )
+                    return HuxResponse.NOT_FOUND(api_c.DESTINATION_NOT_FOUND)
+
+        engagement_ids = []
+        if api_c.AUDIENCE_ENGAGEMENTS in body:
+            # validate list of dict objects
+            for engagement_id in body[api_c.AUDIENCE_ENGAGEMENTS]:
+
+                # map to an object ID field
+                engagement_id = ObjectId(engagement_id)
+
+                # validate the engagement object exists.
+                if not engagement_management.get_engagement(
+                    database, engagement_id
+                ):
+                    logger.error(
+                        "Engagement with ID %s does not exist.", engagement_id
+                    )
+                    return HuxResponse.NOT_FOUND(
+                        f"Engagement with ID {engagement_id} "
+                        f"does not exist."
+                    )
+                engagement_ids.append(engagement_id)
+
+        audience_file = request.files["filename"]
+
+        if not CloudClient().upload_file(
+            file_name=str(audience_file),
+            bucket=get_config().S3_DATASET_BUCKET,
+            object_name=audience_file,
+            user_name=user[api_c.USER_NAME],
+            file_type=api_c.AUDIENCE_UPLOAD,
+        ):
+            logger.error(
+                "Could not load file into S3.",
+            )
+            return HuxResponse.BAD_REQUEST("File can not be uploaded.")
+
+        source = {
+            db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_AMAZONS3,
+            db_c.AUDIENCE_SOURCE_BUCKET: get_config().S3_DATASET_BUCKET,
+            db_c.AUDIENCE_SOURCE_KEY: audience_file,
+        }
+        # create the audience
+        audience_doc = orchestration_management.create_audience(
+            database=database,
+            name=body[api_c.AUDIENCE_NAME],
+            audience_filters=[],
+            audience_source=source,
+            destination_ids=body.get(api_c.DESTINATIONS),
+            user_name=user[api_c.USER_NAME],
+        )
+
+        # add notification
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'New audience named "{audience_doc[db_c.NAME]}" '
+                f"added by {user[api_c.USER_NAME]}."
+            ),
+            db_c.NOTIFICATION_CATEGORY_AUDIENCES,
+            user[api_c.USER_NAME],
+        )
+
+        # attach the audience to each of the engagements
+        for engagement_id in engagement_ids:
+            engagement = engagement_management.append_audiences_to_engagement(
+                database,
+                engagement_id,
+                user[api_c.USER_NAME],
+                [
+                    {
+                        db_c.OBJECT_ID: audience_doc[db_c.ID],
+                        db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
+                    }
+                ],
+            )
+            # add audience attached notification
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f'Audience "{audience_doc[db_c.NAME]}" '
+                    f'added to engagement "{engagement[db_c.NAME]}" '
+                    f"by {user[api_c.USER_NAME]}."
+                ),
+                db_c.NOTIFICATION_CATEGORY_ENGAGEMENTS,
+                user[api_c.USER_NAME],
+            )
+
+        # deliver audience
+        if request.args.get(api_c.DELIVER):
+            # TODO: make this OOP between routes.
+
+            # get engagements
+            engagements = engagement_management.get_engagements_by_audience(
+                database, audience_doc[db_c.ID]
+            )
+
+            # submit jobs for the audience/destination pairs
+            for engagement in engagements:
+                for pair in get_audience_destination_pairs(
+                    engagement[api_c.AUDIENCES]
+                ):
+                    if pair[0] != audience_doc[db_c.ID]:
+                        continue
+                    batch_destination = get_destination_config(
+                        database,
+                        engagement[db_c.ID],
+                        *pair,
+                        username=user[api_c.USER_NAME],
+                    )
+                    batch_destination.register()
+                    batch_destination.submit()
+
+        return HuxResponse.CREATED(
+            data=audience_doc, data_schema=AudienceGetSchema()
+        )

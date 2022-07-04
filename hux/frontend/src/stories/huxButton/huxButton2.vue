@@ -20,30 +20,22 @@
     @click="onClick"
   >
     <icon
-      v-if="isCustomIcon"
       :class="iconClass"
       :color="iconColor"
-      :variant="iconVariant"
+      :border-color="iconColor"
       :type="icon"
       :size="iconSize"
+      outline
     />
-    <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
-      {{ icon }}
-    </v-icon>
     <v-spacer> </v-spacer>
 
     <!-- {{ ButtonText }} -->
     <slot name="default"></slot>
-
-    <v-spacer> </v-spacer>
-    <v-icon v-show="iconPosition == 'right'" dark class="mr-1">
-      {{ icon }}
-    </v-icon>
   </v-btn>
 </template>
 
 <script>
-import Icon from "@/components/common/Icon.vue"
+import Icon from "../icons/Icon2.vue"
 export default {
   name: "HuxButton",
   components: {
@@ -56,11 +48,6 @@ export default {
       default: false,
     },
     icon: {
-      type: String,
-      required: false,
-      default: null,
-    },
-    iconPosition: {
       type: String,
       required: false,
       default: null,
@@ -127,7 +114,7 @@ export default {
     iconClass: {
       type: String,
       required: false,
-      default: "mx-2",
+      default: "mr-2",
     },
     sidePadding: {
       type: String,

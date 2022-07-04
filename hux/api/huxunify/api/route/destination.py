@@ -87,11 +87,20 @@ dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
 
 facebook_auth_example = {
     api_c.AUTHENTICATION_DETAILS: {
-        api_c.FACEBOOK_ACCESS_TOKEN: "ABCD",
-        api_c.FACEBOOK_APP_SECRET: "1234",
-        api_c.FACEBOOK_APP_ID: "1234",
-        api_c.FACEBOOK_AD_ACCOUNT_ID: "1234",
+        api_c.FACEBOOK_ACCESS_TOKEN.replace("-", "_"): "ABCD",
+        api_c.FACEBOOK_APP_SECRET.replace("-", "_"): "1234",
+        api_c.FACEBOOK_APP_ID.replace("-", "_"): "1234",
+        api_c.FACEBOOK_AD_ACCOUNT_ID.replace("-", "_"): "1234",
     },
+}
+
+destination_auth_cred_map = {
+    db_c.DELIVERY_PLATFORM_FACEBOOK: FacebookAuthCredsSchema(),
+    db_c.DELIVERY_PLATFORM_SFMC: SFMCAuthCredsSchema(),
+    db_c.DELIVERY_PLATFORM_SENDGRID: SendgridAuthCredsSchema(),
+    db_c.DELIVERY_PLATFORM_TWILIO: SendgridAuthCredsSchema(),
+    db_c.DELIVERY_PLATFORM_QUALTRICS: QualtricsAuthCredsSchema(),
+    db_c.DELIVERY_PLATFORM_GOOGLE: GoogleAdsAuthCredsSchema(),
 }
 
 
@@ -313,9 +322,9 @@ class DestinationsView(SwaggerView):
 @add_view_to_blueprint(
     dest_bp,
     f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/authentication",
-    "DestinationAuthenticationPostView",
+    "DestinationAuthenticationPutView",
 )
-class DestinationAuthenticationPostView(SwaggerView):
+class DestinationAuthenticationPutView(SwaggerView):
     """Destination Authentication post view class."""
 
     parameters = [
@@ -391,8 +400,10 @@ class DestinationAuthenticationPostView(SwaggerView):
             database, destination_id
         )
         platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+        auth_details = destination_auth_cred_map[platform_type].dump(
+            auth_details
+        )
         if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
-            SFMCAuthCredsSchema().load(auth_details)
             sfmc_config = body.get(db_c.CONFIGURATION)
             if not sfmc_config or not isinstance(sfmc_config, dict):
                 logger.error("%s", api_c.SFMC_CONFIGURATION_MISSING)
@@ -422,17 +433,6 @@ class DestinationAuthenticationPostView(SwaggerView):
                 return HuxResponse.BAD_REQUEST(
                     api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR
                 )
-        elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
-            FacebookAuthCredsSchema().load(auth_details)
-        elif platform_type in [
-            db_c.DELIVERY_PLATFORM_SENDGRID,
-            db_c.DELIVERY_PLATFORM_TWILIO,
-        ]:
-            SendgridAuthCredsSchema().load(auth_details)
-        elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
-            QualtricsAuthCredsSchema().load(auth_details)
-        elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
-            GoogleAdsAuthCredsSchema().load(auth_details)
 
         if auth_details:
             # store the secrets for the updated authentication details
@@ -519,7 +519,12 @@ class DestinationValidatePostView(SwaggerView):
             "in": "body",
             "type": "object",
             "description": "Validate destination body.",
-            "example": facebook_auth_example,
+            "example": {
+                api_c.AUTHENTICATION_DETAILS: facebook_auth_example[
+                    api_c.AUTHENTICATION_DETAILS
+                ],
+                api_c.TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+            },
         },
     ]
 
@@ -565,24 +570,27 @@ class DestinationValidatePostView(SwaggerView):
 
         body = DestinationValidationSchema().load(request.get_json())
         platform_type = body.get(api_c.TYPE)
+        authentication_details = destination_auth_cred_map.get(
+            platform_type
+        ).dump(body.get(api_c.AUTHENTICATION_DETAILS))
 
         # test the destination connection and update connection status
         if platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
             logger.info("Trying to connect to Facebook.")
             destination_connector = FacebookConnector(
                 auth_details={
-                    FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.FACEBOOK_AD_ACCOUNT_ID),
-                    FacebookCredentials.FACEBOOK_APP_ID.name: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.FACEBOOK_APP_ID),
-                    FacebookCredentials.FACEBOOK_APP_SECRET.name: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.FACEBOOK_APP_SECRET),
-                    FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.FACEBOOK_ACCESS_TOKEN),
+                    FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: authentication_details.get(
+                        api_c.FACEBOOK_AD_ACCOUNT_ID
+                    ),
+                    FacebookCredentials.FACEBOOK_APP_ID.name: authentication_details.get(
+                        api_c.FACEBOOK_APP_ID
+                    ),
+                    FacebookCredentials.FACEBOOK_APP_SECRET.name: authentication_details.get(
+                        api_c.FACEBOOK_APP_SECRET
+                    ),
+                    FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: authentication_details.get(
+                        api_c.FACEBOOK_ACCESS_TOKEN
+                    ),
                 },
             )
             if destination_connector.check_connection():
@@ -592,9 +600,7 @@ class DestinationValidatePostView(SwaggerView):
         elif platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             logger.info("Validating SFMC destination.")
             connector = SFMCConnector(
-                auth_details=set_sfmc_auth_details(
-                    body.get(api_c.AUTHENTICATION_DETAILS)
-                )
+                auth_details=set_sfmc_auth_details(authentication_details)
             )
 
             ext_list = sorted(
@@ -616,9 +622,9 @@ class DestinationValidatePostView(SwaggerView):
         ]:
             sendgrid_connector = SendgridConnector(
                 auth_details={
-                    SendgridCredentials.SENDGRID_AUTH_TOKEN.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.SENDGRID_AUTH_TOKEN),
+                    SendgridCredentials.SENDGRID_AUTH_TOKEN.value: authentication_details.get(
+                        api_c.SENDGRID_AUTH_TOKEN
+                    ),
                 },
             )
             if sendgrid_connector.check_connection():
@@ -630,18 +636,16 @@ class DestinationValidatePostView(SwaggerView):
         elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             qualtrics_connector = QualtricsConnector(
                 auth_details={
-                    QualtricsCredentials.QUALTRICS_API_TOKEN.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.QUALTRICS_API_TOKEN),
-                    QualtricsCredentials.QUALTRICS_DATA_CENTER.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.QUALTRICS_DATA_CENTER),
-                    QualtricsCredentials.QUALTRICS_OWNER_ID.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.QUALTRICS_OWNER_ID),
-                    QualtricsCredentials.QUALTRICS_DIRECTORY_ID.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(
+                    QualtricsCredentials.QUALTRICS_API_TOKEN.value: authentication_details.get(
+                        api_c.QUALTRICS_API_TOKEN
+                    ),
+                    QualtricsCredentials.QUALTRICS_DATA_CENTER.value: authentication_details.get(
+                        api_c.QUALTRICS_DATA_CENTER
+                    ),
+                    QualtricsCredentials.QUALTRICS_OWNER_ID.value: authentication_details.get(
+                        api_c.QUALTRICS_OWNER_ID
+                    ),
+                    QualtricsCredentials.QUALTRICS_DIRECTORY_ID.value: authentication_details.get(
                         api_c.QUALTRICS_DIRECTORY_ID
                     ),
                 }
@@ -652,25 +656,26 @@ class DestinationValidatePostView(SwaggerView):
 
             logger.error("Could not validate Qualtrics successfully.")
         elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
+            # TODO: Remove setting GOOGLE_USE_PROTO_PLUS as and when the
+            #  connector package handles it
             google_connector = GoogleConnector(
                 auth_details={
-                    GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.GOOGLE_DEVELOPER_TOKEN),
-                    GoogleCredentials.GOOGLE_REFRESH_TOKEN.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.GOOGLE_REFRESH_TOKEN),
-                    GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(
+                    GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.value: authentication_details.get(
+                        api_c.GOOGLE_DEVELOPER_TOKEN
+                    ),
+                    GoogleCredentials.GOOGLE_REFRESH_TOKEN.value: authentication_details.get(
+                        api_c.GOOGLE_REFRESH_TOKEN
+                    ),
+                    GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.value: authentication_details.get(
                         api_c.GOOGLE_CLIENT_CUSTOMER_ID
                     ),
-                    GoogleCredentials.GOOGLE_CLIENT_ID.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.GOOGLE_CLIENT_ID),
-                    GoogleCredentials.GOOGLE_CLIENT_SECRET.value: body.get(
-                        api_c.AUTHENTICATION_DETAILS
-                    ).get(api_c.GOOGLE_CLIENT_SECRET),
+                    GoogleCredentials.GOOGLE_CLIENT_ID.value: authentication_details.get(
+                        api_c.GOOGLE_CLIENT_ID
+                    ),
+                    GoogleCredentials.GOOGLE_CLIENT_SECRET.value: authentication_details.get(
+                        api_c.GOOGLE_CLIENT_SECRET
+                    ),
+                    GoogleCredentials.GOOGLE_USE_PROTO_PLUS.value: True,
                 }
             )
             if google_connector.check_connection():

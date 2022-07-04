@@ -138,6 +138,34 @@
               <div v-if="header.value == 'size'">
                 <size :value="item[header.value]" />
               </div>
+              <div v-if="header.value == 'tags'">
+                <div
+                  v-if="
+                    item[header.value] && item[header.value].industry.length > 0
+                  "
+                  class="d-flex align-center"
+                >
+                  <div class="d-flex align-center destination-ico">
+                    <tooltip
+                      v-for="tag in item[header.value].industry"
+                      :key="`${item.id}-${tag}`"
+                    >
+                      <template #label-content>
+                        <logo
+                          :key="tag"
+                          :size="18"
+                          class="mr-1"
+                          :type="`${tag}_logo`"
+                        />
+                      </template>
+                      <template #hover-content>
+                        <span>{{ formatText(tag) }}</span>
+                      </template>
+                    </tooltip>
+                  </div>
+                </div>
+                <span v-else>—</span>
+              </div>
               <div v-if="header.value == 'filters'" class="filter_col">
                 <span
                   v-if="
@@ -478,7 +506,7 @@ import Logo from "../../components/common/Logo.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import AudienceFilter from "./Configuration/Drawers/AudienceFilter"
 import Error from "@/components/common/screens/Error"
-import { formatText, getAccess } from "@/utils.js"
+import { formatText, getAccess, getIndustryTags } from "@/utils.js"
 
 export default {
   name: "Audiences",
@@ -540,12 +568,18 @@ export default {
         },
         {
           id: 4,
+          text: "Industry",
+          value: "tags",
+          width: "220px",
+        },
+        {
+          id: 5,
           text: "Attributes",
           value: "filters",
           width: "380px",
         },
         {
-          id: 5,
+          id: 6,
           text: "Destinations",
           value: "destinations",
           width: "150px",
@@ -581,6 +615,7 @@ export default {
           width: "182",
         },
       ],
+      industryTags: getIndustryTags(),
       loading: false,
       selectedAudience: null,
       showLookAlikeDrawer: false,
@@ -623,11 +658,15 @@ export default {
           filterTagsObj[audience.name] = new Set()
           audience.filters.forEach((item) => {
             item.section_filters.forEach((obj) => {
-              let nameObj = this.attributeOptions().find(
-                (item) => item.key == obj.field.toLowerCase()
+              let eventObj = this.getEventsOption(obj)
+              let nameObj = this.attributeOptions().find((item) =>
+                item.key == obj.field ? obj.field.toLowerCase() : null
               )
               if (nameObj) {
                 filterTagsObj[audience.name].add(nameObj.name)
+              }
+              if (eventObj) {
+                filterTagsObj[audience.name].add(eventObj.name)
               }
             })
           })
@@ -667,9 +706,16 @@ export default {
       this.batchDetails.worked_by = false
       this.batchDetails.attribute = []
       this.batchDetails.events = []
+      this.batchDetails.tags = []
       this.batchDetails.deliveries = 2
     },
-
+    getEventsOption(filters) {
+      let eventObj = {}
+      if (filters.field == "event") {
+        eventObj.name = formatText(filters.value[0].value)
+        return eventObj
+      } else return undefined
+    },
     intersected() {
       if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
@@ -701,7 +747,7 @@ export default {
       this.numFiltersSelected = value
     },
     clearFilters() {
-      this.$refs.filters.clearAndReload()
+      this.$refs.filters.clear()
     },
     initiateClone(audienceId) {
       this.$router.push({
@@ -740,6 +786,15 @@ export default {
             }
           })
         })
+
+        for (let tags of this.industryTags) {
+          options.push({
+            key: tags,
+            name: formatText(tags),
+            category: "industry",
+            optionName: "Tags",
+          })
+        }
       }
       return options
     },
@@ -901,6 +956,7 @@ export default {
       this.batchDetails.worked_by = params.selectedAudienceWorkedWith
       this.batchDetails.attribute = params.selectedAttributes
       this.batchDetails.events = params.selectedEvents
+      this.batchDetails.tags = params.selectedTags
       await this.fetchAudienceByBatch()
       this.calculateLastBatch()
       this.loading = false

@@ -19,7 +19,7 @@
         <template #activator="{ on }">
           <div class="pl-4 client py-2 mb-2" v-on="on">
             <span class="d-flex align-center justify-space-between">
-              <span class="d-flex align-center black--text text-h4">
+              <span class="d-flex align-center black--text text-h4 ml-2">
                 <div v-if="isDemoMode" :class="isMini ? 'dotMini' : 'dot mr-2'">
                   <logo :type="client.logo" :size="isMini ? 40 : 20" />
                 </div>
@@ -224,6 +224,7 @@ export default {
   },
 
   async mounted() {
+    this.updateClientInfo()
     await this.getSideBarConfig()
     this.trustidRoute(this.$route.name)
     this.navigationItems = this.sideBarItems
@@ -245,13 +246,16 @@ export default {
         this.prevItem.defaultState &&
         this.prevItem.link.name != item.link.name
       ) {
-        this.$store.replaceState({
-          ...this.$store.state,
-          [this.prevItem.link.name.charAt(0).toLowerCase() +
-          this.prevItem.link.name.slice(1)]: _.cloneDeep(
-            this.prevItem.defaultState
-          ),
-        })
+        setTimeout(
+          this.$store.replaceState({
+            ...this.$store.state,
+            [this.prevItem.link.name.charAt(0).toLowerCase() +
+            this.prevItem.link.name.slice(1)]: _.cloneDeep(
+              this.prevItem.defaultState
+            ),
+          }),
+          2000
+        )
       }
       this.prevItem = item
     },
@@ -451,7 +455,7 @@ export default {
 .ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 14ch;
+  max-width: 12ch;
   display: inline-block;
   width: 28ch;
   white-space: nowrap;

@@ -44,11 +44,16 @@ const audienceData = () => {
       "Not Delivered",
       "Error",
     ]),
-    create_time: () => faker.date.recent(),
-    created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
-    update_time: () => faker.date.recent(),
-    updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
+    create_time: faker.date.recent(),
+    created_by: faker.fake("{{name.firstName}} {{name.lastName}}"),
+    update_time: faker.date.recent(),
+    updated_by: faker.fake("{{name.firstName}} {{name.lastName}}"),
     destinations: mockDestinations(3),
+    delivery_schedule: {
+      start_date: faker.date.past(),
+      end_date: faker.date.soon(),
+      schedule: mockDailySchedule(),
+    },
   }
 }
 

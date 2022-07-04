@@ -1129,6 +1129,7 @@ def clean_and_aggregate_datafeed_details(
             }
         )
         # compute run duration if success or running and end_dt available
+
         if df_detail[api_c.STATUS] in [
             api_c.STATUS_SUCCESS,
             api_c.STATUS_RUNNING,
@@ -1244,7 +1245,7 @@ def set_destination_authentication_secrets(
             ssm_params[parameter_name] = secret
             continue
 
-        param_name = f"{api_c.PARAM_STORE_PREFIX}_{parameter_name}"
+        param_name = f"{api_c.PARAM_STORE_PREFIX}-{parameter_name}"
         ssm_params[parameter_name] = param_name
         try:
             CloudClient().set_secret(secret_name=param_name, value=secret)
@@ -1348,21 +1349,42 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                 event_name = section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
                 if section_filter.get(api_c.TYPE) == "within_the_last":
                     is_range = True
+                    start_date = (
+                        datetime.utcnow()
+                        - timedelta(
+                            days=int(
+                                section_filter.get(
+                                    api_c.AUDIENCE_FILTER_VALUE
+                                )[0]
+                            )
+                        )
+                    ).strftime("%Y-%m-%d")
+                    end_date = datetime.utcnow().strftime("%Y-%m-%d")
                 elif section_filter.get(api_c.TYPE) == "not_within_the_last":
                     is_range = False
+                    start_date = (
+                        datetime.utcnow()
+                        - timedelta(
+                            days=int(
+                                section_filter.get(
+                                    api_c.AUDIENCE_FILTER_VALUE
+                                )[0]
+                            )
+                        )
+                    ).strftime("%Y-%m-%d")
+                    end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                elif section_filter.get(api_c.TYPE) == "between":
+                    is_range = True
+                    start_date = section_filter.get(
+                        api_c.AUDIENCE_FILTER_VALUE
+                    )[0]
+                    end_date = section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[
+                        1
+                    ]
                 else:
                     break
                 section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
                 section_filter.update({api_c.TYPE: "event"})
-                start_date = (
-                    datetime.utcnow()
-                    - timedelta(
-                        days=int(
-                            section_filter.get(api_c.AUDIENCE_FILTER_VALUE)
-                        )
-                    )
-                ).strftime("%Y-%m-%d")
-                end_date = datetime.utcnow().strftime("%Y-%m-%d")
                 section_filter.update(
                     {
                         api_c.VALUE: [

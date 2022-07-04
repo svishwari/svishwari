@@ -11,18 +11,31 @@
         <div class="guide-container">
           <span v-if="!activatorVal.activatorVal" class="square-and-bulb">
             <div class="guide-square"></div>
-            <icon class="guide-bulb" type="guide_bulb" :size="40" />
+            <icon
+              class="guide-bulb"
+              type="Guide"
+              color="black-base"
+              bg-color="yellow-lighten3"
+              outline
+              border-color="white-base"
+              :size="40"
+            />
           </span>
           <span v-else>
             <div class="guide-square-active"></div>
-            <icon class="guide-cross" type="close-remove" :size="25" />
+            <icon
+              class="guide-cross"
+              type="Close & Remove"
+              color="black"
+              :size="40"
+            />
           </span>
         </div>
       </template>
       <template #menuHeader>
         <div class="header-menu d-flex text-body-1 pt-5 pb-5 pr-4 pl-4">
           <span>
-            <icon type="FAB-bulb" :size="24" />
+            <icon type="Guide" :size="24" />
           </span>
           <span class="ml-2 mt-1"> {{ header }} </span>
         </div>
@@ -149,7 +162,7 @@ export default {
   position: relative;
 }
 .guide-cross {
-  bottom: 8px;
+  bottom: 16px;
   position: relative;
 }
 .icon-bulb {

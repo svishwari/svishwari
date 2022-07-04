@@ -109,6 +109,9 @@ export default {
   }
   .no-match-rate {
     background: var(--v-primary-lighten1);
+    ::v-deep .metric-card-wrapper {
+      padding: 16px 0px !important;
+    }
   }
 }
 ::v-deep .titleColor {

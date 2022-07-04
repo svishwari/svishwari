@@ -8,9 +8,41 @@ const defaultAudience = {
       section_aggregator: "ALL",
       section_filters: [
         {
-          field: "filter_field",
-          type: "type",
-          value: "value",
+          field: "gender",
+          type: "equals",
+          value: "female",
+        },
+        {
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "viewed_checkout",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-27", "2022-06-28"],
+            },
+          ],
+        },
+        {
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "abandoned_carts",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-17", "2022-06-28"],
+            },
+          ],
         },
       ],
     },
@@ -35,6 +67,11 @@ const multipleSectionFiltersAudience = {
       section_aggregator: "ALL",
       section_filters: [
         {
+          field: "gender",
+          type: "equals",
+          value: "female",
+        },
+        {
           field: "propensity_to_unsubscribe",
           type: "range",
           value: [0.3, 0.5],
@@ -45,9 +82,36 @@ const multipleSectionFiltersAudience = {
           value: [18, 30],
         },
         {
-          field: "gender",
-          type: "equals",
-          value: "female",
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "viewed_checkout",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-27", "2022-06-28"],
+            },
+          ],
+        },
+        {
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "abandoned_carts",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-17", "2022-06-28"],
+            },
+          ],
         },
       ],
     },
@@ -55,9 +119,9 @@ const multipleSectionFiltersAudience = {
       section_aggregator: "ALL",
       section_filters: [
         {
-          field: "propensity_to_purchase",
-          type: "range",
-          value: [0.55, 0.75],
+          field: "gender",
+          type: "equals",
+          value: "female",
         },
         {
           field: "age",
@@ -65,9 +129,36 @@ const multipleSectionFiltersAudience = {
           value: [30, 60],
         },
         {
-          field: "gender",
-          type: "equals",
-          value: "male",
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "viewed_checkout",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-27", "2022-06-28"],
+            },
+          ],
+        },
+        {
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "abandoned_carts",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-17", "2022-06-28"],
+            },
+          ],
         },
       ],
     },
@@ -75,9 +166,9 @@ const multipleSectionFiltersAudience = {
       section_aggregator: "ALL",
       section_filters: [
         {
-          field: "ltv_predicted",
-          type: "range",
-          value: [250, 460],
+          field: "gender",
+          type: "equals",
+          value: "female",
         },
         {
           field: "City",
@@ -88,6 +179,38 @@ const multipleSectionFiltersAudience = {
           field: "Zip",
           type: "equals",
           value: "19129",
+        },
+        {
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "viewed_checkout",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-27", "2022-06-28"],
+            },
+          ],
+        },
+        {
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "abandoned_carts",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-17", "2022-06-28"],
+            },
+          ],
         },
       ],
     },
@@ -121,6 +244,38 @@ const lookalikeAbleAudience1 = {
           field: "propensity_to_unsubscribe",
           type: "range",
           value: [0.7, 1],
+        },
+        {
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "viewed_checkout",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-27", "2022-06-28"],
+            },
+          ],
+        },
+        {
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "abandoned_carts",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2022-06-17", "2022-06-28"],
+            },
+          ],
         },
       ],
     },
@@ -159,6 +314,22 @@ const lookalikeAbleAudience2 = {
           field: "propensity_to_unsubscribe",
           type: "range",
           value: [0.7, 1],
+        },
+        {
+          field: "event",
+          type: "event",
+          value: [
+            {
+              field: "event_name",
+              type: "equals",
+              value: "traits_analysed",
+            },
+            {
+              field: "created",
+              type: "range",
+              value: ["2020-09-25", "2022-05-18"],
+            },
+          ],
         },
       ],
     },

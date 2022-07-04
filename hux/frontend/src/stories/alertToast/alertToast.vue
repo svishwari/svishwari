@@ -1,6 +1,6 @@
 <template>
   <v-alert
-    :color="bgColor"
+    :color="'var(--v-' + bgColor + ')'"
     text
     dismissible
     :outlined="true"
@@ -9,7 +9,19 @@
     class="px-8 alert-centered"
   >
     <template #prepend>
-      <icon :type="type" size="24" class="mr-2" />
+      <icon
+        :type="type"
+        :size="24"
+        :color="
+          type == 'Guide' || type == 'Error & Warning'
+            ? 'black-lighten6'
+            : 'white-base'
+        "
+        :bg-color="bgColor"
+        :border-color="bgColor"
+        outline
+        class="mr-2"
+      />
     </template>
     <template #default>
       <div class="d-flex justify-space-between align-center">
@@ -21,9 +33,10 @@
     </template>
     <template v-slot:close="{ toggle }">
       <icon
-        type="close-remove"
+        type="Close & Remove"
+        color="black"
         class="cursor-pointer"
-        size="10"
+        size="12"
         @click.native="toggle()"
       />
     </template>
@@ -34,7 +47,7 @@
 import Icon from "../icons/Icon2.vue"
 
 export default {
-  name: "Banner",
+  name: "AlertToast",
   components: {
     Icon,
   },
@@ -60,24 +73,24 @@ export default {
   computed: {
     bgColor() {
       switch (this.type) {
-        case "positive":
-          return "var(--v-success-darken1)"
+        case "Checkmark":
+          return "success-darken1"
 
-        case "negative":
-          return "var(--v-error-lighten1)"
+        case "Error":
+          return "error-lighten1"
 
-        case "warning":
-          return "var(--v-warning-lighten1)"
+        case "Error & Warning":
+          return "warning-lighten1"
 
-        case "guiding":
-          return "var(--v-yellow-lighten3)"
+        case "Guide":
+          return "yellow-lighten3"
 
         case "offline":
-          return "var(--v-black-lighten5)"
+          return "black-lighten5"
 
         default:
           // informative
-          return "var(--v-primary-base)"
+          return "primary-base"
       }
     },
   },
