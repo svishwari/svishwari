@@ -140,7 +140,7 @@ class ConfigurationsNavigation(SwaggerView):
     tags = [api_c.CONFIGURATIONS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves all configurations.

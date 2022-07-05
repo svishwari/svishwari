@@ -1594,8 +1594,7 @@ def convert_cdp_buckets_to_histogram(
 def toggle_components_navigation(
     navigation_response: dict, category: str, module_label: str, flag: bool
 ):
-    """
-    Method to toggle components except given module
+    """Method to toggle components except given module
 
     Args:
         navigation_response(dict): Navigation Endpoint Response
