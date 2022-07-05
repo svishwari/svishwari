@@ -53,6 +53,7 @@
                   class="black--text text-body-1"
                   :class="col.value === '' ? 'text-center' : 'text-left'"
                   :style="{ width: col.width }"
+
                 >
                   <template v-if="col.value === ''">
                     <avatar
@@ -67,7 +68,7 @@
                   </template>
 
                   <template v-else-if="col.value === 'display_name'">
-                    <span class="menu-wrap">
+                    <span class="menu-wrap" data-e2e="member-list">
                       <span>
                         <span
                           class="ellipsis mt-1 d-inline"
@@ -78,6 +79,7 @@
                               ? 'requested'
                               : ''
                           "
+                         
                         >
                           {{ item[col.value] }}
                         </span>
@@ -121,6 +123,7 @@
                           d-none
                           menu-activator
                         "
+                         
                       >
                         <v-menu
                           v-model="openMenu[item.id]"
@@ -133,6 +136,7 @@
                               v-bind="attrs"
                               class="mr-2 more-action"
                               color="primary"
+                              data-e2e="member-list-dots"
                               v-on="on"
                               @click.prevent
                             >

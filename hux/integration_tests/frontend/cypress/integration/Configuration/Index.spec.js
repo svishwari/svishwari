@@ -34,27 +34,32 @@ describe("View configuration", () => {
     cy.get(selector.configuration.teamMemberDrawer.email)
       .eq(0)
       .type("Huxley@gmail.com")
-    cy.get(selector.configuration.teamMemberDrawer.accessLevel).click()
+    cy.get(selector.configuration.teamMemberDrawer.accessLevel).eq(0).click()
     cy.get(".dropdown-menuitems").contains("Admin").click()
-    cy.get(selector.configuration.teamMemberDrawer.togglePii).click()
+    cy.get(selector.configuration.teamMemberDrawer.togglePii).eq(0).click()
     cy.get(selector.configuration.teamMemberDrawer.requestText)
       .eq(0)
       .type("New team member")
     // should click on requestbutton
-    cy.get(selector.configuration.teamMemberDrawer.request).click()
+    cy.get(selector.configuration.teamMemberDrawer.request).eq(0).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
     cy.get(selector.configuration.teamMemberDrawer.teamMemberRequest).click()
     cy.get(selector.configuration.teamMemberDrawer.closeDrawer).click()
+    // cy.get(selector.configuration.memberListDots).eq(0).invoke('show')
+    // .should('be.visible')
+    // .trigger('mouseover')
+    cy.get(selector.configuration.list.teamMembersTable)
+    .find(selector.configuration.list.teamMembersTableBody).eq(1).invoke('show').should('be.visible').trigger('mouseover')
     // should click on module-solutions tab
-    cy.get(selector.configuration.moduleSolution).click()
-    // should click & checked on checkbox to show only active items
-    cy.get(selector.configuration.activeItem).click({ force: true })
-    // should click & un-checked on checkbox to show all items
-    cy.get(selector.configuration.activeItem).click({ force: true })
-    // should open tips menu
-    cy.get(selector.configuration.tipsMenu).click()
-    // should close tips menu
-    cy.get(selector.configuration.tipsMenu).click()
+    // cy.get(selector.configuration.moduleSolution).click()
+    // // should click & checked on checkbox to show only active items
+    // cy.get(selector.configuration.activeItem).click({ force: true })
+    // // should click & un-checked on checkbox to show all items
+    // cy.get(selector.configuration.activeItem).click({ force: true })
+    // // should open tips menu
+    // cy.get(selector.configuration.tipsMenu).click()
+    // // should close tips menu
+    // cy.get(selector.configuration.tipsMenu).click()
   })
 })
