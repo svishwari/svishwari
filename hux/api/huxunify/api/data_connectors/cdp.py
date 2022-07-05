@@ -4,7 +4,6 @@
 import time
 import asyncio
 import random
-from collections import defaultdict
 from typing import Tuple, Optional, List
 from datetime import datetime, timezone
 
@@ -602,6 +601,50 @@ def get_customer_count_by_state(
     return response.json()[api_c.BODY]
 
 
+def get_customer_count_by_country(
+    token: str, filters: Optional[dict] = None
+) -> list:
+    """Get demographic details of customers by country.
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into count_by_country endpoint,
+            default None.
+
+    Returns:
+        list: list of country demographic data.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving demographic insights by country.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/countries",
+        json=filters if filters else {},
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve country demographic insights %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/countries",
+            response.status_code,
+        )
+
+    logger.info("Successfully retrieved country demographic insights.")
+
+    return response.json()[api_c.BODY]
+
+
 def get_demographic_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:
@@ -642,41 +685,13 @@ def get_demographic_by_country(
         list: list of demographic details by country.
     """
 
-    customer_count_by_state = get_customer_count_by_state(
-        token=token,
-        filters=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
-    )
-    # start timer
-    timer = time.perf_counter()
-    # group customer count data by country
-    data_by_country = defaultdict(list)
-    customer_insights_by_country = []
-    for item in customer_count_by_state:
-        data_by_country[item["country"]].append(item)
-
-    for country, country_items in data_by_country.items():
-        total_customer_count = sum(map(lambda x: x["size"], country_items))
-        avg_ltv = (
-            sum(map(lambda x: x["avg_ltv"] * x["size"], country_items))
-            / total_customer_count
-            if None not in list(map(lambda x: x["avg_ltv"], country_items))
-            else None
-        )
-        customer_insights_by_country.append(
-            {
-                "name": country,
-                "avg_ltv": avg_ltv,
-                "size": total_customer_count,
-                "country_label": api_c.COUNTRIES_LIST.get(country, " "),
-            }
-        )
-    # log execution time summary
-    total_ticks = time.perf_counter() - timer
-    logger.info(
-        "Grouped customer count data by country in %0.4f seconds.", total_ticks
+    filters = (
+        {api_c.AUDIENCE_FILTERS: filters}
+        if filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
 
-    return customer_insights_by_country
+    return get_customer_count_by_country(token, filters)
 
 
 def get_customers_insights_count_by_day(

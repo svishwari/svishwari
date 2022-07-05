@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-function-args
 """Purpose of this file is to house all tests related to orchestration."""
 from http import HTTPStatus
 from unittest import mock
@@ -282,6 +282,10 @@ class OrchestrationRouteTest(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
             json=t_c.MOCKED_CUSTOMER_EVENT_TYPES,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
+        )
         self.request_mocker.start()
 
         mock.patch(
@@ -342,6 +346,10 @@ class OrchestrationRouteTest(RouteTestCase):
         self.assertEqual(
             audience_post[api_c.AUDIENCE_NAME],
             response.json[api_c.AUDIENCE_NAME],
+        )
+        self.assertEqual(
+            response.json[db_c.AUDIENCE_SOURCE][db_c.AUDIENCE_SOURCE_TYPE],
+            db_c.CDP_DATA_SOURCE_ID,
         )
         self.assertIsNotNone(
             response.json.get(api_c.DESTINATIONS)[0].get(db_c.DATA_ADDED)
@@ -999,6 +1007,12 @@ class OrchestrationRouteTest(RouteTestCase):
     def test_create_lookalike_audience_facebook_connection_fail(self):
         """Test create lookalike audience when facebook connection fails."""
 
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
+        )
+        self.request_mocker.start()
         # setup facebook connector mock address
         mock.patch.object(
             FacebookConnector,
@@ -1072,6 +1086,10 @@ class OrchestrationRouteTest(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.app.get(
@@ -1135,6 +1153,10 @@ class OrchestrationRouteTest(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
 
@@ -1297,6 +1319,10 @@ class OrchestrationRouteTest(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
 
@@ -1728,6 +1754,10 @@ class OrchestrationRouteTest(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
+        )
         self.request_mocker.start()
 
         mock.patch(
@@ -1816,6 +1846,10 @@ class OrchestrationRouteTest(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
 
