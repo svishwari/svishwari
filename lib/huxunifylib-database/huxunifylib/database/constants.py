@@ -261,7 +261,6 @@ SEGMENT_NAME = "segment_name"
 FACTORS = "factors"
 ATTRIBUTES = "attributes"
 
-
 DESTINATION_COLUMN = "destination_column"
 TRANSFORMER = "transformer"
 TRANSFORMATIONS = "transformations"
@@ -589,7 +588,6 @@ FILE_NAME = "file_name"
 USER_NAME = "user_name"
 DOWNLOAD_TYPE = "download_type"
 
-
 # Required Fields per collection
 
 REQUIRED_FIELDS = {
@@ -720,3 +718,4 @@ RETAIL = "retail"
 HOSPITALITY = "hospitality"
 AUTOMOTIVE = "automotive"
 ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+CLIENT_CONFIG = "client_config"
