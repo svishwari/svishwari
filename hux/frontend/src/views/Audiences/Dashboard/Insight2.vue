@@ -869,9 +869,15 @@ export default {
       )
       this.showSelectDestinationsDrawer = true
     },
-    addStandaloneDestination() {
+    addStandaloneDestination(event) {
       this.closeAllDrawers()
+      this.selectedDestinations = []
       this.engagementId = null
+      this.selectedDestinations.push(
+        ...event.standalone_deliveries.map((dest) => ({
+          id: dest.delivery_platform_id,
+        }))
+      )
       this.showSelectDestinationsDrawer = true
     },
     async deliverEngagement(event) {
