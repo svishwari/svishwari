@@ -918,12 +918,15 @@ AccessLevel = namedtuple(
 ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
 EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
-USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
+HXTRUSTID_LEVEL = AccessLevel(db_c.USER_ROLE_TRUSTID)
+# TODO Remove TrustId from All Role after TrustId SignOff
+USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL, HXTRUSTID_LEVEL]
 
 USER_DISPLAY_ROLES = {
     db_c.USER_ROLE_ADMIN: "Admin",
     db_c.USER_ROLE_EDITOR: "Edit",
     db_c.USER_ROLE_VIEWER: "View-Only",
+    db_c.USER_ROLE_TRUSTID: "HX-TrustId",
 }
 
 # Orchestration API fields
