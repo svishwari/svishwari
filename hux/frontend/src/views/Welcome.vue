@@ -13,7 +13,7 @@
         experiences at scale.
       </span>
       <v-btn
-        :to="role == 'trustIdRole' ? { name: 'HXTrustID' } : { name: 'Home' }"
+        :to="getDefaultRoute()"
         data-e2e="signin"
         elevation="2"
         small
@@ -30,6 +30,7 @@
 <script>
 import Logo from "@/assets/images/logo.svg"
 import { mapGetters } from "vuex"
+import { getDefaultRoute } from "../utils"
 
 export default {
   name: "Welcome",
@@ -70,17 +71,7 @@ export default {
         sessionStorage.removeItem("appRedirect")
         this.$store.dispatch("users/getUserProfile")
         this.$store.dispatch("users/getAccessMetrics")
-        this.role == "trustIdRole"
-          ? this.$router.replace(
-              redirect || {
-                name: "HXTrustID",
-              }
-            )
-          : this.$router.replace(
-              redirect || {
-                name: "Home",
-              }
-            )
+        this.$router.replace(redirect || getDefaultRoute())
       } else {
         this.$store.dispatch("users/setUserProfile", {})
         this.$store.dispatch("users/setUserToken", {})
@@ -89,6 +80,7 @@ export default {
     async isAuthenticated() {
       this.authenticated = await this.$auth.isAuthenticated()
     },
+    getDefaultRoute: getDefaultRoute,
   },
 }
 </script>
