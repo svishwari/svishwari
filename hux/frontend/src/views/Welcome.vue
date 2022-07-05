@@ -13,7 +13,7 @@
         experiences at scale.
       </span>
       <v-btn
-        :to="{ name: 'Home' }"
+        :to="role == 'trustIdRole' ? { name: 'HXTrustID' } : { name: 'Home' }"
         data-e2e="signin"
         elevation="2"
         small
@@ -29,6 +29,7 @@
 
 <script>
 import Logo from "@/assets/images/logo.svg"
+import { mapGetters } from "vuex"
 
 export default {
   name: "Welcome",
@@ -41,6 +42,12 @@ export default {
       authenticated: false,
     }
   },
+  computed: {
+    ...mapGetters({
+      role: "users/getCurrentUserRole",
+    }),
+  },
+
   beforeMount() {
     this.setup()
   },
@@ -63,11 +70,17 @@ export default {
         sessionStorage.removeItem("appRedirect")
         this.$store.dispatch("users/getUserProfile")
         this.$store.dispatch("users/getAccessMetrics")
-        this.$router.replace(
-          redirect || {
-            name: "Home",
-          }
-        )
+        this.role == "trustIdRole"
+          ? this.$router.replace(
+              redirect || {
+                name: "HXTrustID",
+              }
+            )
+          : this.$router.replace(
+              redirect || {
+                name: "Home",
+              }
+            )
       } else {
         this.$store.dispatch("users/setUserProfile", {})
         this.$store.dispatch("users/setUserToken", {})
