@@ -103,7 +103,8 @@ class Decisioning:
             dec_client(
                 api_client=api_client.ApiClient(
                     configuration=configuration.Configuration(
-                        host=get_config().DECISIONING_URL
+                        # host=get_config().DECISIONING_URL
+                        host="https://hux-model-api-dec.hux-lildev.in"
                     ),
                     header_name="Authorization",
                     header_value=self.token,
@@ -256,7 +257,7 @@ class Decisioning:
 
         return models
 
-    def get_model_overview(self, model_id: str, model_version: str) -> dict:
+    def get_model_overview(self, model_id: str, model_version: str = None) -> dict:
         """Get the feature importance for a model
 
         Args:
@@ -402,7 +403,7 @@ class Decisioning:
             },
         }
 
-    def get_model_lift(self, model_id: str, model_version: str) -> list:
+    def get_model_lift(self, model_id: str, model_version: str = None) -> list:
         """Get the lift statics of a model.
 
         Args:
