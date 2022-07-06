@@ -926,7 +926,7 @@ USER_DISPLAY_ROLES = {
     db_c.USER_ROLE_ADMIN: "Admin",
     db_c.USER_ROLE_EDITOR: "Edit",
     db_c.USER_ROLE_VIEWER: "View-Only",
-    db_c.USER_ROLE_TRUSTID: "HX-TrustId",
+    db_c.USER_ROLE_TRUSTID: "TrustId",
 }
 
 # Orchestration API fields
@@ -1441,6 +1441,8 @@ MODELS_STUB = [
 CONFIGURATIONS_TAG = "configurations"
 CONFIGURATION_ID = "configuration_id"
 CONFIGURATIONS_ENDPOINT = "/configurations"
+SETTINGS = "settings"
+NAVIGATION_CHILDREN = "children"
 SAMPLE_NAVIGATION_SETTINGS = {
     db_c.CONFIGURATION_FIELD_SETTINGS: [
         {

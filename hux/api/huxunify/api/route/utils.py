@@ -1605,10 +1605,10 @@ def toggle_components_navigation(
     Returns:
 
     """
-    for data in navigation_response["settings"]:
-        if data["label"] != category:
-            data["enabled"] = flag
+    for data in navigation_response[api_c.SETTINGS]:
+        if data[api_c.LABEL] != category:
+            data[api_c.ENABLED] = flag
         else:
-            for child in data["children"]:
-                if child["label"] != module_label:
-                    child["enabled"] = flag
+            for child in data[api_c.NAVIGATION_CHILDREN]:
+                if child[api_c.LABEL] != module_label:
+                    child[api_c.ENABLED] = flag
