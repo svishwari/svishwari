@@ -280,14 +280,16 @@ class CDPTest(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
 
         countries = set(
             data[api_c.COUNTRY]
-            for data in t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE[api_c.BODY]
+            for data in t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE[
+                api_c.BODY
+            ]
         )
 
         customer_insights_by_country = get_demographic_by_country("")
@@ -295,10 +297,10 @@ class CDPTest(TestCase):
         self.assertTrue(customer_insights_by_country)
         self.assertEqual(len(countries), len(customer_insights_by_country))
         for record in customer_insights_by_country:
-            self.assertIn(api_c.NAME, record)
-            self.assertIn(record[api_c.NAME], countries)
+            self.assertIn(api_c.COUNTRY, record)
+            self.assertIn(record[api_c.COUNTRY], countries)
             self.assertIn(api_c.SIZE, record)
-            self.assertIn(api_c.AVG_LTV, record)
+            self.assertIn(api_c.LTV, record)
 
     def test_get_demographic_by_country_with_single_state_filter(self) -> None:
         """Test get customers insights by country with filter."""
@@ -317,20 +319,20 @@ class CDPTest(TestCase):
             "body": [
                 {
                     api_c.STATE: "CO",
-                    api_c.COUNTRY: "US",
+                    api_c.COUNTRY: "Test Country",
                     api_c.GENDER_MEN: 2656,
                     api_c.GENDER_WOMEN: 2344,
                     api_c.GENDER_OTHER: 12,
-                    api_c.SIZE: 5012,
-                    api_c.AVG_LTV: 123.43,
+                    api_c.SIZE: 1234,
+                    api_c.AVG_LTV: 324.45,
                 }
             ],
             "message": "ok",
         }
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-            json=expected_response,
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
         self.request_mocker.start()
 
@@ -339,20 +341,20 @@ class CDPTest(TestCase):
         )
 
         self.assertTrue(customer_insights_by_country)
-        self.assertIn(api_c.NAME, customer_insights_by_country[0])
+        self.assertIn(api_c.COUNTRY, customer_insights_by_country[0])
         self.assertEqual(
             expected_response[api_c.BODY][0][api_c.COUNTRY],
-            customer_insights_by_country[0][api_c.NAME],
+            customer_insights_by_country[0][api_c.COUNTRY],
         )
         self.assertIn(api_c.SIZE, customer_insights_by_country[0])
         self.assertEqual(
             expected_response[api_c.BODY][0][api_c.SIZE],
             customer_insights_by_country[0][api_c.SIZE],
         )
-        self.assertIn(api_c.AVG_LTV, customer_insights_by_country[0])
+        self.assertIn(api_c.LTV, customer_insights_by_country[0])
         self.assertEqual(
             expected_response[api_c.BODY][0][api_c.AVG_LTV],
-            customer_insights_by_country[0][api_c.AVG_LTV],
+            customer_insights_by_country[0][api_c.LTV],
         )
 
     def test_get_demographic_by_state(self) -> None:
@@ -547,7 +549,7 @@ class CDPTest(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/countries",
             json={},
         )
         self.request_mocker.start()

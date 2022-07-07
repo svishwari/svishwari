@@ -284,6 +284,17 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ENABLED: True,
         db_c.CONFIGURATION_FIELD_SETTINGS: {
             db_c.COMPONENTS: {
+                db_c.CLIENT_CONFIG: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Client Settings",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "client_settings",
+                            db_c.USER_ROLE_ADMIN: False,
+                            db_c.USER_ROLE_EDITOR: False,
+                            db_c.USER_ROLE_VIEWER: False,
+                        }
+                    ],
+                },
                 db_c.ALERTS: {
                     db_c.CONFIGURATION_FIELD_LABEL: "Alerts",
                     db_c.ACTIONS: [
