@@ -1589,3 +1589,26 @@ def convert_cdp_buckets_to_histogram(
             for data in bucket_data
         ],
     )
+
+
+def toggle_components_navigation(
+    navigation_response: dict, category: str, module_label: str, flag: bool
+):
+    """Method to toggle components except given module
+
+    Args:
+        navigation_response(dict): Navigation Endpoint Response
+        category(str): Parent Category Value
+        module_label(str): Module Name
+        flag(bool): Toggle Flag
+
+    Returns:
+
+    """
+    for data in navigation_response[api_c.SETTINGS]:
+        if data[api_c.LABEL] != category:
+            data[api_c.ENABLED] = flag
+        else:
+            for child in data[api_c.NAVIGATION_CHILDREN]:
+                if child[api_c.LABEL] != module_label:
+                    child[api_c.ENABLED] = flag
