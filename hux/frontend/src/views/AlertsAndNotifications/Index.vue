@@ -42,11 +42,7 @@
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
-        <page-header
-          v-if="!isEmptyError"
-          class="top-bar mb-3"
-          :header-height="70"
-        >
+        <page-header v-if="!isEmptyError" class="top-bar" :header-height="70">
           <template #left>
             <v-btn disabled icon color="black">
               <icon type="search" :size="20" color="black" variant="lighten3" />

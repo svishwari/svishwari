@@ -280,16 +280,19 @@ export default {
           text: "",
           value: "",
           width: "76px",
+          sortable: false,
         },
         {
           text: "Name",
           value: "display_name",
           width: "281px",
+          sortable: true,
         },
         {
           text: "Email",
           value: "email",
           width: "367px",
+          sortable: true,
         },
         {
           text: "Access Level",
@@ -303,6 +306,7 @@ export default {
             <b>View-only access</b> <br /><br />\
             Unable to edit a client’s team, or remove and add any solutions across Hux.",
           tooltipWidth: "200px",
+          sortable: true,
         },
         {
           text: "PII Access",
@@ -311,6 +315,7 @@ export default {
           hoverTooltip:
             "Sensitive and PII data are only accessible to individuals tha been granted permission by an Admin.",
           tooltipWidth: "300px",
+          sortable: true,
         },
       ],
       switchLabel: [

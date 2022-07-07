@@ -64,13 +64,20 @@
                 </span>
               </template>
             </tooltip>
-            <div
+
+            <!-- <time-stamp :value="item[column.value]" /> -->
+            <tooltip
               v-else-if="column.value === 'last_processed'"
               class="black--text text--darken-4 text-body-1"
             >
-              <!-- <time-stamp :value="item[column.value]" /> -->
-              {{ formatDateToLocal(item[column.value]) }}
-            </div>
+              <template #label-content>
+                {{ formatDateToLocal(item[column.value]) }}
+              </template>
+              <template #hover-content>
+                {{ formatDateToLocal(item[column.value]) }}
+              </template>
+            </tooltip>
+
             <tooltip v-else-if="column.value === 'name'">
               <template #label-content>
                 <span
@@ -112,7 +119,7 @@
       class="empty-error-card mx-7"
       data-e2e="datasource-datafeeds-table"
     >
-      <v-row class="data-feed-frame my-1 py-16">
+      <v-row class="data-feed-frame py-13">
         <empty-page
           v-if="!datafeedErrorState"
           type="lift-table-empty"
@@ -299,13 +306,16 @@ export default {
 <style lang="scss" scoped>
 .datasource-datafeeds-table {
   margin-top: 1px;
+
   ::v-deep .hux-data-table {
     table {
       table-layout: initial;
+
       .data-feed-name {
         @extend .text-ellipsis;
         max-width: 25ch;
       }
+
       .v-data-table-header {
         tr:first-child {
           th {
@@ -313,17 +323,20 @@ export default {
           }
         }
       }
+
       tr {
         td {
           padding-left: 42px !important;
           height: 60px;
           white-space: nowrap;
           text-overflow: ellipsis !important;
+
           &:last-child {
             padding-right: 30px !important;
           }
         }
       }
+
       tbody {
         tr:last-child {
           td {
@@ -334,12 +347,14 @@ export default {
     }
   }
 }
+
 .empty-error-card {
   height: 280px;
   border: 1px solid var(--v-black-lighten2);
   border-radius: 12px;
   margin-top: 72px;
 }
+
 .data-feed-frame {
   background-image: url("../../assets/images/no-lift-chart-frame.png");
   background-position: center;
