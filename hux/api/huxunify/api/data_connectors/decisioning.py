@@ -85,6 +85,7 @@ class DenStubClient:
         Returns:
             DotNotationDict: model info dictionary.
         """
+
         # convert to an attr dict.
         return [
             convert_model_to_dot_notation(x)
