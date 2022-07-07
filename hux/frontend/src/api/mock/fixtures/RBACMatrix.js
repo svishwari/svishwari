@@ -602,8 +602,8 @@ export default {
           admin: true,
           editor: true,
           viewer: true,
-        }
-      ]
+        },
+      ],
     },
   },
 }

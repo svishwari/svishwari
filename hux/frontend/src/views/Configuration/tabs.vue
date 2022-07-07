@@ -19,7 +19,7 @@
           Team members
         </v-tab>
         <v-tab
-        v-if="getAccess('client_config', 'client_settings')"
+          v-if="getAccess('client_config', 'client_settings')"
           key="team"
           class="text-h3 black--text text--lighten-4"
           data-e2e="teamMembers"
