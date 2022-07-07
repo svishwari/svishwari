@@ -85,7 +85,6 @@ class DenStubClient:
         Returns:
             DotNotationDict: model info dictionary.
         """
-
         # convert to an attr dict.
         return [
             convert_model_to_dot_notation(x)
@@ -103,8 +102,7 @@ class Decisioning:
             dec_client(
                 api_client=api_client.ApiClient(
                     configuration=configuration.Configuration(
-                        # host=get_config().DECISIONING_URL
-                        host="https://hux-model-api-dec.hux-lildev.in"
+                        host=get_config().DECISIONING_URL
                     ),
                     header_name="Authorization",
                     header_value=self.token,
@@ -154,6 +152,7 @@ class Decisioning:
                     info.scheduled_date, "%Y-%m-%d"
                 ),
             )
+        desired_info.model_id = model_id
         desired_info.past_version_count = len(model_infos)
         return desired_info
 
@@ -257,7 +256,9 @@ class Decisioning:
 
         return models
 
-    def get_model_overview(self, model_id: str, model_version: str = None) -> dict:
+    def get_model_overview(
+        self, model_id: str, model_version: str = None
+    ) -> dict:
         """Get the feature importance for a model
 
         Args:
