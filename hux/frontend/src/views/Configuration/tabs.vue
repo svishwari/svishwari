@@ -19,6 +19,7 @@
           Team members
         </v-tab>
         <v-tab
+        v-if="getAccess('client_config', 'client_settings')"
           key="team"
           class="text-h3 black--text text--lighten-4"
           data-e2e="teamMembers"
@@ -43,10 +44,10 @@
 
 <script>
 import { mapGetters } from "vuex"
-
 import ModuleSolutions from "../Configuration/ModuleSolutions/ModuleSolutions.vue"
 import TeamMembers from "../Configuration/TeamMembers/TeamMembers.vue"
 import ClientSettings from "../Configuration/ClientSettings/ClientSettings.vue"
+import { getAccess } from "@/utils.js"
 
 export default {
   name: "ConfigTabs",
@@ -58,6 +59,9 @@ export default {
   },
   computed: {
     ...mapGetters({}),
+  },
+  methods: {
+    getAccess: getAccess,
   },
 }
 </script>

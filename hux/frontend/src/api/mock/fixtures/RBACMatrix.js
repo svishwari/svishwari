@@ -594,5 +594,16 @@ export default {
         },
       ],
     },
+    client_config: {
+      label: "Client Settings",
+      actions: [
+        {
+          type: "client_settings",
+          admin: true,
+          editor: true,
+          viewer: true,
+        }
+      ]
+    },
   },
 }
