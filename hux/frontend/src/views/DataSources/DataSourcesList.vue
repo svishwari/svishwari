@@ -44,14 +44,16 @@
             />
           </template>
           <template slot="action-menu-options">
-            <div
-              v-if="getAccess('data_source', 'delete_one')"
-              class="px-4 py-2 white d-flex flex-column text-h5"
-              :data-e2e="`data-source-list-${dataSource.status}-remove`"
-              @click="openModal(dataSource)"
-            >
-              <span class="d-flex align-center"> Remove </span>
-            </div>
+            <v-list class="py-0">
+              <v-list-item
+                v-if="getAccess('data_source', 'delete_one')"
+                class="text-body-1 action-menu-item"
+                :data-e2e="`data-source-list-${dataSource.status}-remove`"
+                @click="openModal(dataSource)"
+              >
+                <span class="d-flex align-center"> Remove </span>
+              </v-list-item>
+            </v-list>
           </template>
 
           <template slot="default">
@@ -173,27 +175,41 @@ export default {
     position: relative;
     top: 3px;
   }
+
   .v-card {
     .status {
       min-width: 80px;
+
       ::v-deep i {
         font-size: 17px;
       }
     }
   }
+
   ::v-deep.descriptive-card {
     .title {
       padding-bottom: 4px !important;
     }
+
     .px-3.pt-2 {
       padding-top: 24px !important;
     }
   }
 }
+.action-menu-item {
+  min-height: 32px !important;
+  min-width: 90px !important;
+}
+
 ::v-deep circle {
   stroke: rgb(255, 255, 255) !important;
 }
+
 ::v-deep .path_aqfer {
   stroke: rgb(255, 255, 255) !important;
+}
+
+::v-deep .descriptive-card.in-active:hover {
+  box-shadow: none !important;
 }
 </style>

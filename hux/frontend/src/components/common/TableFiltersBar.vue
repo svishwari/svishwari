@@ -16,7 +16,6 @@
           v-for="(filter, i) in filters"
           :key="i"
           v-model="filter.value"
-          :toggle-drop-down="toggleDropDown"
           :min-selection="0"
           :items="filter.data"
           :is-search-enabled="false"
