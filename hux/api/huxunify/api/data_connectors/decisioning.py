@@ -153,6 +153,7 @@ class Decisioning:
                     info.scheduled_date, "%Y-%m-%d"
                 ),
             )
+        desired_info.model_id = model_id
         desired_info.past_version_count = len(model_infos)
         return desired_info
 
@@ -256,7 +257,9 @@ class Decisioning:
 
         return models
 
-    def get_model_overview(self, model_id: str, model_version: str) -> dict:
+    def get_model_overview(
+        self, model_id: str, model_version: str = None
+    ) -> dict:
         """Get the feature importance for a model
 
         Args:
@@ -402,7 +405,7 @@ class Decisioning:
             },
         }
 
-    def get_model_lift(self, model_id: str, model_version: str) -> list:
+    def get_model_lift(self, model_id: str, model_version: str = None) -> list:
         """Get the lift statics of a model.
 
         Args:
