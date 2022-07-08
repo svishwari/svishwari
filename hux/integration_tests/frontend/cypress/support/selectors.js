@@ -123,7 +123,7 @@ export default {
       closeDrawer: "[data-e2e='close-drawer']",
     },
     memberListDots: "[data-e2e='member-list-dots']",
-    memberList: "[data-e2e='member-list']"
+    memberList: "[data-e2e='member-list']",
   },
 
   // data sources

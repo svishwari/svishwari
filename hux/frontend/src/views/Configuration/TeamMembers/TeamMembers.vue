@@ -53,7 +53,6 @@
                   class="black--text text-body-1"
                   :class="col.value === '' ? 'text-center' : 'text-left'"
                   :style="{ width: col.width }"
-
                 >
                   <template v-if="col.value === ''">
                     <avatar
@@ -79,7 +78,6 @@
                               ? 'requested'
                               : ''
                           "
-                         
                         >
                           {{ item[col.value] }}
                         </span>
@@ -123,7 +121,6 @@
                           d-none
                           menu-activator
                         "
-                         
                       >
                         <v-menu
                           v-model="openMenu[item.id]"

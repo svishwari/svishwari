@@ -12,7 +12,7 @@ describe("View configuration", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000)
     // should click on team-members tab
-    cy.get(selector.configuration.teamMembers).first().click()
+    cy.get(selector.configuration.teamMembers).click()
 
     // should verify the columns of the audiences table
     const tableHeaders = ["", "Name", "Email", "Access Level", "PII Access"]
@@ -46,20 +46,15 @@ describe("View configuration", () => {
     cy.wait(1000)
     cy.get(selector.configuration.teamMemberDrawer.teamMemberRequest).click()
     cy.get(selector.configuration.teamMemberDrawer.closeDrawer).click()
-    // cy.get(selector.configuration.memberListDots).eq(0).invoke('show')
-    // .should('be.visible')
-    // .trigger('mouseover')
-    cy.get(selector.configuration.list.teamMembersTable)
-    .find(selector.configuration.list.teamMembersTableBody).eq(1).invoke('show').should('be.visible').trigger('mouseover')
     // should click on module-solutions tab
-    // cy.get(selector.configuration.moduleSolution).click()
-    // // should click & checked on checkbox to show only active items
-    // cy.get(selector.configuration.activeItem).click({ force: true })
-    // // should click & un-checked on checkbox to show all items
-    // cy.get(selector.configuration.activeItem).click({ force: true })
-    // // should open tips menu
-    // cy.get(selector.configuration.tipsMenu).click()
-    // // should close tips menu
-    // cy.get(selector.configuration.tipsMenu).click()
+    cy.get(selector.configuration.moduleSolution).click()
+    // should click & checked on checkbox to show only active items
+    cy.get(selector.configuration.activeItem).click({ force: true })
+    // should click & un-checked on checkbox to show all items
+    cy.get(selector.configuration.activeItem).click({ force: true })
+    // should open tips menu
+    cy.get(selector.configuration.tipsMenu).click()
+    // should close tips menu
+    cy.get(selector.configuration.tipsMenu).click()
   })
 })
