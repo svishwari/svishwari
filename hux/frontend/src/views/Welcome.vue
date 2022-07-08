@@ -13,7 +13,7 @@
         experiences at scale.
       </span>
       <v-btn
-        :to="getDefaultRoute()"
+        :to="getDefaultRoute(role)"
         data-e2e="signin"
         elevation="2"
         small
@@ -71,7 +71,7 @@ export default {
         sessionStorage.removeItem("appRedirect")
         this.$store.dispatch("users/getUserProfile")
         this.$store.dispatch("users/getAccessMetrics")
-        this.$router.replace(redirect || getDefaultRoute())
+        this.$router.replace(redirect || getDefaultRoute(this.role))
       } else {
         this.$store.dispatch("users/setUserProfile", {})
         this.$store.dispatch("users/setUserToken", {})

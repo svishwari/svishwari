@@ -515,10 +515,10 @@ export function getIndustryTags() {
 /**
  * Returns default route based on role
  *
+ * @param {string} role - current role of the user
  * @returns {object} default route
  */
-export function getDefaultRoute() {
-  let role = store.getters["users/getCurrentUserRole"]
+export function getDefaultRoute(role) {
   let route = {}
   switch (role) {
     case "hxtrustid":

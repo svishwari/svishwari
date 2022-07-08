@@ -89,7 +89,8 @@ export default {
     },
   },
   methods: {
-    initiateLogout() {
+    async initiateLogout() {
+      await this.$store.dispatch("users/getUserProfile")
       this.$auth.logout()
     },
 
