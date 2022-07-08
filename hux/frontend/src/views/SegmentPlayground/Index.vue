@@ -549,9 +549,15 @@ export default {
             value: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
             ].operator
-              ? this.audience.attributeRules[ruleIndex].conditions[
+              ? typeof this.audience.attributeRules[ruleIndex].conditions[
                   conditionIndex
-                ].text
+                ].text == "object"
+                ? this.audience.attributeRules[ruleIndex].conditions[
+                    conditionIndex
+                  ].text.text
+                : this.audience.attributeRules[ruleIndex].conditions[
+                    conditionIndex
+                  ].text
               : this.audience.attributeRules[ruleIndex].conditions[
                   conditionIndex
                 ].range,
@@ -619,7 +625,7 @@ export default {
         JSON.stringify(this.getAudience(this.audienceId))
       )
       let tagsData = audienceData.tags?.industry
-      if (tagsData.length > 0) {
+      if (tagsData?.length > 0) {
         tagsData.forEach((item) =>
           this.selectedTags.push(this.formatTagsOptions(item))
         )
@@ -633,51 +639,53 @@ export default {
     },
 
     mapAudienceData(data) {
-      const _audienceObject = JSON.parse(JSON.stringify(data))
-      _audienceObject.originalName = _audienceObject.name
-      // Mapping the filters of audience.
-      const attributeOptions = this.$refs?.filters.attributeOptions()
-      _audienceObject.attributeRules = _audienceObject.filters.map(
-        (filter) => ({
-          id: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-            /[xy]/g,
-            function (c) {
-              var r = (Math.random() * 16) | 0,
-                v = c == "x" ? r : (r & 0x3) | 0x8
-              return v.toString(16)
-            }
-          ),
-          operand: filter.section_aggregator === "ALL",
-          conditions: filter.section_filters.map((cond) => ({
-            id: uuidv4(),
-            attribute: cond.field,
-            operator: cond.type === "range" ? "" : cond.type,
-            text: cond.type !== "range" ? cond.value : "",
-            range: cond.type === "range" ? cond.value : [],
-          })),
+      if (data) {
+        const _audienceObject = JSON.parse(JSON.stringify(data))
+        _audienceObject.originalName = _audienceObject.name
+        // Mapping the filters of audience.
+        const attributeOptions = this.$refs?.filters.attributeOptions()
+        _audienceObject.attributeRules = _audienceObject.filters.map(
+          (filter) => ({
+            id: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+              /[xy]/g,
+              function (c) {
+                var r = (Math.random() * 16) | 0,
+                  v = c == "x" ? r : (r & 0x3) | 0x8
+                return v.toString(16)
+              }
+            ),
+            operand: filter.section_aggregator === "ALL",
+            conditions: filter.section_filters.map((cond) => ({
+              id: uuidv4(),
+              attribute: cond.field,
+              operator: cond.type === "range" ? "" : cond.type,
+              text: cond.type !== "range" ? cond.value : "",
+              range: cond.type === "range" ? cond.value : [],
+            })),
+          })
+        )
+        _audienceObject.attributeRules.forEach((section) => {
+          section.conditions.forEach((cond) => {
+            cond.attribute = this.getAttributeOption(
+              cond.attribute,
+              attributeOptions
+            )
+            let _operators = this.$refs?.filters.operatorOptions(cond)
+            cond.operator =
+              cond.operator !== "range"
+                ? _operators.filter((opt) => opt.key === cond.operator)[0]
+                : cond.operator
+            this.$refs?.filters.triggerSizing(cond, false)
+          })
         })
-      )
-      _audienceObject.attributeRules.forEach((section) => {
-        section.conditions.forEach((cond) => {
-          cond.attribute = this.getAttributeOption(
-            cond.attribute,
-            attributeOptions
-          )
-          let _operators = this.$refs?.filters.operatorOptions(cond)
-          cond.operator =
-            cond.operator !== "range"
-              ? _operators.filter((opt) => opt.key === cond.operator)[0]
-              : cond.operator
-          this.$refs?.filters.triggerSizing(cond, false)
+        this.$set(this, "audience", _audienceObject)
+        if (this.isClone) {
+          this.audience.name = ""
+        }
+        this.$nextTick(function () {
+          this.$refs?.filters.getOverallSize()
         })
-      })
-      this.$set(this, "audience", _audienceObject)
-      if (this.isClone) {
-        this.audience.name = ""
       }
-      this.$nextTick(function () {
-        this.$refs?.filters.getOverallSize()
-      })
     },
     formatText: formatText,
   },

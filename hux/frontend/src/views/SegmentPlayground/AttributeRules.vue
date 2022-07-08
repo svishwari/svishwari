@@ -429,15 +429,40 @@ export default {
     },
     listOptions(condition) {
       if (condition.attribute.key === "City") {
-        // if (this.currenCitytData.length == 0) {
-        //   this.selectedValue = "City"
-        //   this.autoSearchFunc(condition.text)
-        // }
-        // condition.text = this.currenCitytData.find(
-        //   (item) => Object.values(item)[0].split(",")[0] == condition.text
-        // )
+        debugger
+        if (this.currenCitytData.length == 0) {
+          this.selectedValue = "City"
+          this.autoSearchFunc(condition.text.text)
+        }
+        let option = this.currenCitytData.find(
+          (item) => Object.values(item)[0].split(",")[0] == condition.text.text
+        )
+        if (option) {
+          let defaultOption = {
+            value: Object.keys(option)[0],
+            text: Object.values(option)[0],
+          }
+          if (
+            JSON.stringify(condition.text) !== JSON.stringify(defaultOption)
+          ) {
+            condition.text = JSON.parse(JSON.stringyfy(defaultOption))
+          }
+        }
         return this.currenCitytData
       } else if (condition.attribute.key === "Zip") {
+        // if (this.currentData.length == 0) {
+        //   this.selectedValue = "Zip"
+        //   this.autoSearchFunc(condition.text)
+        // }
+        // let option = this.currentData.find(
+        //   (item) => Object.values(item)[0].split(",")[0] == condition.text
+        // )
+        // if (option) {
+        //   condition.text = {
+        //     value: Object.keys(option)[0],
+        //     text: Object.values(option)[0],
+        //   }
+        // }
         return this.currentData
       } else {
         return condition.attribute.options
@@ -645,7 +670,7 @@ export default {
       this.addNewCondition(newSection.id)
     },
     async autoSearchFunc(value) {
-      if (value !== null && value !== "") {
+      if (value !== null && value !== "" && value !== undefined) {
         if (this.selectedValue === "Zip" || this.selectedValue === "City") {
           this.params.fieldType =
             this.selectedValue === "Zip"
@@ -665,7 +690,12 @@ export default {
           }
         }
       }
-      if (value === null || value === "" || value.length < 3) {
+      if (
+        value === null ||
+        value === "" ||
+        value === undefined ||
+        value.length < 3
+      ) {
         if (this.selectedValue === "Zip") {
           this.currentData = []
         } else if (this.selectedValue === "City") {
