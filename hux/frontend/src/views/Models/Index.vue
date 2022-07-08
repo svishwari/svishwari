@@ -60,9 +60,18 @@
           :header-height="69"
         >
           <template #left>
-            <v-btn disabled icon color="black">
+            <!-- <v-btn disabled icon color="black">
               <icon type="search" :size="20" color="black" variant="lighten3" />
-            </v-btn>
+            </v-btn> -->
+            <hux-switch
+            v-model="showListView"
+            false-color="var(--v-black-lighten4)"
+            width="95px"
+            :switch-labels="switchLabelFullAlerts"
+            class="w-53"
+            data-e2e="mainSwitch"
+            @change="toggleMainSwitch($event)"
+          />
           </template>
           <template #right>
             <huxButton
@@ -83,6 +92,7 @@
           v-if="addedModels.length > 0 && !loading"
           class="padding-30 ma-0 content-section"
         >
+        <div v-if="showListView">
           <descriptive-card
             v-for="model in addedModels"
             :key="model.id"
@@ -183,6 +193,10 @@
               </div>
             </template>
           </descriptive-card>
+        </div>
+        <div v-else>
+          <model-table />
+        </div>
         </v-row>
         <v-row
           v-else-if="addedModels.length == 0 && !loading && !showError"
@@ -317,6 +331,8 @@ import Logo from "@/components/common/Logo.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import ModelFilter from "@/views/Models/Drawers/ModelFilter"
 import EmptyPage from "@/components/common/EmptyPage"
+import ModelTable from "./ModelTable"
+import HuxSwitch from "@/components/common/Switch.vue"
 import { getAccess, formatText, getIndustryTags } from "@/utils.js"
 
 export default {
@@ -337,6 +353,8 @@ export default {
     Tooltip,
     ModelFilter,
     EmptyPage,
+    ModelTable,
+    HuxSwitch
   },
   data() {
     return {
@@ -357,6 +375,17 @@ export default {
         "unsubscribe",
         "regression",
         "classification",
+      ],
+      showListView: false,
+      switchLabelFullAlerts: [
+        {
+          condition: true,
+          label: "Card View",
+        },
+        {
+          condition: false,
+          label: "List View",
+        },
       ],
     }
   },
@@ -463,6 +492,8 @@ export default {
         })
       }
       return options
+    },
+    toggleMainSwitch(value) {
     },
     getAccess: getAccess,
     formatText: formatText,
