@@ -272,7 +272,10 @@ const actions = {
     try {
       let res = await api.engagements.deliver(id)
       if (res.status == 200) {
-        handleSuccess("Successfully started deliveries to audiences.", res.status)
+        handleSuccess(
+          "Successfully started deliveries to audiences.",
+          res.status
+        )
       } else if (res.status == 206) {
         handleInfo("Deliveries are currently disabled", res.status)
       }
