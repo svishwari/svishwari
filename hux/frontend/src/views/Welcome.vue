@@ -13,7 +13,7 @@
         experiences at scale.
       </span>
       <v-btn
-        :to="{ name: 'Home' }"
+        :to="getDefaultRoute(role)"
         data-e2e="signin"
         elevation="2"
         small
@@ -29,6 +29,8 @@
 
 <script>
 import Logo from "@/assets/images/logo.svg"
+import { mapGetters } from "vuex"
+import { getDefaultRoute } from "../utils"
 
 export default {
   name: "Welcome",
@@ -41,6 +43,12 @@ export default {
       authenticated: false,
     }
   },
+  computed: {
+    ...mapGetters({
+      role: "users/getCurrentUserRole",
+    }),
+  },
+
   beforeMount() {
     this.setup()
   },
@@ -63,11 +71,7 @@ export default {
         sessionStorage.removeItem("appRedirect")
         this.$store.dispatch("users/getUserProfile")
         this.$store.dispatch("users/getAccessMetrics")
-        this.$router.replace(
-          redirect || {
-            name: "Home",
-          }
-        )
+        this.$router.replace(redirect || getDefaultRoute(this.role))
       } else {
         this.$store.dispatch("users/setUserProfile", {})
         this.$store.dispatch("users/setUserToken", {})
@@ -76,6 +80,7 @@ export default {
     async isAuthenticated() {
       this.authenticated = await this.$auth.isAuthenticated()
     },
+    getDefaultRoute: getDefaultRoute,
   },
 }
 </script>
