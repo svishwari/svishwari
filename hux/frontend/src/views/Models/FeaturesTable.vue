@@ -38,18 +38,14 @@
         </template>
         <!-- // need after backend is updated -->
 
-        <!-- <template v-else-if="col.value === 'feature_type'">
-          {{ item[col.value] | Empty('-') }}
-        </template> -->
+        <template v-else-if="col.value === 'feature_type'"> - </template>
 
         <template v-else-if="col.value === 'records_not_null'">
           {{ removeDecimal(item[col.value]) | Empty("-") }}
         </template>
         <!-- // need after backend is updated -->
 
-        <!-- <template v-else-if="col.value === 'feature_importance'">
-          {{ item[col.value] | Empty('-') }}
-        </template> -->
+        <template v-else-if="col.value === 'feature_importance'"> - </template>
 
         <template
           v-else-if="
@@ -61,9 +57,7 @@
 
         <!-- // need after backend is updated -->
 
-        <!-- <template v-else-if="col.value === 'unique_values'">
-          {{ item[col.value] | Empty('-') }}
-        </template> -->
+        <template v-else-if="col.value === 'unique_values'"> - </template>
 
         <template v-else-if="col.value === 'lcuv' || col.value === 'mcuv'">
           {{ item[col.value] }}
@@ -107,11 +101,11 @@ export default {
         },
         // need after backend is updated
 
-        // {
-        //   text: "Feature type",
-        //   value: "feature_type",
-        //   width: "210px",
-        // },
+        {
+          text: "Feature type",
+          value: "feature_type",
+          width: "210px",
+        },
         {
           text: "Records not null",
           value: "records_not_null",
@@ -119,11 +113,11 @@ export default {
         },
         // need after backend is updated
 
-        // {
-        //   text: "Feature importance",
-        //   value: "feature_importance",
-        //   width: "180px",
-        // },
+        {
+          text: "Feature importance",
+          value: "feature_importance",
+          width: "180px",
+        },
         {
           text: "Mean",
           value: "mean",
@@ -139,14 +133,12 @@ export default {
           value: "max",
           width: "150px",
         },
-        // need after backend is updated
-        //  {
-        //   text: "Unique values",
-        //   value: "unique_values",
-        //   width: "180px",
-        //   hoverTooltip:
-        //     "Number of unique values.",
-        // },
+        {
+          text: "Unique values",
+          value: "unique_values",
+          width: "180px",
+          hoverTooltip: "Number of unique values.",
+        },
         {
           text: "LCUV",
           value: "lcuv",

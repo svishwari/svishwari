@@ -423,7 +423,7 @@ export default {
 .nav-footer {
   opacity: 0.8;
   height: 27px;
-  margin-top: 10px;
+  margin-top: -35px;
 }
 .v-menu__content {
   @extend .box-shadow-25;
