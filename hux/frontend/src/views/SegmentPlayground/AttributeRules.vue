@@ -429,7 +429,6 @@ export default {
     },
     listOptions(condition) {
       if (condition.attribute.key === "City") {
-        debugger
         if (this.currenCitytData.length == 0) {
           this.selectedValue = "City"
           this.autoSearchFunc(condition.text.text)
