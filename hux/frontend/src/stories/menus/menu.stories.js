@@ -5,13 +5,9 @@ export default {
 
   title: "NewComponents/Menu",
 
-  argTypes: {
-    
-  },
+  argTypes: {},
 
-  args: {
-    
-  },
+  args: {},
 
   parameters: {
     design: {

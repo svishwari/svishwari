@@ -2,14 +2,7 @@
   <div class="text-center">
     <v-menu offset-y :min-width="130">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
-          Menu
-        </v-btn>
+        <v-btn color="primary" dark v-bind="attrs" v-on="on"> Menu </v-btn>
       </template>
       <v-list>
         <div class="px-4 py-2">Header</div>
@@ -18,22 +11,22 @@
           :key="index"
           class="py-2 menu-items"
         >
-          <icon 
+          <icon
             type="Icon Placeholder"
             :size="24"
             color="black-lighten1"
             :outline="false"
-            borderColor="primary"
-            bgColor="primary"
+            border-color="primary"
+            bg-color="primary"
           />
           <span class="text-body-1">{{ item.title }}</span>
-          <icon 
+          <icon
             type="Dropdown - right"
             :size="13"
             color="primary-base"
             :outline="false"
-            borderColor="primary"
-            bgColor="primary"
+            border-color="primary"
+            bg-color="primary"
             class="temp"
           />
         </v-list-item>
@@ -51,10 +44,10 @@ export default {
   data() {
     return {
       items: [
-        { title: 'Item' },
-        { title: 'Item' },
-        { title: 'Item' },
-        { title: 'Item' },
+        { title: "Item" },
+        { title: "Item" },
+        { title: "Item" },
+        { title: "Item" },
       ],
     }
   },

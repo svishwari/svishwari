@@ -3,14 +3,14 @@
     <div class="mb-4">
       <div class="card-header" :class="$slots.filters ? 'mb-2' : ''">
         <div class="title-bar">
-          <icon 
+          <icon
             v-if="iconType"
             :type="iconType"
             :size="24"
             :color="iconColor"
             outline
-            :borderColor="borderColor"
-            :bgColor="iconBgColor"
+            :border-color="borderColor"
+            :bg-color="iconBgColor"
             class="mr-1"
           />
           <span class="text-h4">{{ title }}</span>

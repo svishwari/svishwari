@@ -15,7 +15,12 @@
         </template>
       </tooltip>
       <span v-else>{{ label }}</span>
-      <v-menu v-if="dropdown" v-model="showMenu" nudge-left="32" nudge-bottom="24">
+      <v-menu
+        v-if="dropdown"
+        v-model="showMenu"
+        nudge-left="32"
+        nudge-bottom="24"
+      >
         <template #activator="{ on, attrs }">
           <icon
             :type="showMenu ? 'Dropdown - up' : 'Dropdown - down'"
