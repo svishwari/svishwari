@@ -329,4 +329,7 @@ export default {
   min-height: 32px !important;
   min-width: 180px !important;
 }
+::v-deep .descriptive-card.in-active:hover {
+  box-shadow: none !important;
+}
 </style>
