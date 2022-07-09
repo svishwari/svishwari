@@ -67,7 +67,7 @@
                   </template>
 
                   <template v-else-if="col.value === 'display_name'">
-                    <span class="menu-wrap">
+                    <span class="menu-wrap" data-e2e="member-list">
                       <span>
                         <span
                           class="ellipsis mt-1 d-inline"
@@ -133,6 +133,7 @@
                               v-bind="attrs"
                               class="mr-2 more-action"
                               color="primary"
+                              data-e2e="member-list-dots"
                               v-on="on"
                               @click.prevent
                             >
