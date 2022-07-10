@@ -43,7 +43,7 @@ from huxunify.api.schema.trust_id import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.stubbed_data.trust_id_stub import (
-    trust_id_filters_stub,
+    trust_id_filters_stub, lp_trust_id_filters,
 )
 
 
@@ -269,7 +269,7 @@ class TrustIdSegmentFilters(SwaggerView):
         """
 
         return HuxResponse.OK(
-            data=trust_id_filters_stub,
+            data=lp_trust_id_filters,
             data_schema=TrustIdSegmentFilterSchema(),
         )
 
