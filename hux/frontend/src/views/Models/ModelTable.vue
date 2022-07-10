@@ -30,13 +30,15 @@
                   <a data-e2e="model-name-click" @click="goToDashboard(item)">
                     <tooltip>
                       <template #label-content>
-                        <logo
-                          :key="item.name"
-                          :size="18"
-                          class="mr-1"
-                          :type="`model-${getModelType(item)}`"
-                        />
-                        {{ item[header.value] | Empty("-") }}
+                        <span class="model-logo">
+                          <logo
+                            :key="item.name"
+                            :size="24"
+                            class="mr-1"
+                            :type="`model-${getModelType(item)}`"
+                          />
+                          {{ item[header.value] | Empty("-") }}
+                        </span>
                       </template>
                       <template #hover-content>
                         {{ item[header.value] | Empty("-") }}
@@ -81,8 +83,8 @@
                     <v-chip
                       small
                       class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                      text-color="primary"
-                      color="var(--v-primary-lighten3)"
+                      color="var(--v-success-darken1)"
+                      text-color="var(--v-white-base)"
                     >
                       {{ formatText(item[header.value]) }}
                     </v-chip>
@@ -106,12 +108,15 @@
                         :key="`${item.id}-${tag}`"
                       >
                         <template #label-content>
-                          <logo
-                            :key="tag"
-                            :size="18"
-                            class="mr-1"
-                            :type="`${tag}_logo`"
-                          />
+                          <div class="icon-circle">
+                            <icon
+                              :type="`${tag}_logo`"
+                              class="industry-icon"
+                              :size="24"
+                              color="black"
+                              variant="darken4"
+                            />
+                          </div>
                         </template>
                         <template #hover-content>
                           <span>{{ formatText(tag) }}</span>
@@ -151,6 +156,7 @@ import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue
 import Tooltip from "@/components/common/Tooltip.vue"
 import Status from "@/components/common/Status.vue"
 import Logo from "@/components/common/Logo.vue"
+import Icon from "@/components/common/Icon.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 
 export default {
@@ -160,6 +166,7 @@ export default {
     Tooltip,
     Status,
     Logo,
+    Icon,
     TimeStamp,
   },
   props: {
@@ -174,17 +181,17 @@ export default {
         {
           text: "Model Name",
           value: "name",
-          width: "320px",
+          width: "300px",
         },
         {
           text: "Status",
           value: "status",
-          width: "136px",
+          width: "130px",
         },
         {
           text: "Description",
           value: "description",
-          width: "410px",
+          width: "400px",
         },
         {
           text: "Category",
@@ -194,17 +201,17 @@ export default {
         {
           text: "Industry",
           value: "tags",
-          width: "220px",
+          width: "160px",
         },
         {
           text: "Version",
           value: "latest_version",
-          width: "200px",
+          width: "120px",
         },
         {
           text: "Last trained",
           value: "last_trained",
-          width: "200px",
+          width: "120px",
         },
       ],
       modelTypes: [
@@ -340,9 +347,24 @@ export default {
 .hr-divider {
   margin-top: -27px !important;
 }
-.background-empty {
-  height: 70vh !important;
-  background-image: url("../../assets/images/no-alert-frame.png");
-  background-position: center;
+.icon-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--v-black-base);
+  background: var(--v-white-base);
+  text-align: center;
+  padding-top: 0px !important;
+  margin-left: 4px;
+}
+.industry-icon {
+  padding-right: 2px !important;
+  padding-bottom: 1px !important;
+}
+.model-logo {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 6px !important;
 }
 </style>
