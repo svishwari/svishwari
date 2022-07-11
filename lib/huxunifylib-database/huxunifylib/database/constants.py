@@ -38,6 +38,8 @@ USERNAME = "username"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
+CONVERSIONS_DATABASE = "conversions"
+EVENTS_COLLECTION = "events"
 CONSTANTS_COLLECTION = "constants"
 DATA_SOURCES_COLLECTION = "data_sources"
 CDP_DATA_SOURCES_COLLECTION = "cdp_data_sources"
