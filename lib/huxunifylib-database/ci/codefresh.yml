@@ -22,7 +22,7 @@ steps:
     working_directory: '${{CF_REPO_NAME}}/lib/huxunifylib-database'
     description: "run tests using tox"
     commands:
-      - tox -e ${TOXENV} -- --skip-model-generate
+      - tox -e ${TOXENV} --
     scale:
       py37:
         title: 'tests'
@@ -41,7 +41,7 @@ steps:
     working_directory: '${{CF_REPO_NAME}}/lib/huxunifylib-database'
     description: "run tests using tox"
     commands:
-      - tox -e ${TOXENV} -- --skip-model-generate
+      - tox -e ${TOXENV} --
     scale:
       checkCoverage:
         title: 'checkCoverage'
