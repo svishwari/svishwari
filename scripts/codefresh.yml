@@ -19,7 +19,7 @@ steps:
     working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/scripts'
     description: run tests using tox
     commands:
-     - tox -e ${TOXENV} --
+     - tox -e ${TOXENV}
     scale:
       py37:
         title: "py37 Unit tests"
