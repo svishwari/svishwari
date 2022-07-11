@@ -569,6 +569,7 @@ export default {
   .deliver-icon {
     &.disabled {
       color: var(--v-black-lighten3);
+      pointer-events: none;
     }
   }
   .status-list {
