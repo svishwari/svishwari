@@ -110,7 +110,7 @@ export const defineRoutes = (server) => {
       alerts: requestData.alerts,
     })
   })
-  server.get("users/accessMatrix", () => RBACMatrix)
+  server.get("users/rbac_matrix", () => RBACMatrix)
 
   //client projects
   server.get("/client-projects")

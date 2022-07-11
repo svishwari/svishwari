@@ -49,8 +49,13 @@ Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.
 
 ## CDM Snowflake Environments
 
+### Deloitte Instances
 CDMDEV1: https://cdmdev1.east-us-2.azure.snowflakecomputing.com/console <br>
 CDMSTG1: https://deloittehux-cdmstg1.snowflakecomputing.com/console
+
+### Lilly Pulitzer Instances
+DEV: https://lillypulitzer_cdp_dev.east-us-2.azure.snowflakecomputing.com/console <br>
+STG: https://lillypulitzer-cdp_stg.snowflakecomputing.com/console
 
 ## Security Applications
 WhiteSource https://deloitte.whitesourcesoftware.com

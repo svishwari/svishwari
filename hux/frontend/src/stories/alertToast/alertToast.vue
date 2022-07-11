@@ -10,7 +10,7 @@
   >
     <template #prepend>
       <icon
-        :type="type"
+        :type="type == 'Informative' ? 'Error & Warning' : type"
         :size="24"
         :color="
           type == 'Guide' || type == 'Error & Warning'
@@ -24,7 +24,7 @@
       />
     </template>
     <template #default>
-      <div class="d-flex justify-space-between align-center">
+      <div class="d-flex align-center">
         <span class="alert-label text-body-2">{{ label }}</span>
         <a class="alert-more-info text-h6 ml-2 mr-8" :href="to"
           >More information</a
@@ -36,7 +36,7 @@
         type="Close & Remove"
         color="black"
         class="cursor-pointer"
-        size="12"
+        size="16"
         @click.native="toggle()"
       />
     </template>
@@ -85,7 +85,7 @@ export default {
         case "Guide":
           return "yellow-lighten3"
 
-        case "offline":
+        case "Offline":
           return "black-lighten5"
 
         default:
@@ -101,7 +101,6 @@ export default {
 $alert-border-radius: 25px;
 .alert-label {
   color: var(--v-black-base);
-  max-width: 552px;
   line-height: 20px !important;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -110,6 +109,7 @@ $alert-border-radius: 25px;
 .alert-more-info {
   color: var(--v-primary-lighten7);
   font-weight: bold;
+  line-height: 20px;
 }
 .alert-centered {
   margin: 0 auto;

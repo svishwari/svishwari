@@ -34,13 +34,18 @@ describe("View configuration", () => {
     cy.get(selector.configuration.teamMemberDrawer.email)
       .eq(0)
       .type("Huxley@gmail.com")
-    cy.get(selector.configuration.teamMemberDrawer.accessLevel).click()
+    cy.get(selector.configuration.teamMemberDrawer.accessLevel).eq(0).click()
     cy.get(".dropdown-menuitems").contains("Admin").click()
-    cy.get(selector.configuration.teamMemberDrawer.togglePii).click()
+    cy.get(selector.configuration.teamMemberDrawer.togglePii).eq(0).click()
     cy.get(selector.configuration.teamMemberDrawer.requestText)
       .eq(0)
       .type("New team member")
-
+    // should click on requestbutton
+    cy.get(selector.configuration.teamMemberDrawer.request).eq(0).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    cy.get(selector.configuration.teamMemberDrawer.teamMemberRequest).click()
+    cy.get(selector.configuration.teamMemberDrawer.closeDrawer).click()
     // should click on module-solutions tab
     cy.get(selector.configuration.moduleSolution).click()
     // should click & checked on checkbox to show only active items

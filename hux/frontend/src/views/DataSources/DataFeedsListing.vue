@@ -392,7 +392,7 @@
           v-else-if="!loading && hasDataFeeds == 0"
           class="empty-error-card mx-7"
         >
-          <v-row class="data-feed-frame my-1 py-16">
+          <v-row class="data-feed-frame py-13">
             <empty-page
               v-if="!datafeedErrorState"
               type="lift-table-empty"
@@ -561,7 +561,7 @@ export default {
         {
           text: `Last processed start time (${this.selected_time})`,
           value: "last_processed_start",
-          width: "260",
+          width: "300",
         },
       ]
     },

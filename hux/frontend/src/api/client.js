@@ -380,7 +380,11 @@ client["audiences"].deliver = (resourceId, data) => {
 // }
 
 client["audiences"].deliveries = (resourceId, query) => {
-  return http.get(`/audiences/${resourceId}/delivery-history?${query}`)
+  if (query) {
+    return http.get(`/audiences/${resourceId}/delivery-history?${query}`)
+  } else {
+    return http.get(`/audiences/${resourceId}/delivery-history`)
+  }
 }
 
 client["audiences"].geoCities = (resourceId, batchNumber, batchSize) => {
