@@ -505,6 +505,18 @@ configurations_constants = [
                             db_c.USER_ROLE_EDITOR: True,
                             db_c.USER_ROLE_VIEWER: True,
                         },
+                        {
+                            db_c.TYPE: "delete_user",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: False,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "edit_user",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
                     ],
                 },
                 db_c.DATA_SOURCE: {
@@ -889,6 +901,29 @@ configurations_constants = [
                         },
                     ],
                 },
+                db_c.APPLICATIONS: {
+                    db_c.CONFIGURATION_FIELD_LABEL: "Applications",
+                    db_c.ACTIONS: [
+                        {
+                            db_c.TYPE: "get_all",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "create_application",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "update_application",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                    ],
+                },
             }
         },
     },
@@ -1270,13 +1305,14 @@ def insert_applications(database: MongoClient, applications: list) -> None:
 
 if __name__ == "__main__":
     # Initiate Data Base client
-    db_client = get_mongo_client()
-    drop_collections(db_client)
-    insert_data_sources(db_client, DATA_SOURCES_LIST)
-    insert_delivery_platforms(db_client, DELIVERY_PLATFORM_LIST)
-    insert_configurations(db_client, configurations_constants)
-    insert_client_projects(db_client, client_projects_list)
-    insert_applications(db_client, applications_constants)
-    # create required empty collection for all the other collections
-    create_empty_collections(db_client, empty_collections_to_create)
-    logging.info("Pre-populate database procedure complete.")
+    if os.environ.get("PREPOPULATE_DB", False):
+        db_client = get_mongo_client()
+        drop_collections(db_client)
+        insert_data_sources(db_client, DATA_SOURCES_LIST)
+        insert_delivery_platforms(db_client, DELIVERY_PLATFORM_LIST)
+        insert_configurations(db_client, configurations_constants)
+        insert_client_projects(db_client, client_projects_list)
+        insert_applications(db_client, applications_constants)
+        # create required empty collection for all the other collections
+        create_empty_collections(db_client, empty_collections_to_create)
+        logging.info("Pre-populate database procedure complete.")
