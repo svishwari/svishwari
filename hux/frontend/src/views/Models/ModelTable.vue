@@ -4,11 +4,10 @@
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
-        <v-row class="pb-7 pl-3 white">
+        <v-row class="pb-3 pl-3 white">
           <hux-lazy-data-table
             :columns="columnDefs"
             :data-items="modelsData"
-            sort-column="name"
             sort-desc
             class="big-table mt-2"
             data-e2e="models-table"
@@ -31,17 +30,20 @@
                     <tooltip>
                       <template #label-content>
                         <span class="model-logo">
-                          <logo
-                            :key="item.name"
-                            :size="24"
-                            class="mr-1"
-                            :type="`model-${getModelType(item)}`"
-                          />
-                          {{ item[header.value] | Empty("-") }}
+                          <span class="model-circle mr-1">
+                            <logo
+                              :key="item.name"
+                              :size="18"
+                              class="mr-1 logo-margin"
+                              :type="`model-${getModelType(item)}`"
+                            />
+                          </span>
+
+                          {{ formatText(item[header.value]) | Empty("-") }}
                         </span>
                       </template>
                       <template #hover-content>
-                        {{ item[header.value] | Empty("-") }}
+                        {{ formatText(item[header.value]) | Empty("-") }}
                       </template>
                     </tooltip>
                   </a>
@@ -67,10 +69,12 @@
                   </tooltip>
                 </div>
 
-                <div v-if="header.value == 'description'" max-width="59%">
+                <div v-if="header.value == 'description'" max-width="400px">
                   <tooltip>
                     <template #label-content>
-                      {{ formatText(item["description"]) | Empty("-") }}
+                      <span class="text-ellipsis text-width">
+                        {{ formatText(item["description"]) | Empty("-") }}
+                      </span>
                     </template>
                     <template #hover-content>
                       {{ formatText(item["description"]) | Empty("-") }}
@@ -108,7 +112,7 @@
                         :key="`${item.id}-${tag}`"
                       >
                         <template #label-content>
-                          <div class="icon-circle">
+                          <div class="industry-circle">
                             <icon
                               :type="`${tag}_logo`"
                               class="industry-icon"
@@ -126,10 +130,7 @@
                   </div>
                   <span v-else>—</span>
                 </div>
-                <tooltip
-                  v-if="header.value == 'latest_version'"
-                  max-width="47%"
-                >
+                <tooltip v-if="header.value == 'latest_version'">
                   <template #label-content>
                     {{ item[header.value] }}
                   </template>
@@ -281,6 +282,9 @@ export default {
         td {
           font-size: 14px;
           height: 63px;
+          .text-width {
+            width: 400px;
+          }
         }
       }
     }
@@ -347,15 +351,22 @@ export default {
 .hr-divider {
   margin-top: -27px !important;
 }
-.icon-circle {
+.circle {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 1px solid var(--v-black-base);
   background: var(--v-white-base);
   text-align: center;
   padding-top: 0px !important;
-  margin-left: 4px;
+}
+.industry-circle {
+  @extend .circle;
+  border: 1px solid var(--v-black-base);
+  margin-right: 4px;
+}
+.model-circle {
+  @extend .circle;
+  border: 1px solid var(--v-anchor-base);
 }
 .industry-icon {
   padding-right: 2px !important;
@@ -366,5 +377,9 @@ export default {
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 6px !important;
+}
+.logo-margin {
+  margin-top: 2px;
+  margin-left: 2px;
 }
 </style>
