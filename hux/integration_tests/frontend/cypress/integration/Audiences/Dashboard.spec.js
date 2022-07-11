@@ -1,5 +1,8 @@
 import route from "../../support/routes"
 import selector from "../../support/selectors"
+import { randomName } from "../../support/utils"
+
+let engagementName = randomName()
 
 describe("Orchestration > Audiences > Audience dashboard", () => {
   beforeEach(() => {
@@ -35,7 +38,109 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
 
     // verify items in delivery tab
     cy.get(selector.audience.engagementDeliveryDetails).should("exist")
+
+    cy.get(selector.audience.engagementDeliveryDetails)
+      .contains("An engagement")
+      .click()
+
+    cy.get(selector.audience.selectEngagement).its("length").should("gte", 0)
+    cy.contains("Create a new engagement").click()
+    cy.get(selector.audience.newEngagementFirstName)
+      .eq(0)
+      .type(`Test Engagement ${engagementName}`)
+    cy.get(selector.audience.createNewEngagement).click()
+
+    cy.get(selector.audience.addNewDestination).eq(0).click()
+    // Select the first destination from the existing ones
+    cy.get(selector.engagement.selectDestination).eq(0).click()
+    cy.get(selector.engagement.exitDrawer).click()
+    cy.get(selector.audience.addNewDestination).eq(0).click()
+
+    cy.get("body").then(($body) => {
+      if ($body.find(selector.engagement.salesForceAddButton).length > 0) {
+        cy.get(selector.engagement.salesForceAddButton).click()
+        // Add new data extension name
+        cy.get(selector.engagement.dataExtensionName)
+          .eq(1)
+          .type(`Test Extension ${engagementName}`)
+        // Close the data extension drawer
+        cy.get(selector.engagement.exitDataExtensionDrawer).click()
+      }
+    })
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    // Close the add destination drawer
+    cy.get(selector.engagement.exitDrawer).click()
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000)
+
+    // verify items in delivery tab
+    cy.get(selector.audience.refreshAudience).click()
+
+    cy.get(selector.audience.engagementdelivery).contains("Deliver all").click()
+
+    cy.get(selector.audience.destinationRemove).each(($el) => {
+      if ($el.text().includes("Salesforce")) {
+        // Make the vertical dots visible
+        cy.wrap($el)
+          .find(".mdi-dots-vertical")
+          .invoke("attr", "aria-expanded", "true")
+          .click({ force: true })
+
+        cy.contains("Deliver now").click()
+
+        cy.wrap($el)
+          .find(".mdi-dots-vertical")
+          .invoke("attr", "aria-expanded", "true")
+          .click({ force: true })
+
+        cy.contains("Remove destination").click()
+        cy.contains("Yes, remove it").click()
+      }
+    })
+
+    cy.get(selector.audience.engagementdelivery)
+      .eq(0)
+      .find(".mdi-dots-vertical")
+      .eq(0)
+      .click()
+
+    cy.contains("Remove engagement").click()
+    cy.contains("Yes, remove it").click()
+
     cy.get(selector.audience.standaloneDelivery).should("exist")
+    cy.get(selector.audience.standaloneDelivery).contains("Deliver all").click()
+    cy.get(selector.audience.standaloneDestinationDrawer).click()
+    // Select the first destination from the existing ones
+    cy.get(selector.engagement.selectDestination)
+      .contains(/\bAdd\b/g)
+      .eq(0)
+      .click()
+    cy.get(selector.engagement.exitDrawer).click()
+
+    cy.get(selector.audience.replaceAudience).eq(0).click()
+    cy.get(selector.audience.standaloneDestinations)
+      .eq(0)
+      .find(".mdi-dots-vertical")
+      .invoke("attr", "aria-expanded", "true")
+      .click({ force: true })
+    cy.contains("Deliver now").click()
+
+    cy.get(selector.audience.standaloneDestinations)
+      .eq(0)
+      .find(".mdi-dots-vertical")
+      .invoke("attr", "aria-expanded", "true")
+      .click({ force: true })
+    cy.contains("Open destination")
+
+    cy.get(selector.audience.standaloneDestinations)
+      .eq(0)
+      .find(".mdi-dots-vertical")
+      .invoke("attr", "aria-expanded", "true")
+      .click({ force: true })
+    cy.contains("Remove destination")
+
     cy.get(selector.audience.matchRateTable).should("exist")
     cy.get(selector.audience.lookalikes).should("exist")
 
@@ -63,5 +168,13 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
     // map state list should have 1 or more states
     // validate no of state in list
     cy.get(selector.audience.mapStateList).its("length").should("be.gt", 0)
+
+    cy.get(selector.audience.editAudience).click()
+    cy.contains("Nevermind")
+    cy.contains("Nevermind").click()
+    cy.get(selector.audience.audienceOptions).click()
+    cy.contains("Favorite")
+    cy.contains("Download as")
+    cy.contains("Delete audience")
   })
 })

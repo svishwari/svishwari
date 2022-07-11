@@ -26,7 +26,7 @@
     >
       <template #activator="{ on }">
         <span class="d-flex cursor-pointer mr-4" data-e2e="addicon" v-on="on">
-          <tooltip :z-index="99">
+          <tooltip v-if="role != 'hxtrustid'" :z-index="99">
             <template #label-content>
               <span :class="{ 'icon-shadow': menu }">
                 <icon
@@ -61,7 +61,7 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <application v-if="!clientPanel" />
+    <application v-if="!clientPanel && role != 'hxtrustid'" />
     <notification v-if="!clientPanel" />
     <help />
   </div>
@@ -73,6 +73,7 @@ import Help from "../components/Help.vue"
 import Icon from "@/components/common/Icon"
 import Tooltip from "./common/Tooltip.vue"
 import Application from "./Application.vue"
+import { mapGetters } from "vuex"
 
 export default {
   name: "HeaderNavigation",
@@ -96,6 +97,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      role: "users/getCurrentUserRole",
+    }),
     getFormattedTime() {
       let formate = this.$options.filters.Date(this.appLoadTime, "calendar")
       let newFormate = formate.replace(" at", ",")

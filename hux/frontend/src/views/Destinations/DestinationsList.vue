@@ -33,7 +33,7 @@
           <v-list class="py-0">
             <v-list-item
               class="text-body-1 action-menu-item"
-              data-e2e="destination-list-remove"
+              data-e2e="destination-edit-url"
               @click="openEditModal(destination)"
             >
               Edit destination URL
@@ -328,5 +328,8 @@ export default {
 .action-menu-item {
   min-height: 32px !important;
   min-width: 180px !important;
+}
+::v-deep .descriptive-card.in-active:hover {
+  box-shadow: none !important;
 }
 </style>

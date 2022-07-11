@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-function-args
 """This module enables functionality related to
 orchestration(audience/engagement) management.
 """
@@ -29,6 +29,7 @@ def create_audience(
     destination_ids: list = None,
     size: int = 0,
     audience_tags: Union[dict, None] = None,
+    audience_source: dict = None,
 ) -> Union[dict, None]:
     """A function to create an audience.
 
@@ -43,6 +44,7 @@ def create_audience(
         size (int): audience size.
         audience_tags (dict): A dict of different type of tags that the
             audience can be tagged with.
+        audience_source (dict): Source for audience.
 
     Returns:
         Union[list, None]: MongoDB audience doc.
@@ -70,6 +72,7 @@ def create_audience(
     audience_doc = {
         db_c.AUDIENCE_NAME: name,
         db_c.AUDIENCE_FILTERS: audience_filters,
+        db_c.AUDIENCE_SOURCE: audience_source,
         db_c.DESTINATIONS: destination_ids if destination_ids else [],
         db_c.CREATE_TIME: curr_time,
         db_c.UPDATE_TIME: curr_time,

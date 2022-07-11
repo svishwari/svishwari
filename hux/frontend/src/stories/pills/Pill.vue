@@ -6,28 +6,36 @@
     :close="removable"
     close-icon="mdi-close"
     @click="pillClicked()"
-    @click:close="pillClicked()"
   >
-    <tooltip v-if="hover" nudge-right="-40" nudge-top="-10">
-      <template #label-content>{{ label }}</template>
-      <template #hover-content>
-        <div>{{ hover }}</div>
-      </template>
-    </tooltip>
-    <div v-else>
-      {{ label }}
-      <v-menu v-if="dropdown" v-model="showMenu">
-        <template #activator="{ on }">
+    <div class="vertical-align">
+      <tooltip v-if="hover" nudge-right="30" nudge-top="25">
+        <template #label-content>{{ label }}</template>
+        <template #hover-content>
+          <div>{{ hover }}</div>
+        </template>
+      </tooltip>
+      <span v-else>{{ label }}</span>
+      <v-menu
+        v-if="dropdown"
+        v-model="showMenu"
+        nudge-left="32"
+        nudge-bottom="24"
+      >
+        <template #activator="{ on, attrs }">
           <icon
-            right
             :type="showMenu ? 'Dropdown - up' : 'Dropdown - down'"
-            :color="darkText ? 'black' : 'white'"
-            size="14"
+            :size="14"
+            :color="darkText ? 'black-base' : 'white-base'"
+            outline
+            :border-color="color"
+            :bg-color="color"
             :on="on"
+            :bind="attrs"
+            class="ml-1"
           />
         </template>
-        <slot name="dropdown">
-          <v-list><v-list-item>hi</v-list-item></v-list>
+        <slot name="dropdown-menu">
+          <v-list><v-list-item>menu content</v-list-item></v-list>
         </slot>
       </v-menu>
     </div>
@@ -97,5 +105,10 @@ export default {
   position: relative;
   top: 30px;
   right: 30px;
+}
+.vertical-align {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

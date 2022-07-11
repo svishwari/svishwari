@@ -1416,7 +1416,12 @@ CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE = {
 CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE = {
     "code": 200,
     "body": [
-        {api_c.NAME: "Test Country", api_c.SIZE: 1234, api_c.LTV: 324.45}
+        {
+            api_c.COUNTRY: "Test Country",
+            api_c.CUSTOMER_COUNT: 1234,
+            api_c.SIZE: 1234,
+            api_c.LTV: 324.45,
+        }
     ],
     "message": "ok",
 }

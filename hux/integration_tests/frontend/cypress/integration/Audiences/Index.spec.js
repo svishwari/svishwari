@@ -19,6 +19,7 @@ describe("Orchestration > Audiences", () => {
       "Audience name",
       "Status",
       "Size",
+      "Industry",
       "Attributes",
       "Destinations",
       "Last delivered",
@@ -59,5 +60,10 @@ describe("Orchestration > Audiences", () => {
       .find("button")
       .eq(0)
       .click({ force: true })
+
+    // scroll down for lazy loading
+    cy.get(".table-overflow").scrollTo("bottom")
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
   })
 })

@@ -147,8 +147,15 @@ class AudienceGetSchema(Schema):
             }
         ],
     )
+    source = fields.Dict(
+        attribute=db_c.AUDIENCE_SOURCE,
+        example={
+            db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_AMAZONS3,
+            db_c.AUDIENCE_SOURCE_KEY: "bucket-name",
+            db_c.AUDIENCE_SOURCE_BUCKET: "file location",
+        },
+    )
     tags = fields.Nested(AudienceTagsSchema, required=False)
-
     destinations = fields.List(fields.Nested(DestinationGetSchema))
     engagements = fields.List(fields.Nested(EngagementDeliverySchema))
     standalone_deliveries = fields.List(fields.Nested(AudienceDeliverySchema))

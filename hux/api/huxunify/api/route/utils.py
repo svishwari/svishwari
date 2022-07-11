@@ -1129,6 +1129,7 @@ def clean_and_aggregate_datafeed_details(
             }
         )
         # compute run duration if success or running and end_dt available
+
         if df_detail[api_c.STATUS] in [
             api_c.STATUS_SUCCESS,
             api_c.STATUS_RUNNING,
@@ -1348,21 +1349,42 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                 event_name = section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
                 if section_filter.get(api_c.TYPE) == "within_the_last":
                     is_range = True
+                    start_date = (
+                        datetime.utcnow()
+                        - timedelta(
+                            days=int(
+                                section_filter.get(
+                                    api_c.AUDIENCE_FILTER_VALUE
+                                )[0]
+                            )
+                        )
+                    ).strftime("%Y-%m-%d")
+                    end_date = datetime.utcnow().strftime("%Y-%m-%d")
                 elif section_filter.get(api_c.TYPE) == "not_within_the_last":
                     is_range = False
+                    start_date = (
+                        datetime.utcnow()
+                        - timedelta(
+                            days=int(
+                                section_filter.get(
+                                    api_c.AUDIENCE_FILTER_VALUE
+                                )[0]
+                            )
+                        )
+                    ).strftime("%Y-%m-%d")
+                    end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                elif section_filter.get(api_c.TYPE) == "between":
+                    is_range = True
+                    start_date = section_filter.get(
+                        api_c.AUDIENCE_FILTER_VALUE
+                    )[0]
+                    end_date = section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[
+                        1
+                    ]
                 else:
                     break
                 section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
                 section_filter.update({api_c.TYPE: "event"})
-                start_date = (
-                    datetime.utcnow()
-                    - timedelta(
-                        days=int(
-                            section_filter.get(api_c.AUDIENCE_FILTER_VALUE)
-                        )
-                    )
-                ).strftime("%Y-%m-%d")
-                end_date = datetime.utcnow().strftime("%Y-%m-%d")
                 section_filter.update(
                     {
                         api_c.VALUE: [
@@ -1567,3 +1589,26 @@ def convert_cdp_buckets_to_histogram(
             for data in bucket_data
         ],
     )
+
+
+def toggle_components_navigation(
+    navigation_response: dict, category: str, module_label: str, flag: bool
+):
+    """Method to toggle components except given module
+
+    Args:
+        navigation_response(dict): Navigation Endpoint Response
+        category(str): Parent Category Value
+        module_label(str): Module Name
+        flag(bool): Toggle Flag
+
+    Returns:
+
+    """
+    for data in navigation_response[api_c.SETTINGS]:
+        if data[api_c.LABEL] != category:
+            data[api_c.ENABLED] = flag
+        else:
+            for child in data[api_c.NAVIGATION_CHILDREN]:
+                if child[api_c.LABEL] != module_label:
+                    child[api_c.ENABLED] = flag

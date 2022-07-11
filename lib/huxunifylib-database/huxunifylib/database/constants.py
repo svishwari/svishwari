@@ -263,7 +263,6 @@ SEGMENT_NAME = "segment_name"
 FACTORS = "factors"
 ATTRIBUTES = "attributes"
 
-
 DESTINATION_COLUMN = "destination_column"
 TRANSFORMER = "transformer"
 TRANSFORMATIONS = "transformations"
@@ -419,7 +418,13 @@ USER_DEMO_CONFIG = "demo_config"
 USER_ROLE_ADMIN = "admin"
 USER_ROLE_EDITOR = "editor"
 USER_ROLE_VIEWER = "viewer"
-USER_ROLES = [USER_ROLE_ADMIN, USER_ROLE_EDITOR, USER_ROLE_VIEWER]
+USER_ROLE_TRUSTID = "hxtrustid"
+USER_ROLES = [
+    USER_ROLE_ADMIN,
+    USER_ROLE_EDITOR,
+    USER_ROLE_VIEWER,
+    USER_ROLE_TRUSTID,
+]
 COMPONENT_ID = "component_id"
 COMPONENT_NAME = "component_name"
 USER_PII_ACCESS = "pii_access"
@@ -591,7 +596,6 @@ FILE_NAME = "file_name"
 USER_NAME = "user_name"
 DOWNLOAD_TYPE = "download_type"
 
-
 # Required Fields per collection
 
 REQUIRED_FIELDS = {
@@ -722,3 +726,4 @@ RETAIL = "retail"
 HOSPITALITY = "hospitality"
 AUTOMOTIVE = "automotive"
 ALL_INDUSTRY_TYPES = [HEALTHCARE, RETAIL, HOSPITALITY, AUTOMOTIVE]
+CLIENT_CONFIG = "client_config"

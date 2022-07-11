@@ -918,12 +918,15 @@ AccessLevel = namedtuple(
 ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
 EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
-USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
+HXTRUSTID_LEVEL = AccessLevel(db_c.USER_ROLE_TRUSTID)
+# TODO Remove TrustId from All Role after TrustId SignOff
+USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL, HXTRUSTID_LEVEL]
 
 USER_DISPLAY_ROLES = {
     db_c.USER_ROLE_ADMIN: "Admin",
     db_c.USER_ROLE_EDITOR: "Edit",
     db_c.USER_ROLE_VIEWER: "View-Only",
+    db_c.USER_ROLE_TRUSTID: "TrustId",
 }
 
 # Orchestration API fields
@@ -933,6 +936,7 @@ AUDIENCES = "audiences"
 ORCHESTRATION_TAG = "orchestration"
 DECISIONING = "decisioning"
 AUDIENCE = "audience"
+AUDIENCE_UPLOAD = "audience_upload"
 AUDIENCE_ID = "audience_id"
 AUDIENCE_IDS = "audience_ids"
 AUDIENCE_NAME = "name"
@@ -1437,6 +1441,8 @@ MODELS_STUB = [
 CONFIGURATIONS_TAG = "configurations"
 CONFIGURATION_ID = "configuration_id"
 CONFIGURATIONS_ENDPOINT = "/configurations"
+SETTINGS = "settings"
+NAVIGATION_CHILDREN = "children"
 SAMPLE_NAVIGATION_SETTINGS = {
     db_c.CONFIGURATION_FIELD_SETTINGS: [
         {

@@ -89,7 +89,12 @@
                 >
                 <logo v-if="item.type" :type="item.type" :size="20"></logo>
                 <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
-                <icon v-if="item.modelIcon" type="model" :size="21" />
+                <icon
+                  v-if="item.modelIcon"
+                  type="model"
+                  :size="21"
+                  class="ml-n1"
+                />
                 {{ item.name }}
               </v-list-item-title>
             </v-list-item>

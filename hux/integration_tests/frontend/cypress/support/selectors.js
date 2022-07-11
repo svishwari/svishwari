@@ -109,6 +109,7 @@ export default {
     list: {
       teamMembersTable: "[data-e2e='team-members-table']",
       teamMembersTableHeaders: "table thead tr",
+      teamMembersTableBody: "table tbody tr td",
     },
     teamMemberDrawer: {
       teamMemberRequest: "[data-e2e='teamMemberRequest']",
@@ -119,7 +120,10 @@ export default {
       togglePii: "[data-e2e='togglePii']",
       requestText: "[data-e2e='requestText']",
       request: "[data-e2e='request']",
+      closeDrawer: "[data-e2e='close-drawer']",
     },
+    memberListDots: "[data-e2e='member-list-dots']",
+    memberList: "[data-e2e='member-list']",
   },
 
   // data sources
@@ -164,6 +168,7 @@ export default {
     destinationRemoveConfirmBody: ".confirm-modal-body",
     removeDestinationText: "[data-e2e='remove-destination-text']",
     cancelRequestDestination: "[data-e2e='cancel-destination-request']",
+    destinationeditUrl: "[data-e2e='destination-edit-url']",
   },
 
   // decisioning
@@ -334,25 +339,33 @@ export default {
     addAudiences: "a[href='/segment-playground']",
     audienceName: "[data-e2e='audience-name']",
     actionAudience: "[data-e2e='action-audience']",
+    refreshAudience: "[data-e2e='refresh-audience']",
     addEngagement: "[data-e2e='add-engagement']",
     selectEngagement: "[data-e2e='engagement-list']",
     addDestination: "[data-e2e='add-destination-audience']",
     createAudience: "[data-e2e='create-audience']",
     salesForceAddButton: "[data-e2e='destination-select-button-sfmc']",
+    destinationRemove: "[data-e2e='destination-list-audience']",
     newEngagementFirst: "[data-e2e='first-engagement-create']",
     newEngagementFirstName: "[data-e2e='new-engagement-name']",
     createNewEngagement: "[data-e2e='create-engagement-new']",
     cancelAudience: "[data-e2e='cancel-audience']",
     removeAudience: "[data-e2e='remove-audience-confirmation']",
     addNewAudience: "[data-e2e='add-audience']",
+    addNewDestination: "[data-e2e='add-audience-destination']",
     editAudienceName: "[data-e2e='edit-audience-name']",
+    audienceOptions: "[data-e2e='audience-options']",
+    editAudience: "[data-e2e='edit-audience']",
     engagementDeliveryDetails: "[data-e2e='engagement-delivery-details']",
     standaloneDelivery: "[data-e2e='standalone-delivery']",
+    standaloneDestinations: "[data-e2e='standalone-destinations']",
+    standaloneDestinationDrawer: "[data-e2e='add-standalone-destination']",
     deliveryTab: "[data-e2e='delivery-tab']",
     insightsTab: "[data-e2e='insights-tab']",
     matchRateTable: "[data-e2e='audience-matchrates']",
     lookalikes: "[data-e2e='lookalike-audiences']",
     allAudiences: "[data-e2e='audience-breadcrumb']",
+    replaceAudience: "[data-e2e='replace-audience']",
   },
 
   segmentPlayground: {
