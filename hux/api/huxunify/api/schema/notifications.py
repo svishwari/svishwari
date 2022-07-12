@@ -44,6 +44,14 @@ class NotificationSchema(Schema):
     )
 
 
+class ErrorAlertsSchema(Schema):
+    """Error Alerts Schema"""
+
+    destinations = Bool(example=False, default=False)
+    models = Bool(example=False, default=False)
+    datasources = Bool(example=False, default=False)
+
+
 class NotificationsSchema(Schema):
     """Notifications get schema"""
 
@@ -64,6 +72,7 @@ class NotificationsSchema(Schema):
             },
         ],
     )
+    error_alerts = Nested(ErrorAlertsSchema())
 
 
 class NotificationPostSchema(Schema):
