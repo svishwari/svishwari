@@ -2303,7 +2303,7 @@ def _get_conversion_events(
     database: DatabaseClient,
     collection_name: str,
     event_id: str = None,
-) -> Optional[dict]:
+) -> Optional[List[dict]]:
     """Helper method to retrieve conversion events.
 
     Args:
@@ -2313,7 +2313,7 @@ def _get_conversion_events(
         event_id (str): Event ID.
 
     Returns:
-        Optional[dict]: Matched events.
+        Optional[List[dict]]: list of matched events.
 
     Raises:
         OperationFailure: If an exception occurs during mongo operation.
@@ -2325,7 +2325,7 @@ def _get_conversion_events(
     metric_queries = [{db_c.OBJECT_ID: event_id}]
 
     try:
-        return collection.find({"$and": metric_queries})
+        return list(collection.find({"$and": metric_queries}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
         raise
