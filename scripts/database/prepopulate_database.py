@@ -170,13 +170,13 @@ configurations_constants = [
         db_c.CONFIGURATION_FIELD_ROADMAP: False,
     },
     {
-        db_c.CONFIGURATION_FIELD_NAME:"Error Alerts",
-        db_c.CONFIGURATION_FIELD_TYPE:"error_alerts",
-        db_c.CONFIGURATION_FIELD_MODULES:{
+        db_c.CONFIGURATION_FIELD_NAME: "Error Alerts",
+        db_c.CONFIGURATION_FIELD_TYPE: "error_alerts",
+        db_c.CONFIGURATION_FIELD_MODULES: {
             db_c.DESTINATIONS: False,
             db_c.MODELS: False,
-            db_c.DATASOURCES: False
-        }
+            db_c.DATASOURCES: False,
+        },
     },
     {
         db_c.CONFIGURATION_FIELD_NAME: "Navigation Settings",
