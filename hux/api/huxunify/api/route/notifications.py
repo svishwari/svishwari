@@ -18,6 +18,7 @@ from huxunifylib.util.general.logging import logger
 from huxunifylib.database import (
     constants as db_c,
     notification_management,
+    collection_management,
 )
 
 from huxunify.api.schema.notifications import (
@@ -345,7 +346,12 @@ class NotificationsSearch(SwaggerView):
         notifications.update(
             {db_c.SEEN_NOTIFICATIONS: user[db_c.SEEN_NOTIFICATIONS]}
         )
-
+        error_alerts = collection_management.get_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            query_filter={api_c.TYPE: api_c.ERROR_ALERTS},
+        )
+        notifications.update({api_c.ERROR_ALERTS: error_alerts[api_c.MODULES]})
         return HuxResponse.OK(
             data=notifications, data_schema=NotificationsSchema()
         )

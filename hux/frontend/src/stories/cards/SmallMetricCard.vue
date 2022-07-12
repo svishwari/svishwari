@@ -9,7 +9,10 @@
         variant="base"
         class="mr-1 mt-1"
       />
-      <span class="text-body-4">{{ title }}</span>
+      <span class="text-body-4">
+        <a v-if="isLink">{{ title }}</a>
+        <span v-else>{{ title }}</span>
+      </span>
       <tooltip v-if="tooltipContent">
         <template #label-content>
           <icon
@@ -59,6 +62,11 @@ export default {
       required: false,
     },
     isError: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isLink: {
       type: Boolean,
       required: false,
       default: false,
