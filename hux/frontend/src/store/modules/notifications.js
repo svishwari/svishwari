@@ -10,6 +10,7 @@ const state = {
   latest5: {},
   total: 0,
   seenNotifications: false,
+  error_alerts: {},
 }
 
 const getters = {
@@ -24,6 +25,8 @@ const getters = {
   total: (state) => state.total,
 
   seenNotifications: (state) => state.seenNotifications,
+
+  error_alerts: (state) => state.error_alerts,
 }
 
 const mutations = {
@@ -57,6 +60,10 @@ const mutations = {
       Vue.set(state.latest5, item.id, item)
     })
   },
+
+  SET_ERROR_ALERTS(state, data) {
+    Vue.set(state, "error_alerts", data)
+  },
 }
 
 const actions = {
@@ -81,6 +88,7 @@ const actions = {
         commit("SET_ALL", response.data)
       }
       commit("SET_SEEN_NOTIFICATIONS", response.data.seen_notifications)
+      commit("SET_ERROR_ALERTS", response.data.error_alerts)
     } catch (error) {
       handleError(error)
       throw error

@@ -721,6 +721,11 @@ export const defineRoutes = (server) => {
     let [initialCount, lastCount] = getBatchCounts(request)
     let allNotifications = schema.notifications.all()
     const notifications = {
+      error_alerts: {
+        datasources: false,
+        destinations: false,
+        models: false,
+      },
       notifications: allNotifications.models.slice(initialCount, lastCount),
       total: allNotifications.length,
       seen_notifications: request.queryParams.batch_size > 5 ? true : false,
