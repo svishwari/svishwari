@@ -411,6 +411,36 @@ To use local database for development, set the following in `../../hux/api/setti
    MONGO_DB_PASSWORD=''
    MONGO_DB_USE_SSL=False
    ```
+Connecting to any environment hosted in AWS, we can do so using credentials for the respective environment as in [1Password](https://magnetic.1password.com/).
+
+However, for database instances hosted in Azure, we need to connect to the Kubernetes cluster that hosts the database instance and do a port forward as mentioned in [here](https://confluence.hux.deloitte.com/pages/viewpage.action?pageId=107452469).
+
+Steps to follow to connect to K8 cluster and port-forward to access MongoDB locally.
+
+* Fetch the secret from [Thycotic Server](https://uspcs.us.deloitte.com/USPCS/app/#/secrets/all). Make sure to connect to Deloitte VPN to access Thycotic Server.
+* Execute the following command to log in to azure. When asked to authenticate use the secret fetched from Thycotic Server.
+  ```
+  az login --use-device-code
+  ```
+* Execute the following command to get credentials for accessing the cluster.
+  ```
+  az aks get-credentials --subscription <Subscription> --resource-group <ResourceGroup> --name <AKSCluster> 
+  ```
+* Execute the command below to fetch the pod which hosts mongodb instance. When asked to authenticate use the secret fetched from Thycotic Server.
+  ```
+  kubectl get pods -n <namespace>
+  ```
+* Port-forward to use MongoDB locally, execute the following command.
+  ```
+  kubectl port-forward <POD_NAME> 27017:27017 -n <namespace>
+  ```
+  
+Use the following details to connect to corresponding environments.
+
+**Environment**|      **Subscription**      |  **ResourceGroup**  |     **AKSCluster**      | **namespace** 
+:-------------:|:--------------------------:|:-------------------:|:-----------------------:|:-------------:|
+HUSDEV2|US-AZSUB-AME-CON-HUSDEV2-NPD| HUSDEV2-EU2-APP-RSG | uni-aks-eastus2-husdev2 |    mongodb    
+LILDEV|US-AZSUB-AME-CON-LILDEV-NPD | LILDEV-EU2-APP-RSG  | uni-aks-eastus2-lildev  |    unified    
 
 ### How to implement a new endpoint
 * Define marshmallow Schema: create a schema by defining a class with variables
