@@ -112,7 +112,10 @@
           {{ item.name }}
         </v-list-item-title>
 
-        <v-list-item-icon v-if="getError(item)" class="ma-0 alignment">
+        <v-list-item-icon
+          v-if="errorAlerts[item.name.toLowerCase().replace(' ', '')]"
+          class="ma-0 alignment"
+        >
           <status
             status="Critical"
             :show-label="false"
@@ -164,7 +167,10 @@
               {{ menu.superscript }}
             </span>
           </v-list-item-title>
-          <v-list-item-icon v-if="getError(menu)" class="ma-0 alignment">
+          <v-list-item-icon
+            v-if="errorAlerts[menu.name.toLowerCase().replace(' ', '')]"
+            class="ma-0 alignment"
+          >
             <status
               status="Critical"
               :show-label="false"
@@ -219,7 +225,7 @@ export default {
       sideBarItems: "configuration/sideBarConfigs",
       demoConfiguration: "users/getDemoConfiguration",
       seenNotification: "notifications/seenNotifications",
-      allAlerts: "notifications/list",
+      errorAlerts: "notifications/error_alerts",
     }),
 
     isMini() {
@@ -342,16 +348,6 @@ export default {
       }
     },
     formatText: formatText,
-    getError(item) {
-      return (
-        !this.seenNotification &&
-        this.allAlerts.find(
-          (x) =>
-            this.formatText(x.category).toLowerCase() ==
-              item.name.toLowerCase() && x.notification_type == "critical"
-        )
-      )
-    },
   },
 }
 </script>
