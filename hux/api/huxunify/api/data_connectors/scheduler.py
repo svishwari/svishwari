@@ -366,7 +366,7 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
     # set the event loop
     asyncio.set_event_loop(asyncio.SelectorEventLoop())
     loop = asyncio.get_event_loop()
-
+    error_count = 0
     for destination in get_all_delivery_platforms(database, enabled=True):
         connector = get_delivery_platform_connector(
             destination[api_c.DELIVERY_PLATFORM_TYPE],
@@ -377,9 +377,9 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                 # fire and forget task.
                 task = loop.create_task(connector)
                 loop.run_until_complete(task)
-
             # pylint: disable=broad-except
             except Exception as exception:
+                error_count += 1
                 logger.error(
                     "%s: %s while connecting to destination %s.",
                     exception.__class__,
@@ -419,6 +419,50 @@ def run_scheduled_destination_checks(database: MongoClient) -> None:
                     status=api_c.STATUS_ERROR,
                     deleted=True,
                 )
+                error_alert_doc = collection_management.get_document(
+                    database=database,
+                    collection=db_c.CONFIGURATIONS_COLLECTION,
+                    query_filter={api_c.TYPE: api_c.ERROR_ALERTS},
+                )
+
+                collection_management.update_document(
+                    database=database,
+                    collection=db_c.CONFIGURATIONS_COLLECTION,
+                    document_id=error_alert_doc[db_c.ID],
+                    update_doc={
+                        api_c.MODULES: {
+                            api_c.DESTINATIONS: True,
+                            api_c.MODELS: error_alert_doc[api_c.MODULES][
+                                api_c.MODELS
+                            ],
+                            api_c.DATASOURCES: error_alert_doc[api_c.MODULES][
+                                api_c.DATASOURCES
+                            ],
+                        }
+                    },
+                )
+
+    if error_count == 0:
+        error_alert_doc = collection_management.get_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            query_filter={api_c.TYPE: api_c.ERROR_ALERTS},
+        )
+
+        collection_management.update_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            document_id=error_alert_doc[db_c.ID],
+            update_doc={
+                api_c.MODULES: {
+                    api_c.DESTINATIONS: False,
+                    api_c.MODELS: error_alert_doc[api_c.MODULES][api_c.MODELS],
+                    api_c.DATASOURCES: error_alert_doc[api_c.MODULES][
+                        api_c.DATASOURCES
+                    ],
+                }
+            },
+        )
 
 
 def run_scheduled_customer_profile_audience_count(

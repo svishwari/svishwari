@@ -664,6 +664,8 @@ ONLY_ADDED = "only_added"
 DELETE_DATASOURCES_SUCCESS = "Successfully deleted data source(s) - {}."
 
 # error messages
+ERROR_ALERTS = "error_alerts"
+MODULES = "modules"
 CANNOT_DELETE_DATASOURCES = "Error deleting data source(s) - {}."
 INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."

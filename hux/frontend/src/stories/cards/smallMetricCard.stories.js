@@ -17,6 +17,7 @@ export default {
     tooltipContent: { control: { type: "text" } },
     cardBodyText: { control: { type: "text" } },
     isError: { control: { type: "boolean" } },
+    isLink: { control: { type: "boolean" } },
   },
   args: {
     title: "Card Title",

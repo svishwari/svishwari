@@ -171,6 +171,7 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
 
     cy.get(selector.audience.editAudience).click()
     cy.contains("Nevermind")
+    cy.contains("Nevermind").click()
     cy.get(selector.audience.audienceOptions).click()
     cy.contains("Favorite")
     cy.contains("Download as")

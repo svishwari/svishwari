@@ -163,7 +163,9 @@
             >
               <v-card-title class="pb-2 pl-5 pt-2">
                 <div class="mt-2">
-                  <span class="black--text text--darken-4 text-h3"> USA </span>
+                  <span class="black--text text--darken-4 text-h3">
+                    USA by population
+                  </span>
                 </div>
               </v-card-title>
               <map-chart
