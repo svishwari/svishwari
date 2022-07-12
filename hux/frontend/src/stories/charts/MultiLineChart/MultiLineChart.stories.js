@@ -1,5 +1,5 @@
 import MultiLineChart from "@/components/common/IDRMatchingTrend/MultiLineChart.vue"
-import data from "./DensityChartData"
+import data from "./MultiLineChartData.js"
 
 export default {
   component: MultiLineChart,
@@ -7,15 +7,9 @@ export default {
   title: "Charts/Multi Line Chart",
 
   args: {
-    data: data,
-    range: [100, 400],
-    min: 0,
-    max: 1000,
-    id: "1",
-    chartDimensions: {
-      width: 1000,
-      height: 100,
-    },
+    value: data,
+    colorCodes: ["#005587", "#42EFFD", "#0C9DDB"],
+    chartDimensions: { width: 1606, height: 300 },
   },
 
   parameters: {
@@ -32,7 +26,7 @@ const Template = (_, { argTypes }) => ({
   template: `
   <div>
     <div class="mb-5">
-      For any param change to reflect on the chart change the id
+      Multi Line Chart
     </div>
     <div>
       <multi-line-chart v-bind="$props" v-on="$props" />
@@ -41,4 +35,4 @@ const Template = (_, { argTypes }) => ({
   `,
 })
 
-export const DensityChart = Template.bind({})
+export const AMultiLineChart = Template.bind({})
