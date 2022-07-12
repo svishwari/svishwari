@@ -1353,7 +1353,9 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                         datetime.utcnow()
                         - timedelta(
                             days=int(
-                                section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[0]
+                                section_filter.get(
+                                    api_c.AUDIENCE_FILTER_VALUE
+                                )[0]
                             )
                         )
                     ).strftime("%Y-%m-%d")
@@ -1364,7 +1366,9 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                         datetime.utcnow()
                         - timedelta(
                             days=int(
-                                section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[0]
+                                section_filter.get(
+                                    api_c.AUDIENCE_FILTER_VALUE
+                                )[0]
                             )
                         )
                     ).strftime("%Y-%m-%d")
