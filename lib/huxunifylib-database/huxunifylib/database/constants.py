@@ -38,6 +38,8 @@ USERNAME = "username"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
+CONVERSIONS_DATABASE = "conversions"
+EVENTS_COLLECTION = "events"
 CONSTANTS_COLLECTION = "constants"
 DATA_SOURCES_COLLECTION = "data_sources"
 CDP_DATA_SOURCES_COLLECTION = "cdp_data_sources"
@@ -416,7 +418,13 @@ USER_DEMO_CONFIG = "demo_config"
 USER_ROLE_ADMIN = "admin"
 USER_ROLE_EDITOR = "editor"
 USER_ROLE_VIEWER = "viewer"
-USER_ROLES = [USER_ROLE_ADMIN, USER_ROLE_EDITOR, USER_ROLE_VIEWER]
+USER_ROLE_TRUSTID = "hxtrustid"
+USER_ROLES = [
+    USER_ROLE_ADMIN,
+    USER_ROLE_EDITOR,
+    USER_ROLE_VIEWER,
+    USER_ROLE_TRUSTID,
+]
 COMPONENT_ID = "component_id"
 COMPONENT_NAME = "component_name"
 USER_PII_ACCESS = "pii_access"
@@ -437,6 +445,7 @@ DELIVERY = "delivery"
 CUSTOMERS = "customers"
 IDR = "idr"
 TRUST_ID = "trustid"
+DATASOURCES = "datasources"
 
 DELIVERY_JOB_ID = "delivery_job_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"
@@ -528,6 +537,7 @@ CONFIGURATION_TYPE_NAVIGATION_SETTINGS = "navigation_settings"
 CONFIGURATION_TYPE_RBAC_MATRIX = "rbac_matrix"
 CONFIGURATION_FIELD_SETTINGS = "settings"
 CONFIGURATION_FIELD_CHILDREN = "children"
+CONFIGURATION_FIELD_MODULES = "modules"
 
 # Audience constants
 AUDIENCE_FILTER_CONSTANTS = "audience_filter_constants"
@@ -625,6 +635,7 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_ENABLED,
         CONFIGURATION_FIELD_ROADMAP,
         CONFIGURATION_FIELD_SETTINGS,
+        CONFIGURATION_FIELD_MODULES,
     ],
     MODELS_COLLECTION: [
         NAME,

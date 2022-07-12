@@ -20,7 +20,10 @@ from huxunify.api.route.decorators import (
     requires_access_levels,
 )
 from huxunify.api.route.return_util import HuxResponse
-from huxunify.api.route.utils import get_db_client
+from huxunify.api.route.utils import (
+    get_db_client,
+    toggle_components_navigation,
+)
 from huxunify.api import constants as api_c
 
 from huxunify.api.schema.utils import (
@@ -198,6 +201,14 @@ class ConfigurationsNavigation(SwaggerView):
                 insights_nav_setting[db_c.CONFIGURATION_FIELD_NAME] = user[
                     db_c.USER_DEMO_CONFIG
                 ].get(api_c.TARGET, api_c.CUSTOMERS_TAG.title())
+
+        if user[api_c.ROLE] == db_c.USER_ROLE_TRUSTID:
+            toggle_components_navigation(
+                navigation_response=nav_settings_doc,
+                category="Insights",
+                module_label="HX TrustID",
+                flag=False,
+            )
 
         return HuxResponse.OK(
             data=nav_settings_doc, data_schema=NavigationSettingsSchema()

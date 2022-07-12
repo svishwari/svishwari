@@ -42,11 +42,7 @@
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
-        <page-header
-          v-if="!isEmptyError"
-          class="top-bar mb-3"
-          :header-height="70"
-        >
+        <page-header v-if="!isEmptyError" class="top-bar" :header-height="70">
           <template #left>
             <v-btn disabled icon color="black">
               <icon type="search" :size="20" color="black" variant="lighten3" />
@@ -357,7 +353,7 @@ export default {
       this.alertDrawer = !this.alertDrawer
     },
     intersected() {
-      if (this.batchDetails.batchNumber <= this.lastBatch) {
+      if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
         this.enableLazyLoad = true
         this.fetchNotificationsByBatch()
@@ -367,14 +363,14 @@ export default {
     },
     async fetchNotificationsByBatch() {
       await this.getAllNotifications(this.batchDetails)
-      this.batchDetails.batchNumber++
+      this.batchDetails.batch_number++
     },
     async getUserData() {
       await this.getUsersNoti()
     },
     calculateLastBatch() {
       this.lastBatch = Math.ceil(
-        this.totalNotifications / this.batchDetails.batchSize
+        this.totalNotifications / this.batchDetails.batch_size
       )
     },
     toggleFilterDrawer() {
@@ -403,8 +399,8 @@ export default {
         getEndDate,
         "YYYY-MM-DD"
       )
-      this.batchDetails.batchSize = 25
-      this.batchDetails.batchNumber = 1
+      this.batchDetails.batch_size = 25
+      this.batchDetails.batch_number = 1
       this.batchDetails.isLazyLoad = false
     },
     async alertfunction(data) {
@@ -420,8 +416,8 @@ export default {
           today_date.getMonth(),
           today_date.getDate()
         )
-        this.batchDetails.batchSize = 25
-        this.batchDetails.batchNumber = 1
+        this.batchDetails.batch_size = 25
+        this.batchDetails.batch_number = 1
         this.batchDetails.isLazyLoad = false
         if (data.selectedAlertType.length !== 0) {
           this.batchDetails.notification_types = formatRequestText(

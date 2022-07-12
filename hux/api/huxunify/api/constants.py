@@ -664,6 +664,8 @@ ONLY_ADDED = "only_added"
 DELETE_DATASOURCES_SUCCESS = "Successfully deleted data source(s) - {}."
 
 # error messages
+ERROR_ALERTS = "error_alerts"
+MODULES = "modules"
 CANNOT_DELETE_DATASOURCES = "Error deleting data source(s) - {}."
 INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
@@ -918,12 +920,15 @@ AccessLevel = namedtuple(
 ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
 EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
-USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
+HXTRUSTID_LEVEL = AccessLevel(db_c.USER_ROLE_TRUSTID)
+# TODO Remove TrustId from All Role after TrustId SignOff
+USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL, HXTRUSTID_LEVEL]
 
 USER_DISPLAY_ROLES = {
     db_c.USER_ROLE_ADMIN: "Admin",
     db_c.USER_ROLE_EDITOR: "Edit",
     db_c.USER_ROLE_VIEWER: "View-Only",
+    db_c.USER_ROLE_TRUSTID: "TrustId",
 }
 
 # Orchestration API fields
@@ -1438,6 +1443,8 @@ MODELS_STUB = [
 CONFIGURATIONS_TAG = "configurations"
 CONFIGURATION_ID = "configuration_id"
 CONFIGURATIONS_ENDPOINT = "/configurations"
+SETTINGS = "settings"
+NAVIGATION_CHILDREN = "children"
 SAMPLE_NAVIGATION_SETTINGS = {
     db_c.CONFIGURATION_FIELD_SETTINGS: [
         {

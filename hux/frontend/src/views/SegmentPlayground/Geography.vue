@@ -4,7 +4,7 @@
     height="400"
   >
     <v-card-title class="d-flex justify-space-between pa-0">
-      <h5 class="text-h3">USA</h5>
+      <h5 class="text-h3">USA by population</h5>
       <v-btn-toggle v-model="toggle_view" tile class="toggle-options">
         <v-btn text min-width="36" small @click="showMapView = true">
           <icon type="world" color="black" :size="36" class="mr-1" />

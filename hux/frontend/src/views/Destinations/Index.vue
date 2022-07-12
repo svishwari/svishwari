@@ -120,19 +120,12 @@ export default {
     if (this.$route.params.select) {
       this.drawer = true
     }
-
-    this.$root.$on("same-route-Connections", () => {
-      this.toggleDrawer()
-    })
   },
 
   methods: {
     ...mapActions({
       getDestinations: "destinations/getAll",
     }),
-    toggleDrawer() {
-      this.drawer = !this.drawer
-    },
     getAccess: getAccess,
   },
 }
