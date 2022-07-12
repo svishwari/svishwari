@@ -443,7 +443,7 @@ DELIVERY = "delivery"
 CUSTOMERS = "customers"
 IDR = "idr"
 TRUST_ID = "trustid"
-DATASOURCES="datasources"
+DATASOURCES = "datasources"
 
 DELIVERY_JOB_ID = "delivery_job_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"
