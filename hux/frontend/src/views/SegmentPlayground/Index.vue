@@ -162,6 +162,10 @@
         </template>
         <template #right>
           <hux-button
+            v-if="
+              getAccess('audience', 'create') ||
+              getAccess('audience', 'update_one')
+            "
             size="large"
             height="40"
             is-tile
@@ -320,7 +324,12 @@ import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 import EmptyPage from "@/components/common/EmptyPage.vue"
 import Error from "@/components/common/screens/Error"
 import { v4 as uuidv4 } from "uuid"
-import { formatText, getIndustryTags, formatRequestText } from "@/utils.js"
+import {
+  formatText,
+  getIndustryTags,
+  formatRequestText,
+  getAccess,
+} from "@/utils.js"
 
 export default {
   name: "SegmentPlayground",
@@ -680,6 +689,7 @@ export default {
       })
     },
     formatText: formatText,
+    getAccess: getAccess,
   },
 }
 </script>

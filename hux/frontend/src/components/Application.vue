@@ -1,13 +1,6 @@
 <template>
   <div>
-    <v-menu
-      v-if="getAccess('applications', 'get_all')"
-      v-model="openMenu"
-      :min-width="192"
-      left
-      offset-y
-      close-on-click
-    >
+    <v-menu v-model="openMenu" :min-width="192" left offset-y close-on-click>
       <template #activator="{ on }">
         <span
           class="d-flex cursor-pointer mr-4"
