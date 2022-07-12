@@ -1,6 +1,13 @@
 <template>
   <div>
-    <v-menu v-model="openMenu" :min-width="192" left offset-y close-on-click>
+    <v-menu
+      v-if="getAccess('applications', 'get_all')"
+      v-model="openMenu"
+      :min-width="192"
+      left
+      offset-y
+      close-on-click
+    >
       <template #activator="{ on }">
         <span
           class="d-flex cursor-pointer mr-4"
@@ -93,6 +100,7 @@
                       <span class="ml-1 mt-half">{{ app.title }}</span>
                     </v-list-item-title>
                     <span
+                      v-if="getAccess('applications', 'update_application')"
                       class="d-none delete-button"
                       @click="app.onDelete && app.onDelete()"
                     >
@@ -129,6 +137,7 @@ import Tooltip from "./common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import Logo from "@/components/common/Logo"
 import { mapGetters, mapActions } from "vuex"
+import { getAccess } from "../utils"
 
 export default {
   name: "Application",
@@ -181,6 +190,7 @@ export default {
           isDisabled: false,
           isVisible: true,
           onClick: () => this.addApplication(),
+          isHidden: !this.getAccess("applications", "create_application"),
         },
       ]
     },
@@ -223,6 +233,7 @@ export default {
       })
       this.selectedId = null
     },
+    getAccess: getAccess,
   },
 }
 </script>
