@@ -118,7 +118,6 @@ class AttributeScoreOverviewSchema(Schema):
 class TrustIdSegmentFilterSchema(Schema):
     """Trust ID segment filter schema"""
 
-
     class Meta:
         """Meta class for Schema"""
 

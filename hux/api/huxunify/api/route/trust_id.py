@@ -19,7 +19,8 @@ from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.trust_id import (
     get_trust_id_attributes,
     get_trust_id_overview,
-    get_trust_id_comparison_data, get_trust_id_filters,
+    get_trust_id_comparison_data,
+    get_trust_id_filters,
 )
 from huxunify.api.route.decorators import (
     secured,
@@ -43,7 +44,8 @@ from huxunify.api.schema.trust_id import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.stubbed_data.trust_id_stub import (
-    trust_id_filters_stub, lp_trust_id_filters,
+    trust_id_filters_stub,
+    lp_trust_id_filters,
 )
 
 

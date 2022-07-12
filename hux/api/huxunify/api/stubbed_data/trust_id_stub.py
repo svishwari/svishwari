@@ -1120,7 +1120,12 @@ lp_trust_id_filters = [
     {
         "type": "gender",
         "description": "Gender",
-        "values": ["Male", "Female", "Gender-fluid/Non-binary", "Prefer not to say"],
+        "values": [
+            "Male",
+            "Female",
+            "Gender-fluid/Non-binary",
+            "Prefer not to say",
+        ],
     },
     {
         "type": "highest_level_of_education",
@@ -1146,7 +1151,7 @@ lp_trust_id_filters = [
             "Hispanic or Latino",
             "Other race or ethnicity",
             "Prefer not to say",
-            "Multi-racial"
+            "Multi-racial",
         ],
     },
     {
@@ -1160,7 +1165,7 @@ lp_trust_id_filters = [
             "$80K-$100K",
             "$100K-$150K",
             "$150K+",
-            "Prefer not to say"
-        ]
-    }
+            "Prefer not to say",
+        ],
+    },
 ]
