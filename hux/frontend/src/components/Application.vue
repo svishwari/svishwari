@@ -181,9 +181,8 @@ export default {
         {
           title: "Add an application",
           isDisabled: false,
-          isVisible: true,
+          isVisible: this.getAccess("applications", "create_application"),
           onClick: () => this.addApplication(),
-          isHidden: !this.getAccess("applications", "create_application"),
         },
       ]
     },
