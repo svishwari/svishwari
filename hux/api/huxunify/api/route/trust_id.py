@@ -214,7 +214,7 @@ class TrustIdAttributeComparison(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
 
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves Trust ID comparison data.
