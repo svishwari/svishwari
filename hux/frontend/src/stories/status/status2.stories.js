@@ -38,7 +38,6 @@ export default {
     collapsed: "false",
     showLabel: "true",
     iconSize: 16,
-    tooltipTitle: "Tooltip title",
     showIconTooltip: "true",
   },
 

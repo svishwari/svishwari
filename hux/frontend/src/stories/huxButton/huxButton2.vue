@@ -8,7 +8,7 @@
       sidePadding,
       buttonSize,
       { 'box-shadow-15-4': boxShadow },
-      'text-button',
+      'new-b3',
       variant,
     ]"
     :style="styleObject"

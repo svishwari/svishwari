@@ -7,13 +7,14 @@
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
       :transition="transition"
+      :disabled="isDisabled"
       close-on-click
       class="hux-dropdown"
     >
       <template #activator="{ on }">
         <v-list-item
           v-if="isSubMenu"
-          class="d-flex justify-space-between pr-1 text-body-1"
+          class="d-flex justify-space-between pr-1 new-b1"
           v-on="on"
         >
           {{ label }}
@@ -21,14 +22,14 @@
           <v-icon color="primary">mdi-chevron-right</v-icon>
         </v-list-item>
         <huxButton
-          v-else-if="type == 'inline'"
+          v-else-if="!isDisabled && type == 'inline'"
           :v-on="on"
           text
           width="200"
           :icon="dropDownIcon"
           icon-position="right"
           tile
-          class="ma-2 main-button pr-1 text-body-1"
+          class="ma-2 main-button pr-1 new-b1"
           :style="{
             width: minWidth + 'px !important',
             borderWidth: borderWidth,
@@ -56,6 +57,22 @@
             isSubMenu ? item.name : optionSelected["name"] || label
           }}</span>
         </huxButton>
+        <huxButton
+          v-else-if="isDisabled && type == 'inline'"
+          text
+          width="200"
+          :icon="dropDownIcon"
+          icon-position="right"
+          tile
+          class="ma-2 main-disabled-button pr-1 new-b1"
+          :style="{
+            width: minWidth + 'px !important',
+            borderWidth: borderWidth,
+            color: 'var(--v-black-lighten5)',
+          }"
+        >
+          <span class="text-ellipsis text-width">{{ label }}</span>
+        </huxButton>
         <v-icon
           v-else-if="type == 'hotdog'"
           class="hotdog-menu-button"
@@ -80,10 +97,12 @@
           <v-icon right> {{ dropDownIcon }} </v-icon>
         </v-chip>
       </template>
-      <slot name="header" />
       <v-list class="py-0">
+        <v-list-item v-if="isHeader" class="header-class new-b2">
+          <slot name="header" />
+        </v-list-item>
         <template v-for="(item, index) in items">
-          <div :key="index" class="dropdown-menuitems text-body-1">
+          <div :key="index" class="dropdown-menuitems new-b1">
             <div
               v-if="item.isGroup"
               :key="item.name"
@@ -103,6 +122,8 @@
               :is-offset-x="true"
               :is-offset-y="false"
               :is-sub-menu="true"
+              :is-header="false"
+              :is-footer="false"
               :selected="selected"
               @on-select="onSelect"
             />
@@ -122,7 +143,9 @@
           </div>
         </template>
       </v-list>
-      <slot name="footer" />
+      <v-list-item v-if="isFooter" class="footer-class new-b3">
+        <slot name="footer" />
+      </v-list-item>
     </v-menu>
   </div>
 </template>
@@ -182,6 +205,21 @@ export default {
       required: false,
       default: true,
     },
+    isDisabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isHeader: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isFooter: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data: function () {
     return {
@@ -193,7 +231,9 @@ export default {
       return this.selected || this.label
     },
     dropdownColor() {
-      return this.openMenu
+      return this.isDisabled
+        ? "var(--v-black-lighten5)"
+        : this.openMenu
         ? "var(--v-primary-base) !important"
         : "var(--v-primary-lighten7)"
     },
@@ -248,6 +288,22 @@ export default {
     }
   }
 }
+.main-disabled-button {
+  color: var(--v-black-lighten5) !important;
+  &:hover {
+    color: var(--v-black-lighten5) !important;
+  }
+  @extend .main-button;
+  ::v-deep .v-btn__content {
+    .text-width {
+      position: relative;
+      bottom: 2px !important;
+    }
+    .v-icon {
+      color: var(--v-black-lighten5) !important;
+    }
+  }
+}
 .hotdog-menu-button {
   color: var(--v-primary-lighten7) !important;
   &:hover {
@@ -277,6 +333,9 @@ export default {
   color: var(--v-black-darken4);
   .v-list-item {
     min-height: 40px;
+    &:hover::before {
+      opacity: 0.03 !important;
+    }
     .v-list-item__title {
       line-height: 24px !important;
     }
@@ -291,8 +350,7 @@ export default {
   text-align: left;
 }
 ::v-deep .header-class {
-  font-size: 16px !important;
-  font-weight: 24px !important;
+  color: var(--v-black-base);
 }
 ::v-deep .footer-class {
   background-color: var(--v-black-lighten7);

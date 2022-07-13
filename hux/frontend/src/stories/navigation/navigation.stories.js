@@ -4,7 +4,7 @@ import sideBarItems from "./sideBarItems"
 export default {
   component: SideMenu,
 
-  title: "NewComponents/NAvigation",
+  title: "NewComponents/Navigation",
 
   argTypes: {
     toggle: { control: "boolean" },
