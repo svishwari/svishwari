@@ -359,10 +359,14 @@ export default {
       attributesData: "audiences/getDensityChartData",
     }),
     sliderLabel(attribute, value) {
-      if (attribute.key === "ltv_predicted") {
-        return `$${value}`
+      if (attribute.selected == "value") {
+        if (attribute.key === "ltv_predicted") {
+          return `$${value}`
+        }
+        return value
+      } else if (attribute.selected == "percentage") {
+        return `${(value / (attribute.max - attribute.min)) * 100} %`
       }
-      return value
     },
     sizeHandler() {
       if (this.$refs["hux-density-slider"]) {
@@ -414,7 +418,24 @@ export default {
                   return subOption
                 })
               }
-              if (groupKey.includes("model")) _subOption["modelIcon"] = true
+              if (groupKey.includes("model")) {
+                _subOption["modelIcon"] = true
+                _subOption["selected"] = "value"
+                _subOption["menu"] = [
+                  {
+                    key: "value",
+                    name: "Value",
+                    type: "range",
+                    model: JSON.parse(JSON.stringify(_subOption)),
+                  },
+                  {
+                    key: "percentage",
+                    name: "Decile percentage",
+                    type: "range",
+                    model: JSON.parse(JSON.stringify(_subOption)),
+                  },
+                ]
+              }
               _subOption.key = key
               return _subOption
             })
@@ -488,7 +509,7 @@ export default {
         value = [...condition.range]
         type = "range"
       } else {
-        value = condition.text
+        value = [condition.text]
         type = condition.operator.key
       }
       let filterJSON = {
@@ -580,17 +601,17 @@ export default {
     },
 
     async onSelect(type, condition, item) {
-      let dataItem = item
-      condition[type] = item
+      let dataItem = item.model ? item.model : item
+      condition[type] = dataItem
       if (type === "attribute") {
-        this.selectedValue = item.key
-        if (!this.notHistogramKeys.includes(item.key)) {
+        this.selectedValue = dataItem.key
+        if (!this.notHistogramKeys.includes(dataItem.key)) {
           let data = await this.attributesData({
-            field: item.modelIcon ? "model" : item.key,
-            model: item.modelIcon ? item.key : null,
+            field: dataItem.modelIcon ? "model" : dataItem.key,
+            model: dataItem.modelIcon ? dataItem.key : null,
           })
           if (data) {
-            data.key = item.key
+            data.key = dataItem.key
             dataItem = data
           }
         }

@@ -163,6 +163,9 @@ export default {
   },
   methods: {
     onSelect(item) {
+      if (item.model) {
+        item.model.selected = item.key
+      }
       this.$emit("on-select", item)
       this.openMenu = false
     },
