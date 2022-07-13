@@ -106,7 +106,6 @@ class TrustIdOverview(SwaggerView):
                 database=get_db_client(),
                 cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}",
                 cache_value=trust_id_overview,
-                expire_after_seconds=604800,
             )
 
         return HuxResponse.OK(
@@ -174,7 +173,6 @@ class TrustIdAttributes(SwaggerView):
                 database=get_db_client(),
                 cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.ATTRIBUTES}",
                 cache_value=trust_id_attributes,
-                expire_after_seconds=604800,
             )
 
         return HuxResponse.OK(
@@ -232,22 +230,36 @@ class TrustIdAttributeComparison(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
-        add_default = validation.validate_bool(
-            request.args.get(api_c.DEFAULT, "true")
-        )
-
-        custom_segments = get_user_trust_id_segments(
-            database=get_db_client(), okta_id=user[db_c.OKTA_ID]
-        )
-
-        segments_data = populate_trust_id_segments(
+        trust_id_comparison_data = get_cache_entry(
             database=get_db_client(),
-            custom_segments=custom_segments,
-            add_default=add_default,
+            cache_key=f"{api_c.TRUST_ID_TAG}.comparison"
         )
+        if not trust_id_comparison_data:
+            add_default = validation.validate_bool(
+                request.args.get(api_c.DEFAULT, "true")
+            )
+
+            custom_segments = get_user_trust_id_segments(
+                database=get_db_client(), okta_id=user[db_c.OKTA_ID]
+            )
+
+            segments_data = populate_trust_id_segments(
+                database=get_db_client(),
+                custom_segments=custom_segments,
+                add_default=add_default,
+            )
+
+            trust_id_comparison_data = get_trust_id_comparison_data(segments_data)
+
+            # Cache Trust ID comparison data
+            create_cache_entry(
+                database=get_db_client(),
+                cache_key=f"{api_c.TRUST_ID_TAG}.comparison",
+                cache_value=trust_id_comparison_data
+            )
 
         return HuxResponse.OK(
-            data=get_trust_id_comparison_data(segments_data),
+            data=trust_id_comparison_data,
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -389,8 +401,17 @@ class TrustIdAddSegment(SwaggerView):
             database=get_db_client(), custom_segments=updated_segments
         )
 
+        trust_id_comparison_data = get_trust_id_comparison_data(segments_data)
+
+        # Create or update cache comparison data
+        create_cache_entry(
+            database=get_db_client(),
+            cache_key=f"{api_c.TRUST_ID_TAG}.comparison",
+            cache_value=trust_id_comparison_data,
+        )
+
         return HuxResponse.CREATED(
-            data=get_trust_id_comparison_data(segments_data),
+            data=trust_id_comparison_data,
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -458,7 +479,16 @@ class TrustIdRemoveSegment(SwaggerView):
             database=get_db_client(), custom_segments=updated_segments
         )
 
+        trust_id_comparison_data = get_trust_id_comparison_data(segments_data)
+
+        # Create or update cache comparison data
+        create_cache_entry(
+            database=get_db_client(),
+            cache_key=f"{api_c.TRUST_ID_TAG}.comparison",
+            cache_value=trust_id_comparison_data,
+        )
+
         return HuxResponse.OK(
-            data=get_trust_id_comparison_data(segments_data),
+            data=trust_id_comparison_data,
             data_schema=TrustIdComparisonSchema(),
         )
