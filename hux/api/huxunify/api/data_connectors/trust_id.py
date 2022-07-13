@@ -2,14 +2,14 @@
 import statistics
 from collections import defaultdict
 
-from huxunify.api.route.utils import get_db_client
-from huxunifylib.database import constants as db_c, collection_management
-from huxunify.api import constants as api_c
+from huxunifylib.database import constants as db_c
+from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.survey_metrics_management import get_survey_responses
+from huxunify.api import constants as api_c
 
 
 def populate_trust_id_segments(
-    custom_segments: list, add_default: bool = True
+    database: DatabaseClient, custom_segments: list, add_default: bool = True
 ) -> list:
     """Function to populate Trust ID Segment data.
     Args:
@@ -18,7 +18,6 @@ def populate_trust_id_segments(
     Returns:
         list: Filled segments data with survey responses.
     """
-    database = get_db_client()
     segments_data = []
     # Set default segment without any filters
     if add_default:
@@ -386,18 +385,3 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
     trust_id_comparison_data.insert(0, composite_factor_scores)
 
     return trust_id_comparison_data
-
-
-def get_trust_id_filters() -> list:
-    """Get trust id filters
-
-    Args:
-
-    Returns:
-         (list): TrustID filters
-    """
-    return collection_management.get_document(
-        database=get_db_client(),
-        collection=db_c.CONFIGURATIONS_COLLECTION,
-        query_filter={db_c.CONFIGURATION_FIELD_TYPE: db_c.TRUST_ID_FILTERS},
-    ).get(db_c.TRUST_ID_FILTERS)

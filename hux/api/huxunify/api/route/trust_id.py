@@ -6,7 +6,7 @@ from typing import Tuple
 from flasgger import SwaggerView
 from flask import Blueprint, request
 
-from huxunifylib.database import constants as db_c
+from huxunifylib.database import constants as db_c, collection_management
 from huxunifylib.database.cache_management import (
     get_cache_entry,
     create_cache_entry,
@@ -19,13 +19,11 @@ from huxunifylib.database.user_management import (
 )
 
 from huxunify.api import constants as api_c
-
 from huxunify.api.data_connectors.trust_id import (
     populate_trust_id_segments,
     get_trust_id_attributes,
     get_trust_id_overview,
     get_trust_id_comparison_data,
-    get_trust_id_filters,
 )
 from huxunify.api.route.decorators import (
     secured,
@@ -243,6 +241,7 @@ class TrustIdAttributeComparison(SwaggerView):
         )
 
         segments_data = populate_trust_id_segments(
+            database=get_db_client(),
             custom_segments=custom_segments,
             add_default=add_default,
         )
@@ -293,7 +292,13 @@ class TrustIdSegmentFilters(SwaggerView):
         """
 
         return HuxResponse.OK(
-            data=get_trust_id_filters(),
+            data=collection_management.get_document(
+                database=get_db_client(),
+                collection=db_c.CONFIGURATIONS_COLLECTION,
+                query_filter={
+                    db_c.CONFIGURATION_FIELD_TYPE: db_c.TRUST_ID_FILTERS
+                },
+            ).get(db_c.TRUST_ID_FILTERS),
             data_schema=TrustIdSegmentFilterSchema(),
         )
 
