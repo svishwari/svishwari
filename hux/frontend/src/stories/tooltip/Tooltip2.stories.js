@@ -24,10 +24,12 @@ const Template = (args, { argTypes }) => ({
   <tooltip2 v-bind="$props">
     <template #label-content>
       <icon
-        type="informative-rev"
-        :size="16"
-        color="primary"
-        variant="base"
+        type="Informative"
+        :size="20"
+        color="white-base"
+        outline
+        borderColor="primary-base"
+        bgColor="primary-base"
       />
     </template>
     <template #hover-content>

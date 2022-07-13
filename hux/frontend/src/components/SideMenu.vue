@@ -4,29 +4,32 @@
     floating
     :permanent="true"
     :mini-variant.sync="isMini"
-    mini-variant-width="72"
+    mini-variant-width="92"
     width="220"
     class="side-nav-bar"
   >
     <template #prepend>
       <logo
         type="logo"
-        :size="isMini ? 40 : 56"
-        class="d-flex ma-6"
+        :size="56"
+        :class="isMini ? 'd-flex ma-6 ml-5' : 'd-flex ma-6'"
         data-e2e="click-outside"
       />
       <v-menu v-model="menu" content-class="ml-n3" close-on-click offset-y>
         <template #activator="{ on }">
-          <div class="pl-4 client py-2 mb-2" v-on="on">
+          <div
+            :class="isMini ? 'pl-7 client py-2 mb-2' : 'pl-4 client py-2 mb-2'"
+            v-on="on"
+          >
             <span class="d-flex align-center justify-space-between">
-              <span class="d-flex align-center black--text text-h4 ml-2">
+              <span class="d-flex align-center black--text text-h4">
                 <div v-if="isDemoMode" :class="isMini ? 'dotMini' : 'dot mr-2'">
                   <logo :type="client.logo" :size="isMini ? 40 : 20" />
                 </div>
                 <logo
                   v-else
                   :type="client.logo"
-                  :size="isMini ? 40 : 24"
+                  :size="isMini ? 38 : 24"
                   :class="isMini ? '' : 'ml-1 mr-2'"
                 />
                 <span v-if="!isMini" class="ellipsis">{{ client.name }}</span>
@@ -68,14 +71,14 @@
         v-if="item.children && item.children.length > 0"
         class="list-group black--text mt-2"
       >
-        <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-6">
+        <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-4">
           {{ item.name }}
         </span>
       </div>
 
       <v-list-item
         v-if="!item.children"
-        class="pl-6 mr-2"
+        :class="{ 'pl-6 mr-2 mb-1': true, 'collapse-height': isMini }"
         :data-e2e="`nav-${item.icon}`"
         :to="item.link"
         @click="navigate(item)"
@@ -92,7 +95,11 @@
             color="black-lighten4"
           >
             <template #label-content>
-              <icon :type="item.icon" :size="iconSize" class="mr-0" />
+              <icon
+                :type="item.icon"
+                :size="iconSize"
+                :class="{ 'pl-1 mr-0': true, 'pt-1': isMini }"
+              />
             </template>
             <template #hover-content>
               <span class="text-h6 error-base--text">
@@ -104,13 +111,25 @@
         <v-list-item-title class="black--text text-h6">
           {{ item.name }}
         </v-list-item-title>
+
+        <v-list-item-icon
+          v-if="errorAlerts[item.name.toLowerCase().replace(' ', '')]"
+          class="ma-0 alignment"
+        >
+          <status
+            status="Critical"
+            :show-label="false"
+            class="d-flex my-3"
+            :icon-size="12"
+          />
+        </v-list-item-icon>
       </v-list-item>
 
       <div v-if="item.children">
         <v-list-item
           v-for="menu in item.children"
           :key="menu.name"
-          class="pl-6 mr-2"
+          :class="{ 'pl-6 mr-2 mb-1': true, 'collapse-height': isMini }"
           :data-e2e="`nav-${menu.icon}`"
           :to="menu.link"
           @click="navigate(menu)"
@@ -129,7 +148,11 @@
               color="black"
             >
               <template #label-content>
-                <icon :type="menu.icon" :size="iconSize" class="mr-0" />
+                <icon
+                  :type="menu.icon"
+                  :size="iconSize"
+                  :class="{ 'pl-1 mr-0': true, 'pt-1': isMini }"
+                />
               </template>
               <template #hover-content>
                 <span class="black--text text-h6">
@@ -144,21 +167,23 @@
               {{ menu.superscript }}
             </span>
           </v-list-item-title>
+          <v-list-item-icon
+            v-if="errorAlerts[menu.name.toLowerCase().replace(' ', '')]"
+            class="ma-0 alignment"
+          >
+            <status
+              status="Critical"
+              :show-label="false"
+              class="d-flex my-3"
+              :icon-size="12"
+            />
+          </v-list-item-icon>
         </v-list-item>
       </div>
     </v-list>
 
     <template v-if="!isMini" #append>
-      <div
-        class="
-          nav-footer
-          primary--text
-          text--darken-1 text-body-2
-          pl-4
-          pr-3
-          pb-2
-        "
-      >
+      <div class="nav-footer text--darken-1 text-body-2 pl-4 pr-3 pb-2">
         Hux by Deloitte Digital
       </div>
     </template>
@@ -171,11 +196,13 @@ import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
 import * as _ from "lodash"
 import { mapGetters, mapActions } from "vuex"
+import { formatText } from "@/utils"
+import Status from "./common/Status.vue"
 
 export default {
   name: "SideMenu",
 
-  components: { Icon, Tooltip, Logo },
+  components: { Icon, Tooltip, Logo, Status },
 
   props: {
     toggle: Boolean,
@@ -197,6 +224,8 @@ export default {
     ...mapGetters({
       sideBarItems: "configuration/sideBarConfigs",
       demoConfiguration: "users/getDemoConfiguration",
+      seenNotification: "notifications/seenNotifications",
+      errorAlerts: "notifications/error_alerts",
     }),
 
     isMini() {
@@ -208,7 +237,7 @@ export default {
     },
 
     iconSize() {
-      return this.isMini ? 21 : 16
+      return this.isMini ? 24 : 16
     },
 
     displayedMenuItems() {
@@ -318,6 +347,7 @@ export default {
         })
       }
     },
+    formatText: formatText,
   },
 }
 </script>
@@ -327,6 +357,10 @@ export default {
   border-right: solid 1px var(--v-black-lighten3);
   @media (min-height: 900px) {
     background-position: bottom 30px center;
+  }
+
+  ::v-deep.v-navigation-drawer__content::-webkit-scrollbar {
+    display: none;
   }
 
   .client {
@@ -356,10 +390,10 @@ export default {
     }
     &:hover {
       svg {
-        fill: var(--v-primary-lighten6) !important;
+        fill: var(--v-primary-base) !important;
       }
       .v-list-item__title {
-        color: var(--v-primary-lighten6) !important;
+        color: var(--v-primary-base) !important;
       }
       &::before {
         opacity: 0;
@@ -374,16 +408,16 @@ export default {
 
   .v-list-item--active {
     background-color: var(--v-primary-lighten1);
-    border-left: solid 4px var(--v-primary-lighten6);
+    border-left: solid 4px var(--v-primary-base);
     border-top-right-radius: 40px;
     border-bottom-right-radius: 40px;
     padding-left: 20px !important;
 
     svg {
-      fill: var(--v-primary-lighten6) !important;
+      fill: var(--v-primary-base) !important;
     }
     .v-list-item__title {
-      color: var(--v-primary-lighten6) !important;
+      color: var(--v-primary-base) !important;
     }
     &::before {
       opacity: 0;
@@ -424,12 +458,17 @@ export default {
   opacity: 0.8;
   height: 27px;
   margin-top: -35px;
+  color: var(--v-success-darken1) !important;
 }
 .v-menu__content {
   @extend .box-shadow-25;
 }
 .height-fix {
   min-height: 32px;
+}
+.collapse-height {
+  min-height: 52px !important;
+  max-height: 52px !important;
 }
 .title-superscript {
   @extend .superscript;
@@ -459,5 +498,11 @@ export default {
   display: inline-block;
   width: 28ch;
   white-space: nowrap;
+}
+
+.alignment {
+  align-self: center;
+  position: absolute;
+  right: 3px;
 }
 </style>
