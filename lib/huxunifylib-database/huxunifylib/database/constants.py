@@ -26,6 +26,7 @@ CONFIGURATION = "configuration"
 SIZE = "size"
 DOCUMENTS = "documents"
 DESCRIPTION = "description"
+SHORT_DESCRIPTION = "short_description"
 ICON = "icon"
 ACCESS_LEVEL = "access_level"
 

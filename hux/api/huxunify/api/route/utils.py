@@ -1491,48 +1491,6 @@ async def build_notification_recipients_and_send_email(
         # send_email(**send_email_dict)
 
 
-def populate_trust_id_segments(
-    database: DatabaseClient, custom_segments: list, add_default: bool = True
-) -> list:
-    """Function to populate Trust ID Segment data.
-    Args:
-        database (DatabaseClient): A database client.
-        custom_segments(list): List of user specific segments data.
-        add_default (Optional, bool): Flag to add All Customers.
-    Returns:
-        list: Filled segments data with survey responses.
-    """
-
-    segments_data = []
-    # Set default segment without any filters
-    if add_default:
-        segments_data.append(
-            {
-                api_c.SEGMENT_NAME: "All Customers",
-                api_c.SEGMENT_FILTERS: [],
-                api_c.SURVEY_RESPONSES: get_survey_responses(
-                    database=database
-                ),
-            }
-        )
-
-    for seg in custom_segments:
-        survey_response = get_survey_responses(
-            database=database,
-            filters=seg[api_c.SEGMENT_FILTERS],
-        )
-        segments_data.append(
-            {
-                api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
-                api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
-                api_c.SURVEY_RESPONSES: survey_response
-                if survey_response
-                else [],
-            }
-        )
-    return segments_data
-
-
 def get_engaged_audience_last_delivery(audience: dict) -> None:
     """Method for getting last delivery at engagement and engaged audience level
 

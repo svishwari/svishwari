@@ -5,6 +5,48 @@ from collections import defaultdict
 from huxunify.api.route.utils import get_db_client
 from huxunifylib.database import constants as db_c, collection_management
 from huxunify.api import constants as api_c
+from huxunifylib.database.survey_metrics_management import get_survey_responses
+
+
+def populate_trust_id_segments(
+    custom_segments: list, add_default: bool = True
+) -> list:
+    """Function to populate Trust ID Segment data.
+    Args:
+        custom_segments(list): List of user specific segments data.
+        add_default (Optional, bool): Flag to add All Customers.
+    Returns:
+        list: Filled segments data with survey responses.
+    """
+    database = get_db_client()
+    segments_data = []
+    # Set default segment without any filters
+    if add_default:
+        segments_data.append(
+            {
+                api_c.SEGMENT_NAME: "All Customers",
+                api_c.SEGMENT_FILTERS: [],
+                api_c.SURVEY_RESPONSES: get_survey_responses(
+                    database=database
+                ),
+            }
+        )
+
+    for seg in custom_segments:
+        survey_response = get_survey_responses(
+            database=database,
+            filters=seg[api_c.SEGMENT_FILTERS],
+        )
+        segments_data.append(
+            {
+                api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
+                api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
+                api_c.SURVEY_RESPONSES: survey_response
+                if survey_response
+                else [],
+            }
+        )
+    return segments_data
 
 
 def aggregate_attributes(survey_responses: list) -> dict:
@@ -163,6 +205,7 @@ def get_trust_id_attributes(survey_responses: list) -> list:
                         api_c.ATTRIBUTE_DESCRIPTION: attribute[
                             db_c.DESCRIPTION
                         ],
+                        api_c.ATTRIBUTE_SHORT_DESCRIPTION: attribute[db_c.SHORT_DESCRIPTION]
                     }
                 )
 
@@ -307,16 +350,8 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
                                 api_c.ATTRIBUTE_DESCRIPTION
                             ],
                             api_c.ATTRIBUTE_SCORE: x[api_c.ATTRIBUTE_SCORE],
-                            api_c.ATTRIBUTE_TYPE: api_c.ATTRIBUTE_DESCRIPTION_TYPE_MAP[
-                                x[api_c.ATTRIBUTE_DESCRIPTION].lower()
-                            ][
-                                api_c.TYPE
-                            ],
-                            api_c.ATTRIBUTE_NAME: api_c.ATTRIBUTE_DESCRIPTION_TYPE_MAP[
-                                x[api_c.ATTRIBUTE_DESCRIPTION].lower()
-                            ][
-                                api_c.NAME
-                            ],
+                            api_c.ATTRIBUTE_TYPE: x[api_c.ATTRIBUTE_SHORT_DESCRIPTION].lower().replace(' ', '_'),
+                            api_c.ATTRIBUTE_NAME: x[api_c.ATTRIBUTE_SHORT_DESCRIPTION],
                         }
                         for x in data
                     ]

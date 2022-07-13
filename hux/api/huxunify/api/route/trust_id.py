@@ -7,6 +7,7 @@ from flasgger import SwaggerView
 from flask import Blueprint, request
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.cache_management import get_cache_entry, create_cache_entry
 from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.user_management import (
     get_user_trust_id_segments,
@@ -17,6 +18,7 @@ from huxunifylib.database.user_management import (
 from huxunify.api import constants as api_c
 
 from huxunify.api.data_connectors.trust_id import (
+    populate_trust_id_segments,
     get_trust_id_attributes,
     get_trust_id_overview,
     get_trust_id_comparison_data,
@@ -32,7 +34,6 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
-    populate_trust_id_segments,
     Validation as validation,
 )
 from huxunify.api.schema.trust_id import (
@@ -43,9 +44,6 @@ from huxunify.api.schema.trust_id import (
     TrustIdSegmentPostSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.stubbed_data.trust_id_stub import (
-    trust_id_filters_stub,
-)
 
 
 trust_id_bp = Blueprint(api_c.TRUST_ID_ENDPOINT, import_name=__name__)
@@ -95,9 +93,22 @@ class TrustIdOverview(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        survey_responses = get_survey_responses(get_db_client())
+        trust_id_overview = get_cache_entry(
+            get_db_client(),
+            f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}"
+        )
+        if not trust_id_overview:
+            survey_responses = get_survey_responses(get_db_client())
+            trust_id_overview = get_trust_id_overview(survey_responses)
 
-        trust_id_overview = get_trust_id_overview(survey_responses)
+            # Cache TrustID overview data for 7 days
+            create_cache_entry(
+                database=get_db_client(),
+                cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}",
+                cache_value=trust_id_overview,
+                expire_after_seconds=604800
+
+            )
 
         return HuxResponse.OK(
             data=trust_id_overview,
@@ -143,17 +154,30 @@ class TrustIdAttributes(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
-        survey_responses = get_survey_responses(get_db_client())
-
-        trust_id_attributes = sorted(
-            sorted(
-                get_trust_id_attributes(survey_responses),
-                key=lambda x: x[api_c.ATTRIBUTE_SCORE],
-                reverse=True,
-            ),
-            key=lambda x: x[api_c.FACTOR_NAME],
-            reverse=False,
+        trust_id_attributes = get_cache_entry(
+            get_db_client(),
+            f"{api_c.TRUST_ID_TAG}.{api_c.ATTRIBUTES}"
         )
+        if not trust_id_attributes:
+            survey_responses = get_survey_responses(get_db_client())
+
+            trust_id_attributes = sorted(
+                sorted(
+                    get_trust_id_attributes(survey_responses),
+                    key=lambda x: x[api_c.ATTRIBUTE_SCORE],
+                    reverse=True,
+                ),
+                key=lambda x: x[api_c.FACTOR_NAME],
+                reverse=False,
+            )
+
+            # Cache TrustID attribute data for 7 days
+            create_cache_entry(
+                database=get_db_client(),
+                cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.ATTRIBUTES}",
+                cache_value=trust_id_attributes,
+                expire_after_seconds=604800
+            )
 
         return HuxResponse.OK(
             data=trust_id_attributes,
@@ -192,7 +216,7 @@ class TrustIdAttributeComparison(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
 
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves Trust ID comparison data.
@@ -219,7 +243,6 @@ class TrustIdAttributeComparison(SwaggerView):
         )
 
         segments_data = populate_trust_id_segments(
-            database=get_db_client(),
             custom_segments=custom_segments,
             add_default=add_default,
         )
