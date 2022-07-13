@@ -25,7 +25,6 @@ from pymongo import MongoClient
 from huxunifylib.util.general.logging import logger
 
 from huxunifylib.database.audit_management import create_audience_audit
-from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database import (
     constants as db_c,

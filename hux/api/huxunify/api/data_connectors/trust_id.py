@@ -13,6 +13,7 @@ def populate_trust_id_segments(
 ) -> list:
     """Function to populate Trust ID Segment data.
     Args:
+        database(DatabaseClient): Database client
         custom_segments(list): List of user specific segments data.
         add_default (Optional, bool): Flag to add All Customers.
     Returns:
