@@ -303,6 +303,7 @@ def update_user(
         db_c.USER_ALERTS,
         db_c.SEEN_NOTIFICATIONS,
         db_c.LAST_SEEN_ALERT_TIME,
+        db_c.USER_LAST_KNOWN_RELEASE_VERSION,
     ]
 
     # validate allowed fields, any invalid returns, raise error
@@ -368,9 +369,7 @@ def delete_favorite_from_all_users(
     return False
 
 
-def update_all_users(
-    database: DatabaseClient, update_doc: dict
-) -> Union[dict, None]:
+def update_all_users(database: DatabaseClient, update_doc: dict) -> Union[dict, None]:
     """Function to update all users.
 
     Args:
@@ -659,9 +658,7 @@ def add_applications_to_users(
     return None
 
 
-def get_user_applications(
-    database: DatabaseClient, okta_id: str
-) -> Union[list, None]:
+def get_user_applications(database: DatabaseClient, okta_id: str) -> Union[list, None]:
     """A function to fetch user applications.
 
     Args:
@@ -790,9 +787,7 @@ def remove_user_trust_id_segments(
         return collection.find_one_and_update(
             {db_c.OKTA_ID: okta_id},
             {
-                "$pull": {
-                    db_c.TRUST_ID_SEGMENTS: {db_c.SEGMENT_NAME: segment_name}
-                },
+                "$pull": {db_c.TRUST_ID_SEGMENTS: {db_c.SEGMENT_NAME: segment_name}},
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
@@ -821,9 +816,7 @@ def get_user_trust_id_segments(
 
     try:
         return list(
-            collection.find_one({db_c.OKTA_ID: okta_id}).get(
-                db_c.TRUST_ID_SEGMENTS, []
-            )
+            collection.find_one({db_c.OKTA_ID: okta_id}).get(db_c.TRUST_ID_SEGMENTS, [])
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
