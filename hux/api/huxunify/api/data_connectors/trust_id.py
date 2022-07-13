@@ -205,7 +205,9 @@ def get_trust_id_attributes(survey_responses: list) -> list:
                         api_c.ATTRIBUTE_DESCRIPTION: attribute[
                             db_c.DESCRIPTION
                         ],
-                        api_c.ATTRIBUTE_SHORT_DESCRIPTION: attribute[db_c.SHORT_DESCRIPTION]
+                        api_c.ATTRIBUTE_SHORT_DESCRIPTION: attribute[
+                            db_c.SHORT_DESCRIPTION
+                        ],
                     }
                 )
 
@@ -350,8 +352,14 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
                                 api_c.ATTRIBUTE_DESCRIPTION
                             ],
                             api_c.ATTRIBUTE_SCORE: x[api_c.ATTRIBUTE_SCORE],
-                            api_c.ATTRIBUTE_TYPE: x[api_c.ATTRIBUTE_SHORT_DESCRIPTION].lower().replace(' ', '_'),
-                            api_c.ATTRIBUTE_NAME: x[api_c.ATTRIBUTE_SHORT_DESCRIPTION],
+                            api_c.ATTRIBUTE_TYPE: x[
+                                api_c.ATTRIBUTE_SHORT_DESCRIPTION
+                            ]
+                            .lower()
+                            .replace(" ", "_"),
+                            api_c.ATTRIBUTE_NAME: x[
+                                api_c.ATTRIBUTE_SHORT_DESCRIPTION
+                            ],
                         }
                         for x in data
                     ]

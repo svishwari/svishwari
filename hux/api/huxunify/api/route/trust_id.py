@@ -7,7 +7,10 @@ from flasgger import SwaggerView
 from flask import Blueprint, request
 
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.cache_management import get_cache_entry, create_cache_entry
+from huxunifylib.database.cache_management import (
+    get_cache_entry,
+    create_cache_entry,
+)
 from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.user_management import (
     get_user_trust_id_segments,
@@ -94,8 +97,7 @@ class TrustIdOverview(SwaggerView):
         """
 
         trust_id_overview = get_cache_entry(
-            get_db_client(),
-            f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}"
+            get_db_client(), f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}"
         )
         if not trust_id_overview:
             survey_responses = get_survey_responses(get_db_client())
@@ -106,8 +108,7 @@ class TrustIdOverview(SwaggerView):
                 database=get_db_client(),
                 cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}",
                 cache_value=trust_id_overview,
-                expire_after_seconds=604800
-
+                expire_after_seconds=604800,
             )
 
         return HuxResponse.OK(
@@ -155,8 +156,7 @@ class TrustIdAttributes(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
         trust_id_attributes = get_cache_entry(
-            get_db_client(),
-            f"{api_c.TRUST_ID_TAG}.{api_c.ATTRIBUTES}"
+            get_db_client(), f"{api_c.TRUST_ID_TAG}.{api_c.ATTRIBUTES}"
         )
         if not trust_id_attributes:
             survey_responses = get_survey_responses(get_db_client())
@@ -176,7 +176,7 @@ class TrustIdAttributes(SwaggerView):
                 database=get_db_client(),
                 cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.ATTRIBUTES}",
                 cache_value=trust_id_attributes,
-                expire_after_seconds=604800
+                expire_after_seconds=604800,
             )
 
         return HuxResponse.OK(
