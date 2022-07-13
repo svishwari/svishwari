@@ -18,7 +18,7 @@
       <v-menu v-model="menu" content-class="ml-n3" close-on-click offset-y>
         <template #activator="{ on }">
           <div
-            :class="isMini ? 'pl-7 client py-2 mb-2' : 'pl-4 client py-2 mb-2'"
+            :class="isMini ? 'pl-7 client py-2 mb-2' : 'px-4 client py-2 mb-2'"
             v-on="on"
           >
             <span class="d-flex align-center justify-space-between">
@@ -32,12 +32,14 @@
                   :size="isMini ? 38 : 24"
                   :class="isMini ? '' : 'ml-1 mr-2'"
                 />
-                <span v-if="!isMini" class="ellipsis">{{ client.name }}</span>
+                <span v-if="!isMini" class="ellipsis font-weight-regular">
+                  {{ client.name }}
+                </span>
               </span>
-              <span v-if="!isMini" class="mr-3">
+              <span v-if="!isMini" class="mr-0 pa-1">
                 <icon
                   type="chevron-down"
-                  :size="14"
+                  :size="16"
                   class="arrow-icon d-block"
                   color="black"
                   :class="{ 'menu-active rotate-icon-180': menu }"
@@ -71,14 +73,24 @@
         v-if="item.children && item.children.length > 0"
         class="list-group black--text mt-2"
       >
-        <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-4">
+        <span
+          v-if="!isMini"
+          class="
+            text-h5
+            black--text
+            text--lighten-4
+            pl-4
+            menu-parent-item
+            font-weight-bold
+          "
+        >
           {{ item.name }}
         </span>
       </div>
 
       <v-list-item
         v-if="!item.children"
-        :class="{ 'pl-6 mr-2 mb-1': true, 'collapse-height': isMini }"
+        :class="{ 'pl-6 mr-2 mb-2': true, 'collapse-height pr-8': isMini }"
         :data-e2e="`nav-${item.icon}`"
         :to="item.link"
         @click="navigate(item)"
@@ -95,11 +107,7 @@
             color="black-lighten4"
           >
             <template #label-content>
-              <icon
-                :type="item.icon"
-                :size="iconSize"
-                :class="{ 'pl-1 mr-0': true, 'pt-1': isMini }"
-              />
+              <icon :type="item.icon" :size="iconSize" :class="iconClass" />
             </template>
             <template #hover-content>
               <span class="text-h6 error-base--text">
@@ -108,9 +116,21 @@
             </template>
           </tooltip>
         </v-list-item-icon>
-        <v-list-item-title class="black--text text-h6">
+        <v-list-item-title class="black--text text-h6 pl-1">
           {{ item.name }}
         </v-list-item-title>
+
+        <v-list-item-icon
+          v-if="errorAlerts[item.name.toLowerCase().replace(' ', '')]"
+          class="ma-0 alignment"
+        >
+          <status
+            status="Critical"
+            :show-label="false"
+            class="d-flex my-3"
+            :icon-size="12"
+          />
+        </v-list-item-icon>
       </v-list-item>
 
       <div v-if="item.children">
@@ -126,7 +146,7 @@
         >
           <v-list-item-icon
             v-if="menu.icon"
-            class="my-3 mr-0"
+            class="my-1 mr-0"
             :class="{ 'menu-icon': !isMini }"
           >
             <tooltip
@@ -136,11 +156,7 @@
               color="black"
             >
               <template #label-content>
-                <icon
-                  :type="menu.icon"
-                  :size="iconSize"
-                  :class="{ 'pl-1 mr-0': true, 'pt-1': isMini }"
-                />
+                <icon :type="menu.icon" :size="iconSize" :class="iconClass" />
               </template>
               <template #hover-content>
                 <span class="black--text text-h6">
@@ -149,12 +165,23 @@
               </template>
             </tooltip>
           </v-list-item-icon>
-          <v-list-item-title class="black--text text-h6">
+          <v-list-item-title class="black--text text-h6 pl-1">
             {{ menu.name }}
             <span v-if="menu.superscript" class="title-superscript">
               {{ menu.superscript }}
             </span>
           </v-list-item-title>
+          <v-list-item-icon
+            v-if="errorAlerts[menu.name.toLowerCase().replace(' ', '')]"
+            class="ma-0 alignment"
+          >
+            <status
+              status="Critical"
+              :show-label="false"
+              class="d-flex my-3"
+              :icon-size="12"
+            />
+          </v-list-item-icon>
         </v-list-item>
       </div>
     </v-list>
@@ -173,11 +200,13 @@ import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
 import * as _ from "lodash"
 import { mapGetters, mapActions } from "vuex"
+import { formatText } from "@/utils"
+import Status from "./common/Status.vue"
 
 export default {
   name: "SideMenu",
 
-  components: { Icon, Tooltip, Logo },
+  components: { Icon, Tooltip, Logo, Status },
 
   props: {
     toggle: Boolean,
@@ -199,6 +228,8 @@ export default {
     ...mapGetters({
       sideBarItems: "configuration/sideBarConfigs",
       demoConfiguration: "users/getDemoConfiguration",
+      seenNotification: "notifications/seenNotifications",
+      errorAlerts: "notifications/error_alerts",
     }),
 
     isMini() {
@@ -210,7 +241,11 @@ export default {
     },
 
     iconSize() {
-      return this.isMini ? 24 : 16
+      return this.isMini ? 40 : 24
+    },
+
+    iconClass() {
+      return this.isMini ? "pt-1 icon-padding pa-1 mr-0" : "pa-1 mr-0"
     },
 
     displayedMenuItems() {
@@ -320,6 +355,7 @@ export default {
         })
       }
     },
+    formatText: formatText,
   },
 }
 </script>
@@ -331,8 +367,17 @@ export default {
     background-position: bottom 30px center;
   }
 
-  ::v-deep.v-navigation-drawer__content::-webkit-scrollbar {
-    display: none;
+  ::v-deep.v-navigation-drawer__content {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    .v-list {
+      .list-group {
+        .menu-parent-item {
+          color: var(--v-black-lighten6) !important;
+        }
+      }
+    }
   }
 
   .client {
@@ -343,6 +388,10 @@ export default {
 
   .v-icon {
     transition: none;
+  }
+
+  .icon-padding {
+    padding: 6px !important;
   }
 
   .v-list {
@@ -410,19 +459,20 @@ export default {
   // Apply this css only if icon size is 14 otherwise icon size should be 18
   .home-menu-icon {
     svg {
-      top: 30%;
+      top: 20%;
       position: absolute;
     }
   }
   .menu-icon {
     svg {
-      top: 32.89%;
+      top: 20%;
+      position: absolute;
     }
   }
 }
 .mini-home-icon {
   svg {
-    top: 8px;
+    top: 5px;
     position: absolute;
   }
 }
@@ -470,5 +520,11 @@ export default {
   display: inline-block;
   width: 28ch;
   white-space: nowrap;
+}
+
+.alignment {
+  align-self: center;
+  position: absolute;
+  right: 3px;
 }
 </style>

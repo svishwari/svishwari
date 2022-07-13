@@ -359,6 +359,7 @@ export default {
             this.deleteTeamMember = true
             this.deleteTeamMemberObj = item
           },
+          isHidden: !this.getAccess("user", "delete_user"),
         },
       ],
       openMenu: {},
