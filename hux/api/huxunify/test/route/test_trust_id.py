@@ -32,6 +32,9 @@ class TestTrustIDRoutes(RouteTestCase):
         _ = set_survey_responses_bulk(
             self.database, t_c.TRUST_ID_SURVEY_RESPONSES
         )
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_TRUSTID_USER_RESPONSE
+        )
 
     def test_trust_id_overview(self):
         """Test for trust_id overview endpoint."""

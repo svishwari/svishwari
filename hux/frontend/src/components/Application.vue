@@ -93,6 +93,7 @@
                       <span class="ml-1 mt-half">{{ app.title }}</span>
                     </v-list-item-title>
                     <span
+                      v-if="getAccess('applications', 'update_application')"
                       class="d-none delete-button"
                       @click="app.onDelete && app.onDelete()"
                     >
@@ -129,6 +130,7 @@ import Tooltip from "./common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import Logo from "@/components/common/Logo"
 import { mapGetters, mapActions } from "vuex"
+import { getAccess } from "../utils"
 
 export default {
   name: "Application",
@@ -179,7 +181,7 @@ export default {
         {
           title: "Add an application",
           isDisabled: false,
-          isVisible: true,
+          isVisible: this.getAccess("applications", "create_application"),
           onClick: () => this.addApplication(),
         },
       ]
@@ -223,6 +225,7 @@ export default {
       })
       this.selectedId = null
     },
+    getAccess: getAccess,
   },
 }
 </script>

@@ -67,7 +67,7 @@
                   </template>
 
                   <template v-else-if="col.value === 'display_name'">
-                    <span class="menu-wrap">
+                    <span class="menu-wrap" data-e2e="member-list">
                       <span>
                         <span
                           class="ellipsis mt-1 d-inline"
@@ -133,6 +133,7 @@
                               v-bind="attrs"
                               class="mr-2 more-action"
                               color="primary"
+                              data-e2e="member-list-dots"
                               v-on="on"
                               @click.prevent
                             >
@@ -280,16 +281,19 @@ export default {
           text: "",
           value: "",
           width: "76px",
+          sortable: false,
         },
         {
           text: "Name",
           value: "display_name",
           width: "281px",
+          sortable: true,
         },
         {
           text: "Email",
           value: "email",
           width: "367px",
+          sortable: true,
         },
         {
           text: "Access Level",
@@ -303,6 +307,7 @@ export default {
             <b>View-only access</b> <br /><br />\
             Unable to edit a client’s team, or remove and add any solutions across Hux.",
           tooltipWidth: "200px",
+          sortable: true,
         },
         {
           text: "PII Access",
@@ -311,6 +316,7 @@ export default {
           hoverTooltip:
             "Sensitive and PII data are only accessible to individuals tha been granted permission by an Admin.",
           tooltipWidth: "300px",
+          sortable: true,
         },
       ],
       switchLabel: [
@@ -353,6 +359,7 @@ export default {
             this.deleteTeamMember = true
             this.deleteTeamMemberObj = item
           },
+          isHidden: !this.getAccess("user", "delete_user"),
         },
       ],
       openMenu: {},

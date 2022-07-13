@@ -43,6 +43,8 @@ Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.
 
 ### Azure Environments - VPN Setup & Access
 * To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN).
+  * To connect to HUSDEV2, use [this](https://github.com/DeloitteHux/vpn-config/blob/master/Azure-VPN/husdev2-eu2-vng.ovpn) VPN configuration file 
+  * To connect to LILDEV, use [this](https://github.com/DeloitteHux/vpn-config/blob/master/Azure-CDM-VPN/lildev1.ovpn) VPN configuration file
 * Instructions to configure OpenVPN client on Windows or Mac systems can be found [here](https://confluence.hux.deloitte.com/display/TO/How-to%3A+Configure+the+OpenVPN+Client) on confluence.
 * Instructions to connect to an Azure environment VPN can be found [here](https://confluence.hux.deloitte.com/display/HUS/Azure+Environment+Access) on confluence once the OpenVPN client setup is done.
 * Instructions to access and connect to an Azure environment MongoDB pod outside of k8s can be found [here](https://confluence.hux.deloitte.com/pages/viewpage.action?pageId=107452469) on confluence.

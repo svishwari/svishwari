@@ -1,6 +1,8 @@
 import PlainCard from "./PlainCard.vue"
 import Icon from "../icons/Icon2.vue"
 import EmptyPage from "@/components/common/EmptyPage"
+import AllIcons from "../icons/Icons"
+import AllColors from "../colors/allColors"
 
 export default {
   component: PlainCard,
@@ -17,12 +19,32 @@ export default {
     actionMenu: {
       control: { type: "boolean" },
     },
-    cardBody: {
-      defaultValue: "empty",
-      options: ["empty", "error"],
+    iconType: {
+      options: AllIcons,
       control: {
         type: "select",
       },
+    },
+    iconColor: {
+      options: AllColors,
+      control: {
+        type: "select",
+      },
+    },
+    iconBorderColor: {
+      options: AllColors,
+      control: {
+        type: "select",
+      },
+    },
+    iconBgColor: {
+      options: AllColors,
+      control: {
+        type: "select",
+      },
+    },
+    error: {
+      control: { type: "boolean" },
     },
   },
   args: {
@@ -47,16 +69,15 @@ const Template = (args, { argTypes }) => ({
       <plain-card v-bind="$props">
         <template #call-to-action v-if="$props.actionMenu">
           <span>
-            <icon type="success" size="22" />
-            <icon type="success" size="22" />
-            <icon type="success" size="22" />
-            <icon type="success" size="22" />
+            <icon type="Icon Placeholder" size="22" color="primary-base" />
+            <icon type="Icon Placeholder" size="22" color="primary-base" />
+            <icon type="Icon Placeholder" size="22" color="primary-base" />
+            <icon type="Icon Placeholder" size="22" color="primary-base" />
           </span>
         </template>
         <template #body>
-          <div v-if="$props.cardBody == 'empty'">Empty content</div>
           <empty-page
-            v-else
+            v-if="$props.error"
             type="error-on-screens"
             :size="40"
           >
@@ -69,6 +90,7 @@ const Template = (args, { argTypes }) => ({
               </div>
             </template>
           </empty-page>
+          <div v-else>Empty content</div>
         </template>
       </plain-card>
     </div>`,

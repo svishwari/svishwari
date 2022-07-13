@@ -10,7 +10,7 @@
   >
     <template #prepend>
       <icon
-        :type="type"
+        :type="type == 'Informative' ? 'Error & Warning' : type"
         :size="24"
         :color="
           type == 'Guide' || type == 'Error & Warning'
