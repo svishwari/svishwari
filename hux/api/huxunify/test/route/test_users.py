@@ -248,10 +248,7 @@ class TestUserRoutes(RouteTestCase):
             update_doc={db_c.USER_LAST_KNOWN_RELEASE_VERSION: "6.0"},
         )
 
-        release_notes_latest = (
-            "https://docs.hux.deloitte.com/docs/hux-unified"
-            "/en/develop/release_notes/release_notes_6_0.html"
-        )
+        release_notes_latest = "https://fake.com/release_notes.html"
 
         # mock config to set the latest release info to some static values to
         # validate in the response
