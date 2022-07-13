@@ -5,7 +5,7 @@
 Hux Unified API is an API that will be primarily consumed by the
 Hux Unified Front-end application.
 
-The API is UI-driven.
+The API is UI-Driven.
 
 * [Hux Unified API](#hux-unified-api)
    * [Installation](#installation)
