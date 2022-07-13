@@ -45,7 +45,6 @@ from huxunify.api.schema.trust_id import (
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.stubbed_data.trust_id_stub import (
     trust_id_filters_stub,
-    lp_trust_id_filters,
 )
 
 
@@ -77,8 +76,8 @@ class TrustIdOverview(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
 
-    # @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @api_error_handler()
+    @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves Trust ID overview data.
 
@@ -127,7 +126,7 @@ class TrustIdAttributes(SwaggerView):
     tags = [api_c.TRUST_ID_TAG]
 
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves Trust ID trust_id_attributes data.
 
@@ -194,7 +193,7 @@ class TrustIdAttributeComparison(SwaggerView):
     tags = [api_c.TRUST_ID_TAG]
 
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves Trust ID comparison data.
 
@@ -252,7 +251,7 @@ class TrustIdSegmentFilters(SwaggerView):
     tags = [api_c.TRUST_ID_TAG]
 
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves Trust ID segment filters.
 
@@ -316,7 +315,7 @@ class TrustIdAddSegment(SwaggerView):
     tags = [api_c.TRUST_ID_TAG]
 
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def post(self, user: dict) -> Tuple[list, int]:
         """Add Trust ID segment.
 
@@ -399,7 +398,7 @@ class TrustIdRemoveSegment(SwaggerView):
     tags = [api_c.TRUST_ID_TAG]
 
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def delete(self, user: dict) -> Tuple[list, int]:
         """Remove Trust ID segment.
 

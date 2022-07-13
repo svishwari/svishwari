@@ -210,6 +210,41 @@ export default {
           editor: true,
           viewer: true,
         },
+        {
+          type: "delete_user",
+          admin: true,
+          editor: false,
+          viewer: false,
+        },
+        {
+          type: "edit_user",
+          admin: true,
+          editor: true,
+          viewer: false,
+        },
+      ],
+    },
+    applications: {
+      label: "Applications",
+      actions: [
+        {
+          type: "get_all",
+          admin: true,
+          editor: true,
+          viewer: true,
+        },
+        {
+          type: "create_application",
+          admin: true,
+          editor: true,
+          viewer: false,
+        },
+        {
+          type: "update_application",
+          admin: true,
+          editor: true,
+          viewer: false,
+        },
       ],
     },
     data_source: {
@@ -598,10 +633,10 @@ export default {
       label: "Client Settings",
       actions: [
         {
-          type: "client_settings",
           admin: true,
           editor: true,
           viewer: true,
+          type: "client_settings",
         },
       ],
     },

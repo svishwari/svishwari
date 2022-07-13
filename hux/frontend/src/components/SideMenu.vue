@@ -111,6 +111,18 @@
         <v-list-item-title class="black--text text-h6">
           {{ item.name }}
         </v-list-item-title>
+
+        <v-list-item-icon
+          v-if="errorAlerts[item.name.toLowerCase().replace(' ', '')]"
+          class="ma-0 alignment"
+        >
+          <status
+            status="Critical"
+            :show-label="false"
+            class="d-flex my-3"
+            :icon-size="12"
+          />
+        </v-list-item-icon>
       </v-list-item>
 
       <div v-if="item.children">
@@ -155,6 +167,17 @@
               {{ menu.superscript }}
             </span>
           </v-list-item-title>
+          <v-list-item-icon
+            v-if="errorAlerts[menu.name.toLowerCase().replace(' ', '')]"
+            class="ma-0 alignment"
+          >
+            <status
+              status="Critical"
+              :show-label="false"
+              class="d-flex my-3"
+              :icon-size="12"
+            />
+          </v-list-item-icon>
         </v-list-item>
       </div>
     </v-list>
@@ -173,11 +196,13 @@ import Tooltip from "@/components/common/Tooltip"
 import Logo from "@/components/common/Logo"
 import * as _ from "lodash"
 import { mapGetters, mapActions } from "vuex"
+import { formatText } from "@/utils"
+import Status from "./common/Status.vue"
 
 export default {
   name: "SideMenu",
 
-  components: { Icon, Tooltip, Logo },
+  components: { Icon, Tooltip, Logo, Status },
 
   props: {
     toggle: Boolean,
@@ -199,6 +224,8 @@ export default {
     ...mapGetters({
       sideBarItems: "configuration/sideBarConfigs",
       demoConfiguration: "users/getDemoConfiguration",
+      seenNotification: "notifications/seenNotifications",
+      errorAlerts: "notifications/error_alerts",
     }),
 
     isMini() {
@@ -320,6 +347,7 @@ export default {
         })
       }
     },
+    formatText: formatText,
   },
 }
 </script>
@@ -470,5 +498,11 @@ export default {
   display: inline-block;
   width: 28ch;
   white-space: nowrap;
+}
+
+.alignment {
+  align-self: center;
+  position: absolute;
+  right: 3px;
 }
 </style>

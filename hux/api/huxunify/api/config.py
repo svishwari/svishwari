@@ -119,17 +119,6 @@ class Config:
     AUDIENCE_ROUTER_IMAGE = config(
         api_c.AUDIENCE_ROUTER_IMAGE_CONST, default=""
     )
-    AUDIENCE_ROUTER_JOB_QUEUE = config(
-        api_c.AUDIENCE_ROUTER_JOB_QUEUE_CONST, default=""
-    )
-
-    # campaign data performance router scheduled event name
-    CDPR_EVENT_NAME = config(api_c.CDPR_EVENT_CONST, default="")
-
-    # feedback loop data router scheduled event name
-    FLDR_EVENT_NAME = config(api_c.FLDR_EVENT_CONST, default="")
-
-    EVENT_ROUTERS = [CDPR_EVENT_NAME, FLDR_EVENT_NAME]
 
     CDP_SERVICE = config(api_c.CDP_SERVICE, default="")
     CDP_CONNECTION_SERVICE = config(api_c.CDP_CONNECTION_SERVICE, default="")
