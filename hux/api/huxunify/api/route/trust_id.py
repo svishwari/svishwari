@@ -232,7 +232,7 @@ class TrustIdAttributeComparison(SwaggerView):
         """
         trust_id_comparison_data = get_cache_entry(
             database=get_db_client(),
-            cache_key=f"{api_c.TRUST_ID_TAG}.comparison"
+            cache_key=f"{api_c.TRUST_ID_TAG}.comparison",
         )
         if not trust_id_comparison_data:
             add_default = validation.validate_bool(
@@ -249,13 +249,15 @@ class TrustIdAttributeComparison(SwaggerView):
                 add_default=add_default,
             )
 
-            trust_id_comparison_data = get_trust_id_comparison_data(segments_data)
+            trust_id_comparison_data = get_trust_id_comparison_data(
+                segments_data
+            )
 
             # Cache Trust ID comparison data
             create_cache_entry(
                 database=get_db_client(),
                 cache_key=f"{api_c.TRUST_ID_TAG}.comparison",
-                cache_value=trust_id_comparison_data
+                cache_value=trust_id_comparison_data,
             )
 
         return HuxResponse.OK(
