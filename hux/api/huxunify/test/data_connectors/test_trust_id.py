@@ -10,7 +10,7 @@ from huxunify.api.data_connectors.trust_id import (
     get_trust_id_overview,
     get_trust_id_comparison_data,
 )
-from huxunify.api.route.utils import populate_trust_id_segments
+from huxunify.api.data_connectors.trust_id import populate_trust_id_segments
 
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.survey_metrics_management import (
