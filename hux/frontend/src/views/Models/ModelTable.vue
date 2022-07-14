@@ -8,7 +8,7 @@
           <hux-lazy-data-table
             :columns="columnDefs"
             :data-items="modelsData"
-            sort-desc
+            sort-column="name"
             class="big-table mt-2"
             data-e2e="models-table"
             view-height="calc(100vh - 265px)"
@@ -203,6 +203,7 @@ export default {
           text: "Industry",
           value: "tags",
           width: "160px",
+          sortable: false,
         },
         {
           text: "Version",
@@ -232,7 +233,7 @@ export default {
   computed: {
     modelsData() {
       let sortedModelslist = this.sourceData
-      return sortedModelslist.sort((a, b) => a.id - b.id)
+      return sortedModelslist.sort((a, b) => a.name.localeCompare(b.name))
     },
   },
   methods: {

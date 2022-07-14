@@ -85,7 +85,7 @@ export default {
   transition-property: transform, visibility, width;
 }
 .toggle-menu {
-  bottom: 10px;
+  bottom: 3px;
   position: fixed;
   z-index: 9;
 }
