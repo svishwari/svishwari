@@ -1305,14 +1305,13 @@ def insert_applications(database: MongoClient, applications: list) -> None:
 
 if __name__ == "__main__":
     # Initiate Data Base client
-    if os.environ.get("PREPOPULATE_DB", False):
-        db_client = get_mongo_client()
-        drop_collections(db_client)
-        insert_data_sources(db_client, DATA_SOURCES_LIST)
-        insert_delivery_platforms(db_client, DELIVERY_PLATFORM_LIST)
-        insert_configurations(db_client, configurations_constants)
-        insert_client_projects(db_client, client_projects_list)
-        insert_applications(db_client, applications_constants)
-        # create required empty collection for all the other collections
-        create_empty_collections(db_client, empty_collections_to_create)
-        logging.info("Pre-populate database procedure complete.")
+    db_client = get_mongo_client()
+    drop_collections(db_client)
+    insert_data_sources(db_client, DATA_SOURCES_LIST)
+    insert_delivery_platforms(db_client, DELIVERY_PLATFORM_LIST)
+    insert_configurations(db_client, configurations_constants)
+    insert_client_projects(db_client, client_projects_list)
+    insert_applications(db_client, applications_constants)
+    # create required empty collection for all the other collections
+    create_empty_collections(db_client, empty_collections_to_create)
+    logging.info("Pre-populate database procedure complete.")
