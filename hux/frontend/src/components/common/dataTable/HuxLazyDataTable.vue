@@ -38,7 +38,7 @@
             <!-- TODO: find a better solution and remove v-html -->
             <span
               :key="column.value"
-              :class="{ 'ml-5': column.id == 1 }"
+              :class="{ 'ml-5': column.id == 1, 'new-b3': true }"
               v-bind.prop="formatInnerHTML(column.text)"
             />
           </template>
@@ -274,13 +274,22 @@ export default {
       background: var(--v-white-base) !important;
       left: 0px !important;
     }
+    tr {
+      height: 56px !important;
+    }
     .v-data-table-header {
-      tr {
-        height: 32px !important;
-        th {
-          height: 32px !important;
-          padding-top: 0px;
-          padding-bottom: 0px;
+      th {
+        height: 56px !important;
+        background: var(--v-black-lighten7) !important;
+        padding-top: 18px;
+        padding-bottom: 18px;
+        padding-left: 16px;
+        padding-right: 16px;
+        &:first-child {
+          padding-left: 32px !important;
+        }
+        &:last-child {
+          padding-right: 32px !important;
         }
       }
     }
