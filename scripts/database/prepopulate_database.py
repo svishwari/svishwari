@@ -381,13 +381,19 @@ configurations_constants = [
                         {
                             db_c.TYPE: "create_one",
                             db_c.USER_ROLE_ADMIN: True,
-                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_EDITOR: False,
                             db_c.USER_ROLE_VIEWER: False,
                         },
                         {
                             db_c.TYPE: "delete",
                             db_c.USER_ROLE_ADMIN: True,
                             db_c.USER_ROLE_EDITOR: False,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
+                            db_c.TYPE: "edit_url",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
                             db_c.USER_ROLE_VIEWER: False,
                         },
                     ],
@@ -404,7 +410,7 @@ configurations_constants = [
                         {
                             db_c.TYPE: "create_lookalike",
                             db_c.USER_ROLE_ADMIN: True,
-                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_EDITOR: False,
                             db_c.USER_ROLE_VIEWER: False,
                         },
                         {
@@ -422,7 +428,7 @@ configurations_constants = [
                         {
                             db_c.TYPE: "create",
                             db_c.USER_ROLE_ADMIN: True,
-                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_EDITOR: False,
                             db_c.USER_ROLE_VIEWER: False,
                         },
                         {
@@ -470,7 +476,7 @@ configurations_constants = [
                         {
                             db_c.TYPE: "delete_one",
                             db_c.USER_ROLE_ADMIN: True,
-                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_EDITOR: False,
                             db_c.USER_ROLE_VIEWER: False,
                         },
                     ],
@@ -569,13 +575,13 @@ configurations_constants = [
                         {
                             db_c.TYPE: "get_all",
                             db_c.USER_ROLE_ADMIN: True,
-                            db_c.USER_ROLE_EDITOR: True,
-                            db_c.USER_ROLE_VIEWER: True,
+                            db_c.USER_ROLE_EDITOR: False,
+                            db_c.USER_ROLE_VIEWER: False,
                         },
                         {
                             db_c.TYPE: "create_one",
                             db_c.USER_ROLE_ADMIN: True,
-                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_EDITOR: False,
                             db_c.USER_ROLE_VIEWER: False,
                         },
                         {
@@ -635,7 +641,7 @@ configurations_constants = [
                         {
                             db_c.TYPE: "delete_one",
                             db_c.USER_ROLE_ADMIN: True,
-                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_EDITOR: False,
                             db_c.USER_ROLE_VIEWER: False,
                         },
                     ],
@@ -652,7 +658,7 @@ configurations_constants = [
                         {
                             db_c.TYPE: "request_one",
                             db_c.USER_ROLE_ADMIN: True,
-                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_EDITOR: False,
                             db_c.USER_ROLE_VIEWER: False,
                         },
                         {
@@ -690,6 +696,12 @@ configurations_constants = [
                             db_c.USER_ROLE_ADMIN: True,
                             db_c.USER_ROLE_EDITOR: True,
                             db_c.USER_ROLE_VIEWER: True,
+                        },
+                        {
+                            db_c.TYPE: "remove",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: False,
+                            db_c.USER_ROLE_VIEWER: False,
                         },
                     ],
                 },
