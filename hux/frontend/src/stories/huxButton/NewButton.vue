@@ -24,7 +24,7 @@
       }"
       @click="onClick"
     >
-      <div class="button-content text-b3">
+      <div class="button-content new-b3">
         <icon
           v-if="icon"
           :type="icon"

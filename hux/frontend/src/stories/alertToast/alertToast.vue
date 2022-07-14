@@ -5,7 +5,7 @@
     dismissible
     :outlined="true"
     height="56"
-    width="842"
+    width="fit-content"
     class="px-8 alert-centered"
   >
     <template #prepend>
@@ -24,9 +24,9 @@
       />
     </template>
     <template #default>
-      <div class="d-flex align-center">
-        <span class="alert-label text-body-2">{{ label }}</span>
-        <a class="alert-more-info text-h6 ml-2 mr-8" :href="to"
+      <div class="d-flex justify-space-between align-center">
+        <span class="alert-label new-b4">{{ label }}</span>
+        <a class="alert-more-info new-b3 ml-2 mr-8" :href="to"
           >More information</a
         >
       </div>
@@ -101,15 +101,13 @@ export default {
 $alert-border-radius: 25px;
 .alert-label {
   color: var(--v-black-base);
-  line-height: 20px !important;
+  max-width: 552px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 .alert-more-info {
   color: var(--v-primary-lighten7);
-  font-weight: bold;
-  line-height: 20px;
 }
 .alert-centered {
   margin: 0 auto;
