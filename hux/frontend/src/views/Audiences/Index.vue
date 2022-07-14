@@ -571,6 +571,7 @@ export default {
           text: "Industry",
           value: "tags",
           width: "220px",
+          sortable: false,
         },
         {
           id: 5,
