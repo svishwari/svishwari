@@ -14,7 +14,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.database.user_management import get_user
+from huxunifylib.database.user_management import get_user, update_user
 
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_user_favorites
@@ -237,6 +237,43 @@ class TestUserRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         t_c.validate_schema(UserSchema(), response.json)
         self.assertIn(db_c.AUDIENCES, response.json[db_c.USER_FAVORITES])
+
+    def test_get_user_profile_welcome_message(self):
+        """Test success response with welcome message for getting user profile
+        using Okta ID."""
+
+        update_user(
+            self.database,
+            okta_id=t_c.VALID_USER_RESPONSE[api_c.OKTA_ID_SUB],
+            update_doc={db_c.USER_LAST_KNOWN_RELEASE_VERSION: "6.0"},
+        )
+
+        release_notes_latest = "https://fake.com/release_notes.html"
+
+        # mock config to set the latest release info to some static values to
+        # validate in the response
+        self.config.RELEASE_VERSION_LATEST = "6.1"
+        self.config.RELEASE_NOTES_LATEST = release_notes_latest
+        mock.patch(
+            "huxunify.api.config.get_config",
+            return_value=self.config,
+        ).start()
+
+        endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIn(api_c.SHOW_LATEST_RELEASE_NOTES, response.json)
+        self.assertTrue(api_c.SHOW_LATEST_RELEASE_NOTES)
+        self.assertIn(api_c.LINK_LATEST_RELEASE_NOTES, response.json)
+        self.assertEqual(
+            release_notes_latest,
+            response.json[api_c.LINK_LATEST_RELEASE_NOTES],
+        )
 
     def test_get_all_users(self):
         """Tests getting all users."""

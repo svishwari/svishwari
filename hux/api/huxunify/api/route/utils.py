@@ -593,6 +593,13 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             )
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
+        # set a boolean field in user dict to indicate that it is a new user
+        user[api_c.IS_USER_NEW] = True
+    else:
+        # set a boolean field in user dict to indicate that it is an existing
+        # user
+        user[api_c.IS_USER_NEW] = False
+
     return user
 
 

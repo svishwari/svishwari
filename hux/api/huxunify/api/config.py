@@ -154,6 +154,9 @@ class Config:
 
     ENV_NAME = config(api_c.ENVIRONMENT_NAME, default="")
 
+    RELEASE_VERSION_LATEST = config(api_c.RELEASE_VERSION_LATEST, default="")
+    RELEASE_NOTES_LATEST = config(api_c.RELEASE_NOTES_LATEST, default="")
+
 
 class ProductionConfig(Config):
     """Production Config Object."""
