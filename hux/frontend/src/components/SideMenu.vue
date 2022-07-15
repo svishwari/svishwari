@@ -71,7 +71,7 @@
     >
       <div
         v-if="item.children && item.children.length > 0"
-        class="list-group black--text mt-2"
+        class="list-group black--text"
       >
         <span
           v-if="!isMini"
@@ -133,7 +133,7 @@
         </v-list-item-icon>
       </v-list-item>
 
-      <div v-if="item.children">
+      <div v-if="item.children" class="mb-2">
         <v-list-item
           v-for="menu in item.children"
           :key="menu.name"
@@ -187,7 +187,7 @@
     </v-list>
 
     <template v-if="!isMini" #append>
-      <div class="nav-footer text--darken-1 text-body-2 pl-4 pr-3 pb-2">
+      <div class="nav-footer text--darken-1 text-body-2 px-4 py-3">
         Hux by Deloitte Digital
       </div>
     </template>
@@ -375,6 +375,7 @@ export default {
       .list-group {
         .menu-parent-item {
           color: var(--v-black-lighten6) !important;
+          text-transform: none !important;
         }
       }
     }
@@ -396,6 +397,9 @@ export default {
 
   .v-list {
     padding: 0;
+    .list-group {
+      border-top: 1px solid rgba(226, 234, 236, 0.5);
+    }
   }
 
   .v-list-item__icon {
@@ -446,8 +450,6 @@ export default {
   }
 
   .list-group {
-    border-top: 1px solid rgba(226, 234, 236, 0.5);
-
     span {
       text-transform: uppercase;
       min-height: 40px;
@@ -478,8 +480,9 @@ export default {
 }
 .nav-footer {
   opacity: 0.8;
-  height: 27px;
-  margin-top: -35px;
+  height: 40px;
+  padding-top: 10px;
+  border-top: 1px solid var(--v-black-lighten1);
   color: var(--v-success-darken1) !important;
 }
 .v-menu__content {

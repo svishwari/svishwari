@@ -27,7 +27,7 @@
     <template #close>
       <icon type="Close & Remove" :size="16" color="black" @click="toggle" />
     </template>
-    <div class="banner-label" :style="cssVars">{{ label }}</div>
+    <div class="banner-label new-b3" :style="cssVars">{{ label }}</div>
   </v-alert>
 </template>
 
@@ -111,7 +111,5 @@ export default {
 }
 .banner-label {
   color: var(--v-black-base);
-  font-weight: bold;
-  line-height: 20px;
 }
 </style>

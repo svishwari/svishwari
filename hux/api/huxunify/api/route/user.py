@@ -140,6 +140,11 @@ class UserProfile(SwaggerView):
                     "message": api_c.AUTH401_ERROR_MESSAGE
                 }, HTTPStatus.UNAUTHORIZED
 
+            # get the new user value right here since the decorator
+            # requires_access_levels that is wrapped around this endpoint
+            # would have set the user in DB if new
+            is_user_new = user.get(api_c.IS_USER_NEW, False)
+
             # get the user info and the corresponding user document from db
             # from the access_token
             user_response = get_user_from_db(access_token)
@@ -150,6 +155,15 @@ class UserProfile(SwaggerView):
             if isinstance(user_response, tuple):
                 return user_response
 
+            # check and set the last known release version of the user right
+            # here before updating the user document in DB below
+            config = get_config()
+            show_latest_release_notes = (
+                config.RELEASE_VERSION_LATEST
+                != user.get(db_c.USER_LAST_KNOWN_RELEASE_VERSION, "")
+            )
+            release_notes_latest = config.RELEASE_NOTES_LATEST
+
             # update user record's login_count and update_time in DB and return
             # the updated record
             user = update_user(
@@ -158,9 +172,14 @@ class UserProfile(SwaggerView):
                 update_doc={
                     db_c.USER_LOGIN_COUNT: (
                         user_response.get(db_c.USER_LOGIN_COUNT, 0) + 1
-                    )
+                    ),
+                    db_c.USER_LAST_KNOWN_RELEASE_VERSION: config.RELEASE_VERSION_LATEST,
                 },
             )
+
+            user[api_c.IS_USER_NEW] = is_user_new
+            user[api_c.SHOW_LATEST_RELEASE_NOTES] = show_latest_release_notes
+            user[api_c.LINK_LATEST_RELEASE_NOTES] = release_notes_latest
 
             # merge lookalikes if any to audiences
             if user[db_c.USER_FAVORITES]:

@@ -1,4 +1,5 @@
 import PlainButton from "./plainButton.vue"
+import allIcons from "../icons/Icons"
 
 export default {
   component: PlainButton,
@@ -11,10 +12,11 @@ export default {
         type: "text",
       },
     },
+    icon: { options: allIcons, control: { type: "select" } },
   },
 
   args: {
-    icon: "setting-gear",
+    icon: "Destinations",
     color: "black",
     iconSize: "27",
     default: "CTA",
