@@ -20,7 +20,7 @@
         <template v-for="column in columns" #[`header.${column.value}`]>
           <tooltip v-if="column.tooltipValue" :key="column.id">
             <template #label-content>
-              <span :class="{ 'ml-5': column.id == 1 }">
+              <span :class="{ 'ml-5': column.id == 1, 'new-b3': true }">
                 {{ column.text }}
               </span>
             </template>
@@ -38,7 +38,7 @@
             <!-- TODO: find a better solution and remove v-html -->
             <span
               :key="column.value"
-              :class="{ 'ml-5': column.id == 1 }"
+              :class="{ 'ml-5': column.id == 1, 'new-b3': true }"
               v-bind.prop="formatInnerHTML(column.text)"
             />
           </template>
@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import Tooltip from "../Tooltip.vue"
+import Tooltip from "@/components/common/Tooltip"
 import Icon from "@/components/common/Icon"
 import { formatInnerHTML } from "@/utils"
 
@@ -269,11 +269,17 @@ export default {
     }
     .v-data-table-header {
       tr {
-        height: 32px !important;
+        height: 56px !important;
         th {
-          height: 32px !important;
-          padding-top: 0px;
-          padding-bottom: 0px;
+          height: 56px !important;
+          background: var(--v-black-lighten7) !important;
+          padding: 16px;
+          &:first-child {
+            padding-left: 32px !important;
+          }
+          &:last-child {
+            padding-right: 32px !important;
+          }
         }
       }
     }
@@ -286,6 +292,28 @@ export default {
 
     tr:hover {
       background-color: transparent !important;
+    }
+    tbody {
+      tr {
+        &:hover,
+        &:active {
+          filter: drop-shadow(0px 100px 200px rgba(30, 30, 30, 0.03))
+            drop-shadow(0px 4px 8px rgba(0, 85, 135, 0.15));
+        }
+        &:active {
+          background: var(--v-black-lighten7) !important;
+        }
+        td {
+          @extend .new-b1;
+          padding: 16px !important;
+          &:first-child {
+            padding-left: 32px !important;
+          }
+          &:last-child {
+            padding-right: 32px !important;
+          }
+        }
+      }
     }
   }
 
