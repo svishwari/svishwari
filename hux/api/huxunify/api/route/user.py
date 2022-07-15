@@ -95,7 +95,7 @@ class UserProfile(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels(api_c.COMMON_USER_ROLE)
     def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves a user profile.
 
