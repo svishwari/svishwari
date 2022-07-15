@@ -168,8 +168,6 @@ def get_survey_responses(
         {"$match": match_query_filters},
         {
             "$project": {
-                "survey_id": 1,
-                "customer_id": 1,
                 "factors": "$responses.factors",
             }
         },

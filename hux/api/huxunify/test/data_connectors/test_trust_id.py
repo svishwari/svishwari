@@ -129,12 +129,12 @@ class TrustIDTest(TestCase):
 
         self.assertEqual(
             t_c.TRUST_ID_SAMPLE_USER_SEGMENT[0].get(api_c.SEGMENT_NAME),
-            comparison_data[1].get(api_c.SEGMENTS)[1].get(api_c.SEGMENT_NAME),
+            comparison_data[1].get(api_c.SEGMENTS)[0].get(api_c.SEGMENT_NAME),
         )
 
         self.assertEqual(
             t_c.TRUST_ID_SAMPLE_USER_SEGMENT[0].get(api_c.SEGMENT_FILTERS),
             comparison_data[1]
-            .get(api_c.SEGMENTS)[1]
+            .get(api_c.SEGMENTS)[0]
             .get(api_c.SEGMENT_FILTERS),
         )
