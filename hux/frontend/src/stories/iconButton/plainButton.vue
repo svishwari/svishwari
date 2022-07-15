@@ -3,24 +3,24 @@
     text
     plain
     :ripple="false"
-    class="primary--text text-body-1"
+    class="primary--text new-b3"
     data-e2e="drawerToggle"
     @click.native="onClick()"
   >
     <icon
       v-if="raised"
-      type="plus"
+      type="Add"
       size="17"
-      color="primary"
+      color="primary-lighten7"
       class="mr-2"
       @click.native="onClick()"
     />
     <icon
-      type="destination"
+      :type="icon"
       :size="iconSize"
       color="primary"
       :class="{
-        'mr-1 hoverIcon': true,
+        'mr-2 hoverIcon': true,
         'box-shadow-15-4': raised,
         'selected-icon': !raised,
       }"
@@ -47,12 +47,8 @@ export default {
     },
     isDisabled: {
       type: Boolean,
-      default: false,
-    },
-    size: {
-      type: String,
       required: false,
-      default: null,
+      default: false,
     },
     iconColor: {
       type: String,

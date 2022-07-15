@@ -2,7 +2,11 @@
   <div class="steps-wrap progress-steps">
     <div v-for="(label, step) in steps" :key="step" class="steps-wrap">
       <div class="d-flex justify-center flex-column progress-step">
-        <icon v-if="errorSteps.includes(step + 1)" type="negative" :size="40" />
+        <icon
+          v-if="errorSteps.includes(step + 1)"
+          type="negative-invert"
+          :size="40"
+        />
         <div
           v-else-if="currentStep <= step + 1"
           :class="
@@ -11,17 +15,17 @@
               : 'in-active step-circle'
           "
         >
-          <span class="text-body-2">{{ step }}</span>
+          <span class="new-b2">{{ step }}</span>
         </div>
         <icon v-else type="positive" :size="40" />
-        <span class="tooltip-subheading pt-2">{{ label }}</span>
+        <span class="pt-2 new-b3">{{ label }}</span>
       </div>
       <div
         v-if="step != steps.length - 1"
         :class="
           currentStep > step + 1
-            ? 'ruler-active ruler mb-5'
-            : 'ruler-in-active ruler mb-5'
+            ? 'ruler-active ruler mb-6'
+            : 'ruler-in-active ruler mb-6'
         "
       ></div>
     </div>
@@ -82,7 +86,7 @@ export default {
       color: var(--v-success-darken1);
     }
     &.in-active {
-      border: 1px solid var(--v-black-lighten2);
+      border: 1px solid var(--v-black-lighten8);
       color: var(--v-black-lighten6);
     }
   }
@@ -92,11 +96,8 @@ export default {
       border: 1px solid var(--v-success-darken1);
     }
     &.ruler-in-active {
-      border: 1px dashed var(--v-black-lighten2);
+      border: 1px dashed var(--v-black-lighten8);
     }
-  }
-  ::v-deep .tooltip-subheading {
-    line-height: 20px !important;
   }
 }
 </style>
