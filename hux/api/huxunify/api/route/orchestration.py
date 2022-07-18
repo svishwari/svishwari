@@ -1741,12 +1741,12 @@ class AudienceRules(SwaggerView):
                     },
                     "mailing_address": {
                         "name": "Mailing address",
-                        "country": {
+                        "mailing_country": {
                             "name": "Country",
                             "type": "list",
                             "options": country_list,
                         },
-                        "state": {
+                        "mailing_state": {
                             "name": "State",
                             "type": "list",
                             "options": [
@@ -1754,12 +1754,12 @@ class AudienceRules(SwaggerView):
                                 for key, value in api_c.STATE_NAMES.items()
                             ],
                         },
-                        "city": {
+                        "mailing_city": {
                             "name": "City",
                             "type": "list",
                             "options": [],
                         },
-                        "zip_code": {
+                        "mailing_zip_code": {
                             "name": "Zip",
                             "type": "list",
                             "options": [],
@@ -1767,12 +1767,12 @@ class AudienceRules(SwaggerView):
                     },
                     "shipping_address": {
                         "name": "Shipping address",
-                        "country": {
+                        "shipping_country": {
                             "name": "Country",
                             "type": "list",
                             "options": country_list,
                         },
-                        "state": {
+                        "shipping_state": {
                             "name": "State",
                             "type": "list",
                             "options": [
@@ -1780,12 +1780,12 @@ class AudienceRules(SwaggerView):
                                 for key, value in api_c.STATE_NAMES.items()
                             ],
                         },
-                        "city": {
+                        "shipping_city": {
                             "name": "City",
                             "type": "list",
                             "options": [],
                         },
-                        "zip_code": {
+                        "shipping_zip_code": {
                             "name": "Zip",
                             "type": "list",
                             "options": [],
