@@ -27,17 +27,27 @@
               class="guide-cross"
               type="Close & Remove"
               color="black"
-              :size="40"
+              :size="25"
             />
           </span>
         </div>
       </template>
       <template #menuHeader>
-        <div class="header-menu d-flex text-body-1 pt-5 pb-5 pr-4 pl-4">
+        <div
+          class="header-menu d-flex align-items-center new-h4 pt-5 pb-4 px-6"
+        >
           <span>
-            <icon type="Guide" :size="24" />
+            <icon
+              class="guide-bulb"
+              type="Guide"
+              color="black-base"
+              bg-color="yellow-lighten3"
+              outline
+              border-color="black-base"
+              :size="24"
+            />
           </span>
-          <span class="ml-2 mt-1"> {{ header }} </span>
+          <span class="ml-2"> {{ header }} </span>
         </div>
       </template>
       <template #menuBody>
@@ -53,22 +63,26 @@
                     class="icon-left"
                     :class="panel.includes(i) ? 'rotate-icon-90' : ''"
                   >
-                    <icon :type="'side-arrow'" :size="11" color="primary" />
+                    <icon
+                      :type="'Dropdown - right'"
+                      :size="24"
+                      color="primary"
+                    />
                   </span>
-                  <span class="text-body-1 primary--text">
+                  <span class="new-b2">
                     {{ data.title }}
                   </span>
                 </span>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <div
-                  class="text-body-1"
+                  class="new-b1"
                   v-bind.prop="formatInnerHTML(data.text)"
                 ></div>
                 <br />
                 <div
                   v-if="data.textPart"
-                  class="text-body-1"
+                  class="new-b1"
                   v-bind.prop="formatInnerHTML(data.textPart)"
                 ></div>
               </v-expansion-panel-content>
@@ -162,7 +176,7 @@ export default {
   position: relative;
 }
 .guide-cross {
-  bottom: 16px;
+  bottom: 9px;
   position: relative;
 }
 .icon-bulb {
@@ -177,7 +191,6 @@ export default {
 .guide-button {
   top: 165px !important;
   .header-menu {
-    background: var(--v-yellow-lighten1);
     .header-text {
       position: absolute;
     }

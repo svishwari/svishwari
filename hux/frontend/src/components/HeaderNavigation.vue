@@ -17,7 +17,7 @@
       mdi-refresh
     </v-icon>
     <v-menu
-      v-if="!clientPanel"
+      v-if="!clientPanel && role != 'hxtrustid' && getDropdownLinks.length > 0"
       v-model="menu"
       :min-width="200"
       left
@@ -50,7 +50,7 @@
           </v-list-item-title>
         </v-list-item>
         <v-list-item
-          v-for="link in dropdownLinks"
+          v-for="link in getDropdownLinks"
           :key="link.name"
           :data-e2e="link.name"
           @click="routerRedirect(link.path)"
@@ -61,7 +61,13 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <application v-if="!clientPanel" />
+    <application
+      v-if="
+        !clientPanel &&
+        role != 'hxtrustid' &&
+        getAccess('applications', 'get_all')
+      "
+    />
     <notification v-if="!clientPanel" />
     <help />
   </div>
@@ -73,6 +79,8 @@ import Help from "../components/Help.vue"
 import Icon from "@/components/common/Icon"
 import Tooltip from "./common/Tooltip.vue"
 import Application from "./Application.vue"
+import { mapGetters } from "vuex"
+import { getAccess } from "../utils"
 
 export default {
   name: "HeaderNavigation",
@@ -86,16 +94,35 @@ export default {
   data() {
     return {
       dropdownLinks: [
-        { name: "Data Source", path: "DataSources" },
-        { name: "Destination", path: "DestinationConfiguration" },
-        { name: "Audience", path: "SegmentPlayground" },
-        { name: "Engagement", path: "EngagementConfiguration" },
+        {
+          name: "Data Source",
+          path: "DataSources",
+          isHidden: !this.getAccess("data_source", "request_new"),
+        },
+        {
+          name: "Destination",
+          path: "DestinationConfiguration",
+          isHidden: !this.getAccess("destinations", "create_one"),
+        },
+        {
+          name: "Audience",
+          path: "SegmentPlayground",
+          isHidden: !this.getAccess("audience", "create"),
+        },
+        {
+          name: "Engagement",
+          path: "EngagementConfiguration",
+          isHidden: !this.getAccess("engagements", "create_one"),
+        },
       ],
       appLoadTime: new Date(),
       menu: false,
     }
   },
   computed: {
+    ...mapGetters({
+      role: "users/getCurrentUserRole",
+    }),
     getFormattedTime() {
       let formate = this.$options.filters.Date(this.appLoadTime, "calendar")
       let newFormate = formate.replace(" at", ",")
@@ -103,6 +130,9 @@ export default {
     },
     clientPanel() {
       return this.$route.name == "ClientPanel"
+    },
+    getDropdownLinks() {
+      return this.dropdownLinks.filter((x) => !x.isHidden)
     },
   },
   methods: {
@@ -119,6 +149,7 @@ export default {
         })
       }
     },
+    getAccess: getAccess,
   },
 }
 </script>

@@ -5,7 +5,7 @@ export default {
   title: "NewComponents/GuideButton",
 
   args: {
-    header: "My custom header",
+    header: "User Guide",
     panelListItems: [
       {
         id: 1,

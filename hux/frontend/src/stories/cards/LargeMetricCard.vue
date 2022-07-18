@@ -1,10 +1,10 @@
 <template>
   <v-card
     :disabled="disabled"
-    class="descriptive-card align-center text-center rounded-lg card-space mb-4"
+    class="descriptive-card align-center text-center rounded-lg card-space"
     :width="getWidth"
   >
-    <div class="pa-4 pb-6">
+    <div class="pa-4 pb-0">
       <div v-if="status">
         <status
           :icon-size="16"
@@ -50,7 +50,7 @@
         />
       </div>
     </div>
-    <v-card class="pt-4">
+    <v-card class="pt-8 inner-card">
       <div :class="description || $slots.body ? '' : 'pa-4'" class="text-h3">
         {{ title }}
       </div>
@@ -200,9 +200,16 @@ export default {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    @extend .box-shadow-1;
+    box-shadow: 0px -10px 10px 1px rgba(0, 0, 0, 0.1) !important;
     background: var(--v-white-base);
     text-align: -webkit-center;
+    position: relative;
+    top: 30px;
+    right: 20px;
+    z-index: 10;
+  }
+  .inner-card {
+    box-shadow: 0px -5px 10px 0px rgba(0, 0, 0, 0.1) !important;
   }
   .description {
     -webkit-box-orient: vertical !important;

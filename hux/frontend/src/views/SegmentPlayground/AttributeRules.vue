@@ -512,7 +512,7 @@ export default {
         value = [...condition.range]
         type = "range"
       } else {
-        value = condition.text
+        value = [condition.text]
         type = condition.operator.key
       }
       let filterJSON = {

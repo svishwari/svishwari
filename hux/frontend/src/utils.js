@@ -511,3 +511,22 @@ export function getIndustryTags() {
     "retail",
   ]
 }
+
+/**
+ * Returns default route based on role
+ *
+ * @param {string} role - current role of the user
+ * @returns {object} default route
+ */
+export function getDefaultRoute(role) {
+  let route = {}
+  switch (role) {
+    case "hxtrustid":
+      route = { name: "HXTrustID" }
+      break
+
+    default:
+      route = { name: "Home" }
+  }
+  return route
+}
