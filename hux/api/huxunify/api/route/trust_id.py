@@ -98,8 +98,7 @@ class TrustIdOverview(SwaggerView):
             get_db_client(), f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}"
         )
         if not trust_id_overview:
-            survey_responses = get_survey_responses(get_db_client())
-            trust_id_overview = get_trust_id_overview(survey_responses)
+            trust_id_overview = get_trust_id_overview(get_db_client())
 
             # Cache TrustID overview data for 7 days
             create_cache_entry(
