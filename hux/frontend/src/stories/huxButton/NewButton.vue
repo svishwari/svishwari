@@ -28,7 +28,7 @@
         <icon
           v-if="icon"
           :type="icon"
-          size="15"
+          size="16"
           :color="getColor()"
           outline
           border-color="white-base"
