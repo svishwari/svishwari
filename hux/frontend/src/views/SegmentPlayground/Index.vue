@@ -558,9 +558,9 @@ export default {
             value: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
             ].operator
-              ? this.audience.attributeRules[ruleIndex].conditions[
+              ? [this.audience.attributeRules[ruleIndex].conditions[
                   conditionIndex
-                ].text
+                ].text]
               : this.audience.attributeRules[ruleIndex].conditions[
                   conditionIndex
                 ].range,
