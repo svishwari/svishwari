@@ -1320,7 +1320,7 @@ class AudiencePostView(SwaggerView):
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             audience_source={
-                db_c.AUDIENCE_SOURCE_TYPE: db_c.CDP_DATA_SOURCE_ID
+                db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_CDP
             },
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],

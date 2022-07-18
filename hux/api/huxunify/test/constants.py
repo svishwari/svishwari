@@ -87,6 +87,13 @@ VALID_EDITOR_USER_RESPONSE = {
     api_c.ROLE: db_c.USER_ROLE_EDITOR,
     api_c.USER_PII_ACCESS: True,
 }
+VALID_TRUSTID_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: VALID_EDITOR_INTROSPECTION_RESPONSE[api_c.OKTA_UID],
+    api_c.EMAIL: VALID_EDITOR_INTROSPECTION_RESPONSE[api_c.OKTA_ID_SUB],
+    api_c.NAME: "TRUSTID USER",
+    api_c.ROLE: db_c.USER_ROLE_TRUSTID,
+    api_c.USER_PII_ACCESS: True,
+}
 # response missing some fields
 INVALID_USER_RESPONSE = {
     api_c.EMAIL: "davesmith@fake.com",

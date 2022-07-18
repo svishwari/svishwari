@@ -8,7 +8,7 @@
       sidePadding,
       buttonSize,
       { 'box-shadow-15-4': boxShadow },
-      'text-button',
+      'new-b3',
       variant,
     ]"
     :style="styleObject"
@@ -121,6 +121,11 @@ export default {
       required: false,
       default: "px-6",
     },
+    backgroundColor: {
+      type: String,
+      required: false,
+      default: "primary darken-1",
+    },
   },
   data() {
     return {
@@ -149,7 +154,7 @@ export default {
       }
     },
     color() {
-      return this.variant == "danger" ? "error" : "primary darken-1"
+      return this.variant == "danger" ? "error" : this.backgroundColor
     },
     isOutlined() {
       return this.variant == "secondary"
@@ -194,7 +199,7 @@ $btn-hover-opacity: 0 !important;
   border: solid 1px var(--v-black-lighten1) !important;
 }
 
-button.v-btn.text-button {
+button.v-btn {
   &.primary {
     &:hover {
       @extend .box-shadow-15-8;

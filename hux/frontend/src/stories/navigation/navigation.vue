@@ -4,20 +4,23 @@
     floating
     :permanent="true"
     :mini-variant.sync="isMini"
-    mini-variant-width="72"
+    mini-variant-width="92"
     width="220"
     class="side-nav-bar"
   >
     <template #prepend>
       <logo
         type="logo"
-        :size="isMini ? 40 : 56"
-        class="d-flex ma-6"
+        :size="56"
+        :class="isMini ? 'd-flex ma-6 ml-5' : 'd-flex ma-6'"
         data-e2e="click-outside"
       />
       <v-menu v-model="menu" content-class="ml-n3" close-on-click offset-y>
         <template #activator="{ on }">
-          <div class="pl-4 client py-2 mb-2" v-on="on">
+          <div
+            :class="isMini ? 'pl-7 client py-2 mb-2' : 'px-4 client py-2 mb-2'"
+            v-on="on"
+          >
             <span class="d-flex align-center justify-space-between">
               <span class="d-flex align-center black--text text-h4">
                 <div v-if="isDemoMode" :class="isMini ? 'dotMini' : 'dot mr-2'">
@@ -26,15 +29,17 @@
                 <logo
                   v-else
                   :type="client.logo"
-                  :size="isMini ? 40 : 24"
+                  :size="isMini ? 38 : 24"
                   :class="isMini ? '' : 'ml-1 mr-2'"
                 />
-                <span v-if="!isMini" class="ellipsis">{{ client.name }}</span>
+                <span v-if="!isMini" class="ellipsis font-weight-regular">
+                  {{ client.name }}
+                </span>
               </span>
-              <span v-if="!isMini" class="mr-3">
+              <span v-if="!isMini" class="mr-0 pa-1">
                 <icon
                   type="chevron-down"
-                  :size="14"
+                  :size="16"
                   class="arrow-icon d-block"
                   color="black"
                   :class="{ 'menu-active rotate-icon-180': menu }"
@@ -68,16 +73,27 @@
         v-if="item.children && item.children.length > 0"
         class="list-group black--text mt-2"
       >
-        <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-6">
+        <span
+          v-if="!isMini"
+          class="
+            text-h5
+            black--text
+            text--lighten-4
+            pl-4
+            menu-parent-item
+            font-weight-bold
+          "
+        >
           {{ item.name }}
         </span>
       </div>
 
       <v-list-item
         v-if="!item.children"
-        class="pl-6 mr-2"
+        :class="{ 'pl-6 mr-2 mb-2': true, 'collapse-height pr-8': isMini }"
         :data-e2e="`nav-${item.icon}`"
         :to="item.link"
+        @click="navigate(item)"
       >
         <v-list-item-icon
           v-if="item.icon"
@@ -91,7 +107,7 @@
             color="black-lighten4"
           >
             <template #label-content>
-              <icon :type="item.icon" :size="iconSize" class="mr-0" />
+              <icon :type="item.icon" :size="iconSize" :class="iconClass" />
             </template>
             <template #hover-content>
               <span class="text-h6 error-base--text">
@@ -100,7 +116,7 @@
             </template>
           </tooltip>
         </v-list-item-icon>
-        <v-list-item-title class="black--text text-h6">
+        <v-list-item-title class="black--text text-h6 pl-1">
           {{ item.name }}
         </v-list-item-title>
       </v-list-item>
@@ -109,13 +125,16 @@
         <v-list-item
           v-for="menu in item.children"
           :key="menu.name"
-          class="pl-6 mr-2"
+          :class="{ 'pl-6 mr-2 mb-1': true, 'collapse-height': isMini }"
           :data-e2e="`nav-${menu.icon}`"
           :to="menu.link"
+          @click="navigate(menu)"
+          @mouseover="onMouseOver(menu)"
+          @mouseleave="onMouseLeave()"
         >
           <v-list-item-icon
             v-if="menu.icon"
-            class="my-3 mr-0"
+            class="my-1 mr-0"
             :class="{ 'menu-icon': !isMini }"
           >
             <tooltip
@@ -125,7 +144,7 @@
               color="black"
             >
               <template #label-content>
-                <icon :type="menu.icon" :size="iconSize" class="mr-0" />
+                <icon :type="menu.icon" :size="iconSize" :class="iconClass" />
               </template>
               <template #hover-content>
                 <span class="black--text text-h6">
@@ -134,7 +153,7 @@
               </template>
             </tooltip>
           </v-list-item-icon>
-          <v-list-item-title class="black--text text-h6">
+          <v-list-item-title class="black--text text-h6 pl-1">
             {{ menu.name }}
             <span v-if="menu.superscript" class="title-superscript">
               {{ menu.superscript }}
@@ -143,21 +162,6 @@
         </v-list-item>
       </div>
     </v-list>
-
-    <template v-if="!isMini" #append>
-      <div
-        class="
-          nav-footer
-          primary--text
-          text--darken-1 text-body-2
-          pl-4
-          pr-3
-          pb-2
-        "
-      >
-        Hux by Deloitte Digital
-      </div>
-    </template>
   </v-navigation-drawer>
 </template>
 
@@ -207,7 +211,11 @@ export default {
     },
 
     iconSize() {
-      return this.isMini ? 21 : 16
+      return this.isMini ? 40 : 24
+    },
+
+    iconClass() {
+      return this.isMini ? "pt-1 icon-padding pa-1 mr-0" : "pa-1 mr-0"
     },
 
     displayedMenuItems() {
@@ -224,6 +232,19 @@ export default {
     background-position: bottom 30px center;
   }
 
+  ::v-deep.v-navigation-drawer__content {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    .v-list {
+      .list-group {
+        .menu-parent-item {
+          color: var(--v-black-lighten6) !important;
+        }
+      }
+    }
+  }
+
   .client {
     background-color: rgba(160, 220, 255, 0.25);
     color: var(--v-black-lighten4);
@@ -232,6 +253,10 @@ export default {
 
   .v-icon {
     transition: none;
+  }
+
+  .icon-padding {
+    padding: 6px !important;
   }
 
   .v-list {
@@ -251,10 +276,10 @@ export default {
     }
     &:hover {
       svg {
-        fill: var(--v-primary-lighten6) !important;
+        fill: var(--v-primary-base) !important;
       }
       .v-list-item__title {
-        color: var(--v-primary-lighten6) !important;
+        color: var(--v-primary-base) !important;
       }
       &::before {
         opacity: 0;
@@ -269,16 +294,16 @@ export default {
 
   .v-list-item--active {
     background-color: var(--v-primary-lighten1);
-    border-left: solid 4px var(--v-primary-lighten6);
+    border-left: solid 4px var(--v-primary-base);
     border-top-right-radius: 40px;
     border-bottom-right-radius: 40px;
     padding-left: 20px !important;
 
     svg {
-      fill: var(--v-primary-lighten6) !important;
+      fill: var(--v-primary-base) !important;
     }
     .v-list-item__title {
-      color: var(--v-primary-lighten6) !important;
+      color: var(--v-primary-base) !important;
     }
     &::before {
       opacity: 0;
@@ -299,32 +324,38 @@ export default {
   // Apply this css only if icon size is 14 otherwise icon size should be 18
   .home-menu-icon {
     svg {
-      top: 30%;
+      top: 20%;
       position: absolute;
     }
   }
   .menu-icon {
     svg {
-      top: 32.89%;
+      top: 20%;
+      position: absolute;
     }
   }
 }
 .mini-home-icon {
   svg {
-    top: 8px;
+    top: 5px;
     position: absolute;
   }
 }
 .nav-footer {
   opacity: 0.8;
   height: 27px;
-  margin-top: 10px;
+  margin-top: -35px;
+  color: var(--v-success-darken1) !important;
 }
 .v-menu__content {
   @extend .box-shadow-25;
 }
 .height-fix {
   min-height: 32px;
+}
+.collapse-height {
+  min-height: 52px !important;
+  max-height: 52px !important;
 }
 .title-superscript {
   @extend .superscript;
@@ -350,7 +381,7 @@ export default {
 .ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 14ch;
+  max-width: 12ch;
   display: inline-block;
   width: 28ch;
   white-space: nowrap;

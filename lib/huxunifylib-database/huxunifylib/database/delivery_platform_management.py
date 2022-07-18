@@ -2066,6 +2066,56 @@ def _set_performance_metrics(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def _set_conversion_events(
+    database: DatabaseClient,
+    collection_name: str,
+    conversion_event_doc: dict,
+) -> dict:
+    """Helper to store conversion events.
+
+    Args:
+        database (DatabaseClient): A database client.
+        collection_name (str): Name of collection in which operation is
+            performed.
+        conversion_event_doc (dict): conversion event
+
+    Returns:
+        dict: dict containing insert_status.
+    """
+
+    platform_db = database[db_c.CONVERSIONS_DATABASE]
+    collection = platform_db[collection_name]
+
+    insert_result = {"insert_status": False}
+
+    try:
+        result = collection.insert_one(conversion_event_doc)
+        if result.acknowledged:
+            insert_result["insert_status"] = True
+
+        collection.create_index([("event_id", pymongo.ASCENDING)])
+
+        return insert_result
+    except pymongo.errors.BulkWriteError as exc:
+        for err in exc.details["writeErrors"]:
+            if err["code"] == db_c.DUPLICATE_ERR_CODE:
+                logging.warning(
+                    "Ignoring %s due to duplicate unique field!",
+                    str(err["op"]),
+                )
+                continue
+            logging.error(exc)
+            return insert_result
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return insert_result
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def set_deliverability_metrics(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
@@ -2137,6 +2187,11 @@ set_campaign_activity = partial(
     metrics_dict=None,
     start_time=None,
     end_time=None,
+)
+
+set_conversion_events = partial(
+    _set_conversion_events,
+    collection_name=db_c.EVENTS_COLLECTION,
 )
 
 
@@ -2240,6 +2295,42 @@ def _get_performance_metrics(
     return None
 
 
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def _get_conversion_events(
+    database: DatabaseClient,
+    collection_name: str,
+    event_id: str = None,
+) -> Optional[List[dict]]:
+    """Helper method to retrieve conversion events.
+
+    Args:
+        database (DatabaseClient): database client.
+        collection_name (str): Name of collection in which operation is
+            performed.
+        event_id (str): Event ID.
+
+    Returns:
+        Optional[List[dict]]: list of matched events.
+
+    Raises:
+        OperationFailure: If an exception occurs during mongo operation.
+    """
+
+    platform_db = database[db_c.CONVERSIONS_DATABASE]
+    collection = platform_db[collection_name]
+
+    metric_queries = [{db_c.OBJECT_ID: event_id}]
+
+    try:
+        return list(collection.find({"$and": metric_queries}))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+        raise
+
+
 get_deliverability_metrics = partial(
     _get_performance_metrics,
     collection_name=db_c.DELIVERABILITY_METRICS_COLLECTION,
@@ -2257,6 +2348,11 @@ get_campaign_activity = partial(
     collection_name=db_c.CAMPAIGN_ACTIVITY_COLLECTION,
     min_start_time=None,
     max_end_time=None,
+)
+
+get_conversion_events = partial(
+    _get_conversion_events,
+    collection_name=db_c.EVENTS_COLLECTION,
 )
 
 

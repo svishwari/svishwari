@@ -303,6 +303,7 @@ def update_user(
         db_c.USER_ALERTS,
         db_c.SEEN_NOTIFICATIONS,
         db_c.LAST_SEEN_ALERT_TIME,
+        db_c.USER_LAST_KNOWN_RELEASE_VERSION,
     ]
 
     # validate allowed fields, any invalid returns, raise error

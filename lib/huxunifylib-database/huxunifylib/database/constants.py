@@ -38,6 +38,8 @@ USERNAME = "username"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
+CONVERSIONS_DATABASE = "conversions"
+EVENTS_COLLECTION = "events"
 CONSTANTS_COLLECTION = "constants"
 DATA_SOURCES_COLLECTION = "data_sources"
 CDP_DATA_SOURCES_COLLECTION = "cdp_data_sources"
@@ -411,6 +413,7 @@ USER_DISPLAY_NAME = "display_name"
 USER_LAST_LOGIN = "last_login"
 USER_PROFILE_PHOTO = "profile_photo"
 USER_LOGIN_COUNT = "login_count"
+USER_LAST_KNOWN_RELEASE_VERSION = "last_known_release_version"
 USER_DASHBOARD_CONFIGURATION = "dashboard_configuration"
 USER_DEMO_CONFIG = "demo_config"
 USER_ROLE_ADMIN = "admin"
@@ -443,6 +446,7 @@ DELIVERY = "delivery"
 CUSTOMERS = "customers"
 IDR = "idr"
 TRUST_ID = "trustid"
+DATASOURCES = "datasources"
 
 DELIVERY_JOB_ID = "delivery_job_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"
@@ -534,6 +538,7 @@ CONFIGURATION_TYPE_NAVIGATION_SETTINGS = "navigation_settings"
 CONFIGURATION_TYPE_RBAC_MATRIX = "rbac_matrix"
 CONFIGURATION_FIELD_SETTINGS = "settings"
 CONFIGURATION_FIELD_CHILDREN = "children"
+CONFIGURATION_FIELD_MODULES = "modules"
 
 # Audience constants
 AUDIENCE_FILTER_CONSTANTS = "audience_filter_constants"
@@ -631,6 +636,7 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_ENABLED,
         CONFIGURATION_FIELD_ROADMAP,
         CONFIGURATION_FIELD_SETTINGS,
+        CONFIGURATION_FIELD_MODULES,
     ],
     MODELS_COLLECTION: [
         NAME,

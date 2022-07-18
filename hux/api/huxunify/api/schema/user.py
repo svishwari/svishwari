@@ -162,6 +162,9 @@ class UserSchema(Schema):
     alerts = Nested(UserAlertCategorySchema)
     seen_notifications = Bool(default=False)
     last_seen_alert_time = DateTimeWithZ(allow_none=True)
+    is_user_new = Bool(required=False)
+    show_latest_release_notes = Bool(required=False)
+    link_latest_release_notes = Str(required=False)
 
 
 class RequestedUserSchema(Schema):

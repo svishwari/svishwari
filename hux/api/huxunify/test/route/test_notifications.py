@@ -34,6 +34,17 @@ class TestNotificationRoutes(RouteTestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch(
+            "huxunify.api.route.notifications.collection_management.get_document",
+            return_value={
+                api_c.MODULES: {
+                    api_c.DESTINATIONS: False,
+                    api_c.MODELS: False,
+                    api_c.DATASOURCES: False,
+                }
+            },
+        ).start()
+
         self.test_username = "test_user"
 
         notifications = [

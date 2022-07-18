@@ -14,6 +14,9 @@ export default {
     items: { control: "array" },
     onSelect: { action: "Selected!" },
     isBorder: { control: "boolean" },
+    isDisabled: { control: "boolean" },
+    isHeader: { control: "boolean" },
+    isFooter: { control: "boolean" },
     color: {
       table: {
         disable: true,
@@ -60,6 +63,9 @@ export default {
     footer: "Text",
     isBorder: true,
     type: "inline",
+    isDisabled: false,
+    isHeader: true,
+    isFooter: true,
   },
 
   parameters: {
@@ -87,10 +93,10 @@ const Template = (args, { argTypes }) => ({
       v-on="$props"
       @on-select="onSelectMenuItem">
         <template #header>
-          <div class="text-body-2 pl-4 py-2 font-weight-semi-bold header-class"> ${args.header} </div>
+        ${args.header}
         </template>
         <template #footer>
-          <div class="text-body-3 pl-4 py-2 footer-class"> ${args.footer} </div>
+          ${args.footer}
         </template>
     <text-menu/>
   `,
