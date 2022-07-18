@@ -272,7 +272,10 @@ class Decisioning:
                     api_c.DESCRIPTION: model_info.model_metadata.description,
                     api_c.STATUS: model_info.model_metadata.status.title(),
                     api_c.LATEST_VERSION: model_info.model_metrics.get(
-                        api_c.VERSION_NUMBER
+                        api_c.VERSION_NUMBER,
+                        model_info.__dict__.get(
+                            api_c.VERSION, "No Version Found"
+                        ),
                     ),
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
