@@ -303,6 +303,7 @@ export default {
       params: {},
       notHistogramKeys: ["gender", "email", "Country", "State", "City", "Zip"],
       loaderValue: false,
+      selected: {},
     }
   },
   computed: {
@@ -359,12 +360,18 @@ export default {
       attributesData: "audiences/getDensityChartData",
     }),
     sliderLabel(attribute, value) {
-      if (attribute.selected == "value") {
+      if (!this.selected[attribute.key]) {
+        this.selected[attribute.key] = "value"
+      }
+      if (attribute.selected) {
+        this.selected[attribute.key] = attribute.selected
+      }
+      if (this.selected[attribute.key] == "value") {
         if (attribute.key === "ltv_predicted") {
           return `$${value}`
         }
         return value
-      } else if (attribute.selected == "percentage") {
+      } else if (this.selected[attribute.key] == "percentage") {
         return `${(value / (attribute.max - attribute.min)) * 100} %`
       }
     },
