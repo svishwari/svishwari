@@ -33,11 +33,11 @@
     </template>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <template>
-      <div v-if="!loading" class="d-flex main-content">
+      <div class="d-flex main-content">
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
-          <overview :data="trustIdOverview" />
+          <overview v-if="!loading" :data="trustIdOverview" />
           <v-tabs v-model="tabOption" class="mt-4">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
