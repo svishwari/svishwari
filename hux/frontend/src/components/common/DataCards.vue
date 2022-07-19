@@ -9,6 +9,9 @@
     >
       <template #default="props">
         <!-- header -->
+        <v-card
+            class="header-alignment"
+          >
         <v-row
           align="center"
           no-gutters
@@ -77,6 +80,7 @@
             </div>
           </v-col>
         </v-row>
+        </v-card>
 
         <!-- row -->
         <div v-for="(item, index) in Object.values(props.items)" :key="index">
@@ -249,5 +253,9 @@ export default {
   height: 60px;
   display: flex;
   align-items: center;
+}
+.header-alignment {
+  box-shadow: none !important;
+  background-color: transparent !important;
 }
 </style>
