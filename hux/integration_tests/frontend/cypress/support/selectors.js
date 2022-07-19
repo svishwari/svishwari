@@ -239,6 +239,8 @@ export default {
     emailOverview: '[data-e2e="email-overview"]',
     accessActions: '[data-e2e="access-actions"]',
     actions: '[data-e2e="actions"]',
+    deleteAudience: '[data-e2e="delete-audience"]',
+    addAudienceDrawerName: '[data-e2e="add-audience-drawer-name"]',
   },
 
   //Customer Profiles
