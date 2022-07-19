@@ -799,6 +799,7 @@ export default {
       try {
         await this.addNewSegment(event)
         this.$refs.comparisonChart.initializeComparisonChart()
+        this.switchStatus()
       } finally {
         this.loading = false
         this.isFilterToggled = !this.isFilterToggled
