@@ -479,7 +479,7 @@ def get_overview(
     platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
 
-    pipeline = overview_pipeline
+    pipeline = [x for x in overview_pipeline]
     if filters:
         pipeline.insert(0, frame_match_query(filters))
 
