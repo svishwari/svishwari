@@ -12,7 +12,10 @@ customer-profile-api|[![Codefresh build status](https://g.codefresh.io/api/badge
 argo-cd| - | - |[![ArgoCD health status](https://argocd.hux-unified-dev1.in/applications/unified-ui-huxui-main-use1-hux-unified-dev1?resource=&operation=false)]| - |
 
 ## RTD Documentation (most up to date)
-https://docs.hux.deloitte.com/docs/hux-unified/en/develop/
+[Unified Documentation](https://docs.hux.deloitte.com/docs/hux-unified/en/develop/)
+
+## Users Email List
+[Email List](https://confluence.hux.deloitte.com/display/HUS/RC1+Users+Email+List)
 
 # Environments
 Hux unified solutions and other dependent environment URLs
@@ -43,7 +46,7 @@ Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.
 
 ### Azure Environments - VPN Setup & Access
 * To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN).
-  * To connect to HUSDEV2, use [this](https://github.com/DeloitteHux/vpn-config/blob/master/Azure-VPN/husdev2-eu2-vng.ovpn) VPN configuration file 
+  * To connect to HUSDEV2, use [this](https://github.com/DeloitteHux/vpn-config/blob/master/Azure-VPN/husdev2-eu2-vng.ovpn) VPN configuration file
   * To connect to LILDEV, use [this](https://github.com/DeloitteHux/vpn-config/blob/master/Azure-CDM-VPN/lildev1.ovpn) VPN configuration file
 * Instructions to configure OpenVPN client on Windows or Mac systems can be found [here](https://confluence.hux.deloitte.com/display/TO/How-to%3A+Configure+the+OpenVPN+Client) on confluence.
 * Instructions to connect to an Azure environment VPN can be found [here](https://confluence.hux.deloitte.com/display/HUS/Azure+Environment+Access) on confluence once the OpenVPN client setup is done.

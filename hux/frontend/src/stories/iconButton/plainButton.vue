@@ -3,14 +3,14 @@
     text
     plain
     :ripple="false"
-    class="primary--text new-b3"
+    class="primary--text new-b2"
     data-e2e="drawerToggle"
     @click.native="onClick()"
   >
     <icon
       v-if="raised"
       type="Add"
-      size="17"
+      :size="iconSize"
       color="primary-lighten7"
       class="mr-2"
       @click.native="onClick()"
@@ -68,7 +68,7 @@ export default {
     iconSize: {
       type: Number,
       required: false,
-      default: 15,
+      default: 24,
     },
   },
   data() {
