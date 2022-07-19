@@ -109,7 +109,7 @@ export default {
     iconSize: {
       type: Number,
       required: false,
-      default: 15,
+      default: 16,
     },
     iconClass: {
       type: String,

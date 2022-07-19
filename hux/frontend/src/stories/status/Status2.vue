@@ -11,7 +11,7 @@
       />
       <span v-if="showLabel" class="new-b4">{{ status | TitleCase }} </span>
     </span>
-    <v-menu v-else bottom offset-y open-on-hover>
+    <v-menu v-else bottom offset-y open-on-hover content-class="rounded-md">
       <template #activator="{ on }">
         <v-btn
           :width="iconSize"
@@ -53,7 +53,7 @@
       />
       <span v-if="showLabel">{{ status }} </span>
     </span>
-    <v-menu v-else bottom offset-y open-on-hover>
+    <v-menu v-else bottom offset-y open-on-hover content-class="rounded-md">
       <template #activator="{ on }">
         <v-btn
           :width="iconSize"
@@ -97,7 +97,7 @@
         {{ status | TitleCase }}
       </span>
     </span>
-    <v-menu v-else bottom offset-y open-on-hover>
+    <v-menu v-else bottom offset-y open-on-hover content-class="rounded-md">
       <template #activator="{ on }">
         <v-btn
           :width="iconSize"
@@ -132,7 +132,7 @@
       <icon :size="iconSize" type="failed-error" class="mr-2" />
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
-    <v-menu v-else bottom offset-y open-on-hover>
+    <v-menu v-else bottom offset-y open-on-hover content-class="rounded-md">
       <template #activator="{ on }">
         <icon :size="iconSize" type="failed-error" class="mr-2" v-on="on" />
       </template>
@@ -160,7 +160,7 @@
         {{ status | TitleCase }}
       </span>
     </span>
-    <v-menu v-else bottom offset-y open-on-hover>
+    <v-menu v-else bottom offset-y open-on-hover content-class="rounded-md">
       <template #activator="{ on }">
         <v-btn
           :width="iconSize"
@@ -202,7 +202,7 @@
       />
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
-    <v-menu v-else bottom offset-y open-on-hover>
+    <v-menu v-else bottom offset-y open-on-hover content-class="rounded-md">
       <template #activator="{ on }">
         <v-btn
           :width="iconSize"
@@ -244,7 +244,7 @@
       />
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
-    <v-menu v-else bottom offset-y open-on-hover>
+    <v-menu v-else bottom offset-y open-on-hover content-class="rounded-md">
       <template #activator="{ on }">
         <v-btn
           :width="iconSize"
@@ -333,6 +333,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+$menu-content-border-radius: 8px !important;
 .v-icon,
 .v-btn--icon {
   cursor: default !important;

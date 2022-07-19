@@ -67,6 +67,6 @@ export default [
     title: "Forms",
     weight: "400",
     spacing: "",
-    lineHeight: "20px",
+    lineHeight: "16px",
   },
 ]

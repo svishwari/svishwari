@@ -11,7 +11,7 @@
           v-else-if="currentStep <= step + 1"
           :class="
             currentStep === step + 1
-              ? 'active step-circle'
+              ? 'box-shadow-15-8 active step-circle'
               : 'in-active step-circle'
           "
         >
