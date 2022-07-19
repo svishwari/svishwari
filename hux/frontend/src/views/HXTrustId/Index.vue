@@ -30,15 +30,15 @@
           </div>
         </template>
       </page-header>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
+    <v-progress-linear :active="loading" :indeterminate="loading" />
     <template>
-      <div class="d-flex">
+      <div v-if="!loading" class="d-flex main-content">
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
-          <overview v-if="!loading" :data="trustIdOverview" />
-          <v-tabs v-if="!loading" v-model="tabOption" class="mt-4">
+          <overview :data="trustIdOverview" />
+          <v-tabs v-model="tabOption" class="mt-4">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
               <v-tab
@@ -143,12 +143,7 @@
                       v-model="switchSegment"
                       false-color="var(--v-black-lighten4)"
                       :width="'60px'"
-                      :is-disabled="
-                        (multipleSegments && onlyDefault) ||
-                        (multipleSegments && !onlyDefault)
-                          ? false
-                          : true
-                      "
+                      :is-disabled="switchStatus()"
                       :switch-labels="switchLabel"
                       @change="toggleDefaultSwitch($event)"
                     />
@@ -635,6 +630,8 @@ export default {
           key: "segment_filters",
           label: "Segment filters",
           col: 4,
+          tooltip:
+            "Social or behavioral difficulty or disability (e.g. associated with autism, attention deficit disorder or Aspergers’ syndrome)",
         },
       ]
 
@@ -835,7 +832,15 @@ export default {
           type: "error",
           message: `${error.response.data.message}`,
         })
+      } finally {
+        this.switchStatus()
       }
+    },
+    switchStatus() {
+      let currentSegments = this.getSelectedSegment.segments
+      let multipleSegments = currentSegments.some((data) => !data.default)
+      let onlyDefault = currentSegments.some((data) => data.default)
+      return multipleSegments && (onlyDefault || !onlyDefault) ? false : true
     },
   },
 }
@@ -846,7 +851,11 @@ export default {
   .hx-trust-id-wrapper {
     ::v-deep .container {
       padding-top: 0px !important;
-      padding-bottom: 0px !important;
+      padding: 0px !important;
+    }
+    .main-content {
+      padding: 30px !important;
+      padding-top: 0px !important;
     }
     ::v-deep .v-breadcrumbs {
       li {
