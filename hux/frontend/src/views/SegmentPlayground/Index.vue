@@ -558,12 +558,14 @@ export default {
             value: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
             ].operator
-              ? typeof this.audience.attributeRules[ruleIndex].conditions[
+              ? this.audience.attributeRules[ruleIndex].conditions[
                   conditionIndex
-                ].text == "object"
-                ? this.audience.attributeRules[ruleIndex].conditions[
-                    conditionIndex
-                  ].text.text
+                ].attribute.type == "text"
+                ? [
+                    this.audience.attributeRules[ruleIndex].conditions[
+                      conditionIndex
+                    ].text,
+                  ]
                 : this.audience.attributeRules[ruleIndex].conditions[
                     conditionIndex
                   ].text

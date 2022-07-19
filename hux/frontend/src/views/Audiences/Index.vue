@@ -861,6 +861,7 @@ export default {
         {
           title: "Clone audience",
           isDisabled: false,
+          isHidden: !this.getAccess("audience", "create"),
           onClick: () => {
             this.initiateClone(audience.id)
           },
