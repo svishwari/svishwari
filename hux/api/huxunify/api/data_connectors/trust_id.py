@@ -122,6 +122,66 @@ def aggregate_attributes(survey_responses: list) -> dict:
     return attribute_aggregated_values
 
 
+def get_trust_id_overview_deprecated(survey_responses: list) -> dict:
+    """Fetch trust id overview data
+
+    Args:
+        survey_responses (list): List of survey responses
+
+    Returns:
+        (dict): Trust ID overview data
+    """
+    aggregated_attributes = aggregate_attributes(survey_responses)
+
+    overview_data = {
+        db_c.FACTORS: [
+            {
+                api_c.FACTOR_NAME: factor_name,
+                api_c.FACTOR_SCORE: int(
+                    (
+                        (
+                            factor_values.get(api_c.AGREE, 0)
+                            - factor_values.get(api_c.DISAGREE, 0)
+                        )
+                        / len(survey_responses)
+                    )
+                    * 100
+                ),
+                api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
+                    factor_name
+                ],
+                api_c.OVERALL_CUSTOMER_RATING: {
+                    api_c.TOTAL_CUSTOMERS: len(survey_responses),
+                    api_c.RATING: {
+                        customer_rating: {
+                            api_c.COUNT: factor_values.get(customer_rating, 0),
+                            api_c.PERCENTAGE: round(
+                                factor_values.get(customer_rating, 0)
+                                / len(survey_responses),
+                                4,
+                            ),
+                        }
+                        for customer_rating in api_c.RATING_MAP.values()
+                    },
+                },
+            }
+            for factor_name, factor_values in aggregated_attributes.items()
+        ]
+    }
+
+    overview_data[api_c.TRUST_ID_SCORE] = (
+        int(
+            statistics.mean(
+                [x[api_c.FACTOR_SCORE] for x in overview_data[db_c.FACTORS]]
+            )
+        )
+        if overview_data.get(db_c.FACTORS)
+        else 0
+    )
+
+    return overview_data
+
+
 def get_trust_id_overview(database: DatabaseClient) -> dict:
     """Fetch trust id overview data
 
@@ -258,7 +318,9 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
         )
         overview_data[
             segment_data[api_c.SEGMENT_NAME]
-        ] = get_trust_id_overview(segment_data[api_c.SURVEY_RESPONSES])
+        ] = get_trust_id_overview_deprecated(
+            segment_data[api_c.SURVEY_RESPONSES]
+        )
 
         for factor_name in api_c.LIST_OF_FACTORS:
             if (

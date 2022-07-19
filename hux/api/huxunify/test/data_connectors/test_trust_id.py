@@ -91,8 +91,7 @@ class TrustIDTest(TestCase):
     def test_get_trust_id_overview(self):
         """Test get_trust_id_overview method."""
 
-        survey_responses = get_survey_responses(self.database)
-        overview = get_trust_id_overview(survey_responses)
+        overview = get_trust_id_overview(self.database)
         self.assertEqual(True, True)
 
         # Ensure all factors in list
