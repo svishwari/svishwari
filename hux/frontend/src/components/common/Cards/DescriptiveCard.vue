@@ -221,7 +221,10 @@ export default {
   },
 
   mounted() {
-    if (document.getElementById("menu-options-card").children.length == 0) {
+    if (
+      document.getElementById("menu-options-card") &&
+      document.getElementById("menu-options-card").children.length == 0
+    ) {
       document.getElementById("menu-icon-card").style.cssText =
         "display:none !important"
     } else {
