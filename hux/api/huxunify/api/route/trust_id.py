@@ -1,5 +1,7 @@
 # pylint: disable=no-self-use,disable=unused-argument
 """Paths for TrustID APIs."""
+import logging
+import time
 from http import HTTPStatus
 from typing import Tuple
 
@@ -94,15 +96,21 @@ class TrustIdOverview(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
+        database = get_db_client()
         trust_id_overview = get_cache_entry(
-            get_db_client(), f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}"
+            database, f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}"
         )
         if not trust_id_overview:
-            trust_id_overview = get_trust_id_overview(get_db_client())
+            start_time = time.perf_counter()
+            trust_id_overview = get_trust_id_overview(database)
+            logging.info(
+                "Successfully fetched TrustID overview in %s secs.",
+                round(time.perf_counter() - start_time, 3),
+            )
 
             # Cache TrustID overview data for 7 days
             create_cache_entry(
-                database=get_db_client(),
+                database=database,
                 cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}",
                 cache_value=trust_id_overview,
             )
@@ -151,11 +159,13 @@ class TrustIdAttributes(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
+        database = get_db_client()
         trust_id_attributes = get_cache_entry(
-            get_db_client(), f"{api_c.TRUST_ID_TAG}.{api_c.ATTRIBUTES}"
+            database, f"{api_c.TRUST_ID_TAG}.{api_c.ATTRIBUTES}"
         )
         if not trust_id_attributes:
-            survey_responses = get_survey_responses(get_db_client())
+            start_time = time.perf_counter()
+            survey_responses = get_survey_responses(database)
 
             trust_id_attributes = sorted(
                 sorted(
@@ -166,10 +176,14 @@ class TrustIdAttributes(SwaggerView):
                 key=lambda x: x[api_c.FACTOR_NAME],
                 reverse=False,
             )
+            logging.info(
+                "Successfully fetched TrustID attributes in %s secs.",
+                round(time.perf_counter() - start_time, 3),
+            )
 
             # Cache TrustID attribute data for 7 days
             create_cache_entry(
-                database=get_db_client(),
+                database=database,
                 cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.ATTRIBUTES}",
                 cache_value=trust_id_attributes,
             )
