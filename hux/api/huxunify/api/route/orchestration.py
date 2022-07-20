@@ -1690,7 +1690,7 @@ class AudienceRules(SwaggerView):
                     "contact_preference": {
                         "name": "Contact preference",
                         "type": "list",
-                        "options": [{"email": "Email", "text": "Text"}],
+                        "options": [{"email": "Email"}, {"text": "Text"}],
                     },
                     "email": {
                         "name": "Email",
