@@ -10,7 +10,7 @@ from huxunify.api.data_connectors.trust_id import (
     get_trust_id_overview,
     get_trust_id_comparison_data,
 )
-from huxunify.api.route.utils import populate_trust_id_segments
+from huxunify.api.data_connectors.trust_id import populate_trust_id_segments
 
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.survey_metrics_management import (
@@ -91,8 +91,7 @@ class TrustIDTest(TestCase):
     def test_get_trust_id_overview(self):
         """Test get_trust_id_overview method."""
 
-        survey_responses = get_survey_responses(self.database)
-        overview = get_trust_id_overview(survey_responses)
+        overview = get_trust_id_overview(self.database)
         self.assertEqual(True, True)
 
         # Ensure all factors in list
@@ -129,12 +128,12 @@ class TrustIDTest(TestCase):
 
         self.assertEqual(
             t_c.TRUST_ID_SAMPLE_USER_SEGMENT[0].get(api_c.SEGMENT_NAME),
-            comparison_data[1].get(api_c.SEGMENTS)[1].get(api_c.SEGMENT_NAME),
+            comparison_data[1].get(api_c.SEGMENTS)[0].get(api_c.SEGMENT_NAME),
         )
 
         self.assertEqual(
             t_c.TRUST_ID_SAMPLE_USER_SEGMENT[0].get(api_c.SEGMENT_FILTERS),
             comparison_data[1]
-            .get(api_c.SEGMENTS)[1]
+            .get(api_c.SEGMENTS)[0]
             .get(api_c.SEGMENT_FILTERS),
         )

@@ -26,6 +26,7 @@ CONFIGURATION = "configuration"
 SIZE = "size"
 DOCUMENTS = "documents"
 DESCRIPTION = "description"
+SHORT_DESCRIPTION = "short_description"
 ICON = "icon"
 ACCESS_LEVEL = "access_level"
 
@@ -259,6 +260,7 @@ SURVEY_ID = "survey_id"
 SURVEY_RESPONSES = "responses"
 SURVEY_RESPONSE_DATE = "response_date"
 TRUST_ID_SEGMENTS = "trust_id_segments"
+TRUST_ID_FILTERS = "trust_id_filters"
 SEGMENT_NAME = "segment_name"
 FACTORS = "factors"
 ATTRIBUTES = "attributes"
@@ -537,6 +539,7 @@ CONFIGURATION_TYPE_BUSINESS_SOLUTION = "business_solution"
 CONFIGURATION_TYPE_NAVIGATION_SETTINGS = "navigation_settings"
 CONFIGURATION_TYPE_RBAC_MATRIX = "rbac_matrix"
 CONFIGURATION_FIELD_SETTINGS = "settings"
+CONFIGURATION_FIELD_FILTERS = "filters"
 CONFIGURATION_FIELD_CHILDREN = "children"
 CONFIGURATION_FIELD_MODULES = "modules"
 
@@ -637,6 +640,7 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_ROADMAP,
         CONFIGURATION_FIELD_SETTINGS,
         CONFIGURATION_FIELD_MODULES,
+        CONFIGURATION_FIELD_FILTERS,
     ],
     MODELS_COLLECTION: [
         NAME,
