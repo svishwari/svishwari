@@ -47,7 +47,7 @@ def integration_test_job() -> Response:
     # get integration test jobs from the database.
     return {
         api_c.DELIVERIES: {
-            api_c.PENDING_JOBS: get_documents(
+            api_c.ORCH_INTEGRATION_TEST: get_documents(
                 get_db_client(),
                 db_c.DELIVERY_JOBS_COLLECTION,
                 {db_c.USERNAME: db_c.ORCH_INTEGRATION_TEST_USER},
