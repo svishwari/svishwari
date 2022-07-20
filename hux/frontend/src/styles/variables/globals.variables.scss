@@ -119,7 +119,7 @@ $rounded: (
   0: 0,
   null: $border-radius-root,
   "sm": $border-radius-root * 0.5,
-  "md": $border-radius-root * 1,
+  "md": $border-radius-root * 2,
   "lg": $border-radius-root * 3,
   "xl": $border-radius-root * 6,
   "pill": 9999px,
@@ -167,7 +167,7 @@ $rounded: (
 }
 .new-h3 {
   font-size: 20px;
-  line-height: 40px;
+  line-height: 24px;
   font-weight: 700;
   letter-spacing: 0.15px;
 }
@@ -209,7 +209,7 @@ $rounded: (
 }
 .new-secondary-label {
   font-size: 12px;
-  line-height: 20px;
+  line-height: 16px;
   font-weight: 400;
   letter-spacing: 0;
 }

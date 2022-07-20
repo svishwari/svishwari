@@ -25,7 +25,7 @@ const Template = (args, { argTypes }) => ({
     <template #label-content>
       <icon
         type="Informative"
-        :size="20"
+        :size="16"
         color="white-base"
         outline
         borderColor="primary-base"

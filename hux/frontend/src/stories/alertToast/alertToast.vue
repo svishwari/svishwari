@@ -111,5 +111,7 @@ $alert-border-radius: 25px;
 }
 .alert-centered {
   margin: 0 auto;
+  border-width: 1px !important;
+  border-radius: 5px !important;
 }
 </style>

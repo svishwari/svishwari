@@ -108,6 +108,7 @@ export default {
 .banner-container {
   display: flex;
   justify-content: center;
+  border-radius: 0px !important;
 }
 .banner-label {
   color: var(--v-black-base);
