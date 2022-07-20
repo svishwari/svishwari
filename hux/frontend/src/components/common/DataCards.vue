@@ -9,74 +9,77 @@
     >
       <template #default="props">
         <!-- header -->
-        <v-row
-          align="center"
-          no-gutters
-          :class="{ 'pl-2': bordered, 'data-card-headers': true }"
-        >
-          <v-col
-            v-for="field in fields"
-            :key="field.label"
-            :cols="field.col"
-            :class="[headerClass, { center: field.center }]"
+        <v-card class="header-alignment">
+          <v-row
+            align="center"
+            no-gutters
+            :class="{ 'pl-2': bordered, 'data-card-headers': true }"
           >
-            <tooltip v-if="field.tooltip">
-              <template #label-content>
-                <div class="px-4 py-2" :class="{ 'ta-center': field.center }">
-                  <span class="text-body-2 black--text text--lighten-4">
-                    {{ field.label }}
-                    <v-btn
-                      v-if="field.sortable"
-                      icon
-                      x-small
-                      @click="setSortBy(field.key)"
-                    >
-                      <v-icon
-                        x-small
-                        :class="{
-                          'primary--text text--lighten-8': isSortedBy(
-                            field.key
-                          ),
-                          'rotate-icon-180': isSortedBy(field.key) && sortDesc,
-                        }"
-                      >
-                        mdi-arrow-down
-                      </v-icon>
-                    </v-btn>
-                  </span>
-                </div>
-              </template>
-              <template #hover-content>
-                {{ field.tooltip }}
-              </template>
-            </tooltip>
-            <div
-              v-else
-              class="px-4 py-2"
-              :class="{ 'ta-center': field.center }"
+            <v-col
+              v-for="field in fields"
+              :key="field.label"
+              :cols="field.col"
+              :class="[headerClass, { center: field.center }]"
             >
-              <span class="text-body-2 black--text text--lighten-4">
-                {{ field.label }}
-                <v-btn
-                  v-if="field.sortable"
-                  icon
-                  x-small
-                  @click="setSortBy(field.key)"
-                >
-                  <v-icon
+              <tooltip v-if="field.tooltip">
+                <template #label-content>
+                  <div class="px-4 py-2" :class="{ 'ta-center': field.center }">
+                    <span class="text-body-2 black--text text--lighten-4">
+                      {{ field.label }}
+                      <v-btn
+                        v-if="field.sortable"
+                        icon
+                        x-small
+                        @click="setSortBy(field.key)"
+                      >
+                        <v-icon
+                          x-small
+                          :class="{
+                            'primary--text text--lighten-8': isSortedBy(
+                              field.key
+                            ),
+                            'rotate-icon-180':
+                              isSortedBy(field.key) && sortDesc,
+                          }"
+                        >
+                          mdi-arrow-down
+                        </v-icon>
+                      </v-btn>
+                    </span>
+                  </div>
+                </template>
+                <template #hover-content>
+                  {{ field.tooltip }}
+                </template>
+              </tooltip>
+              <div
+                v-else
+                class="px-4 py-2"
+                :class="{ 'ta-center': field.center }"
+              >
+                <span class="text-body-2 black--text text--lighten-4">
+                  {{ field.label }}
+                  <v-btn
+                    v-if="field.sortable"
+                    icon
                     x-small
-                    :class="{
-                      'primary--text text--lighten-8': isSortedBy(field.key),
-                      'rotate-icon-180': isSortedBy(field.key) && sortDesc,
-                    }"
+                    @click="setSortBy(field.key)"
                   >
-                    mdi-arrow-down
-                  </v-icon>
-                </v-btn>
-              </span>
-            </div>
-          </v-col>
-        </v-row>
+                    <v-icon
+                      x-small
+                      :class="{
+                        'primary--text text--lighten-8': isSortedBy(field.key),
+                        'rotate-icon-180': isSortedBy(field.key) && sortDesc,
+                      }"
+                    >
+                      mdi-arrow-down
+                    </v-icon>
+                  </v-btn>
+                </span>
+              </div>
+            </v-col>
+          </v-row>
+        </v-card>
 
         <!-- row -->
         <div v-for="(item, index) in Object.values(props.items)" :key="index">
@@ -249,5 +252,9 @@ export default {
   height: 60px;
   display: flex;
   align-items: center;
+}
+.header-alignment {
+  box-shadow: none !important;
+  background-color: transparent !important;
 }
 </style>
