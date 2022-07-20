@@ -57,6 +57,7 @@
                 </tooltip>
               </v-list-item>
               <v-list-item
+                v-if="getAccess('engagements', 'update_one')"
                 :disabled="engagementData.status == 'Inactive'"
                 @click="inactiveEngagement()"
               >

@@ -41,7 +41,12 @@
           </template>
         </delivery-details>
       </div>
-      <v-list dense class="add-engagement ma-0 pa-0 py-2" :height="22">
+      <v-list
+        v-if="getAccess('audience', 'add_engagement_to_audience')"
+        dense
+        class="add-engagement ma-0 pa-0 py-2"
+        :height="22"
+      >
         <v-list-item>
           <hux-icon type="plus" :size="16" color="primary" class="mr-4 ml-2" />
           <v-btn
@@ -117,7 +122,10 @@ export default {
           id: 5,
           title: "Remove engagement",
           active: false,
-          isHidden: !this.getAccess("engagements", "delete_one"),
+          isHidden: !this.getAccess(
+            "engagements",
+            "remove_engagement_from_audience"
+          ),
         },
       ],
       destinationMenuOptions: [
