@@ -216,10 +216,9 @@ def get_trust_id_overview_data(
                         )
                         * 100
                     ),
-                    api_c.FACTOR_DESCRIPTION: factor_ratings.get(
-                        api_c.DESCRIPTION,
-                        api_c.FACTOR_DESCRIPTION_MAP[factor_name],
-                    ),
+                    api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
+                        factor_name
+                    ],
                     api_c.OVERALL_CUSTOMER_RATING: factor_ratings,
                 }
             )

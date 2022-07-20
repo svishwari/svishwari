@@ -1,3 +1,4 @@
+# pylint:disable=too-many-lines
 """This module houses all aggregation pipelines."""
 
 trust_id_overview_pipeline = [

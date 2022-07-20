@@ -107,7 +107,7 @@ class TrustIdOverview(SwaggerView):
                 round(time.perf_counter() - start_time, 3),
             )
 
-            # Cache TrustID overview data for 7 days
+            # Cache TrustID overview data
             create_cache_entry(
                 database=database,
                 cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}",
