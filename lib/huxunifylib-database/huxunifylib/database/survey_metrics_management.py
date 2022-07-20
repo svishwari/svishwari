@@ -218,7 +218,7 @@ def get_survey_responses(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_overview(
+def get_trust_id_overview(
     database: DatabaseClient,
     filters: list = None,
 ) -> Union[dict, None]:
@@ -232,8 +232,9 @@ def get_overview(
         Union[dict, None]: Dict of survey responses overview, default None.
     """
 
-    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.SURVEY_METRICS_COLLECTION
+    ]
 
     pipeline = trust_id_overview_pipeline
     if filters:
@@ -252,7 +253,7 @@ def get_overview(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_attributes(
+def get_trust_id_attributes(
     database: DatabaseClient,
     filters: list = None,
 ) -> Union[dict, None]:
@@ -265,8 +266,9 @@ def get_attributes(
     Returns:
         Union[dict, None]: Dict of survey responses overview, default None.
     """
-    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.SURVEY_METRICS_COLLECTION
+    ]
 
     pipeline = trust_id_attribute_ratings_pipeline
     if filters:

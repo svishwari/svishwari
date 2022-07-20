@@ -7,8 +7,8 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.collection_management import get_document
 from huxunifylib.database.survey_metrics_management import (
     get_survey_responses,
-    get_overview,
-    get_attributes,
+    get_trust_id_overview,
+    get_trust_id_attributes,
 )
 from huxunify.api import constants as api_c
 
@@ -185,7 +185,7 @@ def get_trust_id_overview_deprecated(survey_responses: list) -> dict:
     return overview_data
 
 
-def get_trust_id_overview(
+def get_trust_id_overview_data(
     database: DatabaseClient, filters: list = None
 ) -> dict:
     """Fetch trust id overview data
@@ -197,7 +197,7 @@ def get_trust_id_overview(
     Returns:
         (dict): Trust ID overview data
     """
-    overview = get_overview(database, filters)
+    overview = get_trust_id_overview(database, filters)
 
     trust_id_overview = {api_c.FACTORS: []}
     for factor_name, factor_ratings in overview.items():
@@ -305,7 +305,7 @@ def get_trust_id_attributes_deprecated(survey_responses: list) -> list:
     return trust_id_attributes
 
 
-def get_trust_id_attributes(
+def get_trust_id_attributes_data(
     database: DatabaseClient, filters: list = None
 ) -> list:
     """Get trust id attribute details
@@ -325,7 +325,7 @@ def get_trust_id_attributes(
         {"type": db_c.TRUST_ID_ATTRIBUTES},
     )[db_c.ATTRIBUTES]
 
-    trust_id_attribute_ratings = get_attributes(database, filters)
+    trust_id_attribute_ratings = get_trust_id_attributes(database, filters)
 
     for key, value in trust_id_attributes.items():
         for ind, attribute in enumerate(value):

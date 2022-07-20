@@ -91,6 +91,7 @@ class TrustIdAttributesSchema(Schema):
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
     attribute_description = Str(required=True, example="Good Quality")
+    attribute_short_description = Str(required=True, example="Good Quality")
     overall_customer_rating = Nested(OverallCustomerRatingSchema)
 
 

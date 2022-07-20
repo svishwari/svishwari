@@ -13,7 +13,6 @@ from huxunifylib.database.cache_management import (
     get_cache_entry,
     create_cache_entry,
 )
-from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.user_management import (
     get_user_trust_id_segments,
     add_user_trust_id_segments,
@@ -23,10 +22,9 @@ from huxunifylib.database.user_management import (
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.trust_id import (
     populate_trust_id_segments,
-    get_trust_id_attributes_deprecated,
-    get_trust_id_overview,
+    get_trust_id_overview_data,
     get_trust_id_comparison_data,
-    get_trust_id_attributes,
+    get_trust_id_attributes_data,
 )
 from huxunify.api.route.decorators import (
     secured,
@@ -103,7 +101,7 @@ class TrustIdOverview(SwaggerView):
         )
         if not trust_id_overview:
             start_time = time.perf_counter()
-            trust_id_overview = get_trust_id_overview(database)
+            trust_id_overview = get_trust_id_overview_data(database)
             logging.info(
                 "Successfully fetched TrustID overview in %s secs.",
                 round(time.perf_counter() - start_time, 3),
@@ -142,7 +140,7 @@ class TrustIdAttributes(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
 
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves Trust ID trust_id_attributes data.
@@ -168,7 +166,7 @@ class TrustIdAttributes(SwaggerView):
             start_time = time.perf_counter()
             trust_id_attributes = sorted(
                 sorted(
-                    get_trust_id_attributes(database),
+                    get_trust_id_attributes_data(database),
                     key=lambda x: x[api_c.ATTRIBUTE_SCORE],
                     reverse=True,
                 ),
