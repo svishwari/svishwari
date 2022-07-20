@@ -4,6 +4,7 @@ from unittest import TestCase
 import pytest
 import requests
 from conftest import Crud
+from huxunify.api.prometheus import record_test_result
 
 
 class TestApplications(TestCase):
@@ -11,6 +12,10 @@ class TestApplications(TestCase):
 
     APPLICATIONS = "applications"
     COLLECTION = "applications"
+
+    @record_test_result("GET /api/v1/audiences")
+    def test_example(self):
+        self.assertEqual(0, 1)
 
     def test_get_all_applications(self):
         """Test get all applications"""

@@ -148,6 +148,55 @@ def record_health_status(connection: Connections) -> object:
     return wrapper
 
 
+def record_test_result(route: str) -> object:
+    """Purpose of this decorator is for recording the health status
+    metrics for the various services
+
+    Example: @record_health_status(ConnectionHealth.CONNECTION_NAME)
+
+    Args:
+        route (str): the route name.
+
+    Returns:
+        wrapper: returns the wrapped decorator function.
+    """
+
+    def wrapper(in_function: object) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+            Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for recording health status metrics.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+            print("Running metric recording function!!!")
+            try:
+                in_function(*args, **kwargs)
+            except Exception as exc:
+                print("Test failed so i got here!!!")
+                raise exc
+
+            print("Test passed !!!!")
+            # health_check_metrics.labels(name=connection.value).set(status[0])
+            # return status
+
+        return decorator
+
+    return wrapper
+
+
 def get_routes(app: Flask) -> list:
     """Gets the routes and applicable information for metric tracking
 
