@@ -32,6 +32,7 @@ def pending_jobs() -> Response:
         }
     }
 
+
 @triggers_bp.route(
     f"/{api_c.TRIGGERS_TAG}/{api_c.DELIVERIES}/{api_c.ORCH_INTEGRATION_TEST}",
     methods=["GET"],

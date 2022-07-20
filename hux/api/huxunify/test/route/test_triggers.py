@@ -105,5 +105,6 @@ class TestTriggersRoute(TestCase):
 
             self.assertEqual(HTTPStatus.OK, response.status_code)
             self.assertDictEqual(
-                {api_c.DELIVERIES: {api_c.ORCH_INTEGRATION_TEST: 58}}, response.json
+                {api_c.DELIVERIES: {api_c.ORCH_INTEGRATION_TEST: 58}},
+                response.json,
             )
