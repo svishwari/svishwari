@@ -98,7 +98,7 @@
                   </template>
                 </tooltip>
 
-                <div v-if="header.value == 'tags'">
+                <div v-if="header.value == 'tags' && enableDemoConfig">
                   <div
                     v-if="
                       item[header.value] &&
@@ -172,8 +172,14 @@ export default {
   },
   props: {
     sourceData: {
-      type: Array,
-      required: true,
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    enableDemoConfig: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   data() {
@@ -235,6 +241,11 @@ export default {
       let sortedModelslist = this.sourceData
       return sortedModelslist.sort((a, b) => a.name.localeCompare(b.name))
     },
+  },
+  mounted() {
+     if(!this.enableDemoConfig) {
+      this.columnDefs = this.columnDefs.filter(ele => ele.value != "tags")
+     }
   },
   methods: {
     goToDashboard(model) {
