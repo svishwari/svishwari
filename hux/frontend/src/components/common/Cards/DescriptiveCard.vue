@@ -220,18 +220,18 @@ export default {
     },
   },
 
-  mounted() {
-    if (
-      document.getElementById("menu-options-card") &&
-      document.getElementById("menu-options-card").children.length == 0
-    ) {
-      document.getElementById("menu-icon-card").style.cssText =
-        "display:none !important"
-    } else {
-      document.getElementById("menu-icon-card").style.cssText =
-        "display:flex !important"
-    }
-  },
+  // mounted() {
+  //   if (
+  //     document.getElementById("menu-options-card") &&
+  //     document.getElementById("menu-options-card").children.length == 0
+  //   ) {
+  //     document.getElementById("menu-icon-card").style.cssText =
+  //       "display:none !important"
+  //   } else {
+  //     document.getElementById("menu-icon-card").style.cssText =
+  //       "display:flex !important"
+  //   }
+  // },
 }
 </script>
 
