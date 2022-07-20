@@ -429,16 +429,16 @@ export default {
     },
     listOptions(condition) {
       if (condition.attribute.key === "City") {
-        if (this.currentCityData.length == 0) {
-          this.selectedValue = "City"
-          this.autoSearchFunc(condition.text)
-        }
+        // if (this.currentCityData.length == 0) {
+        //   this.selectedValue = "City"
+        //   this.autoSearchFunc(condition.text)
+        // }
         return this.currentCityData
       } else if (condition.attribute.key === "Zip") {
-        if (this.currentData.length == 0) {
-          this.selectedValue = "Zip"
-          this.autoSearchFunc(condition.text)
-        }
+        // if (this.currentData.length == 0) {
+        //   this.selectedValue = "Zip"
+        //   this.autoSearchFunc(condition.text)
+        // }
         return this.currentData
       } else {
         return condition.attribute.options
