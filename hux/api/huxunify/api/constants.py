@@ -1819,7 +1819,7 @@ RELIABILITY = "reliability"
 HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
-LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+LIST_OF_FACTORS = [HUMANITY, RELIABILITY, CAPABILITY, TRANSPARENCY]
 SEGMENT_TYPE = "segment_type"
 SEGMENTS = "segments"
 SEGMENT_TYPES = [
@@ -1841,6 +1841,7 @@ ATTRIBUTE_TYPE = "attribute_type"
 ATTRIBUTE_NAME = "attribute_name"
 ATTRIBUTE_SCORE = "attribute_score"
 ATTRIBUTE_DESCRIPTION = "attribute_description"
+ATTRIBUTE_SHORT_DESCRIPTION = "attribute_short_description"
 OCCUPATION = "occupation"
 CUSTOMER_TYPE = "customer_type"
 OPTIONS = "options"

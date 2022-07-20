@@ -6,7 +6,7 @@ import mongomock
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.trust_id import (
     aggregate_attributes,
-    get_trust_id_attributes,
+    get_trust_id_attributes_deprecated,
     get_trust_id_overview,
     get_trust_id_comparison_data,
 )
@@ -71,7 +71,7 @@ class TrustIDTest(TestCase):
         """Test get_trust_attributes method."""
 
         survey_responses = get_survey_responses(self.database)
-        attributes = get_trust_id_attributes(survey_responses)
+        attributes = get_trust_id_attributes_deprecated(survey_responses)
 
         self.assertIsInstance(attributes, list)
         # Ensure all attributes are for list of factors.

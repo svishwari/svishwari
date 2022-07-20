@@ -12,6 +12,39 @@ import huxunifylib.database.db_exceptions as de
 
 import huxunifylib.database.constants as db_c
 import huxunifylib.database.delivery_platform_management as dm
+from huxunifylib.database.aggregation_pipelines import (
+    trust_id_overview_pipeline,
+    trust_id_attribute_ratings_pipeline,
+)
+
+
+def frame_match_query(filters: list) -> dict:
+    """Frame the match query based on the selected filters
+
+    Args:
+        filters(list): List of selected filters
+
+    Returns:
+         (dict): match query
+    """
+    return {
+        "$match": {
+            "$and": [
+                {
+                    "$or": [
+                        {
+                            f"responses.{x['description']}": {
+                                "$regex": val,
+                                "$options": "i",
+                            }
+                        }
+                        for val in x["values"]
+                    ]
+                }
+                for x in filters
+            ]
+        }
+    }
 
 
 @retry(
@@ -168,14 +201,79 @@ def get_survey_responses(
         {"$match": match_query_filters},
         {
             "$project": {
-                "survey_id": 1,
-                "customer_id": 1,
                 "factors": "$responses.factors",
             }
         },
     ]
     try:
         return list(collection.aggregate(pipeline))
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_overview(
+    database: DatabaseClient,
+    filters: list = None,
+) -> Union[dict, None]:
+    """Method to retrieve overview of survey responses.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filters (list): Filters to apply, default None.
+
+    Returns:
+        Union[dict, None]: Dict of survey responses overview, default None.
+    """
+
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
+
+    pipeline = trust_id_overview_pipeline
+    if filters:
+        pipeline.insert(0, frame_match_query(filters))
+
+    try:
+        return list(collection.aggregate(pipeline))[0]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_attributes(
+    database: DatabaseClient,
+    filters: list = None,
+) -> Union[dict, None]:
+    """Method to retrieve attribute ratings of survey responses.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filters (list): Filters to apply, default None.
+
+    Returns:
+        Union[dict, None]: Dict of survey responses overview, default None.
+    """
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
+
+    pipeline = trust_id_attribute_ratings_pipeline
+    if filters:
+        pipeline.insert(0, frame_match_query(filters))
+
+    try:
+        return list(collection.aggregate(pipeline))[0]
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
