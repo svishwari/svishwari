@@ -69,7 +69,11 @@
             ></v-checkbox>
           </div>
         </hux-filter-panel>
-        <hux-filter-panel v-if="demoConfigSelection" title="Industry" :count="selectedTags.length">
+        <hux-filter-panel
+          v-if="demoConfigSelection"
+          title="Industry"
+          :count="selectedTags.length"
+        >
           <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
               v-if="data.category == 'industry' && data.optionName == 'Tags'"
@@ -106,7 +110,7 @@ export default {
       required: true,
       default: false,
     },
-    demoConfigSelection : {
+    demoConfigSelection: {
       type: Boolean,
       required: false,
       default: false,

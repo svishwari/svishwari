@@ -93,11 +93,13 @@
               data-e2e="edit-audience-name"
             />
 
-            <div class="black--text text--darken-4 text-h5 text-label mb-1"
-              v-if="enableDemoConfig">
+            <div
+              v-if="enableDemoConfig"
+              class="black--text text--darken-4 text-h5 text-label mb-1"
+            >
               Industry
             </div>
-            <div class="tag-section" v-if="enableDemoConfig">
+            <div v-if="enableDemoConfig" class="tag-section">
               <hux-drop-down-search
                 v-model="selectedTags"
                 :min-width="360"
@@ -240,12 +242,17 @@
           v-if="!isEdit"
           class="d-flex flex-column align-center justify-center px-7 mt-5"
         >
-          <div :class="enableDemoConfig ?'add-modal':'add-modal conform-model-margin'" style="width: 496px">
+          <div
+            :class="
+              enableDemoConfig ? `add-modal` : `add-modal conform-model-margin`
+            "
+            style="width: 496px"
+          >
             <div
               class="
                 black--text
                 text--darken-4 text-h5 text-left text-label
-                mb-n1 
+                mb-n1
               "
             >
               Audience name
@@ -267,9 +274,9 @@
             />
           </div>
           <div
+            v-if="enableDemoConfig"
             class="tag-section add-modal mt-n2"
             style="width: 496px; height: 40px"
-            v-if="enableDemoConfig"
           >
             <div
               class="black--text text--darken-4 text-left text-h5 text-label"
@@ -472,7 +479,7 @@ export default {
   },
   async mounted() {
     this.loading = true
-    this.enableDemoConfig = getAccess('client_config', 'client_settings')
+    this.enableDemoConfig = getAccess("client_config", "client_settings")
     this.loadingOverview = true
     try {
       switch (this.$route.name) {

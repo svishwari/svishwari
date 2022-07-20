@@ -415,7 +415,7 @@
           v-model="isFilterToggled"
           view-height="calc(100vh - 180px)"
           :filter-options="attributeOptions()"
-          :demoConfigSelection="enableDemoConfig"
+          :demo-config-selection="enableDemoConfig"
           @selected-filters="totalFiltersSelected"
           @onSectionAction="applyFilter"
         />
@@ -680,10 +680,10 @@ export default {
   },
   async mounted() {
     this.loading = true
-     this.enableDemoConfig = getAccess('client_config', 'client_settings')
-     if(!this.enableDemoConfig) {
-      this.columnDefs = this.columnDefs.filter(ele => ele.value != "tags")
-     }
+    this.enableDemoConfig = getAccess("client_config", "client_settings")
+    if (!this.enableDemoConfig) {
+      this.columnDefs = this.columnDefs.filter((ele) => ele.value != "tags")
+    }
     try {
       this.setDefaultBatch()
       await this.fetchAudienceByBatch()

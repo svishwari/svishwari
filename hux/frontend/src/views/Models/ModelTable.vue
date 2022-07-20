@@ -243,9 +243,9 @@ export default {
     },
   },
   mounted() {
-     if(!this.enableDemoConfig) {
-      this.columnDefs = this.columnDefs.filter(ele => ele.value != "tags")
-     }
+    if (!this.enableDemoConfig) {
+      this.columnDefs = this.columnDefs.filter((ele) => ele.value != "tags")
+    }
   },
   methods: {
     goToDashboard(model) {

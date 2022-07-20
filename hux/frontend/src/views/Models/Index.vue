@@ -17,7 +17,7 @@
           your active models for an effective delivery experience.
         </div>
       </template>
-      <template #right v-if="enableDemoConfig">
+      <template v-if="enableDemoConfig" #right>
         <v-btn
           icon
           data-e2e="audienceFilterToggle"
@@ -121,7 +121,7 @@
                 "
                 slot="top"
               >
-                <div class="float-right" v-if="enableDemoConfig">
+                <div v-if="enableDemoConfig" class="float-right">
                   <tooltip v-for="tags in model.tags.industry" :key="tags">
                     <template #label-content>
                       <logo
@@ -191,7 +191,10 @@
             </descriptive-card>
           </v-row>
           <div v-else>
-            <model-table :enableDemoConfig="enableDemoConfig" :source-data="addedModels" />
+            <model-table
+              :enable-demo-config="enableDemoConfig"
+              :source-data="addedModels"
+            />
           </div>
         </div>
         <v-row
@@ -406,7 +409,7 @@ export default {
   },
   async mounted() {
     this.loading = true
-    this.enableDemoConfig = getAccess('client_config', 'client_settings')
+    this.enableDemoConfig = getAccess("client_config", "client_settings")
     try {
       await this.getModels()
     } catch (error) {
