@@ -1295,6 +1295,7 @@ export default {
         {
           title: "Make inactive",
           isDisabled: false,
+          isHidden: !this.getAccess("engagements", "update_one"),
           onClick: (value) => {
             this.openInactiveModal(value)
           },

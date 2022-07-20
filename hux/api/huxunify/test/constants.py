@@ -2052,26 +2052,26 @@ TRUST_ID_SURVEY_RESPONSES = [
                 "HUMANITY": {
                     "attributes": [
                         {
-                            "description": "Demonstrates empathy and kindness towards me, and treats everyone fairly",
-                            "score": "6",
-                        },
-                        {
                             "description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "4",
                             "rating": "0",
                         },
                         {
                             "description": "Values & respects everyone, regardless of background, identity or beliefs",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "6",
                             "rating": "1",
                         },
                         {
                             "description": "Takes care of employees",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "4",
                             "rating": "0",
                         },
                         {
                             "description": "values the good of society and the environment, not just profit",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "6",
                             "rating": "1",
                         },
@@ -2081,26 +2081,26 @@ TRUST_ID_SURVEY_RESPONSES = [
                 "RELIABILITY": {
                     "attributes": [
                         {
-                            "description": "Consistently and dependably delivers upon promises it makes",
-                            "score": "6",
-                        },
-                        {
                             "description": "Facilitates digital interactions that run smoothly and work when needed",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "4",
                             "rating": "0",
                         },
                         {
                             "description": "Can be counted on to improve the quality of their products and services",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "6",
                             "rating": "1",
                         },
                         {
                             "description": "Consistently delivers products, services, and experiences with quality",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "6",
                             "rating": "1",
                         },
                         {
                             "description": "Resolves issues in an adequate and timely manner",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "4",
                             "rating": "0",
                         },
@@ -2110,26 +2110,26 @@ TRUST_ID_SURVEY_RESPONSES = [
                 "TRANSPARENCY": {
                     "attributes": [
                         {
-                            "description": "Openly shares all information, motives, and choices in straightforward and plain language",
-                            "score": "6",
-                        },
-                        {
                             "description": "Marketing and communications are accurate and honest",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "5",
                             "rating": "0",
                         },
                         {
                             "description": "How and why my data is used is communicated in plain and easy to understand language",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "6",
                             "rating": "1",
                         },
                         {
                             "description": "Is upfront about how they make and spend money from our interactions",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "4",
                             "rating": "0",
                         },
                         {
                             "description": "Is clear and upfront about fees and costs of products, services and experiences",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "6",
                             "rating": "1",
                         },
@@ -2139,26 +2139,26 @@ TRUST_ID_SURVEY_RESPONSES = [
                 "CAPABILITY": {
                     "attributes": [
                         {
-                            "description": "Creates quality products, services, and/or experiences",
-                            "score": "6",
-                        },
-                        {
                             "description": "Products are good quality, accessible and safe to use",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "6",
                             "rating": "1",
                         },
                         {
                             "description": "Prices of products, services, and experiences are good value for money",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "6",
                             "rating": "1",
                         },
                         {
                             "description": "Creates long term solutions and improvements that work well for me",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "4",
                             "rating": "0",
                         },
                         {
                             "description": "Employees and leadership are competent and understand how to respond to my needs",
+                            "short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
                             "score": "4",
                             "rating": "0",
                         },
@@ -2259,6 +2259,7 @@ TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE_AGG = {
 TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE = {
     "factor_name": "humanity",
     "attribute_description": "Takes care of employees",
+    "attribute_short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
     "attribute_score": 0,
     "overall_customer_rating": {
         "total_customers": 1,

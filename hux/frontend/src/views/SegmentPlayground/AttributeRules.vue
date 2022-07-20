@@ -342,7 +342,7 @@ export default {
         height: 0,
       },
       currentData: [],
-      currenCitytData: [],
+      currentCityData: [],
       selectedValue: null,
       params: {},
       loaderValue: false,
@@ -369,6 +369,7 @@ export default {
       return this.$route.name === "SegmentPlayground"
     },
   },
+
   async mounted() {
     this.sizeHandler()
     this.chartDimensions.height = 26
@@ -377,7 +378,6 @@ export default {
     if (this.ifRouteSegmentPlayground) {
       this.overAllSize = this.overviewData.total_customers
     }
-
     this.$emit("attribute-options", this)
   },
 
@@ -502,8 +502,16 @@ export default {
     },
     listOptions(condition) {
       if (condition.attribute.key === "city") {
-        return this.currenCitytData
+        // if (this.currentCityData.length == 0) {
+        //   this.selectedValue = "City"
+        //   this.autoSearchFunc(condition.text)
+        // }
+        return this.currentCityData
       } else if (condition.attribute.key === "zip") {
+        // if (this.currentData.length == 0) {
+        //   this.selectedValue = "Zip"
+        //   this.autoSearchFunc(condition.text)
+        // }
         return this.currentData
       } else {
         return condition.attribute.options
@@ -553,8 +561,11 @@ export default {
       if (condition.attribute.type === "range") {
         value = [...condition.range]
         type = "range"
-      } else {
+      } else if (condition.operator && condition.attribute.type === "text") {
         value = [condition.text]
+        type = condition.operator.key
+      } else {
+        value = condition.text
         type = condition.operator.key
       }
       let filterJSON = {
@@ -711,7 +722,7 @@ export default {
       this.addNewCondition(newSection.id)
     },
     async autoSearchFunc(value) {
-      if (value !== null && value !== "") {
+      if (value !== null && value !== "" && value !== undefined) {
         if (this.selectedValue === "Zip" || this.selectedValue === "City") {
           this.params.fieldType =
             this.selectedValue === "Zip"
@@ -726,19 +737,24 @@ export default {
               this.currentData = [...data]
             } else if (this.selectedValue === "City") {
               this.loaderValue = false
-              this.currenCitytData = [...data]
+              this.currentCityData = [...data]
             }
           }
         }
       }
-      if (value === null || value === "" || value.length < 3) {
+      if (
+        value === null ||
+        value === "" ||
+        value === undefined ||
+        value.length < 3
+      ) {
         if (this.selectedValue === "Zip") {
           this.currentData = []
         } else if (this.selectedValue === "City") {
-          this.currenCitytData = []
+          this.currentCityData = []
         } else {
           this.currentData = []
-          this.currenCitytData = []
+          this.currentCityData = []
         }
       }
     },

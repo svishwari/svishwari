@@ -1,5 +1,6 @@
 """This module holds the decisioning class that connects to the decisioning
 metrics API."""
+import logging
 import asyncio
 from datetime import datetime
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -7,6 +8,7 @@ from typing import Tuple
 
 from huxmodelclient import api_client, configuration
 from huxmodelclient.api import DefaultApi as dec_client
+from huxmodelclient.exceptions import ApiException
 
 from huxunifylib.database import constants as db_c
 import huxunify.api.constants as api_c
@@ -32,6 +34,31 @@ def get_or_create_eventloop() -> asyncio.events:
             return asyncio.get_event_loop()
 
 
+def map_model_date_field(
+    model_id: str, date_string: str, date_field: str
+) -> datetime:
+    """Converts a date field from the model response to a datetime.
+
+    Args:
+        model_id (str): input model id.
+        date_string (str): input date string to be converted.
+        date_field (str): input date field for logging.
+
+    Returns:
+       datetime: datetime value.
+    """
+    try:
+        return datetime.strptime(date_string, "%Y-%M-%d")
+    except (ValueError, AttributeError):
+        logging.warning(
+            "Failed to map %s date %s for %s.",
+            date_field,
+            date_string,
+            model_id,
+        )
+    return None
+
+
 class DotNotationDict(dict):
     """dot.notation access to dictionary attributes"""
 
@@ -40,7 +67,7 @@ class DotNotationDict(dict):
     __delattr__ = dict.__delitem__
 
 
-def convert_model_to_dot_notation(model_info) -> DotNotationDict:
+def convert_model_to_dot_notation(model_info: dict) -> DotNotationDict:
     """Convert a model to dot notation to simulate the DEN response.
 
     Args:
@@ -137,9 +164,18 @@ class Decisioning:
         Returns:
             dict: model info dictionary.
         """
-        model_infos = self.decisioning_client.get_model_info_api_v1alpha1_models_model_id_get(
-            model_id
-        )
+        try:
+            model_infos = self.decisioning_client.get_model_info_api_v1alpha1_models_model_id_get(
+                model_id
+            )
+        except ApiException:
+            logging.error(
+                "Failed to get model %s from the huxmodelclient.", model_id
+            )
+            return DotNotationDict(
+                {api_c.MODEL_ID: model_id, api_c.MODEL_METADATA: {}}
+            )
+
         desired_info = None
         if model_version:
             for info in model_infos:
@@ -226,23 +262,33 @@ class Decisioning:
         )
 
         for model_info in model_infos:
+            if not model_info.model_metadata:
+                continue
+
             models.append(
                 {
                     api_c.ID: model_info.model_id,
                     api_c.NAME: model_info.model_metadata.model_name,
                     api_c.DESCRIPTION: model_info.model_metadata.description,
                     api_c.STATUS: model_info.model_metadata.status.title(),
-                    api_c.LATEST_VERSION: model_info.model_metrics[
-                        api_c.VERSION_NUMBER
-                    ],
+                    api_c.LATEST_VERSION: model_info.model_metrics.get(
+                        api_c.VERSION_NUMBER,
+                        model_info.__dict__.get(
+                            api_c.VERSION, "No Version Found"
+                        ),
+                    ),
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
                     api_c.PREDICTION_WINDOW: model_info.model_metadata.prediction_days,
-                    api_c.FULCRUM_DATE: datetime.strptime(
-                        model_info.model_metadata.fulcrum_date, "%Y-%M-%d"
+                    api_c.FULCRUM_DATE: map_model_date_field(
+                        model_info.model_id,
+                        model_info.model_metadata.fulcrum_date,
+                        api_c.FULCRUM_DATE,
                     ),
-                    api_c.LAST_TRAINED: datetime.strptime(
-                        model_info.scheduled_date, "%Y-%M-%d"
+                    api_c.LAST_TRAINED: map_model_date_field(
+                        model_info.model_id,
+                        model_info.scheduled_date,
+                        api_c.LAST_TRAINED,
                     ),
                     api_c.TYPE: model_info.model_metadata.model_type.lower(),
                     api_c.CATEGORY: model_info.model_metadata.model_type.lower(),
@@ -284,9 +330,9 @@ class Decisioning:
                     api_c.PRECISION, -1
                 ),
                 api_c.RECALL: model_info.model_metrics.get(api_c.RECALL, -1),
-                api_c.CURRENT_VERSION: model_info.model_metrics[
+                api_c.CURRENT_VERSION: model_info.model_metrics.get(
                     api_c.VERSION_NUMBER
-                ],
+                ),
             },
         }
 
@@ -308,11 +354,12 @@ class Decisioning:
         for feature in model_info.important_features:
             features.append(
                 {
-                    api_c.ID: feature.get(api_c.MODEL_ID),
-                    # make the feature name unique
-                    api_c.NAME: f"{feature[api_c.MODEL_NAME]}-{feature.get(api_c.RANK)}",
+                    api_c.ID: feature.get(api_c.FEATURE),
+                    api_c.NAME: feature.get(api_c.FEATURE),
                     api_c.DESCRIPTION: feature.get(api_c.FEATURE_DESCRIPTION),
-                    api_c.FEATURE_TYPE: feature.get(api_c.MODEL_TYPE),
+                    api_c.FEATURE_TYPE: feature.get(
+                        api_c.MODEL_TYPE, api_c.BINARY
+                    ),
                     api_c.RECORDS_NOT_NULL: 0,
                     api_c.FEATURE_IMPORTANCE: 1,
                     api_c.MEAN: 0,
@@ -321,10 +368,9 @@ class Decisioning:
                     api_c.UNIQUE_VALUES: 1,
                     api_c.LCUV: "",
                     api_c.MCUV: "",
-                    api_c.SCORE: feature.get(api_c.LIFT),
+                    api_c.SCORE: feature.get(api_c.LIFT, 0),
                 }
             )
-
         return features
 
     def get_model_version_history(self, model_id: str) -> list:
@@ -347,14 +393,22 @@ class Decisioning:
                     api_c.NAME: model_info.model_metadata.model_name,
                     api_c.DESCRIPTION: model_info.model_metadata.description,
                     api_c.STATUS: model_info.model_metadata.status,
-                    api_c.CURRENT_VERSION: model_info.model_metrics[
+                    api_c.CURRENT_VERSION: model_info.model_metrics.get(
                         api_c.VERSION_NUMBER
-                    ],
-                    api_c.LAST_TRAINED: model_info.scheduled_date,
+                    ),
                     api_c.OWNER: model_info.model_metadata.owner,
                     api_c.LOOKBACK_WINDOW: model_info.model_metadata.lookback_days,
                     api_c.PREDICTION_WINDOW: model_info.model_metadata.prediction_days,
-                    api_c.FULCRUM_DATE: model_info.model_metadata.fulcrum_date,
+                    api_c.FULCRUM_DATE: map_model_date_field(
+                        model_info.model_id,
+                        model_info.model_metadata.fulcrum_date,
+                        api_c.FULCRUM_DATE,
+                    ),
+                    api_c.LAST_TRAINED: map_model_date_field(
+                        model_info.model_id,
+                        model_info.scheduled_date,
+                        api_c.LAST_TRAINED,
+                    ),
                 }
             )
 
@@ -429,7 +483,9 @@ class Decisioning:
                     api_c.ACTUAL_RATE: lift_info[api_c.RATE_ACTUAL],
                     api_c.PREDICTED_LIFT: lift_info[api_c.LIFT_PREDICTED],
                     api_c.ACTUAL_LIFT: lift_info[api_c.LIFT_ACTUAL],
-                    api_c.PROFILE_SIZE_PERCENT: lift_info[api_c.SIZE_PROFILE],
+                    api_c.PROFILE_SIZE_PERCENT: lift_info.get(
+                        api_c.SIZE_PROFILE, 0
+                    ),
                 }
             )
 
@@ -461,8 +517,10 @@ class Decisioning:
             drift_data.append(
                 {
                     api_c.DRIFT: model_info.model_metrics.get(metric_type, -1),
-                    api_c.RUN_DATE: datetime.strptime(
-                        model_info.scheduled_date, "%Y-%m-%d"
+                    api_c.RUN_DATE: map_model_date_field(
+                        model_info.model_id,
+                        model_info.scheduled_date,
+                        api_c.RUN_DATE,
                     ),
                 }
             )

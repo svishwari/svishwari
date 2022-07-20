@@ -77,13 +77,19 @@ export default {
         {
           type: "create_one",
           admin: true,
-          editor: true,
+          editor: false,
           viewer: false,
         },
         {
           type: "delete",
           admin: true,
           editor: false,
+          viewer: false,
+        },
+        {
+          type: "edit_url",
+          admin: true,
+          editor: true,
           viewer: false,
         },
       ],
@@ -100,7 +106,7 @@ export default {
         {
           type: "create_lookalike",
           admin: true,
-          editor: true,
+          editor: false,
           viewer: false,
         },
         {
@@ -118,7 +124,7 @@ export default {
         {
           type: "create",
           admin: true,
-          editor: true,
+          editor: false,
           viewer: false,
         },
         {
@@ -165,6 +171,30 @@ export default {
         },
         {
           type: "delete_one",
+          admin: true,
+          editor: false,
+          viewer: false,
+        },
+        {
+          type: "add_engagement_to_audience",
+          admin: true,
+          editor: true,
+          viewer: false,
+        },
+        {
+          type: "remove_engagement_from_audience",
+          admin: true,
+          editor: true,
+          viewer: false,
+        },
+        {
+          type: "add_destination_to_audience",
+          admin: true,
+          editor: true,
+          viewer: false,
+        },
+        {
+          type: "remove_destination_from_audience",
           admin: true,
           editor: true,
           viewer: false,
@@ -306,7 +336,7 @@ export default {
         {
           type: "create_one",
           admin: true,
-          editor: true,
+          editor: false,
           viewer: false,
         },
         {
@@ -366,7 +396,7 @@ export default {
         {
           type: "delete_one",
           admin: true,
-          editor: true,
+          editor: false,
           viewer: false,
         },
       ],
@@ -383,7 +413,7 @@ export default {
         {
           type: "request_one",
           admin: true,
-          editor: true,
+          editor: false,
           viewer: false,
         },
         {
@@ -420,6 +450,12 @@ export default {
           type: "get_lift",
           admin: true,
           editor: true,
+          viewer: true,
+        },
+        {
+          type: "remove",
+          admin: true,
+          editor: false,
           viewer: true,
         },
       ],
