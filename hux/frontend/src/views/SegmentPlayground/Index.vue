@@ -93,10 +93,13 @@
               data-e2e="edit-audience-name"
             />
 
-            <div class="black--text text--darken-4 text-h5 text-label mb-1">
+            <div
+              v-if="enableDemoConfig"
+              class="black--text text--darken-4 text-h5 text-label mb-1"
+            >
               Industry
             </div>
-            <div class="tag-section">
+            <div v-if="enableDemoConfig" class="tag-section">
               <hux-drop-down-search
                 v-model="selectedTags"
                 :min-width="360"
@@ -239,7 +242,12 @@
           v-if="!isEdit"
           class="d-flex flex-column align-center justify-center px-7 mt-5"
         >
-          <div class="add-modal" style="width: 496px">
+          <div
+            :class="
+              enableDemoConfig ? `add-modal` : `add-modal conform-model-margin`
+            "
+            style="width: 496px"
+          >
             <div
               class="
                 black--text
@@ -266,6 +274,7 @@
             />
           </div>
           <div
+            v-if="enableDemoConfig"
             class="tag-section add-modal mt-n2"
             style="width: 496px; height: 40px"
           >
@@ -358,6 +367,7 @@ export default {
         },
       ],
       industry_tags: getIndustryTags(),
+      enableDemoConfig: false,
       selectedTags: [],
       openMenu: false,
       editBreadcrumbs: [
@@ -469,6 +479,7 @@ export default {
   },
   async mounted() {
     this.loading = true
+    this.enableDemoConfig = getAccess("client_config", "client_settings")
     this.loadingOverview = true
     try {
       switch (this.$route.name) {
@@ -796,6 +807,9 @@ export default {
   .container {
     height: calc(100vh - 260px);
   }
+}
+.conform-model-margin {
+  margin-bottom: -36px !important;
 }
 .zi-100 {
   z-index: 100;
