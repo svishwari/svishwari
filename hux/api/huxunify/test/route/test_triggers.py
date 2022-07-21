@@ -73,38 +73,38 @@ class TestTriggersRoute(TestCase):
                 {api_c.DELIVERIES: {api_c.PENDING_JOBS: 58}}, response.json
             )
 
-    def test_delivery_zero_integration_jobs(self):
-        """Test delivery of pending jobs no jobs endpoint"""
-        response = self.app.get(
-            (
-                f"{t_c.BASE_ENDPOINT}/{api_c.TRIGGERS_TAG}/"
-                f"{api_c.DELIVERIES}/{api_c.ORCH_INTEGRATION_TEST}"
-            ),
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertDictEqual(
-            {api_c.DELIVERIES: {api_c.ORCH_INTEGRATION_TEST: 0}}, response.json
-        )
-
-    def test_delivery_pending_jobs(self):
-        """Test delivery of pending jobs endpoint"""
-
-        with mock.patch(
-            "huxunify.api.route.triggers.get_documents",
-            return_value={api_c.TOTAL_RECORDS: 58},
-        ):
-            response = self.app.get(
-                (
-                    f"{t_c.BASE_ENDPOINT}/{api_c.TRIGGERS_TAG}/"
-                    f"{api_c.DELIVERIES}/{api_c.ORCH_INTEGRATION_TEST}"
-                ),
-                headers=t_c.STANDARD_HEADERS,
-            )
-
-            self.assertEqual(HTTPStatus.OK, response.status_code)
-            self.assertDictEqual(
-                {api_c.DELIVERIES: {api_c.ORCH_INTEGRATION_TEST: 58}},
-                response.json,
-            )
+    # def test_delivery_zero_integration_jobs(self):
+    #     """Test delivery of pending jobs no jobs endpoint"""
+    #     response = self.app.get(
+    #         (
+    #             f"{t_c.BASE_ENDPOINT}/{api_c.TRIGGERS_TAG}/"
+    #             f"{api_c.DELIVERIES}/{api_c.ORCH_INTEGRATION_TEST}"
+    #         ),
+    #         headers=t_c.STANDARD_HEADERS,
+    #     )
+    #
+    #     self.assertEqual(HTTPStatus.OK, response.status_code)
+    #     self.assertDictEqual(
+    #         {api_c.DELIVERIES: {api_c.ORCH_INTEGRATION_TEST: 0}}, response.json
+    #     )
+    #
+    # def test_delivery_pending_jobs(self):
+    #     """Test delivery of pending jobs endpoint"""
+    #
+    #     with mock.patch(
+    #         "huxunify.api.route.triggers.get_documents",
+    #         return_value={api_c.TOTAL_RECORDS: 58},
+    #     ):
+    #         response = self.app.get(
+    #             (
+    #                 f"{t_c.BASE_ENDPOINT}/{api_c.TRIGGERS_TAG}/"
+    #                 f"{api_c.DELIVERIES}/{api_c.ORCH_INTEGRATION_TEST}"
+    #             ),
+    #             headers=t_c.STANDARD_HEADERS,
+    #         )
+    #
+    #         self.assertEqual(HTTPStatus.OK, response.status_code)
+    #         self.assertDictEqual(
+    #             {api_c.DELIVERIES: {api_c.ORCH_INTEGRATION_TEST: 58}},
+    #             response.json,
+    #         )
