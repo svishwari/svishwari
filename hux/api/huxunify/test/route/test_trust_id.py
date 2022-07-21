@@ -112,11 +112,11 @@ class TestTrustIDRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         # Ensure only one segment is present.
-        self.assertEqual(1, len(response.json[0].get(api_c.SEGMENTS)))
+        self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
 
         # Ensure it is not the default segment.
         self.assertFalse(
-            response.json[0].get(api_c.SEGMENTS)[0].get(api_c.DEFAULT)
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
         )
 
     def test_trust_id_comparison_default_true(self):
@@ -130,11 +130,11 @@ class TestTrustIDRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         # Ensure only one segment is present.
-        self.assertEqual(1, len(response.json[0].get(api_c.SEGMENTS)))
+        self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
 
         # Ensure it is the default segment.
         self.assertTrue(
-            response.json[0].get(api_c.SEGMENTS)[0].get(api_c.DEFAULT)
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
         )
 
     def test_add_trust_id_segment(self):
@@ -142,6 +142,7 @@ class TestTrustIDRoutes(RouteTestCase):
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
+            query_params={api_c.DEFAULT: False},
             json={"segment_name": "Test Add Segment", "segment_filters": []},
             headers=t_c.STANDARD_HEADERS,
         )

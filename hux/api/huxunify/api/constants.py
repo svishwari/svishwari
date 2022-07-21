@@ -966,7 +966,7 @@ LOOKALIKE = "lookalike"
 LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
-ATTRIBUTES = "attributes"
+TRUST_ID_ATTRIBUTES = "attributes"
 AUDIENCES_DEFAULT_BATCH_SIZE = 0
 TAGS = "tags"
 INDUSTRY_TAG = "industry_tag"
@@ -1813,35 +1813,33 @@ TRUST_ID_TAG = "trust-id"
 DEFAULT = "default"
 DEFAULT_TRUST_SEGMENT = "All Customers"
 MAX_SEGMENTS_ALLOWED = 5
+COMPARISON = "comparison"
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"
 HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
-LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
-SEGMENT_TYPE = "segment_type"
-SEGMENTS = "segments"
-SEGMENT_TYPES = [
+HX_TRUST_ID = "HX TrustID"
+TRUST_ID_LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+TRUST_ID_SEGMENT_TYPE = "segment_type"
+TRUST_ID_SEGMENTS = "segments"
+TRUST_ID_SEGMENT_TYPES = [
     "composite & factor scores",
     "humanity attributes",
     "reliability attributes",
     "capability attributes",
     "transparency attributes",
 ]
-SEGMENT_NAME = "segment_name"
-SEGMENT_FILTERS = "segment_filters"
-SURVEY_RESPONSES = "survey_responses"
+TRUST_ID_SEGMENT_NAME = "segment_name"
+TRUST_ID_SEGMENT_FILTERS = "segment_filters"
+TRUST_ID_SURVEY_RESPONSES = "survey_responses"
 TRUST_ID_SCORE = "trust_id_score"
-TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
-SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
-ATTRIBUTE_SCORES = "attribute_scores"
-NAME_OF_SIGNAL = "name_of_signal"
-ATTRIBUTE_TYPE = "attribute_type"
-ATTRIBUTE_NAME = "attribute_name"
-ATTRIBUTE_SCORE = "attribute_score"
-ATTRIBUTE_DESCRIPTION = "attribute_description"
-ATTRIBUTE_SHORT_DESCRIPTION = "attribute_short_description"
+TRUST_ID_ATTRIBUTE_TYPE = "attribute_type"
+TRUST_ID_ATTRIBUTE_NAME = "attribute_name"
+TRUST_ID_ATTRIBUTE_SCORE = "attribute_score"
+TRUST_ID_ATTRIBUTE_DESCRIPTION = "attribute_description"
+TRUST_ID_ATTRIBUTE_SHORT_DESCRIPTION = "attribute_short_description"
 OCCUPATION = "occupation"
 CUSTOMER_TYPE = "customer_type"
 OPTIONS = "options"
@@ -1850,17 +1848,17 @@ RATING = "rating"
 AGREE = "agree"
 NEUTRAL = "neutral"
 DISAGREE = "disagree"
-FACTORS = "factors"
-FACTOR_NAME = "factor_name"
-FACTOR_SCORE = "factor_score"
-FACTOR_DESCRIPTION = "factor_description"
-CUSTOMER_ATTRIBUTE_RATINGS = "customer_attribute_ratings"
-RATING_MAP = {
+TRUST_ID_FACTORS = "factors"
+TRUST_ID_FACTOR_NAME = "factor_name"
+TRUST_ID_FACTOR_SCORE = "factor_score"
+TRUST_ID_FACTOR_DESCRIPTION = "factor_description"
+TRUST_ID_RATING_MAP = {
     "-1": DISAGREE,
     "0": NEUTRAL,
     "1": AGREE,
 }
-FACTOR_DESCRIPTION_MAP = {
+TRUST_ID_FACTOR_DESCRIPTION_MAP = {
+    HX_TRUST_ID: "TrustID is scored on a scale between -100 to 100",
     HUMANITY: (
         "Humanity is demonstrating empathy and kindness towards "
         "customers, and treating everyone fairly. It is scored "
@@ -1881,132 +1879,13 @@ FACTOR_DESCRIPTION_MAP = {
     ),
 }
 
-ATTRIBUTE_DESCRIPTION_TYPE_MAP = {
-    "products are good quality, accessible and safe to use": {
-        TYPE: "product_quality",
-        NAME: "Product quality",
-    },
-    "prices of products, services, and experiences are good value for money": {
-        TYPE: "good_value",
-        NAME: "Good value",
-    },
-    "employees and leadership are competent and understand how to respond to my needs": {
-        TYPE: "competent_leaders_employees",
-        NAME: "Competent leaders & employees",
-    },
-    "creates long term solutions and improvements that work well for me": {
-        TYPE: "long_term_solutions_improvements",
-        NAME: "Long-term solutions & improvements",
-    },
-    (
-        "customer support team quickly resolves issues with my safety, security, "
-        "and satisfaction top of mind"
-    ): {
-        TYPE: "quickly_resolves_issues",
-        NAME: "Quickly Resolves Issues",
-    },
-    "values & respects everyone, regardless of background, identity or beliefs": {
-        TYPE: "values_respects_everyone",
-        NAME: "Values & respects everyone",
-    },
-    "values the good of society and the environment, not just profit": {
-        TYPE: "values_society_environment",
-        NAME: "Values society & environment",
-    },
-    "takes care of employees": {
-        TYPE: "takes_care_of_employees",
-        NAME: "Takes care of employees",
-    },
-    "can be counted on to improve the quality of their products and services": {
-        TYPE: "continuous_product_improvement",
-        NAME: "Continuous product improvement",
-    },
-    "consistently delivers products, services, and experiences with quality": {
-        TYPE: "consistent_quality",
-        NAME: "Consistent quality",
-    },
-    "facilitates digital interactions that run smoothly and work when needed": {
-        TYPE: "smooth_digital_interactions",
-        NAME: "Smooth digital interactions",
-    },
-    "resolves issues in an adequate and timely manner": {
-        TYPE: "timely_issue_resolution",
-        NAME: "Timely issue resolution",
-    },
-    "marketing and communications are accurate and honest": {
-        TYPE: "honesty_marketing_comms",
-        NAME: "Honesty marketing & comms",
-    },
-    "is upfront about how they make and spend money from our interactions": {
-        TYPE: "upfront_on_how_they_make_money",
-        NAME: "Upfront on how they make money",
-    },
-    "how and why my data is used is communicated in plain and easy to understand language": {
-        TYPE: "plain_language_data_policy",
-        NAME: "Plain language data policy",
-    },
-    "is clear and upfront about fees and costs of products, services and experiences": {
-        TYPE: "clear_fees_costs",
-        NAME: "Clear fees & costs",
-    },
+TRUST_ID_SEGMENT_TYPE_MAP = {
+    OVERVIEW: "composite & factor scores",
+    CAPABILITY: "capability attributes",
+    HUMANITY: "humanity attributes",
+    RELIABILITY: "reliability attributes",
+    TRANSPARENCY: "transparency attributes",
 }
-
-# TODO Remove STUB once data is available
-
-TRUST_ID_ATTRIBUTE_STUB = {
-    CAPABILITY: [
-        "Products and services are good value",
-        "Employs competent individuals that understand my needs",
-        "Products are good quality, accessible and safe to use",
-        "Creates long-term solutions that work for me",
-    ],
-    RELIABILITY: [
-        "Consistently delivers quality",
-        "Digital interactions run smoothly and work when needed",
-        "Improves quality of products and services",
-        "Resolves issues in a timely manner",
-    ],
-    HUMANITY: [
-        "Values and respects everyone",
-        "Customer support is in place to quickly resolve issues",
-        "Values good of society and/or environment",
-        "Takes care of employees",
-    ],
-    TRANSPARENCY: [
-        "Easy to understand how my data is used",
-        "Communications are accurate and honest",
-        "Clearly presents information regarding product and services costs",
-        "Upfront about how money is made and spent",
-    ],
-}
-
-TRUST_ID_SUPPORTED_FILTERS_STUB = [
-    {
-        NAME: AGE,
-        TYPE: "range",
-        MIN: 18,
-        MAX: 79,
-    },
-    {
-        NAME: GENDER,
-        TYPE: "list",
-        OPTIONS: [{"female": "Female"}, {"male": "Male"}, {"other": "Other"}],
-    },
-    {
-        NAME: CUSTOMER_TYPE,
-        TYPE: "list",
-        OPTIONS: [{"new": "New"}, {"repeat": "Repeat"}],
-    },
-    {
-        NAME: OCCUPATION,
-        TYPE: "list",
-        OPTIONS: [
-            {"small_business_owner": "Small Business Owner"},
-            {"medium_buisness_owner": "Medium Business Owner"},
-            {"employee": "Employee"},
-        ],
-    },
-]
 
 PERFORMANCE_METRIC_EMAIL_STUB = {
     "sent": 2045,
@@ -2080,13 +1959,6 @@ APPLICATION_CATEGORIES = [
     "Monitoring",
     "Uncategorized",
 ]
-
-SEGMENT_TYPE_MAP = {
-    CAPABILITY: "capability attributes",
-    HUMANITY: "humanity attributes",
-    RELIABILITY: "reliability attributes",
-    TRANSPARENCY: "transparency attributes",
-}
 
 HEALTHCARE = "healthcare"
 RETAIL = "retail"
