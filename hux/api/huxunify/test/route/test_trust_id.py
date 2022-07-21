@@ -34,7 +34,6 @@ class TestTrustIDRoutes(RouteTestCase):
         _ = set_survey_responses_bulk(
             self.database, t_c.TRUST_ID_SURVEY_RESPONSES
         )
-        import huxunifylib.database.constants as db_c
 
         create_document(
             self.database,

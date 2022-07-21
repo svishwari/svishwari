@@ -40,7 +40,6 @@ class TrustIDTest(TestCase):
             "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
-        import huxunifylib.database.constants as db_c
 
         create_document(
             self.database,
