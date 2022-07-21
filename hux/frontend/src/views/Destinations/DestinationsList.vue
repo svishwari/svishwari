@@ -32,6 +32,7 @@
         <template slot="action-menu-options">
           <v-list class="py-0">
             <v-list-item
+              v-if="getAccess('destinations', 'edit_url')"
               class="text-body-1 action-menu-item"
               data-e2e="destination-edit-url"
               @click="openEditModal(destination)"

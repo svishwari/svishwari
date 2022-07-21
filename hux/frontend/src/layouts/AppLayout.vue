@@ -56,7 +56,7 @@ export default {
   watch: {
     alerts: function () {
       if (this.alerts.length > 0 && this.alerts[0].code == 401) {
-        this.$route.push({
+        this.$router.push({
           name: "NoAccess",
         })
       }

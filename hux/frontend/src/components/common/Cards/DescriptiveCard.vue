@@ -16,6 +16,7 @@
         <template #activator="{ on, attrs }">
           <v-icon
             v-if="actionMenu"
+            id="menu-icon-card"
             class="d-flex float-right"
             v-bind="attrs"
             color="primary"
@@ -24,7 +25,10 @@
             mdi-dots-vertical
           </v-icon>
         </template>
-        <div class="black--text text-darken-4 cursor-pointer white">
+        <div
+          id="menu-options-card"
+          class="black--text text-darken-4 cursor-pointer white"
+        >
           <slot name="action-menu-options"></slot>
         </div>
       </v-menu>
@@ -215,6 +219,19 @@ export default {
       default: "mt-3 mr-8",
     },
   },
+
+  // mounted() {
+  //   if (
+  //     document.getElementById("menu-options-card") &&
+  //     document.getElementById("menu-options-card").children.length == 0
+  //   ) {
+  //     document.getElementById("menu-icon-card").style.cssText =
+  //       "display:none !important"
+  //   } else {
+  //     document.getElementById("menu-icon-card").style.cssText =
+  //       "display:flex !important"
+  //   }
+  // },
 }
 </script>
 
