@@ -117,7 +117,7 @@ steps:
       - yq r $VARS_FILE "delivery.$PROMOTE_ENV" | sed -e 's/:\ /=/g'
       - export $(yq r $VARS_FILE "delivery.$PROMOTE_ENV" | sed -e 's/:\ /=/g')
       - echo $RC_VALUES
-      - cf_export COMMIT_MESSAGE="Promote to rc1"
+      - cf_export COMMIT_MESSAGE="Deploy to rc1"
       - cf_export COMMIT_AUTHOR="codefresh"
       ## Update Manifest
       - yq w -i $RC_VALUES image.tag ${{DOCKER_TAG}}
