@@ -104,7 +104,6 @@ steps:
         all:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
           CheckNotaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == false'
-          CheckNotaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "release") == false'
 
   Get_Version_From_Git_for_RC1_deploy:
     stage: rc1_deploy
@@ -129,7 +128,6 @@ steps:
         all:
           triggerNameIncludes: 'includes("${{TRIGGER_NAME}}", "promote") == true'
           IsaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "app") == true'
-          IsaVersionTagValue: 'includes(lower("${{CF_BRANCH}}"), "release") == true'
 
   commit_and_push:
     stage: commit

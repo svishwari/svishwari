@@ -33,30 +33,7 @@ steps:
     type: git-clone
     repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
     revision: "${{CF_BRANCH}}"
-
-  number_tag:
-    stage: build_tag
-    description: "Set docker tag from build number."
-    type: freestyle
-    image: huxhub.repo.mgnt.in/alpine
-    commands:
-      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
-      - cf_export DEPLOY_ENV='dev_deploy'
-
-  version_tag:
-    stage: build_tag
-    description: "Set docker tag based Git tag."
-    type: freestyle
-    image: huxhub.repo.mgnt.in/alpine
-    commands:
-      - cf_export DOCKER_TAG=${{CF_BRANCH}}
-      - cf_export DEPLOY_ENV='aws1_promote'
-    when:
-      branch:
-        only:
-          - /^app.*/i
-          - /^release-[\d].*/i
-
+    
   set_global_vars:
     stage: set_env
     title: Set environment variables
@@ -68,6 +45,31 @@ steps:
       - yq r $VARS_FILE 'global' | sed -e 's/:\ /=/g' >> ${{CF_VOLUME_PATH}}/env_vars_to_export
     environment:
       - VARS_FILE=codefresh_vars.yml
+
+  number_tag:
+    stage: build_tag
+    description: "Set docker tag from build number."
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
+      - cf_export DEPLOY_ENV='dev_deploy'
+      - cf_export JFROG_REGISTRY=${{DEV_REGISTRY}}
+
+  version_tag:
+    stage: build_tag
+    description: "Set docker tag based Git tag."
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BRANCH}}
+      - cf_export DEPLOY_ENV='aws1_promote'
+      - cf_export JFROG_REGISTRY=${{PROD_REGISTRY}}
+    when:
+      branch:
+        only:
+          - /^app.*/i
+          # - /^release-[\d].*/i
 
   test_image:
     stage: tests
@@ -129,14 +131,14 @@ steps:
     arguments:
       BUILD_NAME: "${{APP_NAME}}"
       BUILD_NUMBER: "${{DOCKER_TAG}}"
-      JFROG_REGISTRY: "${{DEV_REGISTRY}}"
+      JFROG_REGISTRY: "${{JFROG_REGISTRY}}"
       BUILD_TAG: "${{DOCKER_TAG}}"
     when:
       branch:
         only:
           - main
           - develop
-          - /^release-[\d].*/i
+          # - /^release-[\d].*/i
           - /^app.*/i
 
   deployment:
@@ -157,5 +159,5 @@ steps:
         only:
           - main
           - develop
-          - /^release-[\d].*/i
+          # - /^release-[\d].*/i
           - /^app.*/i
