@@ -255,3 +255,42 @@ class ConfigurationsTests(RouteTestCase):
                 db_c.CONFIGURATION_FIELD_CHILDREN
             ][1][api_c.ENABLED]
         )
+
+    def test_success_get_empty_industrytags(self):
+        """Test get  industry tags."""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/industrytags",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(response.json)
+
+    def test_success_put_industrytags(self):
+        """Test get  industry tags."""
+
+        industrytags = {
+            "settings": [
+                {
+                    "name": "Automotive",
+                    "label": "Automotive",
+                    "enabled": False,
+                }
+            ]
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/industrytags",
+            json=industrytags,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME]
+        )
+        self.assertEqual(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][api_c.NAME],
+            "Automotive",
+        )

@@ -1,7 +1,7 @@
 """Schemas for the Configurations Object"""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Boolean, Nested, List
+from marshmallow.fields import Str, Boolean, Nested, List, Dict
 
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
@@ -43,3 +43,9 @@ class NavigationSettingsSchema(Schema):
     """Navigation Settings Schema"""
 
     settings = List(Nested(NavigationSettings))
+
+
+class IndustryTagsSchema(Schema):
+    """Industry Tags Schema"""
+
+    settings = List(Dict())
