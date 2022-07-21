@@ -714,6 +714,9 @@ DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
 DESTINATION_ALREADY_PRESENT = "Destination already present."
+DESTINATION_NOT_ADDED = (
+    "Failed to update the authentication details of the destination."
+)
 DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
 USER_NOT_FOUND = "User not found."
 

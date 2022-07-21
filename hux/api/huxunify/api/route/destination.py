@@ -361,11 +361,7 @@ class DestinationAuthenticationPutView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    @api_error_handler(
-        custom_message={
-            ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
-        }
-    )
+    @api_error_handler(custom_message=api_c.DESTINATION_NOT_ADDED)
     @validate_destination()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def put(
