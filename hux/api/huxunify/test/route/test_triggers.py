@@ -88,8 +88,8 @@ class TestTriggersRoute(TestCase):
             {api_c.DELIVERIES: {api_c.ORCH_INTEGRATION_TEST: 0}}, response.json
         )
 
-    def test_delivery_pending_jobs(self):
-        """Test delivery of pending jobs endpoint"""
+    def test_delivery_integration_jobs(self):
+        """Test delivery of integration jobs endpoint"""
 
         with mock.patch(
             "huxunify.api.route.triggers.get_documents",
