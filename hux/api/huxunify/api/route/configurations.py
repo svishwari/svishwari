@@ -305,7 +305,7 @@ class ConfigurationsGETIndustryTags(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of IndustryTag settings.",
-            "schema": {"type": "array", "items": IndustryTagsSchema},
+            "schema": IndustryTagsSchema,
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -343,9 +343,7 @@ class ConfigurationsGETIndustryTags(SwaggerView):
         )
 
         industrytag_settings_doc = (
-            industrytag_settings[db_c.DOCUMENTS][0][
-                db_c.CONFIGURATION_FIELD_SETTINGS
-            ]
+            industrytag_settings[db_c.DOCUMENTS][0]
             if industrytag_settings[db_c.DOCUMENTS]
             else []
         )
@@ -362,6 +360,24 @@ class ConfigurationsGETIndustryTags(SwaggerView):
 )
 class ConfigurationsPUTIndustryTags(SwaggerView):
     """Configurations PUT Industry Tag class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "description": "Settings Object.",
+            "type": "object",
+            "example": {
+                "settings": [
+                    {
+                        "name": "Automotive",
+                        "label": "Automotive",
+                        "enabled": False,
+                    }
+                ]
+            },
+        },
+    ]
 
     responses = {
         HTTPStatus.OK.value: {
