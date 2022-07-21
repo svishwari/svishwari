@@ -945,7 +945,7 @@ class AudienceDeliverHistoryView(SwaggerView):
                 and job.get(api_c.ENGAGEMENT_ID)
                 and delivery_engagement
                 and delivery_platform_id
-                and delivery_platform_id in destination_dict
+                and delivery_platform_id in destination_dict.keys()
             ):
                 delivery_history.append(
                     {
