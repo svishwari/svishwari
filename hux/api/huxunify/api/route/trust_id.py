@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument,no-self-use
 """Paths for TrustID APIs."""
 import logging
 import time
