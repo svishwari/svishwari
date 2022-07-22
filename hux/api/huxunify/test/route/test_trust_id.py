@@ -17,7 +17,6 @@ import huxunify.test.constants as t_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 
 
-
 class TestTrustIDRoutes(RouteTestCase):
     """Tests for trust ID endpoints."""
 
@@ -299,7 +298,7 @@ class TestTrustIDRoutes(RouteTestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
             query_string={
                 api_c.DEFAULT: True,
-                api_c.TRUST_ID_SEGMENT_NAME: "Test Segment"
+                api_c.TRUST_ID_SEGMENT_NAME: "Test Segment",
             },
             headers=t_c.STANDARD_HEADERS,
         )
@@ -348,7 +347,7 @@ class TestTrustIDRoutes(RouteTestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
             query_string={
                 api_c.DEFAULT: True,
-                api_c.TRUST_ID_SEGMENT_NAME: "Test Segment"
+                api_c.TRUST_ID_SEGMENT_NAME: "Test Segment",
             },
             headers=t_c.STANDARD_HEADERS,
         )

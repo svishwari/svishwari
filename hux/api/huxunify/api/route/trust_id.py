@@ -252,12 +252,13 @@ class TrustIdAttributeComparison(SwaggerView):
         )
 
         if add_default:
-            segments.insert(0,
+            segments.insert(
+                0,
                 {
                     api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
                     api_c.TRUST_ID_SEGMENT_FILTERS: [],
                     api_c.DEFAULT: add_default,
-                }
+                },
             )
 
         for segment in segments:
@@ -433,12 +434,13 @@ class TrustIdAddSegment(SwaggerView):
         )
 
         if add_default:
-            segments.insert(0,
+            segments.insert(
+                0,
                 {
                     api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
                     api_c.TRUST_ID_SEGMENT_FILTERS: [],
                     api_c.DEFAULT: add_default,
-                }
+                },
             )
 
         for segment in segments:
@@ -541,12 +543,13 @@ class TrustIdRemoveSegment(SwaggerView):
         )
 
         if add_default:
-            segments.insert(0,
+            segments.insert(
+                0,
                 {
                     api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
                     api_c.TRUST_ID_SEGMENT_FILTERS: [],
                     api_c.DEFAULT: add_default,
-                }
+                },
             )
 
         for segment in segments:
