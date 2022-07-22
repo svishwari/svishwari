@@ -1633,7 +1633,13 @@ class AudienceRules(SwaggerView):
                 "between": "Between",
                 "value": "Value",
                 "decile_percentage": "Decile percentage",
-            }
+            },
+            "allowed_timedelta_types": [
+                {api_c.AUDIENCE_RULES_DAYS: "Days"},
+                {api_c.AUDIENCE_RULES_WEEKS: "Weeks"},
+                {api_c.AUDIENCE_RULES_MONTHS: "Months"},
+                {api_c.AUDIENCE_RULES_YEARS: "Years"},
+            ],
         }
 
         # Fetch events from CDM. Check cache first.
@@ -1674,14 +1680,17 @@ class AudienceRules(SwaggerView):
                     "propensity_to_unsubscribe": {
                         "name": "Propensity to unsubscribe",
                         "type": "range",
+                        "icon": "unsubscribe",
                     },
                     "ltv_predicted": {
                         "name": "Predicted lifetime value",
                         "type": "range",
+                        "icon": "ltv",
                     },
                     "propensity_to_purchase": {
                         "name": "Propensity to purchase",
                         "type": "range",
+                        "icon": "purchase",
                     },
                 },
                 "general": {
