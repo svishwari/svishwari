@@ -28,30 +28,11 @@ def pending_jobs() -> Response:
                 get_db_client(),
                 db_c.DELIVERY_JOBS_COLLECTION,
                 {db_c.STATUS: db_c.STATUS_PENDING},
-            ).get(api_c.TOTAL_RECORDS, 0)
-        }
-    }
-
-
-@triggers_bp.route(
-    f"/{api_c.TRIGGERS_TAG}/{api_c.DELIVERIES}/{api_c.ORCH_INTEGRATION_TEST}",
-    methods=["GET"],
-)
-def integration_test_job() -> Response:
-    """Purpose of this function is to return a delivery job
-    where username is orch_integration_test_user.
-
-    Returns:
-        Response: json response with count
-    """
-
-    # get integration test jobs from the database.
-    return {
-        api_c.DELIVERIES: {
+            ).get(api_c.TOTAL_RECORDS, 0),
             api_c.ORCH_INTEGRATION_TEST: get_documents(
                 get_db_client(),
                 db_c.DELIVERY_JOBS_COLLECTION,
                 {db_c.USERNAME: db_c.ORCH_INTEGRATION_TEST_USER},
             ).get(api_c.TOTAL_RECORDS, 0)
-        }
+        },
     }
