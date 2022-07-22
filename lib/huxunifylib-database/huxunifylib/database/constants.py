@@ -69,7 +69,7 @@ CLIENT_PROJECTS_COLLECTION = "client_projects"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 MODELS_COLLECTION = "models"
-SURVEY_METRICS_COLLECTION = "soumya_trust_test"
+SURVEY_METRICS_COLLECTION = "survey_metrics"
 
 CONSTANT_NAME = "constant"
 CONSTANT_KEY = "key"
