@@ -581,8 +581,8 @@ class AudienceView(SwaggerView):
             audience[api_c.DELIVERIES].sort(
                 key=lambda delivery: delivery[db_c.UPDATE_TIME], reverse=True
             )
-
-            audience[api_c.TAG][api_c.INDUSTRY_TAG].sort()
+            if audience.get(api_c.TAGS):
+                audience[api_c.TAGS][api_c.INDUSTRY].sort()
 
             # set the lookalikeable field in audience before limiting the
             # number of deliveries in it based on delivery_limit
