@@ -154,7 +154,7 @@ class TrustIdComparisonSchema(Schema):
     segment_type = Str(
         required=True,
         example="composite & factor scores",
-        validate=OneOf(api_c.TRUST_ID_SEGMENT_TYPES),
+        validate=OneOf(api_c.TRUST_ID_SEGMENT_TYPE_MAP.values()),
     )
     segments = List(Nested(TrustIdSegmentSchema))
 

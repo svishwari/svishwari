@@ -203,7 +203,7 @@ class TestTrustIDRoutes(RouteTestCase):
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
             query_string={api_c.DEFAULT: False},
-            json={"segment_name": "Test Add Segment", "segment_filters": []},
+            json=t_c.TRUST_ID_SAMPLE_USER_SEGMENT,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -219,6 +219,18 @@ class TestTrustIDRoutes(RouteTestCase):
         # Ensure it is the default segment.
         self.assertFalse(
             response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )
+        self.assertEqual(
+            t_c.TRUST_ID_SAMPLE_USER_SEGMENT[api_c.TRUST_ID_SEGMENT_FILTERS],
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0][
+                api_c.TRUST_ID_SEGMENT_FILTERS
+            ],
+        )
+        self.assertEqual(
+            t_c.TRUST_ID_SAMPLE_USER_SEGMENT[api_c.TRUST_ID_SEGMENT_NAME],
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0][
+                api_c.TRUST_ID_SEGMENT_NAME
+            ],
         )
 
     def test_add_trust_id_segment_default_true(self):
@@ -236,7 +248,7 @@ class TestTrustIDRoutes(RouteTestCase):
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
             query_string={api_c.DEFAULT: True},
-            json={"segment_name": "Test Add Segment", "segment_filters": []},
+            json=t_c.TRUST_ID_SAMPLE_USER_SEGMENT,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -257,6 +269,18 @@ class TestTrustIDRoutes(RouteTestCase):
         self.assertFalse(
             response.json[0].get(api_c.TRUST_ID_SEGMENTS)[1].get(api_c.DEFAULT)
         )
+        self.assertEqual(
+            t_c.TRUST_ID_SAMPLE_USER_SEGMENT[api_c.TRUST_ID_SEGMENT_FILTERS],
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[1][
+                api_c.TRUST_ID_SEGMENT_FILTERS
+            ],
+        )
+        self.assertEqual(
+            t_c.TRUST_ID_SAMPLE_USER_SEGMENT[api_c.TRUST_ID_SEGMENT_NAME],
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[1][
+                api_c.TRUST_ID_SEGMENT_NAME
+            ],
+        )
 
     def test_remove_trust_id_segment_default_true(self):
         """Test for trust_id segment removal endpoint with default set to true."""
@@ -273,7 +297,8 @@ class TestTrustIDRoutes(RouteTestCase):
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
-            json={"segment_name": "Test Segment", "segment_filters": []},
+            query_string={api_c.DEFAULT: True},
+            json=t_c.TRUST_ID_SAMPLE_USER_SEGMENT,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -298,7 +323,9 @@ class TestTrustIDRoutes(RouteTestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
             query_string={
                 api_c.DEFAULT: True,
-                api_c.TRUST_ID_SEGMENT_NAME: "Test Segment",
+                api_c.TRUST_ID_SEGMENT_NAME: t_c.TRUST_ID_SAMPLE_USER_SEGMENT[
+                    api_c.TRUST_ID_SEGMENT_NAME
+                ],
             },
             headers=t_c.STANDARD_HEADERS,
         )
@@ -329,7 +356,7 @@ class TestTrustIDRoutes(RouteTestCase):
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
             query_string={api_c.DEFAULT: False},
-            json={"segment_name": "Test Segment", "segment_filters": []},
+            json=t_c.TRUST_ID_SAMPLE_USER_SEGMENT,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -346,8 +373,10 @@ class TestTrustIDRoutes(RouteTestCase):
         response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
             query_string={
-                api_c.DEFAULT: True,
-                api_c.TRUST_ID_SEGMENT_NAME: "Test Segment",
+                api_c.DEFAULT: False,
+                api_c.TRUST_ID_SEGMENT_NAME: t_c.TRUST_ID_SAMPLE_USER_SEGMENT[
+                    api_c.TRUST_ID_SEGMENT_NAME
+                ],
             },
             headers=t_c.STANDARD_HEADERS,
         )

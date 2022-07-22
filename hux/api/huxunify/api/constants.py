@@ -1836,13 +1836,6 @@ HX_TRUST_ID = "HX TrustID"
 TRUST_ID_LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
 TRUST_ID_SEGMENT_TYPE = "segment_type"
 TRUST_ID_SEGMENTS = "segments"
-TRUST_ID_SEGMENT_TYPES = [
-    "composite & factor scores",
-    "humanity attributes",
-    "reliability attributes",
-    "capability attributes",
-    "transparency attributes",
-]
 TRUST_ID_SEGMENT_NAME = "segment_name"
 TRUST_ID_SEGMENT_FILTERS = "segment_filters"
 TRUST_ID_SURVEY_RESPONSES = "survey_responses"
