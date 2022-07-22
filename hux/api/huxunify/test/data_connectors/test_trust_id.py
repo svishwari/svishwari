@@ -7,7 +7,8 @@ from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.trust_id import (
     get_trust_id_overview_data,
     get_trust_id_attributes_data,
-    get_trust_id_comparison_data,
+    get_trust_id_comparison_data_by_segment,
+    get_trust_id_comparison_response,
 )
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -31,11 +32,6 @@ class TrustIDTest(TestCase):
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
-
-        mock.patch(
-            "huxunify.api.data_connectors.cache.get_db_client",
-            return_value=self.database,
-        ).start()
 
         create_document(
             self.database,
@@ -109,6 +105,11 @@ class TrustIDTest(TestCase):
             return_value=t_c.TRUST_ID_ATTRIBUTE_SAMPLE_DATA,
         ).start()
 
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_overview",
+            return_value=t_c.TRUST_ID_OVERVIEW_SAMPLE_DATA,
+        ).start()
+
         segments = [
             {
                 api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
@@ -116,6 +117,42 @@ class TrustIDTest(TestCase):
                 api_c.DEFAULT: True,
             }
         ]
-        comparison_data = get_trust_id_comparison_data(self.database, segments)
+        comparison_data = get_trust_id_comparison_data_by_segment(
+            self.database, segments
+        )
+        self.assertIsInstance(comparison_data, dict)
+        for segment_type in comparison_data:
+            self.assertIn(segment_type, api_c.TRUST_ID_SEGMENT_TYPE_MAP)
+
+    def test_get_trust_id_comparison_response(self):
+        """Test get_trust_id_comparison_response method."""
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_attributes",
+            return_value=t_c.TRUST_ID_ATTRIBUTE_SAMPLE_DATA,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_overview",
+            return_value=t_c.TRUST_ID_OVERVIEW_SAMPLE_DATA,
+        ).start()
+
+        segments = [
+            {
+                api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
+                api_c.TRUST_ID_SEGMENT_FILTERS: [],
+                api_c.DEFAULT: True,
+            }
+        ]
+        for segment in segments:
+            segment[
+                api_c.COMPARISON
+            ] = get_trust_id_comparison_data_by_segment(self.database, segment)
+
+        comparison_data = get_trust_id_comparison_response(segments)
+
         self.assertIsInstance(comparison_data, list)
-        self.assertIsInstance(comparison_data[0], dict)
+        for segment_type_data in comparison_data:
+            self.assertIn(
+                segment_type_data[api_c.TRUST_ID_SEGMENT_TYPE],
+                api_c.TRUST_ID_SEGMENT_TYPE_MAP.values(),
+            )

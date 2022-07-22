@@ -8,6 +8,7 @@ from typing import Tuple
 from flasgger import SwaggerView
 from flask import Blueprint, request
 
+from huxunify.api.data_connectors.cache import Caching
 from huxunifylib.database import constants as db_c, collection_management
 from huxunifylib.database.cache_management import (
     get_cache_entry,
@@ -23,7 +24,8 @@ from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.trust_id import (
     get_trust_id_overview_data,
     get_trust_id_attributes_data,
-    get_trust_id_comparison_data,
+    get_trust_id_comparison_response,
+    get_trust_id_comparison_data_by_segment,
 )
 from huxunify.api.route.decorators import (
     secured,
@@ -258,8 +260,27 @@ class TrustIdAttributeComparison(SwaggerView):
                 }
             )
 
+        for segment in segments:
+            segment[api_c.COMPARISON] = Caching.check_and_return_cache(
+                {
+                    api_c.ENDPOINT: f"{api_c.TRUST_ID_TAG}.{api_c.COMPARISON}",
+                    **{
+                        api_c.TRUST_ID_SEGMENT_FILTERS: segment.get(
+                            api_c.TRUST_ID_SEGMENT_FILTERS, []
+                        )
+                    },
+                },
+                get_trust_id_comparison_data_by_segment,
+                {
+                    "database": database,
+                    api_c.TRUST_ID_SEGMENT_FILTERS: segment[
+                        api_c.TRUST_ID_SEGMENT_FILTERS
+                    ],
+                },
+            )
+
         return HuxResponse.OK(
-            data=get_trust_id_comparison_data(database, segments),
+            data=get_trust_id_comparison_response(segments),
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -420,8 +441,27 @@ class TrustIdAddSegment(SwaggerView):
                 }
             )
 
+        for segment in segments:
+            segment[api_c.COMPARISON] = Caching.check_and_return_cache(
+                {
+                    api_c.ENDPOINT: f"{api_c.TRUST_ID_TAG}.{api_c.COMPARISON}",
+                    **{
+                        api_c.TRUST_ID_SEGMENT_FILTERS: segment.get(
+                            api_c.TRUST_ID_SEGMENT_FILTERS, []
+                        )
+                    },
+                },
+                get_trust_id_comparison_data_by_segment,
+                {
+                    "database": database,
+                    api_c.TRUST_ID_SEGMENT_FILTERS: segment[
+                        api_c.TRUST_ID_SEGMENT_FILTERS
+                    ],
+                },
+            )
+
         return HuxResponse.CREATED(
-            data=get_trust_id_comparison_data(database, segments),
+            data=get_trust_id_comparison_response(segments),
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -509,7 +549,26 @@ class TrustIdRemoveSegment(SwaggerView):
                 }
             )
 
+        for segment in segments:
+            segment[api_c.COMPARISON] = Caching.check_and_return_cache(
+                {
+                    api_c.ENDPOINT: f"{api_c.TRUST_ID_TAG}.{api_c.COMPARISON}",
+                    **{
+                        api_c.TRUST_ID_SEGMENT_FILTERS: segment.get(
+                            api_c.TRUST_ID_SEGMENT_FILTERS, []
+                        )
+                    },
+                },
+                get_trust_id_comparison_data_by_segment,
+                {
+                    "database": database,
+                    api_c.TRUST_ID_SEGMENT_FILTERS: segment[
+                        api_c.TRUST_ID_SEGMENT_FILTERS
+                    ],
+                },
+            )
+
         return HuxResponse.OK(
-            data=get_trust_id_comparison_data(database, segments),
+            data=get_trust_id_comparison_response(segments),
             data_schema=TrustIdComparisonSchema(),
         )

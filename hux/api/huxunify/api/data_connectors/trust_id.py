@@ -9,7 +9,6 @@ from huxunifylib.database.survey_metrics_management import (
     get_trust_id_attributes,
 )
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.cache import Caching
 
 
 def get_trust_id_overview_data(
@@ -235,42 +234,21 @@ def get_trust_id_comparison_data_by_segment(
     return comparison_data
 
 
-def get_trust_id_comparison_data(
-    database: DatabaseClient, segments: list
-) -> list:
-    """Get comparison data for trust id
+def get_trust_id_comparison_response(segments: list) -> list:
+    """Structure comparison data for response
 
     Args:
-        database(DatabaseClient): database client
         segments(list): List of segments
 
     Returns:
          (list): Segment-wise comparison data
     """
     comparison_data = {
-        segment_type: []
-        for segment_type in api_c.TRUST_ID_SEGMENT_TYPE_MAP
+        segment_type: [] for segment_type in api_c.TRUST_ID_SEGMENT_TYPE_MAP
     }
     for segment in segments:
-        segment_comparison_data = Caching.check_and_return_cache(
-            {
-                api_c.ENDPOINT: f"{api_c.TRUST_ID_TAG}.{api_c.COMPARISON}",
-                **{
-                    api_c.TRUST_ID_SEGMENT_FILTERS: segment.get(
-                        api_c.TRUST_ID_SEGMENT_FILTERS, []
-                    )
-                },
-            },
-            get_trust_id_comparison_data_by_segment,
-            {
-                "database": database,
-                api_c.TRUST_ID_SEGMENT_FILTERS: segment[
-                    api_c.TRUST_ID_SEGMENT_FILTERS
-                ],
-            },
-        )
         for segment_type in api_c.TRUST_ID_SEGMENT_TYPE_MAP:
-            segment_comparison_data[segment_type].update(
+            segment[api_c.COMPARISON][segment_type].update(
                 {
                     api_c.DEFAULT: segment.get(api_c.DEFAULT, False),
                     api_c.TRUST_ID_SEGMENT_NAME: segment[
@@ -279,7 +257,7 @@ def get_trust_id_comparison_data(
                 }
             )
             comparison_data[segment_type].append(
-                segment_comparison_data[segment_type]
+                segment[api_c.COMPARISON][segment_type]
             )
 
     trust_id_comparison_data = [
