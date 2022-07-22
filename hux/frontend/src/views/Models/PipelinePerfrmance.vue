@@ -1,12 +1,14 @@
 <template>
   <div class="pipeline-tab-wrap">
-  <v-progress-linear
-        v-if="loading"
-        :active="loading"
-        :indeterminate="loading"
-      />
-    <v-card v-if="isPipelineAvailable && !loading" class="mt-5 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5">
-
+    <v-progress-linear
+      v-if="loading"
+      :active="loading"
+      :indeterminate="loading"
+    />
+    <v-card
+      v-if="isPipelineAvailable && !loading"
+      class="mt-5 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5"
+    >
       <v-card-title class="d-flex justify-space-between pa-0 pr-2">
         <h3 class="text-h3 mb-2 black--text text--darken-4">Training</h3>
       </v-card-title>
@@ -172,7 +174,10 @@
         </div>
       </span>
     </v-card>
-    <v-card v-if="isPipelineAvailable && !loading" class="mt-6 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5">
+    <v-card
+      v-if="isPipelineAvailable && !loading"
+      class="mt-6 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5"
+    >
       <v-card-title class="d-flex justify-space-between pa-0 pr-2">
         <h3 class="text-h3 mb-2 black--text text--darken-4">Scoring</h3>
       </v-card-title>
@@ -333,8 +338,11 @@
         </div>
       </span>
     </v-card>
-     <v-card v-if="!isPipelineAvailable && !loading" class="mt-5 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5">
-          <div
+    <v-card
+      v-if="!isPipelineAvailable && !loading"
+      class="mt-5 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5"
+    >
+      <div
         class="
           flex-grow-1 flex-shrink-1
           overflow-hidden
@@ -342,13 +350,15 @@
           background-empty
         "
       >
-     <empty-page type="no-customer-data" size="50">
+        <empty-page type="no-customer-data" size="50">
           <template #title>
-            <div class="title-no-engagement">Pipeline performance is coming soon!</div>
+            <div class="title-no-engagement">
+              Pipeline performance is coming soon!
+            </div>
           </template>
         </empty-page>
-          </div>
-     </v-card>
+      </div>
+    </v-card>
   </div>
 </template>
 <script>
@@ -402,8 +412,10 @@ export default {
       this.loading = false
     },
     isPipelineDataAvailable() {
-      this.isPipelineAvailable = !_.isEmpty(this.getPipelinePerData.scoring) && !_.isEmpty(this.getPipelinePerData.training)
-    }
+      this.isPipelineAvailable =
+        !_.isEmpty(this.getPipelinePerData.scoring) &&
+        !_.isEmpty(this.getPipelinePerData.training)
+    },
   },
 }
 </script>
