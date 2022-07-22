@@ -8,7 +8,6 @@ from typing import Tuple
 from flasgger import SwaggerView
 from flask import Blueprint, request
 
-from huxunify.api.data_connectors.cache import Caching
 from huxunifylib.database import constants as db_c, collection_management
 from huxunifylib.database.cache_management import (
     get_cache_entry,
@@ -21,6 +20,7 @@ from huxunifylib.database.user_management import (
 )
 
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.trust_id import (
     get_trust_id_overview_data,
     get_trust_id_attributes_data,

@@ -7,15 +7,15 @@ from huxunifylib.database.collection_management import create_document
 from huxunifylib.database.survey_metrics_management import (
     set_survey_responses_bulk,
 )
+from huxunify.api import constants as api_c
 from huxunify.api.schema.trust_id import (
     TrustIdOverviewSchema,
     TrustIdAttributesSchema,
     TrustIdComparisonSchema,
 )
+import huxunify.test.constants as t_c
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 
-import huxunify.test.constants as t_c
-from huxunify.api import constants as api_c
 
 
 class TestTrustIDRoutes(RouteTestCase):
