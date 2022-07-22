@@ -12,7 +12,9 @@ from huxunifylib.database.survey_metrics_management import (
 from huxunify.api import constants as api_c
 
 
-def get_trust_id_overview_data(database: DatabaseClient, filters: list = None) -> dict:
+def get_trust_id_overview_data(
+    database: DatabaseClient, filters: list = None
+) -> dict:
     """Fetch trust id overview data
 
     Args:
@@ -34,7 +36,9 @@ def get_trust_id_overview_data(database: DatabaseClient, filters: list = None) -
                     api_c.TRUST_ID_FACTOR_NAME: factor_name,
                     api_c.TRUST_ID_FACTOR_SCORE: int(
                         (
-                            factor_ratings[api_c.RATING][api_c.AGREE][api_c.PERCENTAGE]
+                            factor_ratings[api_c.RATING][api_c.AGREE][
+                                api_c.PERCENTAGE
+                            ]
                             - factor_ratings[api_c.RATING][api_c.DISAGREE][
                                 api_c.PERCENTAGE
                             ]
@@ -92,16 +96,18 @@ def get_trust_id_attributes_data(
                     api_c.TRUST_ID_FACTOR_NAME: factor_name,
                     api_c.TRUST_ID_ATTRIBUTE_SCORE: round(
                         (
-                            trust_id_attribute_ratings[db_c.ATTRIBUTES][factor_name][
-                                ind
-                            ][api_c.AGREE][api_c.PERCENTAGE]
-                            - trust_id_attribute_ratings[db_c.ATTRIBUTES][factor_name][
-                                ind
-                            ][api_c.DISAGREE][api_c.PERCENTAGE]
+                            trust_id_attribute_ratings[db_c.ATTRIBUTES][
+                                factor_name
+                            ][ind][api_c.AGREE][api_c.PERCENTAGE]
+                            - trust_id_attribute_ratings[db_c.ATTRIBUTES][
+                                factor_name
+                            ][ind][api_c.DISAGREE][api_c.PERCENTAGE]
                         )
                         * 100
                     ),
-                    api_c.TRUST_ID_ATTRIBUTE_DESCRIPTION: attribute[db_c.DESCRIPTION],
+                    api_c.TRUST_ID_ATTRIBUTE_DESCRIPTION: attribute[
+                        db_c.DESCRIPTION
+                    ],
                     api_c.TRUST_ID_ATTRIBUTE_SHORT_DESCRIPTION: attribute[
                         db_c.SHORT_DESCRIPTION
                     ],
@@ -109,9 +115,9 @@ def get_trust_id_attributes_data(
                         api_c.TOTAL_CUSTOMERS: trust_id_attribute_ratings[
                             api_c.TOTAL_CUSTOMERS
                         ],
-                        api_c.RATING: trust_id_attribute_ratings[db_c.ATTRIBUTES][
-                            factor_name
-                        ][ind],
+                        api_c.RATING: trust_id_attribute_ratings[
+                            db_c.ATTRIBUTES
+                        ][factor_name][ind],
                     },
                 }
             )
@@ -140,14 +146,18 @@ def get_trust_id_comparison_data_by_segment(
         {"type": db_c.TRUST_ID_ATTRIBUTES},
     )[db_c.ATTRIBUTES]
 
-    trust_id_attribute_ratings = get_trust_id_attributes(database, segment_filters)
+    trust_id_attribute_ratings = get_trust_id_attributes(
+        database, segment_filters
+    )
 
     comparison_data = {
         api_c.OVERVIEW: {
             api_c.TRUST_ID_SEGMENT_FILTERS: segment_filters,
             api_c.TRUST_ID_ATTRIBUTES: [
                 {
-                    api_c.TRUST_ID_ATTRIBUTE_TYPE: api_c.TRUST_ID_TAG.replace("-", "_"),
+                    api_c.TRUST_ID_ATTRIBUTE_TYPE: api_c.TRUST_ID_TAG.replace(
+                        "-", "_"
+                    ),
                     api_c.TRUST_ID_ATTRIBUTE_NAME: api_c.HX_TRUST_ID,
                     api_c.TRUST_ID_ATTRIBUTE_SCORE: overview_data.get(
                         api_c.TRUST_ID_SCORE, None
@@ -171,7 +181,9 @@ def get_trust_id_comparison_data_by_segment(
                             api_c.TRUST_ID_ATTRIBUTE_NAME: factor_name.title(),
                             api_c.TRUST_ID_ATTRIBUTE_SCORE: None,
                             api_c.TRUST_ID_ATTRIBUTE_DESCRIPTION: (
-                                api_c.TRUST_ID_FACTOR_DESCRIPTION_MAP[factor_name]
+                                api_c.TRUST_ID_FACTOR_DESCRIPTION_MAP[
+                                    factor_name
+                                ]
                             ),
                         }
                     ],
@@ -184,11 +196,15 @@ def get_trust_id_comparison_data_by_segment(
     for factor in overview_data[api_c.TRUST_ID_FACTORS]:
         comparison_data[api_c.OVERVIEW][api_c.TRUST_ID_ATTRIBUTES].append(
             {
-                api_c.TRUST_ID_ATTRIBUTE_TYPE: factor[api_c.TRUST_ID_FACTOR_NAME],
+                api_c.TRUST_ID_ATTRIBUTE_TYPE: factor[
+                    api_c.TRUST_ID_FACTOR_NAME
+                ],
                 api_c.TRUST_ID_ATTRIBUTE_NAME: factor[
                     api_c.TRUST_ID_FACTOR_NAME
                 ].title(),
-                api_c.TRUST_ID_ATTRIBUTE_SCORE: factor[api_c.TRUST_ID_FACTOR_SCORE],
+                api_c.TRUST_ID_ATTRIBUTE_SCORE: factor[
+                    api_c.TRUST_ID_FACTOR_SCORE
+                ],
                 api_c.TRUST_ID_ATTRIBUTE_DESCRIPTION: factor[
                     api_c.TRUST_ID_FACTOR_DESCRIPTION
                 ],
@@ -225,15 +241,19 @@ def get_trust_id_comparison_data_by_segment(
                         db_c.SHORT_DESCRIPTION,
                         attribute[db_c.SHORT_DESCRIPTION],
                     ),
-                    api_c.TRUST_ID_ATTRIBUTE_DESCRIPTION: attribute[api_c.DESCRIPTION],
+                    api_c.TRUST_ID_ATTRIBUTE_DESCRIPTION: attribute[
+                        api_c.DESCRIPTION
+                    ],
                     api_c.TRUST_ID_ATTRIBUTE_SCORE: round(
                         (
-                            trust_id_attribute_ratings[api_c.TRUST_ID_ATTRIBUTES][
-                                factor_name
-                            ][ind][api_c.AGREE][api_c.PERCENTAGE]
-                            - trust_id_attribute_ratings[api_c.TRUST_ID_ATTRIBUTES][
-                                factor_name
-                            ][ind][api_c.DISAGREE][api_c.PERCENTAGE]
+                            trust_id_attribute_ratings[
+                                api_c.TRUST_ID_ATTRIBUTES
+                            ][factor_name][ind][api_c.AGREE][api_c.PERCENTAGE]
+                            - trust_id_attribute_ratings[
+                                api_c.TRUST_ID_ATTRIBUTES
+                            ][factor_name][ind][api_c.DISAGREE][
+                                api_c.PERCENTAGE
+                            ]
                         )
                         * 100
                     ),
@@ -260,7 +280,9 @@ def get_trust_id_comparison_response(segments: list) -> list:
             segment[api_c.COMPARISON][segment_type].update(
                 {
                     api_c.DEFAULT: segment.get(api_c.DEFAULT, False),
-                    api_c.TRUST_ID_SEGMENT_NAME: segment[api_c.TRUST_ID_SEGMENT_NAME],
+                    api_c.TRUST_ID_SEGMENT_NAME: segment[
+                        api_c.TRUST_ID_SEGMENT_NAME
+                    ],
                 }
             )
             comparison_data[segment_type].append(
@@ -269,7 +291,9 @@ def get_trust_id_comparison_response(segments: list) -> list:
 
     trust_id_comparison_data = [
         {
-            api_c.TRUST_ID_SEGMENT_TYPE: api_c.TRUST_ID_SEGMENT_TYPE_MAP[factor_name],
+            api_c.TRUST_ID_SEGMENT_TYPE: api_c.TRUST_ID_SEGMENT_TYPE_MAP[
+                factor_name
+            ],
             api_c.TRUST_ID_SEGMENTS: segments,
         }
         for factor_name, segments in comparison_data.items()

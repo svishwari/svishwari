@@ -134,7 +134,9 @@ class TrustIdAttributes(SwaggerView):
             "description": "Trust ID attributes data",
             "schema": {"type": "array", "items": TrustIdAttributesSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to fetch factor data"},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to fetch factor data"
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
@@ -221,7 +223,7 @@ class TrustIdAttributeComparison(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
 
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves Trust ID comparison data.
@@ -341,7 +343,9 @@ class TrustIdSegmentFilters(SwaggerView):
             data=collection_management.get_document(
                 database=get_db_client(),
                 collection=db_c.CONFIGURATIONS_COLLECTION,
-                query_filter={db_c.CONFIGURATION_FIELD_TYPE: db_c.TRUST_ID_FILTERS},
+                query_filter={
+                    db_c.CONFIGURATION_FIELD_TYPE: db_c.TRUST_ID_FILTERS
+                },
             ).get(db_c.TRUST_ID_FILTERS),
             data_schema=TrustIdSegmentFilterSchema(),
         )
@@ -388,12 +392,14 @@ class TrustIdAddSegment(SwaggerView):
             "description": "Trust ID segment added successfully",
             "schema": {"type": "array", "items": TrustIdComparisonSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to add new segment"},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to add new segment"
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
 
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def post(self, user: dict) -> Tuple[list, int]:
         """Add Trust ID segment.
@@ -437,7 +443,9 @@ class TrustIdAddSegment(SwaggerView):
             database, user[db_c.OKTA_ID], segment_details
         )[db_c.TRUST_ID_SEGMENTS]
 
-        add_default = validation.validate_bool(request.args.get(api_c.DEFAULT, "true"))
+        add_default = validation.validate_bool(
+            request.args.get(api_c.DEFAULT, "true")
+        )
 
         if add_default:
             segments.insert(
@@ -511,7 +519,9 @@ class TrustIdRemoveSegment(SwaggerView):
             "description": "Trust ID segment removed successfully",
             "schema": {"type": "array", "items": TrustIdComparisonSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to remove segment"},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to remove segment"
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
@@ -537,7 +547,9 @@ class TrustIdRemoveSegment(SwaggerView):
 
         segment_name = request.args.get(api_c.TRUST_ID_SEGMENT_NAME)
         if not segment_name:
-            return HuxResponse.BAD_REQUEST(message="Missing required segment name.")
+            return HuxResponse.BAD_REQUEST(
+                message="Missing required segment name."
+            )
 
         database = get_db_client()
         segments = remove_user_trust_id_segments(
