@@ -15,6 +15,7 @@
         hide-default-footer
         must-sort
         :disable-sort="disableSort"
+        :style="styleObject"
       >
         <!-- table headers -->
         <template v-for="column in columns" #[`header.${column.value}`]>
@@ -171,6 +172,11 @@ export default {
       required: false,
       default: "Nothing to show here yet.",
     },
+    variant: {
+      type: String,
+      required: false,
+      default: "Large",
+    },
   },
   data() {
     return {
@@ -197,6 +203,13 @@ export default {
       set: function (value) {
         this.$emit("sortColumn", value)
       },
+    },
+    styleObject() {
+      return {
+        "--padding-header": this.variant == "Large" ? "18px 16px" : "14px 12px",
+        "--padding-extreme": this.variant == "Large" ? "32px" : "24px",
+        "--padding-content": this.variant == "Large" ? "16px" : "12px",
+      }
     },
   },
   methods: {
@@ -273,12 +286,13 @@ export default {
         th {
           height: 56px !important;
           background: var(--v-black-lighten7) !important;
-          padding: 16px;
+          color: var(--v-black-base) !important;
+          padding: var(--padding-header);
           &:first-child {
-            padding-left: 32px !important;
+            padding-left: var(--padding-extreme) !important;
           }
           &:last-child {
-            padding-right: 32px !important;
+            padding-right: var(--padding-extreme) !important;
           }
         }
       }
@@ -297,20 +311,19 @@ export default {
       tr {
         &:hover,
         &:active {
-          filter: drop-shadow(0px 100px 200px rgba(30, 30, 30, 0.03))
-            drop-shadow(0px 4px 8px rgba(0, 85, 135, 0.15));
+          @extend .box-shadow-15-4;
         }
         &:active {
           background: var(--v-black-lighten7) !important;
         }
         td {
           @extend .new-b1;
-          padding: 16px !important;
+          padding: var(--padding-content) !important;
           &:first-child {
-            padding-left: 32px !important;
+            padding-left: var(--padding-extreme) !important;
           }
           &:last-child {
-            padding-right: 32px !important;
+            padding-right: var(--padding-extreme) !important;
           }
         }
       }

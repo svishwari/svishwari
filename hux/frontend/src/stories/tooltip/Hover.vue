@@ -3,7 +3,7 @@
     :top="positionTop"
     offset-y
     open-on-hover
-    :content-class="`tooltipContentClass ${contentClass}`"
+    :content-class="`hoverContentClass ${contentClass}`"
     :max-width="maxWidth"
     :min-width="minWidth"
     :nudge-right="nudgeRight"
@@ -11,7 +11,7 @@
     :z-index="zIndex"
   >
     <template #activator="{ on }">
-      <span class="new-b3" v-on="on">
+      <span class="new-3" v-on="on">
         <slot name="label-content"></slot>
         <slot name="default"></slot>
       </span>
@@ -25,7 +25,7 @@
 
 <script>
 export default {
-  name: "Tooltip",
+  name: "Hover",
   props: {
     positionTop: {
       type: Boolean,
@@ -65,12 +65,12 @@ export default {
     color: {
       type: String,
       required: false,
-      default: "white-base",
+      default: "black-base",
     },
     backgroundColor: {
       type: String,
       required: false,
-      default: "primary-base",
+      default: "white-base",
     },
   },
   computed: {
@@ -88,7 +88,7 @@ export default {
 .tooltip-hover {
   border-radius: 8px !important;
 }
-.tooltipContentClass {
+.hoverContentClass {
   @extend .box-shadow-15-8;
   border-radius: 8px;
 }

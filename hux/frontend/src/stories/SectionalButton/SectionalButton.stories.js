@@ -3,7 +3,7 @@ import SectionalButton from "./SectionalButton.vue"
 export default {
   component: SectionalButton,
 
-  title: "NewComponents/SectionalButton",
+  title: "NewComponents/Button",
 
   parameters: {
     design: {
