@@ -4,9 +4,11 @@ from collections import defaultdict
 
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.collection_management import get_document
 from huxunifylib.database.survey_metrics_management import (
     get_survey_responses,
-    get_overview,
+    get_trust_id_overview,
+    get_trust_id_attributes,
 )
 from huxunify.api import constants as api_c
 
@@ -183,16 +185,19 @@ def get_trust_id_overview_deprecated(survey_responses: list) -> dict:
     return overview_data
 
 
-def get_trust_id_overview(database: DatabaseClient) -> dict:
+def get_trust_id_overview_data(
+    database: DatabaseClient, filters: list = None
+) -> dict:
     """Fetch trust id overview data
 
     Args:
         database(DatabaseClient): database client
+        filters(list): List of filters, default None
 
     Returns:
         (dict): Trust ID overview data
     """
-    overview = get_overview(database)
+    overview = get_trust_id_overview(database, filters)
 
     trust_id_overview = {api_c.FACTORS: []}
     for factor_name, factor_ratings in overview.items():
@@ -211,10 +216,9 @@ def get_trust_id_overview(database: DatabaseClient) -> dict:
                         )
                         * 100
                     ),
-                    api_c.FACTOR_DESCRIPTION: factor_ratings.get(
-                        api_c.DESCRIPTION,
-                        api_c.FACTOR_DESCRIPTION_MAP[factor_name],
-                    ),
+                    api_c.FACTOR_DESCRIPTION: api_c.FACTOR_DESCRIPTION_MAP[
+                        factor_name
+                    ],
                     api_c.OVERALL_CUSTOMER_RATING: factor_ratings,
                 }
             )
@@ -234,7 +238,7 @@ def get_trust_id_overview(database: DatabaseClient) -> dict:
     return trust_id_overview
 
 
-def get_trust_id_attributes(survey_responses: list) -> list:
+def get_trust_id_attributes_deprecated(survey_responses: list) -> list:
     """Get trust id values details
 
     Args:
@@ -300,6 +304,62 @@ def get_trust_id_attributes(survey_responses: list) -> list:
     return trust_id_attributes
 
 
+def get_trust_id_attributes_data(
+    database: DatabaseClient, filters: list = None
+) -> list:
+    """Get trust id attribute details
+
+    Args:
+        database(DatabaseClient): database client
+        filters(list): List o filters, default None
+
+    Returns:
+        (list): List of attributes and their details
+
+    """
+    attributes = []
+    trust_id_attributes = get_document(
+        database,
+        db_c.CONFIGURATIONS_COLLECTION,
+        {"type": db_c.TRUST_ID_ATTRIBUTES},
+    )[db_c.ATTRIBUTES]
+
+    trust_id_attribute_ratings = get_trust_id_attributes(database, filters)
+
+    for key, value in trust_id_attributes.items():
+        for ind, attribute in enumerate(value):
+            attributes.append(
+                {
+                    api_c.FACTOR_NAME: key,
+                    api_c.ATTRIBUTE_SCORE: round(
+                        (
+                            trust_id_attribute_ratings[db_c.ATTRIBUTES][key][
+                                ind
+                            ][api_c.AGREE][api_c.PERCENTAGE]
+                            - trust_id_attribute_ratings[db_c.ATTRIBUTES][key][
+                                ind
+                            ][api_c.DISAGREE][api_c.PERCENTAGE]
+                        )
+                        * 100
+                    ),
+                    api_c.ATTRIBUTE_DESCRIPTION: attribute[db_c.DESCRIPTION],
+                    api_c.ATTRIBUTE_SHORT_DESCRIPTION: attribute[
+                        db_c.SHORT_DESCRIPTION
+                    ],
+                    api_c.OVERALL_CUSTOMER_RATING: {
+                        api_c.TOTAL_CUSTOMERS: trust_id_attribute_ratings[
+                            api_c.TOTAL_CUSTOMERS
+                        ],
+                        api_c.RATING: trust_id_attribute_ratings[
+                            db_c.ATTRIBUTES
+                        ][key][ind],
+                    },
+                }
+            )
+
+    return attributes
+
+
 def get_trust_id_comparison_data(data_by_segment: list) -> list:
     """Get comparison data for trust id
 
@@ -314,7 +374,7 @@ def get_trust_id_comparison_data(data_by_segment: list) -> list:
 
     for segment_data in data_by_segment:
 
-        attributes_data = get_trust_id_attributes(
+        attributes_data = get_trust_id_attributes_deprecated(
             segment_data[api_c.SURVEY_RESPONSES]
         )
         overview_data[

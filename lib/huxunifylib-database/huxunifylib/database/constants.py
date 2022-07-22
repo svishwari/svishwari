@@ -262,6 +262,7 @@ SURVEY_RESPONSES = "responses"
 SURVEY_RESPONSE_DATE = "response_date"
 TRUST_ID_SEGMENTS = "trust_id_segments"
 TRUST_ID_FILTERS = "trust_id_filters"
+TRUST_ID_ATTRIBUTES = "trust_id_attributes"
 SEGMENT_NAME = "segment_name"
 FACTORS = "factors"
 ATTRIBUTES = "attributes"
@@ -642,6 +643,7 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_SETTINGS,
         CONFIGURATION_FIELD_MODULES,
         CONFIGURATION_FIELD_FILTERS,
+        ATTRIBUTES,
     ],
     MODELS_COLLECTION: [
         NAME,
