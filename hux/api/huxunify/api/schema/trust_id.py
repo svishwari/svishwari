@@ -104,7 +104,6 @@ class AttributeScoreOverviewSchema(Schema):
         ordered = True
 
     attribute_type = Str(
-        attribute=api_c.TRUST_ID_ATTRIBUTE_SHORT_DESCRIPTION,
         required=True,
         example="trust_id",
     )

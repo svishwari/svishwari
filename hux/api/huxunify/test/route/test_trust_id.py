@@ -104,9 +104,17 @@ class TestTrustIDRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        # self.assertFalse(
-        #     TrustIdComparisonSchema().validate(response.json, many=True)
-        # )
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )
+
+        # Ensure only one segment is present.
+        self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
+
+        # Ensure it is the default segment.
+        self.assertTrue(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )
 
     def test_trust_id_comparison_default_false(self):
         """Test for trust_id comparison data endpoint using default false."""
@@ -123,6 +131,7 @@ class TestTrustIDRoutes(RouteTestCase):
         # Add segment.
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
+            query_string={api_c.DEFAULT: False},
             json={"segment_name": "Test Add Segment", "segment_filters": []},
             headers=t_c.STANDARD_HEADERS,
         )
@@ -136,13 +145,17 @@ class TestTrustIDRoutes(RouteTestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-        # # Ensure only one segment is present.
-        # self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
-        #
-        # # Ensure it is not the default segment.
-        # self.assertFalse(
-        #     response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
-        # )
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )
+
+        # Ensure only one segment is present.
+        self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
+
+        # Ensure it is not the default segment.
+        self.assertFalse(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )
 
     def test_trust_id_comparison_default_true(self):
         """Test for trust_id comparison data endpoint using default true."""
@@ -164,16 +177,20 @@ class TestTrustIDRoutes(RouteTestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )
+
         # Ensure only one segment is present.
-        # self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
+        self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
 
         # Ensure it is the default segment.
-        # self.assertTrue(
-        #     response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
-        # )
+        self.assertTrue(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )
 
-    def test_add_trust_id_segment(self):
-        """Test for trust_id segment addition endpoint."""
+    def test_add_trust_id_segment_default_false(self):
+        """Test for trust_id segment addition endpoint with default set to false."""
         mock.patch(
             "huxunify.api.data_connectors.trust_id.get_trust_id_attributes",
             return_value=t_c.TRUST_ID_ATTRIBUTE_SAMPLE_DATA,
@@ -193,8 +210,57 @@ class TestTrustIDRoutes(RouteTestCase):
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
-    def test_remove_trust_id_segment(self):
-        """Test for trust_id segment removal endpoint."""
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )
+
+        # Ensure only one segment is present.
+        self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
+
+        # Ensure it is the default segment.
+        self.assertFalse(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )
+
+    def test_add_trust_id_segment_default_true(self):
+        """Test for trust_id segment addition endpoint with default set to true."""
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_attributes",
+            return_value=t_c.TRUST_ID_ATTRIBUTE_SAMPLE_DATA,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_overview",
+            return_value=t_c.TRUST_ID_OVERVIEW_SAMPLE_DATA,
+        ).start()
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
+            query_string={api_c.DEFAULT: True},
+            json={"segment_name": "Test Add Segment", "segment_filters": []},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )
+
+        # Ensure 2 segments is present.
+        self.assertEqual(2, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
+
+        # Ensure the first segment is default.
+        self.assertTrue(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )
+        # Ensure one of the segment is not default.
+        self.assertFalse(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[1].get(api_c.DEFAULT)
+        )
+
+    def test_remove_trust_id_segment_default_true(self):
+        """Test for trust_id segment removal endpoint with default set to true."""
 
         mock.patch(
             "huxunify.api.data_connectors.trust_id.get_trust_id_attributes",
@@ -214,10 +280,89 @@ class TestTrustIDRoutes(RouteTestCase):
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )
+        # Ensure 2 segments is present.
+        self.assertEqual(2, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
+
+        # Ensure the first segment is default.
+        self.assertTrue(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )
+        # Ensure one of the segment is not default.
+        self.assertFalse(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[1].get(api_c.DEFAULT)
+        )
+
         response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
-            query_string={"segment_name": "Test Segment"},
+            query_string={
+                api_c.DEFAULT: True,
+                api_c.TRUST_ID_SEGMENT_NAME: "Test Segment"
+            },
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        # Ensure 1 segment is present.
+        self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
+
+        # Ensure the segment is default.
+        self.assertTrue(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )
+
+    def test_remove_trust_id_segment_default_false(self):
+        """Test for trust_id segment removal endpoint with default set to true."""
+
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_attributes",
+            return_value=t_c.TRUST_ID_ATTRIBUTE_SAMPLE_DATA,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_overview",
+            return_value=t_c.TRUST_ID_OVERVIEW_SAMPLE_DATA,
+        ).start()
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
+            query_string={api_c.DEFAULT: False},
+            json={"segment_name": "Test Segment", "segment_filters": []},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+
+        # Ensure 1 segment is present.
+        self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
+
+        # Ensure the segment is not default.
+        self.assertFalse(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/segment",
+            query_string={
+                api_c.DEFAULT: True,
+                api_c.TRUST_ID_SEGMENT_NAME: "Test Segment"
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertFalse(
+            TrustIdComparisonSchema().validate(response.json, many=True)
+        )
+
+        # Ensure 1 segment is present.
+        self.assertEqual(1, len(response.json[0].get(api_c.TRUST_ID_SEGMENTS)))
+
+        # Ensure the segment is default.
+        self.assertTrue(
+            response.json[0].get(api_c.TRUST_ID_SEGMENTS)[0].get(api_c.DEFAULT)
+        )

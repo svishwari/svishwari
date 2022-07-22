@@ -194,7 +194,7 @@ class TrustIdAttributes(SwaggerView):
 
 @add_view_to_blueprint(
     trust_id_bp,
-    f"{api_c.TRUST_ID_ENDPOINT}/comparison",
+    f"{api_c.TRUST_ID_ENDPOINT}/{api_c.COMPARISON}",
     "TrustIdAttributeComparison",
 )
 class TrustIdAttributeComparison(SwaggerView):
@@ -223,7 +223,7 @@ class TrustIdAttributeComparison(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.TRUST_ID_TAG]
 
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.TRUST_ID_ROLE_ALL)
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves Trust ID comparison data.
@@ -252,7 +252,7 @@ class TrustIdAttributeComparison(SwaggerView):
         )
 
         if add_default:
-            segments.append(
+            segments.insert(0,
                 {
                     api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
                     api_c.TRUST_ID_SEGMENT_FILTERS: [],
@@ -433,7 +433,7 @@ class TrustIdAddSegment(SwaggerView):
         )
 
         if add_default:
-            segments.append(
+            segments.insert(0,
                 {
                     api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
                     api_c.TRUST_ID_SEGMENT_FILTERS: [],
@@ -541,7 +541,7 @@ class TrustIdRemoveSegment(SwaggerView):
         )
 
         if add_default:
-            segments.append(
+            segments.insert(0,
                 {
                     api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
                     api_c.TRUST_ID_SEGMENT_FILTERS: [],
