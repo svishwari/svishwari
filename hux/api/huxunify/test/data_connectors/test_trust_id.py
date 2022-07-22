@@ -33,11 +33,6 @@ class TrustIDTest(TestCase):
         ).connect()
 
         mock.patch(
-            "huxunify.api.route.trust_id.get_db_client",
-            return_value=self.database,
-        ).start()
-
-        mock.patch(
             "huxunify.api.data_connectors.cache.get_db_client",
             return_value=self.database,
         ).start()
@@ -82,6 +77,10 @@ class TrustIDTest(TestCase):
     def test_get_trust_id_overview(self):
         """Test get_trust_id_overview method."""
 
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_overview",
+            return_value=t_c.TRUST_ID_OVERVIEW_SAMPLE_DATA,
+        ).start()
         overview = get_trust_id_overview_data(self.database)
 
         # Ensure all factors in list
@@ -110,6 +109,13 @@ class TrustIDTest(TestCase):
             return_value=t_c.TRUST_ID_ATTRIBUTE_SAMPLE_DATA,
         ).start()
 
-        comparison_data = get_trust_id_comparison_data(self.database, [])
+        segments = [
+            {
+                api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
+                api_c.TRUST_ID_SEGMENT_FILTERS: [],
+                api_c.DEFAULT: True,
+            }
+        ]
+        comparison_data = get_trust_id_comparison_data(self.database, segments)
         self.assertIsInstance(comparison_data, list)
         self.assertIsInstance(comparison_data[0], dict)

@@ -272,7 +272,7 @@ def get_trust_id_comparison_data(
         for segment_type in api_c.TRUST_ID_SEGMENT_TYPE_MAP.keys():
             segment_comparison_data[segment_type].update(
                 {
-                    api_c.DEFAULT: segment[api_c.DEFAULT],
+                    api_c.DEFAULT: segment.get(api_c.DEFAULT, False),
                     api_c.TRUST_ID_SEGMENT_NAME: segment[
                         api_c.TRUST_ID_SEGMENT_NAME
                     ],
