@@ -18,11 +18,7 @@
         </div>
       </template>
       <template #right>
-        <v-btn
-          icon
-          data-e2e="modelFilterToggle"
-          @click.native="filterToggle()"
-        >
+        <v-btn icon data-e2e="modelFilterToggle" @click.native="filterToggle()">
           <icon
             type="filter"
             :size="27"

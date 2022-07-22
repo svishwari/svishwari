@@ -258,8 +258,9 @@ export default {
       clearFavorite: "users/clearFavorite",
       updateEngagement: "engagements/updateEngagement",
       deliverEngagementApi: "engagements/deliver",
-      attachEngagementAudienceDestination: "engagements/attachEngagementAudienceDestination",
-      detachDestinationAudi: "engagement/detachDestinationAudi"
+      attachEngagementAudienceDestination:
+        "engagements/attachEngagementAudienceDestination",
+      detachDestinationAudi: "engagement/detachDestinationAudi",
     }),
     async refreshEntity() {
       this.loading = true

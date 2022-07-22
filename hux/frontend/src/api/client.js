@@ -253,7 +253,8 @@ client["engagements"].deliveries = (resourceId, query) => {
 
 client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
   return http.get(
-    `/engagements/${resourceId}/audience-performance/${data === "ads" ? "display-ads" : "email"
+    `/engagements/${resourceId}/audience-performance/${
+      data === "ads" ? "display-ads" : "email"
     }`
   )
 }
@@ -373,7 +374,10 @@ client["audiences"].demographics = (audienceId) => {
 client["audiences"].deliver = (payload) => {
   console.log("payload+++++++++++++++++++++++", payload)
   if (payload.toggleValue) {
-    return http.post(`/audiences/${payload.id}/deliver?replace_audience=${payload.toggleValue}`, payload.payload)
+    return http.post(
+      `/audiences/${payload.id}/deliver?replace_audience=${payload.toggleValue}`,
+      payload.payload
+    )
   } else {
     return http.post(`/audiences/${payload.id}/deliver`, payload.payload)
   }
@@ -524,8 +528,10 @@ client.dataSources.dataFeedsDetails = (
   status
 ) => {
   return http.get(
-    `/data-sources/${type}/datafeeds/${name}${start_date || end_date || status.length > 0 ? "?" : ""
-    }${start_date ? "start_date=" + start_date + "&" : ""}${end_date ? "end_date=" + end_date + "&" : ""
+    `/data-sources/${type}/datafeeds/${name}${
+      start_date || end_date || status.length > 0 ? "?" : ""
+    }${start_date ? "start_date=" + start_date + "&" : ""}${
+      end_date ? "end_date=" + end_date + "&" : ""
     }${status.length > 0 ? "status=" + status : ""}`
   )
 }

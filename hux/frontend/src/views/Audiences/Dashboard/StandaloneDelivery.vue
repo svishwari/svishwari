@@ -5,7 +5,13 @@
         <span class="text-h3">Standalone deliveries</span>
         <tooltip :max-width="396" position-top>
           <template #label-content>
-            <icon type="info" :size="8" class="ml-1 mb-1" color="primary" variant="base" />
+            <icon
+              type="info"
+              :size="8"
+              class="ml-1 mb-1"
+              color="primary"
+              variant="base"
+            />
           </template>
           <template #hover-content>
             These are deliveries that are not part of an engagement.
@@ -13,36 +19,66 @@
         </tooltip>
       </div>
       <v-spacer> </v-spacer>
-      <div v-if="getAccess('delivery', 'deliver')" :class="{
-        'black--text text--lighten-3 disabled':
-          audience.standalone_deliveries &&
-          audience.standalone_deliveries.length == 0,
-        'primary--text':
-          audience.standalone_deliveries &&
-          audience.standalone_deliveries.length > 0,
-      }" class="d-flex mr-4 cursor-pointer deliver-icon text-body-1" @click="deliverAll()">
-        <icon class="mr-1 mt-n1" :type="
-          audience.standalone_deliveries.length == 0 ? 'deliver' : 'deliver_2'
-        " :size="37" :color="
-  audience.standalone_deliveries.length == 0 ? 'black' : 'primary'
-" :variant="
-  audience.standalone_deliveries.length == 0 ? 'lighten3' : 'base'
-" />
+      <div
+        v-if="getAccess('delivery', 'deliver')"
+        :class="{
+          'black--text text--lighten-3 disabled':
+            audience.standalone_deliveries &&
+            audience.standalone_deliveries.length == 0,
+          'primary--text':
+            audience.standalone_deliveries &&
+            audience.standalone_deliveries.length > 0,
+        }"
+        class="d-flex mr-4 cursor-pointer deliver-icon text-body-1"
+        @click="deliverAll()"
+      >
+        <icon
+          class="mr-1 mt-n1"
+          :type="
+            audience.standalone_deliveries.length == 0 ? 'deliver' : 'deliver_2'
+          "
+          :size="37"
+          :color="
+            audience.standalone_deliveries.length == 0 ? 'black' : 'primary'
+          "
+          :variant="
+            audience.standalone_deliveries.length == 0 ? 'lighten3' : 'base'
+          "
+        />
         <span class="deliverAll"> Deliver all </span>
       </div>
     </v-card-title>
     <v-card-text class="pl-6 pr-6 pb-6 pt-3">
-      <div v-if="
-        audience &&
-        audience.standalone_deliveries &&
-        audience.standalone_deliveries.length > 0
-      ">
-        <hux-data-table class="delivery-table" :columns="columnDefs" :sort-desc="true"
-          :data-items="audience.standalone_deliveries">
+      <div
+        v-if="
+          audience &&
+          audience.standalone_deliveries &&
+          audience.standalone_deliveries.length > 0
+        "
+      >
+        <hux-data-table
+          class="delivery-table"
+          :columns="columnDefs"
+          :sort-desc="true"
+          :data-items="audience.standalone_deliveries"
+        >
           <template #row-item="{ item }">
-            <td v-for="header in columnDefs" :key="header.value" class="text-body-2" :style="{ width: header.width }">
-              <div v-if="header.value == 'name'" class="text-body-1" data-e2e="standalone-destinations">
-                <logo :type="item.delivery_platform_type" :size="22" class="mb-n1">
+            <td
+              v-for="header in columnDefs"
+              :key="header.value"
+              class="text-body-2"
+              :style="{ width: header.width }"
+            >
+              <div
+                v-if="header.value == 'name'"
+                class="text-body-1"
+                data-e2e="standalone-destinations"
+              >
+                <logo
+                  :type="item.delivery_platform_type"
+                  :size="22"
+                  class="mb-n1"
+                >
                 </logo>
                 <span class="ml-2 text-ellipsis mb-n1">
                   {{ item.delivery_platform_name }}
@@ -50,15 +86,25 @@
                 <span class="action-icon font-weight-light float-right d-none">
                   <v-menu class="menu-wrapper" bottom offset-y>
                     <template #activator="{ on, attrs }">
-                      <v-icon v-bind="attrs" class="top-action" color="primary" v-on="on">
+                      <v-icon
+                        v-bind="attrs"
+                        class="top-action"
+                        color="primary"
+                        v-on="on"
+                      >
                         mdi-dots-vertical
                       </v-icon>
                     </template>
                     <v-list class="menu-list-wrapper">
                       <v-list-item-group>
-                        <v-list-item v-for="option in destinationMenuOptions.filter(
-                          (x) => !x.isHidden
-                        )" :key="option.id" :disabled="!option.active" @click="standaloneOptions(option, item)">
+                        <v-list-item
+                          v-for="option in destinationMenuOptions.filter(
+                            (x) => !x.isHidden
+                          )"
+                          :key="option.id"
+                          :disabled="!option.active"
+                          @click="standaloneOptions(option, item)"
+                        >
                           <v-list-item-title v-if="!option.menu">
                             {{ option.title }}
                           </v-list-item-title>
@@ -69,7 +115,12 @@
                 </span>
               </div>
               <div v-if="header.value == 'status'" class="text-body-1">
-                <status :status="item['status']" :show-label="true" class="d-flex" :icon-size="17" />
+                <status
+                  :status="item['status']"
+                  :show-label="true"
+                  class="d-flex"
+                  :icon-size="17"
+                />
               </div>
               <div v-if="header.value == 'size'" class="text-body-1">
                 <size :value="item['size']" />
@@ -78,21 +129,43 @@
                 <time-stamp :value="item['last_delivered']" />
               </div>
               <div v-if="header.value == 'replace'" class="text-body-1">
-                <hux-switch v-if="item['is_ad_platform']" v-model="item['replace_audience']"
-                  :switch-labels="switchLabels" false-color="var(--v-black-lighten4)" data-e2e="replace-audience"
-                  @change="kickoffReplace(item['delivery_platform_id'], $event)" />
+                <hux-switch
+                  v-if="item['is_ad_platform']"
+                  v-model="item['replace_audience']"
+                  :switch-labels="switchLabels"
+                  false-color="var(--v-black-lighten4)"
+                  data-e2e="replace-audience"
+                  @change="kickoffReplace(item['delivery_platform_id'], $event)"
+                />
               </div>
             </td>
           </template>
         </hux-data-table>
 
-        <v-list v-if="getAccess('engagements', 'add_destination_to_engagement')" dense class="add-list list-border"
-          :height="52">
-          <v-list-item data-e2e="add-standalone-destination" @click="$emit('onAddStandaloneDestination', audience)">
+        <v-list
+          v-if="getAccess('engagements', 'add_destination_to_engagement')"
+          dense
+          class="add-list list-border"
+          :height="52"
+        >
+          <v-list-item
+            data-e2e="add-standalone-destination"
+            @click="$emit('onAddStandaloneDestination', audience)"
+          >
             <tooltip>
               <template #label-content>
-                <hux-icon type="plus" :size="16" color="primary" class="mr-2 plus-icon" />
-                <hux-icon type="destination_button" :size="34" color="primary" class="mr-0 mb-n1" />
+                <hux-icon
+                  type="plus"
+                  :size="16"
+                  color="primary"
+                  class="mr-2 plus-icon"
+                />
+                <hux-icon
+                  type="destination_button"
+                  :size="34"
+                  color="primary"
+                  class="mr-0 mb-n1"
+                />
               </template>
               <template #hover-content>
                 <div class="py-2 white d-flex flex-column">
@@ -100,7 +173,12 @@
                 </div>
               </template>
             </tooltip>
-            <v-btn text min-width="7rem" height="2rem" class="primary--text text-body-1 mt-n1">
+            <v-btn
+              text
+              min-width="7rem"
+              height="2rem"
+              class="primary--text text-body-1 mt-n1"
+            >
               <span class="destination_text">Destination</span>
             </v-btn>
           </v-list-item>
@@ -111,12 +189,30 @@
         <div class="mb-1">
           This audience has no standalone deliveries. Add a destination below.
         </div>
-        <v-list v-if="getAccess('engagements', 'add_destination_to_engagement')" dense class="add-list" :height="52">
-          <v-list-item class="px-0" data-e2e="add-standalone-destination"
-            @click="$emit('onAddStandaloneDestination', audience)">
+        <v-list
+          v-if="getAccess('engagements', 'add_destination_to_engagement')"
+          dense
+          class="add-list"
+          :height="52"
+        >
+          <v-list-item
+            class="px-0"
+            data-e2e="add-standalone-destination"
+            @click="$emit('onAddStandaloneDestination', audience)"
+          >
             <hux-icon type="plus" :size="16" color="primary" class="mr-2" />
-            <hux-icon type="destination_button" :size="34" color="primary" class="mr-0 mb-n1" />
-            <v-btn text min-width="7rem" height="2rem" class="primary--text text-body-1">
+            <hux-icon
+              type="destination_button"
+              :size="34"
+              color="primary"
+              class="mr-0 mb-n1"
+            />
+            <v-btn
+              text
+              min-width="7rem"
+              height="2rem"
+              class="primary--text text-body-1"
+            >
               <span class="destination_empty">Destination</span>
             </v-btn>
           </v-list-item>
@@ -158,7 +254,7 @@ export default {
     audience: {
       type: Object,
       required: false,
-      default: () => { },
+      default: () => {},
     },
   },
   data() {
@@ -288,14 +384,14 @@ export default {
         },
       })
       let payloadDeliver
-      if (val === true || value === false) {
+      if (val === true || val === false) {
         payloadDeliver = {
           id: this.audienceId,
           toggleValue: val,
           payload: { destinations: [{ id: deliveryId }] },
         }
-      }else {
-         payloadDeliver = {
+      } else {
+        payloadDeliver = {
           id: this.audienceId,
           payload: { destinations: [{ id: deliveryId }] },
         }
@@ -346,7 +442,6 @@ export default {
   tbody {
     tr {
       td:nth-child(1) {
-
         &:hover,
         &:focus {
           .action-icon {
