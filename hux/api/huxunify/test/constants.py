@@ -2256,19 +2256,189 @@ TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE_AGG = {
     "Takes care of employees": {"neutral": 1, "score": 0}
 }
 
-TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE = {
-    "factor_name": "humanity",
-    "attribute_description": "Takes care of employees",
-    "attribute_short_description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
-    "attribute_score": 0,
+TRUST_ID_SAMPLE_ATTRIBUTE = {
+    "factor_name": "capability",
+    "attribute_score": 81,
+    "attribute_description": "Products are good quality, accessible and safe to use",
+    "attribute_short_description": "Product quality, accessibility and safety",
     "overall_customer_rating": {
-        "total_customers": 1,
+        "total_customers": 13266,
         "rating": {
-            "disagree": {"count": 0, "percentage": 0.0},
-            "neutral": {"count": 1, "percentage": 1.0},
-            "agree": {"count": 0, "percentage": 0.0},
+            "agree": {"count": 11002, "percentage": 0.8293381576963667},
+            "disagree": {"count": 301, "percentage": 0.02268958239107493},
+            "neutral": {"count": 1963, "percentage": 0.1479722599125584},
         },
     },
+}
+
+TRUST_ID_ATTRIBUTE_DESCRIPTION_MAP = {
+    "capability": [
+        {
+            "description": "Products are good quality, accessible and safe to use",
+            "short_description": "Product quality, accessibility and safety",
+        },
+        {
+            "description": "Prices of products, services, and experiences are good value for money",
+            "short_description": "Fair product & service pricing",
+        },
+        {
+            "description": "Employees and leadership are competent and understand how to respond to my needs",
+            "short_description": "Competent leadership and employees",
+        },
+        {
+            "description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
+            "short_description": "Applicable long-term solutions & improvements",
+        },
+    ],
+    "humanity": [
+        {
+            "description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
+            "short_description": "Quickly resolves issues",
+        },
+        {
+            "description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
+            "short_description": "Values & respects everyone",
+        },
+        {
+            "description": "Lilly Pulitzer values the good of society and the environment, not just profit",
+            "short_description": "Values society & environment",
+        },
+        {
+            "description": "Lilly Pulitzer takes care of employees",
+            "short_description": "Takes care of employees",
+        },
+    ],
+    "reliability": [
+        {
+            "description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
+            "short_description": "Continuous product improvement",
+        },
+        {
+            "description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
+            "short_description": "Delivers quality products",
+        },
+        {
+            "description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
+            "short_description": "Facilitates smooth digital interactions",
+        },
+        {
+            "description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
+            "short_description": "Timely issue resolution",
+        },
+    ],
+    "transparency": [
+        {
+            "description": 'Lilly Pulitzer"s marketing and communications are accurate and honest',
+            "short_description": "Honest communication and marketing",
+        },
+        {
+            "description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
+            "short_description": "Upfront spending and income",
+        },
+        {
+            "description": "How and why my data is used is communicated in plain and easy to understand language",
+            "short_description": "Data storage and communication",
+        },
+        {
+            "description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
+            "short_description": "Upfront costs and fees",
+        },
+    ],
+}
+
+TRUST_ID_ATTRIBUTE_RATINGS = {
+    "_id": None,
+    "attributes": {
+        "capability": [
+            {
+                "agree": {"count": 11002, "percentage": 0.8293381576963667},
+                "disagree": {"count": 301, "percentage": 0.02268958239107493},
+                "neutral": {"count": 1963, "percentage": 0.1479722599125584},
+            },
+            {
+                "agree": {"count": 5811, "percentage": 0.43803708729081864},
+                "disagree": {"count": 871, "percentage": 0.06565656565656566},
+                "neutral": {"count": 6584, "percentage": 0.4963063470526157},
+            },
+            {
+                "agree": {"count": 8127, "percentage": 0.6126187245590231},
+                "disagree": {"count": 370, "percentage": 0.027890848786371176},
+                "neutral": {"count": 4769, "percentage": 0.35949042665460573},
+            },
+            {
+                "agree": {"count": 6132, "percentage": 0.4622342831298055},
+                "disagree": {"count": 378, "percentage": 0.028493894165535955},
+                "neutral": {"count": 6756, "percentage": 0.5092718227046585},
+            },
+        ],
+        "humanity": [
+            {
+                "agree": {"count": 8052, "percentage": 0.6069651741293532},
+                "disagree": {"count": 440, "percentage": 0.03316749585406302},
+                "neutral": {"count": 4774, "percentage": 0.3598673300165838},
+            },
+            {
+                "agree": {"count": 8928, "percentage": 0.6729986431478969},
+                "disagree": {"count": 294, "percentage": 0.022161917684305744},
+                "neutral": {"count": 4044, "percentage": 0.3048394391677974},
+            },
+            {
+                "agree": {"count": 7230, "percentage": 0.5450022614201718},
+                "disagree": {"count": 364, "percentage": 0.027438564751997588},
+                "neutral": {"count": 5672, "percentage": 0.42755917382783054},
+            },
+            {
+                "agree": {"count": 5076, "percentage": 0.38263229308005425},
+                "disagree": {"count": 126, "percentage": 0.009497964721845319},
+                "neutral": {"count": 8064, "percentage": 0.6078697421981004},
+            },
+        ],
+        "reliability": [
+            {
+                "agree": {"count": 7888, "percentage": 0.5946027438564752},
+                "disagree": {"count": 472, "percentage": 0.035579677370722144},
+                "neutral": {"count": 4906, "percentage": 0.36981757877280264},
+            },
+            {
+                "agree": {"count": 9701, "percentage": 0.7312679029096939},
+                "disagree": {"count": 462, "percentage": 0.03482587064676617},
+                "neutral": {"count": 3103, "percentage": 0.23390622644353987},
+            },
+            {
+                "agree": {"count": 9187, "percentage": 0.6925222372983567},
+                "disagree": {"count": 439, "percentage": 0.03309211518166742},
+                "neutral": {"count": 3640, "percentage": 0.27438564751997585},
+            },
+            {
+                "agree": {"count": 8188, "percentage": 0.6172169455751545},
+                "disagree": {"count": 626, "percentage": 0.047188300919644204},
+                "neutral": {"count": 4452, "percentage": 0.3355947535052013},
+            },
+        ],
+        "transparency": [
+            {
+                "agree": {"count": 10200, "percentage": 0.7688828584350973},
+                "disagree": {"count": 248, "percentage": 0.01869440675410825},
+                "neutral": {"count": 2818, "percentage": 0.21242273481079452},
+            },
+            {
+                "agree": {"count": 4825, "percentage": 0.36371174430875924},
+                "disagree": {"count": 678, "percentage": 0.05110809588421529},
+                "neutral": {"count": 7763, "percentage": 0.5851801598070254},
+            },
+            {
+                "agree": {"count": 7329, "percentage": 0.552464947987336},
+                "disagree": {"count": 599, "percentage": 0.045153022764963066},
+                "neutral": {"count": 5338, "percentage": 0.4023820292477009},
+            },
+            {
+                "agree": {"count": 10183, "percentage": 0.7676013870043721},
+                "disagree": {"count": 336, "percentage": 0.02532790592492085},
+                "neutral": {"count": 2747, "percentage": 0.20707070707070707},
+            },
+        ],
+    },
+    "total_customers": 13266,
 }
 
 

@@ -12,254 +12,10 @@ import huxunifylib.database.db_exceptions as de
 
 import huxunifylib.database.constants as db_c
 import huxunifylib.database.delivery_platform_management as dm
-
-
-overview_pipeline = [
-    {"$project": {"factors": "$responses.factors"}},
-    {
-        "$group": {
-            "_id": None,
-            "total_customers": {"$sum": 1},
-            "humanity_agree": {
-                "$sum": {
-                    "$cond": [{"$eq": ["$factors.HUMANITY.rating", "1"]}, 1, 0]
-                }
-            },
-            "humanity_disagree": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.HUMANITY.rating", "-1"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-            "humanity_neutral": {
-                "$sum": {
-                    "$cond": [{"$eq": ["$factors.HUMANITY.rating", "0"]}, 1, 0]
-                }
-            },
-            "reliability_agree": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.RELIABILITY.rating", "1"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-            "reliability_disagree": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.RELIABILITY.rating", "-1"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-            "reliability_neutral": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.RELIABILITY.rating", "0"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-            "capability_agree": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.CAPABILITY.rating", "1"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-            "capability_disagree": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.CAPABILITY.rating", "-1"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-            "capability_neutral": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.CAPABILITY.rating", "0"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-            "transparency_agree": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.TRANSPARENCY.rating", "1"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-            "transparency_disagree": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.TRANSPARENCY.rating", "-1"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-            "transparency_neutral": {
-                "$sum": {
-                    "$cond": [
-                        {"$eq": ["$factors.TRANSPARENCY.rating", "0"]},
-                        1,
-                        0,
-                    ]
-                }
-            },
-        }
-    },
-    {
-        "$addFields": {
-            "humanity": {
-                "total_customers": "$total_customers",
-                "rating": {
-                    "agree": {
-                        "count": "$humanity_agree",
-                        "percentage": {
-                            "$divide": ["$humanity_agree", "$total_customers"]
-                        },
-                    },
-                    "disagree": {
-                        "count": "$humanity_disagree",
-                        "percentage": {
-                            "$divide": [
-                                "$humanity_disagree",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                    "neutral": {
-                        "count": "$humanity_neutral",
-                        "percentage": {
-                            "$divide": [
-                                "$humanity_neutral",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                },
-            },
-            "reliability": {
-                "total_customers": "$total_customers",
-                "rating": {
-                    "agree": {
-                        "count": "$reliability_agree",
-                        "percentage": {
-                            "$divide": [
-                                "$reliability_agree",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                    "disagree": {
-                        "count": "$reliability_disagree",
-                        "percentage": {
-                            "$divide": [
-                                "$reliability_disagree",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                    "neutral": {
-                        "count": "$reliability_neutral",
-                        "percentage": {
-                            "$divide": [
-                                "$reliability_neutral",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                },
-            },
-            "capability": {
-                "total_customers": "$total_customers",
-                "rating": {
-                    "agree": {
-                        "count": "$capability_agree",
-                        "percentage": {
-                            "$divide": [
-                                "$capability_agree",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                    "disagree": {
-                        "count": "$capability_disagree",
-                        "percentage": {
-                            "$divide": [
-                                "$capability_disagree",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                    "neutral": {
-                        "count": "$capability_neutral",
-                        "percentage": {
-                            "$divide": [
-                                "$capability_neutral",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                },
-            },
-            "transparency": {
-                "total_customers": "$total_customers",
-                "rating": {
-                    "agree": {
-                        "count": "$transparency_agree",
-                        "percentage": {
-                            "$divide": [
-                                "$transparency_agree",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                    "disagree": {
-                        "count": "$transparency_disagree",
-                        "percentage": {
-                            "$divide": [
-                                "$transparency_disagree",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                    "neutral": {
-                        "count": "$transparency_neutral",
-                        "percentage": {
-                            "$divide": [
-                                "$transparency_neutral",
-                                "$total_customers",
-                            ]
-                        },
-                    },
-                },
-            },
-        }
-    },
-    {
-        "$project": {
-            "humanity": 1,
-            "reliability": 1,
-            "capability": 1,
-            "transparency": 1,
-        }
-    },
-]
+from huxunifylib.database.aggregation_pipelines import (
+    trust_id_overview_pipeline,
+    trust_id_attribute_ratings_pipeline,
+)
 
 
 def frame_match_query(filters: list) -> dict:
@@ -462,7 +218,7 @@ def get_survey_responses(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_overview(
+def get_trust_id_overview(
     database: DatabaseClient,
     filters: list = None,
 ) -> Union[dict, None]:
@@ -476,10 +232,45 @@ def get_overview(
         Union[dict, None]: Dict of survey responses overview, default None.
     """
 
-    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[db_c.SURVEY_METRICS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.SURVEY_METRICS_COLLECTION
+    ]
 
-    pipeline = overview_pipeline
+    pipeline = trust_id_overview_pipeline
+    if filters:
+        pipeline.insert(0, frame_match_query(filters))
+
+    try:
+        return list(collection.aggregate(pipeline))[0]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_trust_id_attributes(
+    database: DatabaseClient,
+    filters: list = None,
+) -> Union[dict, None]:
+    """Method to retrieve attribute ratings of survey responses.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filters (list): Filters to apply, default None.
+
+    Returns:
+        Union[dict, None]: Dict of survey responses overview, default None.
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.SURVEY_METRICS_COLLECTION
+    ]
+
+    pipeline = trust_id_attribute_ratings_pipeline
     if filters:
         pipeline.insert(0, frame_match_query(filters))
 

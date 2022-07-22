@@ -6,13 +6,15 @@ import mongomock
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.trust_id import (
     aggregate_attributes,
-    get_trust_id_attributes,
-    get_trust_id_overview,
     get_trust_id_comparison_data,
+    get_trust_id_overview_data,
+    get_trust_id_attributes_data,
 )
 from huxunify.api.data_connectors.trust_id import populate_trust_id_segments
 
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.collection_management import create_document
 from huxunifylib.database.survey_metrics_management import (
     set_survey_responses_bulk,
     get_survey_responses,
@@ -39,6 +41,15 @@ class TrustIDTest(TestCase):
             return_value=self.database,
         ).start()
 
+        create_document(
+            self.database,
+            db_c.CONFIGURATIONS_COLLECTION,
+            {
+                db_c.CONFIGURATION_FIELD_TYPE: db_c.TRUST_ID_ATTRIBUTES,
+                db_c.CONFIGURATION_FIELD_NAME: "TrustID Attributes",
+                db_c.ATTRIBUTES: t_c.TRUST_ID_ATTRIBUTE_DESCRIPTION_MAP,
+            },
+        )
         set_survey_responses_bulk(self.database, t_c.TRUST_ID_SURVEY_RESPONSES)
 
     def test_aggregate_attributes(self):
@@ -69,9 +80,12 @@ class TrustIDTest(TestCase):
 
     def test_get_trust_id_attributes(self):
         """Test get_trust_attributes method."""
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_attributes",
+            return_value=t_c.TRUST_ID_ATTRIBUTE_RATINGS,
+        ).start()
 
-        survey_responses = get_survey_responses(self.database)
-        attributes = get_trust_id_attributes(survey_responses)
+        attributes = get_trust_id_attributes_data(self.database)
 
         self.assertIsInstance(attributes, list)
         # Ensure all attributes are for list of factors.
@@ -86,13 +100,12 @@ class TrustIDTest(TestCase):
         self.assertEqual(len(attributes), len(filtered_attributes))
 
         # Ensure sample humanity attribute in list.
-        self.assertIn(t_c.TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE, attributes)
+        self.assertIn(t_c.TRUST_ID_SAMPLE_ATTRIBUTE, attributes)
 
     def test_get_trust_id_overview(self):
         """Test get_trust_id_overview method."""
 
-        overview = get_trust_id_overview(self.database)
-        self.assertEqual(True, True)
+        overview = get_trust_id_overview_data(self.database)
 
         # Ensure all factors in list
         factors_present = sorted(
