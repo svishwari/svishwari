@@ -37,6 +37,9 @@ MAX = "max"
 LINK = "link"
 USERNAME = "username"
 
+# ORCH integration test User
+ORCH_INTEGRATION_TEST_USER = "orch_integration_test_user"
+
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
 CONVERSIONS_DATABASE = "conversions"
@@ -262,6 +265,7 @@ SURVEY_RESPONSES = "responses"
 SURVEY_RESPONSE_DATE = "response_date"
 TRUST_ID_SEGMENTS = "trust_id_segments"
 TRUST_ID_FILTERS = "trust_id_filters"
+TRUST_ID_ATTRIBUTES = "trust_id_attributes"
 SEGMENT_NAME = "segment_name"
 FACTORS = "factors"
 ATTRIBUTES = "attributes"
@@ -541,6 +545,7 @@ CONFIGURATION_TYPE_NAVIGATION_SETTINGS = "navigation_settings"
 CONFIGURATION_TYPE_RBAC_MATRIX = "rbac_matrix"
 CONFIGURATION_FIELD_SETTINGS = "settings"
 CONFIGURATION_FIELD_FILTERS = "filters"
+CONFIGURATION_FIELD_ATTRIBUTES = "attributes"
 CONFIGURATION_FIELD_CHILDREN = "children"
 CONFIGURATION_FIELD_MODULES = "modules"
 
@@ -642,6 +647,7 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_SETTINGS,
         CONFIGURATION_FIELD_MODULES,
         CONFIGURATION_FIELD_FILTERS,
+        CONFIGURATION_FIELD_ATTRIBUTES,
     ],
     MODELS_COLLECTION: [
         NAME,

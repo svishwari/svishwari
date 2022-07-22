@@ -396,6 +396,7 @@ class TestRouteUtils(TestCase):
                             "field": "traits_analysed",
                             "type": "within_the_last",
                             "value": ["12"],
+                            "delta_type": "days",
                         }
                     ],
                 }
@@ -433,6 +434,7 @@ class TestRouteUtils(TestCase):
                                     ],
                                 },
                             ],
+                            "delta_type": "days",
                         }
                     ],
                 }
