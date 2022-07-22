@@ -37,6 +37,9 @@ MAX = "max"
 LINK = "link"
 USERNAME = "username"
 
+# ORCH integration test User
+ORCH_INTEGRATION_TEST_USER = "orch_integration_test_user"
+
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
 CONVERSIONS_DATABASE = "conversions"
