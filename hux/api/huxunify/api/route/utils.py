@@ -25,7 +25,6 @@ from pymongo import MongoClient
 from huxunifylib.util.general.logging import logger
 
 from huxunifylib.database.audit_management import create_audience_audit
-from huxunifylib.database.survey_metrics_management import get_survey_responses
 from huxunifylib.database.util.client import db_client_factory
 from huxunifylib.database import (
     constants as db_c,
@@ -477,22 +476,31 @@ def is_component_favorite(
     return False
 
 
-def get_start_end_dates(request: dict, delta: int) -> (str, str):
+def get_start_end_dates(
+    request: dict, delta: int, delta_type: str = "months"
+) -> (str, str):
     """Get date range.
 
     Args:
         request (dict) : Request object.
-        delta (int) : Time in months.
+        delta (int) : Delta Time.
+        delta_type(str): Delta Type, options: days,weeks,months,years
 
     Returns:
         start_date, end_date (str, str): Date range.
     """
-
+    if delta_type not in api_c.ALLOWED_AUDIENCE_TIMEDELTA_TYPES:
+        logger.warning(
+            "Incorrect delta type for calculating date ranges. %s delta type is not allowed",
+            delta_type,
+        )
+        return None
+    kwargs = {delta_type: delta}
     start_date = (
         request.args.get(api_c.START_DATE)
         if request and request.args.get(api_c.START_DATE)
         else datetime.strftime(
-            datetime.utcnow().date() - relativedelta(months=delta),
+            datetime.utcnow().date() - relativedelta(**kwargs),
             api_c.DEFAULT_DATE_FORMAT,
         )
     )
@@ -1356,30 +1364,27 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                 event_name = section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
                 if section_filter.get(api_c.TYPE) == "within_the_last":
                     is_range = True
-                    start_date = (
-                        datetime.utcnow()
-                        - timedelta(
-                            days=int(
-                                section_filter.get(
-                                    api_c.AUDIENCE_FILTER_VALUE
-                                )[0]
-                            )
-                        )
-                    ).strftime("%Y-%m-%d")
-                    end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                    start_date, end_date = get_start_end_dates(
+                        {},
+                        delta=int(
+                            section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[0]
+                        ),
+                        delta_type=section_filter.get(
+                            api_c.AUDIENCE_FILTER_DELTA_TYPE
+                        ),
+                    )
+
                 elif section_filter.get(api_c.TYPE) == "not_within_the_last":
                     is_range = False
-                    start_date = (
-                        datetime.utcnow()
-                        - timedelta(
-                            days=int(
-                                section_filter.get(
-                                    api_c.AUDIENCE_FILTER_VALUE
-                                )[0]
-                            )
-                        )
-                    ).strftime("%Y-%m-%d")
-                    end_date = datetime.utcnow().strftime("%Y-%m-%d")
+                    start_date, end_date = get_start_end_dates(
+                        {},
+                        delta=int(
+                            section_filter.get(api_c.AUDIENCE_FILTER_VALUE)[0]
+                        ),
+                        delta_type=section_filter.get(
+                            api_c.AUDIENCE_FILTER_DELTA_TYPE
+                        ),
+                    )
                 elif section_filter.get(api_c.TYPE) == "between":
                     is_range = True
                     start_date = section_filter.get(
@@ -1390,9 +1395,13 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                     ]
                     if start_date == end_date:
                         end_date = (
-                            end_date + timedelta(days=1) - timedelta(seconds=1)
+                            datetime.strptime(end_date, "%Y-%m-%d")
+                            + timedelta(days=1)
+                            - timedelta(seconds=1)
                         ).strftime("%Y-%m-%dT%H:%M:%SZ")
-                        start_date = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+                        start_date = datetime.strptime(
+                            start_date, "%Y-%m-%d"
+                        ).strftime("%Y-%m-%dT%H:%M:%SZ")
                 else:
                     break
                 section_filter.update({api_c.AUDIENCE_FILTER_FIELD: "event"})
@@ -1501,48 +1510,6 @@ async def build_notification_recipients_and_send_email(
 
         # TODO: call send email function to actually send an email
         # send_email(**send_email_dict)
-
-
-def populate_trust_id_segments(
-    database: DatabaseClient, custom_segments: list, add_default: bool = True
-) -> list:
-    """Function to populate Trust ID Segment data.
-    Args:
-        database (DatabaseClient): A database client.
-        custom_segments(list): List of user specific segments data.
-        add_default (Optional, bool): Flag to add All Customers.
-    Returns:
-        list: Filled segments data with survey responses.
-    """
-
-    segments_data = []
-    # Set default segment without any filters
-    if add_default:
-        segments_data.append(
-            {
-                api_c.SEGMENT_NAME: "All Customers",
-                api_c.SEGMENT_FILTERS: [],
-                api_c.SURVEY_RESPONSES: get_survey_responses(
-                    database=database
-                ),
-            }
-        )
-
-    for seg in custom_segments:
-        survey_response = get_survey_responses(
-            database=database,
-            filters=seg[api_c.SEGMENT_FILTERS],
-        )
-        segments_data.append(
-            {
-                api_c.SEGMENT_NAME: seg[api_c.SEGMENT_NAME],
-                api_c.SEGMENT_FILTERS: seg[api_c.SEGMENT_FILTERS],
-                api_c.SURVEY_RESPONSES: survey_response
-                if survey_response
-                else [],
-            }
-        )
-    return segments_data
 
 
 def get_engaged_audience_last_delivery(audience: dict) -> None:

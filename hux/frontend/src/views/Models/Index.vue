@@ -117,7 +117,7 @@
                 "
                 slot="top"
               >
-                <div class="float-right">
+                <div v-if="enableDemoConfig" class="float-right">
                   <tooltip v-for="tags in model.tags.industry" :key="tags">
                     <template #label-content>
                       <logo
@@ -187,7 +187,10 @@
             </descriptive-card>
           </v-row>
           <div v-else>
-            <model-table :source-data="addedModels" />
+            <model-table
+              :enable-demo-config="enableDemoConfig"
+              :source-data="addedModels"
+            />
           </div>
         </div>
         <v-row
@@ -369,6 +372,7 @@ export default {
         "classification",
       ],
       showCardView: true,
+      enableDemoConfig: false,
       switchLabelFullAlerts: [
         {
           condition: true,
@@ -401,6 +405,7 @@ export default {
   },
   async mounted() {
     this.loading = true
+    this.enableDemoConfig = getAccess("client_config", "client_settings")
     try {
       await this.getModels()
     } catch (error) {

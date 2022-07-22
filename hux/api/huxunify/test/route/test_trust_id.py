@@ -2,6 +2,8 @@
 from http import HTTPStatus
 from unittest import mock
 
+import huxunifylib.database.constants as db_c
+from huxunifylib.database.collection_management import create_document
 from huxunifylib.database.survey_metrics_management import (
     set_survey_responses_bulk,
 )
@@ -32,6 +34,16 @@ class TestTrustIDRoutes(RouteTestCase):
         _ = set_survey_responses_bulk(
             self.database, t_c.TRUST_ID_SURVEY_RESPONSES
         )
+
+        create_document(
+            self.database,
+            db_c.CONFIGURATIONS_COLLECTION,
+            {
+                db_c.CONFIGURATION_FIELD_TYPE: db_c.TRUST_ID_ATTRIBUTES,
+                db_c.CONFIGURATION_FIELD_NAME: "TrustID Attributes",
+                db_c.ATTRIBUTES: t_c.TRUST_ID_ATTRIBUTE_DESCRIPTION_MAP,
+            },
+        )
         self.request_mocker.get(
             t_c.USER_INFO_CALL, json=t_c.VALID_TRUSTID_USER_RESPONSE
         )
@@ -52,6 +64,10 @@ class TestTrustIDRoutes(RouteTestCase):
 
     def test_trust_id_attributes_data(self):
         """Test for trust_id attributes data endpoint."""
+        mock.patch(
+            "huxunify.api.data_connectors.trust_id.get_trust_id_attributes",
+            return_value=t_c.TRUST_ID_ATTRIBUTE_RATINGS,
+        ).start()
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.TRUST_ID_ENDPOINT}/attributes",

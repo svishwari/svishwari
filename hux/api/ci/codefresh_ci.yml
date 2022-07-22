@@ -36,34 +36,7 @@ steps:
     type: git-clone
     repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
     revision: '${{CF_BRANCH}}' # Git branch triggering the pipeline
-
-# Below steps "NumberTag" and "VersionTag" can be used to conditionally tag build image based on the Git Branch.
-
-  NumberTag:
-    stage: build_tag
-    description: Set docker tag from build number
-    type: freestyle
-    image: huxhub.repo.mgnt.in/alpine
-    commands:
-      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
-      - cf_export DEPLOY_ENV='dev_deploy'
-
-# Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
-
-  VersionTag:
-    stage: build_tag
-    description: Set docker tag based Git tag
-    type: freestyle
-    image: huxhub.repo.mgnt.in/alpine
-    commands:
-      - cf_export DOCKER_TAG=${{CF_BRANCH}}
-      - cf_export DEPLOY_ENV='aws1_promote'
-    when:
-      branch:
-        only:
-          - /^app.*/i
-          # - /^release-[\d].*/i
-
+    
   set_global_vars:
     stage: set_env
     title: Set environment variables
@@ -76,6 +49,34 @@ steps:
     environment:
       - VARS_FILE=codefresh_vars.yml
 
+# Below steps "NumberTag" and "VersionTag" can be used to conditionally tag build image based on the Git Branch.
+  NumberTag:
+    stage: build_tag
+    description: Set docker tag from build number
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
+      - cf_export DEPLOY_ENV='dev_deploy'
+      - cf_export JFROG_REGISTRY=${{DEV_REGISTRY}}
+
+# Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
+
+  VersionTag:
+    stage: build_tag
+    description: Set docker tag based Git tag
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BRANCH}}
+      - cf_export DEPLOY_ENV='aws1_promote'
+      - cf_export JFROG_REGISTRY=${{PROD_REGISTRY}}
+    when:
+      branch:
+        only:
+          - /^app.*/i
+          # - /^release-[\d].*/i
+
   jfrog_python_artifactory_read:
     stage: set_env_artifactory_token
     title: "Get artifactory token"
@@ -83,10 +84,6 @@ steps:
     arguments:
       JFROG_API_KEY: '${{JFROG_API_KEY}}'
       JFROG_USERNAME: '${{JFROG_USERNAME}}'
-    when:
-      branch:
-        ignore:
-          - /^app.*/i
 
   build_image:
     stage: "docker"
@@ -98,10 +95,6 @@ steps:
     tag: '${{DOCKER_TAG}}'
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
-    when:
-      branch:
-        ignore:
-          - /^app.*/i
 
   Tox_Tests:
     stage: tox_parallel
@@ -144,7 +137,7 @@ steps:
     arguments:
       BUILD_NAME: '${{APP_NAME}}'
       BUILD_NUMBER: '${{DOCKER_TAG}}'
-      JFROG_REGISTRY: '${{DEV_REGISTRY}}'
+      JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
       BUILD_TAG: '${{DOCKER_TAG}}'
     when:
       branch:
@@ -152,7 +145,7 @@ steps:
           - main
           - develop
           # - /^release-[\d].*/i
-          # - /^app.*/i
+          - /^app.*/i
 
   deployment:
     stage: argo-deploy

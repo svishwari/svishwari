@@ -88,7 +88,7 @@ const masterList = [
     title: "Forms",
     size: "12px",
     weight: "400",
-    lineHeight: "20px",
+    lineHeight: "16px",
     letterSpace: "0",
   },
 ]
