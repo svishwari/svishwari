@@ -261,6 +261,7 @@ class TrustIdAttributeComparison(SwaggerView):
                 },
             )
 
+        start_time = time.perf_counter()
         for segment in segments:
             segment[api_c.COMPARISON] = Caching.check_and_return_cache(
                 {
@@ -279,7 +280,10 @@ class TrustIdAttributeComparison(SwaggerView):
                     ],
                 },
             )
-
+        logging.info(
+            "Comparison data fetched in %s secs.",
+            (time.perf_counter() - start_time),
+        )
         return HuxResponse.OK(
             data=get_trust_id_comparison_response(segments),
             data_schema=TrustIdComparisonSchema(),
@@ -443,6 +447,7 @@ class TrustIdAddSegment(SwaggerView):
                 },
             )
 
+        start_time = time.perf_counter()
         for segment in segments:
             segment[api_c.COMPARISON] = Caching.check_and_return_cache(
                 {
@@ -461,6 +466,10 @@ class TrustIdAddSegment(SwaggerView):
                     ],
                 },
             )
+        logging.info(
+            "Comparison data fetched in %s secs.",
+            (time.perf_counter() - start_time),
+        )
 
         return HuxResponse.CREATED(
             data=get_trust_id_comparison_response(segments),
@@ -552,6 +561,7 @@ class TrustIdRemoveSegment(SwaggerView):
                 },
             )
 
+        start_time = time.perf_counter()
         for segment in segments:
             segment[api_c.COMPARISON] = Caching.check_and_return_cache(
                 {
@@ -570,6 +580,10 @@ class TrustIdRemoveSegment(SwaggerView):
                     ],
                 },
             )
+        logging.info(
+            "Comparison data fetched in %s secs.",
+            (time.perf_counter() - start_time),
+        )
 
         return HuxResponse.OK(
             data=get_trust_id_comparison_response(segments),
