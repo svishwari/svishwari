@@ -5,8 +5,8 @@ version: "1.0"
 stages:
   - prepare
   - git
-  - build_tag
   - set_env
+  - build_tag
   - set_env_artifactory_token
   - docker
   - tox_parallel

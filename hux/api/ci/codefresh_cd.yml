@@ -3,8 +3,8 @@ version: '1.0'
 stages:
   - prepare
   - app_repo
-  - deploy_repo
   - set_vars
+  - deploy_repo
   - dev_deploy
   - stg_deploy
   - rc1_deploy
@@ -24,7 +24,7 @@ steps:
     revision: '${{CF_BRANCH}}'
 
   SetGlobalVars:
-    stage: app_repo
+    stage: set_vars
     title: Set environment variables
     type: freestyle
     image: huxhub.repo.mgnt.in/yq
