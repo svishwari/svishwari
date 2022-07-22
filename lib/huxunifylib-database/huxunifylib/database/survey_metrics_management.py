@@ -232,7 +232,9 @@ def get_trust_id_overview(
         Union[dict, None]: Dict of survey responses overview, default None.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.SURVEY_METRICS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.SURVEY_METRICS_COLLECTION
+    ]
 
     pipeline = trust_id_overview_pipeline
     if filters:
@@ -267,7 +269,9 @@ def get_trust_id_attributes(
     Returns:
         Union[dict, None]: Dict of survey responses overview, default None.
     """
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.SURVEY_METRICS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.SURVEY_METRICS_COLLECTION
+    ]
 
     pipeline = trust_id_attribute_ratings_pipeline
     if filters:
@@ -323,9 +327,9 @@ def delete_survey_responses(
         remove_result = collection.remove(query)
         if remove_result["n"]:
             remove_status[db_c.STATUS] = True
-            remove_status[db_c.STATUS_MESSAGE] = "Total records deleted: " + str(
-                remove_result["n"]
-            )
+            remove_status[
+                db_c.STATUS_MESSAGE
+            ] = "Total records deleted: " + str(remove_result["n"])
 
         else:
             remove_status[db_c.STATUS] = False
