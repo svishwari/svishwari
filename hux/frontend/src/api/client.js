@@ -372,7 +372,6 @@ client["audiences"].demographics = (audienceId) => {
 }
 
 client["audiences"].deliver = (payload) => {
-  console.log("payload+++++++++++++++++++++++", payload)
   if (payload.toggleValue) {
     return http.post(
       `/audiences/${payload.id}/deliver?replace_audience=${payload.toggleValue}`,
