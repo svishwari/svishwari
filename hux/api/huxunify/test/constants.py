@@ -2743,37 +2743,37 @@ TRUST_ID_AGGREGATED_COMPARISON_DATA = [
                         "attribute_type": "trust_id",
                         "attribute_name": "HX TrustID",
                         "attribute_score": 90,
-                        "attribute_description": "TrustID is scored on a scale between -100 to 100"
+                        "attribute_description": "TrustID is scored on a scale between -100 to 100",
                     },
                     {
                         "attribute_type": "capability",
                         "attribute_name": "Capability",
                         "attribute_score": 100,
-                        "attribute_description": "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100"
+                        "attribute_description": "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
                     },
                     {
                         "attribute_type": "humanity",
                         "attribute_name": "Humanity",
                         "attribute_score": 100,
-                        "attribute_description": "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100"
+                        "attribute_description": "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
                     },
                     {
                         "attribute_type": "reliability",
                         "attribute_name": "Reliability",
                         "attribute_score": 60,
-                        "attribute_description": "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100"
+                        "attribute_description": "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
                     },
                     {
                         "attribute_type": "transparency",
                         "attribute_name": "Transparency",
                         "attribute_score": 100,
-                        "attribute_description": "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100"
-                    }
+                        "attribute_description": "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
+                    },
                 ],
                 "default": False,
-                "segment_name": "Test Add Segment"
+                "segment_name": "Test Add Segment",
             }
-        ]
+        ],
     },
     {
         "segment_type": "capability attributes",
@@ -2785,37 +2785,37 @@ TRUST_ID_AGGREGATED_COMPARISON_DATA = [
                         "attribute_type": "capability",
                         "attribute_name": "Capability",
                         "attribute_description": "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "product_quality,_accessibility_and_safety",
                         "attribute_name": "Product quality, accessibility and safety",
                         "attribute_description": "Products are good quality, accessible and safe to use",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "fair_product_&_service_pricing",
                         "attribute_name": "Fair product & service pricing",
                         "attribute_description": "Prices of products, services, and experiences are good value for money",
-                        "attribute_score": 60
+                        "attribute_score": 60,
                     },
                     {
                         "attribute_type": "competent_leadership_and_employees",
                         "attribute_name": "Competent leadership and employees",
                         "attribute_description": "Employees and leadership are competent and understand how to respond to my needs",
-                        "attribute_score": 60
+                        "attribute_score": 60,
                     },
                     {
                         "attribute_type": "applicable_long-term_solutions_&_improvements",
                         "attribute_name": "Applicable long-term solutions & improvements",
                         "attribute_description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
-                        "attribute_score": 80
-                    }
+                        "attribute_score": 80,
+                    },
                 ],
                 "default": False,
-                "segment_name": "Test Add Segment"
+                "segment_name": "Test Add Segment",
             }
-        ]
+        ],
     },
     {
         "segment_type": "humanity attributes",
@@ -2827,37 +2827,37 @@ TRUST_ID_AGGREGATED_COMPARISON_DATA = [
                         "attribute_type": "humanity",
                         "attribute_name": "Humanity",
                         "attribute_description": "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "quickly_resolves_issues",
                         "attribute_name": "Quickly resolves issues",
                         "attribute_description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "values_&_respects_everyone",
                         "attribute_name": "Values & respects everyone",
                         "attribute_description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "values_society_&_environment",
                         "attribute_name": "Values society & environment",
                         "attribute_description": "Lilly Pulitzer values the good of society and the environment, not just profit",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "takes_care_of_employees",
                         "attribute_name": "Takes care of employees",
                         "attribute_description": "Lilly Pulitzer takes care of employees",
-                        "attribute_score": 60
-                    }
+                        "attribute_score": 60,
+                    },
                 ],
                 "default": False,
-                "segment_name": "Test Add Segment"
+                "segment_name": "Test Add Segment",
             }
-        ]
+        ],
     },
     {
         "segment_type": "reliability attributes",
@@ -2869,37 +2869,37 @@ TRUST_ID_AGGREGATED_COMPARISON_DATA = [
                         "attribute_type": "reliability",
                         "attribute_name": "Reliability",
                         "attribute_description": "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
-                        "attribute_score": 60
+                        "attribute_score": 60,
                     },
                     {
                         "attribute_type": "continuous_product_improvement",
                         "attribute_name": "Continuous product improvement",
                         "attribute_description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "delivers_quality_products",
                         "attribute_name": "Delivers quality products",
                         "attribute_description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "facilitates_smooth_digital_interactions",
                         "attribute_name": "Facilitates smooth digital interactions",
                         "attribute_description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "timely_issue_resolution",
                         "attribute_name": "Timely issue resolution",
                         "attribute_description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
-                        "attribute_score": 100
-                    }
+                        "attribute_score": 100,
+                    },
                 ],
                 "default": False,
-                "segment_name": "Test Add Segment"
+                "segment_name": "Test Add Segment",
             }
-        ]
+        ],
     },
     {
         "segment_type": "transparency attributes",
@@ -2911,38 +2911,38 @@ TRUST_ID_AGGREGATED_COMPARISON_DATA = [
                         "attribute_type": "transparency",
                         "attribute_name": "Transparency",
                         "attribute_description": "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "honest_communication_and_marketing",
                         "attribute_name": "Honest communication and marketing",
                         "attribute_description": "Lilly Pulitzer's marketing and communications are accurate and honest",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "upfront_spending_and_income",
                         "attribute_name": "Upfront spending and income",
                         "attribute_description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
-                        "attribute_score": 60
+                        "attribute_score": 60,
                     },
                     {
                         "attribute_type": "data_storage_and_communication",
                         "attribute_name": "Data storage and communication",
                         "attribute_description": "How and why my data is used is communicated in plain and easy to understand language",
-                        "attribute_score": 100
+                        "attribute_score": 100,
                     },
                     {
                         "attribute_type": "upfront_costs_and_fees",
                         "attribute_name": "Upfront costs and fees",
                         "attribute_description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
-                        "attribute_score": 100
-                    }
+                        "attribute_score": 100,
+                    },
                 ],
                 "default": False,
-                "segment_name": "Test Add Segment"
+                "segment_name": "Test Add Segment",
             }
-        ]
-    }
+        ],
+    },
 ]
 
 TRUST_ID_ATTRIBUTE_SAMPLE_DATA = {
