@@ -952,6 +952,7 @@ AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
 AUDIENCE_FILTER_RANGE = "range"
+AUDIENCE_FILTER_DELTA_TYPE = "delta_type"
 AUDIENCE_FILTER_NOT_RANGE = "not_range"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_LAST_DELIVERY = "last_delivery"
@@ -976,6 +977,17 @@ SECRET_STORAGE_ERROR_MSG = (
     "An error occurred while attempting to"
     " store secrets in the cloud secret storage."
 )
+
+AUDIENCE_RULES_DAYS = "days"
+AUDIENCE_RULES_WEEKS = "weeks"
+AUDIENCE_RULES_MONTHS = "months"
+AUDIENCE_RULES_YEARS = "years"
+ALLOWED_AUDIENCE_TIMEDELTA_TYPES = [
+    AUDIENCE_RULES_DAYS,
+    AUDIENCE_RULES_WEEKS,
+    AUDIENCE_RULES_MONTHS,
+    AUDIENCE_RULES_YEARS,
+]
 
 # users
 USER_TAG = "user"

@@ -1,39 +1,38 @@
-import { Response } from "miragejs"
+import { driftData } from "@/api/mock/factories/driftData.js"
+import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
+import customerEventData from "@/api/mock/fixtures/customerEventData.js"
+import demographicsData from "@/api/mock/fixtures/demographicData.js"
+import domainData from "@/api/mock/fixtures/domainLineData.js"
+import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
+import runDurationData from "@/api/mock/fixtures/runDurationData.js"
+import trustIdComparisonData from "@/api/mock/fixtures/segmentComparisonScores.js"
+import trustIdAttribute from "@/api/mock/fixtures/trustIdAttribute.js"
+import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
+import mapData from "@/components/common/MapChart/mapData.js"
+import { getBatchCounts } from "@/utils"
 import dayjs from "dayjs"
 import faker from "faker"
-import { getBatchCounts } from "@/utils"
+import { Response } from "miragejs"
+import { addedApplications, applications } from "./factories/application"
+import attributeRules from "./factories/attributeRules"
+import audienceCSVData from "./factories/audienceCSVData"
+import audienceHistogramData from "./factories/audienceHistogramData.js"
 import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
-import { me } from "./factories/me"
+import { dataFeedDetails, dataFeeds } from "./factories/dataSource"
 import {
   destinationsConstants,
   destinationsDataExtensions,
 } from "./factories/destination"
-import { idrOverview, idrDataFeedReport } from "./factories/identity"
-import { dataFeeds, dataFeedDetails } from "./factories/dataSource"
-import attributeRules from "./factories/attributeRules"
-import audienceHistogramData from "./factories/audienceHistogramData.js"
-import featureData from "./factories/featureData.json"
-import { user, requestedUser, someTickets } from "./factories/user.js"
-import audienceCSVData from "./factories/audienceCSVData"
+import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
+import { idrDataFeedReport, idrOverview } from "./factories/identity"
 import liftData from "./factories/liftChartData"
-import mapData from "@/components/common/MapChart/mapData.js"
-import demographicsData from "@/api/mock/fixtures/demographicData.js"
-import customerEventData from "@/api/mock/fixtures/customerEventData.js"
+import { me } from "./factories/me"
+import { requestedUser, someTickets, user } from "./factories/user.js"
+import menuConfig from "./fixtures/menuConfig"
+import RBACMatrix from "./fixtures/RBACMatrix"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
-import menuConfig from "./fixtures/menuConfig"
-import { driftData } from "@/api/mock/factories/driftData.js"
-import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
-import { addedApplications, applications } from "./factories/application"
-import domainData from "@/api/mock/fixtures/domainLineData.js"
-import { emailDeliverabilityOveriew } from "./factories/emailDeliverability"
-import runDurationData from "@/api/mock/fixtures/runDurationData.js"
-import addSegmentData from "@/api/mock/fixtures/addSegmentData.js"
-import trustIdOverview from "@/api/mock/fixtures/trustIdOverview.js"
-import trustIdAttribute from "@/api/mock/fixtures/trustIdAttribute.js"
-import trustIdComparisonData from "@/api/mock/fixtures/segmentComparisonScores.js"
-import RBACMatrix from "./fixtures/RBACMatrix"
 
 export const defineRoutes = (server) => {
   // Users
@@ -610,10 +609,6 @@ export const defineRoutes = (server) => {
     return data
   })
 
-  server.get("/models/:id/feature-importance", () => {
-    return featureData.featureList
-  })
-
   server.get("/models/:id/pipeline-performance", () => {
     return runDurationData
   })
@@ -723,7 +718,7 @@ export const defineRoutes = (server) => {
     const notifications = {
       error_alerts: {
         datasources: false,
-        destinations: false,
+        destinations: true,
         models: false,
       },
       notifications: allNotifications.models.slice(initialCount, lastCount),

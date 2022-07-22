@@ -72,11 +72,9 @@ export default {
   methods: {
     handleClick() {
       this.toggleFilter = true // change this later
-      console.log(this.toggleFilter) // clicking 2x for some reason (problem in icon button)
     },
     addFilter(label) {
       this.filtersAdded.push(label)
-      console.log(this.filtersAdded)
     },
     removeFilter(label) {
       const temp = this.filtersAdded.indexOf(label)
