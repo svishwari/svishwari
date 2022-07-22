@@ -249,7 +249,7 @@ def get_trust_id_comparison_data(
     """
     comparison_data = {
         segment_type: []
-        for segment_type in api_c.TRUST_ID_SEGMENT_TYPE_MAP.keys()
+        for segment_type in api_c.TRUST_ID_SEGMENT_TYPE_MAP
     }
     for segment in segments:
         segment_comparison_data = Caching.check_and_return_cache(
@@ -269,7 +269,7 @@ def get_trust_id_comparison_data(
                 ],
             },
         )
-        for segment_type in api_c.TRUST_ID_SEGMENT_TYPE_MAP.keys():
+        for segment_type in api_c.TRUST_ID_SEGMENT_TYPE_MAP:
             segment_comparison_data[segment_type].update(
                 {
                     api_c.DEFAULT: segment.get(api_c.DEFAULT, False),
