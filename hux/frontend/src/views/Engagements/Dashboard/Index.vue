@@ -258,6 +258,8 @@ export default {
       clearFavorite: "users/clearFavorite",
       updateEngagement: "engagements/updateEngagement",
       deliverEngagementApi: "engagements/deliver",
+      attachEngagementAudienceDestination: "engagements/attachEngagementAudienceDestination",
+      detachDestinationAudi: "engagement/detachDestinationAudi"
     }),
     async refreshEntity() {
       this.loading = true
@@ -282,7 +284,7 @@ export default {
           this.triggerDetachAudiences(this.deleteActionData)
           break
         case "remove-destination":
-          await this.detachAudienceDestination(this.deleteActionData)
+          await this.detachDestinationAudi(this.deleteActionData)
           await this.loadEngagement(this.engagementId)
           break
         case "remove-engagement":
@@ -341,7 +343,7 @@ export default {
       this.loadingAudiences = true
       const payload = event.destination
       try {
-        await this.attachAudienceDestination({
+        await this.attachEngagementAudienceDestination({
           engagementId: this.engagementId,
           audienceId: this.selectedAudienceId,
           data: payload,

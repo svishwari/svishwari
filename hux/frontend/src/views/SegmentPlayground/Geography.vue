@@ -1,8 +1,5 @@
 <template>
-  <v-card
-    class="map-card-wrapper mt-3 rounded-lg card-shadow pa-6 pt-4"
-    height="400"
-  >
+  <v-card class="map-card-wrapper mt-3 rounded-lg card-shadow pa-6 pt-4" height="400">
     <v-card-title class="d-flex justify-space-between pa-0">
       <h5 class="text-h3">USA by population</h5>
       <v-btn-toggle v-model="toggle_view" tile class="toggle-options">
@@ -15,34 +12,41 @@
       </v-btn-toggle>
     </v-card-title>
     <v-card-text class="pa-0">
-      <v-progress-linear
-        v-if="loading"
-        :active="loading"
-        :indeterminate="loading"
-      />
+      <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" />
       <div v-if="showMapView && data.geo">
-        <map-chart
-          v-if="!loading"
-          :map-data="data.geo"
-          :configuration-data="configurationData"
-          :disable-hover-effects="true"
-          data-e2e="map-chart"
-        />
-        <map-slider
-          v-if="!loading"
-          :map-data="data.geo"
-          :configuration-data="configurationData"
-        />
+        <map-chart v-if="!loading" :map-data="data.geo" :configuration-data="configurationData"
+          :disable-hover-effects="true" data-e2e="map-chart" />
+        <map-slider v-if="!loading" :map-data="data.geo" :configuration-data="configurationData" />
+        <empty-page v-if="!loading && data.geo.length === 0" type="drift-chart-empty" :size="50">
+          <template #title>
+            <div class="title-no-notification">
+              No audience data to show
+            </div>
+          </template>
+          <template #subtitle>
+            <div class="des-no-notification mt-2">
+              Map feature chart will appear here once you create an
+              audience.
+            </div>
+          </template>
+        </empty-page>
+        <empty-page v-else class="title-no-notification" type="error-on-screens" :size="50">
+          <template #title>
+            <div class="title-no-notification">
+              Map feature is currently unavailable
+            </div>
+          </template>
+          <template #subtitle>
+            <div class="text-body-2 black--text text--base mt-2">
+              Our team is working hard to fix it. Please be
+              patient and try again soon!
+            </div>
+          </template>
+        </empty-page>
       </div>
       <div v-if="!showMapView && data.geo" class="pt-2">
-        <map-state-list
-          v-if="!loading"
-          :map-data="data.geo"
-          :configuration-data="configurationData"
-          :header-config="headerConfig"
-          :sort-metric="sortMetric"
-          :height="330"
-        />
+        <map-state-list v-if="!loading" :map-data="data.geo" :configuration-data="configurationData"
+          :header-config="headerConfig" :sort-metric="sortMetric" :height="330" />
       </div>
     </v-card-text>
   </v-card>
@@ -61,7 +65,7 @@ export default {
     data: {
       type: Object,
       required: false,
-      default: () => {},
+      default: () => { },
     },
     loading: {
       type: Boolean,
@@ -85,13 +89,16 @@ export default {
 .toggle-options {
   position: relative;
   bottom: 6px !important;
+
   .v-btn {
     background: none;
     border: none;
     border-width: inherit !important;
+
     &::before {
       opacity: 0;
     }
+
     &.v-item--active {
       svg {
         fill: var(--v-primary-lighten6) !important;
@@ -104,14 +111,17 @@ export default {
   ::-webkit-scrollbar {
     width: 5px;
   }
+
   ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px var(--v-white-base);
     border-radius: 10px;
   }
+
   ::-webkit-scrollbar-thumb {
     background: var(--v-black-lighten3);
     border-radius: 5px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: var(--v-black-lighten3);
   }
@@ -122,10 +132,12 @@ export default {
         tr {
           display: table;
           width: 100%;
+
           td {
             &:first-child {
               color: var(--v-black-lighten4);
             }
+
             &:last-child {
               color: var(--v-black-base);
             }
@@ -133,16 +145,20 @@ export default {
         }
       }
     }
+
     .v-data-table {
       .v-data-table-header {
         tr {
           height: 40px !important;
         }
+
         th {
           background: var(--v-primary-lighten2);
+
           &:first-child {
             border-top-left-radius: 12px;
           }
+
           &:last-child {
             border-top-right-radius: 12px;
           }
@@ -150,8 +166,10 @@ export default {
       }
     }
   }
+
   ::v-deep .v-input__prepend-outer {
     margin-right: 4px;
+
     .slider-value-display {
       width: 37px !important;
     }

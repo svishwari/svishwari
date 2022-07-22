@@ -253,8 +253,7 @@ client["engagements"].deliveries = (resourceId, query) => {
 
 client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
   return http.get(
-    `/engagements/${resourceId}/audience-performance/${
-      data === "ads" ? "display-ads" : "email"
+    `/engagements/${resourceId}/audience-performance/${data === "ads" ? "display-ads" : "email"
     }`
   )
 }
@@ -371,8 +370,13 @@ client["audiences"].demographics = (audienceId) => {
   return http.get(`/audiences/${audienceId}/audience_insights`)
 }
 
-client["audiences"].deliver = (resourceId, data) => {
-  return http.post(`/audiences/${resourceId}/deliver`, data)
+client["audiences"].deliver = (payload) => {
+  console.log("payload+++++++++++++++++++++++", payload)
+  if (payload.toggleValue) {
+    return http.post(`/audiences/${payload.id}/deliver?replace_audience=${payload.toggleValue}`, payload.payload)
+  } else {
+    return http.post(`/audiences/${payload.id}/deliver`, payload.payload)
+  }
 }
 
 // client["audiences"].create = (resourceId, data) => {
@@ -418,10 +422,11 @@ client["audiences"].histogram = (field, model) => {
 }
 
 client["audiences"].replaceAudience = (data) => {
-  return http.post(
-    `/engagements/${data.engagement_id}/audience/${data.audience_id}/destination/${data.destination_id}/deliver`,
-    data.value
-  )
+  let url = `/engagements/${data.engagement_id}/audience/${data.audience_id}/destination/${data.destination_id}/deliver`
+  if (data.value === true || data.value === false) {
+    url = url + `?replace_audience=${data.value}`
+  }
+  return http.post(url)
 }
 
 client["audiences"].update = (audienceId, payload) => {
@@ -519,10 +524,8 @@ client.dataSources.dataFeedsDetails = (
   status
 ) => {
   return http.get(
-    `/data-sources/${type}/datafeeds/${name}${
-      start_date || end_date || status.length > 0 ? "?" : ""
-    }${start_date ? "start_date=" + start_date + "&" : ""}${
-      end_date ? "end_date=" + end_date + "&" : ""
+    `/data-sources/${type}/datafeeds/${name}${start_date || end_date || status.length > 0 ? "?" : ""
+    }${start_date ? "start_date=" + start_date + "&" : ""}${end_date ? "end_date=" + end_date + "&" : ""
     }${status.length > 0 ? "status=" + status : ""}`
   )
 }

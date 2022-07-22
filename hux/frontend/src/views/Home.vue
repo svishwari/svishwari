@@ -160,7 +160,7 @@
                     <hux-status
                       :status="formatText(item['notification_type'])"
                       :show-label="true"
-                      :icon-size="20"
+                      :icon-size="item['notification_type'] === 'success' ? 20 : 18"
                     />
                   </template>
 

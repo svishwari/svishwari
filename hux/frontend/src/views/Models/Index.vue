@@ -20,7 +20,7 @@
       <template #right>
         <v-btn
           icon
-          data-e2e="audienceFilterToggle"
+          data-e2e="modelFilterToggle"
           @click.native="filterToggle()"
         >
           <icon
