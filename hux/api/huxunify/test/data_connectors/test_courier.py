@@ -1,5 +1,6 @@
 """Purpose of this file is to house all the courier tests."""
 import asyncio
+from datetime import datetime
 from http import HTTPStatus
 from unittest import TestCase, mock
 import mongomock
@@ -24,7 +25,10 @@ from huxunifylib.database.engagement_management import (
     get_engagement,
     set_engagement,
 )
-from huxunifylib.database.orchestration_management import create_audience
+from huxunifylib.database.orchestration_management import (
+    create_audience,
+    append_destination_to_standalone_audience,
+)
 from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     FacebookCredentials,
@@ -576,12 +580,44 @@ class CourierTest(TestCase):
             AWSBatchConnector, "submit_job", return_value=t_c.BATCH_RESPONSE
         ).start()
 
+        standalone_audience = create_audience(
+            self.database,
+            "standalone test audience",
+            [],
+            t_c.TEST_USER_NAME,
+            [],
+        )
+
+        sfmc_destination = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_SFMC,
+            db_c.DELIVERY_PLATFORM_SFMC,
+        )
+        sfmc_destination = set_connection_status(
+            self.database, sfmc_destination[db_c.ID], db_c.STATUS_SUCCEEDED
+        )
+
+        aud_destination = {
+            db_c.OBJECT_ID: sfmc_destination[db_c.ID],
+            db_c.DELIVERY_PLATFORM_CONFIG: {
+                db_c.DATA_EXTENSION_NAME: "SFMC Date Extension"
+            },
+            db_c.DATA_ADDED: datetime.utcnow(),
+        }
+
+        standalone_audience = append_destination_to_standalone_audience(
+            database=self.database,
+            audience_id=standalone_audience[db_c.ID],
+            destination=aud_destination,
+            user_name=t_c.TEST_USER_NAME,
+        )
+
         # manually deliver audience to a destination without any engagement
         asyncio.run(
             deliver_audience_to_destination(
                 database=self.database,
-                audience_id=self.audience_one[db_c.ID],
-                destination_id=self.destination_ids[0],
+                audience=standalone_audience,
+                destination_id=sfmc_destination[db_c.ID],
                 user_name="Delivery Test User",
             )
         )
@@ -589,8 +625,8 @@ class CourierTest(TestCase):
         # validate delivery job created
         delivery_jobs = get_delivery_jobs_using_metadata(
             database=self.database,
-            audience_id=self.audience_one[db_c.ID],
-            delivery_platform_id=self.destination_ids[0],
+            audience_id=standalone_audience[db_c.ID],
+            delivery_platform_id=sfmc_destination[db_c.ID],
         )
         self.assertTrue(delivery_jobs)
         self.assertEqual(1, len(delivery_jobs))
