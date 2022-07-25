@@ -16,7 +16,7 @@
           class="d-flex justify-space-between pr-1 text-body-1"
           v-on="on"
         >
-          <icon v-if="modelIcon" :type="modelIcon" :size="21" class="ml-n1" />
+          <icon v-if="modelIcon" :type="modelIcon" :size="24" class="ml-n1" />
           {{ label }}
           <div class="flex-grow-1"></div>
           <v-icon color="primary">mdi-chevron-right</v-icon>

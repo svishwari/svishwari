@@ -615,6 +615,7 @@ export default {
           _group_items.push(
             ...Object.keys(masterAttributes[groupKey]).map((key) => {
               const _subOption = masterAttributes[groupKey][key]
+
               const hasSubOptins = Object.keys(_subOption).filter(
                 (item) => !!_subOption[item]["name"]
               )
@@ -626,7 +627,7 @@ export default {
                 })
               }
               if (groupKey.includes("model")) {
-                _subOption["modelIcon"] = "model"
+                _subOption["modelIcon"] = "model-" + _subOption.icon
                 _subOption["selected"] = "value"
                 _subOption["menu"] = [
                   {
