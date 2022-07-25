@@ -1,7 +1,7 @@
 <template>
   <v-container class="header-container">
     <v-row class="header-title" :class="description ? '' : 'pb-4'">
-      <div class="title-left text-h2">
+      <div class="title-left new-h1">
         <icon :type="iconType" :size="40" color="primary" class="mr-2"></icon>
         <span class="mr-2">{{ title }}</span>
         <icon

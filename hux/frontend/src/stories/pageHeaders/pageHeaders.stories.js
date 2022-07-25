@@ -69,7 +69,7 @@ const Template = (args, { argTypes }) => ({
       <template #breadcrumbs >
           <breadcrumb :items="$props.breadcrumbItems"></breadcrumb>
       </template>
-      <template #call-to-action v-if="$props.callToAction">
+      <template #call-to-action v-if="$props.callToAction" class="new-b3">
       <icon v-if="$props.ctaIcon1" :type="$props.ctaIcon1" size="24" color="primary" class="ml-2 mr-2 mt-1" /><icon v-if="$props.ctaIcon2" :type="$props.ctaIcon2" size="24" color="primary" class="ml-2 mr-2 mt-1" />
       <icon v-if="$props.ctaIcon3" :type="$props.ctaIcon3" size="24" color="primary" class="ml-2 mr-2 mt-1" />
       <icon v-if="$props.ctaIcon4" :type="$props.ctaIcon4" size="24" color="primary" class="ml-2 mr-2 mt-1" />
