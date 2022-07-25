@@ -581,6 +581,8 @@ class AudienceView(SwaggerView):
             audience[api_c.DELIVERIES].sort(
                 key=lambda delivery: delivery[db_c.UPDATE_TIME], reverse=True
             )
+            if audience.get(api_c.TAGS):
+                audience[api_c.TAGS][api_c.INDUSTRY].sort()
 
             # set the lookalikeable field in audience before limiting the
             # number of deliveries in it based on delivery_limit
@@ -1631,7 +1633,13 @@ class AudienceRules(SwaggerView):
                 "between": "Between",
                 "value": "Value",
                 "decile_percentage": "Decile percentage",
-            }
+            },
+            "allowed_timedelta_types": [
+                {api_c.AUDIENCE_RULES_DAYS: "Days"},
+                {api_c.AUDIENCE_RULES_WEEKS: "Weeks"},
+                {api_c.AUDIENCE_RULES_MONTHS: "Months"},
+                {api_c.AUDIENCE_RULES_YEARS: "Years"},
+            ],
         }
 
         # Fetch events from CDM. Check cache first.
@@ -1672,14 +1680,17 @@ class AudienceRules(SwaggerView):
                     "propensity_to_unsubscribe": {
                         "name": "Propensity to unsubscribe",
                         "type": "range",
+                        "icon": "unsubscribe",
                     },
                     "ltv_predicted": {
                         "name": "Predicted lifetime value",
                         "type": "range",
+                        "icon": "ltv",
                     },
                     "propensity_to_purchase": {
                         "name": "Propensity to purchase",
                         "type": "range",
+                        "icon": "purchase",
                     },
                 },
                 "general": {

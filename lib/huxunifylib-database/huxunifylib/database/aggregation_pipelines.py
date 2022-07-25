@@ -9,13 +9,13 @@ trust_id_overview_pipeline = [
             "total_customers": {"$sum": 1},
             "humanity_agree": {
                 "$sum": {
-                    "$cond": [{"$eq": ["$factors.HUMANITY.rating", "1"]}, 1, 0]
+                    "$cond": [{"$eq": ["$factors.HUMANITY.rating", 1]}, 1, 0]
                 }
             },
             "humanity_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.HUMANITY.rating", "-1"]},
+                        {"$eq": ["$factors.HUMANITY.rating", -1]},
                         1,
                         0,
                     ]
@@ -23,13 +23,13 @@ trust_id_overview_pipeline = [
             },
             "humanity_neutral": {
                 "$sum": {
-                    "$cond": [{"$eq": ["$factors.HUMANITY.rating", "0"]}, 1, 0]
+                    "$cond": [{"$eq": ["$factors.HUMANITY.rating", 0]}, 1, 0]
                 }
             },
             "reliability_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.RELIABILITY.rating", "1"]},
+                        {"$eq": ["$factors.RELIABILITY.rating", 1]},
                         1,
                         0,
                     ]
@@ -38,7 +38,7 @@ trust_id_overview_pipeline = [
             "reliability_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.RELIABILITY.rating", "-1"]},
+                        {"$eq": ["$factors.RELIABILITY.rating", -1]},
                         1,
                         0,
                     ]
@@ -47,7 +47,7 @@ trust_id_overview_pipeline = [
             "reliability_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.RELIABILITY.rating", "0"]},
+                        {"$eq": ["$factors.RELIABILITY.rating", 0]},
                         1,
                         0,
                     ]
@@ -56,7 +56,7 @@ trust_id_overview_pipeline = [
             "capability_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.CAPABILITY.rating", "1"]},
+                        {"$eq": ["$factors.CAPABILITY.rating", 1]},
                         1,
                         0,
                     ]
@@ -65,7 +65,7 @@ trust_id_overview_pipeline = [
             "capability_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.CAPABILITY.rating", "-1"]},
+                        {"$eq": ["$factors.CAPABILITY.rating", -1]},
                         1,
                         0,
                     ]
@@ -74,7 +74,7 @@ trust_id_overview_pipeline = [
             "capability_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.CAPABILITY.rating", "0"]},
+                        {"$eq": ["$factors.CAPABILITY.rating", 0]},
                         1,
                         0,
                     ]
@@ -83,7 +83,7 @@ trust_id_overview_pipeline = [
             "transparency_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.TRANSPARENCY.rating", "1"]},
+                        {"$eq": ["$factors.TRANSPARENCY.rating", 1]},
                         1,
                         0,
                     ]
@@ -92,7 +92,7 @@ trust_id_overview_pipeline = [
             "transparency_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.TRANSPARENCY.rating", "-1"]},
+                        {"$eq": ["$factors.TRANSPARENCY.rating", -1]},
                         1,
                         0,
                     ]
@@ -101,7 +101,7 @@ trust_id_overview_pipeline = [
             "transparency_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$factors.TRANSPARENCY.rating", "0"]},
+                        {"$eq": ["$factors.TRANSPARENCY.rating", 0]},
                         1,
                         0,
                     ]
@@ -284,7 +284,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute1_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute1.rating", "1"]},
+                        {"$eq": ["$humanity_attribute1.rating", 1]},
                         1,
                         0,
                     ]
@@ -293,7 +293,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute1_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute1.rating", "-1"]},
+                        {"$eq": ["$humanity_attribute1.rating", -1]},
                         1,
                         0,
                     ]
@@ -302,7 +302,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute1_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute1.rating", "0"]},
+                        {"$eq": ["$humanity_attribute1.rating", 0]},
                         1,
                         0,
                     ]
@@ -311,7 +311,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute2_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute2.rating", "1"]},
+                        {"$eq": ["$humanity_attribute2.rating", 1]},
                         1,
                         0,
                     ]
@@ -320,7 +320,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute2_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute2.rating", "-1"]},
+                        {"$eq": ["$humanity_attribute2.rating", -1]},
                         1,
                         0,
                     ]
@@ -329,7 +329,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute2_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute2.rating", "0"]},
+                        {"$eq": ["$humanity_attribute2.rating", 0]},
                         1,
                         0,
                     ]
@@ -338,7 +338,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute3_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute3.rating", "1"]},
+                        {"$eq": ["$humanity_attribute3.rating", 1]},
                         1,
                         0,
                     ]
@@ -347,7 +347,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute3_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute3.rating", "-1"]},
+                        {"$eq": ["$humanity_attribute3.rating", -1]},
                         1,
                         0,
                     ]
@@ -356,7 +356,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute3_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute3.rating", "0"]},
+                        {"$eq": ["$humanity_attribute3.rating", 0]},
                         1,
                         0,
                     ]
@@ -365,7 +365,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute4_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute4.rating", "1"]},
+                        {"$eq": ["$humanity_attribute4.rating", 1]},
                         1,
                         0,
                     ]
@@ -374,7 +374,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute4_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute4.rating", "-1"]},
+                        {"$eq": ["$humanity_attribute4.rating", -1]},
                         1,
                         0,
                     ]
@@ -383,7 +383,7 @@ trust_id_attribute_ratings_pipeline = [
             "humanity_attribute4_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$humanity_attribute4.rating", "0"]},
+                        {"$eq": ["$humanity_attribute4.rating", 0]},
                         1,
                         0,
                     ]
@@ -392,7 +392,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute1_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute1.rating", "1"]},
+                        {"$eq": ["$reliability_attribute1.rating", 1]},
                         1,
                         0,
                     ]
@@ -401,7 +401,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute1_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute1.rating", "-1"]},
+                        {"$eq": ["$reliability_attribute1.rating", -1]},
                         1,
                         0,
                     ]
@@ -410,7 +410,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute1_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute1.rating", "0"]},
+                        {"$eq": ["$reliability_attribute1.rating", 0]},
                         1,
                         0,
                     ]
@@ -419,7 +419,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute2_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute2.rating", "1"]},
+                        {"$eq": ["$reliability_attribute2.rating", 1]},
                         1,
                         0,
                     ]
@@ -428,7 +428,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute2_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute2.rating", "-1"]},
+                        {"$eq": ["$reliability_attribute2.rating", -1]},
                         1,
                         0,
                     ]
@@ -437,7 +437,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute2_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute2.rating", "0"]},
+                        {"$eq": ["$reliability_attribute2.rating", 0]},
                         1,
                         0,
                     ]
@@ -446,7 +446,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute3_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute3.rating", "1"]},
+                        {"$eq": ["$reliability_attribute3.rating", 1]},
                         1,
                         0,
                     ]
@@ -455,7 +455,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute3_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute3.rating", "-1"]},
+                        {"$eq": ["$reliability_attribute3.rating", -1]},
                         1,
                         0,
                     ]
@@ -464,7 +464,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute3_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute3.rating", "0"]},
+                        {"$eq": ["$reliability_attribute3.rating", 0]},
                         1,
                         0,
                     ]
@@ -473,7 +473,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute4_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute4.rating", "1"]},
+                        {"$eq": ["$reliability_attribute4.rating", 1]},
                         1,
                         0,
                     ]
@@ -482,7 +482,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute4_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute4.rating", "-1"]},
+                        {"$eq": ["$reliability_attribute4.rating", -1]},
                         1,
                         0,
                     ]
@@ -491,7 +491,7 @@ trust_id_attribute_ratings_pipeline = [
             "reliability_attribute4_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$reliability_attribute4.rating", "0"]},
+                        {"$eq": ["$reliability_attribute4.rating", 0]},
                         1,
                         0,
                     ]
@@ -500,7 +500,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute1_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute1.rating", "1"]},
+                        {"$eq": ["$capability_attribute1.rating", 1]},
                         1,
                         0,
                     ]
@@ -509,7 +509,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute1_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute1.rating", "-1"]},
+                        {"$eq": ["$capability_attribute1.rating", -1]},
                         1,
                         0,
                     ]
@@ -518,7 +518,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute1_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute1.rating", "0"]},
+                        {"$eq": ["$capability_attribute1.rating", 0]},
                         1,
                         0,
                     ]
@@ -527,7 +527,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute2_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute2.rating", "1"]},
+                        {"$eq": ["$capability_attribute2.rating", 1]},
                         1,
                         0,
                     ]
@@ -536,7 +536,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute2_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute2.rating", "-1"]},
+                        {"$eq": ["$capability_attribute2.rating", -1]},
                         1,
                         0,
                     ]
@@ -545,7 +545,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute2_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute2.rating", "0"]},
+                        {"$eq": ["$capability_attribute2.rating", 0]},
                         1,
                         0,
                     ]
@@ -554,7 +554,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute3_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute3.rating", "1"]},
+                        {"$eq": ["$capability_attribute3.rating", 1]},
                         1,
                         0,
                     ]
@@ -563,7 +563,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute3_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute3.rating", "-1"]},
+                        {"$eq": ["$capability_attribute3.rating", -1]},
                         1,
                         0,
                     ]
@@ -572,7 +572,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute3_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute3.rating", "0"]},
+                        {"$eq": ["$capability_attribute3.rating", 0]},
                         1,
                         0,
                     ]
@@ -581,7 +581,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute4_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute4.rating", "1"]},
+                        {"$eq": ["$capability_attribute4.rating", 1]},
                         1,
                         0,
                     ]
@@ -590,7 +590,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute4_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute4.rating", "-1"]},
+                        {"$eq": ["$capability_attribute4.rating", -1]},
                         1,
                         0,
                     ]
@@ -599,7 +599,7 @@ trust_id_attribute_ratings_pipeline = [
             "capability_attribute4_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$capability_attribute4.rating", "0"]},
+                        {"$eq": ["$capability_attribute4.rating", 0]},
                         1,
                         0,
                     ]
@@ -608,7 +608,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute1_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute1.rating", "1"]},
+                        {"$eq": ["$transparency_attribute1.rating", 1]},
                         1,
                         0,
                     ]
@@ -617,7 +617,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute1_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute1.rating", "-1"]},
+                        {"$eq": ["$transparency_attribute1.rating", -1]},
                         1,
                         0,
                     ]
@@ -626,7 +626,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute1_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute1.rating", "0"]},
+                        {"$eq": ["$transparency_attribute1.rating", 0]},
                         1,
                         0,
                     ]
@@ -635,7 +635,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute2_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute2.rating", "1"]},
+                        {"$eq": ["$transparency_attribute2.rating", 1]},
                         1,
                         0,
                     ]
@@ -644,7 +644,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute2_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute2.rating", "-1"]},
+                        {"$eq": ["$transparency_attribute2.rating", -1]},
                         1,
                         0,
                     ]
@@ -653,7 +653,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute2_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute2.rating", "0"]},
+                        {"$eq": ["$transparency_attribute2.rating", 0]},
                         1,
                         0,
                     ]
@@ -662,7 +662,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute3_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute3.rating", "1"]},
+                        {"$eq": ["$transparency_attribute3.rating", 1]},
                         1,
                         0,
                     ]
@@ -671,7 +671,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute3_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute3.rating", "-1"]},
+                        {"$eq": ["$transparency_attribute3.rating", -1]},
                         1,
                         0,
                     ]
@@ -680,7 +680,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute3_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute3.rating", "0"]},
+                        {"$eq": ["$transparency_attribute3.rating", 0]},
                         1,
                         0,
                     ]
@@ -689,7 +689,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute4_agree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute4.rating", "1"]},
+                        {"$eq": ["$transparency_attribute4.rating", 1]},
                         1,
                         0,
                     ]
@@ -698,7 +698,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute4_disagree": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute4.rating", "-1"]},
+                        {"$eq": ["$transparency_attribute4.rating", -1]},
                         1,
                         0,
                     ]
@@ -707,7 +707,7 @@ trust_id_attribute_ratings_pipeline = [
             "transparency_attribute4_neutral": {
                 "$sum": {
                     "$cond": [
-                        {"$eq": ["$transparency_attribute4.rating", "0"]},
+                        {"$eq": ["$transparency_attribute4.rating", 0]},
                         1,
                         0,
                     ]
