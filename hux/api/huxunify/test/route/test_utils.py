@@ -1,3 +1,4 @@
+# pylint: disable=too-many-public-methods
 """Purpose of this file is to house all the route/utils tests."""
 from datetime import datetime, timedelta
 from http import HTTPStatus
@@ -26,6 +27,7 @@ from huxunify.api.route.utils import (
     filter_team_member_requests,
     convert_filters_for_events,
     convert_cdp_buckets_to_histogram,
+    convert_filters_for_contact_preference,
 )
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
@@ -510,6 +512,82 @@ class TestRouteUtils(TestCase):
                 api_c.AUDIENCE_SECTION_FILTERS
             ],
         )
+
+    def test_convert_filters_for_contact_preference_email(self):
+        """Test convert_filters_for_contact_preference method with email."""
+
+        contact_preference_filters = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: api_c.EMAIL,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        expected_filters = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.PREFERENCE_EMAIL,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: True,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        # test method
+        convert_filters_for_contact_preference(contact_preference_filters)
+
+        self.assertDictEqual(contact_preference_filters, expected_filters)
+
+    def test_convert_filters_for_contact_preference_text(self):
+        """Test convert_filters_for_contact_preference method with text."""
+
+        contact_preference_filters = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: api_c.TEXT,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        expected_filters = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.PREFERENCE_SMS,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: True,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        # test method
+        convert_filters_for_contact_preference(contact_preference_filters)
+
+        self.assertDictEqual(contact_preference_filters, expected_filters)
 
     def test_convert_cdp_age_bucket_to_histogram(self):
         """Test for convert_cdp_buckets_to_histogram method for age field."""

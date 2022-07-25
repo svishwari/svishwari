@@ -91,6 +91,7 @@ from huxunify.api.route.utils import (
     convert_unique_city_filter,
     match_rate_data_for_audience,
     convert_filters_for_events,
+    convert_filters_for_contact_preference,
 )
 
 # setup the orchestration blueprint
@@ -1310,6 +1311,7 @@ class AudiencePostView(SwaggerView):
         )
 
         convert_filters_for_events(audience_filters, event_types)
+        convert_filters_for_contact_preference(audience_filters)
         # get live audience size
         customers = get_customers_overview(
             token_response[0],

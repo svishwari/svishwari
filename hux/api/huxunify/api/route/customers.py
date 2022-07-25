@@ -66,6 +66,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     convert_unique_city_filter,
     convert_filters_for_events,
+    convert_filters_for_contact_preference,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -201,7 +202,7 @@ class CustomerPostOverview(SwaggerView):
         }
     ]
     responses = {
-        HTTPStatus.CREATED.value: {
+        HTTPStatus.OK.value: {
             "description": "Customer Profiles Overview",
             "schema": CustomerOverviewSchema,
         },
@@ -256,6 +257,7 @@ class CustomerPostOverview(SwaggerView):
 
         filters = convert_unique_city_filter(request.json)
         convert_filters_for_events(filters, event_types)
+        convert_filters_for_contact_preference(filters)
         customers_overview = Caching.check_and_return_cache(
             {
                 "endpoint": f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
