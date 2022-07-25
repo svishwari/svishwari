@@ -1,11 +1,14 @@
 <template>
   <div class="pipeline-tab-wrap">
-    <v-card class="mt-5 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5">
-      <v-progress-linear
-        v-if="loading"
-        :active="loading"
-        :indeterminate="loading"
-      />
+    <v-progress-linear
+      v-if="loading"
+      :active="loading"
+      :indeterminate="loading"
+    />
+    <v-card
+      v-if="isPipelineAvailable && !loading"
+      class="mt-5 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5"
+    >
       <v-card-title class="d-flex justify-space-between pa-0 pr-2">
         <h3 class="text-h3 mb-2 black--text text--darken-4">Training</h3>
       </v-card-title>
@@ -171,12 +174,10 @@
         </div>
       </span>
     </v-card>
-    <v-card class="mt-6 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5">
-      <v-progress-linear
-        v-if="loading"
-        :active="loading"
-        :indeterminate="loading"
-      />
+    <v-card
+      v-if="isPipelineAvailable && !loading"
+      class="mt-6 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5"
+    >
       <v-card-title class="d-flex justify-space-between pa-0 pr-2">
         <h3 class="text-h3 mb-2 black--text text--darken-4">Scoring</h3>
       </v-card-title>
@@ -337,6 +338,27 @@
         </div>
       </span>
     </v-card>
+    <v-card
+      v-if="!isPipelineAvailable && !loading"
+      class="mt-5 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5"
+    >
+      <div
+        class="
+          flex-grow-1 flex-shrink-1
+          overflow-hidden
+          mw-100
+          background-empty
+        "
+      >
+        <empty-page type="no-customer-data" size="50">
+          <template #title>
+            <div class="title-no-engagement">
+              Pipeline performance is coming soon!
+            </div>
+          </template>
+        </empty-page>
+      </div>
+    </v-card>
   </div>
 </template>
 <script>
@@ -344,17 +366,22 @@ import { mapGetters, mapActions } from "vuex"
 import runDurationData from "@/api/mock/fixtures/runDurationData.js"
 import RunDurationChart from "@/components/common/RunDurationChart/RunDurationChart"
 import Tooltip from "@/components/common/Tooltip.vue"
+import EmptyPage from "@/components/common/EmptyPage"
+import * as _ from "lodash"
+
 export default {
   name: "PipelinePerfrmance",
   components: {
     RunDurationChart,
     Tooltip,
+    EmptyPage,
   },
   data() {
     return {
       tabOption: 0,
       runDurationData: runDurationData,
       loading: false,
+      isPipelineAvailable: false,
     }
   },
   computed: {
@@ -377,10 +404,17 @@ export default {
       this.loading = true
       try {
         await this.getPipelinePerById(this.$route.params.id)
+        this.isPipelineDataAvailable()
+        this.isPipelineAvailable = !_.isEmpty(this.getPipelinePerData)
       } catch {
         this.loading = false
       }
       this.loading = false
+    },
+    isPipelineDataAvailable() {
+      this.isPipelineAvailable =
+        !_.isEmpty(this.getPipelinePerData.scoring) &&
+        !_.isEmpty(this.getPipelinePerData.training)
     },
   },
 }
@@ -421,5 +455,11 @@ export default {
 .most-recent {
   min-width: 19.5% !important;
   max-width: 24% !important;
+}
+.background-empty {
+  height: 280px !important;
+  background-image: url("../../assets/images/no-drift-chart-frame.png");
+  background-position: center;
+  background-size: 96% 86%;
 }
 </style>
