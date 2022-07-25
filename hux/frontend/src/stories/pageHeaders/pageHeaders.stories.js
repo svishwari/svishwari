@@ -2,6 +2,7 @@ import PageHeader from "./PageHeader.vue"
 import AllIcons from "../icons/Icons"
 import Icon from "../icons/Icon2.vue"
 import HuxButton from "../huxButton/huxButton2.vue"
+import Breadcrumb from "../../components/common/Breadcrumb.vue"
 
 export default {
   components: { PageHeader, AllIcons },
@@ -67,9 +68,8 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
     <page-header v-bind="$props">
-      <template #breadcrumbs v-if="$props.maxBreadcrumbs != 'None'">
-          <span v-if="$props.breadcrumb1">{{$props.breadcrumb1}}</span>
-          <icon v-if="$props.breadcrumb1 && $props.maxBreadcrumbs != 'breadcrumb1'"" type="Dropdown - right" size="24" color="primary" class="ml-2 mr-2 mt-1" />
+      <template #breadcrumbs >
+          <breadcrumb :items="hello"></breadcrumb>
           <span v-if="$props.breadcrumb2">{{$props.breadcrumb2}}</span>
           <icon v-if="$props.breadcrumb2 && $props.maxBreadcrumbs != 'breadcrumb2'"" type="Dropdown - right" size="24" color="primary" class="ml-2 mr-2 mt-1" />
           <span v-if="$props.breadcrumb3">{{$props.breadcrumb3}}</span>
