@@ -683,6 +683,25 @@ export default {
               operator: cond.type === "range" ? "" : cond.type,
               text: cond.type !== "range" ? cond.value : "",
               range: cond.type === "range" ? cond.value : [],
+              selection_type: cond.selection_type,
+              delta_type: cond.delta_type,
+              rules: cond.sub_filters?.map((item) => ({
+                id: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+                  /[xy]/g,
+                  function (c) {
+                    var r = (Math.random() * 16) | 0,
+                      v = c == "x" ? r : (r & 0x3) | 0x8
+                    return v.toString(16)
+                  }
+                ),
+                operand: item.sub_section_aggregator === "ALL",
+                conditions: item.sub_section_filters.map((sub_cond) => ({
+                  id: uuidv4(),
+                  attribute: sub_cond.field,
+                  operator: sub_cond.type === "range" ? "" : sub_cond.type,
+                  text: sub_cond.type !== "range" ? sub_cond.value : "",
+                })),
+              })),
             })),
           })
         )
@@ -697,6 +716,25 @@ export default {
               cond.operator !== "range"
                 ? _operators.filter((opt) => opt.key === cond.operator)[0]
                 : cond.operator
+
+            if (cond.rules.length > 0) {
+              cond.rules.forEach((sub_section) => {
+                sub_section.conditions.forEach((sub_cond) => {
+                  sub_cond.attribute = this.getAttributeOption(
+                    sub_cond.attribute,
+                    attributeOptions
+                  )
+                  let _operators = this.$refs?.filters.operatorOptions(sub_cond)
+                  sub_cond.operator =
+                    sub_cond.operator !== "range"
+                      ? _operators.filter(
+                          (opt) => opt.key === sub_cond.operator
+                        )[0]
+                      : sub_cond.operator
+                })
+              })
+            }
+
             this.$refs?.filters.triggerSizing(cond, false)
           })
         })

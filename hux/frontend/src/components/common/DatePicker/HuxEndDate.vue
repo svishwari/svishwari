@@ -175,7 +175,7 @@ export default {
     font-size: 14px;
     line-height: 22px;
     width: auto !important;
-    min-width: 200px;
+    min-width: 215px;
     color: var(--v-black-darken4);
     width: 215px !important;
     height: 42px;
