@@ -20,17 +20,15 @@ export default {
       control: {type: 'select'}, 
       options: AllIcons,
     },
+    breadcrumbItems: {
+      control: {type: 'object'},
+    },
+    maxBreadcrumbs: {
+      control: {type: 'select'},
+      options: ["None", "1", "2", "3", "4", "5"]
+    },
     description: { control: { type: "text" }, icon: [''] },
     callToAction: { control: { type: "boolean" } },
-    maxBreadcrumbs: { 
-      control: { type: "select"}, 
-      options: ["None", "breadcrumb1", "breadcrumb2", "breadcrumb3", "breadcrumb4", "breadcrumb5"]
-    },
-    breadcrumb1: { control: {type: 'text'} },
-    breadcrumb2: { control: {type: 'text'} },
-    breadcrumb3: { control: {type: 'text'} },
-    breadcrumb4: { control: {type: 'text'} },
-    breadcrumb5: { control: {type: 'text'} },
     ctaIcon1: { 
       control: { type: 'select'},
       options: AllIcons,
@@ -64,20 +62,12 @@ export default {
 }
 
 const Template = (args, { argTypes }) => ({
-  components: { PageHeader, Icon, HuxButton },
+  components: { PageHeader, Icon, HuxButton, Breadcrumb },
   props: Object.keys(argTypes),
   template: `
     <page-header v-bind="$props">
       <template #breadcrumbs >
-          <breadcrumb :items="hello"></breadcrumb>
-          <span v-if="$props.breadcrumb2">{{$props.breadcrumb2}}</span>
-          <icon v-if="$props.breadcrumb2 && $props.maxBreadcrumbs != 'breadcrumb2'"" type="Dropdown - right" size="24" color="primary" class="ml-2 mr-2 mt-1" />
-          <span v-if="$props.breadcrumb3">{{$props.breadcrumb3}}</span>
-          <icon v-if="$props.breadcrumb3 && $props.maxBreadcrumbs != 'breadcrumb3'"" type="Dropdown - right" size="24" color="primary" class="ml-2 mr-2 mt-1" />
-          <span v-if="$props.breadcrumb4">{{$props.breadcrumb4}}</span>
-          <icon v-if="$props.breadcrumb4 && $props.maxBreadcrumbs != 'breadcrumb4'"" type="Dropdown - right" size="24" color="primary" class="ml-2 mr-2 mt-1" />
-          <span v-if="$props.breadcrumb5">{{$props.breadcrumb5}}</span>
-          <icon v-if="$props.breadcrumb5 && $props.maxBreadcrumbs != 'breadcrumb5'"" type="Dropdown - right" size="24" color="primary" class="ml-2 mr-2 mt-1" />
+          <breadcrumb :items="$props.breadcrumbItems"></breadcrumb>
       </template>
       <template #call-to-action v-if="$props.callToAction">
       <icon v-if="$props.ctaIcon1" :type="$props.ctaIcon1" size="24" color="primary" class="ml-2 mr-2 mt-1" /><icon v-if="$props.ctaIcon2" :type="$props.ctaIcon2" size="24" color="primary" class="ml-2 mr-2 mt-1" />

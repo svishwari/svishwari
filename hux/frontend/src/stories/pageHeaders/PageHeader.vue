@@ -15,7 +15,7 @@
           v-if="maxBreadcrumbs != 'None'"
           type="Dropdown - right"
           :size="24"
-          color="black"
+          color="primary"
           class="mr-2 mt-1"
         ></icon>
         <slot name="breadcrumbs" />
