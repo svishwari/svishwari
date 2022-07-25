@@ -38,7 +38,8 @@ LINK = "link"
 USERNAME = "username"
 
 # ORCH integration test User
-ORCH_INTEGRATION_TEST_USER = "orch_integration_test_user"
+ORCH_INTEGRATION_TEST_USER_CPDR = "orch_integration_test_user_cpdr"
+ORCH_INTEGRATION_TEST_USER_FLDR = "orch_integration_test_user_fldr"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
