@@ -91,6 +91,7 @@ from huxunify.api.route.utils import (
     convert_unique_city_filter,
     match_rate_data_for_audience,
     convert_filters_for_events,
+    convert_filters_for_contact_preference,
 )
 
 # setup the orchestration blueprint
@@ -1310,6 +1311,7 @@ class AudiencePostView(SwaggerView):
         )
 
         convert_filters_for_events(audience_filters, event_types)
+        convert_filters_for_contact_preference(audience_filters)
         # get live audience size
         customers = get_customers_overview(
             token_response[0],
@@ -1635,10 +1637,10 @@ class AudienceRules(SwaggerView):
                 "decile_percentage": "Decile percentage",
             },
             "allowed_timedelta_types": [
-                {api_c.AUDIENCE_RULES_DAYS: "Days"},
-                {api_c.AUDIENCE_RULES_WEEKS: "Weeks"},
-                {api_c.AUDIENCE_RULES_MONTHS: "Months"},
-                {api_c.AUDIENCE_RULES_YEARS: "Years"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_DAYS, api_c.NAME: "Days"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_WEEKS, api_c.NAME: "Weeks"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_MONTHS, api_c.NAME: "Months"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_YEARS, api_c.NAME: "Years"},
             ],
         }
 
