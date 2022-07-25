@@ -872,7 +872,7 @@ class TestDeliveryRoutes(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(
+        self.assertDictEqual(
             {
                 api_c.MESSAGE: f"Destination ID {str(self.destinations[0][db_c.ID])} "
                 f"to be delivered not attached to audience "
