@@ -34,8 +34,8 @@
         </div>
       </v-card>
     </v-col>
-    <v-col v-if="getRules.length > 0" col="12" class="pt-0 pr-0 pa-0">
-      <div v-for="(rule, index) in getRules" :key="rule.id">
+    <v-col v-if="rules.length > 0" col="12" class="pt-0 pr-0 pa-0">
+      <div v-for="(rule, index) in rules" :key="rule.id">
         <div
           class="
             d-flex
@@ -530,10 +530,6 @@ export default {
 
     ifRouteSegmentPlayground() {
       return this.$route.name === "SegmentPlayground"
-    },
-
-    getRules() {
-      return this.rules
     },
   },
 
