@@ -238,10 +238,13 @@ def get_trust_id_overview(
 
     pipeline = trust_id_overview_pipeline
     if filters:
-        pipeline.insert(0, frame_match_query(filters))
+        match_query = frame_match_query(filters)
+        pipeline.insert(0, match_query)
 
     try:
-        return list(collection.aggregate(pipeline))[0]
+        data = list(collection.aggregate(pipeline))
+        if data:
+            return data[0]
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -275,7 +278,9 @@ def get_trust_id_attributes(
         pipeline.insert(0, frame_match_query(filters))
 
     try:
-        return list(collection.aggregate(pipeline))[0]
+        data = list(collection.aggregate(pipeline))
+        if data:
+            return data[0]
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
