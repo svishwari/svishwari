@@ -80,7 +80,7 @@ class TestTriggersRoute(TestCase):
                 {
                     api_c.DELIVERIES: {
                         api_c.PENDING_JOBS: 58,
-                        api_c.ORCH_INTEGRATION_TEST: 58,
+                        api_c.ORCH_INTEGRATION_TEST_CPDR: 58,
                         api_c.ORCH_INTEGRATION_TEST_FLDR: 58,
                     }
                 },
