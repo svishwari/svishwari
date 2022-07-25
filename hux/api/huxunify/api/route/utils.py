@@ -1347,15 +1347,13 @@ def generate_audience_file(
 
 
 def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
-    """Method to Convert for Events
+    """Method to convert filters for events.
 
     Args:
         filters (dict): An audience filter
         event_types(List[dict]): List of event_types
-
-    Returns:
-
     """
+
     for section in filters[api_c.AUDIENCE_FILTERS]:
         for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
             if section_filter.get(api_c.AUDIENCE_FILTER_FIELD) in [
@@ -1424,6 +1422,37 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
                         ]
                     }
                 )
+
+
+# pylint: disable=line-too-long
+def convert_filters_for_contact_preference(filters: dict) -> None:
+    """Method to convert filters for contact preference.
+
+    Args:
+        filters (dict): Audience filters.
+    """
+
+    for section in filters[api_c.AUDIENCE_FILTERS]:
+        for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
+            if (
+                section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
+                == api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE
+            ):
+                section_filter_value = section_filter.get(
+                    api_c.AUDIENCE_FILTER_VALUE
+                )
+                if (
+                    section_filter_value
+                    in api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES
+                ):
+                    section_filter.update(
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDP_MAP.get(
+                                section_filter_value
+                            )
+                        }
+                    )
+                    section_filter.update({api_c.VALUE: True})
 
 
 # pylint: disable=unused-variable
