@@ -1635,10 +1635,10 @@ class AudienceRules(SwaggerView):
                 "decile_percentage": "Decile percentage",
             },
             "allowed_timedelta_types": [
-                {api_c.AUDIENCE_RULES_DAYS: "Days"},
-                {api_c.AUDIENCE_RULES_WEEKS: "Weeks"},
-                {api_c.AUDIENCE_RULES_MONTHS: "Months"},
-                {api_c.AUDIENCE_RULES_YEARS: "Years"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_DAYS, api_c.NAME: "Days"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_WEEKS, api_c.NAME: "Weeks"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_MONTHS, api_c.NAME: "Months"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_YEARS, api_c.NAME: "Years"},
             ],
         }
 
