@@ -29,22 +29,9 @@ export default {
     },
     description: { control: { type: "text" }, icon: [''] },
     callToAction: { control: { type: "boolean" } },
-    ctaIcon1: { 
-      control: { type: 'select'},
-      options: AllIcons,
-    },
-    ctaIcon2: { 
-        control: { type: 'select'},
-        options: AllIcons,
-    },
-    ctaIcon3: { 
-      control: { type: 'select'},
-      options: AllIcons,
-    },
-    ctaIcon4: { 
-      control: { type: 'select'},
-      options: AllIcons,
-    },
+    ctaIcons: { 
+      control: { type: "array"},
+    }
   },
 
   args: {
@@ -70,9 +57,7 @@ const Template = (args, { argTypes }) => ({
           <breadcrumb :items="$props.breadcrumbItems"></breadcrumb>
       </template>
       <template #call-to-action v-if="$props.callToAction" class="new-b3">
-      <icon v-if="$props.ctaIcon1" :type="$props.ctaIcon1" size="24" color="primary" class="ml-2 mr-2 mt-1" /><icon v-if="$props.ctaIcon2" :type="$props.ctaIcon2" size="24" color="primary" class="ml-2 mr-2 mt-1" />
-      <icon v-if="$props.ctaIcon3" :type="$props.ctaIcon3" size="24" color="primary" class="ml-2 mr-2 mt-1" />
-      <icon v-if="$props.ctaIcon4" :type="$props.ctaIcon4" size="24" color="primary" class="ml-2 mr-2 mt-1" />
+        <icon v-for="icons in $props.ctaIcons" :type="icons" size="24" color="primary" class="ml-2 mr-2 mt-1" />
         <hux-button class="ml-2">button</hux-button>
       </template>
     </page-header>
