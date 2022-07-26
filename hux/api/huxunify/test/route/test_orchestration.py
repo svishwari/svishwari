@@ -286,6 +286,10 @@ class OrchestrationRouteTest(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/products-by-categories",
+            json=t_c.CUSTOMERS_PRODUCT_CATEGORIES_RESPONSE,
+        )
         self.request_mocker.start()
 
         mock.patch(
@@ -300,6 +304,9 @@ class OrchestrationRouteTest(RouteTestCase):
         self.assertIn("rule_attributes", response.json)
         self.assertIn("general", response.json["rule_attributes"])
         self.assertIn("events", response.json["rule_attributes"]["general"])
+        self.assertIn(
+            "product_categories", response.json["rule_attributes"]["general"]
+        )
         self.assertIn("text_operators", response.json)
 
     def test_create_audience_with_destination(self):

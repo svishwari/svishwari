@@ -52,6 +52,7 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
+from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.cdp import (
     get_customers_overview,
     get_demographic_by_state_async,
@@ -60,8 +61,8 @@ from huxunify.api.data_connectors.cdp import (
     get_customers_overview_async,
     get_customer_event_types,
     get_customer_count_by_country,
+    get_customer_product_categories,
 )
-from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
@@ -1672,6 +1673,18 @@ class AudienceRules(SwaggerView):
                 {country[api_c.COUNTRY]: country[api_c.COUNTRY]}
             )
 
+        # Fetch product categories from CDM. Check cache first.
+        categories = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.PRODUCT_CATEGORIES}",
+            get_customer_product_categories,
+            {"token": token_response[0]},
+        )
+
+        # filter categories list based on the response
+        product_category_list = []
+        for category in categories.keys():
+            product_category_list.append({category: category})
+
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
         # list of genders will come from cdm
@@ -1805,6 +1818,7 @@ class AudienceRules(SwaggerView):
                         },
                     },
                     "events": event_types_rules,
+                    "product_categories": product_category_list,
                 },
             }
         }
