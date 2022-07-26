@@ -117,6 +117,7 @@
                         <hux-start-date
                           :label="selectedStartDate"
                           :selected="selectedStartDate"
+                          :show-min="false"
                           @on-date-select="onStartDateSelect($event, condition)"
                         />
                       </div>
