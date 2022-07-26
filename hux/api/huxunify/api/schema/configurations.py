@@ -45,7 +45,7 @@ class NavigationSettingsSchema(Schema):
     settings = List(Nested(NavigationSettings))
 
 
-class IndustryTagsSchema(Schema):
-    """Industry Tags Schema"""
+class TagsSchema(Schema):
+    """Tags Schema"""
 
-    settings = List(Dict())
+    settings = Dict()

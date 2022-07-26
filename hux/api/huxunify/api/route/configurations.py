@@ -12,7 +12,7 @@ from huxunifylib.database import (
 from huxunify.api.schema.configurations import (
     ConfigurationsSchema,
     NavigationSettingsSchema,
-    IndustryTagsSchema,
+    TagsSchema,
 )
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -296,7 +296,7 @@ class ConfigurationsNavigationPUT(SwaggerView):
 
 @add_view_to_blueprint(
     configurations_bp,
-    f"/{api_c.CONFIGURATIONS_ENDPOINT}/industrytags",
+    f"/{api_c.CONFIGURATIONS_ENDPOINT}/tags",
     "ConfigurationsGETIndustryTags",
 )
 class ConfigurationsGETIndustryTags(SwaggerView):
@@ -304,8 +304,8 @@ class ConfigurationsGETIndustryTags(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of IndustryTag settings.",
-            "schema": IndustryTagsSchema,
+            "description": "Tag settings.",
+            "schema": TagsSchema,
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -332,7 +332,7 @@ class ConfigurationsGETIndustryTags(SwaggerView):
 
         query_filter = {
             db_c.CONFIGURATION_FIELD_TYPE: {
-                "$in": [db_c.CONFIGURATION_TYPE_INDUSTRYTAG_SETTINGS]
+                "$in": [db_c.CONFIGURATION_TYPE_TAG_SETTINGS]
             }
         }
 
@@ -345,17 +345,17 @@ class ConfigurationsGETIndustryTags(SwaggerView):
         industrytag_settings_doc = (
             industrytag_settings[db_c.DOCUMENTS][0]
             if industrytag_settings[db_c.DOCUMENTS]
-            else []
+            else {}
         )
 
         return HuxResponse.OK(
-            data=industrytag_settings_doc, data_schema=IndustryTagsSchema()
+            data=industrytag_settings_doc, data_schema=TagsSchema()
         )
 
 
 @add_view_to_blueprint(
     configurations_bp,
-    f"/{api_c.CONFIGURATIONS_ENDPOINT}/industrytags",
+    f"/{api_c.CONFIGURATIONS_ENDPOINT}/tags",
     "ConfigurationsPUTIndustryTags",
 )
 class ConfigurationsPUTIndustryTags(SwaggerView):
@@ -368,21 +368,23 @@ class ConfigurationsPUTIndustryTags(SwaggerView):
             "description": "Settings Object.",
             "type": "object",
             "example": {
-                "settings": [
-                    {
-                        "name": "Automotive",
-                        "label": "Automotive",
-                        "enabled": False,
-                    }
-                ]
+                db_c.CONFIGURATION_FIELD_SETTINGS: {
+                    db_c.CONFIGURATION_INDUSTRY_NAME: [
+                        {
+                            "name": "Automotive",
+                            "label": "Automotive",
+                            "enabled": False,
+                        }
+                    ]
+                }
             },
         },
     ]
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of IndustryTag settings.",
-            "schema": {"type": "array", "items": IndustryTagsSchema},
+            "description": "Tag settings.",
+            "schema": {"type": "dict", "items": TagsSchema},
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -391,9 +393,9 @@ class ConfigurationsPUTIndustryTags(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels(api_c.COMMON_USER_ROLE)
+    @requires_access_levels([api_c.ADMIN_LEVEL])
     def put(self, user: dict) -> Tuple[Response, int]:
-        """Retrieves all industry tag configurations.
+        """Update tag configurations.
 
         ---
         security:
@@ -408,12 +410,12 @@ class ConfigurationsPUTIndustryTags(SwaggerView):
         """
 
         # load into the schema object
-        body = IndustryTagsSchema().load(request.get_json())
+        body = TagsSchema().load(request.get_json())
 
         database = get_db_client()
         query_filter = {
             db_c.CONFIGURATION_FIELD_TYPE: {
-                "$in": [db_c.CONFIGURATION_TYPE_INDUSTRYTAG_SETTINGS]
+                "$in": [db_c.CONFIGURATION_TYPE_TAG_SETTINGS]
             }
         }
 
@@ -425,12 +427,10 @@ class ConfigurationsPUTIndustryTags(SwaggerView):
         )
 
         if nav_doc is None:
-            body[
-                db_c.CONFIGURATION_FIELD_NAME
-            ] = db_c.CONFIGURATION_INDUSTRYTAG_NAME
+            body[db_c.CONFIGURATION_FIELD_NAME] = db_c.CONFIGURATION_TAG_NAME
             body[
                 db_c.CONFIGURATION_FIELD_TYPE
-            ] = db_c.CONFIGURATION_TYPE_INDUSTRYTAG_SETTINGS
+            ] = db_c.CONFIGURATION_TYPE_TAG_SETTINGS
             updated_doc = collection_management.create_document(
                 database,
                 db_c.CONFIGURATIONS_COLLECTION,
@@ -446,6 +446,4 @@ class ConfigurationsPUTIndustryTags(SwaggerView):
                 username=user[api_c.USER_NAME],
             )
 
-        return HuxResponse.OK(
-            data=updated_doc, data_schema=IndustryTagsSchema()
-        )
+        return HuxResponse.OK(data=updated_doc, data_schema=TagsSchema())
