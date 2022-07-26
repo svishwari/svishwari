@@ -34,11 +34,11 @@ from huxunify.api.data_connectors.cdp import (
 from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.data_connectors.okta import get_env_okta_user_bearer_token
 from huxunify.api.data_connectors.trust_id import get_trust_id_comparison_data_by_segment
-from huxunify.api.schema.utils import get_next_schedule
 from huxunify.api.data_connectors.courier import (
     get_destination_config,
     get_audience_destination_pairs,
 )
+from huxunify.api.schema.utils import get_next_schedule
 
 monthly_period_items_dict = {
     "first": "1",
