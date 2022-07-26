@@ -21,7 +21,9 @@ from huxunifylib.database.orchestration_management import (
     get_audience,
     get_all_audiences,
 )
-from huxunifylib.database.survey_metrics_management import get_all_distinct_segment_filters
+from huxunifylib.database.survey_metrics_management import (
+    get_all_distinct_segment_filters,
+)
 from huxunifylib.connectors.util.selector import (
     get_delivery_platform_connector,
 )
@@ -33,7 +35,9 @@ from huxunify.api.data_connectors.cdp import (
 )
 from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.data_connectors.okta import get_env_okta_user_bearer_token
-from huxunify.api.data_connectors.trust_id import get_trust_id_comparison_data_by_segment
+from huxunify.api.data_connectors.trust_id import (
+    get_trust_id_comparison_data_by_segment,
+)
 from huxunify.api.data_connectors.courier import (
     get_destination_config,
     get_audience_destination_pairs,
