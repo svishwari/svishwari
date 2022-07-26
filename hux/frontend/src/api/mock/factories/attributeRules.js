@@ -37,7 +37,7 @@ const attributeRules = {
     { key: "swim", name: "Swim", menu: [] },
     { key: "activewear", name: "Activewear", menu: [] },
     {
-      key: "shoes_&_accressories",
+      key: "shoes_&_accessories",
       name: "Shoes & accessories",
       menu: [
         { key: "bags", name: "Bags", menu: [] },
