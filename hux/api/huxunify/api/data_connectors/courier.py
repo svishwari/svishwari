@@ -16,7 +16,6 @@ from huxunifylib.database.engagement_management import (
     add_delivery_job,
 )
 from huxunifylib.database.notification_management import create_notification
-from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
@@ -475,7 +474,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
 
     # validate to ensure list of dicts has destinations
     if any(x for x in audiences if db_c.DESTINATIONS not in x):
-        raise TypeError("must be a list of destinations.")
+        raise TypeError("Must be a list of destinations.")
 
     return [
         [aud[db_c.OBJECT_ID], dest]
@@ -487,7 +486,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
 
 async def deliver_audience_to_destination(
     database: MongoClient,
-    audience_id: ObjectId,
+    audience: dict,
     destination_id: ObjectId,
     user_name: str,
 ):
@@ -495,25 +494,12 @@ async def deliver_audience_to_destination(
 
     Args:
         database (MongoClient): The mongo database client.
-        audience_id (ObjectId): Audience ID.
+        audience (dict): Audience object.
         destination_id (ObjectId): Destination ID.
         user_name (str): Username.
     """
 
-    # get audience object for delivering
-    audience = get_audience(database, audience_id)
-    if not audience:
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_CRITICAL,
-            (
-                f'Failed to deliver audience ID "{audience_id}" '
-                f"because the audience does not exist."
-            ),
-            db_c.NOTIFICATION_CATEGORY_DELIVERY,
-            user_name,
-        )
-        return
+    audience_id = audience[db_c.ID]
 
     # get destination object for delivering
     destination = get_delivery_platform(database, destination_id)
@@ -530,6 +516,7 @@ async def deliver_audience_to_destination(
             user_name,
         )
         return
+
     replace_audience = False
     if destination.get(db_c.IS_AD_PLATFORM):
         replace_audience = list(
@@ -543,6 +530,12 @@ async def deliver_audience_to_destination(
             )
         )
         replace_audience = replace_audience[0] if replace_audience else None
+
+    # set audience destination details dict into the destination object
+    for aud_destination in audience.get(api_c.DESTINATIONS, []):
+        if aud_destination[db_c.OBJECT_ID] == destination_id:
+            destination = {**destination, **aud_destination}
+            break
 
     delivery_job_id = str(
         create_delivery_job(
