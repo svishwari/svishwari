@@ -2,7 +2,7 @@ import PageHeader from "./PageHeader.vue"
 import AllIcons from "../icons/Icons"
 import Icon from "../icons/Icon2.vue"
 import HuxButton from "../huxButton/huxButton2.vue"
-import Breadcrumb from "../../components/common/Breadcrumb.vue"
+import Breadcrumb from "./NewBreadcrumb.vue"
 
 export default {
   components: { PageHeader, AllIcons },
@@ -15,29 +15,27 @@ export default {
       options: AllIcons,
     },
     title: { control: { type: "text" } },
-    titleIcon: {control: {type: "boolean"}},
-    titleIconSel: { 
-      control: {type: 'select'}, 
-      options: AllIcons,
-    },
+    titleIcon: { control: { type: "boolean" } },
+    titleFavorite: { control: { type: "boolean" } },
     breadcrumbItems: {
-      control: {type: 'object'},
+      control: { type: "object" },
     },
     maxBreadcrumbs: {
-      control: {type: 'select'},
-      options: ["None", "1", "2", "3", "4", "5"]
+      control: { type: "select" },
+      options: ["None", "1", "2", "3", "4", "5"],
     },
-    description: { control: { type: "text" }, icon: [''] },
+    description: { control: { type: "text" }, icon: [""] },
     callToAction: { control: { type: "boolean" } },
-    ctaIcons: { 
-      control: { type: "array"},
-    }
+    ctaIcons: {
+      control: { type: "array" },
+    },
   },
 
   args: {
     callToAction: false,
     iconType: "Icon Placeholder",
     titleIcon: false,
+    titleFavorite: false,
   },
 
   parameters: {

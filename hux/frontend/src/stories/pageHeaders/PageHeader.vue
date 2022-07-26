@@ -3,25 +3,27 @@
     <v-row class="header-title" :class="description ? '' : 'pb-4'">
       <div class="title-left new-h1">
         <icon :type="iconType" :size="40" color="primary" class="mr-2"></icon>
-        <span class="mr-2">{{ title }}</span>
+        <span :class="maxBreadcrumbs != 'None' ? 'mr-2 blue--text' : 'mr-2'">{{
+          title
+        }}</span>
         <icon
-          v-if="titleIcon"
-          :type="titleIconSel"
-          :size="40"
-          color="primary"
-          class="mr-2"
+          v-if="titleFavorite"
+          type="Favorite"
+          size="20"
+          color="white-base"
+          class="mt-1 mr-2 ml-1"
         ></icon>
         <icon
           v-if="maxBreadcrumbs != 'None'"
           type="Dropdown - right"
           :size="24"
-          color="primary"
           class="mr-2 mt-1"
+          color="primary-lighten7"
         ></icon>
         <slot name="breadcrumbs" />
       </div>
       <v-spacer />
-      <div class="title-right text-h3">
+      <div class="title-right new-b3">
         <slot name="call-to-action" />
       </div>
     </v-row>
@@ -50,8 +52,8 @@ export default {
       type: String,
       required: false,
     },
-    titleIconSel: {
-      type: String,
+    titleFavorite: {
+      type: Boolean,
       required: false,
     },
     titleIcon: {
@@ -87,10 +89,12 @@ export default {
   }
 
   .header-description {
-    min-height: 32px;
     padding: 0px 32px 16px;
     line-height: 24px;
     margin-top: 8px;
+  }
+  .blue--text {
+    color: #007cb0 !important;
   }
 }
 </style>
