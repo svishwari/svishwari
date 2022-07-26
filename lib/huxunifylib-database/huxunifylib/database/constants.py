@@ -268,6 +268,7 @@ TRUST_ID_SEGMENTS = "trust_id_segments"
 TRUST_ID_FILTERS = "trust_id_filters"
 TRUST_ID_ATTRIBUTES = "trust_id_attributes"
 SEGMENT_NAME = "segment_name"
+SEGMENT_FILTERS = "segment_filters"
 FACTORS = "factors"
 ATTRIBUTES = "attributes"
 

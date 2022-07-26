@@ -2,6 +2,10 @@
 import asyncio
 from datetime import datetime
 from pymongo import MongoClient
+from huxunifylib.connectors.util.selector import (
+    get_delivery_platform_connector,
+)
+from huxunifylib.util.general.logging import logger
 from huxunifylib.database import constants as db_c, collection_management
 from huxunifylib.database.cache_management import (
     create_cache_entry,
@@ -20,22 +24,24 @@ from huxunifylib.database.orchestration_management import (
     get_audience,
     get_all_audiences,
 )
-from huxunifylib.connectors.util.selector import (
-    get_delivery_platform_connector,
+from huxunifylib.database.survey_metrics_management import (
+    get_all_distinct_segment_filters,
 )
-from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.cdp import (
     get_customers_count_async,
     get_customers_overview,
 )
-from huxunify.api.data_connectors.okta import get_env_okta_user_bearer_token
-from huxunify.api.schema.utils import get_next_schedule
 from huxunify.api.data_connectors.courier import (
     get_destination_config,
     get_audience_destination_pairs,
 )
 from huxunify.api.data_connectors.jira import JiraConnection
+from huxunify.api.data_connectors.okta import get_env_okta_user_bearer_token
+from huxunify.api.data_connectors.trust_id import (
+    get_trust_id_comparison_data_by_segment,
+)
+from huxunify.api.schema.utils import get_next_schedule
 
 monthly_period_items_dict = {
     "first": "1",
@@ -592,3 +598,76 @@ def run_scheduled_customer_overview_audience_insights(
             " refresh for each since failed to obtain get env okta user access"
             " bearer token."
         )
+
+
+async def cache_trust_id_comparison_insights(
+    database: MongoClient, segment_filter: list
+) -> None:
+    """Fetch and cache trust id comparison insights for the segment
+    filters.
+
+    Args:
+        database (MongoClient): The mongo database client.
+        segment_filter (list): Segment Filters.
+    """
+
+    comparison_data = get_trust_id_comparison_data_by_segment(
+        database, segment_filter
+    )
+
+    cache_key = {
+        api_c.ENDPOINT: f"{api_c.TRUST_ID_TAG}.{api_c.COMPARISON}",
+        **{api_c.TRUST_ID_SEGMENT_FILTERS: segment_filter},
+    }
+
+    create_cache_entry(
+        database=database,
+        cache_key=cache_key,
+        cache_value=comparison_data,
+    )
+
+
+def run_scheduled_trust_id_comparison_insights(
+    database: MongoClient,
+) -> None:
+    """Function to run scheduled trust id comparison insights.
+
+    Args:
+        database (MongoClient): The mongo database client.
+    """
+
+    # # get the current environment's okta user bearer token
+    # okta_access_token = get_env_okta_user_bearer_token()
+
+    # if okta_access_token:
+    #     # set the event loop
+    asyncio.set_event_loop(asyncio.SelectorEventLoop())
+    loop = asyncio.get_event_loop()
+
+    # get all distinct trust id segment filters
+    segment_filters = get_all_distinct_segment_filters(database=database)
+
+    # add default filter
+    segment_filters.append([])
+
+    # iterate through the segment filters to refresh the cache for trust id
+    # comparison insights for each unique type of filters
+    for segment_filter in segment_filters:
+        cache_key = {
+            api_c.ENDPOINT: f"{api_c.TRUST_ID_TAG}.{api_c.COMPARISON}",
+            **{api_c.TRUST_ID_SEGMENT_FILTERS: segment_filter},
+        }
+
+        # check if cache data for matching key is not expired and present
+        # in DB before proceeding further to cache new data
+        cache_data = get_cache_entry(database=database, cache_key=cache_key)
+
+        if not cache_data:
+            # fire and forget task
+            task = loop.create_task(
+                cache_trust_id_comparison_insights(
+                    database,
+                    segment_filter,
+                )
+            )
+            loop.run_until_complete(task)

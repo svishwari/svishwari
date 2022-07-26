@@ -124,8 +124,8 @@ class TrustIdSegmentFilterSchema(Schema):
 
         ordered = True
 
-    type = Str(example="children_count", required=True)
     description = Str(example="Children count", required=True)
+    type = Str(example="children_count", required=True)
     values = List(Str(example=["1", "2", "3", "4", "5+"]), default=[])
 
 
