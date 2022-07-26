@@ -955,8 +955,8 @@ class AudienceDeliverHistoryView(SwaggerView):
 
         # get destinations at once to lookup name for each delivery job
         destination_dict = {
-            x[db_c.ID]: x
-            for x in delivery_platform_management.get_all_delivery_platforms(
+            platform[db_c.ID]: platform
+            for platform in delivery_platform_management.get_all_delivery_platforms(
                 database
             )
         }
@@ -966,26 +966,28 @@ class AudienceDeliverHistoryView(SwaggerView):
             delivery_engagement = get_engagement(
                 database, job.get(db_c.ENGAGEMENT_ID)
             )
+            delivery_platform_id = job.get(db_c.DELIVERY_PLATFORM_ID)
             if (
                 job.get(db_c.STATUS) == db_c.AUDIENCE_STATUS_DELIVERED
                 and job.get(api_c.ENGAGEMENT_ID)
                 and delivery_engagement
-                and job.get(db_c.DELIVERY_PLATFORM_ID)
+                and delivery_platform_id
+                and delivery_platform_id in destination_dict.keys()
             ):
                 delivery_history.append(
                     {
                         api_c.ENGAGEMENT: delivery_engagement,
                         api_c.DESTINATION: destination_dict.get(
-                            job.get(db_c.DELIVERY_PLATFORM_ID)
+                            delivery_platform_id
                         ),
                         api_c.SIZE: job.get(
                             db_c.DELIVERY_PLATFORM_AUD_SIZE, 0
                         ),
                         # TODO: HUS-837 Change once match_rate data can be fetched from CDM
                         api_c.MATCH_RATE: 0
-                        if destination_dict.get(
-                            job.get(db_c.DELIVERY_PLATFORM_ID)
-                        ).get(db_c.IS_AD_PLATFORM)
+                        if destination_dict.get(delivery_platform_id).get(
+                            db_c.IS_AD_PLATFORM
+                        )
                         else None,
                         api_c.DELIVERED: job.get(db_c.UPDATE_TIME),
                     }
