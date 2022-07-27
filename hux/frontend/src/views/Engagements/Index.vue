@@ -99,6 +99,12 @@
             >
               Inactive
             </v-tab>
+            <v-tab
+              key="error"
+              class="pa-2 mr-3 text-h3 black--text text--lighten-4"
+            >
+              Error
+            </v-tab>
             <v-tab key="all" class="text-h3 black--text text--lighten-4">
               All
             </v-tab>
@@ -121,8 +127,8 @@
             >
               <template #item-row="{ item, expandFunc, isExpanded }">
                 <tr
-                  :class="{ 'expanded-row': isExpanded }"
                   v-if="item.status == tab.label || tab.label == 'All'"
+                  :class="{ 'expanded-row': isExpanded }"
                 >
                   <td
                     v-for="header in columnDefs"
@@ -351,8 +357,8 @@
                   >
                     <template #item-row="{ item, expandFunc, isExpanded }">
                       <tr
-                        :class="{ 'expanded-row': isExpanded }"
                         v-if="item.status == tab.label || tab.label == 'All'"
+                        :class="{ 'expanded-row': isExpanded }"
                       >
                         <td
                           :style="{ width: expandedHeaders[0].width }"
@@ -918,7 +924,6 @@ import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.
 import EngagementFilter from "./Configuration/Drawers/EngagementFilter.vue"
 import EmptyPage from "@/components/common/EmptyPage"
 import { getAccess } from "@/utils"
-import EngagementHuxLazyTable from "./Dashboard/Components/EngagementHuxLazyTable.vue"
 
 export default {
   name: "Engagements",
@@ -941,7 +946,6 @@ export default {
     HuxDeliveryText,
     EngagementFilter,
     EmptyPage,
-    EngagementHuxLazyTable,
   },
   data() {
     return {
@@ -966,7 +970,12 @@ export default {
         },
       ],
       loading: true,
-      tabs: [{ label: "Active" }, { label: "Inactive" }, { label: "All" }],
+      tabs: [
+        { label: "Active" },
+        { label: "Inactive" },
+        { label: "Error" },
+        { label: "All" },
+      ],
       manualDeliverySchedule: "Manual",
       numFiltersSelected: 0,
       finalFilterApplied: 0,
