@@ -47,7 +47,7 @@
                 <status
                   :status="formatText(data.notification_type)"
                   :show-label="false"
-                  :icon-size="data.notification_type === 'success' ? 22 : 21"
+                  :icon-size="data.notification_type === 'success' ? 21 : 19"
                 />
                 <div class="d-flex flex-column">
                   <tooltip>

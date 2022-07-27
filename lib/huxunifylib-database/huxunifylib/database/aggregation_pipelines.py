@@ -1195,3 +1195,15 @@ trust_id_attribute_ratings_pipeline = [
     },
     {"$project": {"attributes": 1, "total_customers": 1}},
 ]
+
+unique_segment_filters_pipeline = [
+    {"$match": {"trust_id_segments": {"$ne": None}}},
+    {"$project": {"segment_filters": "$trust_id_segments.segment_filters"}},
+    {"$unwind": {"path": "$segment_filters"}},
+    {
+        "$group": {
+            "_id": None,
+            "segment_filters": {"$addToSet": "$segment_filters"},
+        }
+    },
+]

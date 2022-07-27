@@ -16,7 +16,7 @@ from huxunifylib.database.client import DatabaseClient
 def create_cache_entry(
     database: DatabaseClient,
     cache_key: Union[dict, str],
-    cache_value: str,
+    cache_value: Union[dict, str],
     expire_after_seconds: int = 86400,
     platform: str = db_c.AWS_DOCUMENT_DB,
 ) -> None:
@@ -25,7 +25,7 @@ def create_cache_entry(
     Args:
         database (DatabaseClient): A database client.
         cache_key (Union(dict,str)): cache key string or dict.
-        cache_value (str): name of the cache key value.
+        cache_value (Union(dict, str)): Value to be cached.
         expire_after_seconds (int): Time for the document to expire in seconds.
         platform (str, Optional): Underlying DB on which Mongo DB API is based.
     """

@@ -17,12 +17,8 @@
           your active models for an effective delivery experience.
         </div>
       </template>
-      <template v-if="enableDemoConfig" #right>
-        <v-btn
-          icon
-          data-e2e="audienceFilterToggle"
-          @click.native="filterToggle()"
-        >
+      <template #right>
+        <v-btn icon data-e2e="modelFilterToggle" @click.native="filterToggle()">
           <icon
             type="filter"
             :size="27"

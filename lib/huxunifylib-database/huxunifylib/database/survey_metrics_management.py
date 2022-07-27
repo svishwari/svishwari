@@ -15,6 +15,7 @@ import huxunifylib.database.delivery_platform_management as dm
 from huxunifylib.database.aggregation_pipelines import (
     trust_id_overview_pipeline,
     trust_id_attribute_ratings_pipeline,
+    unique_segment_filters_pipeline,
 )
 
 
@@ -339,3 +340,36 @@ def delete_survey_responses(
         logging.error(exc)
 
     return remove_status
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_distinct_segment_filters(
+    database: DatabaseClient,
+) -> list:
+    """Method to delete survey responses based on query parameter.
+
+    Args:
+        database (DatabaseClient): A database client.
+
+    Returns:
+        list: list of distinct segment filters
+    """
+
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.USER_COLLECTION]
+
+    try:
+        segment_filters = list(
+            collection.aggregate(unique_segment_filters_pipeline)
+        )
+
+        if segment_filters:
+            return segment_filters[0][db_c.SEGMENT_FILTERS]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return []

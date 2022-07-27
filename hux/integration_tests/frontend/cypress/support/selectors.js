@@ -193,6 +193,7 @@ export default {
     removeModel: "[data-e2e='remove-model']",
     removeModelConfirmation: "[data-e2e='remove-modal-confirmation']",
     pipelinePerformanceTab: "[data-e2e='pipeline-performance']",
+    modelFilterToggle: "[data-e2e='modelFilterToggle']",
   },
 
   // engagements
