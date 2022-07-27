@@ -6,7 +6,7 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 """
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Union
 from decouple import config
 from huxunify.api import constants as api_c
@@ -74,6 +74,9 @@ class Config:
             config(api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem")
         )
     )
+    MONGO_TLS_CA_CERT_FILE = str(
+        PurePath("/certs", config(api_c.TLS_CA_CERT_KEY_FILE_NAME, default="mongodb-ca-cert"))
+    )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
@@ -84,8 +87,8 @@ class Config:
     }
     if MONGO_SSL_FLAG:
         MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
-        if CLOUD_PROVIDER == api_c.AZURE:
-            MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
+        if CLOUD_PROVIDER == api_c.AZURE and config(api_c.ENVIRONMENT_NAME, default="") == api_c.HUSDEV2_ENV:
+            MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = MONGO_TLS_CA_CERT_FILE
         # TODO: To be removed once LILDEV env has ssl and cert setup
         #  implementation done
         if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
@@ -244,7 +247,7 @@ class PyTestConfig(Config):
 
 
 def get_config(
-    flask_env=config(api_c.FLASK_ENV, default="")
+        flask_env=config(api_c.FLASK_ENV, default="")
 ) -> Union[DevelopmentConfig, Config, PyTestConfig]:
     """Get configuration for the environment.
 
