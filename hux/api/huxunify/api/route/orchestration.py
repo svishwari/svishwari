@@ -1682,8 +1682,33 @@ class AudienceRules(SwaggerView):
 
         # filter categories list based on the response
         product_category_list = []
-        for category in categories.keys():
-            product_category_list.append({category: category})
+        for category1, value in categories.items():
+            menu1 = []
+            for category2, category2values in value.items():
+                menu2 = []
+                for category3value in category2values:
+                    menu2.append(
+                        {
+                            "name": category3value["name"],
+                            "key": category3value["name"]
+                            .lower()
+                            .replace(" ", "_"),
+                        }
+                    )
+                menu1.append(
+                    {
+                        "name": category2,
+                        "key": category2.lower().replace(" ", "_"),
+                        "menu": menu2,
+                    }
+                )
+            product_category_list.append(
+                {
+                    "name": category1,
+                    "key": category1.lower().replace(" ", "_"),
+                    "menu": menu1,
+                }
+            )
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
