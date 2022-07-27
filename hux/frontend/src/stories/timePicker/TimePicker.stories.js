@@ -3,7 +3,7 @@ import AllIcons from "../icons/Icons"
 
 export default {
   component: TimePicker,
-  title: "NewComponents/DatePicker",
+  title: "NewComponents/TimePicker",
   argTypes: {
     hour: {
       options: [
