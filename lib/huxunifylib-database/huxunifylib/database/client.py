@@ -19,6 +19,7 @@ class DatabaseClient:
         ssl_cert_path: Optional[str] = None,
         ssl_flag: Optional[bool] = None,
         tls_cert_key_file: Optional[str] = None,
+        tls_ca_cert_key_file: Optional[str] = None,
     ) -> None:
         """Initialize a DatabaseClient object.
 
@@ -35,6 +36,7 @@ class DatabaseClient:
             ssl_flag (Optional(bool)): SSL flag for database
                 connecting to MongoDB (optional).
             tls_cert_key_file (Optional(str)): TLS Client certificates.
+            tls_ca_cert_key_file(Optional(str)): TLS CA Client Certificate
 
         """
 
@@ -51,6 +53,7 @@ class DatabaseClient:
         self._ssl_cert_path = ssl_cert_path
         self._use_ssl_flag = ssl_flag
         self._tls_cert_key_file = tls_cert_key_file
+        self._tls_ca_cert_key_file = tls_ca_cert_key_file
 
     @property
     def connection_string(self) -> Union[str, None]:
@@ -115,6 +118,16 @@ class DatabaseClient:
         return self._tls_cert_key_file
 
     @property
+    def tls_ca_cert_key_file(self) -> Union[str, None]:
+        """Get the tls CA client certificates for self-signed certificates.
+
+        Returns:
+            Union[str, None]: TLS CA Certificate, Key used by the client.
+        """
+
+        return self._tls_ca_cert_key_file
+
+    @property
     def ssl_flag(self):
         """Union[bool, None]: SSL flag used when authenticating the client."""
         return self._use_ssl_flag
@@ -144,6 +157,7 @@ class DatabaseClient:
             mongo_args["ssl"] = True
             mongo_args["ssl_ca_certs"] = self._ssl_cert_path
             mongo_args["tlsCertificateKeyFile"] = self._tls_cert_key_file
+            mongo_args["tlsCAFile"] = self._tls_ca_cert_key_file
         elif self._use_ssl_flag:
             mongo_args["ssl"] = True
             mongo_args["retrywrites"] = False
