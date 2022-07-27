@@ -184,10 +184,6 @@ class DevelopmentConfig(Config):
     }
     if Config.MONGO_SSL_FLAG:
         MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
-        if Config.CLOUD_PROVIDER == api_c.AZURE:
-            MONGO_DB_CONFIG[
-                api_c.TLS_CERT_KEY
-            ] = Config.AZURE_MONGO_TLS_CLIENT_KEY
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
