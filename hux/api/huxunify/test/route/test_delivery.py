@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 """Purpose of this file is to house all the delivery API tests."""
+from datetime import datetime
 from unittest import mock
 from http import HTTPStatus
 from bson import ObjectId
@@ -12,12 +13,16 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     set_delivery_job,
     set_delivery_job_status,
+    set_connection_status,
 )
 from huxunifylib.database.engagement_management import (
     set_engagement,
     get_engagement,
 )
-from huxunifylib.database.orchestration_management import create_audience
+from huxunifylib.database.orchestration_management import (
+    create_audience,
+    append_destination_to_standalone_audience,
+)
 from huxunifylib.database.user_management import set_user, delete_user
 from huxunifylib.connectors import AWSBatchConnector
 import huxunify.test.constants as t_c
@@ -739,8 +744,9 @@ class TestDeliveryRoutes(RouteTestCase):
             )
         )
 
-    def test_deliver_audience_without_an_engagement_to_a_destination(self):
-        """Test delivery of audience without an engagement to a destination."""
+    def test_deliver_standalone_audience_to_a_destination(self):
+        """Test delivery of standalone audience to a destination attached to
+        audience."""
 
         # mock AWS batch connector register job function
         mock.patch.object(
@@ -752,7 +758,107 @@ class TestDeliveryRoutes(RouteTestCase):
             AWSBatchConnector, "submit_job", return_value=t_c.BATCH_RESPONSE
         ).start()
 
-        audience_id = self.audiences[0][db_c.ID]
+        standalone_audience = create_audience(
+            self.database,
+            "standalone test audience",
+            [],
+            t_c.TEST_USER_NAME,
+            [],
+        )
+
+        sfmc_destination = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_SFMC,
+            db_c.DELIVERY_PLATFORM_SFMC,
+        )
+        sfmc_destination = set_connection_status(
+            self.database, sfmc_destination[db_c.ID], db_c.STATUS_SUCCEEDED
+        )
+
+        aud_destination = {
+            db_c.OBJECT_ID: sfmc_destination[db_c.ID],
+            db_c.DELIVERY_PLATFORM_CONFIG: {
+                db_c.DATA_EXTENSION_NAME: "SFMC Date Extension"
+            },
+            db_c.DATA_ADDED: datetime.utcnow(),
+        }
+
+        standalone_audience = append_destination_to_standalone_audience(
+            database=self.database,
+            audience_id=standalone_audience[db_c.ID],
+            destination=aud_destination,
+            user_name=t_c.TEST_USER_NAME,
+        )
+
+        audience_id = standalone_audience[db_c.ID]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
+            f"{api_c.DELIVER}",
+            json={
+                api_c.DESTINATIONS: [
+                    {db_c.OBJECT_ID: str(sfmc_destination[db_c.ID])}
+                ]
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(
+            {
+                api_c.MESSAGE: f"Successfully created delivery job(s) for "
+                f"audience ID {audience_id}"
+            },
+            response.json,
+        )
+
+    def test_deliver_standalone_audience_to_a_destination_not_attached(self):
+        """Test delivery of standalone audience to a destination not attached
+        to audience."""
+
+        # mock AWS batch connector register job function
+        mock.patch.object(
+            AWSBatchConnector, "register_job", return_value=t_c.BATCH_RESPONSE
+        ).start()
+
+        # mock AWS batch connector submit job function
+        mock.patch.object(
+            AWSBatchConnector, "submit_job", return_value=t_c.BATCH_RESPONSE
+        ).start()
+
+        standalone_audience = create_audience(
+            self.database,
+            "standalone test audience",
+            [],
+            t_c.TEST_USER_NAME,
+            [],
+        )
+
+        sfmc_destination = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_SFMC,
+            db_c.DELIVERY_PLATFORM_SFMC,
+        )
+        sfmc_destination = set_connection_status(
+            self.database, sfmc_destination[db_c.ID], db_c.STATUS_SUCCEEDED
+        )
+
+        aud_destination = {
+            db_c.OBJECT_ID: sfmc_destination[db_c.ID],
+            db_c.DELIVERY_PLATFORM_CONFIG: {
+                db_c.DATA_EXTENSION_NAME: "SFMC Date Extension"
+            },
+            db_c.DATA_ADDED: datetime.utcnow(),
+        }
+
+        standalone_audience = append_destination_to_standalone_audience(
+            database=self.database,
+            audience_id=standalone_audience[db_c.ID],
+            destination=aud_destination,
+            user_name=t_c.TEST_USER_NAME,
+        )
+
+        audience_id = standalone_audience[db_c.ID]
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
@@ -765,11 +871,12 @@ class TestDeliveryRoutes(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
-        self.assertEqual(
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertDictEqual(
             {
-                api_c.MESSAGE: f"Successfully created delivery job(s) for "
-                f"audience ID {audience_id}"
+                api_c.MESSAGE: f"Destination ID {str(self.destinations[0][db_c.ID])} "
+                f"to be delivered not attached to audience "
+                f"ID {audience_id}."
             },
             response.json,
         )

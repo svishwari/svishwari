@@ -37,6 +37,10 @@ MAX = "max"
 LINK = "link"
 USERNAME = "username"
 
+# ORCH integration test User
+ORCH_INTEGRATION_TEST_USER_CPDR = "orch_integration_test_user_cpdr"
+ORCH_INTEGRATION_TEST_USER_FLDR = "orch_integration_test_user_fldr"
+
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
 CONVERSIONS_DATABASE = "conversions"
@@ -61,6 +65,7 @@ USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
 APPLICATIONS_COLLECTION = "applications"
+APPLICATIONS = "applications"
 CLIENT_PROJECTS_COLLECTION = "client_projects"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
@@ -261,7 +266,9 @@ SURVEY_RESPONSES = "responses"
 SURVEY_RESPONSE_DATE = "response_date"
 TRUST_ID_SEGMENTS = "trust_id_segments"
 TRUST_ID_FILTERS = "trust_id_filters"
+TRUST_ID_ATTRIBUTES = "trust_id_attributes"
 SEGMENT_NAME = "segment_name"
+SEGMENT_FILTERS = "segment_filters"
 FACTORS = "factors"
 ATTRIBUTES = "attributes"
 
@@ -540,6 +547,7 @@ CONFIGURATION_TYPE_NAVIGATION_SETTINGS = "navigation_settings"
 CONFIGURATION_TYPE_RBAC_MATRIX = "rbac_matrix"
 CONFIGURATION_FIELD_SETTINGS = "settings"
 CONFIGURATION_FIELD_FILTERS = "filters"
+CONFIGURATION_FIELD_ATTRIBUTES = "attributes"
 CONFIGURATION_FIELD_CHILDREN = "children"
 CONFIGURATION_FIELD_MODULES = "modules"
 
@@ -641,6 +649,7 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_SETTINGS,
         CONFIGURATION_FIELD_MODULES,
         CONFIGURATION_FIELD_FILTERS,
+        CONFIGURATION_FIELD_ATTRIBUTES,
     ],
     MODELS_COLLECTION: [
         NAME,

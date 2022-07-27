@@ -16,7 +16,7 @@
     >
       <v-toolbar-title class="title-wrap">
         <icon v-if="iconType" :type="iconType" size="38" color="primary" />
-        <span class="text-h2">{{ title }}</span>
+        <span class="new-h2">{{ title }}</span>
         <v-spacer></v-spacer>
       </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -28,7 +28,7 @@
     </slot>
 
     <div class="drawer-content">
-      <slot></slot>
+      <slot name="drawerContent"></slot>
     </div>
 
     <v-footer
@@ -52,10 +52,15 @@
         }}</span>
       </div>
       <div>
-        <span v-if="footerTextField && !primaryButtonText">{{
+        <span v-if="footerTextField && !primaryButtonText" class="new-b1">{{
           footerTextField
         }}</span>
-        <hux-button v-if="primaryButtonText" tile color="primary">
+        <hux-button
+          v-if="primaryButtonText"
+          class="new-b2"
+          tile
+          color="primary"
+        >
           {{ primaryButtonText }}
         </hux-button>
       </div>
@@ -239,5 +244,9 @@ $drawer-data-table-padding: 9px 25px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.btn-style {
+  padding: 12px, 24px, 12px, 24px;
+  border: 0.75px solid #007cb0 !important;
 }
 </style>

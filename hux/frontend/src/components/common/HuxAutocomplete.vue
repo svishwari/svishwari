@@ -9,6 +9,7 @@
     :height="40"
     :cache-items="false"
     :loading="loader"
+    :placeholder="placeholder"
     @update:search-input="(val) => $emit('search-update', val)"
   ></v-autocomplete>
 </template>
@@ -32,6 +33,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: null,
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: "",
     },
   },
   emits: ["input", "change"],

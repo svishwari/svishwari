@@ -28,6 +28,16 @@ def pending_jobs() -> Response:
                 get_db_client(),
                 db_c.DELIVERY_JOBS_COLLECTION,
                 {db_c.STATUS: db_c.STATUS_PENDING},
-            ).get(api_c.TOTAL_RECORDS, 0)
-        }
+            ).get(api_c.TOTAL_RECORDS, 0),
+            api_c.ORCH_INTEGRATION_TEST_CPDR: get_documents(
+                get_db_client(),
+                db_c.DELIVERY_JOBS_COLLECTION,
+                {db_c.USERNAME: db_c.ORCH_INTEGRATION_TEST_USER_CPDR},
+            ).get(api_c.TOTAL_RECORDS, 0),
+            api_c.ORCH_INTEGRATION_TEST_FLDR: get_documents(
+                get_db_client(),
+                db_c.DELIVERY_JOBS_COLLECTION,
+                {db_c.USERNAME: db_c.ORCH_INTEGRATION_TEST_USER_FLDR},
+            ).get(api_c.TOTAL_RECORDS, 0),
+        },
     }

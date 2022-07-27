@@ -266,6 +266,7 @@
         <v-tab-item key="delivery" class="delivery-tab">
           <v-row class="">
             <div
+              v-if="!audienceError"
               class="mt-3 ml-3"
               :style="{ transition: '0.5s', width: deliveryCols + '%' }"
             >
@@ -303,8 +304,39 @@
                 "
               />
             </div>
+            <v-card
+              v-else
+              class="rounded-lg box-shadow-5 mt-8 ml-3 mb-4"
+              :height="'340px'"
+              :width="'65%'"
+            >
+              <div class="audience-table-frame py-16 mt-8">
+                <empty-page
+                  v-if="audienceError"
+                  class="title-no-notification"
+                  type="error-on-screens"
+                  :size="50"
+                >
+                  <template #title>
+                    <div class="title-no-notification">
+                      Delivery details table is currently unavailable
+                    </div>
+                  </template>
+                  <template #subtitle>
+                    <div class="des-no-notification mt-2">
+                      Our team is working hard to fix it. Please be patient and
+                      try again soon!
+                    </div>
+                  </template>
+                </empty-page>
+              </div>
+            </v-card>
             <div :style="{ width: '1.5%' }"></div>
-            <div class="mt-3" :style="{ width: advertisingCols + '%' }">
+            <div
+              v-if="!audienceError"
+              class="mt-3"
+              :style="{ width: advertisingCols + '%' }"
+            >
               <div
                 class="collapsible-bar"
                 :class="{
@@ -371,6 +403,34 @@
                 </error>
               </v-card>
             </div>
+            <v-card
+              v-else
+              class="rounded-lg box-shadow-5 mt-8 mb-4"
+              :height="'340px'"
+              :width="'30%'"
+            >
+              <div class="audience-table-frame py-14 mt-5">
+                <empty-page
+                  v-if="audienceError"
+                  class="title-no-notification"
+                  type="error-on-screens"
+                  :size="50"
+                >
+                  <template #title>
+                    <div class="title-no-notification">
+                      Lookalike table is currently <br />
+                      unavailable
+                    </div>
+                  </template>
+                  <template #subtitle>
+                    <div class="des-no-notification mt-2">
+                      Our team is working hard to fix it. Please be patient and
+                      <br />try again soon!
+                    </div>
+                  </template>
+                </empty-page>
+              </div>
+            </v-card>
           </v-row>
         </v-tab-item>
         <v-tab-item key="insights" class="insights-tab">
@@ -511,6 +571,7 @@ import DownloadAudienceDrawer from "@/views/Shared/Drawers/DownloadAudienceDrawe
 import AudienceLookalikeDashboard from "@/views/Audiences/Lookalike/Dashboard.vue"
 import TextField from "@/components/common/TextField"
 import { formatText } from "@/utils.js"
+import EmptyPage from "@/components/common/EmptyPage"
 
 export default {
   name: "AudienceInsight",
@@ -535,6 +596,7 @@ export default {
     DownloadAudienceDrawer,
     AudienceLookalikeDashboard,
     TextField,
+    EmptyPage,
   },
   data() {
     return {
@@ -617,6 +679,7 @@ export default {
       },
       toggleDownloadAudienceDrawer: false,
       matchrateStyles: {},
+      audienceError: false,
     }
   },
   computed: {
@@ -1245,6 +1308,8 @@ export default {
         this.is_lookalike = this.audience.is_lookalike
         this.items[1].text = this.audience.name
         this.getDestinations()
+      } catch (error) {
+        this.audienceError = true
       } finally {
         this.refreshAudience = false
         this.loading = false
@@ -1568,5 +1633,10 @@ export default {
 
 ::v-deep .v-card--link .v-chip {
   cursor: auto !important;
+}
+.audience-table-frame {
+  background-image: url("../../../assets/images/no-lift-chart-frame.png");
+  background-position: 50% 60%;
+  background-size: 93% 87%;
 }
 </style>

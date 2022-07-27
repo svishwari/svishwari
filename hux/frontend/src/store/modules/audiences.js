@@ -332,9 +332,9 @@ const actions = {
     }
   },
 
-  async deliverStandaloneAudience(_, { id, payload }) {
+  async deliverStandaloneAudience(_, payload) {
     try {
-      const response = await api.audiences.deliver(id, payload)
+      const response = await api.audiences.deliver(payload)
       return response.data
     } catch (error) {
       handleError(error)

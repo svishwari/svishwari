@@ -18,6 +18,7 @@ from huxunify.api.data_connectors.scheduler import (
     run_scheduled_destination_checks,
     run_scheduled_customer_profile_audience_count,
     run_scheduled_customer_overview_audience_insights,
+    run_scheduled_trust_id_comparison_insights,
 )
 from huxunify.api.route.utils import get_db_client
 
@@ -158,6 +159,13 @@ def create_app() -> Flask:
             trigger="cron",
             hour=2,
             timezone=pytz.timezone("US/Eastern"),
+            args=[get_db_client()],
+        )
+        scheduler.add_job(
+            id="cache_trust_id_comparison_insights",
+            func=run_scheduled_trust_id_comparison_insights,
+            trigger="cron",
+            minute=api_c.TRUST_ID_CRON,
             args=[get_db_client()],
         )
         scheduler.add_job(

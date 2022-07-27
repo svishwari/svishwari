@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="localModal" :width="width" max-width="952">
+  <v-dialog
+    v-model="localModal"
+    :width="width"
+    max-width="952"
+    max-height="500"
+  >
     <template #activator="{ on, attrs }">
       <slot name="activator" v-bind="attrs" v-on="on"></slot>
     </template>
@@ -13,12 +18,12 @@
               :color="iconColor"
               :border-color="iconColor"
               outline
-              :size="38"
-              class="mb-7"
+              :size="40"
+              class="mb-8"
             />
           </slot>
           <slot name="title">
-            <div v-if="title" class="black--text text--darken-4 text-h2 mb-6">
+            <div v-if="title" class="black--text text--darken-4 new-h2 mb-6">
               {{ title }}
             </div>
           </slot>
@@ -27,9 +32,11 @@
               v-if="body"
               class="
                 black--text
-                text--darken-4 text-body-1
+                text--darken-4
+                new-b1
                 font-weight-regular
                 mb-8
+                lh-sm
               "
             >
               {{ body }}
@@ -41,35 +48,41 @@
             <huxButton
               v-if="showCancel"
               size="large"
-              variant="white"
+              variant="none"
               height="40"
-              width="88"
+              width="93"
               :style="{ float: 'left' }"
-              class="mr-2 btn-border box-shadow-none"
+              class="box-shadow-none second-cta-btn"
               @click="onCancel()"
             >
-              <span class="primary--text">{{ cancelBtnText }}</span>
-            </huxButton>
-            <huxButton
-              v-if="showBack"
-              size="large"
-              variant="white"
-              height="40"
-              class="btn-border box-shadow-none"
-              :style="{ float: 'left' }"
-              @click="onBack()"
-            >
-              <span class="primary--text">{{ backBtnText }}</span>
+              <span class="primary--text font-weight-bold">{{
+                cancelBtnText
+              }}</span>
             </huxButton>
             <huxButton
               v-if="showConfirm"
               size="large"
               :variant="type"
               height="40"
+              width="93"
               :style="{ float: 'right' }"
               @click="onSubmit()"
             >
-              <span>{{ confirmBtnText }}</span>
+              <span class="font-weight-bold">{{ confirmBtnText }}</span>
+            </huxButton>
+            <huxButton
+              v-if="showBack"
+              size="large"
+              height="40"
+              width="93"
+              variant="none"
+              class="mr-2 box-shadow-none second-cta-btn"
+              :style="{ float: 'right' }"
+              @click="onBack()"
+            >
+              <span class="primary--text font-weight-bold">{{
+                backBtnText
+              }}</span>
             </huxButton>
           </slot>
         </div>
@@ -219,17 +232,28 @@ export default {
   background: var(--v-white-base);
   text-align: center;
   padding-top: 48px;
+  box-shadow: 0px 100px 200px rgba(30, 30, 30, 0.03),
+    0px 16px 32px rgba(0, 85, 135, 0.15);
   .modal-body {
     margin-right: 24px;
     margin-left: 24px;
   }
   .modal-footer {
-    border-top: 1px solid var(--v-black-lighten3);
+    box-shadow: inset 0px 1px 0px #dddddd;
     display: flow-root;
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
     background: var(--v-primary-lighten1);
   }
+}
+
+.second-cta-btn {
+  border: 0.75px solid #007cb0 !important;
+  padding: 12px 24px !important;
+  background-color: white !important;
+  border-radius: 5px;
+  color: #007cb0;
+  font-size: 16px;
 }
 </style>

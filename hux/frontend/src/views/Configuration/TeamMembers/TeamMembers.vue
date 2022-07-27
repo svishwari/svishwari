@@ -114,6 +114,7 @@
 
                       <v-spacer> </v-spacer>
                       <span
+                        v-if="item['email'] != getCurrentUserEmail"
                         class="
                           action-icon
                           font-weight-light

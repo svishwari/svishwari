@@ -50,7 +50,14 @@ class TestTriggersRoute(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertDictEqual(
-            {api_c.DELIVERIES: {api_c.PENDING_JOBS: 0}}, response.json
+            {
+                api_c.DELIVERIES: {
+                    api_c.PENDING_JOBS: 0,
+                    api_c.ORCH_INTEGRATION_TEST_CPDR: 0,
+                    api_c.ORCH_INTEGRATION_TEST_FLDR: 0,
+                }
+            },
+            response.json,
         )
 
     def test_delivery_pending_jobs(self):
@@ -70,5 +77,12 @@ class TestTriggersRoute(TestCase):
 
             self.assertEqual(HTTPStatus.OK, response.status_code)
             self.assertDictEqual(
-                {api_c.DELIVERIES: {api_c.PENDING_JOBS: 58}}, response.json
+                {
+                    api_c.DELIVERIES: {
+                        api_c.PENDING_JOBS: 58,
+                        api_c.ORCH_INTEGRATION_TEST_CPDR: 58,
+                        api_c.ORCH_INTEGRATION_TEST_FLDR: 58,
+                    }
+                },
+                response.json,
             )

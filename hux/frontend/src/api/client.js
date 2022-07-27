@@ -371,8 +371,14 @@ client["audiences"].demographics = (audienceId) => {
   return http.get(`/audiences/${audienceId}/audience_insights`)
 }
 
-client["audiences"].deliver = (resourceId, data) => {
-  return http.post(`/audiences/${resourceId}/deliver`, data)
+client["audiences"].deliver = (payload) => {
+  var payloadUrl = payload.toggleValue
+    ? `?replace_audience=${payload.toggleValue}`
+    : ""
+  return http.post(
+    `/audiences/${payload.id}/deliver${payloadUrl}`,
+    payload.payload
+  )
 }
 
 // client["audiences"].create = (resourceId, data) => {
@@ -418,10 +424,11 @@ client["audiences"].histogram = (field, model) => {
 }
 
 client["audiences"].replaceAudience = (data) => {
-  return http.post(
-    `/engagements/${data.engagement_id}/audience/${data.audience_id}/destination/${data.destination_id}/deliver`,
-    data.value
-  )
+  let url = `/engagements/${data.engagement_id}/audience/${data.audience_id}/destination/${data.destination_id}/deliver`
+  if (data.value !== null) {
+    url += `?replace_audience=${data.value}`
+  }
+  return http.post(url)
 }
 
 client["audiences"].update = (audienceId, payload) => {
