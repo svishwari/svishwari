@@ -199,13 +199,12 @@ class DevelopmentConfig(Config):
             MONGO_TLS_CA_CERT_FILE = str(
                 PurePath(
                     "/certs",
-                    config(
-                        api_c.TLS_CA_CERT_KEY_FILE_NAME,
-                        default="mongodb-ca-cert",
-                    ),
+                    config(api_c.TLS_CA_CERT_KEY_FILE_NAME, default="mongodb-ca-cert"),
                 )
             )
-            MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = MONGO_TLS_CA_CERT_FILE
+            MONGO_DB_CONFIG[
+                api_c.TLS_CA_CERT_KEY
+            ] = MONGO_TLS_CA_CERT_FILE
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
