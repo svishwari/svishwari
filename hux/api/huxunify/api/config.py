@@ -75,8 +75,7 @@ class Config:
         )
     )
     MONGO_TLS_CA_CERT_FILE = str(
-        PurePath(
-            "/certs",
+        Path(__file__).parent.parent.joinpath(
             config(api_c.TLS_CA_CERT_KEY_FILE_NAME, default="mongodb-ca-cert"),
         )
     )
@@ -95,6 +94,7 @@ class Config:
             CLOUD_PROVIDER == api_c.AZURE
             and config(api_c.ENVIRONMENT_NAME, default="") == api_c.HUSDEV2_ENV
         ):
+            del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
             MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = MONGO_TLS_CA_CERT_FILE
         # TODO: To be removed once LILDEV env has ssl and cert setup
         #  implementation done
@@ -191,6 +191,20 @@ class DevelopmentConfig(Config):
     }
     if Config.MONGO_SSL_FLAG:
         MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
+        if (
+            Config.CLOUD_PROVIDER == api_c.AZURE
+            and Config.ENV_NAME == api_c.HUSDEV2_ENV
+        ):
+            del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
+            MONGO_TLS_CA_CERT_FILE = str(
+                PurePath(
+                    "/certs",
+                    config(api_c.TLS_CA_CERT_KEY_FILE_NAME, default="mongodb-ca-cert"),
+                )
+            )
+            MONGO_DB_CONFIG[
+                api_c.TLS_CA_CERT_KEY
+            ] = MONGO_TLS_CA_CERT_FILE
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
