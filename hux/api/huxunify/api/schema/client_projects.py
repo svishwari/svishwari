@@ -47,4 +47,4 @@ class ClientDetailsSchema(Schema):
     """Client Details Schema."""
 
     name = Str(required=True, example="Retail Co", default="Retail Co")
-    logo = Str(required=True, example="retail_co.svg", default="retail_co.svg")
+    logo = Str(required=True, example="client", default="client")
