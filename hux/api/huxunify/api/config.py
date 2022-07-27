@@ -90,6 +90,7 @@ class Config:
     }
     if MONGO_SSL_FLAG:
         MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
+        # Testing for Mongo Certs
         if (
             CLOUD_PROVIDER == api_c.AZURE
             and config(api_c.ENVIRONMENT_NAME, default="") == api_c.HUSDEV2_ENV
