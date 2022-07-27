@@ -373,7 +373,7 @@ client["audiences"].demographics = (audienceId) => {
 
 client["audiences"].deliver = (payload) => {
   var payloadUrl = payload.toggleValue
-    ? "?replace_audience=${payload.toggleValue}"
+    ? `?replace_audience=${payload.toggleValue}`
     : ""
   return http.post(
     `/audiences/${payload.id}/deliver${payloadUrl}`,
@@ -425,7 +425,7 @@ client["audiences"].histogram = (field, model) => {
 
 client["audiences"].replaceAudience = (data) => {
   let url = `/engagements/${data.engagement_id}/audience/${data.audience_id}/destination/${data.destination_id}/deliver`
-  if (data.value === true || data.value === false) {
+  if (data.value !== null) {
     url += `?replace_audience=${data.value}`
   }
   return http.post(url)
