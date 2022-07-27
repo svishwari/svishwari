@@ -216,7 +216,7 @@ class ClientDetails(SwaggerView):
 
     # pylint: disable=unused-argument
     @api_error_handler()
-    @requires_access_levels(api_c.USER_ROLE_ALL)
+    @requires_access_levels(api_c.COMMON_USER_ROLE)
     def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves client details.
 
@@ -231,7 +231,7 @@ class ClientDetails(SwaggerView):
             Tuple[Response, int]: dict of requested users, HTTP status code.
         """
 
-        # Fetch rbac matrix settings document from configurations collection
+        # Fetch client details document from configurations collection
         database = get_db_client()
         query_filter = {
             db_c.CONFIGURATION_FIELD_TYPE: db_c.CONFIGURATION_TYPE_CLIENT_DETAILS
