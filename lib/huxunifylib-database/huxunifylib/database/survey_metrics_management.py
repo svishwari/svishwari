@@ -19,33 +19,33 @@ from huxunifylib.database.aggregation_pipelines import (
 )
 
 
-def frame_match_query(filters: list) -> dict:
+def frame_match_query(filters: list) -> list:
     """Frame the match query based on the selected filters
 
     Args:
         filters(list): List of selected filters
 
     Returns:
-         (dict): match query
+         (list): match query as a stage in aggregate pipeline
     """
-    return {
-        "$match": {
-            "$and": [
-                {
-                    "$or": [
-                        {
-                            f"responses.{x['description']}": {
-                                "$regex": val,
-                                "$options": "i",
+    return [
+        {
+            "$match": {
+                "$and": [
+                    {
+                        "$or": [
+                            {
+                                f"responses.{x['description']}": {
+                                    "$in": x["values"],
+                                }
                             }
-                        }
-                        for val in x["values"]
-                    ]
-                }
-                for x in filters
-            ]
+                        ]
+                    }
+                    for x in filters
+                ]
+            }
         }
-    }
+    ]
 
 
 @retry(
@@ -237,10 +237,8 @@ def get_trust_id_overview(
         db_c.SURVEY_METRICS_COLLECTION
     ]
 
-    pipeline = trust_id_overview_pipeline
-    if filters:
-        match_query = frame_match_query(filters)
-        pipeline.insert(0, match_query)
+    pipeline = frame_match_query(filters) if filters else []
+    pipeline.extend(trust_id_overview_pipeline)
 
     try:
         data = list(collection.aggregate(pipeline))
@@ -274,9 +272,8 @@ def get_trust_id_attributes(
         db_c.SURVEY_METRICS_COLLECTION
     ]
 
-    pipeline = trust_id_attribute_ratings_pipeline
-    if filters:
-        pipeline.insert(0, frame_match_query(filters))
+    pipeline = frame_match_query(filters) if filters else []
+    pipeline.extend(trust_id_attribute_ratings_pipeline)
 
     try:
         data = list(collection.aggregate(pipeline))
