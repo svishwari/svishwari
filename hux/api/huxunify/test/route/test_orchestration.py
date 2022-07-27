@@ -1765,6 +1765,10 @@ class OrchestrationRouteTest(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/products-by-categories",
+            json=t_c.CUSTOMERS_PRODUCT_CATEGORIES_RESPONSE,
+        )
         self.request_mocker.start()
 
         mock.patch(
@@ -1857,6 +1861,10 @@ class OrchestrationRouteTest(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/products-by-categories",
+            json=t_c.CUSTOMERS_PRODUCT_CATEGORIES_RESPONSE,
         )
         self.request_mocker.start()
 
