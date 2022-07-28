@@ -16,7 +16,7 @@
     >
       <v-toolbar-title class="title-wrap">
         <icon v-if="iconType" :type="iconType" size="38" color="primary" />
-        <span class="new-h2">{{ title }}</span>
+        <span class="new-h2 ml-2">{{ title }}</span>
         <v-spacer></v-spacer>
       </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -42,22 +42,30 @@
           size="large"
           tile
           variant="secondary"
-          class="btn-border box-shadow-none"
+          class="btn-border box-shadow-none new-b3"
           @click="localDrawer = !localDrawer"
         >
           {{ secondaryButtonText }}
         </hux-button>
-        <span v-if="footerTextField && primaryButtonText" class="ml-2">{{
+        <span v-if="footerTextField && primaryButtonText" class="ml-6 new-b4">{{
           footerTextField
         }}</span>
       </div>
       <div>
-        <span v-if="footerTextField && !primaryButtonText" class="new-b1">{{
+        <span v-if="footerTextField && !primaryButtonText" class="new-b4">{{
           footerTextField
         }}</span>
         <hux-button
+          v-if="secondPrimaryButtonText"
+          class="new-b3 mr-2 btn-border box-shadow-none"
+          tile
+          variant="secondary"
+        >
+          {{ secondPrimaryButtonText }}
+        </hux-button>
+        <hux-button
           v-if="primaryButtonText"
-          class="new-b2"
+          class="new-b3"
           tile
           color="primary"
         >
@@ -130,6 +138,10 @@ export default {
       default: "Close",
     },
     primaryButtonText: {
+      type: String,
+      required: false,
+    },
+    secondPrimaryButtonText: {
       type: String,
       required: false,
     },
@@ -244,9 +256,5 @@ $drawer-data-table-padding: 9px 25px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.btn-style {
-  padding: 12px, 24px, 12px, 24px;
-  border: 0.75px solid #007cb0 !important;
 }
 </style>

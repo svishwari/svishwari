@@ -26,6 +26,7 @@ export default {
       options: ["Text", "Empty", "Error"],
     },
     secondaryButtonText: { control: { type: "text" } },
+    secondPrimaryButtonText: { control: { type: "text" } },
     primaryButtonText: { control: { type: "text" } },
     footerTextField: { control: { type: "text" } },
   },
@@ -69,13 +70,13 @@ const Template = (args, { argTypes }) => ({
       @onClose="onClose()"
     >
       <template #drawerContent>
-        <div class="body-1 pa-6" v-if="$props.status == 'Text'">
+        <div class="new-b1 pa-6" v-if="$props.status == 'Text'">
           {{$props.drawerContent}}
         </div>
-        <div class="body-1 pa-6" v-if="$props.status == 'Error'">
-          <page2 errorState="true"/>
+        <div class="new-b1 pa-6" v-if="$props.status == 'Error'" >
+          <page2 errorState="true" />
         </div>
-        <div class="body-1 pa-6" v-if="$props.status == 'Empty'">
+        <div class="new-b1 pa-6" v-if="$props.status == 'Empty'" >
           <page2 emptyState="true"/>
         </div>
       </template>
