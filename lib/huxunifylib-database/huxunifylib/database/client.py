@@ -10,16 +10,16 @@ class DatabaseClient:
     """Database client for handling operations on the database."""
 
     def __init__(
-            self,
-            connection_string: Optional[str] = None,
-            host: Union[str, list, None] = None,
-            port: Optional[int] = None,
-            username: Optional[str] = None,
-            password: Optional[str] = None,
-            ssl_cert_path: Optional[str] = None,
-            ssl_flag: Optional[bool] = None,
-            tls_cert_key_file: Optional[str] = None,
-            tls_ca_cert_key_file: Optional[str] = None
+        self,
+        connection_string: Optional[str] = None,
+        host: Union[str, list, None] = None,
+        port: Optional[int] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        ssl_cert_path: Optional[str] = None,
+        ssl_flag: Optional[bool] = None,
+        tls_cert_key_file: Optional[str] = None,
+        tls_ca_cert_key_file: Optional[str] = None,
     ) -> None:
         """Initialize a DatabaseClient object.
 

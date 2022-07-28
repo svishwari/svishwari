@@ -15,7 +15,7 @@ def get_mongodb_client(
     ssl_cert_path: str = None,
     ssl_flag: bool = None,
     tls_cert_key_file: str = None,
-    tls_ca_cert_key_file:str=None,
+    tls_ca_cert_key_file: str = None,
 ) -> MongoClient:
     """Get connected Pymongo client.
     Args:
@@ -43,7 +43,7 @@ def get_mongodb_client(
         ssl_cert_path=ssl_cert_path,
         ssl_flag=ssl_flag,
         tls_cert_key_file=tls_cert_key_file,
-        tls_ca_cert_key_file=tls_ca_cert_key_file
+        tls_ca_cert_key_file=tls_ca_cert_key_file,
     )
     return mongo_db_client.connect()
 
