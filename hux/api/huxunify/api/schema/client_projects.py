@@ -46,5 +46,5 @@ class ClientProjectPatchSchema(Schema):
 class ClientDetailsSchema(Schema):
     """Client Details Schema."""
 
-    name = Str(required=True, example="Retail Co", default="Retail Co")
-    logo = Str(required=True, example="client", default="client")
+    name = Str(required=True, example="Client Name", default="Retail Co")
+    logo = Str(required=True, example="client_logo", default="client")
