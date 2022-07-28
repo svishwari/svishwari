@@ -1129,7 +1129,9 @@ def clean_and_aggregate_datafeed_details(
                 ),
                 api_c.PROCESSED_END_DATE: parse(
                     df_detail[api_c.PROCESSED_END_DATE]
-                ),
+                )
+                if df_detail[api_c.PROCESSED_END_DATE] is not None
+                else "",
                 api_c.STATUS: df_detail[api_c.STATUS].title(),
                 api_c.SUB_STATUS: df_detail[api_c.SUB_STATUS].title(),
                 api_c.RECORDS_PROCESSED_PERCENTAGE: {
