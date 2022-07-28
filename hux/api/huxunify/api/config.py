@@ -6,7 +6,7 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 """
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Union
 from decouple import config
 from huxunify.api import constants as api_c
@@ -84,8 +84,6 @@ class Config:
     }
     if MONGO_SSL_FLAG:
         MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
-        if CLOUD_PROVIDER == api_c.AZURE:
-            MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
         # TODO: To be removed once LILDEV env has ssl and cert setup
         #  implementation done
         if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
@@ -198,6 +196,44 @@ class DevelopmentConfig(Config):
     TEST_AUTH_OVERRIDE = False
 
 
+class HUSDEV2Config(DevelopmentConfig):
+    """HUSDEV2 Config Object."""
+
+    FLASK_ENV = api_c.HUSDEV2_ENV
+
+    MONGO_DB_CONFIG = {
+        api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
+        api_c.HOST: Config.MONGO_DB_HOST,
+        api_c.PORT: Config.MONGO_DB_PORT,
+        api_c.USERNAME: Config.MONGO_DB_USERNAME,
+        api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
+        api_c.SSL_FLAG: Config.MONGO_SSL_FLAG,
+    }
+    MONGO_TLS_CA_CERT_FILE = (
+        str(
+            PurePath(
+                "/certs",
+                config(
+                    api_c.TLS_CA_CERT_KEY_FILE_NAME,
+                    default="mongodb-ca-cert",
+                ),
+            )
+        )
+        if Config.ENV_NAME == api_c.HUSDEV2_ENV
+        else str(
+            str(
+                Path(__file__).parent.parent.joinpath(
+                    config(
+                        api_c.TLS_CA_CERT_KEY_FILE_NAME,
+                        default="mongodb-ca-cert",
+                    )
+                )
+            )
+        )
+    )
+    MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = MONGO_TLS_CA_CERT_FILE
+
+
 class PyTestConfig(Config):
     """Test Config Object."""
 
@@ -257,6 +293,8 @@ def get_config(
 
     if flask_env == api_c.DEVELOPMENT_MODE:
         return DevelopmentConfig
+    if flask_env == api_c.HUSDEV2_ENV:
+        return HUSDEV2Config
     if flask_env == api_c.TEST_MODE:
         return PyTestConfig
     return Config
