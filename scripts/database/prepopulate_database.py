@@ -972,6 +972,16 @@ configurations_constants = [
             }
         },
     },
+    {
+        db_c.CONFIGURATION_FIELD_NAME: "Client Details",
+        db_c.CONFIGURATION_FIELD_TYPE: db_c.CONFIGURATION_TYPE_CLIENT_DETAILS,
+        db_c.CONFIGURATION_FIELD_DESCRIPTION: "Client name and logo details",
+        db_c.CONFIGURATION_FIELD_ENABLED: True,
+        db_c.CONFIGURATION_FIELD_DETAILS: {
+            db_c.NAME: "Retail Co",
+            db_c.CLIENT_LOGO: "retail",
+        },
+    },
 ]
 
 # Client Projects List
