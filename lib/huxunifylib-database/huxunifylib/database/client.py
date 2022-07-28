@@ -150,9 +150,12 @@ class DatabaseClient:
         }
         if self._use_ssl:
             mongo_args["ssl"] = True
-            mongo_args["ssl_ca_certs"] = self._ssl_cert_path
+            # ssl_ca_certs & tlsCAFile is same thing
+            mongo_args["ssl_ca_certs"] = (
+                self._ssl_cert_path or self._tls_ca_cert_key_file
+            )
             mongo_args["tlsCertificateKeyFile"] = self._tls_cert_key_file
-            mongo_args["tlsCAFile"] = self._tls_ca_cert_key_file
+            # mongo_args["tlsCAFile"] = self._tls_ca_cert_key_file
         elif self._use_ssl_flag:
             mongo_args["ssl"] = True
             mongo_args["retrywrites"] = False
