@@ -1,7 +1,6 @@
 """This module enables functionality related to database clients."""
 
 from typing import Optional, Union
-from pathlib import Path
 import pymongo
 
 
