@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="attribute-table-wrapper mt-3">
+  <v-card flat class="attribute-table-wrapper mt-3 card-width">
     <v-progress-linear :active="isLoading" :indeterminate="isLoading" />
     <template v-if="!isLoading">
       <v-card-title v-if="data.length > 0" class="py-5 px-6">
@@ -277,5 +277,11 @@ export default {
   .agree-color {
     color: var(--v-success-lighten3);
   }
+}
+.card-width {
+  width: 98.4%;
+}
+::v-deep .hux-data-table .table-overflow {
+  overflow-x: inherit !important;
 }
 </style>
