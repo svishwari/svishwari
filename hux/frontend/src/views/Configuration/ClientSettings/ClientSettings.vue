@@ -46,7 +46,7 @@
                 :selected="currentIndustrySelection"
                 :show-hover="false"
                 :items="configOptions['industryOptions']"
-                min-width="320"
+                min-width="360"
                 @on-select="onSelectMenuItem"
               />
             </div>
@@ -78,6 +78,17 @@
       </v-col>
     </v-row>
     <hux-footer slot="footer" data-e2e="footer" max-width="100%">
+      <template #left>
+        <huxButton
+            size="large"
+            variant="white"
+            is-tile
+            class="btn-cancel ml-4 btn-border box-shadow-none"
+            @click="restoreState"
+          >
+            Cancel
+          </huxButton>
+      </template>
       <template #right>
         <hux-button
           size="large"
@@ -202,6 +213,10 @@ export default {
           ? false
           : true
       } else return false
+    },
+    restoreState() {
+      this.prepopulateConfiguration()
+      this.isPrePopulate = true
     },
     async updatedConfigSettings() {
       await this.updateDemoConfig({
