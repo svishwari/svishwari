@@ -152,7 +152,9 @@ class IndividualDataSourceDataFeedDetailSchema(Schema):
         attribute=api_c.PROCESSED_START_DATE, example="2022-01-01T01:02:03Z"
     )
     last_processed_end = DateTimeWithZ(
-        attribute=api_c.PROCESSED_END_DATE, example="2022-01-01T01:02:03Z"
+        attribute=api_c.PROCESSED_END_DATE,
+        example="2022-01-01T01:02:03Z",
+        allow_none=True,
     )
     records_processed = fields.Int(example=20000)
     records_received = fields.Int(example=25000)
@@ -199,7 +201,9 @@ class DataSourceDataFeedDetailsGetSchema(Schema):
         attribute=api_c.PROCESSED_START_DATE, example="2022-01-01T01:02:03Z"
     )
     last_processed_end = DateTimeWithZ(
-        attribute=api_c.PROCESSED_END_DATE, example="2022-01-01T01:02:03Z"
+        attribute=api_c.PROCESSED_END_DATE,
+        example="2022-01-01T01:02:03Z",
+        required=False,
     )
     records_processed = fields.Int(example=40000)
     records_received = fields.Int(example=50000)
