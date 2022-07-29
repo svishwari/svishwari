@@ -220,11 +220,11 @@ button.v-btn {
   }
   &.secondary {
     background-color: var(--v-white-base) !important;
-    border-color: var(--v-primary-base) !important;
+    border-color: var(--v-primary-lighten7) !important;
     &:hover {
       @extend .box-shadow-15-8;
       background-color: var(--v-white-base) !important;
-      border-color: var(--v-primary-base) !important;
+      border-color: var(--v-primary-lighten7) !important;
       ::v-deep.v-btn__content {
         color: var(--v-primary-base) !important;
       }
@@ -232,7 +232,7 @@ button.v-btn {
     &:active {
       @extend .box-shadow-none;
       background-color: var(--v-primary-base) !important;
-      border-color: var(--v-primary-base) !important;
+      border-color: var(--v-primary-lighten7) !important;
       ::v-deep.v-btn__content {
         color: var(--v-white-base) !important;
       }

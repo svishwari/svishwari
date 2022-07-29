@@ -42,7 +42,8 @@
           size="large"
           tile
           variant="secondary"
-          class="btn-border box-shadow-none new-b3"
+          :boxShadow="false"
+          class="new-b3"
           @click="localDrawer = !localDrawer"
         >
           {{ secondaryButtonText }}
@@ -57,7 +58,8 @@
         }}</span>
         <hux-button
           v-if="secondPrimaryButtonText"
-          class="new-b3 mr-2 btn-border box-shadow-none"
+          :boxShadow="false"
+          class="new-b3 mr-2"
           tile
           variant="secondary"
         >
