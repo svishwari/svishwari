@@ -198,7 +198,7 @@ export default {
 <style lang="scss" scoped>
 .v-application {
   .overview-card {
-    width: 98.4%;
+    width: 100%;
     border-radius: 12px !important;
     ::v-deep {
       .text-h3 {
