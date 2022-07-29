@@ -33,8 +33,10 @@
     </template>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <template>
-      <div class="d-flex main-content overflow-auto mw-100 content-section">
-        <div class="flex-grow-1 flex-shrink-1">
+      <div class="d-flex main-content">
+        <div
+          class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
+        >
           <overview v-if="!loading" :data="trustIdOverview" />
           <v-tabs v-model="tabOption" class="mt-4">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
@@ -61,7 +63,7 @@
               <v-row>
                 <v-col md="12">
                   <v-card
-                    class="mt-3 rounded-lg box-shadow-5 tab-card-1 card-width"
+                    class="mt-3 rounded-lg box-shadow-5 tab-card-1"
                     :height="segmentScores.length > 0 ? '365' : '250'"
                   >
                     <v-progress-linear
@@ -291,11 +293,7 @@
                     </div>
                   </template>
                 </data-cards>
-                <v-card
-                  v-else
-                  class="box-shadow-5 rounded-lg card-width"
-                  height="250"
-                >
+                <v-card v-else class="box-shadow-5 rounded-lg" height="250">
                   <empty-page
                     class="py-8"
                     :type="emptyPageIcon(segmentErrorState)"
@@ -363,10 +361,7 @@
                 :data="attributeData.data"
               />
               <div v-else class="mt-3">
-                <v-card
-                  class="pb-12 box-shadow-5 rounded-lg card-width"
-                  height="250"
-                >
+                <v-card class="pb-12 box-shadow-5 rounded-lg" height="250">
                   <empty-page
                     class="pt-16"
                     :type="emptyPageIcon(attributeErrorState)"
@@ -956,11 +951,5 @@ export default {
 }
 .toggle-main-div {
   float: right;
-}
-.card-width {
-  width: 98.4%;
-}
-::v-deep .card-changes {
-  width: 98.4%;
 }
 </style>
