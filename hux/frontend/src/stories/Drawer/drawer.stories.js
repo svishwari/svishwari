@@ -77,7 +77,7 @@ const Template = (args, { argTypes }) => ({
           <page2 errorState="true" />
         </div>
         <div class="new-b1 pa-6" v-if="$props.status == 'Empty'" >
-          <page2 emptyState="true"/>
+          <page2 emptyState="true" />
         </div>
       </template>
     </drawer>

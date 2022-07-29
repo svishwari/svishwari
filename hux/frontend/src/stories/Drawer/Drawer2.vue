@@ -27,7 +27,11 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </slot>
 
-    <div class="drawer-content">
+    <div
+      :class="
+        status == 'text' ? 'drawer-content' : 'drawer-content status-overflow'
+      "
+    >
       <slot name="drawerContent"></slot>
     </div>
 
@@ -151,6 +155,10 @@ export default {
       type: String,
       required: false,
     },
+    status: {
+      type: String,
+      required: false,
+    },
   },
 
   data() {
@@ -232,6 +240,10 @@ $drawer-data-table-padding: 9px 25px;
 }
 ::v-deep .v-icon.v-icon::after {
   content: none;
+}
+
+.status-overflow {
+  overflow-y: hidden !important;
 }
 
 ::v-deep .hux-data-table {
