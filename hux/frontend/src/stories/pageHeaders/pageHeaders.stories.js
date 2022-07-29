@@ -2,6 +2,7 @@ import PageHeader from "./PageHeader.vue"
 import AllIcons from "../icons/Icons"
 import Icon from "../icons/Icon2.vue"
 import HuxButton from "../huxButton/huxButton2.vue"
+import Breadcrumb from "./NewBreadcrumb.vue"
 
 export default {
   components: { PageHeader, AllIcons },
@@ -14,15 +15,27 @@ export default {
       options: AllIcons,
     },
     title: { control: { type: "text" } },
-    description: { control: { type: "text" } },
-    breadcrumbs: { control: { type: "boolean" } },
+    titleIcon: { control: { type: "boolean" } },
+    titleFavorite: { control: { type: "boolean" } },
+    breadcrumbItems: {
+      control: { type: "object" },
+    },
+    maxBreadcrumbs: {
+      control: { type: "select" },
+      options: ["None", "1", "2", "3", "4", "5"],
+    },
+    description: { control: { type: "text" }, icon: [""] },
     callToAction: { control: { type: "boolean" } },
+    ctaIcons: {
+      control: { type: "array" },
+    },
   },
 
   args: {
-    breadcrumbs: false,
     callToAction: false,
     iconType: "Icon Placeholder",
+    titleIcon: false,
+    titleFavorite: false,
   },
 
   parameters: {
@@ -34,19 +47,15 @@ export default {
 }
 
 const Template = (args, { argTypes }) => ({
-  components: { PageHeader, Icon, HuxButton },
+  components: { PageHeader, Icon, HuxButton, Breadcrumb },
   props: Object.keys(argTypes),
   template: `
     <page-header v-bind="$props">
-      <template #breadcrumbs v-if="$props.breadcrumbs">
-        <span>adding</span>
-        <icon type="Dropdown - right" size="18" color="primary" class="ml-2 mr-2 mt-1" />
-        <span>some</span>
-        <icon type="Dropdown - right" size="18" color="primary" class="ml-2 mr-2 mt-1" />
-        <span>breadcrumbs</span>
+      <template #breadcrumbs >
+          <breadcrumb :items="$props.breadcrumbItems"></breadcrumb>
       </template>
-      <template #call-to-action v-if="$props.callToAction">
-        <span>adding call to action</span>
+      <template #call-to-action v-if="$props.callToAction" class="new-b3">
+        <icon v-for="icons in $props.ctaIcons" :type="icons" size="24" color="primary" class="ml-2 mr-2 mt-1" />
         <hux-button class="ml-2">button</hux-button>
       </template>
     </page-header>

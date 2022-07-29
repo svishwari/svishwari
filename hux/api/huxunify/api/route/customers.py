@@ -242,9 +242,10 @@ class CustomerPostOverview(SwaggerView):
             logger.error(
                 "Invalid filter passed in to retrieve customer data overview."
             )
-            return {
-                api_c.MESSAGE: "Invalid filter passed in."
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                CustomerOverviewSchema().dump({}),
+                HTTPStatus.OK,
+            )
 
         token_response = get_token_from_request(request)
 
@@ -258,6 +259,27 @@ class CustomerPostOverview(SwaggerView):
         filters = convert_unique_city_filter(request.json)
         convert_filters_for_events(filters, event_types)
         convert_filters_for_contact_preference(filters)
+
+        # check range filters
+        # if a range type was passed in but range is empty.
+        # instead of raising 500, lets return empty and log the error instead.
+        for audience_filter in filters.get(api_c.AUDIENCE_FILTERS, []):
+            for section_filter in audience_filter.get(
+                api_c.AUDIENCE_SECTION_FILTERS, []
+            ):
+                if section_filter.get(
+                    api_c.TYPE
+                ) == api_c.AUDIENCE_FILTER_RANGE and not section_filter.get(
+                    api_c.VALUE, False
+                ):
+                    logger.error(
+                        "Invalid range filter passed in to retrieve customer data overview."
+                    )
+                    return (
+                        CustomerOverviewSchema().dump({}),
+                        HTTPStatus.OK,
+                    )
+
         customers_overview = Caching.check_and_return_cache(
             {
                 "endpoint": f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
@@ -359,8 +381,6 @@ class IDROverview(SwaggerView):
         cache_key = f"{api_c.IDR_TAG}.{start_date}.{end_date}"
 
         if current_env == "RC1":
-            requested_start_date = start_date
-            requested_end_date = end_date
             start_date = datetime.strftime(
                 datetime.utcnow().date() - relativedelta(months=60),
                 api_c.DEFAULT_DATE_FORMAT,
@@ -387,45 +407,6 @@ class IDROverview(SwaggerView):
                 start_date,
                 end_date,
             )
-
-            # TODO Only for demo purpose remove after actual data integration
-            if current_env == "RC1":
-                end_date = datetime.utcnow() - relativedelta(days=1)
-                latest_data_date = max(
-                    [data[api_c.DAY] for data in trend_data]
-                )
-                delta_days = (end_date - latest_data_date).days
-                for data in trend_data:
-                    data[api_c.DAY] = data[api_c.DAY] + relativedelta(
-                        days=delta_days
-                    )
-                requested_data = [
-                    data
-                    for data in trend_data
-                    if datetime.strptime(
-                        requested_start_date, api_c.DEFAULT_DATE_FORMAT
-                    )
-                    <= data[api_c.DAY]
-                    <= datetime.strptime(
-                        requested_end_date, api_c.DEFAULT_DATE_FORMAT
-                    )
-                ]
-                # idr_overview[api_c.UPDATED] = requested_end_date
-                trend_data = requested_data
-                start_date = datetime.strftime(
-                    datetime.strptime(
-                        requested_start_date, api_c.DEFAULT_DATE_FORMAT
-                    )
-                    - relativedelta(days=delta_days),
-                    api_c.DEFAULT_DATE_FORMAT,
-                )
-                end_date = datetime.strftime(
-                    datetime.strptime(
-                        requested_end_date, api_c.DEFAULT_DATE_FORMAT
-                    )
-                    - relativedelta(days=delta_days),
-                    api_c.DEFAULT_DATE_FORMAT,
-                )
 
             # get IDR overview
             idr_overview = get_identity_overview(
@@ -751,17 +732,6 @@ class IDRDataFeeds(SwaggerView):
                 "end_date": end_date,
             },
         )
-
-        # TODO Only for demo purpose remove after actual data integration
-        if get_config().ENV_NAME == "RC1" and data_feeds:
-            end_date = datetime.utcnow() - relativedelta(days=1)
-            delta_days = (
-                end_date - max([data[api_c.TIMESTAMP] for data in data_feeds])
-            ).days
-            for data in data_feeds:
-                data[api_c.TIMESTAMP] = data[api_c.TIMESTAMP] + relativedelta(
-                    days=delta_days
-                )
 
         return (
             jsonify(

@@ -74,11 +74,6 @@ class Config:
             config(api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem")
         )
     )
-    MONGO_TLS_CA_CERT_FILE = str(
-        Path(__file__).parent.parent.joinpath(
-            config(api_c.TLS_CA_CERT_KEY_FILE_NAME, default="mongodb-ca-cert"),
-        )
-    )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
@@ -89,13 +84,6 @@ class Config:
     }
     if MONGO_SSL_FLAG:
         MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
-        # Testing for Mongo Certs
-        if (
-            CLOUD_PROVIDER == api_c.AZURE
-            and config(api_c.ENVIRONMENT_NAME, default="") == api_c.HUSDEV2_ENV
-        ):
-            del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
-            MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = MONGO_TLS_CA_CERT_FILE
         # TODO: To be removed once LILDEV env has ssl and cert setup
         #  implementation done
         if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
@@ -191,21 +179,10 @@ class DevelopmentConfig(Config):
     }
     if Config.MONGO_SSL_FLAG:
         MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
-        if (
-            Config.CLOUD_PROVIDER == api_c.AZURE
-            and Config.ENV_NAME == api_c.HUSDEV2_ENV
-        ):
-            del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
-            MONGO_TLS_CA_CERT_FILE = str(
-                PurePath(
-                    "/certs",
-                    config(
-                        api_c.TLS_CA_CERT_KEY_FILE_NAME,
-                        default="mongodb-ca-cert",
-                    ),
-                )
-            )
-            MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = MONGO_TLS_CA_CERT_FILE
+        if Config.CLOUD_PROVIDER == api_c.AZURE:
+            MONGO_DB_CONFIG[
+                api_c.TLS_CERT_KEY
+            ] = Config.AZURE_MONGO_TLS_CLIENT_KEY
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
@@ -217,6 +194,44 @@ class DevelopmentConfig(Config):
         del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
     TEST_AUTH_OVERRIDE = False
+
+
+class HUSDEV2Config(DevelopmentConfig):
+    """HUSDEV2 Config Object."""
+
+    FLASK_ENV = api_c.HUSDEV2_ENV
+
+    MONGO_DB_CONFIG = {
+        api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
+        api_c.HOST: Config.MONGO_DB_HOST,
+        api_c.PORT: Config.MONGO_DB_PORT,
+        api_c.USERNAME: Config.MONGO_DB_USERNAME,
+        api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
+        api_c.SSL_FLAG: Config.MONGO_SSL_FLAG,
+    }
+    MONGO_TLS_CA_CERT_FILE = (
+        str(
+            PurePath(
+                "/certs",
+                config(
+                    api_c.TLS_CA_CERT_KEY_FILE_NAME,
+                    default="mongodb-ca-cert",
+                ),
+            )
+        )
+        if Config.ENV_NAME == api_c.HUSDEV2_ENV
+        else str(
+            str(
+                Path(__file__).parent.parent.joinpath(
+                    config(
+                        api_c.TLS_CA_CERT_KEY_FILE_NAME,
+                        default="mongodb-ca-cert",
+                    )
+                )
+            )
+        )
+    )
+    MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = MONGO_TLS_CA_CERT_FILE
 
 
 class PyTestConfig(Config):
@@ -278,6 +293,8 @@ def get_config(
 
     if flask_env == api_c.DEVELOPMENT_MODE:
         return DevelopmentConfig
+    if flask_env == api_c.HUSDEV2_ENV:
+        return HUSDEV2Config
     if flask_env == api_c.TEST_MODE:
         return PyTestConfig
     return Config

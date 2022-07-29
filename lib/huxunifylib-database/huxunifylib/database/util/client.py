@@ -29,7 +29,7 @@ def get_mongodb_client(
         ssl_flag (bool, optional): MongoDB ssl flag. Defaults to None.
         tls_cert_key_file (str, optional): TLS Client certificates.
             Defaults to None.
-        tls_ca_cert_key_file(str, optional): TLS CA Client certificate, defaults to None.
+        tls_ca_cert_key_file(str,optional): TLS CA Client Certificates defaults to None
 
     Returns:
         pymongo.MongoClient: Connected Pymongo client.

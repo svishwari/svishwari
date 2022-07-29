@@ -278,4 +278,7 @@ export default {
     color: var(--v-success-lighten3);
   }
 }
+::v-deep .hux-data-table .table-overflow {
+  overflow-x: inherit !important;
+}
 </style>
