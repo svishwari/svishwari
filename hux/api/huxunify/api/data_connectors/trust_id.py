@@ -46,13 +46,19 @@ def get_trust_id_overview_data(
                 api_c.TRUST_ID_FACTOR_DESCRIPTION: api_c.TRUST_ID_FACTOR_DESCRIPTION_MAP[
                     factor_name
                 ],
-                api_c.OVERALL_CUSTOMER_RATING: overview[factor_name][
-                    api_c.RATING
-                ]
+                api_c.OVERALL_CUSTOMER_RATING: {
+                    api_c.RATING: overview[factor_name][api_c.RATING],
+                    api_c.TOTAL_CUSTOMERS: overview[factor_name][
+                        api_c.TOTAL_CUSTOMERS
+                    ],
+                }
                 if overview.get(factor_name)
                 else {
-                    rating: {api_c.COUNT: 0}
-                    for rating in api_c.TRUST_ID_RATING_MAP.values()
+                    api_c.TOTAL_CUSTOMERS: 0,
+                    api_c.RATING: {
+                        rating: {api_c.COUNT: 0}
+                        for rating in api_c.TRUST_ID_RATING_MAP.values()
+                    },
                 },
             }
             for factor_name in api_c.TRUST_ID_LIST_OF_FACTORS
