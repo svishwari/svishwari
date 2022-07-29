@@ -203,7 +203,7 @@ class DataSourceDataFeedDetailsGetSchema(Schema):
     last_processed_end = DateTimeWithZ(
         attribute=api_c.PROCESSED_END_DATE,
         example="2022-01-01T01:02:03Z",
-        required=False,
+        allow_none=True,
     )
     records_processed = fields.Int(example=40000)
     records_received = fields.Int(example=50000)
