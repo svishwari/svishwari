@@ -67,15 +67,15 @@ unified-ui:
         - py
         - txt
 
-unified-lib:
+huxunifylib-database:
   global:
     APP_DIR: lib/huxunifylib-database
 
   veracode:
     scans:
-      VC_APPLICATION_NAME: hux-unified-lib
+      VC_APPLICATION_NAME: huxunifylib-database
       VC_DEV_BRANCH: develop
-      VC_SANDBOX: develop-hux-unified-lib
+      VC_SANDBOX: develop-huxunifylib-database
     fail:
       VC_FAIL_ON_SEVERITY: "Very High, High"
     files:
