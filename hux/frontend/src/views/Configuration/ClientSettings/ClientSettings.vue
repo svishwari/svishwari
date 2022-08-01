@@ -79,15 +79,23 @@
     </v-row>
     <hux-footer slot="footer" data-e2e="footer" max-width="100%">
       <template #left>
-        <huxButton
-            size="large"
-            variant="white"
-            is-tile
-            class="btn-cancel ml-4 btn-border box-shadow-none"
-            @click="restoreState"
-          >
-            Cancel
-          </huxButton>
+        <hux-button
+          size="large"
+          variant="white"
+          is-tile
+          class="
+            text-button
+            ml-auto
+            primary--text
+            mr-3
+            submit-button
+            btn-border
+            box-shadow-none
+          "
+          @click="restoreState"
+        >
+          Cancel
+        </hux-button>
       </template>
       <template #right>
         <hux-button
@@ -187,7 +195,7 @@ export default {
       this.resetSubCategories()
     },
     onSelectMenuItem(item) {
-      if (item.name !== "Select") {
+      if (item.name !== ("Select" && this.currentIndustrySelection)) {
         this.currentIndustrySelection = item.name
         this.showSubCategories = true
         this.resetSubCategories()
