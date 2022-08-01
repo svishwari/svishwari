@@ -219,7 +219,7 @@ class AzureConfig(DevelopmentConfig):
                 ),
             )
         )
-        if Config.ENV_NAME == api_c.HUSDEV2_ENV
+        if Config.ENV_NAME == api_c.AZURE
         else str(
             str(
                 Path(__file__).parent.parent.joinpath(
