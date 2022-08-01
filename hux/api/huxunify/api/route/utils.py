@@ -1255,15 +1255,6 @@ def set_destination_authentication_secrets(
         parameter_name,
         secret,
     ) in authentication_details.items():
-
-        # only store secrets in ssm, otherwise store in object.
-        # if (
-        #     parameter_name
-        #     in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]
-        # ):
-        #     ssm_params[parameter_name] = secret
-        #     continue
-
         # set all destination creds in SSM/KeyVault
         param_name = f"{api_c.PARAM_STORE_PREFIX}-{parameter_name}"
         ssm_params[parameter_name] = param_name
