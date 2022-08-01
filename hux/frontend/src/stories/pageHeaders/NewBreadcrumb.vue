@@ -57,8 +57,16 @@
             {{ item.superscript }}
           </sup>
         </span>
-        <div v-if="item.favorite" class="d-flex pl-2 mt-1">
-          <icon type="Favorite" :size="20" color="white-base"></icon>
+        <div
+          v-if="item.favorite"
+          class="d-flex pl-2 mt-1"
+          @click="favorited = !favorited"
+        >
+          <icon
+            :type="favorited ? 'Favorite - Selected' : 'Favorite'"
+            :size="20"
+            :color="favorited ? 'black' : 'white-base'"
+          ></icon>
         </div>
       </v-breadcrumbs-item>
     </template>
@@ -99,6 +107,11 @@ export default {
       required: false,
       default: false,
     },
+  },
+  data() {
+    return {
+      favorited: false,
+    }
   },
 }
 </script>

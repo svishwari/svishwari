@@ -20,9 +20,8 @@ export default {
     breadcrumbItems: {
       control: { type: "object" },
     },
-    maxBreadcrumbs: {
-      control: { type: "select" },
-      options: ["None", "1", "2", "3", "4", "5"],
+    titleDisabled: {
+      control: { type: "boolean" },
     },
     description: { control: { type: "text" }, icon: [""] },
     callToAction: { control: { type: "boolean" } },
@@ -56,7 +55,7 @@ const Template = (args, { argTypes }) => ({
       </template>
       <template #call-to-action v-if="$props.callToAction" class="new-b3">
         <icon v-for="icons in $props.ctaIcons" :type="icons" size="24" color="primary" class="ml-2 mr-2 mt-1" />
-        <hux-button class="ml-2">button</hux-button>
+        <hux-button class="ml-2 new-b3">button</hux-button>
       </template>
     </page-header>
   `,
