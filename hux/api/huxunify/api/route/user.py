@@ -74,7 +74,7 @@ def before_request():
 
 
 @add_view_to_blueprint(
-    user_bp, f"{api_c.USER_ENDPOINT}/profile", "IndividualUserSearch"
+    user_bp, f"{api_c.USER_ENDPOINT}/{api_c.PROFILE}", "UserProfile"
 )
 class UserProfile(SwaggerView):
     """User Profile Class."""
