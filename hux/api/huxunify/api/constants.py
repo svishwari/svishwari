@@ -1562,6 +1562,7 @@ ONLY_ACTIVE = "only_active"
 CLIENT_PROJECTS_TAG = "client-projects"
 CLIENT_PROJECT_ID = "client_project_id"
 CLIENT_PROJECTS_ENDPOINT = "/client-projects"
+CLIENT_ENDPOINT = "/client"
 
 # Histogram data stub.
 VALUES = "values"

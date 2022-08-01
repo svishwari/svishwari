@@ -196,10 +196,10 @@ class DevelopmentConfig(Config):
     TEST_AUTH_OVERRIDE = False
 
 
-class HUSDEV2Config(DevelopmentConfig):
-    """HUSDEV2 Config Object."""
+class AzureConfig(DevelopmentConfig):
+    """Azure Env Config Object."""
 
-    FLASK_ENV = api_c.HUSDEV2_ENV
+    FLASK_ENV = api_c.AZURE
 
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: Config.MONGO_CONNECTION_STRING,
@@ -293,8 +293,8 @@ def get_config(
 
     if flask_env == api_c.DEVELOPMENT_MODE:
         return DevelopmentConfig
-    if flask_env == api_c.HUSDEV2_ENV:
-        return HUSDEV2Config
+    if flask_env == api_c.AZURE:
+        return AzureConfig
     if flask_env == api_c.TEST_MODE:
         return PyTestConfig
     return Config
