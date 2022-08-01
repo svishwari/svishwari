@@ -40,7 +40,7 @@ steps:
     environment:
       - DEV_PRODUCT=hux-unified-dev
       - PROD_PRODUCT=hux-unified
-      - PROJECTNAME=huxunifylib-database
+      - PROJECTNAME="huxunifylib-database"
 
   CreateWSConfigs:
     stage: create_ws_configs
