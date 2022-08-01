@@ -64,7 +64,7 @@
                 <v-col md="12">
                   <v-card
                     class="mt-3 rounded-lg box-shadow-5 tab-card-1"
-                    height="365"
+                    :height="segmentScores.length > 0 ? '365' : '250'"
                   >
                     <v-progress-linear
                       v-if="segmentComparisonLoading"
@@ -87,9 +87,9 @@
                       :segment-scores="segmentScores"
                       data-e2e="trust-comparison-chart"
                     />
-                    <div v-else class="pt-11">
+                    <div v-else>
                       <empty-page
-                        class="pt-16"
+                        class="pt-12"
                         :type="
                           getEmptyType ? 'no-customer-data' : 'error-on-screens'
                         "
@@ -118,7 +118,7 @@
                   </v-card>
                 </v-col>
               </v-row>
-              <v-row cl>
+              <v-row>
                 <v-col md="8">
                   <link-dropdown
                     v-if="getSegment.length > 0"
@@ -127,8 +127,11 @@
                     @onselect="getSelectedData"
                   ></link-dropdown>
                 </v-col>
-                <v-col md="4">
-                  <div class="d-flex toggle-main-div">
+                <v-col md="4" class="ml-n5">
+                  <div
+                    v-if="getSegment.length > 0"
+                    class="d-flex toggle-main-div"
+                  >
                     <span
                       class="
                         mr-5
@@ -290,7 +293,7 @@
                     </div>
                   </template>
                 </data-cards>
-                <v-card v-else class="box-shadow-5" height="250">
+                <v-card v-else class="box-shadow-5 rounded-lg" height="250">
                   <empty-page
                     class="py-8"
                     :type="emptyPageIcon(segmentErrorState)"
@@ -309,7 +312,10 @@
                   </empty-page>
                 </v-card>
               </div>
-              <div v-if="getSelectedSegment && segmentCount < 5">
+              <div
+                v-if="getSelectedSegment && segmentCount < 5"
+                class="card-width"
+              >
                 <v-list class="add-segment no-data-width" :height="22">
                   <v-list-item @click="filterToggle()">
                     <hux-icon
@@ -329,7 +335,7 @@
                   </v-list-item>
                 </v-list>
               </div>
-              <div v-else-if="getSelectedSegment">
+              <div v-else-if="getSelectedSegment" class="card-width">
                 <v-card class="empty-text">
                   <hux-icon
                     type="critical"
@@ -354,24 +360,26 @@
                 v-if="showAttributes"
                 :data="attributeData.data"
               />
-              <v-card v-else class="pb-12 box-shadow-5" height="250">
-                <empty-page
-                  class="pt-16"
-                  :type="emptyPageIcon(attributeErrorState)"
-                  :size="50"
-                >
-                  <template #title>
-                    <div class="title-no-notification">
-                      {{ attributeTableTitle }}
-                    </div>
-                  </template>
-                  <template #subtitle>
-                    <div class="des-no-notification">
-                      {{ attributeTableDescription }}
-                    </div>
-                  </template>
-                </empty-page>
-              </v-card>
+              <div v-else class="mt-3">
+                <v-card class="pb-12 box-shadow-5 rounded-lg" height="250">
+                  <empty-page
+                    class="pt-16"
+                    :type="emptyPageIcon(attributeErrorState)"
+                    :size="50"
+                  >
+                    <template #title>
+                      <div class="title-no-notification">
+                        {{ attributeTableTitle }}
+                      </div>
+                    </template>
+                    <template #subtitle>
+                      <div class="des-no-notification">
+                        {{ attributeTableDescription }}
+                      </div>
+                    </template>
+                  </empty-page>
+                </v-card>
+              </div>
             </v-tab-item>
           </v-tabs-items>
         </div>

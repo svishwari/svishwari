@@ -1029,7 +1029,9 @@ def group_and_aggregate_datafeed_details_by_date(
                 ]
             # set last processed end for datafeeds aggregated by date
             # i.e. Maximum of last processed end for all grouped datafeeds
-            if (
+            if isinstance(
+                data_feed_by_date.get(api_c.PROCESSED_END_DATE), datetime
+            ) and (
                 not data_feed_by_date.get(api_c.PROCESSED_END_DATE)
                 or data_feed_by_date[api_c.PROCESSED_END_DATE]
                 <= df_detail[api_c.PROCESSED_END_DATE]
@@ -1129,7 +1131,9 @@ def clean_and_aggregate_datafeed_details(
                 ),
                 api_c.PROCESSED_END_DATE: parse(
                     df_detail[api_c.PROCESSED_END_DATE]
-                ),
+                )
+                if df_detail[api_c.PROCESSED_END_DATE] is not None
+                else "",
                 api_c.STATUS: df_detail[api_c.STATUS].title(),
                 api_c.SUB_STATUS: df_detail[api_c.SUB_STATUS].title(),
                 api_c.RECORDS_PROCESSED_PERCENTAGE: {
