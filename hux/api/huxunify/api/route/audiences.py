@@ -1,5 +1,5 @@
 # pylint: disable=unused-argument,too-many-lines
-"""Paths for Orchestration API"""
+"""Paths for Orchestration API."""
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
@@ -14,8 +14,6 @@ from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
-from huxunify.api.route.return_util import HuxResponse
-from huxunify.api.schema.errors import NotFoundError
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     get_delivery_platforms_by_id,
@@ -57,6 +55,7 @@ from huxunify.api.route.decorators import (
     validate_engagement_and_audience,
     requires_access_levels,
 )
+from huxunify.api.route.return_util import HuxResponse
 
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
@@ -66,6 +65,7 @@ from huxunify.api.schema.customers import (
     CustomerRevenueInsightsSchema,
 )
 from huxunify.api.schema.engagement import DestinationEngagedAudienceSchema
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.orchestration import AudienceGetSchema
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
