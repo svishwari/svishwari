@@ -577,7 +577,7 @@ client["trustId"].addSegment = (data) => {
   return http.post("trust_id/segment", data)
 }
 client["trustId"].removeSegmentData = ({ segment_name }) => {
-  return http.delete(`/trust_id/segment?segment_name=${segment_name}`)
+  return http.delete(`/trust_id/segment?segment_name=${encodeURIComponent(segment_name)}`)
 }
 
 export default client
