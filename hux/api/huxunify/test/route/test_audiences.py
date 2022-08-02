@@ -45,6 +45,7 @@ class AudienceDownloadsTest(RouteTestCase):
 
     def setUp(self) -> None:
         """Setup tests."""
+
         config = get_config()
         config.CLOUD_PROVIDER = "aws"
 
@@ -468,10 +469,12 @@ class AudienceInsightsTest(TestCase):
     )
     def test_audience_location_rules_cities(self, city_substring: str) -> None:
         """Test get audience location rules cities.
+
         Args:
             city_substring (str): Substring for which cities need to be
             matched.
         """
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.CITY}/{city_substring}",
@@ -489,10 +492,12 @@ class AudienceInsightsTest(TestCase):
     @given(zip_substring=st.integers(100, 9999))
     def test_audience_location_rules_zip(self, zip_substring: int) -> None:
         """Test get audience location rules zip.
+
         Args:
            zip_substring (int): Substring for which zip codes need to be
            matched.
         """
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.ZIP_CODE}/{zip_substring}",
@@ -511,6 +516,7 @@ class AudienceInsightsTest(TestCase):
 
     def test_audience_location_rules_unknown_field(self) -> None:
         """Test get audience location rules with unknown field."""
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.USER}/ri",
@@ -520,6 +526,7 @@ class AudienceInsightsTest(TestCase):
 
     def test_audience_histogram_rules_age(self) -> None:
         """Test get audience location rules histogram for age field."""
+
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights"
@@ -533,11 +540,13 @@ class AudienceInsightsTest(TestCase):
             f"{api_c.AGE}/histogram",
             headers=t_c.STANDARD_HEADERS,
         )
+
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json.get(api_c.VALUES))
 
     def test_audience_histogram_rules_model(self) -> None:
         """Test get audience rules histogram for model field."""
+
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights"
@@ -551,16 +560,69 @@ class AudienceInsightsTest(TestCase):
             f"{api_c.MODEL}/histogram?{api_c.MODEL_NAME}=propensity_to_unsubscribe",
             headers=t_c.STANDARD_HEADERS,
         )
+
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json.get(api_c.VALUES))
 
+    def test_audience_histogram_rules_age_empty_not_found_response(
+        self,
+    ) -> None:
+        """Test get audience location rules histogram for age field."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights"
+            f"/count-by-age",
+            json={
+                "code": 200,
+                "body": [],
+                "message": "ok",
+            },
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
+            f"{api_c.AGE}/histogram",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_audience_histogram_rules_model_empty_not_found_response(
+        self,
+    ) -> None:
+        """Test get audience rules histogram for model field."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights"
+            f"/counts/by-float-field",
+            json={
+                "code": 200,
+                "body": [],
+                "message": "ok",
+            },
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
+            f"{api_c.MODEL}/histogram?{api_c.MODEL_NAME}=propensity_to_unsubscribe",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
     def test_audience_histogram_rules_model_unknown_name(self) -> None:
         """Test get audience rules histogram for model field unknown name."""
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
             f"{api_c.MODEL}/histogram?{api_c.MODEL_NAME}=propensity_to_leave",
             headers=t_c.STANDARD_HEADERS,
         )
+
         self.assertEqual(response.status_code, 404)
 
     def test_audience_histogram_rules_unknown(self) -> None:
@@ -620,10 +682,11 @@ class AudienceInsightsTest(TestCase):
 
 
 class TestAudienceDestination(TestCase):
-    """Test for Audience Destination"""
+    """Test for Audience Destination."""
 
     def setUp(self):
         """Setup tests."""
+
         self.config = get_config(api_c.TEST_MODE)
         # init mongo patch initially
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
@@ -697,7 +760,8 @@ class TestAudienceDestination(TestCase):
         )
 
     def test_add_destination_audience(self) -> None:
-        """Test Adding destination to audience"""
+        """Test Adding destination to audience."""
+
         destination = {"id": str(self.delivery_platform_doc[db_c.ID])}
 
         response = self.app.post(
@@ -720,7 +784,8 @@ class TestAudienceDestination(TestCase):
         )
 
     def test_delete_destination_audience(self) -> None:
-        """Test Removing destination to audience"""
+        """Test Removing destination to audience."""
+
         destination = {"id": str(self.delivery_platform_doc[db_c.ID])}
 
         # append destination first
