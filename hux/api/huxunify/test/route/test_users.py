@@ -737,7 +737,7 @@ class TestUserRoutes(RouteTestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         # If no users have been requested, the response should be an empty list
-        self.assertEqual([], response.json)
+        self.assertFalse(response.json)
 
     def test_get_rbac_matrix(self):
         """Test get user RBAC matrix."""
