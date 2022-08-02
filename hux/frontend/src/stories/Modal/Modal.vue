@@ -48,41 +48,35 @@
             <huxButton
               v-if="showCancel"
               size="large"
-              variant="none"
-              height="40"
-              width="93"
+              tile
+              variant="secondary"
               :style="{ float: 'left' }"
-              class="box-shadow-none second-cta-btn"
+              class="box-shadow-none button-padding"
               @click="onCancel()"
             >
-              <span class="primary--text font-weight-bold">{{
-                cancelBtnText
-              }}</span>
+              <span class="new-b3">{{ cancelBtnText }}</span>
             </huxButton>
             <huxButton
               v-if="showConfirm"
               size="large"
-              :variant="type"
-              height="40"
-              width="93"
+              tile
+              variant="primary"
               :style="{ float: 'right' }"
+              class="button-padding"
               @click="onSubmit()"
             >
-              <span class="font-weight-bold">{{ confirmBtnText }}</span>
+              <span class="new-b3">{{ confirmBtnText }}</span>
             </huxButton>
             <huxButton
               v-if="showBack"
               size="large"
-              height="40"
-              width="93"
-              variant="none"
-              class="mr-2 box-shadow-none second-cta-btn"
+              tile
+              variant="secondary"
+              class="mr-2 box-shadow-none button-padding"
               :style="{ float: 'right' }"
               @click="onBack()"
             >
-              <span class="primary--text font-weight-bold">{{
-                backBtnText
-              }}</span>
+              <span class="new-b3">{{ backBtnText }}</span>
             </huxButton>
           </slot>
         </div>
@@ -92,7 +86,7 @@
 </template>
 
 <script>
-import huxButton from "@/components/common/huxButton"
+import huxButton from "../huxButton/huxButton2.vue"
 import Icon from "../icons/Icon2.vue"
 export default {
   name: "Modal",
@@ -247,13 +241,7 @@ export default {
     background: var(--v-primary-lighten1);
   }
 }
-
-.second-cta-btn {
-  border: 0.75px solid #007cb0 !important;
-  padding: 12px 24px !important;
-  background-color: white !important;
-  border-radius: 5px;
-  color: #007cb0;
-  font-size: 16px;
+.button-padding {
+  padding: 10px 24px !important;
 }
 </style>

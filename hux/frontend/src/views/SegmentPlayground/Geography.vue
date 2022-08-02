@@ -37,6 +37,7 @@
           v-if="!loading && data.geo.length === 0"
           type="drift-chart-empty"
           :size="50"
+          class="mt-16"
         >
           <template #title>
             <div class="title-no-notification">No audience data to show</div>
@@ -86,9 +87,10 @@ import MapChart from "../../components/common/MapChart/MapChart.vue"
 import MapSlider from "../../components/common/MapChart/mapSlider.vue"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
+import EmptyPage from "@/components/common/EmptyPage.vue"
 export default {
   name: "Geography",
-  components: { Icon, MapChart, MapSlider, MapStateList },
+  components: { Icon, MapChart, MapSlider, MapStateList, EmptyPage },
   props: {
     data: {
       type: Object,

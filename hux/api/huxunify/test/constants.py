@@ -3339,6 +3339,7 @@ TRUST_ID_SAMPLE_USER_SEGMENT = {
             api_c.TYPE: "age",
             api_c.VALUES: ["50 to 54 years"],
             api_c.DESCRIPTION: "Age",
+            api_c.IS_BOOLEAN: False,
         }
     ],
 }

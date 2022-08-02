@@ -24,33 +24,47 @@ def get_trust_id_overview_data(
     Returns:
         (dict): Trust ID overview data
     """
-    overview = get_trust_id_overview(database, filters)
+    overview = get_trust_id_overview(database, filters) or {}
 
-    if not overview:
-        return {}
-    trust_id_overview = {api_c.TRUST_ID_FACTORS: []}
-    for factor_name, factor_ratings in overview.items():
-        if factor_name in api_c.TRUST_ID_LIST_OF_FACTORS:
-            trust_id_overview[api_c.TRUST_ID_FACTORS].append(
-                {
-                    api_c.TRUST_ID_FACTOR_NAME: factor_name,
-                    api_c.TRUST_ID_FACTOR_SCORE: int(
-                        (
-                            factor_ratings[api_c.RATING][api_c.AGREE][
-                                api_c.PERCENTAGE
-                            ]
-                            - factor_ratings[api_c.RATING][api_c.DISAGREE][
-                                api_c.PERCENTAGE
-                            ]
-                        )
-                        * 100
-                    ),
-                    api_c.TRUST_ID_FACTOR_DESCRIPTION: api_c.TRUST_ID_FACTOR_DESCRIPTION_MAP[
-                        factor_name
+    trust_id_overview = {
+        api_c.TRUST_ID_FACTORS: [
+            {
+                api_c.TRUST_ID_FACTOR_NAME: factor_name,
+                api_c.TRUST_ID_FACTOR_SCORE: int(
+                    (
+                        overview[factor_name][api_c.RATING][api_c.AGREE][
+                            api_c.PERCENTAGE
+                        ]
+                        - overview[factor_name][api_c.RATING][api_c.DISAGREE][
+                            api_c.PERCENTAGE
+                        ]
+                    )
+                    * 100
+                )
+                if overview.get(factor_name)
+                else None,
+                api_c.TRUST_ID_FACTOR_DESCRIPTION: api_c.TRUST_ID_FACTOR_DESCRIPTION_MAP[
+                    factor_name
+                ],
+                api_c.OVERALL_CUSTOMER_RATING: {
+                    api_c.RATING: overview[factor_name][api_c.RATING],
+                    api_c.TOTAL_CUSTOMERS: overview[factor_name][
+                        api_c.TOTAL_CUSTOMERS
                     ],
-                    api_c.OVERALL_CUSTOMER_RATING: factor_ratings,
                 }
-            )
+                if overview.get(factor_name)
+                else {
+                    api_c.TOTAL_CUSTOMERS: 0,
+                    api_c.RATING: {
+                        rating: {api_c.COUNT: 0}
+                        for rating in api_c.TRUST_ID_RATING_MAP.values()
+                    },
+                },
+            }
+            for factor_name in api_c.TRUST_ID_LIST_OF_FACTORS
+        ]
+    }
+
     trust_id_overview.update(
         {
             api_c.TRUST_ID_SCORE: round(
@@ -61,6 +75,8 @@ def get_trust_id_overview_data(
                     ]
                 )
             )
+            if overview
+            else None
         }
     )
 
@@ -170,29 +186,6 @@ def get_trust_id_comparison_data_by_segment(
         },
     }
 
-    if not overview_data:
-        comparison_data.update(
-            {
-                factor_name: {
-                    api_c.TRUST_ID_SEGMENT_FILTERS: segment_filters,
-                    api_c.TRUST_ID_ATTRIBUTES: [
-                        {
-                            api_c.TRUST_ID_ATTRIBUTE_TYPE: factor_name,
-                            api_c.TRUST_ID_ATTRIBUTE_NAME: factor_name.title(),
-                            api_c.TRUST_ID_ATTRIBUTE_SCORE: None,
-                            api_c.TRUST_ID_ATTRIBUTE_DESCRIPTION: (
-                                api_c.TRUST_ID_FACTOR_DESCRIPTION_MAP[
-                                    factor_name
-                                ]
-                            ),
-                        }
-                    ],
-                }
-                for factor_name in api_c.TRUST_ID_LIST_OF_FACTORS
-            }
-        )
-        return comparison_data
-
     for factor in overview_data[api_c.TRUST_ID_FACTORS]:
         comparison_data[api_c.OVERVIEW][api_c.TRUST_ID_ATTRIBUTES].append(
             {
@@ -256,7 +249,9 @@ def get_trust_id_comparison_data_by_segment(
                             ]
                         )
                         * 100
-                    ),
+                    )
+                    if trust_id_attribute_ratings
+                    else None,
                 }
             )
 

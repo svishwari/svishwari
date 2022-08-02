@@ -1,5 +1,5 @@
 <template>
-  <div class="white overview-card pa-6 pt-4 mt-7">
+  <div class="white overview-card pa-6 box-shadow-5">
     <div v-if="data">
       <div class="text-h3">HX TrustID scores for all customers</div>
       <div class="d-flex justify-start">
@@ -198,7 +198,7 @@ export default {
 <style lang="scss" scoped>
 .v-application {
   .overview-card {
-    width: 98.4%;
+    width: 100%;
     border-radius: 12px !important;
     ::v-deep {
       .text-h3 {
