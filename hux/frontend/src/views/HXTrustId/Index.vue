@@ -31,13 +31,17 @@
         </template>
       </page-header>
     </template>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
-    <template>
-      <div class="d-flex main-content">
+    <v-progress-linear
+      class="pl-0 pr-0"
+      :active="loading"
+      :indeterminate="loading"
+    />
+    <template >
+      <div v-if="!loading" class="d-flex main-content">
         <div
           class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
         >
-          <overview v-if="!loading" :data="trustIdOverview" />
+          <overview :data="trustIdOverview" />
           <v-tabs v-model="tabOption" class="mt-4">
             <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
             <div class="d-flex">
@@ -55,7 +59,6 @@
             </div>
           </v-tabs>
           <v-tabs-items
-            v-if="!loading"
             v-model="tabOption"
             class="mt-2 tabs-item"
           >
@@ -67,7 +70,6 @@
                     :height="segmentScores.length > 0 ? '365' : '250'"
                   >
                     <v-progress-linear
-                      v-if="segmentComparisonLoading"
                       :active="segmentComparisonLoading"
                       :indeterminate="segmentComparisonLoading"
                     />
@@ -704,15 +706,15 @@ export default {
         : "Attributes will display when data has been uploaded. Please check back later."
     },
   },
-  mounted() {
+  async mounted() {
     this.loading = true
     this.segmentComparisonLoading = true
     try {
-      this.getOverview()
+      await this.getOverview()
     } finally {
-      this.fetchComparisonData()
-      this.fetchSegmentData()
-      this.fetchAttributeData()
+      await this.fetchComparisonData()
+      await this.fetchSegmentData()
+      await this.fetchAttributeData()
       this.loading = false
       this.segmentComparisonLoading = false
     }
@@ -799,19 +801,19 @@ export default {
       })
       this.applyDefaultSegmentChanges()
       this.getTrustIdAttribute()
-      this.$refs.comparisonChart.initializeComparisonChart()
       this.loading = false
+      this.reloadComparisonChart()
     },
     async addSegment(event) {
       this.loading = true
       try {
         await this.addNewSegment(event)
-        this.$refs.comparisonChart.initializeComparisonChart()
         this.switchStatus()
       } finally {
         this.loading = false
         this.isFilterToggled = !this.isFilterToggled
         this.$refs.filters.clear()
+        this.reloadComparisonChart()
       }
     },
     async removeSegment(item) {
@@ -827,13 +829,13 @@ export default {
             defaultValue: true,
           })
           this.getTrustIdAttribute()
-          this.$refs.comparisonChart.initializeComparisonChart()
           this.setAlert({
             type: "success",
             message: `'${item.segment_name}' has been deleted Successfully.`,
           })
 
           this.loading = false
+          this.reloadComparisonChart()
         }
       } catch (error) {
         this.loading = false
@@ -851,6 +853,11 @@ export default {
       let onlyDefault = currentSegments.some((data) => data.default)
       return multipleSegments && (onlyDefault || !onlyDefault) ? false : true
     },
+    reloadComparisonChart() {
+      if (this.$refs.comparisonChart) {
+        this.$refs.comparisonChart.initializeComparisonChart()
+      }
+    }
   },
 }
 </script>
