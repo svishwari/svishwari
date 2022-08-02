@@ -471,21 +471,25 @@ export function aggregateAgeFilters(filters) {
     ) {
       aggregatedFilterEnd = currentFilterEnd
     } else {
-        numericFilters.push(
-          `${aggregatedFilterStart}-${aggregatedFilterEnd} years`
-        )
-        aggregatedFilterStart = currentFilterStart
-        aggregatedFilterEnd = currentFilterEnd
+      numericFilters.push(
+        `${aggregatedFilterStart}-${aggregatedFilterEnd} years`
+      )
+      aggregatedFilterStart = currentFilterStart
+      aggregatedFilterEnd = currentFilterEnd
     }
   })
   if (aggregatedFilterStart) {
     if (aggregatedFilterEnd) {
-      numericFilters.push(`${aggregatedFilterStart}-${aggregatedFilterEnd} years`)
+      numericFilters.push(
+        `${aggregatedFilterStart}-${aggregatedFilterEnd} years`
+      )
     } else {
       numericFilters.push(`${aggregatedFilterStart}+ years`)
     }
   }
-  let finalOut = [...numericFilters, ...stringFilters].filter(data => !data.includes("NaN"))
+  let finalOut = [...numericFilters, ...stringFilters].filter(
+    (data) => !data.includes("NaN")
+  )
   return finalOut
 }
 

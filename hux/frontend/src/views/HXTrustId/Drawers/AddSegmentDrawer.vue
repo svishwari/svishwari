@@ -109,8 +109,7 @@ export default {
 
   computed: {
     filterData() {
-      return this.segmentData.filter(
-        (element) => !element.is_boolean)
+      return this.segmentData.filter((element) => !element.is_boolean)
     },
     segmentFilters() {
       const payload = []

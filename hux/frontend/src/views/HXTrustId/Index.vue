@@ -302,10 +302,7 @@
                 </empty-page>
               </v-card>
             </div>
-            <div
-              v-if="getSelectedSegment && segmentCount < 5"
-              class="card-width"
-            >
+            <div v-if="noDefaultSegments.length < 5" class="card-width">
               <v-list class="add-segment no-data-width" :height="22">
                 <v-list-item @click="filterToggle()">
                   <hux-icon
@@ -325,10 +322,7 @@
                 </v-list-item>
               </v-list>
             </div>
-            <div
-              v-if="getSelectedSegment && segmentCount > 5"
-              class="card-width"
-            >
+            <div v-else class="card-width">
               <v-card class="empty-text">
                 <hux-icon
                   type="critical"
@@ -693,6 +687,11 @@ export default {
         ? "Our team is working hard to fix it. Please be patient and try again soon!"
         : "Attributes will display when data has been uploaded. Please check back later."
     },
+    noDefaultSegments() {
+      return this.getSelectedSegment
+        ? this.getSelectedSegment.segments.filter((data) => !data.default)
+        : []
+    },
   },
   async mounted() {
     this.loading = true
@@ -845,7 +844,7 @@ export default {
       if (this.$refs.comparisonChart) {
         this.$refs.comparisonChart.initializeComparisonChart()
       }
-    }
+    },
   },
 }
 </script>
