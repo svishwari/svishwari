@@ -56,9 +56,7 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
         )
 
     # pull the secrets from ssm
-    for secret in api_c.DESTINATION_SECRETS[destination_type][
-        api_c.AWS_SSM_NAME
-    ]:
+    for secret in api_c.DESTINATION_SECRETS[destination_type]:
         auth[secret] = CloudClient().get_secret(auth[secret])
 
     if destination_type == db_c.DELIVERY_PLATFORM_SFMC:
