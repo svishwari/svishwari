@@ -133,7 +133,6 @@ def get_health_check() -> HealthCheck:
     health.add_check(check_mongo_connection)
     health.add_check(check_okta_connection)
     health.add_check(CloudClient().health_check_secret_storage)
-    health.add_check(CloudClient().health_check_batch_service)
     health.add_check(CloudClient().health_check_storage_service)
     health.add_check(check_cdm_api_connection)
     health.add_check(check_cdp_connections_api_connection)

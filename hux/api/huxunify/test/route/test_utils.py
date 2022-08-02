@@ -98,13 +98,6 @@ class TestRouteUtils(TestCase):
         """Test health check."""
 
         for subclass in CloudClient.__subclasses__():
-            # mock get_store_value of cloud secret store
-            mock.patch.object(
-                subclass,
-                "health_check_batch_service",
-                return_value=(True, "Batch service available"),
-            ).start()
-
             mock.patch.object(
                 subclass,
                 "health_check_storage_service",
