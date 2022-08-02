@@ -49,7 +49,7 @@
           </template>
         </empty-page>
         <empty-page
-          v-else
+          v-if="!data"
           class="title-no-notification"
           type="error-on-screens"
           :size="50"
