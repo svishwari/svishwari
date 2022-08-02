@@ -392,7 +392,7 @@
           v-else-if="!loading && hasDataFeeds == 0"
           class="empty-error-card mx-7"
         >
-          <v-row class="data-feed-frame py-13">
+          <v-row class="data-feed-frame py-13 mt-4">
             <empty-page
               v-if="!datafeedErrorState"
               type="lift-table-empty"
