@@ -4,6 +4,7 @@ from unittest import TestCase
 import pytest
 import requests
 from conftest import Crud
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestNotifications(TestCase):
@@ -12,6 +13,9 @@ class TestNotifications(TestCase):
     NOTIFICATIONS = "notifications"
     COLLECTION = "notifications"
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.NOTIFICATIONS.GET_DISTINCT_USERS
+    )
     def test_distinct_users(self) -> None:
         """Test GET /notifications/users."""
 
@@ -23,6 +27,9 @@ class TestNotifications(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.NOTIFICATIONS.POST_CREATE_NOTIFICATION
+    )
     def test_create_notification(self) -> None:
         """Test create a notification."""
 
@@ -42,6 +49,9 @@ class TestNotifications(TestCase):
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.NOTIFICATIONS.GET_ALL_NOTIFICATIONS
+    )
     def test_get_notifications(self) -> None:
         """Test get notifications."""
 
@@ -53,6 +63,9 @@ class TestNotifications(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.NOTIFICATIONS.GET_NOTIFICATION
+    )
     def test_get_notification(self) -> None:
         """Test get a notification."""
 
@@ -80,6 +93,9 @@ class TestNotifications(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.DELETE, Endpoints.NOTIFICATIONS.DELETE_NOTIFICATION
+    )
     def test_delete_notification(self) -> None:
         """Test delete a notification."""
 

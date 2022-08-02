@@ -7,11 +7,12 @@ import pytest
 from _pytest.config import Config
 from requests.exceptions import MissingSchema
 from bson import ObjectId
-from pymongo import MongoClient
 from get_okta_token import OktaOIDC
 
 
 # change log level from WARNING to INFO and initialise logger for conftest
+from prometheus_metrics import push_test_metrics
+
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 # ENV VARS
@@ -23,17 +24,17 @@ OKTA_PARAM_DICT = {
     "scopes": "openid+profile+email",
     "redirect_uri": getenv("OKTA_REDIRECT_URI"),
 }
-# MONGO_DB_CONFIG = {
-#     "host": getenv("MONGO_DB_HOST"),
-#     "port": int(getenv("MONGO_DB_PORT")),
-#     "w": 1,
-#     "username": getenv("MONGO_DB_USERNAME"),
-#     "password": getenv("MONGO_DB_PASSWORD"),
-#     "ssl": True,
-#     "tlsCAFile": str(
-#         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
-#     ),
-# }
+MONGO_DB_CONFIG = {
+    "host": getenv("MONGO_DB_HOST"),
+    "port": int(getenv("MONGO_DB_PORT")),
+    "w": 1,
+    "username": getenv("MONGO_DB_USERNAME"),
+    "password": getenv("MONGO_DB_PASSWORD"),
+    "ssl": True,
+    "tlsCAFile": str(
+        Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
+    ),
+}
 ACCESS_TOKEN = "ACCESS_TOKEN"
 DATABASE = "data_management"
 INT_TEST_API_VERSION = "INT_TEST_API_VERSION"
@@ -123,6 +124,8 @@ def pytest_unconfigure(config):
     # collections
     int_test_user_name = getenv("INT_TEST_USER_NAME")
     LOGGER.info("Integration test user's user name: %s", int_test_user_name)
+
+    push_test_metrics()
 
     for (
         collection_name,

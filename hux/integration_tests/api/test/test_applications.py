@@ -4,7 +4,7 @@ from unittest import TestCase
 import pytest
 import requests
 from conftest import Crud
-from huxunify.api.prometheus import record_test_result
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestApplications(TestCase):
@@ -13,10 +13,9 @@ class TestApplications(TestCase):
     APPLICATIONS = "applications"
     COLLECTION = "applications"
 
-    @record_test_result("GET /api/v1/audiences")
-    def test_example(self):
-        self.assertEqual(0, 1)
-
+    @record_test_result(
+        HttpMethod.GET, Endpoints.APPLICATIONS.GET_ALL_APPLICATIONS
+    )
     def test_get_all_applications(self):
         """Test get all applications"""
 
@@ -28,6 +27,9 @@ class TestApplications(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.APPLICATIONS.POST_CREATE_APPLICATION
+    )
     def test_create_application(self):
         """Test create application"""
 
@@ -46,6 +48,9 @@ class TestApplications(TestCase):
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.PATCH, Endpoints.APPLICATIONS.PATCH_UPDATE_APPLICATION
+    )
     def test_update_application(self):
         """Test update application"""
 

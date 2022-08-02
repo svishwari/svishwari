@@ -4,6 +4,7 @@ from unittest import TestCase
 from http import HTTPStatus
 import pytest
 import requests
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestTrustId(TestCase):
@@ -25,6 +26,7 @@ class TestTrustId(TestCase):
         self.assertIsInstance(response.json(), list)
         self.assertGreaterEqual(len(response.json()), 1)
 
+    @record_test_result(HttpMethod.GET, Endpoints.TRUST_ID.GET_ATTRIBUTES)
     def test_get_trust_id_attributes(self):
         """Test get trust ID attributes data."""
 
@@ -38,6 +40,7 @@ class TestTrustId(TestCase):
         self.assertIsInstance(response.json(), list)
         self.assertGreaterEqual(len(response.json()), 1)
 
+    @record_test_result(HttpMethod.GET, Endpoints.TRUST_ID.GET_COMPARISON_DATA)
     def test_get_trust_id_comparison(self):
         """Test get trust ID comparison."""
 
@@ -51,6 +54,7 @@ class TestTrustId(TestCase):
         self.assertIsInstance(response.json(), list)
         self.assertGreaterEqual(len(response.json()), 1)
 
+    @record_test_result(HttpMethod.GET, Endpoints.TRUST_ID.GET_OVERIVEW)
     def test_get_trust_id_overview(self):
         """Test get trust ID overview data."""
 
@@ -63,8 +67,10 @@ class TestTrustId(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(HttpMethod.POST, Endpoints.TRUST_ID.POST_ADD_SEGMENT)
     def test_add_and_remove_trust_id_segment(self):
         """Test adding and removing trust ID segment for a user."""
+        # TODO https://jira.hux.deloitte.com/browse/HUS-3679
 
         segment_name = (
             f"E2E test_trust_id Integration Test-{int(time() * 1000)}"
