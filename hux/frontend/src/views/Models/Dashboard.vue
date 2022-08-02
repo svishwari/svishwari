@@ -763,9 +763,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-::v-deep .hux-data-table .table-overflow {
-  overflow-x: inherit !important;
-}
 .model-dashboard-wrap {
   .tabs-item {
     overflow: hidden !important;
