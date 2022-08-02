@@ -185,15 +185,13 @@ class DevelopmentConfig(Config):
     }
     if Config.MONGO_SSL_FLAG:
         if Config.CLOUD_PROVIDER == api_c.AZURE:
-            MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = (
-                str(
-                    PurePath(
-                        "/certs",
-                        config(
-                            api_c.TLS_CA_CERT_KEY_FILE_NAME,
-                            default="mongodb-ca-cert",
-                        ),
-                    )
+            MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = str(
+                PurePath(
+                    "/certs",
+                    config(
+                        api_c.TLS_CA_CERT_KEY_FILE_NAME,
+                        default="mongodb-ca-cert",
+                    ),
                 )
             )
         else:
