@@ -178,6 +178,12 @@ export default {
           box-shadow: none !important;
           background: var(--v-primary-lighten2);
           height: 40px !important;
+          &:first-child {
+            border-radius: 12px 0px 0px 0px;
+          }
+          &:last-child {
+            border-radius: 0px 12px 0px 0px;
+          }
         }
       }
     }
@@ -198,7 +204,7 @@ export default {
     }
 
     border-radius: 12px 12px 0px 0px;
-    overflow: hidden;
+    overflow: scroll;
   }
 
   .col-overflow {
