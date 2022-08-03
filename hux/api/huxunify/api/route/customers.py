@@ -139,17 +139,13 @@ class CustomerOverview(SwaggerView):
             {"token": token_response[0]},
         )
 
-        customers_overview[
-            api_c.IDR_INSIGHTS
-        ] = Caching.check_and_return_cache(
+        customers_overview[api_c.IDR_INSIGHTS] = Caching.check_and_return_cache(
             f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}",
             get_identity_overview,
             {"token": token_response[0]},
         )
 
-        customers_overview[
-            api_c.GEOGRAPHICAL
-        ] = Caching.check_and_return_cache(
+        customers_overview[api_c.GEOGRAPHICAL] = Caching.check_and_return_cache(
             f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.GEOGRAPHICAL}",
             get_demographic_by_state,
             {
@@ -239,9 +235,7 @@ class CustomerPostOverview(SwaggerView):
             for y in x.get(api_c.AUDIENCE_SECTION_FILTERS, [])
             if y == {api_c.AUDIENCE_FILTER_VALUE: ""}
         ):
-            logger.error(
-                "Invalid filter passed in to retrieve customer data overview."
-            )
+            logger.error("Invalid filter passed in to retrieve customer data overview.")
             return (
                 CustomerOverviewSchema().dump({}),
                 HTTPStatus.OK,
@@ -258,7 +252,7 @@ class CustomerPostOverview(SwaggerView):
 
         filters = convert_unique_city_filter(request.json)
         convert_filters_for_events(filters, event_types)
-        convert_filters_for_contact_preference(filters)
+        convert_filters_for_contact_preference(filters=filters, convert_for_cdm=True)
 
         # check range filters
         # if a range type was passed in but range is empty.
@@ -289,17 +283,13 @@ class CustomerPostOverview(SwaggerView):
             {"token": token_response[0], api_c.AUDIENCE_FILTERS: filters},
         )
 
-        customers_overview[
-            api_c.IDR_INSIGHTS
-        ] = Caching.check_and_return_cache(
+        customers_overview[api_c.IDR_INSIGHTS] = Caching.check_and_return_cache(
             {"endpoint": f"{api_c.IDR_ENDPOINT}.{api_c.OVERVIEW}", **filters},
             get_identity_overview,
             {"token": token_response[0], api_c.AUDIENCE_FILTERS: filters},
         )
 
-        customers_overview[
-            api_c.GEOGRAPHICAL
-        ] = Caching.check_and_return_cache(
+        customers_overview[api_c.GEOGRAPHICAL] = Caching.check_and_return_cache(
             {
                 "endpoint": f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.GEOGRAPHICAL}",
                 **filters,
@@ -435,18 +425,12 @@ class IDROverview(SwaggerView):
                 {
                     api_c.OVERVIEW: idr_overview,
                     api_c.DATE_RANGE: {
-                        api_c.START_DATE: min(
-                            [x[api_c.DAY] for x in trend_data]
-                        )
+                        api_c.START_DATE: min([x[api_c.DAY] for x in trend_data])
                         if trend_data
-                        else datetime.strptime(
-                            start_date, api_c.DEFAULT_DATE_FORMAT
-                        ),
+                        else datetime.strptime(start_date, api_c.DEFAULT_DATE_FORMAT),
                         api_c.END_DATE: max([x[api_c.DAY] for x in trend_data])
                         if trend_data
-                        else datetime.strptime(
-                            end_date, api_c.DEFAULT_DATE_FORMAT
-                        ),
+                        else datetime.strptime(end_date, api_c.DEFAULT_DATE_FORMAT),
                     },
                 }
             ),
@@ -485,9 +469,7 @@ class CustomersListview(SwaggerView):
             "schema": CustomersSchema,
             "description": "Customers list.",
         },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get customers."
-        },
+        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get customers."},
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
@@ -531,9 +513,7 @@ class CustomersListview(SwaggerView):
         offset = (batch_number - 1) * batch_size
 
         if user.get(api_c.USER_PII_ACCESS) is True:
-            redacted_data = get_customer_profiles(
-                token_response[0], batch_size, offset
-            )
+            redacted_data = get_customer_profiles(token_response[0], batch_size, offset)
         else:
             Caching.check_and_return_cache(
                 f"{api_c.CUSTOMERS_ENDPOINT}.{batch_number}.{batch_size}",
@@ -553,13 +533,9 @@ class CustomersListview(SwaggerView):
                     token_response[0], batch_size, offset
                 )
                 redacted_data = {
-                    api_c.TOTAL_CUSTOMERS: customer_list.get(
-                        api_c.TOTAL_CUSTOMERS
-                    ),
+                    api_c.TOTAL_CUSTOMERS: customer_list.get(api_c.TOTAL_CUSTOMERS),
                     api_c.CUSTOMERS_TAG: [
-                        redact_fields(
-                            x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS
-                        )
+                        redact_fields(x, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS)
                         for x in customer_list.get(api_c.CUSTOMERS_TAG)
                     ],
                 }
@@ -633,9 +609,7 @@ class CustomerProfileSearch(SwaggerView):
             Tuple[dict, int]: dict of customer profile, HTTP status code.
         """
         token_response = get_token_from_request(request)
-        redact = Validation.validate_bool(
-            request.args.get(api_c.REDACT_FIELD, "True")
-        )
+        redact = Validation.validate_bool(request.args.get(api_c.REDACT_FIELD, "True"))
 
         if user.get(api_c.USER_PII_ACCESS) is True and not redact:
             redacted_data = get_customer_profile(token_response[0], hux_id)
@@ -692,9 +666,7 @@ class IDRDataFeeds(SwaggerView):
             "schema": {"type": "array", "items": DataFeedSchema},
             "description": "Identity Resolution Data Feeds",
         },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get IDR Data Feeds."
-        },
+        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get IDR Data Feeds."},
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
@@ -819,8 +791,7 @@ class IDRDataFeedDetails(SwaggerView):
             )
             stub_end_date = datetime.utcnow() - relativedelta(days=1)
             delta_days = (
-                stub_end_date
-                - max([data[api_c.TIMESTAMP] for data in data_feeds])
+                stub_end_date - max([data[api_c.TIMESTAMP] for data in data_feeds])
             ).days
             data_feed[api_c.STITCHED][api_c.STITCHED_TIMESTAMP] = data_feed[
                 api_c.STITCHED
@@ -857,9 +828,7 @@ class CustomerGeoVisualView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler(
-        custom_message={
-            ZeroDivisionError: {"message": api_c.ZERO_AUDIENCE_SIZE}
-        }
+        custom_message={ZeroDivisionError: {"message": api_c.ZERO_AUDIENCE_SIZE}}
     )
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[Response, int]:
@@ -1143,9 +1112,7 @@ class CustomerEvents(SwaggerView):
             start_date = request.json.get(api_c.START_DATE)
             end_date = min(
                 request.json.get(api_c.END_DATE),
-                datetime.strftime(
-                    datetime.utcnow(), api_c.DEFAULT_DATE_FORMAT
-                ),
+                datetime.strftime(datetime.utcnow(), api_c.DEFAULT_DATE_FORMAT),
             )
         else:
             start_date, end_date = get_start_end_dates(request, 6)
