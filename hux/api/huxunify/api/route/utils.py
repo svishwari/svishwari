@@ -1420,34 +1420,69 @@ def convert_filters_for_events(filters: dict, event_types: List[dict]) -> None:
 
 
 # pylint: disable=line-too-long
-def convert_filters_for_contact_preference(filters: dict) -> None:
-    """Method to convert filters for contact preference.
+def convert_filters_for_contact_preference(
+    filters: dict, convert_for_cdm: bool = False
+) -> None:
+    """Method to convert filters for contact preference and return the
+    converted audience filters.
 
     Args:
         filters (dict): Audience filters.
+        convert_for_cdm (bool): If filters need to be converted/translated to
+            be compatible for CDM.
     """
 
-    for section in filters[api_c.AUDIENCE_FILTERS]:
-        for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
-            if (
-                section_filter.get(api_c.AUDIENCE_FILTER_FIELD)
-                == api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE
-            ):
-                section_filter_value = section_filter.get(
-                    api_c.AUDIENCE_FILTER_VALUE
+    if filters:
+        for section in filters[api_c.AUDIENCE_FILTERS]:
+            for section_filter in section[api_c.AUDIENCE_SECTION_FILTERS]:
+                section_filter_field = section_filter.get(
+                    api_c.AUDIENCE_FILTER_FIELD
                 )
                 if (
-                    section_filter_value
-                    in api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES
+                    convert_for_cdm
+                    and section_filter_field
+                    == api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE
+                ):
+                    section_filter_value = section_filter.get(
+                        api_c.AUDIENCE_FILTER_VALUE
+                    )
+                    if (
+                        section_filter_value
+                        in api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_UNIFIED
+                    ):
+                        section_filter.update(
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDP_MAP.get(
+                                    section_filter_value
+                                )
+                            }
+                        )
+                        section_filter.update({api_c.VALUE: True})
+                elif (
+                    not convert_for_cdm
+                    and section_filter_field
+                    in api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDM
                 ):
                     section_filter.update(
                         {
-                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDP_MAP.get(
-                                section_filter_value
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE
+                        }
+                    )
+                    section_filter.update(
+                        {
+                            api_c.VALUE: next(
+                                (
+                                    key
+                                    for (
+                                        key,
+                                        value,
+                                    ) in api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDP_MAP.items()
+                                    if value == section_filter_field
+                                ),
+                                None,
                             )
                         }
                     )
-                    section_filter.update({api_c.VALUE: True})
 
 
 # pylint: disable=unused-variable

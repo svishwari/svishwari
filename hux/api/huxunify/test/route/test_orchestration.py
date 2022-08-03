@@ -114,6 +114,19 @@ class OrchestrationRouteTest(RouteTestCase):
                 set_delivery_platform(self.database, **destination)
             )
 
+        self.contact_preference_audience_filter = [
+            {
+                api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                api_c.AUDIENCE_SECTION_FILTERS: [
+                    {
+                        api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE,
+                        api_c.AUDIENCE_FILTER_TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                        api_c.AUDIENCE_FILTER_VALUE: api_c.EMAIL,
+                    }
+                ],
+            }
+        ]
+
         audiences = [
             {
                 db_c.AUDIENCE_NAME: "Test Audience",
@@ -154,6 +167,23 @@ class OrchestrationRouteTest(RouteTestCase):
                 ],
                 api_c.USER_NAME: self.user_name,
                 "audience_tags": {api_c.INDUSTRY: [api_c.HOSPITALITY]},
+            },
+            {
+                db_c.AUDIENCE_NAME: "Test Audience contact preference",
+                "audience_filters": [
+                    {
+                        api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                        api_c.AUDIENCE_SECTION_FILTERS: [
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_PREFERENCE_EMAIL,
+                                api_c.AUDIENCE_FILTER_TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                                api_c.AUDIENCE_FILTER_VALUE: True,
+                            }
+                        ],
+                    }
+                ],
+                api_c.USER_NAME: self.user_name,
+                "audience_tags": {api_c.INDUSTRY: [api_c.AUTOMOTIVE]},
             },
         ]
 
@@ -686,6 +716,13 @@ class OrchestrationRouteTest(RouteTestCase):
         self.assertIn(api_c.AUDIENCE_INSIGHTS, audience)
         self.assertIsInstance(audience[api_c.AUDIENCE_INSIGHTS], dict)
 
+        self.assertIn(api_c.AUDIENCE_FILTERS, audience)
+        self.assertIsInstance(audience[api_c.AUDIENCE_FILTERS], list)
+        self.assertListEqual(
+            self.audiences[0][api_c.AUDIENCE_FILTERS],
+            audience[api_c.AUDIENCE_FILTERS],
+        )
+
         # validate the facebook destination in the audience is set to
         # "Not delivered"
         for engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
@@ -720,6 +757,39 @@ class OrchestrationRouteTest(RouteTestCase):
             audience.get(api_c.DIGITAL_ADVERTISING, {})
             .get(api_c.MATCH_RATES, [])[0]
             .get(api_c.MATCH_RATE)
+        )
+
+    def test_get_audience_with_contact_preference(self):
+        """Test get audience with contact preference filter attribute set."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{self.audience_api_endpoint}/{self.audiences[2][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            ObjectId(audience[db_c.OBJECT_ID]), self.audiences[2][db_c.ID]
+        )
+        self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_DISABLED)
+        self.assertFalse(audience[api_c.IS_LOOKALIKE])
+
+        self.assertIn(api_c.AUDIENCE_INSIGHTS, audience)
+        self.assertIsInstance(audience[api_c.AUDIENCE_INSIGHTS], dict)
+
+        self.assertIn(api_c.AUDIENCE_FILTERS, audience)
+        self.assertIsInstance(audience[api_c.AUDIENCE_FILTERS], list)
+        self.assertListEqual(
+            self.contact_preference_audience_filter,
+            audience[api_c.AUDIENCE_FILTERS],
         )
 
     def test_get_lookalike_audience(self):
@@ -1595,6 +1665,34 @@ class OrchestrationRouteTest(RouteTestCase):
             api_c.HEALTHCARE, audiences[1][api_c.TAGS][api_c.INDUSTRY]
         )
 
+    def test_get_audiences_with_contact_preference_attribute_filters(self):
+        """Test get all audiences with contact preference attribute filters."""
+
+        response = self.app.get(
+            f"{self.audience_api_endpoint}?{api_c.WORKED_BY}=True&"
+            f"{api_c.ATTRIBUTE}={api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audiences_batch = response.json
+        audiences = audiences_batch[api_c.AUDIENCES]
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audiences)
+        self.assertEqual(1, len(audiences))
+        self.assertEqual(
+            str(self.audiences[2][db_c.ID]), audiences[0][api_c.ID]
+        )
+        self.assertIn(api_c.TAGS, audiences[0])
+        self.assertIn(
+            api_c.AUTOMOTIVE, audiences[0][api_c.TAGS][api_c.INDUSTRY]
+        )
+        self.assertIn(api_c.AUDIENCE_FILTERS, audiences[0])
+        self.assertIsInstance(audiences[0][api_c.AUDIENCE_FILTERS], list)
+        self.assertListEqual(
+            self.contact_preference_audience_filter,
+            audiences[0][api_c.AUDIENCE_FILTERS],
+        )
+
     def test_get_audiences_with_batch_offset(self):
         """Test get all audiences with batch offset."""
 
@@ -1607,7 +1705,7 @@ class OrchestrationRouteTest(RouteTestCase):
         audiences = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
-        self.assertEqual(audiences[api_c.TOTAL_RECORDS], 3)
+        self.assertEqual(4, audiences[api_c.TOTAL_RECORDS])
         self.assertEqual(len(audiences[api_c.AUDIENCES]), 1)
         self.assertEqual(
             str(self.audiences[0][db_c.ID]),
@@ -1646,13 +1744,13 @@ class OrchestrationRouteTest(RouteTestCase):
         audiences = audiences_batch[api_c.AUDIENCES]
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
-        self.assertEqual(3, len(audiences))
+        self.assertEqual(4, len(audiences))
         self.assertEqual(
             str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
         )
         self.assertEqual(audiences[0][db_c.CREATED_BY], self.user_name)
         self.assertEqual(
-            str(self.lookalike_audience_doc[db_c.ID]), audiences[2][api_c.ID]
+            str(self.lookalike_audience_doc[db_c.ID]), audiences[3][api_c.ID]
         )
 
     def test_edit_lookalike_audience(self):

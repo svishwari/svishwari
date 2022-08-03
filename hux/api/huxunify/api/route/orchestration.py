@@ -434,14 +434,25 @@ class AudienceView(SwaggerView):
         ):
             filter_dict[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
-        attribute_list = request.args.getlist(api_c.ATTRIBUTE)
         events_list = request.args.getlist(api_c.EVENTS)
         # set the attribute_list to filter_dict only if it is populated and
         # validation is successful
         if events_list:
             filter_dict[db_c.EVENT] = events_list
 
+        attribute_list = request.args.getlist(api_c.ATTRIBUTE)
         if attribute_list:
+            # if the attribute filter list from the request contains contact_
+            # preference, then update the filter dict with the CDM specific
+            # filters the audiences collection is set
+            if api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE in attribute_list:
+                filter_dict[
+                    api_c.CONTACT_PREFERENCE_ATTRIBUTE
+                ] = api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDM
+                # remove the contact_preference filter from the attribute_list
+                attribute_list.remove(api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE)
+
+            # update the filter_dict
             filter_dict[api_c.ATTRIBUTE] = attribute_list
 
         industry_tag_list = request.args.getlist(api_c.INDUSTRY_TAG)
@@ -607,6 +618,16 @@ class AudienceView(SwaggerView):
                 audience[db_c.ID] in favorite_audiences
             )
 
+            # convert contact preference in audience filters back to be
+            # compatible for Unified UI
+            convert_filters_for_contact_preference(
+                filters={
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
+                }
+            )
+
         lookalikes_count = 0
 
         # fetch lookalike audiences if lookalikeable is set to false as
@@ -629,23 +650,48 @@ class AudienceView(SwaggerView):
                     ]
                 )
 
+            attribute_list = request.args.getlist(api_c.ATTRIBUTE)
             if attribute_list:
-                query_filter["$and"].extend(
-                    [
-                        {
-                            "$and": [
-                                {
-                                    db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
-                                        "$regex": re.compile(
-                                            rf"^{attribute}$(?i)"
-                                        )
+                if api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE in attribute_list:
+                    query_filter["$and"].extend(
+                        [
+                            {
+                                "$or": [
+                                    {
+                                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                                            "$regex": re.compile(
+                                                rf"^{attribute}$(?i)"
+                                            )
+                                        }
                                     }
-                                }
-                                for attribute in attribute_list
-                            ]
-                        }
-                    ]
-                )
+                                    for attribute in api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDM
+                                ]
+                            }
+                        ]
+                    )
+                    # remove the contact_preference filter from the
+                    # attribute_list
+                    attribute_list.remove(
+                        api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE
+                    )
+
+                if attribute_list:
+                    query_filter["$and"].extend(
+                        [
+                            {
+                                "$and": [
+                                    {
+                                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                                            "$regex": re.compile(
+                                                rf"^{attribute}$(?i)"
+                                            )
+                                        }
+                                    }
+                                    for attribute in attribute_list
+                                ]
+                            }
+                        ]
+                    )
 
             if industry_tag_list:
                 query_filter["$and"].extend(
@@ -723,6 +769,16 @@ class AudienceView(SwaggerView):
                         ),
                     }
                     if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
+                        # convert contact preference in lookalike audience
+                        # filters back to be compatible for Unified UI
+                        convert_filters_for_contact_preference(
+                            filters={
+                                api_c.AUDIENCE_FILTERS: lookalike.get(
+                                    db_c.LOOKALIKE_SOURCE_AUD_FILTERS, None
+                                )
+                            }
+                        )
+
                         # rename the key
                         lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
                             db_c.LOOKALIKE_SOURCE_AUD_FILTERS
@@ -1071,6 +1127,16 @@ class AudienceGetView(SwaggerView):
             }
         )
 
+        # convert contact preference in audience filters back to be compatible
+        # for Unified UI
+        convert_filters_for_contact_preference(
+            filters={
+                api_c.AUDIENCE_FILTERS: audience.get(
+                    api_c.AUDIENCE_FILTERS, None
+                )
+            }
+        )
+
         return HuxResponse.OK(
             data=audience, data_schema=AudienceGetSchema(unknown=INCLUDE)
         )
@@ -1311,7 +1377,12 @@ class AudiencePostView(SwaggerView):
         )
 
         convert_filters_for_events(audience_filters, event_types)
-        convert_filters_for_contact_preference(audience_filters)
+        # convert contact preference in audience filters to be compatible for
+        # CDM
+        convert_filters_for_contact_preference(
+            filters=audience_filters, convert_for_cdm=True
+        )
+
         # get live audience size
         customers = get_customers_overview(
             token_response[0],
@@ -1330,6 +1401,16 @@ class AudiencePostView(SwaggerView):
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
             audience_tags=body.get(api_c.TAGS, None),
+        )
+
+        # convert contact preference in audience filters back to be compatible
+        # for Unified UI
+        convert_filters_for_contact_preference(
+            filters={
+                api_c.AUDIENCE_FILTERS: audience_doc.get(
+                    api_c.AUDIENCE_FILTERS, None
+                )
+            }
         )
 
         # add notification

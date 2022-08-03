@@ -325,6 +325,7 @@ WIN_BACK_AUDIENCE = "win_back_audience"
 WIN_BACK_AUDIENCE_STR = "Win-back Audience"
 TAGS = "tags"
 INDUSTRY_TAG = "industry_tag"
+CONTACT_PREFERENCE_ATTRIBUTE = "contact_preference_attribute"
 
 AUDIENCE_TYPE = "audience_type"
 AUDIENCE_TYPE_NAME = "name"
