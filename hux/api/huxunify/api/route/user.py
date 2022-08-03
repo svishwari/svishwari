@@ -984,10 +984,9 @@ class UsersRequested(SwaggerView):
 
         if not jira_issues:
             logger.info(
-                "No user requests found for user with user name %s.",
+                "No users requested by %s.",
                 user[api_c.USER_NAME],
             )
-            return {"message": "No user requests found."}, HTTPStatus.OK
 
         return (
             jsonify(
