@@ -39,7 +39,9 @@ class TestRouteUtils(TestCase):
     def test_handle_api_exception(self):
         """Test handle API exception."""
         exception = BaseException()
-        response = handle_api_exception(exception, description="Exception Raised")
+        response = handle_api_exception(
+            exception, description="Exception Raised"
+        )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status)
         self.assertEqual(HTTPStatus.BAD_REQUEST.description, response.title)
@@ -154,7 +156,9 @@ class TestRouteUtils(TestCase):
         """Test update metrics."""
 
         target_id = ObjectId()
-        perf_metric = update_metrics(target_id, "test_name", [], [], api_c.DISPLAY_ADS)
+        perf_metric = update_metrics(
+            target_id, "test_name", [], [], api_c.DISPLAY_ADS
+        )
 
         self.assertEqual(str(target_id), perf_metric.get(api_c.ID))
         self.assertEqual("test_name", perf_metric.get(api_c.NAME))
@@ -256,7 +260,9 @@ class TestRouteUtils(TestCase):
         state=st.sampled_from(["Gotham", "Wakanda", "Starling"]),
         country=st.sampled_from(["USA"]),
     )
-    def test_convert_unique_city_filter(self, city: str, state: str, country: str):
+    def test_convert_unique_city_filter(
+        self, city: str, state: str, country: str
+    ):
         """Test conversion to unique city filters.
 
         Args:
@@ -285,7 +291,11 @@ class TestRouteUtils(TestCase):
         self.assertTrue(response)
         self.assertEqual(
             2,
-            len(response[api_c.AUDIENCE_FILTERS][0][api_c.AUDIENCE_SECTION_FILTERS]),
+            len(
+                response[api_c.AUDIENCE_FILTERS][0][
+                    api_c.AUDIENCE_SECTION_FILTERS
+                ]
+            ),
         )
         section_filters = []
 
@@ -297,9 +307,16 @@ class TestRouteUtils(TestCase):
                 section_filter[api_c.AUDIENCE_FILTER_FIELD]
                 == api_c.AUDIENCE_FILTER_CITY
             ):
-                self.assertEqual(city, section_filter[api_c.AUDIENCE_FILTER_VALUE])
-            if section_filter[api_c.AUDIENCE_FILTER_FIELD] == api_c.STATE.title():
-                self.assertEqual(state, section_filter[api_c.AUDIENCE_FILTER_VALUE])
+                self.assertEqual(
+                    city, section_filter[api_c.AUDIENCE_FILTER_VALUE]
+                )
+            if (
+                section_filter[api_c.AUDIENCE_FILTER_FIELD]
+                == api_c.STATE.title()
+            ):
+                self.assertEqual(
+                    state, section_filter[api_c.AUDIENCE_FILTER_VALUE]
+                )
 
         self.assertIn(api_c.AUDIENCE_FILTER_CITY, section_filters)
         self.assertIn(api_c.STATE.title(), section_filters)
@@ -405,7 +422,8 @@ class TestRouteUtils(TestCase):
                                     "type": "range",
                                     "value": [
                                         (
-                                            datetime.utcnow() - timedelta(days=12)
+                                            datetime.utcnow()
+                                            - timedelta(days=12)
                                         ).strftime("%Y-%m-%d"),
                                         datetime.utcnow().strftime("%Y-%m-%d"),
                                     ],
@@ -419,8 +437,12 @@ class TestRouteUtils(TestCase):
         }
         convert_filters_for_events(event_filters, event_types)
         self.assertEqual(
-            event_filters[api_c.AUDIENCE_FILTERS][0][api_c.AUDIENCE_SECTION_FILTERS],
-            expected_filters[api_c.AUDIENCE_FILTERS][0][api_c.AUDIENCE_SECTION_FILTERS],
+            event_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+            expected_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
         )
 
     def test_convert_filters_for_events_between(self):
@@ -476,8 +498,12 @@ class TestRouteUtils(TestCase):
         }
         convert_filters_for_events(event_filters, event_types)
         self.assertEqual(
-            event_filters[api_c.AUDIENCE_FILTERS][0][api_c.AUDIENCE_SECTION_FILTERS],
-            expected_filters[api_c.AUDIENCE_FILTERS][0][api_c.AUDIENCE_SECTION_FILTERS],
+            event_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
+            expected_filters[api_c.AUDIENCE_FILTERS][0][
+                api_c.AUDIENCE_SECTION_FILTERS
+            ],
         )
 
     def test_convert_filters_for_contact_preference_email(self):
@@ -538,7 +564,9 @@ class TestRouteUtils(TestCase):
         }
 
         # test method to convert filter from CDM to unified UI
-        convert_filters_for_contact_preference(filters=contact_preference_cdm_filter)
+        convert_filters_for_contact_preference(
+            filters=contact_preference_cdm_filter
+        )
         self.assertDictEqual(
             contact_preference_cdm_filter, contact_preference_unified_filter
         )
@@ -601,7 +629,9 @@ class TestRouteUtils(TestCase):
         }
 
         # test method to convert filter from CDM to unified UI
-        convert_filters_for_contact_preference(filters=contact_preference_cdm_filter)
+        convert_filters_for_contact_preference(
+            filters=contact_preference_cdm_filter
+        )
         self.assertDictEqual(
             contact_preference_cdm_filter, contact_preference_unified_filter
         )
@@ -620,5 +650,9 @@ class TestRouteUtils(TestCase):
         """Test for convert_cdp_buckets_to_histogram method."""
 
         bucket_data = t_c.CDP_COUNTS_BY_FLOAT_RESONSE.get(api_c.BODY, [])
-        histogram_data = convert_cdp_buckets_to_histogram(bucket_data=bucket_data)
-        self.assertEqual(t_c.COUNTS_BY_FLOAT_HISTOGRAM_DATA, histogram_data.values)
+        histogram_data = convert_cdp_buckets_to_histogram(
+            bucket_data=bucket_data
+        )
+        self.assertEqual(
+            t_c.COUNTS_BY_FLOAT_HISTOGRAM_DATA, histogram_data.values
+        )

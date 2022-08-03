@@ -95,7 +95,9 @@ from huxunify.api.route.utils import (
 )
 
 # setup the orchestration blueprint
-orchestration_bp = Blueprint(api_c.ORCHESTRATION_ENDPOINT, import_name=__name__)
+orchestration_bp = Blueprint(
+    api_c.ORCHESTRATION_ENDPOINT, import_name=__name__
+)
 
 
 @orchestration_bp.before_request
@@ -106,7 +108,9 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-def add_destinations(database: MongoClient, destinations: list) -> Union[list, None]:
+def add_destinations(
+    database: MongoClient, destinations: list
+) -> Union[list, None]:
     """Add destinations data using destination ids.
 
     Args:
@@ -119,7 +123,9 @@ def add_destinations(database: MongoClient, destinations: list) -> Union[list, N
 
     if destinations is not None:
         object_ids = [ObjectId(x.get(api_c.ID)) for x in destinations]
-        return destination_management.get_delivery_platforms_by_id(database, object_ids)
+        return destination_management.get_delivery_platforms_by_id(
+            database, object_ids
+        )
     return None
 
 
@@ -200,7 +206,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
     )
     # extract delivery platform ids from the audience
     destination_ids = [
-        x.get(api_c.ID) for x in audience[api_c.DESTINATIONS] if isinstance(x, dict)
+        x.get(api_c.ID)
+        for x in audience[api_c.DESTINATIONS]
+        if isinstance(x, dict)
     ]
 
     # get destinations at once to lookup name for each delivery job
@@ -215,7 +223,10 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
         for job in standalone_delivery_jobs:
             # ignore deliveries to destinations no longer attached to the
             # audience
-            if job.get(db_c.DELIVERY_PLATFORM_ID) not in destination_dict.keys():
+            if (
+                job.get(db_c.DELIVERY_PLATFORM_ID)
+                not in destination_dict.keys()
+            ):
                 continue
 
             # append the necessary schema to standalone_deliveries list
@@ -229,8 +240,12 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                     ).get(api_c.DELIVERY_PLATFORM_TYPE),
                     api_c.STATUS: job.get(api_c.STATUS),
                     api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE, 0),
-                    db_c.UPDATE_TIME: job.get(db_c.UPDATE_TIME, job[db_c.CREATE_TIME]),
-                    db_c.DELIVERY_PLATFORM_ID: job.get(db_c.DELIVERY_PLATFORM_ID),
+                    db_c.UPDATE_TIME: job.get(
+                        db_c.UPDATE_TIME, job[db_c.CREATE_TIME]
+                    ),
+                    db_c.DELIVERY_PLATFORM_ID: job.get(
+                        db_c.DELIVERY_PLATFORM_ID
+                    ),
                     db_c.IS_AD_PLATFORM: destination_dict.get(
                         job.get(db_c.DELIVERY_PLATFORM_ID)
                     ).get(db_c.IS_AD_PLATFORM),
@@ -243,9 +258,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
     _ = [
         standalone_deliveries.append(
             {
-                db_c.METRICS_DELIVERY_PLATFORM_NAME: destination_dict.get(x).get(
-                    api_c.NAME
-                ),
+                db_c.METRICS_DELIVERY_PLATFORM_NAME: destination_dict.get(
+                    x
+                ).get(api_c.NAME),
                 api_c.DELIVERY_PLATFORM_TYPE: destination_dict.get(x).get(
                     api_c.DELIVERY_PLATFORM_TYPE
                 ),
@@ -253,11 +268,16 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
                 api_c.SIZE: 0,
                 db_c.DELIVERY_PLATFORM_ID: x,
                 db_c.LINK: destination_dict.get(x).get(db_c.LINK),
-                db_c.IS_AD_PLATFORM: destination_dict.get(x).get(db_c.IS_AD_PLATFORM),
+                db_c.IS_AD_PLATFORM: destination_dict.get(x).get(
+                    db_c.IS_AD_PLATFORM
+                ),
             }
         )
         for x in destination_ids
-        if x not in [y.get(db_c.DELIVERY_PLATFORM_ID) for y in standalone_deliveries]
+        if x
+        not in [
+            y.get(db_c.DELIVERY_PLATFORM_ID) for y in standalone_deliveries
+        ]
     ]
 
     return list(
@@ -271,7 +291,9 @@ def get_audience_standalone_deliveries(audience: dict) -> list:
     )
 
 
-@add_view_to_blueprint(orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView")
+@add_view_to_blueprint(
+    orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView"
+)
 class AudienceView(SwaggerView):
     """Audience view class."""
 
@@ -365,7 +387,9 @@ class AudienceView(SwaggerView):
             "description": "List of Audiences with total number of audiences.",
             "schema": AudiencesBatchGetSchema,
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get all Audiences."},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get all Audiences."
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
@@ -490,7 +514,9 @@ class AudienceView(SwaggerView):
         )
 
         # get unique destinations per audience across engagements
-        audience_destinations = eam.get_all_engagement_audience_destinations(database)
+        audience_destinations = eam.get_all_engagement_audience_destinations(
+            database
+        )
 
         # Check if favourite audiences is not set
         if favorite_audiences is None:
@@ -522,7 +548,9 @@ class AudienceView(SwaggerView):
 
             # find the matched audience destinations
             matched_destinations = [
-                x for x in audience_destinations if x[db_c.ID] == audience[db_c.ID]
+                x
+                for x in audience_destinations
+                if x[db_c.ID] == audience[db_c.ID]
             ]
 
             # set the unique destinations
@@ -577,20 +605,26 @@ class AudienceView(SwaggerView):
             audience[api_c.STATUS] = weight_delivery_status(audience)
 
             # take the last X number of deliveries
-            audience[api_c.DELIVERIES] = audience[api_c.DELIVERIES][:delivery_limit]
+            audience[api_c.DELIVERIES] = audience[api_c.DELIVERIES][
+                :delivery_limit
+            ]
 
             # if not a part of any engagements and not delivered.
             # set last delivery date to None.
             if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
                 audience[api_c.AUDIENCE_LAST_DELIVERED] = None
 
-            audience[api_c.FAVORITE] = bool(audience[db_c.ID] in favorite_audiences)
+            audience[api_c.FAVORITE] = bool(
+                audience[db_c.ID] in favorite_audiences
+            )
 
             # convert contact preference in audience filters back to be
             # compatible for Unified UI
             convert_filters_for_contact_preference(
                 filters={
-                    api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS, None)
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
                 }
             )
 
@@ -625,7 +659,9 @@ class AudienceView(SwaggerView):
                                 "$or": [
                                     {
                                         db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
-                                            "$regex": re.compile(rf"^{attribute}$(?i)")
+                                            "$regex": re.compile(
+                                                rf"^{attribute}$(?i)"
+                                            )
                                         }
                                     }
                                     for attribute in api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDM
@@ -635,7 +671,9 @@ class AudienceView(SwaggerView):
                     )
                     # remove the contact_preference filter from the
                     # attribute_list
-                    attribute_list.remove(api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE)
+                    attribute_list.remove(
+                        api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE
+                    )
 
                 if attribute_list:
                     query_filter["$and"].extend(
@@ -644,7 +682,9 @@ class AudienceView(SwaggerView):
                                 "$and": [
                                     {
                                         db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
-                                            "$regex": re.compile(rf"^{attribute}$(?i)")
+                                            "$regex": re.compile(
+                                                rf"^{attribute}$(?i)"
+                                            )
                                         }
                                     }
                                     for attribute in attribute_list
@@ -660,7 +700,9 @@ class AudienceView(SwaggerView):
                             "$or": [
                                 {
                                     db_c.INDUSTRY_TAG_FIELD: {
-                                        "$regex": re.compile(rf"^{industry_tag}$(?i)")
+                                        "$regex": re.compile(
+                                            rf"^{industry_tag}$(?i)"
+                                        )
                                     }
                                 }
                                 for industry_tag in industry_tag_list
@@ -684,7 +726,9 @@ class AudienceView(SwaggerView):
             # get total lookalike audiences count to add it to response for
             # pagination request
             lookalikes_count = (
-                0 if lookalikes is None else lookalikes.get(api_c.TOTAL_RECORDS, 0)
+                0
+                if lookalikes is None
+                else lookalikes.get(api_c.TOTAL_RECORDS, 0)
             )
 
             # query for lookalike audiences only if required number of regular
@@ -692,7 +736,9 @@ class AudienceView(SwaggerView):
             # in the request
             if fetch_lookalike_audiences:
                 lookalikes = (
-                    [] if lookalikes is None else lookalikes.get(db_c.DOCUMENTS, [])
+                    []
+                    if lookalikes is None
+                    else lookalikes.get(db_c.DOCUMENTS, [])
                 )
 
                 # get the facebook delivery platform for lookalikes
@@ -710,9 +756,13 @@ class AudienceView(SwaggerView):
                         db_c.STATUS: lookalike.get(
                             db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
                         ),
-                        db_c.AUDIENCE_LAST_DELIVERED: lookalike[db_c.CREATE_TIME],
+                        db_c.AUDIENCE_LAST_DELIVERED: lookalike[
+                            db_c.CREATE_TIME
+                        ],
                         db_c.DESTINATIONS: (
-                            [facebook_destination] if facebook_destination else []
+                            [facebook_destination]
+                            if facebook_destination
+                            else []
                         ),
                         api_c.FAVORITE: bool(
                             lookalike[db_c.ID] in favorite_lookalike_audiences
@@ -742,7 +792,9 @@ class AudienceView(SwaggerView):
             # if lookalikeable is set to true, filter out the audiences that
             # are not lookalikeable.
             audiences = [
-                x for x in audiences if x[api_c.LOOKALIKEABLE] == api_c.STATUS_ACTIVE
+                x
+                for x in audiences
+                if x[api_c.LOOKALIKEABLE] == api_c.STATUS_ACTIVE
             ]
 
         audiences_batch = {
@@ -892,9 +944,13 @@ class AudienceGetView(SwaggerView):
                     if not delivery.get(db_c.UPDATE_TIME):
                         delivery[db_c.UPDATE_TIME] = None
                     if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
-                        delivery[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = engagement[
+                        delivery[
                             db_c.ENGAGEMENT_DELIVERY_SCHEDULE
-                        ][api_c.SCHEDULE][api_c.PERIODICIY]
+                        ] = engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                            api_c.SCHEDULE
+                        ][
+                            api_c.PERIODICIY
+                        ]
                         delivery[api_c.NEXT_DELIVERY] = get_next_schedule(
                             engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
                                 api_c.SCHEDULE_CRON
@@ -940,13 +996,19 @@ class AudienceGetView(SwaggerView):
         audience[api_c.AUDIENCE_INSIGHTS] = Caching.check_and_return_cache(
             {
                 api_c.ENDPOINT: f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
-                **{api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS, None)},
+                **{
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
+                },
             },
             get_customers_overview,
             {
                 api_c.AUTHENTICATION_TOKEN: token_response[0],
                 api_c.AUDIENCE_FILTERS: {
-                    api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS, None)
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
                 },
             },
         )
@@ -972,15 +1034,15 @@ class AudienceGetView(SwaggerView):
                         "Destination %s could not be found.",
                         destination.get(api_c.ID),
                     )
-                lookalike_audience[db_c.DELIVERY_PLATFORM_TYPE] = destination.get(
+                lookalike_audience[
                     db_c.DELIVERY_PLATFORM_TYPE
-                )
-                lookalike_audience[api_c.DELIVERY_PLATFORM_NAME] = destination.get(
-                    db_c.NAME
-                )
-                lookalike_audience[api_c.DELIVERY_PLATFORM_LINK] = destination.get(
-                    db_c.LINK
-                )
+                ] = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+                lookalike_audience[
+                    api_c.DELIVERY_PLATFORM_NAME
+                ] = destination.get(db_c.NAME)
+                lookalike_audience[
+                    api_c.DELIVERY_PLATFORM_LINK
+                ] = destination.get(db_c.LINK)
 
         for delivery in standalone_deliveries:
             if delivery.get(api_c.IS_AD_PLATFORM) and not audience.get(
@@ -1009,7 +1071,9 @@ class AudienceGetView(SwaggerView):
             audience_deliveries[0][api_c.DELIVERIES] = (
                 [
                     aud_delivery
-                    for aud_delivery in audience_deliveries[0].get(api_c.DELIVERIES, [])
+                    for aud_delivery in audience_deliveries[0].get(
+                        api_c.DELIVERIES, []
+                    )
                     if aud_delivery
                     and (
                         aud_delivery.get(db_c.STATUS)
@@ -1042,7 +1106,9 @@ class AudienceGetView(SwaggerView):
                             api_c.MATCH_RATE: delivery_platform_data[1].get(
                                 api_c.MATCH_RATE
                             ),
-                            api_c.AUDIENCE_LAST_DELIVERY: delivery_platform_data[1].get(
+                            api_c.AUDIENCE_LAST_DELIVERY: delivery_platform_data[
+                                1
+                            ].get(
                                 api_c.AUDIENCE_LAST_DELIVERY
                             ),
                         }
@@ -1055,14 +1121,20 @@ class AudienceGetView(SwaggerView):
                 api_c.FAVORITE: is_component_favorite(
                     user, api_c.AUDIENCES, str(audience_id)
                 )
-                or is_component_favorite(user, api_c.LOOKALIKE, str(audience_id)),
+                or is_component_favorite(
+                    user, api_c.LOOKALIKE, str(audience_id)
+                ),
             }
         )
 
         # convert contact preference in audience filters back to be compatible
         # for Unified UI
         convert_filters_for_contact_preference(
-            filters={api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS, None)}
+            filters={
+                api_c.AUDIENCE_FILTERS: audience.get(
+                    api_c.AUDIENCE_FILTERS, None
+                )
+            }
         )
 
         return HuxResponse.OK(
@@ -1130,8 +1202,10 @@ class AudienceInsightsGetView(SwaggerView):
         audience_id = ObjectId(audience_id)
 
         audience = orchestration_management.get_audience(database, audience_id)
-        lookalike = destination_management.get_delivery_platform_lookalike_audience(
-            database, audience_id
+        lookalike = (
+            destination_management.get_delivery_platform_lookalike_audience(
+                database, audience_id
+            )
         )
 
         if not audience and not lookalike:
@@ -1257,7 +1331,9 @@ class AudiencePostView(SwaggerView):
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
-                destination[db_c.OBJECT_ID] = ObjectId(destination[db_c.OBJECT_ID])
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
                 destination[db_c.DATA_ADDED] = datetime.utcnow()
 
                 if not destination_management.get_delivery_platform(
@@ -1278,10 +1354,15 @@ class AudiencePostView(SwaggerView):
                 engagement_id = ObjectId(engagement_id)
 
                 # validate the engagement object exists.
-                if not engagement_management.get_engagement(database, engagement_id):
-                    logger.error("Engagement with ID %s does not exist.", engagement_id)
+                if not engagement_management.get_engagement(
+                    database, engagement_id
+                ):
+                    logger.error(
+                        "Engagement with ID %s does not exist.", engagement_id
+                    )
                     return HuxResponse.NOT_FOUND(
-                        f"Engagement with ID {engagement_id} " f"does not exist."
+                        f"Engagement with ID {engagement_id} "
+                        f"does not exist."
                     )
                 engagement_ids.append(engagement_id)
         audience_filters = convert_unique_city_filter(
@@ -1313,7 +1394,9 @@ class AudiencePostView(SwaggerView):
             database=database,
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
-            audience_source={db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_CDP},
+            audience_source={
+                db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_CDP
+            },
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
@@ -1324,7 +1407,9 @@ class AudiencePostView(SwaggerView):
         # for Unified UI
         convert_filters_for_contact_preference(
             filters={
-                api_c.AUDIENCE_FILTERS: audience_doc.get(api_c.AUDIENCE_FILTERS, None)
+                api_c.AUDIENCE_FILTERS: audience_doc.get(
+                    api_c.AUDIENCE_FILTERS, None
+                )
             }
         )
 
@@ -1377,7 +1462,9 @@ class AudiencePostView(SwaggerView):
 
             # submit jobs for the audience/destination pairs
             for engagement in engagements:
-                for pair in get_audience_destination_pairs(engagement[api_c.AUDIENCES]):
+                for pair in get_audience_destination_pairs(
+                    engagement[api_c.AUDIENCES]
+                ):
                     if pair[0] != audience_doc[db_c.ID]:
                         continue
                     batch_destination = get_destination_config(
@@ -1389,7 +1476,9 @@ class AudiencePostView(SwaggerView):
                     batch_destination.register()
                     batch_destination.submit()
 
-        return HuxResponse.CREATED(data=audience_doc, data_schema=AudienceGetSchema())
+        return HuxResponse.CREATED(
+            data=audience_doc, data_schema=AudienceGetSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -1479,7 +1568,9 @@ class AudiencePutView(SwaggerView):
         body = AudiencePutSchema().load(request.get_json(), partial=True)
         database = get_db_client()
 
-        if not orchestration_management.get_audience(database, ObjectId(audience_id)):
+        if not orchestration_management.get_audience(
+            database, ObjectId(audience_id)
+        ):
             return HuxResponse.NOT_FOUND(api_c.AUDIENCE_NOT_FOUND)
 
         # validate destinations
@@ -1488,7 +1579,9 @@ class AudiencePutView(SwaggerView):
             for destination in body[api_c.DESTINATIONS]:
                 # map to an object ID field
                 # validate the destination object exists.
-                destination[db_c.OBJECT_ID] = ObjectId(destination[db_c.OBJECT_ID])
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
 
                 if not destination_management.get_delivery_platform(
                     database, destination[db_c.OBJECT_ID]
@@ -1523,10 +1616,14 @@ class AudiencePutView(SwaggerView):
 
         # check if any engagements to add, otherwise return.
         if not body.get(api_c.ENGAGEMENT_IDS):
-            return HuxResponse.OK(data=audience_doc, data_schema=AudienceGetSchema())
+            return HuxResponse.OK(
+                data=audience_doc, data_schema=AudienceGetSchema()
+            )
 
         # audience put engagement ids
-        put_engagement_ids = [ObjectId(x) for x in body.get(api_c.ENGAGEMENT_IDS)]
+        put_engagement_ids = [
+            ObjectId(x) for x in body.get(api_c.ENGAGEMENT_IDS)
+        ]
 
         # loop each engagement
         removed = []
@@ -1537,7 +1634,10 @@ class AudiencePutView(SwaggerView):
             ]
 
             # evaluate engagement
-            if engagement[db_c.ID] in put_engagement_ids and audience_in_engagement:
+            if (
+                engagement[db_c.ID] in put_engagement_ids
+                and audience_in_engagement
+            ):
                 # audience is in engagement and engagement is in PUT ids.
                 # no update is needed for this scenario.
                 pass
@@ -1566,7 +1666,9 @@ class AudiencePutView(SwaggerView):
                 )
                 removed.append(engagement[db_c.ID])
 
-        return HuxResponse.OK(data=audience_doc, data_schema=AudienceGetSchema())
+        return HuxResponse.OK(
+            data=audience_doc, data_schema=AudienceGetSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -1647,7 +1749,9 @@ class AudienceRules(SwaggerView):
 
         country_list = []
         for country in countries:
-            country_list.append({country[api_c.COUNTRY]: country[api_c.COUNTRY]})
+            country_list.append(
+                {country[api_c.COUNTRY]: country[api_c.COUNTRY]}
+            )
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
@@ -1714,7 +1818,8 @@ class AudienceRules(SwaggerView):
                             "name": "State",
                             "type": "list",
                             "options": [
-                                {key: value} for key, value in api_c.STATE_NAMES.items()
+                                {key: value}
+                                for key, value in api_c.STATE_NAMES.items()
                             ],
                         },
                         "city": {
@@ -1739,7 +1844,8 @@ class AudienceRules(SwaggerView):
                             "name": "State",
                             "type": "list",
                             "options": [
-                                {key: value} for key, value in api_c.STATE_NAMES.items()
+                                {key: value}
+                                for key, value in api_c.STATE_NAMES.items()
                             ],
                         },
                         "mailing_city": {
@@ -1764,7 +1870,8 @@ class AudienceRules(SwaggerView):
                             "name": "State",
                             "type": "list",
                             "options": [
-                                {key: value} for key, value in api_c.STATE_NAMES.items()
+                                {key: value}
+                                for key, value in api_c.STATE_NAMES.items()
                             ],
                         },
                         "shipping_city": {
@@ -1855,7 +1962,9 @@ class SetLookalikeAudience(SwaggerView):
                 error.
         """
 
-        body = LookalikeAudiencePostSchema().load(request.get_json(), partial=True)
+        body = LookalikeAudiencePostSchema().load(
+            request.get_json(), partial=True
+        )
         source_audience_id = body[api_c.AUDIENCE_ID]
         engagement_ids = body.get(api_c.ENGAGEMENT_IDS, [])
 
@@ -1901,7 +2010,9 @@ class SetLookalikeAudience(SwaggerView):
         if engagement_ids:
             recent_jobs_filter.update(
                 {
-                    db_c.ENGAGEMENT_ID: {"$in": [ObjectId(x) for x in engagement_ids]},
+                    db_c.ENGAGEMENT_ID: {
+                        "$in": [ObjectId(x) for x in engagement_ids]
+                    },
                 }
             )
 
@@ -1915,7 +2026,9 @@ class SetLookalikeAudience(SwaggerView):
         most_recent_job = most_recent_job[0] if most_recent_job else None
         if most_recent_job is None:
             logger.error("%s.", api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND)
-            return HuxResponse.NOT_FOUND(api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND)
+            return HuxResponse.NOT_FOUND(
+                api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
+            )
 
         try:
             # set status to error for now.
@@ -1934,18 +2047,16 @@ class SetLookalikeAudience(SwaggerView):
             # )
 
             logger.info("Creating delivery platform lookalike audience.")
-            lookalike_audience = (
-                destination_management.create_delivery_platform_lookalike_audience(
-                    database,
-                    destination[db_c.ID],
-                    source_audience,
-                    body[api_c.NAME],
-                    body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-                    "US",
-                    user[api_c.USER_NAME],
-                    0,  # TODO HUS-801 - set lookalike SIZE correctly.
-                    status,
-                )
+            lookalike_audience = destination_management.create_delivery_platform_lookalike_audience(
+                database,
+                destination[db_c.ID],
+                source_audience,
+                body[api_c.NAME],
+                body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+                "US",
+                user[api_c.USER_NAME],
+                0,  # TODO HUS-801 - set lookalike SIZE correctly.
+                status,
             )
 
         except CustomAudienceDeliveryStatusError:
@@ -1968,7 +2079,9 @@ class SetLookalikeAudience(SwaggerView):
                     }
                 ],
             )
-        logger.info("Successfully created delivery platform lookalike audience.")
+        logger.info(
+            "Successfully created delivery platform lookalike audience."
+        )
 
         # add notification
         create_notification(
@@ -2051,7 +2164,9 @@ class PutLookalikeAudience(SwaggerView):
                 error.
         """
 
-        body = LookalikeAudiencePutSchema().load(request.get_json(), partial=True)
+        body = LookalikeAudiencePutSchema().load(
+            request.get_json(), partial=True
+        )
 
         database = get_db_client()
 
@@ -2074,7 +2189,9 @@ class PutLookalikeAudience(SwaggerView):
             user[api_c.USER_NAME],
         )
 
-        return HuxResponse.OK(data=update_doc, data_schema=LookalikeAudienceGetSchema())
+        return HuxResponse.OK(
+            data=update_doc, data_schema=LookalikeAudienceGetSchema()
+        )
 
 
 @add_view_to_blueprint(
@@ -2302,7 +2419,9 @@ class AudienceS3UploadPostView(SwaggerView):
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
-                destination[db_c.OBJECT_ID] = ObjectId(destination[db_c.OBJECT_ID])
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
                 destination[db_c.DATA_ADDED] = datetime.utcnow()
 
                 if not destination_management.get_delivery_platform(
@@ -2323,10 +2442,15 @@ class AudienceS3UploadPostView(SwaggerView):
                 engagement_id = ObjectId(engagement_id)
 
                 # validate the engagement object exists.
-                if not engagement_management.get_engagement(database, engagement_id):
-                    logger.error("Engagement with ID %s does not exist.", engagement_id)
+                if not engagement_management.get_engagement(
+                    database, engagement_id
+                ):
+                    logger.error(
+                        "Engagement with ID %s does not exist.", engagement_id
+                    )
                     return HuxResponse.NOT_FOUND(
-                        f"Engagement with ID {engagement_id} " f"does not exist."
+                        f"Engagement with ID {engagement_id} "
+                        f"does not exist."
                     )
                 engagement_ids.append(engagement_id)
 
@@ -2408,7 +2532,9 @@ class AudienceS3UploadPostView(SwaggerView):
 
             # submit jobs for the audience/destination pairs
             for engagement in engagements:
-                for pair in get_audience_destination_pairs(engagement[api_c.AUDIENCES]):
+                for pair in get_audience_destination_pairs(
+                    engagement[api_c.AUDIENCES]
+                ):
                     if pair[0] != audience_doc[db_c.ID]:
                         continue
                     batch_destination = get_destination_config(
@@ -2420,4 +2546,6 @@ class AudienceS3UploadPostView(SwaggerView):
                     batch_destination.register()
                     batch_destination.submit()
 
-        return HuxResponse.CREATED(data=audience_doc, data_schema=AudienceGetSchema())
+        return HuxResponse.CREATED(
+            data=audience_doc, data_schema=AudienceGetSchema()
+        )
