@@ -34,10 +34,6 @@ const mutations = {
   SET_TRUST_ATTRIBUTES(state, trustIdAttributes) {
     Vue.set(state, "trustIdAttributes", trustIdAttributes)
   },
-  REMOVE_SEGMENT(state, name) {
-    Vue.set(state, "segmentComparison", [])
-    Vue.set(state, "segmentComparison", data)
-  },
 }
 
 const actions = {
@@ -95,7 +91,10 @@ const actions = {
       const response = await api.trustId.removeSegmentData(payload)
       if (response.status == 200) {
         commit("SET_SEGMENT_COMPARISON", response.data)
-        handleSuccess(`'${segment_name}' has been deleted Successfully.`, response.status)
+        handleSuccess(
+          `'${segment_name}' has been deleted Successfully.`,
+          response.status
+        )
       }
     } catch (error) {
       handleError(error)
