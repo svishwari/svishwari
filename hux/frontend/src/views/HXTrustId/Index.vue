@@ -789,7 +789,6 @@ export default {
       this.applyDefaultSegmentChanges()
       this.getTrustIdAttribute()
       this.loading = false
-      this.reloadComparisonChart()
     },
     async addSegment(event) {
       this.loading = true
@@ -800,38 +799,17 @@ export default {
         this.loading = false
         this.isFilterToggled = !this.isFilterToggled
         this.$refs.filters.clear()
-        this.reloadComparisonChart()
       }
     },
     async removeSegment(item) {
       this.loading = true
       try {
-        let response = await this.deleteSegment({
+        await this.deleteSegment({
           segment_name: item.segment_name,
         })
-        if (response.length > 0) {
-          this.loading = true
-          this.getOverview()
-          this.getTrustIdComparison({
-            defaultValue: true,
-          })
-          this.getTrustIdAttribute()
-          this.setAlert({
-            type: "success",
-            message: `'${item.segment_name}' has been deleted Successfully.`,
-          })
-
-          this.loading = false
-          this.reloadComparisonChart()
-        }
-      } catch (error) {
-        this.loading = false
-        this.setAlert({
-          type: "error",
-          message: `${error.response.data.message}`,
-        })
-      } finally {
         this.switchStatus()
+      } finally {
+        this.loading = false
       }
     },
     switchStatus() {
@@ -839,11 +817,6 @@ export default {
       let multipleSegments = currentSegments.some((data) => !data.default)
       let onlyDefault = currentSegments.some((data) => data.default)
       return multipleSegments && (onlyDefault || !onlyDefault) ? false : true
-    },
-    reloadComparisonChart() {
-      if (this.$refs.comparisonChart) {
-        this.$refs.comparisonChart.initializeComparisonChart()
-      }
     },
   },
 }

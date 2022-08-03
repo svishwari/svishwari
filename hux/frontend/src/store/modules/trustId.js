@@ -1,6 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
-import { handleError } from "@/utils"
+import { handleError, handleSuccess } from "@/utils"
 
 const namespaced = true
 
@@ -35,7 +35,8 @@ const mutations = {
     Vue.set(state, "trustIdAttributes", trustIdAttributes)
   },
   REMOVE_SEGMENT(state, name) {
-    Vue.delete(state, name)
+    Vue.set(state, "segmentComparison", [])
+    Vue.set(state, "segmentComparison", data)
   },
 }
 
@@ -92,8 +93,10 @@ const actions = {
         segment_name: segment_name,
       }
       const response = await api.trustId.removeSegmentData(payload)
-      commit("REMOVE_SEGMENT", response.data)
-      return response.data
+      if (response.status == 200) {
+        commit("SET_SEGMENT_COMPARISON", response.data)
+        handleSuccess(`'${segment_name}' has been deleted Successfully.`, response.status)
+      }
     } catch (error) {
       handleError(error)
       throw error
