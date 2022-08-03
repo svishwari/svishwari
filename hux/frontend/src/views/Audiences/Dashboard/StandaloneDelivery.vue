@@ -150,6 +150,7 @@
         >
           <v-list-item
             data-e2e="add-standalone-destination"
+            class="click-effect"
             @click="$emit('onAddStandaloneDestination', audience)"
           >
             <tooltip>
@@ -177,9 +178,10 @@
               text
               min-width="7rem"
               height="2rem"
-              class="primary--text text-body-1 mt-n1"
+              class="primary--text text-body-1 mt-n1 click-effect"
+              :ripple="false"
             >
-              <span class="destination_text">Destination</span>
+              <span class="destination_text mt-1">Destination</span>
             </v-btn>
           </v-list-item>
         </v-list>
@@ -463,6 +465,10 @@ export default {
 
 .destination_text {
   margin-top: -2px;
+}
+
+.click-effect::before {
+  display: none;
 }
 
 .plus-icon {
