@@ -1,7 +1,7 @@
 <template>
   <div class="lookalike-wrapper">
     <div v-if="isDataExists" class="rounded-sm lookalikes box-shadow-none">
-      <div class="header d-flex mx-6 pr-3 py-5">
+      <div class="header d-flex mx-6 pr-3 py-6">
         <hux-icon type="lookalike" :size="24" class="mr-2" />
         <span class="float-left text-h3 black--text text--base">
           Lookalikes
@@ -12,7 +12,7 @@
         :key="data.id"
         class="lookialike-destination mx-6 my-6"
       >
-        <v-card class="rounded-sm status-card mr-2 box-shadow-none">
+        <v-card class="rounded-sm status-card box-shadow-none">
           <v-card-title class="d-flex pa-2">
             <logo
               :type="data.delivery_platform_type"
@@ -62,11 +62,14 @@
         </v-list-item>
       </v-list>
     </div>
-    <div v-if="!isDataExists && !lookalikeable" class="no-lookalike">
+    <div
+      v-if="!isDataExists && !lookalikeable"
+      class="no-lookalike no-data-no-lookalike"
+    >
       <metric-card
+        :height="156"
         class=""
         title="Lookalikes"
-        :height="156"
         :interactable="false"
         title-class="text-h3"
         icon-type="Lookalikes"
@@ -84,12 +87,13 @@
 
     <div v-if="!isDataExists && lookalikeable" class="no-lookalike mx-6 my-6">
       <metric-card
+        height="auto"
         title="Lookalikes"
-        :height="230"
         :interactable="false"
         title-class="text-h3"
         icon-type="Lookalikes"
         title-icon="lookalike"
+        class="no-lookalike-padding"
       >
         <template #extra-item>
           <div class="black--text text--lighten-4 mt-4 mb-3 text-body-2">
@@ -221,5 +225,22 @@ export default {
 }
 .no-data-width {
   width: 100%;
+}
+.lookalike-wrapper {
+  .no-lookalike {
+    .metric-card-wrapper {
+      padding-left: 0px !important;
+      padding-right: 0px !important;
+      padding-top: 0px !important;
+      padding-bottom: 0px !important;
+    }
+  }
+}
+
+.no-data-no-lookalike {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
 }
 </style>
