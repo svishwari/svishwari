@@ -665,8 +665,7 @@ def get_audience_insights(
         },
         {
             "$addFields": {
-                "deliveries.delivery_platform_type"
-                "": "$destinations.delivery_platform_type",
+                "deliveries.delivery_platform_type": "$destinations.delivery_platform_type",
                 "deliveries.name": "$destinations.name",
                 "deliveries.is_ad_platform": "$destinations.is_ad_platform",
                 "deliveries.status": {
