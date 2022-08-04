@@ -580,4 +580,8 @@ client["trustId"].removeSegmentData = ({ segment_name }) => {
   return http.delete(`/trust_id/segment?segment_name=${segment_name}`)
 }
 
+client["clients"].clientData = () => {
+  return http.get("/client")
+}
+
 export default client
