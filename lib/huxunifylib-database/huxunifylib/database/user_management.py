@@ -146,11 +146,14 @@ def set_user(
         raise de.DuplicateName(okta_id)
 
     try:
-        user_id = collection.insert_one(doc).inserted_id
-        if user_id is not None:
-            return collection.find_one({db_c.ID: user_id})
-        logging.error("Failed to create a new user!")
+        return collection.find_one_and_update(
+            {db_c.OKTA_ID: okta_id},
+            {"$set": doc},
+            upsert=True,
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
     except pymongo.errors.OperationFailure as exc:
+        logging.error("Failed to create a new user!")
         logging.error(exc)
 
     return None
