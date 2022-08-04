@@ -61,28 +61,28 @@ class Config:
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_PASSWORD = config(api_c.MONGO_DB_PASSWORD, default="")
     MONGO_SSL_FLAG = config(api_c.MONGO_DB_USE_SSL, default=True, cast=bool)
-    # grab the SSL cert path
-    MONGO_SSL_CERT = str(
-        Path(__file__).parent.parent.joinpath(
-            config(
-                api_c.SSL_CERT_FILE_NAME, default="rds-combined-ca-bundle.pem"
-            )
-        )
-    )
-    AZURE_MONGO_TLS_CLIENT_KEY = str(
-        Path(__file__).parent.parent.joinpath(
-            config(api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem")
-        )
-    )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
         api_c.PORT: MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: MONGO_DB_PASSWORD,
-        api_c.SSL_FLAG: MONGO_SSL_FLAG,
     }
     if MONGO_SSL_FLAG:
+        MONGO_DB_CONFIG[api_c.SSL_FLAG] = MONGO_SSL_FLAG
+        # grab the SSL cert path
+        MONGO_SSL_CERT = str(
+            Path(__file__).parent.parent.joinpath(
+                config(
+                    api_c.SSL_CERT_FILE_NAME, default="rds-combined-ca-bundle.pem"
+                )
+            )
+        )
+        AZURE_MONGO_TLS_CLIENT_KEY = str(
+            Path(__file__).parent.parent.joinpath(
+                config(api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem")
+            )
+        )
         if CLOUD_PROVIDER == api_c.AZURE:
             MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = str(
                 str(
