@@ -16,7 +16,7 @@
     >
       <v-toolbar-title class="title-wrap">
         <icon v-if="iconType" :type="iconType" size="38" color="primary" />
-        <span class="new-h2">{{ title }}</span>
+        <span class="new-h2 ml-2">{{ title }}</span>
         <v-spacer></v-spacer>
       </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -27,7 +27,11 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </slot>
 
-    <div class="drawer-content">
+    <div
+      :class="
+        status == 'text' ? 'drawer-content' : 'drawer-content status-overflow'
+      "
+    >
       <slot name="drawerContent"></slot>
     </div>
 
@@ -42,22 +46,32 @@
           size="large"
           tile
           variant="secondary"
-          class="btn-border box-shadow-none"
+          :box-shadow="false"
+          class="new-b3"
           @click="localDrawer = !localDrawer"
         >
           {{ secondaryButtonText }}
         </hux-button>
-        <span v-if="footerTextField && primaryButtonText" class="ml-2">{{
+        <span v-if="footerTextField && primaryButtonText" class="ml-6 new-b4">{{
           footerTextField
         }}</span>
       </div>
       <div>
-        <span v-if="footerTextField && !primaryButtonText" class="new-b1">{{
+        <span v-if="footerTextField && !primaryButtonText" class="new-b4">{{
           footerTextField
         }}</span>
         <hux-button
+          v-if="secondPrimaryButtonText"
+          :box-shadow="false"
+          class="new-b3 mr-2"
+          tile
+          variant="secondary"
+        >
+          {{ secondPrimaryButtonText }}
+        </hux-button>
+        <hux-button
           v-if="primaryButtonText"
-          class="new-b2"
+          class="new-b3"
           tile
           color="primary"
         >
@@ -133,7 +147,15 @@ export default {
       type: String,
       required: false,
     },
+    secondPrimaryButtonText: {
+      type: String,
+      required: false,
+    },
     footerTextField: {
+      type: String,
+      required: false,
+    },
+    status: {
       type: String,
       required: false,
     },
@@ -220,6 +242,10 @@ $drawer-data-table-padding: 9px 25px;
   content: none;
 }
 
+.status-overflow {
+  overflow-y: hidden !important;
+}
+
 ::v-deep .hux-data-table {
   .v-data-table {
     > .v-data-table__wrapper {
@@ -244,9 +270,5 @@ $drawer-data-table-padding: 9px 25px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.btn-style {
-  padding: 12px, 24px, 12px, 24px;
-  border: 0.75px solid #007cb0 !important;
 }
 </style>
