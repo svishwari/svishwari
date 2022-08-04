@@ -1323,10 +1323,8 @@ def generate_audience_file(
     )
     if CloudClient().upload_file(
         file_name=str(filename[0]),
-        bucket=get_config().S3_DATASET_BUCKET,
-        object_name=audience_file_name,
-        user_name=user_name,
         file_type=api_c.AUDIENCE,
+        user_name=user_name,
     ):
         create_audience_audit(
             database=database,

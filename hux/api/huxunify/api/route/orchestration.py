@@ -2,6 +2,7 @@
 # too-many-function-args
 """Paths for Orchestration API."""
 import asyncio
+import json
 import re
 import time
 from http import HTTPStatus
@@ -13,6 +14,7 @@ from bson import ObjectId
 from flask import Blueprint, request, Response
 from marshmallow import INCLUDE
 from pymongo import MongoClient
+from werkzeug.utils import secure_filename
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import (
@@ -2409,7 +2411,9 @@ class AudienceS3UploadPostView(SwaggerView):
             Tuple[Response, int]: Created audience, HTTP status code.
         """
 
-        body = AudiencePostSchema().load(request.get_json(), partial=True)
+        body = AudiencePostSchema().load(
+            json.loads(request.form[api_c.FORM_PAYLOAD]), partial=True
+        )
 
         # validate destinations
         database = get_db_client()
@@ -2454,14 +2458,15 @@ class AudienceS3UploadPostView(SwaggerView):
                     )
                 engagement_ids.append(engagement_id)
 
-        audience_file = request.files["filename"]
+        # get the filename from the request and secure the filename
+        audience_file = request.files[api_c.FORM_FILENAME]
+        audience_file_name = secure_filename(audience_file.filename)
 
         if not CloudClient().upload_file(
-            file_name=str(audience_file),
-            bucket=get_config().S3_DATASET_BUCKET,
-            object_name=audience_file,
-            user_name=user[api_c.USER_NAME],
+            file_name=audience_file_name,
             file_type=api_c.AUDIENCE_UPLOAD,
+            user_name=user[api_c.USER_NAME],
+            file_obj=audience_file,
         ):
             logger.error(
                 "Could not load file into S3.",
@@ -2471,7 +2476,7 @@ class AudienceS3UploadPostView(SwaggerView):
         source = {
             db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_AMAZONS3,
             db_c.AUDIENCE_SOURCE_BUCKET: get_config().S3_DATASET_BUCKET,
-            db_c.AUDIENCE_SOURCE_KEY: audience_file,
+            db_c.AUDIENCE_SOURCE_KEY: audience_file_name,
         }
         # create the audience
         audience_doc = orchestration_management.create_audience(
