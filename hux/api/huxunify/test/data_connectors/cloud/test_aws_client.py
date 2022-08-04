@@ -55,7 +55,7 @@ class AWSClientTests(TestCase):
         file_type=strategies.text(alphabet=string.ascii_letters),
     )
     @settings(deadline=600)
-    def test_upload_file_as_file(self, user_name: str, file_type: str):
+    def test_upload_file(self, user_name: str, file_type: str):
         """Test upload of file as a file to mocked S3 dataset bucket.
 
         Args:
@@ -79,42 +79,6 @@ class AWSClientTests(TestCase):
                     file_name=temp_file.name,
                     file_type=file_type,
                     user_name=user_name,
-                )
-            )
-
-    @mock_s3
-    @given(
-        user_name=strategies.text(alphabet=string.ascii_letters),
-        file_type=strategies.text(alphabet=string.ascii_letters),
-    )
-    @settings(deadline=600)
-    def test_upload_file_as_file_obj(self, user_name: str, file_type: str):
-        """Test upload of file as a file object to mocked S3 dataset bucket.
-
-        Args:
-            user_name (str): Value for User name.
-            file_type (str): Type of File.
-        """
-
-        if not user_name:
-            return
-
-        if not file_type:
-            return
-
-        s3_client = boto3.client("s3", region_name=self.config.AWS_REGION)
-
-        with tempfile.NamedTemporaryFile(
-            mode="w+", delete=False, encoding="utf-8"
-        ) as temp_file:
-            s3_client.create_bucket(Bucket=self.config.S3_DATASET_BUCKET)
-
-            self.assertTrue(
-                self.aws_client.upload_file(
-                    file_name=temp_file.name,
-                    file_type=file_type,
-                    user_name=user_name,
-                    file_obj=temp_file,
                 )
             )
 
