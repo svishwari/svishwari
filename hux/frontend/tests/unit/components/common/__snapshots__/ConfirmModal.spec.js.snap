@@ -33,12 +33,7 @@ exports[`Tests Confirm Modal Confirm modal displays props content 1`] = `
         Subtitle prop
       </div>
       <div class="body-slot mx-7">
-        <div class="
-                black--text
-                text--darken-4 text-subtitle-1
-                pt-6
-                font-weight-regular
-              ">Body prop</div>
+        <div class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular">Body prop</div>
       </div>
     </div>
     <div class="confirm-modal-footer">
