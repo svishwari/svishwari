@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use,too-many-lines,unused-argument
-"""Paths for customer API"""
+"""Paths for customer API."""
 from http import HTTPStatus
 from typing import Tuple
 from datetime import datetime
@@ -258,7 +258,9 @@ class CustomerPostOverview(SwaggerView):
 
         filters = convert_unique_city_filter(request.json)
         convert_filters_for_events(filters, event_types)
-        convert_filters_for_contact_preference(filters)
+        convert_filters_for_contact_preference(
+            filters=filters, convert_for_cdm=True
+        )
 
         # check range filters
         # if a range type was passed in but range is empty.

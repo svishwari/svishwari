@@ -457,11 +457,11 @@ export function aggregateAgeFilters(filters) {
   let numericFilters = []
   let stringFilters = []
   let [aggregatedFilterStart, aggregatedFilterEnd] = filters[0]
-    .split("to")
+    .split("-")
     .map((val) => parseInt(val))
   filters.forEach((filter) => {
     let [currentFilterStart, currentFilterEnd] = filter
-      .split("to")
+      .split("-")
       .map((val) => parseInt(val))
     if (!currentFilterStart) {
       stringFilters.push(filter)
@@ -479,9 +479,18 @@ export function aggregateAgeFilters(filters) {
     }
   })
   if (aggregatedFilterStart) {
-    numericFilters.push(`${aggregatedFilterStart}-${aggregatedFilterEnd} years`)
+    if (aggregatedFilterEnd) {
+      numericFilters.push(
+        `${aggregatedFilterStart}-${aggregatedFilterEnd} years`
+      )
+    } else {
+      numericFilters.push(`${aggregatedFilterStart}+ years`)
+    }
   }
-  return [...numericFilters, ...stringFilters]
+  let finalOut = [...numericFilters, ...stringFilters].filter(
+    (data) => !data.includes("NaN")
+  )
+  return finalOut
 }
 
 /**

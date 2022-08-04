@@ -10,6 +10,7 @@ from huxunifylib.database import (
 from huxunifylib.database.user_management import (
     set_user,
     update_user,
+    delete_user,
 )
 import huxunify.test.constants as t_c
 from huxunify.api.schema.configurations import (
@@ -254,4 +255,64 @@ class ConfigurationsTests(RouteTestCase):
             response.json[db_c.CONFIGURATION_FIELD_SETTINGS][0][
                 db_c.CONFIGURATION_FIELD_CHILDREN
             ][1][api_c.ENABLED]
+        )
+
+    def test_success_get_empty_tags(self):
+        """Test get  industry tags."""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/tags",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(response.json)
+
+    def test_success_put_tags(self):
+        """Test get  industry tags."""
+
+        delete_user(
+            self.database, t_c.VALID_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID)
+        )
+        # write a user to the database
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
+            self.database,
+            t_c.VALID_EDITOR_INTROSPECTION_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_EDITOR_USER_RESPONSE.get(api_c.EMAIL),
+            display_name=self.user_name,
+            role=db_c.USER_ROLE_ADMIN,
+        )
+
+        self.request_mocker.stop()
+
+        tags = {
+            "settings": {
+                "industry": [
+                    {
+                        "name": "Automotive",
+                        "label": "Automotive",
+                        "enabled": False,
+                    }
+                ]
+            }
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}/tags",
+            json=tags,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(response.json[db_c.CONFIGURATION_FIELD_SETTINGS])
+        self.assertTrue(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][
+                db_c.CONFIGURATION_INDUSTRY_NAME
+            ][0][api_c.NAME]
+        )
+        self.assertEqual(
+            response.json[db_c.CONFIGURATION_FIELD_SETTINGS][
+                db_c.CONFIGURATION_INDUSTRY_NAME
+            ][0][api_c.NAME],
+            "Automotive",
         )

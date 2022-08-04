@@ -23,6 +23,7 @@
             class="audience-name-field"
             :rules="newAudienceRules"
             required
+            data-e2e="add-audience-drawer-name"
           />
         </v-form>
         <div class="pb-2 black--text text--darken-4 text-caption">

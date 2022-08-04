@@ -302,10 +302,7 @@
                 </empty-page>
               </v-card>
             </div>
-            <div
-              v-if="getSelectedSegment && segmentCount < 5"
-              class="card-width"
-            >
+            <div v-if="noDefaultSegments.length < 5" class="card-width">
               <v-list class="add-segment no-data-width" :height="22">
                 <v-list-item @click="filterToggle()">
                   <hux-icon
@@ -325,10 +322,7 @@
                 </v-list-item>
               </v-list>
             </div>
-            <div
-              v-if="getSelectedSegment && segmentCount > 5"
-              class="card-width"
-            >
+            <div v-else class="card-width">
               <v-card class="empty-text">
                 <hux-icon
                   type="critical"
@@ -693,16 +687,21 @@ export default {
         ? "Our team is working hard to fix it. Please be patient and try again soon!"
         : "Attributes will display when data has been uploaded. Please check back later."
     },
+    noDefaultSegments() {
+      return this.getSelectedSegment
+        ? this.getSelectedSegment.segments.filter((data) => !data.default)
+        : []
+    },
   },
-  mounted() {
+  async mounted() {
     this.loading = true
     this.segmentComparisonLoading = true
     try {
-      this.getOverview()
+      await this.getOverview()
     } finally {
-      this.fetchComparisonData()
-      this.fetchSegmentData()
-      this.fetchAttributeData()
+      await this.fetchComparisonData()
+      await this.fetchSegmentData()
+      await this.fetchAttributeData()
       this.loading = false
       this.segmentComparisonLoading = false
     }
@@ -789,14 +788,12 @@ export default {
       })
       this.applyDefaultSegmentChanges()
       this.getTrustIdAttribute()
-      this.$refs.comparisonChart.initializeComparisonChart()
       this.loading = false
     },
     async addSegment(event) {
       this.loading = true
       try {
         await this.addNewSegment(event)
-        this.$refs.comparisonChart.initializeComparisonChart()
         this.switchStatus()
       } finally {
         this.loading = false
@@ -807,32 +804,12 @@ export default {
     async removeSegment(item) {
       this.loading = true
       try {
-        let response = await this.deleteSegment({
+        await this.deleteSegment({
           segment_name: item.segment_name,
         })
-        if (response.length > 0) {
-          this.loading = true
-          this.getOverview()
-          this.getTrustIdComparison({
-            defaultValue: true,
-          })
-          this.getTrustIdAttribute()
-          this.$refs.comparisonChart.initializeComparisonChart()
-          this.setAlert({
-            type: "success",
-            message: `'${item.segment_name}' has been deleted Successfully.`,
-          })
-
-          this.loading = false
-        }
-      } catch (error) {
-        this.loading = false
-        this.setAlert({
-          type: "error",
-          message: `${error.response.data.message}`,
-        })
-      } finally {
         this.switchStatus()
+      } finally {
+        this.loading = false
       }
     },
     switchStatus() {

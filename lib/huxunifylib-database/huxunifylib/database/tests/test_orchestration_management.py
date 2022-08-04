@@ -47,6 +47,11 @@ class TestAudienceManagement(unittest.TestCase):
                         "type": db_c.AUDIENCE_FILTER_EXCLUDE,
                         "value": ["London"],
                     },
+                    {
+                        "field": "preference_email",
+                        "type": "equals",
+                        "value": True,
+                    },
                 ],
             },
             {
@@ -435,7 +440,7 @@ class TestAudienceManagement(unittest.TestCase):
         )
         self.assertEqual(len(filtered_audiences), 1)
 
-        # Worked by filter.
+        # worked by filter
         filters = {
             db_c.WORKED_BY: self.sample_user.get(db_c.USER_DISPLAY_NAME)
         }
@@ -446,6 +451,18 @@ class TestAudienceManagement(unittest.TestCase):
             filtered_audiences[0][db_c.CREATED_BY],
             self.sample_user.get(db_c.USER_DISPLAY_NAME),
         )
+
+        # contact preference attribute filter
+        filters = {
+            db_c.CONTACT_PREFERENCE_ATTRIBUTE: [
+                "preference_email",
+                "preference_sms",
+            ]
+        }
+        filtered_audiences = am.get_all_audiences(
+            self.database, filters=filters
+        )
+        self.assertEqual(len(filtered_audiences), 1)
 
         # List of audience_ids
         filters = {db_c.ATTRIBUTE: [db_c.AGE, db_c.S_TYPE_CITY]}

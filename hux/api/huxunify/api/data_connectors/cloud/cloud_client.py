@@ -91,14 +91,6 @@ class CloudClient:
         """
         raise NotImplementedError()
 
-    def health_check_batch_service(self) -> Tuple[bool, str]:
-        """Checks the health of the cloud batch service.
-
-        Returns:
-            Tuple[bool, str]: Returns bool for health status and message
-        """
-        raise NotImplementedError()
-
     def health_check_storage_service(self) -> Tuple[bool, str]:
         """Checks the health of the cloud storage service.
 
