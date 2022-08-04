@@ -104,7 +104,9 @@ class AWSClientTests(TestCase):
 
         s3_client = boto3.client("s3", region_name=self.config.AWS_REGION)
 
-        with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
+        with tempfile.NamedTemporaryFile(
+            mode="w+", delete=False, encoding="utf-8"
+        ) as temp_file:
             s3_client.create_bucket(Bucket=self.config.S3_DATASET_BUCKET)
 
             self.assertTrue(
