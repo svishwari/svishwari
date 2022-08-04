@@ -33,6 +33,7 @@ import menuConfig from "./fixtures/menuConfig"
 import RBACMatrix from "./fixtures/RBACMatrix"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
+import clientAppData from "@/api/mock/fixtures/clientAppData.js"
 
 export const defineRoutes = (server) => {
   // Users
@@ -113,6 +114,8 @@ export const defineRoutes = (server) => {
 
   //client projects
   server.get("/client-projects")
+
+  server.get("/client", () => clientAppData)
 
   // data sources
   server.get("/data-sources")

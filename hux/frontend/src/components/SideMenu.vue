@@ -202,6 +202,7 @@ import * as _ from "lodash"
 import { mapGetters, mapActions } from "vuex"
 import { formatText } from "@/utils"
 import Status from "./common/Status.vue"
+import { getAccess } from "../utils"
 
 export default {
   name: "SideMenu",
@@ -230,6 +231,7 @@ export default {
       demoConfiguration: "users/getDemoConfiguration",
       seenNotification: "notifications/seenNotifications",
       errorAlerts: "notifications/error_alerts",
+      clientAppData: "clients/clientAppData",
     }),
 
     isMini() {
@@ -274,6 +276,7 @@ export default {
   methods: {
     ...mapActions({
       getSideBarConfig: "configuration/getSideBarConfig",
+      getClientsAppData: "clients/getClientAppData",
     }),
 
     navigate(item) {
@@ -346,15 +349,21 @@ export default {
       this.navigationItems = []
       this.navigationItems = this.sideBarItems
     },
-    getCurrentConfiguration() {
-      if (this.isBrodcasterOn) {
-        this.$root.$on("update-config-settings", () => {
-          this.setDemoConfiguration()
-          this.updateClientInfo()
-          this.isBrodcasterOn = false
-        })
+    async getCurrentConfiguration() {
+      if (getAccess("client_config", "client_settings")) {
+        if (this.isBrodcasterOn) {
+          this.$root.$on("update-config-settings", () => {
+            this.setDemoConfiguration()
+            this.updateClientInfo()
+            this.isBrodcasterOn = false
+          })
+        }
+      } else {
+        let response = await this.getClientsAppData()
+        this.client = response
       }
     },
+
     formatText: formatText,
   },
 }

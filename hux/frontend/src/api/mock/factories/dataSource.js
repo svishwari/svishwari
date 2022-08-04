@@ -39,13 +39,19 @@ const dataFeed = (type, date = null) => {
 
     records_processed: faker.datatype.number(),
 
-    records_processed_percentage: faker.datatype.number({
-      min: 0,
-      max: 1,
-      precision: 0.01,
-    }),
+    records_processed_percentage: {
+      value: faker.datatype.number({
+        min: 0,
+        max: 1,
+        precision: 0.01,
+      }),
+      flag_indicator: false,
+    },
 
-    thirty_days_avg: faker.datatype.number({ min: 0, max: 1, precision: 0.01 }),
+    thirty_days_avg: {
+      value: faker.datatype.number({ min: 0, max: 1, precision: 0.01 }),
+      flag_indicator: false,
+    },
 
     last_processed: date ? date : faker.date.recent(),
   }

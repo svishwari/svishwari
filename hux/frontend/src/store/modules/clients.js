@@ -6,13 +6,24 @@ const namespaced = true
 
 const state = {
   clientProjects: [],
+  clientData: {},
+}
+
+const getters = {
+  getClients: (state) => state.clientProjects,
+
+  clientAppData: (state) => state.clientData,
 }
 
 const mutations = {
   SET_CLIENT_PROJECTS(state, clientProjects) {
     Vue.set(state, "clientProjects", clientProjects)
   },
+  SET_CLIENT_APP_DATA(state, items) {
+    Vue.set(state, "clientData", items)
+  },
 }
+
 const actions = {
   async getClientProjects({ commit }) {
     try {
@@ -23,10 +34,16 @@ const actions = {
       throw error
     }
   },
-}
-
-const getters = {
-  getClients: (state) => state.clientProjects,
+  async getClientAppData({ commit }) {
+    try {
+      const response = await api.clients.clientData()
+      commit("SET_CLIENT_APP_DATA", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 export default {
