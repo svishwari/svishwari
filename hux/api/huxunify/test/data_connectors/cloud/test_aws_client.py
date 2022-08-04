@@ -55,7 +55,7 @@ class AWSClientTests(TestCase):
         file_type=strategies.text(alphabet=string.ascii_letters),
     )
     @settings(deadline=600)
-    def test_upload_file(self, user_name: str, file_type: str):
+    def test_upload_file_as_file(self, user_name: str, file_type: str):
         """Test upload of file as a file to mocked S3 dataset bucket.
 
         Args:
