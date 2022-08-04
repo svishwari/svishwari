@@ -74,13 +74,16 @@ class Config:
         MONGO_SSL_CERT = str(
             Path(__file__).parent.parent.joinpath(
                 config(
-                    api_c.SSL_CERT_FILE_NAME, default="rds-combined-ca-bundle.pem"
+                    api_c.SSL_CERT_FILE_NAME,
+                    default="rds-combined-ca-bundle.pem",
                 )
             )
         )
         AZURE_MONGO_TLS_CLIENT_KEY = str(
             Path(__file__).parent.parent.joinpath(
-                config(api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem")
+                config(
+                    api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem"
+                )
             )
         )
         if CLOUD_PROVIDER == api_c.AZURE:
