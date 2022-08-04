@@ -18,14 +18,7 @@
         class="blank-section pa-6"
       >
         <div
-          class="
-            text-body-1
-            primary--text
-            new-attribute
-            d-flex
-            align-center
-            cursor-pointer
-          "
+          class="text-body-1 primary--text new-attribute d-flex align-center cursor-pointer"
           data-e2e="add-new-attr"
           @click="addNewSection()"
         >
@@ -37,14 +30,7 @@
     <v-col v-if="rules.length > 0" col="12" class="pt-0 pr-0 pa-0">
       <div v-for="(rule, index) in rules" :key="rule.id">
         <div
-          class="
-            d-flex
-            align-center
-            col-12
-            pa-0
-            black--text
-            text--darken-4 text-body-2
-          "
+          class="d-flex align-center col-12 pa-0 black--text text--darken-4 text-body-2"
         >
           <span class="mr-2 mb-2">Include consumers that match &nbsp;</span>
           <hux-switch
@@ -233,14 +219,7 @@
           >
             <div v-for="sub_rule in condition.rules" :key="sub_rule.id">
               <div
-                class="
-                  d-flex
-                  align-center
-                  pa-0
-                  black--text
-                  text--darken-4 text-body-2
-                  ml-15
-                "
+                class="d-flex align-center pa-0 black--text text--darken-4 text-body-2 ml-15"
               >
                 <span class="mr-2 mb-2">And include &nbsp;</span>
                 <hux-switch

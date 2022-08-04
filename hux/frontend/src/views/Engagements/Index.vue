@@ -133,12 +133,7 @@
                           type="expand-arrow"
                           :size="14"
                           color="primary"
-                          class="
-                            cursor-pointer
-                            mdi-chevron-right
-                            mx-2
-                            d-inline-block
-                          "
+                          class="cursor-pointer mdi-chevron-right mx-2 d-inline-block"
                           :class="{ 'normal-icon': isExpanded }"
                         />
                       </span>
@@ -347,12 +342,7 @@
                                 type="expand-arrow"
                                 :size="14"
                                 color="primary"
-                                class="
-                                  cursor-pointer
-                                  mdi-chevron-right
-                                  mx-2
-                                  d-inline-block
-                                "
+                                class="cursor-pointer mdi-chevron-right mx-2 d-inline-block"
                                 :class="{ 'normal-icon': isExpanded }"
                               />
                             </span>
@@ -633,12 +623,7 @@
 
       <div
         v-if="!loading && rowData.length == 0 && !isEmptyError"
-        class="
-          flex-grow-1 flex-shrink-1
-          overflow-hidden
-          mw-100
-          background-empty
-        "
+        class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100 background-empty"
       >
         <empty-page type="no-engagement" size="50">
           <template #title>
@@ -732,12 +717,7 @@
     >
       <template #body>
         <div
-          class="
-            black--text
-            text--darken-4 text-subtitle-1
-            pt-6
-            font-weight-regular
-          "
+          class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular"
         >
           Are you sure you want to remove this audience from this engagement?
         </div>
@@ -763,12 +743,7 @@
     >
       <template #body>
         <div
-          class="
-            black--text
-            text--darken-4 text-subtitle-1
-            pt-6
-            font-weight-regular
-          "
+          class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular"
         >
           Are you sure you want to delete this Engagement&#63;
         </div>
@@ -794,12 +769,7 @@
     >
       <template #body>
         <div
-          class="
-            black--text
-            text--darken-4 text-subtitle-1
-            pt-6
-            font-weight-regular
-          "
+          class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular"
         >
           Are you sure you want to edit this engagement&#63;
         </div>
@@ -824,12 +794,7 @@
     >
       <template #body>
         <div
-          class="
-            black--text
-            text--darken-4 text-subtitle-1
-            pt-6
-            font-weight-regular
-          "
+          class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular"
         >
           Are you sure you want to make this Engagement inactive&#63;
         </div>

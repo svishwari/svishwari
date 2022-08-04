@@ -1,14 +1,7 @@
 <template>
   <div>
     <div
-      class="
-        black--text
-        text--darken-4 text-subtitle-1
-        font-weight-regular
-        px-13
-        mt-5
-        pb-13
-      "
+      class="black--text text--darken-4 text-subtitle-1 font-weight-regular px-13 mt-5 pb-13"
     >
       We’re always trying our best to improve your experience and your feedback
       can help us do that. Please select an option below if you have feedback,

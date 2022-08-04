@@ -137,16 +137,7 @@
           </div>
 
           <div
-            class="
-              subtitle-slot
-              size
-              mr-2
-              pt-2
-              font-audience-text
-              black--text
-              text--darken-4
-              font-weight-semi-bold
-            "
+            class="subtitle-slot size mr-2 pt-2 font-audience-text black--text text--darken-4 font-weight-semi-bold"
           >
             <size :value="audience.source_size" /> |
             <tooltip position-bottom>
@@ -254,13 +245,7 @@
                 >
                   <template #label-content>
                     <span
-                      class="
-                        black--text
-                        text--darken-4
-                        font-weight-semi-bold
-                        text-over-2
-                        filter-title
-                      "
+                      class="black--text text--darken-4 font-weight-semi-bold text-over-2 filter-title"
                       v-bind.prop="
                         formatInnerHTML(appliedFilters[filterKey][filter].name)
                       "
@@ -310,14 +295,7 @@
               <div class="d-flex align-center">
                 <v-btn
                   text
-                  class="
-                    d-flex
-                    align-center
-                    primary--text
-                    text-decoration-none
-                    body-2
-                    mr-9
-                  "
+                  class="d-flex align-center primary--text text-decoration-none body-2 mr-9"
                   data-e2e="add-engagement"
                   @click="openAttachEngagementDrawer()"
                 >
@@ -1132,11 +1110,13 @@ export default {
     },
 
     /**
-     * Formatting the values to the desired format using predefined application filters.
+     *
+     Formatting the values to the desired format using predefined application filters.
      *
      * @param {object} item item
      * @param {string} item.title item's title
      * @returns {number | string } formatted value
+     * @param item
      */
     getFormattedValue(item) {
       switch (item.title) {

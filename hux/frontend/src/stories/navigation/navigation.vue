@@ -75,14 +75,7 @@
       >
         <span
           v-if="!isMini"
-          class="
-            text-h5
-            black--text
-            text--lighten-4
-            pl-4
-            menu-parent-item
-            font-weight-bold
-          "
+          class="text-h5 black--text text--lighten-4 pl-4 menu-parent-item font-weight-bold"
         >
           {{ item.name }}
         </span>

@@ -141,16 +141,7 @@
                 </div>
                 <div class="d-flex">
                   <div
-                    class="
-                      cursor-pointer
-                      text-center
-                      rounded-lg
-                      manual
-                      py-5
-                      px-5
-                      mr-2
-                      ml-2
-                    "
+                    class="cursor-pointer text-center rounded-lg manual py-5 px-5 mr-2 ml-2"
                     :class="[isActive ? 'active' : 'box-shadow-1']"
                     @click="toggleClass($event), resetSchedule()"
                   >
@@ -171,16 +162,7 @@
                     </div>
                   </div>
                   <div
-                    class="
-                      cursor-pointer
-                      text-center
-                      rounded-lg
-                      recurring
-                      py-5
-                      px-5
-                      ml-5
-                      mb-1
-                    "
+                    class="cursor-pointer text-center rounded-lg recurring py-5 px-5 ml-5 mb-1"
                     :class="[!isActive ? 'active' : 'box-shadow-1']"
                     @click="toggleClass($event)"
                   >

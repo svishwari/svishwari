@@ -15,18 +15,7 @@
                 min-width="80"
                 :ripple="false"
                 :disabled="getRole != 'admin'"
-                class="
-                  d-flex
-                  align-right
-                  primary--text
-                  text-decoration-none
-                  pl-0
-                  pr-0
-                  team-member-request-button
-                  text-body-1
-                  mt-n2
-                  mr-1
-                "
+                class="d-flex align-right primary--text text-decoration-none pl-0 pr-0 team-member-request-button text-body-1 mt-n2 mr-1"
                 data-e2e="teamMemberRequest"
                 @click="toggleTeamMemberRequestDrawer()"
               >
@@ -97,14 +86,7 @@
                             ) != -1
                           "
                           small
-                          class="
-                            ml-1
-                            mr-2
-                            my-2
-                            text-subtitle-2
-                            requested-tag
-                            pl-2
-                          "
+                          class="ml-1 mr-2 my-2 text-subtitle-2 requested-tag pl-2"
                           text-color="white"
                           color="grey"
                         >
@@ -115,13 +97,7 @@
                       <v-spacer> </v-spacer>
                       <span
                         v-if="item['email'] != getCurrentUserEmail"
-                        class="
-                          action-icon
-                          font-weight-light
-                          float-right
-                          d-none
-                          menu-activator
-                        "
+                        class="action-icon font-weight-light float-right d-none menu-activator"
                       >
                         <v-menu
                           v-model="openMenu[item.id]"

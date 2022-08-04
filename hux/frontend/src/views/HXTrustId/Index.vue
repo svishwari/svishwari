@@ -130,13 +130,7 @@
                 <v-col md="4">
                   <div class="d-flex toggle-main-div">
                     <span
-                      class="
-                        mr-5
-                        toggle-content
-                        text-body-1
-                        black--text
-                        text--base
-                      "
+                      class="mr-5 toggle-content text-body-1 black--text text--base"
                       >Compare segments to all customers</span
                     >
                     <hux-switch

@@ -25,12 +25,7 @@
           <slot name="body">
             <div
               v-if="body"
-              class="
-                black--text
-                text--darken-4 text-body-1
-                font-weight-regular
-                mb-8
-              "
+              class="black--text text--darken-4 text-body-1 font-weight-regular mb-8"
             >
               {{ body }}
             </div>

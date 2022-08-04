@@ -45,15 +45,7 @@
               size="large"
               variant="white"
               is-tile
-              class="
-                text-button
-                ml-auto
-                primary--text
-                mr-3
-                submit-button
-                btn-border
-                box-shadow-none
-              "
+              class="text-button ml-auto primary--text mr-3 submit-button btn-border box-shadow-none"
               width="91"
               data-e2e="closeFilter"
               @click="$emit('close')"

@@ -88,12 +88,7 @@
                             type="expand-arrow"
                             :size="14"
                             color="black"
-                            class="
-                              cursor-pointer
-                              mdi-chevron-right
-                              mx-2
-                              d-inline-block
-                            "
+                            class="cursor-pointer mdi-chevron-right mx-2 d-inline-block"
                             :class="{ 'normal-icon': isExpanded }"
                           />
                         </span>

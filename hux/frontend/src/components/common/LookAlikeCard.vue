@@ -4,14 +4,7 @@
     height="100%"
   >
     <v-card-title
-      class="
-        card-heading
-        d-flex
-        justify-space-between
-        py-3
-        pl-4
-        lookalike-card-title
-      "
+      class="card-heading d-flex justify-space-between py-3 pl-4 lookalike-card-title"
     >
       <span>Lookalikes</span>
       <v-btn

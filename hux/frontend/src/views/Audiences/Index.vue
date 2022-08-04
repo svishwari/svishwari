@@ -336,12 +336,7 @@
 
       <div
         v-if="!showError && audienceList.length == 0 && !loading"
-        class="
-          flex-grow-1 flex-shrink-1
-          overflow-hidden
-          mw-100
-          background-empty
-        "
+        class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100 background-empty"
       >
         <empty-page type="no-engagement" size="50">
           <template #title>
@@ -436,12 +431,7 @@
     >
       <template #body>
         <div
-          class="
-            black--text
-            text--darken-4 text-subtitle-1
-            pt-6
-            font-weight-regular
-          "
+          class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular"
         >
           Are you sure you want to delete this audience&#63;
         </div>
@@ -467,12 +457,7 @@
     >
       <template #body>
         <div
-          class="
-            black--text
-            text--darken-4 text-subtitle-1
-            pt-6
-            font-weight-regular
-          "
+          class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular"
         >
           Are you sure you want to edit this audience&#63;
         </div>

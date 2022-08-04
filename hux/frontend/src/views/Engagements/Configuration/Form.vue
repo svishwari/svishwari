@@ -107,12 +107,7 @@
               <tooltip>
                 <template #label-content>
                   <div
-                    class="
-                      resize-destination-button
-                      d-flex
-                      align-items-center
-                      ml-2
-                    "
+                    class="resize-destination-button d-flex align-items-center ml-2"
                     data-e2e="add-destination"
                     @click="openSelectDestinationsDrawer(row.item.id)"
                   >

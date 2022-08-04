@@ -54,14 +54,7 @@
     <page
       v-if="!loading && hasOverview && !errorState"
       max-width="100%"
-      class="
-        white
-        segmentation
-        playground-wrap
-        flex-grow-1 flex-shrink-1
-        mw-100
-        content-section
-      "
+      class="white segmentation playground-wrap flex-grow-1 flex-shrink-1 mw-100 content-section"
     >
       <v-row class="ma-0 segment-wrap">
         <v-col
@@ -81,15 +74,7 @@
               label-text="Edit name"
               background-color="white"
               required
-              class="
-                mt-2
-                text-caption
-                black--text
-                text--darken-4
-                input-placeholder
-                pt-3
-                audience-form
-              "
+              class="mt-2 text-caption black--text text--darken-4 input-placeholder pt-3 audience-form"
               data-e2e="edit-audience-name"
             />
 
@@ -222,12 +207,7 @@
       <template #body>
         <div
           v-if="isEdit"
-          class="
-            black--text
-            text--darken-4 text-subtitle-1
-            pt-6
-            font-weight-regular
-          "
+          class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular"
         >
           Are you sure you want to delete this audience&#63;
         </div>
@@ -249,11 +229,7 @@
             style="width: 496px"
           >
             <div
-              class="
-                black--text
-                text--darken-4 text-h5 text-left text-label
-                mb-n1
-              "
+              class="black--text text--darken-4 text-h5 text-left text-label mb-n1"
             >
               Audience name
             </div>
@@ -263,13 +239,7 @@
               height="40"
               background-color="white"
               required
-              class="
-                text-caption
-                black--text
-                text--darken-4
-                input-placeholder
-                w-100
-              "
+              class="text-caption black--text text--darken-4 input-placeholder w-100"
               data-e2e="audience-name"
             />
           </div>
