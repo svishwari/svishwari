@@ -55,6 +55,8 @@ class TestTriggersRoute(TestCase):
                     api_c.PENDING_JOBS: 0,
                     api_c.ORCH_INTEGRATION_TEST_CPDR: 0,
                     api_c.ORCH_INTEGRATION_TEST_FLDR: 0,
+                    api_c.ORCH_INTEGRATION_TEST_DR: 0,
+                    api_c.ORCH_INTEGRATION_TEST_MCA: 0,
                 }
             },
             response.json,
@@ -82,6 +84,8 @@ class TestTriggersRoute(TestCase):
                         api_c.PENDING_JOBS: 58,
                         api_c.ORCH_INTEGRATION_TEST_CPDR: 58,
                         api_c.ORCH_INTEGRATION_TEST_FLDR: 58,
+                    api_c.ORCH_INTEGRATION_TEST_DR: 58,
+                    api_c.ORCH_INTEGRATION_TEST_MCA: 58,
                     }
                 },
                 response.json,
