@@ -51,6 +51,9 @@ DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
 DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
 DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
 ENVIRONMENT_NAME = "ENVIRONMENT_NAME"
+FORM_PAYLOAD = "form_payload"
+FORM_FILENAME = "form_filename"
+FILE_OBJ = "file_obj"
 
 # PLEASE NOTE - these are only here because DEN API
 # is only available in a couple environments.
