@@ -59,6 +59,7 @@ FILE_OBJ = "file_obj"
 # is only available in a couple environments.
 STAGING_ENV = "STG1"
 LILDEV_ENV = "LILDEV"
+LPZDEV_ENV = "LPZDEV"
 HUSDEV2_ENV = "HUSDEV2"
 
 # AWS constants
