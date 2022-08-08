@@ -12,7 +12,7 @@
     @click="onClick"
   >
     <icon
-      v-if="iconPosition == 'left' && isCustomIcon"
+      v-if="isCustomIcon"
       :class="iconClass"
       :color="iconColor"
       :variant="iconVariant"
@@ -28,14 +28,6 @@
     <slot name="default"></slot>
 
     <v-spacer> </v-spacer>
-    <icon
-      v-if="iconPosition == 'right' && isCustomIcon"
-      :class="iconClass"
-      :color="iconColor"
-      :variant="iconVariant"
-      :type="icon"
-      :size="iconSize"
-    />
     <v-icon v-show="iconPosition == 'right'" dark class="mr-1">
       {{ icon }}
     </v-icon>
