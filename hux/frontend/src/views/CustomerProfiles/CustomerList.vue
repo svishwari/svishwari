@@ -167,6 +167,9 @@ export default {
     }),
     customers() {
       let sortedCustomerList = this.customersList
+      if (sortedCustomerList) {
+        sortedCustomerList.forEach((data) => (data.id = data.hux_id))
+      }
       return sortedCustomerList.sort((a, b) => a.id - b.id)
     },
   },
