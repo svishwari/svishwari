@@ -37,9 +37,12 @@ MAX = "max"
 LINK = "link"
 USERNAME = "username"
 
-# ORCH integration test User
+# ORCH integration test triggers
 ORCH_INTEGRATION_TEST_USER_CPDR = "orch_integration_test_user_cpdr"
 ORCH_INTEGRATION_TEST_USER_FLDR = "orch_integration_test_user_fldr"
+ORCH_INTEGRATION_TEST_DR = "orch_integration_test_dr"
+ORCH_INTEGRATION_TEST_MCA = "orch_integration_test_mca"
+
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
