@@ -24,7 +24,7 @@
             :key="index"
             class="col-2"
             :class="{ 'selected-time-option': h == Hour }"
-            @click="selectHour(h)"
+            @click="selectTimeType('hour', h)"
           >
             {{ h }}
           </button>
@@ -36,7 +36,7 @@
             :key="index"
             class="col-2"
             :class="{ 'selected-time-option': min == Minute }"
-            @click="selectMinute(min)"
+            @click="selectTimeType('minute', min)"
           >
             {{ min }}
           </button>
@@ -61,7 +61,7 @@
         <v-row v-for="(selection, index) in Zones" :key="index">
           <button
             class="d-flex align-items-center"
-            @click="selectZone(selection)"
+            @click="selectTimeType('zone', selection)"
           >
             <icon
               v-if="showCheckMark && selection == selectedZone"
@@ -172,14 +172,20 @@ export default {
     },
   },
   methods: {
-    selectHour(value) {
-      this.hour = value
-    },
-    selectMinute(value) {
-      this.minute = value
-    },
-    selectZone(value) {
-      this.selectedZone = value
+    selectTimeType(type, value) {
+      switch (type) {
+        case "hour":
+          this.hour = value
+          break
+
+        case "minute":
+          this.minute = value
+          break
+
+        default:
+          // am or pm
+          this.selectedZone = value
+      }
     },
   },
 }
