@@ -1,4 +1,4 @@
 export default {
-  name: "Retail Co",
-  logo: "client",
+  name: "Lilly Pulitzer",
+  logo: "lilly_pulitzer",
 }

@@ -38,7 +38,6 @@ const actions = {
     try {
       const response = await api.clients.clientData()
       commit("SET_CLIENT_APP_DATA", response.data)
-      return response.data
     } catch (error) {
       handleError(error)
       throw error

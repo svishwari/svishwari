@@ -723,7 +723,10 @@ export default {
     },
     async autoSearchFunc(value) {
       if (value !== null && value !== "" && value !== undefined) {
-        if (this.selectedValue === "zip_code" || this.selectedValue === "city") {
+        if (
+          this.selectedValue === "zip_code" ||
+          this.selectedValue === "city"
+        ) {
           this.params.fieldType =
             this.selectedValue === "zip_code"
               ? "zip_code"
