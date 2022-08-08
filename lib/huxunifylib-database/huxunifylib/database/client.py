@@ -44,9 +44,8 @@ class DatabaseClient:
         self._port = port
         self._username = username
         self._password = password
-        self._use_ssl = True
+        self._use_ssl = ssl_flag
         self._ssl_cert_path = ssl_cert_path
-        self._use_ssl_flag = ssl_flag
         self._tls_cert_key_file = tls_cert_key_file
         self._tls_ca_cert_key_file = tls_ca_cert_key_file
 
@@ -125,7 +124,7 @@ class DatabaseClient:
     @property
     def ssl_flag(self):
         """Union[bool, None]: SSL flag used when authenticating the client."""
-        return self._use_ssl_flag
+        return self._use_ssl
 
     def connect(self) -> pymongo.MongoClient:
         """Connect to the database.
@@ -156,8 +155,6 @@ class DatabaseClient:
             )
             mongo_args["tlsCertificateKeyFile"] = self._tls_cert_key_file
             # mongo_args["tlsCAFile"] = self._tls_ca_cert_key_file
-        elif self._use_ssl_flag:
-            mongo_args["ssl"] = True
             mongo_args["retrywrites"] = False
 
         return pymongo.MongoClient(**mongo_args)
