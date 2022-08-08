@@ -503,13 +503,13 @@ export default {
     listOptions(condition) {
       if (condition.attribute.key === "city") {
         // if (this.currentCityData.length == 0) {
-        //   this.selectedValue = "City"
+        //   this.selectedValue = "city"
         //   this.autoSearchFunc(condition.text)
         // }
         return this.currentCityData
       } else if (condition.attribute.key === "zip") {
         // if (this.currentData.length == 0) {
-        //   this.selectedValue = "Zip"
+        //   this.selectedValue = "zip_code"
         //   this.autoSearchFunc(condition.text)
         // }
         return this.currentData
@@ -703,13 +703,13 @@ export default {
     },
     getPlaceHolderText(condition) {
       switch (condition.attribute.name) {
-        case "Email":
+        case "email":
           return "example@email.com"
-        case "Gender":
+        case "gender":
           return "Type male, female, or other"
-        case "City":
-        case "Country":
-        case "State":
+        case "city":
+        case "country":
+        case "state":
           return condition.attribute.name + " name"
         default:
           return condition.attribute.name
@@ -723,19 +723,19 @@ export default {
     },
     async autoSearchFunc(value) {
       if (value !== null && value !== "" && value !== undefined) {
-        if (this.selectedValue === "Zip" || this.selectedValue === "City") {
+        if (this.selectedValue === "zip_code" || this.selectedValue === "city") {
           this.params.fieldType =
-            this.selectedValue === "Zip"
+            this.selectedValue === "zip_code"
               ? "zip_code"
               : this.selectedValue.toLowerCase()
           this.params.key = value
           if (value.length > 2 && value.length <= 8) {
             this.loaderValue = true
             let data = await this.getAudiencesRulesByFields(this.params)
-            if (this.selectedValue === "Zip") {
+            if (this.selectedValue === "zip_code") {
               this.loaderValue = false
               this.currentData = [...data]
-            } else if (this.selectedValue === "City") {
+            } else if (this.selectedValue === "city") {
               this.loaderValue = false
               this.currentCityData = [...data]
             }
@@ -748,9 +748,9 @@ export default {
         value === undefined ||
         value.length < 3
       ) {
-        if (this.selectedValue === "Zip") {
+        if (this.selectedValue === "zip_code") {
           this.currentData = []
-        } else if (this.selectedValue === "City") {
+        } else if (this.selectedValue === "city") {
           this.currentCityData = []
         } else {
           this.currentData = []
