@@ -359,8 +359,8 @@ export default {
           })
         }
       } else {
-        let response = await this.getClientsAppData()
-        this.client = response
+        await this.getClientsAppData()
+        this.client = this.clientAppData
       }
     },
 

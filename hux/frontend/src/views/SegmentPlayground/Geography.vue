@@ -205,4 +205,18 @@ export default {
     }
   }
 }
+.des-no-notification {
+  font-size: 14px !important;
+  line-height: 16px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.title-no-notification {
+  font-size: 24px !important;
+  line-height: 34px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
 </style>
