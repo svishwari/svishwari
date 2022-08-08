@@ -1,19 +1,13 @@
-import SideMenu from "./navigation.vue"
-import sideBarItems from "./sideBarItems"
+import TopNav from "./NavBar.vue"
 
 export default {
-  component: SideMenu,
+  component: TopNav,
 
   title: "NewComponents/Navigation",
 
-  argTypes: {
-    toggle: { control: "boolean" },
-  },
+  argTypes: {},
 
-  args: {
-    sideBarItems: sideBarItems,
-    toggle: false,
-  },
+  args: {},
 
   parameters: {
     design: {
@@ -24,18 +18,18 @@ export default {
 }
 
 const Template = (args, { argTypes }) => ({
-  components: { SideMenu },
+  components: { TopNav },
 
   props: Object.keys(argTypes),
 
   methods: {},
 
   template: `
-    <side-menu
+    <top-nav
       v-bind="$props" 
       v-on="$props"
     />
   `,
 })
 
-export const SideNavigation = Template.bind({})
+export const TopNavigation = Template.bind({})
