@@ -1564,7 +1564,7 @@ export default {
           .menu-cell-wrapper > div {
             a.text-decoration-none {
               .ellipsis {
-                width: auto !important;
+                width: 16ch !important;
               }
             }
           }
