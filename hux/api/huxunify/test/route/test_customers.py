@@ -813,7 +813,6 @@ class TestCustomersOverview(RouteTestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertFalse(response.json)
-        self.assertEqual(0, len(response.json))
 
     def test_get_idr_data_feed_details_empty_data(self) -> None:
         """Test get idr datafeed details for empty data."""
