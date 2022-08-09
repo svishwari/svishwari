@@ -792,7 +792,7 @@ class TestCustomersOverview(RouteTestCase):
         self.assertFalse(MatchingTrendsSchema().validate(response.json, many=True))
 
     def test_get_idr_data_feeds_empty_data(self):
-        """Test get IDR Datafeeds."""
+        """Test get IDR Datafeeds with empty body."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
