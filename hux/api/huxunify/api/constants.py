@@ -162,6 +162,7 @@ INPUT = "input"
 TEXT = "text"
 EVENTS = "events"
 ENDPOINT = "endpoint"
+RACE_ETHNICITY = "race_ethnicity"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
