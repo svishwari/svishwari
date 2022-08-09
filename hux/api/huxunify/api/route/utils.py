@@ -690,15 +690,13 @@ def convert_audience_city_filter(audience_json: dict) -> dict:
                     == api_c.AUDIENCE_FILTER_CITY
                 ):
                     # Convert pipe string for showing it back in the UI.
-                    item[api_c.AUDIENCE_FILTER_VALUE] = item[
+                    item[api_c.AUDIENCE_FILTER_VALUE] = item.get(
                         api_c.AUDIENCE_FILTER_CITY_VALUE
-                    ]
+                    )
         return audience_json
-    except KeyError:
-        logger.info("Incorrect Audience Filter Object")
-        return audience_json
-    except ValueError:
-        logger.info("Incorrect Audience Filter Object")
+    except Exception as exc:
+        logger.info("Unable to update audience field")
+        logger.error(exc)
         return audience_json
 
 
