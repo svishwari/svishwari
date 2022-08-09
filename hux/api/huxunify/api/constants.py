@@ -13,7 +13,6 @@ PRODUCTION_MODE = "production"
 API_SPEC = "apispec_1.json"
 FLASK_ENV = "FLASK_ENV"
 TEST_AUTH_OVERRIDE = "TEST_AUTH_OVERRIDE"
-SSM_INIT_LOAD_DELIMITER = "||"
 HOST = "host"
 PORT = "port"
 USER = "user"
@@ -46,7 +45,6 @@ DECISIONING_URL = "DECISIONING_URL"
 DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
 DISABLE_SCHEDULED_DELIVERIES = "DISABLE_SCHEDULED_DELIVERIES"
 DISABLE_DELIVERY_MSG = "Deliveries are disabled."
-SALES_FORECASTING = "Sales forecasting"
 DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
 DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
 DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
@@ -59,7 +57,6 @@ FILE_OBJ = "file_obj"
 # is only available in a couple environments.
 STAGING_ENV = "STG1"
 LILDEV_ENV = "LILDEV"
-HUSDEV2_ENV = "HUSDEV2"
 
 # AWS constants
 AWS_REGION = "AWS_REGION"
@@ -68,7 +65,6 @@ AWS_S3_BUCKET_CONST = "S3_DATASET_BUCKET"
 AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
 AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
 AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
-AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 
@@ -157,7 +153,6 @@ FIELDS = "fields"
 STATUSES = "statuses"
 INPUT_FILE = "input_file"
 UNIQUE_ID = "unique_id"
-INPUT = "input"
 TEXT = "text"
 EVENTS = "events"
 ENDPOINT = "endpoint"
@@ -176,13 +171,6 @@ TOTAL_RECORDS = "total_records"
 MATCH_RATE = "match_rate"
 MATCH_RATES = "match_rates"
 TOTAL = "total"
-TOTAL_UNIQUE_IDS = "total_unique_ids"
-TOTAL_UNKNOWN_IDS = "total_unknown_ids"
-TOTAL_KNOWN_IDS = "total_known_ids"
-TOTAL_INDIVIDUAL_IDS = "total_individual_ids"
-TOTAL_HOUSEHOLD_IDS = "total_household_ids"
-TOTAL_ADDRESS_IDS = "total_address_ids"
-TOTAL_ANONYMOUS_IDS = "total_anonymous_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
@@ -204,10 +192,6 @@ GENDER_WOMEN_COUNT = "gender_women_count"
 GENDER_MEN_COUNT = "gender_men_count"
 GENDER_OTHER_COUNT = "gender_other_count"
 GENDERS = [GENDER_WOMEN, GENDER_MEN, GENDER_OTHER]
-MIN_LTV_PREDICTED = "min_ltv_predicted"
-MAX_LTV_PREDICTED = "max_ltv_predicted"
-MIN_LTV_ACTUAL = "min_ltv_actual"
-MAX_LTV_ACTUAL = "max_ltv_actual"
 AVG_LTV = "avg_ltv"
 MIN_LTV = "min_ltv"
 MAX_LTV = "max_ltv"
@@ -326,18 +310,9 @@ DIFFERENCE_COUNT = "diff_count"
 EXCLUDE = "exclude"
 
 # AWS defines
-AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
-AWS_SSM_NAME = "ssm"
-AWS_EVENTS_NAME = "events"
-AWS_BATCH_NAME = "batch"
 AWS_S3_NAME = "s3"
 AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE = "Required parameter(s) not found."
-
 AWS_BUCKET = "Bucket"
-AWS_TARGET_ID = "Id"
-AWS_TARGET_ARN = "Arn"
-AWS_TARGET_ROLE_ARN = "RoleArn"
-AWS_TARGET_BATCH_PARAMS = "BatchParameters"
 
 REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
@@ -362,8 +337,6 @@ STATUS_DRAFT = "Draft"
 STATUS_PENDING = "Pending"
 STATUS_REQUESTED = "Requested"
 STATUS_ERROR = "Error"
-STATUS_PAUSED = "Paused"
-STATUS_STOPPED = "Stopped"
 STATUS_SUCCESS = "Success"
 STATUS_COMPLETE = "Complete"
 STATUS_INCOMPLETE = "Incomplete"
@@ -624,7 +597,6 @@ DESTINATION_CONSTANTS = {
 }
 
 # DESTINATION Secret Mapping
-MONGO = "mongo"
 DESTINATION_SECRETS = {
     db_c.DELIVERY_PLATFORM_FACEBOOK: [
         FACEBOOK_AD_ACCOUNT_ID,
@@ -663,7 +635,6 @@ DELETE_DATASOURCES_SUCCESS = "Successfully deleted data source(s) - {}."
 ERROR_ALERTS = "error_alerts"
 MODULES = "modules"
 CANNOT_DELETE_DATASOURCES = "Error deleting data source(s) - {}."
-INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 BSON_INVALID_ID = (
     lambda invalid_id: f"'{invalid_id}' is not a valid ObjectId, it must be a "
@@ -692,7 +663,6 @@ CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED = (
 SAME_PERFORMANCE_CAMPAIGN_ERROR = (
     "Performance metric and Campaign activity cannot be same"
 )
-INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
 INVALID_BATCH_PARAMS = "Invalid Batch Number or Batch Size"
@@ -738,7 +708,6 @@ DESTINATION_REFRESH = "refresh_all"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_CONNECTION_FAILED = "Destination connection failed."
-INVALID_STATUS = "Invalid status value."
 INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
@@ -1027,7 +996,6 @@ USER_PHONE_NUMBER = "phone_number"
 USER_EMAIL_ADDRESS = "email_address"
 USER_ACCESS_LEVEL = "access_level"
 USER_PII_ACCESS = "pii_access"
-USER_DESCRIPTION = "USER API"
 USER_DEMO_MODE = "demo_mode"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
@@ -1038,7 +1006,6 @@ RESET = "reset"
 RBAC_MATRIX = "rbac_matrix"
 INDUSTRY = "industry"
 TARGET = "target"
-TRACK = "track"
 RELEASE_VERSION_LATEST = "RELEASE_VERSION_LATEST"
 RELEASE_NOTES_LATEST = "RELEASE_NOTES_LATEST"
 
@@ -1048,10 +1015,8 @@ MODEL = "model"
 MODELS = "models"
 MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
-RANK = "rank"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
-MODEL_VERSION = "model_version"
 MODEL_METADATA = "model_metadata"
 BINARY = "binary"
 FEATURE = "feature"
@@ -1067,51 +1032,6 @@ LIFT_PREDICTED = "lift_predicted"
 LIFT_ACTUAL = "lift_actual"
 RATE_ACTUAL = "rate_actual"
 MODEL_ID = "model_id"
-MODEL_SHAP_DATA = "shap_data"
-MODEL_ONE_SHAP_DATA = [
-    "dow-pe_u_dow-count",
-    "duration_days-order-min",
-    "dow-u_wd-weekday",
-    "dow-pe_u_wd-weekday",
-    "1to2y-quantity-cnt",
-    "1to2y-data_source-transactions",
-    "1to2y-price-max",
-    "1to2y-price-sum",
-    "1to2y-price-avg",
-    "1to2y-price-cnt",
-    "1to2y-positive-order",
-    "1to2y-type-transaction",
-    "1to2y-quantity-max",
-    "1to2y-quantity-sum",
-    "1to2y-quantity-avg",
-    "dow-pe_u_dow-thursday",
-    "dow-u_dow-thursday",
-    "8to12m-data_source-transactions",
-    "8to12m-price-max",
-    "8to12m-price-sum",
-]
-MODEL_TWO_SHAP_DATA = [
-    "8to12m-price-min",
-    "8to12m-price-avg",
-    "8to12m-price-cnt",
-    "8to12m-type-transaction",
-    "8to12m-positive-order",
-    "8to12m-quantity-max",
-    "8to12m-quantity-sum",
-    "8to12m-quantity-avg",
-    "dow-pe_u_dow-tuesday",
-    "dow-u_dow-tuesday",
-    "1to2y-description-red",
-    "dow-u_dow-wednesday",
-    "dow-pe_u_dow-wednesday",
-    "4m-quantity-cnt",
-    "4m-price-avg",
-    "4m-price-sum",
-    "4m-price-max",
-    "4m-price-cnt",
-    "4m-price-min",
-    "1to2y-description-set",
-]
 MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
@@ -1122,11 +1042,6 @@ MODEL_ID_PARAMS = [
         "example": "1",
     }
 ]
-MODEL_STATUS_MAPPING = {
-    "success": STATUS_ACTIVE,
-    "pending": STATUS_PENDING,
-    "active": STATUS_ACTIVE,
-}
 
 PURCHASE = "purchase"
 LTV = "ltv"
@@ -1140,8 +1055,6 @@ FEATURE_IMPORTANCE = "feature-importance"
 SCORE = "score"
 
 FEATURES = "features"
-JOIN_KEYS = "joinKeys"
-RESULTS = "results"
 LATEST_VERSION = "latest_version"
 VERSION = "version"
 FULCRUM_DATE = "fulcrum_date"
@@ -1150,7 +1063,6 @@ TRAINED_DATE = "trained_date"
 LOOKBACK_WINDOW = "lookback_window"
 PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
-FEATURE_SERVICE = "feature_service"
 DATA_SOURCE = "data_source"
 FEATURE_TYPE = "feature_type"
 MEAN = "mean"
@@ -1160,7 +1072,6 @@ LCUV = "lcuv"
 MCUV = "mcuv"
 UNIQUE_VALUES = "unique_value"
 RECORDS_NOT_NULL = "records_not_null"
-POPULARITY = "popularity"
 BUCKET = "bucket"
 PREDICTED_VALUE = "predicted_value"
 ACTUAL_VALUE = "actual_value"
@@ -1179,7 +1090,6 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 CDP_DATA_SOURCE_TYPE = "datasource_type"
 DATAFEED_NAME = "datafeed_name"
-LAST_PROCESSED = "last_processed"
 PROCESSED_START_DATE = "processed_start_dt"
 PROCESSED_END_DATE = "processed_end_dt"
 DATA_SOURCES = "data_sources"
@@ -1213,9 +1123,6 @@ NOTIFICATION_EMAIL_RECIPIENTS = "recipients"
 NOTIFICATION_EMAIL_ALERT_CATEGORY = "alert_category"
 NOTIFICATION_EMAIL_ALERT_TYPE = "alert_type"
 NOTIFICATION_EMAIL_ALERT_DESCRIPTION = "alert_description"
-
-# AWS BATCH
-BATCH_SIZE = "batch_size"
 
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
@@ -1292,52 +1199,6 @@ DATASOURCES = "datasources"
 DATA_MANAGEMENT = "data_management"
 DATAFEEDS = "datafeeds"
 
-PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
-    {
-        ID: 3,
-        VERSION: "22.8.32",
-        NAME: random.choice(
-            [
-                f"4w-ORDTDOL-cnt-{i}",
-                f"profile-NSTOREDIST-sum-{i}",
-                f"2m-ITEMNO-94508948346-{i}",
-                f"2w-ORDAMT-max-{i}",
-                f"1to2y-COGS-sum-{i}",
-                f"1to2y-ITEMQTY-avg-{i}",
-                f"2m-ORDTDOL-cnt-{i}",
-                f"dow-pe_u_dow-pe_count-{i}",
-                f"duration_days-item-min-{i}",
-                f"2m-COGS-cnt-{i}",
-            ]
-        ),
-        FEATURE_TYPE: random.choice(["Numerical", "Categorial"]),
-        RECORDS_NOT_NULL: str(random.randint(1, 100)) + "%",
-        FEATURE_IMPORTANCE: random.randint(1, 3),
-        MEAN: random.uniform(1.0, 4.0),
-        MIN: random.uniform(1.0, 3.0),
-        MAX: random.uniform(3.0, 7.0),
-        FEATURE_SERVICE: PURCHASE,
-        UNIQUE_VALUES: random.randint(1, 100),
-        LCUV: random.choice(["Women", "Gasoline", "Clothing", "Cars"]),
-        MCUV: random.choice(["Men", "Water", "Grocery", "Home accesories"]),
-    }
-    for i in range(50)
-]
-
-PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
-    MODEL_NAME: "Propensity to Purchase",
-    PERFORMANCE_METRIC: {
-        RMSE: -1,
-        AUC: 0.82,
-        PRECISION: 0.81,
-        RECALL: 0.59,
-        CURRENT_VERSION: "22.8.32",
-    },
-    DESCRIPTION: "Predicts the propensity of a customer to make a purchase "
-    "after receiving an email.",
-    MODEL_TYPE: "purchase",
-}
-
 # Connections Data feeds Constants
 PROCESSED_AT = "processed_at"
 RECORDS_PROCESSED = "records_processed"
@@ -1350,144 +1211,8 @@ DATA_FILES = "data_files"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
-MODELS_STUB = [
-    {
-        CATEGORY: "Email",
-        TYPE: "Classification",
-        NAME: "Propensity to Open",
-        DESCRIPTION: " Propensity for a customer to open an email.",
-        ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Email",
-        TYPE: "Classification",
-        NAME: "Propensity to Click",
-        DESCRIPTION: "Propensity for a customer to click "
-        "on a link in an email.",
-        ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Email",
-        TYPE: "Unknown",
-        NAME: "Email Content Optimization",
-        DESCRIPTION: "Alter email content to optimize "
-        "email campaign performance.",
-        ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust ID",
-        TYPE: "Classification",
-        NAME: "Capability Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral capability score.",
-        ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust ID",
-        TYPE: "Classification",
-        NAME: "Trust Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral trust score.",
-        ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust ID",
-        TYPE: "Classification",
-        NAME: "Humanity Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral humanity score.",
-        ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust ID",
-        TYPE: "Classification",
-        NAME: "Reliability Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral reliability score.",
-        ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Trust ID",
-        TYPE: "Classification",
-        NAME: "Transparency Propensity",
-        DESCRIPTION: "Propensity for a customer to have positive,"
-        " negative, or neutral transparency score.",
-        ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Retention",
-        TYPE: "Classification",
-        NAME: "Churn",
-        DESCRIPTION: "Propensity for a customer to leave a service "
-        "over a defined time range.",
-        ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Sales forecasting",
-        TYPE: "Regression",
-        NAME: "Predicted Sales Per Customer",
-        DESCRIPTION: "Predicting sales for a customer over a "
-        "defined time range.",
-        ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Sales forecasting",
-        TYPE: "Regression",
-        NAME: "Predicted Sales Per Store",
-        DESCRIPTION: "Predicting sales for a store over a "
-        "defined time range.",
-        ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Web",
-        TYPE: "Classification",
-        NAME: "Propensity to Purchase Product Category",
-        DESCRIPTION: "Propensity for a customer to make a web purchase"
-        " in a particular product category.",
-        ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Web",
-        TYPE: "Classification",
-        NAME: "Propensity to Visit Product Category",
-        DESCRIPTION: "Propensity for a customer to make a web visit"
-        " in a particular product category.",
-        ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Web",
-        TYPE: "Classification",
-        NAME: "Propensity to Visit Website",
-        DESCRIPTION: "Propensity for a customer to visit a website.",
-        ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Uncategorized",
-        TYPE: "Classification",
-        NAME: "Segmentation",
-        DESCRIPTION: "Segment a set of customers.",
-        ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-]
-
 # Configurations
 CONFIGURATIONS_TAG = "configurations"
-CONFIGURATION_ID = "configuration_id"
 CONFIGURATIONS_ENDPOINT = "/configurations"
 SETTINGS = "settings"
 NAVIGATION_CHILDREN = "children"
@@ -1575,7 +1300,6 @@ SAMPLE_RBAC_MATRIX_SETTINGS = {
 APPLICATIONS_TAG = "applications"
 APPLICATION_ID = "application_id"
 APPLICATIONS_ENDPOINT = "/applications"
-ONLY_ACTIVE = "only_active"
 
 # Client Projects
 CLIENT_PROJECTS_TAG = "client-projects"
@@ -1713,7 +1437,6 @@ ALERTS = "alerts"
 
 RESOURCE_OWNER = "resource_owner"
 ALLOWED_RESOURCES_FOR_ABAC = [AUDIENCE, ENGAGEMENT]
-ALLOWED_ACCESS_RULES = [RESOURCE_OWNER]
 
 REQUESTED_USERS = "requested_users"
 # Jira States.
@@ -1866,16 +1589,12 @@ TRUST_ID_SEGMENTS = "segments"
 TRUST_ID_SEGMENT_NAME = "segment_name"
 TRUST_ID_SEGMENT_FILTERS = "segment_filters"
 IS_BOOLEAN = "is_boolean"
-TRUST_ID_SURVEY_RESPONSES = "survey_responses"
 TRUST_ID_SCORE = "trust_id_score"
 TRUST_ID_ATTRIBUTE_TYPE = "attribute_type"
 TRUST_ID_ATTRIBUTE_NAME = "attribute_name"
 TRUST_ID_ATTRIBUTE_SCORE = "attribute_score"
 TRUST_ID_ATTRIBUTE_DESCRIPTION = "attribute_description"
 TRUST_ID_ATTRIBUTE_SHORT_DESCRIPTION = "attribute_short_description"
-OCCUPATION = "occupation"
-CUSTOMER_TYPE = "customer_type"
-OPTIONS = "options"
 OVERALL_CUSTOMER_RATING = "overall_customer_rating"
 RATING = "rating"
 AGREE = "agree"
