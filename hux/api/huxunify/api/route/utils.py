@@ -646,6 +646,10 @@ def convert_unique_city_filter(request_json: dict) -> dict:
                     item[api_c.AUDIENCE_FILTER_FIELD]
                     == api_c.AUDIENCE_FILTER_CITY
                 ):
+                    # store pipe string for showing it back in the UI.
+                    item[api_c.AUDIENCE_FILTER_CITY_VALUE] = item[
+                        api_c.AUDIENCE_FILTER_VALUE
+                    ]
                     city_value, state_value, _ = item.get(
                         api_c.AUDIENCE_FILTER_VALUE
                     ).split("|")
@@ -656,7 +660,7 @@ def convert_unique_city_filter(request_json: dict) -> dict:
                             api_c.AUDIENCE_FILTER_FIELD: api_c.STATE.title(),
                             api_c.AUDIENCE_FILTER_TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
                             api_c.AUDIENCE_FILTER_VALUE: state_value,
-                        }
+                        },
                     )
         return request_json
     except KeyError:
@@ -666,6 +670,36 @@ def convert_unique_city_filter(request_json: dict) -> dict:
     except ValueError:
         logger.info("Incorrect Audience Filter Object")
         return request_json
+
+
+def convert_audience_city_filter(audience_json: dict) -> dict:
+    """To convert stored audience json to have unique city.
+
+    Args:
+        audience_json (dict): Stored audience filter json object.
+
+    Returns:
+        dict: Converted audience filter.
+    """
+
+    try:
+        for filters in audience_json[api_c.AUDIENCE_FILTERS]:
+            for item in filters[api_c.AUDIENCE_SECTION_FILTERS]:
+                if (
+                    item[api_c.AUDIENCE_FILTER_FIELD]
+                    == api_c.AUDIENCE_FILTER_CITY
+                ):
+                    # Convert pipe string for showing it back in the UI.
+                    item[api_c.AUDIENCE_FILTER_VALUE] = item[
+                        api_c.AUDIENCE_FILTER_CITY_VALUE
+                    ]
+        return audience_json
+    except KeyError:
+        logger.info("Incorrect Audience Filter Object")
+        return audience_json
+    except ValueError:
+        logger.info("Incorrect Audience Filter Object")
+        return audience_json
 
 
 def match_rate_data_for_audience(delivery: dict, match_rate_data: dict = None):
