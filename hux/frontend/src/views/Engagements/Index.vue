@@ -1472,7 +1472,7 @@ export default {
     text-overflow: ellipsis;
     max-width: 21ch;
     display: inline-block;
-    max-width: 21ch;
+    width: 21ch;
     white-space: nowrap;
   }
   .mdi-chevron-right {
