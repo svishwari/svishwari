@@ -10,6 +10,10 @@ export default {
   argTypes: {
     dataItems: { control: { type: "array" } },
     columns: { control: { type: "array" } },
+    variant: {
+      options: ["Large", "Medium"],
+      control: { type: "select" },
+    },
   },
 
   args: {
@@ -157,6 +161,7 @@ export default {
         width: "117px",
       },
     ],
+    variant: "Large",
   },
 
   parameters: {

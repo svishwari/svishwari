@@ -99,6 +99,45 @@ const TemplateAll = (args) => ({
             </v-sheet>
           </template>
       </v-item>
+      
+      <v-item>
+        <template v-slot:default="{ active, toggle }">
+          <v-sheet
+            :color="
+              active
+                  ? 'backgroundMed'
+                : undefined
+            "
+            tile
+            @click="toggle"
+          >
+            <div class="transition-swing text-uppercase text-h3 pa-5"> HX TrustId gradient color
+            </div>
+            <v-expand-transition>
+              <v-responsive>
+                <div class="d-flex flex-wrap mt-5">
+                  <v-card
+                    width="220"
+                    class="ml-5 mb-4"
+                    elevation="1"
+                    shaped
+                  >
+                    <div
+                      style="height: 112px; width: 100%"
+                      class="d-flex"
+                      :style="{
+                        background: 'linear-gradient(224.19deg, #D0C539 2.41%, #037E8E 35.61%, #3C89B7 66.79%, #92C7CD 98.98%)',
+                        border: 'solid 2px #e2eaec',
+                      }"
+                    ></div>
+                  </v-card>
+                </div>
+              </v-responsive>
+            </v-expand-transition>
+          </v-sheet>
+        </template>
+      </v-item>
+
       </v-sheet>
     </v-item-group>
   </div>`,

@@ -490,7 +490,7 @@ export default {
 .nav-footer {
   opacity: 0.8;
   height: 40px;
-  padding-top: 10px;
+  padding-top: 10px !important;
   border-top: 1px solid var(--v-black-lighten1);
   color: var(--v-success-darken1) !important;
 }

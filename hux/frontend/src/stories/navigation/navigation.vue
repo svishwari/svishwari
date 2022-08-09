@@ -32,7 +32,10 @@
                   :size="isMini ? 38 : 24"
                   :class="isMini ? '' : 'ml-1 mr-2'"
                 />
-                <span v-if="!isMini" class="ellipsis font-weight-regular">
+                <span
+                  v-if="!isMini"
+                  class="ellipsis font-weight-regular new-h4"
+                >
                   {{ client.name }}
                 </span>
               </span>
@@ -71,12 +74,12 @@
     >
       <div
         v-if="item.children && item.children.length > 0"
-        class="list-group black--text mt-2"
+        class="list-group black--text"
       >
         <span
           v-if="!isMini"
           class="
-            text-h5
+            new-b3
             black--text
             text--lighten-4
             pl-4
@@ -116,12 +119,12 @@
             </template>
           </tooltip>
         </v-list-item-icon>
-        <v-list-item-title class="black--text text-h6 pl-1">
+        <v-list-item-title class="black--text new-b4 pl-3">
           {{ item.name }}
         </v-list-item-title>
       </v-list-item>
 
-      <div v-if="item.children">
+      <div v-if="item.children" class="mb-2">
         <v-list-item
           v-for="menu in item.children"
           :key="menu.name"
@@ -153,7 +156,7 @@
               </template>
             </tooltip>
           </v-list-item-icon>
-          <v-list-item-title class="black--text text-h6 pl-1">
+          <v-list-item-title class="black--text new-b4 pl-3">
             {{ menu.name }}
             <span v-if="menu.superscript" class="title-superscript">
               {{ menu.superscript }}
@@ -162,6 +165,11 @@
         </v-list-item>
       </div>
     </v-list>
+    <template v-if="!isMini" #append>
+      <div class="nav-footer text--darken-1 new-b4 px-4 py-3">
+        Hux by Deloitte Digital
+      </div>
+    </template>
   </v-navigation-drawer>
 </template>
 
@@ -211,7 +219,7 @@ export default {
     },
 
     iconSize() {
-      return this.isMini ? 40 : 24
+      return this.isMini ? 40 : 32
     },
 
     iconClass() {
@@ -240,6 +248,7 @@ export default {
       .list-group {
         .menu-parent-item {
           color: var(--v-black-lighten6) !important;
+          text-transform: none !important;
         }
       }
     }
@@ -261,6 +270,9 @@ export default {
 
   .v-list {
     padding: 0;
+    .list-group {
+      border-top: 1px solid rgba(226, 234, 236, 0.5);
+    }
   }
 
   .v-list-item__icon {
@@ -311,8 +323,6 @@ export default {
   }
 
   .list-group {
-    border-top: 1px solid rgba(226, 234, 236, 0.5);
-
     span {
       text-transform: uppercase;
       min-height: 40px;
@@ -321,16 +331,16 @@ export default {
     }
   }
 
-  // Apply this css only if icon size is 14 otherwise icon size should be 18
+  // Apply this css only if icon size is 32 otherwise icon size should be 40
   .home-menu-icon {
     svg {
-      top: 20%;
+      top: 8%;
       position: absolute;
     }
   }
   .menu-icon {
     svg {
-      top: 20%;
+      top: 8%;
       position: absolute;
     }
   }
@@ -343,8 +353,9 @@ export default {
 }
 .nav-footer {
   opacity: 0.8;
-  height: 27px;
-  margin-top: -35px;
+  height: 40px;
+  padding-top: 10px !important;
+  border-top: 1px solid var(--v-black-lighten1);
   color: var(--v-success-darken1) !important;
 }
 .v-menu__content {
