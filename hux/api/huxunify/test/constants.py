@@ -200,6 +200,21 @@ IDENTITY_INSIGHT_RESPONSE = {
     },
     "message": "ok",
 }
+IDENTITY_INSIGHT_EMPTY_RESPONSE = {
+    "code": 200,
+    "body": {
+        "total_records": 0,
+        "match_rate": 0,
+        "total_unique_ids": 0,
+        "total_anonymous_ids": 0,
+        "total_address_ids": 0,
+        "total_individual_ids": 0,
+        "total_household_ids": 0,
+        "updated": 0,
+    },
+    "message": "ok",
+}
+
 EVENT_TYPES_RESPONSE = {
     "code": 200,
     "body": [
@@ -1505,6 +1520,12 @@ IDR_DATAFEEDS_RESPONSE = {
     ],
 }
 
+IDR_DATAFEEDS_EMPTY_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": [],
+}
+
 IDR_DATAFEED_DETAILS_RESPONSE = {
     "code": 200,
     "message": "ok",
@@ -1531,6 +1552,39 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
             "digital_ids_added": 12,
             "digital_ids_merged": 21,
             "match_rate": 66,
+            "merge_rate": 0,
+            "records_source": "input waterfall",
+            "stitched_timestamp": "2021-08-05T14:44:42.694Z",
+        },
+    },
+}
+
+IDR_DATAFEED_DETAILS_EMPTY_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": {
+        "pinning": {
+            "input_records": 0,
+            "output_records": 0,
+            "empty_records": 0,
+            "individual_id_match": 0,
+            "household_id_match": 0,
+            "company_id_match": 0,
+            "address_id_match": 0,
+            "db_reads": 0,
+            "db_writes": 0,
+            "filename": "email_analytics_extract_clicks_2021841437.csv",
+            "new_individual_ids": 0,
+            "new_household_ids": 0,
+            "new_company_ids": 0,
+            "new_address_ids": 0,
+            "process_time": 0,
+            "pinning_timestamp": "2021-08-05T14:44:42.694Z",
+        },
+        "stitched": {
+            "digital_ids_added": 0,
+            "digital_ids_merged": 0,
+            "match_rate": 0,
             "merge_rate": 0,
             "records_source": "input waterfall",
             "stitched_timestamp": "2021-08-05T14:44:42.694Z",
@@ -1718,6 +1772,25 @@ IDR_MATCHING_TRENDS_BY_DAY_DATA = {
             api_c.UNIQUE_HUX_IDS: 906,
             api_c.ANONYMOUS_IDS: 104,
             api_c.KNOWN_IDS: 906,
+        },
+    ],
+}
+
+IDR_MATCHING_TRENDS_BY_DAY_EMPTY_DATA = {
+    "code": 200,
+    "message": "ok",
+    api_c.BODY: [
+        {
+            api_c.DAY: "2021-08-01",
+            api_c.UNIQUE_HUX_IDS: 0,
+            api_c.ANONYMOUS_IDS: 0,
+            api_c.KNOWN_IDS: 0,
+        },
+        {
+            api_c.DAY: "2021-08-02",
+            api_c.UNIQUE_HUX_IDS: 0,
+            api_c.ANONYMOUS_IDS: 0,
+            api_c.KNOWN_IDS: 0,
         },
     ],
 }

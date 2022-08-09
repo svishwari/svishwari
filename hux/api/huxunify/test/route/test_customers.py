@@ -741,6 +741,104 @@ class TestCustomersOverview(RouteTestCase):
             )
         )
 
+    def test_get_idr_overview_empty_body(self):
+        """Test get customers idr overview empty data."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.INSIGHTS}",
+            json=t_c.IDENTITY_INSIGHT_EMPTY_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by"
+            f"-day",
+            json=t_c.IDR_MATCHING_TRENDS_BY_DAY_EMPTY_DATA,
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{self.idr}/{api_c.OVERVIEW}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        data = response.json
+        self.assertTrue(data[api_c.OVERVIEW])
+        self.assertTrue(data[api_c.DATE_RANGE])
+
+        expected_response = IDROverviewSchema().dump(
+            clean_cdm_fields(t_c.IDENTITY_INSIGHT_EMPTY_RESPONSE[api_c.BODY].copy())
+        )
+        for key, value in data[api_c.OVERVIEW].items():
+            self.assertEqual(expected_response[key], value)
+
+    def test_get_idr_trends_empty_body(self):
+        """Test get matching trends with empty data."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by"
+            f"-day",
+            json=t_c.IDR_MATCHING_TRENDS_BY_DAY_EMPTY_DATA,
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.MATCHING_TRENDS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertFalse(MatchingTrendsSchema().validate(response.json, many=True))
+
+    def test_get_idr_data_feeds_empty_data(self):
+        """Test get IDR Datafeeds."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.DATAFEEDS}",
+            json=t_c.IDR_DATAFEEDS_EMPTY_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(response.json)
+        self.assertEqual(0, len(response.json))
+
+    def test_get_idr_data_feed_details_empty_data(self) -> None:
+        """Test get idr datafeed details for empty data."""
+
+        datafeed_id = 1
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.DATAFEEDS}/"
+            f"{datafeed_id}",
+            json=t_c.IDR_DATAFEED_DETAILS_EMPTY_RESPONSE,
+        )
+
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.DATAFEEDS}",
+            json=t_c.IDR_DATAFEEDS_EMPTY_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}/"
+            f"{datafeed_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(DataFeedDetailsSchema().validate(response.json))
+
     def test_get_customer_overview_dependency_failure(self) -> None:
         """Test get customer overview 424 dependency failure."""
 
