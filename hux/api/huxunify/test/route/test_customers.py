@@ -767,7 +767,9 @@ class TestCustomersOverview(RouteTestCase):
         self.assertTrue(data[api_c.DATE_RANGE])
 
         expected_response = IDROverviewSchema().dump(
-            clean_cdm_fields(t_c.IDENTITY_INSIGHT_EMPTY_RESPONSE[api_c.BODY].copy())
+            clean_cdm_fields(
+                t_c.IDENTITY_INSIGHT_EMPTY_RESPONSE[api_c.BODY].copy()
+            )
         )
         for key, value in data[api_c.OVERVIEW].items():
             self.assertEqual(expected_response[key], value)
@@ -789,7 +791,9 @@ class TestCustomersOverview(RouteTestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-        self.assertFalse(MatchingTrendsSchema().validate(response.json, many=True))
+        self.assertFalse(
+            MatchingTrendsSchema().validate(response.json, many=True)
+        )
 
     def test_get_idr_data_feeds_empty_data(self):
         """Test get IDR Datafeeds with empty body."""
