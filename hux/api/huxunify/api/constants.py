@@ -57,6 +57,11 @@ FILE_OBJ = "file_obj"
 # is only available in a couple environments.
 STAGING_ENV = "STG1"
 LILDEV_ENV = "LILDEV"
+<<<<<<< HEAD
+=======
+LPZDEV_ENV = "LPZDEV"
+HUSDEV2_ENV = "HUSDEV2"
+>>>>>>> 1abbde62058fca9f2661de60d1613fdba3c2548e
 
 # AWS constants
 AWS_REGION = "AWS_REGION"
@@ -156,6 +161,7 @@ UNIQUE_ID = "unique_id"
 TEXT = "text"
 EVENTS = "events"
 ENDPOINT = "endpoint"
+RACE_ETHNICITY = "race_ethnicity"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
