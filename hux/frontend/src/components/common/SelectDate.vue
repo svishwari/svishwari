@@ -13,7 +13,7 @@
     </div>
 
     <div class="mx-1">
-      <label class="black--text text--darken-4"> {{ labelYear }} </label>
+      <label class="black--text text--darken-4"> {{ labelYear }} </label> ̰
 
       <hux-select
         v-model="year"
