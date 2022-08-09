@@ -40,11 +40,12 @@
           class="mt-16"
         >
           <template #title>
-            <div class="title-no-notification">No audience data to show</div>
+            <div class="title-no-notification mt-1">No map data to show</div>
           </template>
           <template #subtitle>
-            <div class="des-no-notification mt-2">
-              Map feature chart will appear here once you create an audience.
+            <div class="des-no-notification mt-4">
+              Map feature chart will appear here once <br />
+              you have relevant audiences
             </div>
           </template>
         </empty-page>
@@ -55,12 +56,12 @@
           :size="50"
         >
           <template #title>
-            <div class="title-no-notification">
+            <div class="title-no-notification mt-1">
               Map feature is currently unavailable
             </div>
           </template>
           <template #subtitle>
-            <div class="text-body-2 black--text text--base mt-2">
+            <div class="text-body-2 black--text text--base mt-4">
               Our team is working hard to fix it. Please be patient and try
               again soon!
             </div>
