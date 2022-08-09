@@ -74,7 +74,7 @@ def before_request():
 
 
 @add_view_to_blueprint(
-    user_bp, f"{api_c.USER_ENDPOINT}/profile", "IndividualUserSearch"
+    user_bp, f"{api_c.USER_ENDPOINT}/{api_c.PROFILE}", "UserProfile"
 )
 class UserProfile(SwaggerView):
     """User Profile Class."""
@@ -984,10 +984,9 @@ class UsersRequested(SwaggerView):
 
         if not jira_issues:
             logger.info(
-                "No user requests found for user with user name %s.",
+                "No users requested by %s.",
                 user[api_c.USER_NAME],
             )
-            return {"message": "No user requests found."}, HTTPStatus.OK
 
         return (
             jsonify(

@@ -8,7 +8,6 @@ from typing import Tuple
 from bson import ObjectId
 from flasgger import SwaggerView
 from flask import Blueprint, request, Response
-from marshmallow import ValidationError
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database.notification_management import create_notification
@@ -361,11 +360,7 @@ class DestinationAuthenticationPutView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    @api_error_handler(
-        custom_message={
-            ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
-        }
-    )
+    @api_error_handler(custom_message=api_c.DESTINATION_AUTHENTICATION_INVALID)
     @validate_destination()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def put(

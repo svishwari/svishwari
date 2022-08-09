@@ -39,5 +39,15 @@ def pending_jobs() -> Response:
                 db_c.DELIVERY_JOBS_COLLECTION,
                 {db_c.USERNAME: db_c.ORCH_INTEGRATION_TEST_USER_FLDR},
             ).get(api_c.TOTAL_RECORDS, 0),
+            api_c.ORCH_INTEGRATION_TEST_DR: get_documents(
+                get_db_client(),
+                db_c.DELIVERY_PLATFORM_COLLECTION,
+                {db_c.DELIVERY_PLATFORM_NAME: db_c.ORCH_INTEGRATION_TEST_DR},
+            ).get(api_c.TOTAL_RECORDS, 0),
+            api_c.ORCH_INTEGRATION_TEST_MCA: get_documents(
+                get_db_client(),
+                db_c.DELIVERY_PLATFORM_COLLECTION,
+                {db_c.DELIVERY_PLATFORM_NAME: db_c.ORCH_INTEGRATION_TEST_MCA},
+            ).get(api_c.TOTAL_RECORDS, 0),
         },
     }

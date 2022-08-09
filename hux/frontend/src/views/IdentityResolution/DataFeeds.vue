@@ -23,7 +23,11 @@
             >
               <tooltip v-if="col.value === 'datafeed_name'">
                 <span
-                  class="d-inline-block mw-100 text-truncate text-decoration-none"
+                  class="
+                    d-inline-block
+                    mw-100
+                    text-truncate text-decoration-none
+                  "
                 >
                   {{ item[col.value] }}
                 </span>

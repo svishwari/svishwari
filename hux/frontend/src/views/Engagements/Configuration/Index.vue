@@ -53,7 +53,12 @@
     >
       <template #body>
         <div
-          class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular"
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
         >
           Are you sure you want to delete this Engagement&#63;
         </div>

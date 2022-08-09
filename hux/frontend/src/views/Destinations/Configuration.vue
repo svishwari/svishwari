@@ -54,7 +54,16 @@
     <!-- add destination form -->
     <v-form v-if="showAddForm" v-model="isAddFormValid" class="mt-10">
       <div
-        class="primary lighten-1 border-all black--border border--lighten-2 pa-5 rounded mb-10"
+        class="
+          primary
+          lighten-1
+          border-all
+          black--border
+          border--lighten-2
+          pa-5
+          rounded
+          mb-10
+        "
       >
         <v-row class="pt-4 pl-3">
           <v-col
@@ -111,7 +120,15 @@
       </div>
       <div
         v-if="isSFMCSelected && isValidated"
-        class="primary lighten-1 black--border border--lighten-2 pa-4 rounded mt-10"
+        class="
+          primary
+          lighten-1
+          black--border
+          border--lighten-2
+          pa-4
+          rounded
+          mt-10
+        "
       >
         <s-f-m-c :data-extensions="dataExtensions" @select="setExtension" />
       </div>
@@ -132,7 +149,15 @@
       <v-alert
         outlined
         tile
-        class="pa-3 pl-2 yellow lighten-1 black--border border--lighten-2 black--text"
+        class="
+          pa-3
+          pl-2
+          yellow
+          lighten-1
+          black--border
+          border--lighten-2
+          black--text
+        "
       >
         <div class="d-flex justify-space-between">
           <div class="mr-3">
@@ -228,7 +253,15 @@
       <v-row>
         <v-col cols="12" class="textAreaDiv pt-6">
           <div
-            class="primary lighten-1 border-all black--border border--lighten-2 rounded pa-5"
+            class="
+              primary
+              lighten-1
+              border-all
+              black--border
+              border--lighten-2
+              rounded
+              pa-5
+            "
           >
             <label class="d-flex text-h5 mb-2">
               What is the use case for this destination?
@@ -253,7 +286,14 @@
           size="large"
           variant="white"
           is-tile
-          class="text-button ml-auto primary--text mr-3 btn-border box-shadow-none"
+          class="
+            text-button
+            ml-auto
+            primary--text
+            mr-3
+            btn-border
+            box-shadow-none
+          "
           data-e2e="cancel-destination-request"
           @click="cancel()"
         >

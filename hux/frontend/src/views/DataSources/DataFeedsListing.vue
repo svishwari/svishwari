@@ -88,7 +88,12 @@
                             type="expand-arrow"
                             :size="14"
                             color="black"
-                            class="cursor-pointer mdi-chevron-right mx-2 d-inline-block"
+                            class="
+                              cursor-pointer
+                              mdi-chevron-right
+                              mx-2
+                              d-inline-block
+                            "
                             :class="{ 'normal-icon': isExpanded }"
                           />
                         </span>
@@ -111,12 +116,33 @@
                     v-else-if="header.value === 'status'"
                     class="black--text text--darken-4 text-body-1"
                   >
-                    <status
-                      :status="item[header.value]"
-                      :show-label="true"
-                      class="data-feed-status d-flex"
-                      :icon-size="item[header.value] == 'Failed' ? '15' : '18'"
-                    />
+                    <tooltip>
+                      <template #label-content>
+                        <status
+                          :status="item[header.value]"
+                          :show-label="true"
+                          class="data-feed-status d-flex"
+                          :icon-size="
+                            item[header.value] == 'Failed' ? '15' : '18'
+                          "
+                        />
+                      </template>
+                      <template #hover-content>
+                        <span v-if="item[header.value] == 'Success'">
+                          File processing complete and all jobs are success
+                        </span>
+                        <span v-if="item[header.value] == 'Running'">
+                          File processing / job is in progress
+                        </span>
+                        <span v-if="item[header.value] == 'Canceled'">
+                          Ingestion job is canceled
+                        </span>
+                        <span v-if="item[header.value] == 'Failed'">
+                          File processing / job is in progress and at least one
+                          job is failed
+                        </span>
+                      </template>
+                    </tooltip>
                   </div>
                   <div
                     v-else-if="
@@ -387,7 +413,7 @@
           v-else-if="!loading && hasDataFeeds == 0"
           class="empty-error-card mx-7"
         >
-          <v-row class="data-feed-frame py-13">
+          <v-row class="data-feed-frame py-13 mt-4">
             <empty-page
               v-if="!datafeedErrorState"
               type="lift-table-empty"

@@ -3,7 +3,7 @@
     :top="positionTop"
     offset-y
     open-on-hover
-    :content-class="contentClass"
+    :content-class="`tooltipContentClass ${contentClass}`"
     :max-width="maxWidth"
     :min-width="minWidth"
     :nudge-right="nudgeRight"
@@ -11,15 +11,12 @@
     :z-index="zIndex"
   >
     <template #activator="{ on }">
-      <span class="text-body-3" v-on="on">
+      <span class="new-b3" v-on="on">
         <slot name="label-content"></slot>
         <slot name="default"></slot>
       </span>
     </template>
-    <div
-      class="px-4 py-2 tooltip-hover text-body-2 box-shadow-15-8"
-      :style="style"
-    >
+    <div class="px-4 py-2 tooltip-hover new-b3" :style="style">
       <slot name="hover-content"></slot>
       <slot name="tooltip"></slot>
     </div>
@@ -68,12 +65,12 @@ export default {
     color: {
       type: String,
       required: false,
-      default: "black-base",
+      default: "white-base",
     },
     backgroundColor: {
       type: String,
       required: false,
-      default: "white-base",
+      default: "primary-base",
     },
   },
   computed: {
@@ -90,5 +87,9 @@ export default {
 <style lang="scss" scoped>
 .tooltip-hover {
   border-radius: 8px !important;
+}
+.tooltipContentClass {
+  @extend .box-shadow-15-8;
+  border-radius: 8px;
 }
 </style>

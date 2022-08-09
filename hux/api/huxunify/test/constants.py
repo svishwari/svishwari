@@ -1,6 +1,5 @@
 # pylint: disable=invalid-name,line-too-long,too-many-lines
 """Purpose of this file is housing shared components for tests."""
-from datetime import datetime
 import time
 from http import HTTPStatus
 from typing import Generator
@@ -1971,6 +1970,17 @@ DATAFEED_FILE_DETAILS_RESPONSE = {
             api_c.SUB_STATUS: api_c.STATUS_COMPLETE,
             api_c.THIRTY_DAYS_AVG: 0.94,
         },
+        {
+            api_c.INPUT_FILE: "jim_.csv",
+            api_c.UNIQUE_ID: 3,
+            api_c.PROCESSED_END_DATE: None,
+            api_c.PROCESSED_START_DATE: "2022-02-12T16:06:40.000Z",
+            api_c.RECORDS_PROCESSED: 424684,
+            api_c.RECORDS_RECEIVED: 669920,
+            api_c.STATUS: api_c.STATUS_SUCCESS,
+            api_c.SUB_STATUS: api_c.STATUS_COMPLETE,
+            api_c.THIRTY_DAYS_AVG: 0.94,
+        },
     ],
 }
 
@@ -3329,6 +3339,7 @@ TRUST_ID_SAMPLE_USER_SEGMENT = {
             api_c.TYPE: "age",
             api_c.VALUES: ["50 to 54 years"],
             api_c.DESCRIPTION: "Age",
+            api_c.IS_BOOLEAN: False,
         }
     ],
 }

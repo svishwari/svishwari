@@ -81,7 +81,12 @@
             <tooltip v-else-if="column.value === 'name'">
               <template #label-content>
                 <span
-                  class="primary--text cursor-pointer text-body-1 data-feed-name"
+                  class="
+                    primary--text
+                    cursor-pointer
+                    text-body-1
+                    data-feed-name
+                  "
                   @click="getDataFeedDetailsFunc(item)"
                 >
                   {{ item[column.value] }}

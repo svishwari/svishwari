@@ -3,21 +3,25 @@ export default [
     type: "children_under_18",
     description: "Children in Household",
     values: ["true"],
+    is_boolean: true,
   },
   {
     type: "age",
     description: "Age",
     values: ["Under 18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+"],
+    is_boolean: false,
   },
   {
     type: "adults_per_household",
     description: "Adults per Household",
     values: ["1", "2", "3+"],
+    is_boolean: false,
   },
   {
     type: "gender",
     description: "Gender",
     values: ["Male", "Female", "Gender-fluid/Non-binary", "Prefer not to say"],
+    is_boolean: false,
   },
   {
     type: "highest_level_of_education",
@@ -30,6 +34,7 @@ export default [
       "Graduate Degree",
       "Post-graduate Degree",
     ],
+    is_boolean: false,
   },
   {
     type: "race_ethnicity",
@@ -45,6 +50,7 @@ export default [
       "Prefer not to say",
       "Multi-racial",
     ],
+    is_boolean: false,
   },
   {
     type: "household_income",
@@ -59,5 +65,6 @@ export default [
       "$150K+",
       "Prefer not to say",
     ],
+    is_boolean: false,
   },
 ]

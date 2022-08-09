@@ -4,13 +4,14 @@ from http import HTTPStatus
 from typing import Tuple
 
 from bson import ObjectId
-from flask import Blueprint, request
+from flask import Blueprint, request, Response
 from flasgger import SwaggerView
 
 from huxunifylib.database import (
     constants as db_c,
     collection_management,
 )
+from huxunifylib.database.collection_management import get_document
 from huxunifylib.util.general.logging import logger
 
 from huxunify.api import constants as api_c
@@ -25,7 +26,9 @@ from huxunify.api.route.utils import get_db_client
 from huxunify.api.schema.client_projects import (
     ClientProjectGetSchema,
     ClientProjectPatchSchema,
+    ClientDetailsSchema,
 )
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
 )
@@ -188,4 +191,61 @@ class ClientProjectPatchView(SwaggerView):
 
         return HuxResponse.OK(
             data=updated_client_project, data_schema=ClientProjectGetSchema()
+        )
+
+
+@add_view_to_blueprint(
+    client_projects_bp,
+    f"{api_c.CLIENT_ENDPOINT}",
+    "ClientDetails",
+)
+class ClientDetails(SwaggerView):
+    """User Client Details Class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Retrieve Client Details.",
+            "schema": ClientDetailsSchema,
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CLIENT_PROJECTS_TAG]
+
+    # pylint: disable=unused-argument
+    @api_error_handler()
+    @requires_access_levels(api_c.COMMON_USER_ROLE)
+    def get(self, user: dict) -> Tuple[Response, int]:
+        """Retrieves client details.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
+
+        Returns:
+            Tuple[Response, int]: dict of requested users, HTTP status code.
+        """
+
+        # Fetch client details document from configurations collection
+        database = get_db_client()
+        query_filter = {
+            db_c.CONFIGURATION_FIELD_TYPE: db_c.CONFIGURATION_TYPE_CLIENT_DETAILS
+        }
+
+        client_details = get_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            query_filter=query_filter,
+        )
+
+        return HuxResponse.OK(
+            data=client_details[db_c.CONFIGURATION_FIELD_DETAILS]
+            if client_details
+            else {},
+            data_schema=ClientDetailsSchema(),
         )

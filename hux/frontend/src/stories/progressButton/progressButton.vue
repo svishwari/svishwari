@@ -1,8 +1,6 @@
 <template>
   <div class="progress-button d-flex flex-wrap">
-    <hux-button v-if="variant == 'validate'" @click="validate()">
-      Validate
-    </hux-button>
+    <hux-button v-if="variant == 'validate'"> Validate </hux-button>
     <hux-button
       v-else-if="variant == 'success'"
       icon="Checkmark"

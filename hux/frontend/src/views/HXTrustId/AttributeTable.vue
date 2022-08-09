@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="attribute-table-wrapper mt-3">
+  <v-card flat class="attribute-table-wrapper box-shadow-5 rounded-lg mt-3">
     <v-progress-linear :active="isLoading" :indeterminate="isLoading" />
     <template v-if="!isLoading">
       <v-card-title v-if="data.length > 0" class="py-5 px-6">

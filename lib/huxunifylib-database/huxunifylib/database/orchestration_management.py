@@ -327,6 +327,26 @@ def build_get_audiences_query_filter(
                     }
                 ]
             )
+
+        if filters.get(db_c.CONTACT_PREFERENCE_ATTRIBUTE):
+            query_filter["$and"].extend(
+                [
+                    {
+                        "$or": [
+                            {
+                                db_c.ATTRIBUTE_FILTER_FIELD: {
+                                    "$regex": rf"^{attribute}$",
+                                    "$options": "i",
+                                }
+                            }
+                            for attribute in filters.get(
+                                db_c.CONTACT_PREFERENCE_ATTRIBUTE
+                            )
+                        ]
+                    }
+                ]
+            )
+
         if filters.get(db_c.EVENT):
             query_filter["$and"].extend(
                 [
@@ -343,6 +363,7 @@ def build_get_audiences_query_filter(
                     }
                 ]
             )
+
         if filters.get(db_c.INDUSTRY_TAG):
             query_filter["$and"].extend(
                 [
@@ -665,8 +686,7 @@ def get_audience_insights(
         },
         {
             "$addFields": {
-                "deliveries.delivery_platform_type"
-                "": "$destinations.delivery_platform_type",
+                "deliveries.delivery_platform_type": "$destinations.delivery_platform_type",
                 "deliveries.name": "$destinations.name",
                 "deliveries.is_ad_platform": "$destinations.is_ad_platform",
                 "deliveries.status": {

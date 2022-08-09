@@ -41,3 +41,10 @@ class ClientProjectPatchSchema(Schema):
     """Client Project Patch Schema."""
 
     url = Str()
+
+
+class ClientDetailsSchema(Schema):
+    """Client Details Schema."""
+
+    name = Str(required=True, example="Client Name", default="Retail Co")
+    logo = Str(required=True, example="client_logo", default="client")

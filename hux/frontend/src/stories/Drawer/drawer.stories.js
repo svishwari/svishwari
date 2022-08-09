@@ -2,6 +2,7 @@ import Drawer from "./Drawer2.vue"
 import HuxButton from "../huxButton/huxButton2.vue"
 import { action } from "@storybook/addon-actions"
 import AllIcons from "../icons/Icons"
+import Page2 from "../Page/Page2.vue"
 
 export default {
   component: Drawer,
@@ -12,6 +13,7 @@ export default {
     },
     loading: { table: { disable: true } },
     title: { control: { type: "text" } },
+    drawerContent: { control: { type: "text" } },
     iconType: {
       defaultValue: "mapping",
       options: AllIcons,
@@ -19,7 +21,12 @@ export default {
         type: "select",
       },
     },
+    status: {
+      control: { type: "select" },
+      options: ["Text", "Empty", "Error"],
+    },
     secondaryButtonText: { control: { type: "text" } },
+    secondPrimaryButtonText: { control: { type: "text" } },
     primaryButtonText: { control: { type: "text" } },
     footerTextField: { control: { type: "text" } },
   },
@@ -37,7 +44,7 @@ export default {
 }
 
 const Template = (args, { argTypes }) => ({
-  components: { Drawer, HuxButton },
+  components: { Drawer, HuxButton, Page2 },
   props: Object.keys(argTypes),
   methods: {
     onCancel: action("onCancel"),
@@ -62,9 +69,15 @@ const Template = (args, { argTypes }) => ({
       v-on="$props"
       @onClose="onClose()"
     >
-      <template #default>
-        <div class="body-1 pa-6">
-          Some content
+      <template #drawerContent>
+        <div class="new-b1 pa-6" v-if="$props.status == 'Text'">
+          {{$props.drawerContent}}
+        </div>
+        <div class="new-b1 pa-6" v-if="$props.status == 'Error'" >
+          <page2 errorState="true" />
+        </div>
+        <div class="new-b1 pa-6" v-if="$props.status == 'Empty'" >
+          <page2 emptyState="true" />
         </div>
       </template>
     </drawer>

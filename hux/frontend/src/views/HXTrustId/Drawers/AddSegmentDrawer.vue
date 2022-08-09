@@ -27,10 +27,7 @@
         </div>
         <span v-for="(list, index) in segmentData" :key="index">
           <v-checkbox
-            v-if="
-              list.type === 'households_with_children_under_18' ||
-              list.type === 'households_with_seniors_over_65'
-            "
+            v-if="list.is_boolean"
             v-model="segmentDataObj[list.type + '#' + list.description]"
             color="primary lighten-6"
             class="text--base-1 px-5 withoutExpansion checkboxFavorite"
@@ -112,11 +109,7 @@ export default {
 
   computed: {
     filterData() {
-      return this.segmentData.filter(
-        (element) =>
-          element.type != "households_with_children_under_18" &&
-          element.type != "households_with_seniors_over_65"
-      )
+      return this.segmentData.filter((element) => !element.is_boolean)
     },
     segmentFilters() {
       const payload = []

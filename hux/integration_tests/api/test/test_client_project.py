@@ -38,5 +38,5 @@ class TestClientProjects(TestCase):
                 headers=pytest.HEADERS,
             )
 
-        # test success
-        self.assertEqual(HTTPStatus.OK, response.status_code)
+            # test success
+            self.assertEqual(HTTPStatus.OK, response.status_code)

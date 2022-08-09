@@ -30,7 +30,7 @@ const Template = (args, { argTypes }) => ({
   components: { Page2 },
   props: Object.keys(argTypes),
   template: `
-  <page2 v-bind="$props"/>`,
+  <page2 v-bind="$props" />`,
 })
 
 export const newPage = Template.bind({})

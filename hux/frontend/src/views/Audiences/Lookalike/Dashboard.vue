@@ -8,7 +8,13 @@
             name: 'AudienceInsight',
             params: { id: audienceData.source_id },
           }"
-          class="text-body-1 primary--text text--base view-all text-decoration-none"
+          class="
+            text-body-1
+            primary--text
+            text--base
+            view-all
+            text-decoration-none
+          "
         >
           {{ audienceData.source_name }}
         </router-link>
@@ -35,7 +41,13 @@
                 >
                   <template #subtitle-extended>
                     <div
-                      class="mt-1 caption black--text text--darken-4 font-weight-semi-bold"
+                      class="
+                        mt-1
+                        caption
+                        black--text
+                        text--darken-4
+                        font-weight-semi-bold
+                      "
                     >
                       <logo type="facebook" :size="24"></logo>
                     </div>
@@ -46,7 +58,13 @@
                 <metric-card title="Reach" :height="75" :interactable="false">
                   <template #subtitle-extended>
                     <div
-                      class="mt-1 caption black--text text--darken-4 font-weight-semi-bold"
+                      class="
+                        mt-1
+                        caption
+                        black--text
+                        text--darken-4
+                        font-weight-semi-bold
+                      "
                     >
                       {{ audienceData.audience_size_percentage }}%
                     </div>
@@ -62,7 +80,13 @@
                 >
                   <template #subtitle-extended>
                     <div
-                      class="mt-1 caption black--text text--darken-4 font-weight-semi-bold"
+                      class="
+                        mt-1
+                        caption
+                        black--text
+                        text--darken-4
+                        font-weight-semi-bold
+                      "
                     >
                       -
                     </div>
@@ -73,7 +97,13 @@
                 <metric-card title="Created" :height="75" :interactable="false">
                   <template #subtitle-extended>
                     <div
-                      class="mt-1 caption black--text text--darken-4 font-weight-semi-bold"
+                      class="
+                        mt-1
+                        caption
+                        black--text
+                        text--darken-4
+                        font-weight-semi-bold
+                      "
                     >
                       {{
                         audienceData.create_time | Date("MM/DD/YY [•] h:mm A")
@@ -112,14 +142,25 @@
                         name: 'AudienceInsight',
                         params: { id: audienceData.source_id },
                       }"
-                      class="text-body-1 primary--text text--base font-weight-semi-bold text-decoration-none"
+                      class="
+                        text-body-1
+                        primary--text
+                        text--base
+                        font-weight-semi-bold
+                        text-decoration-none
+                      "
                     >
                       {{ audienceData.source_name | Empty("-") }}
                     </router-link>
                   </span>
                   <span
                     v-else
-                    class="caption black--text text--darken-4 font-weight-semi-bold"
+                    class="
+                      caption
+                      black--text
+                      text--darken-4
+                      font-weight-semi-bold
+                    "
                   >
                     {{ audienceData.source_name | Empty("-") }}
                   </span>
@@ -138,7 +179,13 @@
                 >
                   <template #subtitle-extended>
                     <div
-                      class="mt-1 caption black--text text--darken-4 font-weight-semi-bold"
+                      class="
+                        mt-1
+                        caption
+                        black--text
+                        text--darken-4
+                        font-weight-semi-bold
+                      "
                     >
                       {{
                         audienceData.source_size
@@ -157,7 +204,13 @@
                 >
                   <template #subtitle-extended>
                     <div
-                      class="mt-1 caption black--text text--darken-4 font-weight-semi-bold"
+                      class="
+                        mt-1
+                        caption
+                        black--text
+                        text--darken-4
+                        font-weight-semi-bold
+                      "
                     >
                       {{
                         audienceData.match_rate

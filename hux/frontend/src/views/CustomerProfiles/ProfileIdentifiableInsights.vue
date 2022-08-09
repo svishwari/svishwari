@@ -21,7 +21,16 @@
           v-else
           text
           min-width="80"
-          class="d-flex align-right primary--text text-decoration-none pl-0 pr-0 mr-2 body-1"
+          class="
+            d-flex
+            align-right
+            primary--text
+            text-decoration-none
+            pl-0
+            pr-0
+            mr-2
+            body-1
+          "
           @click="togglePIIData()"
         >
           <icon

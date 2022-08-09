@@ -1,354 +1,354 @@
 <template>
-  <page max-width="100%" class="hx-trust-id-wrapper">
-    <template #header>
-      <page-header
-        class="page-header py-5"
-        header-min-height="110"
-        header-max-height="120"
-      >
-        <template #left>
-          <div>
-            <breadcrumb
-              :items="[
-                {
-                  text: 'HX TrustID',
-                  superscript: 'TM',
-                  disabled: true,
-                  href: '/hx-trustid',
-                  icon: 'hx-trustid-header',
-                  iconSize: 36,
-                  iconColor: 'black',
-                  iconColorVariant: 'base',
-                },
-              ]"
-            />
-          </div>
-          <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
-            Measure the factors of trust, predict how trust sentiment will
-            impact consumer &amp; employee behaviors, and identify actions to
-            (re)build trust.
-          </div>
-        </template>
-      </page-header>
-    </template>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
-    <template>
-      <div class="d-flex main-content">
-        <div
-          class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
-        >
-          <overview v-if="!loading" :data="trustIdOverview" />
-          <v-tabs v-model="tabOption" class="mt-4">
-            <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
-            <div class="d-flex">
-              <v-tab
-                key="comparison"
-                class="pa-2 mr-3 text-h3"
-                color
-                data-e2e="comparison-tab"
-              >
-                Comparison
-              </v-tab>
-              <v-tab key="attributes" class="text-h3" data-e2e="attributes-tab">
-                Attributes
-              </v-tab>
-            </div>
-          </v-tabs>
-          <v-tabs-items
-            v-if="!loading"
-            v-model="tabOption"
-            class="mt-2 tabs-item"
-          >
-            <v-tab-item key="comparison" class="tab-item">
-              <v-row>
-                <v-col md="12">
-                  <v-card
-                    class="mt-3 rounded-lg box-shadow-5 tab-card-1"
-                    height="365"
-                  >
-                    <v-progress-linear
-                      v-if="segmentComparisonLoading"
-                      :active="segmentComparisonLoading"
-                      :indeterminate="segmentComparisonLoading"
-                    />
-                    <v-card-title
-                      v-if="segmentScores && segmentScores.length > 0"
-                      class="pb-2 pl-6 pt-5"
-                    >
-                      <span class="d-flex">
-                        <h3 class="text-h3">
-                          HX TrustID scores across segments
-                        </h3>
-                      </span>
-                    </v-card-title>
-                    <trust-comparison-chart
-                      v-if="segmentScores.length > 0"
-                      ref="comparisonChart"
-                      :segment-scores="segmentScores"
-                      data-e2e="trust-comparison-chart"
-                    />
-                    <div v-else class="pt-11">
-                      <empty-page
-                        class="pt-16"
-                        :type="
-                          getEmptyType ? 'no-customer-data' : 'error-on-screens'
-                        "
-                        :size="50"
-                      >
-                        <template #title>
-                          <div class="title-no-notification">
-                            {{
-                              getEmptyType
-                                ? "No Hux Trust ID scores to show"
-                                : "Hux Trust ID scores chart currently unavailable"
-                            }}
-                          </div>
-                        </template>
-                        <template #subtitle>
-                          <div class="des-no-notification">
-                            {{
-                              getEmptyType
-                                ? "Trust ID scores chart will display when data has been uploaded. Please check back later."
-                                : "Our team is working hard to fix it. Please be patient and try again soon!"
-                            }}
-                          </div>
-                        </template>
-                      </empty-page>
-                    </div>
-                  </v-card>
-                </v-col>
-              </v-row>
-              <v-row cl>
-                <v-col md="8">
-                  <link-dropdown
-                    v-if="getSegment.length > 0"
-                    :data-list="getSegment"
-                    :width="245"
-                    @onselect="getSelectedData"
-                  ></link-dropdown>
-                </v-col>
-                <v-col md="4">
-                  <div class="d-flex toggle-main-div">
-                    <span
-                      class="mr-5 toggle-content text-body-1 black--text text--base"
-                      >Compare segments to all customers</span
-                    >
-                    <hux-switch
-                      v-model="switchSegment"
-                      false-color="var(--v-black-lighten4)"
-                      :width="'60px'"
-                      :is-disabled="switchStatus()"
-                      :switch-labels="switchLabel"
-                      @change="toggleDefaultSwitch($event)"
-                    />
-                  </div>
-                </v-col>
-              </v-row>
-              <div>
-                <data-cards
-                  v-if="getSegmentTableData.length > 0"
-                  bordered
-                  card-class="py-5 pa-4"
-                  :items="getSegmentTableData"
-                  :fields="getSegmentTableHeaders"
-                  :multiple-segments="multipleSegments"
-                >
-                  <template
-                    v-for="header in getSegmentTableHeaders"
-                    #[`field:${header.key}`]="row"
-                  >
-                    <rhombus-number
-                      v-if="!includesSegmentHeaders(header.key)"
-                      :key="header.key"
-                      :value="row.value"
-                      :text-color="
-                        row.value < 0 ? 'error--text' : 'black--text'
-                      "
-                      :border-image="header.key == 'trust_id'"
-                      :color="
-                        colColorArr[header.key] &&
-                        colColorArr[header.key].stroke
-                      "
-                      :variant="
-                        colColorArr[header.key] &&
-                        colColorArr[header.key].variant
-                      "
-                    ></rhombus-number>
+  <div class="hx-trust-id-wrapper">
+    <page-header
+      class="page-header py-5"
+      header-min-height="110"
+      header-max-height="120"
+    >
+      <template #left>
+        <div>
+          <breadcrumb
+            :items="[
+              {
+                text: 'HX TrustID',
+                superscript: 'TM',
+                disabled: true,
+                href: '/hx-trustid',
+                icon: 'hx-trustid-header',
+                iconSize: 36,
+                iconColor: 'black',
+                iconColorVariant: 'base',
+              },
+            ]"
+          />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular pt-0 pl-0">
+          Measure the factors of trust, predict how trust sentiment will impact
+          consumer &amp; employee behaviors, and identify actions to (re)build
+          trust.
+        </div>
+      </template>
+    </page-header>
 
-                    <span
-                      v-else-if="header.key == 'segment_filters'"
-                      :key="header.key"
+    <v-progress-linear :active="loading" :indeterminate="loading" />
+
+    <div class="d-flex">
+      <div
+        class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
+      >
+        <overview v-if="!loading" :data="trustIdOverview" />
+        <v-tabs v-if="!loading" v-model="tabOption" class="mt-4">
+          <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
+          <div class="d-flex">
+            <v-tab
+              key="comparison"
+              class="pa-2 mr-3 text-h3"
+              color
+              data-e2e="comparison-tab"
+            >
+              Comparison
+            </v-tab>
+            <v-tab key="attributes" class="text-h3" data-e2e="attributes-tab">
+              Attributes
+            </v-tab>
+          </div>
+        </v-tabs>
+        <v-tabs-items
+          v-if="!loading"
+          v-model="tabOption"
+          class="mt-2 tabs-item"
+        >
+          <v-tab-item key="comparison" class="tab-item">
+            <v-row>
+              <v-col md="12">
+                <v-card
+                  class="mt-3 rounded-lg box-shadow-5 tab-card-1"
+                  :height="segmentScores.length > 0 ? '365' : '250'"
+                >
+                  <v-progress-linear
+                    v-if="segmentComparisonLoading"
+                    :active="segmentComparisonLoading"
+                    :indeterminate="segmentComparisonLoading"
+                  />
+                  <v-card-title
+                    v-if="segmentScores && segmentScores.length > 0"
+                    class="pb-2 pl-6 pt-5"
+                  >
+                    <span class="d-flex">
+                      <h3 class="text-h3">HX TrustID scores across segments</h3>
+                    </span>
+                  </v-card-title>
+                  <trust-comparison-chart
+                    v-if="segmentScores.length > 0"
+                    ref="comparisonChart"
+                    :segment-scores="segmentScores"
+                    data-e2e="trust-comparison-chart"
+                  />
+                  <div v-else>
+                    <empty-page
+                      class="pt-12"
+                      :type="
+                        getEmptyType ? 'no-customer-data' : 'error-on-screens'
+                      "
+                      :size="50"
                     >
-                      <span v-if="row.value.length != 0">
-                        <span
-                          v-for="(filter, filterIndex) in row.value"
-                          :key="filterIndex"
-                        >
-                          <tooltip v-if="filterIndex < 4">
-                            <template #label-content>
-                              <v-chip
-                                v-if="filterIndex < 4"
-                                small
-                                class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                                text-color="primary"
-                                color="var(--v-primary-lighten3)"
-                              >
-                                {{ filter.description }}
-                              </v-chip>
-                            </template>
-                            <template #hover-content>
-                              <span
-                                v-if="filterIndex < 4"
-                                class="text-body-2 black--text text--darken-4"
-                              >
-                                <div
-                                  v-for="(
-                                    filterValue, filterValueIndex
-                                  ) in pillHoverData(
-                                    filter.values,
-                                    filter.type
-                                  )"
-                                  :key="filterValueIndex"
-                                >
-                                  <span
-                                    v-bind.prop="formatInnerHTML(filterValue)"
-                                  />
-                                  <br />
-                                </div>
-                              </span>
-                            </template>
-                          </tooltip>
-                        </span>
-                        <tooltip>
+                      <template #title>
+                        <div class="title-no-notification">
+                          {{
+                            getEmptyType
+                              ? "No Hux Trust ID scores to show"
+                              : "Hux Trust ID scores chart currently unavailable"
+                          }}
+                        </div>
+                      </template>
+                      <template #subtitle>
+                        <div class="des-no-notification">
+                          {{
+                            getEmptyType
+                              ? "Trust ID scores chart will display when data has been uploaded. Please check back later."
+                              : "Our team is working hard to fix it. Please be patient and try again soon!"
+                          }}
+                        </div>
+                      </template>
+                    </empty-page>
+                  </div>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col md="8">
+                <link-dropdown
+                  v-if="getSegment.length > 0"
+                  :data-list="getSegment"
+                  :width="245"
+                  @onselect="getSelectedData"
+                ></link-dropdown>
+              </v-col>
+              <v-col md="4" class="ml-n5">
+                <div
+                  v-if="getSegment.length > 0"
+                  class="d-flex toggle-main-div"
+                >
+                  <span
+                    class="
+                      mr-5
+                      toggle-content
+                      text-body-1
+                      black--text
+                      text--base
+                    "
+                    >Compare segments to all customers</span
+                  >
+                  <hux-switch
+                    v-model="switchSegment"
+                    false-color="var(--v-black-lighten4)"
+                    :width="'60px'"
+                    :is-disabled="switchStatus()"
+                    :switch-labels="switchLabel"
+                    @change="toggleDefaultSwitch($event)"
+                  />
+                </div>
+              </v-col>
+            </v-row>
+            <div>
+              <data-cards
+                v-if="getSegmentTableData.length > 0"
+                bordered
+                card-class="py-5 pa-4"
+                :items="getSegmentTableData"
+                :fields="getSegmentTableHeaders"
+                :multiple-segments="multipleSegments"
+              >
+                <template
+                  v-for="header in getSegmentTableHeaders"
+                  #[`field:${header.key}`]="row"
+                >
+                  <rhombus-number
+                    v-if="!includesSegmentHeaders(header.key)"
+                    :key="header.key"
+                    :value="row.value"
+                    :text-color="row.value < 0 ? 'error--text' : 'black--text'"
+                    :border-image="header.key == 'trust_id'"
+                    :color="
+                      colColorArr[header.key] && colColorArr[header.key].stroke
+                    "
+                    :variant="
+                      colColorArr[header.key] && colColorArr[header.key].variant
+                    "
+                  ></rhombus-number>
+
+                  <span
+                    v-else-if="header.key == 'segment_filters'"
+                    :key="header.key"
+                  >
+                    <span v-if="row.value.length != 0">
+                      <span
+                        v-for="(filter, filterIndex) in row.value"
+                        :key="filterIndex"
+                      >
+                        <tooltip v-if="filterIndex < 4">
                           <template #label-content>
-                            <span
-                              v-if="row.value.length > 4"
-                              class="text-subtitle-2 primary--text"
+                            <v-chip
+                              v-if="filterIndex < 4"
+                              small
+                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                              text-color="primary"
+                              color="var(--v-primary-lighten3)"
                             >
-                              +{{ row.value.length - 4 }}
-                            </span>
+                              {{ filter.description }}
+                            </v-chip>
                           </template>
                           <template #hover-content>
                             <span
-                              v-for="(filter, filterIndex) in row.value"
-                              :key="filterIndex"
+                              v-if="filterIndex < 4"
+                              class="text-body-2 black--text text--darken-4"
                             >
-                              <v-chip
-                                v-if="filterIndex >= 4"
-                                small
-                                class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                                text-color="primary"
-                                color="var(--v-primary-lighten3)"
+                              <div
+                                v-for="(
+                                  filterValue, filterValueIndex
+                                ) in pillHoverData(filter.values, filter.type)"
+                                :key="filterValueIndex"
                               >
-                                {{ filter.description }}
-                              </v-chip>
-                              <br v-if="filterIndex >= 4" />
+                                <span
+                                  v-bind.prop="formatInnerHTML(filterValue)"
+                                />
+                                <br />
+                              </div>
                             </span>
                           </template>
                         </tooltip>
                       </span>
-                      <span v-else>
-                        <v-chip
-                          small
-                          class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                          text-color="primary"
-                          color="var(--v-primary-lighten3)"
-                        >
-                          All customers
-                        </v-chip>
-                      </span>
-                    </span>
-                  </template>
-
-                  <template #field:delete="row">
-                    <div
-                      v-if="
-                        getSelectedSegment &&
-                        getSelectedSegment.segments.length > 1 &&
-                        !row.item.default
-                      "
-                      class="d-flex align-center justify-end mr-2"
-                    >
-                      <tooltip max-width="90" nudge-right="-20">
+                      <tooltip>
                         <template #label-content>
-                          <hux-icon
-                            type="trash"
-                            class="cursor-pointer"
-                            :size="18"
-                            color="black"
-                            @click.native="removeSegment(row.item)"
-                          />
+                          <span
+                            v-if="row.value.length > 4"
+                            class="text-subtitle-2 primary--text"
+                          >
+                            +{{ row.value.length - 4 }}
+                          </span>
                         </template>
-                        <template #hover-content> Delete segment </template>
+                        <template #hover-content>
+                          <span
+                            v-for="(filter, filterIndex) in row.value"
+                            :key="filterIndex"
+                          >
+                            <v-chip
+                              v-if="filterIndex >= 4"
+                              small
+                              class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                              text-color="primary"
+                              color="var(--v-primary-lighten3)"
+                            >
+                              {{ filter.description }}
+                            </v-chip>
+                            <br v-if="filterIndex >= 4" />
+                          </span>
+                        </template>
                       </tooltip>
+                    </span>
+                    <span v-else>
+                      <v-chip
+                        small
+                        class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                        text-color="primary"
+                        color="var(--v-primary-lighten3)"
+                      >
+                        All customers
+                      </v-chip>
+                    </span>
+                  </span>
+                </template>
+
+                <template #field:delete="row">
+                  <div
+                    v-if="
+                      getSelectedSegment &&
+                      getSelectedSegment.segments.length > 1 &&
+                      !row.item.default
+                    "
+                    class="d-flex align-center justify-end mr-2"
+                  >
+                    <tooltip max-width="90" nudge-right="-20">
+                      <template #label-content>
+                        <hux-icon
+                          type="trash"
+                          class="cursor-pointer"
+                          :size="18"
+                          color="black"
+                          @click.native="removeSegment(row.item)"
+                        />
+                      </template>
+                      <template #hover-content> Delete segment </template>
+                    </tooltip>
+                  </div>
+                </template>
+              </data-cards>
+              <v-card v-else class="box-shadow-5 rounded-lg" height="250">
+                <empty-page
+                  class="py-8"
+                  :type="emptyPageIcon(segmentErrorState)"
+                  :size="50"
+                >
+                  <template #title>
+                    <div class="title-no-notification">
+                      {{ segmentTableTitle }}
                     </div>
                   </template>
-                </data-cards>
-                <v-card v-else class="box-shadow-5" height="250">
-                  <empty-page
-                    class="py-8"
-                    :type="emptyPageIcon(segmentErrorState)"
-                    :size="50"
-                  >
-                    <template #title>
-                      <div class="title-no-notification">
-                        {{ segmentTableTitle }}
-                      </div>
-                    </template>
-                    <template #subtitle>
-                      <div class="des-no-notification">
-                        {{ segmentTableDescription }}
-                      </div>
-                    </template>
-                  </empty-page>
-                </v-card>
-              </div>
-              <div v-if="getSelectedSegment && segmentCount < 5">
-                <v-list class="add-segment no-data-width" :height="22">
-                  <v-list-item @click="filterToggle()">
-                    <hux-icon
-                      type="plus"
-                      :size="16"
-                      color="primary"
-                      class="mr-4 ml-2"
-                    />
-                    <v-btn
-                      text
-                      min-width="7rem"
-                      height="2rem"
-                      class="primary--text text-body-1"
-                    >
-                      New segment to compare
-                    </v-btn>
-                  </v-list-item>
-                </v-list>
-              </div>
-              <div v-else-if="getSelectedSegment">
-                <v-card class="empty-text">
+                  <template #subtitle>
+                    <div class="des-no-notification">
+                      {{ segmentTableDescription }}
+                    </div>
+                  </template>
+                </empty-page>
+              </v-card>
+            </div>
+            <div v-if="noDefaultSegments.length < 5" class="card-width">
+              <v-list class="add-segment no-data-width" :height="22">
+                <v-list-item @click="filterToggle()">
                   <hux-icon
-                    type="critical"
-                    :size="21"
-                    color="error"
-                    class="mr-4 ml-6"
+                    type="plus"
+                    :size="16"
+                    color="primary"
+                    class="mr-4 ml-2"
                   />
-                  <span
-                    class="error--text text-subtitle-1 mr-4"
-                    :style="{ fontWeight: 800 }"
-                    >OH NO!</span
+                  <v-btn
+                    text
+                    min-width="7rem"
+                    height="2rem"
+                    class="primary--text text-body-1"
                   >
-                  <span class="text-body-2 error--text"
-                    >You’ve reached the limit for the number of comparisons.
-                    Remove a comparison to add a new one.
-                  </span>
-                </v-card>
-              </div>
-            </v-tab-item>
-            <v-tab-item key="attributes" class="tab-item">
-              <trust-id-attributes
-                v-if="showAttributes"
-                :data="attributeData.data"
-              />
-              <v-card v-else class="pb-12 box-shadow-5" height="250">
+                    New segment to compare
+                  </v-btn>
+                </v-list-item>
+              </v-list>
+            </div>
+            <div v-else class="card-width">
+              <v-card class="empty-text">
+                <hux-icon
+                  type="critical"
+                  :size="21"
+                  color="error"
+                  class="mr-4 ml-6"
+                />
+                <span
+                  class="error--text text-subtitle-1 mr-4"
+                  :style="{ fontWeight: 800 }"
+                  >OH NO!</span
+                >
+                <span class="text-body-2 error--text"
+                  >You’ve reached the limit for the number of comparisons.
+                  Remove a comparison to add a new one.
+                </span>
+              </v-card>
+            </div>
+          </v-tab-item>
+          <v-tab-item key="attributes" class="tab-item">
+            <trust-id-attributes
+              v-if="showAttributes"
+              :data="attributeData.data"
+            />
+            <div v-else class="mt-3">
+              <v-card class="pb-12 box-shadow-5 rounded-lg" height="250">
                 <empty-page
                   class="pt-16"
                   :type="emptyPageIcon(attributeErrorState)"
@@ -366,22 +366,22 @@
                   </template>
                 </empty-page>
               </v-card>
-            </v-tab-item>
-          </v-tabs-items>
-        </div>
-        <div class="ml-auto segment-drawer">
-          <add-segment-drawer
-            ref="filters"
-            v-model="isFilterToggled"
-            view-height="calc(100vh - 210px)"
-            :segment-data="addSegmentData"
-            :segment-length="segmentScores.length"
-            @onSectionAction="addSegment($event)"
-          />
-        </div>
+            </div>
+          </v-tab-item>
+        </v-tabs-items>
       </div>
-    </template>
-  </page>
+      <div class="ml-auto segment-drawer">
+        <add-segment-drawer
+          ref="filters"
+          v-model="isFilterToggled"
+          view-height="calc(100vh - 210px)"
+          :segment-data="addSegmentData"
+          :segment-length="segmentScores.length"
+          @onSectionAction="addSegment($event)"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -389,7 +389,6 @@ import { mapGetters, mapActions } from "vuex"
 import Overview from "./Overview.vue"
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import LinkDropdown from "@/components/common/LinkDropdown.vue"
-import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import TrustComparisonChart from "@/components/common/TrustIDComparisonChart/TrustComparisonChart"
 import DataCards from "@/components/common/DataCards.vue"
@@ -408,7 +407,6 @@ export default {
     Overview,
     Breadcrumb,
     LinkDropdown,
-    Page,
     PageHeader,
     TrustComparisonChart,
     DataCards,
@@ -689,16 +687,21 @@ export default {
         ? "Our team is working hard to fix it. Please be patient and try again soon!"
         : "Attributes will display when data has been uploaded. Please check back later."
     },
+    noDefaultSegments() {
+      return this.getSelectedSegment
+        ? this.getSelectedSegment.segments.filter((data) => !data.default)
+        : []
+    },
   },
-  mounted() {
+  async mounted() {
     this.loading = true
     this.segmentComparisonLoading = true
     try {
-      this.getOverview()
+      await this.getOverview()
     } finally {
-      this.fetchComparisonData()
-      this.fetchSegmentData()
-      this.fetchAttributeData()
+      await this.fetchComparisonData()
+      await this.fetchSegmentData()
+      await this.fetchAttributeData()
       this.loading = false
       this.segmentComparisonLoading = false
     }
@@ -785,14 +788,12 @@ export default {
       })
       this.applyDefaultSegmentChanges()
       this.getTrustIdAttribute()
-      this.$refs.comparisonChart.initializeComparisonChart()
       this.loading = false
     },
     async addSegment(event) {
       this.loading = true
       try {
         await this.addNewSegment(event)
-        this.$refs.comparisonChart.initializeComparisonChart()
         this.switchStatus()
       } finally {
         this.loading = false
@@ -803,32 +804,12 @@ export default {
     async removeSegment(item) {
       this.loading = true
       try {
-        let response = await this.deleteSegment({
+        await this.deleteSegment({
           segment_name: item.segment_name,
         })
-        if (response.length > 0) {
-          this.loading = true
-          this.getOverview()
-          this.getTrustIdComparison({
-            defaultValue: true,
-          })
-          this.getTrustIdAttribute()
-          this.$refs.comparisonChart.initializeComparisonChart()
-          this.setAlert({
-            type: "success",
-            message: `'${item.segment_name}' has been deleted Successfully.`,
-          })
-
-          this.loading = false
-        }
-      } catch (error) {
-        this.loading = false
-        this.setAlert({
-          type: "error",
-          message: `${error.response.data.message}`,
-        })
-      } finally {
         this.switchStatus()
+      } finally {
+        this.loading = false
       }
     },
     switchStatus() {
@@ -912,11 +893,9 @@ export default {
 }
 .content-section {
   height: calc(100vh - 210px);
+  padding: 30px;
   overflow-y: auto !important;
   overflow-x: hidden !important;
-}
-.segment-drawer {
-  margin-right: -30px;
 }
 ::v-deep .hux-filters-drawer {
   width: 320px !important;
@@ -937,5 +916,8 @@ export default {
 }
 .toggle-main-div {
   float: right;
+}
+::v-deep .hux-data-table .table-overflow {
+  overflow-x: inherit !important;
 }
 </style>

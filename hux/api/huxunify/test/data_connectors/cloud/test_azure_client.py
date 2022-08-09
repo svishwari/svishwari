@@ -45,16 +45,6 @@ class AzureClientTests(TestCase):
         # TODO HUS-2615
         pass
 
-    def test_health_check_batch_service(self):
-        """Test health check for batch service."""
-        # TODO HUS-2614
-        pass
-
-    def test_health_check_batch_service_failure(self):
-        """Test health check batch service when service is down."""
-        # TODO HUS-2614
-        pass
-
     def test_health_check_storage_service(self):
         """Test health check for storage service."""
         # TODO HUS-2614

@@ -15,36 +15,37 @@ import huxunifylib.database.delivery_platform_management as dm
 from huxunifylib.database.aggregation_pipelines import (
     trust_id_overview_pipeline,
     trust_id_attribute_ratings_pipeline,
+    unique_segment_filters_pipeline,
 )
 
 
-def frame_match_query(filters: list) -> dict:
+def frame_match_query(filters: list) -> list:
     """Frame the match query based on the selected filters
 
     Args:
         filters(list): List of selected filters
 
     Returns:
-         (dict): match query
+         (list): match query as a stage in aggregate pipeline
     """
-    return {
-        "$match": {
-            "$and": [
-                {
-                    "$or": [
-                        {
-                            f"responses.{x['description']}": {
-                                "$regex": val,
-                                "$options": "i",
+    return [
+        {
+            "$match": {
+                "$and": [
+                    {
+                        "$or": [
+                            {
+                                f"responses.{x['description']}": {
+                                    "$in": x["values"],
+                                }
                             }
-                        }
-                        for val in x["values"]
-                    ]
-                }
-                for x in filters
-            ]
+                        ]
+                    }
+                    for x in filters
+                ]
+            }
         }
-    }
+    ]
 
 
 @retry(
@@ -236,10 +237,8 @@ def get_trust_id_overview(
         db_c.SURVEY_METRICS_COLLECTION
     ]
 
-    pipeline = trust_id_overview_pipeline
-    if filters:
-        match_query = frame_match_query(filters)
-        pipeline.insert(0, match_query)
+    pipeline = frame_match_query(filters) if filters else []
+    pipeline.extend(trust_id_overview_pipeline)
 
     try:
         data = list(collection.aggregate(pipeline))
@@ -273,9 +272,8 @@ def get_trust_id_attributes(
         db_c.SURVEY_METRICS_COLLECTION
     ]
 
-    pipeline = trust_id_attribute_ratings_pipeline
-    if filters:
-        pipeline.insert(0, frame_match_query(filters))
+    pipeline = frame_match_query(filters) if filters else []
+    pipeline.extend(trust_id_attribute_ratings_pipeline)
 
     try:
         data = list(collection.aggregate(pipeline))
@@ -339,3 +337,36 @@ def delete_survey_responses(
         logging.error(exc)
 
     return remove_status
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_distinct_segment_filters(
+    database: DatabaseClient,
+) -> list:
+    """Method to delete survey responses based on query parameter.
+
+    Args:
+        database (DatabaseClient): A database client.
+
+    Returns:
+        list: list of distinct segment filters
+    """
+
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.USER_COLLECTION]
+
+    try:
+        segment_filters = list(
+            collection.aggregate(unique_segment_filters_pipeline)
+        )
+
+        if segment_filters:
+            return segment_filters[0][db_c.SEGMENT_FILTERS]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return []

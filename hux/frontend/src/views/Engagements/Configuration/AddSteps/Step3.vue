@@ -28,7 +28,15 @@
             </div>
           </div>
           <div
-            class="cursor-pointer text-center rounded-lg recurring py-5 px-5 ml-2"
+            class="
+              cursor-pointer
+              text-center
+              rounded-lg
+              recurring
+              py-5
+              px-5
+              ml-2
+            "
             :class="[!isActive ? 'active' : 'box-shadow-1']"
             @click="toggleClass($event)"
           >

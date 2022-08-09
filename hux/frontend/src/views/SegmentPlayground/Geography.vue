@@ -33,6 +33,39 @@
           :map-data="data.geo"
           :configuration-data="configurationData"
         />
+        <empty-page
+          v-if="!loading && data.geo.length === 0"
+          type="drift-chart-empty"
+          :size="50"
+          class="mt-16"
+        >
+          <template #title>
+            <div class="title-no-notification">No audience data to show</div>
+          </template>
+          <template #subtitle>
+            <div class="des-no-notification mt-2">
+              Map feature chart will appear here once you create an audience.
+            </div>
+          </template>
+        </empty-page>
+        <empty-page
+          v-if="!data"
+          class="title-no-notification"
+          type="error-on-screens"
+          :size="50"
+        >
+          <template #title>
+            <div class="title-no-notification">
+              Map feature is currently unavailable
+            </div>
+          </template>
+          <template #subtitle>
+            <div class="text-body-2 black--text text--base mt-2">
+              Our team is working hard to fix it. Please be patient and try
+              again soon!
+            </div>
+          </template>
+        </empty-page>
       </div>
       <div v-if="!showMapView && data.geo" class="pt-2">
         <map-state-list
@@ -54,9 +87,10 @@ import MapChart from "../../components/common/MapChart/MapChart.vue"
 import MapSlider from "../../components/common/MapChart/mapSlider.vue"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
+import EmptyPage from "@/components/common/EmptyPage.vue"
 export default {
   name: "Geography",
-  components: { Icon, MapChart, MapSlider, MapStateList },
+  components: { Icon, MapChart, MapSlider, MapStateList, EmptyPage },
   props: {
     data: {
       type: Object,
@@ -85,13 +119,16 @@ export default {
 .toggle-options {
   position: relative;
   bottom: 6px !important;
+
   .v-btn {
     background: none;
     border: none;
     border-width: inherit !important;
+
     &::before {
       opacity: 0;
     }
+
     &.v-item--active {
       svg {
         fill: var(--v-primary-lighten6) !important;
@@ -104,14 +141,17 @@ export default {
   ::-webkit-scrollbar {
     width: 5px;
   }
+
   ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px var(--v-white-base);
     border-radius: 10px;
   }
+
   ::-webkit-scrollbar-thumb {
     background: var(--v-black-lighten3);
     border-radius: 5px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: var(--v-black-lighten3);
   }
@@ -122,10 +162,12 @@ export default {
         tr {
           display: table;
           width: 100%;
+
           td {
             &:first-child {
               color: var(--v-black-lighten4);
             }
+
             &:last-child {
               color: var(--v-black-base);
             }
@@ -133,16 +175,20 @@ export default {
         }
       }
     }
+
     .v-data-table {
       .v-data-table-header {
         tr {
           height: 40px !important;
         }
+
         th {
           background: var(--v-primary-lighten2);
+
           &:first-child {
             border-top-left-radius: 12px;
           }
+
           &:last-child {
             border-top-right-radius: 12px;
           }
@@ -150,11 +196,27 @@ export default {
       }
     }
   }
+
   ::v-deep .v-input__prepend-outer {
     margin-right: 4px;
+
     .slider-value-display {
       width: 37px !important;
     }
   }
+}
+.des-no-notification {
+  font-size: 14px !important;
+  line-height: 16px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.title-no-notification {
+  font-size: 24px !important;
+  line-height: 34px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
 }
 </style>

@@ -79,7 +79,12 @@
                       : 'EngagementDashboard',
                   params: { id: item[col.value].id },
                 }"
-                class="d-inline-block mw-100 text-truncate text-decoration-none primary--text"
+                class="
+                  d-inline-block
+                  mw-100
+                  text-truncate text-decoration-none
+                  primary--text
+                "
               >
                 {{
                   item[col.value] &&

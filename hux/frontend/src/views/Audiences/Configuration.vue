@@ -66,7 +66,14 @@
                     label-text="Audience name"
                     background-color="white"
                     required
-                    class="mt-1 text-caption black--text text--darken-4 pt-2 input-placeholder"
+                    class="
+                      mt-1
+                      text-caption
+                      black--text
+                      text--darken-4
+                      pt-2
+                      input-placeholder
+                    "
                     data-e2e="audience-name"
                     :rules="audienceNamesRules"
                     help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
@@ -143,7 +150,13 @@
                     </template>
                     <template
                       #hover-content
-                      class="black--text text--darken-4 shadow pa-2 text-caption"
+                      class="
+                        black--text
+                        text--darken-4
+                        shadow
+                        pa-2
+                        text-caption
+                      "
                     >
                       <v-sheet max-width="240px">
                         The external platforms where this audience will be

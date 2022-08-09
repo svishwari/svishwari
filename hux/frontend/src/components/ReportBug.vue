@@ -1,7 +1,14 @@
 <template>
   <div>
     <div
-      class="black--text text--darken-4 text-subtitle-1 font-weight-regular px-13 mt-5 pb-5"
+      class="
+        black--text
+        text--darken-4 text-subtitle-1
+        font-weight-regular
+        px-13
+        mt-5
+        pb-5
+      "
     >
       Give us some details about the problem you are having.
     </div>

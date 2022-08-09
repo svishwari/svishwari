@@ -20,7 +20,14 @@
                 Run frequency
               </label>
               <p
-                class="mt-1 caption black--text text--darken-4 font-weight-semi-bold ma-0"
+                class="
+                  mt-1
+                  caption
+                  black--text
+                  text--darken-4
+                  font-weight-semi-bold
+                  ma-0
+                "
               >
                 {{ pipelinePerformanceData.training.frequency | Empty("-") }}
               </p>
@@ -32,7 +39,14 @@
                 Last run
               </label>
               <p
-                class="mt-1 caption black--text text--darken-4 font-weight-semi-bold ma-0"
+                class="
+                  mt-1
+                  caption
+                  black--text
+                  text--darken-4
+                  font-weight-semi-bold
+                  ma-0
+                "
               >
                 {{
                   pipelinePerformanceData.training.last_run
@@ -50,7 +64,14 @@
               <tooltip>
                 <template #label-content>
                   <p
-                    class="mt-1 caption black--text text--darken-4 font-weight-semi-bold ma-0"
+                    class="
+                      mt-1
+                      caption
+                      black--text
+                      text--darken-4
+                      font-weight-semi-bold
+                      ma-0
+                    "
                   >
                     {{
                       pipelinePerformanceData.training.most_recent_run_duration
@@ -115,7 +136,14 @@
                 Total runs
               </label>
               <p
-                class="mt-1 caption black--text text--darken-4 font-weight-semi-bold ma-0"
+                class="
+                  mt-1
+                  caption
+                  black--text
+                  text--darken-4
+                  font-weight-semi-bold
+                  ma-0
+                "
               >
                 {{ pipelinePerformanceData.training.total_runs | Empty("-") }}
               </p>
@@ -127,7 +155,13 @@
             <span class="d-flex mb-2">
               <h3 class="text-h3">Run duration</h3>
               <span
-                class="text-body-1 black--text text--lighten-4 ml-1 last-duration"
+                class="
+                  text-body-1
+                  black--text
+                  text--lighten-4
+                  ml-1
+                  last-duration
+                "
               >
                 (last 10)
               </span>
@@ -155,7 +189,14 @@
                 Run frequency
               </label>
               <p
-                class="mt-1 caption black--text text--darken-4 font-weight-semi-bold ma-0"
+                class="
+                  mt-1
+                  caption
+                  black--text
+                  text--darken-4
+                  font-weight-semi-bold
+                  ma-0
+                "
               >
                 {{ pipelinePerformanceData.scoring.frequency | Empty("-") }}
               </p>
@@ -167,7 +208,14 @@
                 Last run
               </label>
               <p
-                class="mt-1 caption black--text text--darken-4 font-weight-semi-bold ma-0"
+                class="
+                  mt-1
+                  caption
+                  black--text
+                  text--darken-4
+                  font-weight-semi-bold
+                  ma-0
+                "
               >
                 {{
                   pipelinePerformanceData.scoring.last_run
@@ -183,7 +231,14 @@
                 Most recent run duration
               </label>
               <p
-                class="mt-1 caption black--text text--darken-4 font-weight-semi-bold ma-0"
+                class="
+                  mt-1
+                  caption
+                  black--text
+                  text--darken-4
+                  font-weight-semi-bold
+                  ma-0
+                "
               >
                 {{
                   pipelinePerformanceData.scoring.most_recent_run_duration
@@ -245,7 +300,14 @@
                 Total runs
               </label>
               <p
-                class="mt-1 caption black--text text--darken-4 font-weight-semi-bold ma-0"
+                class="
+                  mt-1
+                  caption
+                  black--text
+                  text--darken-4
+                  font-weight-semi-bold
+                  ma-0
+                "
               >
                 {{ pipelinePerformanceData.training.total_runs | Empty("-") }}
               </p>
@@ -257,7 +319,13 @@
             <span class="d-flex mb-2">
               <h3 class="text-h3">Run duration</h3>
               <span
-                class="text-body-1 black--text text--lighten-4 ml-1 last-duration"
+                class="
+                  text-body-1
+                  black--text
+                  text--lighten-4
+                  ml-1
+                  last-duration
+                "
               >
                 (last 10)
               </span>
@@ -275,7 +343,12 @@
       class="mt-5 rounded-lg pt-5 pb-6 pl-6 pr-6 box-shadow-5"
     >
       <div
-        class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100 background-empty"
+        class="
+          flex-grow-1 flex-shrink-1
+          overflow-hidden
+          mw-100
+          background-empty
+        "
       >
         <empty-page type="no-customer-data" size="50">
           <template #title>

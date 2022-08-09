@@ -62,7 +62,17 @@
                 <v-btn
                   text
                   min-width="80"
-                  class="d-flex align-right primary--text text-decoration-none pl-0 pr-0 idr-link text-body-1 mt-n2"
+                  class="
+                    d-flex
+                    align-right
+                    primary--text
+                    text-decoration-none
+                    pl-0
+                    pr-0
+                    idr-link
+                    text-body-1
+                    mt-n2
+                  "
                   data-e2e="eventsDrawerButton"
                   @click="toggleCustomerEventsDrawer()"
                 >
@@ -88,7 +98,12 @@
             </v-card>
             <v-card
               v-else
-              class="no-data-chart-frame rounded-lg card-info-wrapper box-shadow-5"
+              class="
+                no-data-chart-frame
+                rounded-lg
+                card-info-wrapper
+                box-shadow-5
+              "
               height="280px"
             >
               <empty-page

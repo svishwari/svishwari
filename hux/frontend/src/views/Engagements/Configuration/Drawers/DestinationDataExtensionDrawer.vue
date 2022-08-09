@@ -88,7 +88,14 @@
               :help-text="tooltipText"
               height="40"
               background-color="white"
-              class="mt-1 text-caption black--text text--darken-4 pt-2 input-placeholder"
+              class="
+                mt-1
+                text-caption
+                black--text
+                text--darken-4
+                pt-2
+                input-placeholder
+              "
               :rules="newExtensionRules"
               required
               data-e2e="new-data-extension"

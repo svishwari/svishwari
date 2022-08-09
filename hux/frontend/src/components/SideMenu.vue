@@ -75,7 +75,14 @@
       >
         <span
           v-if="!isMini"
-          class="text-h5 black--text text--lighten-4 pl-4 menu-parent-item font-weight-bold"
+          class="
+            text-h5
+            black--text
+            text--lighten-4
+            pl-4
+            menu-parent-item
+            font-weight-bold
+          "
         >
           {{ item.name }}
         </span>
@@ -195,6 +202,7 @@ import * as _ from "lodash"
 import { mapGetters, mapActions } from "vuex"
 import { formatText } from "@/utils"
 import Status from "./common/Status.vue"
+import { getAccess } from "../utils"
 
 export default {
   name: "SideMenu",
@@ -223,6 +231,7 @@ export default {
       demoConfiguration: "users/getDemoConfiguration",
       seenNotification: "notifications/seenNotifications",
       errorAlerts: "notifications/error_alerts",
+      clientAppData: "clients/clientAppData",
     }),
 
     isMini() {
@@ -267,6 +276,7 @@ export default {
   methods: {
     ...mapActions({
       getSideBarConfig: "configuration/getSideBarConfig",
+      getClientsAppData: "clients/getClientAppData",
     }),
 
     navigate(item) {
@@ -339,15 +349,21 @@ export default {
       this.navigationItems = []
       this.navigationItems = this.sideBarItems
     },
-    getCurrentConfiguration() {
-      if (this.isBrodcasterOn) {
-        this.$root.$on("update-config-settings", () => {
-          this.setDemoConfiguration()
-          this.updateClientInfo()
-          this.isBrodcasterOn = false
-        })
+    async getCurrentConfiguration() {
+      if (getAccess("client_config", "client_settings")) {
+        if (this.isBrodcasterOn) {
+          this.$root.$on("update-config-settings", () => {
+            this.setDemoConfiguration()
+            this.updateClientInfo()
+            this.isBrodcasterOn = false
+          })
+        }
+      } else {
+        await this.getClientsAppData()
+        this.client = this.clientAppData
       }
     },
+
     formatText: formatText,
   },
 }
@@ -474,7 +490,7 @@ export default {
 .nav-footer {
   opacity: 0.8;
   height: 40px;
-  padding-top: 10px;
+  padding-top: 10px !important;
   border-top: 1px solid var(--v-black-lighten1);
   color: var(--v-success-darken1) !important;
 }

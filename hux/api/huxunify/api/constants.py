@@ -25,6 +25,8 @@ SSL_CERT_PATH = "ssl_cert_path"
 SSL_CERT_FILE_NAME = "SSL_CERT_FILE_NAME"
 TLS_CERT_KEY = "tls_cert_key_file"
 TLS_CERT_KEY_FILE_NAME = "TLS_CERT_KEY_FILE_NAME"
+TLS_CA_CERT_KEY = "tls_ca_cert_key_file"
+TLS_CA_CERT_KEY_FILE_NAME = "TLS_CA_CERT_KEY_FILE_NAME"
 MONGO_DB_HOST = "MONGO_DB_HOST"
 MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
@@ -49,11 +51,15 @@ DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
 DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
 DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
 ENVIRONMENT_NAME = "ENVIRONMENT_NAME"
+FORM_PAYLOAD = "form_payload"
+FORM_FILENAME = "form_filename"
+FILE_OBJ = "file_obj"
 
 # PLEASE NOTE - these are only here because DEN API
 # is only available in a couple environments.
 STAGING_ENV = "STG1"
 LILDEV_ENV = "LILDEV"
+HUSDEV2_ENV = "HUSDEV2"
 
 # AWS constants
 AWS_REGION = "AWS_REGION"
@@ -115,6 +121,7 @@ FIRST_NAME = "first_name"
 LAST_NAME = "last_name"
 EMAIL = "email"
 PUSH = "push"
+IN_APP = "in_app"
 PHONE = "phone"
 AGE = "age"
 GENDER = "gender"
@@ -248,6 +255,7 @@ DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
 DESTINATION_CHECK_CRON = "*/15"
 DELIVERY_JOB_CRON = "0 * * * *"
+TRUST_ID_CRON = "0 0 ? * *"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
@@ -618,44 +626,34 @@ DESTINATION_CONSTANTS = {
 # DESTINATION Secret Mapping
 MONGO = "mongo"
 DESTINATION_SECRETS = {
-    db_c.DELIVERY_PLATFORM_FACEBOOK: {
-        MONGO: [
-            FACEBOOK_AD_ACCOUNT_ID,
-            FACEBOOK_APP_ID,
-        ],
-        AWS_SSM_NAME: [FACEBOOK_ACCESS_TOKEN, FACEBOOK_APP_SECRET],
-    },
-    db_c.DELIVERY_PLATFORM_SFMC: {
-        MONGO: [
-            SFMC_CLIENT_ID,
-            SFMC_AUTH_BASE_URI,
-            SFMC_ACCOUNT_ID,
-            SFMC_SOAP_BASE_URI,
-            SFMC_REST_BASE_URI,
-        ],
-        AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
-    },
-    db_c.DELIVERY_PLATFORM_SENDGRID: {
-        MONGO: [],
-        AWS_SSM_NAME: [SENDGRID_AUTH_TOKEN],
-    },
-    db_c.DELIVERY_PLATFORM_QUALTRICS: {
-        MONGO: [
-            QUALTRICS_DIRECTORY_ID,
-            QUALTRICS_DATA_CENTER,
-            QUALTRICS_OWNER_ID,
-        ],
-        AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
-    },
-    db_c.DELIVERY_PLATFORM_GOOGLE: {
-        MONGO: [GOOGLE_CLIENT_CUSTOMER_ID],
-        AWS_SSM_NAME: [
-            GOOGLE_DEVELOPER_TOKEN,
-            GOOGLE_CLIENT_SECRET,
-            GOOGLE_REFRESH_TOKEN,
-            GOOGLE_CLIENT_ID,
-        ],
-    },
+    db_c.DELIVERY_PLATFORM_FACEBOOK: [
+        FACEBOOK_AD_ACCOUNT_ID,
+        FACEBOOK_APP_ID,
+        FACEBOOK_ACCESS_TOKEN,
+        FACEBOOK_APP_SECRET,
+    ],
+    db_c.DELIVERY_PLATFORM_SFMC: [
+        SFMC_CLIENT_ID,
+        SFMC_AUTH_BASE_URI,
+        SFMC_ACCOUNT_ID,
+        SFMC_SOAP_BASE_URI,
+        SFMC_REST_BASE_URI,
+        SFMC_CLIENT_SECRET,
+    ],
+    db_c.DELIVERY_PLATFORM_SENDGRID: [SENDGRID_AUTH_TOKEN],
+    db_c.DELIVERY_PLATFORM_QUALTRICS: [
+        QUALTRICS_DIRECTORY_ID,
+        QUALTRICS_DATA_CENTER,
+        QUALTRICS_OWNER_ID,
+        QUALTRICS_API_TOKEN,
+    ],
+    db_c.DELIVERY_PLATFORM_GOOGLE: [
+        GOOGLE_CLIENT_CUSTOMER_ID,
+        GOOGLE_DEVELOPER_TOKEN,
+        GOOGLE_CLIENT_SECRET,
+        GOOGLE_REFRESH_TOKEN,
+        GOOGLE_CLIENT_ID,
+    ],
 }
 
 ONLY_ADDED = "only_added"
@@ -715,6 +713,9 @@ DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
 DESTINATION_ALREADY_PRESENT = "Destination already present."
+DESTINATION_AUTHENTICATION_INVALID = (
+    "Failed to update the authentication details of the destination."
+)
 DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
 USER_NOT_FOUND = "User not found."
 
@@ -770,6 +771,9 @@ DELIVERY_HISTORY = "delivery-history"
 PENDING_JOBS = "pending-jobs"
 ORCH_INTEGRATION_TEST_CPDR = "orch_integration_test_cpdr"
 ORCH_INTEGRATION_TEST_FLDR = "orch_integration_test_fldr"
+ORCH_INTEGRATION_TEST_DR = "orch_integration_test_dr"
+ORCH_INTEGRATION_TEST_MCA = "orch_integration_test_mca"
+
 TRIGGERS_TAG = "triggers"
 CAMPAIGNS = "campaigns"
 AD_SET_ID = "ad_set_id"
@@ -958,14 +962,22 @@ AUDIENCE_FILTER_RANGE = "range"
 AUDIENCE_FILTER_DELTA_TYPE = "delta_type"
 AUDIENCE_FILTER_NOT_RANGE = "not_range"
 AUDIENCE_FILTER_CONTACT_PREFERENCE = "contact_preference"
-AUDIENCE_FILTER_CONTACT_PREFERENCES = [EMAIL, TEXT, PUSH]
 AUDIENCE_FILTER_PREFERENCE_EMAIL = "preference_email"
 AUDIENCE_FILTER_PREFERENCE_SMS = "preference_sms"
 AUDIENCE_FILTER_PREFERENCE_PUSH = "preference_push"
+AUDIENCE_FILTER_PREFERENCE_IN_APP = "preference_in_app"
+AUDIENCE_FILTER_CONTACT_PREFERENCES_UNIFIED = [EMAIL, TEXT, PUSH, IN_APP]
+AUDIENCE_FILTER_CONTACT_PREFERENCES_CDM = [
+    AUDIENCE_FILTER_PREFERENCE_EMAIL,
+    AUDIENCE_FILTER_PREFERENCE_SMS,
+    AUDIENCE_FILTER_PREFERENCE_PUSH,
+    AUDIENCE_FILTER_PREFERENCE_IN_APP,
+]
 AUDIENCE_FILTER_CONTACT_PREFERENCES_CDP_MAP = {
     EMAIL: AUDIENCE_FILTER_PREFERENCE_EMAIL,
     TEXT: AUDIENCE_FILTER_PREFERENCE_SMS,
     PUSH: AUDIENCE_FILTER_PREFERENCE_PUSH,
+    IN_APP: AUDIENCE_FILTER_PREFERENCE_IN_APP,
 }
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_LAST_DELIVERY = "last_delivery"
@@ -984,6 +996,7 @@ TRUST_ID_ATTRIBUTES = "attributes"
 AUDIENCES_DEFAULT_BATCH_SIZE = 0
 TAGS = "tags"
 INDUSTRY_TAG = "industry_tag"
+CONTACT_PREFERENCE_ATTRIBUTE = "contact_preference_attribute"
 
 PARAM_STORE_PREFIX = "unified"
 SECRET_STORAGE_ERROR_MSG = (
@@ -1568,6 +1581,7 @@ ONLY_ACTIVE = "only_active"
 CLIENT_PROJECTS_TAG = "client-projects"
 CLIENT_PROJECT_ID = "client_project_id"
 CLIENT_PROJECTS_ENDPOINT = "/client-projects"
+CLIENT_ENDPOINT = "/client"
 
 # Histogram data stub.
 VALUES = "values"
@@ -1851,6 +1865,7 @@ TRUST_ID_SEGMENT_TYPE = "segment_type"
 TRUST_ID_SEGMENTS = "segments"
 TRUST_ID_SEGMENT_NAME = "segment_name"
 TRUST_ID_SEGMENT_FILTERS = "segment_filters"
+IS_BOOLEAN = "is_boolean"
 TRUST_ID_SURVEY_RESPONSES = "survey_responses"
 TRUST_ID_SCORE = "trust_id_score"
 TRUST_ID_ATTRIBUTE_TYPE = "attribute_type"

@@ -157,6 +157,7 @@ export default {
 <style lang="scss" scoped>
 .v-list-item {
   min-height: 32px;
+  white-space: nowrap;
 }
 .insight-height {
   height: 30px !important;

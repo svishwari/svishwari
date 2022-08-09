@@ -113,7 +113,9 @@
                     :status="formatText(item['notification_type'])"
                     :show-label="false"
                     class="d-flex"
-                    :icon-size="18"
+                    :icon-size="
+                      item['notification_type'] === 'success' ? 21 : 18
+                    "
                   />
                   {{ formatText(item["notification_type"]) | Empty("-") }}
                 </div>
@@ -358,6 +360,7 @@ export default {
         this.enableLazyLoad = true
         this.fetchNotificationsByBatch()
       } else {
+        this.batchDetails.isLazyLoad = false
         this.enableLazyLoad = false
       }
     },

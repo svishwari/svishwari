@@ -14,7 +14,12 @@
           <slot name="body">
             <div
               v-if="body"
-              class="black--text text--darken-4 text-subtitle-1 pt-6 font-weight-regular"
+              class="
+                black--text
+                text--darken-4 text-subtitle-1
+                pt-6
+                font-weight-regular
+              "
             >
               {{ body }}
             </div>

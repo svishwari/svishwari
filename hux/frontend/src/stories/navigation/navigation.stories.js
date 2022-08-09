@@ -38,4 +38,4 @@ const Template = (args, { argTypes }) => ({
   `,
 })
 
-export const Navigation = Template.bind({})
+export const SideNavigation = Template.bind({})

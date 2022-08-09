@@ -3,7 +3,11 @@ from unittest import mock
 from http import HTTPStatus
 
 from bson import ObjectId
-from huxunify.api.schema.client_projects import ClientProjectGetSchema
+from huxunify.api import constants as api_c
+from huxunify.api.schema.client_projects import (
+    ClientProjectGetSchema,
+    ClientDetailsSchema,
+)
 from huxunify.test.route.route_test_util.route_test_case import RouteTestCase
 from huxunifylib.database.user_management import (
     set_user,
@@ -11,7 +15,6 @@ from huxunifylib.database.user_management import (
 from huxunifylib.database.collection_management import create_document
 from huxunifylib.database import constants as db_c
 import huxunify.test.constants as t_c
-from huxunify.api import constants as api_c
 
 
 class ClientProjectsTests(RouteTestCase):
@@ -63,7 +66,18 @@ class ClientProjectsTests(RouteTestCase):
             for client_project in client_projects
         ]
 
-        # self.addCleanup(mock.patch.stopall)
+        self.client_details = create_document(
+            self.database,
+            db_c.CONFIGURATIONS_COLLECTION,
+            {
+                db_c.CONFIGURATION_FIELD_TYPE: db_c.CLIENT_DETAILS,
+                db_c.CONFIGURATION_FIELD_NAME: "Client Details",
+                db_c.CONFIGURATION_FIELD_DETAILS: {
+                    db_c.NAME: "Test Client",
+                    db_c.CLIENT_LOGO: "test_client.svg",
+                },
+            },
+        )
 
     def test_get_all_client_projects(self):
         """Test get all client projects successfully."""
@@ -131,3 +145,20 @@ class ClientProjectsTests(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_get_client_details(self):
+        """Test get client details"""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CLIENT_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertFalse(ClientDetailsSchema().validate(response.json))
+
+        client_details = response.json
+        for field in client_details:
+            self.assertEqual(
+                self.client_details[db_c.CONFIGURATION_FIELD_DETAILS][field],
+                client_details[field],
+            )

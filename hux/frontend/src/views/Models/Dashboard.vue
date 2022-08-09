@@ -1,345 +1,268 @@
 <template>
-  <page class="model-dashboard-wrap" max-width="100%">
-    <template #header>
-      <page-header>
-        <template #left>
-          <breadcrumb
-            :items="breadcrumbItems"
-            :add-border="true"
-            :reduce-icon="true"
-          />
-        </template>
-        <template #right>
-          <tooltip>
-            <template #label-content>
-              <span data-e2e="model-dashboard-options">
-                <icon
-                  type="main_screen"
-                  :size="40"
-                  class="cursor-pointer mr-7"
-                  color="black-darken4"
-                  data-e2e="version-history-button"
-                  @click.native="viewVersionHistory()"
-                />
-              </span>
-            </template>
-            <template #hover-content>
-              <div class="px-4 py-2 white caption cursor-pointer">
-                Version history
-              </div>
-            </template>
-          </tooltip>
-        </template>
-      </page-header>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
-    </template>
-
-    <v-tabs v-model="tabOption" class="tabs-group">
-      <v-tabs-slider color="primary"></v-tabs-slider>
-      <div class="d-flex">
-        <v-tab key="model" class="pa-2 mr-3 text-h3" color>
-          Model performance
-        </v-tab>
-        <v-tab key="pipeline" class="text-h3" data-e2e="pipeline-performance">
-          Pipeline performance
-        </v-tab>
-      </div>
-    </v-tabs>
-    <v-tabs-items v-model="tabOption" class="tabs-item">
-      <v-tab-item key="model" class="delivery-tab">
-        <template v-if="!loading" #default>
-          <v-row class="mt-2">
-            <v-col col="6">
-              <div class="model-dashboard__card pa-4">
-                <label class="text-body-2 black--text text--lighten-4 ma-0">
-                  Description
-                </label>
-                <p class="text-body-1 ma-0">
-                  {{ model.description | Empty }}
-                </p>
-              </div>
-            </v-col>
-            <v-col col="6">
-              <div class="d-flex">
-                <div
-                  v-for="(metric, key) in model.performance_metric"
-                  :key="key"
-                  data-e2e="performancemetric"
-                >
-                  <metric-card
-                    v-if="key === 'created_on'"
-                    class="model-dashboard__card px-6 py-3 mr-2"
-                    :min-width="180"
-                    :height="80"
-                    :title="metric"
-                    subtitle="Created On"
-                    :high-level="true"
-                    :interactable="false"
-                    :title-above="true"
-                  >
-                    <template #title>
-                      <tooltip>
-                        <template #label-content>
-                          {{ metric | Numeric }}
-                        </template>
-                        <template #hover-content>
-                          {{ metric | Empty }}
-                        </template>
-                      </tooltip>
-                    </template>
-                  </metric-card>
-                  <metric-card
-                    v-if="key === 'rmse' && metric > 0"
-                    class="model-dashboard__card px-6 py-3 mr-2"
-                    :min-width="122"
-                    :height="80"
-                    :title="metric"
-                    subtitle="RMSE"
-                    :high-level="true"
-                    :interactable="false"
-                    :title-above="true"
-                  >
-                    <template #title>
-                      <tooltip>
-                        <template #label-content>
-                          {{ metric | Numeric }}
-                        </template>
-                        <template #hover-content>
-                          {{ metric | Empty }}
-                        </template>
-                      </tooltip>
-                    </template>
-                  </metric-card>
-                  <metric-card
-                    v-if="key === 'auc' && metric > 0"
-                    class="model-dashboard__card px-6 py-3 mr-2"
-                    :min-width="122"
-                    :height="80"
-                    :title="metric"
-                    subtitle="AUC"
-                    :high-level="true"
-                    :interactable="false"
-                    :title-above="true"
-                  >
-                    <template #title>
-                      <tooltip>
-                        <template #label-content>
-                          {{ metric | Numeric }}
-                        </template>
-                        <template #hover-content>
-                          {{ metric | Empty }}
-                        </template>
-                      </tooltip>
-                    </template>
-                  </metric-card>
-                  <metric-card
-                    v-if="key === 'precision' && metric > 0"
-                    class="model-dashboard__card px-6 py-3 mr-2"
-                    :min-width="122"
-                    :height="80"
-                    :title="metric"
-                    subtitle="Precision"
-                    :high-level="true"
-                    :interactable="false"
-                    :title-above="true"
-                  >
-                    <template #title>
-                      <tooltip>
-                        <template #label-content>
-                          {{ metric | Numeric }}
-                        </template>
-                        <template #hover-content>
-                          {{ metric | Empty }}
-                        </template>
-                      </tooltip>
-                    </template>
-                  </metric-card>
-                  <metric-card
-                    v-if="key === 'recall' && metric > 0"
-                    class="model-dashboard__card px-6 py-3 mr-2"
-                    :min-width="122"
-                    :height="80"
-                    :title="metric"
-                    subtitle="Recall"
-                    :high-level="true"
-                    :interactable="false"
-                    :title-above="true"
-                  >
-                    <template #title>
-                      <tooltip>
-                        <template #label-content>
-                          {{ metric | Numeric }}
-                        </template>
-                        <template #tooltip>
-                          {{ metric | Empty }}
-                        </template>
-                      </tooltip>
-                    </template>
-                  </metric-card>
-                  <metric-card
-                    v-if="key === 'current_version'"
-                    class="model-dashboard__card px-6 py-3 mr-2"
-                    :min-width="152"
-                    :height="80"
-                    :title="metric"
-                    :subtitle="
-                      showCurrentVersion ? 'Current version' : 'Past version'
-                    "
-                    :high-level="true"
-                    :interactable="false"
-                    :title-above="true"
-                    :text-color="
-                      showCurrentVersion ? '' : 'var(--v-error-base)'
-                    "
-                  >
-                    <template #title>
-                      <tooltip>
-                        <template #label-content>
-                          {{
-                            showCurrentVersion ? metric : versionData | Empty
-                          }}
-                        </template>
-                        <template #hover-content>
-                          <div class="mb-3">
-                            Trained date<br />
-                            {{ modelMetricDetails.last_trained | Date | Empty }}
-                          </div>
-                          <div class="mb-3">
-                            Fulcrum date<br />
-                            {{ modelMetricDetails.fulcrum_date | Date | Empty }}
-                          </div>
-                          <div class="mb-3">
-                            Lookback period (days)<br />
-                            {{ modelMetricDetails.lookback_window }}
-                          </div>
-                          <div>
-                            Prediction period (days)<br />
-                            {{ modelMetricDetails.prediction_window }}
-                          </div>
-                        </template>
-                      </tooltip>
-                    </template>
-                  </metric-card>
+  <div class="model-dashboard-wrap">
+    <page-header>
+      <template #left>
+        <breadcrumb
+          :items="breadcrumbItems"
+          :add-border="true"
+          :reduce-icon="true"
+        />
+      </template>
+      <template #right>
+        <tooltip>
+          <template #label-content>
+            <span data-e2e="model-dashboard-options">
+              <icon
+                type="main_screen"
+                :size="40"
+                class="cursor-pointer mr-7"
+                color="black-darken4"
+                data-e2e="version-history-button"
+                @click.native="viewVersionHistory()"
+              />
+            </span>
+          </template>
+          <template #hover-content>
+            <div class="px-4 py-2 white caption cursor-pointer">
+              Version history
+            </div>
+          </template>
+        </tooltip>
+      </template>
+    </page-header>
+    <v-progress-linear :active="loading" :indeterminate="loading" />
+    <div
+      v-if="!loading"
+      class="flex-grow-1 flex-shrink-1 mw-100 content-section"
+    >
+      <v-tabs v-model="tabOption" class="tabs-group">
+        <v-tabs-slider color="primary"></v-tabs-slider>
+        <div class="d-flex">
+          <v-tab key="model" class="pa-2 mr-3 text-h3" color>
+            Model performance
+          </v-tab>
+          <v-tab key="pipeline" class="text-h3" data-e2e="pipeline-performance">
+            Pipeline performance
+          </v-tab>
+        </div>
+      </v-tabs>
+      <v-tabs-items v-model="tabOption" class="tabs-item">
+        <v-tab-item key="model" class="delivery-tab">
+          <template v-if="!loading" #default>
+            <v-row class="mt-2">
+              <v-col col="6">
+                <div class="model-dashboard__card pa-4">
+                  <label class="text-body-2 black--text text--lighten-4 ma-0">
+                    Description
+                  </label>
+                  <p class="text-body-1 ma-0">
+                    {{ model.description | Empty }}
+                  </p>
                 </div>
-              </div>
-            </v-col>
-          </v-row>
-          <v-row class="pt-0">
-            <v-col md="6" class="pt-0">
-              <v-card
-                class="mt-2 rounded-lg box-shadow-5"
-                :height="modelFeatures.length == 0 ? 280 : 662"
-              >
-                <v-progress-linear
-                  :active="featuresLoading"
-                  :indeterminate="featuresLoading"
-                />
-                <v-card-title
-                  v-if="modelFeatures.length != 0"
-                  class="chart-style pb-6 px-6 pt-5"
-                >
-                  <span class="black--text text--darken-4 text-h3">
-                    Top
-                    {{ modelFeatures.length }}
-                    feature importance
-                  </span>
-                </v-card-title>
-                <feature-chart
-                  v-if="!featuresLoading && modelFeatures.length != 0"
-                  :feature-data="modelFeatures"
-                  data-e2e="feature-chart"
-                />
-                <v-row
-                  v-else-if="!featuresLoading && modelFeatures.length == 0"
-                  class="model-features-frame py-14"
-                >
-                  <empty-page
-                    v-if="modelFeatures.length == 0 && !modelFeaturesErrorState"
-                    type="model-features-empty"
-                    :size="50"
+              </v-col>
+              <v-col col="6">
+                <div class="d-flex">
+                  <div
+                    v-for="(metric, key) in model.performance_metric"
+                    :key="key"
+                    data-e2e="performancemetric"
                   >
-                    <template #title>
-                      <div class="title-no-notification">No data to show</div>
-                    </template>
-                    <template #subtitle>
-                      <div class="des-no-notification">
-                        Top 20 features chart will appear here once
-                        {{ modelMetricDetails.name }} finishes uploading. <br />
-                        Please check back later.
-                      </div>
-                    </template>
-                  </empty-page>
-                  <empty-page
-                    v-else-if="modelFeaturesErrorState"
-                    class="title-no-notification"
-                    type="error-on-screens"
-                    :size="50"
-                  >
-                    <template #title>
-                      <div class="title-no-notification">
-                        Top 20 features chart is currently unavailable
-                      </div>
-                    </template>
-                    <template #subtitle>
-                      <div class="des-no-notification">
-                        Our team is working hard to fix it. Please be
-                        patient.<br />Thank you!
-                      </div>
-                    </template>
-                  </empty-page>
-                </v-row>
-                <div
-                  v-if="modelFeatures.length != 0"
-                  class="pt-2 pb-6 text-center black--text text-body-1"
-                >
-                  Score
+                    <metric-card
+                      v-if="key === 'created_on'"
+                      class="model-dashboard__card px-6 py-3 mr-2"
+                      :min-width="180"
+                      :height="80"
+                      :title="metric"
+                      subtitle="Created On"
+                      :high-level="true"
+                      :interactable="false"
+                      :title-above="true"
+                    >
+                      <template #title>
+                        <tooltip>
+                          <template #label-content>
+                            {{ metric | Numeric }}
+                          </template>
+                          <template #hover-content>
+                            {{ metric | Empty }}
+                          </template>
+                        </tooltip>
+                      </template>
+                    </metric-card>
+                    <metric-card
+                      v-if="key === 'rmse' && metric > 0"
+                      class="model-dashboard__card px-6 py-3 mr-2"
+                      :min-width="122"
+                      :height="80"
+                      :title="metric"
+                      subtitle="RMSE"
+                      :high-level="true"
+                      :interactable="false"
+                      :title-above="true"
+                    >
+                      <template #title>
+                        <tooltip>
+                          <template #label-content>
+                            {{ metric | Numeric }}
+                          </template>
+                          <template #hover-content>
+                            {{ metric | Empty }}
+                          </template>
+                        </tooltip>
+                      </template>
+                    </metric-card>
+                    <metric-card
+                      v-if="key === 'auc' && metric > 0"
+                      class="model-dashboard__card px-6 py-3 mr-2"
+                      :min-width="122"
+                      :height="80"
+                      :title="metric"
+                      subtitle="AUC"
+                      :high-level="true"
+                      :interactable="false"
+                      :title-above="true"
+                    >
+                      <template #title>
+                        <tooltip>
+                          <template #label-content>
+                            {{ metric | Numeric }}
+                          </template>
+                          <template #hover-content>
+                            {{ metric | Empty }}
+                          </template>
+                        </tooltip>
+                      </template>
+                    </metric-card>
+                    <metric-card
+                      v-if="key === 'precision' && metric > 0"
+                      class="model-dashboard__card px-6 py-3 mr-2"
+                      :min-width="122"
+                      :height="80"
+                      :title="metric"
+                      subtitle="Precision"
+                      :high-level="true"
+                      :interactable="false"
+                      :title-above="true"
+                    >
+                      <template #title>
+                        <tooltip>
+                          <template #label-content>
+                            {{ metric | Numeric }}
+                          </template>
+                          <template #hover-content>
+                            {{ metric | Empty }}
+                          </template>
+                        </tooltip>
+                      </template>
+                    </metric-card>
+                    <metric-card
+                      v-if="key === 'recall' && metric > 0"
+                      class="model-dashboard__card px-6 py-3 mr-2"
+                      :min-width="122"
+                      :height="80"
+                      :title="metric"
+                      subtitle="Recall"
+                      :high-level="true"
+                      :interactable="false"
+                      :title-above="true"
+                    >
+                      <template #title>
+                        <tooltip>
+                          <template #label-content>
+                            {{ metric | Numeric }}
+                          </template>
+                          <template #tooltip>
+                            {{ metric | Empty }}
+                          </template>
+                        </tooltip>
+                      </template>
+                    </metric-card>
+                    <metric-card
+                      v-if="key === 'current_version'"
+                      class="model-dashboard__card px-6 py-3 mr-2"
+                      :min-width="152"
+                      :height="80"
+                      :title="metric"
+                      :subtitle="
+                        showCurrentVersion ? 'Current version' : 'Past version'
+                      "
+                      :high-level="true"
+                      :interactable="false"
+                      :title-above="true"
+                      :text-color="
+                        showCurrentVersion ? '' : 'var(--v-error-base)'
+                      "
+                    >
+                      <template #title>
+                        <tooltip>
+                          <template #label-content>
+                            {{
+                              showCurrentVersion ? metric : versionData | Empty
+                            }}
+                          </template>
+                          <template #hover-content>
+                            <div class="mb-3">
+                              Trained date<br />
+                              {{
+                                modelMetricDetails.last_trained | Date | Empty
+                              }}
+                            </div>
+                            <div class="mb-3">
+                              Fulcrum date<br />
+                              {{
+                                modelMetricDetails.fulcrum_date | Date | Empty
+                              }}
+                            </div>
+                            <div class="mb-3">
+                              Lookback period (days)<br />
+                              {{ modelMetricDetails.lookback_window }}
+                            </div>
+                            <div>
+                              Prediction period (days)<br />
+                              {{ modelMetricDetails.prediction_window }}
+                            </div>
+                          </template>
+                        </tooltip>
+                      </template>
+                    </metric-card>
+                  </div>
                 </div>
-              </v-card>
-            </v-col>
-            <v-col md="6" :class="driftChartData.length == 0 ? 'pt-3' : 'pt-0'">
-              <v-card
-                class="rounded-lg px-4 box-shadow-5 mt-2"
-                :height="driftChartData.length == 0 ? 280 : 662"
-              >
-                <v-progress-linear
-                  v-if="loadingDrift"
-                  :active="loadingDrift"
-                  :indeterminate="loadingDrift"
-                />
-                <div
-                  v-if="driftChartData.length != 0"
-                  class="pt-5 pl-2 pb-10 black--text text--darken-4 text-h3"
+              </v-col>
+            </v-row>
+            <v-row class="pt-0">
+              <v-col md="6" class="pt-0">
+                <v-card
+                  class="mt-2 rounded-lg box-shadow-5"
+                  :height="modelFeatures.length == 0 ? 280 : 662"
                 >
-                  Drift
-                  <span
-                    v-if="
-                      model.performance_metric &&
-                      model.performance_metric['rmse'] !== -1
-                    "
-                    class="black--text text--darken-1"
+                  <v-progress-linear
+                    :active="featuresLoading"
+                    :indeterminate="featuresLoading"
+                  />
+                  <v-card-title
+                    v-if="modelFeatures.length != 0"
+                    class="chart-style pb-6 px-6 pt-5"
                   >
-                    RMSE
-                  </span>
-                  <span v-else class="black--text text--lighten-4"> AUC </span>
-                </div>
-                <div ref="decisioning-drift">
-                  <!-- TODO: Refactor the yAxisZeroToOne prop in upcoming changes  -->
-                  <drift-chart
-                    v-if="!loadingDrift && driftChartData.length != 0"
-                    v-model="driftChartData"
-                    :chart-dimensions="chartDimensions"
-                    x-axis-format="%m/%d"
-                    :enable-grid="[true, true]"
-                    data-e2e="drift-chart"
-                    :y-axis-zero-to-one="model.type != 'ltv'"
+                    <span class="black--text text--darken-4 text-h3">
+                      Top
+                      {{ modelFeatures.length }}
+                      feature importance
+                    </span>
+                  </v-card-title>
+                  <feature-chart
+                    v-if="!featuresLoading && modelFeatures.length != 0"
+                    :feature-data="modelFeatures"
+                    data-e2e="feature-chart"
                   />
                   <v-row
-                    v-else-if="!loadingDrift && driftChartData.length == 0"
-                    class="drift-chart-frame py-14"
+                    v-else-if="!featuresLoading && modelFeatures.length == 0"
+                    class="model-features-frame py-14"
                   >
                     <empty-page
-                      v-if="!driftChartErrorState"
-                      type="drift-chart-empty"
+                      v-if="
+                        modelFeatures.length == 0 && !modelFeaturesErrorState
+                      "
+                      type="model-features-empty"
                       :size="50"
                     >
                       <template #title>
@@ -347,10 +270,170 @@
                       </template>
                       <template #subtitle>
                         <div class="des-no-notification">
-                          Drift chart will appear here once
+                          Top 20 features chart will appear here once
                           {{ modelMetricDetails.name }} finishes uploading.
                           <br />
                           Please check back later.
+                        </div>
+                      </template>
+                    </empty-page>
+                    <empty-page
+                      v-else-if="modelFeaturesErrorState"
+                      class="title-no-notification"
+                      type="error-on-screens"
+                      :size="50"
+                    >
+                      <template #title>
+                        <div class="title-no-notification">
+                          Top 20 features chart is currently unavailable
+                        </div>
+                      </template>
+                      <template #subtitle>
+                        <div class="des-no-notification">
+                          Our team is working hard to fix it. Please be
+                          patient.<br />Thank you!
+                        </div>
+                      </template>
+                    </empty-page>
+                  </v-row>
+                  <div
+                    v-if="modelFeatures.length != 0"
+                    class="pt-2 pb-6 text-center black--text text-body-1"
+                  >
+                    Score
+                  </div>
+                </v-card>
+              </v-col>
+              <v-col
+                md="6"
+                :class="driftChartData.length == 0 ? 'pt-3' : 'pt-0'"
+              >
+                <v-card
+                  class="rounded-lg px-4 box-shadow-5 mt-2"
+                  :height="driftChartData.length == 0 ? 280 : 662"
+                >
+                  <v-progress-linear
+                    v-if="loadingDrift"
+                    :active="loadingDrift"
+                    :indeterminate="loadingDrift"
+                  />
+                  <div
+                    v-if="driftChartData.length != 0"
+                    class="pt-5 pl-2 pb-10 black--text text--darken-4 text-h3"
+                  >
+                    Drift
+                    <span
+                      v-if="
+                        model.performance_metric &&
+                        model.performance_metric['rmse'] !== -1
+                      "
+                      class="black--text text--darken-1"
+                    >
+                      RMSE
+                    </span>
+                    <span v-else class="black--text text--lighten-4">
+                      AUC
+                    </span>
+                  </div>
+                  <div ref="decisioning-drift">
+                    <!-- TODO: Refactor the yAxisZeroToOne prop in upcoming changes  -->
+                    <drift-chart
+                      v-if="!loadingDrift && driftChartData.length != 0"
+                      v-model="driftChartData"
+                      :chart-dimensions="chartDimensions"
+                      x-axis-format="%m/%d"
+                      :enable-grid="[true, true]"
+                      data-e2e="drift-chart"
+                      :y-axis-zero-to-one="model.type != 'ltv'"
+                    />
+                    <v-row
+                      v-else-if="!loadingDrift && driftChartData.length == 0"
+                      class="drift-chart-frame py-14"
+                    >
+                      <empty-page
+                        v-if="!driftChartErrorState"
+                        type="drift-chart-empty"
+                        :size="50"
+                      >
+                        <template #title>
+                          <div class="title-no-notification">
+                            No data to show
+                          </div>
+                        </template>
+                        <template #subtitle>
+                          <div class="des-no-notification">
+                            Drift chart will appear here once
+                            {{ modelMetricDetails.name }} finishes uploading.
+                            <br />
+                            Please check back later.
+                          </div>
+                        </template>
+                      </empty-page>
+                      <empty-page
+                        v-else
+                        class="title-no-notification"
+                        type="error-on-screens"
+                        :size="50"
+                      >
+                        <template #title>
+                          <div class="title-no-notification">
+                            Drift chart is currently unavailable
+                          </div>
+                        </template>
+                        <template #subtitle>
+                          <div class="des-no-notification">
+                            Our team is working hard to fix it. Please be
+                            patient.<br />Thank you!
+                          </div>
+                        </template>
+                      </empty-page>
+                    </v-row>
+                  </div>
+                  <div
+                    v-if="driftChartData.length != 0"
+                    class="pt-2 pb-6 text-center black--text text-body-1"
+                  >
+                    Date
+                  </div>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col col="12">
+                <v-card class="rounded-lg box-shadow-5 px-6 py-5">
+                  <div
+                    v-if="lift.length != 0"
+                    class="black--text text--darken-4 text-h3 pb-4"
+                  >
+                    Lift chart
+                  </div>
+                  <v-progress-linear
+                    v-if="loadingLift"
+                    :active="loadingLift"
+                    :indeterminate="loadingLift"
+                  />
+                  <lift-chart
+                    v-else-if="!loadingLift && lift.length != 0"
+                    :data="lift"
+                    :rmse="model.performance_metric['rmse']"
+                    data-e2e="table-lift"
+                  />
+                  <v-row
+                    v-else-if="!loadingLift && lift.length == 0"
+                    class="lift-chart-frame py-14"
+                  >
+                    <empty-page
+                      v-if="!liftErrorState"
+                      type="lift-table-empty"
+                      :size="50"
+                    >
+                      <template #title>
+                        <div class="title-no-notification">No data to show</div>
+                      </template>
+                      <template #subtitle>
+                        <div class="des-no-notification">
+                          Lift chart table will appear here once
+                          {{ modelMetricDetails.name }} finishes uploading.
                         </div>
                       </template>
                     </empty-page>
@@ -362,161 +445,98 @@
                     >
                       <template #title>
                         <div class="title-no-notification">
-                          Drift chart is currently unavailable
+                          Lift table is currently unavailable
                         </div>
                       </template>
                       <template #subtitle>
                         <div class="des-no-notification">
-                          Our team is working hard to fix it. Please be
-                          patient.<br />Thank you!
+                          Our team is working hard to fix it. Please be patient
+                          and try again soon!
                         </div>
                       </template>
                     </empty-page>
                   </v-row>
-                </div>
-                <div
-                  v-if="driftChartData.length != 0"
-                  class="pt-2 pb-6 text-center black--text text-body-1"
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col col="12">
+                <v-card
+                  class="rounded-lg box-shadow-5 px-6 py-5"
+                  data-e2e="table-feature"
                 >
-                  Date
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col col="12">
-              <v-card class="rounded-lg box-shadow-5 px-6 py-5">
-                <div
-                  v-if="lift.length != 0"
-                  class="black--text text--darken-4 text-h3 pb-4"
-                >
-                  Lift chart
-                </div>
-                <v-progress-linear
-                  v-if="loadingLift"
-                  :active="loadingLift"
-                  :indeterminate="loadingLift"
-                />
-                <lift-chart
-                  v-else-if="!loadingLift && lift.length != 0"
-                  :data="lift"
-                  :rmse="model.performance_metric['rmse']"
-                  data-e2e="table-lift"
-                />
-                <v-row
-                  v-else-if="!loadingLift && lift.length == 0"
-                  class="lift-chart-frame py-14"
-                >
-                  <empty-page
-                    v-if="!liftErrorState"
-                    type="lift-table-empty"
-                    :size="50"
+                  <div
+                    v-if="dashboardFeatureSize"
+                    class="black--text text--darken-4 text-h3 pb-4"
                   >
-                    <template #title>
-                      <div class="title-no-notification">No data to show</div>
-                    </template>
-                    <template #subtitle>
-                      <div class="des-no-notification">
-                        Lift chart table will appear here once
-                        {{ modelMetricDetails.name }} finishes uploading.
-                      </div>
-                    </template>
-                  </empty-page>
-                  <empty-page
-                    v-else
-                    class="title-no-notification"
-                    type="error-on-screens"
-                    :size="50"
+                    Features ({{ dashboardFeatureSize }})
+                  </div>
+                  <v-progress-linear
+                    v-if="loadingModelFeatures"
+                    :active="loadingModelFeatures"
+                    :indeterminate="loadingModelFeatures"
+                  />
+                  <features-table
+                    v-else-if="
+                      !loadingModelFeatures && dashboardFeatureSize != 0
+                    "
+                    :data="dashboardFeature"
+                  />
+                  <v-row
+                    v-else-if="
+                      !loadingModelFeatures && dashboardFeatureSize == 0
+                    "
+                    class="lift-chart-frame py-14"
                   >
-                    <template #title>
-                      <div class="title-no-notification">
-                        Lift table is currently unavailable
-                      </div>
-                    </template>
-                    <template #subtitle>
-                      <div class="des-no-notification">
-                        Our team is working hard to fix it. Please be patient
-                        and try again soon!
-                      </div>
-                    </template>
-                  </empty-page>
-                </v-row>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col col="12">
-              <v-card
-                class="rounded-lg box-shadow-5 px-6 py-5"
-                data-e2e="table-feature"
-              >
-                <div
-                  v-if="dashboardFeatureSize"
-                  class="black--text text--darken-4 text-h3 pb-4"
-                >
-                  Features ({{ dashboardFeatureSize }})
-                </div>
-                <v-progress-linear
-                  v-if="loadingModelFeatures"
-                  :active="loadingModelFeatures"
-                  :indeterminate="loadingModelFeatures"
-                />
-                <features-table
-                  v-else-if="!loadingModelFeatures && dashboardFeatureSize != 0"
-                  :data="dashboardFeature"
-                />
-                <v-row
-                  v-else-if="!loadingModelFeatures && dashboardFeatureSize == 0"
-                  class="lift-chart-frame py-14"
-                >
-                  <empty-page
-                    v-if="!featuresErrorState"
-                    type="lift-table-empty"
-                    :size="50"
-                  >
-                    <template #title>
-                      <div class="title-no-notification">No data to show</div>
-                    </template>
-                    <template #subtitle>
-                      <div class="des-no-notification">
-                        Features table will appear here once
-                        {{ modelMetricDetails.name }} finishes uploading.
-                      </div>
-                    </template>
-                  </empty-page>
-                  <empty-page
-                    v-else
-                    class="title-no-notification"
-                    type="error-on-screens"
-                    :size="50"
-                  >
-                    <template #title>
-                      <div class="title-no-notification">
-                        Features table is currently unavailable
-                      </div>
-                    </template>
-                    <template #subtitle>
-                      <div class="des-no-notification">
-                        Our team is working hard to fix it. Please be patient
-                        and try again soon!
-                      </div>
-                    </template>
-                  </empty-page>
-                </v-row>
-              </v-card>
-            </v-col>
-          </v-row>
-        </template>
-      </v-tab-item>
-      <v-tab-item key="pipeline" class="delivery-tab">
-        <pipeline-perfrmance></pipeline-perfrmance>
-      </v-tab-item>
-      <version-history
-        v-model="versionHistoryDrawer"
-        data-e2e="version-history"
-      />
-    </v-tabs-items>
-  </page>
+                    <empty-page
+                      v-if="!featuresErrorState"
+                      type="lift-table-empty"
+                      :size="50"
+                    >
+                      <template #title>
+                        <div class="title-no-notification">No data to show</div>
+                      </template>
+                      <template #subtitle>
+                        <div class="des-no-notification">
+                          Features table will appear here once
+                          {{ modelMetricDetails.name }} finishes uploading.
+                        </div>
+                      </template>
+                    </empty-page>
+                    <empty-page
+                      v-else
+                      class="title-no-notification"
+                      type="error-on-screens"
+                      :size="50"
+                    >
+                      <template #title>
+                        <div class="title-no-notification">
+                          Features table is currently unavailable
+                        </div>
+                      </template>
+                      <template #subtitle>
+                        <div class="des-no-notification">
+                          Our team is working hard to fix it. Please be patient
+                          and try again soon!
+                        </div>
+                      </template>
+                    </empty-page>
+                  </v-row>
+                </v-card>
+              </v-col>
+            </v-row>
+          </template>
+        </v-tab-item>
+        <v-tab-item key="pipeline" class="delivery-tab">
+          <pipeline-perfrmance></pipeline-perfrmance>
+        </v-tab-item>
+        <version-history
+          v-model="versionHistoryDrawer"
+          data-e2e="version-history"
+        />
+      </v-tabs-items>
+    </div>
+  </div>
 </template>
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -526,7 +546,6 @@ import FeaturesTable from "./FeaturesTable.vue"
 import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import Icon from "@/components/common/Icon"
 import LiftChart from "@/components/common/LiftChart.vue"
-import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
 import MetricCard from "@/components/common/MetricCard"
@@ -540,7 +559,6 @@ export default {
     Tooltip,
     FeatureChart,
     LiftChart,
-    Page,
     PageHeader,
     Icon,
     VersionHistory,
@@ -795,5 +813,25 @@ export default {
   .v-tabs-slider-wrapper
   .v-tabs-slider {
   margin-top: 2px !important;
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
+}
+.content-section {
+  height: calc(100vh - 180px);
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 30px;
 }
 </style>

@@ -103,7 +103,17 @@
     </v-form>
     <v-form v-if="customApp == false" class="pt-3">
       <div
-        class="primary lighten-1 border-all black--border border--lighten-2 pa-6 rounded h-106 border-radius-12"
+        class="
+          primary
+          lighten-1
+          border-all
+          black--border
+          border--lighten-2
+          pa-6
+          rounded
+          h-106
+          border-radius-12
+        "
       >
         <v-row>
           <v-col>
@@ -127,7 +137,14 @@
           size="large"
           variant="white"
           is-tile
-          class="text-button ml-auto primary--text mr-3 btn-border box-shadow-none"
+          class="
+            text-button
+            ml-auto
+            primary--text
+            mr-3
+            btn-border
+            box-shadow-none
+          "
           data-e2e="cancel-application-request"
           @click="cancel()"
         >

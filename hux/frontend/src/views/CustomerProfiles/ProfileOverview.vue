@@ -15,7 +15,12 @@
             <tooltip v-if="showPii">
               <template #label-content>
                 <span
-                  class="text-subtitle-1 text-ellipsis black--text d-block max-char"
+                  class="
+                    text-subtitle-1 text-ellipsis
+                    black--text
+                    d-block
+                    max-char
+                  "
                 >
                   {{ profile["first_name"] | Empty }}
                 </span>
@@ -39,7 +44,12 @@
             <tooltip v-if="showPii">
               <template #label-content>
                 <span
-                  class="text-subtitle-1 text-ellipsis d-block max-char black--text"
+                  class="
+                    text-subtitle-1 text-ellipsis
+                    d-block
+                    max-char
+                    black--text
+                  "
                 >
                   {{ profile["last_name"] | Empty }}
                 </span>

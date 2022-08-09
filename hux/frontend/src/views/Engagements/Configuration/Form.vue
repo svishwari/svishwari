@@ -107,7 +107,12 @@
               <tooltip>
                 <template #label-content>
                   <div
-                    class="resize-destination-button d-flex align-items-center ml-2"
+                    class="
+                      resize-destination-button
+                      d-flex
+                      align-items-center
+                      ml-2
+                    "
                     data-e2e="add-destination"
                     @click="openSelectDestinationsDrawer(row.item.id)"
                   >
@@ -134,7 +139,7 @@
 
       <template #field:manage="row">
         <div class="d-flex align-center justify-end">
-          <div @click="removeAudience(row.item)">
+          <div data-e2e="delete-audience" @click="removeAudience(row.item)">
             <icon
               class="cursor-pointer"
               size="19"
