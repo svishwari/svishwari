@@ -17,14 +17,14 @@ steps:
     title: Prepare Build Details
     type: parallel
     steps:
-    GetTriggerName:
-     stage: prepare
-     title: get trigger name using id from spec yaml
-     type: deloittehux/get-trigger-name
-    BuildNumber:
-     stage: prepare
-     title: Bump default BUILD_NUMBER annotation
-     type: bump-build-number
+      GetTriggerName:
+       stage: prepare
+       title: get trigger name using id from spec yaml
+       type: deloittehux/get-trigger-name
+      BuildNumber:
+       stage: prepare
+       title: Bump default BUILD_NUMBER annotation
+       type: bump-build-number
 
   CloneRepository:
     stage: git
