@@ -247,6 +247,9 @@ export default {
           customerOptions: this.existingDemoConfiguration.target,
           conversionOptions: this.existingDemoConfiguration.track,
         }
+      } else {
+        this.enableSelection = false
+        this.showSubCategories = false
       }
     },
   },
