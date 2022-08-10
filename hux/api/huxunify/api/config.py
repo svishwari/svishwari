@@ -111,6 +111,11 @@ class Config:
     DECISIONING_URL = config(api_c.DECISIONING_URL, default="")
 
     # JIRA
+    JIRA_SERVICE_DESK = config(api_c.JIRA_SERVICE_DESK, default=False)
+    JIRA_REQUEST_PARTICIPANTS = config(
+        api_c.JIRA_REQUEST_PARTICIPANTS, default=[]
+    )
+    JIRA_SERVICE_DESK_ID = config(api_c.JIRA_SERVICE_DESK_ID, default="")
     JIRA_PROJECT_KEY = config(api_c.JIRA_PROJECT_KEY, default="")
     JIRA_USER_EMAIL = config(api_c.JIRA_USER_EMAIL, default="")
     JIRA_API_KEY = config(api_c.JIRA_API_KEY, default="")
