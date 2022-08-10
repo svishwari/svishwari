@@ -3,6 +3,7 @@ from http import HTTPStatus
 from unittest import TestCase
 import pytest
 import requests
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestCoreAppChecks(TestCase):
@@ -13,6 +14,7 @@ class TestCoreAppChecks(TestCase):
     HEALTH_CHECK = "health-check"
     METRICS = "metrics"
 
+    @record_test_result(HttpMethod.GET, Endpoints.CORE_APP.GET_SWAGGER_DOCS)
     def test_get_swagger_docs(self):
         """Test get swagger docs page."""
 
@@ -20,6 +22,7 @@ class TestCoreAppChecks(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(HttpMethod.GET, Endpoints.CORE_APP.GET_API_SPEC)
     def test_get_apispec(self):
         """Test open apispec."""
 
@@ -32,6 +35,7 @@ class TestCoreAppChecks(TestCase):
         self.assertIn("title", response_json["info"])
         self.assertEqual("Hux API", response_json["info"]["title"])
 
+    @record_test_result(HttpMethod.GET, Endpoints.CORE_APP.GET_HEALTH_CHECK)
     def test_get_core_health_check(self):
         """Test get API application's core health check."""
 
@@ -49,6 +53,7 @@ class TestCoreAppChecks(TestCase):
             )
         )
 
+    @record_test_result(HttpMethod.GET, Endpoints.CORE_APP.GET_METRICS)
     def test_get_api_metrics(self):
         """Test get API prometheus metrics."""
 

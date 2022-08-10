@@ -5,6 +5,7 @@ from unittest import TestCase
 import pytest
 import requests
 from conftest import Crud
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestOrchestration(TestCase):
@@ -33,6 +34,9 @@ class TestOrchestration(TestCase):
         }
     ]
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_AUDIENCE_RULES
+    )
     def test_get_audience_rules(self):
         """Test get audience rules"""
 
@@ -45,6 +49,9 @@ class TestOrchestration(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_ALL_AUDIENCES
+    )
     def test_get_all_audiences(self):
         """Test get all audiences."""
 
@@ -56,6 +63,9 @@ class TestOrchestration(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.ORCHESTRATION.POST_CREATE_AUDIENCE
+    )
     def test_create_new_audience(self):
         """Test create new audience."""
 
@@ -76,6 +86,9 @@ class TestOrchestration(TestCase):
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_HISTOGRAM_DATA
+    )
     def test_get_histogram_data(self):
         """Test get rules histogram data."""
 
@@ -97,6 +110,9 @@ class TestOrchestration(TestCase):
         self.assertIsInstance(rules_data.get("steps"), int)
         self.assertIsInstance(rules_data.get("values"), list)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_HISTOGRAM_DATA
+    )
     def test_get_histogram_models_data(self):
         """Test get histogram data for models."""
 
@@ -118,6 +134,9 @@ class TestOrchestration(TestCase):
         self.assertIsInstance(rules_data.get("max"), float)
         self.assertIsInstance(rules_data.get("values"), list)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_LOCATION_RULES_CONTSTANTS
+    )
     def test_get_location_rules_constant(self):
         """Test get location rules constant."""
 
@@ -133,6 +152,9 @@ class TestOrchestration(TestCase):
 
         self.assertTrue(str(list(rules_data[0].keys())[0]).find("ka"))
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_AUDIENCE_INSIGHTS
+    )
     def test_get_audience_insights(self):
         """Test get audience insights."""
 
@@ -165,6 +187,10 @@ class TestOrchestration(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.POST,
+        Endpoints.ORCHESTRATION.POST_ADD_DESTINATION_TO_AUDIENCE,
+    )
     def test_add_destination_to_audience(self):
         """Test add destination to audience."""
 
@@ -211,6 +237,10 @@ class TestOrchestration(TestCase):
             destination_id, response.json().get("destinations")[0].get("id")
         )
 
+    @record_test_result(
+        HttpMethod.DELETE,
+        Endpoints.ORCHESTRATION.DELETE_DESTINATION_FROM_AUDIENCE,
+    )
     def test_remove_destination_from_audience(self):
         """Test remove destination from audience."""
 
@@ -265,6 +295,9 @@ class TestOrchestration(TestCase):
         )
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_AUDIENCE_INSIGHTS_COUNTRIES
+    )
     def test_get_country_level_audience_insights(self):
         """Test get country level audience Insights."""
 
@@ -294,6 +327,9 @@ class TestOrchestration(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_AUDIENCE_INSIGHTS_STATES
+    )
     def test_get_state_level_audience_insights(self):
         """Test get state level audience Insights."""
 
@@ -323,6 +359,9 @@ class TestOrchestration(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_AUDIENCE_INSIGHTS_CITIES
+    )
     def test_get_city_level_audience_insights(self):
         """Test get city level audience Insights."""
 
@@ -352,6 +391,9 @@ class TestOrchestration(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.ORCHESTRATION.GET_DOWNLOAD_AUDIENCE
+    )
     def test_get_audience_download(self):
         """Test download audience file."""
         # Create the audience.
@@ -386,6 +428,7 @@ class TestOrchestration(TestCase):
             "application/zip", response.headers.get("content-type")
         )
 
+    @record_test_result(HttpMethod.GET, Endpoints.ORCHESTRATION.GET_AUDIENCE)
     def test_get_audience_by_id(self):
         """Test get audience by id."""
 
@@ -415,6 +458,9 @@ class TestOrchestration(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.PUT, Endpoints.ORCHESTRATION.PUT_UPDATE_AUDIENCE
+    )
     def test_update_audience(self):
         """Test update audience."""
 
@@ -447,6 +493,9 @@ class TestOrchestration(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.DELETE, Endpoints.ORCHESTRATION.DELETE_AUDIENCE
+    )
     def test_delete_audience(self):
         """Test delete audience."""
 
@@ -474,8 +523,12 @@ class TestOrchestration(TestCase):
         # test success
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.ORCHESTRATION.POST_CREATE_LOOKALIKE_AUDIENCE
+    )
     def test_create_and_update_lookalike_audience(self):
         """Test create and update lookalike audience."""
+        # TODO https://jira.hux.deloitte.com/browse/HUS-3678
 
         # get all audiences to get a lookalikable active source audience id
         response = requests.get(
