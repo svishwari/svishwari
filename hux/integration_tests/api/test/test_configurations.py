@@ -3,6 +3,7 @@ from unittest import TestCase
 from http import HTTPStatus
 import pytest
 import requests
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestConfigurations(TestCase):
@@ -11,6 +12,9 @@ class TestConfigurations(TestCase):
     CONFIGURATIONS = "configurations"
     COLLECTION = "configurations"
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CONFIGURATION.GET_CONFIGURATION_MODULES
+    )
     def test_get_all_configurations(self):
         """Test get all configurations."""
 
@@ -23,6 +27,9 @@ class TestConfigurations(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CONFIGURATION.GET_ALL_CONFIGURATIONS
+    )
     def test_get_all_configurations_status_active(self):
         """Test get all configurations with status active."""
 
@@ -37,6 +44,9 @@ class TestConfigurations(TestCase):
         for configuration in response.json():
             self.assertEqual("active", configuration["status"])
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CONFIGURATION.GET_ALL_CONFIGURATIONS
+    )
     def test_get_navigation_settings_type_configurations(self):
         """Test get configurations of type navigation settings."""
 
@@ -51,6 +61,9 @@ class TestConfigurations(TestCase):
         self.assertIn("settings", response.json())
         self.assertIsInstance(response.json()["settings"], list)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CONFIGURATION.PUT_NAVIGATION_SETTINGS
+    )
     def test_update_navigation_settings_type_configuration(self):
         """Test update configuration of a navigation settings type."""
 

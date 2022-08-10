@@ -3,6 +3,7 @@ from unittest import TestCase
 from http import HTTPStatus
 import pytest
 import requests
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestDestinations(TestCase):
@@ -12,6 +13,9 @@ class TestDestinations(TestCase):
     COLLECTION = "delivery_platforms"
     DELIVERY_PLATFORM_SFMC = "sfmc"
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.DESTINATIONS.GET_ALL_DESTINATIONS
+    )
     def test_get_destinations(self):
         """Test get all destinations."""
 
@@ -25,6 +29,7 @@ class TestDestinations(TestCase):
         self.assertIsInstance(response.json(), list)
         self.assertGreaterEqual(len(response.json()), 1)
 
+    @record_test_result(HttpMethod.GET, Endpoints.DESTINATIONS.GET_DESTINATION)
     def test_get_destination(self):
         """Test get destination."""
 
@@ -49,6 +54,9 @@ class TestDestinations(TestCase):
         )
         self.assertIsInstance(get_individual_destination_response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.DESTINATIONS.GET_DESTINATION_CONSTANTS
+    )
     def test_get_destination_constants(self):
         """Test get destination constants."""
 
@@ -60,6 +68,9 @@ class TestDestinations(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.DESTINATIONS.GET_DESTINATION_DATA_EXTENSIONS
+    )
     def test_get_destination_data_extension(self):
         """Test get destination data extensions."""
 
@@ -87,6 +98,9 @@ class TestDestinations(TestCase):
         self.assertIsInstance(get_dest_data_ext.json(), list)
         self.assertGreaterEqual(len(get_dest_data_ext.json()), 1)
 
+    @record_test_result(
+        HttpMethod.PATCH, Endpoints.DESTINATIONS.PATCH_UPDATE_DESTINATION
+    )
     def test_update_destination(self):
         """Test update destination."""
 
