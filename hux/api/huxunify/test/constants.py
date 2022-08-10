@@ -203,14 +203,14 @@ IDENTITY_INSIGHT_RESPONSE = {
 IDENTITY_INSIGHT_EMPTY_RESPONSE = {
     "code": 200,
     "body": {
-        "total_records": 0,
-        "match_rate": 0,
-        "total_unique_ids": 0,
-        "total_anonymous_ids": 0,
-        "total_address_ids": 0,
-        "total_individual_ids": 0,
-        "total_household_ids": 0,
-        "updated": 0,
+        "total_records": None,
+        "match_rate": None,
+        "total_unique_ids": None,
+        "total_anonymous_ids": None,
+        "total_address_ids": None,
+        "total_individual_ids": None,
+        "total_household_ids": None,
+        "updated": None,
     },
     "message": "ok",
 }
@@ -1779,20 +1779,7 @@ IDR_MATCHING_TRENDS_BY_DAY_DATA = {
 IDR_MATCHING_TRENDS_BY_DAY_EMPTY_DATA = {
     "code": 200,
     "message": "ok",
-    api_c.BODY: [
-        {
-            api_c.DAY: "2021-08-01",
-            api_c.UNIQUE_HUX_IDS: 0,
-            api_c.ANONYMOUS_IDS: 0,
-            api_c.KNOWN_IDS: 0,
-        },
-        {
-            api_c.DAY: "2021-08-02",
-            api_c.UNIQUE_HUX_IDS: 0,
-            api_c.ANONYMOUS_IDS: 0,
-            api_c.KNOWN_IDS: 0,
-        },
-    ],
+    api_c.BODY: [],
 }
 
 SCHEDULES = [

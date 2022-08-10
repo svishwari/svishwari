@@ -791,9 +791,7 @@ class TestCustomersOverview(RouteTestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-        self.assertFalse(
-            MatchingTrendsSchema().validate(response.json, many=True)
-        )
+        self.assertFalse(response.json)
 
     def test_get_idr_data_feeds_empty_data(self):
         """Test get IDR Datafeeds with empty body."""
