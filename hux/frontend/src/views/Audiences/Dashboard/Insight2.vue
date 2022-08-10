@@ -824,7 +824,7 @@ export default {
             }
           })
         })
-        if (eventFilters.length > 0) {
+        if (eventFilters.length > 0 && _filters["general"]) {
           _filters["general"].event = eventFilters
         }
       }
@@ -850,7 +850,7 @@ export default {
         parseInt(
           this.$refs.advertisingcard.parentElement.parentElement.clientHeight
         ) +
-        this.audienceData.lookalike_audiences.length * 4 +
+        this.audienceData?.lookalike_audiences?.length * 4 +
         "px"
     }
   },
@@ -1396,7 +1396,7 @@ export default {
       }
     },
     matchHeight() {
-      var heightString = this.$refs.infoBox.$el.clientHeight + "px"
+      var heightString = this.$refs.infoBox?.$el.clientHeight + "px"
       Vue.set(this.matchrateStyles, "height", heightString)
     },
     openLookalikeEditModal() {
