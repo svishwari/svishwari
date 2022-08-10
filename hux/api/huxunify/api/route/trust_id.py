@@ -339,14 +339,23 @@ class TrustIdSegmentFilters(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
+        # grab the attribute filters
+        attribute_filters = collection_management.get_document(
+            database=get_db_client(),
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            query_filter={
+                db_c.CONFIGURATION_FIELD_TYPE: db_c.TRUST_ID_FILTERS
+            },
+        ).get(db_c.TRUST_ID_FILTERS, {})
+
+        # sort each filter alphabetically
+        for attribute_filter in attribute_filters:
+            # only sort these fields.
+            if attribute_filter[api_c.TYPE] == api_c.RACE_ETHNICITY:
+                attribute_filter[api_c.VALUES].sort()
+
         return HuxResponse.OK(
-            data=collection_management.get_document(
-                database=get_db_client(),
-                collection=db_c.CONFIGURATIONS_COLLECTION,
-                query_filter={
-                    db_c.CONFIGURATION_FIELD_TYPE: db_c.TRUST_ID_FILTERS
-                },
-            ).get(db_c.TRUST_ID_FILTERS),
+            data=attribute_filters,
             data_schema=TrustIdSegmentFilterSchema(),
         )
 

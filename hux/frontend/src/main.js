@@ -1,5 +1,6 @@
 import Vue from "vue"
 import VueCompositionAPI from "@vue/composition-api"
+import IdleVue from "idle-vue"
 
 import App from "@/App"
 import filters from "@/filters"
@@ -14,8 +15,15 @@ import vuetify from "./plugins/vuetify"
 // Layouts as usable components
 Vue.component("app-layout", AppLayout)
 Vue.component("default-layout", DefaultLayout)
+const eventsHub = new Vue()
 
 Vue.use(VueCompositionAPI)
+Vue.use(IdleVue, {
+  eventEmitter: eventsHub,
+  store,
+  idleTime: 1680000, // 28 minites idle timer
+  startAtIdle: false,
+})
 
 // Filters
 Object.keys(filters).forEach((filterName) => {

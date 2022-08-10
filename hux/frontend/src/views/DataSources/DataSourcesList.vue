@@ -9,7 +9,7 @@
           :title="dataSource.name"
           :logo-size="60"
           :logo-box-padding="'10px'"
-          :description="dataSource.category"
+          :sub-title="formatText(dataSource.category)"
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active'"
           :interactable="dataSource.status == 'Active' ? true : false"
@@ -17,6 +17,7 @@
           :icon-color="true"
           :logo-option="true"
           :dot-option="'Remove'"
+          :no-description="true"
           class="mr-12 model-desc-card"
           height="222"
           width="255"
@@ -57,7 +58,7 @@
           </template>
 
           <template slot="default">
-            <div class="text-h4 black--text">
+            <div class="pt-4 text-h4 black--text">
               {{
                 dataSource.feed_count && dataSource.status == "Active"
                   ? dataSource.feed_count
@@ -108,7 +109,7 @@ import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import sortBy from "lodash/sortBy"
-import { getAccess } from "../../utils"
+import { getAccess, formatText } from "../../utils"
 
 export default {
   name: "DataSourcesList",
@@ -164,6 +165,7 @@ export default {
       this.confirmModal = false
     },
     getAccess: getAccess,
+    formatText: formatText,
   },
 }
 </script>

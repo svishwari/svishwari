@@ -469,7 +469,7 @@ export default {
               if (groupKey.includes("model")) {
                 _subOption["modelIcon"] = "model"
                 _subOption["selected"] = "value"
-                _subOption["menu"] = [
+                _subOption["options"] = [
                   {
                     key: "value",
                     name: "Value",
@@ -481,9 +481,9 @@ export default {
                     type: "range",
                   },
                 ]
-                _subOption.menu.forEach((item) => {
+                _subOption.options.forEach((item) => {
                   let tempobj = cloneDeep(_subOption)
-                  delete tempobj.menu
+                  delete tempobj.options
                   item.model = tempobj
                 })
               }

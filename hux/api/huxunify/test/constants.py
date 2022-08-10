@@ -1472,6 +1472,19 @@ CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE = {
     "message": "ok",
 }
 
+CUSTOMERS_PRODUCT_CATEGORIES_RESPONSE = {
+    "code": 200,
+    "body": {
+        "Shoes & accessories": {
+            "Shoes": [
+                {"name": "Wedges", "count": 128},
+                {"name": "Slippers", "count": 29},
+            ]
+        }
+    },
+    "message": "ok",
+}
+
 CUSTOMERS_INSIGHTS_BY_CITIES_RESPONSE = {
     "code": 200,
     "body": [

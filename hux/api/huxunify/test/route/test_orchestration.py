@@ -316,6 +316,10 @@ class OrchestrationRouteTest(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/products-by-categories",
+            json=t_c.CUSTOMERS_PRODUCT_CATEGORIES_RESPONSE,
+        )
         self.request_mocker.start()
 
         mock.patch(
@@ -330,6 +334,9 @@ class OrchestrationRouteTest(RouteTestCase):
         self.assertIn("rule_attributes", response.json)
         self.assertIn("general", response.json["rule_attributes"])
         self.assertIn("events", response.json["rule_attributes"]["general"])
+        self.assertIn(
+            "product_categories", response.json["rule_attributes"]["general"]
+        )
         self.assertIn("text_operators", response.json)
 
     def test_create_audience_with_destination(self):
@@ -938,6 +945,56 @@ class OrchestrationRouteTest(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_get_audience_city_filter(self) -> None:
+        """Test get audience with city filter."""
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/event-types",
+            json=t_c.MOCKED_CUSTOMER_EVENT_TYPES,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "City",
+                            api_c.AUDIENCE_FILTER_TYPE: "equals",
+                            api_c.AUDIENCE_FILTER_VALUE: "New Yortk|NY|US",
+                        }
+                    ],
+                }
+            ],
+        }
+
+        response = self.app.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audience_id = response.json["id"]
+
+        response = self.app.get(
+            f"{self.audience_api_endpoint}/{audience_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience_filter = response.json["filters"][0]["section_filters"]
+        self.assertEqual(audience_filter[0]["field"], "City")
+        self.assertEqual(audience_filter[0]["value"], "New Yortk|NY|US")
+        self.assertEqual(audience_filter[0]["city_value"], "New Yortk|NY|US")
 
     def test_get_audiences(self):
         """Test get all audiences."""
@@ -1856,6 +1913,10 @@ class OrchestrationRouteTest(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/products-by-categories",
+            json=t_c.CUSTOMERS_PRODUCT_CATEGORIES_RESPONSE,
+        )
         self.request_mocker.start()
 
         mock.patch(
@@ -1948,6 +2009,10 @@ class OrchestrationRouteTest(RouteTestCase):
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/countries",
             json=t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/products-by-categories",
+            json=t_c.CUSTOMERS_PRODUCT_CATEGORIES_RESPONSE,
         )
         self.request_mocker.start()
 

@@ -97,6 +97,7 @@
               :top-right-adjustment="
                 model.status != 'active' ? 'ml-8 mt-6 mr-8' : 'mt-3 mr-8'
               "
+              :sub-title="formatText(model.category)"
               data-e2e="model-item"
               :disabled="model.status !== 'Active'"
               :interactable="model.status == 'Active' ? true : false"

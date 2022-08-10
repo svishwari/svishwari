@@ -72,7 +72,7 @@
               v-else-if="item.menu"
               :key="index"
               :label="item.name"
-              :items="item.menu"
+              :items="item.options"
               :is-open-on-hover="false"
               :is-offset-x="true"
               :is-offset-y="false"
