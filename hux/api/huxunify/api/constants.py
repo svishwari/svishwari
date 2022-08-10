@@ -25,6 +25,8 @@ SSL_CERT_PATH = "ssl_cert_path"
 SSL_CERT_FILE_NAME = "SSL_CERT_FILE_NAME"
 TLS_CERT_KEY = "tls_cert_key_file"
 TLS_CERT_KEY_FILE_NAME = "TLS_CERT_KEY_FILE_NAME"
+TLS_CA_CERT_KEY = "tls_ca_cert_key_file"
+TLS_CA_CERT_KEY_FILE_NAME = "TLS_CA_CERT_KEY_FILE_NAME"
 MONGO_DB_HOST = "MONGO_DB_HOST"
 MONGO_DB_PORT = "MONGO_DB_PORT"
 MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
@@ -49,11 +51,16 @@ DEFAULT_NEW_USER_PROJECT_NAME = "DEFAULT_NEW_USER_PROJECT_NAME"
 DEFAULT_OKTA_GROUP_NAME = "DEFAULT_OKTA_GROUP_NAME"
 DEFAULT_OKTA_APP = "DEFAULT_OKTA_APP"
 ENVIRONMENT_NAME = "ENVIRONMENT_NAME"
+FORM_PAYLOAD = "form_payload"
+FORM_FILENAME = "form_filename"
+FILE_OBJ = "file_obj"
 
 # PLEASE NOTE - these are only here because DEN API
 # is only available in a couple environments.
 STAGING_ENV = "STG1"
 LILDEV_ENV = "LILDEV"
+LPZDEV_ENV = "LPZDEV"
+HUSDEV2_ENV = "HUSDEV2"
 
 # AWS constants
 AWS_REGION = "AWS_REGION"
@@ -89,6 +96,9 @@ UNIFIED_OKTA_TEST_USER_NAME = "unified_okta_test_user_name"
 UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
 
 # JIRA
+JIRA_SERVICE_DESK = "JIRA_SERVICE_DESK"
+JIRA_REQUEST_PARTICIPANTS = "REQUEST_PARTICIPANTS"
+JIRA_SERVICE_DESK_ID = "SERVICE_DESK_ID"
 JIRA_PROJECT_KEY = "JIRA_PROJECT_KEY"
 JIRA_USER_EMAIL = "JIRA_USER_EMAIL"
 JIRA_SERVER = "JIRA_SERVER"
@@ -114,6 +124,8 @@ DESCRIPTION = "description"
 FIRST_NAME = "first_name"
 LAST_NAME = "last_name"
 EMAIL = "email"
+PUSH = "push"
+IN_APP = "in_app"
 PHONE = "phone"
 AGE = "age"
 GENDER = "gender"
@@ -153,6 +165,7 @@ INPUT = "input"
 TEXT = "text"
 EVENTS = "events"
 ENDPOINT = "endpoint"
+RACE_ETHNICITY = "race_ethnicity"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -184,6 +197,7 @@ TOTAL_COUNT = "total_count"
 TOTAL_STATES = "total_us_states"
 TOTAL_CITIES = "total_cities"
 COUNTRIES = "countries"
+PRODUCT_CATEGORIES = "product_categories"
 STATES = "states"
 CITIES = "cities"
 MIN_AGE = "min_age"
@@ -247,6 +261,7 @@ DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
 DESTINATION_CHECK_CRON = "*/15"
 DELIVERY_JOB_CRON = "0 * * * *"
+TRUST_ID_CRON = "0 0 ? * *"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
@@ -617,44 +632,34 @@ DESTINATION_CONSTANTS = {
 # DESTINATION Secret Mapping
 MONGO = "mongo"
 DESTINATION_SECRETS = {
-    db_c.DELIVERY_PLATFORM_FACEBOOK: {
-        MONGO: [
-            FACEBOOK_AD_ACCOUNT_ID,
-            FACEBOOK_APP_ID,
-        ],
-        AWS_SSM_NAME: [FACEBOOK_ACCESS_TOKEN, FACEBOOK_APP_SECRET],
-    },
-    db_c.DELIVERY_PLATFORM_SFMC: {
-        MONGO: [
-            SFMC_CLIENT_ID,
-            SFMC_AUTH_BASE_URI,
-            SFMC_ACCOUNT_ID,
-            SFMC_SOAP_BASE_URI,
-            SFMC_REST_BASE_URI,
-        ],
-        AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
-    },
-    db_c.DELIVERY_PLATFORM_SENDGRID: {
-        MONGO: [],
-        AWS_SSM_NAME: [SENDGRID_AUTH_TOKEN],
-    },
-    db_c.DELIVERY_PLATFORM_QUALTRICS: {
-        MONGO: [
-            QUALTRICS_DIRECTORY_ID,
-            QUALTRICS_DATA_CENTER,
-            QUALTRICS_OWNER_ID,
-        ],
-        AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
-    },
-    db_c.DELIVERY_PLATFORM_GOOGLE: {
-        MONGO: [GOOGLE_CLIENT_CUSTOMER_ID],
-        AWS_SSM_NAME: [
-            GOOGLE_DEVELOPER_TOKEN,
-            GOOGLE_CLIENT_SECRET,
-            GOOGLE_REFRESH_TOKEN,
-            GOOGLE_CLIENT_ID,
-        ],
-    },
+    db_c.DELIVERY_PLATFORM_FACEBOOK: [
+        FACEBOOK_AD_ACCOUNT_ID,
+        FACEBOOK_APP_ID,
+        FACEBOOK_ACCESS_TOKEN,
+        FACEBOOK_APP_SECRET,
+    ],
+    db_c.DELIVERY_PLATFORM_SFMC: [
+        SFMC_CLIENT_ID,
+        SFMC_AUTH_BASE_URI,
+        SFMC_ACCOUNT_ID,
+        SFMC_SOAP_BASE_URI,
+        SFMC_REST_BASE_URI,
+        SFMC_CLIENT_SECRET,
+    ],
+    db_c.DELIVERY_PLATFORM_SENDGRID: [SENDGRID_AUTH_TOKEN],
+    db_c.DELIVERY_PLATFORM_QUALTRICS: [
+        QUALTRICS_DIRECTORY_ID,
+        QUALTRICS_DATA_CENTER,
+        QUALTRICS_OWNER_ID,
+        QUALTRICS_API_TOKEN,
+    ],
+    db_c.DELIVERY_PLATFORM_GOOGLE: [
+        GOOGLE_CLIENT_CUSTOMER_ID,
+        GOOGLE_DEVELOPER_TOKEN,
+        GOOGLE_CLIENT_SECRET,
+        GOOGLE_REFRESH_TOKEN,
+        GOOGLE_CLIENT_ID,
+    ],
 }
 
 ONLY_ADDED = "only_added"
@@ -714,6 +719,9 @@ DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
 DESTINATION_ALREADY_PRESENT = "Destination already present."
+DESTINATION_AUTHENTICATION_INVALID = (
+    "Failed to update the authentication details of the destination."
+)
 DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
 USER_NOT_FOUND = "User not found."
 
@@ -767,6 +775,11 @@ DELIVERY_TAG = "delivery"
 DELIVER = "deliver"
 DELIVERY_HISTORY = "delivery-history"
 PENDING_JOBS = "pending-jobs"
+ORCH_INTEGRATION_TEST_CPDR = "orch_integration_test_cpdr"
+ORCH_INTEGRATION_TEST_FLDR = "orch_integration_test_fldr"
+ORCH_INTEGRATION_TEST_DR = "orch_integration_test_dr"
+ORCH_INTEGRATION_TEST_MCA = "orch_integration_test_mca"
+
 TRIGGERS_TAG = "triggers"
 CAMPAIGNS = "campaigns"
 AD_SET_ID = "ad_set_id"
@@ -951,8 +964,28 @@ INSIGHTS = "insights"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
+AUDIENCE_FILTER_CITY_VALUE = "city_value"
 AUDIENCE_FILTER_RANGE = "range"
+AUDIENCE_FILTER_DELTA_TYPE = "delta_type"
 AUDIENCE_FILTER_NOT_RANGE = "not_range"
+AUDIENCE_FILTER_CONTACT_PREFERENCE = "contact_preference"
+AUDIENCE_FILTER_PREFERENCE_EMAIL = "preference_email"
+AUDIENCE_FILTER_PREFERENCE_SMS = "preference_sms"
+AUDIENCE_FILTER_PREFERENCE_PUSH = "preference_push"
+AUDIENCE_FILTER_PREFERENCE_IN_APP = "preference_in_app"
+AUDIENCE_FILTER_CONTACT_PREFERENCES_UNIFIED = [EMAIL, TEXT, PUSH, IN_APP]
+AUDIENCE_FILTER_CONTACT_PREFERENCES_CDM = [
+    AUDIENCE_FILTER_PREFERENCE_EMAIL,
+    AUDIENCE_FILTER_PREFERENCE_SMS,
+    AUDIENCE_FILTER_PREFERENCE_PUSH,
+    AUDIENCE_FILTER_PREFERENCE_IN_APP,
+]
+AUDIENCE_FILTER_CONTACT_PREFERENCES_CDP_MAP = {
+    EMAIL: AUDIENCE_FILTER_PREFERENCE_EMAIL,
+    TEXT: AUDIENCE_FILTER_PREFERENCE_SMS,
+    PUSH: AUDIENCE_FILTER_PREFERENCE_PUSH,
+    IN_APP: AUDIENCE_FILTER_PREFERENCE_IN_APP,
+}
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_LAST_DELIVERY = "last_delivery"
 AUDIENCE_ENGAGEMENTS = "engagements"
@@ -966,16 +999,28 @@ LOOKALIKE = "lookalike"
 LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
-ATTRIBUTES = "attributes"
+TRUST_ID_ATTRIBUTES = "attributes"
 AUDIENCES_DEFAULT_BATCH_SIZE = 0
 TAGS = "tags"
 INDUSTRY_TAG = "industry_tag"
+CONTACT_PREFERENCE_ATTRIBUTE = "contact_preference_attribute"
 
 PARAM_STORE_PREFIX = "unified"
 SECRET_STORAGE_ERROR_MSG = (
     "An error occurred while attempting to"
     " store secrets in the cloud secret storage."
 )
+
+AUDIENCE_RULES_DAYS = "days"
+AUDIENCE_RULES_WEEKS = "weeks"
+AUDIENCE_RULES_MONTHS = "months"
+AUDIENCE_RULES_YEARS = "years"
+ALLOWED_AUDIENCE_TIMEDELTA_TYPES = [
+    AUDIENCE_RULES_DAYS,
+    AUDIENCE_RULES_WEEKS,
+    AUDIENCE_RULES_MONTHS,
+    AUDIENCE_RULES_YEARS,
+]
 
 # users
 USER_TAG = "user"
@@ -1013,6 +1058,10 @@ MODELS_VERSION_HISTORY = "version-history"
 RANK = "rank"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
+MODEL_VERSION = "model_version"
+MODEL_METADATA = "model_metadata"
+BINARY = "binary"
+FEATURE = "feature"
 VERSION_NUMBER = "version_number"
 FEATURE_DESCRIPTION = "feature_description"
 PREDICTED = "predicted"
@@ -1539,6 +1588,7 @@ ONLY_ACTIVE = "only_active"
 CLIENT_PROJECTS_TAG = "client-projects"
 CLIENT_PROJECT_ID = "client_project_id"
 CLIENT_PROJECTS_ENDPOINT = "/client-projects"
+CLIENT_ENDPOINT = "/client"
 
 # Histogram data stub.
 VALUES = "values"
@@ -1809,34 +1859,27 @@ TRUST_ID_TAG = "trust-id"
 DEFAULT = "default"
 DEFAULT_TRUST_SEGMENT = "All Customers"
 MAX_SEGMENTS_ALLOWED = 5
+COMPARISON = "comparison"
 
 CAPABILITY = "capability"
 RELIABILITY = "reliability"
 HUMANITY = "humanity"
 TRANSPARENCY = "transparency"
 
-LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
-SEGMENT_TYPE = "segment_type"
-SEGMENTS = "segments"
-SEGMENT_TYPES = [
-    "composite & factor scores",
-    "humanity attributes",
-    "reliability attributes",
-    "capability attributes",
-    "transparency attributes",
-]
-SEGMENT_NAME = "segment_name"
-SEGMENT_FILTERS = "segment_filters"
-SURVEY_RESPONSES = "survey_responses"
+HX_TRUST_ID = "HX TrustID"
+TRUST_ID_LIST_OF_FACTORS = [CAPABILITY, RELIABILITY, HUMANITY, TRANSPARENCY]
+TRUST_ID_SEGMENT_TYPE = "segment_type"
+TRUST_ID_SEGMENTS = "segments"
+TRUST_ID_SEGMENT_NAME = "segment_name"
+TRUST_ID_SEGMENT_FILTERS = "segment_filters"
+IS_BOOLEAN = "is_boolean"
+TRUST_ID_SURVEY_RESPONSES = "survey_responses"
 TRUST_ID_SCORE = "trust_id_score"
-TRUST_ID_SCORE_OVERVIEW = "trust_id_score_overview"
-SIGNAL_SCORES_OVERVIEW = "signal_scores_overview"
-ATTRIBUTE_SCORES = "attribute_scores"
-NAME_OF_SIGNAL = "name_of_signal"
-ATTRIBUTE_TYPE = "attribute_type"
-ATTRIBUTE_NAME = "attribute_name"
-ATTRIBUTE_SCORE = "attribute_score"
-ATTRIBUTE_DESCRIPTION = "attribute_description"
+TRUST_ID_ATTRIBUTE_TYPE = "attribute_type"
+TRUST_ID_ATTRIBUTE_NAME = "attribute_name"
+TRUST_ID_ATTRIBUTE_SCORE = "attribute_score"
+TRUST_ID_ATTRIBUTE_DESCRIPTION = "attribute_description"
+TRUST_ID_ATTRIBUTE_SHORT_DESCRIPTION = "attribute_short_description"
 OCCUPATION = "occupation"
 CUSTOMER_TYPE = "customer_type"
 OPTIONS = "options"
@@ -1845,17 +1888,17 @@ RATING = "rating"
 AGREE = "agree"
 NEUTRAL = "neutral"
 DISAGREE = "disagree"
-FACTORS = "factors"
-FACTOR_NAME = "factor_name"
-FACTOR_SCORE = "factor_score"
-FACTOR_DESCRIPTION = "factor_description"
-CUSTOMER_ATTRIBUTE_RATINGS = "customer_attribute_ratings"
-RATING_MAP = {
+TRUST_ID_FACTORS = "factors"
+TRUST_ID_FACTOR_NAME = "factor_name"
+TRUST_ID_FACTOR_SCORE = "factor_score"
+TRUST_ID_FACTOR_DESCRIPTION = "factor_description"
+TRUST_ID_RATING_MAP = {
     "-1": DISAGREE,
     "0": NEUTRAL,
     "1": AGREE,
 }
-FACTOR_DESCRIPTION_MAP = {
+TRUST_ID_FACTOR_DESCRIPTION_MAP = {
+    HX_TRUST_ID: "TrustID is scored on a scale between -100 to 100",
     HUMANITY: (
         "Humanity is demonstrating empathy and kindness towards "
         "customers, and treating everyone fairly. It is scored "
@@ -1876,132 +1919,13 @@ FACTOR_DESCRIPTION_MAP = {
     ),
 }
 
-ATTRIBUTE_DESCRIPTION_TYPE_MAP = {
-    "products are good quality, accessible and safe to use": {
-        TYPE: "product_quality",
-        NAME: "Product quality",
-    },
-    "prices of products, services, and experiences are good value for money": {
-        TYPE: "good_value",
-        NAME: "Good value",
-    },
-    "employees and leadership are competent and understand how to respond to my needs": {
-        TYPE: "competent_leaders_employees",
-        NAME: "Competent leaders & employees",
-    },
-    "creates long term solutions and improvements that work well for me": {
-        TYPE: "long_term_solutions_improvements",
-        NAME: "Long-term solutions & improvements",
-    },
-    (
-        "customer support team quickly resolves issues with my safety, security, "
-        "and satisfaction top of mind"
-    ): {
-        TYPE: "quickly_resolves_issues",
-        NAME: "Quickly Resolves Issues",
-    },
-    "values & respects everyone, regardless of background, identity or beliefs": {
-        TYPE: "values_respects_everyone",
-        NAME: "Values & respects everyone",
-    },
-    "values the good of society and the environment, not just profit": {
-        TYPE: "values_society_environment",
-        NAME: "Values society & environment",
-    },
-    "takes care of employees": {
-        TYPE: "takes_care_of_employees",
-        NAME: "Takes care of employees",
-    },
-    "can be counted on to improve the quality of their products and services": {
-        TYPE: "continuous_product_improvement",
-        NAME: "Continuous product improvement",
-    },
-    "consistently delivers products, services, and experiences with quality": {
-        TYPE: "consistent_quality",
-        NAME: "Consistent quality",
-    },
-    "facilitates digital interactions that run smoothly and work when needed": {
-        TYPE: "smooth_digital_interactions",
-        NAME: "Smooth digital interactions",
-    },
-    "resolves issues in an adequate and timely manner": {
-        TYPE: "timely_issue_resolution",
-        NAME: "Timely issue resolution",
-    },
-    "marketing and communications are accurate and honest": {
-        TYPE: "honesty_marketing_comms",
-        NAME: "Honesty marketing & comms",
-    },
-    "is upfront about how they make and spend money from our interactions": {
-        TYPE: "upfront_on_how_they_make_money",
-        NAME: "Upfront on how they make money",
-    },
-    "how and why my data is used is communicated in plain and easy to understand language": {
-        TYPE: "plain_language_data_policy",
-        NAME: "Plain language data policy",
-    },
-    "is clear and upfront about fees and costs of products, services and experiences": {
-        TYPE: "clear_fees_costs",
-        NAME: "Clear fees & costs",
-    },
+TRUST_ID_SEGMENT_TYPE_MAP = {
+    OVERVIEW: "composite & factor scores",
+    CAPABILITY: "capability attributes",
+    HUMANITY: "humanity attributes",
+    RELIABILITY: "reliability attributes",
+    TRANSPARENCY: "transparency attributes",
 }
-
-# TODO Remove STUB once data is available
-
-TRUST_ID_ATTRIBUTE_STUB = {
-    CAPABILITY: [
-        "Products and services are good value",
-        "Employs competent individuals that understand my needs",
-        "Products are good quality, accessible and safe to use",
-        "Creates long-term solutions that work for me",
-    ],
-    RELIABILITY: [
-        "Consistently delivers quality",
-        "Digital interactions run smoothly and work when needed",
-        "Improves quality of products and services",
-        "Resolves issues in a timely manner",
-    ],
-    HUMANITY: [
-        "Values and respects everyone",
-        "Customer support is in place to quickly resolve issues",
-        "Values good of society and/or environment",
-        "Takes care of employees",
-    ],
-    TRANSPARENCY: [
-        "Easy to understand how my data is used",
-        "Communications are accurate and honest",
-        "Clearly presents information regarding product and services costs",
-        "Upfront about how money is made and spent",
-    ],
-}
-
-TRUST_ID_SUPPORTED_FILTERS_STUB = [
-    {
-        NAME: AGE,
-        TYPE: "range",
-        MIN: 18,
-        MAX: 79,
-    },
-    {
-        NAME: GENDER,
-        TYPE: "list",
-        OPTIONS: [{"female": "Female"}, {"male": "Male"}, {"other": "Other"}],
-    },
-    {
-        NAME: CUSTOMER_TYPE,
-        TYPE: "list",
-        OPTIONS: [{"new": "New"}, {"repeat": "Repeat"}],
-    },
-    {
-        NAME: OCCUPATION,
-        TYPE: "list",
-        OPTIONS: [
-            {"small_business_owner": "Small Business Owner"},
-            {"medium_buisness_owner": "Medium Business Owner"},
-            {"employee": "Employee"},
-        ],
-    },
-]
 
 PERFORMANCE_METRIC_EMAIL_STUB = {
     "sent": 2045,
@@ -2075,13 +1999,6 @@ APPLICATION_CATEGORIES = [
     "Monitoring",
     "Uncategorized",
 ]
-
-SEGMENT_TYPE_MAP = {
-    CAPABILITY: "capability attributes",
-    HUMANITY: "humanity attributes",
-    RELIABILITY: "reliability attributes",
-    TRANSPARENCY: "transparency attributes",
-}
 
 HEALTHCARE = "healthcare"
 RETAIL = "retail"

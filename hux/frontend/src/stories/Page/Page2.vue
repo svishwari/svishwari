@@ -1,7 +1,10 @@
 <template>
   <div>
     <slot name="header" />
-    <div class="container" :style="{ 'max-width': maxWidth, padding: padding }">
+    <div
+      class="container no-shadow"
+      :style="{ 'max-width': maxWidth, padding: padding }"
+    >
       <empty-page v-if="errorState" class="mt-n3" type="sad-face-2" :size="40">
         <template #title>
           <div class="text-h4 mt-4 error-text-color">Unavailable</div>
@@ -76,6 +79,8 @@ export default {
   height: calc(100vh - 180px);
   overflow-y: auto !important;
   overflow-x: hidden !important;
+  box-shadow: -100px 0px 200px rgba(30, 30, 30, 0.03),
+    -8px 0px 16px rgba(0, 85, 135, 0.15);
 }
 .empty-text-color {
   color: var(--v-black-lighten6) !important;

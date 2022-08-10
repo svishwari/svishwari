@@ -1,3 +1,4 @@
+# pylint: disable=too-many-public-methods
 """Purpose of this file is to house all the route/utils tests."""
 from datetime import datetime, timedelta
 from http import HTTPStatus
@@ -26,6 +27,7 @@ from huxunify.api.route.utils import (
     filter_team_member_requests,
     convert_filters_for_events,
     convert_cdp_buckets_to_histogram,
+    convert_filters_for_contact_preference,
 )
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
@@ -96,13 +98,6 @@ class TestRouteUtils(TestCase):
         """Test health check."""
 
         for subclass in CloudClient.__subclasses__():
-            # mock get_store_value of cloud secret store
-            mock.patch.object(
-                subclass,
-                "health_check_batch_service",
-                return_value=(True, "Batch service available"),
-            ).start()
-
             mock.patch.object(
                 subclass,
                 "health_check_storage_service",
@@ -396,6 +391,7 @@ class TestRouteUtils(TestCase):
                             "field": "traits_analysed",
                             "type": "within_the_last",
                             "value": ["12"],
+                            "delta_type": "days",
                         }
                     ],
                 }
@@ -433,6 +429,7 @@ class TestRouteUtils(TestCase):
                                     ],
                                 },
                             ],
+                            "delta_type": "days",
                         }
                     ],
                 }
@@ -507,6 +504,136 @@ class TestRouteUtils(TestCase):
             expected_filters[api_c.AUDIENCE_FILTERS][0][
                 api_c.AUDIENCE_SECTION_FILTERS
             ],
+        )
+
+    def test_convert_filters_for_contact_preference_email(self):
+        """Test convert_filters_for_contact_preference method with email."""
+
+        contact_preference_unified_filter = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: api_c.EMAIL,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        contact_preference_cdm_filter = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_PREFERENCE_EMAIL,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: True,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        # test method to convert filter from unified UI to CDM
+        convert_filters_for_contact_preference(
+            filters=contact_preference_unified_filter, convert_for_cdm=True
+        )
+        self.assertDictEqual(
+            contact_preference_unified_filter, contact_preference_cdm_filter
+        )
+
+        # reset contact preference unified filter for next test
+        contact_preference_unified_filter = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: api_c.EMAIL,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        # test method to convert filter from CDM to unified UI
+        convert_filters_for_contact_preference(
+            filters=contact_preference_cdm_filter
+        )
+        self.assertDictEqual(
+            contact_preference_cdm_filter, contact_preference_unified_filter
+        )
+
+    def test_convert_filters_for_contact_preference_text(self):
+        """Test convert_filters_for_contact_preference method with text."""
+
+        contact_preference_unified_filter = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: api_c.TEXT,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        contact_preference_cdm_filter = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_PREFERENCE_SMS,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: True,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        # test method to convert filter from unified UI to CDM
+        convert_filters_for_contact_preference(
+            filters=contact_preference_unified_filter, convert_for_cdm=True
+        )
+        self.assertDictEqual(
+            contact_preference_unified_filter, contact_preference_cdm_filter
+        )
+
+        # reset contact preference unified filter for next test
+        contact_preference_unified_filter = {
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE,
+                            api_c.TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.VALUE: api_c.TEXT,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        # test method to convert filter from CDM to unified UI
+        convert_filters_for_contact_preference(
+            filters=contact_preference_cdm_filter
+        )
+        self.assertDictEqual(
+            contact_preference_cdm_filter, contact_preference_unified_filter
         )
 
     def test_convert_cdp_age_bucket_to_histogram(self):

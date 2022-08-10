@@ -3,9 +3,6 @@ import logging
 from typing import Tuple
 from pathlib import Path
 
-from azure.batch import BatchServiceClient
-from azure.batch.batch_auth import SharedKeyCredentials
-from azure.batch.models import BatchErrorException
 from azure.identity import ClientSecretCredential
 from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import ContainerClient
@@ -207,30 +204,6 @@ class AzureClient(CloudClient):
             return False
 
         return True
-
-    @record_health_status(Connections.BATCH_SERVICE)
-    def health_check_batch_service(self) -> Tuple[bool, str]:
-        """Checks the health of the Azure batch service.
-
-        Returns:
-            Tuple[bool, str]: Returns bool for health status and message.
-        """
-
-        credentials = SharedKeyCredentials(
-            self.config.AZURE_BATCH_ACCOUNT_NAME,
-            self.config.AZURE_BATCH_ACCOUNT_KEY,
-        )
-        batch_client = BatchServiceClient(
-            credentials, self.config.AZURE_BATCH_ACCOUNT_URL
-        )
-        status = True, "Azure batch service available."
-
-        try:
-            batch_client.account.list_supported_images()
-        except BatchErrorException as exc:
-            status = False, getattr(exc, "message", repr(exc))
-
-        return status
 
     @record_health_status(Connections.STORAGE_SERVICE)
     def health_check_storage_service(self) -> Tuple[bool, str]:

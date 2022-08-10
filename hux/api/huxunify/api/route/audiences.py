@@ -1,5 +1,5 @@
 # pylint: disable=unused-argument,too-many-lines
-"""Paths for Orchestration API"""
+"""Paths for Orchestration API."""
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
@@ -55,6 +55,7 @@ from huxunify.api.route.decorators import (
     validate_engagement_and_audience,
     requires_access_levels,
 )
+from huxunify.api.route.return_util import HuxResponse
 
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
@@ -64,6 +65,7 @@ from huxunify.api.schema.customers import (
     CustomerRevenueInsightsSchema,
 )
 from huxunify.api.schema.engagement import DestinationEngagedAudienceSchema
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.orchestration import AudienceGetSchema
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -766,6 +768,10 @@ class AudienceRulesHistogram(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get Audience Rules."
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "Data not found for field type.",
+            "schema": NotFoundError,
+        },
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
@@ -790,10 +796,7 @@ class AudienceRulesHistogram(SwaggerView):
         token_response = get_token_from_request(request)
 
         if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA:
-            return (
-                jsonify({"message": f"Data not found for {field_type}"}),
-                HTTPStatus.NOT_FOUND,
-            )
+            return HuxResponse.NOT_FOUND(f"Data not found for {field_type}")
 
         if field_type == api_c.AGE:
             bucket_data = Caching.check_and_return_cache(
@@ -801,6 +804,12 @@ class AudienceRulesHistogram(SwaggerView):
                 method=get_age_histogram_data,
                 keyword_arguments={"token": token_response[0]},
             )
+
+            if not bucket_data:
+                return HuxResponse.NOT_FOUND(
+                    f"Data not found for {field_type}"
+                )
+
             histogram_data = convert_cdp_buckets_to_histogram(
                 bucket_data=bucket_data, field=field_type
             )
@@ -823,6 +832,11 @@ class AudienceRulesHistogram(SwaggerView):
                     },
                 )
 
+                if not bucket_data:
+                    return HuxResponse.NOT_FOUND(
+                        f"Data not found for {model_name}"
+                    )
+
                 histogram_data = convert_cdp_buckets_to_histogram(
                     bucket_data=bucket_data
                 )
@@ -840,10 +854,8 @@ class AudienceRulesHistogram(SwaggerView):
                     ],
                     HTTPStatus.OK,
                 )
-            return (
-                jsonify({"message": f"Data not found for {model_name}"}),
-                HTTPStatus.NOT_FOUND,
-            )
+
+            return HuxResponse.NOT_FOUND(f"Data not found for {model_name}")
 
         return (
             jsonify(api_c.AUDIENCE_RULES_HISTOGRAM_DATA[field_type]),

@@ -17,12 +17,8 @@
           your active models for an effective delivery experience.
         </div>
       </template>
-      <template #right>
-        <v-btn
-          icon
-          data-e2e="audienceFilterToggle"
-          @click.native="filterToggle()"
-        >
+      <template v-if="enableDemoConfig" #right>
+        <v-btn icon data-e2e="modelFilterToggle" @click.native="filterToggle()">
           <icon
             type="filter"
             :size="27"
@@ -101,6 +97,7 @@
               :top-right-adjustment="
                 model.status != 'active' ? 'ml-8 mt-6 mr-8' : 'mt-3 mr-8'
               "
+              :sub-title="formatText(model.category)"
               data-e2e="model-item"
               :disabled="model.status !== 'Active'"
               :interactable="model.status == 'Active' ? true : false"
@@ -121,7 +118,7 @@
                 "
                 slot="top"
               >
-                <div class="float-right">
+                <div v-if="enableDemoConfig" class="float-right">
                   <tooltip v-for="tags in model.tags.industry" :key="tags">
                     <template #label-content>
                       <logo
@@ -191,7 +188,10 @@
             </descriptive-card>
           </v-row>
           <div v-else>
-            <model-table :source-data="addedModels" />
+            <model-table
+              :enable-demo-config="enableDemoConfig"
+              :source-data="addedModels"
+            />
           </div>
         </div>
         <v-row
@@ -373,6 +373,7 @@ export default {
         "classification",
       ],
       showCardView: true,
+      enableDemoConfig: false,
       switchLabelFullAlerts: [
         {
           condition: true,
@@ -405,6 +406,7 @@ export default {
   },
   async mounted() {
     this.loading = true
+    this.enableDemoConfig = getAccess("client_config", "client_settings")
     try {
       await this.getModels()
     } catch (error) {

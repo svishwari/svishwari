@@ -1,6 +1,5 @@
 # pylint: disable=invalid-name,line-too-long,too-many-lines
 """Purpose of this file is housing shared components for tests."""
-from datetime import datetime
 import time
 from http import HTTPStatus
 from typing import Generator
@@ -1458,6 +1457,19 @@ CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE = {
     "message": "ok",
 }
 
+CUSTOMERS_PRODUCT_CATEGORIES_RESPONSE = {
+    "code": 200,
+    "body": {
+        "Shoes & accessories": {
+            "Shoes": [
+                {"name": "Wedges", "count": 128},
+                {"name": "Slippers", "count": 29},
+            ]
+        }
+    },
+    "message": "ok",
+}
+
 CUSTOMERS_INSIGHTS_BY_CITIES_RESPONSE = {
     "code": 200,
     "body": [
@@ -1971,108 +1983,57 @@ DATAFEED_FILE_DETAILS_RESPONSE = {
             api_c.SUB_STATUS: api_c.STATUS_COMPLETE,
             api_c.THIRTY_DAYS_AVG: 0.94,
         },
+        {
+            api_c.INPUT_FILE: "jim_.csv",
+            api_c.UNIQUE_ID: 3,
+            api_c.PROCESSED_END_DATE: None,
+            api_c.PROCESSED_START_DATE: "2022-02-12T16:06:40.000Z",
+            api_c.RECORDS_PROCESSED: 424684,
+            api_c.RECORDS_RECEIVED: 669920,
+            api_c.STATUS: api_c.STATUS_SUCCESS,
+            api_c.SUB_STATUS: api_c.STATUS_COMPLETE,
+            api_c.THIRTY_DAYS_AVG: 0.94,
+        },
     ],
 }
 
 TRUST_ID_SURVEY_RESPONSES = [
     {
-        "customer_id": "711428396",
-        "response_date": "2021-11-05T00:00:00.000Z",
-        "survey_id": "05cc7a8a1b7c3adaf69384e4320751db",
-        "url": "https://survey.medallia.com/?feedless-wsj-05cc7a8a1b7c3adaf69384e4320751db",
+        "responseDate": "2022-02-06T21:16:00.000Z",
         "responses": {
-            "VXID": "4190f126905168bea727e2d677e57446bf1c10e5a320d88ef1e5f47ef443f332",
-            "Adobe ID": "1",
-            "Customer Email": "",
-            "startdate": "11:23.0",
-            "Survey Time to Complete (in Minutes)": "",
-            "survey_is_mobile": "Yes",
-            "Banner Indicator": "No",
-            "trustid_brand_unit": "The Wall Street Journal",
-            "Consent Statement": "Yes, I agree to proceed",
-            "Children in Household": "None",
-            "Household Seniors Y/N": "2",
-            "Employment Status": "Employed full-time",
-            "Education": "Undergraduate Degree",
-            "Identifies as LGBTQ+": "No",
+            "Race and Ethnicity": "White or Caucasian",
+            "Age": "18-24",
             "Gender": "Female",
-            "Age": "50 to 54 years",
-            "Race and Ethnicity": "White",
-            "Political Outlook": "Lean to the right (i.e. fairly conservative)",
-            "Political_Affliliation": "Right",
-            "Health Conditions": "None of the above",
-            "Other Health Condition": "",
-            "Industry": "",
-            "Household Income": "",
-            "Time": "12824",
-            "StraightLine": "0",
-            "USE": "1",
-            "prospect_with_vxid": "0",
-            "classification": "Existing",
-            "bundle": "Digital Plus",
-            "bundle_hl": "digital",
-            "PercentOpinion": "",
-            "Opinion_Bucket": "0",
-            "TopCategory": "",
-            "TopCategory_HL": "",
-            "Per_Web": "",
-            "Prospect_Temp": "-",
-            "Existing_Class": "Dormant",
-            "VisitsTotal": "0",
-            "activeDays": "0",
-            "VisitsWeb": "0",
-            "VisitsApps": "0",
-            "activeDaysThisWeek": "0",
-            "viewsArts": "0",
-            "viewsBusiness": "0",
-            "viewsCareers": "0",
-            "viewsCSuite": "0",
-            "viewsEconomy": "0",
-            "viewsLife": "0",
-            "viewsMagazine": "0",
-            "viewsMarkets": "0",
-            "viewsNewYork": "0",
-            "viewsPageOne": "0",
-            "viewsPersonalFinance": "0",
-            "viewsPolitics": "0",
-            "viewsPro": "0",
-            "viewsRealEstate": "0",
-            "viewsTech": "0",
-            "viewsUS": "0",
-            "viewsWorld": "0",
-            "viewsOpinion": "0",
-            "mobile": "0",
-            "desktop": "0",
-            "Tenure (days)": "146",
-            "Tenure (months)": "4.8",
-            "channel": "",
-            "recency": "",
-            "freq": "",
+            "No Of Household Seniors": "3+",
+            "Children in Household": "No",
+            "Education": "Undergraduate Degree",
+            "Household Income": "$20K-$40K",
+            "Zipcode": "33407",
             "factors": {
                 "HUMANITY": {
                     "attributes": [
                         {
-                            "description": "Demonstrates empathy and kindness towards me, and treats everyone fairly",
+                            "description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
                             "score": "6",
-                        },
-                        {
-                            "description": "Customer support team quickly resolves issues with my safety, security, and satisfaction top of mind",
-                            "score": "4",
-                            "rating": "0",
-                        },
-                        {
-                            "description": "Values & respects everyone, regardless of background, identity or beliefs",
-                            "score": "6",
+                            "short_description": None,
                             "rating": "1",
                         },
                         {
-                            "description": "Takes care of employees",
-                            "score": "4",
-                            "rating": "0",
+                            "description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
                         },
                         {
-                            "description": "values the good of society and the environment, not just profit",
+                            "description": "Lilly Pulitzer values the good of society and the environment, not just profit",
                             "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer takes care of employees",
+                            "score": "6",
+                            "short_description": None,
                             "rating": "1",
                         },
                     ],
@@ -2081,28 +2042,28 @@ TRUST_ID_SURVEY_RESPONSES = [
                 "RELIABILITY": {
                     "attributes": [
                         {
-                            "description": "Consistently and dependably delivers upon promises it makes",
+                            "description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
                             "score": "6",
-                        },
-                        {
-                            "description": "Facilitates digital interactions that run smoothly and work when needed",
-                            "score": "4",
-                            "rating": "0",
-                        },
-                        {
-                            "description": "Can be counted on to improve the quality of their products and services",
-                            "score": "6",
+                            "short_description": None,
                             "rating": "1",
                         },
                         {
-                            "description": "Consistently delivers products, services, and experiences with quality",
+                            "description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
                             "score": "6",
+                            "short_description": None,
                             "rating": "1",
                         },
                         {
-                            "description": "Resolves issues in an adequate and timely manner",
-                            "score": "4",
-                            "rating": "0",
+                            "description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
                         },
                     ],
                     "rating": "1",
@@ -2110,27 +2071,27 @@ TRUST_ID_SURVEY_RESPONSES = [
                 "TRANSPARENCY": {
                     "attributes": [
                         {
-                            "description": "Openly shares all information, motives, and choices in straightforward and plain language",
+                            "description": "Lilly Pulitzer's marketing and communications are accurate and honest",
                             "score": "6",
+                            "short_description": None,
+                            "rating": "1",
                         },
                         {
-                            "description": "Marketing and communications are accurate and honest",
-                            "score": "5",
-                            "rating": "0",
+                            "description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
                         },
                         {
                             "description": "How and why my data is used is communicated in plain and easy to understand language",
                             "score": "6",
+                            "short_description": "Data storage and communication",
                             "rating": "1",
                         },
                         {
-                            "description": "Is upfront about how they make and spend money from our interactions",
-                            "score": "4",
-                            "rating": "0",
-                        },
-                        {
-                            "description": "Is clear and upfront about fees and costs of products, services and experiences",
+                            "description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
                             "score": "6",
+                            "short_description": None,
                             "rating": "1",
                         },
                     ],
@@ -2139,27 +2100,159 @@ TRUST_ID_SURVEY_RESPONSES = [
                 "CAPABILITY": {
                     "attributes": [
                         {
-                            "description": "Creates quality products, services, and/or experiences",
-                            "score": "6",
-                        },
-                        {
                             "description": "Products are good quality, accessible and safe to use",
-                            "score": "6",
+                            "score": "7",
+                            "short_description": "Product quality, accessibility and safety",
                             "rating": "1",
                         },
                         {
                             "description": "Prices of products, services, and experiences are good value for money",
                             "score": "6",
+                            "short_description": "Fair product & service pricing",
                             "rating": "1",
                         },
                         {
-                            "description": "Creates long term solutions and improvements that work well for me",
+                            "description": "Employees and leadership are competent and understand how to respond to my needs",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+            },
+        },
+        "create_time": "2022-07-20T11:58:57.000Z",
+    },
+    {
+        "responseDate": "2022-02-06T17:31:00.000Z",
+        "responses": {
+            "Race and Ethnicity": "White or Caucasian,Hispanic or Latino",
+            "Age": "35-44",
+            "Gender": "Female",
+            "No Of Household Seniors": "1",
+            "Children in Household": "No",
+            "Education": "Graduate Degree",
+            "Household Income": "$60K-$80K",
+            "Zipcode": "33417",
+            "factors": {
+                "HUMANITY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer values the good of society and the environment, not just profit",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer takes care of employees",
                             "score": "4",
+                            "short_description": None,
+                            "rating": "0",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "RELIABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "TRANSPARENCY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer's marketing and communications are accurate and honest",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
+                            "score": "4",
+                            "short_description": None,
+                            "rating": "0",
+                        },
+                        {
+                            "description": "How and why my data is used is communicated in plain and easy to understand language",
+                            "score": "7",
+                            "short_description": "Data storage and communication",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "CAPABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Products are good quality, accessible and safe to use",
+                            "score": "6",
+                            "short_description": "Product quality, accessibility and safety",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Prices of products, services, and experiences are good value for money",
+                            "score": "5",
+                            "short_description": "Fair product & service pricing",
                             "rating": "0",
                         },
                         {
                             "description": "Employees and leadership are competent and understand how to respond to my needs",
-                            "score": "4",
+                            "score": "5",
+                            "short_description": None,
+                            "rating": "0",
+                        },
+                        {
+                            "description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
+                            "score": "5",
+                            "short_description": None,
                             "rating": "0",
                         },
                     ],
@@ -2167,7 +2260,1033 @@ TRUST_ID_SURVEY_RESPONSES = [
                 },
             },
         },
-    }
+        "create_time": "2022-07-20T11:58:57.000Z",
+    },
+    {
+        "responseDate": "2022-02-06T17:05:00.000Z",
+        "responses": {
+            "Race and Ethnicity": "Prefer not to say",
+            "Age": "55-64",
+            "Gender": "Female",
+            "No Of Household Seniors": "2",
+            "Children in Household": "No",
+            "Education": "Prefer not to say",
+            "Household Income": "Prefer not to say",
+            "Zipcode": "33407",
+            "factors": {
+                "HUMANITY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer values the good of society and the environment, not just profit",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer takes care of employees",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "RELIABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "TRANSPARENCY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer's marketing and communications are accurate and honest",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "How and why my data is used is communicated in plain and easy to understand language",
+                            "score": "7",
+                            "short_description": "Data storage and communication",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "CAPABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Products are good quality, accessible and safe to use",
+                            "score": "7",
+                            "short_description": "Product quality, accessibility and safety",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Prices of products, services, and experiences are good value for money",
+                            "score": "7",
+                            "short_description": "Fair product & service pricing",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Employees and leadership are competent and understand how to respond to my needs",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+            },
+        },
+        "create_time": "2022-07-20T11:58:57.000Z",
+    },
+    {
+        "responseDate": "2022-02-06T17:51:00.000Z",
+        "responses": {
+            "Race and Ethnicity": "White or Caucasian",
+            "Age": "55-64",
+            "Gender": "Female",
+            "No Of Household Seniors": "2",
+            "Children in Household": "No",
+            "Education": "Vocational Training",
+            "Household Income": "$150K+",
+            "Zipcode": "33409",
+            "factors": {
+                "HUMANITY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer values the good of society and the environment, not just profit",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer takes care of employees",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "RELIABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "-1",
+                },
+                "TRANSPARENCY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer's marketing and communications are accurate and honest",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "How and why my data is used is communicated in plain and easy to understand language",
+                            "score": "7",
+                            "short_description": "Data storage and communication",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "CAPABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Products are good quality, accessible and safe to use",
+                            "score": "7",
+                            "short_description": "Product quality, accessibility and safety",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Prices of products, services, and experiences are good value for money",
+                            "score": "5",
+                            "short_description": "Fair product & service pricing",
+                            "rating": "0",
+                        },
+                        {
+                            "description": "Employees and leadership are competent and understand how to respond to my needs",
+                            "score": "6",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+            },
+        },
+        "create_time": "2022-07-20T11:58:57.000Z",
+    },
+    {
+        "responseDate": "2022-02-06T17:17:00.000Z",
+        "responses": {
+            "Race and Ethnicity": "White or Caucasian",
+            "Age": "55-64",
+            "Gender": "Female",
+            "No Of Household Seniors": "2",
+            "Children in Household": "No",
+            "Education": "Vocational Training",
+            "Household Income": "$40K-$60K",
+            "Zipcode": "33417",
+            "factors": {
+                "HUMANITY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer values the good of society and the environment, not just profit",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer takes care of employees",
+                            "score": "4",
+                            "short_description": None,
+                            "rating": "0",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "RELIABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "TRANSPARENCY": {
+                    "attributes": [
+                        {
+                            "description": "Lilly Pulitzer's marketing and communications are accurate and honest",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
+                            "score": "4",
+                            "short_description": None,
+                            "rating": "0",
+                        },
+                        {
+                            "description": "How and why my data is used is communicated in plain and easy to understand language",
+                            "score": "7",
+                            "short_description": "Data storage and communication",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+                "CAPABILITY": {
+                    "attributes": [
+                        {
+                            "description": "Products are good quality, accessible and safe to use",
+                            "score": "7",
+                            "short_description": "Product quality, accessibility and safety",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Prices of products, services, and experiences are good value for money",
+                            "score": "7",
+                            "short_description": "Fair product & service pricing",
+                            "rating": "1",
+                        },
+                        {
+                            "description": "Employees and leadership are competent and understand how to respond to my needs",
+                            "score": "4",
+                            "short_description": None,
+                            "rating": "0",
+                        },
+                        {
+                            "description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
+                            "score": "7",
+                            "short_description": None,
+                            "rating": "1",
+                        },
+                    ],
+                    "rating": "1",
+                },
+            },
+        },
+        "create_time": "2022-07-20T11:58:57.000Z",
+    },
+]
+
+TRUST_ID_OVERVIEW_SAMPLE_DATA = {
+    "_id": None,
+    "capability": {
+        "rating": {
+            "agree": {"count": 5, "percentage": 1.0},
+            "disagree": {"count": 0, "percentage": 0.0},
+            "neutral": {"count": 0, "percentage": 0.0},
+        },
+        "total_customers": 5,
+    },
+    "humanity": {
+        "rating": {
+            "agree": {"count": 5, "percentage": 1.0},
+            "disagree": {"count": 0, "percentage": 0.0},
+            "neutral": {"count": 0, "percentage": 0.0},
+        },
+        "total_customers": 5,
+    },
+    "reliability": {
+        "rating": {
+            "agree": {"count": 4, "percentage": 0.8},
+            "disagree": {"count": 1, "percentage": 0.2},
+            "neutral": {"count": 0, "percentage": 0.0},
+        },
+        "total_customers": 5,
+    },
+    "transparency": {
+        "rating": {
+            "agree": {"count": 5, "percentage": 1.0},
+            "disagree": {"count": 0, "percentage": 0.0},
+            "neutral": {"count": 0, "percentage": 0.0},
+        },
+        "total_customers": 5,
+    },
+}
+
+TRUST_ID_AGGREGATED_OVERVIEW_SAMPLE_DATA = {
+    "factors": [
+        {
+            "factor_description": "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
+            "factor_name": "humanity",
+            "factor_score": 100,
+            "overall_customer_rating": {
+                "rating": {
+                    "agree": {"count": 5, "percentage": 1.0},
+                    "disagree": {"count": 0, "percentage": 0.0},
+                    "neutral": {"count": 0, "percentage": 0.0},
+                },
+                "total_customers": 5,
+            },
+        },
+        {
+            "factor_description": "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
+            "factor_name": "reliability",
+            "factor_score": 60,
+            "overall_customer_rating": {
+                "rating": {
+                    "agree": {"count": 4, "percentage": 0.8},
+                    "disagree": {"count": 1, "percentage": 0.2},
+                    "neutral": {"count": 0, "percentage": 0.0},
+                },
+                "total_customers": 5,
+            },
+        },
+        {
+            "factor_description": "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
+            "factor_name": "capability",
+            "factor_score": 100,
+            "overall_customer_rating": {
+                "rating": {
+                    "agree": {"count": 5, "percentage": 1.0},
+                    "disagree": {"count": 0, "percentage": 0.0},
+                    "neutral": {"count": 0, "percentage": 0.0},
+                },
+                "total_customers": 5,
+            },
+        },
+        {
+            "factor_description": "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
+            "factor_name": "transparency",
+            "factor_score": 100,
+            "overall_customer_rating": {
+                "rating": {
+                    "agree": {"count": 5, "percentage": 1.0},
+                    "disagree": {"count": 0, "percentage": 0.0},
+                    "neutral": {"count": 0, "percentage": 0.0},
+                },
+                "total_customers": 5,
+            },
+        },
+    ],
+    "trust_id_score": 90,
+}
+
+TRUST_ID_ATTRIBUTE_SAMPLE_DATA = {
+    "_id": None,
+    "attributes": {
+        "capability": [
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            {
+                "agree": {"count": 3, "percentage": 0.6},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 2, "percentage": 0.4},
+            },
+            {
+                "agree": {"count": 3, "percentage": 0.6},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 2, "percentage": 0.4},
+            },
+            {
+                "agree": {"count": 4, "percentage": 0.8},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 1, "percentage": 0.2},
+            },
+        ],
+        "humanity": [
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            {
+                "agree": {"count": 3, "percentage": 0.6},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 2, "percentage": 0.4},
+            },
+        ],
+        "reliability": [
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+        ],
+        "transparency": [
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            {
+                "agree": {"count": 3, "percentage": 0.6},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 2, "percentage": 0.4},
+            },
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+        ],
+    },
+    "total_customers": 5,
+}
+
+TRUST_ID_AGGREGATED_ATTRIBUTE_SAMPLE_DATA = [
+    {
+        "attribute_description": "Products are good quality, accessible and safe to use",
+        "attribute_score": 100,
+        "attribute_short_description": "Product quality, accessibility and safety",
+        "factor_name": "capability",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Prices of products, services, and experiences are good value for money",
+        "attribute_score": 60,
+        "attribute_short_description": "Fair product & service pricing",
+        "factor_name": "capability",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 3, "percentage": 0.6},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 2, "percentage": 0.4},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Employees and leadership are competent and understand how to respond to my needs",
+        "attribute_score": 60,
+        "attribute_short_description": "Competent leadership and employees",
+        "factor_name": "capability",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 3, "percentage": 0.6},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 2, "percentage": 0.4},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
+        "attribute_score": 80,
+        "attribute_short_description": "Applicable long-term solutions & improvements",
+        "factor_name": "capability",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 4, "percentage": 0.8},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 1, "percentage": 0.2},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
+        "attribute_score": 100,
+        "attribute_short_description": "Quickly resolves issues",
+        "factor_name": "humanity",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
+        "attribute_score": 100,
+        "attribute_short_description": "Values & respects everyone",
+        "factor_name": "humanity",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer values the good of society and the environment, not just profit",
+        "attribute_score": 100,
+        "attribute_short_description": "Values society & environment",
+        "factor_name": "humanity",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer takes care of employees",
+        "attribute_score": 60,
+        "attribute_short_description": "Takes care of employees",
+        "factor_name": "humanity",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 3, "percentage": 0.6},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 2, "percentage": 0.4},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
+        "attribute_score": 100,
+        "attribute_short_description": "Continuous product improvement",
+        "factor_name": "reliability",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
+        "attribute_score": 100,
+        "attribute_short_description": "Delivers quality products",
+        "factor_name": "reliability",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
+        "attribute_score": 100,
+        "attribute_short_description": "Facilitates smooth digital interactions",
+        "factor_name": "reliability",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
+        "attribute_score": 100,
+        "attribute_short_description": "Timely issue resolution",
+        "factor_name": "reliability",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": 'Lilly Pulitzer"s marketing and communications are accurate and honest',
+        "attribute_score": 100,
+        "attribute_short_description": "Honest communication and marketing",
+        "factor_name": "transparency",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
+        "attribute_score": 60,
+        "attribute_short_description": "Upfront spending and income",
+        "factor_name": "transparency",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 3, "percentage": 0.6},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 2, "percentage": 0.4},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "How and why my data is used is communicated in plain and easy to understand language",
+        "attribute_score": 100,
+        "attribute_short_description": "Data storage and communication",
+        "factor_name": "transparency",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+    {
+        "attribute_description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
+        "attribute_score": 100,
+        "attribute_short_description": "Upfront costs and fees",
+        "factor_name": "transparency",
+        "overall_customer_rating": {
+            "rating": {
+                "agree": {"count": 5, "percentage": 1.0},
+                "disagree": {"count": 0, "percentage": 0.0},
+                "neutral": {"count": 0, "percentage": 0.0},
+            },
+            "total_customers": 5,
+        },
+    },
+]
+
+TRUST_ID_AGGREGATED_COMPARISON_DATA = [
+    {
+        "segment_type": "composite & factor scores",
+        "segments": [
+            {
+                "segment_filters": [],
+                "attributes": [
+                    {
+                        "attribute_type": "trust_id",
+                        "attribute_name": "HX TrustID",
+                        "attribute_score": 90,
+                        "attribute_description": "TrustID is scored on a scale between -100 to 100",
+                    },
+                    {
+                        "attribute_type": "capability",
+                        "attribute_name": "Capability",
+                        "attribute_score": 100,
+                        "attribute_description": "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
+                    },
+                    {
+                        "attribute_type": "humanity",
+                        "attribute_name": "Humanity",
+                        "attribute_score": 100,
+                        "attribute_description": "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
+                    },
+                    {
+                        "attribute_type": "reliability",
+                        "attribute_name": "Reliability",
+                        "attribute_score": 60,
+                        "attribute_description": "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
+                    },
+                    {
+                        "attribute_type": "transparency",
+                        "attribute_name": "Transparency",
+                        "attribute_score": 100,
+                        "attribute_description": "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
+                    },
+                ],
+                "default": False,
+                "segment_name": "Test Add Segment",
+            }
+        ],
+    },
+    {
+        "segment_type": "capability attributes",
+        "segments": [
+            {
+                "segment_filters": [],
+                "attributes": [
+                    {
+                        "attribute_type": "capability",
+                        "attribute_name": "Capability",
+                        "attribute_description": "Capability is creating quality products, services, and/or experiences. It is scored on a scale between -100 to 100",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "product_quality,_accessibility_and_safety",
+                        "attribute_name": "Product quality, accessibility and safety",
+                        "attribute_description": "Products are good quality, accessible and safe to use",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "fair_product_&_service_pricing",
+                        "attribute_name": "Fair product & service pricing",
+                        "attribute_description": "Prices of products, services, and experiences are good value for money",
+                        "attribute_score": 60,
+                    },
+                    {
+                        "attribute_type": "competent_leadership_and_employees",
+                        "attribute_name": "Competent leadership and employees",
+                        "attribute_description": "Employees and leadership are competent and understand how to respond to my needs",
+                        "attribute_score": 60,
+                    },
+                    {
+                        "attribute_type": "applicable_long-term_solutions_&_improvements",
+                        "attribute_name": "Applicable long-term solutions & improvements",
+                        "attribute_description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
+                        "attribute_score": 80,
+                    },
+                ],
+                "default": False,
+                "segment_name": "Test Add Segment",
+            }
+        ],
+    },
+    {
+        "segment_type": "humanity attributes",
+        "segments": [
+            {
+                "segment_filters": [],
+                "attributes": [
+                    {
+                        "attribute_type": "humanity",
+                        "attribute_name": "Humanity",
+                        "attribute_description": "Humanity is demonstrating empathy and kindness towards customers, and treating everyone fairly. It is scored on a scale between -100 to 100",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "quickly_resolves_issues",
+                        "attribute_name": "Quickly resolves issues",
+                        "attribute_description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "values_&_respects_everyone",
+                        "attribute_name": "Values & respects everyone",
+                        "attribute_description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "values_society_&_environment",
+                        "attribute_name": "Values society & environment",
+                        "attribute_description": "Lilly Pulitzer values the good of society and the environment, not just profit",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "takes_care_of_employees",
+                        "attribute_name": "Takes care of employees",
+                        "attribute_description": "Lilly Pulitzer takes care of employees",
+                        "attribute_score": 60,
+                    },
+                ],
+                "default": False,
+                "segment_name": "Test Add Segment",
+            }
+        ],
+    },
+    {
+        "segment_type": "reliability attributes",
+        "segments": [
+            {
+                "segment_filters": [],
+                "attributes": [
+                    {
+                        "attribute_type": "reliability",
+                        "attribute_name": "Reliability",
+                        "attribute_description": "Reliability is consistently and dependably delivering on promises. It is scored on a scale between -100 to 100",
+                        "attribute_score": 60,
+                    },
+                    {
+                        "attribute_type": "continuous_product_improvement",
+                        "attribute_name": "Continuous product improvement",
+                        "attribute_description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "delivers_quality_products",
+                        "attribute_name": "Delivers quality products",
+                        "attribute_description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "facilitates_smooth_digital_interactions",
+                        "attribute_name": "Facilitates smooth digital interactions",
+                        "attribute_description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "timely_issue_resolution",
+                        "attribute_name": "Timely issue resolution",
+                        "attribute_description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
+                        "attribute_score": 100,
+                    },
+                ],
+                "default": False,
+                "segment_name": "Test Add Segment",
+            }
+        ],
+    },
+    {
+        "segment_type": "transparency attributes",
+        "segments": [
+            {
+                "segment_filters": [],
+                "attributes": [
+                    {
+                        "attribute_type": "transparency",
+                        "attribute_name": "Transparency",
+                        "attribute_description": "Transparency is openly sharing all information, motives, and choices in straightforward and plain language. It is scored on a scale between -100 to 100",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "honest_communication_and_marketing",
+                        "attribute_name": "Honest communication and marketing",
+                        "attribute_description": "Lilly Pulitzer's marketing and communications are accurate and honest",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "upfront_spending_and_income",
+                        "attribute_name": "Upfront spending and income",
+                        "attribute_description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
+                        "attribute_score": 60,
+                    },
+                    {
+                        "attribute_type": "data_storage_and_communication",
+                        "attribute_name": "Data storage and communication",
+                        "attribute_description": "How and why my data is used is communicated in plain and easy to understand language",
+                        "attribute_score": 100,
+                    },
+                    {
+                        "attribute_type": "upfront_costs_and_fees",
+                        "attribute_name": "Upfront costs and fees",
+                        "attribute_description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
+                        "attribute_score": 100,
+                    },
+                ],
+                "default": False,
+                "segment_name": "Test Add Segment",
+            }
+        ],
+    },
 ]
 
 CDP_COUNT_BY_AGE_RESONSE = {
@@ -2226,48 +3345,186 @@ CDP_COUNTS_BY_FLOAT_RESONSE = {
     "message": "ok",
 }
 
-TRUST_ID_SAMPLE_USER_SEGMENT = [
-    {
-        "segment_name": "Segment",
-        "segment_filters": [
-            {"type": "age", "values": ["50 to 54 years"], "description": "Age"}
+TRUST_ID_SAMPLE_USER_SEGMENT = {
+    api_c.TRUST_ID_SEGMENT_NAME: "Segment",
+    api_c.TRUST_ID_SEGMENT_FILTERS: [
+        {
+            api_c.TYPE: "age",
+            api_c.VALUES: ["50 to 54 years"],
+            api_c.DESCRIPTION: "Age",
+            api_c.IS_BOOLEAN: False,
+        }
+    ],
+}
+
+TRUST_ID_ATTRIBUTE_DESCRIPTION_MAP = {
+    "capability": [
+        {
+            "description": "Products are good quality, accessible and safe to use",
+            "short_description": "Product quality, accessibility and safety",
+        },
+        {
+            "description": "Prices of products, services, and experiences are good value for money",
+            "short_description": "Fair product & service pricing",
+        },
+        {
+            "description": "Employees and leadership are competent and understand how to respond to my needs",
+            "short_description": "Competent leadership and employees",
+        },
+        {
+            "description": "Lilly Pulitzer creates long term solutions and improvements that work well for me",
+            "short_description": "Applicable long-term solutions & improvements",
+        },
+    ],
+    "humanity": [
+        {
+            "description": "Lilly Pulitzer quickly resolves issues with safety, security and satisfaction top of mind",
+            "short_description": "Quickly resolves issues",
+        },
+        {
+            "description": "Lilly Pulitzer values & respects everyone, regardless of background, identity or beliefs",
+            "short_description": "Values & respects everyone",
+        },
+        {
+            "description": "Lilly Pulitzer values the good of society and the environment, not just profit",
+            "short_description": "Values society & environment",
+        },
+        {
+            "description": "Lilly Pulitzer takes care of employees",
+            "short_description": "Takes care of employees",
+        },
+    ],
+    "reliability": [
+        {
+            "description": "Lilly Pulitzer can be counted on to improve the quality of their products and services",
+            "short_description": "Continuous product improvement",
+        },
+        {
+            "description": "Lilly Pulitzer consistently delivers products, services, and experiences with quality",
+            "short_description": "Delivers quality products",
+        },
+        {
+            "description": "Lilly Pulitzer facilitates digital interactions that run smoothly and work when needed",
+            "short_description": "Facilitates smooth digital interactions",
+        },
+        {
+            "description": "Lilly Pulitzer resolves issues in an adequate and timely manner",
+            "short_description": "Timely issue resolution",
+        },
+    ],
+    "transparency": [
+        {
+            "description": 'Lilly Pulitzer"s marketing and communications are accurate and honest',
+            "short_description": "Honest communication and marketing",
+        },
+        {
+            "description": "Lilly Pulitzer is upfront about how they make and spend money from our interactions",
+            "short_description": "Upfront spending and income",
+        },
+        {
+            "description": "How and why my data is used is communicated in plain and easy to understand language",
+            "short_description": "Data storage and communication",
+        },
+        {
+            "description": "Lilly Pulitzer is clear and upfront about fees and costs of products, services and experiences",
+            "short_description": "Upfront costs and fees",
+        },
+    ],
+}
+
+TRUST_ID_ATTRIBUTE_RATINGS = {
+    "_id": None,
+    "attributes": {
+        "capability": [
+            {
+                "agree": {"count": 11002, "percentage": 0.8293381576963667},
+                "disagree": {"count": 301, "percentage": 0.02268958239107493},
+                "neutral": {"count": 1963, "percentage": 0.1479722599125584},
+            },
+            {
+                "agree": {"count": 5811, "percentage": 0.43803708729081864},
+                "disagree": {"count": 871, "percentage": 0.06565656565656566},
+                "neutral": {"count": 6584, "percentage": 0.4963063470526157},
+            },
+            {
+                "agree": {"count": 8127, "percentage": 0.6126187245590231},
+                "disagree": {"count": 370, "percentage": 0.027890848786371176},
+                "neutral": {"count": 4769, "percentage": 0.35949042665460573},
+            },
+            {
+                "agree": {"count": 6132, "percentage": 0.4622342831298055},
+                "disagree": {"count": 378, "percentage": 0.028493894165535955},
+                "neutral": {"count": 6756, "percentage": 0.5092718227046585},
+            },
         ],
-    }
-]
-
-TRUST_ID_SAMPLE_HUMANITY_OVERVIEW = {
-    "factor_name": "humanity",
-    "factor_score": 100,
-    "factor_description": "Humanity is demonstrating empathy and kindness "
-    "towards customers, and "
-    "treating everyone fairly. "
-    "It is scored on a scale between -100 to 100",
-    "overall_customer_rating": {
-        "total_customers": 1,
-        "rating": {
-            "disagree": {"count": 0, "percentage": 0.0},
-            "neutral": {"count": 0, "percentage": 0.0},
-            "agree": {"count": 1, "percentage": 1.0},
-        },
+        "humanity": [
+            {
+                "agree": {"count": 8052, "percentage": 0.6069651741293532},
+                "disagree": {"count": 440, "percentage": 0.03316749585406302},
+                "neutral": {"count": 4774, "percentage": 0.3598673300165838},
+            },
+            {
+                "agree": {"count": 8928, "percentage": 0.6729986431478969},
+                "disagree": {"count": 294, "percentage": 0.022161917684305744},
+                "neutral": {"count": 4044, "percentage": 0.3048394391677974},
+            },
+            {
+                "agree": {"count": 7230, "percentage": 0.5450022614201718},
+                "disagree": {"count": 364, "percentage": 0.027438564751997588},
+                "neutral": {"count": 5672, "percentage": 0.42755917382783054},
+            },
+            {
+                "agree": {"count": 5076, "percentage": 0.38263229308005425},
+                "disagree": {"count": 126, "percentage": 0.009497964721845319},
+                "neutral": {"count": 8064, "percentage": 0.6078697421981004},
+            },
+        ],
+        "reliability": [
+            {
+                "agree": {"count": 7888, "percentage": 0.5946027438564752},
+                "disagree": {"count": 472, "percentage": 0.035579677370722144},
+                "neutral": {"count": 4906, "percentage": 0.36981757877280264},
+            },
+            {
+                "agree": {"count": 9701, "percentage": 0.7312679029096939},
+                "disagree": {"count": 462, "percentage": 0.03482587064676617},
+                "neutral": {"count": 3103, "percentage": 0.23390622644353987},
+            },
+            {
+                "agree": {"count": 9187, "percentage": 0.6925222372983567},
+                "disagree": {"count": 439, "percentage": 0.03309211518166742},
+                "neutral": {"count": 3640, "percentage": 0.27438564751997585},
+            },
+            {
+                "agree": {"count": 8188, "percentage": 0.6172169455751545},
+                "disagree": {"count": 626, "percentage": 0.047188300919644204},
+                "neutral": {"count": 4452, "percentage": 0.3355947535052013},
+            },
+        ],
+        "transparency": [
+            {
+                "agree": {"count": 10200, "percentage": 0.7688828584350973},
+                "disagree": {"count": 248, "percentage": 0.01869440675410825},
+                "neutral": {"count": 2818, "percentage": 0.21242273481079452},
+            },
+            {
+                "agree": {"count": 4825, "percentage": 0.36371174430875924},
+                "disagree": {"count": 678, "percentage": 0.05110809588421529},
+                "neutral": {"count": 7763, "percentage": 0.5851801598070254},
+            },
+            {
+                "agree": {"count": 7329, "percentage": 0.552464947987336},
+                "disagree": {"count": 599, "percentage": 0.045153022764963066},
+                "neutral": {"count": 5338, "percentage": 0.4023820292477009},
+            },
+            {
+                "agree": {"count": 10183, "percentage": 0.7676013870043721},
+                "disagree": {"count": 336, "percentage": 0.02532790592492085},
+                "neutral": {"count": 2747, "percentage": 0.20707070707070707},
+            },
+        ],
     },
-}
-
-TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE_AGG = {
-    "Takes care of employees": {"neutral": 1, "score": 0}
-}
-
-TRUST_ID_SAMPLE_HUMANITY_ATTRIBUTE = {
-    "factor_name": "humanity",
-    "attribute_description": "Takes care of employees",
-    "attribute_score": 0,
-    "overall_customer_rating": {
-        "total_customers": 1,
-        "rating": {
-            "disagree": {"count": 0, "percentage": 0.0},
-            "neutral": {"count": 1, "percentage": 1.0},
-            "agree": {"count": 0, "percentage": 0.0},
-        },
-    },
+    "total_customers": 13266,
 }
 
 

@@ -150,6 +150,7 @@
         >
           <v-list-item
             data-e2e="add-standalone-destination"
+            class="click-effect"
             @click="$emit('onAddStandaloneDestination', audience)"
           >
             <tooltip>
@@ -177,9 +178,10 @@
               text
               min-width="7rem"
               height="2rem"
-              class="primary--text text-body-1 mt-n1"
+              class="primary--text text-body-1 mt-n1 click-effect"
+              :ripple="false"
             >
-              <span class="destination_text">Destination</span>
+              <span class="destination_text mt-1">Destination</span>
             </v-btn>
           </v-list-item>
         </v-list>
@@ -383,10 +385,20 @@ export default {
           standalone_deliveries: updatedStandaloneDeliveries,
         },
       })
-      this.deliverStandaloneAudience({
-        id: this.audienceId,
-        payload: { destinations: [{ id: deliveryId }] },
-      })
+      let payloadDeliver
+      if (val === true || val === false) {
+        payloadDeliver = {
+          id: this.audienceId,
+          toggleValue: val,
+          payload: { destinations: [{ id: deliveryId }] },
+        }
+      } else {
+        payloadDeliver = {
+          id: this.audienceId,
+          payload: { destinations: [{ id: deliveryId }] },
+        }
+      }
+      this.deliverStandaloneAudience(payloadDeliver)
     },
     getAccess: getAccess,
   },
@@ -400,28 +412,34 @@ export default {
       color: var(--v-black-lighten3);
     }
   }
+
   .delivery-table {
     ::v-deep .v-data-table {
       .v-data-table-header {
         tr {
           height: 32px !important;
         }
+
         th {
           background: var(--v-primary-lighten2);
         }
       }
     }
+
     ::v-deep .v-data-table .v-data-table-header th:first-child {
       border-top-left-radius: 12px !important;
     }
+
     ::v-deep .v-data-table .v-data-table-header th:last-child {
       border-top-right-radius: 12px !important;
     }
   }
 }
+
 .list-border {
   border-bottom: thin solid rgba(0, 0, 0, 0.12) !important;
 }
+
 ::v-deep .v-data-table__wrapper {
   tbody {
     tr {
@@ -436,18 +454,27 @@ export default {
     }
   }
 }
+
 ::v-deep .theme--light.v-data-table.v-data-table--fixed-header thead th {
   box-shadow: none !important;
 }
+
 .deliverAll {
   margin-top: 2px;
 }
+
 .destination_text {
   margin-top: -2px;
 }
+
+.click-effect::before {
+  display: none;
+}
+
 .plus-icon {
   margin-bottom: 7px;
 }
+
 .destination_empty {
   margin-top: 2px;
 }

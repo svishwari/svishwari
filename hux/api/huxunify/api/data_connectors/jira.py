@@ -32,8 +32,10 @@ class JiraConnection:
             },
         )
 
+        self.jira_service_desk = config.JIRA_SERVICE_DESK
+        self.request_participants = config.JIRA_SERVICE_DESK_ID
+        self.service_desk_id = config.JIRA_SERVICE_DESK_ID
         self.project_key = config.JIRA_PROJECT_KEY
-
         self.jira_user_email = config.JIRA_USER_EMAIL
 
     @staticmethod
@@ -91,7 +93,7 @@ class JiraConnection:
         """Create a new issue in JIRA.
 
         Args:
-            issue_type (str): Type of issue
+            issue_type (str): Type of issue/request
             summary (str): Summary of issue
             description (str): Description of issue
 
@@ -104,16 +106,33 @@ class JiraConnection:
         """
 
         try:
-            new_issue = self.jira_client.create_issue(
-                {
-                    "project": {api_c.KEY: self.project_key},
-                    "components": [{api_c.NAME: self.project_key}],
-                    "issuetype": {api_c.NAME: issue_type},
-                    "summary": summary,
-                    "description": description,
-                },
-                False,
-            )
+            if (
+                self.jira_service_desk
+                and self.jira_client.supports_service_desk()
+            ):
+                new_issue = self.jira_client.create_customer_request(
+                    {
+                        "requestParticipants": self.request_participants,
+                        "serviceDeskId": self.service_desk_id,
+                        "requestTypeId": issue_type,
+                        "requestFieldValues": {
+                            "summary": summary,
+                            "description": description,
+                        },
+                    },
+                    False,
+                )
+            else:
+                new_issue = self.jira_client.create_issue(
+                    {
+                        "project": {api_c.KEY: self.project_key},
+                        "components": [{api_c.NAME: self.project_key}],
+                        "issuetype": {api_c.NAME: issue_type},
+                        "summary": summary,
+                        "description": description,
+                    },
+                    False,
+                )
         except JIRAError as jira_error:
             raise FailedAPIDependencyError(
                 "Failed to connect to JIRA.",

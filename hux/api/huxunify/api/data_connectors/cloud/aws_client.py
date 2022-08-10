@@ -136,9 +136,15 @@ class AWSClient(CloudClient):
         try:
             # Upload the file
             s3_client = self.get_aws_client(ClientType.S3)
-            _ = s3_client.upload_file(
-                file_name, bucket, object_name, extraargs
-            )
+            file_obj = kwargs.get(api_c.FILE_OBJ, None)
+            if file_obj:
+                _ = s3_client.upload_fileobj(
+                    file_obj, bucket, object_name, extraargs
+                )
+            else:
+                _ = s3_client.upload_file(
+                    file_name, bucket, object_name, extraargs
+                )
 
         except ClientError as exception:
             logging.error(
@@ -212,19 +218,6 @@ class AWSClient(CloudClient):
                 f"{client.value} unavailable. An error occured: "
                 f"{getattr(exception, 'message', repr(exception))}",
             )
-
-    @record_health_status(Connections.BATCH_SERVICE)
-    def health_check_batch_service(self) -> Tuple[bool, str]:
-        """Checks the health of the AWS batch service.
-
-        Returns:
-            Tuple[bool, str]: Returns bool for health status and message
-        """
-        return self.__check_aws_health_connection(
-            client=ClientType.BATCH,
-            client_method="cancel_job",
-            method_args={"jobId": "test", "reason": "test"},
-        )
 
     @record_health_status(Connections.STORAGE_SERVICE)
     def health_check_storage_service(self) -> Tuple[bool, str]:

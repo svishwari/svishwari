@@ -31,6 +31,7 @@ from huxunify.api.data_connectors.cdp import (
     get_spending_by_gender,
     get_revenue_by_day,
     get_customer_event_types,
+    get_customer_product_categories,
 )
 from huxunify.api.data_connectors.cdp_connection import get_identity_overview
 from huxunify.app import create_app
@@ -679,6 +680,24 @@ class CDPTest(TestCase):
         event_types = get_customer_event_types(token=t_c.TEST_AUTH_TOKEN)
         self.assertIsNotNone(event_types)
         self.assertEqual(len(event_types), 3)
+
+    def test_get_product_categories(self) -> None:
+        """Test get product categories."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/products-by-categories",
+            json=t_c.CUSTOMERS_PRODUCT_CATEGORIES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        customer_product_categories = get_customer_product_categories("")
+
+        self.assertTrue(customer_product_categories)
+        self.assertEqual(len(customer_product_categories.keys()), 1)
+        self.assertEqual(
+            list(customer_product_categories.keys())[0], "Shoes & accessories"
+        )
 
 
 class CdpFieldTests(TestCase):

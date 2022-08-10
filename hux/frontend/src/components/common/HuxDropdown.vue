@@ -16,6 +16,7 @@
           class="d-flex justify-space-between pr-1 text-body-1"
           v-on="on"
         >
+          <icon v-if="modelIcon" :type="modelIcon" :size="21" class="ml-n1" />
           {{ label }}
           <div class="flex-grow-1"></div>
           <v-icon color="primary">mdi-chevron-right</v-icon>
@@ -71,11 +72,12 @@
               v-else-if="item.menu"
               :key="index"
               :label="item.name"
-              :items="item.menu"
+              :items="item.options"
               :is-open-on-hover="false"
               :is-offset-x="true"
               :is-offset-y="false"
               :is-sub-menu="true"
+              :model-icon="item.modelIcon"
               :selected="selected"
               @on-select="onSelect"
             />
@@ -134,6 +136,7 @@ export default {
     isOffsetY: { type: Boolean, default: true },
     isOpenOnHover: { type: Boolean, default: false },
     isSubMenu: { type: Boolean, default: false },
+    modelIcon: { type: String, required: false, default: "" },
     transition: { type: String, default: "scale-transition" },
     minWidth: {
       type: String,
@@ -163,6 +166,9 @@ export default {
   },
   methods: {
     onSelect(item) {
+      if (item.model) {
+        item.model.selected = item.key
+      }
       this.$emit("on-select", item)
       this.openMenu = false
     },

@@ -2,6 +2,7 @@
 # too-many-function-args
 """Paths for Orchestration API."""
 import asyncio
+import json
 import re
 import time
 from http import HTTPStatus
@@ -13,6 +14,7 @@ from bson import ObjectId
 from flask import Blueprint, request, Response
 from marshmallow import INCLUDE
 from pymongo import MongoClient
+from werkzeug.utils import secure_filename
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import (
@@ -52,6 +54,7 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
+from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.cdp import (
     get_customers_overview,
     get_demographic_by_state_async,
@@ -60,8 +63,8 @@ from huxunify.api.data_connectors.cdp import (
     get_customers_overview_async,
     get_customer_event_types,
     get_customer_count_by_country,
+    get_customer_product_categories,
 )
-from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
@@ -89,8 +92,10 @@ from huxunify.api.route.utils import (
     is_component_favorite,
     get_user_favorites,
     convert_unique_city_filter,
+    convert_audience_city_filter,
     match_rate_data_for_audience,
     convert_filters_for_events,
+    convert_filters_for_contact_preference,
 )
 
 # setup the orchestration blueprint
@@ -433,14 +438,25 @@ class AudienceView(SwaggerView):
         ):
             filter_dict[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
-        attribute_list = request.args.getlist(api_c.ATTRIBUTE)
         events_list = request.args.getlist(api_c.EVENTS)
         # set the attribute_list to filter_dict only if it is populated and
         # validation is successful
         if events_list:
             filter_dict[db_c.EVENT] = events_list
 
+        attribute_list = request.args.getlist(api_c.ATTRIBUTE)
         if attribute_list:
+            # if the attribute filter list from the request contains contact_
+            # preference, then update the filter dict with the CDM specific
+            # filters the audiences collection is set
+            if api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE in attribute_list:
+                filter_dict[
+                    api_c.CONTACT_PREFERENCE_ATTRIBUTE
+                ] = api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDM
+                # remove the contact_preference filter from the attribute_list
+                attribute_list.remove(api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE)
+
+            # update the filter_dict
             filter_dict[api_c.ATTRIBUTE] = attribute_list
 
         industry_tag_list = request.args.getlist(api_c.INDUSTRY_TAG)
@@ -581,6 +597,8 @@ class AudienceView(SwaggerView):
             audience[api_c.DELIVERIES].sort(
                 key=lambda delivery: delivery[db_c.UPDATE_TIME], reverse=True
             )
+            if audience.get(api_c.TAGS):
+                audience[api_c.TAGS][api_c.INDUSTRY].sort()
 
             # set the lookalikeable field in audience before limiting the
             # number of deliveries in it based on delivery_limit
@@ -602,6 +620,16 @@ class AudienceView(SwaggerView):
 
             audience[api_c.FAVORITE] = bool(
                 audience[db_c.ID] in favorite_audiences
+            )
+
+            # convert contact preference in audience filters back to be
+            # compatible for Unified UI
+            convert_filters_for_contact_preference(
+                filters={
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS, None
+                    )
+                }
             )
 
         lookalikes_count = 0
@@ -626,23 +654,48 @@ class AudienceView(SwaggerView):
                     ]
                 )
 
+            attribute_list = request.args.getlist(api_c.ATTRIBUTE)
             if attribute_list:
-                query_filter["$and"].extend(
-                    [
-                        {
-                            "$and": [
-                                {
-                                    db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
-                                        "$regex": re.compile(
-                                            rf"^{attribute}$(?i)"
-                                        )
+                if api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE in attribute_list:
+                    query_filter["$and"].extend(
+                        [
+                            {
+                                "$or": [
+                                    {
+                                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                                            "$regex": re.compile(
+                                                rf"^{attribute}$(?i)"
+                                            )
+                                        }
                                     }
-                                }
-                                for attribute in attribute_list
-                            ]
-                        }
-                    ]
-                )
+                                    for attribute in api_c.AUDIENCE_FILTER_CONTACT_PREFERENCES_CDM
+                                ]
+                            }
+                        ]
+                    )
+                    # remove the contact_preference filter from the
+                    # attribute_list
+                    attribute_list.remove(
+                        api_c.AUDIENCE_FILTER_CONTACT_PREFERENCE
+                    )
+
+                if attribute_list:
+                    query_filter["$and"].extend(
+                        [
+                            {
+                                "$and": [
+                                    {
+                                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                                            "$regex": re.compile(
+                                                rf"^{attribute}$(?i)"
+                                            )
+                                        }
+                                    }
+                                    for attribute in attribute_list
+                                ]
+                            }
+                        ]
+                    )
 
             if industry_tag_list:
                 query_filter["$and"].extend(
@@ -720,6 +773,16 @@ class AudienceView(SwaggerView):
                         ),
                     }
                     if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
+                        # convert contact preference in lookalike audience
+                        # filters back to be compatible for Unified UI
+                        convert_filters_for_contact_preference(
+                            filters={
+                                api_c.AUDIENCE_FILTERS: lookalike.get(
+                                    db_c.LOOKALIKE_SOURCE_AUD_FILTERS, None
+                                )
+                            }
+                        )
+
                         # rename the key
                         lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
                             db_c.LOOKALIKE_SOURCE_AUD_FILTERS
@@ -1068,6 +1131,17 @@ class AudienceGetView(SwaggerView):
             }
         )
 
+        # convert contact preference in audience filters back to be compatible
+        # for Unified UI
+        convert_filters_for_contact_preference(
+            filters={
+                api_c.AUDIENCE_FILTERS: audience.get(
+                    api_c.AUDIENCE_FILTERS, None
+                )
+            }
+        )
+
+        convert_audience_city_filter(audience_json=audience)
         return HuxResponse.OK(
             data=audience, data_schema=AudienceGetSchema(unknown=INCLUDE)
         )
@@ -1308,6 +1382,12 @@ class AudiencePostView(SwaggerView):
         )
 
         convert_filters_for_events(audience_filters, event_types)
+        # convert contact preference in audience filters to be compatible for
+        # CDM
+        convert_filters_for_contact_preference(
+            filters=audience_filters, convert_for_cdm=True
+        )
+
         # get live audience size
         customers = get_customers_overview(
             token_response[0],
@@ -1320,12 +1400,22 @@ class AudiencePostView(SwaggerView):
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             audience_source={
-                db_c.AUDIENCE_SOURCE_TYPE: db_c.CDP_DATA_SOURCE_ID
+                db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_CDP
             },
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
             audience_tags=body.get(api_c.TAGS, None),
+        )
+
+        # convert contact preference in audience filters back to be compatible
+        # for Unified UI
+        convert_filters_for_contact_preference(
+            filters={
+                api_c.AUDIENCE_FILTERS: audience_doc.get(
+                    api_c.AUDIENCE_FILTERS, None
+                )
+            }
         )
 
         # add notification
@@ -1628,7 +1718,16 @@ class AudienceRules(SwaggerView):
                 "not_equals": "Does not equal",
                 "within_the_last": "Within the last",
                 "not_within_the_last": "Not within the last",
-            }
+                "between": "Between",
+                "value": "Value",
+                "decile_percentage": "Decile percentage",
+            },
+            "allowed_timedelta_types": [
+                {api_c.KEY: api_c.AUDIENCE_RULES_DAYS, api_c.NAME: "Days"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_WEEKS, api_c.NAME: "Weeks"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_MONTHS, api_c.NAME: "Months"},
+                {api_c.KEY: api_c.AUDIENCE_RULES_YEARS, api_c.NAME: "Years"},
+            ],
         }
 
         # Fetch events from CDM. Check cache first.
@@ -1659,6 +1758,45 @@ class AudienceRules(SwaggerView):
                 {country[api_c.COUNTRY]: country[api_c.COUNTRY]}
             )
 
+        # Fetch product categories from CDM. Check cache first.
+        categories = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.PRODUCT_CATEGORIES}",
+            get_customer_product_categories,
+            {"token": token_response[0]},
+        )
+
+        # filter categories list based on the response
+        product_category_list = []
+        for category1, value in categories.items():
+            menu1 = []
+            for category2, category2values in value.items():
+                menu2 = []
+                for category3value in category2values:
+                    menu2.append(
+                        {
+                            "name": category3value["name"],
+                            "key": category3value["name"]
+                            .lower()
+                            .replace(" ", "_")
+                            if category3value["name"] is not None
+                            else None,
+                        }
+                    )
+                menu1.append(
+                    {
+                        "name": category2,
+                        "key": category2.lower().replace(" ", "_"),
+                        "menu": menu2,
+                    }
+                )
+            product_category_list.append(
+                {
+                    "name": category1,
+                    "key": category1.lower().replace(" ", "_"),
+                    "menu": menu1,
+                }
+            )
+
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
         # list of genders will come from cdm
@@ -1669,97 +1807,28 @@ class AudienceRules(SwaggerView):
                     "propensity_to_unsubscribe": {
                         "name": "Propensity to unsubscribe",
                         "type": "range",
-                        "min": 0.0,
-                        "max": 1.0,
-                        "steps": 0.05,
-                        "values": [
-                            (0.024946739301654024, 11427),
-                            (0.07496427927927932, 11322),
-                            (0.12516851755300673, 11508),
-                            (0.17490722222222196, 11340),
-                            (0.22475237305041784, 11028),
-                            (0.27479887395267527, 10861),
-                            (0.32463341819221986, 10488),
-                            (0.3748012142488386, 9685),
-                            (0.424857603462838, 9472),
-                            (0.4748600344076149, 8719),
-                            (0.5247584942372063, 8069),
-                            (0.5748950945245762, 7141),
-                            (0.6248180486698927, 6616),
-                            (0.6742800016897607, 5918),
-                            (0.7240552640642912, 5226),
-                            (0.7748771045863732, 4666),
-                            (0.8245333194000475, 4067),
-                            (0.8741182097701148, 3480),
-                            (0.9238849161073824, 2980),
-                            (0.9741102931596075, 2456),
-                        ],
+                        "icon": "unsubscribe",
                     },
                     "ltv_predicted": {
                         "name": "Predicted lifetime value",
                         "type": "range",
-                        "min": 0,
-                        "max": 998.80,
-                        "steps": 20,
-                        "values": [
-                            (25.01266121420892, 20466),
-                            (74.90030921605447, 19708),
-                            (124.93400516206559, 18727),
-                            (174.636775834374, 17618),
-                            (224.50257155855883, 15540),
-                            (274.4192853530467, 14035),
-                            (324.5557537562226, 11650),
-                            (374.0836229319332, 9608),
-                            (424.08129865033845, 7676),
-                            (474.0542931632165, 6035),
-                            (523.573803219089, 4610),
-                            (573.6697460367739, 3535),
-                            (623.295952316871, 2430),
-                            (674.0507447610822, 1737),
-                            (722.9281163886425, 1127),
-                            (773.0364963285016, 828),
-                            (823.8157326407769, 515),
-                            (872.0919142507652, 327),
-                            (922.9545223902437, 205),
-                            (975.5857619444447, 108),
-                        ],
+                        "icon": "ltv",
                     },
                     "propensity_to_purchase": {
                         "name": "Propensity to purchase",
                         "type": "range",
-                        "min": 0.0,
-                        "max": 1.0,
-                        "steps": 0.05,
-                        "values": [
-                            (0.02537854973094943, 11522),
-                            (0.07478697708351197, 11651),
-                            (0.1248279331496129, 11249),
-                            (0.1747714344852409, 11112),
-                            (0.2249300773782431, 10985),
-                            (0.2748524565641576, 10763),
-                            (0.32492868003913766, 10220),
-                            (0.3745931779533858, 9997),
-                            (0.42461185061435747, 9278),
-                            (0.4747488547963946, 8767),
-                            (0.5245381213163091, 8144),
-                            (0.5748252185124849, 7368),
-                            (0.6245615267403664, 6694),
-                            (0.6745955099966098, 5902),
-                            (0.7241630427350405, 5265),
-                            (0.7744812744022826, 4559),
-                            (0.824692568267536, 3977),
-                            (0.8744300917431203, 3379),
-                            (0.9241139159001297, 3044),
-                            (0.9740590406189552, 2585),
-                        ],
+                        "icon": "purchase",
                     },
                 },
                 "general": {
                     "age": {
                         "name": "Age",
                         "type": "range",
-                        "min": 18,
-                        "max": 79,
+                    },
+                    "contact_preference": {
+                        "name": "Contact preference",
+                        "type": "list",
+                        "options": [{"email": "Email"}, {"text": "Text"}],
                     },
                     "email": {
                         "name": "Email",
@@ -1781,6 +1850,7 @@ class AudienceRules(SwaggerView):
                             },
                         ],
                     },
+                    # TODO Remove after LP CDM Integration
                     "location": {
                         "name": "Location",
                         "country": {
@@ -1807,7 +1877,60 @@ class AudienceRules(SwaggerView):
                             "options": [],
                         },
                     },
+                    "mailing_address": {
+                        "name": "Mailing address",
+                        "mailing_country": {
+                            "name": "Country",
+                            "type": "list",
+                            "options": country_list,
+                        },
+                        "mailing_state": {
+                            "name": "State",
+                            "type": "list",
+                            "options": [
+                                {key: value}
+                                for key, value in api_c.STATE_NAMES.items()
+                            ],
+                        },
+                        "mailing_city": {
+                            "name": "City",
+                            "type": "list",
+                            "options": [],
+                        },
+                        "mailing_zip_code": {
+                            "name": "Zip",
+                            "type": "list",
+                            "options": [],
+                        },
+                    },
+                    "shipping_address": {
+                        "name": "Shipping address",
+                        "shipping_country": {
+                            "name": "Country",
+                            "type": "list",
+                            "options": country_list,
+                        },
+                        "shipping_state": {
+                            "name": "State",
+                            "type": "list",
+                            "options": [
+                                {key: value}
+                                for key, value in api_c.STATE_NAMES.items()
+                            ],
+                        },
+                        "shipping_city": {
+                            "name": "City",
+                            "type": "list",
+                            "options": [],
+                        },
+                        "shipping_zip_code": {
+                            "name": "Zip",
+                            "type": "list",
+                            "options": [],
+                        },
+                    },
                     "events": event_types_rules,
+                    "product_categories": product_category_list,
                 },
             }
         }
@@ -2331,7 +2454,9 @@ class AudienceS3UploadPostView(SwaggerView):
             Tuple[Response, int]: Created audience, HTTP status code.
         """
 
-        body = AudiencePostSchema().load(request.get_json(), partial=True)
+        body = AudiencePostSchema().load(
+            json.loads(request.form[api_c.FORM_PAYLOAD]), partial=True
+        )
 
         # validate destinations
         database = get_db_client()
@@ -2376,14 +2501,15 @@ class AudienceS3UploadPostView(SwaggerView):
                     )
                 engagement_ids.append(engagement_id)
 
-        audience_file = request.files["filename"]
+        # get the filename from the request and secure the filename
+        audience_file = request.files[api_c.FORM_FILENAME]
+        audience_file_name = secure_filename(audience_file.filename)
 
         if not CloudClient().upload_file(
-            file_name=str(audience_file),
-            bucket=get_config().S3_DATASET_BUCKET,
-            object_name=audience_file,
-            user_name=user[api_c.USER_NAME],
+            file_name=audience_file_name,
             file_type=api_c.AUDIENCE_UPLOAD,
+            user_name=user[api_c.USER_NAME],
+            file_obj=audience_file,
         ):
             logger.error(
                 "Could not load file into S3.",
@@ -2393,7 +2519,7 @@ class AudienceS3UploadPostView(SwaggerView):
         source = {
             db_c.AUDIENCE_SOURCE_TYPE: db_c.DATA_SOURCE_PLATFORM_AMAZONS3,
             db_c.AUDIENCE_SOURCE_BUCKET: get_config().S3_DATASET_BUCKET,
-            db_c.AUDIENCE_SOURCE_KEY: audience_file,
+            db_c.AUDIENCE_SOURCE_KEY: audience_file_name,
         }
         # create the audience
         audience_doc = orchestration_management.create_audience(

@@ -16,6 +16,7 @@ from huxunify.api.schema.customers import (
     CustomersInsightsStatesSchema,
     CustomersInsightsCountriesSchema,
     CustomerRevenueInsightsSchema,
+    CustomerOverviewSchema,
     CustomerProfileContactPreferencesSchema,
     IDROverviewSchema,
 )
@@ -402,7 +403,9 @@ class TestCustomersOverview(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(CustomerOverviewSchema().validate(response.json))
+        self.assertEqual(0, response.json.get(api_c.TOTAL_CUSTOMERS))
 
     def test_get_idr_data_feeds(self):
         """Test get IDR Datafeeds."""

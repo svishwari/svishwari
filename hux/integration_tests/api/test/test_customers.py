@@ -174,7 +174,7 @@ class TestCustomers(TestCase):
 
         response = requests.post(
             f"{pytest.API_URL}/{self.CUSTOMERS}/"
-            f'{customers_list_response.json()["customers"][0]["hux_id"]}'
+            f'{customers_list_response.json()["customers"][-1]["hux_id"]}'
             f"/events?interval=day",
             json={"start_date": start_date, "end_date": end_date},
             headers=pytest.HEADERS,
@@ -194,7 +194,7 @@ class TestCustomers(TestCase):
 
         response = requests.get(
             f"{pytest.API_URL}/{self.CUSTOMERS}/"
-            f'{customers_list_response.json()["customers"][0]["hux_id"]}',
+            f'{customers_list_response.json()["customers"][-1]["hux_id"]}',
             headers=pytest.HEADERS,
         )
 

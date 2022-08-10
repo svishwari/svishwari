@@ -598,7 +598,8 @@ class AudienceDeliverView(SwaggerView):
                 api_c.DESTINATIONS,
             )
             return {
-                api_c.MESSAGE: "Invalid request body sent in. Missing destinations."
+                api_c.MESSAGE: "Invalid request body sent in. "
+                "Missing destinations."
             }, HTTPStatus.BAD_REQUEST
 
         # validate data source ids
@@ -612,10 +613,35 @@ class AudienceDeliverView(SwaggerView):
         ):
             logger.error("Invalid Object ID/IDs found.")
             return {
-                api_c.MESSAGE: "Invalid list of Destination IDs sent in request body."
+                api_c.MESSAGE: "Invalid list of destination IDs sent in "
+                "request body."
             }, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
+
+        audience = get_audience(database, audience_id)
+        audience[db_c.OBJECT_ID] = audience[db_c.ID]
+
+        # check to see if the requested destination is attached to the audience
+        for destination_id in destination_ids:
+            for pair in get_audience_destination_pairs([audience]):
+                if [pair[0], pair[1][db_c.OBJECT_ID]] == [
+                    audience_id,
+                    destination_id,
+                ]:
+                    break
+            else:
+                logger.error(
+                    "Destination ID %s requested to be delivered for audience "
+                    "ID %s not attached to audience.",
+                    destination_id,
+                    audience_id,
+                )
+                return {
+                    api_c.MESSAGE: f"Destination ID {destination_id} "
+                    f"to be delivered not attached to audience "
+                    f"ID {audience_id}."
+                }, HTTPStatus.BAD_REQUEST
 
         if replace_audience:
             replace_audience = (
@@ -630,13 +656,14 @@ class AudienceDeliverView(SwaggerView):
                 replace_audience=replace_audience,
                 user_name=user[db_c.USER_DISPLAY_NAME],
             )
+
         # run the async function for each of the destination_id from the passed
         # in destination_ids list
         for destination_id in destination_ids:
             asyncio.run(
                 deliver_audience_to_destination(
                     database=database,
-                    audience_id=audience_id,
+                    audience=audience,
                     destination_id=destination_id,
                     user_name=user[api_c.USER_NAME],
                 )
@@ -928,8 +955,8 @@ class AudienceDeliverHistoryView(SwaggerView):
 
         # get destinations at once to lookup name for each delivery job
         destination_dict = {
-            x[db_c.ID]: x
-            for x in delivery_platform_management.get_all_delivery_platforms(
+            platform[db_c.ID]: platform
+            for platform in delivery_platform_management.get_all_delivery_platforms(
                 database
             )
         }
@@ -939,26 +966,28 @@ class AudienceDeliverHistoryView(SwaggerView):
             delivery_engagement = get_engagement(
                 database, job.get(db_c.ENGAGEMENT_ID)
             )
+            delivery_platform_id = job.get(db_c.DELIVERY_PLATFORM_ID)
             if (
                 job.get(db_c.STATUS) == db_c.AUDIENCE_STATUS_DELIVERED
                 and job.get(api_c.ENGAGEMENT_ID)
                 and delivery_engagement
-                and job.get(db_c.DELIVERY_PLATFORM_ID)
+                and delivery_platform_id
+                and delivery_platform_id in destination_dict.keys()
             ):
                 delivery_history.append(
                     {
                         api_c.ENGAGEMENT: delivery_engagement,
                         api_c.DESTINATION: destination_dict.get(
-                            job.get(db_c.DELIVERY_PLATFORM_ID)
+                            delivery_platform_id
                         ),
                         api_c.SIZE: job.get(
                             db_c.DELIVERY_PLATFORM_AUD_SIZE, 0
                         ),
                         # TODO: HUS-837 Change once match_rate data can be fetched from CDM
                         api_c.MATCH_RATE: 0
-                        if destination_dict.get(
-                            job.get(db_c.DELIVERY_PLATFORM_ID)
-                        ).get(db_c.IS_AD_PLATFORM)
+                        if destination_dict.get(delivery_platform_id).get(
+                            db_c.IS_AD_PLATFORM
+                        )
                         else None,
                         api_c.DELIVERED: job.get(db_c.UPDATE_TIME),
                     }

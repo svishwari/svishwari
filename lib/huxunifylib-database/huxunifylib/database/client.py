@@ -1,7 +1,6 @@
 """This module enables functionality related to database clients."""
 
 from typing import Optional, Union
-from pathlib import Path
 import pymongo
 
 
@@ -19,6 +18,7 @@ class DatabaseClient:
         ssl_cert_path: Optional[str] = None,
         ssl_flag: Optional[bool] = None,
         tls_cert_key_file: Optional[str] = None,
+        tls_ca_cert_key_file: Optional[str] = None,
     ) -> None:
         """Initialize a DatabaseClient object.
 
@@ -35,6 +35,7 @@ class DatabaseClient:
             ssl_flag (Optional(bool)): SSL flag for database
                 connecting to MongoDB (optional).
             tls_cert_key_file (Optional(str)): TLS Client certificates.
+            tls_ca_cert_key_file(Optional(str)):TLS CA Client Certificates
 
         """
 
@@ -43,14 +44,10 @@ class DatabaseClient:
         self._port = port
         self._username = username
         self._password = password
-        self._use_ssl = (
-            Path(ssl_cert_path).exists()
-            if ssl_cert_path is not None
-            else False
-        )
+        self._use_ssl = ssl_flag
         self._ssl_cert_path = ssl_cert_path
-        self._use_ssl_flag = ssl_flag
         self._tls_cert_key_file = tls_cert_key_file
+        self._tls_ca_cert_key_file = tls_ca_cert_key_file
 
     @property
     def connection_string(self) -> Union[str, None]:
@@ -115,9 +112,19 @@ class DatabaseClient:
         return self._tls_cert_key_file
 
     @property
+    def tls_ca_cert_key_file(self) -> Union[str, None]:
+        """Get the TLS CA client certificates for self-signed certificates.
+
+        Returns:
+            Union[str, None]: TLS CA Certificate, Key used by the client.
+        """
+
+        return self._tls_ca_cert_key_file
+
+    @property
     def ssl_flag(self):
         """Union[bool, None]: SSL flag used when authenticating the client."""
-        return self._use_ssl_flag
+        return self._use_ssl
 
     def connect(self) -> pymongo.MongoClient:
         """Connect to the database.
@@ -142,10 +149,12 @@ class DatabaseClient:
         }
         if self._use_ssl:
             mongo_args["ssl"] = True
-            mongo_args["ssl_ca_certs"] = self._ssl_cert_path
+            # ssl_ca_certs & tlsCAFile is same thing
+            mongo_args["ssl_ca_certs"] = (
+                self._ssl_cert_path or self._tls_ca_cert_key_file
+            )
             mongo_args["tlsCertificateKeyFile"] = self._tls_cert_key_file
-        elif self._use_ssl_flag:
-            mongo_args["ssl"] = True
+            # mongo_args["tlsCAFile"] = self._tls_ca_cert_key_file
             mongo_args["retrywrites"] = False
 
         return pymongo.MongoClient(**mongo_args)

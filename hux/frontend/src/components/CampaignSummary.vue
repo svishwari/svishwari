@@ -87,7 +87,7 @@
               <span else>
                 <tooltip>
                   <template #label-content>
-                    <span class="text--subtitle-1">
+                    <span class="text--subtitle-1 font-weight-semi-bold">
                       <span v-if="numericColumns.includes(item.field)">
                         {{ item.value | Numeric(true, false) }}
                       </span>

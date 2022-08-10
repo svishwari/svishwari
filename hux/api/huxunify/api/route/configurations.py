@@ -12,6 +12,7 @@ from huxunifylib.database import (
 from huxunify.api.schema.configurations import (
     ConfigurationsSchema,
     NavigationSettingsSchema,
+    TagsSchema,
 )
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -291,3 +292,158 @@ class ConfigurationsNavigationPUT(SwaggerView):
             jsonify(NavigationSettingsSchema().dump(updated_doc)),
             HTTPStatus.OK.value,
         )
+
+
+@add_view_to_blueprint(
+    configurations_bp,
+    f"/{api_c.CONFIGURATIONS_ENDPOINT}/tags",
+    "ConfigurationsGETIndustryTags",
+)
+class ConfigurationsGETIndustryTags(SwaggerView):
+    """Configurations Industry Tag class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Tag settings.",
+            "schema": TagsSchema,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.CONFIGURATIONS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @requires_access_levels(api_c.COMMON_USER_ROLE)
+    def get(self, user: dict) -> Tuple[Response, int]:
+        """Retrieves all industry tag configurations.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
+
+        Returns:
+            Tuple[Response, int]: Response list containing dict of configurations,
+                HTTP status code.
+        """
+
+        query_filter = {
+            db_c.CONFIGURATION_FIELD_TYPE: {
+                "$in": [db_c.CONFIGURATION_TYPE_TAG_SETTINGS]
+            }
+        }
+
+        industrytag_settings = collection_management.get_documents(
+            get_db_client(),
+            db_c.CONFIGURATIONS_COLLECTION,
+            query_filter=query_filter,
+        )
+
+        industrytag_settings_doc = (
+            industrytag_settings[db_c.DOCUMENTS][0]
+            if industrytag_settings[db_c.DOCUMENTS]
+            else {}
+        )
+
+        return HuxResponse.OK(
+            data=industrytag_settings_doc, data_schema=TagsSchema()
+        )
+
+
+@add_view_to_blueprint(
+    configurations_bp,
+    f"/{api_c.CONFIGURATIONS_ENDPOINT}/tags",
+    "ConfigurationsPUTIndustryTags",
+)
+class ConfigurationsPUTIndustryTags(SwaggerView):
+    """Configurations PUT Industry Tag class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "description": "Settings Object.",
+            "type": "object",
+            "example": {
+                db_c.CONFIGURATION_FIELD_SETTINGS: {
+                    db_c.CONFIGURATION_INDUSTRY_NAME: [
+                        {
+                            "name": "Automotive",
+                            "label": "Automotive",
+                            "enabled": False,
+                        }
+                    ]
+                }
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Tag settings.",
+            "schema": {"type": "dict", "items": TagsSchema},
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.CONFIGURATIONS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @requires_access_levels([api_c.ADMIN_LEVEL])
+    def put(self, user: dict) -> Tuple[Response, int]:
+        """Update tag configurations.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
+
+        Returns:
+            Tuple[Response, int]: Response list containing dict of configurations,
+                HTTP status code.
+        """
+
+        # load into the schema object
+        body = TagsSchema().load(request.get_json())
+
+        database = get_db_client()
+        query_filter = {
+            db_c.CONFIGURATION_FIELD_TYPE: {
+                "$in": [db_c.CONFIGURATION_TYPE_TAG_SETTINGS]
+            }
+        }
+
+        # Fetch navigation settings document
+        nav_doc = collection_management.get_document(
+            database,
+            db_c.CONFIGURATIONS_COLLECTION,
+            query_filter=query_filter,
+        )
+
+        if nav_doc is None:
+            body[db_c.CONFIGURATION_FIELD_NAME] = db_c.CONFIGURATION_TAG_NAME
+            body[
+                db_c.CONFIGURATION_FIELD_TYPE
+            ] = db_c.CONFIGURATION_TYPE_TAG_SETTINGS
+            updated_doc = collection_management.create_document(
+                database,
+                db_c.CONFIGURATIONS_COLLECTION,
+                new_doc=body,
+                username=user[api_c.USER_NAME],
+            )
+        else:
+            updated_doc = collection_management.update_document(
+                database,
+                db_c.CONFIGURATIONS_COLLECTION,
+                nav_doc[db_c.ID],
+                update_doc=body,
+                username=user[api_c.USER_NAME],
+            )
+
+        return HuxResponse.OK(data=updated_doc, data_schema=TagsSchema())

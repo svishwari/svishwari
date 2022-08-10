@@ -83,7 +83,9 @@
                   />
                   <text-field
                     v-if="
-                      condition.operator && condition.attribute.type === 'text'
+                      condition.operator &&
+                      condition.operator.key != 'between' &&
+                      condition.attribute.type === 'text'
                     "
                     v-model="condition.text"
                     class="item-text-field"
@@ -93,11 +95,47 @@
                   />
                   <span
                     v-if="
-                      condition.operator && condition.attribute.type === 'text'
+                      condition.operator &&
+                      condition.operator.key != 'between' &&
+                      condition.attribute.type === 'text'
                     "
                     class="ml-2 text-body-1"
                     >Days</span
                   >
+                  <div
+                    v-if="
+                      condition.operator.key == 'between' &&
+                      condition.attribute.type === 'text'
+                    "
+                    class="d-flex align-center"
+                  >
+                    <div>
+                      <hux-start-date
+                        :label="selectedStartDate"
+                        :selected="selectedStartDate"
+                        @on-date-select="onStartDateSelect"
+                      />
+                    </div>
+                    <div>
+                      <icon
+                        class="ml-2 mr-1 mt-3"
+                        type="arrow"
+                        :size="19"
+                        color="primary"
+                        variant="lighten6"
+                      />
+                    </div>
+                    <div>
+                      <hux-end-date
+                        :label="selectedEndDate"
+                        :selected="selectedEndDate"
+                        :is-sub-menu="true"
+                        :min-date="endMinDate"
+                        @on-date-select="onEndDateSelect"
+                      />
+                    </div>
+                  </div>
+
                   <hux-autocomplete
                     v-if="
                       condition.operator && condition.attribute.type === 'list'
@@ -106,6 +144,7 @@
                     :options="listOptions(condition)"
                     data-e2e="auto-complete-btn"
                     :loader="loaderValue"
+                    :placeholder="getPlaceHolderText(condition)"
                     @change="triggerSizing(condition)"
                     @search-update="autoSearchFunc"
                   />
@@ -238,6 +277,9 @@ import Icon from "@/components/common/Icon"
 import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import { v4 as uuidv4 } from "uuid"
+import { cloneDeep } from "lodash"
+import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
+import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
 const NEW_RULE_SECTION = {
   id: "",
@@ -266,6 +308,8 @@ export default {
     Icon,
     HuxAutocomplete,
     Tooltip,
+    HuxStartDate,
+    HuxEndDate,
   },
   props: {
     rules: {
@@ -298,11 +342,17 @@ export default {
         height: 0,
       },
       currentData: [],
-      currenCitytData: [],
+      currentCityData: [],
       selectedValue: null,
       params: {},
-      notHistogramKeys: ["gender", "email", "Country", "State", "City", "Zip"],
       loaderValue: false,
+      selected: {},
+      selectedStartDate: new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10),
+      selectedEndDate: "Select date",
     }
   },
   computed: {
@@ -318,15 +368,8 @@ export default {
     ifRouteSegmentPlayground() {
       return this.$route.name === "SegmentPlayground"
     },
-
-    updateHistoArr() {
-      return this.notHistogramKeys.concat(
-        Object.keys(this.ruleAttributes.rule_attributes.general.events).filter(
-          (x) => x != "name"
-        )
-      )
-    },
   },
+
   async mounted() {
     this.sizeHandler()
     this.chartDimensions.height = 26
@@ -335,8 +378,6 @@ export default {
     if (this.ifRouteSegmentPlayground) {
       this.overAllSize = this.overviewData.total_customers
     }
-    this.notHistogramKeys = this.updateHistoArr
-
     this.$emit("attribute-options", this)
   },
 
@@ -359,10 +400,22 @@ export default {
       attributesData: "audiences/getDensityChartData",
     }),
     sliderLabel(attribute, value) {
-      if (attribute.key === "ltv_predicted") {
-        return `$${value}`
+      if (!this.selected[attribute.key]) {
+        this.selected[attribute.key] = "value"
       }
-      return value
+      if (attribute.selected) {
+        this.selected[attribute.key] = attribute.selected
+      }
+      if (this.selected[attribute.key] == "value") {
+        if (attribute.key === "ltv_predicted") {
+          return `$${value}`
+        }
+        return value
+      } else if (this.selected[attribute.key] == "percentage") {
+        return `${Math.floor(
+          (value / (attribute.max - attribute.min)) * 100
+        )} %`
+      }
     },
     sizeHandler() {
       if (this.$refs["hux-density-slider"]) {
@@ -409,12 +462,31 @@ export default {
               if (hasSubOptins.length > 0) {
                 _subOption["menu"] = hasSubOptins.map((key) => {
                   const subOption = _subOption[key]
-                  subOption["key"] =
-                    _subOption.key == "events" ? key : subOption.name
+                  subOption["key"] = key
                   return subOption
                 })
               }
-              if (groupKey.includes("model")) _subOption["modelIcon"] = true
+              if (groupKey.includes("model")) {
+                _subOption["modelIcon"] = "model"
+                _subOption["selected"] = "value"
+                _subOption["options"] = [
+                  {
+                    key: "value",
+                    name: "Value",
+                    type: "range",
+                  },
+                  {
+                    key: "percentage",
+                    name: "Decile percentage",
+                    type: "range",
+                  },
+                ]
+                _subOption.options.forEach((item) => {
+                  let tempobj = cloneDeep(_subOption)
+                  delete tempobj.options
+                  item.model = tempobj
+                })
+              }
               _subOption.key = key
               return _subOption
             })
@@ -422,22 +494,24 @@ export default {
           _group_items.forEach((item) => (item["order"] = order))
           options.push(..._group_items)
         })
+
         return options.sort(function (a, b) {
           return a.order - b.order
         })
       } else return []
     },
     listOptions(condition) {
-      if (condition.attribute.key === "City") {
-        // if (this.currenCitytData.length == 0) {
-        //   this.selectedValue = "City"
+      if (condition.attribute.key === "city") {
+        // if (this.currentCityData.length == 0) {
+        //   this.selectedValue = "city"
         //   this.autoSearchFunc(condition.text)
         // }
-        // condition.text = this.currenCitytData.find(
-        //   (item) => Object.values(item)[0].split(",")[0] == condition.text
-        // )
-        return this.currenCitytData
-      } else if (condition.attribute.key === "Zip") {
+        return this.currentCityData
+      } else if (condition.attribute.key === "zip") {
+        // if (this.currentData.length == 0) {
+        //   this.selectedValue = "zip_code"
+        //   this.autoSearchFunc(condition.text)
+        // }
         return this.currentData
       } else {
         return condition.attribute.options
@@ -462,7 +536,7 @@ export default {
       } else if (condition.attribute.type === "text") {
         return Object.keys(this.ruleAttributes.text_operators)
           .map((key) => {
-            if (key.includes("within_the_last")) {
+            if (key.includes("within_the_last") || key == "between") {
               return {
                 key: key,
                 name: this.ruleAttributes.text_operators[key],
@@ -487,8 +561,11 @@ export default {
       if (condition.attribute.type === "range") {
         value = [...condition.range]
         type = "range"
-      } else {
+      } else if (condition.operator && condition.attribute.type === "text") {
         value = [condition.text]
+        type = condition.operator.key
+      } else {
+        value = condition.text
         type = condition.operator.key
       }
       let filterJSON = {
@@ -580,17 +657,17 @@ export default {
     },
 
     async onSelect(type, condition, item) {
-      let dataItem = item
-      condition[type] = item
+      let dataItem = item.model ? item.model : item
+      condition[type] = dataItem
       if (type === "attribute") {
-        this.selectedValue = item.key
-        if (!this.notHistogramKeys.includes(item.key)) {
+        this.selectedValue = dataItem.key
+        if (dataItem.type == "range") {
           let data = await this.attributesData({
-            field: item.modelIcon ? "model" : item.key,
-            model: item.modelIcon ? item.key : null,
+            field: dataItem.modelIcon ? "model" : dataItem.key,
+            model: dataItem.modelIcon ? dataItem.key : null,
           })
           if (data) {
-            data.key = item.key
+            data.key = dataItem.key
             dataItem = data
           }
         }
@@ -625,17 +702,17 @@ export default {
       this.getOverallSize()
     },
     getPlaceHolderText(condition) {
-      switch (condition.attribute.key) {
+      switch (condition.attribute.name) {
         case "email":
           return "example@email.com"
         case "gender":
           return "Type male, female, or other"
-        case "City":
-        case "Country":
-        case "State":
-          return condition.attribute.key + " name"
+        case "city":
+        case "country":
+        case "state":
+          return condition.attribute.name + " name"
         default:
-          return condition.attribute.key
+          return condition.attribute.name
       }
     },
     addNewSection() {
@@ -645,35 +722,56 @@ export default {
       this.addNewCondition(newSection.id)
     },
     async autoSearchFunc(value) {
-      if (value !== null && value !== "") {
-        if (this.selectedValue === "Zip" || this.selectedValue === "City") {
+      if (value !== null && value !== "" && value !== undefined) {
+        if (
+          this.selectedValue === "zip_code" ||
+          this.selectedValue === "city"
+        ) {
           this.params.fieldType =
-            this.selectedValue === "Zip"
+            this.selectedValue === "zip_code"
               ? "zip_code"
               : this.selectedValue.toLowerCase()
           this.params.key = value
           if (value.length > 2 && value.length <= 8) {
             this.loaderValue = true
             let data = await this.getAudiencesRulesByFields(this.params)
-            if (this.selectedValue === "Zip") {
+            if (this.selectedValue === "zip_code") {
               this.loaderValue = false
               this.currentData = [...data]
-            } else if (this.selectedValue === "City") {
+            } else if (this.selectedValue === "city") {
               this.loaderValue = false
-              this.currenCitytData = [...data]
+              this.currentCityData = [...data]
             }
           }
         }
       }
-      if (value === null || value === "" || value.length < 3) {
-        if (this.selectedValue === "Zip") {
+      if (
+        value === null ||
+        value === "" ||
+        value === undefined ||
+        value.length < 3
+      ) {
+        if (this.selectedValue === "zip_code") {
           this.currentData = []
-        } else if (this.selectedValue === "City") {
-          this.currenCitytData = []
+        } else if (this.selectedValue === "city") {
+          this.currentCityData = []
         } else {
           this.currentData = []
-          this.currenCitytData = []
+          this.currentCityData = []
         }
+      }
+    },
+
+    onStartDateSelect(val) {
+      this.selectedStartDate = val
+      this.selectedEndDate = null
+      this.endMinDate = val
+    },
+    onEndDateSelect(val) {
+      if (!val) {
+        this.selectedEndDate = "No end date"
+      } else {
+        this.selectedEndDate = val
       }
     },
   },

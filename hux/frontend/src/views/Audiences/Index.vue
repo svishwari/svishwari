@@ -138,7 +138,7 @@
               <div v-if="header.value == 'size'">
                 <size :value="item[header.value]" />
               </div>
-              <div v-if="header.value == 'tags'">
+              <div v-if="header.value == 'tags' && enableDemoConfig">
                 <div
                   v-if="
                     item[header.value] && item[header.value].industry.length > 0
@@ -415,6 +415,7 @@
           v-model="isFilterToggled"
           view-height="calc(100vh - 180px)"
           :filter-options="attributeOptions()"
+          :demo-config-selection="enableDemoConfig"
           @selected-filters="totalFiltersSelected"
           @onSectionAction="applyFilter"
         />
@@ -624,6 +625,7 @@ export default {
       confirmSubtitle: "",
       isFilterToggled: false,
       enableLazyLoad: false,
+      enableDemoConfig: false,
       lastBatch: 0,
       batchDetails: {},
     }
@@ -678,6 +680,10 @@ export default {
   },
   async mounted() {
     this.loading = true
+    this.enableDemoConfig = getAccess("client_config", "client_settings")
+    if (!this.enableDemoConfig) {
+      this.columnDefs = this.columnDefs.filter((ele) => ele.value != "tags")
+    }
     try {
       this.setDefaultBatch()
       await this.fetchAudienceByBatch()
@@ -861,6 +867,7 @@ export default {
         {
           title: "Clone audience",
           isDisabled: false,
+          isHidden: !this.getAccess("audience", "create"),
           onClick: () => {
             this.initiateClone(audience.id)
           },

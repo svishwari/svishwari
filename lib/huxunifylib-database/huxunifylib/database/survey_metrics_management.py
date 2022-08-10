@@ -12,6 +12,40 @@ import huxunifylib.database.db_exceptions as de
 
 import huxunifylib.database.constants as db_c
 import huxunifylib.database.delivery_platform_management as dm
+from huxunifylib.database.aggregation_pipelines import (
+    trust_id_overview_pipeline,
+    trust_id_attribute_ratings_pipeline,
+    unique_segment_filters_pipeline,
+)
+
+
+def frame_match_query(filters: list) -> list:
+    """Frame the match query based on the selected filters
+
+    Args:
+        filters(list): List of selected filters
+
+    Returns:
+         (list): match query as a stage in aggregate pipeline
+    """
+    return [
+        {
+            "$match": {
+                "$and": [
+                    {
+                        "$or": [
+                            {
+                                f"responses.{x['description']}": {
+                                    "$in": x["values"],
+                                }
+                            }
+                        ]
+                    }
+                    for x in filters
+                ]
+            }
+        }
+    ]
 
 
 @retry(
@@ -168,14 +202,83 @@ def get_survey_responses(
         {"$match": match_query_filters},
         {
             "$project": {
-                "survey_id": 1,
-                "customer_id": 1,
                 "factors": "$responses.factors",
             }
         },
     ]
     try:
         return list(collection.aggregate(pipeline))
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_trust_id_overview(
+    database: DatabaseClient,
+    filters: list = None,
+) -> Union[dict, None]:
+    """Method to retrieve overview of survey responses.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filters (list): Filters to apply, default None.
+
+    Returns:
+        Union[dict, None]: Dict of survey responses overview, default None.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.SURVEY_METRICS_COLLECTION
+    ]
+
+    pipeline = frame_match_query(filters) if filters else []
+    pipeline.extend(trust_id_overview_pipeline)
+
+    try:
+        data = list(collection.aggregate(pipeline))
+        if data:
+            return data[0]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_trust_id_attributes(
+    database: DatabaseClient,
+    filters: list = None,
+) -> Union[dict, None]:
+    """Method to retrieve attribute ratings of survey responses.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filters (list): Filters to apply, default None.
+
+    Returns:
+        Union[dict, None]: Dict of survey responses overview, default None.
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.SURVEY_METRICS_COLLECTION
+    ]
+
+    pipeline = frame_match_query(filters) if filters else []
+    pipeline.extend(trust_id_attribute_ratings_pipeline)
+
+    try:
+        data = list(collection.aggregate(pipeline))
+        if data:
+            return data[0]
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -234,3 +337,36 @@ def delete_survey_responses(
         logging.error(exc)
 
     return remove_status
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_distinct_segment_filters(
+    database: DatabaseClient,
+) -> list:
+    """Method to delete survey responses based on query parameter.
+
+    Args:
+        database (DatabaseClient): A database client.
+
+    Returns:
+        list: list of distinct segment filters
+    """
+
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.USER_COLLECTION]
+
+    try:
+        segment_filters = list(
+            collection.aggregate(unique_segment_filters_pipeline)
+        )
+
+        if segment_filters:
+            return segment_filters[0][db_c.SEGMENT_FILTERS]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return []

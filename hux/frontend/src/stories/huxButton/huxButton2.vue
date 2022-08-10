@@ -99,17 +99,12 @@ export default {
     iconColor: {
       type: String,
       required: false,
-      default: "primary",
-    },
-    iconVariant: {
-      type: String,
-      required: false,
-      default: "base",
+      default: "primary-base",
     },
     iconSize: {
       type: Number,
       required: false,
-      default: 15,
+      default: 16,
     },
     iconClass: {
       type: String,
@@ -120,6 +115,11 @@ export default {
       type: String,
       required: false,
       default: "px-6",
+    },
+    backgroundColor: {
+      type: String,
+      required: false,
+      default: "primary darken-1",
     },
   },
   data() {
@@ -139,17 +139,15 @@ export default {
       if (this.variant == "danger") {
         return {
           "--color": this.variant == "secondary" ? "error" : "white",
-          "--color-hover": "error",
         }
       } else {
         return {
           "--color": this.variant == "secondary" ? "primary darken-1" : "white",
-          "--color-hover": "--v-primary-base",
         }
       }
     },
     color() {
-      return this.variant == "danger" ? "error" : "primary darken-1"
+      return this.variant == "danger" ? "error" : this.backgroundColor
     },
     isOutlined() {
       return this.variant == "secondary"
@@ -194,7 +192,7 @@ $btn-hover-opacity: 0 !important;
   border: solid 1px var(--v-black-lighten1) !important;
 }
 
-button.v-btn.text-button {
+button.v-btn {
   &.primary {
     &:hover {
       @extend .box-shadow-15-8;
@@ -215,11 +213,11 @@ button.v-btn.text-button {
   }
   &.secondary {
     background-color: var(--v-white-base) !important;
-    border-color: var(--v-primary-base) !important;
+    border-color: var(--v-primary-lighten7) !important;
     &:hover {
       @extend .box-shadow-15-8;
       background-color: var(--v-white-base) !important;
-      border-color: var(--v-primary-base) !important;
+      border-color: var(--v-primary-lighten7) !important;
       ::v-deep.v-btn__content {
         color: var(--v-primary-base) !important;
       }
@@ -227,15 +225,15 @@ button.v-btn.text-button {
     &:active {
       @extend .box-shadow-none;
       background-color: var(--v-primary-base) !important;
-      border-color: var(--v-primary-base) !important;
+      border-color: var(--v-primary-lighten7) !important;
       ::v-deep.v-btn__content {
         color: var(--v-white-base) !important;
       }
     }
     &.v-btn--disabled {
-      border: 0px !important;
-      background-color: var(--v-black-lighten5) !important;
-      color: var(--v-white-base) !important;
+      border-color: var(--v-black-lighten5) !important;
+      background-color: var(--v-white-base) !important;
+      color: var(--v-black-lighten6) !important;
     }
   }
   &.danger {

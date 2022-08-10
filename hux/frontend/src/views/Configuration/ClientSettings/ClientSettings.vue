@@ -46,7 +46,7 @@
                 :selected="currentIndustrySelection"
                 :show-hover="false"
                 :items="configOptions['industryOptions']"
-                min-width="320"
+                min-width="360"
                 @on-select="onSelectMenuItem"
               />
             </div>
@@ -78,6 +78,25 @@
       </v-col>
     </v-row>
     <hux-footer slot="footer" data-e2e="footer" max-width="100%">
+      <template #left>
+        <hux-button
+          size="large"
+          variant="white"
+          is-tile
+          class="
+            text-button
+            ml-auto
+            primary--text
+            mr-3
+            submit-button
+            btn-border
+            box-shadow-none
+          "
+          @click="restoreState"
+        >
+          Cancel
+        </hux-button>
+      </template>
       <template #right>
         <hux-button
           size="large"
@@ -176,7 +195,7 @@ export default {
       this.resetSubCategories()
     },
     onSelectMenuItem(item) {
-      if (item.name !== "Select") {
+      if (item.name !== ("Select" && this.currentIndustrySelection)) {
         this.currentIndustrySelection = item.name
         this.showSubCategories = true
         this.resetSubCategories()
@@ -203,6 +222,10 @@ export default {
           : true
       } else return false
     },
+    restoreState() {
+      this.prepopulateConfiguration()
+      this.isPrePopulate = true
+    },
     async updatedConfigSettings() {
       await this.updateDemoConfig({
         demo_mode: this.showConfiguration,
@@ -224,6 +247,9 @@ export default {
           customerOptions: this.existingDemoConfiguration.target,
           conversionOptions: this.existingDemoConfiguration.track,
         }
+      } else {
+        this.enableSelection = false
+        this.showSubCategories = false
       }
     },
   },

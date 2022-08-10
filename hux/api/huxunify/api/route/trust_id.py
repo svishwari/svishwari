@@ -1,13 +1,18 @@
-# pylint: disable=no-self-use,disable=unused-argument
+# pylint: disable=unused-argument,no-self-use
 """Paths for TrustID APIs."""
+import logging
+import time
 from http import HTTPStatus
 from typing import Tuple
 
 from flasgger import SwaggerView
 from flask import Blueprint, request
 
-from huxunifylib.database import constants as db_c
-from huxunifylib.database.survey_metrics_management import get_survey_responses
+from huxunifylib.database import constants as db_c, collection_management
+from huxunifylib.database.cache_management import (
+    get_cache_entry,
+    create_cache_entry,
+)
 from huxunifylib.database.user_management import (
     get_user_trust_id_segments,
     add_user_trust_id_segments,
@@ -15,11 +20,12 @@ from huxunifylib.database.user_management import (
 )
 
 from huxunify.api import constants as api_c
-
+from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.trust_id import (
-    get_trust_id_attributes,
-    get_trust_id_overview,
-    get_trust_id_comparison_data,
+    get_trust_id_overview_data,
+    get_trust_id_attributes_data,
+    get_trust_id_comparison_response,
+    get_trust_id_comparison_data_by_segment,
 )
 from huxunify.api.route.decorators import (
     secured,
@@ -31,7 +37,6 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
-    populate_trust_id_segments,
     Validation as validation,
 )
 from huxunify.api.schema.trust_id import (
@@ -42,9 +47,6 @@ from huxunify.api.schema.trust_id import (
     TrustIdSegmentPostSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.stubbed_data.trust_id_stub import (
-    trust_id_filters_stub,
-)
 
 
 trust_id_bp = Blueprint(api_c.TRUST_ID_ENDPOINT, import_name=__name__)
@@ -94,9 +96,24 @@ class TrustIdOverview(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        survey_responses = get_survey_responses(get_db_client())
+        database = get_db_client()
+        trust_id_overview = get_cache_entry(
+            database, f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}"
+        )
+        if not trust_id_overview:
+            start_time = time.perf_counter()
+            trust_id_overview = get_trust_id_overview_data(database)
+            logging.info(
+                "Successfully fetched TrustID overview in %s secs.",
+                round(time.perf_counter() - start_time, 3),
+            )
 
-        trust_id_overview = get_trust_id_overview(survey_responses)
+            # Cache TrustID overview data
+            create_cache_entry(
+                database=database,
+                cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.OVERVIEW}",
+                cache_value=trust_id_overview,
+            )
 
         return HuxResponse.OK(
             data=trust_id_overview,
@@ -142,17 +159,32 @@ class TrustIdAttributes(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
-        survey_responses = get_survey_responses(get_db_client())
-
-        trust_id_attributes = sorted(
-            sorted(
-                get_trust_id_attributes(survey_responses),
-                key=lambda x: x[api_c.ATTRIBUTE_SCORE],
-                reverse=True,
-            ),
-            key=lambda x: x[api_c.FACTOR_NAME],
-            reverse=False,
+        database = get_db_client()
+        trust_id_attributes = get_cache_entry(
+            database, f"{api_c.TRUST_ID_TAG}.{api_c.TRUST_ID_ATTRIBUTES}"
         )
+        if not trust_id_attributes:
+            start_time = time.perf_counter()
+            trust_id_attributes = sorted(
+                sorted(
+                    get_trust_id_attributes_data(database),
+                    key=lambda x: x[api_c.TRUST_ID_ATTRIBUTE_SCORE],
+                    reverse=True,
+                ),
+                key=lambda x: x[api_c.TRUST_ID_FACTOR_NAME],
+                reverse=False,
+            )
+            logging.info(
+                "Successfully fetched TrustID attributes in %s secs.",
+                round(time.perf_counter() - start_time, 3),
+            )
+
+            # Cache TrustID attribute data
+            create_cache_entry(
+                database=database,
+                cache_key=f"{api_c.TRUST_ID_TAG}.{api_c.TRUST_ID_ATTRIBUTES}",
+                cache_value=trust_id_attributes,
+            )
 
         return HuxResponse.OK(
             data=trust_id_attributes,
@@ -162,7 +194,7 @@ class TrustIdAttributes(SwaggerView):
 
 @add_view_to_blueprint(
     trust_id_bp,
-    f"{api_c.TRUST_ID_ENDPOINT}/comparison",
+    f"{api_c.TRUST_ID_ENDPOINT}/{api_c.COMPARISON}",
     "TrustIdAttributeComparison",
 )
 class TrustIdAttributeComparison(SwaggerView):
@@ -209,22 +241,61 @@ class TrustIdAttributeComparison(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
-        add_default = validation.validate_bool(
-            request.args.get(api_c.DEFAULT, "true")
+        database = get_db_client()
+
+        time0 = time.perf_counter()
+        # Fetch custom segments added by the user if any
+        segments = get_user_trust_id_segments(database, user[db_c.OKTA_ID])
+        logging.info(
+            "Added segments fetched in %s secs.",
+            (time.perf_counter() - time0),
+        )
+        add_default = (
+            validation.validate_bool(request.args.get(api_c.DEFAULT, "true"))
+            or not segments
         )
 
-        custom_segments = get_user_trust_id_segments(
-            database=get_db_client(), okta_id=user[db_c.OKTA_ID]
+        if add_default:
+            segments.insert(
+                0,
+                {
+                    api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
+                    api_c.TRUST_ID_SEGMENT_FILTERS: [],
+                    api_c.DEFAULT: add_default,
+                },
+            )
+
+        start_time = time.perf_counter()
+        for segment in segments:
+            segment[api_c.COMPARISON] = Caching.check_and_return_cache(
+                {
+                    api_c.ENDPOINT: f"{api_c.TRUST_ID_TAG}.{api_c.COMPARISON}",
+                    **{
+                        api_c.TRUST_ID_SEGMENT_FILTERS: segment.get(
+                            api_c.TRUST_ID_SEGMENT_FILTERS, []
+                        )
+                    },
+                },
+                get_trust_id_comparison_data_by_segment,
+                {
+                    "database": database,
+                    api_c.TRUST_ID_SEGMENT_FILTERS: segment[
+                        api_c.TRUST_ID_SEGMENT_FILTERS
+                    ],
+                },
+            )
+        time2 = time.perf_counter()
+        logging.info(
+            "Comparison data fetched in %s secs.",
+            (time2 - start_time),
         )
 
-        segments_data = populate_trust_id_segments(
-            database=get_db_client(),
-            custom_segments=custom_segments,
-            add_default=add_default,
+        logging.info(
+            "Structuring the comparison response completed in %s secs.",
+            (time.perf_counter() - time2),
         )
-
         return HuxResponse.OK(
-            data=get_trust_id_comparison_data(segments_data),
+            data=get_trust_id_comparison_response(segments),
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -268,8 +339,23 @@ class TrustIdSegmentFilters(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
+        # grab the attribute filters
+        attribute_filters = collection_management.get_document(
+            database=get_db_client(),
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            query_filter={
+                db_c.CONFIGURATION_FIELD_TYPE: db_c.TRUST_ID_FILTERS
+            },
+        ).get(db_c.TRUST_ID_FILTERS, {})
+
+        # sort each filter alphabetically
+        for attribute_filter in attribute_filters:
+            # only sort these fields.
+            if attribute_filter[api_c.TYPE] == api_c.RACE_ETHNICITY:
+                attribute_filter[api_c.VALUES].sort()
+
         return HuxResponse.OK(
-            data=trust_id_filters_stub,
+            data=attribute_filters,
             data_schema=TrustIdSegmentFilterSchema(),
         )
 
@@ -284,13 +370,22 @@ class TrustIdAddSegment(SwaggerView):
 
     parameters = [
         {
+            "name": api_c.DEFAULT,
+            "description": "Flag for returning default segment.",
+            "in": "query",
+            "type": "boolean",
+            "required": False,
+            "default": True,
+            "example": "False",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
             "description": "Segment with selected filters.",
             "example": {
-                api_c.SEGMENT_NAME: "Segment 1",
-                api_c.SEGMENT_FILTERS: [
+                api_c.TRUST_ID_SEGMENT_NAME: "Segment 1",
+                api_c.TRUST_ID_SEGMENT_FILTERS: [
                     {
                         api_c.TYPE: "gender",
                         api_c.DESCRIPTION: "Gender",
@@ -344,24 +439,59 @@ class TrustIdAddSegment(SwaggerView):
             )
 
         added_segments = [
-            segment.get(api_c.SEGMENT_NAME) for segment in segments
+            segment.get(api_c.TRUST_ID_SEGMENT_NAME) for segment in segments
         ]
+
         # Check if a segment with the specified name exists
-        if segment_details[api_c.SEGMENT_NAME] in added_segments:
+        if segment_details[api_c.TRUST_ID_SEGMENT_NAME] in added_segments:
             return HuxResponse.CONFLICT(
                 message=("Segment with the given name already exists!")
             )
 
-        updated_segments = add_user_trust_id_segments(
+        segments = add_user_trust_id_segments(
             database, user[db_c.OKTA_ID], segment_details
         )[db_c.TRUST_ID_SEGMENTS]
 
-        segments_data = populate_trust_id_segments(
-            database=get_db_client(), custom_segments=updated_segments
+        add_default = validation.validate_bool(
+            request.args.get(api_c.DEFAULT, "true")
+        )
+
+        if add_default:
+            segments.insert(
+                0,
+                {
+                    api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
+                    api_c.TRUST_ID_SEGMENT_FILTERS: [],
+                    api_c.DEFAULT: add_default,
+                },
+            )
+
+        start_time = time.perf_counter()
+        for segment in segments:
+            segment[api_c.COMPARISON] = Caching.check_and_return_cache(
+                {
+                    api_c.ENDPOINT: f"{api_c.TRUST_ID_TAG}.{api_c.COMPARISON}",
+                    **{
+                        api_c.TRUST_ID_SEGMENT_FILTERS: segment.get(
+                            api_c.TRUST_ID_SEGMENT_FILTERS, []
+                        )
+                    },
+                },
+                get_trust_id_comparison_data_by_segment,
+                {
+                    "database": database,
+                    api_c.TRUST_ID_SEGMENT_FILTERS: segment[
+                        api_c.TRUST_ID_SEGMENT_FILTERS
+                    ],
+                },
+            )
+        logging.info(
+            "Comparison data fetched in %s secs.",
+            (time.perf_counter() - start_time),
         )
 
         return HuxResponse.CREATED(
-            data=get_trust_id_comparison_data(segments_data),
+            data=get_trust_id_comparison_response(segments),
             data_schema=TrustIdComparisonSchema(),
         )
 
@@ -375,6 +505,15 @@ class TrustIdRemoveSegment(SwaggerView):
     """Trust ID remove segment class."""
 
     parameters = [
+        {
+            "name": api_c.DEFAULT,
+            "description": "Flag for returning default segment.",
+            "in": "query",
+            "type": "boolean",
+            "required": False,
+            "default": True,
+            "example": "False",
+        },
         {
             "name": "segment_name",
             "in": "query",
@@ -415,21 +554,57 @@ class TrustIdRemoveSegment(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        segment_name = request.args.get(api_c.SEGMENT_NAME)
+        segment_name = request.args.get(api_c.TRUST_ID_SEGMENT_NAME)
         if not segment_name:
             return HuxResponse.BAD_REQUEST(
                 message="Missing required segment name."
             )
 
-        updated_segments = remove_user_trust_id_segments(
-            get_db_client(), user[db_c.OKTA_ID], segment_name
+        database = get_db_client()
+        segments = remove_user_trust_id_segments(
+            database, user[db_c.OKTA_ID], segment_name
         )[db_c.TRUST_ID_SEGMENTS]
 
-        segments_data = populate_trust_id_segments(
-            database=get_db_client(), custom_segments=updated_segments
+        add_default = (
+            validation.validate_bool(request.args.get(api_c.DEFAULT, "true"))
+            or not segments
+        )
+
+        if add_default:
+            segments.insert(
+                0,
+                {
+                    api_c.TRUST_ID_SEGMENT_NAME: api_c.DEFAULT_TRUST_SEGMENT,
+                    api_c.TRUST_ID_SEGMENT_FILTERS: [],
+                    api_c.DEFAULT: add_default,
+                },
+            )
+
+        start_time = time.perf_counter()
+        for segment in segments:
+            segment[api_c.COMPARISON] = Caching.check_and_return_cache(
+                {
+                    api_c.ENDPOINT: f"{api_c.TRUST_ID_TAG}.{api_c.COMPARISON}",
+                    **{
+                        api_c.TRUST_ID_SEGMENT_FILTERS: segment.get(
+                            api_c.TRUST_ID_SEGMENT_FILTERS, []
+                        )
+                    },
+                },
+                get_trust_id_comparison_data_by_segment,
+                {
+                    "database": database,
+                    api_c.TRUST_ID_SEGMENT_FILTERS: segment[
+                        api_c.TRUST_ID_SEGMENT_FILTERS
+                    ],
+                },
+            )
+        logging.info(
+            "Comparison data fetched in %s secs.",
+            (time.perf_counter() - start_time),
         )
 
         return HuxResponse.OK(
-            data=get_trust_id_comparison_data(segments_data),
+            data=get_trust_id_comparison_response(segments),
             data_schema=TrustIdComparisonSchema(),
         )

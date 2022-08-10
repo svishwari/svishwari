@@ -47,7 +47,7 @@ class FactorScoreOverviewSchema(Schema):
     factor_name = Str(
         required=True,
         example="capability",
-        validate=OneOf(api_c.LIST_OF_FACTORS),
+        validate=OneOf(api_c.TRUST_ID_LIST_OF_FACTORS),
     )
     factor_score = Integer(
         required=True,
@@ -85,12 +85,13 @@ class TrustIdAttributesSchema(Schema):
     factor_name = Str(
         required=True,
         example="capability",
-        validate=OneOf(api_c.LIST_OF_FACTORS),
+        validate=OneOf(api_c.TRUST_ID_LIST_OF_FACTORS),
     )
     attribute_score = Integer(
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
     attribute_description = Str(required=True, example="Good Quality")
+    attribute_short_description = Str(required=True, example="Good Quality")
     overall_customer_rating = Nested(OverallCustomerRatingSchema)
 
 
@@ -115,12 +116,18 @@ class AttributeScoreOverviewSchema(Schema):
     attribute_description = Str(required=True, example="Good Quality")
 
 
-class SegmentFilterSchema(Schema):
+class TrustIdSegmentFilterSchema(Schema):
     """Trust ID segment filter schema"""
 
-    type = Str(example="age", required=True)
-    description = Str(example="Age", required=True)
-    values = List(Str())
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    description = Str(example="Children count", required=True)
+    type = Str(example="children_count", required=True)
+    values = List(Str(example=["1", "2", "3", "4", "5+"]), default=[])
+    is_boolean = Boolean(required=False, default=False)
 
 
 class TrustIdSegmentSchema(Schema):
@@ -133,7 +140,7 @@ class TrustIdSegmentSchema(Schema):
 
     segment_name = Str(required=True, example="Segment 1")
     default = Boolean(default=False)
-    segment_filters = List(Nested(SegmentFilterSchema), default=[])
+    segment_filters = List(Nested(TrustIdSegmentFilterSchema), default=[])
     attributes = List(Nested(AttributeScoreOverviewSchema), required=True)
 
 
@@ -148,17 +155,9 @@ class TrustIdComparisonSchema(Schema):
     segment_type = Str(
         required=True,
         example="composite & factor scores",
-        validate=OneOf(api_c.SEGMENT_TYPES),
+        validate=OneOf(api_c.TRUST_ID_SEGMENT_TYPE_MAP.values()),
     )
     segments = List(Nested(TrustIdSegmentSchema))
-
-
-class TrustIdSegmentFilterSchema(Schema):
-    """Trust ID segment filter schema"""
-
-    type = Str(example="children_count", required=True)
-    description = Str(example="Children count", required=True)
-    values = List(Str(example=["1", "2", "3", "4", "5+"]), default=[])
 
 
 class TrustIdSegmentPostSchema(Schema):

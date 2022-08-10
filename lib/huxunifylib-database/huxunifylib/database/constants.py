@@ -26,6 +26,7 @@ CONFIGURATION = "configuration"
 SIZE = "size"
 DOCUMENTS = "documents"
 DESCRIPTION = "description"
+SHORT_DESCRIPTION = "short_description"
 ICON = "icon"
 ACCESS_LEVEL = "access_level"
 
@@ -35,6 +36,13 @@ MIN = "min"
 MAX = "max"
 LINK = "link"
 USERNAME = "username"
+
+# ORCH integration test triggers
+ORCH_INTEGRATION_TEST_USER_CPDR = "orch_integration_test_user_cpdr"
+ORCH_INTEGRATION_TEST_USER_FLDR = "orch_integration_test_user_fldr"
+ORCH_INTEGRATION_TEST_DR = "orch_integration_test_dr"
+ORCH_INTEGRATION_TEST_MCA = "orch_integration_test_mca"
+
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
@@ -60,7 +68,9 @@ USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
 APPLICATIONS_COLLECTION = "applications"
+APPLICATIONS = "applications"
 CLIENT_PROJECTS_COLLECTION = "client_projects"
+CLIENT_LOGO = "logo"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 MODELS_COLLECTION = "models"
@@ -165,13 +175,14 @@ CATEGORY_CUSTOMER_SERVICE = "Customer service"
 CATEGORY_DATA_FILE_STORAGE = "Data & file storage"
 CATEGORY_DATABASES = "Databases"
 CATEGORY_DATA_VISUALIZATION = "Data visualization"
-DELIVERABILITY = "Deliverability"
+CATEGORY_DELIVERABILITY = "Deliverability"
 CATEGORY_ECOMMERCE = "E-commerce"
 CATEGORY_MARKETING = "Marketing"
 CATEGORY_OBJECT_STORAGE = "Object storage"
 CATEGORY_FILES = "Files"
 CATEGORY_FINANCE = "Finance"
 CATEGORY_INTERNET = "Internet"
+CATEGORY_MCA = "MCA"
 CATEGORY_PRODUCTIVITY = "Productivity"
 CATEGORY_SOCIAL_MEDIA = "Social media"
 CATEGORY_REPORTING = "Reporting"
@@ -259,7 +270,10 @@ SURVEY_ID = "survey_id"
 SURVEY_RESPONSES = "responses"
 SURVEY_RESPONSE_DATE = "response_date"
 TRUST_ID_SEGMENTS = "trust_id_segments"
+TRUST_ID_FILTERS = "trust_id_filters"
+TRUST_ID_ATTRIBUTES = "trust_id_attributes"
 SEGMENT_NAME = "segment_name"
+SEGMENT_FILTERS = "segment_filters"
 FACTORS = "factors"
 ATTRIBUTES = "attributes"
 
@@ -315,6 +329,7 @@ WIN_BACK_AUDIENCE = "win_back_audience"
 WIN_BACK_AUDIENCE_STR = "Win-back Audience"
 TAGS = "tags"
 INDUSTRY_TAG = "industry_tag"
+CONTACT_PREFERENCE_ATTRIBUTE = "contact_preference_attribute"
 
 AUDIENCE_TYPE = "audience_type"
 AUDIENCE_TYPE_NAME = "name"
@@ -388,6 +403,7 @@ IS_AD_PLATFORM = "is_ad_platform"
 CONTACT_EMAIL = "contact_email"
 CLIENT_REQUEST = "client_request"
 CLIENT_ACCOUNT = "client_account"
+CLIENT_DETAILS = "client_details"
 USE_CASE = "use_case"
 
 LOOKALIKE = "lookalike"
@@ -533,12 +549,19 @@ CONFIGURATION_FIELD_STATUS = "status"
 CONFIGURATION_FIELD_ENABLED = "enabled"
 CONFIGURATION_FIELD_ROADMAP = "roadmap"
 CONFIGURATION_TYPE_MODULE = "module"
+CONFIGURATION_TYPE_CLIENT_DETAILS = "client_details"
 CONFIGURATION_TYPE_BUSINESS_SOLUTION = "business_solution"
 CONFIGURATION_TYPE_NAVIGATION_SETTINGS = "navigation_settings"
+CONFIGURATION_TYPE_TAG_SETTINGS = "tags"
+CONFIGURATION_TAG_NAME = "Tags"
+CONFIGURATION_INDUSTRY_NAME = "industry"
 CONFIGURATION_TYPE_RBAC_MATRIX = "rbac_matrix"
 CONFIGURATION_FIELD_SETTINGS = "settings"
+CONFIGURATION_FIELD_FILTERS = "filters"
+CONFIGURATION_FIELD_ATTRIBUTES = "attributes"
 CONFIGURATION_FIELD_CHILDREN = "children"
 CONFIGURATION_FIELD_MODULES = "modules"
+CONFIGURATION_FIELD_DETAILS = "details"
 
 # Audience constants
 AUDIENCE_FILTER_CONSTANTS = "audience_filter_constants"
@@ -637,6 +660,9 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_ROADMAP,
         CONFIGURATION_FIELD_SETTINGS,
         CONFIGURATION_FIELD_MODULES,
+        CONFIGURATION_FIELD_FILTERS,
+        CONFIGURATION_FIELD_ATTRIBUTES,
+        CONFIGURATION_FIELD_DETAILS,
     ],
     MODELS_COLLECTION: [
         NAME,

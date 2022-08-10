@@ -69,7 +69,7 @@ def pytest_configure(config: Config):
 
     # set global IDs
     pytest.CRUD_OBJECTS = []
-    pytest.APP_URL = getenv(INT_TEST_HOST)
+    pytest.APP_URL_BASE = getenv(INT_TEST_HOST).replace("/api", "")
     pytest.API_URL = f"{getenv(INT_TEST_HOST)}/{getenv(INT_TEST_API_VERSION)}"
     # pytest.DB_CLIENT = MongoClient(**MONGO_DB_CONFIG)[DATABASE]
 

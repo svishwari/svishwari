@@ -1,6 +1,6 @@
 <template>
   <div class="empty-page d-flex justify-center align-center">
-    <div class="text-center">
+    <div class="text-center empty-margin">
       <slot name="icon">
         <icon :type="type" :size="size" />
       </slot>

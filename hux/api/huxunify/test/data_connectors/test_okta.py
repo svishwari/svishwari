@@ -396,8 +396,8 @@ class OktaTest(TestCase):
             # true means the endpoint and token call were successfully passed.
             self.assertIsInstance(demo_endpoint(), str)
 
-    @given(access_token=st.one_of(st.text(), st.floats(), st.none()))
     @requests_mock.Mocker()
+    @given(access_token=st.one_of(st.text(), st.floats(), st.none()))
     def test_get_user_info_invalid(
         self, request_mocker: Mocker, access_token: str
     ):

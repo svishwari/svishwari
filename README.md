@@ -4,15 +4,18 @@ Repository for hux unified
 Component|Build|Version|CD|Docker Image
 ---------|---|---|---|---|
 huxunifylib-database|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_library?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=606bf0961ca52d74786e76ef&pipeline=unified_solution_library&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0)| - | - | - |
-huxunify-api|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_api_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=605a45789f86ae45939bfec3&pipeline=unified_solution_api_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
-huxunify-ui|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_ui_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=60658a58cefd71c868974159&pipeline=unified_solution_ui_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
+huxunify-api|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_api_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=628e096c994aff665a98e63d&pipeline=unified_solution_api_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
+huxunify-ui|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_ui_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=628f2e20a7ed783974be45a9&pipeline=unified_solution_ui_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
 huxunify-cd|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_cd?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=605c55329f86ae31179c045c&pipeline=unified_solution_cd&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
 huxunify-scripts-ci|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_scripts_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=60eebd2127251f965005f666&pipeline=unified_solution_scripts_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | - | - | - |
 customer-profile-api|[![Codefresh build status](https://g.codefresh.io/api/badges/pipeline/deloittehux/HXP_CDM%2Fcustomer_profile_api_ci?key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ&date=1628594544780)](https://g.codefresh.io/pipelines/edit/new/builds?id=608adc2ade28641bed60176a&pipeline=customer_profile_api_ci&projects=HXP_CDM&projectId=6036b45b3bb11c75ac85caad)| - | - | - |
 argo-cd| - | - |[![ArgoCD health status](https://argocd.hux-unified-dev1.in/applications/unified-ui-huxui-main-use1-hux-unified-dev1?resource=&operation=false)]| - |
 
 ## RTD Documentation (most up to date)
-https://docs.hux.deloitte.com/docs/hux-unified/en/develop/
+[Unified Documentation](https://docs.hux.deloitte.com/docs/hux-unified/en/develop/)
+
+## Users Email List
+[Email List](https://confluence.hux.deloitte.com/display/HUS/RC1+Users+Email+List)
 
 # Environments
 Hux unified solutions and other dependent environment URLs
@@ -43,7 +46,7 @@ Prometheus|[https://prometheus.int.hux-husdev2.in/graph](https://prometheus.int.
 
 ### Azure Environments - VPN Setup & Access
 * To connect to Azure environments please set up VPN according to the document links found [here](https://github.com/DeloitteHux/vpn-config/tree/master/Azure-VPN).
-  * To connect to HUSDEV2, use [this](https://github.com/DeloitteHux/vpn-config/blob/master/Azure-VPN/husdev2-eu2-vng.ovpn) VPN configuration file 
+  * To connect to HUSDEV2, use [this](https://github.com/DeloitteHux/vpn-config/blob/master/Azure-VPN/husdev2-eu2-vng.ovpn) VPN configuration file
   * To connect to LILDEV, use [this](https://github.com/DeloitteHux/vpn-config/blob/master/Azure-CDM-VPN/lildev1.ovpn) VPN configuration file
 * Instructions to configure OpenVPN client on Windows or Mac systems can be found [here](https://confluence.hux.deloitte.com/display/TO/How-to%3A+Configure+the+OpenVPN+Client) on confluence.
 * Instructions to connect to an Azure environment VPN can be found [here](https://confluence.hux.deloitte.com/display/HUS/Azure+Environment+Access) on confluence once the OpenVPN client setup is done.

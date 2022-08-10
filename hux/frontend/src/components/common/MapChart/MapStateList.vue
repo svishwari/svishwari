@@ -3,7 +3,7 @@
     <hux-data-table
       :columns="columnDefs"
       :height="height"
-      :sort-column="sortMetric ? sortMetric : customMetric"
+      :sort-column="sortMetric ? sortMetric : ''"
       :sort-desc="true"
       :data-items="stateListData"
       class="small-table"

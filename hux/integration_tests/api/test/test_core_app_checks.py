@@ -26,7 +26,7 @@ class TestCoreAppChecks(TestCase):
     def test_get_apispec(self):
         """Test open apispec."""
 
-        response = requests.get(f"{pytest.APP_URL}/{self.API_SPEC}.json")
+        response = requests.get(f"{pytest.APP_URL_BASE}/{self.API_SPEC}.json")
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         response_json = response.json()
@@ -39,7 +39,7 @@ class TestCoreAppChecks(TestCase):
     def test_get_core_health_check(self):
         """Test get API application's core health check."""
 
-        response = requests.get(f"{pytest.APP_URL}/{self.HEALTH_CHECK}")
+        response = requests.get(f"{pytest.APP_URL_BASE}/{self.HEALTH_CHECK}")
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         response_json = response.json()
@@ -57,6 +57,6 @@ class TestCoreAppChecks(TestCase):
     def test_get_api_metrics(self):
         """Test get API prometheus metrics."""
 
-        response = requests.get(f"{pytest.APP_URL}/{self.METRICS}")
+        response = requests.get(f"{pytest.APP_URL_BASE}/{self.METRICS}")
 
         self.assertEqual(HTTPStatus.OK, response.status_code)

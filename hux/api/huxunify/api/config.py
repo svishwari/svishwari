@@ -6,7 +6,7 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 """
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Union
 from decouple import config
 from huxunify.api import constants as api_c
@@ -61,37 +61,44 @@ class Config:
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_PASSWORD = config(api_c.MONGO_DB_PASSWORD, default="")
     MONGO_SSL_FLAG = config(api_c.MONGO_DB_USE_SSL, default=True, cast=bool)
-    # grab the SSL cert path
-    MONGO_SSL_CERT = str(
-        Path(__file__).parent.parent.joinpath(
-            config(
-                api_c.SSL_CERT_FILE_NAME, default="rds-combined-ca-bundle.pem"
-            )
-        )
-    )
-    AZURE_MONGO_TLS_CLIENT_KEY = str(
-        Path(__file__).parent.parent.joinpath(
-            config(api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem")
-        )
-    )
     MONGO_DB_CONFIG = {
         api_c.CONNECTION_STRING: MONGO_CONNECTION_STRING,
         api_c.HOST: MONGO_DB_HOST,
         api_c.PORT: MONGO_DB_PORT,
         api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: MONGO_DB_PASSWORD,
-        api_c.SSL_FLAG: MONGO_SSL_FLAG,
     }
     if MONGO_SSL_FLAG:
-        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
+        MONGO_DB_CONFIG[api_c.SSL_FLAG] = MONGO_SSL_FLAG
+        # grab the SSL cert path
+        MONGO_SSL_CERT = str(
+            Path(__file__).parent.parent.joinpath(
+                config(
+                    api_c.SSL_CERT_FILE_NAME,
+                    default="rds-combined-ca-bundle.pem",
+                )
+            )
+        )
+        AZURE_MONGO_TLS_CLIENT_KEY = str(
+            Path(__file__).parent.parent.joinpath(
+                config(
+                    api_c.TLS_CERT_KEY_FILE_NAME, default="mongodb-azure.pem"
+                )
+            )
+        )
         if CLOUD_PROVIDER == api_c.AZURE:
-            MONGO_DB_CONFIG[api_c.TLS_CERT_KEY] = AZURE_MONGO_TLS_CLIENT_KEY
-        # TODO: To be removed once LILDEV env has ssl and cert setup
-        #  implementation done
-        if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
-            MONGO_DB_CONFIG[api_c.SSL_FLAG] = False
-            del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
-            del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
+            MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = str(
+                str(
+                    Path(__file__).parent.parent.joinpath(
+                        config(
+                            api_c.TLS_CA_CERT_KEY_FILE_NAME,
+                            default="mongodb-ca-cert",
+                        ),
+                    )
+                )
+            )
+        else:
+            MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = MONGO_SSL_CERT
 
     # OKTA CONFIGURATION
     OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
@@ -104,6 +111,11 @@ class Config:
     DECISIONING_URL = config(api_c.DECISIONING_URL, default="")
 
     # JIRA
+    JIRA_SERVICE_DESK = config(api_c.JIRA_SERVICE_DESK, default=False)
+    JIRA_REQUEST_PARTICIPANTS = config(
+        api_c.JIRA_REQUEST_PARTICIPANTS, default=[]
+    )
+    JIRA_SERVICE_DESK_ID = config(api_c.JIRA_SERVICE_DESK_ID, default="")
     JIRA_PROJECT_KEY = config(api_c.JIRA_PROJECT_KEY, default="")
     JIRA_USER_EMAIL = config(api_c.JIRA_USER_EMAIL, default="")
     JIRA_API_KEY = config(api_c.JIRA_API_KEY, default="")
@@ -180,20 +192,22 @@ class DevelopmentConfig(Config):
         api_c.SSL_FLAG: Config.MONGO_SSL_FLAG,
     }
     if Config.MONGO_SSL_FLAG:
-        MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
         if Config.CLOUD_PROVIDER == api_c.AZURE:
-            MONGO_DB_CONFIG[
-                api_c.TLS_CERT_KEY
-            ] = Config.AZURE_MONGO_TLS_CLIENT_KEY
+            MONGO_DB_CONFIG[api_c.TLS_CA_CERT_KEY] = str(
+                PurePath(
+                    "/certs",
+                    config(
+                        api_c.TLS_CA_CERT_KEY_FILE_NAME,
+                        default="mongodb-ca-cert",
+                    ),
+                )
+            )
+        else:
+            MONGO_DB_CONFIG[api_c.SSL_CERT_PATH] = Config.MONGO_SSL_CERT
 
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
-
-    if config(api_c.ENVIRONMENT_NAME, default="") == api_c.LILDEV_ENV:
-        MONGO_DB_CONFIG[api_c.SSL_FLAG] = False
-        del MONGO_DB_CONFIG[api_c.TLS_CERT_KEY]
-        del MONGO_DB_CONFIG[api_c.SSL_CERT_PATH]
 
     TEST_AUTH_OVERRIDE = False
 

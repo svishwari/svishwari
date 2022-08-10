@@ -8,12 +8,13 @@
         :icon-color="'white'"
         :logo-size="45"
         :title="destination.name"
-        :description="destination.category"
+        :sub-title="formatText(destination.category)"
         :disabled="['Pending', 'Requested'].includes(destination.status)"
         :action-menu="true"
         :coming-soon="false"
         :logo-option="true"
         :interactable="false"
+        :no-description="true"
         logo-box-padding="8px"
         height="225"
         width="255"
@@ -32,6 +33,7 @@
         <template slot="action-menu-options">
           <v-list class="py-0">
             <v-list-item
+              v-if="getAccess('destinations', 'edit_url')"
               class="text-body-1 action-menu-item"
               data-e2e="destination-edit-url"
               @click="openEditModal(destination)"
@@ -179,7 +181,7 @@ import HuxEmpty from "@/components/common/screens/Empty"
 import Error from "@/components/common/screens/Error"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
-import { getAccess } from "@/utils.js"
+import { getAccess, formatText } from "@/utils.js"
 
 export default {
   name: "DestinationsList",
@@ -291,6 +293,7 @@ export default {
       this.enableConfirm = false
     },
     getAccess: getAccess,
+    formatText: formatText,
   },
 }
 </script>
