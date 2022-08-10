@@ -502,16 +502,16 @@ export default {
     },
     listOptions(condition) {
       if (condition.attribute.key === "city") {
-        // if (this.currentCityData.length == 0) {
-        //   this.selectedValue = "city"
-        //   this.autoSearchFunc(condition.text)
-        // }
+        if (this.currentCityData.length == 0) {
+          this.selectedValue = "city"
+          this.autoSearchFunc(condition.text)
+        }
         return this.currentCityData
       } else if (condition.attribute.key === "zip") {
-        // if (this.currentData.length == 0) {
-        //   this.selectedValue = "zip_code"
-        //   this.autoSearchFunc(condition.text)
-        // }
+        if (this.currentData.length == 0) {
+          this.selectedValue = "zip_code"
+          this.autoSearchFunc(condition.text)
+        }
         return this.currentData
       } else {
         return condition.attribute.options
