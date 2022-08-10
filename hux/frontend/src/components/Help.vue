@@ -148,7 +148,8 @@ export default {
         "https://jira.hux.deloitte.com/servicedesk/customer/portal/18"
 
       if (buttonType == "Report a bug") {
-        window.location.href.includes("hux-lildev")
+        window.location.href.includes("hux-lildev") ||
+        window.location.href.includes("lillypulitzer")
           ? window.open(lildevUrl)
           : (this.reportBug = true)
       } else if (buttonType == "Email us") {
