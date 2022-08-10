@@ -694,6 +694,7 @@ def convert_audience_city_filter(audience_json: dict) -> dict:
                         api_c.AUDIENCE_FILTER_CITY_VALUE
                     )
         return audience_json
+    # pylint: disable=broad-except
     except Exception as exc:
         logger.info("Unable to update audience field")
         logger.error(exc)
