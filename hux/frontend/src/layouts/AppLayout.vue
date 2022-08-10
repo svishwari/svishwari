@@ -80,7 +80,7 @@ export default {
       this.toggleMini = !this.toggleMini
     },
     closeModal() {
-      infoModal = false
+      this.infoModal = false
       this.$router.push({
         name: "Home",
       })
