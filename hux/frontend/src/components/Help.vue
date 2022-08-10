@@ -144,8 +144,14 @@ export default {
       let generalSurvey =
         "https://deloittesurvey.deloitte.com/Community/se/3FC11B267AFCA9B6"
 
+      let lildevUrl =
+        "https://jira.hux.deloitte.com/servicedesk/customer/portal/18"
+
       if (buttonType == "Report a bug") {
-        this.reportBug = true
+        window.location.href.includes("hux-lildev") ||
+        window.location.href.includes("lillypulitzer")
+          ? window.open(lildevUrl)
+          : (this.reportBug = true)
       } else if (buttonType == "Email us") {
         window.open(emailLink)
         this.dailog = false
