@@ -35,7 +35,7 @@
               v-if="title === iconType"
               :type="titleIcon"
               :size="20"
-              class="mr-1 pt-1"
+              class="{ title === 'Lookalike' ? mr-2 pt-1 : mr-1 pt-1}"
             />
             {{ title }}
           </span>
