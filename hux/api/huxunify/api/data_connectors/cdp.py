@@ -645,6 +645,45 @@ def get_customer_count_by_country(
     return response.json()[api_c.BODY]
 
 
+def get_customer_product_categories(token: str) -> dict:
+    """Get customer product categories.
+
+    Args:
+        token (str): OKTA JWT Token.
+
+    Returns:
+        dict: product categories data.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving product categories.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/products-by-categories",
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve product categories %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/products-by-categories",
+            response.status_code,
+        )
+
+    logger.info("Successfully retrieved product categories.")
+
+    return response.json()[api_c.BODY]
+
+
 def get_demographic_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:

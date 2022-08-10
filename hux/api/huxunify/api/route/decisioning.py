@@ -23,6 +23,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     requires_access_levels,
 )
+from huxunify.api.config import get_config
 from huxunify.api.route.return_util import HuxResponse
 from huxunify.api.route.utils import (
     get_db_client,
@@ -769,11 +770,18 @@ class ModelPipelinePerformance(SwaggerView):
             Tuple[dict, int]: dict of model pipeline performance, HTTP status code.
         """
 
+        config = get_config()
+        pipeline_performance = api_c.MODEL_PIPELINE_PERFORMANCE_STUB
+
+        if config.ENV_NAME in [api_c.LILDEV_ENV, api_c.LPZDEV_ENV]:
+            pipeline_performance = {
+                "training": {},
+                "scoring": {},
+            }
+
         return (
             jsonify(
-                ModelPipelinePerformanceSchema().dump(
-                    api_c.MODEL_PIPELINE_PERFORMANCE_STUB
-                )
+                ModelPipelinePerformanceSchema().dump(pipeline_performance)
             ),
             HTTPStatus.OK.value,
         )

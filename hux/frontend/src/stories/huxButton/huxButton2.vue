@@ -99,12 +99,7 @@ export default {
     iconColor: {
       type: String,
       required: false,
-      default: "primary",
-    },
-    iconVariant: {
-      type: String,
-      required: false,
-      default: "base",
+      default: "primary-base",
     },
     iconSize: {
       type: Number,
@@ -144,12 +139,10 @@ export default {
       if (this.variant == "danger") {
         return {
           "--color": this.variant == "secondary" ? "error" : "white",
-          "--color-hover": "error",
         }
       } else {
         return {
           "--color": this.variant == "secondary" ? "primary darken-1" : "white",
-          "--color-hover": "--v-primary-base",
         }
       }
     },
@@ -238,9 +231,9 @@ button.v-btn {
       }
     }
     &.v-btn--disabled {
-      border: 0px !important;
-      background-color: var(--v-black-lighten5) !important;
-      color: var(--v-white-base) !important;
+      border-color: var(--v-black-lighten5) !important;
+      background-color: var(--v-white-base) !important;
+      color: var(--v-black-lighten6) !important;
     }
   }
   &.danger {

@@ -3,18 +3,20 @@
     <v-row class="header-title" :class="description ? '' : 'pb-4'">
       <div class="title-left new-h1">
         <icon :type="iconType" :size="40" color="primary" class="mr-2"></icon>
-        <span :class="maxBreadcrumbs != 'None' ? 'mr-2 blue--text' : 'mr-2'">{{
+        <span :class="titleDisabled ? 'mr-2 blue--text' : 'mr-2'">{{
           title
         }}</span>
+        <div v-if="titleFavorite" @click="favorited = !favorited">
+          <icon
+            v-if="titleFavorite"
+            :type="favorited ? 'Favorite - Selected' : 'Favorite'"
+            size="20"
+            :color="favorited ? 'black' : 'white-base'"
+            class="mt-1 mr-2 ml-1"
+          ></icon>
+        </div>
         <icon
-          v-if="titleFavorite"
-          type="Favorite"
-          size="20"
-          color="white-base"
-          class="mt-1 mr-2 ml-1"
-        ></icon>
-        <icon
-          v-if="maxBreadcrumbs != 'None'"
+          v-if="titleDisabled"
           type="Dropdown - right"
           :size="24"
           class="mr-2 mt-1"
@@ -60,10 +62,16 @@ export default {
       type: Boolean,
       required: true,
     },
-    maxBreadcrumbs: {
-      type: String,
+    titleDisabled: {
+      type: Boolean,
       required: true,
+      default: false,
     },
+  },
+  data() {
+    return {
+      favorited: false,
+    }
   },
 }
 </script>

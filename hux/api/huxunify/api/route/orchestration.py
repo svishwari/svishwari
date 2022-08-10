@@ -54,6 +54,7 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
+from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.cdp import (
     get_customers_overview,
     get_demographic_by_state_async,
@@ -62,8 +63,8 @@ from huxunify.api.data_connectors.cdp import (
     get_customers_overview_async,
     get_customer_event_types,
     get_customer_count_by_country,
+    get_customer_product_categories,
 )
-from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.cache import Caching
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
@@ -1689,7 +1690,7 @@ class AudienceRules(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[Response, int]:
         """Retrieves all audience rules.
@@ -1753,6 +1754,45 @@ class AudienceRules(SwaggerView):
         for country in countries:
             country_list.append(
                 {country[api_c.COUNTRY]: country[api_c.COUNTRY]}
+            )
+
+        # Fetch product categories from CDM. Check cache first.
+        categories = Caching.check_and_return_cache(
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.PRODUCT_CATEGORIES}",
+            get_customer_product_categories,
+            {"token": token_response[0]},
+        )
+
+        # filter categories list based on the response
+        product_category_list = []
+        for category1, value in categories.items():
+            menu1 = []
+            for category2, category2values in value.items():
+                menu2 = []
+                for category3value in category2values:
+                    menu2.append(
+                        {
+                            "name": category3value["name"],
+                            "key": category3value["name"]
+                            .lower()
+                            .replace(" ", "_")
+                            if category3value["name"] is not None
+                            else None,
+                        }
+                    )
+                menu1.append(
+                    {
+                        "name": category2,
+                        "key": category2.lower().replace(" ", "_"),
+                        "menu": menu2,
+                    }
+                )
+            product_category_list.append(
+                {
+                    "name": category1,
+                    "key": category1.lower().replace(" ", "_"),
+                    "menu": menu1,
+                }
             )
 
         # TODO HUS-356. Stubbed, this will come from CDM
@@ -1888,6 +1928,7 @@ class AudienceRules(SwaggerView):
                         },
                     },
                     "events": event_types_rules,
+                    "product_categories": product_category_list,
                 },
             }
         }

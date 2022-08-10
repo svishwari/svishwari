@@ -18,7 +18,7 @@
           <span class="new-b2">{{ step }}</span>
         </div>
         <icon v-else type="positive" :size="40" />
-        <span class="pt-2 new-b3">{{ label }}</span>
+        <span class="pt-2 step-label new-b3">{{ label }}</span>
       </div>
       <div
         v-if="step != steps.length - 1"
@@ -96,8 +96,19 @@ export default {
       border: 1px solid var(--v-success-darken1);
     }
     &.ruler-in-active {
-      border: 1px dashed var(--v-black-lighten8);
+      background-image: linear-gradient(
+        to right,
+        var(--v-black-lighten8) 50%,
+        rgba(255, 255, 255, 0) 20%
+      );
+      background-position: bottom;
+      background-size: 10px 2px;
+      height: 2px;
+      background-repeat: repeat-x !important;
     }
+  }
+  .step-label {
+    color: var(--v-black-lighten6);
   }
 }
 </style>
