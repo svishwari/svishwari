@@ -57,14 +57,10 @@
       </div>
     </div>
 
-    <tooltip
-      v-if="!noDescription"
-      nudge-right="100px"
-      min-width="auto !important"
-    >
+    <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-h4 px-6 pb-3 pt-2 text-ellipsis d-block title text-h4"
+          class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title text-h4"
           :class="disabled || !interactable ? 'black--text' : 'primary--text'"
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
@@ -77,7 +73,7 @@
       </template>
     </tooltip>
 
-    <template v-else>
+    <!-- <template v-else>
       <div
         class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title"
         :class="disabled || !interactable ? 'black--text' : 'primary--text'"
@@ -86,7 +82,27 @@
       >
         {{ title }}
       </div>
-    </template>
+    </template> -->
+
+    <tooltip nudge-right="100px" min-width="auto !important">
+      <template #label-content>
+        <div
+          class="px-3 pb-2 d-block text-body-2 black--text text--lighten-4"
+          :style="{
+            'padding-top': !icon ? '22px' : null,
+            height: 21,
+          }"
+          data-e2e="card-subtitle"
+        >
+          {{ subTitle }}
+        </div>
+      </template>
+      <template #hover-content>
+        <span class="black--text text-body-2 text--lighten-4">{{
+          subTitle
+        }}</span>
+      </template>
+    </tooltip>
 
     <tooltip
       v-if="!noDescription"
@@ -110,7 +126,7 @@
       </template>
     </tooltip>
 
-    <div v-if="$slots.default" class="px-3 pt-2">
+    <div v-if="$slots.default" class="px-3">
       <slot />
     </div>
   </v-card>
@@ -144,6 +160,11 @@ export default {
       type: String,
       required: false,
       default: "Descriptive text for the model item chosen above",
+    },
+    subTitle: {
+      type: String,
+      required: false,
+      default: "",
     },
     noDescription: {
       type: Boolean,

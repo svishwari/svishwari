@@ -84,20 +84,31 @@ To connect your localhost to the API in dev, do the following:
     VUE_APP_API_URL = https://unified-api-dev.main.use1.hux-unified-dev1.in
     ```
 
-3. Restart your local development server using the new configuration.
-    ```sh
-    yarn serve --mode dev1
-    ```
-    Note: `--mode` allows you to use a different env file for your local server.
-
 You will also need to create a `token.txt` file to store your temporary dev access token.
 
-4. Create the token.txt file in `src/api/mock/token.txt`
+3. Create the token.txt file in `src/api/mock/token.txt`
     ```sh
     echo -e 'REPLACE_WITH_TOKEN' > src/api/mock/token.txt
     ```
 
-5. Replace your token in `token.txt` with the one generated in dev.
+4. Replace your token in `token.txt` with the one generated in dev.
+
+5. Comment line 28 - 31 in `src/main.js`
+
+6. Comment line 7 in `src/api/httpClient.js`
+
+7. Replace line 20 & 21 in `src/api/httpClient.js` from the following:
+    ```sh
+    const accessToken = require("./mock/token.txt")["default"]
+    const idToken = require("./mock/token.txt")["default"]
+
+    ```
+8. Restart your local development server using the new configuration.
+```sh
+yarn serve --mode dev1
+```
+Note: `--mode` allows you to use a different env file for your local server.
+
 
 You should now be able to open http://localhost:8080 and connect with the dev API.
 
