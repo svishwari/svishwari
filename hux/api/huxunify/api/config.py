@@ -41,9 +41,12 @@ class Config:
         api_c.AZURE_STORAGE_CONTAINER_NAME, default=""
     )
     AZURE_KEY_VAULT_NAME = config(api_c.AZURE_KEY_VAULT_NAME, default="")
-    AZURE_TENANT_ID = config(api_c.AZURE_TENANT_ID, default="")
-    AZURE_CLIENT_ID = config(api_c.AZURE_CLIENT_ID, default="")
-    AZURE_CLIENT_SECRET = config(api_c.AZURE_CLIENT_SECRET, default="")
+    AZURE_MANAGED_IDENTITY_CLIENT_ID = config(
+        api_c.AZURE_MANAGED_IDENTITY_CLIENT_ID, default=""
+    )
+    AZURE_MANAGED_IDENTITY_OBJECT_ID = config(
+        api_c.AZURE_MANAGED_IDENTITY_OBJECT_ID, default=""
+    )
 
     # AWS_CONFIG
     AWS_REGION = config(api_c.AWS_REGION, default="")
