@@ -137,7 +137,6 @@ class TestTrustId(TestCase):
             self.assertIn("segment_type", comparison_segment_type)
             self.assertIn("segments", comparison_segment_type)
             self.assertIsInstance(comparison_segment_type["segments"], list)
-            self.assertEqual(len(comparison_segment_type["segments"]), 1)
             for segment in comparison_segment_type["segments"]:
                 self.assertIn("segment_name", segment)
                 self.assertEqual(segment_name, segment["segment_name"])
@@ -169,7 +168,6 @@ class TestTrustId(TestCase):
             self.assertIn("segment_type", comparison_segment_type)
             self.assertIn("segments", comparison_segment_type)
             self.assertIsInstance(comparison_segment_type["segments"], list)
-            self.assertEqual(len(comparison_segment_type["segments"]), 1)
             for segment in comparison_segment_type["segments"]:
                 self.assertIn("segment_name", segment)
                 self.assertIn("segment_filters", segment)
