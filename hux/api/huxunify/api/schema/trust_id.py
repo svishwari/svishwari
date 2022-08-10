@@ -64,7 +64,7 @@ class FactorScoreOverviewSchema(Schema):
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
     def round_up_scores(self, data: dict, many: bool = False) -> dict:
-        """Map boolean value to String equivalent
+        """Round up score value to whole numbers
         Args:
             data (dict): Factor details dict
             many (bool): If multiple objects
@@ -118,13 +118,13 @@ class TrustIdAttributesSchema(Schema):
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
     def round_up_scores(self, data: dict, many: bool = False) -> dict:
-        """Map boolean value to String equivalent
+        """Round up score value to whole numbers
         Args:
-            data (dict): Factor details dict
+            data (dict): Attribute details dict
             many (bool): If multiple objects
 
         Returns:
-            dict : Returns a factor details object
+            dict : Returns an attribute details object
         """
         if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
             data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
@@ -158,13 +158,13 @@ class AttributeScoreOverviewSchema(Schema):
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
     def round_up_scores(self, data: dict, many: bool = False) -> dict:
-        """Map boolean value to String equivalent
+        """Round up score value to whole numbers
         Args:
-            data (dict): Factor details dict
+            data (dict): Attribute details dict
             many (bool): If multiple objects
 
         Returns:
-            dict : Returns a factor details object
+            dict : Returns an attribute details object
         """
         if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
             data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
