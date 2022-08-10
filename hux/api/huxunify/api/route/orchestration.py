@@ -92,6 +92,7 @@ from huxunify.api.route.utils import (
     is_component_favorite,
     get_user_favorites,
     convert_unique_city_filter,
+    convert_audience_city_filter,
     match_rate_data_for_audience,
     convert_filters_for_events,
     convert_filters_for_contact_preference,
@@ -1140,6 +1141,7 @@ class AudienceGetView(SwaggerView):
             }
         )
 
+        convert_audience_city_filter(audience_json=audience)
         return HuxResponse.OK(
             data=audience, data_schema=AudienceGetSchema(unknown=INCLUDE)
         )
