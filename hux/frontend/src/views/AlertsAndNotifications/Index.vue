@@ -375,6 +375,7 @@ export default {
         this.enableLazyLoad = true
         this.fetchNotificationsByBatch()
       } else {
+        this.batchDetails.isLazyLoad = false
         this.enableLazyLoad = false
       }
     },

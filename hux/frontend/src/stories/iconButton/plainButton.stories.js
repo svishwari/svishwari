@@ -4,7 +4,7 @@ import allIcons from "../icons/Icons"
 export default {
   component: PlainButton,
 
-  title: "NewComponents/IconButton",
+  title: "NewComponents/Button",
 
   argTypes: {
     default: {
@@ -13,6 +13,7 @@ export default {
       },
     },
     icon: { options: allIcons, control: { type: "select" } },
+    variant: { options: ["default", "danger"], control: { type: "select" } },
   },
 
   args: {
@@ -20,6 +21,7 @@ export default {
     color: "black",
     iconSize: "27",
     default: "CTA",
+    variant: "default",
   },
 
   parameters: {
@@ -40,4 +42,4 @@ const Template = (args, { argTypes }) => ({
   `,
 })
 
-export const myPlainButton = Template.bind({})
+export const RaisedButton = Template.bind({})

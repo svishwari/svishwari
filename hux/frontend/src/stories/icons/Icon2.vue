@@ -66,7 +66,7 @@ export default {
     borderColor: {
       type: String,
       required: false,
-      default: "primary-base",
+      default: "black-base",
     },
 
     bgColor: {

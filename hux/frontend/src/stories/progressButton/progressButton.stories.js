@@ -3,7 +3,7 @@ import ProgressButton from "./progressButton.vue"
 export default {
   component: ProgressButton,
 
-  title: "NewComponents/ProgressButton",
+  title: "NewComponents/Button",
 
   argTypes: {
     variant: {

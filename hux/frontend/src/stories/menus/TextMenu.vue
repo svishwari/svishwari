@@ -45,7 +45,7 @@
                 class="mr-2 mt-1"
                 :size="20"
               ></logo>
-              <span class="text-ellipsis text-width">{{
+              <span class="text-ellipsis new-h4 text-width">{{
                 isSubMenu ? item.name : optionSelected["name"] || label
               }}</span>
             </template>
@@ -53,7 +53,7 @@
               {{ isSubMenu ? item.name : optionSelected["name"] || label }}
             </template>
           </tooltip>
-          <span v-else class="text-ellipsis text-width">{{
+          <span v-else class="text-ellipsis new-h4 text-width">{{
             isSubMenu ? item.name : optionSelected["name"] || label
           }}</span>
         </huxButton>
@@ -68,10 +68,10 @@
           :style="{
             width: minWidth + 'px !important',
             borderWidth: borderWidth,
-            color: 'var(--v-black-lighten5)',
+            color: 'var(--v-black-lighten5) !important',
           }"
         >
-          <span class="text-ellipsis text-width">{{ label }}</span>
+          <span class="text-ellipsis new-h4 text-width">{{ label }}</span>
         </huxButton>
         <v-icon
           v-else-if="type == 'hotdog'"
@@ -93,7 +93,7 @@
           text-color="white"
           @click="openMenu = true"
         >
-          <span class="ma-0 subtitle-2">{{ label }}</span>
+          <span class="ma-0 new-pills subtitle-2">{{ label }}</span>
           <v-icon right> {{ dropDownIcon }} </v-icon>
         </v-chip>
       </template>
@@ -232,10 +232,10 @@ export default {
     },
     dropdownColor() {
       return this.isDisabled
-        ? "var(--v-black-lighten5)"
+        ? "var(--v-black-lighten5) !important"
         : this.openMenu
         ? "var(--v-primary-base) !important"
-        : "var(--v-primary-lighten7)"
+        : "var(--v-primary-lighten7) !important"
     },
     borderWidth() {
       return this.isBorder ? "1px" : "0px"
@@ -256,6 +256,7 @@ export default {
 <style lang="scss" scoped>
 .hux-dropdown {
   .main-button {
+    @extend .new-h4;
     height: 32px;
     padding: 0 16px;
     border-style: solid !important;
@@ -265,9 +266,6 @@ export default {
     box-shadow: none !important;
     background-color: var(--v-white-base) !important;
     background: var(--v-white-base) !important;
-    font-size: 20px !important;
-    line-height: 24px !important;
-    font-weight: 400 !important;
     width: auto !important;
     min-width: 200px;
     color: var(--v-primary-lighten7) !important;
@@ -353,7 +351,8 @@ export default {
   color: var(--v-black-base);
 }
 ::v-deep .footer-class {
+  border-top: 1px solid var(--v-black-lighten1);
   background-color: var(--v-black-lighten7);
-  color: var(--v-primary-lighten7);
+  color: var(--v-primary-lighten7) !important;
 }
 </style>
