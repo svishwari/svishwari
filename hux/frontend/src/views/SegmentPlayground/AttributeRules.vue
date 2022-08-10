@@ -118,6 +118,7 @@
                           :label="selectedStartDate"
                           :selected="selectedStartDate"
                           :show-min="false"
+                          :max-date="endMaxDate"
                           @on-date-select="onStartDateSelect($event, condition)"
                         />
                       </div>
@@ -136,12 +137,14 @@
                           :selected="selectedEndDate"
                           :is-sub-menu="true"
                           :min-date="endMinDate"
+                          :max-date="endMaxDate"
+                          :show-min="true"
                           @on-date-select="onEndDateSelect($event, condition)"
                         />
                       </div>
                     </div>
 
-                    <span
+                    <!-- <span
                       v-if="
                         condition.operator &&
                         condition.attribute.type === 'text'
@@ -153,7 +156,7 @@
                           : addNewSubSection(condition)
                       "
                       >+ Product</span
-                    >
+                    > -->
 
                     <hux-autocomplete
                       v-if="
@@ -439,7 +442,10 @@ const NEW_CONDITION = {
   outputSummary: "0",
   size: "-",
   selection_type: "",
-  delta_type: "",
+  delta_type: {
+    key: "days",
+    name: "Days",
+  },
 }
 
 const PRODUCT_NEW_CONDITION = {
@@ -513,8 +519,13 @@ export default {
       )
         .toISOString()
         .substr(0, 10),
-      selectedEndDate: "Select date",
+      selectedEndDate: new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString(),
       endMinDate: new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString(),
+      endMaxDate: new Date(
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
     }
@@ -723,6 +734,8 @@ export default {
       } else if (condition.operator && condition.attribute.type === "text") {
         if (condition.operator.key == "between") {
           value = [this.selectedStartDate, this.selectedEndDate]
+          condition.start_date = this.selectedStartDate
+          condition.end_date = this.selectedEndDate
         } else {
           value = [condition.text]
         }
@@ -1034,7 +1047,6 @@ export default {
 
     onStartDateSelect(val, condition) {
       this.selectedStartDate = val
-      this.selectedEndDate = null
       this.endMinDate = val
       this.triggerSizing(condition)
     },

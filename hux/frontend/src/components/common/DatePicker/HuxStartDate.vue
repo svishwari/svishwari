@@ -39,6 +39,7 @@
           v-model="start"
           class="start-date-picker mb-4"
           :min="showMin ? todaysDate : ''"
+          :max="maxDate"
           no-title
           scrollable
         >
@@ -98,6 +99,11 @@ export default {
       type: Boolean,
       required: false,
       default: true,
+    },
+    maxDate: {
+      type: Object,
+      required: false,
+      default: () => {},
     },
   },
   data: function () {

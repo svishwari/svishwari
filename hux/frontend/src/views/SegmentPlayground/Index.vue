@@ -572,17 +572,34 @@ export default {
               ? this.audience.attributeRules[ruleIndex].conditions[
                   conditionIndex
                 ].attribute.type == "text"
-                ? [
-                    this.audience.attributeRules[ruleIndex].conditions[
-                      conditionIndex
-                    ].text,
-                  ]
+                ? this.audience.attributeRules[ruleIndex].conditions[
+                    conditionIndex
+                  ].operator.key == "between"
+                  ? [
+                      this.audience.attributeRules[ruleIndex].conditions[
+                        conditionIndex
+                      ].start_date,
+                      this.audience.attributeRules[ruleIndex].conditions[
+                        conditionIndex
+                      ].end_date,
+                    ]
+                  : [
+                      this.audience.attributeRules[ruleIndex].conditions[
+                        conditionIndex
+                      ].text,
+                    ]
                 : this.audience.attributeRules[ruleIndex].conditions[
                     conditionIndex
                   ].text
               : this.audience.attributeRules[ruleIndex].conditions[
                   conditionIndex
                 ].range,
+            delta_type:
+              this.audience.attributeRules[ruleIndex].conditions[conditionIndex]
+                .delta_type.key,
+            selection_type:
+              this.audience.attributeRules[ruleIndex].conditions[conditionIndex]
+                .selection_type,
           })
         }
         filtersArray.push(filter)
