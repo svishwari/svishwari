@@ -1575,34 +1575,7 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 IDR_DATAFEED_DETAILS_EMPTY_RESPONSE = {
     "code": 200,
     "message": "ok",
-    "body": {
-        "pinning": {
-            "input_records": 0,
-            "output_records": 0,
-            "empty_records": 0,
-            "individual_id_match": 0,
-            "household_id_match": 0,
-            "company_id_match": 0,
-            "address_id_match": 0,
-            "db_reads": 0,
-            "db_writes": 0,
-            "filename": "email_analytics_extract_clicks_2021841437.csv",
-            "new_individual_ids": 0,
-            "new_household_ids": 0,
-            "new_company_ids": 0,
-            "new_address_ids": 0,
-            "process_time": 0,
-            "pinning_timestamp": "2021-08-05T14:44:42.694Z",
-        },
-        "stitched": {
-            "digital_ids_added": 0,
-            "digital_ids_merged": 0,
-            "match_rate": 0,
-            "merge_rate": 0,
-            "records_source": "input waterfall",
-            "stitched_timestamp": "2021-08-05T14:44:42.694Z",
-        },
-    },
+    "body": {},
 }
 
 DATASOURCES_RESPONSE = {
@@ -1792,7 +1765,20 @@ IDR_MATCHING_TRENDS_BY_DAY_DATA = {
 IDR_MATCHING_TRENDS_BY_DAY_EMPTY_DATA = {
     "code": 200,
     "message": "ok",
-    api_c.BODY: [],
+    api_c.BODY: [
+        {
+            api_c.DAY: "2021-08-01",
+            api_c.UNIQUE_HUX_IDS: 0,
+            api_c.ANONYMOUS_IDS: 0,
+            api_c.KNOWN_IDS: 0,
+        },
+        {
+            api_c.DAY: "2021-08-02",
+            api_c.UNIQUE_HUX_IDS: 0,
+            api_c.ANONYMOUS_IDS: 0,
+            api_c.KNOWN_IDS: 0,
+        },
+    ],
 }
 
 SCHEDULES = [

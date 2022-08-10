@@ -791,7 +791,9 @@ class TestCustomersOverview(RouteTestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-        self.assertFalse(response.json)
+        self.assertFalse(
+            MatchingTrendsSchema().validate(response.json, many=True)
+        )
 
     def test_get_idr_data_feeds_empty_data(self):
         """Test get IDR Datafeeds with empty body."""
@@ -838,7 +840,7 @@ class TestCustomersOverview(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertFalse(DataFeedDetailsSchema().validate(response.json))
+        self.assertFalse(response.json)
 
     def test_get_customer_overview_dependency_failure(self) -> None:
         """Test get customer overview 424 dependency failure."""
