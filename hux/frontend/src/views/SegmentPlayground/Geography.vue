@@ -51,7 +51,7 @@
         </empty-page>
         <empty-page
           v-if="!data"
-          class="title-no-notification"
+          class="title-no-notification error-state"
           type="error-on-screens"
           :size="50"
         >
