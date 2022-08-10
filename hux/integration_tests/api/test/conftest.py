@@ -125,7 +125,11 @@ def pytest_unconfigure(config):
     int_test_user_name = getenv("INT_TEST_USER_NAME")
     LOGGER.info("Integration test user's user name: %s", int_test_user_name)
 
-    push_test_metrics()
+    try:
+        push_test_metrics()
+    except Exception as exc:
+        logging.error("Failed to push metrics to Prometheus!")
+        logging.error(exc)
 
     for (
         collection_name,
