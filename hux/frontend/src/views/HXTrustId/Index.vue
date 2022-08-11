@@ -400,7 +400,6 @@ import HuxIcon from "@/components/common/Icon.vue"
 import AddSegmentDrawer from "@/views/HXTrustId/Drawers/AddSegmentDrawer.vue"
 import HuxSwitch from "@/components/common/Switch.vue"
 import EmptyPage from "../../components/common/EmptyPage.vue"
-
 export default {
   name: "HXTrustID",
   components: {
@@ -496,7 +495,6 @@ export default {
         values_respects_everyone: { stroke: "primary", variant: "darken6" },
         values_society_environment: { stroke: "primary", variant: "darken6" },
         takes_care_of_employees: { stroke: "primary", variant: "darken6" },
-
         // Transparency
         transparency: { stroke: "yellow", variant: "darken1" },
         honesty_marketing_comms: { stroke: "yellow", variant: "darken1" },
@@ -506,7 +504,6 @@ export default {
         },
         plain_language_data_policy: { stroke: "yellow", variant: "darken1" },
         clear_fees_costs: { stroke: "yellow", variant: "darken1" },
-
         // Reliability
         reliability: { stroke: "secondary", variant: "lighten2" },
         continuous_product_improvement: {
@@ -519,7 +516,6 @@ export default {
           variant: "lighten2",
         },
         timely_issue_resolution: { stroke: "secondary", variant: "lighten2" },
-
         //Capability
         capability: { stroke: "primary", variant: "darken5" },
         product_quality: { stroke: "primary", variant: "darken5" },
@@ -588,7 +584,6 @@ export default {
     getSegment() {
       return this.segmentScores.map((item) => item.segment_type)
     },
-
     getSegmentTableData() {
       return this.getSelectedSegment
         ? this.getSelectedSegment.segments.map((x, index) => {
@@ -597,7 +592,6 @@ export default {
               segment_filters: x.segment_filters,
               default: x.default,
             }
-
             x.attributes.forEach((item) => {
               segment[item.attribute_type] = item.attribute_score
             })
@@ -610,7 +604,6 @@ export default {
           })
         : []
     },
-
     getSegmentTableHeaders() {
       let headers = [
         {
@@ -626,7 +619,6 @@ export default {
             "Social or behavioral difficulty or disability (e.g. associated with autism, attention deficit disorder or Aspergers’ syndrome)",
         },
       ]
-
       this.getSelectedSegment.segments[0].attributes.forEach((item) => {
         headers.push({
           key: item.attribute_type,
@@ -636,25 +628,20 @@ export default {
           center: true,
         })
       })
-
       headers.push({
         key: "delete",
         col: 1,
       })
-
       return headers
     },
-
     getSelectedSegment() {
       return this.segmentScores.find(
         (x) => x.segment_type == this.selectedSegment?.toLowerCase()
       )
     },
-
     getEmptyType() {
       return !this.segmentComparisonLoading && !this.comparisonErrorState
     },
-
     showAttributes() {
       return (
         !this.attributeErrorState &&
@@ -663,25 +650,21 @@ export default {
         this.attributeData.data.length > 0
       )
     },
-
     segmentTableTitle() {
       return this.segmentErrorState
         ? "Segments currently unavailable"
         : "No segments to show"
     },
-
     segmentTableDescription() {
       return this.segmentErrorState
         ? "Our team is working hard to fix it. Please be patient and try again soon!"
         : "Segments will display when data has been uploaded. Please check back later."
     },
-
     attributeTableTitle() {
       return this.attributeErrorState
         ? "Attributes currently unavailable"
         : "No attributes to show"
     },
-
     attributeTableDescription() {
       return this.attributeErrorState
         ? "Our team is working hard to fix it. Please be patient and try again soon!"
@@ -821,7 +804,6 @@ export default {
   },
 }
 </script>
-
 <style lang="scss" scoped>
 .v-application {
   .hx-trust-id-wrapper {
