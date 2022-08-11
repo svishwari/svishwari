@@ -823,13 +823,8 @@ class TestCustomersOverview(RouteTestCase):
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
             f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.DATAFEEDS}/"
             f"{datafeed_id}",
+            status_code=424,
             json=t_c.IDR_DATAFEED_DETAILS_EMPTY_RESPONSE,
-        )
-
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
-            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.DATAFEEDS}",
-            json=t_c.IDR_DATAFEEDS_EMPTY_RESPONSE,
         )
         self.request_mocker.start()
 
@@ -839,8 +834,7 @@ class TestCustomersOverview(RouteTestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertFalse(response.json)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_get_customer_overview_dependency_failure(self) -> None:
         """Test get customer overview 424 dependency failure."""

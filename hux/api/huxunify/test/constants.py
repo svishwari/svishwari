@@ -1573,9 +1573,8 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 }
 
 IDR_DATAFEED_DETAILS_EMPTY_RESPONSE = {
-    "code": 200,
-    "message": "ok",
-    "body": {},
+    "code": 424,
+    "message": "Failed to obtain data from dependent API endpoint.",
 }
 
 DATASOURCES_RESPONSE = {
@@ -1765,20 +1764,7 @@ IDR_MATCHING_TRENDS_BY_DAY_DATA = {
 IDR_MATCHING_TRENDS_BY_DAY_EMPTY_DATA = {
     "code": 200,
     "message": "ok",
-    api_c.BODY: [
-        {
-            api_c.DAY: "2021-08-01",
-            api_c.UNIQUE_HUX_IDS: 0,
-            api_c.ANONYMOUS_IDS: 0,
-            api_c.KNOWN_IDS: 0,
-        },
-        {
-            api_c.DAY: "2021-08-02",
-            api_c.UNIQUE_HUX_IDS: 0,
-            api_c.ANONYMOUS_IDS: 0,
-            api_c.KNOWN_IDS: 0,
-        },
-    ],
+    api_c.BODY: [],
 }
 
 SCHEDULES = [
