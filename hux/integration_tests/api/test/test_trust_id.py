@@ -5,7 +5,8 @@ from http import HTTPStatus
 import pytest
 import requests
 from prometheus_metrics import record_test_result, HttpMethod, Endpoints
-
+from huxunify.api import constants as api_c
+from huxunifylib.database import constants as db_c
 
 class TestTrustId(TestCase):
     """Test Trust ID."""
@@ -19,6 +20,68 @@ class TestTrustId(TestCase):
             "values": ["Female", "Male"],
         }
     ]
+
+    def test_trust_user_role(self):
+        """Test trust ID user role."""
+        get_user_response = requests.get(
+            f"{pytest.API_URL}/users/profile",
+            headers=pytest.HEADERS,
+        )
+        data = get_user_response.json()
+        user_id = data.get(api_c.ID)
+        user_pii_access = data.get(api_c.USER_PII_ACCESS)
+        user_old_role = data.get(api_c.ROLE)
+
+        update_user_response = requests.patch(
+            f"{pytest.API_URL}/users",
+            json={
+                api_c.ID: user_id,
+                api_c.USER_PII_ACCESS: user_pii_access,
+                api_c.ROLE: db_c.USER_ROLE_TRUSTID,
+            },
+            headers=pytest.HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, update_user_response.status_code)
+
+        get_engagements = requests.get(
+            f"{pytest.API_URL}/engagements",
+            headers=pytest.HEADERS,
+        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, get_engagements.status_code)
+
+        get_audiences = requests.get(
+            f"{pytest.API_URL}/engagements",
+            headers=pytest.HEADERS,
+        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, get_audiences.status_code)
+
+        get_navigation_configuration = requests.get(
+            f"{pytest.API_URL}/configurations/navigation",
+            headers=pytest.HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, get_navigation_configuration.status_code)
+        for parent_config in get_navigation_configuration.json().get(api_c.SETTINGS):
+            if parent_config.get(db_c.CONFIGURATION_FIELD_NAME) == "Insights":
+                self.assertTrue(parent_config.get(db_c.CONFIGURATION_FIELD_ENABLED))
+            else:
+                self.assertFalse(parent_config.get(db_c.CONFIGURATION_FIELD_ENABLED))
+
+            for children_config in parent_config.get(db_c.CONFIGURATION_FIELD_CHILDREN):
+                if children_config.get(db_c.CONFIGURATION_FIELD_NAME) == "HX TrustID":
+                    self.assertTrue(children_config.get(db_c.CONFIGURATION_FIELD_ENABLED))
+                else:
+                    self.assertFalse(children_config.get(db_c.CONFIGURATION_FIELD_ENABLED))
+
+        revert_user_response = requests.patch(
+            f"{pytest.API_URL}/users",
+            json={
+                api_c.ID: user_id,
+                api_c.USER_PII_ACCESS: user_pii_access,
+                api_c.ROLE: user_old_role,
+            },
+            headers=pytest.HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, revert_user_response.status_code)
 
     def test_get_trust_id_user_filters(self):
         """Test get trust ID user filters."""
