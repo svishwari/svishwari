@@ -815,7 +815,7 @@ class TestCustomersOverview(RouteTestCase):
         self.assertFalse(response.json)
 
     def test_get_idr_data_feed_details_empty_data(self) -> None:
-        """Test get idr datafeed details for empty data."""
+        """Test get idr datafeed details for unavailable datafeed_id."""
 
         datafeed_id = 1
         self.request_mocker.stop()
