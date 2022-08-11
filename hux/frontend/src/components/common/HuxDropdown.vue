@@ -69,10 +69,10 @@
               {{ item.name }}
             </div>
             <hux-dropdown
-              v-else-if="item.menu"
+              v-else-if="item.menu || item.metricOptions"
               :key="index"
               :label="item.name"
-              :items="item.options"
+              :items="item.menu || item.metricOptions"
               :is-open-on-hover="false"
               :is-offset-x="true"
               :is-offset-y="false"
