@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="localModal" :width="width" @click:outside="clickOutside()">
+  <v-dialog v-model="localModal" :width="width" persistent>
     <template #activator="{ on, attrs }">
       <slot name="activator" v-bind="attrs" v-on="on"></slot>
     </template>
@@ -185,9 +185,10 @@ export default {
   },
 
   methods: {
-    clickOutside() {
-      this.localModal = true
-    },
+    // clickOutside() {
+    //   console.log("outside click")
+    //   this.localModal = true
+    // },
     logout: function () {
       this.$emit("logout")
     },
