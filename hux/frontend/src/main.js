@@ -21,7 +21,7 @@ Vue.use(VueCompositionAPI)
 Vue.use(IdleVue, {
   eventEmitter: eventsHub,
   store,
-  idleTime: 1680000, // 28 minites idle timer
+  idleTime: 5000, // 28 minites idle timer
   startAtIdle: false,
 })
 

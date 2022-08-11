@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="localModal" :width="width">
+  <v-dialog v-model="localModal" :width="width" @click:outside="clickOutside()">
     <template #activator="{ on, attrs }">
       <slot name="activator" v-bind="attrs" v-on="on"></slot>
     </template>
@@ -50,7 +50,7 @@
             :variant="type"
             height="40"
             is-tile
-            :is-disabled="isDisabled"
+            :is-disabled="true"
             @click="sessioncontinue()"
           >
             {{ rightBtnText }}
@@ -151,8 +151,8 @@ export default {
       localModal: this.value,
       displayMin: 1,
       displaySec: 59,
-      visibleMin: "00",
-      visibleSec: "00",
+      visibleMin: "01",
+      visibleSec: "59",
       sessionInterval: {},
     }
   },
@@ -185,6 +185,9 @@ export default {
   },
 
   methods: {
+    clickOutside() {
+      this.localModal = true
+    },
     logout: function () {
       this.$emit("logout")
     },
@@ -194,6 +197,10 @@ export default {
     start() {
       if (this.displaySec > 0) {
         this.displaySec--
+      }
+      if (this.displayMin == 0 && this.displaySec == 0) {
+        clearInterval(this.sessionInterval)
+        this.logoutSession()
       }
       if (this.displaySec < 1) {
         this.displayMin = 0
@@ -207,12 +214,13 @@ export default {
       if (this.displayMin <= 1) {
         this.visibleMin = "0" + this.displayMin
       }
-
-      if (this.displayMin == 0 && this.displaySec == 0) {
-        clearInterval(this.sessionInterval)
-        this.$store.dispatch("users/getUserProfile")
-        this.$auth.logout()
-      }
+    },
+    async logoutSession() {
+      this.localModal = false
+      await this.$store.dispatch("users/getUserProfile")
+      await this.$auth.logout()
+      this.visibleMin = "00"
+      this.visibleSec = "00"
     },
   },
 }
