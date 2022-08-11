@@ -185,10 +185,6 @@ export default {
   },
 
   methods: {
-    // clickOutside() {
-    //   console.log("outside click")
-    //   this.localModal = true
-    // },
     logout: function () {
       this.$emit("logout")
     },

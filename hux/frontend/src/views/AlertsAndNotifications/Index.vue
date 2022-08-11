@@ -193,13 +193,6 @@
         />
       </div>
     </div>
-    <session-modal
-      v-model="showConfirmModal"
-      icon="time"
-      @logout="logout()"
-      @sessioncontinue="showConfirmModal = !showConfirmModal"
-    >
-    </session-modal>
   </div>
 </template>
 
@@ -219,7 +212,6 @@ import EmptyPage from "@/components/common/EmptyPage"
 import Error from "@/components/common/screens/Error"
 import AlertConfigureDrawer from "./Drawer/AlertConfigure.vue"
 import Status from "@/components/common/Status.vue"
-import SessionModal from "@/components/common/SessionModal"
 
 export default {
   name: "AlertsAndNotifications",
@@ -237,7 +229,6 @@ export default {
     Error,
     Status,
     AlertConfigureDrawer,
-    SessionModal,
   },
   data() {
     return {
@@ -300,7 +291,6 @@ export default {
       numFiltersSelected: 0,
       finalFilterApplied: 1,
       getAllUsers: [],
-      showConfirmModal: false,
     }
   },
   computed: {
@@ -354,12 +344,7 @@ export default {
       getUsersNoti: "notifications/getAllUsers",
     }),
     goBack() {
-      // this.$router.go(-1)
-      this.showConfirmModal = true
-    },
-    async logout() {
-      await this.$store.dispatch("users/getUserProfile")
-      this.$auth.logout()
+      this.$router.go(-1)
     },
     totalFiltersSelected(value) {
       this.numFiltersSelected = value
