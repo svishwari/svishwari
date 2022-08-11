@@ -3,6 +3,7 @@ from unittest import TestCase
 from http import HTTPStatus
 import pytest
 import requests
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestDelivery(TestCase):
@@ -79,6 +80,9 @@ class TestDelivery(TestCase):
                 continue
             break
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.DELIVERY.GET_ENGAGEMENT_DELIVERY_HISTORY
+    )
     def test_get_engagement_delivery_history(self):
         """Test get engagement delivery history."""
 
@@ -93,6 +97,9 @@ class TestDelivery(TestCase):
             self.assertEqual(HTTPStatus.OK, response.status_code)
             self.assertIsInstance(response.json(), list)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.DELIVERY.GET_AUDIENCE_DELIVERY_HISTORY
+    )
     def test_get_audience_delivery_history(self):
         """Test get audience delivery history."""
 
@@ -107,6 +114,9 @@ class TestDelivery(TestCase):
             self.assertEqual(HTTPStatus.OK, response.status_code)
             self.assertIsInstance(response.json(), list)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.DELIVERY.POST_DELIVER_AUDIENCE
+    )
     def test_deliver_audience_to_destination(self):
         """Test deliver audience to a destination."""
 
@@ -128,6 +138,9 @@ class TestDelivery(TestCase):
             self.assertEqual(HTTPStatus.CREATED, response.status_code)
             self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.DELIVERY.POST_DELIVER_ALL_ENGAGED_AUDIENCES
+    )
     def test_deliver_audience_in_engagement(self):
         """Test deliver audience that is part of an engagement."""
 
@@ -148,6 +161,10 @@ class TestDelivery(TestCase):
             self.assertEqual(HTTPStatus.OK, response.status_code)
             self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.POST,
+        Endpoints.DELIVERY.POST_DELIVER_ENGAGED_AUDIENCE_TO_DESTINATION,
+    )
     def test_deliver_engagement_audience_to_destination(self):
         """Test deliver an engagement audience to a destination."""
 
@@ -168,6 +185,10 @@ class TestDelivery(TestCase):
             self.assertEqual(HTTPStatus.OK, response.status_code)
             self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.POST,
+        Endpoints.DELIVERY.POST_SET_DELIVERY_SCHEDULE_ENGAGED_AUDIENCE,
+    )
     def test_update_delivery_schedule_for_audience_in_engagement(self):
         """Test updating delivery schedule for an audience in engagement and
         reset it."""
@@ -207,6 +228,9 @@ class TestDelivery(TestCase):
             self.assertEqual(HTTPStatus.OK, reset_response.status_code)
             self.assertIsInstance(reset_response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.DELIVERY.POST_DELIVER_ENGAGED_AUDIENCE
+    )
     def test_deliver_audience_in_an_engagement(self):
         """Test deliver audience in an engagement to the destinations attached
         to it."""
@@ -224,11 +248,16 @@ class TestDelivery(TestCase):
             self.assertEqual(HTTPStatus.OK, response.status_code)
             self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.POST,
+        Endpoints.DELIVERY.POST_SET_DELIVERY_SCHEDULE_DESTINATION_ENGAGED_AUDIENCE,
+    )
     def test_update_and_delete_destination_delivery_schedule_in_engagement_audience(
         self,
     ):
         """Test updating and followed by deleting delivery schedule for a
         destination in an engagement audience."""
+        # TODO https://jira.hux.deloitte.com/browse/HUS-3676
 
         if (
             self.engagement_id

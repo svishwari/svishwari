@@ -469,7 +469,7 @@ export default {
               if (groupKey.includes("model")) {
                 _subOption["modelIcon"] = "model"
                 _subOption["selected"] = "value"
-                _subOption["menu"] = [
+                _subOption["options"] = [
                   {
                     key: "value",
                     name: "Value",
@@ -481,9 +481,9 @@ export default {
                     type: "range",
                   },
                 ]
-                _subOption.menu.forEach((item) => {
+                _subOption.options.forEach((item) => {
                   let tempobj = cloneDeep(_subOption)
-                  delete tempobj.menu
+                  delete tempobj.options
                   item.model = tempobj
                 })
               }
@@ -502,16 +502,16 @@ export default {
     },
     listOptions(condition) {
       if (condition.attribute.key === "city") {
-        // if (this.currentCityData.length == 0) {
-        //   this.selectedValue = "city"
-        //   this.autoSearchFunc(condition.text)
-        // }
+        if (this.currentCityData.length == 0) {
+          this.selectedValue = "city"
+          this.autoSearchFunc(condition.text)
+        }
         return this.currentCityData
       } else if (condition.attribute.key === "zip") {
-        // if (this.currentData.length == 0) {
-        //   this.selectedValue = "zip_code"
-        //   this.autoSearchFunc(condition.text)
-        // }
+        if (this.currentData.length == 0) {
+          this.selectedValue = "zip_code"
+          this.autoSearchFunc(condition.text)
+        }
         return this.currentData
       } else {
         return condition.attribute.options

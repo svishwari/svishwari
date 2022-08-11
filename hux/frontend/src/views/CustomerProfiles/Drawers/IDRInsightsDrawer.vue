@@ -104,6 +104,12 @@ export default {
       required: true,
       default: false,
     },
+
+    idrData: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
   },
 
   data() {
@@ -197,7 +203,10 @@ export default {
   },
 
   mounted() {
-    this.idrData = this.overview.idr_insights
+    this.mapIDRItems()
+  },
+
+  updated() {
     this.mapIDRItems()
   },
 

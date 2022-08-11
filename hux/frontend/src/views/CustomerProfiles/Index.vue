@@ -490,7 +490,7 @@
         :toggle="geoDrawer.states"
         @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
       />
-      <i-d-r-insights-drawer v-model="idrInsightsDrawer" />
+      <i-d-r-insights-drawer v-model="idrInsightsDrawer" :idr-data="idrData" />
     </div>
   </div>
 </template>
@@ -638,6 +638,7 @@ export default {
       totalCustomerError: false,
       CustomerSpendError: false,
       geoOverviewError: false,
+      idrData: {},
     }
   },
   computed: {
@@ -733,6 +734,8 @@ export default {
         }
         this.overviewListItems[4].value = "none"
         this.overviewListItems[5].subtitle = this.mapGenderData()
+
+        this.idrData = this.overview.idr_insights
       }
     },
     toggleGeoDrawer(geoLevel = "states") {

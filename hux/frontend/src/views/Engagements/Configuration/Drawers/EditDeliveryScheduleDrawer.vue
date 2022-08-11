@@ -188,7 +188,7 @@ export default {
       loading: false,
       localToggle: false,
       localSchedule: JSON.parse(
-        JSON.stringify(deliverySchedule(this.currentSchedule.schedule))
+        JSON.stringify(deliverySchedule(this.currentSchedule?.schedule))
       ),
       isRecurringFlag: false,
       selectedStartDate: "Select date",
@@ -249,7 +249,7 @@ export default {
       this.isRecurringFlag = Object.keys(this.currentSchedule).length > 0
       if (this.isRecurringFlag) {
         this.localSchedule = JSON.parse(
-          JSON.stringify(deliverySchedule(this.currentSchedule.schedule))
+          JSON.stringify(deliverySchedule(this.currentSchedule?.schedule))
         )
         this.selectedStartDate = new Date(
           this.currentSchedule.start_date,

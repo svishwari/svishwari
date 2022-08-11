@@ -4,6 +4,7 @@ from unittest import TestCase
 from http import HTTPStatus
 import pytest
 import requests
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestModels(TestCase):
@@ -28,11 +29,13 @@ class TestModels(TestCase):
         self.test_model_id = [
             model["id"]
             for model in get_models_response.json()
-            if "id" in model
+            if "id" in model and model["id"] == "LifetimeValue_sum_Price"
         ][0]
 
+    @record_test_result(HttpMethod.POST, Endpoints.MODEL.POST_REQUEST_MODEL)
     def test_create_and_delete_model(self):
         """Test creating and deleting a model."""
+        # TODO https://jira.hux.deloitte.com/browse/HUS-3637
 
         create_response = requests.post(
             f"{pytest.API_URL}/{self.MODELS}",
@@ -63,6 +66,7 @@ class TestModels(TestCase):
         self.assertEqual(HTTPStatus.OK, delete_response.status_code)
         self.assertIsInstance(delete_response.json(), dict)
 
+    @record_test_result(HttpMethod.GET, Endpoints.MODEL.GET_ALL_MODELS)
     def test_get_models(self):
         """Test get all models."""
 
@@ -76,6 +80,9 @@ class TestModels(TestCase):
         self.assertIsInstance(response.json(), list)
         self.assertGreaterEqual(len(response.json()), 1)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.MODEL.GET_MODEL_PIPELINE_PERFORMANCE
+    )
     def test_get_model_pipeline_performance(self):
         """Test get model's pipeline performance."""
 
@@ -92,6 +99,9 @@ class TestModels(TestCase):
         self.assertIsNotNone(fetch_response.json()["training"])
         self.assertIsNotNone(fetch_response.json()["scoring"])
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.MODEL.GET_MODEL_VERSION_HISTORY
+    )
     def test_get_model_version_history(self):
         """Test get model's version history."""
 
@@ -106,6 +116,7 @@ class TestModels(TestCase):
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
         self.assertIsInstance(fetch_response.json(), list)
 
+    @record_test_result(HttpMethod.GET, Endpoints.MODEL.GET_MODEL_OVERVIEW)
     def test_get_model_overview(self):
         """Test get model's overview."""
 
@@ -120,6 +131,7 @@ class TestModels(TestCase):
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
         self.assertIsInstance(fetch_response.json(), dict)
 
+    @record_test_result(HttpMethod.GET, Endpoints.MODEL.GET_MODEL_FEATURES)
     def test_get_model_features(self):
         """Test get model's features."""
 
@@ -134,6 +146,7 @@ class TestModels(TestCase):
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
         self.assertIsInstance(fetch_response.json(), list)
 
+    @record_test_result(HttpMethod.GET, Endpoints.MODEL.GET_MODEL_DRIFT)
     def test_get_model_drift(self):
         """Test get model's drift."""
 
@@ -147,6 +160,7 @@ class TestModels(TestCase):
         self.assertEqual(HTTPStatus.OK, fetch_response.status_code)
         self.assertIsInstance(fetch_response.json(), list)
 
+    @record_test_result(HttpMethod.GET, Endpoints.MODEL.GET_MODEL_LIFT)
     def test_get_model_lift(self):
         """Test get model's lift."""
 

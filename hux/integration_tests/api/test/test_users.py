@@ -3,6 +3,7 @@ from http import HTTPStatus
 from unittest import TestCase
 import pytest
 import requests
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestUsers(TestCase):
@@ -106,6 +107,7 @@ class TestUsers(TestCase):
                 headers=pytest.HEADERS,
             )
 
+    @record_test_result(HttpMethod.GET, Endpoints.USER.GET_REQUESTED_USERS)
     def test_retrieve_requested_users(self):
         """Test retrieve requested users."""
 
@@ -117,6 +119,7 @@ class TestUsers(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
 
+    @record_test_result(HttpMethod.GET, Endpoints.USER.GET_ALL_USERS)
     def test_retrieve_all_users(self):
         """Test retrieve all users."""
 
@@ -128,6 +131,7 @@ class TestUsers(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), list)
 
+    @record_test_result(HttpMethod.GET, Endpoints.USER.GET_USER_PROFILE)
     def test_retrieve_user_profile(self):
         """Test retrieve the user profile."""
 
@@ -139,6 +143,9 @@ class TestUsers(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.PUT, Endpoints.USER.PUT_UPDATE_USER_PREFERENCES
+    )
     def test_update_user_preferences(self):
         """Test update user preferences."""
 
@@ -192,6 +199,7 @@ class TestUsers(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(HttpMethod.PATCH, Endpoints.USER.PATCH_UPDATE_USER)
     def test_update_user(self):
         """Test update user."""
 
@@ -206,8 +214,12 @@ class TestUsers(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.USER.POST_CREATE_USER_FAVORITE
+    )
     def test_create_and_delete_a_user_favorite(self):
         """Test create and delete user favorite."""
+        # TODO https://jira.hux.deloitte.com/browse/HUS-3680
 
         # retrieve all audiences
         response = requests.get(
@@ -237,6 +249,7 @@ class TestUsers(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(HttpMethod.GET, Endpoints.USER.GET_REQUESTED_USERS)
     def test_retrieve_user_requested_tickets(self):
         """Test retrieve user requested tickets."""
 
@@ -247,6 +260,7 @@ class TestUsers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(HttpMethod.GET, Endpoints.USER.GET_SEEN_NOTIFICATIONS)
     def test_user_seen_notifications(self):
         """Test user seen notifications."""
 

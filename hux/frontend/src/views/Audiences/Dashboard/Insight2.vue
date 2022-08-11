@@ -334,7 +334,7 @@
             <div :style="{ width: '1.5%' }"></div>
             <div
               v-if="!audienceError"
-              class="mt-3"
+              class="mt-3 mb-3"
               :style="{ width: advertisingCols + '%' }"
             >
               <div
@@ -358,7 +358,11 @@
                   class="collapse-icon ml-1 mr-2"
                 />
               </div>
-              <v-card v-if="showAdvertising" class="digital-adv ml-6 mt-4" flat>
+              <v-card
+                v-if="showAdvertising"
+                class="digital-adv ml-6 mt-4 mb-4"
+                flat
+              >
                 <v-card-title v-if="showAdvertising" class="ml-2 text-h3">
                   Digital advertising
                 </v-card-title>
@@ -820,7 +824,7 @@ export default {
             }
           })
         })
-        if (eventFilters.length > 0) {
+        if (eventFilters.length > 0 && _filters["general"]) {
           _filters["general"].event = eventFilters
         }
       }
@@ -846,7 +850,7 @@ export default {
         parseInt(
           this.$refs.advertisingcard.parentElement.parentElement.clientHeight
         ) +
-        this.audienceData.lookalike_audiences.length * 4 +
+        this.audienceData?.lookalike_audiences?.length * 4 +
         "px"
     }
   },
@@ -1392,7 +1396,7 @@ export default {
       }
     },
     matchHeight() {
-      var heightString = this.$refs.infoBox.$el.clientHeight + "px"
+      var heightString = this.$refs.infoBox?.$el.clientHeight + "px"
       Vue.set(this.matchrateStyles, "height", heightString)
     },
     openLookalikeEditModal() {

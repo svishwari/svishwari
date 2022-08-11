@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card
-      v-if="insights && !profileError"
+      v-if="Object.keys(insights).length > 0 && !profileError"
       class="rounded-lg box-shadow-5"
       height="240"
       data-e2e="chord"

@@ -3,7 +3,7 @@ import logging
 from typing import Tuple
 from pathlib import Path
 
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, ManagedIdentityCredential
 from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import ContainerClient
 
@@ -25,6 +25,8 @@ class AzureClient(CloudClient):
 
         super().__init__(config)
 
+        # TODO: HUS-3524 - Revert after pod identity validation
+        self.environment_name = self.config.ENV_NAME
         self.vault_url = (
             f"https://{self.config.AZURE_KEY_VAULT_NAME}.vault.azure.net"
         )
@@ -44,13 +46,30 @@ class AzureClient(CloudClient):
         """
 
         try:
-            return SecretClient(
-                vault_url=self.vault_url,
-                credential=ClientSecretCredential(
+            # TODO: HUS-3524 - Revert/Modify after pod identity validation
+            if self.environment_name == "HUSDEV2":
+                logging.info(
+                    "START - Initialized ManagedIdentityCredential for HUSDEV2."
+                )
+                credential = ManagedIdentityCredential(
+                    client_id="310065bb-ef77-4272-8028-cd517455c403",
+                    identity_config={
+                        "object_id": "bbad0cca-39d7-40c8-9592-e09fa9c79647"
+                    },
+                )
+                logging.info(
+                    "END - Initialized ManagedIdentityCredential for HUSDEV2."
+                )
+            else:
+                credential = ClientSecretCredential(
                     tenant_id=self.config.AZURE_TENANT_ID,
                     client_id=self.config.AZURE_CLIENT_ID,
                     client_secret=self.config.AZURE_CLIENT_SECRET,
-                ),
+                )
+
+            return SecretClient(
+                vault_url=self.vault_url,
+                credential=credential,
             )
         except Exception as exc:
             logging.error("Failed to initialise Azure secret client.")
@@ -80,13 +99,16 @@ class AzureClient(CloudClient):
             )
             raise exc
 
-    def set_secret(self, secret_name: str, value: str, **kwargs) -> None:
+    def set_secret(self, secret_name: str, value: str, **kwargs) -> str:
         """Set the secret in the cloud.
 
         Args:
             secret_name (str): Name of the secret.
             value (str): The value of the secret.
             **kwargs (dict): function keyword arguments.
+
+        Returns:
+            str: The value of the secret.
 
         Raises:
             Exception: Exception that will be raised if the operation fails.
@@ -95,7 +117,11 @@ class AzureClient(CloudClient):
         try:
             # creates a new secret if a secret with this secret name doesn't
             # exist already, sets a new latest version of secret otherwise
-            self.get_secret_client().set_secret(name=secret_name, value=value)
+            client_secret_set = self.get_secret_client().set_secret(
+                name=secret_name, value=value
+            )
+            # TODO: HUS-3524 - Revert after pod identity validation
+            return client_secret_set.value
         except Exception as exc:
             logging.error("Failed to set %s in Azure key vault.", secret_name)
             raise exc
@@ -239,8 +265,16 @@ class AzureClient(CloudClient):
         secret_name = "unifieddb-rw"
 
         try:
-            self.get_secret_client().get_secret(secret_name)
-            return True, "Azure key vault available."
+            # TODO: HUS-3524 - Revert after pod identity validation
+            secret_value_get = self.get_secret(secret_name)
+            secret_value_set = self.set_secret(
+                secret_name=secret_name, value=secret_value_get
+            )
+            return (
+                True,
+                f"Azure key vault available.GET secret {secret_name}:{secret_value_get},"
+                f" SET secret {secret_name}:{secret_value_set}.",
+            )
         except Exception as exc:
             logging.error(
                 "Failed to get %s from Azure key vault. Azure key vault is unavailable",

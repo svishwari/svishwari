@@ -4,6 +4,7 @@ from http import HTTPStatus
 from unittest import TestCase
 import pytest
 import requests
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestCustomers(TestCase):
@@ -14,6 +15,9 @@ class TestCustomers(TestCase):
     IDR = "idr"
     AUDIENCES = "audiences"
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_INSIGHTS_COUNTRIES
+    )
     def test_customers_insights_countries(self):
         """Testing customers insights countries."""
 
@@ -24,6 +28,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_INSIGHTS_REVENUE
+    )
     def test_customers_insights_revenue(self):
         """Testing customers insights revenue."""
 
@@ -34,6 +41,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_INSIGHTS_STATES
+    )
     def test_customers_insights_states(self):
         """Testing customers insights states."""
 
@@ -44,6 +54,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_INSIGHTS_CITIES
+    )
     def test_customers_insights_cities(self):
         """Testing customers insights cities."""
 
@@ -54,6 +67,7 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(HttpMethod.GET, Endpoints.CUSTOMERS.GET_INSIGHTS_TOTAL)
     def test_customers_insights_total(self):
         """Testing customers insights total."""
 
@@ -64,6 +78,7 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(HttpMethod.GET, Endpoints.CUSTOMERS.GET_INSIGHTS_DEMO)
     def test_customers_insights_demo(self):
         """Testing customers insights demo."""
 
@@ -80,6 +95,7 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(HttpMethod.GET, Endpoints.CUSTOMERS.GET_INSIGHTS_GEO)
     def test_customers_insights_geo(self):
         """Testing customers insights geo."""
 
@@ -90,6 +106,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_INSIGHTS_OVERVIEW
+    )
     def test_get_customers_overview(self):
         """Testing customers overview endpoint."""
 
@@ -100,6 +119,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.CUSTOMERS.POST_INSIGHTS_OVERVIEW
+    )
     def test_post_customers_overview(self):
         """Testing Post customer overview endpoint."""
 
@@ -124,6 +146,7 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(HttpMethod.GET, Endpoints.CUSTOMERS.GET_CUSTOMERS)
     def test_customers_list(self):
         """Test customers list."""
 
@@ -134,6 +157,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.CUSTOMERS.POST_CUSTOMER_EVENTS
+    )
     def test_customers_events(self):
         """Test Customer events."""
 
@@ -156,6 +182,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_CUSTOMER_PROFILE
+    )
     def test_customer_profile(self):
         """Test Customer profile."""
 
@@ -171,6 +200,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_IDR_MATCHING_TRENDS
+    )
     def test_idr_matching_trends(self):
         """Testing idr matching trends."""
 
@@ -181,6 +213,7 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(HttpMethod.GET, Endpoints.CUSTOMERS.GET_IDR_DATAFEEDS)
     def test_idr_datafeeds(self):
         """Testing idr datafeeds."""
 
@@ -190,6 +223,7 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(HttpMethod.GET, Endpoints.CUSTOMERS.GET_IDR_OVERVIEW)
     def test_idr_overview(self):
         """Testing idr overview."""
 
@@ -199,6 +233,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_IDR_DATAFEED_REPORT
+    )
     def test_idr_datafeed(self):
         """Testing idr datafeed."""
 
@@ -216,6 +253,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_AUDIENCE_REVENUE
+    )
     def test_audience_insights_revenue(self):
         """Testing audience insights revenue."""
 
@@ -231,6 +271,9 @@ class TestCustomers(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.CUSTOMERS.GET_AUDIENCE_INSIGHTS
+    )
     def test_audience_insights_total(self):
         """Testing audience insights total."""
 
