@@ -7,6 +7,7 @@ import requests
 from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 from huxunify.api import constants as api_c
 
+
 class TestModels(TestCase):
     """Test Models/Decisioning."""
 
