@@ -48,11 +48,17 @@ class AzureClient(CloudClient):
         try:
             # TODO: HUS-3524 - Revert/Modify after pod identity validation
             if self.environment_name == "HUSDEV2":
+                logging.info(
+                    "START - Initialized ManagedIdentityCredential for HUSDEV2."
+                )
                 credential = ManagedIdentityCredential(
                     client_id="310065bb-ef77-4272-8028-cd517455c403",
                     identity_config={
                         "object_id": "bbad0cca-39d7-40c8-9592-e09fa9c79647"
                     },
+                )
+                logging.info(
+                    "END - Initialized ManagedIdentityCredential for HUSDEV2."
                 )
             else:
                 credential = ClientSecretCredential(
