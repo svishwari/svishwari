@@ -34,7 +34,7 @@
             <template #subtitle-extended>
               <tooltip>
                 <template #label-content>
-                  <span class="text--subtitle-1">
+                  <span class="text-subtitle-1">
                     {{ getFormattedValue(item) | Empty }}
                   </span>
                 </template>
