@@ -35,14 +35,23 @@
         <icon
           class="mr-1 mt-n1"
           :type="
-            audience.standalone_deliveries.length == 0 ? 'deliver' : 'deliver_2'
+            audience.standalone_deliveries &&
+            audience.standalone_deliveries.length == 0
+              ? 'deliver'
+              : 'deliver_2'
           "
           :size="37"
           :color="
-            audience.standalone_deliveries.length == 0 ? 'black' : 'primary'
+            audience.standalone_deliveries &&
+            audience.standalone_deliveries.length == 0
+              ? 'black'
+              : 'primary'
           "
           :variant="
-            audience.standalone_deliveries.length == 0 ? 'lighten3' : 'base'
+            audience.standalone_deliveries &&
+            audience.standalone_deliveries.length == 0
+              ? 'lighten3'
+              : 'base'
           "
         />
         <span class="deliverAll"> Deliver all </span>
@@ -150,6 +159,7 @@
         >
           <v-list-item
             data-e2e="add-standalone-destination"
+            class="click-effect"
             @click="$emit('onAddStandaloneDestination', audience)"
           >
             <tooltip>
@@ -177,9 +187,10 @@
               text
               min-width="7rem"
               height="2rem"
-              class="primary--text text-body-1 mt-n1"
+              class="primary--text text-body-1 mt-n1 click-effect"
+              :ripple="false"
             >
-              <span class="destination_text">Destination</span>
+              <span class="destination_text mt-1">Destination</span>
             </v-btn>
           </v-list-item>
         </v-list>
@@ -463,6 +474,10 @@ export default {
 
 .destination_text {
   margin-top: -2px;
+}
+
+.click-effect::before {
+  display: none;
 }
 
 .plus-icon {

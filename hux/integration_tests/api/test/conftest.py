@@ -7,11 +7,12 @@ import pytest
 from _pytest.config import Config
 from requests.exceptions import MissingSchema
 from bson import ObjectId
-from pymongo import MongoClient
 from get_okta_token import OktaOIDC
 
 
 # change log level from WARNING to INFO and initialise logger for conftest
+from prometheus_metrics import push_test_metrics
+
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 # ENV VARS
@@ -70,7 +71,7 @@ def pytest_configure(config: Config):
     pytest.CRUD_OBJECTS = []
     pytest.APP_URL_BASE = getenv(INT_TEST_HOST).replace("/api", "")
     pytest.API_URL = f"{getenv(INT_TEST_HOST)}/{getenv(INT_TEST_API_VERSION)}"
-    pytest.DB_CLIENT = MongoClient(**MONGO_DB_CONFIG)[DATABASE]
+    # pytest.DB_CLIENT = MongoClient(**MONGO_DB_CONFIG)[DATABASE]
 
     try:
         # setup the oidc class.
@@ -123,6 +124,12 @@ def pytest_unconfigure(config):
     # collections
     int_test_user_name = getenv("INT_TEST_USER_NAME")
     LOGGER.info("Integration test user's user name: %s", int_test_user_name)
+
+    try:
+        push_test_metrics()
+    except Exception as exc:
+        logging.error("Failed to push metrics to Prometheus!")
+        logging.error(exc)
 
     for (
         collection_name,

@@ -169,7 +169,7 @@
                       :loader="loaderValue"
                       :placeholder="getPlaceHolderText(condition)"
                       @change="triggerSizing(condition)"
-                      @search-update="autoSearchFunc"
+                      @search-update="autoSearchFunc(condition, $event)"
                     />
                     <div
                       v-if="condition.attribute && !isTextORSelect(condition)"
@@ -381,7 +381,7 @@
           <hr class="black lighten-2" />
           <v-chip
             small
-            class="mx-2 my-1 text-body-2"
+            class="mx-2 mb-1 text-body-2"
             :text-color="readMode ? 'white' : 'primary'"
             :color="readMode ? 'black lighten-3' : 'primary lighten-3'"
             :ripple="false"
@@ -394,7 +394,7 @@
         <hr class="black lighten-2" />
         <v-chip
           small
-          class="mx-2 my-1 text-body-1 cursor-pointer"
+          class="mx-2 mb-1 text-body-1 cursor-pointer"
           :text-color="readMode ? 'white' : 'primary'"
           :color="readMode ? 'black lighten-3' : 'primary lighten-3'"
           :ripple="false"
@@ -511,7 +511,6 @@ export default {
       },
       currentData: [],
       currentCityData: [],
-      selectedValue: null,
       params: {},
       loaderValue: false,
       selectedStartDate: new Date(
@@ -542,6 +541,12 @@ export default {
 
     ifRouteSegmentPlayground() {
       return this.$route.name === "SegmentPlayground"
+    },
+  },
+
+  watch: {
+    rules: function () {
+      this.updateSizes()
     },
   },
 
@@ -637,7 +642,7 @@ export default {
               if (groupKey.includes("model")) {
                 _subOption["modelIcon"] = "model-" + _subOption.icon
                 _subOption["selected"] = "value"
-                _subOption["menu"] = [
+                _subOption["metricOptions"] = [
                   {
                     key: "value",
                     name: "Value",
@@ -649,9 +654,9 @@ export default {
                     type: "range",
                   },
                 ]
-                _subOption.menu.forEach((item) => {
+                _subOption.metricOptions.forEach((item) => {
                   let tempobj = cloneDeep(_subOption)
-                  delete tempobj.menu
+                  delete tempobj.metricOptions
                   item.model = tempobj
                 })
               }
@@ -670,18 +675,8 @@ export default {
       } else return []
     },
     listOptions(condition) {
-      if (condition.attribute.key === "city") {
-        // if (this.currentCityData.length == 0) {
-        //   this.selectedValue = "city"
-        //   this.autoSearchFunc(condition.text)
-        // }
-        return this.currentCityData
-      } else if (condition.attribute.key === "zip") {
-        // if (this.currentData.length == 0) {
-        //   this.selectedValue = "zip_code"
-        //   this.autoSearchFunc(condition.text)
-        // }
-        return this.currentData
+      if (["city", "zip_code"].includes(condition.attribute.key)) {
+        return condition.autoCompleteOptions
       } else {
         return condition.attribute.options
       }
@@ -797,6 +792,13 @@ export default {
       for (let i = 0; i < rule.conditions.length; i++) {
         let triggerOverallSize = rule.conditions.length - 1 === i ? true : false
         this.triggerSizing(rule.conditions[i], triggerOverallSize)
+
+        if (["city", "zip_code"].includes(rule.conditions[i].attribute.key)) {
+          this.autoSearchFunc(
+            rule.conditions[i],
+            rule.conditions[i].text.split("|")[0]
+          )
+        }
       }
     },
 
@@ -913,7 +915,6 @@ export default {
       let dataItem = item.model ? item.model : item
       condition[type] = dataItem
       if (type === "attribute") {
-        this.selectedValue = dataItem.key
         if (dataItem.type == "range") {
           let data = await this.attributesData({
             field: dataItem.modelIcon ? "model" : dataItem.key,
@@ -1004,27 +1005,18 @@ export default {
       this.addNewSubCondition(newSection.id, condition)
       this.$forceUpdate()
     },
-    async autoSearchFunc(value) {
+    async autoSearchFunc(cond, value) {
       if (value !== null && value !== "" && value !== undefined) {
-        if (
-          this.selectedValue === "zip_code" ||
-          this.selectedValue === "city"
-        ) {
-          this.params.fieldType =
-            this.selectedValue === "zip_code"
-              ? "zip_code"
-              : this.selectedValue.toLowerCase()
-          this.params.key = value
-          if (value.length > 2 && value.length <= 8) {
+        if (["zip_code", "city"].includes(cond.attribute.key)) {
+          this.params.fieldType = cond.attribute.key.toLowerCase()
+          this.params.key = value.split("|")[0]
+          if (value.length > 2) {
             this.loaderValue = true
             let data = await this.getAudiencesRulesByFields(this.params)
-            if (this.selectedValue === "zip_code") {
-              this.loaderValue = false
-              this.currentData = [...data]
-            } else if (this.selectedValue === "city") {
-              this.loaderValue = false
-              this.currentCityData = [...data]
+            if ([...data].length > 0) {
+              cond.autoCompleteOptions = [...data]
             }
+            this.loaderValue = false
           }
         }
       }
@@ -1034,14 +1026,7 @@ export default {
         value === undefined ||
         value.length < 3
       ) {
-        if (this.selectedValue === "zip_code") {
-          this.currentData = []
-        } else if (this.selectedValue === "city") {
-          this.currentCityData = []
-        } else {
-          this.currentData = []
-          this.currentCityData = []
-        }
+        cond.autoCompleteOptions = []
       }
     },
 
