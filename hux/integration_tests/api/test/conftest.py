@@ -5,6 +5,7 @@ from os import getenv, environ
 from collections import namedtuple
 import pytest
 from _pytest.config import Config
+from mongomock import MongoClient
 from requests.exceptions import MissingSchema
 from bson import ObjectId
 from get_okta_token import OktaOIDC
@@ -71,7 +72,7 @@ def pytest_configure(config: Config):
     pytest.CRUD_OBJECTS = []
     pytest.APP_URL_BASE = getenv(INT_TEST_HOST).replace("/api", "")
     pytest.API_URL = f"{getenv(INT_TEST_HOST)}/{getenv(INT_TEST_API_VERSION)}"
-    # pytest.DB_CLIENT = MongoClient(**MONGO_DB_CONFIG)[DATABASE]
+    pytest.DB_CLIENT = MongoClient(**MONGO_DB_CONFIG)[DATABASE]
 
     try:
         # setup the oidc class.
