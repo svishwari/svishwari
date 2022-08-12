@@ -647,7 +647,7 @@ export default {
     getAttributeOption(attribute_key, options) {
       for (let opt of options) {
         if (opt.menu && opt.menu.length > 0) {
-          return opt.menu.filter((menuOpt) => menuOpt.key === attribute_key)[0]
+          return opt.menu.find((menuOpt) => menuOpt.key === attribute_key)
         } else if (opt.key === attribute_key) {
           return opt
         }
@@ -731,7 +731,7 @@ export default {
             let _operators = this.$refs?.filters.operatorOptions(cond)
             cond.operator =
               cond.operator !== "range"
-                ? _operators.filter((opt) => opt.key === cond.operator)[0]
+                ? _operators.find((opt) => opt.key === cond.operator)
                 : cond.operator
 
             if (cond.rules.length > 0) {
