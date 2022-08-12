@@ -1,6 +1,7 @@
 """Purpose of this file is to house trust ID schemas."""
 
 from flask_marshmallow import Schema
+from marshmallow import pre_dump
 from marshmallow.fields import List, Integer, Nested, Str, Float, Boolean
 from marshmallow.validate import Range, OneOf
 
@@ -59,6 +60,25 @@ class FactorScoreOverviewSchema(Schema):
     )
     overall_customer_rating = Nested(OverallCustomerRatingSchema)
 
+    @pre_dump
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    def round_up_scores(self, data: dict, many: bool = False) -> dict:
+        """Round up score value to whole numbers
+        Args:
+            data (dict): Factor details dict
+            many (bool): If multiple objects
+
+        Returns:
+            dict : Returns a factor details object
+        """
+        if data[api_c.TRUST_ID_FACTOR_SCORE]:
+            data[api_c.TRUST_ID_FACTOR_SCORE] = round(
+                data[api_c.TRUST_ID_FACTOR_SCORE]
+            )
+
+        return data
+
 
 class TrustIdOverviewSchema(Schema):
     """Trust ID overview Schema"""
@@ -94,6 +114,25 @@ class TrustIdAttributesSchema(Schema):
     attribute_short_description = Str(required=True, example="Good Quality")
     overall_customer_rating = Nested(OverallCustomerRatingSchema)
 
+    @pre_dump
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    def round_up_scores(self, data: dict, many: bool = False) -> dict:
+        """Round up score value to whole numbers
+        Args:
+            data (dict): Attribute details dict
+            many (bool): If multiple objects
+
+        Returns:
+            dict : Returns an attribute details object
+        """
+        if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
+            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
+                data[api_c.TRUST_ID_ATTRIBUTE_SCORE]
+            )
+
+        return data
+
 
 class AttributeScoreOverviewSchema(Schema):
     """Attribute score overview schema."""
@@ -114,6 +153,25 @@ class AttributeScoreOverviewSchema(Schema):
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
     attribute_description = Str(required=True, example="Good Quality")
+
+    @pre_dump
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    def round_up_scores(self, data: dict, many: bool = False) -> dict:
+        """Round up score value to whole numbers
+        Args:
+            data (dict): Attribute details dict
+            many (bool): If multiple objects
+
+        Returns:
+            dict : Returns an attribute details object
+        """
+        if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
+            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
+                data[api_c.TRUST_ID_ATTRIBUTE_SCORE]
+            )
+
+        return data
 
 
 class TrustIdSegmentFilterSchema(Schema):
