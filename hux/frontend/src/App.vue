@@ -3,16 +3,28 @@
     <component :is="layout">
       <router-view :key="$route.path" />
       <p v-if="isIdle"></p>
+      <session-modal
+        v-model="showConfirmModal"
+        icon="time"
+        @logout="logout()"
+        @sessioncontinue="showConfirmModal = false"
+      >
+      </session-modal>
     </component>
   </v-app>
 </template>
 
 <script>
+import SessionModal from "@/components/common/SessionModal"
 export default {
   name: "App",
+  components: {
+    SessionModal,
+  },
   data() {
     return {
       initialLoad: true,
+      showConfirmModal: false,
     }
   },
   computed: {
@@ -32,10 +44,14 @@ export default {
   methods: {
     showAlertModel(idleState) {
       if (idleState && !this.initialLoad && this.layout !== "default-layout") {
-        alert("you have left this browser idle for 28 minutes!")
+        this.showConfirmModal = true
       } else if (this.initialLoad && this.layout !== "default-layout") {
         this.initialLoad = false
       }
+    },
+    async logout() {
+      await this.$store.dispatch("users/getUserProfile")
+      this.$auth.logout()
     },
   },
 }

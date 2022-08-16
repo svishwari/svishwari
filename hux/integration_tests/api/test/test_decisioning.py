@@ -5,6 +5,7 @@ from http import HTTPStatus
 import pytest
 import requests
 from prometheus_metrics import record_test_result, HttpMethod, Endpoints
+from huxunify.api import constants as api_c
 
 
 class TestModels(TestCase):
@@ -29,7 +30,7 @@ class TestModels(TestCase):
         self.test_model_id = [
             model["id"]
             for model in get_models_response.json()
-            if "id" in model and model["id"] == "LifetimeValue_sum_Price"
+            if api_c.ID in model
         ][0]
 
     @record_test_result(HttpMethod.POST, Endpoints.MODEL.POST_REQUEST_MODEL)
