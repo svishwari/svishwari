@@ -21,7 +21,7 @@
               :cols="field.col"
               :class="[headerClass, { center: field.center }]"
             >
-              <tooltip v-if="field.tooltip">
+              <tooltip v-if="field.tooltip" :max-width="tooltipwidth">
                 <template #label-content>
                   <div class="px-4 py-2" :class="{ 'ta-center': field.center }">
                     <span class="text-body-2 black--text text--lighten-4">
@@ -188,6 +188,11 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    tooltipwidth: {
+      type: String,
+      required: false,
+      default: "auto",
     },
   },
 

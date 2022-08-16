@@ -158,6 +158,7 @@
                 :items="getSegmentTableData"
                 :fields="getSegmentTableHeaders"
                 :multiple-segments="multipleSegments"
+                :tooltipwidth="'180px'"
               >
                 <template
                   v-for="header in getSegmentTableHeaders"
