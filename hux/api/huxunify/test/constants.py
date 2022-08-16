@@ -1575,7 +1575,7 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 IDR_DATAFEED_DETAILS_EMPTY_RESPONSE = {
     "code": 200,
     "message": "ok",
-    "body": {}
+    "body": {},
 }
 
 DATASOURCES_RESPONSE = {
