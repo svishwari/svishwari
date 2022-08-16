@@ -5,7 +5,7 @@
       <v-card-title v-if="data.length > 0" class="py-5 px-6">
         <span class="text-h3 black--text">HX TrustID attributes</span>
       </v-card-title>
-      <v-card-text v-if="data.length > 0" class="px-6">
+      <v-card-text v-if="data.length > 0" class="px-6 attri-overflow">
         <hux-data-table
           v-if="!isLoading"
           class="attribute-table"
@@ -279,6 +279,9 @@ export default {
   .agree-color {
     color: var(--v-success-lighten3);
   }
+}
+.attri-overflow {
+  overflow-x: auto;
 }
 .progress-section {
   display: none;
