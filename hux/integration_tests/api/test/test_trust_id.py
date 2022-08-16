@@ -75,7 +75,7 @@ class TestTrustId(TestCase):
                 ):
                     if (
                         children_config.get(db_c.CONFIGURATION_FIELD_NAME)
-                        == "HX TrustID"
+                        == api_c.HX_TRUST_ID
                     ):
                         self.assertTrue(
                             children_config.get(
