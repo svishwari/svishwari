@@ -93,7 +93,7 @@ class TestTrustId(TestCase):
                     parent_config.get(db_c.CONFIGURATION_FIELD_ENABLED)
                 )
 
-        revert_user_response = requests.patch(
+        revert_user_role = requests.patch(
             f"{pytest.API_URL}/users",
             json={
                 api_c.ID: user_id,
@@ -102,7 +102,7 @@ class TestTrustId(TestCase):
             },
             headers=pytest.HEADERS,
         )
-        self.assertEqual(HTTPStatus.OK, revert_user_response.status_code)
+        self.assertEqual(HTTPStatus.OK, revert_user_role.status_code)
 
     def test_get_trust_id_user_filters(self):
         """Test get trust ID user filters."""
