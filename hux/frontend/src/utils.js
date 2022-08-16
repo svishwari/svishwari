@@ -358,7 +358,7 @@ export function sortByName(data, key) {
  * @returns {string} formatted string
  */
 export function formatText(text) {
-  return capitalize(text.replaceAll("_", " "))
+  return text ? capitalize(text.replaceAll("_", " ")) : ""
 }
 
 /**
@@ -503,7 +503,11 @@ export function aggregateAgeFilters(filters) {
 export function getAccess(screen, action) {
   let role = store.getters["users/getCurrentUserRole"]
   let matrix = store.getters["users/getRbacMatrix"]
-  let rbac_obj = matrix[screen]["actions"].find((item) => item.type == action)
+  let rbac_obj = matrix
+    ? matrix[screen]
+      ? matrix[screen]["actions"].find((item) => item.type == action)
+      : ""
+    : ""
   return rbac_obj ? rbac_obj[role] : true
 }
 

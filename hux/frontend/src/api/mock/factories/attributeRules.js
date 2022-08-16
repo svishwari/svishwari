@@ -28,7 +28,7 @@ const attributeRules = {
       name: "Years",
     },
   ],
-  products: [
+  product_categories: [
     { key: "new_arrival", name: "New Arrival", menu: [] },
     { key: "women", name: "Wemon", menu: [] },
     { key: "girls", name: "Girls", menu: [] },

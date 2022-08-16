@@ -144,7 +144,7 @@
                       </div>
                     </div>
 
-                    <!-- <span
+                    <span
                       v-if="
                         condition.operator &&
                         condition.attribute.type === 'text'
@@ -156,7 +156,7 @@
                           : addNewSubSection(condition)
                       "
                       >+ Product</span
-                    > -->
+                    >
 
                     <hux-autocomplete
                       v-if="
@@ -274,6 +274,7 @@
                             class="item-text-field"
                             placeholder="Enter value"
                             required
+                            :disabled="true"
                           />
                           <hux-dropdown
                             v-if="isTextORSelect(sub_condition)"
@@ -287,28 +288,15 @@
                           />
 
                           <hux-dropdown
+                            v-if="sub_condition.operator"
                             :selected="sub_condition.text"
-                            :items="ruleAttributes.products"
+                            :items="ruleAttributes.product_categories"
                             label="Select product"
                             data-e2e="select-product-btn"
                             @on-select="
                               onSelect('text', sub_condition, $event, condition)
                             "
                           />
-
-                          <!-- <hux-autocomplete
-                            v-if="
-                              sub_condition.operator &&
-                              sub_condition.attribute.type === 'list'
-                            "
-                            v-model="sub_condition.text"
-                            :options="ruleAttributes.products"
-                            data-e2e="auto-complete-btn"
-                            :loader="loaderValue"
-                            :placeholder="getPlaceHolderText(sub_condition)"
-                            @change="triggerSizing(condition)"
-                            @search-update="autoSearchFunc"
-                          /> -->
                         </div>
                         <div
                           v-if="!readMode"
@@ -1318,6 +1306,10 @@ export default {
 
   .invisible {
     visibility: hidden;
+  }
+
+  ::v-deep .theme--light.v-input--is-disabled input {
+    color: var(--v-black-base);
   }
 }
 </style>
