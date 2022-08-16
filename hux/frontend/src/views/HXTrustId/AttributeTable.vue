@@ -57,16 +57,15 @@
                 </tooltip>
               </template>
               <template v-else-if="col.value === 'overall_customer_rating'">
-                <tooltip max-width="183px">
-                  <template #label-content>
-                    <progress-stack-bar
-                      :width="180"
-                      :height="6"
-                      :show-percentage="true"
-                      :data="getRating(item[col.value].rating)"
-                      :bar-id="index + 'table'"
-                    />
-                  </template>
+                <tooltip class="progress-section" max-width="183px">
+                  <progress-stack-bar
+                    class="seg-section"
+                    :width="180"
+                    :height="6"
+                    :show-percentage="true"
+                    :data="getRating(item[col.value].rating)"
+                    :bar-id="index + 'table'"
+                  />
                   <template #hover-content>
                     <div class="body-2">
                       <div class="d-flex flex-column">
@@ -265,6 +264,9 @@ export default {
       }
     }
   }
+  .seg-section {
+    background-color: transparent;
+  }
 }
 
 .v-application {
@@ -280,5 +282,8 @@ export default {
 }
 .attri-overflow {
   overflow-x: auto;
+}
+.progress-section {
+  display: none;
 }
 </style>

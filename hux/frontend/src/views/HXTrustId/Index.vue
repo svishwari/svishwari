@@ -616,8 +616,6 @@ export default {
           key: "segment_filters",
           label: "Segment filters",
           col: 4,
-          tooltip:
-            "Social or behavioral difficulty or disability (e.g. associated with autism, attention deficit disorder or Aspergers’ syndrome)",
         },
       ]
       this.getSelectedSegment.segments[0].attributes.forEach((item) => {
