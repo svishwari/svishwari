@@ -1,0 +1,18 @@
+# Setting coverage targets per flag
+coverage:
+ status:
+   project:
+     default:
+       target: 60% #overall project/ repo coverage
+     api:
+       target: 60%
+       flags:
+         - api
+     lib:
+       target: 60%
+       flags:
+         - lib
+     scripts:
+       target: 60%
+       flags:
+         - scripts
