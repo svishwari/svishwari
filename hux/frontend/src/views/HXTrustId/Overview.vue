@@ -2,7 +2,7 @@
   <div class="white overview-card pa-6 box-shadow-5">
     <div v-if="data">
       <div class="text-h3">HX TrustID scores for all customers</div>
-      <div class="d-flex justify-start">
+      <div class="d-flex justify-start trust-overview">
         <div class="mr-4">
           <tooltip max-width="256px">
             <template #label-content>
@@ -216,5 +216,8 @@ export default {
   .agree-color {
     color: var(--v-success-lighten3);
   }
+}
+.trust-overview {
+  overflow: auto !important;
 }
 </style>
