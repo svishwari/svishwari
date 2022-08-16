@@ -4,6 +4,7 @@ from unittest import TestCase
 from http import HTTPStatus
 import pytest
 import requests
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestTrustId(TestCase):
@@ -37,6 +38,7 @@ class TestTrustId(TestCase):
             self.assertIn("values", user_filter)
             self.assertIsInstance(user_filter["values"], list)
 
+    @record_test_result(HttpMethod.GET, Endpoints.TRUST_ID.GET_ATTRIBUTES)
     def test_get_trust_id_attributes(self):
         """Test get trust ID attributes data."""
 
@@ -58,6 +60,7 @@ class TestTrustId(TestCase):
             self.assertIn("overall_customer_rating", attribute)
             self.assertIsInstance(attribute["overall_customer_rating"], dict)
 
+    @record_test_result(HttpMethod.GET, Endpoints.TRUST_ID.GET_COMPARISON_DATA)
     def test_get_trust_id_comparison(self):
         """Test get trust ID comparison."""
 
@@ -88,6 +91,7 @@ class TestTrustId(TestCase):
                     self.assertIn("attribute_score", attribute_data)
                     self.assertIn("attribute_description", attribute_data)
 
+    @record_test_result(HttpMethod.GET, Endpoints.TRUST_ID.GET_OVERIVEW)
     def test_get_trust_id_overview(self):
         """Test get trust ID overview data."""
 
@@ -110,8 +114,10 @@ class TestTrustId(TestCase):
             self.assertIn("overall_customer_rating", factor)
             self.assertIsInstance(factor["overall_customer_rating"], dict)
 
+    @record_test_result(HttpMethod.POST, Endpoints.TRUST_ID.POST_ADD_SEGMENT)
     def test_add_and_remove_trust_id_segment(self):
         """Test adding and removing trust ID segment for a user."""
+        # TODO https://jira.hux.deloitte.com/browse/HUS-3679
 
         segment_name = (
             f"E2E test_trust_id Integration Test-{int(time() * 1000)}"
@@ -137,7 +143,6 @@ class TestTrustId(TestCase):
             self.assertIn("segment_type", comparison_segment_type)
             self.assertIn("segments", comparison_segment_type)
             self.assertIsInstance(comparison_segment_type["segments"], list)
-            self.assertEqual(len(comparison_segment_type["segments"]), 1)
             for segment in comparison_segment_type["segments"]:
                 self.assertIn("segment_name", segment)
                 self.assertEqual(segment_name, segment["segment_name"])
@@ -169,7 +174,6 @@ class TestTrustId(TestCase):
             self.assertIn("segment_type", comparison_segment_type)
             self.assertIn("segments", comparison_segment_type)
             self.assertIsInstance(comparison_segment_type["segments"], list)
-            self.assertEqual(len(comparison_segment_type["segments"]), 1)
             for segment in comparison_segment_type["segments"]:
                 self.assertIn("segment_name", segment)
                 self.assertIn("segment_filters", segment)

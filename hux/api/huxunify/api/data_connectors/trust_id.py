@@ -30,7 +30,7 @@ def get_trust_id_overview_data(
         api_c.TRUST_ID_FACTORS: [
             {
                 api_c.TRUST_ID_FACTOR_NAME: factor_name,
-                api_c.TRUST_ID_FACTOR_SCORE: int(
+                api_c.TRUST_ID_FACTOR_SCORE: (
                     (
                         overview[factor_name][api_c.RATING][api_c.AGREE][
                             api_c.PERCENTAGE
@@ -67,13 +67,11 @@ def get_trust_id_overview_data(
 
     trust_id_overview.update(
         {
-            api_c.TRUST_ID_SCORE: round(
-                statistics.mean(
-                    [
-                        factor[api_c.TRUST_ID_FACTOR_SCORE]
-                        for factor in trust_id_overview[api_c.TRUST_ID_FACTORS]
-                    ]
-                )
+            api_c.TRUST_ID_SCORE: statistics.mean(
+                [
+                    factor[api_c.TRUST_ID_FACTOR_SCORE]
+                    for factor in trust_id_overview[api_c.TRUST_ID_FACTORS]
+                ]
             )
             if overview
             else None
@@ -110,7 +108,7 @@ def get_trust_id_attributes_data(
             attributes_list.append(
                 {
                     api_c.TRUST_ID_FACTOR_NAME: factor_name,
-                    api_c.TRUST_ID_ATTRIBUTE_SCORE: round(
+                    api_c.TRUST_ID_ATTRIBUTE_SCORE: (
                         (
                             trust_id_attribute_ratings[db_c.ATTRIBUTES][
                                 factor_name
@@ -120,7 +118,9 @@ def get_trust_id_attributes_data(
                             ][ind][api_c.DISAGREE][api_c.PERCENTAGE]
                         )
                         * 100
-                    ),
+                    )
+                    if trust_id_attribute_ratings
+                    else None,
                     api_c.TRUST_ID_ATTRIBUTE_DESCRIPTION: attribute[
                         db_c.DESCRIPTION
                     ],
@@ -134,6 +134,14 @@ def get_trust_id_attributes_data(
                         api_c.RATING: trust_id_attribute_ratings[
                             db_c.ATTRIBUTES
                         ][factor_name][ind],
+                    }
+                    if trust_id_attribute_ratings
+                    else {
+                        api_c.TOTAL_CUSTOMERS: 0,
+                        api_c.RATING: {
+                            rating: {api_c.COUNT: 0}
+                            for rating in api_c.TRUST_ID_RATING_MAP.values()
+                        },
                     },
                 }
             )
@@ -237,7 +245,7 @@ def get_trust_id_comparison_data_by_segment(
                     api_c.TRUST_ID_ATTRIBUTE_DESCRIPTION: attribute[
                         api_c.DESCRIPTION
                     ],
-                    api_c.TRUST_ID_ATTRIBUTE_SCORE: round(
+                    api_c.TRUST_ID_ATTRIBUTE_SCORE: (
                         (
                             trust_id_attribute_ratings[
                                 api_c.TRUST_ID_ATTRIBUTES

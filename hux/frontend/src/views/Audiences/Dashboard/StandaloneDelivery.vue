@@ -35,14 +35,23 @@
         <icon
           class="mr-1 mt-n1"
           :type="
-            audience.standalone_deliveries.length == 0 ? 'deliver' : 'deliver_2'
+            audience.standalone_deliveries &&
+            audience.standalone_deliveries.length == 0
+              ? 'deliver'
+              : 'deliver_2'
           "
           :size="37"
           :color="
-            audience.standalone_deliveries.length == 0 ? 'black' : 'primary'
+            audience.standalone_deliveries &&
+            audience.standalone_deliveries.length == 0
+              ? 'black'
+              : 'primary'
           "
           :variant="
-            audience.standalone_deliveries.length == 0 ? 'lighten3' : 'base'
+            audience.standalone_deliveries &&
+            audience.standalone_deliveries.length == 0
+              ? 'lighten3'
+              : 'base'
           "
         />
         <span class="deliverAll"> Deliver all </span>

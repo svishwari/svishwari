@@ -5,6 +5,7 @@ from unittest import TestCase
 import pytest
 import requests
 from conftest import Crud
+from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 
 
 class TestDataSources(TestCase):
@@ -13,6 +14,9 @@ class TestDataSources(TestCase):
     DATA_SOURCES = "data-sources"
     COLLECTION = "cdp_data_sources"
 
+    @record_test_result(
+        HttpMethod.POST, Endpoints.DATA_SOURCES.POST_CREATE_DATA_SOURCE
+    )
     def test_create_data_source(self):
         """Test creating a data source."""
 
@@ -40,6 +44,9 @@ class TestDataSources(TestCase):
         self.assertIsInstance(response.json(), list)
         self.assertEqual(len(response.json()), 1)
 
+    @record_test_result(
+        HttpMethod.DELETE, Endpoints.DATA_SOURCES.DELETE_DATA_SOURCE
+    )
     def test_delete_data_source(self):
         """Test deleting a data source."""
 
@@ -77,6 +84,9 @@ class TestDataSources(TestCase):
         self.assertEqual(HTTPStatus.OK, delete_response.status_code)
         self.assertIsInstance(delete_response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.DATA_SOURCES.GET_DATA_SOURCES
+    )
     def test_get_all_data_sources(self):
         """Test get all data sources."""
 
@@ -91,6 +101,7 @@ class TestDataSources(TestCase):
         self.assertIsInstance(response.json(), list)
         self.assertGreaterEqual(len(response.json()), 1)
 
+    @record_test_result(HttpMethod.GET, Endpoints.DATA_SOURCES.GET_DATA_SOURCE)
     def test_get_data_source(self):
         """Test get data source by ID."""
 
@@ -115,6 +126,9 @@ class TestDataSources(TestCase):
         self.assertEqual(HTTPStatus.OK, get_individual_response.status_code)
         self.assertIsInstance(get_individual_response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.DATA_SOURCES.GET_DATA_SOURCE_DATAFEEDS
+    )
     def test_get_data_feeds_of_data_source(self):
         """Test get data feeds of a data source."""
 
@@ -128,6 +142,9 @@ class TestDataSources(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIsInstance(response.json(), dict)
 
+    @record_test_result(
+        HttpMethod.GET, Endpoints.DATA_SOURCES.GET_DATA_SOURCE_DATAFEEDS
+    )
     def test_get_data_feeds_of_data_source_data_feed(self):
         """Test get data feeds of a data source's data feed."""
 
@@ -165,6 +182,9 @@ class TestDataSources(TestCase):
             data_source_data_feed_data_feeds_response.json(), list
         )
 
+    @record_test_result(
+        HttpMethod.PATCH, Endpoints.DATA_SOURCES.PATCH_UPDATE_DATA_SOURCES
+    )
     def test_update_data_source(self):
         """Test updating a data source."""
 
