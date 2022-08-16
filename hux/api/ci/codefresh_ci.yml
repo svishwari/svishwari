@@ -103,7 +103,7 @@ steps:
     description: "run tests using tox"
     commands:
       - tox -e ${TOXENV}
-      - codecov -t ${CODECOV_TOKEN} --url ${CODECOV_URL} -f ./huxunifylib/coverage.xml -F api
+      - codecov -t ${CODECOV_TOKEN} --url ${CODECOV_URL} -f coverage.xml -F api
     scale:
       checkCoverage:
         title: 'checkCoverage'
