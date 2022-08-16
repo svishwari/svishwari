@@ -6,7 +6,7 @@ coverage:
        target: 60% #overall project/ repo coverage
      api:
        target: 60%
-      flags:
+       flags:
          - api
      lib:
        target: 60%
