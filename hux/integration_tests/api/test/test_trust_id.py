@@ -8,6 +8,7 @@ from prometheus_metrics import record_test_result, HttpMethod, Endpoints
 from huxunify.api import constants as api_c
 from huxunifylib.database import constants as db_c
 
+
 class TestTrustId(TestCase):
     """Test Trust ID."""
 
@@ -47,30 +48,50 @@ class TestTrustId(TestCase):
             f"{pytest.API_URL}/engagements",
             headers=pytest.HEADERS,
         )
-        self.assertEqual(HTTPStatus.BAD_REQUEST, get_engagements.status_code)
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, get_engagements.status_code)
 
         get_audiences = requests.get(
-            f"{pytest.API_URL}/engagements",
+            f"{pytest.API_URL}/audiences",
             headers=pytest.HEADERS,
         )
-        self.assertEqual(HTTPStatus.BAD_REQUEST, get_audiences.status_code)
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, get_audiences.status_code)
 
         get_navigation_configuration = requests.get(
             f"{pytest.API_URL}/configurations/navigation",
             headers=pytest.HEADERS,
         )
-        self.assertEqual(HTTPStatus.OK, get_navigation_configuration.status_code)
-        for parent_config in get_navigation_configuration.json().get(api_c.SETTINGS):
+        self.assertEqual(
+            HTTPStatus.OK, get_navigation_configuration.status_code
+        )
+        for parent_config in get_navigation_configuration.json().get(
+            api_c.SETTINGS
+        ):
             if parent_config.get(db_c.CONFIGURATION_FIELD_NAME) == "Insights":
-                self.assertTrue(parent_config.get(db_c.CONFIGURATION_FIELD_ENABLED))
+                self.assertTrue(
+                    parent_config.get(db_c.CONFIGURATION_FIELD_ENABLED)
+                )
+                for children_config in parent_config.get(
+                    db_c.CONFIGURATION_FIELD_CHILDREN
+                ):
+                    if (
+                        children_config.get(db_c.CONFIGURATION_FIELD_NAME)
+                        == "HX TrustID"
+                    ):
+                        self.assertTrue(
+                            children_config.get(
+                                db_c.CONFIGURATION_FIELD_ENABLED
+                            )
+                        )
+                    else:
+                        self.assertFalse(
+                            children_config.get(
+                                db_c.CONFIGURATION_FIELD_ENABLED
+                            )
+                        )
             else:
-                self.assertFalse(parent_config.get(db_c.CONFIGURATION_FIELD_ENABLED))
-
-            for children_config in parent_config.get(db_c.CONFIGURATION_FIELD_CHILDREN):
-                if children_config.get(db_c.CONFIGURATION_FIELD_NAME) == "HX TrustID":
-                    self.assertTrue(children_config.get(db_c.CONFIGURATION_FIELD_ENABLED))
-                else:
-                    self.assertFalse(children_config.get(db_c.CONFIGURATION_FIELD_ENABLED))
+                self.assertFalse(
+                    parent_config.get(db_c.CONFIGURATION_FIELD_ENABLED)
+                )
 
         revert_user_response = requests.patch(
             f"{pytest.API_URL}/users",
