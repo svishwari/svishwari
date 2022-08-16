@@ -1573,8 +1573,9 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 }
 
 IDR_DATAFEED_DETAILS_EMPTY_RESPONSE = {
-    "code": 424,
-    "message": "Failed to obtain data from dependent API endpoint.",
+    "code": 200,
+    "message": "ok",
+    "body": {}
 }
 
 DATASOURCES_RESPONSE = {
