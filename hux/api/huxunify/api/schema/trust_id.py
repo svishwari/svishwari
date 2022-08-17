@@ -1,4 +1,5 @@
 """Purpose of this file is to house trust ID schemas."""
+from math import ceil, floor
 
 from flask_marshmallow import Schema
 from marshmallow import pre_dump
@@ -73,9 +74,20 @@ class FactorScoreOverviewSchema(Schema):
             dict : Returns a factor details object
         """
         if data[api_c.TRUST_ID_FACTOR_SCORE]:
-            data[api_c.TRUST_ID_FACTOR_SCORE] = round(
+            sign_coefficient = int(
                 data[api_c.TRUST_ID_FACTOR_SCORE]
+                / abs(data[api_c.TRUST_ID_FACTOR_SCORE])
             )
+            if abs(data[api_c.TRUST_ID_FACTOR_SCORE]) % 1.0 >= 0.5:
+                data[api_c.TRUST_ID_FACTOR_SCORE] = (
+                    ceil(abs(data[api_c.TRUST_ID_FACTOR_SCORE]))
+                    * sign_coefficient
+                )
+            else:
+                data[api_c.TRUST_ID_FACTOR_SCORE] = (
+                    floor(abs(data[api_c.TRUST_ID_FACTOR_SCORE]))
+                    * sign_coefficient
+                )
 
         return data
 
@@ -92,6 +104,33 @@ class TrustIdOverviewSchema(Schema):
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
     factors = List(Nested(FactorScoreOverviewSchema))
+
+    @pre_dump
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    def round_up_scores(self, data: dict, many: bool = False) -> dict:
+        """Round up score value to whole numbers
+        Args:
+            data (dict): Attribute details dict
+            many (bool): If multiple objects
+
+        Returns:
+            dict : Returns an attribute details object
+        """
+        if data[api_c.TRUST_ID_SCORE]:
+            sign_coefficient = int(
+                data[api_c.TRUST_ID_SCORE] / abs(data[api_c.TRUST_ID_SCORE])
+            )
+            if abs(data[api_c.TRUST_ID_SCORE]) % 1.0 >= 0.5:
+                data[api_c.TRUST_ID_SCORE] = (
+                    ceil(abs(data[api_c.TRUST_ID_SCORE])) * sign_coefficient
+                )
+            else:
+                data[api_c.TRUST_ID_SCORE] = (
+                    floor(abs(data[api_c.TRUST_ID_SCORE])) * sign_coefficient
+                )
+
+        return data
 
 
 class TrustIdAttributesSchema(Schema):
@@ -127,9 +166,20 @@ class TrustIdAttributesSchema(Schema):
             dict : Returns an attribute details object
         """
         if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
-            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
+            sign_coefficient = int(
                 data[api_c.TRUST_ID_ATTRIBUTE_SCORE]
+                / abs(data[api_c.TRUST_ID_ATTRIBUTE_SCORE])
             )
+            if abs(data[api_c.TRUST_ID_ATTRIBUTE_SCORE]) % 1.0 >= 0.5:
+                data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = (
+                    ceil(abs(data[api_c.TRUST_ID_ATTRIBUTE_SCORE]))
+                    * sign_coefficient
+                )
+            else:
+                data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = (
+                    floor(abs(data[api_c.TRUST_ID_ATTRIBUTE_SCORE]))
+                    * sign_coefficient
+                )
 
         return data
 
@@ -167,9 +217,20 @@ class AttributeScoreOverviewSchema(Schema):
             dict : Returns an attribute details object
         """
         if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
-            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
+            sign_coefficient = int(
                 data[api_c.TRUST_ID_ATTRIBUTE_SCORE]
+                / abs(data[api_c.TRUST_ID_ATTRIBUTE_SCORE])
             )
+            if abs(data[api_c.TRUST_ID_ATTRIBUTE_SCORE]) % 1.0 >= 0.5:
+                data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = (
+                    ceil(abs(data[api_c.TRUST_ID_ATTRIBUTE_SCORE]))
+                    * sign_coefficient
+                )
+            else:
+                data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = (
+                    floor(abs(data[api_c.TRUST_ID_ATTRIBUTE_SCORE]))
+                    * sign_coefficient
+                )
 
         return data
 
