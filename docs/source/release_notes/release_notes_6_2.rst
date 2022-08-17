@@ -1,9 +1,9 @@
-=========
-6.2 - TBD
-=========
+=====
+6.2 
+=====
 
 Release date:
-TBD
+August 19, 2022
 
 Release Overview
 -----------------
