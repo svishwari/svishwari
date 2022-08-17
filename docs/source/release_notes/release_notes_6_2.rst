@@ -1,6 +1,6 @@
-=====
-6.2 
-=====
+===
+6.2
+===
 
 Release date:
 August 19, 2022
@@ -129,4 +129,3 @@ These are items that the team are currently working on adding into the UI that w
 - Additional audience segmentation improvements
 - Client UI support
 - Discovery for ingesting manual segments
-
