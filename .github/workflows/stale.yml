@@ -22,7 +22,7 @@ jobs:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         stale-pr-label: 'Stale'
         stale-pr-message: 'This PR is stale because it has been open 10 days with no activity. Remove stale label or comment or this will be closed in 10 days.'
-        close-pr-label: 'Close-Stale'
+        close-pr-label: 'Stale-Closed'
         close-pr-message: 'This PR was closed because it has been stalled for 20 days with no activity.'
         # exempt PRs with labels 'Dont Merge' from getting marked as stale if needed
         # exempt-pr-labels: 'Dont Merge'
