@@ -74,10 +74,8 @@ class FactorScoreOverviewSchema(Schema):
         """
         if data[api_c.TRUST_ID_FACTOR_SCORE]:
             score = decimal.Decimal(data[api_c.TRUST_ID_FACTOR_SCORE])
-            decimal.getcontext().rounding = decimal.ROUND_UP
-            data[api_c.TRUST_ID_FACTOR_SCORE] = round(
-                score, 0
-            )
+            decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+            data[api_c.TRUST_ID_FACTOR_SCORE] = round(score, 0)
 
         return data
 
@@ -109,12 +107,11 @@ class TrustIdOverviewSchema(Schema):
         """
         if data[api_c.TRUST_ID_SCORE]:
             score = decimal.Decimal(data[api_c.TRUST_ID_SCORE])
-            decimal.getcontext().rounding = decimal.ROUND_UP
-            data[api_c.TRUST_ID_SCORE] = round(
-                score, 0
-            )
+            decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+            data[api_c.TRUST_ID_SCORE] = round(score, 0)
 
         return data
+
 
 class TrustIdAttributesSchema(Schema):
     """Trust ID attributes Schema"""
@@ -150,10 +147,8 @@ class TrustIdAttributesSchema(Schema):
         """
         if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
             score = decimal.Decimal(data[api_c.TRUST_ID_ATTRIBUTE_SCORE])
-            decimal.getcontext().rounding = decimal.ROUND_UP
-            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
-                score, 0
-            )
+            decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(score, 0)
 
         return data
 
@@ -192,10 +187,8 @@ class AttributeScoreOverviewSchema(Schema):
         """
         if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
             score = decimal.Decimal(data[api_c.TRUST_ID_ATTRIBUTE_SCORE])
-            decimal.getcontext().rounding = decimal.ROUND_UP
-            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
-                score, 0
-            )
+            decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(score, 0)
 
         return data
 
