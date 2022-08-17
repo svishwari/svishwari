@@ -193,7 +193,11 @@ export default {
           .append("text")
           .attr("class", "text-label")
           .attr("text-anchor", "middle")
-          .attr("x", (d) => xScale(d.cumulative) + xScale(d.value) / 2)
+          .attr(
+            "x",
+            (d, i) =>
+              xScale(d.cumulative) + xScale(d.value) / 2 + (i !== 0 ? 10 : 0)
+          ) // add margin if not 0th index
           .attr("y", h / 2 + halfBarHeight * 1.1 + 20)
           .text((d) => d.value + "%")
           .style("font-size", "12px")
