@@ -1,0 +1,30 @@
+# This workflow warns and then closes PRs(and issues too if necessary) that
+# have had no activity for a specified amount of time.
+#
+# For more information, see:
+# https://github.com/actions/stale
+name: Mark stale PRs and Close
+
+on:
+  schedule:
+  - cron: '30 1 * * *'
+
+jobs:
+  stale:
+
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+    - uses: actions/stale@v5
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        stale-pr-label: 'Stale'
+        stale-pr-message: 'This PR is stale because it has been open 10 days with no activity. Remove stale label or comment or this will be closed in 10 days.'
+        close-pr-label: 'Close-Stale'
+        close-pr-message: 'This PR was closed because it has been stalled for 20 days with no activity.'
+        # exempt PRs with labels 'Dont Merge' from getting marked as stale if needed
+        # exempt-pr-labels: 'Dont Merge'
+        days-before-pr-stale: 10
+        days-before-pr-close: 20
