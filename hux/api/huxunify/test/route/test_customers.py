@@ -834,7 +834,24 @@ class TestCustomersOverview(RouteTestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertFalse(response.json)
+        for pinning_key, pinning_value in response.json.get(
+            api_c.PINNING
+        ).items():
+            self.assertEqual(
+                pinning_value,
+                t_c.IDR_DATAFEED_DETAILS_EMPTY_RESPONSE[api_c.BODY][
+                    api_c.PINNING
+                ][pinning_key],
+            )
+        for stitched_key, stitched_value in response.json.get(
+            api_c.STITCHED
+        ).items():
+            self.assertEqual(
+                stitched_value,
+                t_c.IDR_DATAFEED_DETAILS_EMPTY_RESPONSE[api_c.BODY][
+                    api_c.STITCHED
+                ][stitched_key],
+            )
 
     def test_get_customer_overview_dependency_failure(self) -> None:
         """Test get customer overview 424 dependency failure."""

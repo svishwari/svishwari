@@ -1377,7 +1377,34 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 IDR_DATAFEED_DETAILS_EMPTY_RESPONSE = {
     "code": 200,
     "message": "ok",
-    "body": {},
+    "body": {
+        "pinning": {
+            "input_records": None,
+            "output_records": None,
+            "empty_records": None,
+            "individual_id_match": None,
+            "household_id_match": None,
+            "company_id_match": None,
+            "address_id_match": None,
+            "db_reads": None,
+            "db_writes": None,
+            "filename": None,
+            "new_individual_ids": None,
+            "new_household_ids": None,
+            "new_company_ids": None,
+            "new_address_ids": None,
+            "process_time": None,
+            "pinning_timestamp": None,
+        },
+        "stitched": {
+            "digital_ids_added": None,
+            "digital_ids_merged": None,
+            "match_rate": None,
+            "merge_rate": None,
+            "records_source": None,
+            "stitched_timestamp": None,
+        },
+    },
 }
 
 DATASOURCES_RESPONSE = {
