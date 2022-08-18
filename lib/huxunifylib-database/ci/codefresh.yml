@@ -1,7 +1,7 @@
 version: "1.0"
 stages:
   - clone
-  - pylint_&_unittest_check
+  - pylint_check
   - coverage_style_check
   - publish
 
@@ -16,18 +16,14 @@ steps:
     git: "DeloitteHux_github"
 
   safety_test_check:
-    stage: "pylint_&_unittest_check"
-    title: "Pylint and Unittest check"
+    stage: "pylint_check"
+    title: "Pylint check"
     image: huxhub.repo.mgnt.in/tox-ci
     working_directory: '${{CF_REPO_NAME}}/lib/huxunifylib-database'
     description: "run tests using tox"
     commands:
       - tox -e ${TOXENV}
     scale:
-      py37:
-        title: 'tests'
-        environment:
-          - TOXENV=py37
       pylintCheck:
         title: 'pylintCheck'
         environment:
@@ -37,11 +33,12 @@ steps:
   coverageStyleCheck:
     stage: "coverage_style_check"
     title: "Coverage and Style checks."
-    image: huxhub.repo.mgnt.in/tox-ci
+    image: unified-docker-dev-local.repo.mgnt.in/codecov-tox-ci:latest
     working_directory: '${{CF_REPO_NAME}}/lib/huxunifylib-database'
     description: "run tests using tox"
     commands:
       - tox -e ${TOXENV}
+      - codecov -t ${CODECOV_TOKEN} --url ${CODECOV_URL} -f ./huxunifylib/coverage.xml -F lib
     scale:
       checkCoverage:
         title: 'checkCoverage'

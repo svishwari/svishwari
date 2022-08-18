@@ -1,0 +1,75 @@
+# This is the CI pipeline for Unified Solution API
+
+version: "1.0"
+
+stages:
+- prepare
+- git
+- set_env
+- build_tag
+- docker
+- artifactory
+
+steps:
+
+  PrepareBuildDetails:
+    stage: prepare
+    title: Prepare Build Details
+    type: parallel
+    steps:
+      GetTriggerName:
+       stage: prepare
+       title: get trigger name using id from spec yaml
+       type: deloittehux/get-trigger-name
+      BuildNumber:
+       stage: prepare
+       title: Bump default BUILD_NUMBER annotation
+       type: bump-build-number
+
+  CloneRepository:
+    stage: git
+    title: Cloning ${{CF_REPO_NAME}} repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}' # Git branch triggering the pipeline
+
+  set_global_vars:
+    stage: set_env
+    title: Set environment variables
+    type: freestyle
+    image: huxhub.repo.mgnt.in/yq
+    working_directory: "${{CF_REPO_NAME}}/hux/api/ci"
+    commands:
+      # Set Global vars
+      - yq r $VARS_FILE 'global' | sed -e 's/:\ /=/g' >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+    environment:
+      - VARS_FILE=codefresh_vars.yml
+
+  # Below steps "NumberTag" and "VersionTag" can be used to conditionally tag build image based on the Git Branch.
+  NumberTag:
+    stage: build_tag
+    description: Set docker tag from build number
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export JFROG_REGISTRY=${{DEV_REGISTRY}}
+
+
+  build_image:
+    stage: "docker"
+    title: "Building Docker Image for Unified API"
+    type: "build"
+    image_name: "codecov-tox-ci"
+    working_directory: '${{CF_REPO_NAME}}'
+    dockerfile: 'codecov-reports/Dockerfile'
+    tag: 'latest'
+
+  PublishToArtifactory:
+    stage: artifactory
+    title: Publish Unified API Image to JFrog Artifactory
+    type: deloittehux/jfrog-docker-publish
+    arguments:
+      BUILD_NAME: 'codecov-tox-ci'
+      BUILD_NUMBER: 'latest'
+      JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
+      BUILD_TAG: 'latest'

@@ -1718,7 +1718,7 @@ class AudienceRules(SwaggerView):
                 "not_equals": "Does not equal",
                 "within_the_last": "Within the last",
                 "not_within_the_last": "Not within the last",
-                "between": "Between",
+                "from": "From",
                 "value": "Value",
                 "decile_percentage": "Decile percentage",
             },

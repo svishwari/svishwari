@@ -486,6 +486,12 @@ configurations_constants = [
                             db_c.USER_ROLE_VIEWER: False,
                         },
                         {
+                            db_c.TYPE: "add_engagement_to_audience",
+                            db_c.USER_ROLE_ADMIN: True,
+                            db_c.USER_ROLE_EDITOR: True,
+                            db_c.USER_ROLE_VIEWER: False,
+                        },
+                        {
                             db_c.TYPE: "remove_engagement_from_audience",
                             db_c.USER_ROLE_ADMIN: True,
                             db_c.USER_ROLE_EDITOR: True,
