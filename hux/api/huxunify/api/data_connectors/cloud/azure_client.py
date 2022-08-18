@@ -101,6 +101,31 @@ class AzureClient(CloudClient):
             logging.error("Failed to set %s in Azure key vault.", secret_name)
             raise exc
 
+    def get_container_client(self) -> ContainerClient:
+        """
+
+        Returns:
+            ContainerClient: Azure Container Client.
+
+        Raises:
+            Exception: Exception that will be raised if the operation fails.
+        """
+
+        try:
+            return ContainerClient(
+                account_url=f"https://{get_config().AZURE_BATCH_ACCOUNT_NAME}.blob.core.windows.net",
+                container_name=get_config().AZURE_STORAGE_CONTAINER_NAME,
+                credential=ManagedIdentityCredential(
+                    client_id=self.config.AZURE_MANAGED_IDENTITY_CLIENT_ID,
+                    identity_config={
+                        api_c.AZURE_OBJECT_ID: self.config.AZURE_MANAGED_IDENTITY_OBJECT_ID
+                    },
+                ),
+            )
+        except Exception as exc:
+            logging.error("Failed to initialise Azure Storage Client")
+            raise exc
+
     # pylint:disable=broad-except
     def upload_file(
         self, file_name: str, file_type: str, user_name: str, **kwargs
@@ -118,7 +143,6 @@ class AzureClient(CloudClient):
         """
 
         container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
-        connection_string = self.config.AZURE_STORAGE_CONNECTION_STRING
 
         try:
             logging.info(
@@ -126,10 +150,7 @@ class AzureClient(CloudClient):
                 file_name,
                 container_name,
             )
-            container_client = ContainerClient.from_connection_string(
-                connection_string, container_name
-            )
-            blob_client = container_client.get_blob_client(
+            blob_client = self.get_container_client().get_blob_client(
                 Path(file_name).name
             )
 
@@ -172,7 +193,6 @@ class AzureClient(CloudClient):
         """
 
         container_name = self.config.AZURE_STORAGE_CONTAINER_NAME
-        connection_string = self.config.AZURE_STORAGE_CONNECTION_STRING
 
         try:
             logging.info(
@@ -180,10 +200,8 @@ class AzureClient(CloudClient):
                 file_name,
                 container_name,
             )
-            container_client = ContainerClient.from_connection_string(
-                connection_string, container_name
-            )
-            blob_client = container_client.get_blob_client(
+
+            blob_client = self.get_container_client().get_blob_client(
                 Path(file_name).name
             )
 
