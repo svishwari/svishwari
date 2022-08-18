@@ -1,5 +1,5 @@
 """Purpose of this file is to house trust ID schemas."""
-
+import decimal
 from flask_marshmallow import Schema
 from marshmallow import pre_dump
 from marshmallow.fields import List, Integer, Nested, Str, Float, Boolean
@@ -73,9 +73,9 @@ class FactorScoreOverviewSchema(Schema):
             dict : Returns a factor details object
         """
         if data[api_c.TRUST_ID_FACTOR_SCORE]:
-            data[api_c.TRUST_ID_FACTOR_SCORE] = round(
-                data[api_c.TRUST_ID_FACTOR_SCORE]
-            )
+            score = decimal.Decimal(data[api_c.TRUST_ID_FACTOR_SCORE])
+            decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+            data[api_c.TRUST_ID_FACTOR_SCORE] = round(score, 0)
 
         return data
 
@@ -92,6 +92,25 @@ class TrustIdOverviewSchema(Schema):
         required=True, validate=Range(min_inclusive=-100, max_inclusive=100)
     )
     factors = List(Nested(FactorScoreOverviewSchema))
+
+    @pre_dump
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    def round_up_scores(self, data: dict, many: bool = False) -> dict:
+        """Round up score value to whole numbers
+        Args:
+            data (dict): Attribute details dict
+            many (bool): If multiple objects
+
+        Returns:
+            dict : Returns an attribute details object
+        """
+        if data[api_c.TRUST_ID_SCORE]:
+            score = decimal.Decimal(data[api_c.TRUST_ID_SCORE])
+            decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+            data[api_c.TRUST_ID_SCORE] = round(score, 0)
+
+        return data
 
 
 class TrustIdAttributesSchema(Schema):
@@ -127,9 +146,9 @@ class TrustIdAttributesSchema(Schema):
             dict : Returns an attribute details object
         """
         if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
-            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
-                data[api_c.TRUST_ID_ATTRIBUTE_SCORE]
-            )
+            score = decimal.Decimal(data[api_c.TRUST_ID_ATTRIBUTE_SCORE])
+            decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(score, 0)
 
         return data
 
@@ -167,9 +186,9 @@ class AttributeScoreOverviewSchema(Schema):
             dict : Returns an attribute details object
         """
         if data[api_c.TRUST_ID_ATTRIBUTE_SCORE]:
-            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(
-                data[api_c.TRUST_ID_ATTRIBUTE_SCORE]
-            )
+            score = decimal.Decimal(data[api_c.TRUST_ID_ATTRIBUTE_SCORE])
+            decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+            data[api_c.TRUST_ID_ATTRIBUTE_SCORE] = round(score, 0)
 
         return data
 
