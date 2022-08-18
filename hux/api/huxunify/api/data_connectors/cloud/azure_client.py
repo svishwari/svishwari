@@ -102,7 +102,7 @@ class AzureClient(CloudClient):
             raise exc
 
     def get_container_client(self) -> ContainerClient:
-        """
+        """Method to fetch Container client
 
         Returns:
             ContainerClient: Azure Container Client.
@@ -113,7 +113,8 @@ class AzureClient(CloudClient):
 
         try:
             return ContainerClient(
-                account_url=f"https://{get_config().AZURE_BATCH_ACCOUNT_NAME}.blob.core.windows.net",
+                account_url=f"https://"
+                f"{get_config().AZURE_BATCH_ACCOUNT_NAME}.blob.core.windows.net",
                 container_name=get_config().AZURE_STORAGE_CONTAINER_NAME,
                 credential=ManagedIdentityCredential(
                     client_id=self.config.AZURE_MANAGED_IDENTITY_CLIENT_ID,
