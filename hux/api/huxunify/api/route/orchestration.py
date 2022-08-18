@@ -1930,9 +1930,9 @@ class AudienceRules(SwaggerView):
                         },
                     },
                     "events": event_types_rules,
-                    "product_categories": product_category_list,
                 },
-            }
+            },
+            "product_categories": product_category_list,
         }
 
         rules_constants.update(rules_from_cdm)
