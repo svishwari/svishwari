@@ -118,8 +118,7 @@ export default {
       this.reset()
     },
     /**
-     *
-     Method to fecth audience details by ID.
+     * Method to fecth audience details by ID.
      *
      * @param {string} id audience id
      */

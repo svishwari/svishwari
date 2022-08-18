@@ -574,7 +574,7 @@ export default {
                 ].attribute.type == "text"
                 ? this.audience.attributeRules[ruleIndex].conditions[
                     conditionIndex
-                  ].operator.key == "between"
+                  ].operator.key == "from"
                   ? [
                       this.audience.attributeRules[ruleIndex].conditions[
                         conditionIndex
@@ -744,9 +744,7 @@ export default {
                   let _operators = this.$refs?.filters.operatorOptions(sub_cond)
                   sub_cond.operator =
                     sub_cond.operator !== "range"
-                      ? _operators.filter(
-                          (opt) => opt.key === sub_cond.operator
-                        )[0]
+                      ? _operators.find((opt) => opt.key === sub_cond.operator)
                       : sub_cond.operator
                 })
               })
