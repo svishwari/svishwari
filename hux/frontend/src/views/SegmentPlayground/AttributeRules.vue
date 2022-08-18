@@ -84,7 +84,7 @@
                     <text-field
                       v-if="
                         condition.operator &&
-                        condition.operator.key != 'between' &&
+                        condition.operator.key != 'from' &&
                         condition.attribute.type === 'text'
                       "
                       v-model="condition.text"
@@ -97,7 +97,7 @@
                     <hux-dropdown
                       v-if="
                         condition.operator &&
-                        condition.operator.key != 'between' &&
+                        condition.operator.key != 'from' &&
                         condition.attribute.type === 'text'
                       "
                       label="Select time"
@@ -108,7 +108,7 @@
                     />
                     <div
                       v-if="
-                        condition.operator.key == 'between' &&
+                        condition.operator.key == 'from' &&
                         condition.attribute.type === 'text'
                       "
                       class="d-flex align-center mr-2"
@@ -507,8 +507,10 @@ export default {
         .toISOString()
         .substr(0, 10),
       selectedEndDate: new Date(
-        new Date().getTime() - new Date().getTimezoneOffset() * 60000
-      ).toISOString(),
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10),
       endMinDate: new Date(
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
@@ -688,7 +690,7 @@ export default {
       } else if (condition.attribute.type === "text") {
         return Object.keys(this.ruleAttributes.text_operators)
           .map((key) => {
-            if (key.includes("within_the_last") || key == "between") {
+            if (key.includes("within_the_last") || key == "from") {
               return {
                 key: key,
                 name: this.ruleAttributes.text_operators[key],
@@ -715,7 +717,7 @@ export default {
         value = [...condition.range]
         type = "range"
       } else if (condition.operator && condition.attribute.type === "text") {
-        if (condition.operator.key == "between") {
+        if (condition.operator.key == "from") {
           value = [this.selectedStartDate, this.selectedEndDate]
           condition.start_date = this.selectedStartDate
           condition.end_date = this.selectedEndDate
@@ -816,7 +818,7 @@ export default {
             this.rules[i].conditions[j].operator &&
             this.rules[i].conditions[j].attribute.type === "text"
           ) {
-            if (this.rules[i].conditions[j].operator.key == "between") {
+            if (this.rules[i].conditions[j].operator.key == "from") {
               value = [this.selectedStartDate, this.selectedEndDate]
             } else {
               value = [this.rules[i].conditions[j].text]
