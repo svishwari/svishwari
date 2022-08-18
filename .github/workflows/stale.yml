@@ -3,11 +3,11 @@
 #
 # For more information, see:
 # https://github.com/actions/stale
-name: Mark stale PRs and Close
+name: Stale PR Labeler
 
 on:
   schedule:
-  - cron: '10 * * * *'
+  - cron: '0/10 * * * *'
 
 jobs:
   stale:
