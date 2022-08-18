@@ -233,10 +233,7 @@ class AzureClient(CloudClient):
             Tuple[bool, str]: Returns bool for health status and message.
         """
 
-        container_client = ContainerClient.from_connection_string(
-            self.storage_connection_string, self.storage_container_name
-        )
-        client_status = container_client.exists()
+        client_status = self.get_container_client().exists()
 
         status = (
             client_status,
