@@ -144,7 +144,7 @@
                       </div>
                     </div>
 
-                    <span
+                    <!-- <span
                       v-if="
                         condition.operator &&
                         condition.attribute.type === 'text'
@@ -156,7 +156,7 @@
                           : addNewSubSection(condition)
                       "
                       >+ Product</span
-                    >
+                    > -->
 
                     <hux-autocomplete
                       v-if="
